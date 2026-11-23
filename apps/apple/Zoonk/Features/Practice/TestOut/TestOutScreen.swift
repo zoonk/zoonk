@@ -172,8 +172,7 @@ struct TestOutScreen: View {
 
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Continue", table: "Practice", comment: "Moves on after a grade."),
-        icon: .forward
+          "Continue", table: "Practice", comment: "Moves on after a grade.")
       ) {
         dismiss()
       }

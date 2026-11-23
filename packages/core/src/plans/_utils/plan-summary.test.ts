@@ -6,6 +6,7 @@ import {
   reduceCompletedSummary,
   reduceRestoredSummary,
 } from "./plan-summary";
+import { readSavedFeasibility } from "./saved-plan-advice";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
 const plan = { id: "plan-a", userId: "learner-a", version: 7 };
@@ -41,6 +42,7 @@ const summary: PlanSummary = {
     },
     fitOffer: null,
     fullCourseEndDate: null,
+    suggested: null,
   },
   basis: {
     layoutInputVersion: 4,
@@ -165,17 +167,27 @@ describe(reduceCompletedSummary, () => {
     expect(again).toStrictEqual({ kind: "unchanged" });
   });
 
-  it("fits once the last lesson it was short of is done", () => {
+  it("clears a time suggestion and its pending flag once the last short lesson is done", () => {
     const reduction = reduceCompletedSummary({
       completed: [{ lessonId: "shared" }, { lessonId: "after" }],
-      summary,
+      summary: {
+        ...summary,
+        advice: {
+          ...summary.advice,
+          feasibility: { ...summary.advice.feasibility, fits: false, timeCovers: false },
+          suggested: { kind: "everything", minutes: 30 },
+          suggestionPending: true,
+        },
+      },
     });
 
-    expect(reduction).toMatchObject({ coveredShare: 1, kind: "reduced" });
-    expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(true);
+    const reduced = reduction.kind === "reduced" ? reduction.summary : null;
+
+    expect(readSavedFeasibility(reduced)).toMatchObject({ fits: true, timeCovers: true });
+    expect(reduced?.advice).toMatchObject({ suggested: null, suggestionPending: false });
   });
 
-  it("keeps a plan short of a topic from fitting, whatever is done", () => {
+  it("keeps missing topics out of its saved feasibility after crediting completed lessons", () => {
     const missingTopic = {
       ...summary,
       selected: { ...summary.selected, coverage: { ...coverage, coreFits: false } },
@@ -186,7 +198,11 @@ describe(reduceCompletedSummary, () => {
       summary: missingTopic,
     });
 
-    expect(reduction.kind === "reduced" && reduction.summary.selected.coverage?.fits).toBe(false);
+    const reduced = reduction.kind === "reduced" ? reduction.summary : null;
+
+    expect(reduced?.selected.coverage).toMatchObject({ coreFits: false, fits: false });
+
+    expect(readSavedFeasibility(reduced)).toMatchObject({ coveredShare: 0.99 });
   });
 
   it("leaves the summary as it is for work it already counted whole", () => {

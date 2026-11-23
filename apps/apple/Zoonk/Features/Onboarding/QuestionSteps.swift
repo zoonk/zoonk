@@ -1142,9 +1142,7 @@ private struct ExamChoiceQuestion: View {
 
         if choice.take > 1 {
           Section {
-            Text.examPickLimit(choice.take)
-              .typeStyle(.body)
-              .foregroundStyle(.mutedForeground)
+            ExamPickLimit(take: choice.take)
               .listRowSeparator(.hidden)
 
             ExamOptionToggles(

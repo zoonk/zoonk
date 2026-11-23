@@ -106,22 +106,22 @@ internal fun ButtonColors.disabledWhen(waiting: Boolean): ButtonColors =
     if (waiting) copy(containerColor = disabledContainerColor, contentColor = disabledContentColor) else this
 
 /**
- * A button's words with [padding] around them and one glyph: an icon before them ([leadingIcon]) or the
- * forward chevron after them ([forward]), never both. While [busy], a spinner takes the glyph's place,
+ * A button's words with [padding] around them and one glyph: an icon before them ([leadingIcon]) or after
+ * them ([trailingIcon]), never both. While [busy], a spinner takes the glyph's place,
  * or covers the words without one.
  */
 @Composable
 internal fun ButtonContent(
     busy: Boolean,
     leadingIcon: (@Composable () -> Unit)?,
-    forward: Boolean,
+    trailingIcon: (@Composable () -> Unit)?,
     iconSize: Dp,
     padding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
 ) {
-    require(leadingIcon == null || !forward) { "A button shows at most one glyph." }
+    require(leadingIcon == null || trailingIcon == null) { "A button shows at most one glyph." }
 
-    if (leadingIcon == null && !forward) {
+    if (leadingIcon == null && trailingIcon == null) {
         BusyContent(busy) { Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically, content = content) }
         return
     }
@@ -133,9 +133,9 @@ internal fun ButtonContent(
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
         }
         Row(Modifier.weight(1f, fill = false), verticalAlignment = Alignment.CenterVertically, content = content)
-        if (forward) {
+        trailingIcon?.let {
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            IconSlot(busy, iconSize) { ListRowChevron() }
+            IconSlot(busy, iconSize, it)
         }
     }
 }

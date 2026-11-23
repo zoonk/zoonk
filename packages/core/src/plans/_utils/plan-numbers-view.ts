@@ -8,18 +8,15 @@ import { type WritingWork, listRemainingWriting } from "../planner/writing-sched
 import { type ShownFeasibility } from "./plan-feasibility-view";
 import { getPlanNumbers, getPlanWorkload } from "./plan-numbers";
 import { type PlanReadContext } from "./plan-read-projection";
-import { readPlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
 export async function buildPlanNumbersView({
   computed,
   context,
-  coverage = computed.feasibility,
 }: {
   computed: ComputedPlan;
   context: PlanReadContext;
-  coverage?: Pick<ShownFeasibility, "coveredShare" | "measure">;
 }): Promise<PlanNumbers> {
   const { pace, state } = computed;
   const settings = state.settings;
@@ -60,7 +57,7 @@ export async function buildPlanNumbersView({
       weekdayMinutes:
         settings.weekdayMinutes ?? Array.from({ length: 7 }, () => state.goal.dailyMinutes),
     },
-    coverage,
+    coverage: computed.feasibility,
     isExam: context.goal.kind === "exam",
     settings,
     workload,
@@ -68,10 +65,16 @@ export async function buildPlanNumbersView({
   });
 }
 
-export function buildSavedPlanNumbersView(
-  context: PlanReadContext,
-  writing: readonly WritingWork[],
-): PlanNumbers {
+/** `coverage` is the plan view's own, so both say the same share. */
+export function buildSavedPlanNumbersView({
+  context,
+  coverage,
+  writing,
+}: {
+  context: PlanReadContext;
+  coverage: Pick<ShownFeasibility, "coveredShare" | "fits" | "measure"> | null;
+  writing: readonly WritingWork[];
+}): PlanNumbers {
   const { state, goal, today } = context;
 
   const items = context.items.map((item) => ({
@@ -86,11 +89,6 @@ export function buildSavedPlanNumbersView(
 
   const sum = (part: "checkpoint" | "practice" | "unwritten" | "written") =>
     Math.round(facts.reduce((total, fact) => total + (fact?.parts[part] ?? 0), 0) * 10) / 10;
-
-  const summary = readPlanSummary({
-    plan: { ...context.plan, userId: goal.userId },
-    value: context.plan.summary,
-  });
 
   return getPlanNumbers({
     built: {
@@ -115,12 +113,7 @@ export function buildSavedPlanNumbersView(
       weekdayMinutes:
         state.settings.weekdayMinutes ?? Array.from({ length: 7 }, () => state.goal.dailyMinutes),
     },
-    coverage: summary?.selected.coverage
-      ? {
-          coveredShare: summary.selected.coverage.coveredShare ?? 1,
-          measure: summary.selected.coverage.measure,
-        }
-      : null,
+    coverage,
     isExam: goal.kind === "exam",
     settings: state.settings,
     workload: {

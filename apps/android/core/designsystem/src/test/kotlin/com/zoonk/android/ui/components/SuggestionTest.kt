@@ -11,7 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +21,8 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
@@ -71,6 +75,31 @@ class SuggestionTest {
             compose.waitForIdle()
             write(File(folder, if (it) "suggestion-dark.png" else "suggestion.png"), compose.onRoot().captureRender().asAndroidBitmap())
         }
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aLinesActionsGoUnderItsWordsTogether() {
+        compose.setContent {
+            ZoonkTheme {
+                Suggestion(
+                    "Plan suggestion",
+                    "You finished your plan",
+                    SuggestionLayout.Line,
+                    lineAction = {
+                        SuggestionAction("Get your certificate", onClick = {})
+                        SuggestionOpen()
+                    },
+                ) {}
+            }
+        }
+        val words = compose.onNodeWithText("You finished your plan", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val certificate = compose.onNodeWithText("Get your certificate").getUnclippedBoundsInRoot()
+        val view = compose.onNodeWithText("View").getUnclippedBoundsInRoot()
+
+        assertTrue("under: $words, $certificate", certificate.top >= words.bottom)
+        assertEquals("one row: $certificate, $view", certificate.top, view.top)
+        assertEquals("from the words' start: $words, $certificate", words.left, certificate.left)
     }
 
     private fun write(

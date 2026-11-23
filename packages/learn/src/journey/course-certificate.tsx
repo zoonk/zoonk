@@ -30,8 +30,10 @@ export type PlanCertificates = {
   view: { href: string; locked: boolean; several: boolean } | null;
 };
 
+const CLAIM_FAILED = "claimFailed";
+
 function useCertificateClaim(onClaim: PlanCertificates["onClaim"]) {
-  const [failed, setFailed] = useSharedState("claimFailed", false);
+  const [failed, setFailed] = useSharedState(CLAIM_FAILED, false);
   const [isPending, startTransition] = useTransition();
   const request = useSharedRequest("claim", isPending);
 
@@ -44,6 +46,12 @@ function useCertificateClaim(onClaim: PlanCertificates["onClaim"]) {
   };
 
   return { claim, failed, isPending: request.busy };
+}
+
+/** Whether the last claim didn't save: the suggestion says so in its own place, not beside the button. */
+export function useCertificateClaimFailed(): boolean {
+  const [failed] = useSharedState(CLAIM_FAILED, false);
+  return failed;
 }
 
 function ClaimAction({
@@ -93,16 +101,11 @@ export function CertificateAction({
   certificates: PlanCertificates;
   primary: boolean;
 }) {
-  const { claim, failed, isPending } = useCertificateClaim(certificates.onClaim);
+  const { claim, isPending } = useCertificateClaim(certificates.onClaim);
   const variant = primary ? "default" : "outline";
 
   if (certificates.unclaimed.length > 0) {
-    return (
-      <>
-        <ClaimAction claim={claim} isPending={isPending} variant={variant} />
-        {failed && <SuggestionSaveError />}
-      </>
-    );
+    return <ClaimAction claim={claim} isPending={isPending} variant={variant} />;
   }
 
   return certificates.view && <ViewAction variant={variant} view={certificates.view} />;

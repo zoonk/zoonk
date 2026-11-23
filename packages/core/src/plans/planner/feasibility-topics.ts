@@ -1,35 +1,32 @@
-import { toTopicKey } from "../../library/exams/topic-key";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlanGraphSkill } from "./plan-state";
-import { findFrequentSkillIds } from "./topic-weights";
+import { findFrequentSkillIds, listSkillTopicKeys } from "./topic-weights";
 
-function listPlannedSkillIds(built: BuiltPlan): Set<string> {
+function listPlannedSkillIds(items: BuiltPlan["items"]): Set<string> {
   return new Set(
-    built.items.flatMap((item) =>
+    items.flatMap((item) =>
       item.status !== "skipped" && LEARN_KINDS.has(item.kind) && item.skillId ? [item.skillId] : [],
     ),
   );
 }
 
-export function hasEveryTopic({
-  built,
+export function readTopicMembership({
+  items,
   known,
   skills,
 }: {
-  built: BuiltPlan;
+  items: BuiltPlan["items"];
   known: ReadonlySet<string>;
   skills: readonly PlanGraphSkill[];
-}): boolean {
-  const planned = listPlannedSkillIds(built);
+}): (skillId: string) => boolean {
+  const planned = listPlannedSkillIds(items);
 
-  const topicsOf = new Map(
-    skills.map((skill) => [skill.skillId, (skill.topics ?? []).map((topic) => toTopicKey(topic))]),
-  );
+  const topicsOf = new Map(skills.map((skill) => [skill.skillId, listSkillTopicKeys(skill)]));
 
   const plannedTopics = new Set([...planned].flatMap((skillId) => topicsOf.get(skillId) ?? []));
 
-  const isInPlan = (skillId: string) => {
+  return (skillId) => {
     const topics = topicsOf.get(skillId) ?? [];
 
     return (
@@ -38,8 +35,6 @@ export function hasEveryTopic({
       (topics.length > 0 && topics.every((topic) => plannedTopics.has(topic)))
     );
   };
-
-  return built.skillMinutes.every((entry) => isInPlan(entry.skillId));
 }
 
 type SkillFits = ReadonlyMap<string, number>;

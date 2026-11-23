@@ -5,6 +5,7 @@ import { getExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { LEARN_KINDS, isUnwrittenLesson } from "../planner/plan-item-rules";
 import { type PlanSettings } from "../planner/plan-state";
 import { type WritingWork } from "../planner/writing-schedule";
+import { type ShownFeasibility, toShownShare } from "./plan-feasibility-view";
 
 function roundPlanMinutes(minutes: number): number {
   return Math.round(Math.max(0, minutes) * 10) / 10;
@@ -77,7 +78,7 @@ export function getPlanNumbers({
 }: {
   built: Pick<BuiltPlan, "items" | "lessonDayMinutes">;
   context: PlanNumbers["context"];
-  coverage: Pick<NonNullable<PlanNumbers["coverage"]>, "coveredShare" | "measure"> | null;
+  coverage: Pick<ShownFeasibility, "coveredShare" | "fits" | "measure"> | null;
   isExam: boolean;
   settings: PlanSettings;
   workload: PlanWorkload;
@@ -172,7 +173,7 @@ export function getPlanNumbers({
       target && coverage
         ? {
             basis: "selected",
-            coveredShare: Math.round(coverage.coveredShare * 100) / 100,
+            coveredShare: toShownShare(coverage),
             measure: coverage.measure,
             scope: "selectedCurriculum",
           }

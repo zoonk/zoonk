@@ -31,6 +31,7 @@ import {
   requestLessonWritingStep,
   requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
+import { refreshPlanSuggestionStep } from "./steps/refresh-plan-suggestion-step";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
 import { refreshTestedOutPlanStep } from "./steps/refresh-tested-out-plan-step";
 import { settleSessionPlanStep } from "./steps/settle-session-plan-step";
@@ -68,6 +69,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   switch (followUp.kind) {
     case "refreshStudyDay":
       await retryPlanConflicts(refreshStudyDayStep, { ...followUp.input, userId });
+      return;
+    case "refreshPlanSuggestion":
+      await retryPlanConflicts(refreshPlanSuggestionStep, { ...followUp.input, userId });
       return;
     case "settleSessionPlan":
       await settleSessionPlanStep({ ...followUp.input, userId });

@@ -1,5 +1,5 @@
 import { getPathname } from "@/i18n/navigation";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 
 type ChapterHrefParams = { brandSlug: string; chapterSlug: string; courseSlug: string };
@@ -27,7 +27,7 @@ export const MINUTES_PARAM = "minutes";
 export function readDailyMinutes(value: string | string[] | undefined): number | null {
   const minutes = typeof value === "string" && /^\d+$/u.test(value) ? Number(value) : null;
 
-  return minutes !== null && minutes >= MIN_DAILY_MINUTES && minutes <= MAX_DAILY_MINUTES
+  return minutes !== null && minutes >= MIN_DAILY_MINUTES && minutes <= MAX_PICKABLE_DAILY_MINUTES
     ? minutes
     : null;
 }

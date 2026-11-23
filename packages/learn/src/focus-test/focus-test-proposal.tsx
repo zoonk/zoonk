@@ -114,8 +114,8 @@ export function FocusTestProposal({
         <OnboardingDescription>
           {t({
             description:
-              "Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.",
-            message: "Your time can't cover everything before your exam.",
+              "How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has.",
+            message: "Picked from your answers and how much your exam asks about each.",
           })}
         </OnboardingDescription>
       </OnboardingHeading>

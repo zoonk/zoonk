@@ -369,4 +369,4 @@ private fun PlanPreview(chapters: List<CourseChapter>) {
 
 private const val PREVIEW_CHAPTERS = 4
 private const val MIN_DAILY_MINUTES = 5
-private const val MAX_DAILY_MINUTES = 1440
+private const val MAX_DAILY_MINUTES = 480

@@ -8,7 +8,7 @@ import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { MAX_PICKABLE_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { loadDraftMaterial } from "./_utils/draft-material";
 import { type ExamLookup, type FoundExam, listExamLookups } from "./_utils/exam-facts";
 import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-draft";
@@ -164,7 +164,7 @@ async function readMaterial(draft: UnderstandingRunDraft) {
 export async function understandGoalWords(draft: UnderstandingRunDraft): Promise<UnderstoodWords> {
   const understood = await understandGoal({
     analytics: { contentScope: "personal", distinctId: draft.userId },
-    dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
+    dailyMinutesLimits: { max: MAX_PICKABLE_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     goal: draft.prompt,
     language: draft.language,
     material: hasMaterial(draft) ? await readMaterial(draft) : null,

@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { planChangeInputSchema } from "../plan-contract";
+import { savedPlanOfferOperationsSchema } from "../plan-contract";
+import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
-import { PLAN_EPSILON } from "../planner/plan-precision";
-import { getSkillValue } from "../planner/selected-coverage";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import {
@@ -33,7 +32,7 @@ export const planSummarySchema = z
           effect: planEffectSchema,
           fits: z.boolean(),
           lessons: z.int().positive(),
-          operations: planChangeInputSchema.shape.operations,
+          operations: savedPlanOfferOperationsSchema,
         })
         .nullable()
         .optional(),
@@ -50,10 +49,15 @@ export const planSummarySchema = z
         .object({
           effect: planEffectSchema,
           fits: z.boolean(),
-          operations: planChangeInputSchema.shape.operations,
+          operations: savedPlanOfferOperationsSchema,
         })
         .nullable(),
       fullCourseEndDate: z.iso.date().nullable(),
+      suggested: z
+        .object({ kind: z.enum(["everything", "focus"]), minutes: z.int().positive() })
+        .nullable()
+        .default(null),
+      suggestionPending: z.boolean().optional(),
     }),
     basis: planSummaryBasisSchema,
     schemaVersion: z.literal(PLAN_SUMMARY_SCHEMA_VERSION),
@@ -141,19 +145,9 @@ function creditShortLessons({
       : skill;
   });
 
-  const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
-  const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
-
-  const whole = skills.every(
-    (skill) =>
-      skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
-  );
-
   return {
     ...coverage,
-    coveredShare: total > 0 ? Math.min(1, Math.max(0, covered / total)) : null,
-    fits: coverage.coreFits && total > 0 && whole,
+    ...measureDepth({ coreFits: coverage.coreFits, skills }),
     shortLessons: coverage.shortLessons.filter((lesson) => !credited.has(lesson.lessonId)),
     skills,
   };
@@ -186,7 +180,13 @@ export function reduceCompletedSummary({
   return {
     coveredShare: reduced.coveredShare,
     kind: "reduced",
-    summary: { ...summary, selected: { ...summary.selected, coverage: reduced } },
+    summary: {
+      ...summary,
+      advice: reduced.fits
+        ? { ...summary.advice, suggested: null, suggestionPending: false }
+        : summary.advice,
+      selected: { ...summary.selected, coverage: reduced },
+    },
   };
 }
 
@@ -203,7 +203,14 @@ export function reduceRestoredSummary({
     return null;
   }
 
-  const restored = { ...summary, basis: { ...summary.basis, planVersion } };
+  const restored = {
+    ...summary,
+    advice: summary.advice.suggested
+      ? { ...summary.advice, suggested: null, suggestionPending: true }
+      : summary.advice,
+    basis: { ...summary.basis, planVersion },
+  };
+
   const reduction = reduceCompletedSummary({ completed, summary: restored });
 
   return reduction.kind === "reduced" ? reduction.summary : restored;

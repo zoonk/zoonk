@@ -8,6 +8,7 @@ import {
   type GoalDateMove,
   type PlanEffect,
   countLessons,
+  getLessonLead,
   getTopicNames,
   useNames,
 } from "./change-names";
@@ -78,6 +79,7 @@ function useLessonConsequence() {
     const topicsOut = getTopicNames(effect.topicsLeftOut);
     const topicsIn = getTopicNames(effect.topicsAdded);
     const { added, removed } = countLessons(effect, byDate);
+    const lead = byDate ? getLessonLead({ added, removed }) : null;
 
     if (topicsOut.length > 0) {
       return {
@@ -93,11 +95,13 @@ function useLessonConsequence() {
       };
     }
 
-    if (byDate && removed > 0) {
+    if (lead?.kind === "fewer") {
       return {
         key: "notInPlan",
-        text: lessonCount.fewer(removed, dateKind),
-        whole: (effect.lessonsLeftOut ?? []).length + (effect.unwrittenLeftOut ?? []).length === 0,
+        text: lessonCount.fewer(lead.count, dateKind),
+        whole:
+          added === 0 &&
+          (effect.lessonsLeftOut ?? []).length + (effect.unwrittenLeftOut ?? []).length === 0,
       };
     }
 
@@ -111,12 +115,12 @@ function useLessonConsequence() {
             topics: listNames({ kind: "topics", limit: NAMED_IN_SENTENCE, names: topicsIn }),
           },
         ),
-        whole: topicsIn.length <= NAMED_IN_SENTENCE && added === 0,
+        whole: topicsIn.length <= NAMED_IN_SENTENCE && added === 0 && removed === 0,
       };
     }
 
-    return byDate && added > 0
-      ? { key: "added", text: lessonCount.more(added, dateKind), whole: true }
+    return lead?.kind === "more"
+      ? { key: "added", text: lessonCount.more(lead.count, dateKind), whole: removed === 0 }
       : null;
   };
 }

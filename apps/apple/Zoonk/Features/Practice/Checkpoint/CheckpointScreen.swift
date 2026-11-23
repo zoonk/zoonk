@@ -217,20 +217,20 @@ struct CheckpointScreen: View {
               comment: "Finishes a checkpoint to see its result.")
             : LocalizedStringResource(
               "Next", table: "Practice", comment: "Moves to a checkpoint's next question."),
-          icon: .forward, isBusy: state.isPending
+          isBusy: state.isPending
         ) { Task { await next() } }
       } else if question == nil {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See result", table: "Practice",
             comment: "Finishes a checkpoint to see its result."),
-          icon: .forward, isBusy: state.isPending
+          isBusy: state.isPending
         ) { Task { await finish() } }
       } else {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Confirm", table: "Practice", comment: "Sends a checkpoint answer."),
-          icon: .check, isBusy: state.isPending, isDisabled: draft?.complete == nil
+          isBusy: state.isPending, isDisabled: draft?.complete == nil
         ) { Task { await confirm() } }
       }
     }
@@ -515,8 +515,7 @@ private struct CheckpointResultView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Continue", table: "Practice", comment: "Moves on after a grade."), icon: .forward,
-        action: close)
+          "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
     }
   }
 }

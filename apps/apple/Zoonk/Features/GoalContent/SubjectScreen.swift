@@ -751,7 +751,8 @@ struct SubjectTopicRow: View {
   }
 }
 
-/// Says why the subject isn't in the plan, with the way back main offers for each reason.
+/// Main's `NotPlannedCallout`: a notice card saying why the subject isn't in the plan, with the way
+/// back main offers for each reason.
 private struct SubjectNotPlannedNotice: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
@@ -762,16 +763,31 @@ private struct SubjectNotPlannedNotice: View {
   let restoring: VisitRequest<Bool>
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
+    Label {
+      VStack(alignment: .leading, spacing: 10) {
         switch reason {
         case "skipped":
           Text(
             "You took this subject out of your plan.", tableName: "Plan",
             comment: "Why a subject isn't in the plan: the learner skipped it")
+
+          BusyButton(isBusy: restoring.isRunning, icon: .addLessons) {
+            restore()
+          } label: {
+            Text("Add it back", tableName: "Plan")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
         case "time":
-          Text(
-            "This subject isn't in your plan: not enough time.", tableName: "Plan")
+          Button {
+            router.showRoot(of: .plan)
+          } label: {
+            Text(timeLine)
+              .foregroundStyle(Color(.foreground))
+              .multilineTextAlignment(.leading)
+          }
+          // Borderless, so in a list row only the sentence answers a tap.
+          .buttonStyle(.borderless)
         case "missing":
           Text(
             "This subject isn't in your plan yet.", tableName: "Plan",
@@ -779,38 +795,39 @@ private struct SubjectNotPlannedNotice: View {
         default:
           Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
         }
-      } icon: {
-        Image(systemName: "minus.circle")
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
 
-      if reason == "skipped" {
-        BusyButton(isBusy: restoring.isRunning, icon: .addLessons) {
-          restore()
-        } label: {
-          Text("Add it back", tableName: "Plan")
+        if restoring.outcome == false {
+          FailureLine(
+            message: LocalizedStringResource(
+              "That didn't work. Try again in a moment.", table: "Plan",
+              comment: "Says the subject didn't come back into the plan")
+          )
         }
-        .buttonStyle(.outline)
-      } else if reason == "time" {
-        Button {
-          router.showRoot(of: .plan)
-        } label: {
-          Text(
-            "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-        }
-        .buttonStyle(.outline)
       }
-
-      if restoring.outcome == false {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Plan",
-            comment: "Says the subject didn't come back into the plan")
-        )
-        .typeStyle(.body)
-      }
+      .foregroundStyle(Color(.foreground))
+    } icon: {
+      Image(systemName: "minus.circle")
+        .foregroundStyle(.mutedForeground)
     }
+    .typeStyle(.note)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 16)
+    .padding(.vertical, 12)
+    .panel()
+  }
+
+  /// The reason, then "Adjust plan" in ink and underlined, as two sentences sit.
+  private var timeLine: AttributedString {
+    let reason = String(
+      localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
+      comment:
+        "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
+    )
+    var link = AttributedString(
+      localized: "Adjust plan", table: "Plan", comment: "Opens the plan's settings to change them")
+    link.underlineStyle = .single
+
+    return AttributedString([reason, ""].joinedSentences()) + link
   }
 
   private func restore() {

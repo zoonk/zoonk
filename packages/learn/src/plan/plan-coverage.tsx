@@ -5,61 +5,24 @@ import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
-import { TIME_ANSWER_BUTTON_CLASS, useTimeAnswerTexts } from "../_components/time-answer";
+import { TIME_ANSWER_BUTTON_CLASS } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { findSectionControl } from "./plan-editor-sections";
 import { usePlanChange } from "./use-plan-change";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
-/** Below half a percent, the share would read "0%". */
-const MIN_SHOWN_SHARE = 0.005;
-
-/** Null when the plan covers everything in depth or has no date to cover it by. */
-export function usePlanCoverage() {
+/** The plan's date is too close to study everything at the learner's time. */
+export function useFallsShort(): boolean {
   const { plan } = usePlanScreen();
   const { feasibility } = plan;
-
-  if (!feasibility?.deadline || feasibility.fits) {
-    return null;
-  }
-
-  return {
-    coreFits: feasibility.coreFits,
-    coveredShare: feasibility.coveredShare,
-    deepensMostAsked: feasibility.deepensMostAsked,
-    measure: feasibility.measure,
-  };
-}
-
-export function useTimeEnough(): boolean {
-  const { plan } = usePlanScreen();
-  return plan.feasibility?.timeCovers ?? false;
-}
-
-type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
-
-export function useCoveredText() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const texts = useTimeAnswerTexts();
-  const { plan } = usePlanScreen();
-  const { dailyMinutes } = plan.schedule;
-
-  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string =>
-    coveredShare < MIN_SHOWN_SHARE
-      ? t("{time} a day isn't enough time to cover your goal.", {
-          time: formatDuration(dailyMinutes),
-        })
-      : texts.timeCovers({ exam: measure === "exam", minutes: dailyMinutes, value: coveredShare });
+  return Boolean(feasibility?.deadline && !feasibility.fits);
 }
 
 export function useCanMoveDate(): boolean {
-  const { goal } = usePlanScreen();
-  const coverage = usePlanCoverage();
-  const timeEnough = useTimeEnough();
-  return goal.kind !== "exam" && coverage !== null && !timeEnough;
+  const { goal, plan } = usePlanScreen();
+  const fallsShort = useFallsShort();
+  return goal.kind !== "exam" && fallsShort && !plan.feasibility?.timeCovers;
 }
 
 type MoveOutcome = "building" | "failed" | "noDate" | null;
@@ -193,5 +156,3 @@ export function MoveDateSwitch({
     </>
   );
 }
-
-export type FindStatus = "answered" | "building" | "failed" | "idle" | "pending";

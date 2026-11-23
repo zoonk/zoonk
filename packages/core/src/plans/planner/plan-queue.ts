@@ -4,7 +4,7 @@ import { getAreaRates } from "./area-rates";
 import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
 import { type BossMinutes, getPlannedBossMinutes } from "./boss-minutes";
 import { markChapterInProgress, putChapterInProgressFirst } from "./chapter-in-progress";
-import { getAreaFoundationIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
+import { getHarderStartSkillIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
 import { addPhaseCheckpoints } from "./phase-checkpoints";
 import { type PlanBase } from "./plan-bases";
 import { type ExistingPlanItem } from "./plan-items";
@@ -86,19 +86,6 @@ function getSkillMinutes({
   });
 
   return (outlined + standIn * DEFAULT_LESSON_MINUTES) * input.paceFactor;
-}
-
-function getHarderStartSkillIds(input: QueueInput): Set<string> {
-  const strong = input.settings.difficultyBias === "harder" ? (input.strongAreas ?? []) : [];
-  const missed = input.missedSkillIds ?? new Set<string>();
-
-  const foundations = getAreaFoundationIds({
-    areas: new Set([...strong, ...input.settings.pastBasicsAreas]),
-    graph: input.graph,
-    prerequisites: input.prerequisites,
-  });
-
-  return new Set([...foundations].filter((skillId) => !missed.has(skillId)));
 }
 
 function isFocused({

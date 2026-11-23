@@ -283,6 +283,14 @@ export type AlignmentException = {
 
 export const EXCEPTIONS: AlignmentException[] = [
   {
+    configuration: "laptop keys",
+    issue: 2982,
+    piece: "action",
+    reason: "The Plan page shows the missed-days and post-exam actions filled on main too",
+    relation: "one-filled",
+    scenario: "/plan",
+  },
+  {
     configuration: "phone touch",
     issue: 3136,
     piece: "list-group",

@@ -1101,8 +1101,7 @@ struct LessonGuestGateView: View {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {
-        BusyButton(isBusy: isStarting, icon: .play) {
-
+        BusyButton(isBusy: isStarting) {
           starting.run {
             var outcome: Bool = false
 

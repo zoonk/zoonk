@@ -159,7 +159,7 @@ private fun ColumnScope.FocusProposal(
 ) {
     val pending = plan.deciding != null
     SetupContent {
-        TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_description))
+        TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_picked))
         FocusRows(rows)
         PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam, repriced = plan.repriced != null)
         OnboardingActions {

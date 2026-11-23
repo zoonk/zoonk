@@ -152,5 +152,6 @@ export async function planSeededGoal({ goalId, now }: { goalId: string; now: Dat
   }
 
   const computed = await computePlan({ context, mode: "automatic", now });
+
   await commitPlan({ change: null, computed, context, owe: recordFollowUps, revalidation: "skip" });
 }

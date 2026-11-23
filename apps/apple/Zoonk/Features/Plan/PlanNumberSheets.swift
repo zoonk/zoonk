@@ -238,8 +238,8 @@ struct PlanScheduleSheet: View {
     case .needsAdjusting:
       return String(
         localized:
-          "You have more lessons than days left. Study longer each day or pick a later date.",
-        table: "Plan", comment: "A plan with more lessons than days left before its date")
+          "Let's fit your plan to the time left. Study longer each day or pick a later date.",
+        table: "Plan")
     case .pastDate:
       return context.goal.kind == .exam
         ? String(

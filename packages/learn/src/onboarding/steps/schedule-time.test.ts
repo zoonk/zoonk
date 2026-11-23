@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { PAST_DATE, TOO_CLOSE, everythingAt, foundTime } from "../../_test-utils/time-answers";
 import {
   asksAboutTime,
-  getShownAnswer,
+  getShownLine,
   getShownMinutes,
   toFindWeek,
   toPickedMinutes,
@@ -10,6 +10,8 @@ import {
   waitsForSuggestion,
   waitsToSave,
 } from "./schedule-time";
+
+const SUGGESTION = { focus: false, kind: "suggestion", minutes: 35 } as const;
 
 describe(getShownMinutes, () => {
   const SHOWN = {
@@ -100,21 +102,14 @@ describe(toPickedMinutes, () => {
 });
 
 describe(asksAboutTime, () => {
-  const ASK = { dated: true, found: foundTime(), minutes: 35 };
-
-  it("asks about every time but the one the plan suggested", () => {
-    expect(asksAboutTime(ASK)).toBe(false);
-    expect(asksAboutTime({ ...ASK, minutes: 30 })).toBe(true);
+  it("never asks about a dated goal's time: its line is the suggestion, whatever is picked", () => {
+    expect(asksAboutTime({ dated: true, minutes: 35 })).toBe(false);
+    expect(asksAboutTime({ dated: true, minutes: 480 })).toBe(false);
   });
 
-  it("asks an undated goal about its time right away", () => {
-    expect(asksAboutTime({ ...ASK, dated: false, found: null })).toBe(true);
-  });
-
-  it("waits for the suggestion, and never asks about a date that has passed", () => {
-    expect(asksAboutTime({ ...ASK, found: null })).toBe(false);
-    expect(asksAboutTime({ ...ASK, minutes: null })).toBe(false);
-    expect(asksAboutTime({ ...ASK, found: foundTime(PAST_DATE) })).toBe(false);
+  it("asks when an undated goal would finish at the time shown", () => {
+    expect(asksAboutTime({ dated: false, minutes: 30 })).toBe(true);
+    expect(asksAboutTime({ dated: false, minutes: null })).toBe(false);
   });
 });
 
@@ -143,7 +138,7 @@ describe(toFindWeek, () => {
 });
 
 describe(waitsToSave, () => {
-  it("waits while the screen works out what a time the learner didn't pick covers", () => {
+  it("waits while the screen works out what the time shown means", () => {
     expect(waitsToSave({ line: { kind: "asking" }, picked: null })).toBe(true);
     expect(waitsToSave({ line: { kind: "working" }, picked: null })).toBe(true);
   });
@@ -153,29 +148,28 @@ describe(waitsToSave, () => {
   });
 
   it("saves the time shown once the screen says what it means, or that it couldn't", () => {
-    expect(waitsToSave({ line: { kind: "share", share: 0.4 }, picked: null })).toBe(false);
+    expect(waitsToSave({ line: SUGGESTION, picked: null })).toBe(false);
     expect(waitsToSave({ line: { kind: "findFailed" }, picked: null })).toBe(false);
   });
 });
 
-describe(getShownAnswer, () => {
-  const settled = { found: foundTime(), line: { kind: "share", share: 0.4 } } as const;
-  const working = { found: null, line: { kind: "working" } } as const;
+describe(getShownLine, () => {
+  const working = { kind: "working" } as const;
 
-  it("keeps the last answer in place, updating, while new days are worked out", () => {
-    expect(getShownAnswer({ last: settled, now: working })).toStrictEqual({
-      ...settled,
+  it("keeps the last line in place, updating, while new days are worked out", () => {
+    expect(getShownLine({ last: SUGGESTION, now: working })).toStrictEqual({
+      line: SUGGESTION,
       updating: true,
     });
   });
 
-  it("shows the screen working when there's no answer yet, and the new one once it's in", () => {
-    expect(getShownAnswer({ last: working, now: working })).toStrictEqual({
-      ...working,
+  it("shows the screen working when there's no line yet, and the new one once it's in", () => {
+    expect(getShownLine({ last: working, now: working })).toStrictEqual({
+      line: working,
       updating: false,
     });
 
-    const now = { found: foundTime(), line: { kind: "everything", suggested: true } } as const;
-    expect(getShownAnswer({ last: settled, now })).toStrictEqual({ ...now, updating: false });
+    const now = { focus: true, kind: "suggestion", minutes: 240 } as const;
+    expect(getShownLine({ last: SUGGESTION, now })).toStrictEqual({ line: now, updating: false });
   });
 });

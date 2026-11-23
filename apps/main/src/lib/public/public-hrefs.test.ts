@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readLessonOrigin, withOrigin } from "./public-hrefs";
+import { readDailyMinutes, readLessonOrigin, withOrigin } from "./public-hrefs";
 
 describe(readLessonOrigin, () => {
   it("reads a course's, a chapter's or a lesson's path, with the place on it", () => {
@@ -50,5 +50,18 @@ describe(withOrigin, () => {
     expect(withOrigin("/learn/l1?generation=g", "/b/ai/c/x")).toBe(
       "/learn/l1?generation=g&from=%2Fb%2Fai%2Fc%2Fx",
     );
+  });
+});
+
+describe(readDailyMinutes, () => {
+  it("reads a daily time a learner can pick, up to 8 hours", () => {
+    expect(readDailyMinutes("5")).toBe(5);
+    expect(readDailyMinutes("480")).toBe(480);
+  });
+
+  it("drops a time a learner can't pick", () => {
+    for (const value of ["4", "481", "1440", "1h", undefined]) {
+      expect(readDailyMinutes(value)).toBeNull();
+    }
   });
 });

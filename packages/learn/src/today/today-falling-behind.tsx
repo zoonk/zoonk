@@ -21,10 +21,9 @@ import {
   useMainActionVariant,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
-import { useFormatShare } from "../_utils/percent";
-import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { TodaySuggestionCard } from "./today-suggestion-card";
 import { isWelcomeBackDay } from "./use-today-copy";
@@ -33,24 +32,6 @@ type Change = NonNullable<TodayView["planChange"]>;
 type Behind = NonNullable<PlanChangeView["behind"]>;
 type Answer = { kept: true } | { failed: true } | null;
 type Option = "adjustTime" | "focus" | "studyEverything";
-
-function useBehindSentence() {
-  const t = useExtracted();
-  const formatShare = useFormatShare();
-  const formatDuration = useFormatDuration();
-
-  return (behind: Behind): string => {
-    const values = {
-      after: formatShare(behind.coveredAfter),
-      before: formatShare(behind.coveredBefore),
-      time: formatDuration(behind.currentMinutes),
-    };
-
-    return behind.measure === "exam"
-      ? t("{time} a day now covers {after} of the exam, down from {before}.", values)
-      : t("{time} a day now covers {after} of your goal, down from {before}.", values);
-  };
-}
 
 /** On a return after a break, nothing that asks for more hours leads. */
 function getLeadingOption({
@@ -188,7 +169,7 @@ export function FallingBehindNotice({
   onHold: (held: boolean) => void;
 }) {
   const t = useExtracted();
-  const sentence = useBehindSentence();
+  const dateKind = useTodayDateKind();
   const [answer, setAnswer] = useState<Answer>(null);
   const { isPending, keep, superseded } = useKeepTime({ change, onAnswer: setAnswer, onHold });
   const answered = answer !== null && !("failed" in answer);
@@ -209,7 +190,13 @@ export function FallingBehindNotice({
         ) : (
           <>
             <SuggestionHeader>{title}</SuggestionHeader>
-            <SuggestionDescription>{sentence(behind)}</SuggestionDescription>
+            <SuggestionDescription>
+              {t({
+                description:
+                  'Under "You missed a few days": the plan has more lessons than the days left hold. Followed by a button to see the plan\'s changes.',
+                message: "Let's fit your plan to the days left.",
+              })}
+            </SuggestionDescription>
             <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>} />
           </>
         )}
@@ -217,7 +204,7 @@ export function FallingBehindNotice({
 
       <SuggestionSheet>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <PlanEffectDiff effect={change.effect} summary={false} />
+        <PlanEffectDiff dateKind={dateKind} effect={change.effect} />
 
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>

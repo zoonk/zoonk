@@ -9,7 +9,12 @@ import {
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -223,6 +228,32 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("refuses to create any goals when an explicit allocation exhausts the shared day", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "shared-day-overflow",
+    });
+
+    const response = await apiContext.post("/v1/goals", {
+      data: {
+        dailyMinutes: 480,
+        goals: [
+          { dailyMinutes: 480, kind: "learn", language: "en", prompt: "Drawing", title: "Drawing" },
+          { kind: "learn", language: "en", prompt: "Geometry", title: "Geometry" },
+        ],
+      },
+    });
+
+    expect(response.status()).toBe(422);
+
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "DAY_TOO_SHORT", details: { goals: 2, minutes: 485 } },
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await apiContext.dispose();
+  });
+
   test("creates goals that share the day's time and lists them with the main goal first", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -390,6 +421,63 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("keeps a saved long schedule readable and caps newly chosen time", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "plans-daily-limit",
+    });
+
+    const { goal, plan } = await createPlannedGoal(user.id);
+    const path = `/v1/goals/${goal.id}`;
+
+    const operations = [{ kind: "setDailyMinutes", minutes: 620 }];
+
+    const [, proposal] = await Promise.all([
+      prisma.goal.update({ data: { dailyMinutes: 600 }, where: { id: goal.id } }),
+      planChangeFixture({
+        kind: "edited",
+        payload: { operations, source: "tutor" },
+        planId: plan.id,
+        status: "proposed",
+      }),
+    ]);
+
+    const [read, advice, update, change, preview, accept] = await Promise.all([
+      apiContext.get(`${path}/plan`),
+      apiContext.post(`${path}/plan/time-advice`, { data: { dailyMinutes: 600 } }),
+      apiContext.patch(path, { data: { dailyMinutes: 481 } }),
+      apiContext.post(`${path}/plan/changes`, {
+        data: { operations: [{ kind: "setDailyMinutes", minutes: 481 }] },
+      }),
+      apiContext.post(`${path}/plan/change-previews`, {
+        data: { operations: [{ kind: "setWeekdayMinutes", minutes: 481, weekdays: [6] }] },
+      }),
+      apiContext.post(`${path}/plan/changes/${proposal.id}`, { data: { status: "applied" } }),
+    ]);
+
+    const saved = await readBody({ response: read, schema: planResponseSchema });
+    expect(saved.schedule.dailyMinutes).toBe(600);
+    expect(saved.schedule.dailyTimes.at(-1)).toBe(480);
+    expect(saved.changes).toContainEqual(expect.objectContaining({ id: proposal.id, operations }));
+
+    await expect(
+      readBody({ response: advice, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ numbers: { context: { dailyMinutes: 600 } }, ready: true });
+
+    expect([update.status(), change.status(), preview.status(), accept.status()]).toStrictEqual([
+      400, 400, 400, 409,
+    ]);
+
+    await expect(
+      readBody({
+        response: await apiContext.patch(path, { data: { dailyMinutes: 480 } }),
+        schema: goalUpdateResponseSchema,
+      }),
+    ).resolves.toMatchObject({ goal: { dailyMinutes: 480 } });
+
+    await apiContext.dispose();
+  });
+
   test("says what a daily time covers, and finds the time that covers the goal only when asked", async () => {
     const [{ apiContext, user }, stranger] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "plans-time-advice" }),
@@ -475,6 +563,7 @@ test.describe("Goals and plans API", () => {
 
     expect(time).toMatchObject({ ready: true, targetDate });
     expect(time.recommendedMinutes).toBeGreaterThan(12);
+    expect(time.suggested).toMatchObject({ everyTopic: true, kind: "everything" });
 
     await expect(
       readBody({ response: foundWeekdays, schema: planTimeToCoverSchema }),
@@ -494,6 +583,20 @@ test.describe("Goals and plans API", () => {
         schema: planTimeAdviceSchema,
       }),
     ).resolves.toMatchObject({ coveredShare: advice.coveredShare });
+
+    await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
+        data: { operations: [{ kind: "setDailyMinutes", minutes: time.recommendedMinutes }] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+        schema: planResponseSchema,
+      }),
+    ).resolves.toMatchObject({ feasibility: { coreFits: true, fits: true } });
 
     await apiContext.dispose();
   });

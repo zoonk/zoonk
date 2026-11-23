@@ -66,13 +66,9 @@ struct LessonLinkButton: View {
     Button {
       hooks.navigate(.lesson(lessonId: lessonId))
     } label: {
-      Label {
-        Text(
-          "Go over the lesson", tableName: "Practice",
-          comment: "Opens the lesson a content-gap drill is about.")
-      } icon: {
-        Image(systemName: "book")
-      }
+      Text(
+        "Go over the lesson", tableName: "Practice",
+        comment: "Opens the lesson a content-gap drill is about.")
     }
     .buttonStyle(.outline)
     .controlSize(.small)

@@ -5,7 +5,7 @@ import SwiftUI
 enum PlanSlotItem: Hashable {
   case choice(GoalPlan.ExamChoice)
   case courseComplete
-  case coverage(String)
+  case coverage
   /// The exam's optional study, such as its strategy, which fits beside everything it tests.
   case extraLessons
   case finished
@@ -21,11 +21,10 @@ enum PlanSlotItem: Hashable {
     let status = plan.status?.kind
     let finished = plan.end != nil
     let open = status != .pastDate
-    let coverage = planCoverageText(plan)
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
       open && plan.extraOffer != nil ? .extraLessons : nil,
-      open && !(plan.feasibility?.timeCovers ?? false) ? coverage.map { .coverage($0) } : nil,
+      open && plan.suggestedTime != nil ? .coverage : nil,
     ].compactMap(\.self)
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
@@ -108,8 +107,8 @@ private struct PlanChangePanel: ViewModifier {
 /// puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. A change to the plan
 /// (its coverage, an offer, a date that passed) is the whole card at every width, as main's; any other in the
-/// page's column is main's suggestion line, its summary with "View" opening the whole suggestion in
-/// a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
+/// page's column is main's suggestion line, its summary with its own action or "View" opening the
+/// whole suggestion in a sheet, which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole
 /// suggestion.
 struct PlanSuggestionSection: View {
   private enum Focus: Hashable {
@@ -164,15 +163,9 @@ struct PlanSuggestionSection: View {
 
     return Group {
       if isShowing {
-        if item == .finished {
-          SuggestionSheetBody {
-            slot(item)
-          }
-        } else {
-          slot(item)
-            .environment(
-              \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
-        }
+        slot(item)
+          .environment(
+            \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
       }
     }
     .disabled(currentAnswer?.editor.isSaving == true)
@@ -211,19 +204,23 @@ struct PlanSuggestionSection: View {
             SuggestionLine {
               SuggestionMark(kind: summary.mark)
             } summary: {
-              summary.text
-                .accessibilityFocused($focus, equals: .item)
-            } action: {
-              SuggestionViewButton {
-                context.show(.suggestion(item))
+              Group {
+                // A claim that didn't save says so in the line's words, as main's does.
+                if claimFailed(item) {
+                  SuggestionSaveError()
+                } else {
+                  summary.text
+                }
               }
+              .accessibilityFocused($focus, equals: .item)
+            } action: {
+              lineAction(item)
             }
           }
         }
         .padding(.vertical, isInline ? 4 : 0)
         // A change to the plan is main's card on its panel, in the page's column and beside it.
         .modifier(PlanChangePanel(isShown: isPlanChange(item)))
-        .environment(\.isPlanChangeCard, isPlanChange(item))
         // Beside the page a card's actions sit beside its words, so they're small, as main's
         // panel draws them; the sheet a line opens draws them large.
         .controlSize(isInline ? .small : .regular)
@@ -269,17 +266,16 @@ struct PlanSuggestionSection: View {
   ) -> some View {
     // An exam choice keeps its question, as main's does.
     if case .choice(let choice) = answer.item {
-      header(
-        choiceTitle(choice), icon: SuggestionMark(kind: .symbol("signpost.right")))
-    } else {
-      // Main's "Plan updated" heads the card on its own, with no mark.
-      Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied")
-        .typeStyle(.body.weight(.semibold))
+      SuggestionHeader(Text.examChoiceQuestion(group: choice.group, take: choice.take))
         .accessibilityFocused($focus, equals: .item)
+    } else {
+      SuggestionHeader(
+        Text("Plan updated", tableName: "Plan", comment: "Title once a plan suggestion is applied")
+      )
+      .accessibilityFocused($focus, equals: .item)
     }
 
-    Text(sentence)
-      .typeStyle(.body.weight(.medium))
+    SuggestionResult(text: sentence)
       .accessibilityFocused($focus, equals: .result)
 
     if change.canUndo {
@@ -302,9 +298,7 @@ struct PlanSuggestionSection: View {
     SuggestionLine {
       StatusMark(status: .done)
     } summary: {
-      Text(sentence)
-        .typeWeight(.medium)
-        .foregroundStyle(Color(.foreground))
+      SuggestionResult(text: sentence)
         .accessibilityFocused($focus, equals: .result)
     } action: {
       if change.canUndo {
@@ -340,8 +334,15 @@ struct PlanSuggestionSection: View {
   }
 
   private func failed(_ item: PlanSlotItem) -> Bool {
-    currentAnswer?.item == item && currentAnswer?.editor.latest == nil
-      && currentAnswer?.editor.failed == true
+    (currentAnswer?.item == item && currentAnswer?.editor.latest == nil
+      && currentAnswer?.editor.failed == true)
+      || (item == .courseComplete && claimFailed(item))
+  }
+
+  /// The finished plan's own view says it beside its buttons.
+  private func claimFailed(_ item: PlanSlotItem) -> Bool {
+    (item == .courseComplete || item == .finished)
+      && context.slotCheck(item, request: .claim).failed
   }
 
   /// Clears the answer once its moment is over, later while the learner is on it or its Undo is
@@ -417,12 +418,12 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  /// "Beginner complete" when the claim certifies one level, else "Course complete".
   /// A claim that didn't save takes the done mark off its line.
-  private var claimMark: SuggestionMark.Kind {
-    context.slotCheck(.courseComplete, request: .claim).failed ? .alert : .done
+  private func claimMark(_ item: PlanSlotItem) -> SuggestionMark.Kind {
+    claimFailed(item) ? .alert : .done
   }
 
+  /// "Beginner complete" when the claim certifies one level, else "Course complete".
   private var completeTitle: Text {
     let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
 
@@ -466,12 +467,10 @@ struct PlanSuggestionSection: View {
       PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
-        title: choiceTitle(choice), mark: .symbol("signpost.right"),
+        title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
         description: Text(choice.leftOut.line)
       ) {
-        Text.examPickLimit(choice.take)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        ExamPickLimit(take: choice.take)
 
         ExamOptionToggles(
           options: choice.options, take: choice.take,
@@ -494,7 +493,7 @@ struct PlanSuggestionSection: View {
       }
     case .choice(let choice):
       PlanSlotCard(
-        title: choiceTitle(choice), mark: .symbol("signpost.right"),
+        title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
         description: Text(choice.leftOut.line)
       ) {
         // Equal picks: one under the other in their order, none drawn as the main answer.
@@ -528,17 +527,20 @@ struct PlanSuggestionSection: View {
           context: context, item: item, offer: offer, title: { _ in extraTitle },
           facts: { extraFacts(offer, today: $0) }, actions: offers)
       }
-    case .coverage(let text):
-      PlanCoverageSlot(context: context, title: text, actions: offers)
+    case .coverage:
+      if let suggested = context.plan.suggestedTime {
+        PlanCoverageSlot(context: context, suggested: suggested, actions: offers)
+      }
     case .courseComplete:
-      PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
+      PlanSlotCard(title: completeTitle, description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)
+          .mainActionUnlessBarHoldsOne()
       }
     case .finished:
       PlanFinishedSlot(context: context)
     case .tooTight:
       PlanSlotCard(
-        title: Text(tooTightTitle), mark: .symbol("calendar.badge.clock"),
+        title: Text(tooTightTitle),
         description: Text(
           "Study longer each day or pick a later date.", tableName: "Plan",
           comment: "Under the Plan's notice when the plan has more lessons than days left")
@@ -554,19 +556,46 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  private func header(_ title: Text, icon: some View) -> some View {
-    Label {
-      title.typeStyle(.body.weight(.semibold))
-    } icon: {
-      icon
+  /// Main's line action: one that acts on its own, or what opening the whole suggestion leads to.
+  @ViewBuilder
+  private func lineAction(_ item: PlanSlotItem) -> some View {
+    switch item {
+    case .tooTight:
+      Button {
+        context.adjust(.top)
+      } label: {
+        Text(
+          "Adjust", tableName: "Plan",
+          comment:
+            "Opens the plan's settings, on the line saying the plan has more lessons than days left"
+        )
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    case .choice:
+      SuggestionViewButton(
+        label: Text("Choose", tableName: "Plan", comment: "Opens an exam choice's options")
+      ) {
+        context.show(.suggestion(item))
+      }
+    case .courseComplete:
+      CertificateClaimButton(context: context, item: item)
+        .buttonStyle(.outline)
+        .controlSize(.small)
+    case .finished:
+      PlanFinishedLineActions(context: context) {
+        context.show(.suggestion(item))
+      }
+    default:
+      SuggestionViewButton {
+        context.show(.suggestion(item))
+      }
     }
-    .accessibilityFocused($focus, equals: .item)
   }
 
   private var tooTightTitle: String {
     String(
-      localized: "More lessons than days left", table: "Plan",
-      comment: "Title of the Plan's notice when the plan has more lessons than days left")
+      localized: "Let's fit your plan to the time left", table: "Plan")
   }
 
   /// What the line says for each suggestion, as main's `SuggestionSummary`: its title.
@@ -579,7 +608,7 @@ struct PlanSuggestionSection: View {
           comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
       )
     case .choice(let choice):
-      (choiceTitle(choice), .symbol("signpost.right"))
+      (Text.examChoiceQuestion(group: choice.group, take: choice.take), .symbol("signpost.right"))
     case .pastDate:
       (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
@@ -590,31 +619,18 @@ struct PlanSuggestionSection: View {
       )
     case .extraLessons:
       (extraTitle, .sparkle)
-    case .coverage(let text):
-      (Text(text), .sparkle)
+    case .coverage:
+      (Text(context.plan.suggestedTime.map(PlanCoverageSlot.title) ?? ""), .sparkle)
     case .courseComplete:
-      (completeTitle, claimMark)
+      (completeTitle, claimMark(item))
     case .finished:
       (
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
-        .done
+        claimMark(item)
       )
     case .tooTight:
       (Text(tooTightTitle), .symbol("calendar.badge.clock"))
     }
-  }
-
-  private func choiceTitle(_ choice: GoalPlan.ExamChoice) -> Text {
-    choice.take > 1
-      ? Text(
-        "\(choice.group): which ones will you take?", tableName: "Plan",
-        comment:
-          "Asks which options of an exam's choice, like the modules a course takes, the learner takes; they take several"
-      )
-      : Text(
-        "\(choice.group): which one will you take?", tableName: "Plan",
-        comment:
-          "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
 
   private func fitTitle(_ offer: GoalPlan.Offer, today: PlanEffect?) -> Text {
@@ -722,9 +738,7 @@ struct PlanStatement: View {
       } summary: {
         VStack(alignment: .leading, spacing: 2) {
           title
-          description
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          SuggestionDescription(description)
         }
         .accessibilityElement(children: .combine)
       } action: {
@@ -732,24 +746,16 @@ struct PlanStatement: View {
       }
     } else {
       VStack(alignment: .leading, spacing: 8) {
-        MarkedRow {
-          SuggestionMark(kind: mark)
-        } content: {
-          title
-            .typeStyle(.body.weight(.semibold))
-        } end: {
-          EmptyView()
-        }
+        SuggestionHeader(title)
 
-        description
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        SuggestionDescription(description)
       }
     }
   }
 }
 
 /// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+/// Where it sits says whether it's the main answer and where a claim that didn't save says so.
 struct CertificateClaimButton: View {
   let context: PlanContext
   /// The suggestion it's in, whose opening the claim belongs to.
@@ -764,11 +770,6 @@ struct CertificateClaimButton: View {
       Text(
         "Get your certificate", tableName: "Plan",
         comment: "Writes the certificate of the plan's finished course or level and shows it")
-    }
-    .mainActionUnlessBarHoldsOne()
-
-    if claim.failed {
-      SuggestionSaveError()
     }
   }
 }
@@ -805,98 +806,171 @@ private struct PlanCertificatesButton: View {
       Button {
         context.show(.certificate(code: only.code))
       } label: {
-        label(
-          Text(
-            "View certificate", tableName: "Plan",
-            comment: "Opens the certificate of the finished plan's course or level"))
+        Text(
+          "View certificate", tableName: "Plan",
+          comment: "Opens the certificate of the finished plan's course or level")
       }
-      .buttonStyle(.outline)
     } else if !earned.isEmpty {
       Button {
         router.present(.account(.certificates))
       } label: {
-        label(
-          Text(
-            "View certificates", tableName: "Plan",
-            comment: "Opens the learner's certificates, from a plan that earned several"))
+        Text(
+          "View certificates", tableName: "Plan",
+          comment: "Opens the learner's certificates, from a plan that earned several")
       }
-      .buttonStyle(.outline)
     }
   }
+}
 
-  private func label(_ title: Text) -> some View {
-    Label {
-      title
-    } icon: {
-      Image(systemName: "rosette")
+/// Main's `CertificateAction`: get the certificates not written yet, else view the ones earned.
+private struct PlanCertificateAction: View {
+  let context: PlanContext
+  let certificates: PlanEnd.Certificates
+
+  var body: some View {
+    if certificates.unclaimed.isEmpty {
+      PlanCertificatesButton(context: context, earned: certificates.earned)
+    } else {
+      CertificateClaimButton(context: context, item: .finished)
     }
+  }
+}
+
+/// The finished plan's line, as main's: its certificate, and "View" while there's more to show
+/// (what to study next) or no certificate to offer.
+private struct PlanFinishedLineActions: View {
+  @Environment(PlanStore.self) private var store
+
+  let context: PlanContext
+  let open: () -> Void
+
+  var body: some View {
+    let end = store.planEnd(goalId: context.goal.id).value
+    let certificates = end?.offeredCertificates
+
+    HStack(spacing: 8) {
+      if let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+      }
+
+      if certificates == nil || end?.hasMore == true {
+        SuggestionViewButton(action: open)
+      }
+    }
+    .buttonStyle(.outline)
+    .controlSize(.small)
+  }
+}
+
+extension PlanEnd {
+  /// The certificates to get or view, once there's one of either.
+  fileprivate var offeredCertificates: Certificates? {
+    certificates.flatMap { $0.unclaimed.isEmpty && $0.earned.isEmpty ? nil : $0 }
+  }
+
+  /// A next level or related courses: what to study next.
+  fileprivate var hasMore: Bool {
+    next.map { $0.nextLevel != nil || !$0.related.isEmpty } ?? false
   }
 }
 
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
+  @Environment(\.isInSuggestionSheet) private var isInSheet
 
   let context: PlanContext
 
   var body: some View {
     let end = store.planEnd(goalId: context.goal.id)
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over")
-          .typeStyle(.body.weight(.semibold))
-      } icon: {
-        StatusMark(status: .done)
-      }
-
-      if let certificates = end.value?.certificates {
-        if certificates.unclaimed.isEmpty {
-          PlanCertificatesButton(context: context, earned: certificates.earned)
-        } else {
-          CertificateClaimButton(context: context, item: .finished)
+    Group {
+      if isInSheet {
+        SuggestionSheetBody(note: failed ? BarNote(SuggestionSaveError.message) : nil) {
+          words(end.value)
+          related(end.value)
+        } actions: {
+          actions(end.value)
+            .buttonStyle(.outline)
         }
-      }
+      } else {
+        VStack(alignment: .leading, spacing: 8) {
+          words(end.value)
 
-      if let value = end.value?.next, value.nextLevel != nil || !value.related.isEmpty {
-        Text(
-          "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-
-        if let level = value.nextLevel {
-          BusyButton(isBusy: start.isWorking, icon: .play) {
-            continueAtNextLevel()
-          } label: {
-            Text(
-              "Continue at \(planLevelName(level.level))", tableName: "Plan",
-              comment: "Starts the next level of the plan's course")
+          ButtonRow(wraps: true) {
+            actions(end.value)
           }
           .buttonStyle(.outline)
-        }
 
-        ForEach(value.related) { course in
-          Button {
-            router.open(.course(courseId: course.courseId, title: course.title))
-          } label: {
-            Label(course.title, systemImage: "books.vertical")
-              .typeStyle(.body)
+          if failed {
+            SuggestionSaveError()
           }
-          .buttonStyle(.borderless)
-        }
-      }
 
-      if start.failed {
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Plan",
-            comment: "Says the next level didn't start")
-        )
-        .typeStyle(.body)
+          related(end.value)
+        }
       }
     }
     .loads(end, refreshable: false)
+  }
+
+  @ViewBuilder
+  private func words(_ end: PlanEnd?) -> some View {
+    SuggestionHeader(
+      Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"))
+
+    if end?.hasMore == true {
+      SuggestionDescription(
+        Text(
+          "Here's what to study next.", tableName: "Plan", comment: "Leads to what to study next"))
+    }
+  }
+
+  /// Main's: the next level is the main answer when there is one, else the certificate.
+  @ViewBuilder
+  private func actions(_ end: PlanEnd?) -> some View {
+    let certificates = end?.offeredCertificates
+
+    SuggestionActions {
+      if let level = end?.next?.nextLevel {
+        BusyButton(isBusy: start.isWorking, icon: .play) {
+          continueAtNextLevel()
+        } label: {
+          Text(
+            "Continue at \(planLevelName(level.level))", tableName: "Plan",
+            comment: "Starts the next level of the plan's course")
+        }
+        .mainActionUnlessBarHoldsOne()
+      } else if let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+          .mainActionUnlessBarHoldsOne()
+      }
+    } other: {
+      if end?.next?.nextLevel != nil, let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func related(_ end: PlanEnd?) -> some View {
+    // Main's related courses are list rows, each opening its course.
+    ForEach(end?.next?.related ?? []) { course in
+      Button {
+        router.open(.course(courseId: course.courseId, title: course.title))
+      } label: {
+        ListRow(Text(course.title)) {
+          Image(systemName: "books.vertical")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .disclosureChevron()
+      }
+      .buttonStyle(.plain)
+    }
+  }
+
+  /// A claim or the next level's start that didn't save, said under the buttons, as main's is.
+  private var failed: Bool {
+    start.failed || context.slotCheck(.finished, request: .claim).failed
   }
 
   /// "Continue at" the next level, the finished plan's own.

@@ -1,5 +1,4 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
-import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanBasesView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -107,6 +106,7 @@ const PLAN: PlanView = {
     practiceBias: "balanced",
     skippedActivities: [],
   },
+  suggestedTime: null,
   tools: [],
   week: {
     days: [
@@ -158,13 +158,8 @@ function renderPlan(
   children: React.ReactNode,
   {
     adviseOnBases = async () => null,
-    findTimeToCover = async () => null,
     plan: initialPlan = PLAN,
-  }: {
-    adviseOnBases?: PlanActions["adviseOnBases"];
-    findTimeToCover?: PlanActions["findTimeToCover"];
-    plan?: PlanView;
-  } = {},
+  }: { adviseOnBases?: PlanActions["adviseOnBases"]; plan?: PlanView } = {},
 ) {
   const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
   const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
@@ -184,7 +179,7 @@ function renderPlan(
     chooseExamOption: async () => null,
     chooseTools: async () => false,
     decide: async () => false,
-    findTimeToCover,
+    findTimeToCover: async () => null,
     preview,
     readPlanAgain,
   };
@@ -289,33 +284,9 @@ function withWritingLesson(plan: PlanView, writing: boolean): PlanView {
 }
 
 const COVERAGE_PLAN: PlanView = withWritingLesson(
-  {
-    ...PLAN,
-    feasibility: {
-      coreFits: true,
-      coveredShare: 0.5,
-      deadline: "2027-03-01",
-      deepensMostAsked: false,
-      fits: false,
-      measure: "goal",
-      timeCovers: false,
-    },
-    fitOffer: null,
-  },
+  { ...PLAN, fitOffer: null, suggestedTime: { kind: "everything", minutes: 60 } },
   true,
 );
-
-const COVERAGE_TIME = {
-  fittingDate: "2027-04-01",
-  most: null,
-  pastDate: false,
-  readingNotice: false,
-  ready: true,
-  recommendedMinutes: 60,
-  suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 60, split: null },
-  targetDate: "2027-03-01",
-  targetDateNamedMonth: false,
-} satisfies PlanTimeToCover;
 
 async function checkCoverage() {
   const held = renderPlan(
@@ -324,11 +295,15 @@ async function checkCoverage() {
         <PlanSuggestionSlot />
       </PlanSuggestionProvider>
     </PlanSheetHosts>,
-    { findTimeToCover: async () => COVERAGE_TIME, plan: COVERAGE_PLAN },
+    { plan: COVERAGE_PLAN },
   );
 
   await page.getByRole("button", { name: "See what changes" }).click();
-  await expect.poll(() => held.preview).toHaveBeenCalledOnce();
+
+  await expect
+    .poll(() => held.preview)
+    .toHaveBeenCalledExactlyOnceWith([{ kind: "setDailyMinutes", minutes: 60 }]);
+
   return held;
 }
 

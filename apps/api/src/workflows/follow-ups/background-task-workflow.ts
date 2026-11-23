@@ -36,6 +36,7 @@ export type BackgroundTask = Exclude<
       | "replenishLevelTestChecks"
       | "rebuildGoalCurriculum"
       | "prepareSession"
+      | "refreshPlanSuggestion"
       | "refreshStudyDay"
       | "settleSessionPlan"
       | "reviewAlphabetLesson"

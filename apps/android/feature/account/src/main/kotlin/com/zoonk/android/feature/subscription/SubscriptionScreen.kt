@@ -80,6 +80,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.OnFirstLine
@@ -286,7 +287,9 @@ internal fun WebPlusPlan(
     if (standalone && subscription.state != State.UNPAID) PlusBenefits()
     val context = LocalContext.current
     val language = currentLocale().language
-    TextButton(onClick = { openWebPage(context, AppLink.webUrl("/subscription", language)) }, forward = true, edge = ButtonEdge.Start) {
+    TextButton(onClick = {
+        openWebPage(context, AppLink.webUrl("/subscription", language))
+    }, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
         Text(stringResource(R.string.subscription_manage_website))
     }
 }

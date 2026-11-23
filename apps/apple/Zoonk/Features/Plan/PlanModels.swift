@@ -383,6 +383,9 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let ready: Bool
   let schedule: Schedule
   let status: Status?
+  /// The time a day the plan suggests, worked out when it's saved and never more than 4 hours; nil
+  /// unless the goal's own time is below it.
+  let suggestedTime: TimeToCover.Suggested?
   let steering: Steering
   let tools: [Tool]
   let week: Week
@@ -1015,6 +1018,17 @@ enum PlanDate {
     format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
   }
 
+  /// Main's `useGoalDateValues`: a goal's date in a sentence, kept on one line and marked "~" when
+  /// it's estimated.
+  static func goalText(_ isoDate: String, month: Bool, estimated: Bool) -> String {
+    let date = longText(isoDate, month: month).replacingOccurrences(of: " ", with: "\u{00A0}")
+
+    return estimated
+      ? String(
+        localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
+      : date
+  }
+
   /// A wall-clock time in the app's language, such as "7:30 AM" or "19:05".
   static func timeOfDay(minutes: Int, locale: Locale = .appLanguage) -> String {
     let time = calendar.date(
@@ -1075,18 +1089,20 @@ enum PlanDate {
   }
 
   /// A weekday's name from its number, Sunday 0: "Tuesday", or "Tue" when `short` (main's
-  /// `formatWeekdayName`). A `label` starts with a capital, as a control's name does in every
-  /// language; inside a sentence it's written as the language writes it there.
+  /// `formatWeekdayName`), or "T" when `narrow`. A `label` starts with a capital, as a control's name
+  /// does in every language; inside a sentence it's written as the language writes it there.
   static func weekdayName(
-    number: Int, short: Bool = false, label: Bool = false,
+    number: Int, short: Bool = false, narrow: Bool = false, label: Bool = false,
     locale: Locale = .appLanguage
   ) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
     let symbols =
-      label
-      ? (short ? calendar.shortStandaloneWeekdaySymbols : calendar.standaloneWeekdaySymbols)
-      : (short ? calendar.shortWeekdaySymbols : calendar.weekdaySymbols)
+      narrow
+      ? calendar.veryShortStandaloneWeekdaySymbols
+      : label
+        ? (short ? calendar.shortStandaloneWeekdaySymbols : calendar.standaloneWeekdaySymbols)
+        : (short ? calendar.shortWeekdaySymbols : calendar.weekdaySymbols)
     let name = symbols[((number % 7) + 7) % 7]
     return label ? name.labelCased(locale) : name
   }

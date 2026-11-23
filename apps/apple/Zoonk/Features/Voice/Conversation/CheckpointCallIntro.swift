@@ -100,9 +100,8 @@ struct CheckpointCallIntro: View {
     .lonePage()
   }
 
-  /// Writing the call first calls no one, so only the button that calls has the phone.
   private func startButton(writesFirst: Bool, callee: String?) -> some View {
-    BusyButton(isBusy: isStarting, icon: .call) {
+    BusyButton(isBusy: isStarting) {
       starting = Task { await start(writesFirst: writesFirst) }
     } label: {
       if writesFirst {

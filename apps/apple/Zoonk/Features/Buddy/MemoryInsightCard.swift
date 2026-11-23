@@ -3,8 +3,11 @@ import SwiftUI
 /// Answering it refreshes Today, which no longer carries it; the card keeps saying what the answer
 /// did until the learner leaves.
 struct MemoryInsightCard: View {
+  @AccessibilityFocusState private var isResultFocused: Bool
   @Environment(BuddyStore.self) private var store
 
+  let today: String
+  let dateKind: GoalDateKind
   let opened: MemoryInsight
   /// Held by Today, so the answer outlives the card when a layout change builds it again.
   @Binding var answer: Bool?
@@ -15,9 +18,12 @@ struct MemoryInsightCard: View {
   var onAnswering: () -> Void = {}
 
   init(
-    insight: MemoryInsight, answer: Binding<Bool?>, repriced: Binding<MemoryInsight?>,
+    insight: MemoryInsight, today: String, dateKind: GoalDateKind, answer: Binding<Bool?>,
+    repriced: Binding<MemoryInsight?>,
     saving: VisitRequest<InsightAnswer>, onAnswering: @escaping () -> Void = {}
   ) {
+    self.today = today
+    self.dateKind = dateKind
     opened = insight
     _answer = answer
     _repriced = repriced
@@ -27,96 +33,91 @@ struct MemoryInsightCard: View {
 
   private var insight: MemoryInsight { repriced ?? opened }
 
-  var body: some View {
-    GroupBox {
-      VStack(alignment: .leading, spacing: 12) {
-        if let answer {
-          Text(answered(answer))
-            .foregroundStyle(.mutedForeground)
-        } else {
-          Text(insight.message)
+  private var title: Text {
+    Text(
+      "From your recent answers", tableName: "Buddy",
+      comment: "Title of an insight from recent sessions")
+  }
 
-          if let change = insight.planChange, change.status == .proposed {
+  private var failure: LocalizedStringResource? {
+    guard case .failed? = saving.outcome else { return nil }
+    return LocalizedStringResource(
+      "We couldn't save your answer. Try again.", table: "Buddy",
+      comment: "Answering an insight failed")
+  }
+
+  var body: some View {
+    TodaySuggestionCard(mark: mark) {
+      if let answer {
+        SuggestionResult(text: answered(answer))
+          .accessibilityFocused($isResultFocused)
+      } else {
+        VStack(alignment: .leading, spacing: 4) {
+          SuggestionHeader(title)
+          SuggestionDescription(Text(insight.message))
+        }
+
+        if let change = insight.planChange, change.status == .proposed {
+          SuggestionOpen(
+            note: failure.map { BarNote($0) },
+            label: Text("See what changes", tableName: "Today")
+          ) {
+            SuggestionHeader(title)
             PlanEffectDiff(
               effect: try? StudyJSON.recode(change.effect, as: PlanEffect.self),
-              today: PlanDate.today(), repriced: repriced != nil)
+              today: today, options: PlanChangeOptions(dateKind: dateKind),
+              repriced: repriced != nil)
+          } actions: {
+            actions.buttonStyle(.mainAction)
           }
-
-          actions
-        }
-
-        if case .failed? = saving.outcome {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't save your answer. Try again.", table: "Buddy",
-              comment: "Answering an insight failed")
-          )
-          .typeStyle(.note)
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .announcesStatus(answer.map(answered))
-    } label: {
-      Label {
-        Text(
-          "From your recent answers", tableName: "Buddy",
-          comment: "Title of an insight from recent sessions")
-      } icon: {
-        Image(systemName: mark)
-      }
-    }
-  }
-
-  private var mark: String {
-    if insight.kind == .tip {
-      return "lightbulb"
-    }
-
-    return insight.planChange?.status == .applied ? "text.badge.plus" : "sparkles"
-  }
-
-  @ViewBuilder
-  private var actions: some View {
-    let showsAccept =
-      insight.kind != .planChange || insight.planChange?.status == .applied
-      || insight.planChange?.canApply == true
-
-    ButtonRow {
-      if showsAccept {
-        if let dismiss = dismissLabel {
-          Button {
-            save(accepted: true)
-          } label: {
-            acceptLabel.frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-
-          Button {
-            save(accepted: false)
-          } label: {
-            dismiss.frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.outline)
         } else {
-          // A tip's only answer acknowledges it: bordered, so Today's own action stays the
-          // screen's one main button.
-          Button {
-            save(accepted: true)
-          } label: {
-            acceptLabel
+          ButtonRow(wraps: true) {
+            actions
           }
           .buttonStyle(.outline)
+          .controlSize(.small)
         }
-      } else if let dismiss = dismissLabel {
+
+        if let failure {
+          FailureLine(message: failure)
+            .typeStyle(.note)
+        }
+      }
+    }
+    .onChange(of: answer) {
+      isResultFocused = answer != nil
+    }
+    .announcesStatus(answer.map(answered))
+  }
+
+  private var mark: SuggestionMark.Kind {
+    if insight.kind == .tip { return .symbol("lightbulb") }
+    return insight.planChange?.status == .applied ? .symbol("text.badge.plus") : .sparkle
+  }
+
+  private var actions: some View {
+    SuggestionActions {
+      if insight.kind != .planChange || insight.planChange?.status == .applied
+        || insight.planChange?.canApply == true
+      {
+        Button {
+          save(accepted: true)
+        } label: {
+          acceptLabel
+        }
+        .disabled(saving.isRunning)
+      }
+    } other: {
+      if let dismiss = dismissLabel {
         Button {
           save(accepted: false)
         } label: {
           dismiss
         }
         .buttonStyle(.outline)
+        .disabled(saving.isRunning)
       }
     }
-    .disabled(saving.isRunning)
   }
 
   private var acceptLabel: Text {

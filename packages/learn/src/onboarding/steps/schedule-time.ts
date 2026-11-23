@@ -84,23 +84,18 @@ export function waitsForSuggestion({
   return picked === null && found === null && !failed && getSuggestedMinutes(first) !== null;
 }
 
-/** Continue saves only a time the learner picked, or one the screen has said what it covers. */
+/** Continue saves only a time the learner picked, or one the screen has said what it means. */
 export function waitsToSave({ line, picked }: { line: TimeLine; picked: number | null }): boolean {
   return picked === null && isBusyLine(line);
 }
 
-type Answer = { found: PlanTimeToCover | null; line: TimeLine };
-
-/** While the time shown is worked out again, the last answer stays in place, marked as updating. */
-export function getShownAnswer({
-  last,
-  now,
-}: {
-  last: Answer;
-  now: Answer;
-}): Answer & { updating: boolean } {
-  const updating = isBusyLine(now.line) && !isBusyLine(last.line);
-  return { ...(updating ? last : now), updating };
+/** While the line is worked out again, the last one stays in place, marked as updating. */
+export function getShownLine({ last, now }: { last: TimeLine; now: TimeLine }): {
+  line: TimeLine;
+  updating: boolean;
+} {
+  const updating = isBusyLine(now) && !isBusyLine(last);
+  return { line: updating ? last : now, updating };
 }
 
 /** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
@@ -117,27 +112,7 @@ export function toPickedMinutes({
   return follows && getSuggestedMinutes(found) === minutes ? null : minutes;
 }
 
-/** The time picked needs the plan's own answer, except the one it suggested. */
-export function asksAboutTime({
-  dated,
-  found,
-  minutes,
-}: {
-  dated: boolean;
-  found: PlanTimeToCover | null;
-  minutes: number | null;
-}): boolean {
-  if (minutes === null) {
-    return false;
-  }
-
-  if (!dated) {
-    return true;
-  }
-
-  if (!found || found.pastDate) {
-    return false;
-  }
-
-  return found.suggested?.minutes !== minutes;
+/** Only an undated goal's line depends on the time picked: when it would finish. */
+export function asksAboutTime({ dated, minutes }: { dated: boolean; minutes: number | null }) {
+  return minutes !== null && !dated;
 }

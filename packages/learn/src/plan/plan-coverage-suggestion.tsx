@@ -1,6 +1,6 @@
 "use client";
 
-import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type SuggestedDailyTime } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import {
   SuggestionAction,
@@ -8,13 +8,9 @@ import {
   SuggestionDescription,
   SuggestionLinkAction,
 } from "../_components/suggestion";
-import { useTimeAnswerTexts } from "../_components/time-answer";
-import { getLongerTime } from "../_utils/time-answer";
 import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
-import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
-import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import {
   CheckingChange,
   type CoverageOffer,
@@ -22,9 +18,9 @@ import {
   OfferPreview,
   OtherOptions,
   getGoalDateMove,
-  useAnswerOffer,
   useApplyPreview,
-  useCourseOffer,
+  useDateOffer,
+  useSuggestedTimeOffer,
 } from "./plan-offer-preview";
 import { currentPlanPreview } from "./plan-preview-state";
 import {
@@ -33,121 +29,58 @@ import {
   type SlotPreview,
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
-import { useStudyEverythingFromSuggestion } from "./study-everything";
-import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
+import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
-type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
+const ITEM: SlotItem = { key: "coverage", kind: "coverage" };
 
-type CardFlags = {
-  findsTime: boolean;
-  moveDate: boolean;
-  noDate: boolean;
-  pending: boolean;
-  retry: boolean;
-  studiesEverything: boolean;
-};
-
-function getCardFlags({
-  course,
-  found,
-  intent,
-  isGoal,
-  offer,
-  status,
-}: {
-  course: boolean;
-  found: PlanTimeToCover | null;
-  intent: Intent;
-  isGoal: boolean;
-  offer: CoverageOffer | null;
-  status: FindStatus;
-}): CardFlags {
-  const retry = status === "failed" || status === "building";
-  const dateless = isGoal && found !== null && found.fittingDate === null;
-  const offersDate = offer?.operations[0]?.kind === "setTargetDate";
-  const asked = offer !== null || found !== null;
-  const noTime = found !== null && readTimeToCover(found).kind !== "covers";
-
-  return {
-    findsTime: !asked,
-    moveDate: isGoal && !course && !dateless && !offersDate,
-    noDate: dateless && intent === "date",
-    pending: status === "pending",
-    retry,
-    studiesEverything: !isGoal && !course && noTime,
-  };
-}
-
-function useCardLines({
-  flags,
-  found,
-  intent,
-  offer,
-  title,
-}: {
-  flags: CardFlags;
-  found: PlanTimeToCover | null;
-  intent: Intent;
-  offer: CoverageOffer | null;
-  title: string;
-}) {
+/** Moving the date is asked for (it plans the goal many times), so only its answer is waited on. */
+function useDateAsk(intent: Intent) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
-  const answerTexts = useTimeAnswerTexts();
-  const { state } = useTimeToCover();
-  const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
-  const retryText = state.status === "building" ? texts.building : failed;
-
-  const longer = getLongerTime(found);
-
-  const none =
-    found?.targetDate && longer !== undefined && !offer && !flags.noDate
-      ? answerTexts.everythingTakes({
-          date: { isoDate: found.targetDate, namedMonth: found.targetDateNamedMonth },
-          full: longer,
-        })
-      : null;
-
-  const noDate = flags.noDate ? texts.noDate : null;
-  const retry = flags.retry ? retryText : null;
-  const finding = flags.pending && intent === "time" ? texts.finding : null;
+  const dateOffer = useDateOffer();
+  const finder = useTimeToCover();
+  const { status } = finder.state;
+  const asked = intent === "date";
+  const offer = asked && finder.answered ? dateOffer(finder.answered) : null;
+  const retry = asked && (status === "failed" || status === "building");
+  const noDate = asked && finder.answered !== null && offer === null;
+  const failed = status === "building" ? texts.building : t("We couldn't check what changes.");
 
   return {
-    description: offer?.description.filter((line) => line !== title) ?? [],
-    status: finding ?? retry ?? noDate ?? none ?? "",
+    /** No date covers everything once asked, so the menu stops offering it. */
+    dateless: finder.answered !== null && finder.answered.fittingDate === null,
+    offer,
+    pending: asked && status === "pending",
+    retry,
+    status: (retry && failed) || (noDate && texts.noDate) || "",
   };
 }
 
 function CoverageBody({
-  applying,
   ask,
-  flags,
-  intent,
+  canMoveDate,
   offer,
   onApply,
   onStop,
+  pending,
   preview,
+  retry,
 }: {
-  applying: boolean;
-  ask: (intent: Intent) => void;
-  flags: CardFlags;
-  intent: Intent;
+  ask: () => void;
+  canMoveDate: boolean;
   offer: CoverageOffer | null;
   onApply: () => void;
   onStop: () => void;
+  pending: { applying: boolean; asking: boolean };
   preview: SlotPreview;
+  retry: boolean;
 }) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
-  const keepStudying = useKeepStudyingLabel();
-  const coverage = usePlanCoverage();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
-  const fullCourse = useFullCourse();
-  const studyEverything = useStudyEverythingFromSuggestion();
   const focusTestHref = useFocusTestOfferHref();
   const takeFocusTest = useTakeFocusTestLabel();
-  const { findsTime, moveDate, pending, retry } = flags;
 
   if (preview.status !== "idle" && offer) {
     return (
@@ -158,13 +91,13 @@ function CoverageBody({
         })}
         onApply={onApply}
         onRetry={() => void requestPreview(offer.operations)}
-        pending={applying}
+        pending={pending.applying}
         preview={preview}
       />
     );
   }
 
-  if (pending && intent === "date") {
+  if (pending.asking) {
     return <CheckingChange onCancel={onStop} />;
   }
 
@@ -172,34 +105,19 @@ function CoverageBody({
     <SuggestionActions
       main={
         // One key for the main action in every state, so the button pressed keeps the keyboard.
-        <>
-          {offer && (
+        retry ? (
+          <SuggestionAction action={ask} key="find">
+            {texts.tryAgain}
+          </SuggestionAction>
+        ) : (
+          offer && (
             <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
               {texts.seeChanges}
             </SuggestionAction>
-          )}
-
-          {findsTime && (
-            <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
-              {retry ? texts.tryAgain : texts.seeChanges}
-            </SuggestionAction>
-          )}
-
-          {flags.studiesEverything && fullCourse && (
-            <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
-              {keepStudying}
-            </SuggestionAction>
-          )}
-        </>
-      }
-      menu={
-        coverage && (
-          <OtherOptions
-            onMoveDate={moveDate ? () => ask("date") : null}
-            studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
-          />
+          )
         )
       }
+      menu={<OtherOptions onMoveDate={canMoveDate ? ask : null} />}
     >
       {focusTestHref && (
         <div className="flex flex-col gap-1">
@@ -215,33 +133,20 @@ function CoverageBody({
   );
 }
 
-export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
-  const coveredText = useCoveredText();
-  const courseOffer = useCourseOffer();
-  const answerOffer = useAnswerOffer();
+/** The time the plan suggests, shown only while the learner's own time is below it. */
+function SuggestedTimeCard({ suggested }: { suggested: SuggestedDailyTime }) {
+  const suggestedTimeOffer = useSuggestedTimeOffer();
   const { goal, plan } = usePlanScreen();
   const finder = useTimeToCover();
   const { preview: storedPreview, requestPreview, setPreview } = usePlanSuggestionSlot();
   const [intent, setIntent] = useSharedState<Intent>("intent", "time");
   const asking = useSharedMark<Intent | null>("asking", null);
-  const covered = coverage ? coveredText(coverage) : "";
-  const found = finder.answered;
-  const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
-  const offer = courseOffer ?? answered;
-  const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const { apply, isPending } = useApplyPreview(item);
-  const title = offer?.title ?? covered;
-
-  const flags = getCardFlags({
-    course: courseOffer !== null,
-    found,
-    intent,
-    isGoal: goal.kind !== "exam",
-    offer,
-    status: finder.state.status,
-  });
-
-  const lines = useCardLines({ flags, found, intent, offer, title });
+  const dateOffer = useDateOffer();
+  const date = useDateAsk(intent);
+  const timeOffer = suggestedTimeOffer(suggested);
+  const shown = date.offer ?? timeOffer;
+  const offer = date.retry || date.pending ? null : shown;
+  const { apply, isPending } = useApplyPreview(ITEM);
 
   const preview = currentPlanPreview({
     operations: offer?.operations ?? [],
@@ -249,15 +154,14 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
     state: storedPreview,
   });
 
-  const ask = async (next: Intent) => {
-    asking.write(next);
-    setIntent(next);
+  const askDate = async () => {
+    asking.write("date");
+    setIntent("date");
     setPreview();
     const outcome = await finder.find();
-    const time = outcome.status === "answered" ? outcome.time : null;
-    const asked = time && coverage ? answerOffer({ covered, intent: next, time }) : null;
+    const asked = outcome.status === "answered" ? dateOffer(outcome.time) : null;
 
-    if (asked && asking.read() === next) {
+    if (asked && asking.read() === "date") {
       void requestPreview(asked.operations);
     }
   };
@@ -268,32 +172,46 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   };
 
   return (
-    // Finding the time plans the goal many times, so only the button asks.
-    <PlanChangeSuggestion item={item} title={title}>
-      {lines.description.map((line) => (
+    <PlanChangeSuggestion item={ITEM} title={shown.title}>
+      {shown.description.map((line) => (
         <SuggestionDescription key={line}>{line}</SuggestionDescription>
       ))}
 
       {/* Seen here, heard from the live line under it: said once. */}
-      {lines.status && (
-        <SuggestionDescription aria-hidden="true">{lines.status}</SuggestionDescription>
+      {date.status && (
+        <SuggestionDescription aria-hidden="true">{date.status}</SuggestionDescription>
       )}
 
-      {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
+      {/* Always there, so that what moving the date couldn't find is announced. */}
       <p aria-live="polite" className="sr-only">
-        {lines.status}
+        {date.status}
       </p>
 
       <CoverageBody
-        applying={isPending}
-        ask={(next) => void ask(next)}
-        flags={flags}
-        intent={intent}
+        ask={() => void askDate()}
+        canMoveDate={goal.kind !== "exam" && !date.dateless && intent === "time"}
         offer={offer}
         onApply={() => apply(preview)}
         onStop={stopAsking}
+        pending={{ applying: isPending, asking: date.pending }}
         preview={preview}
+        retry={date.retry}
       />
+    </PlanChangeSuggestion>
+  );
+}
+
+export function CoverageSuggestion() {
+  const { plan } = usePlanScreen();
+
+  if (plan.suggestedTime) {
+    return <SuggestedTimeCard suggested={plan.suggestedTime} />;
+  }
+
+  // Once the time is applied nothing is suggested, but the card still says so, with its Undo.
+  return (
+    <PlanChangeSuggestion item={ITEM} title="">
+      {null}
     </PlanChangeSuggestion>
   );
 }

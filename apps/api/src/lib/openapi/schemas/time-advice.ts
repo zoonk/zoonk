@@ -1,10 +1,12 @@
-import { dailyMinutesSchema } from "@zoonk/core/goals/contract";
 import { LANGUAGE_AIMS } from "@zoonk/core/language/aims";
+import { MINUTES_PER_DAY, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { z } from "zod";
 
 /** Weekdays as plans count them: Sunday is 0, Saturday 6. */
 const LAST_WEEKDAY = 6;
 const DAYS_PER_WEEK = 7;
+
+const previewMinutesSchema = z.int().min(MIN_DAILY_MINUTES).max(MINUTES_PER_DAY);
 
 export const planTimeToCoverInputSchema = z
   .object({
@@ -17,7 +19,7 @@ export const planTimeToCoverInputSchema = z
         description:
           "The weekdays the learner would study, Sunday first (0), such as [1, 2, 3, 4, 5] for Monday to Friday; the plan's own days when absent. A week asked about is onboarding's time question: every time in and out is then the time a day the goals typed together share, as `POST /goals/{goalId}/onboarding/answers` takes and splits it (the goal's own time when it was typed alone); without studyDays, the goal's own time",
       }),
-    weekendMinutes: dailyMinutesSchema
+    weekendMinutes: previewMinutesSchema
       .optional()
       .meta({
         description:
@@ -35,7 +37,7 @@ export const planTimeAdviceInputSchema = planTimeToCoverInputSchema
         description:
           "Language goals only, ignored for others: the aim to answer for, as the plan change `setAim` would set it; the goal's own when absent. The time question asks once per aim in `languageAim.choices` to date each choice as picking it would",
       }),
-    dailyMinutes: dailyMinutesSchema
+    dailyMinutes: previewMinutesSchema
       .optional()
       .meta({
         description:

@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,15 +41,15 @@ import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.DaySplit
 import com.zoonk.android.feature.plan.GoalDate
 import com.zoonk.android.feature.plan.TimeAnswer
-import com.zoonk.android.feature.plan.TimeLine
-import com.zoonk.android.feature.plan.fullTimeNote
+import com.zoonk.android.feature.plan.coversEverything
 import com.zoonk.android.feature.plan.lineAdvice
-import com.zoonk.android.feature.plan.markedTimes
+import com.zoonk.android.feature.plan.suggestedMinutes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
+import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
@@ -60,7 +59,6 @@ import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
@@ -270,7 +268,6 @@ private fun ColumnScope.ScheduleTime(
     }
     val pick = { next: Int -> choose(next, shownFound) }
     val stale = hasDays && !startsOnRecommended && waitsForSuggestion(findFailed, first, found, picked)
-    val marked = markedTimes(found)
 
     com.zoonk.android.data
         .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
@@ -287,7 +284,7 @@ private fun ColumnScope.ScheduleTime(
                     OnboardingAnswerInputOneOf9(
                         dailyMinutes = time.toLong(),
                         question = OnboardingAnswerInputOneOf9.Question.SCHEDULE,
-                        fullCourse = if (exam) keepsFullCourse(fullCourse, line) else null,
+                        fullCourse = if (exam) keepsFullCourse(fullCourse, found, minutes) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,
                         weekendMinutes = weekend?.toLong(),
@@ -305,50 +302,9 @@ private fun ColumnScope.ScheduleTime(
                 minutes = minutes,
                 label = label,
                 onChange = pick,
-                suggested = marked.suggested,
-                full = marked.full,
+                suggested = suggestedMinutes(found),
                 stale = stale,
             )
-            TimeAnswer(
-                date = date,
-                exam = exam,
-                line = shown.line,
-                aim =
-                    LocalSetupAim.current.aim?.let { selected ->
-                        selected.aim?.value?.takeIf { value ->
-                            selected.choices.any {
-                                it.aim.value ==
-                                    value
-                            }
-                        }
-                    },
-                minutes = minutes,
-                note = fullTimeNote(shown.found, shown.line, studiesEveryDay = days.size == EVERY_DAY.size),
-                offer = timeOffer(shown.found, shown.line, minutes),
-                onRetry = if (findFailed) covering.restart else timeAdvice.restart,
-                onUseOffer = { choose(it, found) },
-                split =
-                    (
-                        daySplit(
-                            minutes,
-                            timeChoices,
-                            answers,
-                        ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
-                    ).takeIf { hasDays },
-                updating = shown.updating,
-                action = {
-                    Column {
-                        FocusLine(lastAdvice, updating = shown.updating)
-                        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
-                    }
-                },
-            )
-        }
-
-        val short = shown.line is TimeLine.Share || shown.line is TimeLine.Focus
-        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.line))) {
-            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
-            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -366,33 +322,56 @@ private fun ColumnScope.ScheduleTime(
         }
 
         ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
+
+        DateLink(dated = dated, enabled = !pending, onClick = vm::changeDate)
+
+        // It shows only under a time that doesn't cover everything, so it comes after every other input: showing it
+        // moves only the answer under it.
+        val short = shown.found != null && !coversEverything(shown.found, minutes)
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, shown.found, minutes))) {
+            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
+            FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
+        }
+
+        // What the time and days get changes length as they change, so it comes last, with nothing to tap under it.
+        TimeAnswer(
+            date = date,
+            exam = exam,
+            line = shown.line,
+            aim =
+                LocalSetupAim.current.aim?.let { selected ->
+                    selected.aim?.value?.takeIf { value ->
+                        selected.choices.any {
+                            it.aim.value ==
+                                value
+                        }
+                    }
+                },
+            minutes = minutes,
+            offer = timeOffer(shown.line, minutes),
+            onRetry = if (findFailed) covering.restart else timeAdvice.restart,
+            onUseOffer = { choose(it, found) },
+            split =
+                (
+                    daySplit(
+                        minutes,
+                        timeChoices,
+                        answers,
+                    ) ?: pickedSplit.takeIf { picked != null && picked == minutes }
+                ).takeIf { hasDays },
+            updating = shown.updating,
+        )
     }
 }
 
-/** Where a time that doesn't cover everything should go, for a learner whose Focus test has answers. */
-@Composable
-private fun FocusLine(
-    advice: PlanTimeAdvice?,
-    updating: Boolean,
-) {
-    val subjects = advice?.focusSubjects.orEmpty().map { it.shortName ?: it.name }
-    if (subjects.isEmpty()) return
-    Text(
-        stringResource(R.string.focustest_schedule_focus, formatList(subjects, currentLocale())),
-        modifier = Modifier.alpha(if (updating) UPDATING_ALPHA else 1f),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-/** Under the time's answer, its words lined up with the answer's. */
+/** Its words lined up with the column's, as the other inputs' labels are. */
 @Composable
 private fun DateLink(
     dated: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, enabled = enabled, forward = true, edge = ButtonEdge.Start) {
+    TextButton(onClick = onClick, enabled = enabled, trailingIcon = ForwardIcon, edge = ButtonEdge.Start) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }
@@ -485,5 +464,3 @@ private fun SwitchRow(
         Switch(checked = checked, onCheckedChange = null)
     }
 }
-
-private const val UPDATING_ALPHA = 0.5f

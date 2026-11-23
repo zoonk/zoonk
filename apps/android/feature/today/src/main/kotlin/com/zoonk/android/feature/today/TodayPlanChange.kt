@@ -28,9 +28,6 @@ import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeBehind
 import com.zoonk.api.models.PlanChangeDecisionInput
@@ -234,19 +231,7 @@ private fun FallingBehindNotice(
 ) {
     val viewModel = state.viewModel
     val today = state.read.today
-    val locale = currentLocale()
-    val values =
-        arrayOf(
-            formatMinutes(behind.currentMinutes.toInt(), locale),
-            formatPercent(behind.coveredAfter, locale),
-            formatPercent(behind.coveredBefore, locale),
-        )
-    val sentence =
-        if (behind.measure == PlanChangeBehind.Measure.EXAM) {
-            stringResource(R.string.today_behind_exam, *values)
-        } else {
-            stringResource(R.string.today_behind_goal, *values)
-        }
+    val sentence = stringResource(R.string.today_behind_fit_days_left)
     val kept =
         viewModel.planChangeAnswer?.takeIf {
             it.visit == state.read.noticeVisit() && it.change.id == change.id &&
@@ -272,7 +257,7 @@ private fun FallingBehindNotice(
         },
     ) {
         SuggestionHeader(title)
-        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)
+        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind)
 
         if (result != null) {
             SuggestionResult(result)

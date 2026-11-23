@@ -1,15 +1,12 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.ui.components.ButtonIcon
@@ -50,7 +47,7 @@ internal fun StudyNextSuggestion(
                     onClick = host.onCertificate,
                     busy = host.claimingCertificate,
                     secondary = secondary,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
+                    leadingIcon = if (it.unclaimed.isNotEmpty()) ({ ButtonIcon(R.drawable.ic_workspace_premium) }) else null,
                 ) { Text(it.actionLabel()) }
             }
         }
@@ -71,10 +68,8 @@ internal fun StudyNextSuggestion(
 
                 more -> {
                     {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            certificateAction(true)
-                            SuggestionOpen()
-                        }
+                        certificateAction(true)
+                        SuggestionOpen()
                     }
                 }
 

@@ -125,7 +125,7 @@ internal fun slotItems(
         listOfNotNull(
             plan.fitOffer?.takeIf { open }?.let(SlotItem::FitLessons),
             plan.extraOffer?.takeIf { open }?.let(SlotItem::ExtraOffer),
-            SlotItem.Coverage.takeIf { open && planCoverage(plan) != null && !timeEnough(plan) },
+            SlotItem.Coverage.takeIf { open && plan.suggestedTime != null },
         )
 
     return buildList {
@@ -576,7 +576,7 @@ private fun NotEnoughTimeSuggestion(
     layout: SuggestionLayout,
     onAdjust: (PlanSection?) -> Unit,
 ) {
-    val title = stringResource(R.string.plan_no_longer_fits)
+    val title = stringResource(R.string.plan_fit_time_left)
 
     Suggestion(
         label = title,

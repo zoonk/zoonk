@@ -1,32 +1,8 @@
 "use client";
 
-import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
-import { type FullTime, getFullTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { requestWithin } from "./request-within";
-
-export type TimeToCoverAnswer =
-  | { kind: "covers"; minutes: number }
-  | { coveredShare: number; full: FullTime | null; kind: "focus"; minutes: number }
-  | { kind: "none" };
-
-export function readTimeToCover(time: PlanTimeToCover): TimeToCoverAnswer {
-  const { suggested } = time;
-
-  if (!suggested) {
-    return { kind: "none" };
-  }
-
-  return suggested.kind === "everything"
-    ? { kind: "covers", minutes: suggested.minutes }
-    : {
-        coveredShare: suggested.coveredShare,
-        full: getFullTime(time),
-        kind: "focus",
-        minutes: suggested.minutes,
-      };
-}
 
 export function useTimeToCover() {
   const { actions, timeToCover } = usePlanScreen();
@@ -49,7 +25,6 @@ export function useTimeToCoverTexts() {
   return {
     building: t("Your plan is still being built. Try again in a moment."),
     failed: t("We couldn't work out the time needed."),
-    finding: t("Finding the time that covers everything…"),
     noDate: t("We couldn't find a date that covers everything."),
     seeChanges: t("See what changes"),
     tryAgain: t("Try again"),

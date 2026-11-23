@@ -25,7 +25,7 @@
   "focustest_practical_not_checked": "6de288cc4c0bd19cbb74c82982e8d7ed3770f4031e97676114583c5261204846",
   "focustest_proposal_applied": "7595ccafe93e204a9d052c812c76db3a15627c82335aa3cb28cbf1d9b5e562b8",
   "focustest_proposal_declined": "427695e5e2cd863c390fd97eb20177731bf11ee7c730aee4c774c173d862e818",
-  "focustest_proposal_description": "ed345cb23b329e08e484e03311901fe596567b05d3f3c2adcd7cafe6d54daed7",
+  "focustest_proposal_picked": "e6f680df8a096afcd9ab848a89b10064c527d1aa47c8e98f66d2801b1df4dd96",
   "focustest_proposal_title": "5484d38e87e5a6d866e54a84675de898777ffe24834b49d167d828110659e222",
   "focustest_proposal_undone": "7f701c924b195149e7e1cae631f7145f3f8e2c1e2014d42bbb45cdbafc10ff6a",
   "focustest_question_number": "a27d122a6a21ef0290629928cf17ae120ff4c807b984210902f8f947f5547e57",
@@ -35,7 +35,6 @@
   "focustest_result_hand_picked": "a029d27afcbafa796e6f5f3c0d54170e7c4b90fff9061b8203645f464926e2f5",
   "focustest_result_title": "e2e1d1a7214111f9b6c7fd2dd98d6146faedfcc8043773f45292bf984ebd6bcb",
   "focustest_resume_title": "e455a30b695f880e6634aac8b2dc6519a7e86f93770437c93013bda902f45e77",
-  "focustest_schedule_focus": "fc42e627e4bddeb37780cc7593e5fef99ecb24f9bcb9aad11695b5f185dcd2ba",
   "focustest_see_all_subjects": "9b29bed8b45488b6e0f605c622b7c602aa8932a87f62a3c1e77923aa6d1e9d97",
   "focustest_see_my_result": "03f4fb539ed3aab8d5d25f57d6937502ce86282411c7f27d3b7d13f7d089c14a",
   "focustest_see_your_result": "5b85a53e4478c00a810c42919071ca1880ad547c5fadb3ff57ccbc16310f0fad",
@@ -48,7 +47,7 @@
   "focustest_stop": "ca70471e7fbe362bbbc2437c48f07b11abbbd0ae4213e8a8d991c5ca05384d1c",
   "focustest_subject_right": "d8a06c3fbb1813ed4c9b7df0658053863cb5e70d81613ad07f1f4df85e2c2a89",
   "focustest_subjects": "ffd3c647e5ea88232ea8ad9d4a1934623bdf8fe381cda5829f9279fc492d6363",
-  "focustest_suggestion_body": "424df1883394dbc4579784b9bad14a14f01381657acfd3df140246484fd497e7",
+  "focustest_suggestion_body": "3e22cef8a7255d32b7b076a437213e27d79c5d186fa95df85bf6ace0a1fa73b9",
   "focustest_suggestion_dismissed": "f7e994f60528f9d4535dc49f8098cf701aa135de16e51971d5d6df68f1a70873",
   "focustest_suggestion_line": "f2c33e6cf869b04a2eb0686c085e7874f96bece25d0afffeb924706aadb1e505",
   "focustest_take_test": "036b00e43a7561e7484afa2dfbd8ef88db94a7c37cc1fae999afab8949f77925",
@@ -117,7 +116,8 @@
     <string name="focustest_answer_more">Rispondi ad altre domande</string>
     <!-- The test asks before changing a plan the learner already has. -->
     <string name="focustest_proposal_title">Vuoi dedicare più tempo a queste materie?</string>
-    <string name="focustest_proposal_description">Il tempo che hai prima dell’esame non basta per tutto.</string>
+    <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
+    <string name="focustest_proposal_picked">Scelti in base alle tue risposte e a quanto contano nel tuo esame.</string>
     <string name="focustest_update_plan">Aggiorna il mio piano</string>
     <string name="focustest_proposal_applied">Ora il tuo piano dedica più tempo a queste materie.</string>
     <string name="focustest_proposal_declined">Il tuo piano resta com’era.</string>
@@ -142,12 +142,10 @@
     <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
     <string name="focustest_paused_in_sessions">In pausa nelle tue sessioni</string>
     <string name="focustest_take_test">Fai il Test delle priorità</string>
-    <!-- Under the daily time while it's short: %1$s lists up to three exam subjects, such as "Logic, Law and Math". -->
-    <string name="focustest_schedule_focus">Con questo tempo a disposizione, ti suggeriamo di dedicare più attenzione a %1$s.</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Il Test delle priorità ti mostra cosa studiare di più.</string>
-    <!-- %1$s is a duration, such as "15 min". -->
-    <string name="focustest_suggestion_body">Il tempo che hai prima dell’esame non basta per tutto. In circa %1$s, il Test delle priorità ti mostra cosa studiare di più.</string>
+    <!-- %1$s is a duration with its unit, such as "15 min". -->
+    <string name="focustest_suggestion_body">Un test di %1$s mostra cosa sai già, così dedichi più tempo a ciò di cui hai più bisogno. Non esclude mai una materia.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Va bene. Puoi fare il test dal tuo piano.</string>
     <!-- On a session's test question: skips today's test questions; they're asked another day. -->

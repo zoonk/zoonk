@@ -299,18 +299,16 @@ extension View {
   }
 }
 
-/// A task's main action. Every label it shows carries its icon, so the bar keeps one shape from
-/// screen to screen. While busy it ignores `isDisabled`: the button that sent the request keeps its
-/// look and its focus.
+/// A task's main action, which Return presses: its label alone, as main's `TaskMainButton`. While
+/// busy it ignores `isDisabled`: the button that sent the request keeps its look and its focus.
 struct PracticeMainButton: View {
   let title: LocalizedStringResource
-  let icon: ActionIcon
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
-    BusyButton(isBusy: isBusy, icon: icon, action: action) {
+    BusyButton(isBusy: isBusy, action: action) {
       Text(title)
     }
     .buttonStyle(.mainAction)

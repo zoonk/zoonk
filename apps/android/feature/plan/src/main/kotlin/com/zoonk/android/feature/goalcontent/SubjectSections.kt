@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -60,10 +61,12 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
+import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
@@ -193,33 +196,38 @@ internal fun NotPlannedNotice(
             else -> return
         }
 
+    val sentence = stringResource(words)
+    // Main's `NotPlannedCallout`: for time, the sentence ends with the way to change the plan.
+    val text =
+        if (subject.notPlannedReason == "time") {
+            buildAnnotatedString {
+                append(sentence + spaceAfterSentence(sentence))
+                append(statusLink(stringResource(R.string.goalcontent_adjust_plan), actions.adjustPlan))
+            }
+        } else {
+            AnnotatedString(sentence)
+        }
+
     OutlinedCard(Modifier.fillMaxWidth().padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 20.dp)) {
-        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(
                 painter = painterResource(R.drawable.ic_do_not_disturb_on),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(words), style = MaterialTheme.typography.bodyMedium)
+                Text(text, style = MaterialTheme.typography.bodyMedium)
 
-                when (subject.notPlannedReason) {
-                    "skipped" -> {
-                        OutlinedButton(
-                            onClick = { actions.restore(subject.areas) },
-                            busy = writes.restoring,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
-                        ) {
-                            Text(stringResource(R.string.goalcontent_add_back))
-                        }
-                        if (writes.restoreFailed) SaveFailed()
+                if (subject.notPlannedReason == "skipped") {
+                    OutlinedButton(
+                        onClick = { actions.restore(subject.areas) },
+                        busy = writes.restoring,
+                        size = ButtonSize.Small,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
+                    ) {
+                        Text(stringResource(R.string.goalcontent_add_back))
                     }
-
-                    "time" -> {
-                        TextButton(onClick = actions.adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
-                    }
-
-                    else -> {}
+                    if (writes.restoreFailed) SaveFailed()
                 }
             }
         }

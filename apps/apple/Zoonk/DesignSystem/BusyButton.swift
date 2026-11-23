@@ -27,31 +27,30 @@ struct BusyButton<Title: View>: View {
   }
 }
 
-/// A main action's style leaves its icon off (`showsButtonIcon`), so its spinner covers the label.
 private struct BusyButtonLabel<Title: View>: View {
   let isBusy: Bool
   let icon: ActionIcon?
   let isRow: Bool
   let label: Title
 
-  @Environment(\.showsButtonIcon) private var showsIcon
-
   var body: some View {
-    if let icon, showsIcon, icon.trails {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
-        label
-        image(icon)
-      }
-    } else if let icon, showsIcon {
-      Label {
-        label
-      } icon: {
-        image(icon)
-      }
+    if let icon, icon.trails {
+      labeled(icon).labelStyle(.trailingIcon)
+    } else if let icon {
+      // A call site's own label style, such as icon-only, applies here.
+      labeled(icon)
     } else if isRow {
       label.spinnerAtEnd(isBusy)
     } else {
       label.coveredBySpinner(isBusy)
+    }
+  }
+
+  private func labeled(_ icon: ActionIcon) -> some View {
+    Label {
+      label
+    } icon: {
+      image(icon)
     }
   }
 
@@ -68,8 +67,6 @@ private struct BusyButtonLabel<Title: View>: View {
 enum ActionIcon: String {
   case addLessons = "text.badge.plus"
   case archive = "archivebox"
-  case back = "chevron.backward"
-  case call = "phone.fill"
   case certificate = "rosette"
   /// Commits what the learner entered or picked: check, confirm, save, apply.
   case check = "checkmark"
@@ -85,7 +82,6 @@ enum ActionIcon: String {
   case play = "play.fill"
   case print = "printer"
   case retry = "arrow.clockwise"
-  case reveal = "eye"
   case send = "paperplane"
   case setDate = "calendar.badge.checkmark"
   case skip = "forward.end"
@@ -99,10 +95,6 @@ extension EnvironmentValues {
   /// A `BusyButton`'s action is running: a press does nothing, and its style shows neither the press
   /// nor a disabled look.
   @Entry var isBusy = false
-
-  /// A button shows at most its label and one icon, and a main action its label alone: its style
-  /// turns this off.
-  @Entry var showsButtonIcon = true
 }
 
 extension View {

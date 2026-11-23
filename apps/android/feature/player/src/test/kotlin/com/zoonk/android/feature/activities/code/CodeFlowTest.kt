@@ -90,8 +90,9 @@ class CodeFlowTest {
 
     private fun line(number: Int): SemanticsNodeInteraction = rule.onNode(hasContentDescription("Line $number, yours to edit"))
 
+    /** As main's `SandboxRunBar`: Run stays outlined beside Check, and a task's run says Run again only while exploring. */
     @Test
-    fun anAnsweringRunQuestionHasRunAsItsOneFilledEnabledAction() {
+    fun anAnsweringRunQuestionKeepsRunOutlinedAndCheckAsItsOneFilledAction() {
         playFixture("codeRunner", isCorrect = true) { ScriptedSandbox.printed("5050\n") }
         rule.onNodeWithText("Check").assertIsNotEnabled()
         val filled =
@@ -100,17 +101,16 @@ class CodeFlowTest {
                     it.config.getOrNull(LayoutPartKey)?.variant == LayoutPart.Variant.Filled
                 } and isEnabled(),
             )
-        filled.assertCountEquals(1)
-        filled[0].assert(hasText("Run"))
+        filled.assertCountEquals(0)
         tap("Run")
         waitForCheckEnabled()
         filled.assertCountEquals(1)
         filled[0].assert(hasText("Check"))
-        rule.onNodeWithText("Run again").assertDoesNotExist()
         line(2).performTextReplacement("for n in range(1, 101):")
         rule.onNodeWithText("Check").assertIsNotEnabled()
-        filled.assertCountEquals(1)
-        filled[0].assert(hasText("Run again"))
+        filled.assertCountEquals(0)
+        rule.onNodeWithText("Run").assertIsEnabled()
+        rule.onNodeWithText("Run again").assertDoesNotExist()
     }
 
     @Test
@@ -182,7 +182,7 @@ class CodeFlowTest {
         shows("You changed the code. Run it again to see the new output.")
         rule.onNodeWithText("Check").assertIsNotEnabled()
         scripted.gate = null
-        tap("Run again")
+        tap("Run")
 
         waitForCheckEnabled()
         val runs = scripted.requests.filter { it.getValue("type").jsonPrimitive.content == "runProgram" }
@@ -232,7 +232,7 @@ class CodeFlowTest {
         shows("You changed the query. Run it again to see the new result.")
         rule.onNodeWithText("Check").assertIsNotEnabled()
         scripted.gate = null
-        tap("Run again")
+        tap("Run")
         waitForCheckEnabled()
     }
 

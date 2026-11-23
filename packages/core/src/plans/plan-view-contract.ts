@@ -206,6 +206,9 @@ export const planPlacementTestSchema = z
   ])
   .meta({ id: "PlanPlacementTest" });
 
+/** everything: the minutes fit the selected curriculum by the goal's date; focus: capped at 4 hours, they prioritize the most important material. */
+export type SuggestedDailyTime = { kind: "everything" | "focus"; minutes: number };
+
 export type PlanView = {
   access: { mocksRequirePlus: boolean };
   areas: {
@@ -276,6 +279,7 @@ export type PlanView = {
     shape: WeekShape;
   };
   status: PlanStatus | null;
+  suggestedTime: SuggestedDailyTime | null;
   steering: {
     difficultyBias: DifficultyBias;
     lessonsStudied: number;

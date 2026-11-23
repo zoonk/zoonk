@@ -15,6 +15,15 @@ export const planErrorCodes = {
   targetRegionNotOffered: "TARGET_REGION_NOT_OFFERED",
 } as const;
 
+export function dayTooShort({ goals, minutes }: { goals: number; minutes: number }) {
+  return createErrorResponse({
+    code: "DAY_TOO_SHORT",
+    details: { goals, minutes },
+    message: `The goals typed together need at least ${minutes} minutes a day`,
+    status: httpStatus.unprocessableEntity,
+  });
+}
+
 const OPERATION_MESSAGES = {
   badMove: "A weekly challenge can move to a later day within a week",
   baseChoiceClosed:

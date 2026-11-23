@@ -29,6 +29,7 @@ enum FollowUpKind {
   voiceContentFix            @map("voice_content_fix")
   writeSentenceOrders        @map("write_sentence_orders")
   updateLessonsShowing       @map("update_lessons_showing")
+  refreshPlanSuggestion      @map("refresh_plan_suggestion")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

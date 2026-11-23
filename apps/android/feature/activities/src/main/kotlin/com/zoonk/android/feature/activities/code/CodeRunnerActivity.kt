@@ -140,7 +140,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
                 runtimeName = language.runtimeName,
                 runtime = runtime,
                 hasRun = run != null,
-                needsRun = if (props.isExploring) null else props.answer == null,
+                isExploring = props.isExploring,
                 isRunning = editorRun.isRunning,
                 onRun = ::runProgram,
                 onReset = if (edits.isEmpty() || props.isLocked) null else ({ change(emptyMap()) }),

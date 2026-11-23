@@ -14,7 +14,7 @@ import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { getSuggestedTime } from "./_utils/suggested-time";
-import { MIN_DAILY_MINUTES } from "./daily-minutes";
+import { MIN_DAILY_MINUTES, getCandidateDailyMinutesLimit } from "./daily-minutes";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
@@ -74,24 +74,12 @@ function toGoalWeek<Week extends PlanTimeToCoverInput>({
 }
 
 function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null }) {
-  return minutes === null ? null : getBudgetForGoal({ ...day, minutes });
+  return minutes === null || day.count === 1 ? minutes : getBudgetForGoal({ ...day, minutes });
 }
 
 function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
   const minutes = toDayMinutes({ day, minutes: most?.minutes ?? null });
   return most && minutes !== null ? { coveredShare: most.coveredShare, minutes } : null;
-}
-
-function getSearchWeekdayMinutes({
-  input,
-  state,
-}: {
-  input: PlanTimeToCoverInput;
-  state: PlanState;
-}): number {
-  return input.studyDays === undefined && input.weekendMinutes === undefined
-    ? state.goal.dailyMinutes
-    : MIN_DAILY_MINUTES;
 }
 
 function withStudyWeek({
@@ -112,6 +100,7 @@ function withStudyWeek({
 
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
+    maxDailyMinutes: getCandidateDailyMinutesLimit(dailyMinutes),
     operations: [
       ...schedule,
       ...(fullCourse ? [{ fullCourse, kind: "setFullCourse" } as const] : []),
@@ -303,12 +292,17 @@ export async function findPlanTimeToCover({
   const week = toGoalWeek({ day, week: input });
   const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
 
+  const searchStart =
+    week.studyDays === undefined && week.weekendMinutes === undefined
+      ? context.state.goal.dailyMinutes
+      : MIN_DAILY_MINUTES;
+
   const [computed, dateKind] = await Promise.all([
     computePlan({
       context,
       mode: "forced",
       pace: "saved",
-      state: stateAt(getSearchWeekdayMinutes({ input: week, state: context.state })),
+      state: stateAt(searchStart),
       studyScheduleAt: (dailyMinutes) => {
         const state = stateAt(dailyMinutes);
 

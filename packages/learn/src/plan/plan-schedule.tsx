@@ -9,8 +9,7 @@ import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { TimeAnswer } from "../_components/time-answer";
 import { WeekdayGrid, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime, getMissingDays } from "../_components/weekend-time";
-import { useGoalDateValues } from "../_utils/iso-date";
-import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
+import { getSuggestedMinutes, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
@@ -32,12 +31,16 @@ function useTimeAnswer(dated: boolean) {
     }
   }, [dated, state.status]);
 
-  return { answered, retry: () => void find() };
+  return {
+    answered,
+    failed: state.status === "failed" || state.status === "building",
+    retry: () => void find(),
+  };
 }
 
 /**
- * While the schedule's change saves, its place says the new coverage is being worked out: the old
- * one would describe a time no longer picked.
+ * While the schedule's change saves, its place says the plan is updating: the suggestion shown
+ * may be for days no longer picked.
  */
 function DailyCoverage({
   answer,
@@ -53,7 +56,6 @@ function DailyCoverage({
   planChange: PlanChange;
 }) {
   const t = useExtracted();
-  const goalDate = useGoalDateValues();
   const { goal, plan } = usePlanScreen();
   const pending = planChange.isPending;
   const canChooseFocus = useCanChooseFocus();
@@ -70,14 +72,12 @@ function DailyCoverage({
     namedMonth: schedule.targetDateNamedMonth,
   };
 
-  const found = answer.answered;
-
   const line = getTimeLine({
-    advice: { coveredShare: feasibility.fits ? 1 : feasibility.coveredShare, endDate: null },
+    advice: null,
     askFailed: false,
     dated: true,
-    findFailed: false,
-    found,
+    findFailed: answer.failed,
+    found: answer.answered,
     hasDays: true,
     minutes,
   });
@@ -86,7 +86,7 @@ function DailyCoverage({
     <div aria-busy={pending} className="grid text-sm">
       {pending && (
         <p aria-live="polite" className="text-muted-foreground col-start-1 row-start-1">
-          {t("Working out what your time covers…")}
+          {t("Working out the time your goal needs…")}
         </p>
       )}
 
@@ -96,29 +96,14 @@ function DailyCoverage({
           pending && "invisible",
         )}
       >
-        {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it
-            says so. */}
-        {plan.fitOffer?.fits ? (
-          <p className="text-muted-foreground">
-            {t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-              values: goalDate(date),
-            })}
-          </p>
-        ) : (
-          <TimeAnswer
-            date={date}
-            exam={goal.kind === "exam"}
-            line={line}
-            minutes={minutes}
-            offer={getOffer({ found, line, minutes })}
-            onRetry={answer.retry}
-            onUseOffer={onUseTime}
-          />
-        )}
+        <TimeAnswer
+          date={date}
+          exam={goal.kind === "exam"}
+          line={line}
+          minutes={minutes}
+          onRetry={answer.retry}
+          onUseOffer={onUseTime}
+        />
 
         <div className="flex flex-wrap items-center gap-2 empty:hidden">
           {canMoveDate && <MoveDateSwitch onMoving={onMoving} planChange={planChange} />}
@@ -155,7 +140,6 @@ function DailyMinutes({
   const current = shape.weekdays;
   const time = useTappedChoice(current);
   const answer = useTimeAnswer(plan.schedule.targetDate !== null);
-  const marked = getMarkedTimes(answer.answered);
 
   const setMinutes = (minutes: number) => {
     if (isPending || minutes === current) {
@@ -176,12 +160,11 @@ function DailyMinutes({
     <div className="flex flex-col gap-2" id={getEditorSectionId("time")}>
       <DailyTimePicker
         disabled={isPending}
-        full={marked.full}
         label={t("Daily study time")}
         minutes={time.shown}
         onChange={setMinutes}
         saves
-        suggested={marked.suggested}
+        suggested={getSuggestedMinutes(answer.answered)}
         titled
       />
 

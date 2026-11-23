@@ -318,7 +318,8 @@ struct TodayDayView: View {
       if let insight = view.insight ?? answeredInsight {
         Section {
           MemoryInsightCard(
-            insight: insight,
+            insight: insight, today: view.session.localDate,
+            dateKind: GoalDateKind(isExam: view.goal.kind == .exam),
             answer: Binding(
               get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 }),
             repriced: Binding(
@@ -395,8 +396,10 @@ struct TodayDayView: View {
 
     if view.lacksTime {
       return Text(
-        "Not enough time left for all your lessons.", tableName: "Today",
-        comment: "Under Today's title when the plan has more lessons than its days can hold")
+        "Let's fit your plan to the time left.", tableName: "Today",
+        comment:
+          "Above Today, when the plan has more lessons than days left. Followed by a link that opens the plan to change it."
+      )
     }
 
     if let exam = view.exam, exam.stage == .finalStretch, let days = view.goal.daysLeft {

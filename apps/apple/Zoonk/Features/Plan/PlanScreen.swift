@@ -300,7 +300,7 @@ private struct PlanContent: View {
     .modifier(PlanToolbar(context: context))
     .planSheets($sheet, context: context, syllabus: syllabus, slotAnswer: $slotAnswer)
     .completionMoments(certificates: claimed)
-    .loads(courseEnd, refreshable: false)
+    .loads(planEnd, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
         .zoonkSheet()
@@ -402,9 +402,10 @@ private struct PlanContent: View {
     }
   }
 
-  /// An exam's course can finish before its plan does: its exam-day mocks come after.
-  private var courseEnd: [any CachedResource] {
-    goal.kind == .exam && plan.end == nil ? [store.planEnd(goalId: goal.id)] : []
+  /// Its certificates, for the suggestion line: an exam's course can finish before its plan does
+  /// (its exam-day mocks come after), and a finished plan offers its own.
+  private var planEnd: [any CachedResource] {
+    goal.kind == .exam || plan.end != nil ? [store.planEnd(goalId: goal.id)] : []
   }
 
   /// The learner asked for them, so when every moment already played, the certificate opens

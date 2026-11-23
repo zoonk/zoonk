@@ -203,8 +203,7 @@ struct MistakePracticeScreen: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Start the questions", table: "Practice",
-          comment: "Starts a content-gap drill's questions after its idea."),
-        icon: .play
+          comment: "Starts a content-gap drill's questions after its idea.")
       ) {
         shownAt = .now
         state.start()
@@ -213,8 +212,7 @@ struct MistakePracticeScreen: View {
       PracticeActionRow {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "Continue", table: "Practice", comment: "Moves on after a grade."),
-          icon: .forward
+            "Continue", table: "Practice", comment: "Moves on after a grade.")
         ) {
           next()
         }
@@ -248,7 +246,7 @@ struct MistakePracticeScreen: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          icon: .check, isBusy: checking?.pressesCheck == true,
+          isBusy: checking?.pressesCheck == true,
           isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
           if let answer = draft?.complete {
@@ -468,8 +466,7 @@ private struct PracticeDoneView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Back", table: "Practice", comment: "Leaves a finished run."), icon: .back,
-        action: close)
+          "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
     }
   }
 
