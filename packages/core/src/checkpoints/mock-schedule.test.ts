@@ -7,6 +7,32 @@ import { seedPersonaCopy } from "../seed/seed";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { changeMockSchedule, getMockSchedule, undoMockSchedule } from "./mock-schedule";
 
+async function openMockDay() {
+  const copyKey = randomUUID().slice(0, 8);
+
+  const copy = await seedPersonaCopy({
+    copyKey,
+    email: `schedule-day-${copyKey}@zoonk.test`,
+    persona: "exam",
+  });
+
+  mockSession(copy.userId);
+  vi.setSystemTime(new Date("2026-11-08T14:00:00Z"));
+  const { goalId } = copy;
+  const timeZone = "America/Sao_Paulo";
+  await getTodayStudySession({ goalId, timeZone });
+
+  const item = await prisma.planItem.findFirstOrThrow({
+    where: { kind: "mock", plan: { goalId }, scheduledFor: new Date("2026-11-08"), status: "todo" },
+  });
+
+  const block = await prisma.studySessionBlock.findFirstOrThrow({
+    where: { payload: { equals: item.id, path: ["planItemId"] }, session: { goalId } },
+  });
+
+  return { block, item, timeZone };
+}
+
 describe("scheduled mock changes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -143,34 +169,65 @@ describe("scheduled mock changes", () => {
     ).resolves.toBeTruthy();
   });
 
-  it("removes an unstarted mock from today's saved session atomically, restores it, and refuses a started block", async () => {
+  it("accepts a later mock's vacated date when it is offered for the preceding mock", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
     const copy = await seedPersonaCopy({
       copyKey,
-      email: `schedule-day-${copyKey}@zoonk.test`,
+      email: `vacated-${copyKey}@zoonk.test`,
       persona: "exam",
     });
 
     mockSession(copy.userId);
-    vi.setSystemTime(new Date("2026-11-08T14:00:00Z"));
-    const { goalId } = copy;
-    const timeZone = "America/Sao_Paulo";
-    await getTodayStudySession({ goalId, timeZone });
 
-    const item = await prisma.planItem.findFirstOrThrow({
+    const [first, second] = await prisma.planItem.findMany({
+      orderBy: { scheduledFor: "asc" },
+      take: 2,
       where: {
         kind: "mock",
-        plan: { goalId },
-        scheduledFor: new Date("2026-11-08"),
+        plan: { goalId: copy.goalId },
+        scheduledFor: { gte: new Date("2026-11-08") },
         status: "todo",
       },
     });
 
-    const block = await prisma.studySessionBlock.findFirstOrThrow({
-      where: { payload: { equals: item.id, path: ["planItemId"] }, session: { goalId } },
+    if (!first || !second?.scheduledFor) {
+      throw new Error("Expected two scheduled mocks");
+    }
+
+    const timeZone = "America/Sao_Paulo";
+    const options = await getMockSchedule({ planItemId: second.id, timeZone });
+
+    if (options.status !== "ready" || !options.dates[0]) {
+      throw new Error("Expected a later date");
+    }
+
+    await expect(
+      changeMockSchedule({ input: { date: options.dates[0], timeZone }, planItemId: second.id }),
+    ).resolves.toMatchObject({ status: "changed" });
+
+    const earlier = await prisma.planItem.findFirstOrThrow({
+      where: {
+        kind: "mock",
+        planId: first.planId,
+        scheduledFor: first.scheduledFor,
+        status: "todo",
+      },
     });
 
+    const date = second.scheduledFor.toISOString().slice(0, 10);
+
+    await expect(getMockSchedule({ planItemId: earlier.id, timeZone })).resolves.toMatchObject({
+      dates: expect.arrayContaining([date]),
+    });
+
+    await expect(
+      changeMockSchedule({ input: { date, timeZone }, planItemId: earlier.id }),
+    ).resolves.toMatchObject({ status: "changed" });
+  });
+
+  it("preserves yesterday's saved block through skipping and undoing an overdue mock", async () => {
+    const { item, block, timeZone } = await openMockDay();
     vi.setSystemTime(new Date("2026-11-09T14:00:00Z"));
 
     await expect(getMockSchedule({ planItemId: item.id, timeZone })).resolves.toMatchObject({
@@ -178,7 +235,28 @@ describe("scheduled mock changes", () => {
       status: "ready",
     });
 
-    vi.setSystemTime(new Date("2026-11-08T14:00:00Z"));
+    const overdue = await changeMockSchedule({
+      input: { date: null, timeZone },
+      planItemId: item.id,
+    });
+
+    expect(overdue.status).toBe("changed");
+
+    if (overdue.status !== "changed") {
+      return;
+    }
+
+    await expect(
+      undoMockSchedule({ changeId: overdue.changeId, planItemId: item.id, timeZone }),
+    ).resolves.toStrictEqual({ status: "undone" });
+
+    await expect(
+      prisma.studySessionBlock.findUnique({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
+  });
+
+  it("removes an unstarted mock from today's saved session atomically, restores it, and refuses a started block", async () => {
+    const { item, block, timeZone } = await openMockDay();
 
     const result = await changeMockSchedule({
       input: { date: null, timeZone },

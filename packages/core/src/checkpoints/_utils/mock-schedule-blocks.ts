@@ -28,10 +28,17 @@ export function findMockProgress({
 /** Called under the learner lock so a concurrent mock start wins or observes the removal. */
 export async function removeUnstartedMockBlocks({
   tx,
+  today,
   ...occurrence
-}: MockOccurrence & { tx: TransactionClient }) {
+}: MockOccurrence & { today: Date; tx: TransactionClient }) {
   const blocks = await tx.studySessionBlock.findMany({
-    select: { id: true, mockExam: { select: { id: true } }, sessionId: true, status: true },
+    select: {
+      id: true,
+      mockExam: { select: { id: true } },
+      session: { select: { localDate: true } },
+      sessionId: true,
+      status: true,
+    },
     where: mockBlocksFor(occurrence),
   });
 
@@ -39,9 +46,13 @@ export async function removeUnstartedMockBlocks({
     throw new PlanConflictError();
   }
 
+  const todayBlocks = blocks.filter(
+    (block) => block.session.localDate.getTime() === today.getTime(),
+  );
+
   await tx.studySessionBlock.deleteMany({
-    where: { id: { in: blocks.map((block) => block.id) }, status: "pending" },
+    where: { id: { in: todayBlocks.map((block) => block.id) }, status: "pending" },
   });
 
-  await oweStartedDaySettlements(tx, blocks);
+  await oweStartedDaySettlements(tx, todayBlocks);
 }

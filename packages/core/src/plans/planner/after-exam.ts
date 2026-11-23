@@ -3,7 +3,8 @@ import { MAX_PLAN_DAYS } from "../target-date-range";
 import { type ExamBossDays, listBossEvents, withBossEvents } from "./exam-boss-days";
 import { type FundedMocks, type MockFunding, fundMocks } from "./mock-funding";
 import { type MockClock, type MockResolution } from "./mock-identity";
-import { type StudyCalendar, addDays, getWeeklyEventWeekday } from "./plan-calendar";
+import { withMockSchedule } from "./moved-events";
+import { type StudyCalendar, addDays, getWeeklyEventWeekday, toIsoDate } from "./plan-calendar";
 import { createLearnDays } from "./plan-days";
 import { type PlanSettings } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
@@ -101,7 +102,7 @@ export function continueAfterExam({
   mockMinutes: number;
   phase: number;
   planStart: Date;
-  settings: Pick<PlanSettings, "fullCourse" | "movedEvents" | "practiceBias">;
+  settings: Pick<PlanSettings, "fullCourse" | "mockSchedule" | "movedEvents" | "practiceBias">;
   start: Date;
 }): AfterExam | null {
   const { targetDate } = goal;
@@ -123,11 +124,11 @@ export function continueAfterExam({
     targetDate: null,
   });
 
-  const describeDay = (date: Date) => {
+  const describeDay = withMockSchedule((date) => {
     const day = learnDay(date);
     const bosses = bossDays ? listBossEvents({ bossDays, bossMinutes, date }) : [];
     return { ...day, events: withBossEvents({ bosses, events: day.events }), phase };
-  };
+  }, settings.mockSchedule);
 
   const funded = fundMocks({
     clocks,
@@ -149,8 +150,13 @@ export function continueAfterExam({
   const units = [...(shown?.held ?? []), ...schedule.units];
   const lastUnit = units.at(-1)?.date;
 
+  const movedDates = new Set(settings.mockSchedule?.map((entry) => entry.to));
+
   const events = schedule.events.filter(
-    (event) => event.kind === "boss" || (lastUnit !== undefined && event.date <= lastUnit),
+    (event) =>
+      event.kind === "boss" ||
+      (event.kind === "mock" && movedDates.has(toIsoDate(event.date))) ||
+      (lastUnit !== undefined && event.date <= lastUnit),
   );
 
   const dates = [...units, ...events]

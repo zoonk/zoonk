@@ -89,6 +89,7 @@ function getPlanEvents({
         mockMinutes,
         moves: input.settings.movedEvents,
         targetDate,
+        vacated: new Set(input.settings.mockSchedule?.map((entry) => entry.from)),
         weeks: getMockWeeks({
           calendar: {
             dailyMinutes: input.goal.dailyMinutes,
@@ -96,13 +97,7 @@ function getPlanEvents({
           },
           minutes: mockMinutes,
         }),
-      }).filter(
-        (event) =>
-          event.kind !== "mock" ||
-          !input.settings.mockSchedule?.some(
-            (entry) => entry.from === toIsoDate(event.date) && entry.to !== entry.from,
-          ),
-      )
+      })
     : practice;
 }
 

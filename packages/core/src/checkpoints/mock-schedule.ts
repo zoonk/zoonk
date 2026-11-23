@@ -35,7 +35,7 @@ function datesFor({ goal, item, items, plan, today }: OwnedChallenge) {
     item.kind !== "mock" ||
     item.status !== "todo" ||
     !item.scheduledFor ||
-    (goal.targetDate !== null && today >= goal.targetDate && item.scheduledFor < today)
+    (goal.targetDate !== null && today >= goal.targetDate && item.scheduledFor < goal.targetDate)
   ) {
     return null;
   }
@@ -69,7 +69,12 @@ function datesFor({ goal, item, items, plan, today }: OwnedChallenge) {
   );
 
   const end = new Date(
-    Math.min(goal.targetDate?.getTime() ?? addDays(new Date(last), 1).getTime(), ...next),
+    Math.min(
+      goal.targetDate && from <= goal.targetDate
+        ? goal.targetDate.getTime()
+        : addDays(new Date(last), 1).getTime(),
+      ...next,
+    ),
   );
 
   return Array.from({ length: Math.max(0, daysBetween(start, end) - 1) }, (_, index) =>
@@ -196,7 +201,13 @@ export async function changeMockSchedule({
         status: "applied",
       },
       changeDay: async (tx) => {
-        await removeUnstartedMockBlocks({ goalId: challenge.goal.id, planItemId, tx });
+        await removeUnstartedMockBlocks({
+          goalId: challenge.goal.id,
+          planItemId,
+          today: context.today,
+          tx,
+        });
+
         await oweGoalLessons({ db: tx, goalId: challenge.goal.id, userId: challenge.userId });
       },
       computed,

@@ -473,7 +473,7 @@ describe("a plan that goes on after its exam", () => {
 
     const targetDate = addDays(MONDAY, 21);
 
-    const built = buildPlan({
+    const input: BuildPlanInput = {
       goal: { dailyMinutes: 30, kind: "exam", targetDate },
       graph,
       items: [],
@@ -491,7 +491,9 @@ describe("a plan that goes on after its exam", () => {
       readiness: new Map(),
       settings: parsePlanSettings({ fullCourse: true, startDate: toIsoDate(MONDAY) }),
       today: MONDAY,
-    });
+    };
+
+    const built = buildPlan(input);
 
     const after = built.items.filter(
       (item) => item.kind === "mock" && item.scheduledFor && item.scheduledFor > targetDate,
@@ -508,6 +510,27 @@ describe("a plan that goes on after its exam", () => {
         return [item.minutes, entry?.minutes, (entry?.contributions.length ?? 0) > 0];
       }),
     ).toStrictEqual(after.map(() => [165, 165, true]));
+
+    const first = after[0]!.scheduledFor!;
+    const from = toIsoDate(first);
+    const later = toIsoDate(addDays(first, 1));
+
+    for (const to of [later, null]) {
+      const settings = {
+        ...input.settings,
+        mockSchedule: [{ from, fullLength: false, minutes: 165, to }],
+      };
+
+      const changed = buildPlan({ ...input, settings });
+
+      const dates = changed.items.flatMap((item) =>
+        item.kind === "mock" && item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [],
+      );
+
+      expect(dates).not.toContain(from);
+
+      expect(dates.includes(later)).toBe(to !== null);
+    }
   });
 });
 

@@ -112,7 +112,12 @@ export async function undoChange({
         throw new PlanConflictError();
       }
 
-      await removeUnstartedMockBlocks({ goalId: context.goal.id, planItemId: moved.id, tx });
+      await removeUnstartedMockBlocks({
+        goalId: context.goal.id,
+        planItemId: moved.id,
+        today: context.today,
+        tx,
+      });
     }
 
     const session =

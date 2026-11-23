@@ -4,7 +4,7 @@ import { type BuildPlanInput } from "./build-plan";
 import { listTakenMockDays } from "./mock-days";
 import { fundMocks } from "./mock-funding";
 import { type MockResolution } from "./mock-identity";
-import { withMovedEvents } from "./moved-events";
+import { withMockSchedule, withMovedEvents } from "./moved-events";
 import {
   type StudyCalendar,
   addDays,
@@ -20,7 +20,6 @@ import { type PlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, type PlanDay, listPlanDays } from "./schedule-units";
-import { mockEvent } from "./short-exam-plan";
 import { getTaughtDay } from "./whole-boss";
 import { allocateWriting } from "./writing-allocation";
 
@@ -131,40 +130,7 @@ function describeRunDays({
     resolveMoved,
   });
 
-  const overrides = settings.mockSchedule ?? [];
-
-  if (overrides.length === 0) {
-    return { describeDay: describe };
-  }
-
-  return {
-    describeDay(date: Date) {
-      const shape = describe(date);
-      const label = toIsoDate(date);
-      const moved = overrides.find((entry) => entry.to === label);
-
-      if (!moved && !overrides.some((entry) => entry.from === label)) {
-        return shape;
-      }
-
-      const events = shape.events.filter(
-        (event) => event.kind !== "mock" && !(moved && event.kind === "review"),
-      );
-
-      if (moved) {
-        events.push(
-          mockEvent({
-            date,
-            fullLength: moved.fullLength,
-            minutes: moved.minutes,
-            replacesDay: true,
-          }),
-        );
-      }
-
-      return { ...shape, events };
-    },
-  };
+  return { describeDay: withMockSchedule(describe, settings.mockSchedule) };
 }
 
 /** Lessons finished today already took part of today's time, so the rest of today holds only what's left. */
