@@ -277,7 +277,7 @@ export type AlignmentException = {
   configuration: string;
   piece: string;
   reason: string;
-  relation: Relation | "one-filled" | (typeof PAGE_RULES)[number];
+  relation: Relation | "column" | "one-filled" | (typeof PAGE_RULES)[number];
   scenario: string;
 } & ({ grantedBy: "user" } | { issue: number });
 
