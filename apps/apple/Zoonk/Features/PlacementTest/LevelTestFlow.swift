@@ -147,10 +147,9 @@ struct LevelTestFlow: View {
     case .finish(let attemptID, let completion):
       TestOutcome(
         title: Text("Your answers are saved", tableName: "Onboarding"),
-        failureMessage: completion == .testOut
-          ? LocalizedStringResource("That didn't go through. Try again in a moment.", table: "Plan")
-          : nil,
-        isSaving: pressed != nil, failed: failed
+        failureMessage: LocalizedStringResource(
+          "That didn't go through. Try again in a moment.", table: "Plan"),
+        isSaving: isAnswering || pressed != nil, failed: failed
       ) {
         save(.main) { try await finish(attemptID, completion: completion) }
       }
@@ -406,9 +405,16 @@ struct LevelTestFlow: View {
   ) async throws {
     switch completion {
     case .levelTest:
-      let result = try await store.finishLanguageTest(goalID: goalID, attemptID: attemptID)
-      undoRequest.leave()
-      phase = .result(length: length, result)
+      do {
+        let result = try await store.finishLanguageTest(goalID: goalID, attemptID: attemptID)
+        undoRequest.leave()
+        phase = .result(length: length, result)
+      } catch is CancellationError {
+        throw CancellationError()
+      } catch {
+        phase = .finish(attemptID: attemptID)
+        failed = true
+      }
     case .testOut:
       phase = LanguageTestPhase(
         testOut: try await store.finishLevelTestOut(goalID: goalID, attemptID: attemptID))
