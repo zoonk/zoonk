@@ -474,7 +474,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        icon: .check, isBusy: isSaving && submission == .confirm,
+        isBusy: isSaving && submission == .confirm,
         isDisabled: isSaving || draft?.complete == nil
       ) {
         if let answer = draft?.complete {

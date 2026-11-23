@@ -317,8 +317,7 @@ struct PlanBuilding: View {
         comment: "Over Start, while the plan is still built"),
       label: Text(
         "Start", tableName: "Onboarding",
-        comment: "Opens the goal's first lesson, written before its plan"),
-      icon: .play
+        comment: "Opens the goal's first lesson, written before its plan")
     ) {
       router.open(.lesson(lessonId: firstLesson.id))
     }

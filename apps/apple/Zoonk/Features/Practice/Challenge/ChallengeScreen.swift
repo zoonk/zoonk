@@ -254,8 +254,7 @@ struct ChallengeScreen: View {
     if isLocked(challenge) {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Subscribe", table: "Practice", comment: "Opens the subscription page."),
-        icon: .forward
+          "Subscribe", table: "Practice", comment: "Opens the subscription page.")
       ) {
         hooks.navigate(.subscription)
       }
@@ -268,8 +267,7 @@ struct ChallengeScreen: View {
 
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See result", table: "Practice", comment: "Opens a finished checkpoint's result."),
-        icon: .forward
+          "See result", table: "Practice", comment: "Opens a finished checkpoint's result.")
       ) {
         dismiss()
         hooks.navigate(
@@ -288,7 +286,7 @@ struct ChallengeScreen: View {
           ) { run { await move() } }
         }
 
-        PracticeMainButton(title: MockPreparing.keepStudying, icon: .forward) {
+        PracticeMainButton(title: MockPreparing.keepStudying) {
           dismiss()
         }
       }
@@ -318,7 +316,7 @@ struct ChallengeScreen: View {
                   comment: "Goes back into a challenge already started.")
                 : LocalizedStringResource(
                   "Start", table: "Practice", comment: "Starts a challenge."),
-              icon: .play, isBusy: isStarting || isWriting,
+              isBusy: isStarting || isWriting,
               isDisabled: isMoving
             ) { run { await start(afterWriting: false) } }
           }

@@ -762,7 +762,7 @@ private struct RowEditor: View {
       }
 
       ButtonRow {
-        BusyButton(isBusy: isSaving, icon: .check, action: save) {
+        BusyButton(isBusy: isSaving, action: save) {
           Text("Save", tableName: "Onboarding", comment: "Saves a fix to an understood fact")
         }
         .buttonStyle(.mainAction)

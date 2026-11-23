@@ -142,7 +142,7 @@ struct MistakeLessonQuestionView: View {
           PracticeMainButton(
             title: LocalizedStringResource(
               "Start the questions", table: "Practice",
-              comment: "Starts a content-gap drill's questions after its idea."), icon: .play
+              comment: "Starts a content-gap drill's questions after its idea.")
           ) {
             showsIdea = false
             shownAt = .now
@@ -176,7 +176,7 @@ struct MistakeLessonQuestionView: View {
             PracticeMainButton(
               title: LocalizedStringResource(
                 "Continue", table: "Practice", comment: "Moves on after a grade."),
-              icon: .forward, action: next
+              action: next
             )
             .practiceFocus(.next)
           } else if case .challenge(let challenge) = replay.step.content,
@@ -185,7 +185,7 @@ struct MistakeLessonQuestionView: View {
             PracticeMainButton(
               title: LocalizedStringResource(
                 "Continue", table: "Practice", comment: "Moves on after a grade."),
-              icon: .forward, isDisabled: !challengeCanContinue(challenge)
+              isDisabled: !challengeCanContinue(challenge)
             ) { state.continueLesson() }
           } else if let record = recordInBar.button, !speechChecking {
             record
@@ -194,7 +194,7 @@ struct MistakeLessonQuestionView: View {
             PracticeMainButton(
               title: LocalizedStringResource(
                 "Check", table: "Practice", comment: "Sends the answer to be graded."),
-              icon: .check, isBusy: state.phase == .checking || speechChecking,
+              isBusy: state.phase == .checking || speechChecking,
               isDisabled: !canCheck
             ) {
               press(.check)

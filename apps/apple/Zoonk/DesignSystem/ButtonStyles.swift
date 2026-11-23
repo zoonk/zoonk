@@ -5,7 +5,8 @@ import SwiftUI
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
 /// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`), and
 /// `.endsRow` on a ghost one is main's `edge="end"`. Glass stays on floating controls and toolbar
-/// items.
+/// items. Each shows its label and the one icon it carries; the main action that Return presses
+/// carries none, as main's `EnterButton` takes none.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -118,8 +119,7 @@ private struct ZoonkButton: View {
     let shape = RoundedRectangle(
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
-    labelOnlyIfMain(configuration.label)
-      .environment(\.showsButtonIcon, !isLabelOnly)
+    configuration.label
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
@@ -148,18 +148,6 @@ private struct ZoonkButton: View {
       .contentShape(MinimumHitArea())
       .padding(
         .trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
-  }
-
-  /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.
-  private var isLabelOnly: Bool { variant == .main && !isIcon }
-
-  @ViewBuilder
-  private func labelOnlyIfMain(_ label: ButtonStyleConfiguration.Label) -> some View {
-    if isLabelOnly {
-      label.labelStyle(.titleOnly)
-    } else {
-      label
-    }
   }
 
   private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }

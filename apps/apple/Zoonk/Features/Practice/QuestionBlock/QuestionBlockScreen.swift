@@ -351,10 +351,10 @@ struct QuestionBlockView: View {
       Text(Self.alreadyAnswered)
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
-      PracticeMainButton(title: continueTitle, icon: .forward) { onRefresh() }
+      PracticeMainButton(title: continueTitle) { onRefresh() }
         .practiceFocus(.next)
     case .finishReady:
-      PracticeMainButton(title: finishTitle, icon: .forward) { Task { await run.finish() } }
+      PracticeMainButton(title: finishTitle) { Task { await run.finish() } }
     case .finishFailed:
       PracticeSaveError(
         failures: run.state.saveFailures, onReport: { showsSaveReport = true },
@@ -363,7 +363,7 @@ struct QuestionBlockView: View {
       EmptyView()
     case .feedback(_, let feedback):
       PracticeActionRow {
-        PracticeMainButton(title: continueTitle, icon: .forward) { Task { await run.next() } }
+        PracticeMainButton(title: continueTitle) { Task { await run.next() } }
           .practiceFocus(.next)
         ask(answered: true)
       }
@@ -378,8 +378,7 @@ struct QuestionBlockView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Start the questions", table: "Practice",
-            comment: "Starts a content-gap drill's questions after its idea."),
-          icon: .play
+            comment: "Starts a content-gap drill's questions after its idea.")
         ) { run.startDrill() }
       } else {
         answerButtons(phase: phase)
@@ -423,7 +422,7 @@ struct QuestionBlockView: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        icon: .check, isBusy: phase.checking?.pressesCheck == true,
+        isBusy: phase.checking?.pressesCheck == true,
         isDisabled: !accepts || run.draft?.complete == nil
       ) {
         if let answer = run.draft?.complete {
@@ -646,8 +645,7 @@ private struct BlockFinishedView: View {
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
-          "Continue", table: "Practice", comment: "Moves on after a grade."), icon: .forward,
-        action: close)
+          "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
     }
   }
 
