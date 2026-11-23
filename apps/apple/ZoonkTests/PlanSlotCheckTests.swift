@@ -166,7 +166,75 @@ final class PlanSlotCheckTests: XCTestCase {
     XCTAssertTrue(shown.isEmpty, "Nothing opens before the plan's settings")
   }
 
+  /// The finished plan's line offers its certificate itself, as web's and Android's do, with
+  /// "View" for what to study next; the claim opens nothing first.
+  func testTheFinishedPlansLineOffersItsCertificate() async throws {
+    var claims = 0
+    var shown: [PlanSheet] = []
+    let context = PlanContext(
+      goal: Self.goal(kind: .learn), plan: try goalPlanFixture(end: "finished"), adjust: { _ in },
+      show: { shown.append($0) },
+      claimCertificate: {
+        claims += 1
+        return nil
+      }, slotChecks: PlanSlotChecks())
+    let window = try await showLine(
+      context,
+      end: #"""
+        {"certificates": {"earned": [], "unclaimed": [{"courseLevel": null}]},
+         "next": {"nextLevel": {"level": "intermediate", "title": "Intermediate"}, "related": []}}
+        """#)
+
+    XCTAssertTrue(
+      spoken(in: window).contains(String(localized: "View", table: "Plan")), "\(spoken(in: window))"
+    )
+    try await activate(String(localized: "Get your certificate", table: "Plan"), in: window)
+
+    try await waitForTestCondition("The claim was never sent") { claims == 1 }
+    XCTAssertTrue(shown.isEmpty, "The claim opens nothing first")
+    try await waitForTestCondition("The line never said the claim didn't save") {
+      self.spoken(in: window).contains(String(localized: SuggestionSaveError.message))
+    }
+  }
+
+  /// With nothing more to show, the line is its certificate alone.
+  func testTheFinishedPlansLineWithNothingNextIsItsCertificate() async throws {
+    let context = try context(kind: .learn, plan: goalPlanFixture(end: "finished"))
+    let window = try await showLine(
+      context,
+      end: #"""
+        {"certificates": {"earned": [{"code": "abc", "locked": false}], "unclaimed": []},
+         "next": {"nextLevel": null, "related": []}}
+        """#)
+
+    let spoken = spoken(in: window)
+    XCTAssertTrue(
+      spoken.contains(String(localized: "View certificate", table: "Plan")), "\(spoken)")
+    XCTAssertFalse(spoken.contains(String(localized: "View", table: "Plan")), "\(spoken)")
+  }
+
   // MARK: Helpers
+
+  /// The suggestion line in the page's column, with the plan's end read as `end`.
+  private func showLine(_ context: PlanContext, end: String) async throws -> UIWindow {
+    try await readsWhatVoiceOverReads()
+    let session = SessionStore.preview(account: .planTestAccount)
+    let api = PlanAPIStub()
+    await api.setPlanEnd(try JSONDecoder().decode(PlanEnd.self, from: Data(end.utf8)))
+    let store = PlanStore(api: api, cache: AppCache(session: session))
+    await store.planEnd(goalId: context.goal.id).load()
+    let window = try show(
+      List {
+        PlanSuggestionSection(context: context, answer: .constant(nil))
+      }
+      .environment(store)
+      .environment(session)
+      .environment(AppRouter())
+      .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await waitForLayout(in: window)
+    return window
+  }
 
   private func context(kind: LearnerGoal.Kind = .exam, plan: GoalPlan? = nil) throws
     -> PlanContext

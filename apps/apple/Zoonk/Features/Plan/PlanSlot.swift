@@ -210,8 +210,15 @@ struct PlanSuggestionSection: View {
             SuggestionLine {
               SuggestionMark(kind: summary.mark)
             } summary: {
-              summary.text
-                .accessibilityFocused($focus, equals: .item)
+              Group {
+                // A claim that didn't save says so in the line's words, as main's does.
+                if claimFailed(item) {
+                  SuggestionSaveError()
+                } else {
+                  summary.text
+                }
+              }
+              .accessibilityFocused($focus, equals: .item)
             } action: {
               lineAction(item)
             }
@@ -337,8 +344,15 @@ struct PlanSuggestionSection: View {
   }
 
   private func failed(_ item: PlanSlotItem) -> Bool {
-    currentAnswer?.item == item && currentAnswer?.editor.latest == nil
-      && currentAnswer?.editor.failed == true
+    (currentAnswer?.item == item && currentAnswer?.editor.latest == nil
+      && currentAnswer?.editor.failed == true)
+      || (item == .courseComplete && claimFailed(item))
+  }
+
+  /// The finished plan's own view says it beside its buttons.
+  private func claimFailed(_ item: PlanSlotItem) -> Bool {
+    (item == .courseComplete || item == .finished)
+      && context.slotCheck(item, request: .claim).failed
   }
 
   /// Clears the answer once its moment is over, later while the learner is on it or its Undo is
@@ -414,12 +428,12 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  /// "Beginner complete" when the claim certifies one level, else "Course complete".
   /// A claim that didn't save takes the done mark off its line.
-  private var claimMark: SuggestionMark.Kind {
-    context.slotCheck(.courseComplete, request: .claim).failed ? .alert : .done
+  private func claimMark(_ item: PlanSlotItem) -> SuggestionMark.Kind {
+    claimFailed(item) ? .alert : .done
   }
 
+  /// "Beginner complete" when the claim certifies one level, else "Course complete".
   private var completeTitle: Text {
     let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
 
@@ -530,8 +544,9 @@ struct PlanSuggestionSection: View {
         PlanCoverageSlot(context: context, suggested: suggested, actions: offers)
       }
     case .courseComplete:
-      PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
+      PlanSlotCard(title: completeTitle, mark: claimMark(item), description: nil) {
         CertificateClaimButton(context: context, item: .courseComplete)
+          .mainActionUnlessBarHoldsOne()
       }
     case .finished:
       PlanFinishedSlot(context: context)
@@ -584,6 +599,14 @@ struct PlanSuggestionSection: View {
       ) {
         context.show(.suggestion(item))
       }
+    case .courseComplete:
+      CertificateClaimButton(context: context, item: item)
+        .buttonStyle(.outline)
+        .controlSize(.small)
+    case .finished:
+      PlanFinishedLineActions(context: context) {
+        context.show(.suggestion(item))
+      }
     default:
       SuggestionViewButton {
         context.show(.suggestion(item))
@@ -620,11 +643,11 @@ struct PlanSuggestionSection: View {
     case .coverage:
       (Text(context.plan.suggestedTime.map(PlanCoverageSlot.title) ?? ""), .sparkle)
     case .courseComplete:
-      (completeTitle, claimMark)
+      (completeTitle, claimMark(item))
     case .finished:
       (
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
-        .done
+        claimMark(item)
       )
     case .tooTight:
       (Text(tooTightTitle), .symbol("calendar.badge.clock"))
@@ -777,6 +800,7 @@ struct PlanStatement: View {
 }
 
 /// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+/// Where it sits says whether it's the main answer and where a claim that didn't save says so.
 struct CertificateClaimButton: View {
   let context: PlanContext
   /// The suggestion it's in, whose opening the claim belongs to.
@@ -791,11 +815,6 @@ struct CertificateClaimButton: View {
       Text(
         "Get your certificate", tableName: "Plan",
         comment: "Writes the certificate of the plan's finished course or level and shows it")
-    }
-    .mainActionUnlessBarHoldsOne()
-
-    if claim.failed {
-      SuggestionSaveError()
     }
   }
 }
@@ -837,7 +856,6 @@ private struct PlanCertificatesButton: View {
             "View certificate", tableName: "Plan",
             comment: "Opens the certificate of the finished plan's course or level"))
       }
-      .buttonStyle(.outline)
     } else if !earned.isEmpty {
       Button {
         router.present(.account(.certificates))
@@ -847,7 +865,6 @@ private struct PlanCertificatesButton: View {
             "View certificates", tableName: "Plan",
             comment: "Opens the learner's certificates, from a plan that earned several"))
       }
-      .buttonStyle(.outline)
     }
   }
 
@@ -857,6 +874,49 @@ private struct PlanCertificatesButton: View {
     } icon: {
       Image(systemName: "rosette")
     }
+  }
+}
+
+/// Main's `CertificateAction`: get the certificates not written yet, else view the ones earned.
+private struct PlanCertificateAction: View {
+  let context: PlanContext
+  let certificates: PlanEnd.Certificates
+
+  var body: some View {
+    if certificates.unclaimed.isEmpty {
+      PlanCertificatesButton(context: context, earned: certificates.earned)
+    } else {
+      CertificateClaimButton(context: context, item: .finished)
+    }
+  }
+}
+
+/// The finished plan's line, as main's: its certificate, and "View" while there's more to show
+/// (what to study next) or no certificate to offer.
+private struct PlanFinishedLineActions: View {
+  @Environment(PlanStore.self) private var store
+
+  let context: PlanContext
+  let open: () -> Void
+
+  var body: some View {
+    let end = store.planEnd(goalId: context.goal.id).value
+    let certificates = end?.certificates.flatMap {
+      $0.unclaimed.isEmpty && $0.earned.isEmpty ? nil : $0
+    }
+    let hasMore = end?.next.map { $0.nextLevel != nil || !$0.related.isEmpty } ?? false
+
+    HStack(spacing: 8) {
+      if let certificates {
+        PlanCertificateAction(context: context, certificates: certificates)
+      }
+
+      if certificates == nil || hasMore {
+        SuggestionViewButton(action: open)
+      }
+    }
+    .buttonStyle(.outline)
+    .controlSize(.small)
   }
 }
 
@@ -877,11 +937,18 @@ private struct PlanFinishedSlot: View {
         StatusMark(status: .done)
       }
 
+      // Main's: the next level is the main answer when there is one, else the certificate.
       if let certificates = end.value?.certificates {
-        if certificates.unclaimed.isEmpty {
-          PlanCertificatesButton(context: context, earned: certificates.earned)
+        if end.value?.next?.nextLevel == nil {
+          PlanCertificateAction(context: context, certificates: certificates)
+            .mainActionUnlessBarHoldsOne()
         } else {
-          CertificateClaimButton(context: context, item: .finished)
+          PlanCertificateAction(context: context, certificates: certificates)
+            .buttonStyle(.outline)
+        }
+
+        if context.slotCheck(.finished, request: .claim).failed {
+          SuggestionSaveError()
         }
       }
 
@@ -900,7 +967,7 @@ private struct PlanFinishedSlot: View {
               "Continue at \(planLevelName(level.level))", tableName: "Plan",
               comment: "Starts the next level of the plan's course")
           }
-          .buttonStyle(.outline)
+          .mainActionUnlessBarHoldsOne()
         }
 
         ForEach(value.related) { course in
