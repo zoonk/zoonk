@@ -81,8 +81,7 @@ function TrueFalseOptions({
   );
 }
 
-/** A placement question is answered by taps alone; a number or text never comes from one. */
-function toTapAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null {
+function toPlacementAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null {
   return "number" in answer || "text" in answer ? null : answer;
 }
 
@@ -289,7 +288,7 @@ export function PlacementQuestionScreen({
             order={value && "order" in value ? value.order : undefined}
             allowBlank={false}
             disabled={pending}
-            onChange={(answer) => setValue(answer && toTapAnswer(answer))}
+            onChange={(answer) => setValue(answer && toPlacementAnswer(answer))}
             onSubmit={confirm}
             question={{
               entry: null,
