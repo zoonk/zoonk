@@ -131,7 +131,7 @@ function LevelRow({
     <li className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0">
       <span className="text-sm font-medium">{skillName(skill)}</span>
       {bar}
-      <span className="text-end font-mono text-xs font-medium tabular-nums">{label}</span>
+      <span className="text-end text-xs font-medium whitespace-nowrap tabular-nums">{label}</span>
     </li>
   );
 }

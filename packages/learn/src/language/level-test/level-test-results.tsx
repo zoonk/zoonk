@@ -4,13 +4,11 @@ import {
   type LevelTestLength,
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
-import {
-  OnboardingDescription,
-  OnboardingSecondaryButton,
-} from "../../onboarding/onboarding-frame";
+import { OnboardingDescription } from "../../onboarding/onboarding-frame";
 import { TestOutcome } from "../../onboarding/test-outcome";
 import { type PlacementPressed } from "../../placement-test/use-placement-test";
 import { useSkippedLessonsSentences } from "../../plan/use-skipped-lessons-sentences";
@@ -62,26 +60,25 @@ export function LevelResult({
       failed={failed}
       lead={<LevelResultLead result={result} undone={undone} />}
       onContinue={walks ? onWalkTopics : onDone}
-      other={
-        <>
-          {button(pressed !== null)}
-          {!walks && testOutLevel && (
-            <OnboardingSecondaryButton
-              busy={pressed === "other"}
-              disabled={pending || pressed === "main"}
-              onClick={() => onTestOut(testOutLevel)}
-            >
-              {t("Test out of {level}", { level: testOutLevel })}
-            </OnboardingSecondaryButton>
-          )}
-        </>
-      }
+      other={button(pressed !== null)}
       rail={rail}
       title={
         undone ? skipped(0) : t("Your {language} level", { language: languageName(targetLanguage) })
       }
     >
       {result && <LevelRanges ranges={result.ranges} />}
+      {!walks && testOutLevel && (
+        <Button
+          busy={pressed === "other"}
+          className="self-start"
+          disabled={pending || pressed === "main"}
+          onClick={() => onTestOut(testOutLevel)}
+          type="button"
+          variant="link"
+        >
+          {t("Test out of {level}", { level: testOutLevel })}
+        </Button>
+      )}
     </TestOutcome>
   );
 }

@@ -150,7 +150,7 @@ struct LevelTestFlow: View {
     case .result(let length, let result):
       LanguageTestResultView(
         length: length, result: result, targetLanguage: targetLanguage, testOutLevel: testOutLevel,
-        pressed: undoRequest.isRunning ? .other : pressed, failed: failed,
+        pressed: pressed, failed: failed,
         undo: undo(changeId: result?.changeId, lessons: result?.lessonsSkipped ?? 0),
         onboarding: onOnboardingDone != nil
       ) {

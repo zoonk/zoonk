@@ -31,39 +31,56 @@ struct LanguageTestResultView: View {
 
       if let result, !result.skillRanges.isEmpty {
         Section {
-          ForEach(result.skillRanges, id: \.skill) { item in
-            LabeledContent {
-              Text(verbatim: item.range.shown)
-                .monospacedDigit()
-            } label: {
-              VStack(alignment: .leading, spacing: 6) {
+          Grid(horizontalSpacing: 16, verticalSpacing: 0) {
+            ForEach(Array(result.skillRanges.enumerated()), id: \.element.skill) { index, item in
+              if index > 0 {
+                Divider()
+              }
+              GridRow {
                 Text(verbatim: languageSkillName(item.skill.rawValue))
+                  .typeStyle(.meta.weight(.medium))
+                  .gridColumnAlignment(.leading)
+                  .frame(minHeight: 44)
+                  .accessibilityLabel(Text(PlacementTestCopy.skillRange(item.skill, item.range)))
                 LevelRangeBar(range: item.range)
+                  .frame(minWidth: 32, maxWidth: .infinity)
+                Text(verbatim: item.range.shown)
+                  .typeStyle(.note.weight(.medium))
+                  .monospacedDigit()
+                  .fixedSize()
+                  .gridColumnAlignment(.trailing)
+                  .accessibilityHidden(true)
               }
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(PlacementTestCopy.skillRange(item.skill, item.range)))
           }
         }
+        .listRowInsets(.vertical, 0)
       }
 
+      if let testOutLevel, !walks {
+        BusyButton(isBusy: pressed == .other, action: onTestOut) {
+          Text(verbatim: PlacementTestCopy.testOut(testOutLevel))
+            .underline()
+        }
+        .buttonStyle(.borderless)
+        .disabled(pressed == .main || undo?.request.isRunning == true)
+      }
     }
     .bottomBar(note: undo?.failure ?? (failed && pressed == nil ? BarNote(saveFailure) : nil)) {
       undo?.button
       StepButtons(
+        canContinue: undo?.request.isRunning != true,
         continueLabel: walks
           ? Text(
             "Keep going", tableName: "Onboarding",
             comment: "Goes on from the whole-course level test to the course's topics")
           : onboarding
             ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
-        skipLabel: testOutLevel.map { Text(verbatim: PlacementTestCopy.testOut($0)) },
-        onContinue: onContinue,
-        onSkip: !walks && testOutLevel != nil ? onTestOut : nil)
+        onContinue: onContinue)
     }
     .onboardingColumn()
     .announcesStatus(undo?.announcement)
-    .environment(\.isSavingAnswer, pressed != nil)
+    .environment(\.isSavingAnswer, pressed != nil || undo?.request.isRunning == true)
   }
 
   private var lead: String {
