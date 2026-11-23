@@ -194,6 +194,7 @@ function keptRow({
   anchored,
   before,
   change,
+  marked,
   position,
   screen,
   sources,
@@ -201,6 +202,8 @@ function keptRow({
 }: {
   anchored: boolean;
   before: SnapshotScreen;
+  /** Whether the fix marks the screen's example box and underline again. */
+  marked: boolean;
   change: StoredScreens;
   position: number;
   screen: SnapshotScreen;
@@ -210,7 +213,7 @@ function keptRow({
   const baseChanged = baseScreenChanged({ after: screen, before, change, sources });
   const variants = editedVariants(before, screen);
 
-  if (baseChanged || variants.length > 0) {
+  if (baseChanged || variants.length > 0 || marked) {
     return {
       answerKey:
         changesAnswerKey({ after: screen, before }) ||
@@ -244,6 +247,10 @@ export function readScreenRows(change: StoredScreens): ScreenRow[] {
     .map((screen, index) => ({ index, screen }))
     .filter(({ index }) => !keptIndexes.includes(index));
 
+  const markedPositions = new Set(
+    (change.mediaLinks ?? []).flatMap((link) => (link.target === "marks" ? link.positions : [])),
+  );
+
   const rows: ScreenRow[] = [];
   let placed = 0;
 
@@ -274,6 +281,7 @@ export function readScreenRows(change: StoredScreens): ScreenRow[] {
           anchored: anchored.has(index),
           before,
           change,
+          marked: markedPositions.has(screen.position),
           position: at + 1,
           screen,
           sources,

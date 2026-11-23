@@ -8,13 +8,13 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 import { type readMapIdeas } from "./content-fix-map";
+import { ScreenMarks } from "./content-fix-marks";
 import { type MediaItem, ReviewClip, ScreenPicture } from "./content-fix-media-item";
 import {
   type ScreenRow,
   type ScreenSnapshot,
   type SnapshotScreen,
   type StoredScreens,
-  ideaIndexOf,
 } from "./screen-list";
 
 export type ScreenMedia = ReadonlyMap<string, MediaItem>;
@@ -76,22 +76,6 @@ export function screenHeadline({
     textOf(content.template)?.replaceAll("[BLANK]", "____") ??
     textOf(content.mission) ??
     ""
-  );
-}
-
-function IdeaLine({ context, screen }: { context: ScreenContext; screen: SnapshotScreen }) {
-  const index = ideaIndexOf(screen);
-  const idea = index === null ? undefined : context.ideas[index];
-
-  if (index === null || !idea) {
-    return null;
-  }
-
-  return (
-    <p className="text-muted-foreground text-xs">
-      Idea {index + 1} on the map: <span lang={context.lang}>{idea.text}</span>
-      {idea.status === "new" ? " (new)" : null}
-    </p>
   );
 }
 
@@ -263,7 +247,7 @@ export function ShownRow({
       return (
         <RowFrame position={row.position} screen={row.screen} status="New" tone="added">
           <ScreenBody context={context} proposed screen={row.screen} snapshot={after} />
-          <IdeaLine context={context} screen={row.screen} />
+          <ScreenMarks context={context} screen={row.screen} />
         </RowFrame>
       );
     case "removed":
@@ -309,6 +293,9 @@ export function ShownRow({
             </StateMark>
           )}
           {row.baseChanged && <ScreenComparison context={context} row={row} />}
+          {!row.baseChanged && row.variants.length === 0 && (
+            <ScreenBody context={context} proposed screen={row.screen} snapshot={after} />
+          )}
           {row.variants.map((edit) => (
             <div className="flex flex-col gap-1" key={edit.after.id}>
               <p className="text-muted-foreground text-xs leading-5 font-medium">
@@ -317,7 +304,7 @@ export function ShownRow({
               <ScreenComparison context={context} row={row} variant={edit} />
             </div>
           ))}
-          <IdeaLine context={context} screen={row.screen} />
+          <ScreenMarks context={context} screen={row.screen} />
         </RowFrame>
       );
     default:

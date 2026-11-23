@@ -2,9 +2,11 @@ import { AdminJson } from "@/components/admin-json";
 import { type ContentFixDetail, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { LINK_CLASS } from "@/lib/link-class";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
+import { stepMarksKey } from "@zoonk/core/staff/content-fixes/media-schema";
 import Link from "next/link";
 import { connection } from "next/server";
 import { CollectionChange } from "./content-fix-collection";
+import { FixMarks } from "./content-fix-marks";
 import { PlanChange } from "./content-fix-plan";
 import { Restored } from "./content-fix-restored";
 import { ScreenListChange } from "./content-fix-screens";
@@ -209,6 +211,9 @@ export async function ContentFixChanges({
               {fix.rowLabels.get(rowKeyOf(change)) ?? MODEL_LABELS[change.model]}
             </h3>
             <ChangeBody change={change} compact={compact} names={fix.names} />
+            {change.model === "Step" && change.op === "set" && (
+              <FixMarks index={0} item={media.get(stepMarksKey(change.id))} lang={lang} />
+            )}
           </li>
         );
       })}

@@ -95,6 +95,10 @@ export function IdeaIcon({ item }: { item: MediaItem }) {
     return <StateMark state="failed">Couldn&apos;t draw an icon for this idea</StateMark>;
   }
 
+  if (result.kind !== "ideaIcon") {
+    return null;
+  }
+
   return (
     <span className="flex items-center gap-3">
       <Image
