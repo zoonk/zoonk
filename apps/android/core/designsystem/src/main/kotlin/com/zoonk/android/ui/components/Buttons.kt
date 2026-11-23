@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 
@@ -62,8 +63,8 @@ fun ButtonIcon(
     @DrawableRes id: Int,
 ) = Icon(painterResource(id), contentDescription = null)
 
-/** Main's `FORWARD_ICON`: the one glyph that trails words that go forward (next, continue, see the result). */
-val ForwardIcon: @Composable () -> Unit = { ListRowChevron() }
+/** Main's `FORWARD_ICON`: the one glyph that trails words that go forward (next, continue, see the result), in their color. */
+val ForwardIcon: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_chevron_right) }
 
 /** A screen's main action: its words, with main's glyph where it has one. */
 @Composable
