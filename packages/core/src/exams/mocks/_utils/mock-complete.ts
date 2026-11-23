@@ -1,28 +1,36 @@
 import { type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { type MockListening } from "./mock-listening";
 
-export function isPaperComplete(
-  plan: MockPlan,
-  questions: number,
-  written: number,
+/** `writing`: the learner has an unseen prompt for each written question the paper sits. */
+export function isPaperComplete({
   missingRecordings = 0,
-) {
+  plan,
+  questions,
+  writing,
+}: {
+  missingRecordings?: number;
+  plan: MockPlan;
+  questions: number;
+  writing: boolean;
+}) {
   return (
     plan.sections.length > 0 &&
     countPlannedQuestions(plan) === questions &&
-    plan.sections.reduce((sum, section) => sum + section.essays.length, 0) === written &&
-    missingRecordings === 0
+    missingRecordings === 0 &&
+    writing
   );
 }
 
 export function isScheduledPaperComplete(
   plan: MockPlan & { outline: MockPlan; audio: MockListening },
+  writing: boolean,
 ) {
-  return isPaperComplete(
+  return isPaperComplete({
+    missingRecordings: plan.outline.sections.filter(
+      (section) => section.name && plan.audio.unvoiced.has(section.name),
+    ).length,
     plan,
-    countPlannedQuestions(plan.outline),
-    plan.outline.sections.reduce((sum, section) => sum + section.essays.length, 0),
-    plan.outline.sections.filter((section) => section.name && plan.audio.unvoiced.has(section.name))
-      .length,
-  );
+    questions: countPlannedQuestions(plan.outline),
+    writing,
+  });
 }

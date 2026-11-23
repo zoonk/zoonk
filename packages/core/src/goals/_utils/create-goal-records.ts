@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type OnboardingDraft, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { claimBundleInWrite, openUsageLedgerInWrite } from "../../entitlements/bundle-claims";
@@ -7,6 +7,8 @@ import { type UsageDecision } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { linkGoalSources } from "../../library/sources/link-goal-sources";
+import { findOwnSources } from "../../library/sources/own-sources";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type CourseStart } from "../course-start-details";
@@ -86,6 +88,13 @@ type GoalRecord = {
   input: Pick<GoalCreateInput, "studyDays" | "studyTime" | "timeZone">;
   testedLanguage: string | null;
   userId: string;
+};
+
+type NewGoalRecord = GoalRecord & {
+  input: GoalCreateInput;
+  /** Material a request sent for its main goal, read only when the goal's card kept none. */
+  sentSourceIds?: readonly string[];
+  viewer: EntitlementViewer;
 };
 
 /** Runs in the caller's learner write, so a goal can be created atomically with other writes. */
@@ -176,11 +185,13 @@ async function pauseGoal(
   }
 }
 
+type CardMaterial = Pick<OnboardingDraft, "materialIntent" | "sourceIds">;
+
 /** An archived goal frees its place, so the card can start it again. */
 async function findCardGoal(
   tx: TransactionClient,
   { card, userId }: { card: CardPlace; userId: string },
-): Promise<{ card?: CardPlace; goalId?: string }> {
+): Promise<{ card?: CardPlace; goalId?: string; material?: CardMaterial }> {
   const draft = await tx.onboardingDraft.findFirst({
     select: {
       goals: {
@@ -189,11 +200,50 @@ async function findCardGoal(
         take: 1,
         where: { onboardingPlace: card.place, status: { not: "archived" } },
       },
+      materialIntent: true,
+      sourceIds: true,
     },
     where: { id: card.draftId, userId },
   });
 
-  return draft ? { card, goalId: draft.goals[0]?.id } : {};
+  if (!draft) {
+    return {};
+  }
+
+  const { goals, ...material } = draft;
+  const isMain = card.place === 0 && material.sourceIds.length > 0;
+
+  return { card, goalId: goals[0]?.id, material: isMain ? material : undefined };
+}
+
+/** The draft's choice wins over the details a client sends, so a card confirmed as is keeps it. */
+function withCardMaterialIntent({
+  draft,
+  material,
+}: {
+  draft: GoalDraft;
+  material: CardMaterial;
+}): GoalDraft {
+  const { materialIntent: _sent, ...details } = draft.details ?? {};
+
+  if (material.materialIntent === null) {
+    return { ...draft, details };
+  }
+
+  const withIntent = { ...details, materialIntent: material.materialIntent };
+  const needsPurpose = material.materialIntent === "understand" && !details.purpose;
+
+  return { ...draft, details: needsPurpose ? { ...withIntent, purpose: "other" } : withIntent };
+}
+
+/** What resolves is linked: material that no longer names one of the learner's uploads is left out. */
+async function linkMaterial(
+  tx: TransactionClient,
+  { goalId, sourceIds, userId }: { goalId: string; sourceIds: readonly string[]; userId: string },
+): Promise<void> {
+  const uploads = await findOwnSources({ db: tx, origin: "upload", sourceIds, userId });
+
+  await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: uploads.resolved, userId });
 }
 
 /**
@@ -203,9 +253,9 @@ async function findCardGoal(
  * twice, at once or after a lost response, gets the goal the first confirm made.
  */
 export async function createGoal(
-  record: GoalRecord & { input: GoalCreateInput; viewer: EntitlementViewer },
+  record: NewGoalRecord,
 ): Promise<UsageDecision | { goalId: string; status: "existing" }> {
-  const { draft, id, input, userId, viewer } = record;
+  const { draft, id, input, sentSourceIds = [], userId, viewer } = record;
   const isExplanation = draft.kind === "explain";
 
   return writeLearnerChange<UsageDecision, UsageDecision | { goalId: string; status: "existing" }>(
@@ -220,7 +270,7 @@ export async function createGoal(
         }
       }
 
-      const { card, goalId } = record.card
+      const { card, goalId, material } = record.card
         ? await findCardGoal(transaction, { card: record.card, userId })
         : {};
 
@@ -243,7 +293,18 @@ export async function createGoal(
         return unchanged(decision);
       }
 
-      await insertGoalWithPlan(transaction, { ...record, card });
+      await insertGoalWithPlan(transaction, {
+        ...record,
+        card,
+        draft: material && !isExplanation ? withCardMaterialIntent({ draft, material }) : draft,
+      });
+
+      await linkMaterial(transaction, {
+        goalId: id,
+        sourceIds: material?.sourceIds ?? sentSourceIds,
+        userId,
+      });
+
       return decision;
     },
   );

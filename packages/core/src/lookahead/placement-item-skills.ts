@@ -23,7 +23,9 @@ import {
   getConfirmingCount,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
+import { getWritingSkillIds } from "../learner/writing-skills";
 import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
+import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../library/items/item-field";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
@@ -65,12 +67,12 @@ type PickingGoal = Pick<Goal, "details"> & {
 async function readPickedSkillIds({
   forPlacement,
   goal,
-  listeningSkillIds,
+  nonObjectiveSkillIds,
   skillIds,
 }: {
   forPlacement: boolean;
   goal: PickingGoal | null;
-  listeningSkillIds: ReadonlySet<string>;
+  nonObjectiveSkillIds: ReadonlySet<string>;
   skillIds?: string[];
 }): Promise<string[]> {
   if (forPlacement && goal && !wantsPlacementQuestions(goal)) {
@@ -78,7 +80,7 @@ async function readPickedSkillIds({
   }
 
   if (skillIds) {
-    return [...new Set(skillIds)].filter((skillId) => !listeningSkillIds.has(skillId));
+    return [...new Set(skillIds)].filter((skillId) => !nonObjectiveSkillIds.has(skillId));
   }
 
   const graph = parsePlanGraph(goal?.plan?.graph);
@@ -88,7 +90,7 @@ async function readPickedSkillIds({
     focusAreas: parsePlanSettings(goal?.plan?.settings).focusAreas,
     graph,
     knownAreas: goal ? getKnownSubjects(goal) : [],
-    listeningSkillIds,
+    listeningSkillIds: nonObjectiveSkillIds,
     ownLevel: goal ? getOwnLevel({ goal }) : null,
     prerequisites: await loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
   });
@@ -132,10 +134,6 @@ type SkillItem = {
 
 type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & { items: SkillItem[] };
 
-function isAnswered(item: SkillItem): boolean {
-  return item.attempts.length > 0;
-}
-
 /** Questions incompatible with the goal's current format or option count do not satisfy coverage. */
 function toPick({
   coversQuick,
@@ -157,7 +155,7 @@ function toPick({
   writesQuick: boolean;
   writesTaps: boolean;
 }): Omit<PlacementItemPick, "usedSituations"> | null {
-  const unanswered = row.items.filter((item) => !(exceptAnswered && isAnswered(item)));
+  const unanswered = row.items.filter((item) => !(exceptAnswered && item.attempts.length > 0));
 
   const needsQuick =
     writesQuick && unanswered.filter((item) => coversQuick(item)).length < quickNeeded;
@@ -183,6 +181,21 @@ function toPick({
     tapsNeeded,
     targetLanguage: row.targetLanguage,
   };
+}
+
+function getNonObjectiveSkillIds(
+  goal: (PickingGoal & Parameters<typeof toListeningExam>[0]) | null,
+) {
+  const graph = parsePlanGraph(goal?.plan?.graph);
+
+  const blueprintStructure = goal?.examBlueprint
+    ? readBlueprintContent(goal.examBlueprint).structure
+    : null;
+
+  return new Set([
+    ...(goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : []),
+    ...getWritingSkillIds({ graph, structure: blueprintStructure }),
+  ]);
 }
 
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
@@ -218,11 +231,9 @@ export async function pickPlacementItemSkills({
     where: { id: goalId },
   });
 
-  const listeningSkillIds = goal
-    ? getListeningSkillIds({ exam: toListeningExam(goal), graph: parsePlanGraph(goal.plan?.graph) })
-    : new Set<string>();
+  const nonObjectiveSkillIds = getNonObjectiveSkillIds(goal);
 
-  const picked = await readPickedSkillIds({ forPlacement, goal, listeningSkillIds, skillIds });
+  const picked = await readPickedSkillIds({ forPlacement, goal, nonObjectiveSkillIds, skillIds });
 
   const blueprint = goal?.examBlueprint ?? null;
   const writesQuick = !formats || formats.some((format) => isQuickFormat(format));

@@ -48,7 +48,8 @@
   "generation_understanding_read": "4a8c4b11ba7529bbd2737bf884101dcd1a155e7ceac30319bce07e28c808703b",
   "generation_understanding_read_line_1": "ea5016f81705d2051b0761c73f87aa268442deac3f75fcfb68d124559b17805b",
   "generation_understanding_read_line_2": "d1e059192022cb548a862c6a7887b4aec3ed74126304d0f6337577608398ca66",
-  "generation_understanding_read_line_3": "18266c6fd6c90b751bc8dfe15ff72313ef4a26b6784db1ee1a1605f2495cb47d"
+  "generation_understanding_read_line_3": "18266c6fd6c90b751bc8dfe15ff72313ef4a26b6784db1ee1a1605f2495cb47d",
+  "generation_writing_prompt": "3fc2ef452d72c527d294cbd2452d35ea5b4fd6630673260ce952964e095c6c35"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">Hedefin için gerekenleri listeliyoruz…</string>
     <string name="generation_skills_line_2">Becerileri sıraya koyuyoruz…</string>
     <string name="generation_skills_line_3">Önemli bir şeyin eksik kalmadığını kontrol ediyoruz…</string>
+    <string name="generation_writing_prompt">Sorunu hazırlıyoruz</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Hedefini okuyoruz</string>
     <string name="generation_understanding_read">Hedefini inceliyoruz</string>

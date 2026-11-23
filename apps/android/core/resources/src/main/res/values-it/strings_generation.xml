@@ -48,7 +48,8 @@
   "generation_understanding_read": "a6b5c1c4b8429dfcee474848a325da0f2c6a34f462e52fbf52e00449e14bdd76",
   "generation_understanding_read_line_1": "149a018e00a16c5007faed7451a25c146bc44f70b50a776cc348704babffbe4d",
   "generation_understanding_read_line_2": "00d89cd0d2ae39270a0f534c8c5b5b54ac10ec4cfe65a0d1205ca2e8a38faccd",
-  "generation_understanding_read_line_3": "df3469f1dcb02c78f49dbd4770da76cba9b87130db396fd7387616148a3084c4"
+  "generation_understanding_read_line_3": "df3469f1dcb02c78f49dbd4770da76cba9b87130db396fd7387616148a3084c4",
+  "generation_writing_prompt": "53872d170e23fa7d952aa5eddbda725ae019e990322a9b890c3276f35efcbd7a"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">Stiamo elencando ciò che serve per il tuo obiettivo…</string>
     <string name="generation_skills_line_2">Stiamo mettendo in ordine le abilità…</string>
     <string name="generation_skills_line_3">Stiamo controllando che non manchi nulla di importante…</string>
+    <string name="generation_writing_prompt">Prepariamo la tua domanda</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">Stiamo leggendo il tuo obiettivo</string>
     <string name="generation_understanding_read">Stiamo leggendo il tuo obiettivo</string>

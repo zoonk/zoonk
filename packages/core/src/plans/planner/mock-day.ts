@@ -13,7 +13,7 @@ export function getSpendable(shape: DayShape): number {
     .filter((event) => event.kind !== "review" && !event.beside)
     .reduce((sum, event) => sum + event.minutes, 0);
 
-  return Math.max(0, shape.minutes - fixed - (shape.kept ?? 0));
+  return Math.max(0, shape.minutes - fixed - (shape.kept ?? 0) - (shape.writtenMinutes ?? 0));
 }
 
 export function fundDay({ minutes, shape }: { minutes: number; shape: DayShape }): DayShape {

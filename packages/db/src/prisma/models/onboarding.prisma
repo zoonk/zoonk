@@ -4,6 +4,12 @@ enum OnboardingDraftStatus {
   failed
 }
 
+/// What the learner chose to do with the material they attached on Start.
+enum MaterialIntent {
+  exam
+  understand
+}
+
 /// The same words typed again by the same learner reuse it for a day, since relative dates ("this
 /// year") change. It's theirs alone: never another learner's, and deleted with them.
 model GoalUnderstanding {
@@ -42,18 +48,22 @@ model InstrumentWaitlistEntry {
 /// Kept so a refresh shows the same screen. `understanding` is null while the run reads the words.
 /// Goals created from it carry its id as `details.onboardingId`, which is how a draft finds them.
 model OnboardingDraft {
-  id            String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId        String                @map("user_id") @db.Uuid
-  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  prompt        String
-  language      String                @db.VarChar(10)
-  timeZone      String                @map("time_zone")
-  status        OnboardingDraftStatus @default(understanding)
-  understanding Json?
-  runId         String?               @map("run_id")
-  createdAt     DateTime              @default(now()) @map("created_at")
-  updatedAt     DateTime              @default(now()) @updatedAt @map("updated_at")
-  goals         Goal[]
+  id             String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String                @map("user_id") @db.Uuid
+  user           User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt         String
+  language       String                @db.VarChar(10)
+  timeZone       String                @map("time_zone")
+  status         OnboardingDraftStatus @default(understanding)
+  understanding  Json?
+  runId          String?               @map("run_id")
+  /// The learner's material sent with the words, in the order they attached it. The reading reads
+  /// it, and the card's main goal is created with it.
+  sourceIds      String[]              @default([]) @map("source_ids") @db.Uuid
+  materialIntent MaterialIntent?       @map("material_intent")
+  createdAt      DateTime              @default(now()) @map("created_at")
+  updatedAt      DateTime              @default(now()) @updatedAt @map("updated_at")
+  goals          Goal[]
 
   @@index([userId, updatedAt])
   @@map("onboarding_drafts")

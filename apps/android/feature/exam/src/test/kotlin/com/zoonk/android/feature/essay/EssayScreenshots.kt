@@ -1,24 +1,22 @@
 package com.zoonk.android.feature.essay
 
-import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.feature.writing.WritingTaskName
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.runBlocking
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -31,8 +29,9 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
 /**
- * Review screenshots of the essay, written only on demand:
+ * Review screenshots of a written task, written only on demand:
  * `./gradlew :feature:exam:testDebugUnitTest --tests '*EssayScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ * The `-full` ones are as tall as their content, to read a whole result at once.
  */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -51,229 +50,186 @@ class EssayScreenshots {
     @Before
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
+    private val longAnswer = (ANSWER_TEXT + "\n\n").repeat(5).trim()
+
     private fun show(
         name: String,
-        drafted: Boolean = false,
-        tooShort: Boolean = false,
-        text: String = "",
-        grading: Boolean = false,
-        rewrite: Boolean = false,
-        secondStep: Boolean = false,
-        status: String = "active",
-        refusal: String? = null,
-        withTexts: Boolean = true,
-        fold: Boolean = false,
+        read: com.zoonk.api.models.Essay = essay(),
         dark: Boolean = false,
-        direction: LayoutDirection = LayoutDirection.Ltr,
+        fold: Boolean = false,
+        prepare: suspend (EssayViewModel) -> Unit = {},
+        screen: @Composable (EssayViewModel, EssayUi, com.zoonk.api.models.Essay) -> Unit,
     ) {
-        val read = essay(drafted, tooShort, status, withTexts)
-        val viewModel = essayViewModel(read, drafts.root, refusal)
+        val api = FakeEssayApi(read)
+        val viewModel = essayViewModel(api, drafts.root)
+        runBlocking { prepare(viewModel) }
         rule.waitForIdle()
-        if (rewrite) viewModel.rewrite()
-        if (text.isNotEmpty()) viewModel.write(text)
-        if (grading || refusal != null) viewModel.send()
-
         rule.setContent {
-            ZoonkTheme(darkTheme = dark, moreContrast = dark) {
-                CompositionLocalProvider(LocalLayoutDirection provides direction) {
-                    val ui by viewModel.ui.collectAsStateWithLifecycle()
-                    val navigator = rememberAppNavigator()
-                    val grade = ui.grade
-                    if (ui.closed && grade == null) {
-                        SkippedEssay(read, navigator)
-                    } else if ((ui.mode == EssayMode.Grade || ui.closed) && grade != null) {
-                        EssayGradeSteps(
-                            read,
-                            grade,
-                            finished = false,
-                            closed = ui.closed,
-                            announce = false,
-                            finishing = false,
-                            finishFailures = 0,
-                            viewModel,
-                            navigator,
-                        )
-                    } else {
-                        EssayWrite(read, ui, finishing = false, finishFailures = 0, viewModel, navigator)
-                    }
-                }
+            ZoonkTheme(darkTheme = dark) {
+                val ui by viewModel.ui.collectAsStateWithLifecycle()
+                screen(viewModel, ui, read)
             }
         }
         rule.mainClock.advanceTimeBy(1_000)
-        if (secondStep) rule.onNodeWithText("Continue").performClick()
         if (fold) rule.unfoldBook(folds)
-        write(name)
-    }
-
-    private fun write(name: String) {
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        writeRender(File(folder, "$name.png"), bitmap)
+        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    private fun question(
+        name: String,
+        read: com.zoonk.api.models.Essay = essay(),
+    ) = show(name, read) { viewModel, ui, essay -> WritingQuestionScreen(essay, ui, viewModel, rememberAppNavigator()) }
+
+    private fun writing(
+        name: String,
+        text: String,
+        fold: Boolean = false,
+    ) = show(name, fold = fold, prepare = {
+        it.startWriting()
+        it.write(text)
+    }) { viewModel, ui, essay -> WriteScreen(essay, ui, viewModel, rememberAppNavigator()) }
+
+    private fun result(
+        name: String,
+        grade: String,
+        dark: Boolean = false,
+        status: String = "active",
+    ) = show(name, essay(graded = listOf(grade), status = status), dark) { viewModel, ui, essay ->
+        ui.latest?.let { WritingResultScreen(essay, ui, it, false, 0, viewModel, rememberAppNavigator()) {} }
     }
 
     @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneWrite() = show("phone-write", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun question() = question("03-question")
 
     @Test
-    @Config(qualifiers = "pt-rBR-w411dp-h891dp-xxhdpi")
-    fun phoneWriteInPortuguese() = show("phone-write-pt", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun questionWithADraft() = question("03-question-continue", essay(draft = "Half an answer."))
 
     @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneGrading() = show("phone-grading", text = "A mobilidade urbana é um desafio.", grading = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneSignUpRequired() = show("phone-sign-up-required", text = "A mobilidade urbana é um desafio.", refusal = "SIGN_UP_REQUIRED")
-
-    @Test
-    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
-    fun tabletWrite() = show("tablet-write", text = "A mobilidade urbana é um dos maiores desafios das cidades brasileiras.")
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneGrade() = show("phone-grade", drafted = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneNextStep() = show("phone-next-step", drafted = true, secondStep = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneNextStepLargeFont() {
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun questionAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        show("phone-next-step-font200", drafted = true, secondStep = true)
+        question("03-question-font200")
     }
 
     @Test
-    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
-    fun tabletGrade() = show("tablet-grade", drafted = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun writing() = writing("04-writing", longAnswer)
 
     @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneClosedNextStep() = show("phone-closed-next-step", drafted = true, secondStep = true, status = "completed")
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun writingPastTheLimit() = writing("04-writing-over-limit", (longAnswer + "\n\n").repeat(3))
 
     @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneSkipped() = show("phone-skipped", status = "skipped")
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneClosedTooShort() = show("phone-closed-too-short", drafted = true, tooShort = true, status = "completed")
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneRewrite() = show("phone-rewrite", drafted = true, rewrite = true)
+    @Config(qualifiers = "w320dp-h568dp-xhdpi")
+    fun writingOnASmallPhone() = writing("04-writing-small", longAnswer)
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
-    fun tabletRewrite() = show("tablet-rewrite", drafted = true, rewrite = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneTooShort() = show("phone-too-short", drafted = true, tooShort = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneRewriteTooShort() = show("phone-rewrite-too-short", drafted = true, tooShort = true, rewrite = true)
+    fun writingBesideTheQuestion() = writing("04-writing-expanded", longAnswer)
 
     @Test
     @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWrite() = show("essay-book-write", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true)
+    fun writingOnABook() = writing("04-writing-book", longAnswer, fold = true)
 
     @Test
-    @Config(qualifiers = "w707dp-h823dp-xhdpi")
-    fun smallBookWrite() = show("essay-small-book-write", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true)
+    @Config(qualifiers = "w390dp-h2400dp-xxhdpi")
+    fun resultWithPoints() = result("05-result-scale-full", POINTS_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWriteWithTexts() = show("essay-book-write-texts", text = "A mobilidade urbana é um desafio.", fold = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun resultWithPointsFirstScreen() = result("05-result-scale", POINTS_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookRewrite() = show("essay-book-rewrite", drafted = true, rewrite = true, withTexts = false, fold = true)
+    @Config(qualifiers = "w390dp-h2400dp-night-xxhdpi")
+    fun resultWithPointsDark() = result("05b-result-scale-dark-full", POINTS_RESULT, dark = true)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookGrade() = show("essay-book-grade", drafted = true, fold = true)
+    @Config(qualifiers = "w390dp-h2400dp-xxhdpi")
+    fun resultWithLevels() = result("06-result-levels-full", LEVELS_RESULT)
 
     @Test
-    @Config(qualifiers = "w707dp-h823dp-xhdpi")
-    fun smallBookGrade() = show("essay-small-book-grade", drafted = true, fold = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun resultWithLevelsFirstScreen() = result("06-result-levels", LEVELS_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookNextStep() = show("essay-book-next-step", drafted = true, secondStep = true, fold = true)
+    @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
+    fun resultZeroed() = result("05-result-zeroed-full", ZEROED_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookTooShort() = show("essay-book-too-short", drafted = true, tooShort = true, fold = true)
-
-    @Test
-    @Config(qualifiers = "w707dp-h823dp-xhdpi")
-    fun smallBookTooShort() = show("essay-small-book-too-short", drafted = true, tooShort = true, fold = true)
-
-    @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookSkipped() = show("essay-book-skipped", status = "skipped", fold = true)
-
-    @Test
-    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
-    fun bookSkippedDarkMoreContrast() = show("essay-book-skipped-dark-more-contrast", status = "skipped", fold = true, dark = true)
-
-    @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookSkippedAtTwiceTheFontSize() {
+    @Config(qualifiers = "w390dp-h2400dp-xxhdpi")
+    fun resultAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        show("essay-book-skipped-font200", status = "skipped", fold = true)
+        result("06-result-levels-font200", LEVELS_RESULT)
     }
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookSkippedRightToLeft() = show("essay-book-skipped-rtl", status = "skipped", fold = true, direction = LayoutDirection.Rtl)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun refused() =
+        show("12-grades-used-up") { _, _, essay ->
+            WritingRefused(
+                com.zoonk.android.feature.writing
+                    .writingTaskTitle(drill = false, task = null, fallback = null, lines = 30) to
+                    essay.pacing.minutes.toInt(),
+                busy = false,
+                onContinue = {},
+                onClose = {},
+            )
+        }
 
     @Test
-    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
-    fun tabletSkipped() = show("essay-tablet-skipped", status = "skipped")
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun resultDone() = result("06-result-levels-done", DONE_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-night-xhdpi")
-    fun bookWriteDarkMoreContrast() =
-        show("essay-book-write-dark-more-contrast", text = "A mobilidade urbana é um desafio.", withTexts = false, fold = true, dark = true)
+    @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
+    fun resultPastTheLimit() = result("05-result-over-limit-full", LIMIT_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookRewriteAtTwiceTheFontSize() {
-        RuntimeEnvironment.setFontScale(2f)
-        show("essay-book-rewrite-font200", drafted = true, rewrite = true, fold = true)
-    }
+    @Config(qualifiers = "w390dp-h1600dp-xxhdpi")
+    fun resultZeroedWithItsKind() = result("05-result-zeroed-kind-full", ZEROED_KIND_RESULT)
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookWriteRightToLeft() =
-        show("essay-book-write-texts-rtl", text = "A mobilidade urbana é um desafio.", fold = true, direction = LayoutDirection.Rtl)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun taskRemoved() = show("13-task-removed") { _, _, _ -> WritingRemoved("Written answer", onClose = {}) }
 
     @Test
-    @Config(qualifiers = "w707dp-h823dp-xhdpi")
-    fun smallBookWriteWithTexts() = show("essay-small-book-write-texts", text = "A mobilidade urbana é um desafio.", fold = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun questionFailed() =
+        show("11b-question-failed") { _, _, _ -> WritingFailed("Written answer", drill = false, busy = false, onRetry = {}, onClose = {}) }
 
     @Test
-    @Config(qualifiers = "w700dp-h840dp-xhdpi")
-    fun mediumWrite() = show("essay-medium-write", text = "A mobilidade urbana é um desafio.")
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun exerciseFailed() =
+        show(
+            "11c-drill-exercise-failed",
+        ) { _, _, _ -> WritingFailed("Writing practice", drill = true, busy = false, onRetry = {}, onClose = {}) }
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookClosedTooShort() = show("essay-book-closed-too-short", drafted = true, tooShort = true, status = "completed", fold = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun signUpRequired() = show("11d-sign-up-required") { _, _, _ -> WritingSignUp("Written answer", onCreateAccount = {}, onClose = {}) }
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookClosedGrade() = show("essay-book-closed-grade", drafted = true, status = "completed", fold = true)
+    @Config(qualifiers = "w393dp-h851dp")
+    fun reopenedBeforeStart() =
+        show("03b-question-before-start") { _, _, _ ->
+            WritingAvailable(
+                header = "Written answer",
+                drill = false,
+                task = RefusedTask("A written question", 70, name = WritingTaskName(30, 1, 2, distinctLines = true)),
+                busy = false,
+                onWrite = {},
+                onClose = {},
+            )
+        }
 
     @Test
-    @Config(qualifiers = "w852dp-h883dp-xhdpi")
-    fun bookGradeAtTwiceTheFontSize() {
-        RuntimeEnvironment.setFontScale(2f)
-        show("essay-book-grade-font200", drafted = true, fold = true)
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun draftConflict() {
+        rule.setContent { ZoonkTheme { DraftConflictDialog(onKeepThis = {}, onUseOther = {}) } }
+        rule.waitForIdle()
+        writeRender(File(folder, "04c-draft-conflict.png"), rule.onNode(isDialog()).captureRender().asAndroidBitmap())
     }
 }

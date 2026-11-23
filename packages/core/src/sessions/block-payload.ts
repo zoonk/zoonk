@@ -2,6 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { writingBlockSchema, writingPacingSchema } from "../exams/essays/writing-contract";
 import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
@@ -38,6 +39,7 @@ const checkpointSchema = z.object({
   /** A boss lost on an earlier day, back after reinforcement lessons. */
   rematch: z.boolean().default(false),
   timeLimitMinutes: z.number().int().nullable(),
+  written: z.literal(true).optional(),
 });
 
 /** Freeze question ids at build time so revisits ask the same questions. */
@@ -112,11 +114,19 @@ const blockPayloadSchema = z.object({
   topics: z.array(z.string()).default([]),
   /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
+  writing: writingBlockSchema.optional(),
+  writingLessonId: uuidSchema().optional(),
+  writingPacing: writingPacingSchema.shape.source.optional(),
+  writingPlacement: z.boolean().optional(),
 });
 
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;
 export type BlockCapsule = z.infer<typeof capsuleSchema>;
 export type BlockCheckpoint = z.infer<typeof checkpointSchema>;
+
+export function hasWritingProgress({ writing }: BlockPayload): boolean {
+  return Boolean(writing?.admissionId || writing?.draft);
+}
 
 const EMPTY_BLOCK_PAYLOAD: BlockPayload = blockPayloadSchema.parse({});
 

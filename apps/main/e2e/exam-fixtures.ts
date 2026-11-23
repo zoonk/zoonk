@@ -12,7 +12,7 @@ const PASS_MARK = 4;
 
 const MOCK_PLAN_POSITION = 10_000;
 
-export async function findTodaySession({ goalId, userId }: { goalId: string; userId: string }) {
+async function findTodaySession({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.studySession.findFirstOrThrow({
     orderBy: { localDate: "desc" },
     where: { goalId, userId },

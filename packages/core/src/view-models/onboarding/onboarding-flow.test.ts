@@ -341,13 +341,9 @@ describe("onboarding a new goal", () => {
 
     const [goal] = result.status === "created" ? result.goals : [];
 
-    const [mine, others] = await Promise.all([
-      prisma.learnerSource.findFirstOrThrow({ where: { sourceId: notes.id, userId: user.id } }),
-      prisma.learnerSource.findFirstOrThrow({ where: { sourceId: theirs.id, userId: other.id } }),
-    ]);
-
-    expect(mine.goalId).toBe(goal?.id);
-    expect(others.goalId).toBeNull();
+    await expect(
+      prisma.goalSource.findMany({ select: { sourceId: true }, where: { goalId: goal?.id } }),
+    ).resolves.toStrictEqual([{ sourceId: notes.id }]);
   });
 
   it("lists only what's still missing, then the profile, placement, the time and the plan", async () => {

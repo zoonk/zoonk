@@ -27,7 +27,7 @@ export function countSkippableItems({
   plan: TestOutPlan;
   skills: readonly Pick<GoalSkillNode, "id">[];
 }): number {
-  const ids = new Set(skills.map((skill) => skill.id));
+  const ids = new Set(skills.flatMap(({ id }) => (plan.writtenSkillIds?.has(id) ? [] : [id])));
 
   return plan.items.filter(
     (item) =>
@@ -35,6 +35,24 @@ export function countSkippableItems({
       item.skillIds.length > 0 &&
       item.skillIds.every((skillId) => ids.has(skillId)),
   ).length;
+}
+
+export function getChapterTestOutSkills({
+  chapterId,
+  plan,
+}: Parameters<typeof getChapterSkills>[0]) {
+  const chapterSkills = getChapterSkills({ chapterId, plan });
+
+  if (chapterSkills.length === 0) {
+    return { status: "notFound" as const };
+  }
+
+  const skills = chapterSkills.filter(({ id }) => !plan.writtenSkillIds?.has(id));
+  const skippable = countSkippableItems({ plan, skills });
+
+  return skippable > 0
+    ? { skills, skippable, status: "ready" as const }
+    : { status: "nothingToSkip" as const };
 }
 
 /** Includes general and matching-exam questions, never another exam's. */

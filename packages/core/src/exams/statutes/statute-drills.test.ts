@@ -133,7 +133,7 @@ describe("statute drills", () => {
 
     await prisma.source.updateMany({
       data: { kind: "upload", ownerId: goal.userId, visibility: "private" },
-      where: { learnerSources: { some: { goalId: goal.id } }, title: { startsWith: "Lei" } },
+      where: { goalSources: { some: { goalId: goal.id } }, title: { startsWith: "Lei" } },
     });
 
     await expect(loadStatuteDrillTargets(goal.id)).resolves.toStrictEqual([]);

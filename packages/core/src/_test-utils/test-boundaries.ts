@@ -62,7 +62,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/goals/find-exam-date": { findExamDate: vi.fn() },
   "@zoonk/ai/tasks/goals/understand-goal": { understandGoal: vi.fn() },
   "@zoonk/ai/tasks/grading/explain-wrong-answer": { explainWrongAnswer: vi.fn() },
-  "@zoonk/ai/tasks/grading/grade-essay": { gradeEssay: vi.fn() },
+  "@zoonk/ai/tasks/grading/grade-essay": { gradeWritingEvidence: vi.fn() },
   "@zoonk/ai/tasks/grading/grade-typed-answer": { gradeTypedAnswer: vi.fn(gradeForReal) },
   "@zoonk/ai/tasks/icons/image": { generateLessonIconImage: vi.fn() },
   "@zoonk/ai/tasks/icons/match": { matchLessonIcons: vi.fn() },
@@ -72,6 +72,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/images/generate": { generateLessonImage: vi.fn() },
   "@zoonk/ai/tasks/images/scene": { generateImageScene: vi.fn() },
   "@zoonk/ai/tasks/items/work-field": { classifyWorkField: vi.fn() },
+  "@zoonk/ai/tasks/items/write-writing-prompt": { writeWritingPrompt: vi.fn() },
   "@zoonk/ai/tasks/language/alphabet-lesson": {
     fixAlphabetLesson: vi.fn(),
     generateAlphabetLesson: vi.fn(),

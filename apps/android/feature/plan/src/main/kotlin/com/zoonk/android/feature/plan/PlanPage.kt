@@ -43,7 +43,9 @@ import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
+import com.zoonk.android.feature.goalcontent.WriteNow
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
+import com.zoonk.android.feature.goalcontent.rememberWriteNow
 import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.feature.language.alphabetSkip
 import com.zoonk.android.feature.speaking.speakingMockStart
@@ -80,6 +82,8 @@ class PlanLinks(
     private val navigator: AppNavigator,
     private val page: PlanPageState,
     private val openFarTopic: ((FarTopic) -> Unit)? = null,
+    /** "Write" where the estimate waits on the written part. */
+    val writeNow: WriteNow? = null,
     private val leaving: () -> Unit = {},
 ) {
     val hasExam: Boolean get() = page.isExam
@@ -132,7 +136,7 @@ class PlanLinks(
         }
 
     /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
-    fun closing(close: () -> Unit) = PlanLinks(navigator, page, openFarTopic) { close() }
+    fun closing(close: () -> Unit) = PlanLinks(navigator, page, openFarTopic, writeNow) { close() }
 
     fun open(route: AppRoute) {
         leaving()
@@ -222,7 +226,7 @@ internal fun PlanPage(
     }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
     var studyingEverything by rememberSaveable { mutableStateOf(focus == STUDY_EVERYTHING && fullCourse(page) != null) }
-    val links = PlanLinks(navigator, page, farTopics::open)
+    val links = PlanLinks(navigator, page, farTopics::open, rememberWriteNow(app, page.goal.id, navigator))
     val edits =
         PlanEdits(
             pending = pending,

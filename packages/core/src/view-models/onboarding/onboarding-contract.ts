@@ -14,7 +14,7 @@ import {
 } from "../../goals/country-contract";
 import { type DaySplit } from "../../goals/daily-budget";
 import { type GoalDraft, type GoalView } from "../../goals/goal-contract";
-import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
+import { MAX_GOAL_PROMPT_LENGTH, MAX_GOAL_SOURCES } from "../../goals/goal-input-limits";
 import { reasonAnswerSchema } from "../../language/aims/language-aim-schemas";
 import {
   type LanguageAimView,
@@ -34,6 +34,10 @@ const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 
+export const MATERIAL_INTENTS = ["exam", "understand"] as const;
+
+export type MaterialIntent = (typeof MATERIAL_INTENTS)[number];
+
 export const goalUnderstandingInputSchema = z
   .object({
     goal: z
@@ -47,9 +51,28 @@ export const goalUnderstandingInputSchema = z
       .min(MIN_LANGUAGE_LENGTH)
       .max(MAX_LANGUAGE_LENGTH)
       .meta({ description: "The learner's language, for titles and notes" }),
+    materialIntent: z
+      .enum(MATERIAL_INTENTS)
+      .optional()
+      .meta({
+        description:
+          "What the learner wants from the material in `sourceIds`: `exam` to prepare for a test on it, `understand` to learn what it covers. Left out when they didn't choose; refused without `sourceIds`",
+      }),
+    sourceIds: z
+      .array(uuidSchema())
+      .max(MAX_GOAL_SOURCES)
+      .optional()
+      .meta({
+        description:
+          "Material the learner attached (`POST /v1/uploads`), in the order they added it. The goal is read together with it, and the draft's main goal is created with it, so POST /goals needs no `sourceIds` for this draft. An id `POST /v1/uploads` returned keeps working after the upload is merged into a shared copy. When an id names none of the learner's uploads, the start is refused with 422 `MATERIAL_UNAVAILABLE` before anything is charged; a repeated id counts once",
+      }),
     timeZone: timeZoneSchema,
   })
   .strict()
+  .refine((input) => !input.materialIntent || Boolean(input.sourceIds?.length), {
+    message: "A material intent needs the material in sourceIds",
+    path: ["materialIntent"],
+  })
   .meta({ id: "GoalUnderstandingInput" });
 
 export type GoalUnderstandingInput = z.infer<typeof goalUnderstandingInputSchema>;
@@ -110,6 +133,8 @@ export type GoalUnderstandingView =
 
 export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed"] as const;
 
+export type DraftSource = { id: string; title: string };
+
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
   /**
@@ -124,7 +149,13 @@ export type OnboardingDraftView = {
   generationId: string | null;
   goalId: string | null;
   id: string;
+  /** What the learner wants from `sources`; null when they didn't choose or sent none. */
+  materialIntent: MaterialIntent | null;
+  /** Material sent with the words that can't be read: it no longer names one of the learner's uploads, or holds no text. */
+  materialMissing: boolean;
   prompt: string;
+  /** The material read with the words, in the order the learner attached it; `title` is "" for pasted text. */
+  sources: DraftSource[];
   status: (typeof ONBOARDING_DRAFT_STATUSES)[number];
   /** Counts the learner's today, which a `targetDate` fix must come after. */
   timeZone: string;

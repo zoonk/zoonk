@@ -14,6 +14,8 @@ import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeMove
@@ -156,6 +158,39 @@ class ChallengeViewModelTest {
             assertEquals(null, viewModel.ui.value.problem)
             assertEquals(false, viewModel.ui.value.starting)
             assertEquals(before + 1, reads)
+        }
+
+    @Test
+    fun aScheduledMockWaitingForASpecialtyShowsTheNamedChoice() =
+        runTest(dispatcher) {
+            start = {
+                throw ApiException(
+                    ApiError.Unavailable,
+                    "EXAM_CHOICE_REQUIRED",
+                    status = 409,
+                    details = ApiJson.parseToJsonElement("""{"choiceGroups":["Specialty"]}"""),
+                )
+            }
+            val viewModel = viewModel()
+
+            viewModel.start()
+            advanceUntilIdle()
+
+            assertEquals(listOf("Specialty"), viewModel.ui.value.choiceGroups)
+            assertNull(viewModel.ui.value.opening)
+        }
+
+    @Test
+    fun aScheduledMockCanRequireAnAccount() =
+        runTest(dispatcher) {
+            start = { throw ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", status = 403) }
+            val viewModel = viewModel()
+
+            viewModel.start()
+            advanceUntilIdle()
+
+            assertEquals(Limit.SignUpRequired, viewModel.ui.value.refused)
+            assertNull(viewModel.ui.value.opening)
         }
 
     @Test

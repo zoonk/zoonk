@@ -111,54 +111,44 @@ fun SettingsScreen(
                     )
                 }
 
-                Column {
-                    PageRow(
-                        title = stringResource(R.string.settings_preferences),
-                        selected = navigator.currentRoute == AppRoute.Preferences,
-                    ) { open(AppRoute.Preferences) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.reminders_title),
-                        selected = navigator.currentRoute == AppRoute.Reminders,
-                        summary = reminder.value?.let { remindersSummary(it) },
-                    ) { open(AppRoute.Reminders) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.profile_questions_title),
-                        selected = navigator.currentRoute == AppRoute.AboutYou || navigator.currentRoute is AppRoute.ProfileQuestionEdit,
-                    ) { open(AppRoute.AboutYou) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.settings_memory),
-                        selected = navigator.currentRoute == AppRoute.Memory,
-                    ) { open(AppRoute.Memory) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.settings_privacy),
-                        selected = navigator.currentRoute == AppRoute.PrivacySettings,
-                    ) { open(AppRoute.PrivacySettings) }
-                }
+                val current = navigator.currentRoute
+                PageGroup(
+                    listOf(
+                        SettingsPage(stringResource(R.string.settings_preferences), AppRoute.Preferences, current),
+                        SettingsPage(
+                            stringResource(R.string.reminders_title),
+                            AppRoute.Reminders,
+                            current,
+                            summary = reminder.value?.let { remindersSummary(it) },
+                        ),
+                        SettingsPage(
+                            stringResource(R.string.profile_questions_title),
+                            AppRoute.AboutYou,
+                            current,
+                            selected = current == AppRoute.AboutYou || current is AppRoute.ProfileQuestionEdit,
+                        ),
+                        SettingsPage(stringResource(R.string.settings_memory), AppRoute.Memory, current),
+                        SettingsPage(stringResource(R.string.settings_privacy), AppRoute.PrivacySettings, current),
+                    ),
+                    open,
+                )
 
-                Column {
-                    PageRow(
-                        title = stringResource(R.string.account_menu_subscription),
-                        selected = navigator.currentRoute == AppRoute.Subscription,
-                        summary =
-                            stringResource(R.string.subscription_plus).takeIf {
-                                account != null && learner.value?.tier == LearnerSummary.Tier.PLUS
-                            },
-                    ) { open(AppRoute.Subscription) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.account_menu_help),
-                        selected = navigator.currentRoute == AppRoute.Help,
-                    ) { open(AppRoute.Help) }
-                    ListDivider()
-                    PageRow(
-                        title = stringResource(R.string.settings_licenses),
-                        selected = navigator.currentRoute == AppRoute.Licenses,
-                    ) { open(AppRoute.Licenses) }
-                }
+                PageGroup(
+                    listOf(
+                        SettingsPage(
+                            stringResource(R.string.account_menu_subscription),
+                            AppRoute.Subscription,
+                            current,
+                            summary =
+                                stringResource(R.string.subscription_plus).takeIf {
+                                    account != null && learner.value?.tier == LearnerSummary.Tier.PLUS
+                                },
+                        ),
+                        SettingsPage(stringResource(R.string.account_menu_help), AppRoute.Help, current),
+                        SettingsPage(stringResource(R.string.settings_licenses), AppRoute.Licenses, current),
+                    ),
+                    open,
+                )
 
                 if (account != null) {
                     ListRow(
@@ -183,6 +173,29 @@ fun SettingsScreen(
 @Composable
 private fun remindersSummary(reminder: StudyReminder): String =
     if (reminder.email.on || reminder.push.on) reminderTime(reminder.time) else stringResource(R.string.settings_reminders_off)
+
+/** A page in the hub, [selected] while it's the one shown beside the hub. */
+private class SettingsPage(
+    val title: String,
+    val route: AppRoute,
+    current: AppRoute,
+    val summary: String? = null,
+    val selected: Boolean = current == route,
+)
+
+/** Main's `SettingsGroup`: its pages with hairlines between them, gone beside the page shown. */
+@Composable
+private fun PageGroup(
+    pages: List<SettingsPage>,
+    onOpen: (AppRoute) -> Unit,
+) {
+    Column {
+        pages.forEachIndexed { index, page ->
+            if (index > 0) ListDivider(besideHighlight = page.selected || pages[index - 1].selected)
+            PageRow(page.title, page.selected, page.summary) { onOpen(page.route) }
+        }
+    }
+}
 
 /**
  * A settings page in the hub (main's `SettingsGroup` row): its name, and at its end a [summary] in

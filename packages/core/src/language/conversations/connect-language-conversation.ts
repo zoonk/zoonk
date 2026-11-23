@@ -36,12 +36,15 @@ function getCallTimes(
 
 export type ConnectLanguageConversationResult =
   | LiveCallRefusal
-  | Exclude<StartStudyBlockResult, { status: "preparing" | "ready" }>
+  | Exclude<StartStudyBlockResult, { status: "needsChoice" | "preparing" | "ready" }>
   | { setup: LanguageConversationSetup; status: "ready" };
 
 async function startCheckpointBlock(
   studyBlockId: string | null,
-): Promise<Exclude<StartStudyBlockResult, { status: "preparing" | "ready" }> | null> {
+): Promise<Exclude<
+  StartStudyBlockResult,
+  { status: "needsChoice" | "preparing" | "ready" }
+> | null> {
   if (!studyBlockId) {
     return null;
   }
@@ -58,7 +61,7 @@ async function startCheckpointBlock(
     sessionId: block.sessionId,
   });
 
-  if (started.status === "preparing") {
+  if (started.status === "preparing" || started.status === "needsChoice") {
     throw new Error(`Language checkpoint ${studyBlockId} was treated as a scheduled mock.`);
   }
 

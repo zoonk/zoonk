@@ -1,4 +1,4 @@
-import { mockAnswerSchema } from "@zoonk/core/exams/mocks/answer-contract";
+import { mockAnswerEditSchema, mockAnswerSchema } from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { z } from "zod";
@@ -7,9 +7,12 @@ import { deviceStorage } from "../_utils/device-storage";
 const unsentMockDraftSchema = z.object({
   answer: mockAnswerSchema.nullable(),
   durationMs: z.int().min(0),
+  edit: mockAnswerEditSchema.optional(),
   flagged: z.boolean(),
   itemId: z.string().min(1),
 });
+
+export type PendingMockDraft = MockDraft & Pick<z.infer<typeof unsentMockDraftSchema>, "edit">;
 
 const storedMockDraftSchema = z.object({ draft: unsentMockDraftSchema, keptAt: z.int().min(0) });
 
@@ -29,10 +32,12 @@ function getDraftKey({ blockId, itemId }: { blockId: string; itemId: string }): 
   return `${getPrefix(blockId)}${itemId}`;
 }
 
-function isSameDraft(first: MockDraft, second: MockDraft): boolean {
+function isSameDraft(first: PendingMockDraft, second: PendingMockDraft): boolean {
   return (
     first.durationMs === second.durationMs &&
     first.flagged === second.flagged &&
+    first.edit?.writer === second.edit?.writer &&
+    first.edit?.order === second.edit?.order &&
     JSON.stringify(first.answer) === JSON.stringify(second.answer)
   );
 }
@@ -47,7 +52,7 @@ export function keepUnsentMockDraft({
   keepPlace,
 }: {
   blockId: string;
-  draft: MockDraft;
+  draft: PendingMockDraft;
   keepPlace: boolean;
 }) {
   const key = getDraftKey({ blockId, itemId: draft.itemId });
@@ -58,7 +63,13 @@ export function keepUnsentMockDraft({
 }
 
 /** Removes the question's entry only if storage still holds this exact version. */
-export function dropUnsentMockDraft({ blockId, draft }: { blockId: string; draft: MockDraft }) {
+export function dropUnsentMockDraft({
+  blockId,
+  draft,
+}: {
+  blockId: string;
+  draft: PendingMockDraft;
+}) {
   const key = getDraftKey({ blockId, itemId: draft.itemId });
   const parsed = storedMockDraftSchema.safeParse(deviceStorage.getJson(key));
 
@@ -74,7 +85,7 @@ export function restoreUnsentMockDrafts({
 }: {
   blockId: string;
   view: MockView;
-}): MockDraft[] {
+}): PendingMockDraft[] {
   const keys = deviceStorage.keys(getPrefix(blockId));
 
   if (view.status === "finished" || view.status === "expired") {

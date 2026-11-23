@@ -22,14 +22,11 @@ export const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 export const MAX_OPTIONS = OPTION_LETTERS.length;
 /** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
 const MAX_DECIMAL_PLACES = 4;
-/** An AP scoring guideline's row is worth up to 6 points (a long essay's evidence row is 3 or 4). */
-const MAX_RUBRIC_ROW_POINTS = 6;
 
-/** `points` is null when the exam's rubric doesn't give each row its own whole points. */
 const essayRubricRowSchema = z.object({
   criterion: z.string(),
   description: z.string(),
-  points: z.number().int().min(1).max(MAX_RUBRIC_ROW_POINTS).nullable(),
+  points: z.number().positive().nullable(),
 });
 
 const difficulty = z.enum(["easy", "medium", "hard"]);

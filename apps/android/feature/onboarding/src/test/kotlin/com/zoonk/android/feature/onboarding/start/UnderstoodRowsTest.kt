@@ -76,6 +76,15 @@ class UnderstoodRowsTest {
     }
 
     @Test
+    fun onlyANamedExamWaitsForItsNotice() {
+        val classTest = dateRow(understanding(goalsUnderstanding()))
+        val named = dateRow(understanding(goalsUnderstanding(details = """{"examName":"OAB"}""")))
+
+        assertEquals("Know the date? Set it here.", classTest.note)
+        assertEquals("The official date comes out in the exam's notice. Know it already? Set it here.", named.note)
+    }
+
+    @Test
     fun anExamHeldSeveralTimesAYearAsksWhichSitting() {
         val dates = listOf("2026-12-05", "2027-03-06", "2027-06-05", "2027-09-04").joinToString(",") { day(it) }
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[$dates]")))

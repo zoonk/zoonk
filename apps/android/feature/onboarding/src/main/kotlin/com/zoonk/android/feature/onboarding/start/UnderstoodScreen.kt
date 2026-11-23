@@ -92,6 +92,7 @@ internal fun ColumnScope.UnderstoodScreen(
     activeGoalsLeft: Long?,
     timeZone: String,
     material: List<String>,
+    materialMissing: Boolean,
     hasAccount: Boolean,
     isCreating: Boolean,
     error: GoalError?,
@@ -111,7 +112,7 @@ internal fun ColumnScope.UnderstoodScreen(
     var clearedCountry by rememberSaveable { mutableStateOf(listOf<Int>()) }
     val firstGoalRows =
         listOfNotNull(
-            rows.materialRow(material),
+            rows.materialRow(material, materialMissing),
             rows.scheduleRow(understanding.schedule, minutesSaid(understanding.goals.firstOrNull())),
         )
     val startable = understanding.startableGoals(activeGoalsLeft)
@@ -319,7 +320,13 @@ private fun FactRow(
                 Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.Bottom) {
-                        Text(row.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
+                        if (row.value.isNotEmpty()) {
+                            Text(
+                                row.value,
+                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
                         row.badge?.let {
                             Text(
                                 it,

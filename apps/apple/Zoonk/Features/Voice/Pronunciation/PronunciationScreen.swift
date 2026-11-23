@@ -139,7 +139,10 @@ private struct PronunciationRoundView: View {
       }
     case .word(_, let state):
       if let word = round.current {
-        QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 24) {
+        QuestionSpread(
+          readableWidth: PracticeLayout.readableWidth, spacing: 24, note: note(state)?.note,
+          usesPracticeBar: true
+        ) {
           EmptyView()
         } stimulus: {
           RoundMeter(round: round)
@@ -156,7 +159,6 @@ private struct PronunciationRoundView: View {
 
             wordActions(round, state: state)
           }
-          .practiceBar(note: note(state)?.note)
         }
         .taskOptions(
           isShown: showsOptions(state),

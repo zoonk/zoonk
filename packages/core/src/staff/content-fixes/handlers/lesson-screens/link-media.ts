@@ -2,6 +2,8 @@ import { type TransactionClient } from "@zoonk/db";
 import { PlanInputWriteConflictError } from "../../../../library/_utils/plan-input-write";
 import { toAudioData } from "../../../../library/language/_utils/audio-data";
 import { readSavedLessonMap } from "../../../../library/lessons/lesson-map";
+import { linkScreenMarks } from "../../_utils/screen-marks";
+import { type ProducedContentFixMedia } from "../../media-schema";
 import { type FixContext } from "../fix-handler";
 import { type ScreenSnapshot, type StoredScreens } from "./schema";
 
@@ -21,6 +23,78 @@ function linkIdeaIcon({
     idea.iconId = iconId;
     after.summary = map;
   }
+}
+
+/** A screen's own picture or alphabet clip; false for any other link. */
+function linkScreenAsset({
+  after,
+  link,
+  media,
+  now,
+}: {
+  after: ScreenSnapshot;
+  link: NonNullable<StoredScreens["mediaLinks"]>[number];
+  media?: ProducedContentFixMedia;
+  now: Date;
+}): boolean {
+  if (link.target !== "picture" && link.target !== "alphabet") {
+    return false;
+  }
+
+  const screen = after.screens.find(({ position }) => position === link.position);
+
+  if (link.target === "picture" && media?.kind === "picture") {
+    if (screen) {
+      screen.mediaAssetId = media.mediaAssetId;
+      screen.pictureAvailableAt = now.toISOString();
+    }
+
+    return true;
+  }
+
+  if (link.target === "alphabet" && media?.kind === "clip") {
+    if (screen) {
+      screen.content.audioUrl = media.url;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+/** An idea's icon, a screen list's marks or a word's or sentence's clip; false for any other link. */
+function linkLessonMedia({
+  after,
+  link,
+  media,
+}: {
+  after: ScreenSnapshot;
+  link: NonNullable<StoredScreens["mediaLinks"]>[number];
+  media?: ProducedContentFixMedia;
+}): boolean {
+  if (link.target === "idea" && media?.kind === "ideaIcon") {
+    linkIdeaIcon({ after, iconId: media.iconId, position: link.position });
+    return true;
+  }
+
+  if (link.target === "marks" && media?.kind === "marks") {
+    linkScreenMarks({ marked: media, positions: link.positions, screens: after.screens });
+    return true;
+  }
+
+  if ("id" in link && media?.kind === "clip") {
+    const rows = link.target === "word" ? after.words : after.sentences;
+    const row = rows.find(({ id }) => id === link.id);
+
+    if (row) {
+      row.audioUrl = media.url;
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 export function resolvePublishedScreens(change: StoredScreens, context: FixContext) {
@@ -48,29 +122,10 @@ export function resolvePublishedScreens(change: StoredScreens, context: FixConte
   for (const link of change.mediaLinks ?? []) {
     const media = context.media.get(link.key);
 
-    if (media?.kind === "picture" && link.target === "picture") {
-      const screen = after.screens.find(({ position }) => position === link.position);
-
-      if (screen) {
-        screen.mediaAssetId = media.mediaAssetId;
-        screen.pictureAvailableAt = context.now.toISOString();
-      }
-    } else if (link.target === "alphabet" && media?.kind === "clip") {
-      const screen = after.screens.find(({ position }) => position === link.position);
-
-      if (screen) {
-        screen.content.audioUrl = media.url;
-      }
-    } else if (link.target === "idea" && media?.kind === "ideaIcon") {
-      linkIdeaIcon({ after, iconId: media.iconId, position: link.position });
-    } else if ("id" in link && media?.kind === "clip") {
-      const rows = link.target === "word" ? after.words : after.sentences;
-      const row = rows.find(({ id }) => id === link.id);
-
-      if (row) {
-        row.audioUrl = media.url;
-      }
-    } else {
+    if (
+      !linkScreenAsset({ after, link, media, now: context.now }) &&
+      !linkLessonMedia({ after, link, media })
+    ) {
       throw new Error(`Missing reviewed lesson media for ${link.key}`);
     }
   }

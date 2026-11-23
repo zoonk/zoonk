@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -10,72 +9,13 @@ import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
-import { daysBetween } from "../_utils/iso-date";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
 import { MockPreparingNote } from "../mock/mock-preparing";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { useChoiceLine } from "../writing/writing-choice";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
-
-function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
-  return (
-    <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
-      <LineMarker aria-hidden="true">{icon}</LineMarker>
-      <span>{children}</span>
-    </p>
-  );
-}
-
-function renderNumber(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
-}
-
-function OpensLine() {
-  const t = useExtracted();
-  const { challenge } = useChallengeScreen();
-  const icon = <CalendarClockIcon className="size-4" />;
-
-  if (challenge.date) {
-    const days = Math.max(1, daysBetween(challenge.today, challenge.date));
-
-    return (
-      <StatusLine icon={icon}>
-        {t.rich("{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}", {
-          count: days,
-          mono: renderNumber,
-        })}
-      </StatusLine>
-    );
-  }
-
-  return <LessonsFirstLine />;
-}
-
-function LessonsFirstLine() {
-  const t = useExtracted();
-
-  return (
-    <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {t("Opens when you finish the lessons before it")}
-    </StatusLine>
-  );
-}
-
-function WaitingLine() {
-  const t = useExtracted();
-  const { challenge } = useChallengeScreen();
-  const empty = challenge.questions === 0 && !challenge.call && !challenge.mock;
-
-  if (empty && challenge.date !== null && challenge.date > challenge.today) {
-    return <OpensLine />;
-  }
-
-  return (
-    <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {empty ? t("This challenge isn't ready yet.") : t("Next time you study")}
-    </StatusLine>
-  );
-}
+import { OpensLine, StatusLine, WaitingLine } from "./challenge-status-line";
 
 function useStartProblem(): React.ReactNode {
   const t = useExtracted();
@@ -208,11 +148,28 @@ function PlusRequiredNotice() {
 
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const { challenge, start, writing } = useChallengeScreen();
+  const { challenge, hrefs, start, writing } = useChallengeScreen();
   const writingLimit = useLiveLimit(writing?.kind === "refused" ? writing.limit : null);
+  const choiceLine = useChoiceLine();
 
   if (start.problem === "plusRequired") {
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
+  }
+
+  // The mock's written test waits for an exam choice, which Today asks.
+  if (typeof start.problem === "object" && start.problem !== null) {
+    return {
+      actions: (
+        <TaskActions>
+          <TaskMainLink href={hrefs.exit}>{t("Choose on Today")}</TaskMainLink>
+        </TaskActions>
+      ),
+      line: (
+        <StatusLine icon={<CalendarClockIcon className="size-4" />}>
+          {choiceLine(start.problem.choiceGroups)}
+        </StatusLine>
+      ),
+    };
   }
 
   switch (challenge.status) {

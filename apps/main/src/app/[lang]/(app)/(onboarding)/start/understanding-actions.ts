@@ -114,7 +114,9 @@ export async function startUnderstandingAction(input: unknown): Promise<StartUnd
     return toLimitOutcome(result.limit);
   }
 
-  return result.status === "slowDown" || result.status === "signUpRequired"
+  return result.status === "slowDown" ||
+    result.status === "signUpRequired" ||
+    result.status === "materialUnavailable"
     ? result
     : { status: "failed" };
 }

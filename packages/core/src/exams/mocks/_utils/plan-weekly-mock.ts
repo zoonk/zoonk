@@ -17,25 +17,10 @@ import {
   outlineMock,
   planMock,
 } from "../mock-plan";
-import { type MockEssayCandidate, getDayWrittenParts } from "../written-parts";
+import { outlineWrittenPrompts } from "../written-test-plan";
 import { loadMockCandidates } from "./mock-candidates";
-import { loadMockEssays } from "./mock-essays";
 import { type MockListening, loadListeningCandidates } from "./mock-listening";
 import { countFinishedMocksBefore } from "./mock-number";
-
-function loadWeeklyMockEssays({
-  goal,
-  userId,
-}: {
-  goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
-  userId: string;
-}): Promise<MockEssayCandidate[]> {
-  const { id } = goal;
-
-  return id
-    ? loadMockEssays({ goal: { examBlueprintId: goal.examBlueprintId, id }, userId })
-    : Promise.resolve([]);
-}
 
 async function loadWeeklyMockListening({
   client,
@@ -85,7 +70,6 @@ async function loadWeeklyMockListening({
 }
 
 type WeeklyOutline = {
-  essays?: readonly MockEssayCandidate[];
   /** A GET's finished-mock count; without it, it's counted fresh. */
   finishedMocks?: Promise<number>;
   goal: Pick<Goal, "examBlueprintId" | "targetDate"> & { id: string | null };
@@ -131,14 +115,12 @@ async function loadPaperSkillIds({
 }
 
 export async function loadWeeklyOutline({
-  essays,
   finishedMocks,
   goal,
   identity,
   savedPlan,
   structure,
   today,
-  userId,
 }: WeeklyOutline) {
   const days = getMockDays(structure);
 
@@ -162,10 +144,8 @@ export async function loadWeeklyOutline({
 
   const { day, fullLength } = await resolveIdentity();
 
-  const written =
-    fullLength && getDayWrittenParts({ day, structure }).length > 0
-      ? (essays ?? (await loadWeeklyMockEssays({ goal, userId })))
-      : [];
+  // The paper keeps a place for each written question; a start seats the learner's unseen prompts.
+  const written = fullLength ? outlineWrittenPrompts({ day, structure }) : [];
 
   const clock = getMockClock({ day, fullLength, structure });
 

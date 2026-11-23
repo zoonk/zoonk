@@ -7,7 +7,40 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 export type QuestionWriting =
   | { generationId: string; status: "writing" }
   | { limit: HelpLimit; status: "refused" }
+  /** Today's extra writing is used: a written test's questions return on that day. */
+  | { returnsOn: string; status: "writingUsedUp" }
+  /** The written test's questions depend on an exam choice the learner hasn't made. */
+  | { choiceGroups: string[]; status: "needsChoice" }
   | { status: "failed" | "plusRequired" | "preparing" | "ready" };
+
+const HTTP_TOO_MANY_REQUESTS = 429;
+const EXAM_CHOICE_REQUIRED = "EXAM_CHOICE_REQUIRED";
+
+function readChoiceGroups(body: unknown): string[] | null {
+  const error = isJsonObject(body) ? body.error : null;
+
+  if (getString(error, "code") !== EXAM_CHOICE_REQUIRED) {
+    return null;
+  }
+
+  const details = isJsonObject(error) ? error.details : null;
+  const groups = isJsonObject(details) ? details.choiceGroups : null;
+
+  return Array.isArray(groups) ? groups.filter((group) => typeof group === "string") : [];
+}
+
+function readReturnsOn({ body, status }: { body: unknown; status: number }): string | null {
+  const error = isJsonObject(body) ? body.error : null;
+
+  if (
+    status !== HTTP_TOO_MANY_REQUESTS ||
+    getString(error, "code") !== LESSON_PLAYER_ERROR_CODES.usageLimitReached
+  ) {
+    return null;
+  }
+
+  return getString(isJsonObject(error) ? error.details : null, "returnsOn");
+}
 
 export async function requestQuestionWriting(
   path: `/${string}`,
@@ -30,6 +63,18 @@ export async function requestQuestionWriting(
     LESSON_PLAYER_ERROR_CODES.plusRequired
   ) {
     return { status: "plusRequired" };
+  }
+
+  const choiceGroups = readChoiceGroups(answer);
+
+  if (choiceGroups) {
+    return { choiceGroups, status: "needsChoice" };
+  }
+
+  const returnsOn = readReturnsOn({ body: answer, status: response.status });
+
+  if (returnsOn) {
+    return { returnsOn, status: "writingUsedUp" };
   }
 
   const limit = readRefusedLimit({ body: answer, status: response.status });

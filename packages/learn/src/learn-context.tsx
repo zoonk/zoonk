@@ -39,6 +39,11 @@ export type LearnAdapters = {
   loadCountries: (language: string) => Promise<CountryChoice[] | null>;
   linkComponent: LearnLinkComponent;
   routes: LearnRoutes;
+  /**
+   * Starts a written task the learner asked for (the goal's next, or `taskKey`'s) and opens it.
+   * False when it couldn't. Hosts without written practice leave it out.
+   */
+  writeNow?: (input: { goalId: string; taskKey?: string }) => Promise<boolean>;
 };
 
 export const LearnAdaptersContext = createContext<LearnAdapters | null>(null);
@@ -63,6 +68,10 @@ export function useLearnAnalytics(): LearnAnalytics {
 
 export function useLoadCountries(): LearnAdapters["loadCountries"] {
   return useLearnAdapters().loadCountries;
+}
+
+export function useWriteNow(): LearnAdapters["writeNow"] {
+  return useLearnAdapters().writeNow;
 }
 
 export function useLearnRoutes(): LearnRoutes {

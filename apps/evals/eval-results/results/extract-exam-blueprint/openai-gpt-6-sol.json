@@ -3,8 +3,16 @@
   "results": [
     {
       "steps": [
-        { "conclusion": "Facts 5/5. passages found 12/12", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Facts 5/5. passages found 12/12", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 5/5. passages found 12/12",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 5/5. passages found 12/12",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Facts 5/5. passages found 12/12",
           "kind": "potentialImprovements",
@@ -14,11 +22,28 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 98 },
-            { "kind": "section", "minutes": 64, "questions": 54 },
-            { "kind": "section", "minutes": 70, "questions": 44 },
-            { "kind": "timeLimit", "minutes": 134 },
-            { "format": "multipleChoice", "kind": "format" }
+            {
+              "kind": "questionCount",
+              "value": 98
+            },
+            {
+              "kind": "section",
+              "minutes": 64,
+              "questions": 54
+            },
+            {
+              "kind": "section",
+              "minutes": 70,
+              "questions": 44
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 134
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            }
           ]
         },
         "id": "sat-1",
@@ -35,8 +60,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Facts 3/3. passages found 24/24", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Facts 3/3. passages found 24/24", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 3/3. passages found 24/24",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 3/3. passages found 24/24",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Facts 3/3. passages found 24/24",
           "kind": "potentialImprovements",
@@ -46,9 +79,21 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-04-27", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-05-05", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-04-30", "dateKind": "exam", "kind": "date" }
+            {
+              "date": "2027-04-27",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-05-05",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-04-30",
+              "dateKind": "exam",
+              "kind": "date"
+            }
           ]
         },
         "id": "abitur-bayern-2027-1",
@@ -65,8 +110,16 @@
     },
     {
       "steps": [
-        { "conclusion": "Facts 3/3. passages found 46/46", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Facts 3/3. passages found 46/46", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Facts 3/3. passages found 46/46",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts 3/3. passages found 46/46",
+          "kind": "minorErrors",
+          "score": 10
+        },
         {
           "conclusion": "Facts 3/3. passages found 46/46",
           "kind": "potentialImprovements",
@@ -76,15 +129,30 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-06-14", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-06-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-07-06", "dateKind": "results", "kind": "date" }
+            {
+              "date": "2027-06-14",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-06-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2027-07-06",
+              "dateKind": "results",
+              "kind": "date"
+            }
           ]
         },
         "id": "bac-2027-1",
         "userInput": {
           "documents": [
-            { "title": "Dates du bac 2027", "url": "https://www.letudiant.fr/bac/date-du-bac.html" }
+            {
+              "title": "Dates du bac 2027",
+              "url": "https://www.letudiant.fr/bac/date-du-bac.html"
+            }
           ],
           "exam": "Baccalauréat général 2027"
         }
@@ -93,17 +161,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. problems left 0",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. problems left 0",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 13/13 (read 13). passages found 53/53. problems left 0",
+          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -111,56 +179,10 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 },
-            { "kind": "testedLanguage", "language": null }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
             {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 5/5 (read 5). passages found 53/53. problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "subject", "name": "Ciências da Natureza e suas Tecnologias" },
+              "kind": "subject",
+              "name": "Ciências da Natureza e suas Tecnologias"
+            },
             {
               "kind": "topic",
               "subject": "Ciências da Natureza e suas Tecnologias",
@@ -217,17 +239,53 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 150 },
-            { "kind": "section", "questions": 35 },
-            { "kind": "section", "questions": 45 },
-            { "kind": "section", "questions": 70 },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "wrongPenalty", "value": 1 },
-            { "kind": "timeLimit", "minutes": 240 },
-            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 150
+            },
+            {
+              "kind": "section",
+              "questions": 35
+            },
+            {
+              "kind": "section",
+              "questions": 45
+            },
+            {
+              "kind": "section",
+              "questions": 70
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "wrongPenalty",
+              "value": 1
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 240
+            },
+            {
+              "date": "2026-11-22",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-08-26",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-17",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
           ]
         },
         "id": "tcdf-2026-1",
@@ -264,15 +322,46 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-01-17", "dateKind": "exam", "kind": "date" },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "section", "minutes": 300, "questions": 180 },
-            { "kind": "subject", "name": "Língua Portuguesa" },
-            { "kind": "subject", "name": "Linguística" },
-            { "kind": "subject", "name": "Ciência Política" },
-            { "group": "P1", "kind": "group", "subject": "Língua Portuguesa" },
-            { "group": "P2", "kind": "group", "subject": "Linguística" },
+            {
+              "date": "2027-01-17",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 180
+            },
+            {
+              "kind": "subject",
+              "name": "Língua Portuguesa"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguística"
+            },
+            {
+              "kind": "subject",
+              "name": "Ciência Política"
+            },
+            {
+              "group": "P1",
+              "kind": "group",
+              "subject": "Língua Portuguesa"
+            },
+            {
+              "group": "P2",
+              "kind": "group",
+              "subject": "Linguística"
+            },
             {
               "kind": "topic",
               "subject": "Língua Portuguesa",
@@ -307,6 +396,115 @@
           "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 53/53. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "majorErrors",
+          "score": 9.573333333333334
+        },
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 53/53. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "minorErrors",
+          "score": 9.573333333333334
+        },
+        {
+          "conclusion": "Facts kept 13/15 (read 13). passages found 53/53. problems left 0. missing: {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "potentialImprovements",
+          "score": 9.573333333333334
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "grading": "enem",
+              "kind": "writtenTask",
+              "lines": null,
+              "points": 1000,
+              "zeroing": true
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      },
+      "score": 9.573333333333334
     }
   ],
   "taskId": "extract-exam-blueprint"

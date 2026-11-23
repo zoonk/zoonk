@@ -131,6 +131,21 @@ export function listSettled(input: BuildPlanInput): Set<string> {
   ]);
 }
 
+export function getWrittenCoverage({ built, input }: { built: BuiltPlan; input: BuildPlanInput }) {
+  const budget = built.writingRequirement;
+  const skillIds = input.writing?.skillIds;
+  const count = skillIds?.size ?? 0;
+
+  return budget && skillIds && count > 0
+    ? {
+        coveredRaw: Math.min(budget.reserved, budget.target) / count,
+        requiredRaw: budget.target / count,
+        skillIds,
+        state: "measured" as const,
+      }
+    : null;
+}
+
 export function sumRequirement({
   built,
   requirement,

@@ -28,11 +28,13 @@ import com.zoonk.android.feature.onboarding.goalLimitReason
 import com.zoonk.android.feature.onboarding.startError
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalUnderstanding
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 enum class MaterialIntent { Exam, Understand, Questions }
@@ -111,6 +113,10 @@ class StartGoalViewModel(
         private set
 
     var entryError by mutableStateOf<GoalError?>(null)
+        private set
+
+    /** Ids of attached material the last send couldn't read, marked until it's removed or added again. */
+    var unreadable by mutableStateOf(emptySet<String>())
         private set
 
     /** A draft whose read hit a limit when started again. */
@@ -197,7 +203,10 @@ class StartGoalViewModel(
         if (canAttach) attachFailed.clear()
     }
 
-    fun removeAttached(id: String) = update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
+    fun removeAttached(id: String) {
+        unreadable -= id
+        update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
+    }
 
     fun attachFile(
         file: PickedFile,
@@ -229,6 +238,9 @@ class StartGoalViewModel(
 
     val canAttach: Boolean get() = !isAttaching && attachFailure.canAttachMaterial(java.time.Instant.now())
 
+    /** The most material a goal is sent with, once that many are attached: no more can be added until one is removed. */
+    val materialLimitReached: Int? get() = MAX_GOAL_SOURCES.takeIf { flow.attached.size >= it }
+
     private fun attach(add: suspend () -> WriteOutcome<AttachedSource>) {
         if (!canAttach) return
         isAttaching = true
@@ -238,6 +250,7 @@ class StartGoalViewModel(
             when (val outcome = add()) {
                 is WriteOutcome.Done -> {
                     isAttachOpen = false
+                    unreadable -= outcome.value.id
                     update { it.copy(attached = it.attached.filterNot { source -> source.id == outcome.value.id } + outcome.value) }
                 }
 
@@ -262,23 +275,31 @@ class StartGoalViewModel(
             update { it.copy(screen = StartScreen.Questions) }
             return
         }
-        send(typed.ifBlank { materialGoal }, language)
+        send(typed.ifBlank { materialGoal }, language, words = typed)
     }
 
-    /** One goal on its way at a time. */
+    /** One goal on its way at a time; a goal that isn't read gives the entry back its [words], what the learner typed. */
     fun send(
         goal: String,
         language: String,
+        words: String = goal,
     ) {
         if (isSending) return
+        val sourceIds = flow.attached.map { UUID.fromString(it.id) }.ifEmpty { null }
+        val materialIntent =
+            when (flow.intent.takeIf { sourceIds != null }) {
+                MaterialIntent.Exam -> GoalUnderstandingInput.MaterialIntent.EXAM
+                MaterialIntent.Understand -> GoalUnderstandingInput.MaterialIntent.UNDERSTAND
+                MaterialIntent.Questions, null -> null
+            }
         isSending = true
-        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = flow.attached.isNotEmpty())
+        val attempt = AnalyticsEvent.GoalTyped(hasAttachment = sourceIds != null)
         analytics.track(attempt)
         draftId?.let(store::forgetSent)
         entryError = null
         update { it.copy(screen = StartScreen.Sending(goal), waitStartedAt = attempt.submittedAt, attemptId = attempt.attemptId) }
         viewModelScope.launch {
-            val outcome = store.sendGoal(goal, language)
+            val outcome = store.sendGoal(goal, language, sourceIds, materialIntent)
             isSending = false
             when (outcome) {
                 is WriteOutcome.Done -> {
@@ -293,17 +314,24 @@ class StartGoalViewModel(
                 }
 
                 WriteOutcome.Obsolete -> {
-                    showEntry(goal)
+                    showEntry(words)
                 }
 
                 else -> {
-                    showEntry(goal, outcome.startError())
+                    val missing = ((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.MaterialUnavailable)?.sourceIds
+                    showEntry(words, outcome.startError().takeIf { missing == null })
+                    unreadable = missing.orEmpty().toSet()
                 }
             }
         }
     }
 
     fun backToEntry(words: String) = showEntry(words)
+
+    fun editDraft(draft: OnboardingDraft) {
+        restoreDraftMaterial(draft)
+        showEntry(draft.prompt)
+    }
 
     /**
      * Another learner, or none, sees nothing of this one's words, material or answers. A guest who
@@ -409,9 +437,23 @@ class StartGoalViewModel(
     }
 
     fun rewrite(
+        draft: OnboardingDraft,
         words: String,
         language: String,
-    ) = send(words, language)
+    ) {
+        restoreDraftMaterial(draft)
+        send(words, language)
+    }
+
+    private fun restoreDraftMaterial(draft: OnboardingDraft) {
+        val intent =
+            when (draft.materialIntent) {
+                OnboardingDraft.MaterialIntent.EXAM -> MaterialIntent.Exam
+                OnboardingDraft.MaterialIntent.UNDERSTAND -> MaterialIntent.Understand
+                null -> null
+            }
+        update { it.copy(attached = draft.sources.map { source -> AttachedSource(source.id.toString(), source.title) }, intent = intent) }
+    }
 
     fun confirm(input: GoalCreateInput) = create(input, GoalOpens.Setup)
 
@@ -556,6 +598,7 @@ class StartGoalViewModel(
         editing = null
         creationFailure.clear()
         entryError = error
+        unreadable = emptySet()
         update { it.copy(screen = StartScreen.Entry, words = words) }
     }
 
@@ -571,3 +614,6 @@ class StartGoalViewModel(
         saved = flow
     }
 }
+
+/** Core's `MAX_GOAL_SOURCES`: a goal is sent with this many at most. */
+private const val MAX_GOAL_SOURCES = 5

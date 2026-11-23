@@ -1,4 +1,5 @@
 import "server-only";
+import { type WritingNeedsChoice } from "../exams/essays/writing-contract";
 import { startMock } from "../exams/mocks/start-mock";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type StudyBlockStartInput } from "../sessions/contract";
@@ -10,9 +11,11 @@ import { type ChallengeDestination } from "./challenge-contract";
 
 /** On questionsNeeded, request question generation before starting again; plusRequired requires upgrading. */
 export type StartChallengeResult =
+  | WritingNeedsChoice
   | { destination: ChallengeDestination; status: "ready" }
   | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
   | { status: "notToday" }
+  | { status: "signUpRequired" }
   | { status: "preparing" }
   | { status: "blockFinished" | "notFound" | "plusRequired" | "questionsNeeded" | "unauthorized" };
 
@@ -30,6 +33,10 @@ async function startBlock({
 
     if (started.status === "expired") {
       throw new Error(`Mock block ${block.id} didn't start again after its time ran out.`);
+    }
+
+    if (started.status === "needsChoice") {
+      return started;
     }
 
     if (started.status === "ready") {

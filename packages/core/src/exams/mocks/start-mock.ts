@@ -1,20 +1,24 @@
 import "server-only";
 import { type StudySessionBlock } from "@zoonk/db";
 import { startStudyBlock } from "../../sessions/start-study-block";
+import { type WritingNeedsChoice } from "../essays/writing-contract";
 import { findOwnedMock } from "./_utils/owned-mock";
 import { type MockTimeZoneInput } from "./mock-contract";
 
-export type StartMockResult = {
-  status:
-    | "blockFinished"
-    | "expired"
-    | "finished"
-    | "notFound"
-    | "plusRequired"
-    | "preparing"
-    | "ready"
-    | "unauthorized";
-};
+export type StartMockResult =
+  | WritingNeedsChoice
+  | {
+      status:
+        | "blockFinished"
+        | "expired"
+        | "finished"
+        | "notFound"
+        | "plusRequired"
+        | "preparing"
+        | "ready"
+        | "signUpRequired"
+        | "unauthorized";
+    };
 
 async function startScheduledBlock({
   block,
@@ -29,7 +33,7 @@ async function startScheduledBlock({
     throw new Error(`Mock block ${block.id} was refused by the session start: ${started.status}.`);
   }
 
-  return { status: started.status };
+  return started.status === "needsChoice" ? started : { status: started.status };
 }
 
 export async function startMock({

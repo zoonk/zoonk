@@ -68,6 +68,12 @@ export type TestOutQuestionsStepName = (typeof TEST_OUT_QUESTIONS_STEPS)[number]
 
 export const TEST_OUT_QUESTIONS_READY_STEP: TestOutQuestionsStepName = "testOutQuestionsReady";
 
+export const WRITING_PROMPT_KIND = "writingPrompt";
+
+export const WRITING_PROMPT_STEPS = ["ready", "signUpRequired", "writeWritingPrompt"] as const;
+
+export type WritingPromptStepName = (typeof WRITING_PROMPT_STEPS)[number];
+
 const CHALLENGE_QUESTIONS_STEPS = [
   "joinChallengeQuestions",
   "writeChallengeQuestions",

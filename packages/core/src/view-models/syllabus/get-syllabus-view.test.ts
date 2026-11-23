@@ -13,6 +13,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { CGU } from "../../exams/mocks/_test-utils/cgu-written";
 import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
@@ -189,6 +190,47 @@ async function readTopicStatus(name: string) {
 }
 
 describe(getSyllabusView, () => {
+  it("links a syllabus subject to the written section named by its notice group", async () => {
+    const [user, blueprint, writing] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({ structure: CGU }),
+      skillFixture({ name: "Write a short answer" }),
+    ]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ name: "Practice" }],
+        skills: [
+          { area: "Writing", lessons: 1, name: writing.name, phase: 0, skillId: writing.id },
+        ],
+      },
+    });
+
+    mockSession(user.id);
+
+    const result = await getSyllabusView({ goalId: goal.id });
+    const syllabus = result.status === "ready" ? result.syllabus : null;
+
+    expect(syllabus?.writtenPractice?.subjects).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ points: expect.objectContaining({ name: "Written test" }) }),
+      ]),
+    );
+
+    expect(syllabus?.subjects.find(({ name }) => name === "Writing")).toMatchObject({
+      areas: ["Writing"],
+      group: "Written test",
+      writtenPart: "Written test",
+    });
+  });
+
   it("requires a session and the learner's own goal with a plan", async () => {
     const { goal } = await signedInExamLearner({ topics: false });
 

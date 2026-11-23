@@ -89,6 +89,7 @@ private struct SubjectContent: View {
   @State private var showsDoneChapters = false
   @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
   @State private var restoring = VisitRequest<Bool>()
+  @State private var writeFailed = false
 
   let goal: LearnerGoal
   let syllabus: GoalSyllabus
@@ -115,8 +116,35 @@ private struct SubjectContent: View {
         topics
       }
     }
-    .bottomBar {
-      if let chapterId = nextChapterId {
+    .bottomBar(note: writeNote) {
+      // A written part's main action is writing: its lessons are a small part of its time.
+      // An unfinished task opens where it was left; once the day's grading is used the bar says
+      // when it returns instead of offering a tap that would be refused.
+      // Every task waiting for an exam choice leaves nothing to write until it's made, on Today.
+      if let written, written.pendingChoice?.all == true {
+        Button {
+          router.showRoot(of: .today)
+        } label: {
+          Text("Choose on Today", tableName: "Plan")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      } else if let written, let returnsOn = written.returnsOn {
+        Label {
+          Text(WritingLabels.gradingReturns(returnsOn))
+        } icon: {
+          Image(systemName: "clock")
+        }
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, minHeight: 44)
+      } else if let written {
+        WriteNowButton(
+          goalId: goal.id, taskKey: written.unfinished?.taskKey,
+          continues: written.unfinished != nil, failed: $writeFailed
+        )
+        .keyboardShortcut(.defaultAction)
+      } else if let chapterId = nextChapterId {
         Button {
           router.open(chapterRoute(chapterId))
         } label: {
@@ -135,6 +163,30 @@ private struct SubjectContent: View {
     }
   }
 
+  private var written: GoalPlan.WrittenPractice.Subject? {
+    syllabus.writtenPractice?.subject(for: subject)
+  }
+
+  private var writeNote: BarNote? {
+    if writeFailed {
+      return BarNote(
+        LocalizedStringResource(
+          "That didn't go through. Try again in a moment.", table: "Plan"))
+    }
+
+    guard let choice = written?.pendingChoice else { return nil }
+
+    if choice.all {
+      return BarNote(WritingLabels.choiceLine(choice.groups), tone: .status)
+    }
+
+    return BarNote(
+      WritingLabels.choiceLine(choice.groups, task: choice.task), tone: .status,
+      action: .init(
+        label: Text("Choose on Today", tableName: "Plan"),
+        perform: { router.showRoot(of: .today) }))
+  }
+
   private var nextChapterId: String? {
     guard subject.notPlannedReason == nil else {
       return nil
@@ -151,8 +203,27 @@ private struct SubjectContent: View {
   /// the exam gives no question count, and how much is done while lessons teach it. Topics and
   /// chapters count themselves over their lists.
   private var facts: [String] {
+    if let written {
+      return writtenFacts(written)
+    }
+
     let inLessons = subject.notPlannedReason == nil && subject.preparation == nil
     return [origin, examShare, inLessons ? doneShare : nil].compactMap(\.self)
+  }
+
+  /// A written part says how many questions, its official time and its share of the score.
+  private func writtenFacts(_ written: GoalPlan.WrittenPractice.Subject) -> [String] {
+    [
+      written.questions.map {
+        String(localized: "\($0) questions", table: "Plan", comment: "A written part's questions")
+      },
+      written.minutes.map { studyDuration(minutes: $0) },
+      written.share.map {
+        String(
+          localized: "\(WritingLabels.share($0)) of the score",
+          table: "Plan")
+      },
+    ].compactMap(\.self)
   }
 
   private var origin: String? {
@@ -229,7 +300,9 @@ private struct SubjectContent: View {
   /// Main's `SubjectCoverage`: the preparation an exam measures, or else the lessons studied.
   @ViewBuilder
   private var numbers: some View {
-    if let preparation = subject.preparation {
+    if let written {
+      SubjectWrittenSections(written: written)
+    } else if let preparation = subject.preparation {
       Section {
         SubjectPreparation(share: preparation, mastery: subject.mastery)
       }

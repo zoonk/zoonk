@@ -26,6 +26,7 @@ import {
 import { PLAN_CHANGED_WHILE_SAVING, planChangeInvalidResponse } from "../schemas/plan-errors";
 import {
   conflictResponse,
+  forbiddenResponse,
   guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
@@ -166,10 +167,11 @@ export const checkpointPaths = {
           ...paymentRequiredResponse,
           description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a language phase/final call on Free or after Plus lapses, a mock without mocks in the plan. Error code: ${studySessionErrorCodes.plusRequired}.`,
         },
+        "403": forbiddenResponse,
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: `It isn't in today's session, it's already finished, a phase challenge waits for earlier work (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or the bank holds too few questions for it (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with \`afterWriting\`).`,
+          description: `It isn't in today's session, it's already finished, a phase challenge waits for earlier work (error code ${studySessionErrorCodes.earlierFirst}, with details.reason \`lessons\` or \`challenge\`; complete or skip that work, then start again), or the bank holds too few questions for it (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with \`afterWriting\`). A written test requiring an exam choice answers \`EXAM_CHOICE_REQUIRED\` with \`details.choiceGroups\`.`,
         },
       },
       security: AUTHENTICATED_SECURITY,

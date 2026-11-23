@@ -11,6 +11,7 @@ import {
   getPlannedItemIds,
 } from "../mock-plan";
 import { countReused } from "../mock-reuse";
+import { hasMockWriting, outlineWrittenPrompts } from "../written-test-plan";
 import { type AnytimeMockSetup, loadMockSkillIds } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { isScheduledPaperComplete } from "./mock-complete";
@@ -70,6 +71,10 @@ async function loadAvailableSetup({
   };
 }
 
+function toScheduledShape(plan: Pick<MockPlan, "day" | "fullLength">) {
+  return { day: plan.day, kind: plan.fullLength ? ("full" as const) : ("half" as const) };
+}
+
 export async function planScheduledFromBank({
   client = prisma,
   exclude,
@@ -102,7 +107,6 @@ export async function planScheduledFromBank({
 
   const plan = await planWeeklyMock({
     client,
-    essays: setup.essays,
     exclude,
     finishedMocks: Promise.resolve(finishedMocks),
     goal,
@@ -124,12 +128,14 @@ export async function planScheduledFromBank({
       unvoiced: plan.audio.unvoiced,
     },
     candidates: plan.candidates,
-    complete: isScheduledPaperComplete(plan),
+    complete: isScheduledPaperComplete(
+      plan,
+      hasMockWriting({ essays: setup.essays, shape: toScheduledShape(plan), structure }),
+    ),
     option: {
       area: null,
       areas: [],
-      day: plan.day,
-      kind: plan.fullLength ? ("full" as const) : ("half" as const),
+      ...toScheduledShape(plan),
       questions: countPlannedQuestions(plan.outline),
     },
     plan,
@@ -190,7 +196,12 @@ export async function planFromBank({
   option,
   ...input
 }: BankInput & { option: MockOption }): Promise<BankPlan> {
-  const bank = await loadMockBank(input);
+  // The written test sits only written questions, so it reads nothing from the reserve.
+  const bank =
+    option.kind === "written"
+      ? { available: input.setup, reuse: input.reuse ?? false, text: [] }
+      : await loadMockBank(input);
+
   return planFromMockBank({ bank, option });
 }
 
@@ -242,11 +253,13 @@ export function planFromMockBank({
   const { available, reuse, text } = bank;
   const candidates = [...text, ...[...available.listening.values()].flat()];
 
-  const freshPlan = planOptionMock({
+  const paper = {
     ...available,
-    candidates: text.filter((item) => !item.answered),
+    essays: outlineWrittenPrompts({ day: option.day, structure: available.structure }),
     option,
-  });
+  };
+
+  const freshPlan = planOptionMock({ ...paper, candidates: text.filter((item) => !item.answered) });
 
   if (!reuse || countPlannedQuestions(freshPlan) === option.questions) {
     return {
@@ -258,9 +271,8 @@ export function planFromMockBank({
   }
   // The full-day planner normally excludes repeats. Fair use admits them after reserving the scheduled papers.
   const plan = planOptionMock({
-    ...available,
+    ...paper,
     candidates: text.map((item) => ({ ...item, answered: false })),
-    option,
   });
 
   return {

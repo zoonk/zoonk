@@ -3,6 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { loadWritingSkillIds } from "../../writing-skills";
 import { type FocusTestView } from "../focus-test-contract";
 import { type PlacementStatus } from "../placement-contract";
 import { type PlacementItemCandidate } from "../placement-item-choice";
@@ -133,12 +134,14 @@ export async function loadPlacementWithSummary({
   goalId,
   ignoreAttempt = false,
   ownLevel: requestedLevel,
-  plan,
+  plan: goalPlan,
   today = null,
   timeZone,
   userId,
   tx = prisma,
 }: PlacementRead): Promise<PlacementLoad> {
+  const written = await loadWritingSkillIds(goalId, tx);
+  const plan = { ...goalPlan, skills: goalPlan.skills.filter((skill) => !written.has(skill.id)) };
   const skillIds = plan.skills.map((skill) => skill.id);
   const facts = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
   const attempt = facts.exam.placement?.attempt;

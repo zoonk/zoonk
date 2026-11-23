@@ -19,6 +19,7 @@ import {
   type MaterialQuestionAnswer,
   type MaterialQuestionInput,
 } from "./material-question-contract";
+import { findOwnSources } from "./own-sources";
 
 export type MaterialQuestionResult =
   | { answer: MaterialQuestionAnswer; status: "answered" }
@@ -26,17 +27,15 @@ export type MaterialQuestionResult =
   | Exclude<UsageDecision, { status: "allowed" }>;
 
 async function findOwnMaterial({ sourceIds, userId }: { sourceIds: string[]; userId: string }) {
-  const links = await prisma.learnerSource.findMany({
-    select: {
-      source: {
-        select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
-      },
-    },
-    where: { source: { extractedText: { not: null } }, sourceId: { in: sourceIds }, userId },
+  const { resolved } = await findOwnSources({ sourceIds, userId });
+
+  const sources = await prisma.source.findMany({
+    select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
+    where: { extractedText: { not: null }, id: { in: resolved } },
   });
 
-  return sourceIds.flatMap((sourceId) => {
-    const source = links.find((link) => link.source.id === sourceId)?.source;
+  return resolved.flatMap((sourceId) => {
+    const source = sources.find((candidate) => candidate.id === sourceId);
     return source?.extractedText ? [{ ...source, text: source.extractedText }] : [];
   });
 }

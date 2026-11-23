@@ -4,6 +4,7 @@ import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
+import { loadWritingSkillIds } from "../../writing-skills";
 import { getTestQuestionStatuses, listUnaskedAreas } from "../focus-test-progress";
 import { type TestSubject } from "../focus-test-subjects";
 import { type PlacementEvidence } from "../placement-beliefs";
@@ -145,8 +146,12 @@ export async function pickSessionChecks({
   test?: SessionTest;
   userId: string;
 }): Promise<{ placementItemIds: string[]; placementRecheckItemIds: string[] }> {
-  const listening = listeningSkillIds ?? (await loadListeningSkillIds(goal.id));
-  const skills = planSkills.filter((skill) => !listening.has(skill.id));
+  const [listening, written] = await Promise.all([
+    listeningSkillIds ?? loadListeningSkillIds(goal.id),
+    loadWritingSkillIds(goal.id),
+  ]);
+
+  const skills = planSkills.filter((skill) => !listening.has(skill.id) && !written.has(skill.id));
 
   const easy = new Set(easySkillIds);
 

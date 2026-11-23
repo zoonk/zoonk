@@ -119,9 +119,115 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct WrittenPractice: Decodable, Equatable, Sendable {
+    /// A written part's page: where the learner stands in points, how the answers move, and each
+    /// first answer.
+    struct Subject: Decodable, Equatable, Sendable {
+      struct Answer: Decodable, Equatable, Identifiable, Sendable {
+        /// How a levels answer went; nil on a points answer.
+        struct Criteria: Decodable, Equatable, Sendable {
+          let complete: Int
+          let total: Int
+        }
+
+        let attemptId: String
+        let criteria: Criteria?
+        let date: String
+        let decimals: Int?
+        /// The server's count of the lines sent; nil on answers from before it was counted.
+        let estimatedLines: Int?
+        let lines: Int?
+        let range: WritingRange?
+        let taskKey: String
+        let title: String
+        let unit: WritingPrompt.Unit?
+        let versions: Int
+
+        var id: String { attemptId }
+      }
+
+      /// Unknown shares are nil.
+      struct Sample: Decodable, Equatable, Sendable {
+        let contentShare: Double?
+        let date: String
+        let errors: Int
+        let presentationShare: Double?
+      }
+
+      /// What "Write" starts: each task, and whether it's open now, continues an unfinished block
+      /// or waits for tomorrow's grades.
+      struct WriteAction: Decodable, Equatable, Sendable {
+        let availability: WritingAvailability
+        let blockId: String?
+        let taskKey: String
+        let writingTask: WritingTaskName?
+      }
+
+      let answers: [Answer]
+      /// Set when the whole part waits for an exam choice; a server without write actions says it
+      /// only here.
+      let availability: WritingAvailability?
+      let decimals: Int?
+      let minutes: Int?
+      let points: WrittenPartPoints
+      let questions: Int?
+      /// Nil from a server before it said; then a part measured in points is in points.
+      let scale: WritingScale?
+      let share: Double?
+      let trend: [Sample]
+      let writeActions: [WriteAction]?
+
+      /// The unfinished task to continue, if any.
+      var unfinished: WriteAction? {
+        writeActions?.first { $0.availability == .continue && $0.blockId != nil }
+      }
+
+      /// Whether answers can be estimated in points.
+      var shownScale: WritingScale {
+        scale ?? (points.range != nil || answers.contains { $0.range != nil } ? .points : .levels)
+      }
+
+      /// When every task's grading is used up for today, the first day one returns.
+      var returnsOn: String? {
+        guard let writeActions, !writeActions.isEmpty else { return nil }
+        let days = writeActions.compactMap(\.availability.returnsOn)
+        return days.count == writeActions.count ? days.min() : nil
+      }
+
+      /// The exam choices some tasks wait for, whether every task does, and the one waiting task's
+      /// name when the others don't.
+      var pendingChoice: (groups: [String], all: Bool, task: String?)? {
+        guard let writeActions, !writeActions.isEmpty else {
+          return availability?.choiceGroups.map { ($0, true, nil) }
+        }
+
+        let waiting = writeActions.filter { $0.availability.choiceGroups != nil }
+        let groups = waiting.flatMap { $0.availability.choiceGroups ?? [] }
+        guard !groups.isEmpty else { return nil }
+
+        let task = waiting.count == 1 ? waiting.first : nil
+        let name = task.map { action in
+          WritingLabels.taskName(
+            action.writingTask,
+            title: points.tasks.first { $0.key == action.taskKey }?.name ?? "")
+        }
+
+        return (
+          groups.reduce(into: []) { if !$0.contains($1) { $0.append($1) } },
+          waiting.count == writeActions.count, name
+        )
+      }
+    }
+
     /// `weekly`, `biweekly` or `finalWeeks`.
     let cadence: String
     let parts: [String]
+    let subjects: [Subject]?
+
+    func subject(for subject: SyllabusSubject) -> Subject? {
+      subjects?.first { $0.points.name == subject.writtenPart }
+        ?? subjects?.first { written in subject.areas.contains(written.points.name) }
+        ?? subjects?.first { $0.points.name == subject.group }
+    }
   }
 
   /// An exam plan built before research read its notice: `reading` while the reveal waits for
@@ -598,6 +704,8 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   let topicCount: Int
   /// The plan says which skills teach which topic, so topics have a status.
   let topicsMapped: Bool
+  /// An exam's written parts: their points, trend and past answers.
+  let writtenPractice: GoalPlan.WrittenPractice?
 
   /// Core's `hasSubjectPages`: a language keeps its path; an exam's notice, or more than one
   /// module, has subjects.
@@ -723,6 +831,7 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let topics: [Topic]
   let topicsKnown: Int?
   let topicsStudied: Int?
+  let writtenPart: String?
 
   var id: String { key }
 

@@ -4,6 +4,7 @@ import { addDays, daysBetween, getPlanCalendar } from "../planner/plan-calendar"
 import { getExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { LEARN_KINDS, isUnwrittenLesson } from "../planner/plan-item-rules";
 import { type PlanSettings } from "../planner/plan-state";
+import { type WritingWork } from "../planner/writing-schedule";
 
 function roundPlanMinutes(minutes: number): number {
   return Math.round(Math.max(0, minutes) * 10) / 10;
@@ -72,6 +73,7 @@ export function getPlanNumbers({
   isExam,
   settings,
   workload,
+  writing = [],
 }: {
   built: Pick<BuiltPlan, "items" | "lessonDayMinutes">;
   context: PlanNumbers["context"];
@@ -79,35 +81,55 @@ export function getPlanNumbers({
   isExam: boolean;
   settings: PlanSettings;
   workload: PlanWorkload;
+  writing?: readonly WritingWork[];
 }): PlanNumbers {
   const from = new Date(`${context.fromDate}T00:00:00Z`);
   const targetDate = context.targetDate;
   const target = targetDate ? new Date(`${targetDate}T00:00:00Z`) : null;
-  const scheduledMinutes = Object.values(workload).reduce((sum, minutes) => sum + minutes, 0);
+
+  const includesWriting = {
+    ...workload,
+    checkpointMinutes: roundPlanMinutes(
+      workload.checkpointMinutes +
+        writing.reduce((sum, entry) => sum + (entry.test ? entry.minutes : 0), 0),
+    ),
+    practiceMinutes: roundPlanMinutes(
+      workload.practiceMinutes +
+        writing.reduce((sum, entry) => sum + (entry.test ? 0 : entry.minutes), 0),
+    ),
+  };
+
+  const scheduledMinutes = Object.values(includesWriting).reduce(
+    (sum, minutes) => sum + minutes,
+    0,
+  );
 
   const after =
     target && targetDate
-      ? built.items.reduce((sum, item) => {
-          if (item.status !== "todo" || !item.scheduledFor || item.scheduledFor < from) {
+      ? built.items.reduce(
+          (sum, item) => {
+            if (item.status !== "todo" || !item.scheduledFor || item.scheduledFor < from) {
+              return sum;
+            }
+
+            const portions = built.lessonDayMinutes.get(item.key);
+
+            if (portions) {
+              const minutes = [...portions]
+                .filter(([date]) => date >= context.fromDate && date >= targetDate)
+                .reduce((total, [, amount]) => total + amount, 0);
+
+              return sum + minutes;
+            }
+
+            if (item.scheduledFor >= target) {
+              return sum + item.minutes;
+            }
+
             return sum;
-          }
-
-          const portions = built.lessonDayMinutes.get(item.key);
-
-          if (portions) {
-            const minutes = [...portions]
-              .filter(([date]) => date >= context.fromDate && date >= targetDate)
-              .reduce((total, [, amount]) => total + amount, 0);
-
-            return sum + minutes;
-          }
-
-          if (item.scheduledFor >= target) {
-            return sum + item.minutes;
-          }
-
-          return sum;
-        }, 0)
+          },
+          writing.reduce((sum, entry) => sum + (entry.date >= targetDate ? entry.minutes : 0), 0),
+        )
       : 0;
 
   const afterDeadlineMinutes = target ? roundPlanMinutes(after) : null;
@@ -158,6 +180,6 @@ export function getPlanNumbers({
     milestoneExtraMinutesBeforeDeadline: target ? roundPlanMinutes(overflow) : null,
     scheduledMinutes,
     studyDaysBeforeDeadline: target ? budgets.filter((minutes) => minutes > 0).length : null,
-    workload,
+    workload: includesWriting,
   };
 }

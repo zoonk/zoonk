@@ -60,6 +60,7 @@ import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.writing.ChooseOnToday
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -70,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
@@ -729,6 +731,15 @@ private fun ChallengeFooter(
         ChallengeGate(challenge, actions)
         return
     }
+    val groups = ui.choiceGroups
+    if (groups != null) {
+        ChooseOnToday(groups, onChoose = actions::toToday)
+        return
+    }
+    if (ui.refused == Limit.SignUpRequired) {
+        LimitNotice(Limit.SignUpRequired, LimitSubject.Help, onCreateAccount = actions::createAccount, onSubscribe = actions::seePlus)
+        return
+    }
     when (challenge.status) {
         Challenge.Status.READY, Challenge.Status.STARTED -> {
             val wait = challenge.waitReason
@@ -864,7 +875,7 @@ private fun isPreparing(
     (challenge.status == Challenge.Status.READY || challenge.status == Challenge.Status.STARTED) &&
         challenge.waitReason == null &&
         challenge.access == Challenge.Access.PREPARING &&
-        ui.problem != StartProblem.PlusRequired
+        ui.problem != StartProblem.PlusRequired && ui.choiceGroups == null && ui.refused != Limit.SignUpRequired
 
 @Composable
 private fun PreparingNote(

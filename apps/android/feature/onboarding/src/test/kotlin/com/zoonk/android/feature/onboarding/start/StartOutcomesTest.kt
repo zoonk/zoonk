@@ -19,6 +19,7 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.understoodDraft
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.OnboardingDraft
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -58,11 +59,10 @@ class StartOutcomesTest {
                 object : OnboardingApi by fake {
                     override suspend fun understand(
                         session: AuthenticatedSession,
-                        goal: String,
-                        language: String,
+                        input: GoalUnderstandingInput,
                     ): OnboardingDraft {
                         gate.await()
-                        return fake.understand(session, goal, language)
+                        return fake.understand(session, input)
                     }
                 }
             val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))

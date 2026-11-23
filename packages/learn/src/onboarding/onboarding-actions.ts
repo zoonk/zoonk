@@ -35,6 +35,8 @@ export type StartUnderstandingOutcome =
   | ({ status: "limitReached" } & UsageCap)
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
+  /** Only the sent ids that can't be read anymore. */
+  | { sourceIds: string[]; status: "materialUnavailable" }
   | { status: "failed" };
 
 export type UnderstandingActions = {
@@ -45,7 +47,9 @@ export type UnderstandingActions = {
     draftId: string;
     edit: OnboardingDraftEdit;
   }) => Promise<OnboardingDraftView | null>;
-  start: (input: { goal: string; language: string }) => Promise<StartUnderstandingOutcome>;
+  start: (
+    input: { goal: string; language: string } & SentMaterial,
+  ) => Promise<StartUnderstandingOutcome>;
 };
 
 export type GoalLimitReason =
@@ -90,6 +94,9 @@ export type AnswerOutcome =
 export type WaitlistOutcome = "failed" | "joined" | "signInRequired";
 
 export type AttachedSource = { id: string; title: string };
+
+/** The material a goal is sent with; the draft keeps it from then on. */
+export type SentMaterial = { materialIntent?: "exam" | "understand"; sourceIds?: string[] };
 
 /** `availableAt` is when a cap over the last 30 days gives back its next use. */
 export type UsageCap = {

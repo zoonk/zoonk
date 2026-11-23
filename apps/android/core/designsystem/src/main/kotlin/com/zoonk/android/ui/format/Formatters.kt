@@ -85,10 +85,12 @@ fun formatNumber(
     maximumFractionDigits: Int = 2,
     signed: Boolean = false,
     grouping: Boolean = true,
+    minimumFractionDigits: Int = 0,
 ): String {
     val format =
         NumberFormat.getInstance(ULocale.forLocale(locale)).apply {
             this.maximumFractionDigits = maximumFractionDigits.coerceIn(0, MAX_FRACTION_DIGITS)
+            this.minimumFractionDigits = minimumFractionDigits.coerceIn(0, this.maximumFractionDigits)
             isGroupingUsed = grouping
             roundingMode = BigDecimal.ROUND_HALF_UP
         }

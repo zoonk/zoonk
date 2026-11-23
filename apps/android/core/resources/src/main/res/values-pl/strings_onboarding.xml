@@ -151,7 +151,11 @@
   "onboarding_material_description": "310bd4f6162bf699509e0c7f5bb5c30f940f7bbf27e688fbbc559bfb1e23331e",
   "onboarding_material_goal_exam": "e5b9fcc8caa1b63d0cf4630fb7610802d2dea966d45fcb7837e1cd1284b1ad57",
   "onboarding_material_goal_understand": "1c9e8243f9968f88680d25e80ec4f2d5e3336eeae1d28d87abb2e23fa69c9d41",
+  "onboarding_material_limit": "a1563dd51ab55a6c929ca57f521ba55c5849a218349ce9fa81b7646261452414",
   "onboarding_material_sign_up": "e3f5d904f06568893095dece8f5edfdc1c619db7bb143cbd382befadf825e934",
+  "onboarding_material_unreadable_one": "f51d110c86fc796259c5461bf21b58d6e31b3d0bebc939a3fd82768d95747d28",
+  "onboarding_material_unreadable_some": "5dafd038e5246dc60bb4b9e11e424951b1ee0e52e81b4ef85eca3b3958088597",
+  "onboarding_material_unreadable_state": "9e41eb96de234ae18af9da51890a9da8b578811fd480976cfcda748a34fcb667",
   "onboarding_more": "c5d96d438eec631dc5f06e3cc39ee18ea63ff2e13c768be9e0c091edb1bf70ef",
   "onboarding_musicianship_card": "497e82e8c6802773cf0d9a803e5c80db753ab8989bb4207d10bb58242647b487",
   "onboarding_musicianship_subject": "6b9409fd22eb22de0aa42a22d3fe40bfa9b38b2ef38f4d5ff03e15dcc258fb9c",
@@ -266,6 +270,7 @@
   "onboarding_row_date_not_out_guide": "6abefc8496dca26da977ba492ac07097bf26c0a44db0d6f8ed9b59a5f5e900a6",
   "onboarding_row_date_not_out_notice": "deb4084d27c65665ccd945494b5427c1eea25d360e1f41df0282c03b383046bb",
   "onboarding_row_date_to_be_confirmed": "f5c0b1b9fa5643507faff31ceeca7abec61c66232bc4d397963021e41c9cdb0e",
+  "onboarding_row_date_unknown": "d45cba14c8c156dc61e431ca405a8f3188946f787f2585c7d8268faea3cb8440",
   "onboarding_row_dates_estimated": "f5dcd955f919bdbe682b3c88c3d0a3185313e531d279c1de5aaa060efdde29d8",
   "onboarding_row_days_left": "f5ab18a3f17e162fbc5ddaa683e8e4f82f3bbe79711eb718005e38637317b991",
   "onboarding_row_deadline": "08eb435141ec53abe4d5312c23a82a4f34019a3a4b2b7bdc2e94319fc23f3122",
@@ -276,6 +281,8 @@
   "onboarding_row_last_cutoff": "bf7c2e469894620fa0db20e097aba2225ee7aaa21ad4fc21f8fb0f7690e4de33",
   "onboarding_row_level": "5c724f6a2063cdff723142d9df4688a3565f560be4cd095e278e725833b9c898",
   "onboarding_row_material": "2961931457ac6824068a721f337a1172c2178f7616cae6414aa3dcce6b48bf2d",
+  "onboarding_row_material_all_missing_note": "cd6ba92b14c8d3d8bff0fc3c2288a9c62e79b8426f08b62e20608b5e4611585c",
+  "onboarding_row_material_missing_note": "3c1041cebf4edffc89a80e54eaefdf42ba4368f2294f877cc0ae10b669c80c49",
   "onboarding_row_material_note": "71ce7730b30430b3e824e667d716a8897fc50e1ba2cc489c722318cee050f2ac",
   "onboarding_row_minutes_a_day": "b4f52f79925ed4489dd28b651a53cbb460a3803fdabbee766dec1391c57d153b",
   "onboarding_row_notice_says": "2c71aabd324d494ae65c00d7f69207cf77176077709b30ab16ac32793c31e740",
@@ -451,6 +458,10 @@
     <string name="onboarding_row_minutes_a_day">%1$s dziennie</string>
     <string name="onboarding_row_material">Twoje materiały</string>
     <string name="onboarding_row_material_note">Twój plan i lekcje opierają się na tych materiałach</string>
+    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Twój plan i lekcje opierają się tylko na tych materiałach. Pozostałych nie da się już odczytać.</string>
+    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Nie da się ich już odczytać, więc plan nie będzie ich uwzględniać.</string>
     <string name="onboarding_row_exam_date">Data egzaminu</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Terminy egzaminu</string>
@@ -466,6 +477,8 @@
     <string name="onboarding_row_year_to_be_confirmed">%1$s, do potwierdzenia</string>
     <!-- %1$s is a month and year, like "November 2027". -->
     <string name="onboarding_row_date_to_be_confirmed">%1$s, do potwierdzenia</string>
+    <!-- Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date. -->
+    <string name="onboarding_row_date_unknown">Znasz datę? Ustaw ją tutaj.</string>
     <string name="onboarding_row_date_not_out_notice">Oficjalny termin pojawi się w ogłoszeniu o egzaminie. Już go znasz? Ustaw go tutaj.</string>
     <string name="onboarding_row_date_not_out_guide">Termin pojawi się w oficjalnym kalendarzu egzaminu. Już go znasz? Ustaw go tutaj.</string>
     <string name="onboarding_row_date_booked">Termin tego testu wybierasz przy rezerwacji. Masz już rezerwację? Ustaw go tutaj.</string>
@@ -516,6 +529,14 @@
     <!-- The learner sent again a document research already read for an earlier ask. -->
     <string name="onboarding_attach_already_read">Ten dokument już przeczytaliśmy. Prześlij inny.</string>
     <string name="onboarding_attach_failed">Nie udało się tego dodać. Spróbuj ponownie za chwilę.</string>
+    <!-- Under the learner's attached material when one item sent with their goal can't be read anymore. %1$s is its name, like "Cell cycle.pdf". -->
+    <string name="onboarding_material_unreadable_one">Nie możemy już odczytać „%1$s”. Usuń ten plik i dodaj go ponownie.</string>
+    <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
+    <string name="onboarding_material_unreadable_some">Nie możemy już odczytać niektórych plików. Usuń je i dodaj ponownie.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <string name="onboarding_material_unreadable_state">Nie da się już odczytać</string>
+    <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
+    <string name="onboarding_material_limit">Do jednego celu możesz dodać maksymalnie %1$d plików. Usuń jeden, aby dodać kolejny.</string>
     <string name="onboarding_intent_title">Co chcesz zrobić?</string>
     <!-- One of the learner's answers to "What do you want to do?": they want to prepare themselves for an exam. -->
     <string name="onboarding_intent_exam">Przygotować się do egzaminu</string>

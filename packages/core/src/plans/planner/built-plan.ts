@@ -2,6 +2,7 @@ import { type StrainedEnd } from "./kept-phase-ends";
 import { type LaidOutOrder } from "./learned-order";
 import { type MockFunding } from "./mock-funding";
 import { type PlannedItem } from "./plan-items";
+import { type PlanSettings } from "./plan-state";
 import { type PlannedMocks } from "./planned-mocks";
 import { type PlanDay } from "./schedule-units";
 import { type SkillMinutes } from "./skill-minutes";
@@ -24,4 +25,6 @@ export type BuiltPlan = PlanOutline & {
   skillMinutes: SkillMinutes[];
   spill: number;
   waitingSkillIds: string[];
+  writingRequirement?: { reserved: number; target: number };
+  writingSchedule?: PlanSettings["writingSchedule"];
 };

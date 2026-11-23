@@ -8,6 +8,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
+import { linkGoalSources } from "./link-goal-sources";
 
 export type GoalUploadRequest = {
   examDocument: ExamDocument;
@@ -102,21 +103,19 @@ export async function answerGoalUploadRequest({
       return unchanged("noUploadRequest" as const);
     }
 
-    const fresh = await transaction.learnerSource.updateMany({
+    await linkGoalSources(transaction, {
+      goalId,
+      origin: "upload",
+      sourceIds: access.sourceIds,
+      userId,
+    });
+
+    const fresh = await transaction.goalSource.updateMany({
       data: { answeredAt: new Date() },
-      where: { answeredAt: null, sourceId: { in: access.sourceIds }, userId },
+      where: { answeredAt: null, goalId, sourceId: { in: access.sourceIds } },
     });
 
-    if (fresh.count === 0) {
-      return unchanged("alreadyAnswered" as const);
-    }
-
-    await transaction.learnerSource.updateMany({
-      data: { goalId },
-      where: { goalId: null, sourceId: { in: access.sourceIds }, userId },
-    });
-
-    return "answered" as const;
+    return fresh.count === 0 ? unchanged("alreadyAnswered" as const) : ("answered" as const);
   });
 
   if (answered !== "answered") {

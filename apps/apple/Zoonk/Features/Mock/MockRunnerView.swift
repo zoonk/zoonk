@@ -95,7 +95,7 @@ struct MockRunnerView: View {
   private func pages(_ question: MockQuestion) -> some View {
     if showsAnswerSheet, fitsTwoPages {
       PaneSplit(primaryShare: 0.5) {
-        QuestionColumn(readableWidth: 720, spacing: 16) {
+        QuestionColumn(readableWidth: 720, spacing: 16, note: run.barNote) {
           progress
         } content: {
           questionParts(question)
@@ -114,10 +114,10 @@ struct MockRunnerView: View {
   }
 
   private func spread(_ question: MockQuestion) -> some View {
-    QuestionSpread(readableWidth: 720, spacing: 16) {
+    QuestionSpread(readableWidth: 720, spacing: 16, note: run.barNote) {
       progress
     } stimulus: {
-      MockQuestionMeta(run: run, question: question)
+      MockQuestionMeta(run: run, view: view, question: question)
       MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     } response: {
       MockQuestionCard(run: run, view: view, question: question, part: .response)
@@ -129,7 +129,7 @@ struct MockRunnerView: View {
 
   @ViewBuilder
   private func questionParts(_ question: MockQuestion) -> some View {
-    MockQuestionMeta(run: run, question: question)
+    MockQuestionMeta(run: run, view: view, question: question)
     MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
     MockQuestionCard(run: run, view: view, question: question, part: .response)
     MovesNote(moves: run.moves)
@@ -155,7 +155,7 @@ struct MockRunnerView: View {
   }
 
   private var actionBar: some View {
-    MockActionBar(run: run) {
+    MockActionBar {
       UnsureButton(run: run)
       nextButton
     }
@@ -207,18 +207,28 @@ struct MockRunnerView: View {
 
 private struct MockQuestionMeta: View {
   let run: MockRun
+  let view: MockView
   let question: MockQuestion
 
   var body: some View {
-    let place = sectionPlace
     AccessibilityStack {
-      if let area = question.area {
+      if writtenTestPlace != nil, let area = question.area {
+        Chip(Text(verbatim: [MockLabels.title(number: view.number), area].joinedFacts()))
+      } else if let area = question.area {
         Chip(Text(area))
       }
       Spacer(minLength: 0)
-      if question.format == .essay {
-        Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+      if let place = writtenTestPlace {
+        // A written test counts its questions; the chip already names the test.
+        Text(
+          "\(String(place.number)) of \(String(place.total))", tableName: "Mock",
+          comment: "A written test question's place, like '1 of 2'")
+      } else if question.format == .essay {
+        if view.shape?.kind != .written {
+          Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
+        }
       } else {
+        let place = sectionPlace
         Text("\(place.number) of \(place.total)", tableName: "Mock", comment: "Question place")
           .monospacedDigit()
       }
@@ -226,7 +236,7 @@ private struct MockQuestionMeta: View {
     .typeStyle(.data)
     .foregroundStyle(.mutedForeground)
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(accessibilityPlace(number: place.number, total: place.total))
+    .accessibilityLabel(accessibilityPlace)
   }
 
   private var sectionPlace: (number: Int, total: Int) {
@@ -236,14 +246,24 @@ private struct MockQuestionMeta: View {
     return (run.position + 1, run.questions.count { $0.format != .essay })
   }
 
-  private func accessibilityPlace(number: Int, total: Int) -> Text {
+  private var writtenTestPlace: (number: Int, total: Int)? {
+    run.writtenTestPlace(of: question)
+  }
+
+  private var accessibilityPlace: Text {
+    if let place = writtenTestPlace {
+      return Text("Question \(String(place.number)) of \(String(place.total))", tableName: "Mock")
+    }
+
     if question.format == .essay {
       return question.area.map {
         Text("Written part\u{00A0}· \($0)", tableName: "Mock", comment: "An essay's place")
       } ?? Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
     }
 
-    return Text(MockLabels.questionPlace(number: number, total: total, area: question.area))
+    let place = sectionPlace
+    return Text(
+      MockLabels.questionPlace(number: place.number, total: place.total, area: question.area))
   }
 }
 
@@ -312,6 +332,7 @@ private struct MockQuestionCard: View {
   }
 }
 
+/// A written question reads as it does in practice: its topic, the support text, what to write.
 private struct MockEssayPrompt: View {
   let question: MockQuestion
 
@@ -321,8 +342,25 @@ private struct MockEssayPrompt: View {
         ItemSetStimulusView(set: set)
       }
 
-      ItemSupportView(context: question.context, image: nil, visual: nil)
-      QuestionTitle(text: question.question)
+      if let writing = question.writing {
+        Text(writing.title)
+          .typeStyle(.section)
+          .accessibilityAddTraits(.isHeader)
+
+        if let context = question.context, !context.isEmpty {
+          SectionTitle(
+            Text("Support text", tableName: "Essay"))
+          QuotedPassage(context, isItalic: false)
+        }
+
+        SectionTitle(
+          Text("What to write", tableName: "Essay"))
+        LessonTextBlocks(question.question)
+          .typeStyle(.reading)
+      } else {
+        ItemSupportView(context: question.context, image: nil, visual: nil)
+        QuestionTitle(text: question.question)
+      }
     }
   }
 }
@@ -334,12 +372,17 @@ private struct MockEssayBox: View {
   let isLocked: Bool
   @FocusState private var isFocused: Bool
 
+  private var label: Text {
+    Text("Your answer", tableName: "Essay", comment: "The box for a written answer")
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text((view.essayRubric ?? .custom).writingName)
+      label
         .typeStyle(.body.weight(.medium))
         .accessibilityHidden(true)
 
+      let count = question.writing.map { WritingLabels.lineCount(text.wrappedValue, writing: $0) }
       let words = WordCount.count(text.wrappedValue)
 
       TextEditor(text: text)
@@ -347,13 +390,18 @@ private struct MockEssayBox: View {
         .frame(minHeight: 280)
         .scrollContentBackground(.hidden)
         .focused($isFocused)
-        .fieldBorder(isFocused: isFocused)
+        .fieldBorder(isFocused: isFocused, holdsFocus: true)
         .disabled(isLocked)
-        .accessibilityLabel(Text((view.essayRubric ?? .custom).writingName))
-        .accessibilityHint(EssayWords.hint(words))
+        .accessibilityLabel(label)
+        .accessibilityHint(Text(count?.words ?? ""))
 
-      if words > 0 {
-        EssayWords.text(words)
+      if let count {
+        Text(count.words)
+          .typeStyle(.data)
+          .foregroundStyle(count.isOver ? .warningText : .mutedForeground)
+          .accessibilityHidden(true)
+      } else if words > 0 {
+        Text("\(words) words", tableName: "Essay", comment: "An answer's word count")
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
@@ -368,7 +416,8 @@ private struct MockEssayBox: View {
         if case .text(let text) = answer.wrappedValue { return text }
         return ""
       },
-      set: { answer.wrappedValue = .text($0) })
+      // The server takes no longer answer, so the field stops there.
+      set: { answer.wrappedValue = .text(EssayWriter.fitted($0)) })
   }
 }
 
@@ -528,6 +577,12 @@ struct MockSectionCounts {
 
       if run.isCountedAsAnswered(question.itemId) { answered += 1 } else { blank += 1 }
     }
+
+    // A written test is all questions, so a blank one is a blank question.
+    if essays == total {
+      blank = blankEssays
+      blankEssays = 0
+    }
   }
 
   var leftOpen: String {
@@ -571,8 +626,12 @@ struct MockSectionCounts {
     if blankEssays > 0 {
       parts.append(
         String(
-          localized: "\(blankEssays) essays are blank.", table: "Mock",
-          locale: .appLanguage, comment: "Blank essays when handing in"))
+          localized: "\(blankEssays) written questions are blank.", table: "Mock",
+          locale: .appLanguage,
+          comment:
+            "Before handing in a mock exam with objective and written questions: how many written answers are blank."
+        )
+      )
     }
 
     return parts.joinedSentences()
@@ -676,11 +735,14 @@ private struct MockAnswerSheet: View {
   private func row(_ question: MockQuestion, at index: Int) -> some View {
     let draft = run.drafts[question.itemId]
 
+    let writtenNumber = run.writtenTestPlace(of: question)?.number
+
     return MockSheetRow(
-      name: question.format == .essay
+      name: question.format == .essay && writtenNumber == nil
         ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
         : String(
-          localized: "Question \(question.number)", table: "Mock", locale: .appLanguage,
+          localized: "Question \(writtenNumber ?? question.number)", table: "Mock",
+          locale: .appLanguage,
           comment: "A question by number"),
       answered: run.isCountedAsAnswered(question.itemId),
       unsure: draft?.unsure ?? false,
@@ -689,6 +751,16 @@ private struct MockAnswerSheet: View {
     ) {
       onPick(index)
     }
+  }
+}
+
+extension MockRun {
+  func writtenTestPlace(of question: MockQuestion) -> (number: Int, total: Int)? {
+    guard question.format == .essay, let total = current?.questionTotal,
+      total > 1, question.number <= total
+    else { return nil }
+
+    return (question.number, total)
   }
 }
 

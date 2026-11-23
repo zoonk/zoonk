@@ -1,13 +1,14 @@
-import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
 import "server-only";
+import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { loadScheduledAnswersForRefresh } from "../../learner/facts/scheduled-answers";
 import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
-import { type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
-import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
+import { getKeptBlocks, hasSameBlocks, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
@@ -22,10 +23,6 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
-
-function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
-  return blocks.filter((block) => block.status !== "pending" || readBlockPayload(block).extra);
-}
 
 /** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
 function getOpenedPractice({
@@ -70,6 +67,17 @@ function withoutKept({
   const isNewLesson = (lesson: { lessonId: string | null }) =>
     !lesson.lessonId || !lessonIds.has(lesson.lessonId);
 
+  const drillLessons = new Set(kept.map((block) => readBlockPayload(block).writingLessonId));
+
+  const newLessons = (lessons: readonly PlannedLesson[]) =>
+    lessons
+      .filter((lesson) => isNewLesson(lesson))
+      .map((lesson) =>
+        lesson.drill && lesson.lessonId && drillLessons.has(lesson.lessonId)
+          ? { ...lesson, drill: undefined, minutes: lesson.minutes - lesson.drill.minutes }
+          : lesson,
+      );
+
   return {
     ...input,
     capsules: kinds.has("review") ? [] : input.capsules,
@@ -79,14 +87,13 @@ function withoutKept({
         ...checkpoint,
         reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
       })),
-    fillLessons: input.fillLessons?.filter(isNewLesson),
-    lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
+    fillLessons: input.fillLessons && newLessons(input.fillLessons),
+    lessons: newLessons(input.lessons),
     openedPractice: getOpenedPractice({ kept, session }),
     placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
-    produce: kinds.has("produce") ? null : input.produce,
     usedMinutes: getSessionUsedMinutes(kept),
   };
 }
@@ -108,6 +115,8 @@ export async function planRestOfDayWithPlan({
     localDate: session.localDate,
     now: new Date(),
     readSubscription,
+    readWritingAnswers: (userId: string, goalId: string) =>
+      loadScheduledAnswersForRefresh({ goalId, kept, localDate: session.localDate, userId }),
     timeZone,
     userId: session.userId,
   };
@@ -129,29 +138,11 @@ export async function planRestOfDayWithPlan({
     withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
   );
 
-  const keptKinds = new Set(kept.map((block) => block.kind));
-
   return {
-    blocks: blocks.filter((block) => !ONE_PER_DAY.has(block.kind) || !keptKinds.has(block.kind)),
+    blocks,
     plan: await dayPlan,
     plannedMinutes: Math.ceil(getSessionUsedMinutes(kept) + plannedMinutes),
   };
-}
-
-export function hasSameBlocks({
-  locked,
-  read,
-}: {
-  locked: readonly StudySessionBlock[];
-  read: readonly StudySessionBlock[];
-}): boolean {
-  return (
-    read.length === locked.length &&
-    read.every((block, index) => {
-      const current = locked[index];
-      return current?.id === block.id && current.status === block.status;
-    })
-  );
 }
 
 /** Preserve the session id and started work; a concurrent block start leaves the queue unchanged. */
@@ -163,9 +154,6 @@ async function replaceNotStartedBlocks({
   selection?: SelectedDayPlan;
 }): Promise<DaySessionRefresh> {
   const { session } = day;
-  const kept = getKeptBlocks(session.blocks);
-  const keptIds = new Set(kept.map((block) => block.id));
-  const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 
   const context = {
     goal: day.goal,
@@ -177,6 +165,10 @@ async function replaceNotStartedBlocks({
 
   // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
+
+  const kept = getKeptBlocks(session.blocks, selection?.state);
+  const keptIds = new Set(kept.map((block) => block.id));
+  const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
 
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 

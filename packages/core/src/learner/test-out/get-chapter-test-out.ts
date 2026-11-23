@@ -11,7 +11,7 @@ import {
   parsePlacementItem,
   toPlacementQuestionView,
 } from "../placement/_utils/placement-items";
-import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
+import { getChapterTestOutSkills, loadSkillItems } from "./_utils/chapter-items";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
@@ -77,19 +77,13 @@ export async function loadChapterTestOut({
   userId: string;
 }): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
   const plan = await loadTestOutPlan(goal.id, { goal, source: savedPlan });
-  const chapterSkills = getChapterSkills({ chapterId, plan });
+  const eligible = getChapterTestOutSkills({ chapterId, plan });
 
-  if (chapterSkills.length === 0) {
-    return { status: "notFound" };
+  if (eligible.status !== "ready") {
+    return eligible;
   }
 
-  const skippable = countSkippableItems({ plan, skills: chapterSkills });
-
-  if (skippable === 0) {
-    return { status: "nothingToSkip" };
-  }
-
-  const sampled = pickTestOutSkills(chapterSkills);
+  const sampled = pickTestOutSkills(eligible.skills);
 
   const questionsPerSkill = TEST_OUT_QUESTIONS_PER_SKILL;
 

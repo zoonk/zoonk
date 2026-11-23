@@ -18,7 +18,7 @@
   "session_block_weakest": "836e8e80b4ea95162415d529abd0d4beb15a433a4e8960eb428a7185397043ba",
   "session_block_weekly_challenge": "b3e959bb0c8e69691a6c821bc3b8ca792a3612c3d9f478b3ea6f146097439814",
   "session_block_what_you_know": "9b5359a0466c6ad81b838068ba12c7cb8eccecf2617c2939bf4cd846dcc3a2bf",
-  "session_block_writing_practice": "fdc84147d9d9aa269b73311b7615a0ebf51014df028d60f7559bb2b1c28651d7",
+  "session_block_writing_draft_saved": "88acba8bcd37d77ee644ccda263579a8f3a489af0f876b8880d13a171ac4ed26",
   "session_catch_up_to_go": "f297b466e703eb603dbcddc4081982f184c946ec6bba21eb4e2037237c6f0d91",
   "session_caught_up_today": "32430ad1ca6dce8193708bfccb9e54229e8695dfb3acfc6493b9dab6aef8ec4c",
   "session_day_done": "1b5de0e8634ec6cba7aaf480193ae488da9042d2cf120e2b8fb51f76b0ca3e04",
@@ -97,7 +97,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">O que você já sabe</string>
     <string name="session_block_new_lesson">Nova aula</string>
-    <string name="session_block_writing_practice">Prática de escrita</string>
+    <string name="session_block_writing_draft_saved">Seu rascunho está salvo</string>
     <string name="session_block_practice_mistakes">Corrigir erros</string>
     <string name="session_block_mixed_practice">Prática variada</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

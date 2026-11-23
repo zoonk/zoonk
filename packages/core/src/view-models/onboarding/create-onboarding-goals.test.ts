@@ -1,12 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
 import { mockSession } from "../../_test-utils/mock-session";
 import { moveLanguageGoalToExam } from "../../exams/move-language-goal";
 import { type GoalDraft } from "../../goals/goal-contract";
+import { loadGoalMaterial } from "../../library/sources/goal-material";
 import { isInputRangeError } from "../../plans/target-date-range";
 import { getSession } from "../../users/get-session";
 import { getLearnerToday } from "./_utils/understanding-view";
@@ -33,6 +36,42 @@ function cardGoal(onboardingId: string, title = "Learn chess"): GoalDraft {
 async function confirm(goals: GoalDraft[]) {
   const created = await createOnboardingGoals({ dailyMinutes: 30, goals, timeZone: "UTC" });
   return created.status === "created" ? created.goals.map((goal) => goal.id) : [];
+}
+
+async function uploadFixture(userId: string) {
+  const source = await sourceFixture({
+    extractedText: "The cell cycle runs through G1, S, G2 and M.",
+    kind: "upload",
+    title: "Cell cycle.pdf",
+  });
+
+  await learnerSourceFixture({ sourceId: source.id, userId });
+  return source.id;
+}
+
+/** For each source, the goals that read it as the learner's material. */
+function findLinkedGoalIds(sourceIds: string[]) {
+  return prisma.goalSource
+    .findMany({
+      orderBy: { goalId: "asc" },
+      select: { goalId: true, sourceId: true },
+      where: { origin: "upload", sourceId: { in: sourceIds } },
+    })
+    .then((links) =>
+      sourceIds.map((id) =>
+        links.filter((link) => link.sourceId === id).map((link) => link.goalId),
+      ),
+    );
+}
+
+function readMaterialIds(goalId: string | undefined) {
+  return loadGoalMaterial(goalId ?? "").then((sources) => sources.map((source) => source.id));
+}
+
+function findDetails(goalId: string | undefined) {
+  return prisma.goal
+    .findUniqueOrThrow({ select: { details: true }, where: { id: goalId } })
+    .then((goal) => goal.details);
 }
 
 function countClaims(userId: string) {
@@ -258,6 +297,155 @@ describe(createOnboardingGoals, () => {
       expect(forged).toStrictEqual([expect.not.stringMatching(ownersGoal ?? "")]);
       await expect(prisma.goal.count({ where: { userId: other.id } })).resolves.toBe(1);
     });
+  });
+
+  describe("a card sent with material", () => {
+    it("creates its main goal with the draft's material and choice, whatever the client sends", async () => {
+      const user = await userFixture();
+      const sourceIds = await Promise.all([uploadFixture(user.id), uploadFixture(user.id)]);
+
+      const card = await onboardingDraftFixture({
+        materialIntent: "understand",
+        sourceIds,
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+
+      const sent: GoalDraft = {
+        ...cardGoal(card.id),
+        details: { materialIntent: "exam", onboardingId: card.id },
+      };
+
+      const [goalId] = await confirm([sent]);
+      const again = await confirm([sent]);
+
+      expect(again).toStrictEqual([goalId]);
+
+      await expect(findDetails(goalId)).resolves.toMatchObject({
+        materialIntent: "understand",
+        purpose: "other",
+      });
+
+      await expect(findLinkedGoalIds(sourceIds)).resolves.toStrictEqual([[goalId], [goalId]]);
+    });
+
+    it("links only the card's material, never more the client sends with it", async () => {
+      const user = await userFixture();
+      const [notes, extra] = await Promise.all([uploadFixture(user.id), uploadFixture(user.id)]);
+      const card = await onboardingDraftFixture({ sourceIds: [notes], userId: user.id });
+      mockSession(user.id);
+
+      const sent = { dailyMinutes: 30, goals: [cardGoal(card.id)], timeZone: "UTC" };
+      const created = await createOnboardingGoals({ ...sent, sourceIds: [extra] });
+      const again = await createOnboardingGoals({ ...sent, sourceIds: [extra] });
+
+      const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
+
+      expect(again).toMatchObject({ goals: [{ id: goalId }] });
+
+      await expect(findLinkedGoalIds([notes, extra])).resolves.toStrictEqual([[goalId], []]);
+    });
+
+    it("leaves out a choice the learner didn't make on the card", async () => {
+      const user = await userFixture();
+      const notes = await uploadFixture(user.id);
+      const card = await onboardingDraftFixture({ sourceIds: [notes], userId: user.id });
+      mockSession(user.id);
+
+      const [goalId] = await confirm([
+        { ...cardGoal(card.id), details: { materialIntent: "exam", onboardingId: card.id } },
+      ]);
+
+      await expect(findDetails(goalId)).resolves.not.toHaveProperty("materialIntent");
+      await expect(findLinkedGoalIds([notes])).resolves.toStrictEqual([[goalId]]);
+    });
+
+    it("gives each card's goal the material it was sent with, even when another goal reads it", async () => {
+      const user = await userFixture();
+      const notes = await uploadFixture(user.id);
+
+      const [first, second] = await Promise.all([
+        onboardingDraftFixture({ materialIntent: "exam", sourceIds: [notes], userId: user.id }),
+        onboardingDraftFixture({ materialIntent: "exam", sourceIds: [notes], userId: user.id }),
+      ]);
+
+      mockSession(user.id);
+      const [firstGoal] = await confirm([cardGoal(first.id)]);
+      const [secondGoal] = await confirm([cardGoal(second.id)]);
+
+      expect(secondGoal).toStrictEqual(expect.any(String));
+      expect(secondGoal).not.toBe(firstGoal);
+      await expect(findDetails(secondGoal)).resolves.toMatchObject({ materialIntent: "exam" });
+
+      await expect(
+        Promise.all([readMaterialIds(firstGoal), readMaterialIds(secondGoal)]),
+      ).resolves.toStrictEqual([[notes], [notes]]);
+    });
+
+    it("creates its main goal with an upload merged into a shared copy before the learner confirmed", async () => {
+      const user = await userFixture();
+      const { shared, upload } = await uploadWithSharedCopyFixture(user.id);
+
+      const card = await onboardingDraftFixture({
+        materialIntent: "exam",
+        sourceIds: [upload.id],
+        userId: user.id,
+      });
+
+      await mergeIntoSharedCopy(upload);
+      mockSession(user.id);
+
+      const [goalId] = await confirm([cardGoal(card.id)]);
+
+      await expect(readMaterialIds(goalId)).resolves.toStrictEqual([shared.id]);
+    });
+
+    it("still links the material a client sends with a card that kept none", async () => {
+      const user = await userFixture();
+      const notes = await uploadFixture(user.id);
+      const card = await onboardingDraftFixture({ userId: user.id });
+      mockSession(user.id);
+
+      const created = await createOnboardingGoals({
+        dailyMinutes: 30,
+        goals: [
+          { ...cardGoal(card.id), details: { materialIntent: "exam", onboardingId: card.id } },
+        ],
+        sourceIds: [notes],
+        timeZone: "UTC",
+      });
+
+      const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
+
+      await expect(findDetails(goalId)).resolves.toMatchObject({ materialIntent: "exam" });
+      await expect(findLinkedGoalIds([notes])).resolves.toStrictEqual([[goalId]]);
+    });
+  });
+
+  it("links the material a client sends with an explanation", async () => {
+    const user = await userFixture();
+    const notes = await uploadFixture(user.id);
+    mockSession(user.id);
+
+    const created = await createOnboardingGoals({
+      dailyMinutes: 5,
+      goals: [
+        {
+          details: { question: "How does mitosis work?" },
+          kind: "explain",
+          language: "en",
+          prompt: "How does mitosis work?",
+          title: "How does mitosis work?",
+        },
+      ],
+      sourceIds: [notes],
+      timeZone: "UTC",
+    });
+
+    const goalId = created.status === "created" ? created.goals[0]?.id : undefined;
+
+    await expect(findLinkedGoalIds([notes])).resolves.toStrictEqual([[goalId]]);
   });
 
   it("refuses a date no card gave", async () => {

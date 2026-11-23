@@ -3317,7 +3317,7 @@ describe(goalContentWorkflow, () => {
     expect(getStreamedEvents().some(({ step }) => step === "warmUpReady")).toBe(false);
   });
 
-  it("writes original free-response questions with pointed rubric rows for an AP exam", async () => {
+  it("does not generate essay prompts from an exam name alone", async () => {
     const blueprint = await examBlueprintFixture({
       identityKey: `ap-biology-${crypto.randomUUID()}`,
       name: "AP Biology",
@@ -3327,21 +3327,13 @@ describe(goalContentWorkflow, () => {
 
     await goalContentWorkflow({ goalId: goal.id });
 
-    const essayCalls = vi
-      .mocked(generateItems)
-      .mock.calls.filter(([params]) => params.format === "essay");
-
-    expect(essayCalls.length).toBeGreaterThan(0);
-    expect(essayCalls.length).toBeLessThanOrEqual(3);
-
-    expect(essayCalls[0]?.[0]).toMatchObject({
-      count: 1,
-      examFormat: expect.objectContaining({ name: "AP Biology" }),
-    });
+    expect(vi.mocked(generateItems).mock.calls.some(([params]) => params.format === "essay")).toBe(
+      false,
+    );
 
     await expect(
       prisma.item.count({ where: { examBlueprintId: blueprint.id, format: "essay" } }),
-    ).resolves.toBe(essayCalls.length);
+    ).resolves.toBe(0);
   });
 
   it("writes question sets for an exam goal's first areas in the background, never for a guest", async () => {

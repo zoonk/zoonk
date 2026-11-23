@@ -15,15 +15,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -75,11 +79,16 @@ import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
+import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.putJsonArray
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
@@ -164,6 +173,129 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun levelTestWaiting() = captureLevelTestWaiting("phone-screen")
+
+    /** The card names the draft's material; back on the entry, five sources leave the paperclip off. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialFull() {
+        val sources =
+            listOf("Cell cycle.pdf", "Mitosis slides.pptx", "", "Chapter 12: Meiosis", "Lab notes")
+                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        sources = sources,
+                    )
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write("understood-material-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+        write("start-material-full-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** A class test has no exam notice, so the card asks for its date when the learner knows it. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun classTest() {
+        val api =
+            FakeOnboardingApi().apply {
+                draft = understoodDraft(prompt = "biology test next week", understanding = goalsUnderstanding(title = "Biology test"))
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write("understood-class-test-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** The card says when some of the goal's material can't be read anymore, with what's left of it or with none. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialMissing() = captureMaterialMissing(listOf("Mitosis slides.pptx"), "understood-material-missing-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialAllMissing() = captureMaterialMissing(emptyList(), "understood-material-missing-all-phone-screen")
+
+    /** Material that can't be read anymore sends the learner back to their start, with what to add again marked. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialUnreadable() = captureUnreadable(1, "start-material-unreadable-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialSeveralUnreadable() = captureUnreadable(2, "start-material-unreadable-several-phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialUnreadableDarkMoreContrast() =
+        captureUnreadable(1, "start-material-unreadable-phone-screen-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialUnreadableAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureUnreadable(1, "start-material-unreadable-phone-font200")
+    }
+
+    private fun captureMaterialMissing(
+        titles: List<String>,
+        name: String,
+    ) {
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        materialMissing = true,
+                        sources = titles.map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) },
+                    )
+            }
+        compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    private fun captureUnreadable(
+        unreadable: Int,
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val sources =
+            listOf("Cell cycle notes.pdf", "Mitosis slides.pptx", "Chapter 12: Meiosis")
+                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test on Friday").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        sources = sources,
+                    )
+            }
+        lateinit var focus: FocusManager
+        compose.setContent {
+            focus = LocalFocusManager.current
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } }
+        }
+        compose.waitForIdle()
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.waitForIdle()
+        api.refusal =
+            ApiException(
+                ApiError.Unavailable,
+                "MATERIAL_UNAVAILABLE",
+                status = 422,
+                details = buildJsonObject { putJsonArray("sourceIds") { sources.take(unreadable).forEach { add(it.id.toString()) } } },
+            )
+        // Sent from the keyboard and the box left, as a tap on Build my plan leaves its press ripple drawn in the picture.
+        compose.onNode(hasSetTextAction()).performImeAction()
+        compose.runOnUiThread { focus.clearFocus() }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

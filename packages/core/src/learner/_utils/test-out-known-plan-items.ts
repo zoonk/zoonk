@@ -3,6 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { awardCourseCertificates } from "../../certificates/_utils/award-course-certificate";
 import { awardLanguageLevelCertificates } from "../../certificates/_utils/award-language-certificates";
+import { loadExamWritingSkillIdsForLearner } from "../writing-skills";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
 
 export type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
@@ -13,7 +14,7 @@ export type TestOutInput = {
   placedSkills?: readonly LeftOutSkill[];
 };
 
-export function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) {
+function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) {
   const planned = new Set(items.flatMap((item) => item.skillIds));
 
   return {
@@ -100,12 +101,28 @@ export async function testOutKnownPlanItems(
     timeZone,
     ...input
   }: TestOutInput & { goalId: string; testedOutAt: Date; timeZone: string },
-): Promise<{ itemIds: string[]; sharedItemIds: string[]; standInIds: string[] }> {
-  const { ids, leftOut } = findTestOut(input);
+): Promise<{
+  itemIds: string[];
+  requestedItemIds: string[];
+  sharedItemIds: string[];
+  standInIds: string[];
+}> {
   const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
 
+  const written = await loadExamWritingSkillIdsForLearner({
+    skillIds: [...input.knownSkillIds],
+    tx,
+    userId: goal.userId,
+  });
+
+  const knownSkillIds = new Set(
+    [...input.knownSkillIds].filter((skillId) => !written.has(skillId)),
+  );
+
+  const { ids, leftOut } = findTestOut({ ...input, knownSkillIds });
+
   const otherPlans =
-    input.knownSkillIds.size > 0
+    knownSkillIds.size > 0
       ? await tx.plan.findMany({
           where: {
             goal: { id: { not: goalId }, status: { not: "archived" }, userId: goal.userId },
@@ -117,10 +134,7 @@ export async function testOutKnownPlanItems(
     otherPlans.map((plan) => loadGoalPlan(plan.goalId, undefined, { tx })),
   );
 
-  const sharedIds = findTestOut({
-    items: others.flatMap((plan) => plan.items),
-    knownSkillIds: input.knownSkillIds,
-  }).ids;
+  const sharedIds = findTestOut({ items: others.flatMap((plan) => plan.items), knownSkillIds }).ids;
 
   const allIds = [...ids, ...sharedIds];
 
@@ -145,6 +159,7 @@ export async function testOutKnownPlanItems(
 
   return {
     itemIds: ids.filter((id) => changed.has(id)),
+    requestedItemIds: ids,
     sharedItemIds: sharedIds.filter((id) => changed.has(id)),
     standInIds,
   };

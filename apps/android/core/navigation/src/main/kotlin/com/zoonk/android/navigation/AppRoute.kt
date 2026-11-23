@@ -2,6 +2,7 @@ package com.zoonk.android.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Every page of main's app (`apps/main/src/app/[lang]`) as a typed route, plus the two screens
@@ -266,9 +267,26 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
+    /**
+     * A start's answer belongs to the current visit. Restoring the route only restores the block ID.
+     */
     @Serializable
     data class Essay(
         val blockId: String,
+        @Transient val writing: String? = null,
+        @Transient val taskDescription: String? = null,
+        @Transient val taskMinutes: Int? = null,
+        @Transient val taskLines: Int? = null,
+        @Transient val taskNumber: Int? = null,
+        @Transient val taskTotal: Int? = null,
+        @Transient val taskDistinctLines: Boolean = false,
+        @Transient val drill: Boolean = false,
+    ) : AppRoute
+
+    /** A past written answer, read as its result was. */
+    @Serializable
+    data class WritingAnswer(
+        val attemptId: String,
     ) : AppRoute
 
     @Serializable
@@ -418,8 +436,9 @@ val AppRoute.presentation: Presentation
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook, is AppRoute.Lesson,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.TestOut,
             is AppRoute.FocusTest, is AppRoute.PlacementTest, is AppRoute.LevelTest, is AppRoute.Challenge,
-            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.MindMap, is AppRoute.MindMapStudy,
-            is AppRoute.Pronunciation, is AppRoute.Conversation, is AppRoute.Explain, is AppRoute.PlanLink, AppRoute.Login,
+            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.WritingAnswer, is AppRoute.Mock, is AppRoute.MindMap,
+            is AppRoute.MindMapStudy, is AppRoute.Pronunciation, is AppRoute.Conversation, is AppRoute.Explain,
+            is AppRoute.PlanLink, AppRoute.Login,
             -> Presentation.Task
 
             is AppRoute.WebPage -> Presentation.Web
@@ -440,7 +459,7 @@ val AppRoute.requirement: Requirement
             AppRoute.StatsPatterns, is AppRoute.GoalSetup,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.Challenge,
-            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.Pronunciation,
+            is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.WritingAnswer, is AppRoute.Mock, is AppRoute.Pronunciation,
             is AppRoute.Conversation, is AppRoute.Explain, AppRoute.Certificates, is AppRoute.Certificate,
             -> Requirement.Account
 

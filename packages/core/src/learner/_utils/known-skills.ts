@@ -7,8 +7,9 @@ import { unlessPlanConflict } from "../../plans/plan-conflict";
 import { type FinishedChapter } from "../../sessions/completion-contract";
 import { INFERRED_KNOWN_ANSWER } from "../answer-rating";
 import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
+import { loadExamWritingSkillIdsForLearner } from "../writing-skills";
 import { type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
-import { type LeftOutSkill, findTestOut, testOutKnownPlanItems } from "./test-out-known-plan-items";
+import { type LeftOutSkill, testOutKnownPlanItems } from "./test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "./write-learner-change";
 
 /** Existing learned memory outranks inferred knowledge. A supplied transaction must already have marked the learner changed. */
@@ -37,14 +38,21 @@ export async function markSkillsKnown({
   });
 
   const write = async (tx: TransactionClient) => {
+    const written = await loadExamWritingSkillIdsForLearner({ skillIds, tx, userId });
+    const objective = skillIds.filter((id) => !written.has(id));
+
+    if (objective.length === 0) {
+      return 0;
+    }
+
     const created = await tx.learnerSkill.createMany({
-      data: skillIds.map((skillId) => ({ ...memory, skillId, userId })),
+      data: objective.map((skillId) => ({ ...memory, skillId, userId })),
       skipDuplicates: true,
     });
 
     const updated = await tx.learnerSkill.updateMany({
       data: memory,
-      where: { reps: 0, skillId: { in: [...skillIds] }, userId },
+      where: { reps: 0, skillId: { in: objective }, userId },
     });
 
     return created.count + updated.count;
@@ -110,7 +118,6 @@ export async function markPlanItemsTestedOut({
     planVersion: null,
   };
 
-  const { ids, leftOut } = findTestOut({ items, knownSkillIds, placedSkills });
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
@@ -118,7 +125,7 @@ export async function markPlanItemsTestedOut({
   }
 
   const written =
-    knownSkillIds.size > 0 || leftOut.length > 0
+    knownSkillIds.size > 0
       ? await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
           const changed = await testOutKnownPlanItems(tx, {
             goalId,
@@ -136,7 +143,11 @@ export async function markPlanItemsTestedOut({
               })
             : [];
 
-          const result = { finishedChapters: finished, standInIds: changed.standInIds };
+          const result = {
+            finishedChapters: finished,
+            ids: changed.requestedItemIds,
+            standInIds: changed.standInIds,
+          };
 
           return changed.itemIds.length === 0 &&
             changed.sharedItemIds.length === 0 &&
@@ -144,9 +155,9 @@ export async function markPlanItemsTestedOut({
             ? unchanged(result)
             : result;
         })
-      : { finishedChapters: [], standInIds: [] };
+      : { finishedChapters: [], ids: [], standInIds: [] };
 
-  const { finishedChapters, standInIds } = written;
+  const { finishedChapters, ids, standInIds } = written;
 
   const planItemIds = [...ids, ...standInIds];
   const announced = [...new Set([...announceAlso, ...planItemIds])];

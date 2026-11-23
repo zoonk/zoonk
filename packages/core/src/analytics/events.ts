@@ -129,6 +129,7 @@ type LearningEvents = {
     minutes: number;
     questions: number;
   };
+  "Writing Prompt Wait Viewed": { generation_id: string; surface: "practice" | "mock" };
   "Pronunciation Tip Shown": { skill_id: string | null; target_language: string };
   /**
    * Sent by the app once per connection, best effort, however it ended. A reply gap runs from the
@@ -219,6 +220,7 @@ type AccountEvents = {
 type QualityEvents = {
   "Content Reported": { content_id: string; content_kind: string; reason: string };
   "Feedback Sent": { content_kind: string | null };
+  "Writing Prompt Wait Shown": { block_id: string; run_id: string };
   "Generation Failed": { content_kind: string; model: string | null; task: string };
   "Generation Waited": {
     content_kind: string;

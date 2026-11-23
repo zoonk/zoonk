@@ -28,8 +28,14 @@ const OWNERS: Record<string, string> = {
     "A certificate's page has no split.",
   "Features/Courses/CatalogStartActions.swift: goalSwitch":
     "The course, chapter and lesson pages' goal switch, attached to the view that holds their PaneSplit.",
+  "Features/Essay/EssayScreen.swift: finishing":
+    "A written task's screen has no split; closing it is leaving the task.",
+  "Features/Essay/WritingStartView.swift: asking":
+    "The written question's wait has no split; closing it ends following the run, which goes on.",
   "Features/Exam/ExamScreen.swift: callStart, dateChange, resultSave":
     "The exam page, which holds its PaneSplit.",
+  "Features/Exam/WrittenProjection.swift: writing":
+    "Write's own button, in a bottom bar or a sheet's footer, outside any split.",
   "Features/FocusTest/FocusTestFlow.swift: tasks": "The focus test has no split.",
   "Features/GoalContent/ChapterScreen.swift: practicing":
     "The chapter page, which holds its PaneSplit.",

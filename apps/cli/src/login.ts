@@ -96,8 +96,12 @@ function showCode(code: DeviceCode) {
   );
 }
 
-export async function logIn({ file, origin }: LoginPlace) {
-  const code = await requestDeviceCode(origin);
+export async function logIn({
+  file,
+  origin,
+  writingRepair,
+}: LoginPlace & { writingRepair?: boolean }) {
+  const code = await requestDeviceCode(origin, writingRepair);
 
   showCode(code);
   openBrowser(code.verificationUriComplete ?? code.verificationUri);

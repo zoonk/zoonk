@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 /**
- * Main's hairline between a list's rows (`divided-rows`), on the words' margin rather than the screen's edges. Beside
- * a highlighted row it goes clear but keeps its room, so moving the highlight moves no row.
+ * Main's hairline between a list's rows (`divided-rows`), on the words' margin rather than the screen's edges. Touching a
+ * highlighted row ([besideHighlight]) it turns transparent rather than going, so nothing moves when the highlight does.
  */
 @Composable
 fun ListDivider(

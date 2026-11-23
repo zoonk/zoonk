@@ -1,7 +1,6 @@
 import "server-only";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { getMockPaperSkillIds } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
@@ -26,6 +25,7 @@ import {
 import { findPlannedReview, listReviewExtraItems } from "./day-review";
 import { listFittingLessons } from "./day-stretch";
 import { type DayPracticeQuery, type DayWork, loadDayWork, loadHeldDayInput } from "./day-work";
+import { loadDayWriting } from "./day-writing";
 import { getExamPrepAccess } from "./exam-access";
 import { loadLivingPlanSignals } from "./living-plan-session";
 import { loadDayPlanLessons } from "./load-plan-lessons";
@@ -225,7 +225,7 @@ export async function loadSessionBuildInput(
     { capsules: dueCapsules, claims },
     boss,
     weekly,
-    produce,
+    writing,
   ] = await Promise.all([
     dayLessons,
     loadAlphabetIntro({ goal, userId }),
@@ -260,19 +260,17 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
-    loadSessionProduce({
-      goal,
-      planSettings: plan.settings,
-      skillIds: testSkillIds,
-      structure: plan.structure,
-      today: localDate,
-      userId,
-    }),
+    loadDayWriting({ context, includesMockExams: access.includesMockExams, plan }),
   ]);
 
-  const lessons = [...toAlphabetLessons(alphabet), ...planLessons];
-  const checkpoints = listDayCheckpoints({ boss, items: plan.items, weekly });
+  const lessons = [
+    ...toAlphabetLessons(alphabet),
+    ...planLessons.map((lesson) => writing.reserveDrill(lesson)),
+  ];
+
+  const checkpoints = writing.writtenTest
+    ? [writing.writtenTest]
+    : listDayCheckpoints({ boss, items: plan.items, weekly });
 
   // A Plus-only mock day gives free learners a full review of every test topic instead.
   const fullReview = weekly.plusRequired;
@@ -294,22 +292,24 @@ export async function loadSessionBuildInput(
     allowsReviewLessons,
     checkpoints,
     dailyMinutes: dayMinutes,
-    fillLessons,
+    fillLessons: fillLessons.map((lesson) => writing.reserveDrill(lesson)),
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,
     lastSessionChallenges: plan.lastSessionChallenges,
     lessons,
-    mockReplacesDay: isMockOnlyDay({
-      goal,
-      hasMock: context.keepsMock || checkpoints.some((checkpoint) => checkpoint.mock),
-      items: plan.items,
-      planSettings: plan.settings,
-      today: localDate,
-    }),
+    mockReplacesDay:
+      Boolean(writing.writtenTest) ||
+      isMockOnlyDay({
+        goal,
+        hasMock: context.keepsMock || checkpoints.some((checkpoint) => checkpoint.mock),
+        items: plan.items,
+        planSettings: plan.settings,
+        today: localDate,
+      }),
     netScored,
     planItems: plan.items,
     practiceShare: getDayPracticeShare({ goal, items: plan.items, today: localDate }),
-    produce,
+    produces: writing.produces,
     reviewPlanItemId: reviewDay?.id ?? null,
     reviewPlanItemKey: reviewDay ? (reviewDay.key ?? getItemKey(reviewDay)) : null,
     topics: getPlanTopics({ goal, graph: plan.graph }),

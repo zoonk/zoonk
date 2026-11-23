@@ -2,6 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { applyAnswerToLearnerSkill } from "../../learner/_utils/update-learner-skill";
 import { gradeLessonAnswers } from "../../learner/answer-rating";
+import { loadExamWritingSkillIdsForLearner } from "../../learner/writing-skills";
 import { isAnswerableStep } from "../lesson-run";
 import { type PlayableLibraryStep } from "../playable-lesson";
 import { type loadPlayedLesson } from "./load-played-lesson";
@@ -71,7 +72,15 @@ export async function reviewLessonPlanSkills({
   userId: string;
 }): Promise<boolean> {
   const grade = gradeLessonAnswers(toFirstAnswers(answers));
-  const skillIds = getSkillsToReview({ answers, planSkillIds });
+  const candidates = getSkillsToReview({ answers, planSkillIds });
+
+  const written = await loadExamWritingSkillIdsForLearner({
+    skillIds: candidates,
+    tx: transaction,
+    userId,
+  });
+
+  const skillIds = candidates.filter((id) => !written.has(id));
 
   if (!grade || skillIds.length === 0) {
     return false;

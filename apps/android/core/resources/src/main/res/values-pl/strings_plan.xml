@@ -70,11 +70,9 @@
   "plan_building_description": "f5a0f06b20575cdfe3747e1b1369615ced611a9e3b7f67c2ae2d0ac24d249de5",
   "plan_building_eyebrow": "c2a1d058d7e31d4dabcc9e6be33c3ee58adb2bfde40b3f1a180d441704afe45e",
   "plan_cadence_biweekly": "60790e8f35ff9e62499b80deec688ff4a6482eac667195ab6ec035ed498124aa",
-  "plan_cadence_biweekly_effect": "5539464b2e12ef0f88c7d2e5efd4021236b3e24dedcdfac6648c1175a9281c76",
   "plan_cadence_final_weeks": "b420d226861bdfa56a3697128194354bf5024598cadd14e6b1585d56d93fa89f",
-  "plan_cadence_final_weeks_effect": "2f3b644d1ace7c4205197cba24756a627dad12287fa07e57443d470d64987bb3",
   "plan_cadence_weekly": "c63ec389a11b1c09dcfae198514b7f880d8c5d2f251c78bbad330bfff7659f96",
-  "plan_cadence_weekly_effect": "202ff7d732378c56f6dcbb2c579fb527a0c1860747ba12721ca5eabc1c111931",
+  "plan_cadence_weekly_recommended": "4c8812ee48c8ee59407a5018162cec80532dc21d9205c132bfabad9236e44ba7",
   "plan_call_not_in_plan": "fa2ff0dd20863578f8eea85b909b1c2f8224572bcc2fddec221fe6ff0e66d501",
   "plan_cancel": "1e3288ecb7786b06c058d3d51352510ffeec5c9195ec665ac06d72d99503d3ed",
   "plan_challenge_live_call": "5a1cf8c90f99334aff9f8b48b41c628b11f0f0e8404183c792e5739a29838967",
@@ -518,13 +516,23 @@
   "plan_week_time": "183926dfbffef96fc4f8abf41f73d15219503a20341ece2498318e9e8c99b92f",
   "plan_weekly_challenges": "2f09d962e57d9571807aff0452c842f083d7fcbd34088820c7d02a8d3cf4317e",
   "plan_what_you_practice": "83617eadfd979b65e06ad23b2406b1017ba971662ed1acc34af1a3da544f2238",
-  "plan_when_to_practice": "dac3d6991ecd7c4a99dcf0b3d6e7cbf1885d9ddd5075ca6d0051a58d41d32a22",
+  "plan_when_to_practice_writing": "520767303dd423defa8df368bec33ba7abef49481559873201c8318ccaa50a0c",
   "plan_where_to_focus": "02deaceab401250ba5bf9eba11773b69effede3044d4dd14af603111152f7aec",
   "plan_where_to_focus_description": "30dff9fd993634cb49ba687e6aab72c24ad97582e2d1668c3fc19fbcec82a962",
   "plan_why_phase_dates_later": "536f87f85afd59b401051d6952f61d08378b935ad68e774b80f11a9d42631054",
   "plan_why_phase_end_later": "2d2b7df762253ae7b6bb84ca9a04de346ceb440c5817524a2f0500c2b01d4bae",
   "plan_why_phase_end_off_rest": "278c315959452326cfe9e69cc1928664b2b4b3efc6ac003d23e43956191d4451",
   "plan_working_out_coverage": "dc4e210ef6f6be15c9a4ad9f74f644241773259279ccbd9171930c2c49a01585",
+  "plan_written_above_minimum": "29d9e956b8a22903bc69e1e42318f50c16d69a7e5e0aa1c48f6b6f54d6f16348",
+  "plan_written_asks_for": "dd1ee23f553738fbb2e8fe50e509c997defdef09ec32ce5ad7379daeada5546f",
+  "plan_written_asks_for_share": "e3e5af6099b5bee7c92917e767c1770e38599edf47e61dbe7c78194a4d47035e",
+  "plan_written_below_minimum": "7f5cde6ddc472150e9809eb44ffb65b77ae13347185aee7a565277b4739ba009",
+  "plan_written_close_to_minimum": "6669a02d45fa3931301555834a31dfaef463096e41ac93a3f130647d10fd82c2",
+  "plan_written_not_measured": "979d5edb82806272d70460de305bdaef83aef5ff45658a7c7b2e728a6ea638ce",
+  "plan_written_not_measured_half": "7f359c1492ba38fdd54ac0cef5d6e891674b2e619a28f5f54b8f1c26410b046a",
+  "plan_written_not_measured_share": "db2796f4550d81b65b1c2dd96901773f61c2b80531f1a77935f7682157fb6dd7",
+  "plan_written_objective": "77b424140f78fc3be26757cd5cb35bbee13e2aacb227cf716be997c1e03cc041",
+  "plan_written_points_below": "62a8e8b1d2c0843fd99c1afa054c00077576b4c085f2240724f60bc95e37e3cc",
   "plan_you_are_here_suffix": "2f61c12bb05b1e5c9ec264c4a266263ca65b8675d139483436eae7bc5a9020ae",
   "plan_your_level": "0aa17a176581c23fcdfd2c31a401f30881b6dc107b9476f557fb69904545f87b",
   "plan_your_pace": "88ff44ae808a593ad2153f9c0fd5b9d5091b5fdadcadcd9858aeeca7251c6542",
@@ -1171,13 +1179,11 @@
     <string name="plan_tool_writing_setup_line_3">Dodajemy szybki test działania narzędzia…</string>
     <string name="plan_tool_device">Twoje urządzenie</string>
     <string name="plan_what_you_practice">Co ćwiczysz</string>
-    <string name="plan_when_to_practice">Kiedy ćwiczyć: %1$s</string>
+    <string name="plan_when_to_practice_writing">Kiedy ćwiczyć pisanie</string>
     <string name="plan_cadence_weekly">Co tydzień</string>
     <string name="plan_cadence_biweekly">Co drugi tydzień</string>
     <string name="plan_cadence_final_weeks">Tylko w ostatnich tygodniach</string>
-    <string name="plan_cadence_weekly_effect">Polecamy: trochę ćwiczeń co tydzień, bo to najlepiej rozwija umiejętność pisania.</string>
-    <string name="plan_cadence_biweekly_effect">Tyle samo ćwiczeń, ale co drugi tydzień: rzadziej, za to więcej naraz.</string>
-    <string name="plan_cadence_final_weeks_effect">Ćwiczenia mniej rozłożone w czasie, skupione w ostatnich tygodniach przed egzaminem.</string>
+    <string name="plan_cadence_weekly_recommended">Co tydzień (zalecane)</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">Do %1$s nie wystarczy czasu, by przerobić wszystko.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
@@ -1508,4 +1514,14 @@
     <string name="plan_call_not_in_plan">Twój plan nie obejmuje rozmowy</string>
     <string name="plan_outside_past_basics">Pominięte · znasz już podstawy</string>
     <string name="plan_outside_skipped_base">Pominięte · twój wybór</string>
+    <string name="plan_written_below_minimum">Poniżej progu zaliczenia</string>
+    <string name="plan_written_asks_for">Z %1$s trzeba zdobyć %2$s pkt, niezależnie od pozostałych wyników.</string>
+    <string name="plan_written_asks_for_share">Do zaliczenia %1$s potrzeba %2$s punktów, niezależnie od pozostałych wyników.</string>
+    <string name="plan_written_not_measured">%1$s nie ma jeszcze wyniku.</string>
+    <string name="plan_written_not_measured_half">%1$s (połowa wyniku końcowego) nie ma jeszcze wyniku.</string>
+    <string name="plan_written_not_measured_share">%1$s (%2$s wyniku końcowego) nie ma jeszcze wyniku.</string>
+    <string name="plan_written_objective">Test obiektywny</string>
+    <string name="plan_written_above_minimum">Powyżej wymaganego minimum %1$s pkt</string>
+    <string name="plan_written_points_below">Brakuje %1$s pkt do wymaganego minimum %2$s</string>
+    <string name="plan_written_close_to_minimum">Blisko wymaganego minimum %1$s</string>
 </resources>

@@ -1,4 +1,4 @@
-import { accessError } from "@/lib/api-errors";
+import { accessError, createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import {
   getUnderstandingLocation,
@@ -34,6 +34,15 @@ async function createGoalUnderstanding(request: NextRequest) {
 
   if (result.status === "unauthorized" || isRefusedUsage(result)) {
     return usageDecisionError(result);
+  }
+
+  if (result.status === "materialUnavailable") {
+    return createErrorResponse({
+      code: "MATERIAL_UNAVAILABLE",
+      details: { sourceIds: result.sourceIds },
+      message: "Material in sourceIds names none of the learner's uploads",
+      status: httpStatus.unprocessableEntity,
+    });
   }
 
   const headers = { Location: getUnderstandingLocation(result.draft.id) };

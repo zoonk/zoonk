@@ -13,6 +13,7 @@ import { type SkillReadiness } from "../planner/skill-order";
 import { getLevelFloor } from "./level-bands";
 import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
+import { loadPlanWriting } from "./planner-writing";
 import { loadStrongAreas } from "./strong-areas";
 import { findWrittenStartLessonId } from "./written-start";
 
@@ -89,6 +90,7 @@ export async function loadPlannerInputs({
   examPicks,
   goal,
   graph,
+  skippedAreas,
   targetDate,
   userId,
 }: {
@@ -105,11 +107,20 @@ export async function loadPlannerInputs({
     | "targetLanguage"
   >;
   graph: PlanGraph;
+  skippedAreas: readonly string[];
   targetDate: Date | null;
   userId: string;
 }) {
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
+
+  const examFactsRead = Promise.resolve(
+    loadExamFacts({
+      goal,
+      graph: { ...graph, skills: graph.skills.filter((skill) => !skill.extra) },
+      picks: examPicks,
+    }),
+  );
 
   const [
     lessons,
@@ -124,16 +135,33 @@ export async function loadPlannerInputs({
     loadGoalPlannerLessons({ goal, graph, userId }),
     loadSkillPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    loadExamFacts({
-      goal,
-      graph: { ...graph, skills: graph.skills.filter((skill) => !skill.extra) },
-      picks: examPicks,
-    }),
-    loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
+    examFactsRead,
+    examFactsRead.then(({ writtenSkillIds }) =>
+      loadSkillEvidence({
+        goalId: goal.id,
+        skillIds,
+        userId,
+        writingFact: { examBlueprintId: goal.examBlueprintId, skillIds: new Set(writtenSkillIds) },
+      }),
+    ),
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
     findWrittenStartLessonId(goal),
     loadCurrentLanguageLevel({ ...goal, userId }),
   ]);
+
+  const { writingNotice, writtenSkillIds, ...examFacts } = exam;
+
+  const writing =
+    writingNotice && goal.examBlueprintId
+      ? await loadPlanWriting({
+          examBlueprintId: goal.examBlueprintId,
+          graph,
+          skillIds: new Set(writtenSkillIds),
+          skippedAreas,
+          userId,
+          ...writingNotice,
+        })
+      : undefined;
 
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
@@ -159,6 +187,8 @@ export async function loadPlannerInputs({
     readiness,
     startLessonId,
     strongAreas: new Set([...strongAreas].toSorted()),
-    ...exam,
+    writtenSkillIds,
+    ...examFacts,
+    ...(writing && { writing }),
   };
 }

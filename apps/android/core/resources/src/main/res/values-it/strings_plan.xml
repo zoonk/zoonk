@@ -70,11 +70,9 @@
   "plan_building_description": "6d72fb449de9337a5c9d2b75eac451ff406174df7c418128bae366152b2ea9a0",
   "plan_building_eyebrow": "98102beaca7cf7f734c5b73ef5b2841989f834d2377f040ef3f0f9bc90c2fee5",
   "plan_cadence_biweekly": "eda474ceb987bf07f08948dc18f946d59cdc17e2150bfb956e90b079154f760d",
-  "plan_cadence_biweekly_effect": "b8bc3af13cfa518781205938c0d0cb634e8d3d57aaf997f1c99e96f61f2b636a",
   "plan_cadence_final_weeks": "2f0a1504e488c8da4ca832c00268350ed2975c6134f4df25dae1cd3250e37df8",
-  "plan_cadence_final_weeks_effect": "6e1a0508e3d5d374c19f433505223f7b730a46719c6e70e89f1802da7a514d74",
   "plan_cadence_weekly": "f4a8803da28fd47b22d1f582f06316fbe03634a5fe13fb4cf3b01a8513974095",
-  "plan_cadence_weekly_effect": "00f7cd6950ceb9bb06af9addd1f8e73a092224035938731b8f159a4e5ead87ae",
+  "plan_cadence_weekly_recommended": "5ad885e4a3b5d1738554697bb99c81c62c427c289a239a88c01ce48073d55849",
   "plan_call_not_in_plan": "f870b444870ddbd4388e8b85941a383d9745ac8ad54b7813c16f41875b456c3f",
   "plan_cancel": "d3505c361b31efac0ab630c68e84df61a9a7fdc99840b0d2bd076497651fb14c",
   "plan_challenge_live_call": "d8a5a0215756c2e4057bbeff7d2aff02c06c5cf81499e1ccbb73fd8d7c267767",
@@ -518,13 +516,23 @@
   "plan_week_time": "51d54990937ae88c6bf417ff3a2ba4cc610be9c0d2449520e8b10c45d1ebda7a",
   "plan_weekly_challenges": "b2c56bf735614e52c318a76b7a8f4ebbc9862cf5011c5212388bd07e1a2d875c",
   "plan_what_you_practice": "dd760574b53bfd83fd1f66e150f9b89ad01c739f31b9a0a0aca89c73c90e09f5",
-  "plan_when_to_practice": "1f10d31c6e64f06575aa3969f7e2d0ea5ff982caf8293055b115e9df57772623",
+  "plan_when_to_practice_writing": "387a47f283129bf11b97d7d1c20bd4bdcd8ae191e0da60aab007191949ba2f74",
   "plan_where_to_focus": "62ecaa9035e6c0e55b77a67751b585a597e100c1f93c6cb6df4667de63684878",
   "plan_where_to_focus_description": "790fbef502313d3382198501db6bcd2e3ecc454ded308277146875ed7e415dc8",
   "plan_why_phase_dates_later": "07646726d9e90a70a66fcd19c690373d51c8084b4c4b085227e4448631568583",
   "plan_why_phase_end_later": "df0c1d4f12aba1dd996558b57aedf356eaba11307dfe3968b7b3c13f12c1a91d",
   "plan_why_phase_end_off_rest": "69171f1519fc44ee7ff626478458b4b36f6191b6ac46fb0821d7edeaf9ffc68a",
   "plan_working_out_coverage": "d1572927032b67a3766079a96e77b93b8c1e007aa17413d908dfc0875e443ab0",
+  "plan_written_above_minimum": "813f11781afd62ba81911fa5276c12b6b569f9d9e17630ef25ce7b4aaa512aa4",
+  "plan_written_asks_for": "a779d30fae23f8d3d471b3fe3e308c0863cb43d25fe53ba4ae8d34540c6f9e5c",
+  "plan_written_asks_for_share": "ce0c5d4ddbd078911b184836f2c72510a21021b8fbc88452f110309c5b0cb5e0",
+  "plan_written_below_minimum": "38ef76c0026202edce282ed9200b69f70d0e3eca491cbe8d4b43703ccead108e",
+  "plan_written_close_to_minimum": "1a1ee1382daa36a635dea4acf83762d9d95a8e20404702090c2b370e45ed03f0",
+  "plan_written_not_measured": "1667a4b14ba98589e0ceb7c3b918a1d5ebc398268fe2d6b9a5f2b37e877a0fcb",
+  "plan_written_not_measured_half": "e022db8564c41ec765f1180ba1865f3f22f3669dedc1711cb5744fdf90c8ccbd",
+  "plan_written_not_measured_share": "84529546663f05c4b4dcd2fbbab1a87da8a75855a8f11aeb9b4b96ad93620cbf",
+  "plan_written_objective": "cb8d0ad0774990dfa6c307920387d7fe28af84bf0ed80277797132fad5016e98",
+  "plan_written_points_below": "c90ff7da2291dc77eec875f564fef03c0b2846476868c398eb2b6ffa95c7dc75",
   "plan_you_are_here_suffix": "3ec98884f05171ebdb77ada2cd8676c8ef47815b28b4c352a40f04c6e1cd4858",
   "plan_your_level": "51f8ff7fe2edd7b6e9756769ec8d4c95384c02532a61e7bb4c1531c5559d11b4",
   "plan_your_pace": "843956c3ff7d44be2327332d61e1229f9fb2578f7c176e71f27ee64e6e5e4f76",
@@ -1120,13 +1128,11 @@
     <string name="plan_tool_writing_setup_line_3">Stiamo aggiungendo un controllo rapido per vedere se funziona…</string>
     <string name="plan_tool_device">Il tuo dispositivo</string>
     <string name="plan_what_you_practice">Su cosa ti eserciti</string>
-    <string name="plan_when_to_practice">Quando esercitarti con %1$s</string>
+    <string name="plan_when_to_practice_writing">Quando esercitarsi nella scrittura</string>
     <string name="plan_cadence_weekly">Ogni settimana</string>
     <string name="plan_cadence_biweekly">A settimane alterne</string>
     <string name="plan_cadence_final_weeks">Solo nelle ultime settimane</string>
-    <string name="plan_cadence_weekly_effect">Consigliato: un po’ ogni settimana è il modo più efficace per migliorare nella scrittura.</string>
-    <string name="plan_cadence_biweekly_effect">La stessa quantità di esercizi a settimane alterne: meno spesso, di più ogni volta.</string>
-    <string name="plan_cadence_final_weeks_effect">Esercizi più ravvicinati, concentrati nelle ultime settimane prima dell’esame.</string>
+    <string name="plan_cadence_weekly_recommended">Ogni settimana (consigliato)</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">Non c’è abbastanza tempo per coprire tutto entro il %1$s.</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
@@ -1442,4 +1448,14 @@
     <string name="plan_call_not_in_plan">La conversazione non rientra nel tuo piano</string>
     <string name="plan_outside_past_basics">Saltato · conosci già le basi</string>
     <string name="plan_outside_skipped_base">Saltato · per tua scelta</string>
+    <string name="plan_written_below_minimum">Al di sotto della soglia minima per superare la prova</string>
+    <string name="plan_written_asks_for">%1$s deve ottenere %2$s punti, a prescindere dagli altri punteggi.</string>
+    <string name="plan_written_asks_for_share">%1$s deve ottenere il %2$s dei suoi punti, a prescindere dagli altri punteggi.</string>
+    <string name="plan_written_not_measured">%1$s è ancora da valutare.</string>
+    <string name="plan_written_not_measured_half">%1$s, che vale metà del punteggio finale, è ancora da valutare.</string>
+    <string name="plan_written_not_measured_share">%1$s, che vale il %2$s del punteggio finale, è ancora da valutare.</string>
+    <string name="plan_written_objective">Test oggettivo</string>
+    <string name="plan_written_above_minimum">Sopra la soglia minima di %1$s punti</string>
+    <string name="plan_written_points_below">%1$s punti sotto la soglia minima di %2$s</string>
+    <string name="plan_written_close_to_minimum">Quasi alla soglia minima di %1$s punti</string>
 </resources>

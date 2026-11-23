@@ -38,13 +38,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.essay.MAX_WRITING_CHARACTERS
+import com.zoonk.android.feature.essay.WritingLineCount
+import com.zoonk.android.feature.essay.WritingQuestionBody
 import com.zoonk.android.feature.player.language.countWords
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemLine
@@ -64,6 +69,7 @@ import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
@@ -72,6 +78,7 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.MockExam
+import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
@@ -92,10 +99,17 @@ internal fun MockQuestionCard(
     val previous = run.questions.getOrNull(run.position - 1)
     val set = question.question.set
 
+    val writing = question.writing.takeIf { question.essay }
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (set != null && set.listening == null) ItemSetText(set, continued = previous?.question?.set?.id == set.id)
-        ItemSupport(question.question)
-        QuestionTitle(question.question.question)
+        if (writing != null) {
+            // A written test's question reads as a practice question does: its topic, then the support text and what to write.
+            Text(writing.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            WritingQuestionBody(question.question.context, question.question.question)
+        } else {
+            ItemSupport(question.question)
+            QuestionTitle(question.question.question)
+        }
         AnswerInput(viewModel, run, question)
     }
 }
@@ -110,7 +124,7 @@ private fun AnswerInput(
     val locked = run.pending || !run.moves.canChange(run.position)
 
     when {
-        question.essay -> EssayAnswer(viewModel, run, draft)
+        question.essay -> EssayAnswer(viewModel, run, draft, question.writing)
         question.question.format == QuestionFormat.Numeric -> NumberAnswer(viewModel, question, draft, locked)
         question.question.format == QuestionFormat.Typed -> WordAnswer(viewModel, draft, locked)
         question.question.select.isMulti -> Picks(viewModel, question, draft, locked)
@@ -244,25 +258,31 @@ private fun EssayAnswer(
     viewModel: MockRunnerViewModel,
     run: MockRun,
     draft: MockDraft?,
+    writing: WritingPromptOutput?,
 ) {
     val text = (draft?.answer as? Answer.Text)?.text.orEmpty()
     val words = countWords(text)
 
     OutlinedTextField(
         value = text,
-        onValueChange = { if (it.length <= MAX_ESSAY_CHARACTERS) viewModel.write(Answer.Text(it)) },
+        onValueChange = { viewModel.write(Answer.Text(it.take(MAX_WRITING_CHARACTERS))) },
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
+        colors = writingAreaColors(),
         label =
             stringResource(
                 if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,
             ),
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
-            Text(
-                if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
+            if (writing != null) {
+                WritingLineCount(text, writing)
+            } else {
+                Text(
+                    if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
+            }
         },
         minLines = ESSAY_LINES,
     )
@@ -308,13 +328,13 @@ internal fun QuestionCell(
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
     val shape = RoundedCornerShape(10.dp)
+    // A written test's questions are numbered, so two of them don't look the same.
+    val writtenNumber = run.sectionPlace(question, index)?.takeIf { question.essay }?.number
     val number =
-        if (question.essay) {
-            stringResource(
-                R.string.mock_written_part,
-            )
-        } else {
-            stringResource(R.string.mock_question_number, question.number)
+        when {
+            writtenNumber != null -> stringResource(R.string.mock_question_number, writtenNumber)
+            question.essay -> stringResource(R.string.mock_written_part)
+            else -> stringResource(R.string.mock_question_number, question.number)
         }
     val name = if (unsure) stringResource(R.string.mock_cell_unsure, number) else number
     val states = if (answered) stringResource(R.string.mock_cell_answered) else ""
@@ -361,7 +381,7 @@ internal fun QuestionCell(
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, strong = answered || current)
+            CellLabel(question, writtenNumber, strong = answered || current)
             if (unsure) UnsureMark(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
             if (current) {
                 Box(
@@ -386,13 +406,14 @@ internal fun UnsureMark(modifier: Modifier = Modifier) {
 @Composable
 private fun CellLabel(
     question: MockQuestion,
+    writtenNumber: Int?,
     strong: Boolean,
 ) {
-    if (question.essay) {
+    if (question.essay && writtenNumber == null) {
         Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
     } else {
         Text(
-            question.number.toString(),
+            (writtenNumber ?: question.number).toString(),
             color =
                 if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
@@ -434,7 +455,8 @@ internal fun ItemCountdown(
 }
 
 private const val NUMBER_DIGITS = 4
-private const val MAX_ESSAY_CHARACTERS = 12_000
+
+/** The API's longest written answer. */
 private const val ESSAY_LINES = 10
 private val ESSAY_HEIGHT = 288.dp
 private const val MS_PER_SECOND = 1000L

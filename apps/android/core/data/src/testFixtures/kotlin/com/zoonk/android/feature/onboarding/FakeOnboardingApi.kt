@@ -16,6 +16,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestAnswerInput
 import com.zoonk.api.models.LanguageLevelTestGeneration
@@ -61,17 +62,17 @@ fun understoodDraft(
     activeGoalsLeft: Int? = null,
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":$activeGoalsLeft,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","timeZone":"UTC","understanding":$understanding}""",
+        """{"activeGoalsLeft":$activeGoalsLeft,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"$prompt","sources":[],"status":"understood","timeZone":"UTC","understanding":$understanding}""",
     )
 
 fun failedDraft(): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"pass the bar exam","sources":[],"status":"failed","timeZone":"UTC","understanding":null}""",
     )
 
 fun readingDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalsLeft":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","materialIntent":null,"materialMissing":false,"prompt":"$prompt","sources":[],"status":"understanding","timeZone":"UTC","understanding":null}""",
     )
 
 fun goalsUnderstanding(
@@ -157,7 +158,7 @@ class FakeOnboardingApi : OnboardingApi {
     var refusal: ApiException? = null
     var events: Flow<GenerationEvent> = flowOf()
     val generationSessions = mutableListOf<AuthenticatedSession?>()
-    val understandCalls = mutableListOf<Pair<String, String>>()
+    val understandCalls = mutableListOf<GoalUnderstandingInput>()
     val drafts = mutableListOf<String>()
     val created = mutableListOf<GoalCreateInput>()
     val fromPlans = mutableListOf<Pair<String, PlanLinkStartInput>>()
@@ -165,13 +166,12 @@ class FakeOnboardingApi : OnboardingApi {
 
     override suspend fun understand(
         session: AuthenticatedSession,
-        goal: String,
-        language: String,
+        input: GoalUnderstandingInput,
     ): OnboardingDraft {
         sessions += session
-        understandCalls += goal to language
+        understandCalls += input
         refusal?.let { throw it }
-        return understood(goal)
+        return understood(input.goal)
     }
 
     override suspend fun draft(

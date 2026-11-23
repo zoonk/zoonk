@@ -626,8 +626,8 @@ extension StudyDestination {
       .challenge(planItemId: planItemID, sessionId: sessionID)
     case .checkpoint(let blockID, let sessionID):
       .checkpoint(blockId: blockID, sessionId: sessionID)
-    case .essay(let blockID):
-      .essay(blockId: blockID)
+    case .essay(let blockID, let start):
+      .essay(blockId: blockID, start: start)
     case .instantLesson(let lessonID, let sessionID, let opening):
       .lesson(lessonId: lessonID, sessionId: sessionID, opening: opening, activated: true)
     case .lesson(let lessonID, let sessionID):

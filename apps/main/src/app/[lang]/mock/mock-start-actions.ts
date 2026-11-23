@@ -1,13 +1,17 @@
 "use server";
 
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
-import { startAnytimeMock } from "@zoonk/core/exams/mocks/start-anytime";
+import {
+  type StartAnytimeMockResult,
+  startAnytimeMock,
+} from "@zoonk/core/exams/mocks/start-anytime";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 
 const goalIdSchema = uuidSchema();
 
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
+  | Extract<StartAnytimeMockResult, { status: "limitReached" | "needsChoice" }>
   | { status: "failed" | "preparing" };
 
 export async function startAnytimeMockAction(
@@ -25,6 +29,10 @@ export async function startAnytimeMockAction(
 
   if ("id" in result) {
     return { id: result.id, status: result.status };
+  }
+
+  if (result.status === "limitReached" || result.status === "needsChoice") {
+    return result;
   }
 
   return { status: result.status === "preparing" ? "preparing" : "failed" };

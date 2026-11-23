@@ -2,7 +2,7 @@
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
@@ -44,16 +44,15 @@ export function WrittenCadenceChoice({
 }) {
   const t = useExtracted();
   const labelId = useId();
-  const format = useFormatter();
   const words = useWrittenCadenceWords();
   const choice = useTappedChoice(practice.cadence);
-  const parts = format.list(practice.parts, { type: "conjunction" });
 
   const cadences = CADENCES.filter(
     (cadence) => cadence !== "finalWeeks" || practice.finalWeeksFrom !== null,
   );
 
-  const title = t("When to practice {parts}", { parts });
+  // The parts' names come from the notice, so none is set mid-sentence in a language's own casing.
+  const title = t("When to practice writing");
 
   return (
     <section aria-labelledby={labelId} className="flex flex-col gap-2">

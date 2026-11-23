@@ -63,6 +63,9 @@ private enum ChooserStatus: Equatable {
   case choosing
   case failed
   case plusRequired
+  case refused(HelpLimit)
+  case writingLimitReached(returnsOn: String)
+  case needsChoice(choiceGroups: [String])
 }
 
 private struct MockChooser: View {
@@ -85,6 +88,7 @@ private struct MockChooser: View {
   let onStarted: (String) -> Void
 
   private var isOpen: Bool { view.access == .open }
+  private var isWaitingForChoice: Bool { pickedOption.flatMap(pendingChoice) != nil }
   private var severalDays: Bool { view.options.filter { $0.kind == .full }.count > 1 }
   /// Nothing is picked when the page opens, so one tap on Start never begins a five-hour exam.
   private var pickedOption: MockOption? {
@@ -92,7 +96,9 @@ private struct MockChooser: View {
   }
 
   private var isPreparing: Bool {
-    guard let requested = view.requested, let pickedOption else { return false }
+    if case .refused = status { return false }
+    guard let requested = view.requested, let pickedOption, rowLimit(pickedOption) == nil
+    else { return false }
     return requested.status == .preparing && requested.shape == pickedOption.shape
   }
 
@@ -131,6 +137,9 @@ private struct MockChooser: View {
     }
     .task(id: isPreparing) {
       await readAgainWhilePreparing()
+    }
+    .clearsRefusal {
+      if case .refused = status { status = .choosing }
     }
     .onDisappear {
       starting.leave()
@@ -176,25 +185,45 @@ private struct MockChooser: View {
     }
   }
 
+  /// An exam of several tests (an objective one in the morning, a written one in the afternoon).
+  private var tests: Int { severalDays ? 0 : MockLabels.examTests(view.options) }
+
+  /// An exam of several tests lists each test and all of them first, then the shorter, objective-only
+  /// options; any other exam lists the exam, then one subject.
+  private func leads(_ option: MockOption) -> Bool {
+    tests > 1 ? option.kind != .half && option.kind != .area : option.kind != .area
+  }
+
   @ViewBuilder
   private var choices: some View {
-    let examOptions = view.options.filter { $0.kind != .area }
-    let subjects = view.options.filter { $0.kind == .area }
+    let examOptions = view.options.filter(leads)
+    let rest = view.options.filter { !leads($0) }
 
     Section {
       ForEach(examOptions) { optionRow($0) }
     } header: {
-      if !subjects.isEmpty {
+      if tests > 1 {
+        SectionTitle(
+          Text(
+            "Your exam has \(tests) tests", tableName: "Mock",
+            comment: "Over the mock exams of an exam held as several tests"))
+      } else if !rest.isEmpty {
         SectionTitle(
           Text("The exam", tableName: "Mock", comment: "Mock exams of a whole exam or exam day"))
       }
     }
 
-    if !subjects.isEmpty {
+    if !rest.isEmpty {
       Section {
-        ForEach(subjects) { optionRow($0) }
+        ForEach(rest) { optionRow($0, objectiveTitled: tests > 1) }
       } header: {
-        SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        if tests > 1 {
+          SectionTitle(
+            Text(
+              "Shorter, objective questions only", tableName: "Mock"))
+        } else {
+          SectionTitle(Text("One subject", tableName: "Mock", comment: "Mocks of one subject"))
+        }
       }
     }
   }
@@ -218,6 +247,18 @@ private struct MockChooser: View {
       SubscribeButton()
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
+    } else if case .refused(let limit) = status {
+      LimitWayOn(limit: limit)
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    } else if isWaitingForChoice {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Choose on Today", tableName: "Mock")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     } else if isPreparing {
       Button {
         router.showRoot(of: .today)
@@ -237,7 +278,7 @@ private struct MockChooser: View {
         startLabel
       }
       .buttonStyle(.mainAction)
-      .disabled(pickedOption == nil)
+      .disabled(pickedOption.map { rowLimit($0) != nil } ?? true)
       .keyboardShortcut(.defaultAction)
     }
   }
@@ -251,6 +292,12 @@ private struct MockChooser: View {
       return BarNote(
         String(localized: "Mock exams need a subscription", table: "Mock"), tone: .status)
     }
+
+    if case .refused(let limit) = status {
+      return BarNote(limit.sentence(), tone: .status)
+    }
+
+    if isWaitingForChoice { return nil }
 
     if isPreparing {
       return BarNote {
@@ -267,6 +314,26 @@ private struct MockChooser: View {
     }
 
     return failure.map { BarNote($0) }
+  }
+
+  /// The exam choices an option's written test waits for, from the options or a refused start.
+  private func pendingChoice(_ option: MockOption) -> [String]? {
+    if let groups = option.pendingChoice { return groups }
+    if case .needsChoice(let groups) = status, option.hasWrittenTest { return groups }
+    return nil
+  }
+
+  /// Why an option can't start now, said on its own row the way Today says it.
+  private func rowLimit(_ option: MockOption) -> String? {
+    if let groups = pendingChoice(option) {
+      return WritingLabels.choiceLine(groups)
+    }
+
+    if case .writingLimitReached(let returnsOn) = status, option.hasWrittenTest {
+      return WritingLabels.gradingReturns(returnsOn)
+    }
+
+    return nil
   }
 
   private var detail: Text {
@@ -288,12 +355,17 @@ private struct MockChooser: View {
       : nil
   }
 
-  private func optionRow(_ option: MockOption) -> some View {
-    choiceRow(
+  /// An exam taken as one test reads its options as it always did; its sections say nothing new.
+  private func optionRow(_ option: MockOption, objectiveTitled: Bool = false) -> some View {
+    var shown = option
+    if tests < 2 { shown.sections = nil }
+
+    return choiceRow(
       isPicked: option.id == pickedOption?.id,
-      title: MockLabels.optionName(option, severalDays: severalDays),
-      detail: optionDetail(option),
-      trailing: optionSize(option)
+      title: MockLabels.optionName(shown, severalDays: severalDays, tests: tests),
+      detail: objectiveTitled ? nil : optionDetail(shown),
+      note: rowLimit(option),
+      trailing: optionSize(shown)
     ) {
       picked = option.id
     }
@@ -304,7 +376,7 @@ private struct MockChooser: View {
   private func optionSize(_ option: MockOption) -> [String] {
     let size = String(
       localized:
-        "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
+        "\(MockLabels.questions(option)) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
       table: "Mock", locale: .appLanguage,
       comment: "A mock exam's size: its number of questions, then its time limit.")
 
@@ -322,7 +394,7 @@ private struct MockChooser: View {
   /// Main's `ChoiceRows`: the words, the mock's size under them on a phone or before the row's
   /// mark, and the mark at the end, empty until the row is picked, so the rows read as choices.
   private func choiceRow(
-    isPicked: Bool, title: String, detail: String?, trailing: [String],
+    isPicked: Bool, title: String, detail: String?, note: String? = nil, trailing: [String],
     action: @escaping () -> Void
   ) -> some View {
     let size = FactSegments(trailing)
@@ -333,7 +405,8 @@ private struct MockChooser: View {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
           ChoiceWords(
-            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) })
+            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) },
+            note: note.map { Text($0) })
 
           if sizeUnderWords {
             size
@@ -350,6 +423,13 @@ private struct MockChooser: View {
   }
 
   private func optionDetail(_ option: MockOption) -> String {
+    let sessions = (option.sections ?? []).compactMap(\.session)
+
+    // A test of an exam of several says when it happens, if the notice says; its name says the rest.
+    if !(option.sections ?? []).isEmpty, option.kind != .half {
+      return sessions.joinedFacts()
+    }
+
     let subjects = severalDays && option.kind != .area ? option.areas : []
     let parts = option.covers ?? subjects + option.written
 
@@ -382,6 +462,13 @@ private struct MockChooser: View {
           return asked
         }
         return nil
+      case .done(.refused(let limit)):
+        return .refused(limit)
+      case .done(.writingLimitReached(let returnsOn)):
+        announcePolitely(WritingLabels.gradingReturns(returnsOn))
+        return .writingLimitReached(returnsOn: returnsOn)
+      case .done(.needsChoice(let groups)):
+        return .needsChoice(choiceGroups: groups)
       case .done(.plusRequired):
         // The server's answer is the access now, even if the read after it fails; a later read
         // (a subscription bought) replaces it.
@@ -432,7 +519,10 @@ struct MockSummaryRow: View {
         StatusMark(status: .done)
       } trailing: {
         VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-          Text(score)
+          // A written test has no objective questions to score.
+          if mock.total > 0 {
+            Text(score)
+          }
           Text(PlanDate.moment(mock.finishedAt, .row, weekday: true))
         }
       }

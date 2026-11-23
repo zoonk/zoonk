@@ -10,7 +10,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">What you already know</string>
     <string name="session_block_new_lesson">New lesson</string>
-    <string name="session_block_writing_practice">Writing practice</string>
+    <string name="session_block_writing_draft_saved">Your draft is saved</string>
     <string name="session_block_practice_mistakes">Practice mistakes</string>
     <string name="session_block_mixed_practice">Mixed practice</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

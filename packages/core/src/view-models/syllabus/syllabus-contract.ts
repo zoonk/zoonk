@@ -91,7 +91,7 @@ export const syllabusViewSchema = z
       .nullable()
       .meta({
         description:
-          "When the exam's written tests are practiced, which the learner chooses on a written test's page (a subject whose `areas` include one of `parts`) and in the plan. Null for goals without written tests",
+          "When the exam's written tests are practiced and the details of each written section. Null for goals without written tests",
       }),
   })
   .meta({ id: "Syllabus" });

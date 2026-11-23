@@ -5,15 +5,13 @@ import {
   getPlannedSubjectQuestions,
 } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
-import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 import { type MockOptionView, type MockShape } from "./mock-contract";
+import { isPartOfAnother, listDayOptions } from "./mock-day-options";
 import { estimateMockMinutes } from "./mock-estimate";
-import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
-import { getMockDays, outlineMock } from "./mock-plan";
+import { type MockTypedPart, listMockLeftOut } from "./mock-left-out";
 import { type SubjectShare } from "./mock-subject-shares";
-import { type UnpickedChoice, listLeftOutChoices } from "./mock-unpicked";
+import { type UnpickedChoice } from "./mock-unpicked";
 import { getSubjectPace } from "./subject-sections";
-import { type MockEssayCandidate, getDayWrittenParts } from "./written-parts";
 import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 const DEFAULT_SUBJECT_QUESTIONS = 20;
@@ -100,117 +98,6 @@ function getObjectiveSubjects({
   );
 }
 
-function getDayObjectiveSections({
-  day,
-  structure,
-}: {
-  day: number | null;
-  structure: ExamStructure | null;
-}) {
-  return (structure?.mock?.sections ?? []).filter(
-    (section) => section.day === day && isObjectiveSection(section),
-  );
-}
-
-function isPartOfAnother({
-  subject,
-  subjects,
-}: {
-  subject: Subject;
-  subjects: readonly Subject[];
-}): boolean {
-  return Boolean(subject.partOf) && subjects.some((other) => other.name === subject.partOf);
-}
-
-function getDayAreas({
-  day,
-  subjects,
-  structure,
-}: {
-  day: number | null;
-  subjects: readonly Subject[];
-  structure: ExamStructure | null;
-}): string[] {
-  const objective = getDayObjectiveSections({ day, structure });
-  const named = objective.map((section) => section.name).filter((name) => name.trim().length > 0);
-  const sections = getObjectiveSectionNames(structure);
-
-  const isOnDay = (subject: Subject) =>
-    findSubjectSections({ sections, structure, subject }).some((name) => named.includes(name));
-
-  const asked =
-    getMockDays(structure).length > 1 && named.length > 0
-      ? subjects.filter((subject) => isOnDay(subject))
-      : subjects;
-
-  return asked
-    .filter((subject) => !isPartOfAnother({ subject, subjects }))
-    .map((subject) => subject.name);
-}
-
-function toDayOption({
-  day,
-  essays,
-  kind,
-  listening,
-  pace,
-  speaking,
-  subjects,
-  structure,
-  typed,
-  unpicked,
-}: {
-  day: number | null;
-  essays: readonly MockEssayCandidate[];
-  kind: "full" | "half";
-  listening: ReadonlySet<string>;
-  pace: number | null;
-  speaking: boolean;
-  subjects: readonly Subject[];
-  structure: ExamStructure | null;
-  typed: readonly MockTypedPart[];
-  unpicked: readonly UnpickedChoice[];
-}): MockOption {
-  const outline = outlineMock({
-    day,
-    essays,
-    fullLength: kind === "full",
-    listening,
-    speaking,
-    structure,
-  });
-
-  const running = new Set(
-    outline.sections.flatMap((section) => (section.kind && section.name ? [section.name] : [])),
-  );
-
-  const parts = getDayWrittenParts({ day, structure });
-  const asked = outline.written.filter((part) => part.asked).map((part) => part.name);
-  const choices = listLeftOutChoices({ day, kind, unpicked });
-  const leftOut = listMockLeftOut({ asked, choices, day, kind, running, structure, typed });
-  const questions = outline.sections.reduce((sum, section) => sum + section.questions, 0);
-
-  return {
-    area: null,
-    areas: getDayAreas({ day, structure, subjects }),
-    covers: listCoveredSections({ asked, day, leftOut, structure }),
-    day,
-    estimatedMinutes: estimateMockMinutes({
-      minutes: outline.minutes,
-      pace,
-      questions,
-      sections: outline.sections,
-      written: outline.written,
-    }),
-    kind,
-    leftOut,
-    minutes: outline.minutes,
-    objectiveOnly: asked.length < parts.length,
-    questions,
-    written: asked,
-  };
-}
-
 function getEvenSubjectQuestions(structure: ExamStructure): number | null {
   const subjects = structure.subjects.filter((subject) =>
     isQuestionSubject({ structure, subject }),
@@ -268,14 +155,13 @@ function toSubjectOption({
     kind: "area",
     leftOut: listMockLeftOut({ asked: [], day: null, kind: "area", structure, typed }),
     minutes,
-    objectiveOnly: false,
+    objectiveOnly: true,
     questions,
     written: [],
   };
 }
 
 export function listMockOptions({
-  essays = [],
   goalAreas,
   listening = new Set(),
   pace = null,
@@ -284,7 +170,6 @@ export function listMockOptions({
   typed = [],
   unpicked = [],
 }: {
-  essays?: readonly MockEssayCandidate[];
   goalAreas: readonly string[];
   listening?: ReadonlySet<string>;
   pace?: number | null;
@@ -294,10 +179,7 @@ export function listMockOptions({
   unpicked?: readonly UnpickedChoice[];
 }): MockOption[] {
   const subjects = structure ? getObjectiveSubjects({ goalAreas, structure }) : [];
-  const days = getMockDays(structure);
-  const shared = { essays, listening, pace, speaking, structure, subjects, typed, unpicked };
-  const full = days.map((day) => toDayOption({ ...shared, day, kind: "full" }));
-  const halves = days.map((day) => toDayOption({ ...shared, day, kind: "half" }));
+  const days = listDayOptions({ listening, pace, speaking, structure, subjects, typed, unpicked });
 
   const wholes = subjects.filter((subject) => !isPartOfAnother({ subject, subjects }));
 
@@ -316,7 +198,7 @@ export function listMockOptions({
           .toSorted((first, second) => second.questions - first.questions)
       : [];
 
-  return [...full, ...halves, ...bySubject].filter(
+  return [...days, ...bySubject].filter(
     (option) => option.questions > 0 || option.written.length > 0,
   );
 }

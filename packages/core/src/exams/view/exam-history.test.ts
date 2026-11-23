@@ -201,6 +201,64 @@ describe("exam screen history", () => {
     }
   });
 
+  it("keeps written sittings in history and plots only objective scores", async () => {
+    const { goal } = await historySetup(0);
+
+    const written = {
+      max: 100,
+      minimum: null,
+      name: "Written test",
+      range: null,
+      standing: "unmeasured" as const,
+      tasks: [],
+    };
+
+    const sittings: { kind: NonNullable<MockConditions["shape"]>["kind"]; result: MockResult }[] = [
+      { kind: "objective", result: netResult(12) },
+      { kind: "written", result: { ...netResult(0), calibration: null, net: null, total: 0 } },
+      {
+        kind: "full",
+        result: {
+          ...netResult(17),
+          points: {
+            asked: 20,
+            earned: 14,
+            max: 20,
+            met: null,
+            minimum: null,
+            parts: [],
+            projected: null,
+            short: null,
+            unjudged: [],
+            written: [written],
+          },
+        },
+      },
+    ];
+
+    await prisma.mockExam.createMany({
+      data: sittings.map(({ kind, result }, index) => ({
+        conditions: sat({ purpose: "practice", shape: { area: null, day: null, kind } }),
+        createdAt: daysAgo(3 - index),
+        finishedAt: daysAgo(3 - index),
+        goalId: goal.id,
+        result,
+        sectionStartedAt: daysAgo(3 - index),
+        status: "finished",
+        userId: goal.userId,
+      })),
+    });
+
+    const history = await loadExamHistory({ goalId: goal.id, today: SESSION_NOW });
+
+    expect(history.mocks.map(({ total }) => total)).toStrictEqual([20, 0, 20]);
+
+    expect(history.progress?.mocks).toMatchObject([
+      { number: 1, percent: 20 },
+      { number: 3, percent: 70 },
+    ]);
+  });
+
   it("keeps numbering and calibration consistent when a mock completes between history reads", async () => {
     const { goal } = await historySetup(32);
 

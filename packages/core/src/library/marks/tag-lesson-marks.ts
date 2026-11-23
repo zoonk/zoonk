@@ -4,7 +4,7 @@ import { type CallWait } from "@zoonk/ai/provider-options";
 import { type IconNeed } from "@zoonk/ai/tasks/icons/need";
 import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { type MarksScreen, type ScreenMarks } from "@zoonk/ai/tasks/lesson-marks/schema";
-import { DbNull, type Lesson, type StepKind, prisma } from "@zoonk/db";
+import { DbNull, type Lesson, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { PICTURE_WAIT_MS } from "../../lesson-player/picture-wait";
@@ -14,14 +14,12 @@ import {
   readSavedLessonMap,
 } from "../lessons/lesson-map";
 import { toPreparedVersion } from "../lessons/lesson-versions";
-import { safeParseStepContent } from "../steps/contract/step-contract";
 import {
-  type MarkedScreen,
   type SavedStepMarks,
-  canShowIcon,
-  getMarkedText,
   isTaggedScreen,
+  parseMarkedScreen,
   readSavedStepMarks,
+  toMarksScreen,
 } from "./step-marks";
 
 export type LessonIconRequest = { forIdea: boolean; need: IconNeed; usedFor: string };
@@ -55,66 +53,9 @@ async function findLessonToTag(lessonId: string) {
 
 type LessonToTag = NonNullable<Awaited<ReturnType<typeof findLessonToTag>>>;
 
-function parseScreen({ content, kind }: { content: unknown; kind: StepKind }): MarkedScreen | null {
-  if (kind === "explanation") {
-    const parsed = safeParseStepContent(kind, content);
-    return parsed.success ? { content: parsed.data, kind } : null;
-  }
-
-  if (kind === "workedExample") {
-    const parsed = safeParseStepContent(kind, content);
-    return parsed.success ? { content: parsed.data, kind } : null;
-  }
-
-  if (kind === "hook") {
-    const parsed = safeParseStepContent(kind, content);
-    return parsed.success ? { content: parsed.data, kind } : null;
-  }
-
-  if (kind === "check") {
-    const parsed = safeParseStepContent(kind, content);
-    return parsed.success ? { content: parsed.data, kind } : null;
-  }
-
-  if (kind === "typedAnswer") {
-    const parsed = safeParseStepContent(kind, content);
-    return parsed.success ? { content: parsed.data, kind } : null;
-  }
-
-  return null;
-}
-
-function questionText(screen: MarkedScreen): string {
-  if (screen.kind === "check" || screen.kind === "typedAnswer") {
-    return [screen.content.context, screen.content.question].filter(Boolean).join("\n");
-  }
-
-  return screen.kind === "hook" && screen.content.variant === "guess"
-    ? screen.content.question
-    : "";
-}
-
-function toMarksScreen(screen: MarkedScreen): MarksScreen {
-  if (screen.kind === "explanation" || screen.kind === "workedExample") {
-    return {
-      hasVisual: !canShowIcon(screen),
-      kind: screen.kind,
-      text: getMarkedText(screen) ?? "",
-      title: screen.content.title ?? null,
-    };
-  }
-
-  return {
-    hasVisual: true,
-    kind: screen.kind === "hook" ? "guess" : "question",
-    text: questionText(screen),
-    title: null,
-  };
-}
-
 function toTaggedSteps(lesson: LessonToTag): TaggedStep[] {
   return lesson.steps.flatMap((step) => {
-    const screen = parseScreen(step);
+    const screen = parseMarkedScreen(step);
 
     return screen && isTaggedScreen(screen)
       ? [{ id: step.id, marks: readSavedStepMarks(step.marks), screen: toMarksScreen(screen) }]

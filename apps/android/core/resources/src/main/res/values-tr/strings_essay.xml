@@ -1,142 +1,308 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "essay_about_lines": "8edec77f5f39ea75b1ef978232aa23a63fba4b0c926a5d0404d77ae615fe6ca3",
+  "essay_about_time": "4d5640138d24ea2644e9008e2e0eb51322e2479a724d1025fd3656bfc8216375",
+  "essay_back_on": "8a42f07b12c5ea59c1aadf3b6220c94bf2dac32879f4b268161b21a856f511c0",
   "essay_back_to_today": "8b86dd6f84027b23346553bf13170fcf182c0e65a6430d4abedd5a9d829dd73b",
+  "essay_back_tomorrow": "a9ffec964e4d5d0b797aca4098f424cf93e98fc69d9440423e9f7340645106d2",
+  "essay_choose_on_today": "42101f1a15f8d4b4a5654f1ada4db35e2548a5e36a2ec70149f0a48129428462",
   "essay_comments": "1394af1e5f1737669eddc1ab456a70f42aeb36e830fb434b07f23a0d186c8520",
-  "essay_criterion_addressing": "ff673a2da41a523c15e818eea56bd3fd8a9468f02eab181cfb4946510f62bd49",
-  "essay_criterion_argument": "36ff048a52010eebcf776540dce0f824654a84181c439482f90cc2226f7f0f80",
-  "essay_criterion_closing": "6080b3fe5a05faeb297d83b1017a235ecf272bd18fa10d315540d817f09b963f",
-  "essay_criterion_cohesion": "e0553ddd552dfb822bce654241d35d6f0d7b75e1a7af4523e85cc32dea785848",
-  "essay_criterion_facts": "ae7c94b3a8b3f18689a3e1a816e6010815e149008317d45b576a6b3fd244ca77",
-  "essay_criterion_formal_writing": "03c73d2338fb265d61ea628a5404b2ec86dd84ed756863c31c6049ab6fa6437a",
-  "essay_criterion_intervention": "9615f28c2def9701ec50a25dae74fabded0018d6781c10db5af08b4d434809da",
-  "essay_criterion_legal_basis": "18699697b94b1367bedf46fff2efb85c0f0b25875f6a4e69500d61cf7076bb95",
-  "essay_criterion_requests": "87fef4f4a271e1a57939479ed374a8fb117fe3e1deeea8ab0755dff0f35fe0fc",
-  "essay_criterion_topic": "bfe7c8a8024c170885642c0809411a161d4187b4fc4dc5c18554f657458c23da",
-  "essay_element_action": "e11a07e21b4c02653323dd6b9e38f8824d050037e1cb1e49423b1e7d97c72892",
-  "essay_element_agent": "9c5f76d5d95128227430405eec094189871d1117ea8da0ec7dd0d2e804810822",
-  "essay_element_detail": "8bc090561f2a9f6ce59658285a707ed3029eeede263c1a9bf52f4b6a1218dbec",
-  "essay_element_effect": "aa2a5a99064b07e324c1b116e52f93df0d168ba8969dc4d29f1517c4eef80bb2",
-  "essay_element_means": "ddeeffe0d1e3b37e8ddddad21e62d46f946969f63bf464e27d2a720507ea7d27",
-  "essay_element_missing": "542ae41776decadf65a757205b60aba95ca813b5ad2b76aa3898766b27265cf4",
-  "essay_element_present": "f5ab4052a92a2d6a591661929bc07c3f7dd7f6f8e844904e3ced2c1f1e3957eb",
+  "essay_conflict_body": "411ce20678e71730f96c21fa875ed56fc94491232f852b39d76d079f4fd865e2",
+  "essay_conflict_keep": "84941c0a42d562463ed6aba891970b27946079ea797c8078b26570e383c32642",
+  "essay_conflict_title": "da309cd8c83cd2786ffa919c956bbe02396fcfbd71aec18efaf3ba458ee56e07",
+  "essay_conflict_use_other": "65d6d14e46f069f7eda9c5abb1bd647987539736ce8412e6fe20743cb4c62cbd",
+  "essay_content": "055be29bcb468580aafa60eed4f5f90b848d0b21f9d60cd823142112f7fc5bc9",
+  "essay_continue": "6a76dcccde5ac512f7a307ec89816de0459c5d57798ac9ca30714c76a995f6fb",
+  "essay_criteria": "3fdd0ed672219a39a6535443cc48396ff325ad49fce5f6b4493c859baee941fd",
+  "essay_criteria_complete": "df32e2daaca548e9fc49fa23b8754269e3634c29b3df1831e8c27ab8091996b4",
+  "essay_criteria_from_notice": "7621a90b8a38c93a2175f71d67de27591d54de7079dd2a565faa33e1fe446996",
+  "essay_criteria_from_notice_practice_key": "cfbda53f0a502cd11b6c516e8904619cf339395766370dd514e5b25c1aba7ac9",
+  "essay_depends_on_choice": "686945295d50bf8f2cd12d7b763bf0e4fdd2228ad831c2b51c5630fa46b97d41",
+  "essay_errors": "db2b3d5b913c84be1f72a9bcaadddc21fb5df17dd3bad151424a936d14005ba1",
+  "essay_estimated_score": "df6e8ffac3e4cff9fed23a3f5521571ab390623ff8079b1866fa0a27a0ff59c4",
+  "essay_exercise_failed": "bef1499585d67346866d235e9fdaac1026d603ee1106170796dcd98cb41ae57b",
   "essay_finish_failed": "696adf7b1a44695c0b97d1587fa56cca14a16de9a2c9f4b9c58c0ac461830c71",
+  "essay_fixed": "da40d69cdde95a0fc09487402a3a6a77835510bf5d07b6115f997d9f7cca37f0",
   "essay_for_example": "b3007d40b9b8f212c6b5be304a780696bb16afa60ae61b3d1e05b7727957ef2c",
-  "essay_full_marks": "46f549bcbef9efc7130abb101455443408ff943350692ddc8c887321d957e22f",
+  "essay_from_notice": "d91830f5dc57ba4133cfd1012444b7a86b15443c1c05b2edb0ed3783645f79ce",
+  "essay_from_notice_practice_key": "7e8b81964258810e72f712886e5e37249d47ad2309e0a970f38f614ba2110858",
+  "essay_full_marks": "588e53ad5f8444a52ca9161c8a1bc2f6e042e47c82ec95535b08468d50693270",
+  "essay_grade_answer": "e13d441d3383db54aa20b29006a2cdfd54d4d2bff3e8e747523c9a528d707507",
   "essay_grade_rewrite": "6af0b6c5238938d5c34b441204efbd0f958ec7f04b28145248529f7735bcdd3c",
-  "essay_grading": "462bc053b5de78ee4f2e70e685058c4a534e275d76da8c19d8ef9392da209205",
+  "essay_graded_by_level": "ef22855ac2c6769ac635a987a33380487114cda238a3d813795aa29d1434b405",
+  "essay_graded_earlier_version": "85db086b5117ca9f5b8d8c69a007389f0121875fa41e64398aca4836bfbda124",
+  "essay_grading": "2a5008f10aec6ddec33e511d64b993df83f63f44e7faf1c29096c5cad024acff",
+  "essay_grading_criteria": "07b828e51872254c103965d36c92cc26123ab98e244bae32e3e708b97886e790",
   "essay_grading_slow": "7ce73f075a0f0908668070cdd6522a0b90f57822f2e663d19ba01569516045c6",
+  "essay_judged_on": "9671f9defd732c13804b8593bfbdb06c3900d1a67ca551b66afdd7b8aa33909b",
   "essay_keep_writing": "b2de857194238bd5307b6d1fefeb4f21aa6233fd81b374472599942c90dc2750",
-  "essay_last_grade": "a1ab7f49d59f7d91f18f982e3551e7e9d30f254447033afda7181fca625f4c54",
-  "essay_leave_description": "b3e29ebf2b4cd94881af861963a4f6c74b722b5a9b82c2d10242b1a74c2a5d8d",
-  "essay_leave_title": "7730fc59196c9399d5b3ce89bbe2f3d8895ac0c9a96be67ccfb32d0b7109b6c7",
-  "essay_limit_reached": "789bd3c6766544c3cdcfa5f05f93777dc8c82a5b5230e75596e83a4e8cfbd29f",
-  "essay_motivating_texts": "b183405a837e23485c5fb428c37d85d6c6247a8aef6843ce967552f51a4d8a5d",
+  "essay_language_errors": "bb42b3552e15119465f61ff4b0d92f6a0d4006ef74f06483a1e443b6977890ca",
+  "essay_left_for_tomorrow": "04ed767b886d2c530378401f2c697359ca1da29eb191c7a636fd1abfc8bfc230",
+  "essay_level_complete": "63e04fd8ded84aa51e2f363b95b411ef73001938907ada28713fa3ac7ba80353",
+  "essay_level_missing": "3bbe268167e4b1b60277ac00fd02827c25dd75b21166852adb0280b76272cfe2",
+  "essay_level_partial": "0fb10041454e4ddf713f452c2787e59d2cf838860c9d4de7297a789ad64d9b21",
+  "essay_level_strong": "2b7360a76f73e4dd676152a772c92b788a8f0b433ba29b8cf12e7d601aaac074",
+  "essay_limit_text": "8e421fab5c76de8e527e04e732be70c1f1b3f072169a92ea4f24e378df3afedd",
+  "essay_limit_text_any": "9dac177ff51d2865b9ec52f535a4d0e310da05a8d534426943c12c918ee4581b",
+  "essay_limit_title": "2a0e5c9d922d4f95b3b67fcf26a598a5a6cad8604a8634625d6795a6b2be8932",
+  "essay_limit_title_any": "1dde54ba2386b7214f2bf6a861df4e2832ba604530cef373261c8c3643f0a2e8",
+  "essay_lines_empty": "60f90685c6d00aaaa4047d21cb259500faefb9a4d37aff681921c568a93f8334",
+  "essay_lines_over": "dd5394c651c17efb3823da90ff639f957f7cd70f72f1ed0a817e3aeff02b8136",
+  "essay_lines_question": "2c8c00c22365a3c83a983ef467c755bb93e4dff749ac62bacfcf39848cff2ce2",
+  "essay_lines_used": "b6d15f7ecd63042025cb983e85e99ad47b4d800a7c2f1d2df8d9cef87d03c514",
+  "essay_minus": "d551e510e48abe7a5435c62240c7b2a3a38b7a1f2de36d91d4934a0282d592d2",
+  "essay_minus_range": "5e2a69bf458d6faa7dcf3e65792bdc642d715d4f0a6dff65ff7cc9fcbc2e83ce",
+  "essay_more_tomorrow": "0432d8d7e66d0c537983dff831174de920bb4ee6a2c9828445e6dee9513d642b",
   "essay_next_step": "c99aca494c63df9f4f4ba2f16f459351b448e9e8ce334547afd8735309ae7137",
-  "essay_next_step_named": "fd888a7e504e5d6eb17047906615a2eb23847743348d667154175456c48229bc",
+  "essay_no_more_grading": "8020e000b194e6db4c5b376ee87887f449be9d1856acc501cd2eb8ddf9462fef",
+  "essay_no_points_in_notice": "9a4782fb11b98b5190c7c833c4044146fa340c8ac58fd3835b7475cfe436993f",
+  "essay_not_measured": "92b3f21fcd7fc300d5c0fbd64fcd9c808aeb88c9a2410580af007ad4a53b5305",
+  "essay_not_saved": "126c77d55f0e94ca6f7c344704fcedb635959a2584674cae6642adca369b6d60",
   "essay_nothing_left": "de0de240a1b85e9b48b3ff63b7be81c74e0663904fa65195fe39361d37c601dc",
-  "essay_proposal_elements": "cb5d2c4980ebaa4b2192c50d6e3489d0278c5a6230a9d172111edfd7e6dad250",
+  "essay_nothing_lost": "8d1f38e4ad5fa175529f112cdb489476f19b31dda5a9ba95e19e58c22d375ddf",
+  "essay_of_max": "156c8c1ec72e2a130838cd7c4ebb4f24555ae096ce3931feb782092b0a37a4ae",
+  "essay_part_minimum": "9f31c924267eda524f19fc8d8c0d847609e910c2e93bc2512ff69ee27b6358b8",
+  "essay_past_limit": "c232c64eac6022a930b8749233f1f77e3a927d0b68cb2435eaac0a7291cd8e2d",
+  "essay_past_line": "0e210ea46e7761ef996a27305f8d37a1d02515f68c065a6a332b78294e1df3d5",
+  "essay_points": "1b1c312be7a66903363c737b2bb4bfff2739dd83c78868cfa4f03bcb350b3e1e",
+  "essay_points_of": "828e84119c6a6832fc20effe53ba50371e78564d4de0fd3660f848f7356094db",
+  "essay_points_split": "9c695e62ea7f47f7e5c276dc488c1d894224d62ca95d8aa9ce6337b0d61f28cf",
+  "essay_question": "c40b83ce9aac596431fc408e907c7d8e46d21446c5b54750d35e80e5cb2ef04d",
+  "essay_question_failed": "a7637fe67b6bf76f4bc1b9342d642e2cbb3e84b7414915152815eac386c8caa5",
+  "essay_question_number": "d2a8dd6c81285cdcab3c955baf00f13ab30f85c9f54cd17859e331bfe97d7b18",
   "essay_range": "e405aae6d0e4072c923e2c667c490efbadb845eaa9fac3f3658778ffbf9d4409",
+  "essay_removed": "cd7c82272cda97d7452f84f62eddd7d74263996f1046cdd9945ad660b6217152",
+  "essay_removed_detail": "a08657d7af991fe1ffa450486b72aaecbe82fa2c27b035bb0c89a9751c5578c1",
   "essay_rewrite": "111ad1d3e5c6f4bec49e56c1c51c1839203444bf4e3ed840cff21058b010bb05",
   "essay_rewrite_label": "ff673351308f9a35eb87f9c66e6556f27e9cbee058719c874dea5618955e2b4e",
-  "essay_scale": "3add3bc3b18ba0ad74d13cfb94db9a4e5a856924d103a17939e78b0467848f7e",
   "essay_score_of": "10e1a7291d55820f75166b665966d983fbce501d1078d94ebcd6f28536c9b0b0",
   "essay_see_comments": "21b1a1d0e3ef9265d2f00f5331234d78e983549ffdb94fc037bf3a8d393aad70",
-  "essay_see_grade": "2e5fbb82ac41ef978c65bc1e466f25667e315ad78f1450e7d824d60659f35b14",
-  "essay_send": "75727b9d0400c9327694873a5c01487eaebd142d7ef07be2657e2b71603e5ebe",
   "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
+  "essay_short_exercise": "29e5157a52bd62f2879e664ea0d616eaf469823076699493c3c7fad34e41e5d9",
+  "essay_short_exercise_detail": "3463c52d8c77781fdf786b6df0a02dd9b8c6754196f6f6d552f271e51eefe3bc",
+  "essay_short_text": "291deee197099c721350af8a263c39f589ce9d24540cd144503a2d71234893cb",
+  "essay_short_title": "f8198944218b8d1bbf1e1229d2972a2ada0130b78e3ad181bc26a323bcd271c9",
   "essay_skip_rewrite": "4dbeca0cff4ab5310d602e45ddc68a2303e94a0810e326b175e42efd7be31853",
-  "essay_skipped": "be168f28ba3b7e44b507e076434363eac5d25b84752da0979fab572294cce9af",
-  "essay_supporting_texts": "284247f75176a73283ece11d20d21dc967460d7094a301abf75a6aac733da29e",
-  "essay_the_case": "f49fccea8d964c1d742be1ddc878a0adf8120fb67b6b0841f1c49f312934d622",
-  "essay_title": "a9328f75b055cff2585692b490da4c10949681f8df012d8683828113346659f1",
-  "essay_title_ap": "f03afac7657110bb807deac4c7b0a146319c4731eb30b45d52ad7daa3a30c7d6",
-  "essay_title_enem": "d3b5c42028536bac035e7eb22c383b7ab6838220f8b13b1aa0223456db911503",
-  "essay_too_short": "3d8aefb08bd62a6e6ce4857ff61e8930043a71ee8c982c7e27ea39092285dded",
-  "essay_too_short_detail": "a3940d32f70347efefa58f7ad1c85cc5f0bb3058fe1a89713de791d952c28d3b",
+  "essay_skipped": "973248f5cf59132b2a62c75112b4be7f5f43ab12e77a5f417e9259e1b98a7710",
+  "essay_start_about_time": "3ce07ae74529de96b1bdab08c1eea1e77c2646067fcf2da5cb5074bf8ad78201",
+  "essay_still_to_work_on": "7ecb84dc16cb4985e0f2d42d3334b60796d3ce08bed8291fbd5956f8f4351060",
+  "essay_support_text": "e4f87b15ff8cf1375994b25f9fcd167fad7ff097b16f8206a1c70c3bb3f51ae2",
+  "essay_task_depends_on_choice": "1231bb36a1ba5a6b0e311a9b38fc124174b617fdad5fb66982acc95c042d451e",
+  "essay_the_question": "7b15f8a4f24d40b27ab0f570da67e2c76a1d3955b4a4acdededf16010c00d934",
+  "essay_try_again": "be83ab0d0d1ed59f8d84f58ee2b2aea7234fb8519f12a227bc10fc333b06d6b8",
+  "essay_unsaved_body": "91d6737bfc16b8b145cd23a1b1d75864d8ea6daa21c44d93c22d0256cb61ab54",
+  "essay_unsaved_title": "ee63f8f475439e5d9fec3247d34e1d596bec12d1eb1097ca715c1d635bfa5a8f",
+  "essay_up_to_lines": "638c9da87c279b318325f1c05ddfc952fe6546d91f4e64508da7a5b57b0d8bef",
   "essay_what_to_rewrite": "43be399b6f5f7a630da0b2c788fe03edad90210076a9d1b4bed7e38d9b9b67d1",
+  "essay_what_to_write": "eb299c6c2dbc48642342b35033ced5ccb16fc0dbf2d32c42e40c951cc49210a7",
   "essay_words": "c8c344619014c086de826917c12701f45685f0c6dcf380edfa9483fa1825190c",
+  "essay_write": "3fa443673efcdeabd5ef53eedf0c77f22d40d43eb29db840c81643a9ad1ac37d",
+  "essay_write_lines_question": "d4e7133c6d3b601594e356abef33fd66e3f2a1016aba95f375e6ce562dd9d834",
+  "essay_write_question_number": "3d61224cb3c2c3c36bee8aa9a8db33ed4d43a2874be3e12130b5615f66107571",
+  "essay_write_the_question": "f626a4a2399519c6327af067cb275a9f4d9e23673183c74ce1c0dff8fccb39cb",
+  "essay_writing_exercise": "e03ea0dd02cf9fd723519ffbd59cd0e36713c9f5b710ff66c982de34a862e9d5",
+  "essay_writing_exercise_detail": "9f1a6e8f25fc13b7f5ee786a4f3168befd79adc2498043fcee2db1254bfb951e",
+  "essay_writing_practice": "83739401d821f62a43e6cdc765bb1ce1a222fdd5c2a04213457b455daa1220d4",
+  "essay_writing_question": "bc7212147765f40d23730500fdb5eb56280c94385a667ac116a436ae885d2299",
+  "essay_writing_question_detail": "08efc9adb8fe8480b179467fb33fda75bf1efe141764a37d688cf43bf40f62fc",
+  "essay_written_answer": "eef3f21c595c19161cc004eebd930e456706da138f87cad11b587588080dd2f8",
+  "essay_you_wrote": "a3a69f95ece8ad4fc11f489c81e51a62bd93b51a206c8374c4af98ace63e3708",
   "essay_your_answer": "e186183a2b983253026ecfcc29923515a92a825f9a57eca5b904db3378f9926c",
-  "essay_your_essay": "e4ed6b32b6e7724ab7024a55c8f2c285455a9e59d77b53749e52068d178bd376"
+  "essay_your_text": "1532e26279ab1e47fd3f346ab6a65db6c7dc9b2a2c69cf880a6d42ecd4caa4b0",
+  "essay_zero_blank_text": "809ec5651453344f64447b6b1a88830e1385838d8719860f48d96a4fce16fee1",
+  "essay_zero_blank_title": "c166fd3e34741ad062c9e796d6fa41cf1123380bb63df4a6ed5e31df33bfe837",
+  "essay_zero_copied_support_text": "981eca16a20466480c58a3ece666388affaa910a8b3b315d369cd8154164f5dd",
+  "essay_zero_copied_support_title": "b0dc206c48c68ab2529e7b255036688915159e73a70513e9bc58c8c371ccbf12",
+  "essay_zero_identification_text": "84eb4eb654719f0129297b0ca909039bb4915423a58013ebfc85ee3a793f4473",
+  "essay_zero_identification_title": "1109ba11cf83c37cabca87711e81348ce7935fe14be3435097427e640345a700",
+  "essay_zero_off_topic_text": "9a670ec3829a76d71215de584ceaca563e5af8ef6e191e073ac318d9b6255573",
+  "essay_zero_text": "c718ce8e594c757f1492656e918d854af5c4c4f9bf946381142c5a90969c4df7",
+  "essay_zero_title": "109c117fadb66b29c7e5bf9d7d74c96aa60af08b71b553ba5f88519ffac9c6d9",
+  "essay_zero_to_minus": "7cd8afb8a01af26c5e7fc2d3b6359941cf0e8e2ff3ffe4fa3926596afe3dfd19",
+  "essay_zero_too_few_lines_text": "564510866a10fe4d9714c0fe790f33ba0804fbb9880f4992da5fffefb6d74d7b",
+  "essay_zero_too_few_lines_title": "1f19135a754a09aeb2c59d84b8e6786a45f5bd16ba3eeb79ee1bc06a4fadb8aa",
+  "essay_zero_wrong_form_text": "36aed5d6052e5023d9dc1c0a9ea8420ae3cd552a34b7eb3de843745f4f99d616",
+  "essay_zero_wrong_form_title": "b36f26d1a3776d52cbde6d230b52a399b0e77ac55e2e031fa87f618d2a10225a"
 }
 -->
 <resources>
-    <string name="essay_your_essay">Kompozisyonun</string>
+    <string name="essay_writing_practice">Yazma alıştırması</string>
+    <!-- A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer. -->
+    <string name="essay_short_exercise">Kısa yazma alıştırması</string>
+    <!-- Under a short writing exercise after a lesson: what it's for. -->
+    <string name="essay_short_exercise_detail">Az önce öğrendiklerini kullanmak için</string>
+    <!-- A whole answer of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_write_lines_question">%1$d satır uzunluğundaki soruyu yaz</string>
+    <!-- A whole answer of an exam's written test whose questions share a line limit, named by its place in the test. -->
+    <string name="essay_write_question_number">%1$d. soruyu yaz</string>
+    <!-- The whole answer of an exam's written test that has one question. -->
+    <string name="essay_write_the_question">Soruyu yaz</string>
+    <!-- One question of an exam's written test, named by its line limit, such as 30 lines. -->
+    <string name="essay_lines_question">%1$d satır uzunluğundaki soru</string>
+    <string name="essay_question_number">Soru %1$d</string>
+    <!-- The only question of an exam's written test. -->
+    <string name="essay_the_question">Soru</string>
+    <string name="essay_back_tomorrow">Yarın tekrar deneyebilirsin: bugün başka puanlama yapılmayacak</string>
+    <string name="essay_back_on">%1$s tarihinde tekrar deneyebilirsin: bugün başka puanlama yapılmayacak</string>
+    <!-- Under a written test or question whose question depends on an exam choice the learner hasn't made, such as which specialty they'll take. {groups} names the choices. -->
+    <string name="essay_depends_on_choice">Seçim yapmana bağlı: %1$s</string>
+    <!-- Under a written test where one question waits for an exam choice the learner hasn't made. {task} is the question, such as "The 60-line question"; {groups} names the choices. -->
+    <string name="essay_task_depends_on_choice">%1$s, %2$s arasından yapacağın seçime bağlı</string>
+    <string name="essay_choose_on_today">Bugün seç</string>
+    <string name="essay_graded_by_level">Düzeye göre puanlanıyor</string>
+    <string name="essay_estimated_score">Tahmini puan</string>
+    <string name="essay_written_answer">Yazılı cevap</string>
     <string name="essay_your_answer">Cevabın</string>
     <!-- A score's range, such as "610–680". -->
     <string name="essay_range">%1$s–%2$s</string>
-    <!-- %1$s is the essay's highest possible score. -->
-    <string name="essay_scale">Tahmini puan, 0 ile %1$s arasında</string>
-    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="essay_points_of">%1$s / %2$s</string>
+    <string name="essay_of_max">%1$s üzerinden</string>
+    <!-- A criterion's score, such as "7.13 of 9.5". -->
     <string name="essay_score_of">%1$s / %2$s</string>
-    <string name="essay_criterion_formal_writing">Resmî dil kullanımı</string>
-    <!-- Enem essay competence 2: addressing the set theme and drawing on outside knowledge. -->
-    <string name="essay_criterion_topic">Konu ve kaynak kullanımı</string>
-    <string name="essay_criterion_argument">Görüşü savunma</string>
-    <string name="essay_criterion_cohesion">Bağdaşıklık</string>
-    <string name="essay_criterion_intervention">Çözüm önerisi</string>
-    <string name="essay_criterion_addressing">Hitap ve taraflar</string>
-    <string name="essay_criterion_facts">Olaylar</string>
-    <string name="essay_criterion_legal_basis">Hukuki dayanak</string>
-    <string name="essay_criterion_requests">Talepler</string>
-    <!-- OAB legal brief criterion: the brief's closing (claim value, place, date, lawyer and OAB number) and its form. -->
-    <string name="essay_criterion_closing">Sonuç ve biçim</string>
-    <string name="essay_next_step">Sonraki adım</string>
-    <string name="essay_what_to_rewrite">Yeniden yazılacak kısım</string>
-    <string name="essay_for_example">Örneğin: %1$s</string>
-    <string name="essay_nothing_left">Üzerinde çalışılacak bir şey kalmadı</string>
-    <string name="essay_full_marks">Bu tahmine göre her ölçütten tam puan aldın.</string>
-    <!-- The header of a writing block graded by the item's own criteria, or by the OAB exam's. -->
-    <string name="essay_title">Yazma çalışması</string>
-    <string name="essay_title_ap">Açık uçlu yanıt · AP puanlama yönergeleri</string>
-    <string name="essay_title_enem">Kompozisyon · ENEM değerlendirme ölçütleri</string>
-    <string name="essay_supporting_texts">Destekleyici metinler</string>
-    <!-- The texts an ENEM essay prompt gives to motivate the essay. -->
-    <string name="essay_motivating_texts">Yönlendirici metinler</string>
-    <!-- The legal case an OAB written exam answer is about. -->
-    <string name="essay_the_case">Olay</string>
-    <!-- The grade of the learner's last essay draft. -->
-    <string name="essay_last_grade">Son notun</string>
+    <string name="essay_not_measured">Henüz ölçülmedi</string>
+    <plurals name="essay_up_to_lines">
+        <item quantity="one">En çok %d satır</item>
+        <item quantity="other">En fazla %d satır</item>
+    </plurals>
+    <string name="essay_points">%1$s puan</string>
+    <string name="essay_about_time">yaklaşık %1$s</string>
+    <string name="essay_support_text">Destek metni</string>
+    <string name="essay_what_to_write">Yazman gerekenler</string>
+    <string name="essay_grading_criteria">Değerlendirme ölçütleri</string>
+    <string name="essay_points_split">%1$s puanın dağılımı</string>
+    <string name="essay_judged_on">Cevap neye göre değerlendiriliyor</string>
+    <string name="essay_from_notice">Sınav ilanından.</string>
+    <string name="essay_from_notice_practice_key">Sınav ilanından. Cevap anahtarı bize ait, pratik yapman için hazırlandı.</string>
+    <string name="essay_write">Yaz</string>
+    <string name="essay_start_about_time">Yaklaşık %1$s</string>
+    <string name="essay_continue">Devam et</string>
+    <string name="essay_question">Soru</string>
     <string name="essay_rewrite_label">Geliştirmen gereken yerleri yeniden yaz</string>
+    <string name="essay_grade_answer">Cevabı değerlendir</string>
+    <string name="essay_grade_rewrite">Yeniden yazımı değerlendir</string>
     <plurals name="essay_words">
         <item quantity="one">%d kelime</item>
         <item quantity="other">%d kelime</item>
     </plurals>
-    <!-- On an essay the learner skipped, opened again from a link. -->
-    <string name="essay_skipped">Bu kompozisyonu atladın.</string>
-    <string name="essay_back_to_today">Bugün</string>
-    <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
-    <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
-    <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
-    <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
-    <string name="essay_skip_rewrite">Atla</string>
-    <string name="essay_grade_rewrite">Yeniden yazımı değerlendir</string>
-    <string name="essay_send">Kompozisyonu değerlendir</string>
-    <string name="essay_leave_title">Şimdilik çıkmak ister misin?</string>
-    <string name="essay_leave_description">Metnin bu cihazda saklanır, geri döndüğünde seni burada bekler.</string>
+    <!-- How many handwritten lines the typed answer would take, of the question's limit, such as "about 23 of 30 lines". -->
+    <plurals name="essay_lines_used">
+        <item quantity="one">%1$d / %2$d satır civarı</item>
+        <item quantity="other">%1$d / %2$d satır civarı</item>
+    </plurals>
+    <!-- An empty answer field's line count, against the question's limit. -->
+    <plurals name="essay_lines_empty">
+        <item quantity="one">0 / %1$d satır</item>
+        <item quantity="other">0 / %1$d satır</item>
+    </plurals>
+    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
+    <plurals name="essay_lines_over">
+        <item quantity="one">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
+        <item quantity="other">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
+    </plurals>
+    <string name="essay_conflict_title">Bu cevap başka bir cihazda değişti</string>
+    <string name="essay_conflict_body">Burada yazdığın sürümü koru ya da diğerine geç.</string>
+    <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
+    <string name="essay_conflict_keep">Bu sürümü koru</string>
+    <!-- A choice between two versions of one written answer: replace what's typed here with the version saved on another device. -->
+    <string name="essay_conflict_use_other">Diğer sürümü kullan</string>
+    <string name="essay_graded_earlier_version">Bu puan, ilk gönderdiğin sürüm için. Yeniden yazman için yaptığın değişiklikler saklandı.</string>
+    <string name="essay_not_saved">Henüz kaydedilmedi. Bu cihazda saklanıyor.</string>
+    <string name="essay_unsaved_title">Cevabın henüz kaydedilmedi</string>
+    <string name="essay_unsaved_body">Bu cihazda saklanıyor ve tekrar çevrimiçi olduğunda kaydediliyor.</string>
     <string name="essay_keep_writing">Yazmaya devam et</string>
-    <!-- %1$s is the criterion to work on next, such as "Argument". -->
-    <string name="essay_next_step_named">Sonraki adım: %1$s</string>
-    <string name="essay_see_grade">Notunu gör</string>
-    <string name="essay_too_short">Not verilemeyecek kadar kısa</string>
-    <string name="essay_too_short_detail">Kompozisyonun tamamını yaz, sonra yeniden gönder.</string>
-    <string name="essay_rewrite">Yeniden yaz</string>
-    <string name="essay_finish_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
+    <string name="essay_send_failed">İşlem tamamlanamadı. Metnin hâlâ burada. Birazdan tekrar dene.</string>
+    <string name="essay_grading">Cevabını her ölçüte göre değerlendiriyoruz. 30 saniyeye kadar sürebilir.</string>
+    <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
+    <string name="essay_writing_question">Sorunu hazırlıyoruz…</string>
+    <string name="essay_writing_question_detail">Sınavındakilere benzer yeni bir soru. Hazır olunca burada açılır.</string>
+    <string name="essay_writing_exercise">Alıştırmanı hazırlıyoruz…</string>
+    <string name="essay_writing_exercise_detail">Az önce öğrendiklerinle ilgili kısa bir alıştırma. Hazır olunca burada açılır.</string>
+    <string name="essay_exercise_failed">Alıştırmanı hazırlayamadık</string>
+    <string name="essay_question_failed">Sorunu hazırlayamadık</string>
+    <string name="essay_nothing_lost">Hiçbir şey kaybolmadı. Birazdan tekrar dene.</string>
+    <string name="essay_try_again">Tekrar dene</string>
+    <string name="essay_removed">Bu soru artık sınavında yok</string>
+    <string name="essay_removed_detail">Sınav ilanı değiştiği için planından çıktı. Puanlama yapılmadı.</string>
+    <string name="essay_no_more_grading">Bugünlük değerlendirme sınırına ulaştın</string>
+    <string name="essay_more_tomorrow">Yarın daha fazla değerlendirme yapabileceksin.</string>
+    <string name="essay_left_for_tomorrow">Yarına kalanlar</string>
+    <string name="essay_part_minimum">Yazılı sınavı geçmek için gereken en düşük puan oranı: %1$s</string>
+    <string name="essay_content">İçerik</string>
+    <string name="essay_language_errors">Dil hataları</string>
+    <plurals name="essay_errors">
+        <item quantity="one">%d hata</item>
+        <item quantity="other">%d hata</item>
+    </plurals>
+    <plurals name="essay_about_lines">
+        <item quantity="one">yaklaşık %d satır</item>
+        <item quantity="other">yaklaşık %d satır</item>
+    </plurals>
+    <!-- Points taken away, such as "−0.35". -->
+    <string name="essay_minus">−%1$s</string>
+    <!-- Points language errors take away, as a range, such as "−0.3 to −0.6". -->
+    <string name="essay_minus_range">−%1$s ile −%2$s arası</string>
+    <!-- Points language errors may take away, from none, such as "0.0 to −0.4". -->
+    <string name="essay_zero_to_minus">%1$s ile −%2$s arası</string>
+    <string name="essay_fixed">Düzeltilenler: %1$s</string>
+    <string name="essay_still_to_work_on">Üzerinde çalışılacaklar: %1$s</string>
+    <string name="essay_next_step">Sonraki adım</string>
+    <string name="essay_what_to_rewrite">Yeniden yazılacak kısım</string>
+    <string name="essay_for_example">Örneğin: %1$s</string>
+    <string name="essay_nothing_left">Üzerinde çalışılacak bir şey kalmadı</string>
+    <string name="essay_full_marks">Tüm ölçütler tamamlandı.</string>
+    <plurals name="essay_limit_title">
+        <item quantity="one">%1$d satıra sığdır</item>
+        <item quantity="other">%1$d satıra sığdır</item>
+    </plurals>
+    <string name="essay_limit_title_any">Satır sınırına sığdır</string>
+    <string name="essay_limit_text">Değerlendirenler %1$d satırdan sonrasını okumaz.</string>
+    <string name="essay_limit_text_any">Değerlendirenler satır sınırından sonrasını okumaz.</string>
+    <string name="essay_short_title">Daha uzun bir cevap yaz</string>
+    <string name="essay_short_text">Bu cevap değerlendirilemeyecek kadar kısa. Biraz daha ekleyip tekrar gönder.</string>
+    <string name="essay_zero_title">Sorulan soruyu cevapla</string>
+    <string name="essay_zero_text">Yukarıdaki kurala göre yeniden yaz.</string>
+    <string name="essay_zero_blank_title">Cevap yaz</string>
+    <string name="essay_zero_blank_text">Sorunun istediği noktalarla başla.</string>
+    <string name="essay_zero_off_topic_text">Soruyu yeniden oku ve istediği konu hakkında yaz.</string>
+    <!-- The next step of a written answer zeroed for being in the wrong form, such as a list where an essay was asked. -->
+    <string name="essay_zero_wrong_form_title">İstenen biçimde yaz</string>
+    <string name="essay_zero_wrong_form_text">Sorunun istediği metin türünü kontrol et ve o türde yaz.</string>
+    <!-- The next step of a written answer zeroed for being shorter than the exam's minimum number of lines. -->
+    <string name="essay_zero_too_few_lines_title">Asgari uzunluğa ulaş</string>
+    <string name="essay_zero_too_few_lines_text">Sorunun istediği her noktayı, istenen uzunluğa ulaşana kadar geliştir.</string>
+    <string name="essay_zero_copied_support_title">Kendi sözcüklerini kullan</string>
+    <string name="essay_zero_copied_support_text">Destek metnini cevabın olarak değil, başlangıç noktası olarak kullan.</string>
+    <string name="essay_zero_identification_title">Seni tanıtabilecek şeyleri çıkar</string>
+    <string name="essay_zero_identification_text">Cevabın parçası olmayan adları, imzaları ve işaretleri kaldır.</string>
+    <!-- A past written answer graded by level: how many of its criteria were fully met, out of all of them. -->
+    <plurals name="essay_criteria_complete">
+        <item quantity="one">%1$d / %2$d ölçüt tamamlandı</item>
+        <item quantity="other">%1$d / %2$d ölçüt tamamlandı</item>
+    </plurals>
+    <string name="essay_criteria">Ölçütler</string>
+    <!-- A criterion of a written answer fully met. -->
+    <string name="essay_level_complete">Tamamlandı</string>
+    <!-- A criterion of a written answer mostly met. -->
+    <string name="essay_level_strong">İyi</string>
+    <!-- A criterion of a written answer half met. -->
+    <string name="essay_level_partial">Kısmen</string>
+    <!-- A criterion of a written answer not met. -->
+    <string name="essay_level_missing">Eksik</string>
+    <string name="essay_no_points_in_notice">Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor.</string>
+    <string name="essay_criteria_from_notice">Sınav ilanındaki ölçütler ve puanlar.</string>
+    <string name="essay_criteria_from_notice_practice_key">Sınav ilanındaki ölçütler ve puanlar. Cevap anahtarı bize ait, pratik yapman için hazırlandı.</string>
     <string name="essay_see_comments">Yorumları gör</string>
     <string name="essay_comments">Yorumlar</string>
-    <string name="essay_proposal_elements">Önerinin beş unsuru</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->
-    <string name="essay_element_agent">Kim yapacak</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: the action itself. -->
-    <string name="essay_element_action">Ne yapacak</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: how it's carried out. -->
-    <string name="essay_element_means">Hangi yolla</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: its purpose. -->
-    <string name="essay_element_effect">Ne amaçla</string>
-    <!-- One of the five elements of an ENEM essay's intervention proposal: a detail of one of the others. -->
-    <string name="essay_element_detail">Bir ayrıntı</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_present">Var</string>
-    <!-- Whether an element of the proposal is in the essay. -->
-    <string name="essay_element_missing">Eksik</string>
+    <string name="essay_your_text">Metnin</string>
+    <string name="essay_past_line">%1$d satır geçildikten sonra değerlendirenler okumayı bırakır</string>
+    <string name="essay_past_limit">Sınırdan sonrası: değerlendirenler okumayı bırakır</string>
+    <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
+    <string name="essay_you_wrote">“%1$s” yazdın (%2$s)</string>
+    <!-- On a written task the learner skipped, opened again from a link. -->
+    <string name="essay_skipped">Bu görevi atladın.</string>
+    <string name="essay_back_to_today">Bugün</string>
+    <string name="essay_skip_rewrite">Atla</string>
+    <string name="essay_rewrite">Yeniden yaz</string>
+    <string name="essay_finish_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
 </resources>

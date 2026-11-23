@@ -14,6 +14,7 @@ import {
   persistLearnerAnswer,
   publishLearnerAnswer,
 } from "../record-learner-answer";
+import { loadWritingSkillIds } from "../writing-skills";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { readPlacementAttempt } from "./_utils/placement-attempt-record";
@@ -147,16 +148,17 @@ export async function answerPlacementQuestion({
     return owned;
   }
 
-  const [plan, item] = await Promise.all([
+  const [plan, item, written] = await Promise.all([
     owned.goal.kind === "exam" ? null : loadPlacementPlan(goalId),
     findGoalItem({
       examBlueprintId: owned.goal.examBlueprintId,
       itemId: input.itemId,
       userId: owned.userId,
     }),
+    loadWritingSkillIds(goalId),
   ]);
 
-  if (!item) {
+  if (!item || written.has(item.skillId)) {
     return { status: "invalidItem" };
   }
 

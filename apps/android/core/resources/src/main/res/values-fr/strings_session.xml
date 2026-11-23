@@ -18,7 +18,7 @@
   "session_block_weakest": "4118e3f8e72191cd18a13ff9559c540daafe1ed3612e88f76a1904c42eaf643a",
   "session_block_weekly_challenge": "a71f3801eec48936670e3cce9f0fd9a6ae3e70a38097a9dd5d33eddf6af4975b",
   "session_block_what_you_know": "29d769ef1d128879ac05973a5a2fbe6fbd656be928a1040aa77421b7776b19cc",
-  "session_block_writing_practice": "3bd2dd51defbf7d2da778c54a775eb5fb1bdc5dac45c64826ec0569034c7bae5",
+  "session_block_writing_draft_saved": "65f1f535c67a30825882bd323193cb31ef3f4dc36224b2c39f91d6dba5105971",
   "session_catch_up_to_go": "4672672081d0158bf0aa23c5cbc975a05f5e4b39d4ce5ac3a2a024c84c83be5d",
   "session_caught_up_today": "0c21eacd6a89ec02eff852316f418b5183cda3b8815879eebaa058a29ccaf7ef",
   "session_day_done": "9c964af730eee8a40eb52e33ab2d51f0650fa19a4a8ff83e94cb5a9e974afdab",
@@ -97,7 +97,7 @@
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">Ce que tu sais déjà</string>
     <string name="session_block_new_lesson">Nouvelle leçon</string>
-    <string name="session_block_writing_practice">Entraînement à l’écriture</string>
+    <string name="session_block_writing_draft_saved">Ton brouillon est enregistré</string>
     <string name="session_block_practice_mistakes">Corriger tes erreurs</string>
     <string name="session_block_mixed_practice">Entraînement varié</string>
     <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->

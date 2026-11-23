@@ -1,7 +1,10 @@
 import { unshownCertificatesSchema } from "@zoonk/core/certificates/contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
-import { essayGradeSchema } from "@zoonk/core/exams/essays/contract";
+import {
+  writingPromptSchema,
+  writingResultSchema,
+} from "@zoonk/core/exams/essays/writing-contract";
 import { mockAnswerSchema } from "@zoonk/core/exams/mocks/answer-contract";
 import {
   MOCK_PURPOSES,
@@ -48,7 +51,7 @@ const mockQuestionSchema = z.object({
     .enum([...MOCK_QUESTION_FORMATS, "essay"])
     .meta({
       description:
-        "How it's answered: a pick (`multipleChoice`, by `select`; `trueFalse`), a number typed into the answer box (`numeric`, `{ number }`, beside `unit`), a word or a short answer typed in (`typed`, `{ text }`), or a full mock's written part (`essay`: an essay, a discursive test), its text (`{ text }`) on the section's clock",
+        "How it's answered: a pick (`multipleChoice`, by `select`; `trueFalse`), a number typed into the answer box (`numeric`, `{ number }`, beside `unit`), a word or a short answer typed in (`typed`, `{ text }`), or a written test's answer (`essay`: an essay, a discursive test), its text (`{ text }`) on the section's clock",
     }),
   image: questionImageSchema,
   itemId: uuidSchema(),
@@ -65,13 +68,14 @@ const mockQuestionSchema = z.object({
   skillId: uuidSchema(),
   unit: questionUnitSchema,
   visual: questionVisualSchema,
+  writing: writingPromptSchema.optional(),
 });
 
 const mockEssaySchema = z
   .object({
     area: z.string().nullable(),
     context: z.string().nullable(),
-    grade: essayGradeSchema.nullable(),
+    grade: writingResultSchema.nullable(),
     itemId: uuidSchema(),
     question: z.string(),
     status: z
@@ -82,6 +86,7 @@ const mockEssaySchema = z
       }),
     text: z.string().nullable(),
     unsure: z.boolean().meta({ description: "Whether the learner marked the essay as unsure" }),
+    writing: writingPromptSchema.optional(),
   })
   .meta({ id: "MockEssay" });
 
@@ -137,6 +142,7 @@ export const mockViewResponseSchema = z
             durationMs: z.number().int(),
             flagged: z.boolean(),
             itemId: uuidSchema(),
+            revision: uuidSchema().optional(),
           }),
         ),
         kind: z
@@ -178,7 +184,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({ description: "Which exam day it copies, when the exam runs over several days" }),
     essayRubric: z
-      .enum(["ap", "custom", "enem", "oab"])
+      .enum(["enem", "oab", "points", "levels"])
       .nullable()
       .meta({ description: "The rubric its essays are graded by; null when it asks none" }),
     essays: z
@@ -211,6 +217,7 @@ export const mockViewResponseSchema = z
       z.object({ cause: z.enum(MistakeCause).nullable(), count: z.number().int() }),
     ),
     number: z.number().int().min(1),
+    pacing: z.enum(["official", "practice"]).optional(),
     passMarks: passMarksSchema
       .nullable()
       .meta({

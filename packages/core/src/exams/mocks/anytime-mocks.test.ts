@@ -1,11 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
+import { buildExamIdentityKey } from "../../library/exams/exam-identity";
+import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session-goal";
 import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
@@ -522,6 +524,81 @@ describe("mocks taken any time", () => {
     expect(items.find((item) => item.skillId === second?.id)?.status).toBe("todo");
 
     await expect(readMock(id)).resolves.toMatchObject({ adapt: null });
+  });
+
+  it("withdraws the objective skip offer when the notice defines the topic as written", async () => {
+    const { goal, plan, skills } = await anytimeSetup();
+    const [first] = skills;
+    const id = await startMath(goal.id);
+    await answerSection({ id, rightOn: new Set([first!.id]) });
+    await finishMock({ blockId: id, input: { timeZone: UTC } });
+    const before = await readMock(id);
+    expect(before.adapt?.skip?.lessons).toBe(1);
+
+    const identity = {
+      board: null,
+      country: "BR",
+      language: goal.language,
+      name: `Mock exam ${crypto.randomUUID()}`,
+      ownerId: null,
+      role: null,
+    };
+
+    const [blueprint, source] = await Promise.all([
+      prisma.examBlueprint.update({
+        data: { identityKey: buildExamIdentityKey(identity), name: identity.name },
+        where: { id: goal.examBlueprintId! },
+      }),
+      sourceFixture(),
+    ]);
+
+    const content = readBlueprintContent(blueprint);
+    const { structure } = content;
+
+    await saveExamBlueprint({
+      content: {
+        ...content,
+        edition: { ...content.edition, sourceHash: source.contentHash },
+        structure: {
+          ...structure,
+          mock: structure.mock && {
+            ...structure.mock,
+            sections: [
+              ...structure.mock.sections,
+              { day: null, kind: "written", minutes: 30, name: "Written test", questions: null },
+            ],
+          },
+          subjects: structure.subjects.map((subject) =>
+            subject.name === "Mathematics"
+              ? { ...subject, group: "Written test", questions: null }
+              : subject,
+          ),
+        },
+      },
+      identity,
+      provenance: {
+        generatedAt: new Date(),
+        model: "test/fixture",
+        promptVersion: "test",
+        runId: crypto.randomUUID(),
+      },
+      sourceId: source.id,
+    });
+
+    await expect(prisma.plan.findUnique({ where: { id: plan.id } })).resolves.toMatchObject({
+      settings: { writtenSkillIds: expect.arrayContaining([first!.id]) },
+    });
+
+    const after = await readMock(id);
+    expect(after.adapt?.skip ?? null).toBeNull();
+
+    await expect(
+      adaptPlanFromMock({ blockId: id, input: { offer: "skip", timeZone: UTC } }),
+    ).resolves.toMatchObject({ status: "unchanged" });
+
+    await expect(
+      prisma.planItem.findFirst({ where: { planId: plan.id, skillId: first!.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
   });
 
   it("earns the belt its Brain Power crosses, with the level, Energy and ceremony on its result", async () => {

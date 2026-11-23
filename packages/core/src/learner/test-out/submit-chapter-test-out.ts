@@ -15,7 +15,7 @@ import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { withTestSubmissionClaim } from "../_utils/test-submission-claim";
 import { writeLearnerChange } from "../_utils/write-learner-change";
-import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
+import { getChapterTestOutSkills } from "./_utils/chapter-items";
 import { type GradedAnswer, scoreChapter } from "./_utils/score-chapter";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
@@ -146,19 +146,23 @@ async function submitOwnedTestOut({
   }
 
   const plan = await loadTestOutPlan(goalId);
-  const chapterSkills = getChapterSkills({ chapterId, plan });
+  const eligible = getChapterTestOutSkills({ chapterId, plan });
 
-  if (chapterSkills.length === 0) {
-    return { status: "notFound" };
-  }
-
-  if (countSkippableItems({ plan, skills: chapterSkills }) === 0) {
-    return { status: "nothingToSkip" };
+  if (eligible.status !== "ready") {
+    return eligible;
   }
 
   const answeredAt = new Date();
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-  const taken = await scoreChapter({ answeredAt, chapterSkills, goal, input, timeZone, userId });
+
+  const taken = await scoreChapter({
+    answeredAt,
+    chapterSkills: eligible.skills,
+    goal,
+    input,
+    timeZone,
+    userId,
+  });
 
   if (!taken) {
     return { status: "invalidItem" };

@@ -117,8 +117,8 @@ test.describe("Onboarding API", () => {
     expect(onboarding.steps.at(-1)).toBe("plan");
 
     await expect(
-      prisma.learnerSource.findFirstOrThrow({ where: { sourceId: notes.id, userId: user.id } }),
-    ).resolves.toMatchObject({ goalId });
+      prisma.goalSource.findMany({ select: { goalId: true }, where: { sourceId: notes.id } }),
+    ).resolves.toStrictEqual([{ goalId }]);
 
     const answered = await readBody({
       response: await apiContext.post(`/v1/goals/${goalId}/onboarding/answers`, {

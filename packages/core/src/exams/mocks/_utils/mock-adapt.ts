@@ -1,6 +1,8 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { type GoalPlan, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
+import { getWritingSkillIds } from "../../../learner/writing-skills";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../../../plans/planner/plan-state";
@@ -16,10 +18,12 @@ export type MockPlanOffers = {
 };
 
 export async function loadMockPlanOffers({
+  blueprint,
   goal,
   purpose,
   result,
 }: {
+  blueprint: ExamBlueprint | null;
   goal: Goal | null;
   purpose: MockPurpose;
   result: MockResult | null;
@@ -38,9 +42,17 @@ export async function loadMockPlanOffers({
   }
 
   const graph = parsePlanGraph(row.graph);
-  const { focusAreas } = parsePlanSettings(row.settings);
+  const { focusAreas, writtenSkillIds } = parsePlanSettings(row.settings);
+
+  const written = writtenSkillIds
+    ? new Set(writtenSkillIds)
+    : getWritingSkillIds({
+        graph,
+        structure: blueprint ? readBlueprintContent(blueprint).structure : null,
+      });
+
   const planAreas = [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
-  const aced = getAcedSkillIds({ items: plan.items, result });
+  const aced = getAcedSkillIds({ items: plan.items, result }).difference(written);
   const skippable = findSkippableItems({ aced, items: plan.items });
   const focus = findWeakestArea({ focusAreas, planAreas, result });
 

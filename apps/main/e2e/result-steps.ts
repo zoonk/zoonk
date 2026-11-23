@@ -2,7 +2,7 @@ import { type Page, expect } from "./fixtures";
 
 const STEP_PATTERN = /^Step (?<current>\d+) of (?<total>\d+)$/u;
 
-export function stepDots(page: Page) {
+function stepDots(page: Page) {
   return page.getByRole("img", { name: STEP_PATTERN });
 }
 
@@ -17,7 +17,7 @@ async function readStep(page: Page): Promise<{ current: number; total: number }>
   return { current: Number(groups?.current ?? 1), total: Number(groups?.total ?? 1) };
 }
 
-export async function nextStep(page: Page, { keyboard = false }: { keyboard?: boolean } = {}) {
+async function nextStep(page: Page, { keyboard = false }: { keyboard?: boolean } = {}) {
   const { current, total } = await readStep(page);
   const reached = page.getByRole("img", { name: `Step ${current + 1} of ${total}` });
 

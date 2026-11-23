@@ -15,6 +15,7 @@ export type OwnAnswer = {
 type SkillEvidence = OwnAnswer | { undoneOn: Date };
 
 export type ClaimEvent = { at: Date; skillId: string } & (
+  | { attemptId: string; claim: SkillClaim; kind: "writing" }
   | { kind: "claim" | "passedOver" | "studied" | "undone"; localDate?: Date }
   | ({ kind: "practice" | "test"; isCorrect: boolean; recheck?: boolean } & Partial<
       Omit<OwnAnswer, "isCorrect">
@@ -82,13 +83,17 @@ function readSkillConfirmation(answers: readonly SkillEvidence[], today?: Date) 
 type ClaimState = {
   answers: SkillEvidence[];
   claim: SkillClaim | undefined;
-  claimSource: "choice" | "test" | null;
+  claimSource: "choice" | "test" | "writing" | null;
   pendingRecheck: Date | null;
   studied: boolean;
 };
 
 function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent }): ClaimState {
   const { claim, studied } = current;
+
+  if (event.kind === "writing") {
+    return { ...current, claim: event.claim, claimSource: "writing" };
+  }
 
   if (event.kind === "studied") {
     return { ...current, claim: claim === "gap" ? claim : "confirmed", studied: true };
@@ -240,7 +245,10 @@ export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {
 export function listPassedOverToRelearn(events: readonly ClaimEvent[]): Set<string> {
   return new Set(
     [...readClaimStates(events)].flatMap(([skillId, state]) =>
-      state.claimSource !== "test" && !state.studied && isKnownClaim({ passedOver: false, state })
+      state.claimSource !== "test" &&
+      state.claimSource !== "writing" &&
+      !state.studied &&
+      isKnownClaim({ passedOver: false, state })
         ? [skillId]
         : [],
     ),

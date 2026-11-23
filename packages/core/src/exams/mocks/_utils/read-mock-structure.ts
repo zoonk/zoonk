@@ -21,10 +21,12 @@ const UNSTATED_SIZE: MockSizeSource = {
 export function readMockStructure({
   blueprint,
   dayMinutes,
+  includePendingWriting,
   picks,
 }: {
   blueprint: ExamBlueprint;
   dayMinutes?: number | null;
+  includePendingWriting?: boolean;
   picks: ExamPicks;
 }): ExamStructure {
   const { edition, structure } = readBlueprintContent(blueprint);
@@ -33,7 +35,7 @@ export function readMockStructure({
     dayMinutes,
     noticeQuestions: edition.questionCount,
     ownerId: blueprint.ownerId,
-    structure: toChosenStructure({ picks, structure }),
+    structure: toChosenStructure({ includePendingWriting, picks, structure }),
   });
 }
 

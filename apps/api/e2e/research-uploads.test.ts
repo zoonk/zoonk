@@ -126,14 +126,14 @@ test.describe("Research upload requests API", () => {
 
     const [ask, link] = await Promise.all([
       learner.api.get(`/v1/goals/${goal.id}/upload-request`),
-      prisma.learnerSource.findFirst({ where: { sourceId: upload.id, userId: learner.userId } }),
+      prisma.goalSource.findFirst({ where: { goalId: goal.id, sourceId: upload.id } }),
     ]);
 
     expect(goalUploadRequestResponseSchema.parse(await ask.json())).toStrictEqual({
       request: null,
     });
 
-    expect(link).toMatchObject({ goalId: goal.id, origin: "upload" });
+    expect(link).toMatchObject({ answeredAt: expect.any(Date), origin: "upload" });
 
     const again = await learner.api.post("/v1/research", {
       data: { goalId: goal.id, sourceIds: [upload.id] },

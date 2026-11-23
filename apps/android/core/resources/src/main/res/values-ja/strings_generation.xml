@@ -48,7 +48,8 @@
   "generation_understanding_read": "8b8163092437b804f3c8f5a8b8aac1783599f37aa1068fe97ccb1d65d2a06dad",
   "generation_understanding_read_line_1": "1e41ef8cc3d79df36828ffd7df89b5dfface41e72023cf7c9b3a15574c671d57",
   "generation_understanding_read_line_2": "13820fd3a45d690930581f163bac4c09fb03da5d297efafd9fa039d4997b0438",
-  "generation_understanding_read_line_3": "594b51db654f795235be52ebcb46570c357342c2feff317e6be3df71b1d8e4d9"
+  "generation_understanding_read_line_3": "594b51db654f795235be52ebcb46570c357342c2feff317e6be3df71b1d8e4d9",
+  "generation_writing_prompt": "1942d707c4967dda6a3313570358fdc0c571ab466630eacb7794ab4422c84e8f"
 }
 -->
 <resources>
@@ -81,6 +82,7 @@
     <string name="generation_skills_line_1">目標の達成に必要なことを書き出しています…</string>
     <string name="generation_skills_line_2">スキルを学ぶ順に並べています…</string>
     <string name="generation_skills_line_3">大事なことが抜けていないか確かめています…</string>
+    <string name="generation_writing_prompt">質問を作成しています…</string>
     <!-- The wait while a typed goal is read. -->
     <string name="generation_understanding">目標を読み込んでいます</string>
     <string name="generation_understanding_read">目標の内容を読んでいます</string>
