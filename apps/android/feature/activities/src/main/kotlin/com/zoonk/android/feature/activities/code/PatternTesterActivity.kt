@@ -188,6 +188,7 @@ private fun PatternTesterActivity(props: ActivityProps) {
     }
 }
 
+@Suppress("DEPRECATION")
 @Composable
 private fun PatternField(
     value: TextFieldValue,

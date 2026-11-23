@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
@@ -29,6 +32,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AppCache
@@ -100,6 +104,7 @@ class TodayFlowTest {
     @get:Rule
     val rule: ComposeContentTestRule = createComposeRule()
 
+    private lateinit var inputMode: InputModeManager
     private lateinit var navigator: AppNavigator
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val session = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02"
@@ -171,6 +176,7 @@ class TodayFlowTest {
 
         rule.setContent {
             ZoonkTheme(moreContrast = moreContrast) {
+                inputMode = LocalInputModeManager.current
                 Surface {
                     navigator = rememberAppNavigator()
                     ActOn(viewModel.route) { navigator.open(it.route) }
@@ -573,11 +579,10 @@ class TodayFlowTest {
     @Test
     fun theWaitingUpNextRowKeepsFocusWhileKeepLearningsRequestRuns() {
         show("state" to "done", "nextPosition" to null, "extraTime" to upNext())
-        val row = rule.onNodeWithText("Membranes")
-        row.performSemanticsAction(SemanticsActions.RequestFocus)
-        row.assertIsFocused()
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
+        val row = rule.onNodeWithText("Membranes").requestFocus().assertIsFocused()
 
-        rule.onNodeWithText("Keep learning").performClick()
+        rule.onNodeWithText("Keep learning").performSemanticsAction(SemanticsActions.OnClick)
         rule.waitForIdle()
 
         row.assertIsNotEnabled().assertIsFocused()

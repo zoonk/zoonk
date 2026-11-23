@@ -5,6 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -22,6 +25,7 @@ import com.zoonk.android.ui.testing.laidOutStyle
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +36,7 @@ class ChoiceQuestionsRunTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
+    private lateinit var inputMode: InputModeManager
     private var answered by mutableIntStateOf(0)
     private var pending by mutableStateOf(false)
     private var presses = 0
@@ -39,6 +44,7 @@ class ChoiceQuestionsRunTest {
     private fun show(hint: String? = null) {
         rule.setContent {
             ZoonkTheme {
+                inputMode = LocalInputModeManager.current
                 ChoiceQuestionsRun(
                     title = "Test out",
                     questions = listOf(QUESTION),
@@ -77,6 +83,7 @@ class ChoiceQuestionsRunTest {
         show()
         rule.onNodeWithText("Mars").performClick()
         rule.onNodeWithText("Finish").performClick()
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
         rule.onNodeWithText("I don't know yet").requestFocus().assertIsFocused()
 
         sendingTheAnswers()
@@ -95,6 +102,7 @@ class ChoiceQuestionsRunTest {
         show()
         rule.onNodeWithText("Mars").performClick()
         rule.onNodeWithText("I don't know yet").performClick()
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
         rule.onNodeWithText("Finish").requestFocus().assertIsFocused()
 
         sendingTheAnswers()

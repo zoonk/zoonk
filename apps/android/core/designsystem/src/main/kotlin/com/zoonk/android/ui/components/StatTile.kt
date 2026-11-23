@@ -29,11 +29,10 @@ import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
@@ -83,7 +82,7 @@ fun StatTile(
                         icon?.invoke(Modifier.size(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }))
                     }
                     Text(
-                        label.toUpperCase(LocaleList.current),
+                        label.uppercase(currentLocale()),
                         Modifier.weight(1f).clearAndSetSemantics { text = AnnotatedString(label) },
                         color = MaterialTheme.zoonk.faint,
                         style = labelStyle,

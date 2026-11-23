@@ -97,6 +97,7 @@ internal val CodeLanguage.fenceName: String
             CodeLanguage.Sql -> "sql"
         }
 
+@Suppress("DEPRECATION")
 private data class Highlighting(
     private val language: CodeLanguage,
     private val colors: CodeColors,
@@ -133,6 +134,7 @@ private fun Modifier.reachingNeighbors(line: Dp): Modifier =
 private val TOUCH_HEIGHT = 48.dp
 
 /** Main's `ActivityCodeLineInput`: one line of code to edit in place; Enter runs the program. */
+@Suppress("DEPRECATION")
 @Composable
 internal fun CodeLineField(
     value: String,
@@ -172,6 +174,7 @@ internal fun CodeLineField(
  * Main's `ActivityCodeEditor`: highlighted code that scrolls sideways instead of wrapping. Enter
  * starts a new line and Ctrl or Cmd with Enter runs it.
  */
+@Suppress("DEPRECATION")
 @Composable
 internal fun CodeEditor(
     value: TextFieldValue,

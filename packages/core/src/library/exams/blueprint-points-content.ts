@@ -135,16 +135,23 @@ function toParts({
   partNames: readonly string[];
   scoring: Scoring;
 }): ScoredPart[] {
-  return scoring.parts.reduce<ScoredPart[]>((parts, part, index) => {
+  const parts: ScoredPart[] = [];
+
+  scoring.parts.forEach((part, index) => {
     const name = findPartName({ name: part.name, partNames });
 
     if (name === null || parts.some((other) => other.name === name)) {
-      return parts;
+      return;
     }
 
     const scored = toPart({ id: `mock.scoring.parts.${index}`, kept, marking, name, part });
-    return scored ? [...parts, scored] : parts;
-  }, []);
+
+    if (scored) {
+      parts.push(scored);
+    }
+  });
+
+  return parts;
 }
 
 function toTotalMinimum({ kept, scoring }: { kept: KeptFacts; scoring: Scoring }) {

@@ -29,19 +29,19 @@
       "kind": "remote",
       "repository": "https://github.com/PostHog/posthog-ios",
       "version": {
-        "up-to-next-major-version": "3.97.1",
+        "up-to-next-major-version": "4.0.2",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/getsentry/sentry-cocoa",
       "version": {
-        "up-to-next-major-version": "9.34.0",
+        "up-to-next-major-version": "9.35.0",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/stasel/WebRTC",
       "version": {
-        "up-to-next-major-version": "157.0.0",
+        "up-to-next-major-version": "158.0.0",
       },
     }, {
       "kind": "local",

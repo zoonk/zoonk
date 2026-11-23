@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,6 +56,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import kotlinx.coroutines.launch
 
@@ -289,7 +289,7 @@ internal fun TutorSheet(
             onOfferTaken()
         }
     }
-    val sheet = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheet = rememberExpandedBottomSheetState()
     val coroutines = rememberCoroutineScope()
     val close: () -> Unit = { coroutines.launch { sheet.hide() }.invokeOnCompletion { onDismiss() } }
     val open: (AppRoute) -> Unit = { route ->
