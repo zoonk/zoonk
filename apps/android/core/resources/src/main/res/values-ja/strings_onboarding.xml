@@ -171,7 +171,6 @@
   "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
   "onboarding_placement_right": "794ec45fa119e4fd61a3f8de722e2d0ca52a6868d4edbe2cc97c3b50d5ee4683",
-  "onboarding_placement_see_plan": "9c38a0a5b01246669d627600ad71e1beb385c2a6bdb7bdff05173ef90e2fe5b9",
   "onboarding_placement_skip_basics": "d4bc3f80cbbff888d016751c4a0e37e2ca5efaa0f36572e1e8448fa75c3c85d3",
   "onboarding_placement_start": "3a24b4dc9fe444c14d0b7df38149fedb2605efe24c108a32f761b82ad8d497a0",
   "onboarding_placement_stop": "923084fb6166a1b4f3f1aea8cdbcbe5fef486b8d3057c426b4f47cd3cffc6ad9",
@@ -560,7 +559,6 @@
     <string name="onboarding_placement_right">正しい</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">誤り</string>
-    <string name="onboarding_placement_see_plan">プランを見る</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">この言語の文字は初めてですか？テストはスキップしてください。最初のレッスンで読み方を学べます。</string>

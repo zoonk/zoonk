@@ -214,7 +214,6 @@
     <string name="onboarding_placement_right">Right</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
-    <string name="onboarding_placement_see_plan">See plan</string>
     <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
     <!-- The level test: a language goal's placement, in reading and listening. -->

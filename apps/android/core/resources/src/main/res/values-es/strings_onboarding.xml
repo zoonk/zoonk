@@ -171,7 +171,6 @@
   "onboarding_placement_question_number": "e80cce163ae59b37120f10e99ed4a72f57a0ff4918e403b3c60a20d38668a4a1",
   "onboarding_placement_ready": "c62f059c8c3fc06090e9d7b189f20529af468aa16edc51d2f60e358023ba9d44",
   "onboarding_placement_right": "caea6d3669da6351628b308de69d5e31089fdc365f2183eb00f0a899c9e50492",
-  "onboarding_placement_see_plan": "8cd86aefff9d449384cea23698708216ac2dc36cb3f1ad4a7d094f0953a592f1",
   "onboarding_placement_skip_basics": "fffb94922466f4a4bf03f3d3d3570c4fd79be045ccab40f1f1dc9256bf32ea62",
   "onboarding_placement_start": "436df20cc56308b5ddb345963c9bba7a8f6de7fe222a02c2e77bfe06235ebade",
   "onboarding_placement_stop": "04671bb698b6386c164d439c3e68d5b9234214110e334ddde1e083e31994cd98",
@@ -566,7 +565,6 @@
     <string name="onboarding_placement_right">Correcto</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Incorrecto</string>
-    <string name="onboarding_placement_see_plan">Ver plan</string>
     <string name="onboarding_placement_unavailable_title">Veremos qué sabes durante tus primeros días</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">¿No conoces su alfabeto? Sáltate la prueba. Tu primera lección te enseña a leerlo.</string>

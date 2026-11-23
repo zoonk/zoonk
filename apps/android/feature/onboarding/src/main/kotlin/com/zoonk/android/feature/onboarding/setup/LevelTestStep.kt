@@ -194,15 +194,7 @@ internal fun ColumnScope.LevelTestSteps(
                 }
 
                 else -> {
-                    PlacementDone(
-                        pending = vm.isSaving,
-                        failed = vm.finishFailed,
-                        action =
-                            stringResource(
-                                if (plan.onboarding) R.string.onboarding_continue else R.string.onboarding_placement_see_plan,
-                            ),
-                        onContinue = vm::finish,
-                    )
+                    PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = vm::finish)
                 }
             }
         }

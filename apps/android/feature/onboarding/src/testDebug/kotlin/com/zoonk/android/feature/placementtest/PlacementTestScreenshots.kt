@@ -21,6 +21,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.setup.LevelTestLanguageNotes
+import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
@@ -144,6 +145,9 @@ class PlacementTestScreenshots(
                 select = Select.All,
             )
         }
+
+    @Test
+    fun partOver() = shoot("part-over") { PlacementDone(pending = false, failed = false, onContinue = {}) }
 
     @Test
     fun betweenParts() =

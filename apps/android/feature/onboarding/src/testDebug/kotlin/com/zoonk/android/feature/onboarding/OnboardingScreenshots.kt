@@ -227,7 +227,7 @@ class OnboardingScreenshots {
         compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { LevelTest(api, levelDetails = levelDetails) } } }
         compose.waitUntil(WAIT_MS) {
             compose.onAllNodesWithText("Your Italian level").fetchSemanticsNodes().isNotEmpty() ||
-                compose.onAllNodesWithText("See plan").fetchSemanticsNodes().isNotEmpty()
+                compose.onAllNodesWithText("Your answers are saved").fetchSemanticsNodes().isNotEmpty()
         }
         compose.onNodeWithText("Your Italian level").assertExists()
         assertEquals(if (saved) 0 else 1, api.finishedLevelTests)

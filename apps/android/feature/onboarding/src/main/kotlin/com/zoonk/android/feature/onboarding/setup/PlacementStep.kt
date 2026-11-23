@@ -544,13 +544,11 @@ private fun StatementAnswers(
 internal fun ColumnScope.PlacementDone(
     pending: Boolean,
     failed: Boolean,
-    action: String = stringResource(R.string.onboarding_placement_see_plan),
     onContinue: () -> Unit,
 ) {
     PlacementOutcome(
         title = stringResource(R.string.focustest_answers_saved_title),
         description = null,
-        action = action,
         pending = pending,
         failed = failed,
         onContinue = onContinue,
@@ -569,7 +567,6 @@ internal fun ColumnScope.PlacementUnavailable(
         pending = pending,
         failed = failed,
         onContinue = onContinue,
-        action = stringResource(R.string.onboarding_continue),
     )
 }
 
@@ -580,7 +577,6 @@ private fun ColumnScope.PlacementOutcome(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
-    action: String = stringResource(R.string.onboarding_placement_see_plan),
 ) {
     SetupContent {
         OnboardingHeading(title, description)
@@ -591,7 +587,7 @@ private fun ColumnScope.PlacementOutcome(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(action)
+                Text(stringResource(R.string.onboarding_continue))
             }
         }
     }
