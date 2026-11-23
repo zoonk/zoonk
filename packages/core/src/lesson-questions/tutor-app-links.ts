@@ -6,7 +6,6 @@ const TUTOR_PAGE_PATHS = {
   appearance: "/settings/appearance",
   buddy: "/buddy",
   courses: "/courses",
-  earlierQuestions: "/buddy/earlier-questions",
   energy: "/energy",
   exam: "/exam",
   level: "/level",
@@ -39,7 +38,10 @@ const BLOCK_LINK = new RegExp(`^/session\\?block=(${UUID})$`, "u");
 const CHALLENGE_LINK = new RegExp(`^/challenge/${UUID}$`, "u");
 const SUBJECT_LINK = /^\/plan\/[^/?#\s]+$/u;
 
-const PAGE_PATHS = new Set<string>(Object.values(TUTOR_PAGE_PATHS));
+const PAGE_PATHS = new Set<string>([
+  ...Object.values(TUTOR_PAGE_PATHS),
+  "/buddy/earlier-questions", // Saved answers can still link to the redirect.
+]);
 
 function toTutorAppPath(link: TutorLink): string {
   switch (link.kind) {

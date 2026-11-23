@@ -11,7 +11,6 @@ enum AppRoute: Hashable, Identifiable {
   case mistakes
   case completedLessons
   case speaking
-  case earlierQuestions
   /// `section` opens that statistics page beside the overview where the window has room.
   case statistics(section: StatsSection? = nil)
   case certificates
@@ -72,7 +71,7 @@ enum AppRoute: Hashable, Identifiable {
   var presentation: Presentation {
     switch self {
     case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes,
-      .completedLessons, .speaking, .earlierQuestions, .statistics, .certificates, .certificate,
+      .completedLessons, .speaking, .statistics, .certificates, .certificate,
       .catalog, .course:
       .push
     default:
@@ -86,7 +85,7 @@ enum AppRoute: Hashable, Identifiable {
     switch self {
     case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .completedLessons, .speaking:
       .goal
-    case .chapter, .languageUnit, .earlierQuestions, .statistics, .certificates, .certificate:
+    case .chapter, .languageUnit, .statistics, .certificates, .certificate:
       .account
     default:
       .none

@@ -2,8 +2,6 @@ import SwiftUI
 
 /// An example fills the field for the learner to edit first.
 struct BuddyGoalStart: View {
-  @Environment(BuddyStore.self) private var store
-  @Environment(\.tutorPlaces) private var places
   @Environment(\.stacksContent) private var isStacked
 
   let name: String
@@ -13,31 +11,13 @@ struct BuddyGoalStart: View {
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 16) {
-        // The hello says the buddy is an AI, since it opens the conversation.
-        Text(
-          "Hi! I'm \(name), your AI study buddy. Tell me what you want to learn, and I'll build your plan.",
-          tableName: "Buddy",
-          comment: "The buddy's hello before the learner has a goal; the argument is its name"
-        )
-        .typeStyle(.message)
-
-        if case .loaded = store.earlierQuestions.state {
-          Button {
-            places.open(.earlierQuestions)
-          } label: {
-            Label {
-              Text(
-                "Earlier questions", tableName: "Buddy",
-                comment: "Opens questions asked before the courses were rewritten")
-            } icon: {
-              Image(systemName: "clock.arrow.circlepath")
-            }
-          }
-          .buttonStyle(.borderless)
-          .foregroundStyle(.mutedForeground)
-        }
-      }
+      // The hello says the buddy is an AI, since it opens the conversation.
+      Text(
+        "Hi! I'm \(name), your AI study buddy. Tell me what you want to learn, and I'll build your plan.",
+        tableName: "Buddy",
+        comment: "The buddy's hello before the learner has a goal; the argument is its name"
+      )
+      .typeStyle(.message)
       .frame(maxWidth: .infinity, alignment: .leading)
       .listRowEdges()
     }

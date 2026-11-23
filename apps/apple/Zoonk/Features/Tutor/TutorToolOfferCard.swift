@@ -15,7 +15,6 @@ enum TutorPlace: Hashable, Sendable {
   case logbook
   case memory
   case energy
-  case earlierQuestions
   case mission(Components.Schemas.StudyMissionOpens)
   /// What a mission's block opened.
   case missionStep(StudyDestination)

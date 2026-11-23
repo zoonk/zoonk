@@ -27,7 +27,7 @@ class AppLinkTest {
             "/c/K7QF2M9XHD4P" to AppRoute.Certificate("K7QF2M9XHD4P"),
             "/speaking" to AppRoute.Speaking(),
             "/speaking?task=2" to AppRoute.Speaking(task = "2"),
-            "/buddy/earlier-questions" to AppRoute.EarlierQuestions,
+            "/buddy/earlier-questions?cursor=old" to AppRoute.Buddy(),
             "/settings" to AppRoute.Settings,
             "/settings/appearance" to AppRoute.Preferences,
             "/settings/memory" to AppRoute.Memory,

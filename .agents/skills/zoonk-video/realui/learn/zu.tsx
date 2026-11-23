@@ -211,12 +211,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
             },
           }),
         }}
-        hrefs={{
-          energy: "/energy",
-          logbook: "/logbook",
-          memory: "/settings/memory",
-          earlierQuestions: "/buddy/earlier-questions",
-        }}
+        hrefs={{ energy: "/energy", logbook: "/logbook", memory: "/settings/memory" }}
         memoryCount={4}
         situation={{ hasMistake: false, hasToday: true }}
         status={status}

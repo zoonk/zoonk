@@ -181,7 +181,6 @@ fun BuddyPage(
         }
     }
     val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
-    val earlier by app.earlierQuestions.questions.collectShown()
 
     OnVisitEnd(vm, goalId, onEnd = vm::endVisit)
     ActOn(vm.route) {
@@ -234,7 +233,6 @@ fun BuddyPage(
                         BuddyMenu(
                             status,
                             name,
-                            hasEarlier = earlier.value != null,
                             onEdit = { editing = true },
                             onGlasses = { wearing = true },
                             navigator,
@@ -401,7 +399,6 @@ private fun PickBuddyButton(onPick: () -> Unit) {
 private fun BuddyMenu(
     status: BuddyStatus,
     name: String,
-    hasEarlier: Boolean,
     onEdit: () -> Unit,
     onGlasses: () -> Unit,
     navigator: AppNavigator,
@@ -454,16 +451,6 @@ private fun BuddyMenu(
                 },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_event_note), contentDescription = null) },
             )
-            if (hasEarlier) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.buddy_page_earlier_questions)) },
-                    onClick = {
-                        open = false
-                        navigator.open(AppRoute.EarlierQuestions)
-                    },
-                    leadingIcon = { Icon(painterResource(R.drawable.ic_history), contentDescription = null) },
-                )
-            }
         }
     }
 }

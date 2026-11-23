@@ -200,7 +200,6 @@ filter:
     - listCurrentUserCompletedLessons
     - listCurrentUserMilestones
     - listCurrentUserMistakes
-    - listEarlierQuestions
     - listGoalMindMaps
     - listGoals
     - listInstrumentWaitlist

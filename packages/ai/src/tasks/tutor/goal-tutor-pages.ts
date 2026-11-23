@@ -6,7 +6,6 @@ export const GOAL_TUTOR_PAGES = [
   "today",
   "plan",
   "buddy",
-  "earlierQuestions",
   "mistakes",
   "mistakesPractice",
   "mockChooser",
@@ -64,7 +63,6 @@ const PAGE_USES: Record<GoalTutorPage, string> = {
     "this conversation with you, their buddy, for the goal they have open, and their buddy's day. For asking you something later.",
   courses:
     "the app's catalog of ready courses, by category. For browsing courses or finding one to start.",
-  earlierQuestions: "the questions they asked you before, with your answers.",
   energy: "their Energy now and over the past 12 months. For questions about their Energy.",
   exam: "about their exam, for an exam goal: its days, the next mock exam, what's on it, how it's scored, their mocks so far and their results. For what their exam is like.",
   level: "their belt, level and Brain Power. For questions about their level, belt or Brain Power.",
