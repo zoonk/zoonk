@@ -65,33 +65,6 @@ struct ZoonkButtonStyle: ButtonStyle {
   }
 }
 
-extension View {
-  /// For a button in a list row, where a label's icon takes a column of its own, far from its
-  /// words: main's 16pt icon and its gap for the button's size.
-  func listRowButtonIcon() -> some View {
-    modifier(ListRowButtonIcon())
-  }
-}
-
-private struct ListRowButtonIcon: ViewModifier {
-  @Environment(\.controlSize) private var controlSize
-
-  func body(content: Content) -> some View {
-    content
-      .labelReservedIconWidth(16)
-      .labelIconToTitleSpacing(gap)
-  }
-
-  /// Main's `gap-1`, `gap-1.5` and `gap-2`.
-  private var gap: CGFloat {
-    switch controlSize {
-    case .mini, .small: 4
-    case .regular: 6
-    default: 8
-    }
-  }
-}
-
 extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
@@ -120,6 +93,9 @@ private struct ZoonkButton: View {
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
+      // A list would set the icon in a column of its own, far from its words.
+      .labelReservedIconWidth(16)
+      .labelIconToTitleSpacing(iconGap)
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
@@ -148,6 +124,15 @@ private struct ZoonkButton: View {
       .contentShape(MinimumHitArea())
       .padding(
         .trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
+  }
+
+  /// Main's `gap-1`, `gap-1.5` and `gap-2`.
+  private var iconGap: CGFloat {
+    switch controlSize {
+    case .mini, .small: 4
+    case .regular: 6
+    default: 8
+    }
   }
 
   private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }

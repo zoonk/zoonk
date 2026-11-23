@@ -317,7 +317,6 @@ private struct MindMapCreateSection: View {
               }
               .buttonStyle(.outline)
               .controlSize(.large)
-              .listRowButtonIcon()
             }
 
             if let line {
