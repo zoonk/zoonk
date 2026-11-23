@@ -180,17 +180,41 @@ private final class SetRecordings {
   private(set) var playing: String?
   private var reached: [String: TimeInterval] = [:]
   @ObservationIgnored private var player: AVPlayer?
+  @ObservationIgnored private var observers: Set<AnyCancellable> = []
   @ObservationIgnored private var shown: [String: Int] = [:]
 
-  func play(_ url: URL, key: String) -> AVPlayerItem {
+  func play(_ url: URL, key: String, onStarted: @escaping @MainActor () -> Void) {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
     let item = AVPlayerItem(url: url)
     let next = AVPlayer(playerItem: item)
     stop()
     player = next
     playing = key
+    failed.remove(key)
+    next.publisher(for: \.timeControlStatus)
+      .first(where: { $0 == .playing })
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        guard self?.player == next else { return }
+        onStarted()
+      }
+      .store(in: &observers)
+    item.publisher(for: \.status)
+      .filter { $0 == .failed }
+      .map { _ in () }
+      .merge(
+        with: NotificationCenter.default.publisher(
+          for: AVPlayerItem.failedToPlayToEndTimeNotification, object: item
+        ).map { _ in () }
+      )
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] in
+        guard let self, player == next else { return }
+        failed.insert(key)
+        stop()
+      }
+      .store(in: &observers)
     next.play()
-    return item
   }
 
   /// Once a play is over, how far it got: its end after a full play.
@@ -204,6 +228,7 @@ private final class SetRecordings {
   }
 
   func stop() {
+    observers.removeAll()
     if let playing { reached[playing] = elapsed(playing) }
     player?.pause()
     player = nil
@@ -264,20 +289,6 @@ private struct ListeningPlayerView: View {
   let questions: (prompts: [String], current: Int)?
   let transcript: [PracticeTranscriptLine]?
   let served: ServedPlays?
-  @State private var played: Int
-
-  init(
-    listening: PracticeItemSet.Listening, playsKey: String,
-    questions: (prompts: [String], current: Int)?, transcript: [PracticeTranscriptLine]?,
-    served: ServedPlays?
-  ) {
-    self.listening = listening
-    self.playsKey = playsKey
-    self.questions = questions
-    self.transcript = transcript
-    self.served = served
-    _played = State(initialValue: Self.played(playsKey, served: served))
-  }
 
   var body: some View {
     let answered = transcript != nil
@@ -374,9 +385,7 @@ private struct ListeningPlayerView: View {
     .onChange(of: playsKey) { previous, key in
       recordings.hide(previous)
       recordings.show(key)
-      played = Self.played(key, served: served)
     }
-    .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
     .onDisappear { recordings.hide(playsKey) }
     .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.didPlayToEndTimeNotification))
     {
@@ -386,8 +395,8 @@ private struct ListeningPlayerView: View {
 
   private var recordings: SetRecordings { .shared }
 
-  private static func played(_ key: String, served: ServedPlays?) -> Int {
-    max(served?.played ?? 0, SetRecordings.shared.used[key] ?? 0)
+  private var played: Int {
+    max(served?.played ?? 0, recordings.used[playsKey] ?? 0)
   }
 
   private var questionsExpanded: Binding<Bool> {
@@ -448,26 +457,14 @@ private struct ListeningPlayerView: View {
     guard let audio = listening.audio, let url = URL(string: audio.url) else { return }
 
     let key = playsKey
-    recordings.failed.remove(key)
-    let item = recordings.play(url, key: key)
-    played += 1
-    recordings.used[key] = played
-
-    if let served {
-      Task { @MainActor in
-        guard await !served.record() else { return }
-        if recordings.playing == key { recordings.stop() }
-        played = listening.plays
-      }
-    }
-
-    Task { @MainActor in
-      for await status in item.publisher(for: \.status).values where status != .unknown {
-        if status == .failed {
-          recordings.failed.insert(key)
+    recordings.play(url, key: key) {
+      recordings.used[key] = played + 1
+      if let served {
+        Task { @MainActor in
+          guard await !served.record() else { return }
           if recordings.playing == key { recordings.stop() }
+          recordings.used[key] = listening.plays
         }
-        break
       }
     }
   }
