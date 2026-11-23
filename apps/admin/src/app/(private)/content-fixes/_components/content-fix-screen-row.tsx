@@ -209,6 +209,12 @@ function ScreenComparison({
   );
 }
 
+/** A screen the fix only marks again keeps its words, so its row says so instead of "Changed". */
+function changedStatus(row: ChangedRow): string {
+  const label = row.baseChanged || row.variants.length > 0 ? "Changed" : "Marked again";
+  return row.was === null ? label : `${label}, was ${String(row.was)}`;
+}
+
 function RowFrame({
   children,
   position,
@@ -284,7 +290,7 @@ export function ShownRow({
         <RowFrame
           position={row.position}
           screen={row.screen}
-          status={row.was === null ? "Changed" : `Changed, was ${String(row.was)}`}
+          status={changedStatus(row)}
           tone="plain"
         >
           {row.answerKey && (
