@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { focusOn, press } from "../_test-utils/activity-player";
 import {
   type Actions,
   openPractice,
@@ -157,13 +158,20 @@ describe("exact standalone bank mistake practice", () => {
       .mockResolvedValue({ ...bankFeedback(), correctAnswer: { order: [0, 1] } });
 
     openPractice(null, { answer }, question("order"));
-    await page.getByRole("checkbox", { name: "First step" }).click();
-    await page.getByRole("checkbox", { name: "Second step" }).click();
+    await focusOn(page.getByRole("button", { name: "Second step" }));
+    await press("Space");
+    const status = page.getByRole("status").filter({ hasText: "Second step" });
+    await expect.element(status).toHaveTextContent("Second step is over position 2.");
+    await press("ArrowUp");
+    await expect.element(status).toHaveTextContent("Second step is over position 1.");
+    await press("Space");
+    await expect.element(status).toHaveTextContent("Second step dropped at position 1.");
+    expect(answer).not.toHaveBeenCalled();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { order: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({ answer: { order: [1, 0] }, itemId: "original-bank-item" }),
     );
   });
 
