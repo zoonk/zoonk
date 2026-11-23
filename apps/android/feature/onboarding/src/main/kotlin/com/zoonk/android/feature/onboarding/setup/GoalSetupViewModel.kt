@@ -38,6 +38,7 @@ import kotlinx.serialization.json.contentOrNull
 /** The screens one per question, before placement and the plan, that the dots count. */
 internal val QUESTION_SCREENS =
     setOf(
+        OnboardingStep.CONTENT_COUNTRY,
         OnboardingStep.PURPOSE,
         OnboardingStep.ROLE,
         OnboardingStep.REASON,

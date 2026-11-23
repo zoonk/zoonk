@@ -51,6 +51,14 @@ class SetupFlowTest {
     }
 
     @Test
+    fun theCountryToShowCountsAsAQuestion() {
+        val country = com.zoonk.api.models.OnboardingStep.CONTENT_COUNTRY
+
+        assertEquals(SetupProgress(answered = 0, total = 3), setupProgress(SetupFlow(GOAL, country), listOf(LEVEL, SCHEDULE, PLAN)))
+        assertEquals(SetupProgress(answered = 1, total = 3), setupProgress(SetupFlow(GOAL, LEVEL, listOf(country)), listOf(SCHEDULE, PLAN)))
+    }
+
+    @Test
     fun noDashesWhileTheLanguageReasonCanAddExamQuestions() {
         assertNull(setupProgress(SetupFlow(GOAL, REASON, listOf(LEVEL, FOLLOW_UPS, TARGET_DATE, SCHEDULE)), listOf(PLAN)))
     }
