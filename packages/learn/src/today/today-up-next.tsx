@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
+import { StepOpenFailed } from "../_components/step-open-failed";
 import { useKeepLearning } from "./today-action";
 import { PlanLessonRow } from "./today-block-row";
 import { useHasNextBlock, useUpNextLessons } from "./use-today-copy";
@@ -42,6 +43,7 @@ export function TodayUpNext({ className }: { className?: string }) {
           />
         ))}
       </ol>
+      {hasNext && keep.failed && <StepOpenFailed />}
     </section>
   );
 }
