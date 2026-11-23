@@ -37,6 +37,13 @@ describe(getExtraTime, () => {
       false,
     );
 
+    const fallback = {
+      kind: "practice" as const,
+      payload: { mockPreparationReview: true },
+      status: "pending" as const,
+    };
+
+    expect(getExtraTime({ blocks: [mock, fallback], current: true }).available).toBe(true);
     expect(getExtraTime({ blocks: [mock], current: false }).available).toBe(false);
   });
 

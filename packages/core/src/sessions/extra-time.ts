@@ -35,7 +35,7 @@ function allowsExtraStudy(block: ExtraTimeBlock): boolean {
     block.status === "completed" ||
     block.status === "skipped" ||
     isScheduledMock(block) ||
-    (block.kind === "review" &&
+    ((block.kind === "review" || block.kind === "practice") &&
       block.payload !== undefined &&
       readBlockPayload({ payload: block.payload }).mockPreparationReview === true)
   );
