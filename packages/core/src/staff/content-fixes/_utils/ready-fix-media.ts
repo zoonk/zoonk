@@ -7,6 +7,7 @@ async function stillReviewed(
 ): Promise<boolean> {
   switch (media.kind) {
     case "clip":
+    case "marks":
       return true;
     case "picture": {
       const rows = await tx.$queryRaw<{ id: string }[]>(sql`

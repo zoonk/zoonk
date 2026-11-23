@@ -21,11 +21,36 @@ export type ScreenRow =
       before: SnapshotScreen;
       position: number;
       screen: SnapshotScreen;
+      /** The example box or underline learners see on it changes. */
+      quotes: boolean;
       status: "changed";
       variants: VariantEdit[];
       /** Set when the screen also moved among the screens it kept. */
       was: number | null;
     };
+
+export type ScreenQuotes = { example: string | null; underline: string | null };
+
+/** The saved example box and underline a screen shows. */
+export function quotesOf(screen: SnapshotScreen): ScreenQuotes {
+  const { marks } = screen;
+
+  return {
+    example: isJsonObject(marks) && typeof marks.example === "string" ? marks.example : null,
+    underline: isJsonObject(marks) && typeof marks.underline === "string" ? marks.underline : null,
+  };
+}
+
+/** A screen whose words stay, and only its example box or underline changes. */
+export function isMarkedOnly(row: ScreenRow): boolean {
+  return row.status === "changed" && !row.baseChanged && row.variants.length === 0;
+}
+
+/** A screen the fix only marks again keeps its words, so its row says so instead of "Changed". */
+export function changedLabel(row: Extract<ScreenRow, { status: "changed" }>): string {
+  const label = isMarkedOnly(row) ? "Marked again" : "Changed";
+  return row.was === null ? label : `${label}, was ${String(row.was)}`;
+}
 
 export function ideaIndexOf(screen: SnapshotScreen): number | null {
   const { marks } = screen;
@@ -194,6 +219,7 @@ function keptRow({
   anchored,
   before,
   change,
+  marked,
   position,
   screen,
   sources,
@@ -201,6 +227,8 @@ function keptRow({
 }: {
   anchored: boolean;
   before: SnapshotScreen;
+  /** Whether the fix marks the screen's example box and underline again. */
+  marked: boolean;
   change: StoredScreens;
   position: number;
   screen: SnapshotScreen;
@@ -209,8 +237,9 @@ function keptRow({
 }): ScreenRow {
   const baseChanged = baseScreenChanged({ after: screen, before, change, sources });
   const variants = editedVariants(before, screen);
+  const quotes = marked || !isDeepStrictEqual(quotesOf(before), quotesOf(screen));
 
-  if (baseChanged || variants.length > 0) {
+  if (baseChanged || variants.length > 0 || quotes) {
     return {
       answerKey:
         changesAnswerKey({ after: screen, before }) ||
@@ -218,6 +247,7 @@ function keptRow({
       baseChanged,
       before,
       position,
+      quotes,
       screen,
       status: "changed",
       variants,
@@ -243,6 +273,10 @@ export function readScreenRows(change: StoredScreens): ScreenRow[] {
   const removed = change.before.screens
     .map((screen, index) => ({ index, screen }))
     .filter(({ index }) => !keptIndexes.includes(index));
+
+  const markedPositions = new Set(
+    (change.mediaLinks ?? []).flatMap((link) => (link.target === "marks" ? link.positions : [])),
+  );
 
   const rows: ScreenRow[] = [];
   let placed = 0;
@@ -274,6 +308,7 @@ export function readScreenRows(change: StoredScreens): ScreenRow[] {
           anchored: anchored.has(index),
           before,
           change,
+          marked: markedPositions.has(screen.position),
           position: at + 1,
           screen,
           sources,

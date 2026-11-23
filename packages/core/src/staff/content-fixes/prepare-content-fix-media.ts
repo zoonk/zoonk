@@ -1,5 +1,6 @@
 import "server-only";
 import { toIconNeed } from "@zoonk/ai/tasks/icons/need";
+import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { prisma, sql } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { generateLanguageAudio } from "../../audio/generate-language-audio";
@@ -8,6 +9,7 @@ import {
   drawLessonIcon,
   failLessonIcon,
 } from "../../library/icons/lesson-icon-library";
+import { type MarksNeed } from "./_utils/screen-marks";
 import {
   type ContentFixMediaNeed,
   type ProducedContentFixMedia,
@@ -163,6 +165,33 @@ export async function produceFixIdeaIcon({
     : "failed";
 }
 
+/** Marks only the screens the fix rewrote, one result per screen in the need's order. */
+export async function produceFixMarks(need: MarksNeed): Promise<ProducedContentFixMedia> {
+  const { data } = await tagLesson({
+    ideas: [],
+    language: need.language,
+    lessonTitle: need.lessonTitle,
+    screens: need.screens,
+  });
+
+  return {
+    key: need.key,
+    kind: "marks",
+    screens: need.screens.map((_screen, index) => ({
+      example: data.screens[index]?.example ?? null,
+      underline: data.screens[index]?.underline ?? null,
+    })),
+  };
+}
+
+/**
+ * A screen without its example box still teaches, so marks that can't be made never hold a fix:
+ * the result marks nothing new, and each screen keeps the quotes that still fit.
+ */
+function withoutMarks(need: MarksNeed): ProducedContentFixMedia {
+  return { key: need.key, kind: "marks", screens: [] };
+}
+
 export async function failFixMedia({
   fixId,
   need,
@@ -183,5 +212,9 @@ export async function failFixMedia({
     }
   }
 
-  await recordFixMedia({ fixId, key: need.key, result: "failed" });
+  await recordFixMedia({
+    fixId,
+    key: need.key,
+    result: need.kind === "marks" ? withoutMarks(need) : "failed",
+  });
 }

@@ -49,6 +49,8 @@ Handle every open comment before pushing, so each round runs CI and the reviewer
 
 Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Mark it ready yourself: never hand back a draft, or ask whether to mark it ready. Then update the PR body when the fixes changed what a reviewer reads there ([new commits on an open PR](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)), retaking pictures a push made stale ([pictures](references/pictures.md#after-a-push)).
 
+Work that can only run once the PR is released gets its trigger now: [work that waits for a release](references/after-release.md).
+
 A bigger UX change the user should try by hand gets a Vercel preview as the very last step; a small UI change needs only its screenshots ([preview](references/preview.md)).
 
 Hand back with:

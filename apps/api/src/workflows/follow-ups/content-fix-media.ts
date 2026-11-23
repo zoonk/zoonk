@@ -6,6 +6,7 @@ import {
   listPendingFixMediaStep,
   planFixPictureStep,
   produceFixIdeaIconStep,
+  produceFixMarksStep,
   recordFixClipStep,
   recordFixMediaStep,
   saveFixPictureStep,
@@ -37,6 +38,11 @@ async function prepareItem({ fixId, need }: { fixId: string; need: ContentFixMed
         return;
       case "ideaIcon": {
         const result = await produceFixIdeaIconStep({ fixId, media: need });
+        await recordFixMediaStep({ fixId, key: need.key, result });
+        return;
+      }
+      case "marks": {
+        const result = await produceFixMarksStep(need);
         await recordFixMediaStep({ fixId, key: need.key, result });
         return;
       }

@@ -1,10 +1,12 @@
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
+import { type MarksScreen } from "@zoonk/ai/tasks/lesson-marks/schema";
+import { type StepKind } from "@zoonk/db";
 import { findCodeFences } from "@zoonk/utils/code-fence";
 import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type LessonIcon } from "../icons/lesson-icon-contract";
-import { type StepContentByKind } from "../steps/contract/step-contract";
+import { type StepContentByKind, safeParseStepContent } from "../steps/contract/step-contract";
 import { type StepMarks } from "./step-marks-contract";
 
 export const iconNeedSchema = z.object({
@@ -59,7 +61,7 @@ export function isTaggedScreen(screen: MarkedScreen): boolean {
   }
 }
 
-export function getMarkedText(screen: MarkedScreen): string | null {
+function getMarkedText(screen: MarkedScreen): string | null {
   if (screen.kind === "explanation") {
     return screen.content.text;
   }
@@ -131,5 +133,68 @@ export function fitStepMarks({
       marks.underline && isUnderlineQuote({ quote: marks.underline, text })
         ? marks.underline
         : null,
+  };
+}
+
+export function parseMarkedScreen({
+  content,
+  kind,
+}: {
+  content: unknown;
+  kind: StepKind;
+}): MarkedScreen | null {
+  if (kind === "explanation") {
+    const parsed = safeParseStepContent(kind, content);
+    return parsed.success ? { content: parsed.data, kind } : null;
+  }
+
+  if (kind === "workedExample") {
+    const parsed = safeParseStepContent(kind, content);
+    return parsed.success ? { content: parsed.data, kind } : null;
+  }
+
+  if (kind === "hook") {
+    const parsed = safeParseStepContent(kind, content);
+    return parsed.success ? { content: parsed.data, kind } : null;
+  }
+
+  if (kind === "check") {
+    const parsed = safeParseStepContent(kind, content);
+    return parsed.success ? { content: parsed.data, kind } : null;
+  }
+
+  if (kind === "typedAnswer") {
+    const parsed = safeParseStepContent(kind, content);
+    return parsed.success ? { content: parsed.data, kind } : null;
+  }
+
+  return null;
+}
+
+function questionText(screen: MarkedScreen): string {
+  if (screen.kind === "check" || screen.kind === "typedAnswer") {
+    return [screen.content.context, screen.content.question].filter(Boolean).join("\n");
+  }
+
+  return screen.kind === "hook" && screen.content.variant === "guess"
+    ? screen.content.question
+    : "";
+}
+
+export function toMarksScreen(screen: MarkedScreen): MarksScreen {
+  if (screen.kind === "explanation" || screen.kind === "workedExample") {
+    return {
+      hasVisual: !canShowIcon(screen),
+      kind: screen.kind,
+      text: getMarkedText(screen) ?? "",
+      title: screen.content.title ?? null,
+    };
+  }
+
+  return {
+    hasVisual: true,
+    kind: screen.kind === "hook" ? "guess" : "question",
+    text: questionText(screen),
+    title: null,
   };
 }
