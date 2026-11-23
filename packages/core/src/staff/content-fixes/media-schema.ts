@@ -27,6 +27,20 @@ const needSchema = z.discriminatedUnion("kind", [
     request: z.string(),
   }),
   z.object({ key, kind: z.literal("ideaIcon"), need: iconNeedSchema }),
+  z.object({
+    key,
+    kind: z.literal("marks"),
+    language: z.string(),
+    lessonTitle: z.string(),
+    screens: z.array(
+      z.object({
+        hasVisual: z.boolean(),
+        kind: z.enum(["explanation", "workedExample"]),
+        text: z.string(),
+        title: z.string().nullable(),
+      }),
+    ),
+  }),
 ]);
 
 const producedSchema = z.discriminatedUnion("kind", [
@@ -43,6 +57,13 @@ const producedSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ key, kind: z.literal("picture"), mediaAssetId: uuidSchema(), url: z.url() }),
   z.object({ iconId: uuidSchema(), key, kind: z.literal("ideaIcon"), url: z.url() }),
+  z.object({
+    key,
+    kind: z.literal("marks"),
+    screens: z.array(
+      z.object({ example: z.string().nullable(), underline: z.string().nullable() }),
+    ),
+  }),
 ]);
 
 const contentFixMediaSchema = z.array(

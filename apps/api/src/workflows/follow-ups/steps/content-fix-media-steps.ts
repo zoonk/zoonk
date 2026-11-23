@@ -5,6 +5,7 @@ import {
   listPendingFixMedia,
   planFixPicture,
   produceFixIdeaIcon,
+  produceFixMarks,
   recordFixClip,
   recordFixMedia,
   storeFixPicture,
@@ -23,6 +24,11 @@ export async function recordFixClipStep(input: Parameters<typeof recordFixClip>[
 export async function produceFixIdeaIconStep(input: Parameters<typeof produceFixIdeaIcon>[0]) {
   "use step";
   return produceFixIdeaIcon(input);
+}
+
+export async function produceFixMarksStep(need: Parameters<typeof produceFixMarks>[0]) {
+  "use step";
+  return produceFixMarks(need);
 }
 
 export async function planFixPictureStep(input: Parameters<typeof planFixPicture>[0]) {

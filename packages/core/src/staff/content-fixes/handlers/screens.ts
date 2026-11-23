@@ -16,6 +16,7 @@ import {
   refuse,
   toJson,
 } from "../_utils/resolved-change";
+import { remarkedStep, stepMarksNeed } from "../_utils/screen-marks";
 import { type ContentFixEffect } from "../contract";
 import { checkScreenContentChange } from "../screen-content-rules";
 import {
@@ -236,15 +237,19 @@ async function resolveStepContent(
     return refuse(problem);
   }
 
-  const resolved = resolveContent({
-    after: set.content ?? null,
-    before: toJson(step.content),
-    id,
-    model: "Step",
-    step,
-  });
+  const after = set.content ?? null;
+  const before = toJson(step.content);
+  const resolved = resolveContent({ after, before, id, model: "Step", step });
 
-  return withWrittenFromScreen(db, { resolved, stepId: id });
+  return withWrittenFromScreen(db, {
+    resolved: resolved.ok
+      ? {
+          ...resolved,
+          media: await stepMarksNeed(db, { after: contentOf(resolved.stored.fields), before, id }),
+        }
+      : resolved,
+    stepId: id,
+  });
 }
 
 async function resolveVariantContent(
@@ -302,11 +307,13 @@ const contentStored = <Model extends ScreenModel>(model: Model) =>
   });
 
 const SCREEN_RULES =
-  "A current screen of a published lesson, of any kind; send the whole content. It keeps its fields, ids, option count and order (setOptions changes options), references and picture requests, and changes what learners read before answering or which answer is right, never both, except a language exercise's words (fillBlank, multipleChoice, matchColumns…), which may change together. A screen with a numeric practice question (itemId) changes in the same fix as that Item, as the question draws it. A spoken screen's sentence fields and a word or sentence screen change with their Word or Sentence. Its variants (StepVariant) can be set in the same fix; the ones left out keep their content. Its saved answer explanations and shared tutor answers are deleted. A learner who started the lesson before the fix is never marked wrong for it.";
+  "A current screen of a published lesson, of any kind; send the whole content. It keeps its fields, ids, option count and order (setOptions changes options), references and picture requests, and changes what learners read before answering or which answer is right, never both, except a language exercise's words (fillBlank, multipleChoice, matchColumns…), which may change together. A screen with a numeric practice question (itemId) changes in the same fix as that Item, as the question draws it. A spoken screen's sentence fields and a word or sentence screen change with their Word or Sentence. Its variants (StepVariant) can be set in the same fix; the ones left out keep their content. An explanation or worked example whose text changes gets the example box and underline it lacks marked at proposal. Its saved answer explanations and shared tutor answers are deleted. A learner who started the lesson before the fix is never marked wrong for it.";
 
 export const stepSet = defineFixHandler({
-  apply: async (tx, stored) => {
-    await tx.step.update({ data: { content: contentOf(stored.fields) }, where: { id: stored.id } });
+  apply: async (tx, stored, context) => {
+    const content = contentOf(stored.fields);
+    const marks = await remarkedStep(tx, { content, id: stored.id, media: context.media });
+    await tx.step.update({ data: { content, ...(marks && { marks }) }, where: { id: stored.id } });
     await deleteWrittenFromScreen(tx, stored.id);
   },
   model: "Step",

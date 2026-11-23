@@ -55,7 +55,13 @@ async function findLessonToTag(lessonId: string) {
 
 type LessonToTag = NonNullable<Awaited<ReturnType<typeof findLessonToTag>>>;
 
-function parseScreen({ content, kind }: { content: unknown; kind: StepKind }): MarkedScreen | null {
+export function parseMarkedScreen({
+  content,
+  kind,
+}: {
+  content: unknown;
+  kind: StepKind;
+}): MarkedScreen | null {
   if (kind === "explanation") {
     const parsed = safeParseStepContent(kind, content);
     return parsed.success ? { content: parsed.data, kind } : null;
@@ -94,7 +100,7 @@ function questionText(screen: MarkedScreen): string {
     : "";
 }
 
-function toMarksScreen(screen: MarkedScreen): MarksScreen {
+export function toMarksScreen(screen: MarkedScreen): MarksScreen {
   if (screen.kind === "explanation" || screen.kind === "workedExample") {
     return {
       hasVisual: !canShowIcon(screen),
@@ -114,7 +120,7 @@ function toMarksScreen(screen: MarkedScreen): MarksScreen {
 
 function toTaggedSteps(lesson: LessonToTag): TaggedStep[] {
   return lesson.steps.flatMap((step) => {
-    const screen = parseScreen(step);
+    const screen = parseMarkedScreen(step);
 
     return screen && isTaggedScreen(screen)
       ? [{ id: step.id, marks: readSavedStepMarks(step.marks), screen: toMarksScreen(screen) }]
