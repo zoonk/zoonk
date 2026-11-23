@@ -244,6 +244,7 @@ describe("preparing media for a proposed content fix", () => {
 
   it("marks the example a rewritten explanation lacks, and a failed marking never holds the fix", async () => {
     const marks = {
+      kept: [{ example: null, underline: null }],
       key: "marks",
       kind: "marks" as const,
       language: "en",

@@ -3,12 +3,18 @@ import { z } from "zod";
 import { iconNeedSchema } from "../../library/marks/step-marks";
 
 const key = z.string().min(1);
+const quotes = z.object({ example: z.string().nullable(), underline: z.string().nullable() });
 
 const clipIdentity = z.object({
   language: z.string(),
   model: z.enum(["AlphabetCard", "Sentence", "Word"]),
   text: z.string(),
 });
+
+/** A Step fix's marks, shown beside the screen it rewrites. */
+export function stepMarksKey(stepId: string): string {
+  return `marks:${stepId}`;
+}
 
 export function clipMediaKey({ language, model, text }: z.infer<typeof clipIdentity>): string {
   return `${model}:${language}:${text}`;
@@ -28,6 +34,8 @@ const needSchema = z.discriminatedUnion("kind", [
   }),
   z.object({ key, kind: z.literal("ideaIcon"), need: iconNeedSchema }),
   z.object({
+    /** The quotes each screen keeps because they still fit; marking fills only the rest. */
+    kept: z.array(quotes),
     key,
     kind: z.literal("marks"),
     language: z.string(),

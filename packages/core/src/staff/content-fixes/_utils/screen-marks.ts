@@ -1,9 +1,17 @@
 import "server-only";
 import { isExampleQuote, isUnderlineQuote } from "@zoonk/ai/tasks/lesson-marks/quotes";
 import { type StepKind, type TransactionClient } from "@zoonk/db";
-import { type SavedStepMarks, readSavedStepMarks } from "../../../library/marks/step-marks";
-import { parseMarkedScreen, toMarksScreen } from "../../../library/marks/tag-lesson-marks";
-import { type ContentFixMediaNeed, type ProducedContentFixMedia } from "../media-schema";
+import {
+  type SavedStepMarks,
+  parseMarkedScreen,
+  readSavedStepMarks,
+  toMarksScreen,
+} from "../../../library/marks/step-marks";
+import {
+  type ContentFixMediaNeed,
+  type ProducedContentFixMedia,
+  stepMarksKey,
+} from "../media-schema";
 import { type Json } from "./resolved-change";
 
 type ScreenText = { content: unknown; kind: StepKind };
@@ -36,7 +44,7 @@ export function isTaggedLesson(screens: readonly { marks: unknown }[]): boolean 
 }
 
 /** The saved quotes that still fit the text; one that no longer does is gone. */
-function fittingQuotes(marks: unknown, text: string): MarkedText {
+export function fittingQuotes(marks: unknown, text: string): MarkedText {
   const saved = readSavedStepMarks(marks);
 
   return {
@@ -49,8 +57,7 @@ function fittingQuotes(marks: unknown, text: string): MarkedText {
   };
 }
 
-export function lacksQuotes(marks: unknown, text: string): boolean {
-  const { example, underline } = fittingQuotes(marks, text);
+export function lacksQuotes({ example, underline }: MarkedText): boolean {
   return !example || !underline;
 }
 
@@ -77,10 +84,6 @@ export function withMarkedText({
   };
 }
 
-function stepMarksKey(stepId: string): string {
-  return `marks:${stepId}`;
-}
-
 /** The quotes a rewritten explanation or worked example lacks get marked before review. */
 export async function stepMarksNeed(
   db: TransactionClient,
@@ -97,19 +100,22 @@ export async function stepMarksNeed(
 
   const target = toMarksNeedScreen({ content: after, kind: step.kind });
   const rewritten = toMarksNeedScreen({ content: before, kind: step.kind })?.text !== target?.text;
+  const kept = target && fittingQuotes(step.marks, target.text);
 
   if (
     !target ||
+    !kept ||
     !rewritten ||
     step.lesson.targetLanguage ||
     !readSavedStepMarks(step.marks) ||
-    !lacksQuotes(step.marks, target.text)
+    !lacksQuotes(kept)
   ) {
     return [];
   }
 
   return [
     {
+      kept: [kept],
       key: stepMarksKey(id),
       kind: "marks",
       language: step.lesson.language,

@@ -7,7 +7,12 @@ import {
   getPictureKey,
   getStepImageRequest,
 } from "../../../../library/media/_utils/step-image-request";
-import { isTaggedLesson, lacksQuotes, toMarksNeedScreen } from "../../_utils/screen-marks";
+import {
+  fittingQuotes,
+  isTaggedLesson,
+  lacksQuotes,
+  toMarksNeedScreen,
+} from "../../_utils/screen-marks";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
 import { type Screen, type ScreenList, type ScreenMediaLink } from "./schema";
 import { type ScreenLesson } from "./snapshot";
@@ -223,9 +228,10 @@ function prepareScreenMarks({
       entry && "id" in entry ? lesson.before.screens.find(({ id }) => id === entry.id) : undefined;
 
     const rewritten = !original || toMarksNeedScreen(original)?.text !== target?.text;
+    const kept = target && fittingQuotes(screen.marks, target.text);
 
-    return marked && target && (asked || rewritten) && lacksQuotes(screen.marks, target.text)
-      ? [{ position: screen.position, screen: target }]
+    return marked && target && kept && (asked || rewritten) && lacksQuotes(kept)
+      ? [{ kept, position: screen.position, screen: target }]
       : [];
   });
 
@@ -239,6 +245,7 @@ function prepareScreenMarks({
     {
       link: { key, positions: targets.map(({ position }) => position), target: "marks" },
       need: {
+        kept: targets.map(({ kept }) => kept),
         key,
         kind: "marks",
         language: lesson.language,

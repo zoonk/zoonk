@@ -117,6 +117,7 @@ describe("marks on screens a fix rewrites", () => {
     const need = await prepareMarks(fix.id);
 
     expect(need).toMatchObject({
+      kept: [{ example: null, underline: "joins numbers" }],
       lessonTitle: lesson.title,
       screens: [{ kind: "explanation", text: after }],
     });
