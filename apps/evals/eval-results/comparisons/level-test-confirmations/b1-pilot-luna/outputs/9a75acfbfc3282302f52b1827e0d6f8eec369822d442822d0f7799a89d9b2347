@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "She practiced in short sessions often and chose music she enjoyed.",
+        "Her friends taught her songs, which made her want to keep practicing.",
+        "She practiced for hours every day until her fingers stopped hurting.",
+        "She chose a simple routine instead of trying to learn everything quickly.",
+        "She waited until she could play without making mistakes before sharing songs."
+      ],
+      "passage": "Quando comecei a aprender violão, achei que precisava praticar por horas todos os dias. Depois de um mês, quase desisti, porque meus dedos doíam e eu não via progresso. Uma professora sugeriu treinos curtos, mas frequentes, e músicas de que eu gostava. Agora pratico vinte minutos antes do jantar. Ainda erro bastante, porém consigo tocar algumas canções para meus amigos. Acho que a rotina simples me ajudou mais do que tentar aprender tudo rapidamente.",
+      "question": "Which things does the writer say helped her continue learning?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Taking extra time to explore the smaller streets is worthwhile.",
+        "The smaller streets are a quicker way to see the center than the main sights.",
+        "The famous monuments are the only places that belong in a visit to the center.",
+        "Visitors should skip the main monuments and focus only on cafés and studios.",
+        "Walking through smaller streets can give visitors a closer sense of everyday life."
+      ],
+      "passage": "Para conhecer o centro histórico de Salvador, muitos visitantes seguem direto para os monumentos mais famosos. Eu prefiro caminhar também pelas ruas menores, onde aparecem ateliês e cafés que quase não entram nos roteiros. O passeio pode levar mais tempo, mas, na minha opinião, essa pausa torna a visita mais próxima da vida cotidiana da cidade. Ainda assim, é bom reservar a manhã para os pontos principais, quando há menos filas.",
+      "question": "Which views does the guide express about exploring Salvador's historic center?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "The team created several clear opportunities to score.",
+        "The team won by a goal, even though it played poorly at first.",
+        "The players had already scored three times before the match ended.",
+        "The players communicated and defended together better after the break.",
+        "The coach believes the team is ready for Saturday without more practice."
+      ],
+      "passage": "Time, perdemos por um gol, mas não saio daqui desanimado. No primeiro tempo, cada um tentava resolver sozinho; depois do intervalo, vocês começaram a conversar e a fechar os espaços juntos. Também criamos três chances claras, embora não tenhamos marcado. Se mantivermos essa organização nos próximos treinos, vamos chegar mais preparados ao jogo de sábado.",
+      "question": "Why does the coach say he is not leaving discouraged?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Spend most of her preparation time choosing the right outfit.",
+        "Memorize complete answers so she will be ready for any question.",
+        "Prepare examples from her work that match the job's requirements.",
+        "Avoid discussing her work experience because the questions may change.",
+        "Rely on her real experience and speak naturally rather than reciting a script."
+      ],
+      "passage": "Oi, Ana. Sobre a entrevista de amanhã, não tente decorar respostas inteiras; se mudarem a pergunta, você pode se perder. Leia de novo o anúncio da vaga e escolha dois exemplos do seu trabalho que mostrem o que você sabe fazer. Também deixe a roupa separada hoje, para não começar o dia correndo. Você já tem experiência; fale com calma e seja sincera.",
+      "question": "What is the friend's main advice for Ana's interview?",
+      "skill": "listening"
+    }
+  ]
+}

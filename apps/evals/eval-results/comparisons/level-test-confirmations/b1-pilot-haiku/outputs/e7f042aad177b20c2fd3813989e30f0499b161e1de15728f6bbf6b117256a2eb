@@ -1,0 +1,72 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        3,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "Because they practice for two hours every day",
+        "Because they decided to quit and start again next year",
+        "Because they learned the hardest songs right at the start",
+        "Because they can now play the songs they enjoy, and their motivation returned",
+        "Because a teacher told them to practice only simple chords for twenty minutes a day"
+      ],
+      "passage": "Comecei a estudar violão há quatro meses, mas quase desisti na semana passada. Eu achava que precisava tocar músicas difíceis logo no início. Depois, um professor me disse para treinar só os acordes simples por vinte minutos por dia. Isso mudou tudo: hoje eu consigo acompanhar canções que eu gosto, e a minha motivação voltou. Se vocês estiverem começando, não tentem aprender tudo de uma vez.",
+      "question": "Why does the writer say their motivation came back?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "It is too crowded to enjoy during the day",
+        "It is the best place to start a trip to Bahia",
+        "Live music is the main reason to visit in the morning",
+        "Visitors should avoid the historic center after dark",
+        "Visitors should begin their trip in Salvador's historic center"
+      ],
+      "passage": "Pelourinho, no centro histórico de Salvador, é o melhor lugar para começar sua visita à Bahia. As ruas de pedra são cheias de casas coloridas e igrejas antigas. Durante o dia, a melhor parte é caminhar sem pressa e parar nos pequenos bares. À noite, a região fica animada com música ao vivo. Porém, leve pouco dinheiro e evite as ruas mais escuras depois das 22h.",
+      "question": "What does the guide think about Pelourinho?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "The defense played very well",
+        "The defense was the main problem",
+        "The coach is not proud of the team",
+        "The midfield was the main problem",
+        "The players in the last ten minutes lacked fight"
+      ],
+      "passage": "Pessoal, quero falar sobre o jogo de sábado. A defesa jogou muito bem, e eu fiquei orgulhoso dela. Acho que o problema foi o meio-campo, que demorou para recuperar a bola. Não vou mentir: perder por dois a um doeu. Mas quem jogou nos últimos dez minutos mostrou garra, e isso é o que eu quero ver na próxima semana.",
+      "question": "What does the coach say about the team's performance?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The interview only lasts five minutes",
+        "Being late makes a bad first impression",
+        "Everyone at the company dresses formally",
+        "The company will hire him only if he wears a suit",
+        "Interviewers always ask why he wants to work there"
+      ],
+      "passage": "Oi, Lucas, vi que você tem entrevista na sexta. Não se preocupe tanto com a roupa, porque na empresa todo mundo usa algo casual. Mas chegue cinco minutos antes, porque atraso é a primeira impressão que fica. E estude o site da empresa, porque eles sempre perguntam por que você quer trabalhar lá. Se você falar disso com segurança, vai se destacar.",
+      "question": "What reasons does the friend give for the advice?",
+      "skill": "listening"
+    }
+  ]
+}

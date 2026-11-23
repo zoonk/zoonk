@@ -38,8 +38,15 @@ export const checkLevelTestConfirmations: TaskCodeChecks = ({ output }) => {
     ];
   });
 
+  const questions = confirmations.map((question, index) => ({
+    ...question,
+    itemLocator: `confirmations[${index}]`,
+  }));
+
   return {
-    judgedOutput: output,
+    blockingProblems: questions.length === 0 ? ["No usable confirmation questions."] : [],
+    judgedOutput: JSON.stringify({ confirmations: questions }),
+    keyFlawLocators: questions.map((question) => question.itemLocator),
     passed: parts.filter((problems) => problems.length === 0).length,
     problems: parts.flat(),
     total: parts.length,

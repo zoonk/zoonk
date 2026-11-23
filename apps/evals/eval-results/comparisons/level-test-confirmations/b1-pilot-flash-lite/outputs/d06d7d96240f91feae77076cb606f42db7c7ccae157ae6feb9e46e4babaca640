@@ -1,0 +1,73 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "B1",
+      "options": [
+        "Regular daily practice matters more than long hours.",
+        "Consistent practice leads to noticeable improvement over time.",
+        "It is easy to quickly recover lost time when returning to music.",
+        "Playing the guitar for fifteen minutes is the maximum daily limit.",
+        "Fingers become completely stiff after stopping musical practice for years."
+      ],
+      "passage": "Decidi voltar a tocar violão depois de muitos anos parado. No início, achei que seria fácil recuperar o tempo perdido, mas logo vi que meus dedos estavam rígidos. No entanto, praticar apenas quinze minutos por dia tem sido suficiente para ver progresso. O segredo é a constância e não a quantidade de horas.",
+      "question": "What is the main point of the text about playing the guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "B1",
+      "options": [
+        "The streets are much less crowded then.",
+        "Museums are always open later during weekdays.",
+        "Visitors can walk around without feeling rushed.",
+        "Admission to all cultural sites is free on Tuesdays.",
+        "Colonial architecture can only be seen from Monday to Friday."
+      ],
+      "passage": "Visitar o centro histórico de Salvador durante a semana é muito melhor do que aos fins de semana. As ruas ficam consideravelmente mais vazias, o que permite caminhar com calma e apreciar a arquitetura colonial sem pressa. Além disso, os museus oferecem entrada gratuita às terças-feiras, embora fechem mais cedo.",
+      "question": "Why does the writer recommend visiting the historical center on weekdays?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "Defensive errors ruined the final result of the game.",
+        "The team played a flawless match from start to finish.",
+        "The players lacked unity throughout the entire match.",
+        "The players showed great commitment despite the mistakes.",
+        "Giving up space in the second half was an intentional strategy."
+      ],
+      "passage": "Pessoal, eu sei que o resultado de hoje não foi o que a gente queria em campo. A defesa vacilou no segundo tempo e cedemos muitos espaços. Porém, lutamos até o apito final e isso mostra a nossa união. Precisamos corrigir esses erros defensivos, mas a entrega do grupo foi excelente.",
+      "question": "What does the coach think about the team's performance?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        1,
+        3
+      ],
+      "level": "B1",
+      "options": [
+        "It can make the reception staff feel uneasy.",
+        "It demonstrates that the person is overly anxious.",
+        "Interviewers prefer candidates who are always late.",
+        "It prevents the candidate from transmitting tranquility.",
+        "The company offices are usually closed before ten minutes."
+      ],
+      "passage": "Olha, para aquela entrevista de emprego, é melhor você chegar com dez minutos de antecedência, mas não muito mais do que isso. Chegar cedo demais deixa a recepção desconfortável e mostra ansiedade excessiva. O ideal é aparecer no horário exato para transmitir segurança e tranquilidade.",
+      "question": "Why does the speaker advise against arriving too early for the interview?",
+      "skill": "listening"
+    }
+  ]
+}
