@@ -526,8 +526,10 @@ struct TodayPlanChangeSection: View {
 
   private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
     let time = studyDuration(minutes: behind.currentMinutes)
-    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
-    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
+    let after = behind.coveredAfter.formatted(
+      .percent.precision(.fractionLength(0)).locale(.appLanguage))
+    let before = behind.coveredBefore.formatted(
+      .percent.precision(.fractionLength(0)).locale(.appLanguage))
 
     return behind.measure == "exam"
       ? String(
@@ -778,7 +780,7 @@ private struct WeekChallengeRow: View {
       parts.append(
         String(
           localized: "\(questions) questions", table: "Today",
-          comment: "How many questions the week's challenge asks"))
+          locale: .appLanguage, comment: "How many questions the week's challenge asks"))
     }
 
     if let minutes = challenge.timeLimitMinutes {
@@ -956,7 +958,9 @@ struct TodayProgressSection: View {
         card(
           title: Text(
             "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
-          value: Text(verbatim: progress.value.formatted(.percent.precision(.fractionLength(0)))),
+          value: Text(
+            verbatim: progress.value.formatted(
+              .percent.precision(.fractionLength(0)).locale(.appLanguage))),
           detail: weekGain(progress.weekGain ?? 0)
         ) {
           EmptyView()

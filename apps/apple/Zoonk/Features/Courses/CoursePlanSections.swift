@@ -15,8 +15,8 @@ struct CoursePlanSections: View {
           planReadout(
             AttributedString(
               localized: "~\(weeks) weeks", table: "Courses",
-              comment: "How many weeks a course's plan takes"),
-            number: "~\(weeks.formatted())"))
+              locale: .appLanguage, comment: "How many weeks a course's plan takes"),
+            number: "~\(weeks.formatted(.number.locale(.appLanguage)))"))
 
         Text(
           "Studying \(minutes) minutes a day. Your plan skips what you already know, so it can take less.",

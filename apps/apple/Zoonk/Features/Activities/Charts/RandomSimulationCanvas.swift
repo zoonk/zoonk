@@ -373,7 +373,7 @@ private struct SamplingSimulationView: View {
     if let whole = Int(exactly: (points * 10).rounded() / 10) {
       return String(
         localized: "±\(whole) points", table: "ActivitiesCharts",
-        comment: "A margin of error in percentage points, like ±3 points")
+        locale: .appLanguage, comment: "A margin of error in percentage points, like ±3 points")
     }
 
     return String(

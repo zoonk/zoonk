@@ -351,7 +351,7 @@ struct PlanChapterRow: View {
     case .todo where chapter.lessonsDone > 0 && chapter.lessonsTotal > 0 && !chapter.writing:
       LocalizedStringResource(
         "\(chapter.lessonsDone) of \(chapter.lessonsTotal) lessons done", table: "Plan",
-        comment: "Spoken on a started chapter, before its title")
+        locale: .appLanguage, comment: "Spoken on a started chapter, before its title")
     case .todo, .currentPhase:
       nil
     }
@@ -593,7 +593,7 @@ struct PlanSyllabusSection: View {
         subjectsText(subjects),
         String(
           localized: "\(syllabus.topicCount) topics", table: "Plan",
-          comment: "How many topics a subject has"),
+          locale: .appLanguage, comment: "How many topics a subject has"),
       ])
     } else if goalKind == .exam {
       Text(
@@ -607,7 +607,9 @@ struct PlanSyllabusSection: View {
   }
 
   private func subjectsText(_ count: Int) -> String {
-    String(localized: "\(count) subjects", table: "Plan", comment: "How many subjects the exam has")
+    String(
+      localized: "\(count) subjects", table: "Plan", locale: .appLanguage,
+      comment: "How many subjects the exam has")
   }
 }
 
@@ -819,7 +821,7 @@ struct SyllabusSubjectRow: View {
           .foregroundStyle(.mutedForeground)
           .frame(
             minWidth: TypeStyle.data.width(
-              of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+              of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
               dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
             alignment: .trailing)
       }

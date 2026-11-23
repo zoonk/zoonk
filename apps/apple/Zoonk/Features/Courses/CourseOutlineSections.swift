@@ -156,7 +156,7 @@ struct CourseOutlineSections: View {
     let lessons = chapters.flatMap(\.lessons)
     let chapterText = String(
       localized: "\(chapters.count) chapters", table: "Courses",
-      comment: "How many chapters a course or an exam area has")
+      locale: .appLanguage, comment: "How many chapters a course or an exam area has")
 
     guard !lessons.isEmpty else {
       return [chapterText]
@@ -164,7 +164,7 @@ struct CourseOutlineSections: View {
 
     let lessonText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",
-      comment: "How many lessons a course or a chapter has")
+      locale: .appLanguage, comment: "How many lessons a course or a chapter has")
     return [chapterText, lessonText]
   }
 }

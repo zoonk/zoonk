@@ -139,7 +139,7 @@ private struct LevelButton: View {
     }
     .accessibilityLabel(
       Text(
-        "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted())",
+        "\(String(localized: belt.localizedTitle)), Level \(level.level.formatted(.number.locale(.appLanguage)))",
         tableName: "Progress",
         comment:
           "Accessible label of the chip that opens Level. The first placeholder is the translated belt name; the second is the learner’s level number. Each locale controls their order and punctuation."
@@ -530,7 +530,7 @@ private func goalLine(_ goal: LearnerGoal) -> String {
         comment: "A goal whose target date is today")
       : String(
         localized: "\(days) days left", table: "Navigation",
-        comment: "Days until a goal's target date")
+        locale: .appLanguage, comment: "Days until a goal's target date")
 
     return "\(perDay)\u{00A0}· \(left)"
   }

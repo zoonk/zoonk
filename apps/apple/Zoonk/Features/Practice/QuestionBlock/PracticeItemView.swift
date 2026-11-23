@@ -577,7 +577,7 @@ struct NumericItemView: View {
   }
 
   private var invalidHint: LocalizedStringResource {
-    let example = 2.5.formatted(.number)
+    let example = 2.5.formatted(.number.locale(.appLanguage))
 
     switch entry?.kind {
     case .fraction:
@@ -603,6 +603,7 @@ func decimalEntryRule(_ places: Int) -> LocalizedStringResource {
 
   return LocalizedStringResource(
     "Round to \(places) decimal places.", table: "Practice",
+    locale: .appLanguage,
     comment: "Rule under a math answer field that takes a fixed number of decimal places.")
 }
 
@@ -679,14 +680,14 @@ private struct FieldMark: View {
 enum NumericEntryParser {
   /// A draft's number as the field shows it in the lessons' language: no grouping, and every digit
   /// a typed number can have, so it reads back as the same number.
-  static func text(for draft: PracticeAnswer?, locale: Locale = .courseLanguage) -> String {
+  static func text(for draft: PracticeAnswer?, locale: Locale = .appLanguage) -> String {
     guard case .number(let value) = draft else { return "" }
     return value.formatted(
       .number.grouping(.never).precision(.significantDigits(1...15)).locale(locale))
   }
 
   static func parse(
-    _ text: String, entry: PracticeNumericEntry?, locale: Locale = .courseLanguage
+    _ text: String, entry: PracticeNumericEntry?, locale: Locale = .appLanguage
   ) -> Double? {
     let trimmed = text.trimmingCharacters(in: .whitespaces)
 

@@ -247,7 +247,8 @@ private func finishedMocks(_ mocks: [ExamMockSummary]) -> SearchGroup {
         SearchItem(
           id: "mock-\(blockId)",
           title: String(
-            localized: "Mock exam \(String(mock.number))", table: "Search",
+            localized: "Mock exam \(mock.number.formatted(.number.locale(.appLanguage)))",
+            table: "Search",
             comment: "A finished mock exam in search, by its number"),
           systemImage: LearnKind.mock.systemImage, action: .open(.mock(blockId: blockId)))
       }

@@ -107,6 +107,6 @@ enum MusicLabels {
         comment: "A guitar string played open, with the note it sounds")
       : String(
         localized: "Fret \(fret), \(note)", table: "ActivitiesMusic",
-        comment: "A fret on a guitar string, with the note it sounds")
+        locale: .appLanguage, comment: "A fret on a guitar string, with the note it sounds")
   }
 }

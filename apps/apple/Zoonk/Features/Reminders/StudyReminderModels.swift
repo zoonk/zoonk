@@ -69,7 +69,7 @@ enum ReminderTime {
     string(date(time))
   }
 
-  /// The zone reminders follow, named the system's way, as in “Brasília Time”; nil when it's this
+  /// The zone reminders follow, named in the app's language, as in “Brasília Time”; nil when it's this
   /// device's, which goes without saying.
   static func zoneName(_ identifier: String) -> String? {
     guard identifier != TimeZone.current.identifier else {

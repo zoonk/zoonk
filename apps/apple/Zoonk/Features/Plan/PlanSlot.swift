@@ -637,7 +637,7 @@ struct PlanSuggestionSection: View {
     [
       String(
         localized: "\(today?.lessonsAdded ?? offer.lessons ?? offer.effect.lessonsAdded) lessons",
-        table: "Plan"),
+        table: "Plan", locale: .appLanguage),
       context.plan.extraLabel,
     ]
   }

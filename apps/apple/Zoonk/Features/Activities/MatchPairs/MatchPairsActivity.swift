@@ -236,7 +236,7 @@ private struct MatchPairsCanvas: View {
         String(
           localized:
             "Matched \(leftText) with \(rightText). \(next.matched.count) of \(pairIds.count) pairs matched.",
-          table: "Activities", comment: "VoiceOver, after a pair is matched"))
+          table: "Activities", locale: .appLanguage, comment: "VoiceOver, after a pair is matched"))
       return
     }
 

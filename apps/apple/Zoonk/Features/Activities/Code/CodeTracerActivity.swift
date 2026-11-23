@@ -390,7 +390,7 @@ private struct CodeTracerCanvas: View {
         String(
           localized: "Step \(next + 1) of \(lastStep + 1). Line \($0) ran.",
           table: "ActivitiesCode",
-          comment: "VoiceOver: where a code trace is after a step")
+          locale: .appLanguage, comment: "VoiceOver: where a code trace is after a step")
       }
         ?? String(
           localized: "Before the first line", table: "ActivitiesCode",

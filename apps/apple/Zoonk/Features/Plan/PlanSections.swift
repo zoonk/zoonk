@@ -35,7 +35,7 @@ extension PlanPhase {
   var placeName: String {
     String(
       localized: "Phase \(index + 1)", table: "Plan",
-      comment: "Name of an unnamed phase by its number")
+      locale: .appLanguage, comment: "Name of an unnamed phase by its number")
   }
 
   var weight: Double {
@@ -415,16 +415,18 @@ struct PlanNumbersSection: View {
       return PlanNumber(
         label: String(
           localized: "Preparation", table: "Plan", comment: "Label of the exam preparation number"),
-        value: Text(verbatim: preparation.value.formatted(.percent.precision(.fractionLength(0)))),
+        value: Text(
+          verbatim: preparation.value.formatted(
+            .percent.precision(.fractionLength(0)).locale(.appLanguage))),
         detail: points == 0
           ? nil
           : points > 0
             ? String(
               localized: "+\(points) this week", table: "Plan",
-              comment: "Preparation points gained this week")
+              locale: .appLanguage, comment: "Preparation points gained this week")
             : String(
               localized: "\(points) this week", table: "Plan",
-              comment: "Preparation points lost this week"),
+              locale: .appLanguage, comment: "Preparation points lost this week"),
         detailIsGain: points > 0, share: preparation.value)
     }
 
@@ -474,7 +476,7 @@ struct PlanNumbersSection: View {
       case .pastDate:
         String(
           localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
-          comment: "Lessons left in a plan whose date passed")
+          locale: .appLanguage, comment: "Lessons left in a plan whose date passed")
       case .ahead, .behind, .onTrack:
         timeShownBeside
           ? nil
@@ -520,21 +522,22 @@ func planStatusText(_ status: GoalPlan.Status, isPaused: Bool) -> String {
   case .ahead:
     return String(
       localized: "\(status.days ?? 0) days ahead", table: "Plan",
-      comment: "State of a plan the learner is ahead of, in days")
+      locale: .appLanguage, comment: "State of a plan the learner is ahead of, in days")
   case .behind:
     if let lessons = status.lessons, lessons > 0 {
       return String(
         localized: "\(lessons) lessons behind", table: "Plan",
+        locale: .appLanguage,
         comment: "State of a plan the learner is behind, in lessons from earlier days")
     }
 
     return String(
       localized: "\(status.days ?? 0) days behind", table: "Plan",
-      comment: "State of a plan the learner is behind, in days")
+      locale: .appLanguage, comment: "State of a plan the learner is behind, in days")
   case .challengesLeft:
     return String(
       localized: "\(status.challenges ?? 0) challenges to go", table: "Plan",
-      comment: "State of a plan with every lesson done and challenges left")
+      locale: .appLanguage, comment: "State of a plan with every lesson done and challenges left")
   case .finished:
     return String(localized: "Finished", table: "Plan", comment: "State of a finished plan")
   case .needsAdjusting:
@@ -859,12 +862,14 @@ private func lessonsProgressLine(studied: Int, known: Int) -> String {
       studied > 0
         ? String(
           localized: "\(studied) studied", table: "Plan",
+          locale: .appLanguage,
           comment:
             "Under the plan's progress percent, beside the lessons already known: the lessons studied"
         )
         : nil,
       String(
         localized: "\(known) already known", table: "Plan",
+        locale: .appLanguage,
         comment: "Under the plan's progress percent: lessons the learner already knew"),
     ].compactMap(\.self).joinedFacts()
   }
@@ -875,5 +880,6 @@ private func lessonsProgressLine(studied: Int, known: Int) -> String {
       comment: "Under the plan's progress percent, in a small tile, before any lesson is studied")
     : String(
       localized: "\(studied) lessons studied", table: "Plan",
+      locale: .appLanguage,
       comment: "Under the plan's progress percent, in a small tile: the lessons studied")
 }

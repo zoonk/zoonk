@@ -78,6 +78,7 @@ struct LanguageTestResultView: View {
     let count = result?.lessonsSkipped ?? 0
     let lessons = String(
       localized: "\(count) lessons", table: "Onboarding",
+      locale: .appLanguage,
       comment: "How many lessons a level test took out of the plan, such as \"12 lessons\"")
     let levels = skipped.formatted(.list(type: .and))
 

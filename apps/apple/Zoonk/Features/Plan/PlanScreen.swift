@@ -119,17 +119,17 @@ func daysLeftText(_ days: Int, estimated: Bool) -> (shown: String, spoken: Strin
   guard estimated else {
     let line = String(
       localized: "\(days) days left", table: "Plan",
-      comment: "How many days are left until the goal's date")
+      locale: .appLanguage, comment: "How many days are left until the goal's date")
     return (line, line)
   }
 
   return (
     String(
       localized: "~\(days) days left", table: "Plan",
-      comment: "About how many days are left until the goal's estimated date"),
+      locale: .appLanguage, comment: "About how many days are left until the goal's estimated date"),
     String(
       localized: "About \(days) days left", table: "Plan",
-      comment: "\"~60 days left\" read aloud: about how many days are left")
+      locale: .appLanguage, comment: "\"~60 days left\" read aloud: about how many days are left")
   )
 }
 

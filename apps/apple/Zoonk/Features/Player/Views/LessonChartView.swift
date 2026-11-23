@@ -192,7 +192,7 @@ private struct LessonChartFormat {
     valueCaption = unit.label
     numberUnit = unit.numberUnit
     tickLabels = Dictionary(
-      zip(ticks, LessonPlotTicks.format(ticks, unit: unit.numberUnit, locale: .courseLanguage)),
+      zip(ticks, LessonPlotTicks.format(ticks, unit: unit.numberUnit, locale: .appLanguage)),
       uniquingKeysWith: { first, _ in first })
   }
 

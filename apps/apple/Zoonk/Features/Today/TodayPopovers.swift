@@ -189,7 +189,7 @@ extension DaySegment {
         data(
           String(
             localized: "\(block.answered) of \(block.questions) questions", table: "Today",
-            comment: "How far the learner is in the day's current block"))
+            locale: .appLanguage, comment: "How far the learner is in the day's current block"))
       ]
     case .block(let block, .current):
       return [

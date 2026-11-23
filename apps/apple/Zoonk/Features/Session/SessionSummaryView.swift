@@ -447,7 +447,7 @@ private struct SummaryTiles: View {
     let start = share.before ?? after
     let format: (Double) -> String =
       goalKind == .exam
-      ? { $0.formatted(.percent.precision(.fractionLength(0))) }
+      ? { $0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)) }
       : { goalProgressPercent($0) }
     let moved = format(after) != format(start)
 

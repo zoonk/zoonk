@@ -268,7 +268,7 @@ struct PlanPastDateSlot: View {
         comment: "No later end date fits the lessons left")
       : String(
         localized: "You have \(lessons) lessons left. A later end date fits them.", table: "Plan",
-        comment: "Lessons left once the goal's end date passed")
+        locale: .appLanguage, comment: "Lessons left once the goal's end date passed")
   }
 
   private func findDate() async {
@@ -484,7 +484,7 @@ struct PlanCoverageSlot: View {
     if let most = time.most {
       return String(
         localized:
-          "The most you can cover is about \(most.coveredShare.formatted(.percent.precision(.fractionLength(0)))), at \(planDurationText(minutes: Double(most.minutes))) a day.",
+          "The most you can cover is about \(most.coveredShare.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))), at \(planDurationText(minutes: Double(most.minutes))) a day.",
         table: "Plan",
         comment: "No time a day covers everything: the most any covers, and at what time a day")
     }
@@ -700,7 +700,7 @@ extension PlanStore {
 /// "{time} a day covers about {share} of your exam topics".
 func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
   let time = planDurationText(minutes: Double(minutes))
-  let percent = share.formatted(.percent.precision(.fractionLength(0)))
+  let percent = share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))
 
   return exam
     ? String(

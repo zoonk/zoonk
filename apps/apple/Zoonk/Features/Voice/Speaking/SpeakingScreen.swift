@@ -297,14 +297,15 @@ private struct SpeakingPaperView: View {
     if lastTry.atLevel > 0 {
       return String(
         localized: "Last try: at \(level) on \(lastTry.atLevel) of \(lastTry.rated) criteria",
-        table: "Voice", comment: "Criteria rated at the exam's level on the last try")
+        table: "Voice", locale: .appLanguage,
+        comment: "Criteria rated at the exam's level on the last try")
     }
 
     return lastTry.nearLevel > 0
       ? String(
         localized: "Last try: near \(level) on \(lastTry.nearLevel) of \(lastTry.rated) criteria",
         table: "Voice",
-        comment: "Criteria rated near the exam's level on the last try")
+        locale: .appLanguage, comment: "Criteria rated near the exam's level on the last try")
       : String(
         localized: "Last try: below \(level)", table: "Voice",
         comment: "Every criterion below the exam's level on the last try")

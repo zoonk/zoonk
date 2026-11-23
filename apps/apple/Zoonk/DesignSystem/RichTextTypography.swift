@@ -4,7 +4,7 @@ import Foundation
 /// with the word, unit or money sign beside it.
 enum RichTextTypography {
   /// Every run but inline code, as main typesets every segment but math and code.
-  static func typesetNumbers(in text: AttributedString, locale: Locale = .courseLanguage)
+  static func typesetNumbers(in text: AttributedString, locale: Locale = .appLanguage)
     -> AttributedString
   {
     let runs = Array(text.runs)

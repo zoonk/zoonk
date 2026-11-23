@@ -772,10 +772,10 @@ private struct FreePlanCard: View {
             [
               String(
                 localized: "\(goals) goals", table: "Subscriptions",
-                comment: "How many goals the free plan has at a time"),
+                locale: .appLanguage, comment: "How many goals the free plan has at a time"),
               String(
                 localized: "\(lessons) lessons a month", table: "Subscriptions",
-                comment: "Free plan: lessons a month"),
+                locale: .appLanguage, comment: "Free plan: lessons a month"),
             ]
           )
           .typeStyle(.note)

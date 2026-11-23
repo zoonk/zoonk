@@ -305,7 +305,8 @@ private struct MockChooser: View {
     let size = String(
       localized:
         "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
-      table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
+      table: "Mock", locale: .appLanguage,
+      comment: "A mock exam's size: its number of questions, then its time limit.")
 
     guard let usual = MockLabels.usualMinutes(option) else {
       return [size]
@@ -444,13 +445,13 @@ struct MockSummaryRow: View {
     case .net:
       String(
         localized: "Net \(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
-        comment: "A net score")
+        locale: .appLanguage, comment: "A net score")
     // An IRT score is only an estimate, shown as a range on the Plan, so a past mock shows its
     // right answers.
     case .irt, .raw:
       String(
         localized: "\(MockLabels.number(mock.correct)) of \(mock.total) right", table: "Mock",
-        comment: "Right answers")
+        locale: .appLanguage, comment: "Right answers")
     }
   }
 }

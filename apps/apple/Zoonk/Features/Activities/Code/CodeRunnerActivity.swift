@@ -436,12 +436,12 @@ private struct CodeRunnerOutput: View {
 
       return String(
         localized: "Line \(line): \(error)", table: "ActivitiesCode",
-        comment: "A program's error and the line it happened on")
+        locale: .appLanguage, comment: "A program's error and the line it happened on")
     case .timeout:
       return String(
         localized:
           "Stopped after \(language.timeLimitSeconds) seconds. Is there a loop that never ends?",
-        table: "ActivitiesCode", comment: "A program ran out of time")
+        table: "ActivitiesCode", locale: .appLanguage, comment: "A program ran out of time")
     case .tooMuchOutput:
       return String(
         localized: "Stopped because it printed too much. Is there a loop that never ends?",

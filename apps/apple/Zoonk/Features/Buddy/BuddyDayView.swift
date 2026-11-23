@@ -136,8 +136,11 @@ struct BuddyDayView: View {
         } label: {
           VStack(alignment: .leading, spacing: 8) {
             IconLabeledContent {
-              Text((current / 100).formatted(.percent.precision(.fractionLength(0))))
-                .monospacedDigit()
+              Text(
+                (current / 100).formatted(
+                  .percent.precision(.fractionLength(0)).locale(.appLanguage))
+              )
+              .monospacedDigit()
             } title: {
               energyTitle
             } icon: {

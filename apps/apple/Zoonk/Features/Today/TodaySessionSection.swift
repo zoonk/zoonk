@@ -600,8 +600,8 @@ extension StudyDay {
     let count = hidden.count + (lessonsAhead ? 1 : 0)
 
     return !lessonsAhead && hidden.allSatisfy({ $0.kind == .learn })
-      ? String(localized: "\(count) more lessons", table: "Today")
-      : String(localized: "\(count) more", table: "Plan")
+      ? String(localized: "\(count) more lessons", table: "Today", locale: .appLanguage)
+      : String(localized: "\(count) more", table: "Plan", locale: .appLanguage)
   }
 }
 
@@ -664,12 +664,15 @@ struct DayFoldRow: View {
   /// Skipped blocks fold with the done ones, but never count as done.
   private var doneAndSkipped: [String] {
     let skippedFact = String(
-      localized: "\(skipped) skipped", table: "Today", comment: "Folded skipped blocks")
+      localized: "\(skipped) skipped", table: "Today", locale: .appLanguage,
+      comment: "Folded skipped blocks")
 
     guard !onlySkipped else { return [skippedFact] }
 
     return [
-      String(localized: "\(count - skipped) done", table: "Today", comment: "Folded done blocks"),
+      String(
+        localized: "\(count - skipped) done", table: "Today", locale: .appLanguage,
+        comment: "Folded done blocks"),
       skippedFact,
     ]
   }
@@ -705,11 +708,13 @@ struct TodayDayStatus: View {
         clause = String(
           localized: "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
           table: "Today",
+          locale: .appLanguage,
           comment:
             "After an exam's date: the lessons left, and whether to study them or archive the goal")
       } else {
         sentence = String(
           localized: "Your end date has passed with \(lessons) lessons left.", table: "Today",
+          locale: .appLanguage,
           comment: "A goal's end date passed with lessons left; the number is the lessons")
         clause = nil
       }

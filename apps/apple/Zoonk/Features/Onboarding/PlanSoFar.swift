@@ -132,7 +132,8 @@ struct PlanFact: Identifiable, Equatable {
       // Never "0 days": Portuguese's singular covers 0, and a date that's today gets asked again.
       daysLeft: days > 0
         ? String(
-          localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
+          localized: "\(days) days", table: "Onboarding", locale: .appLanguage,
+          comment: "How long until a goal's date")
         : nil)
   }
 

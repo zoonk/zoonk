@@ -22,7 +22,7 @@ private struct ScoreTiles: View {
       StatTile(
         quantity: metricPercent(performance.score),
         detail: Text(
-          "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted()) right in the last \(90) days",
+          "\(performance.correctAnswers.formatted(.number.locale(.appLanguage))) of \(performance.totalAnswers.formatted(.number.locale(.appLanguage))) right in the last \(90) days",
           tableName: "Progress")
       )
     }
@@ -113,7 +113,7 @@ struct ScoreTrendChart: View {
               value: metricPercent(selected.point.performance.score),
               note: String(
                 localized: "\(selected.point.performance.totalAnswers) answers", table: "Progress",
-                comment: "A count of answers")),
+                locale: .appLanguage, comment: "A count of answers")),
             valueColor: .successText)
         }
       }

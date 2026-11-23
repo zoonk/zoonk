@@ -32,7 +32,7 @@ extension PracticeDrill {
     case .timed:
       LocalizedStringResource(
         "\(timeLimitSeconds ?? 0) seconds a question, like on the day.", table: "Practice",
-        comment: "How a timed drill goes.")
+        locale: .appLanguage, comment: "How a timed drill goes.")
     case .noGuessing:
       LocalizedStringResource(
         "Only answer when you're sure. Saying you're not sure is fine.", table: "Practice",
@@ -134,7 +134,7 @@ struct DrillCountdownView: View {
         announcePolitely(
           String(
             localized: "\(mark) seconds left", table: "Practice",
-            comment: "VoiceOver: a timed drill's clock is about to run out"))
+            locale: .appLanguage, comment: "VoiceOver: a timed drill's clock is about to run out"))
       }
 
       try? await Task.sleep(for: .seconds(max(end.timeIntervalSinceNow, 0)))

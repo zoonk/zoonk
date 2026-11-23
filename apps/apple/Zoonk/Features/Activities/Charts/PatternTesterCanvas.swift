@@ -456,7 +456,7 @@ struct PatternTesterCanvas: View {
   private static func passingLine(_ summary: (passing: Int, total: Int)) -> String {
     String(
       localized: "\(summary.passing) of \(summary.total) examples pass.", table: "ActivitiesCharts",
-      comment: "How many examples a pattern gets right")
+      locale: .appLanguage, comment: "How many examples a pattern gets right")
   }
 
   private static var invalidLine: String {

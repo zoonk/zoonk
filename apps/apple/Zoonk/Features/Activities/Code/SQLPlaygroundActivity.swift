@@ -337,7 +337,7 @@ private struct SQLPlaygroundCanvas: View {
       return String(
         localized:
           "The query took more than \(CodeSQLRunner.timeLimitSeconds) seconds and was stopped.",
-        table: "ActivitiesCode", comment: "A SQL query ran out of time")
+        table: "ActivitiesCode", locale: .appLanguage, comment: "A SQL query ran out of time")
     case .tooManyRows:
       return String(
         localized: "The query returned too many rows. Is a join missing its condition?",
@@ -363,7 +363,7 @@ private struct SQLPlaygroundCanvas: View {
 
     return String(
       localized: "Your result: \(result.rows.count) rows", table: "ActivitiesCode",
-      comment: "How many rows a query returned")
+      locale: .appLanguage, comment: "How many rows a query returned")
   }
 
   private func insert(_ snippet: String) {

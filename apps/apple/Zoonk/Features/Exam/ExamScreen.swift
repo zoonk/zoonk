@@ -753,7 +753,7 @@ private struct ExamProgressSection: View {
       Section {
         StatTileGrid(columns: [1], minimumWidth: 0) {
           StatTile(
-            quantity: (Double(latest.percent) / 100).formatted(.percent),
+            quantity: (Double(latest.percent) / 100).formatted(.percent.locale(.appLanguage)),
             detail: latestLine(progress, latest: latest))
         }
 
@@ -784,7 +784,7 @@ private struct ExamProgressSection: View {
               AxisGridLine().foregroundStyle(.vizGrid)
               AxisValueLabel {
                 if let percent = value.as(Int.self) {
-                  Text((Double(percent) / 100).formatted(.percent))
+                  Text((Double(percent) / 100).formatted(.percent.locale(.appLanguage)))
                 }
               }
             }
@@ -934,7 +934,7 @@ private struct ExamMapSection: View {
           LabeledContent {
             if let share = subject.share {
               Text(
-                "\(share.formatted(.percent.precision(.fractionLength(0)))) of the exam",
+                "\(share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) of the exam",
                 tableName: "Exam", comment: "A subject's weight")
             } else if let questions = subject.questions {
               Text(
@@ -1175,11 +1175,11 @@ private struct ExamScoringSection: View {
             localized: "A wrong answer cancels a right one", table: "Exam", comment: "Net scoring")
           : String(
             localized:
-              "A wrong answer costs \(penalty.formatted(.percent.precision(.fractionLength(0...1)))) of a right one",
+              "A wrong answer costs \(penalty.formatted(.percent.precision(.fractionLength(0...1)).locale(.appLanguage))) of a right one",
             table: "Exam", comment: "Net scoring with a partial penalty"),
         String(
           localized:
-            "Answer only when you're more than \(breakEven.formatted(.percent.precision(.fractionLength(0)))) sure.",
+            "Answer only when you're more than \(breakEven.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) sure.",
           table: "Exam", comment: "When answering pays")
       )
     case .irt:
@@ -1226,7 +1226,7 @@ private struct ExamAreaRow: View {
           .frame(width: meterWidth)
           .accessibilityHidden(true)
 
-        Text(share.formatted(.percent))
+        Text(share.formatted(.percent.locale(.appLanguage)))
           .foregroundStyle(Color(.foreground))
 
         if showsChange {

@@ -260,15 +260,15 @@ private struct TimelineCanvas: View {
     return rounded == years
       ? String(
         localized: "\(years) years", table: "Activities",
-        comment: "A number of years between two dates")
+        locale: .appLanguage, comment: "A number of years between two dates")
       : String(
         localized: "about \(rounded) years", table: "Activities",
-        comment: "A rounded number of years between two dates")
+        locale: .appLanguage, comment: "A rounded number of years between two dates")
   }
 
   private func formatYear(_ year: Int) -> String {
     let (era, value) = TimelineScale.era(of: year, start: fields.start)
-    let number = value.formatted(.number.grouping(.never))
+    let number = value.formatted(.number.grouping(.never).locale(.appLanguage))
 
     switch era {
     case .bce:

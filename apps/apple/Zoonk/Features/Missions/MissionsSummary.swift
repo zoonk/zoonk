@@ -45,6 +45,7 @@ struct MissionsSummary: View {
               String(
                 localized: "missionsDone", defaultValue: "\(done) of \(missions.count) done",
                 table: "Today",
+                locale: .appLanguage,
                 comment: "Under the title Today's missions: how many of today's missions are done."
               )))
 

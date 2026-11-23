@@ -277,7 +277,7 @@ struct CertificateCeremony: View {
     if certificates.count > 1 {
       return String(
         localized: "\(certificates.count) certificates earned", table: "Certificates",
-        comment: "Title when one result earned several certificates")
+        locale: .appLanguage, comment: "Title when one result earned several certificates")
     }
 
     let level =

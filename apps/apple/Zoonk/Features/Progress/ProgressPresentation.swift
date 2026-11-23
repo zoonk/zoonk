@@ -4,7 +4,7 @@ import SwiftUI
 /// Mirrors main's `formatDuration`, which writes durations in the app's language rather than the
 /// device's region, so "3 hr 38 min" reads the same on every platform (a British region would say
 /// "3 hrs"). A no-break space keeps each number with its unit.
-func progressLearningTime(_ totalSeconds: Int, locale: Locale = .courseLanguage) -> String {
+func progressLearningTime(_ totalSeconds: Int, locale: Locale = .appLanguage) -> String {
   let isJapanese = locale.language.languageCode == .japanese
 
   func unit(_ value: Int, _ unit: UnitDuration) -> String {
@@ -39,7 +39,8 @@ func progressLearningTime(_ totalSeconds: Int, locale: Locale = .courseLanguage)
 /// Mirrors main's `formatMetricPercent`; `value` is on the API's 0–100 scale.
 func metricPercent(_ value: Double) -> String {
   (value / 100).formatted(
-    .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero))
+    .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero).locale(
+      .appLanguage))
 }
 
 /// Mirrors main's `formatProgressShare`: whole percents, but begun never reads "0%" and nearly
@@ -47,7 +48,9 @@ func metricPercent(_ value: Double) -> String {
 func goalProgressPercent(_ share: Double) -> String {
   let whole = 0.01
   let format = { (value: Double) in
-    value.formatted(.percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))
+    value.formatted(
+      .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero).locale(
+        .appLanguage))
   }
 
   if share > 0, share < whole / 2 {
@@ -63,7 +66,8 @@ func goalProgressPercent(_ share: Double) -> String {
 
 func wholePercent(_ value: Double) -> String {
   (value / 100).formatted(
-    .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))
+    .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero).locale(
+      .appLanguage))
 }
 
 extension ProgressBelt {
@@ -185,7 +189,7 @@ extension ProgressDaypart {
     }
   }
 
-  func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
+  func localizedTimeRange(locale: Locale = .appLanguage) -> String {
     PlanDate.hourRange(from: hours.start, to: hours.end, locale: locale)
   }
 
@@ -205,12 +209,12 @@ extension ProgressDaypart {
 
 extension ProgressWeekday {
   /// Capitalized, as a name on its own reads ("Quinta-feira").
-  func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
+  func localizedTitle(locale: Locale = .appLanguage) -> String {
     PlanDate.weekdayName(number: sundayIndex, label: true, locale: locale)
   }
 
   /// Under a chart's column ("Qui.").
-  func localizedShortTitle(locale: Locale = .autoupdatingCurrent) -> String {
+  func localizedShortTitle(locale: Locale = .appLanguage) -> String {
     PlanDate.weekdayName(number: sundayIndex, short: true, label: true, locale: locale)
   }
 

@@ -474,6 +474,7 @@ struct LessonReadouts: View {
   private var score: AttributedString {
     var score = AttributedString(
       localized: "**\(correct)** of \(answered) right", table: "Player",
+      locale: .appLanguage,
       comment:
         "At a lesson's end: the answers the learner got right out of those answered. Keep the ** around the first number: it shows large."
     )

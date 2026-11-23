@@ -234,10 +234,10 @@ private struct CourseExamDates: View {
     return exam.estimated
       ? String(
         localized: "about \(exam.daysLeft) days left", table: "Courses",
-        comment: "How long until an exam's estimated sitting")
+        locale: .appLanguage, comment: "How long until an exam's estimated sitting")
       : String(
         localized: "\(exam.daysLeft) days left", table: "Courses",
-        comment: "How long until an exam's sitting")
+        locale: .appLanguage, comment: "How long until an exam's sitting")
   }
 }
 

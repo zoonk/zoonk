@@ -66,9 +66,10 @@ struct RevealReadouts: View {
         schedule.targetDateEstimated
         ? String(
           localized: "About \(days) days", table: "Onboarding",
-          comment: "How long until a goal's estimated date")
+          locale: .appLanguage, comment: "How long until a goal's estimated date")
         : String(
-          localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
+          localized: "\(days) days", table: "Onboarding", locale: .appLanguage,
+          comment: "How long until a goal's date")
 
       return (
         AnyView(BigQuantity(text)),

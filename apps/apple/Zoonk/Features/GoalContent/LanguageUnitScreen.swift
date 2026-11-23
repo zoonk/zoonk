@@ -554,7 +554,8 @@ private struct LanguageUnitContent: View {
     }
 
     return String(
-      localized: "\(sample) and \(more.formatted()) more", table: "Plan",
+      localized: "\(sample) and \(more.formatted(.number.locale(.appLanguage))) more",
+      table: "Plan",
       comment: "A few of a unit's words, then how many more it teaches")
   }
 
@@ -593,7 +594,7 @@ private struct LanguageUnitContent: View {
         ? nil
         : String(
           localized: "\(lessons.count) lessons", table: "Plan",
-          comment: "How many lessons a chapter has"),
+          locale: .appLanguage, comment: "How many lessons a chapter has"),
       minutes > 0 ? planDurationText(minutes: Double(minutes)) : nil,
     ].compactMap { $0 }
   }
@@ -609,10 +610,12 @@ private struct LanguageUnitContent: View {
     if let range {
       return String(
         localized: "Unit \(position)\u{00A0}· \(range)", table: "Plan",
-        comment: "A unit's number and its level range")
+        locale: .appLanguage, comment: "A unit's number and its level range")
     }
 
-    return String(localized: "Unit \(position)", table: "Plan", comment: "A unit's number")
+    return String(
+      localized: "Unit \(position)", table: "Plan", locale: .appLanguage, comment: "A unit's number"
+    )
   }
 }
 

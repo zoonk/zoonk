@@ -4,7 +4,7 @@ import Foundation
 enum ActivityNumberFormat {
   static func currencyUnit(_ unit: String?) -> String? { money(unit) == nil ? nil : unit }
   static func guess(
-    _ value: Double, unit: String?, digits: Int? = nil, locale: Locale = .courseLanguage
+    _ value: Double, unit: String?, digits: Int? = nil, locale: Locale = .appLanguage
   ) -> String {
     format(value, unit: currencyUnit(unit), digits: digits, locale: locale)
   }
@@ -35,7 +35,7 @@ enum ActivityNumberFormat {
     digits: Int? = nil,
     grouping: Bool = true,
     compact: Bool = false,
-    locale: Locale = .courseLanguage
+    locale: Locale = .appLanguage
   ) -> String {
     if let money = money(unit) {
       let amount = formatMoney(
@@ -135,14 +135,14 @@ enum ActivityNumberFormat {
   }
 
   /// Main's `getUnitPosition`: money goes where the language writes its sign ("R$ 52", "52 €").
-  static func unitLeads(_ unit: String, locale: Locale = .courseLanguage) -> Bool {
+  static func unitLeads(_ unit: String, locale: Locale = .appLanguage) -> Bool {
     moneySignGap(unit, locale: locale) != nil
   }
 
   /// Main's `moneySignGap`: what the language writes between a money sign and its amount ("R$ 52"
   /// in Portuguese, "R$52" in English). Nil for a sign that isn't money, or a language that writes
   /// money after the amount ("52 €").
-  static func moneySignGap(_ sign: String, locale: Locale = .courseLanguage) -> String? {
+  static func moneySignGap(_ sign: String, locale: Locale = .appLanguage) -> String? {
     guard let currency = currency(for: sign) else {
       return nil
     }

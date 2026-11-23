@@ -103,7 +103,7 @@ struct ExamChecklistRows: View {
   private var tally: String {
     String(
       localized: "\(checked.intersection(moment.checklist).count) of \(moment.checklist.count)",
-      table: "Exam", comment: "Checklist items ticked off of all of them")
+      table: "Exam", locale: .appLanguage, comment: "Checklist items ticked off of all of them")
   }
 }
 
@@ -191,11 +191,12 @@ extension ExamMoment {
       sessionsDone > 0
         ? String(
           localized: "\(sessionsDone) days of study", table: "Exam",
-          comment: "Days the learner studied before the exam, in \"… done.\"")
+          locale: .appLanguage, comment: "Days the learner studied before the exam, in \"… done.\"")
         : nil,
       mocksTaken > 0
         ? String(
           localized: "\(mocksTaken) mock exams", table: "Exam",
+          locale: .appLanguage,
           comment: "Mock exams the learner took before the exam, in \"… done.\"")
         : nil,
     ].compactMap(\.self)

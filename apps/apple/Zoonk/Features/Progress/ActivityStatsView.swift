@@ -87,9 +87,12 @@ struct ActivityCalendar: View {
       chartSummary: { visibleDays, months in
         let studied = visibleDays.count(where: { $0.step > 0 })
         return studied == 0
-          ? String(localized: "No study in the past \(months) months", table: "Progress")
+          ? String(
+            localized: "No study in the past \(months) months", table: "Progress",
+            locale: .appLanguage)
           : String(
-            localized: "\(studied) study days in the past \(months) months", table: "Progress")
+            localized: "\(studied) study days in the past \(months) months", table: "Progress",
+            locale: .appLanguage)
       })
   }
 }
@@ -116,7 +119,8 @@ extension ActivityProgressDay {
     let time = timeSpentSeconds > 0 ? progressLearningTime(timeSpentSeconds) : nil
     let lessons =
       lessonCompletions > 0
-      ? String(localized: "\(lessonCompletions) lessons", table: "Progress") : nil
+      ? String(localized: "\(lessonCompletions) lessons", table: "Progress", locale: .appLanguage)
+      : nil
     let facts = [time, lessons].compactMap(\.self)
 
     return facts.isEmpty

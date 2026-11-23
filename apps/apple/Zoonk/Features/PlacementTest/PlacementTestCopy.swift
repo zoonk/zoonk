@@ -45,6 +45,7 @@ enum PlacementTestCopy {
         comment: "After a test of what the learner knows: it took no lesson out of the plan")
       : String(
         localized: "\(count) lessons skipped", table: "Onboarding",
+        locale: .appLanguage,
         comment: "After a test of what the learner knows: how many lessons it took out of the plan")
   }
 

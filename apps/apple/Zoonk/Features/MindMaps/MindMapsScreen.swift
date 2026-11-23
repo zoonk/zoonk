@@ -279,7 +279,7 @@ private struct MindMapCreateSection: View {
 
             if group.name != nil {
               Spacer(minLength: 8)
-              Text(verbatim: group.chapters.count.formatted())
+              Text(verbatim: group.chapters.count.formatted(.number.locale(.appLanguage)))
                 .typeStyle(.data)
                 .foregroundStyle(.mutedForeground)
             }
@@ -296,7 +296,7 @@ private struct MindMapCreateSection: View {
           "No map yet", tableName: "MindMaps",
           comment: "Heading over the chapters whose mind map hasn't been made yet.")
       ) {
-        Text(verbatim: notMade.count.formatted())
+        Text(verbatim: notMade.count.formatted(.number.locale(.appLanguage)))
       }
     }
 
@@ -368,10 +368,11 @@ private struct MindMapCreateSection: View {
     case .onTheWay(let count):
       String(
         localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
-        comment: "How many chapter maps are being made now")
+        locale: .appLanguage, comment: "How many chapter maps are being made now")
     case .fewer(let count):
       String(
         localized: "You can create \(count) more maps right now.", table: "MindMaps",
+        locale: .appLanguage,
         comment:
           "Fewer chapter maps can start than are ready to make: as many as the allowance lets")
     case .unreachable, .stopped, nil:
@@ -462,10 +463,10 @@ private struct LessonGroupRow: View {
     [
       String(
         localized: "Chapter \(item.chapter.position)", table: "MindMaps",
-        comment: "A chapter's number"),
+        locale: .appLanguage, comment: "A chapter's number"),
       String(
         localized: "\(item.group.count) lesson maps", table: "MindMaps",
-        comment: "How many of a chapter's lessons have a map"),
+        locale: .appLanguage, comment: "How many of a chapter's lessons have a map"),
     ]
   }
 }
@@ -663,7 +664,7 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
         } header: {
           if let subject = group.subject {
             SectionTitle(Text(subject.name)) {
-              Text(verbatim: group.items.count.formatted())
+              Text(verbatim: group.items.count.formatted(.number.locale(.appLanguage)))
             }
           }
         }
@@ -674,7 +675,7 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
         Section {
           FoldRow(isUnfolded: $unfolded.contains(group.key)) {
             SectionTitle(Text(group.subject?.name ?? "")) {
-              Text(verbatim: group.items.count.formatted())
+              Text(verbatim: group.items.count.formatted(.number.locale(.appLanguage)))
             }
           }
 

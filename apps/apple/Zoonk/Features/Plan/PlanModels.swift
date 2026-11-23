@@ -826,7 +826,7 @@ enum PlanDate {
   static func moment(
     _ moment: Date, _ role: DateRole = .row, weekday: Bool = false,
     year: DateYear = .inAnotherYear, now: Date = .now, timeZone: TimeZone = .current,
-    locale: Locale = .autoupdatingCurrent
+    locale: Locale = .appLanguage
   ) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = timeZone
@@ -866,7 +866,8 @@ enum PlanDate {
       return start
     }
 
-    let style = Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day()
+    let style = Date.IntervalFormatStyle(locale: .appLanguage, timeZone: .gmt)
+      .month(.abbreviated).day()
     let anotherYear = inAnotherYear(start, today: today) || inAnotherYear(end, today: today)
     return (first..<last).formatted(anotherYear ? style.year() : style)
   }
@@ -883,7 +884,7 @@ enum PlanDate {
     now: Date = .now, calendar: Calendar = .current
   ) -> String {
     let thisYear = calendar.component(.year, from: moment) == calendar.component(.year, from: now)
-    return moment.formatted(thisYear ? style : style.year())
+    return moment.formatted((thisYear ? style : style.year()).locale(.appLanguage))
   }
 
   /// "Nov", or "November" when `wide`, with the year when it isn't this year's.
@@ -905,8 +906,8 @@ enum PlanDate {
     format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
   }
 
-  /// A time of day in the device's own clock, 12- or 24-hour: "7:30 AM", "19:05".
-  static func timeOfDay(minutes: Int, locale: Locale = .current) -> String {
+  /// A wall-clock time in the app's language, such as "7:30 AM" or "19:05".
+  static func timeOfDay(minutes: Int, locale: Locale = .appLanguage) -> String {
     let time = calendar.date(
       from: DateComponents(year: 2000, month: 1, day: 1, hour: minutes / 60, minute: minutes % 60))
 
@@ -914,9 +915,10 @@ enum PlanDate {
       Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, timeZone: .gmt))
   }
 
-  /// An instant's time of day in the learner's zone, in the device's clock.
+  /// An instant's time of day in the learner's zone, written in the app's language.
   static func timeOfDay(_ moment: Date, in timeZone: TimeZone = .current) -> String {
-    moment.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: timeZone))
+    moment.formatted(
+      Date.FormatStyle(date: .omitted, time: .shortened, locale: .appLanguage, timeZone: timeZone))
   }
 
   /// "07:30": a time of day as the server reads and writes it, never shown.
@@ -924,16 +926,16 @@ enum PlanDate {
     String(format: "%02d:%02d", minutes / 60, minutes % 60)
   }
 
-  /// A zone named the system's way, as in "Brasília Time".
+  /// A zone named in the app's language, as in "Brasília Time".
   static func zoneName(_ identifier: String) -> String? {
-    TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current)
+    TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .appLanguage)
   }
 
   /// "0:52", or "1:02:05" from an hour: a clock of minutes and seconds (main's `formatClock`).
   static func clock(seconds: Int) -> String {
     let seconds = max(seconds, 0)
     return Duration.seconds(seconds).formatted(
-      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond).locale(.appLanguage))
   }
 
   /// A month and its year in parts, for a screen that sets the year apart: "Jul 2027".
@@ -955,7 +957,7 @@ enum PlanDate {
   /// time: "1 min, 30 sec".
   static func exactDuration(seconds: Int) -> String {
     Duration.seconds(max(seconds, 0)).formatted(
-      .units(allowed: [.hours, .minutes, .seconds], width: .abbreviated))
+      .units(allowed: [.hours, .minutes, .seconds], width: .abbreviated).locale(.appLanguage))
   }
 
   /// "Monday".
@@ -968,7 +970,7 @@ enum PlanDate {
   /// language; inside a sentence it's written as the language writes it there.
   static func weekdayName(
     number: Int, short: Bool = false, label: Bool = false,
-    locale: Locale = .autoupdatingCurrent
+    locale: Locale = .appLanguage
   ) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
@@ -981,13 +983,14 @@ enum PlanDate {
   }
 
   /// A span of whole hours in the locale's clock: "6–12 AM" or "06–12".
-  static func hourRange(from start: Int, to end: Int, locale: Locale = .autoupdatingCurrent)
+  static func hourRange(from start: Int, to end: Int, locale: Locale = .appLanguage)
     -> String
   {
     let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
 
     guard clockFormat.contains("a") else {
-      return String(format: "%02d–%02d", start, end)
+      let hours = IntegerFormatStyle<Int>.number.precision(.integerLength(2)).locale(locale)
+      return "\(start.formatted(hours))–\(end.formatted(hours))"
     }
 
     var calendar = Calendar(identifier: .gregorian)
@@ -1010,11 +1013,14 @@ enum PlanDate {
 
   /// "M": a weekday's letter, as a week row draws it.
   static func weekdayLetter(_ isoDate: String) -> String {
-    date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.narrow)) ?? ""
+    date(isoDate)?.formatted(
+      Date.FormatStyle(locale: .appLanguage, timeZone: .gmt).weekday(.narrow))
+      ?? ""
   }
 
   static func weekday(_ isoDate: String) -> String {
-    date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated)) ?? ""
+    date(isoDate)?
+      .formatted(Date.FormatStyle(locale: .appLanguage, timeZone: .gmt).weekday(.abbreviated)) ?? ""
   }
 }
 
@@ -1035,7 +1041,7 @@ enum DateRole {
   /// A calendar day is read in UTC, so it never moves with the device's zone; an instant in the
   /// learner's.
   fileprivate func style(
-    weekday: Bool, timeZone: TimeZone = .gmt, locale: Locale = .autoupdatingCurrent
+    weekday: Bool, timeZone: TimeZone = .gmt, locale: Locale = .appLanguage
   ) -> Date.FormatStyle {
     let style = Date.FormatStyle(locale: locale, timeZone: timeZone)
 
@@ -1065,7 +1071,7 @@ enum DateYear {
 extension FormatStyle where Self == Date.FormatStyle {
   /// A calendar day read in UTC, so it never shifts a day.
   static var studyDay: Date.FormatStyle {
-    var style = Date.FormatStyle(timeZone: .gmt)
+    var style = Date.FormatStyle(locale: .appLanguage, timeZone: .gmt)
     style.calendar.timeZone = .gmt
     return style
   }

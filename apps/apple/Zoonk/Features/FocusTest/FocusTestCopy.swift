@@ -93,6 +93,7 @@ enum FocusTestCopy {
       String(
         localized: "\(subject.right) of \(subject.asked - subject.dontKnow) right",
         table: "FocusTest",
+        locale: .appLanguage,
         comment:
           "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted"
       )

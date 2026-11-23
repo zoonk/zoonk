@@ -142,11 +142,12 @@ struct FreePlan: Decodable, Equatable, Sendable {
     guard let month = tutorMessagesPer30Days else {
       return LocalizedStringResource(
         "An AI study buddy: \(day) messages a day", table: "Subscriptions",
-        comment: "Free plan: the study buddy's daily messages")
+        locale: .appLanguage, comment: "Free plan: the study buddy's daily messages")
     }
 
     return LocalizedStringResource(
-      "An AI study buddy: \(day) messages a day, up to \(month) a month", table: "Subscriptions")
+      "An AI study buddy: \(day) messages a day, up to \(month) a month", table: "Subscriptions",
+      locale: .appLanguage)
   }
 }
 

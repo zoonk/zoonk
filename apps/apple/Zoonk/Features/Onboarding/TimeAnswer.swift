@@ -111,7 +111,7 @@ struct TimeAnswer: View {
   }
 
   nonisolated private static func percent(_ share: Double) -> String {
-    share.formatted(.percent.precision(.fractionLength(0)))
+    share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))
   }
 
   private var lineWords: String? {

@@ -753,10 +753,12 @@ extension GenerationWait.NumberedLines {
     case .lessonScreen:
       LocalizedStringResource(
         "Writing screen \(number)…", table: "Player",
+        locale: .appLanguage,
         comment: "What the wait is doing while a lesson is written: the screen it's on")
     case .explanationScreen:
       LocalizedStringResource(
         "Writing screen \(number)…", table: "Onboarding",
+        locale: .appLanguage,
         comment: "What the wait is doing while a quick explanation is written: the screen it's on")
     }
   }

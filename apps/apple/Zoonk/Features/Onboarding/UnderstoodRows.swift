@@ -383,7 +383,8 @@ enum UnderstoodRows {
 
   /// A reference, never a promise.
   private static func cutoffRow(_ cutoff: Components.Schemas.TargetCutoff) -> UnderstoodRow {
-    let number = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1))
+    let number = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1)).locale(
+      .appLanguage)
     let detail = [
       cutoff.course, cutoff.position, cutoff.course == nil ? nil : cutoff.institution,
       cutoff.edition, cutoff.quota,
@@ -619,7 +620,8 @@ enum UnderstoodRows {
 
     return String(
       localized: LocalizedStringResource(
-        "\(days) days left", table: "Onboarding", comment: "Days until a goal's date"))
+        "\(days) days left", table: "Onboarding", locale: .appLanguage,
+        comment: "Days until a goal's date"))
   }
 
   private static func source(

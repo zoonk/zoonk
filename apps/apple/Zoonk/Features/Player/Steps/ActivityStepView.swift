@@ -217,7 +217,7 @@ private struct NumericAnswerField: View {
     .fieldBorder(isFocused: isFocused, minHeight: 44)
     .onChange(of: value) {
       // An answer set elsewhere (going back to the screen) shows as itself.
-      if let typed, parseLocalizedNumber(typed, locale: .courseLanguage) != value {
+      if let typed, parseLocalizedNumber(typed, locale: .appLanguage) != value {
         self.typed = nil
       }
     }
@@ -234,6 +234,6 @@ private struct NumericAnswerField: View {
 
   private func type(_ text: String) {
     typed = text
-    onChange(parseLocalizedNumber(text, locale: .courseLanguage))
+    onChange(parseLocalizedNumber(text, locale: .appLanguage))
   }
 }

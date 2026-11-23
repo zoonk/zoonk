@@ -86,6 +86,7 @@ extension CertificateFacts {
           localized:
             "I just finished \(name) on Zoonk: \(lessons) lessons and about \(studyTime(minutes)) of study.",
           table: "Certificates",
+          locale: .appLanguage,
           comment:
             "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), the lessons studied, then about how long they took, such as \"41 hours\""
         )
@@ -94,6 +95,7 @@ extension CertificateFacts {
       return String(
         localized: "I just finished \(name) on Zoonk: \(lessons) lessons.",
         table: "Certificates",
+        locale: .appLanguage,
         comment:
           "Suggested text for sharing a course certificate: the course or its level (Python · Beginner), then the lessons studied"
       )
@@ -118,7 +120,7 @@ func studyTime(_ minutes: Int) -> String {
     ? Measurement(value: Double(rounded), unit: UnitDuration.minutes)
     : Measurement(value: Double(rounded / 60), unit: UnitDuration.hours)
 
-  return measurement.formatted(.measurement(width: .wide, usage: .asProvided))
+  return measurement.formatted(.measurement(width: .wide, usage: .asProvided).locale(.appLanguage))
 }
 
 @MainActor

@@ -148,6 +148,7 @@ enum PlanChangeWords {
   static func skippedSentence(_ lessons: Int) -> String {
     String(
       localized: "Skipped \(lessons) lessons you already know.", table: "Plan",
+      locale: .appLanguage,
       comment: "One day's plan change: how many lessons the learner's answers took out of the plan")
   }
 
@@ -176,12 +177,14 @@ enum PlanChangeWords {
       ? [
         String(
           localized: "\(more) other subjects", table: "Plan",
+          locale: .appLanguage,
           comment: "The rest of the subjects a plan change names, such as \"2 other subjects\"")
       ] : []
     let subjects = (named + others).formatted(.list(type: .and))
 
     let count = String(
       localized: "\(topics.count) topics", table: "Plan",
+      locale: .appLanguage,
       comment: "How many topics a plan change brought back, such as \"5 topics\"")
 
     return String(
@@ -414,6 +417,7 @@ enum PlanChangeWords {
       return Words(
         title: String(
           localized: "Move the end of \(first.name) \(days) days later?", table: "Plan",
+          locale: .appLanguage,
           comment: "Asks to move a phase's end later; the first argument is the phase's name"),
         why: String(
           localized: "That gives you time to finish its lessons.", table: "Plan",
@@ -647,23 +651,26 @@ func planBaseChoicesStatement(_ choices: [BaseChoice]) -> String {
     deep > 0
       ? String(
         localized: "\(deep) with every lesson", table: "Plan",
+        locale: .appLanguage,
         comment: "Part of the prerequisites statement: how many are studied with every lesson")
       : nil,
     essential > 0
       ? String(
         localized: "\(essential) with the first lessons only", table: "Plan",
+        locale: .appLanguage,
         comment:
           "Part of the prerequisites statement: how many are studied with their first lessons only")
       : nil,
     quick > 0
       ? String(
         localized: "\(quick) with one short lesson", table: "Plan",
+        locale: .appLanguage,
         comment: "Part of the prerequisites statement: how many are studied with one short lesson")
       : nil,
     skip > 0
       ? String(
         localized: "\(skip) skipped", table: "Plan",
-        comment: "Part of the prerequisites statement: how many are skipped")
+        locale: .appLanguage, comment: "Part of the prerequisites statement: how many are skipped")
       : nil,
   ].compactMap(\.self)
 

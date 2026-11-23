@@ -150,7 +150,7 @@ struct MindMapOutlineView: View {
       ForEach(Array(outline.branches.enumerated()), id: \.offset) { index, branch in
         VStack(alignment: .leading, spacing: 8) {
           HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Text(verbatim: (index + 1).formatted())
+            Text(verbatim: (index + 1).formatted(.number.locale(.appLanguage)))
               .typeStyle(.data.weight(.medium))
               .foregroundStyle(.mutedForeground)
               .accessibilityHidden(true)

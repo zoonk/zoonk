@@ -47,12 +47,13 @@ enum SpokenCode {
     if code.isEmpty {
       return String(
         localized: "Line \(number): blank", table: "DesignSystem",
-        comment: "Read by screen readers for an empty line of a program.")
+        locale: .appLanguage, comment: "Read by screen readers for an empty line of a program.")
     }
 
     if line.indent.isEmpty {
       return String(
         localized: "Line \(number): \(code)", table: "DesignSystem",
+        locale: .appLanguage,
         comment:
           "Read by screen readers for a line of a program: its number, then its code as written.")
     }
@@ -61,6 +62,7 @@ enum SpokenCode {
 
     return String(
       localized: "Line \(number), indented \(indent): \(code)", table: "DesignSystem",
+      locale: .appLanguage,
       comment:
         "Read by screen readers for an indented line of a program: its number, how far it's indented (such as “4 spaces”), then its code as written."
     )
@@ -97,11 +99,13 @@ enum SpokenCode {
       return run.isTab
         ? String(
           localized: "\(count) tabs", table: "DesignSystem",
+          locale: .appLanguage,
           comment:
             "How far a line of a program is indented, read by screen readers, such as “Line 2, indented 1 tab: …”."
         )
         : String(
           localized: "\(count) spaces", table: "DesignSystem",
+          locale: .appLanguage,
           comment:
             "How far a line of a program is indented, read by screen readers, such as “Line 2, indented 4 spaces: …”."
         )

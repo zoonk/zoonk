@@ -327,7 +327,8 @@ struct SpeakingMockSections: View {
   }
 
   private func band(low: Double, high: Double) -> String {
-    let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(1))
+    let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(1)).locale(
+      .appLanguage)
     return low == high
       ? low.formatted(format) : "\(low.formatted(format))–\(high.formatted(format))"
   }
@@ -355,7 +356,8 @@ private struct SpeakingGradeDetails: View {
 /// Main's `useEstimateText`: the API reads the grade on its scale; this only formats it.
 enum SpeakingEstimateText {
   static func text(_ estimate: Components.Schemas.SpeakingEstimate) -> String {
-    let number = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...2))
+    let number = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...2)).locale(
+      .appLanguage)
 
     switch estimate {
     case .letter(let letter):

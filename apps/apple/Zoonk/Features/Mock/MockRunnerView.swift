@@ -538,6 +538,7 @@ struct MockSectionCounts {
         String(
           localized: "\(blank) questions are blank and you're not sure of \(unsure).",
           table: "Mock",
+          locale: .appLanguage,
           comment:
             "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button. Both numbers are 1 or more."
         )
@@ -546,12 +547,14 @@ struct MockSectionCounts {
       parts.append(
         String(
           localized: "\(blank) questions are blank.", table: "Mock",
+          locale: .appLanguage,
           comment: "Before handing in a mock exam: how many of its questions are blank.")
       )
     } else if unsure > 0 {
       parts.append(
         String(
           localized: "You're not sure of \(unsure) answers.", table: "Mock",
+          locale: .appLanguage,
           comment:
             "Before handing in a mock exam: how many of its questions are blank, or marked with the \"Not sure\" button."
         )
@@ -569,7 +572,7 @@ struct MockSectionCounts {
       parts.append(
         String(
           localized: "\(blankEssays) essays are blank.", table: "Mock",
-          comment: "Blank essays when handing in"))
+          locale: .appLanguage, comment: "Blank essays when handing in"))
     }
 
     return parts.joinedSentences()
@@ -677,7 +680,8 @@ private struct MockAnswerSheet: View {
       name: question.format == .essay
         ? String(localized: "Written part", table: "Mock", comment: "A full mock's essay part")
         : String(
-          localized: "Question \(question.number)", table: "Mock", comment: "A question by number"),
+          localized: "Question \(question.number)", table: "Mock", locale: .appLanguage,
+          comment: "A question by number"),
       answered: run.isCountedAsAnswered(question.itemId),
       unsure: draft?.unsure ?? false,
       isCurrent: index == run.position,

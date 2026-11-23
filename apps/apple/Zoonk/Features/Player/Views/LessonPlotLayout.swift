@@ -106,7 +106,7 @@ struct LessonPlotLayout {
   let scale: LessonPlotScale
 
   init(
-    _ plot: LessonPlot, width: Double, measure: Measure, locale: Locale = .courseLanguage
+    _ plot: LessonPlot, width: Double, measure: Measure, locale: Locale = .appLanguage
   ) {
     let scale = LessonPlotScale(plot)
     let gutters = Gutters(plot, scale: scale, measure: measure, locale: locale)
@@ -225,7 +225,7 @@ struct LessonPlotLayout {
   /// around the drawing keeps growing.
   static func scale(
     _ plot: LessonPlot, text: Double, width: Double, measure: Measure,
-    locale: Locale = .courseLanguage
+    locale: Locale = .appLanguage
   ) -> Double {
     let gutters = Gutters(plot, scale: LessonPlotScale(plot), measure: measure, locale: locale)
     let named = !plot.references.isEmpty

@@ -174,14 +174,16 @@ private struct SubjectContent: View {
     }
 
     return String(
-      localized: "\(share.formatted(.percent.precision(.fractionLength(0)))) of the exam",
+      localized:
+        "\(share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) of the exam",
       table: "Exam", comment: "A subject's weight")
   }
 
   /// Nothing until some is done, since "0% done" says nothing.
   private var doneShare: String? {
     let percent = Int((min(max(subject.lessonShare, 0), 1) * 100).rounded())
-    return percent > 0 ? String(localized: "\(percent)% done", table: "Plan") : nil
+    return percent > 0
+      ? String(localized: "\(percent)% done", table: "Plan", locale: .appLanguage) : nil
   }
 
   private var knownLine: Text? {
@@ -408,7 +410,7 @@ private struct SubjectPreparation: View {
       Text("Preparation", tableName: "Plan", comment: "Label of a subject's preparation")
         .typeStyle(.sectionTitle)
 
-      BigQuantity(share.formatted(.percent.precision(.fractionLength(0))))
+      BigQuantity(share.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
 
       Meter(value: share, fill: .success)
 

@@ -242,7 +242,7 @@ struct LevelRow: View {
 func levelName(_ belt: ProgressBelt, _ level: Int) -> String {
   String(
     localized: "\(beltName(belt.rawValue) ?? belt.rawValue), level \(level)", table: "Session",
-    comment: "The belt and level reached")
+    locale: .appLanguage, comment: "The belt and level reached")
 }
 
 extension ProgressBelt {
