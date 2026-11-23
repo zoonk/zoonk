@@ -14,7 +14,8 @@ People who have supported this project on [GitHub Sponsors](https://github.com/s
 
 Companies that supported this project with credits to use their services:
 
+- [Claude for Startups](https://claude.com/programs/startups)
 - [Vercel](https://vercel.com/open-source-program)
 - [Google for Startups](https://startup.google.com/)
-- [Neon](https://neon.com/)
+- [Neon](https://neon.com/signup?refcode=8E6MEB1Q)
 - [Eloqnt](https://eloqnt.dev/)
