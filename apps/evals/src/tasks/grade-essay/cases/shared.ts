@@ -23,17 +23,20 @@ export type GradeWritingInput = {
 /**
  * `languageErrors` and `traps` are passages of the answer: a reported error must overlap one of
  * `languageErrors` (a planted error, or a real slip of a published answer), and none may overlap a
- * trap, a usage the standard accepts.
+ * trap, a usage the standard accepts. An omitted key means the passages are unknown.
+ * An empty key means no error passages are expected.
  */
 export type GradeWritingExpected = {
   earned: number[];
   uncertain?: number[];
-  languageErrors: string[];
+  languageErrors?: string[];
+  officialErrorCount?: number;
   traps?: string[];
   zero: boolean;
   minimumLevel?: "strong" | "complete";
   nextStepCriteria?: string[];
   officialTotal?: number;
+  officialContent?: number;
   officialCompetences?: Record<string, number>;
   passBoundary?: { sectionMinimum: number; otherAnswers: number };
   source?: {
