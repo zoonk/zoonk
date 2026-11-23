@@ -24,7 +24,6 @@ import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.LevelTestAttempt
-import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.LevelRow
 import com.zoonk.android.feature.onboarding.setup.LevelRows
 import com.zoonk.android.feature.onboarding.setup.LevelTestSteps
@@ -37,10 +36,13 @@ import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.lessonsSkippedLine
 import com.zoonk.android.feature.plan.levelRange
+import com.zoonk.android.feature.questions.ItemSet
+import com.zoonk.android.feature.questions.ItemSetText
+import com.zoonk.android.feature.questions.ListeningStimulus
 import com.zoonk.android.feature.questions.Question
+import com.zoonk.android.feature.questions.SetPlace
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -110,7 +112,7 @@ private fun ColumnScope.LevelTestPlanFlow(
 
     when {
         testOut != null -> {
-            TestOutFlow(goalId, testOut, store, app.plans, vm, onProgress, onLeave = navigator::closeTask)
+            TestOutFlow(goalId, testOut, app, vm, onProgress, onLeave = navigator::closeTask)
         }
 
         attempt != null -> {
@@ -238,13 +240,12 @@ internal fun ColumnScope.LevelResult(
 private fun ColumnScope.TestOutFlow(
     goalId: String,
     attemptId: UUID,
-    store: OnboardingStore,
-    plans: PlanStore,
+    app: AppContainer,
     vm: LevelTestPlanViewModel,
     onProgress: (Float?) -> Unit,
     onLeave: () -> Unit,
 ) {
-    val resource = store.levelTestOuts[LevelTestAttempt(goalId, attemptId)]
+    val resource = app.onboarding.levelTestOuts[LevelTestAttempt(goalId, attemptId)]
     val state by resource.collectShown()
     val test = state.value
     val scope = rememberCoroutineScope()
@@ -282,8 +283,9 @@ private fun ColumnScope.TestOutFlow(
         next != null -> {
             SetupContent {
                 key(next.itemId) {
+                    val question = next.recode<LanguageLevelTestOutNext, Question>()
                     PlacementQuestion(
-                        item = next.recode<LanguageLevelTestOutNext, Question>(),
+                        item = question,
                         subject = stringResource(R.string.placementtest_test_out, test.level.value),
                         position =
                             stringResource(
@@ -297,6 +299,7 @@ private fun ColumnScope.TestOutFlow(
                         onAnswer = { answer, durationMs -> vm.answerTestOut(next.itemId.toString(), answer, durationMs) },
                         onStop = vm::stopTestOut,
                         canStop = test.answered > 0,
+                        media = { question.set?.let { TestOutMaterial(it, "$attemptId:${question.itemId}", app) } },
                     )
                 }
             }
@@ -308,9 +311,31 @@ private fun ColumnScope.TestOutFlow(
 
         else -> {
             val changeId = test.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
-            TestOutResult(test, onLeave, undo = rememberPlacementUndo(plans, UUID.fromString(goalId), changeId))
+            TestOutResult(test, onLeave, undo = rememberPlacementUndo(app.plans, UUID.fromString(goalId), changeId))
         }
     }
+}
+
+@Composable
+private fun TestOutMaterial(
+    set: ItemSet,
+    askedIn: String,
+    app: AppContainer,
+) {
+    val listening = set.listening
+    if (listening == null) {
+        ItemSetText(set)
+        return
+    }
+    val session = app.sessions.current ?: return
+    SetPlace(set)
+    ListeningStimulus(
+        listening = listening,
+        playsKey = "$askedIn:${set.id}",
+        session = session,
+        speech = app.speech,
+        plays = app.listeningPlays,
+    )
 }
 
 /** Main's `TestOutResult`: what a level's test-out skipped, or why it couldn't check. */
