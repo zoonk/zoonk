@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -75,8 +74,8 @@ import com.zoonk.android.ui.code.CodeColors
 import com.zoonk.android.ui.code.codeColors
 import com.zoonk.android.ui.code.highlightCode
 import com.zoonk.android.ui.code.styledCodeLine
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
@@ -294,18 +293,19 @@ internal fun SnippetBar(
 }
 
 /**
- * Main's `SandboxRunBar`: Run leads until a question has an answer; exploring keeps it secondary
- * because Continue is the screen's main action. Runs wait for the runtime, so Run works while it loads.
+ * Main's `SandboxRunBar`: Run stays secondary, so the screen's Check or Continue stands out. Runs wait for the
+ * runtime, so Run works while it loads.
  */
 @Composable
 internal fun SandboxRunBar(
     runtimeName: String,
     runtime: SandboxRuntime,
     hasRun: Boolean,
+    isExploring: Boolean,
     isRunning: Boolean,
     onRun: () -> Unit,
     onReset: (() -> Unit)? = null,
-    needsRun: Boolean?,
+    canRun: Boolean = true,
 ) {
     if (runtime.status == SandboxRuntimeStatus.Failed) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -327,19 +327,23 @@ internal fun SandboxRunBar(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             if (onReset != null) {
                 val reset = stringResource(R.string.activities_code_start_over)
-                OutlinedIconButton(onClick = onReset, Modifier.size(48.dp).semantics { contentDescription = reset }, enabled = !isRunning) {
+                OutlinedIconButton(
+                    onClick = onReset,
+                    Modifier.semantics { contentDescription = reset },
+                    enabled = !isRunning,
+                    size = ButtonSize.Large,
+                ) {
                     Icon(painterResource(R.drawable.ic_replay), contentDescription = null)
                 }
             }
-            val content: @Composable RowScope.() -> Unit = {
-                Text(stringResource(if (hasRun) R.string.activities_code_run_again else R.string.activities_code_run))
-            }
-            val icon: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_play_arrow) }
-            val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
-            if (needsRun == true) {
-                Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
-            } else if (needsRun == null) {
-                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
+            OutlinedButton(
+                onClick = onRun,
+                enabled = canRun,
+                busy = isRunning,
+                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
+                size = ButtonSize.Large,
+            ) {
+                Text(stringResource(if (isExploring && hasRun) R.string.activities_code_run_again else R.string.activities_code_run))
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

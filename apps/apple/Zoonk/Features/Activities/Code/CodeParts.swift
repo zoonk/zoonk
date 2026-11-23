@@ -5,12 +5,14 @@ enum CodeRuntimeStatus {
   case loading, ready, failed
 }
 
-/// Run is the main action until the first run, then steps back so the screen's Check stands out.
-/// While the runtime loads, Run still works: the run starts as soon as it's ready.
+/// Run stays secondary, so the screen's Check stands out. While the runtime loads, Run still works:
+/// the run starts as soon as it's ready.
 struct CodeRunBar: View {
   let runtimeName: String
   let status: CodeRuntimeStatus
   let hasRun: Bool
+  /// Exploring, a run can be repeated as it is ("Run again"); a task's run follows an edit.
+  let isExploring: Bool
   let isRunning: Bool
   var canRun = true
   let run: () -> Void
@@ -63,11 +65,7 @@ struct CodeRunBar: View {
             .disabled(isRunning)
           }
 
-          if hasRun {
-            runButton.buttonStyle(.outline)
-          } else {
-            runButton.buttonStyle(.mainAction)
-          }
+          runButton
         }
         .controlSize(.large)
 
@@ -82,13 +80,13 @@ struct CodeRunBar: View {
 
   private var runButton: some View {
     BusyButton(isBusy: isRunning, icon: .play, action: run) {
-      if hasRun {
+      if isExploring && hasRun {
         Text("Run again", tableName: "ActivitiesCode", comment: "Run a program or query again")
       } else {
         Text("Run", tableName: "ActivitiesCode", comment: "Run a program or query")
       }
     }
-    .buttonSizing(.flexible)
+    .buttonStyle(.outline)
     .disabled(!canRun)
     .keyboardShortcut(.return, modifiers: .command)
   }
