@@ -458,27 +458,29 @@ struct PlacementQuestionScreen<Media: View>: View {
 
   var body: some View {
     PracticeTaskLayout {
-      VStack(alignment: .leading, spacing: 4) {
-        if let subject {
-          Text(subject)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
+      // Main's `OnboardingSubject`: the chip, and where the question sits at the row's end.
+      if let subject {
+        HStack(spacing: 12) {
+          Chip(Text(verbatim: subject))
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-        Group {
-          if let position {
-            position
-          } else if let total {
-            Text(
-              "Question \(number) of \(total)", tableName: "Onboarding",
-              comment: "Which question of a test with a promised count this is")
-          } else {
-            Text(
-              "Question \(number)", tableName: "Onboarding",
-              comment: "Which placement question this is")
+          Group {
+            if let position {
+              position
+            } else if let total {
+              Text(
+                "Question \(number) of \(total)", tableName: "Onboarding",
+                comment: "Which question of a test with a promised count this is")
+            } else {
+              Text(
+                "Question \(number)", tableName: "Onboarding",
+                comment: "Which placement question this is")
+            }
           }
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+          .fixedSize()
         }
-        .typeStyle(.body.weight(.semibold))
       }
 
       Meter(value: progress, fill: .success)
@@ -517,23 +519,25 @@ struct PlacementQuestionScreen<Media: View>: View {
         .disabled(isSaving && submission != .stop)
       }
     } actions: {
-      PracticeSecondaryButton(
-        title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
-        isDisabled: isSaving
-      ) {
-        submission = .dontKnow
-        onAnswer(.dontKnow)
-      }
+      PracticeActionRow {
+        PracticeSecondaryButton(
+          title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+          isDisabled: isSaving
+        ) {
+          submission = .dontKnow
+          onAnswer(.dontKnow)
+        }
 
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        icon: .check, isBusy: isSaving && submission == .confirm,
-        isDisabled: isSaving || draft?.complete == nil
-      ) {
-        if let answer = draft?.complete {
-          submission = .confirm
-          onAnswer(answer)
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
+          icon: .check, isBusy: isSaving && submission == .confirm,
+          isDisabled: isSaving || draft?.complete == nil
+        ) {
+          if let answer = draft?.complete {
+            submission = .confirm
+            onAnswer(answer)
+          }
         }
       }
     }

@@ -102,8 +102,8 @@ final class PlacementTestRenderTests: XCTestCase {
     let cache = AppCache(session: session)
     let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
     try await capture(
-      "placement-listening", title: "Question 2", detail: "Play the message",
-      absent: ["Fine-tuning your plan"]
+      "placement-listening", title: "When does the train leave?", detail: "Play the message",
+      absent: ["Fine-tuning your plan", "Question 2"]
     ) {
       LevelTestQuestionScreen(
         question: .init(
