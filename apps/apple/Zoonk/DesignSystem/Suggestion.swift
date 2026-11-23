@@ -22,7 +22,7 @@ struct SuggestionMark: View {
       StatusMark(status: .done)
     case .alert:
       Image(systemName: "exclamationmark.circle")
-        .foregroundStyle(.destructiveText)
+        .foregroundStyle(.mutedForeground)
         .accessibilityLabel(Text(SuggestionSaveError.message))
     case .symbol(let name):
       Image(systemName: name)
@@ -32,8 +32,8 @@ struct SuggestionMark: View {
 }
 
 /// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
-/// its small action at its end, or under the title when the action would leave it less than half
-/// the line; stacked, the whole title and the action under it.
+/// its small actions at its end, or under the title's words when they would leave it less than half
+/// the line; stacked, the whole title and the actions under it.
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -46,18 +46,20 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   var body: some View {
     // Stacked, two lines of large text say too little, so the summary wraps whole and the action
     // goes under it.
-    SuggestionLineLayout(isStacked: isStacked) {
-      HStack(alignment: isStacked ? .firstTextBaseline : alignment, spacing: 10) {
+    SuggestionLineLayout(
+      isStacked: isStacked, alignment: isStacked ? .firstTextBaseline : alignment
+    ) {
+      // One part each, however many views they are, and none at all.
+      HStack(spacing: 0) {
         mark
-          .accessibilityHidden(true)
-
-        summary
-          .typeStyle(.body)
-          .lineLimit(isStacked ? nil : 2)
-          .frame(maxWidth: .infinity, alignment: .leading)
       }
+      .accessibilityHidden(true)
 
-      // One part however many views the action is, and none at all.
+      summary
+        .typeStyle(.body)
+        .lineLimit(isStacked ? nil : 2)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
       HStack(spacing: 8) {
         action
       }
@@ -71,75 +73,117 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   }
 }
 
-/// The summary, then the action: beside it while the action leaves it half the line, its buttons
-/// keeping their words whole; under it otherwise, as when content stacks.
+/// The mark, the summary beside it, then the actions as one group: beside the summary while they
+/// leave it half the room after the mark, their buttons keeping their words whole; under its words
+/// otherwise, as when content stacks. The mark stays on the summary either way.
 private struct SuggestionLineLayout: Layout {
   let isStacked: Bool
+  let alignment: VerticalAlignment
 
+  private static let markSpacing: CGFloat = 10
   private static let besideSpacing: CGFloat = 10
   private static let underSpacing: CGFloat = 8
 
-  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-    guard let (lead, action) = parts(subviews) else { return .zero }
+  /// The mark and the summary at a width, the mark aligned to the summary by `alignment`.
+  private struct Lead {
+    let markOffset: CGPoint
+    let summaryOffset: CGPoint
+    let summaryProposal: ProposedViewSize
+    let size: CGSize
+  }
 
-    if let actionSize = besideActionSize(proposal.width, action) {
-      let actionWidth = besideWidth(actionSize)
-      let width = proposal.width.map { $0 - actionWidth }
-      let leadSize = lead.sizeThatFits(ProposedViewSize(width: width, height: nil))
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    guard let (mark, summary, action) = parts(subviews) else { return .zero }
+    let textWidth = proposal.width.map { $0 - markRoom(mark) }
+
+    if let actionSize = besideActionSize(textWidth, action) {
+      let lead = lead(mark, summary, textWidth: textWidth.map { $0 - besideWidth(actionSize) })
       return CGSize(
-        width: proposal.width ?? leadSize.width + actionWidth,
-        height: max(leadSize.height, actionSize.height))
+        width: proposal.width ?? lead.size.width + besideWidth(actionSize),
+        height: max(lead.size.height, actionSize.height))
     }
 
-    let under = ProposedViewSize(width: proposal.width, height: nil)
-    let leadSize = lead.sizeThatFits(under)
-    let actionSize = action.sizeThatFits(under)
+    let lead = lead(mark, summary, textWidth: textWidth)
+    let actionSize = action.sizeThatFits(ProposedViewSize(width: textWidth, height: nil))
     return CGSize(
-      width: proposal.width ?? max(leadSize.width, actionSize.width),
-      height: leadSize.height + underSpacing(actionSize) + actionSize.height)
+      width: proposal.width ?? max(lead.size.width, markRoom(mark) + actionSize.width),
+      height: lead.size.height + underSpacing(actionSize) + actionSize.height)
   }
 
   func placeSubviews(
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
-    guard let (lead, action) = parts(subviews) else { return }
+    guard let (mark, summary, action) = parts(subviews) else { return }
+    let textWidth = bounds.width - markRoom(mark)
 
-    if let actionSize = besideActionSize(bounds.width, action) {
-      let leadWidth = bounds.width - besideWidth(actionSize)
-      lead.place(
-        at: CGPoint(x: bounds.minX, y: bounds.midY), anchor: .leading,
-        proposal: ProposedViewSize(width: leadWidth, height: nil))
+    if let actionSize = besideActionSize(textWidth, action) {
+      let lead = lead(mark, summary, textWidth: textWidth - besideWidth(actionSize))
+      place(lead, mark, summary, at: CGPoint(x: bounds.minX, y: bounds.midY - lead.size.height / 2))
       action.place(
         at: CGPoint(x: bounds.maxX, y: bounds.midY), anchor: .trailing,
         proposal: ProposedViewSize(actionSize))
       return
     }
 
-    let under = ProposedViewSize(width: bounds.width, height: nil)
-    let leadHeight = lead.sizeThatFits(under).height
+    let lead = lead(mark, summary, textWidth: textWidth)
+    let under = ProposedViewSize(width: textWidth, height: nil)
     let spacing = underSpacing(action.sizeThatFits(under))
-    lead.place(at: bounds.origin, proposal: under)
+    place(lead, mark, summary, at: bounds.origin)
     action.place(
-      at: CGPoint(x: bounds.minX, y: bounds.minY + leadHeight + spacing), proposal: under)
+      at: CGPoint(x: bounds.minX + markRoom(mark), y: bounds.minY + lead.size.height + spacing),
+      proposal: under)
   }
 
-  private func parts(_ subviews: Subviews) -> (LayoutSubview, LayoutSubview)? {
-    subviews.count == 2 ? (subviews[0], subviews[1]) : nil
+  private func parts(_ subviews: Subviews) -> (LayoutSubview, LayoutSubview, LayoutSubview)? {
+    subviews.count == 3 ? (subviews[0], subviews[1], subviews[2]) : nil
   }
 
-  /// The action's own size when it goes beside the summary.
-  private func besideActionSize(_ width: CGFloat?, _ action: LayoutSubview) -> CGSize? {
+  private func lead(_ mark: LayoutSubview, _ summary: LayoutSubview, textWidth: CGFloat?) -> Lead {
+    let markDimensions = mark.dimensions(in: .unspecified)
+    let summaryProposal = ProposedViewSize(width: textWidth.map { max(0, $0) }, height: nil)
+    let summaryDimensions = summary.dimensions(in: summaryProposal)
+    // Where the mark's top sits from the summary's, with their `alignment` guides lined up.
+    let markTop = summaryDimensions[alignment] - markDimensions[alignment]
+    let top = min(0, markTop)
+    let bottom = max(summaryDimensions.height, markTop + markDimensions.height)
+    let room = markRoom(mark)
+    return Lead(
+      markOffset: CGPoint(x: 0, y: markTop - top),
+      summaryOffset: CGPoint(x: room, y: -top),
+      summaryProposal: summaryProposal,
+      size: CGSize(width: room + summaryDimensions.width, height: bottom - top))
+  }
+
+  private func place(
+    _ lead: Lead, _ mark: LayoutSubview, _ summary: LayoutSubview, at origin: CGPoint
+  ) {
+    mark.place(
+      at: CGPoint(x: origin.x + lead.markOffset.x, y: origin.y + lead.markOffset.y),
+      proposal: .unspecified)
+    summary.place(
+      at: CGPoint(x: origin.x + lead.summaryOffset.x, y: origin.y + lead.summaryOffset.y),
+      proposal: lead.summaryProposal)
+  }
+
+  /// What the mark takes from the line's width: nothing when there's none.
+  private func markRoom(_ mark: LayoutSubview) -> CGFloat {
+    let width = mark.sizeThatFits(.unspecified).width
+    return width > 0 ? width + Self.markSpacing : 0
+  }
+
+  /// The actions' own size when they go beside the summary.
+  private func besideActionSize(_ textWidth: CGFloat?, _ action: LayoutSubview) -> CGSize? {
     guard !isStacked else { return nil }
     let size = action.sizeThatFits(.unspecified)
-    guard let width else { return size }
-    return besideWidth(size) <= width / 2 ? size : nil
+    guard let textWidth else { return size }
+    return besideWidth(size) <= textWidth / 2 ? size : nil
   }
 
   private func underSpacing(_ action: CGSize) -> CGFloat {
     action.height > 0 ? Self.underSpacing : 0
   }
 
-  /// What the action takes from the summary's width: nothing when there's none.
+  /// What the actions take from the summary's width: nothing when there are none.
   private func besideWidth(_ action: CGSize) -> CGFloat {
     action.width > 0 ? action.width + Self.besideSpacing : 0
   }
