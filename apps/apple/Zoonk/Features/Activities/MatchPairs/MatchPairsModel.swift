@@ -8,14 +8,6 @@ struct MatchPairsFields: Decodable, Hashable, Sendable {
     let why: String?
   }
 
-  struct Distractor: Decodable, Hashable, Sendable {
-    /// "left" or "right".
-    let side: String
-    let text: String
-    let why: String
-  }
-
-  let distractors: [Distractor]
   let pairs: [Pair]
 
   var expected: ActivityExpectedAnswer {
@@ -23,10 +15,8 @@ struct MatchPairsFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// One card in a column. Pair cards share their pair's id on both sides; traps have their own.
 struct MatchCard: Hashable, Sendable, Identifiable {
   let id: String
-  let isTrap: Bool
   let text: String
   let why: String?
 }
@@ -37,35 +27,22 @@ enum MatchPairs {
     case left, right
   }
 
-  /// Matched pairs (locked in), each pair's first try and the traps that caught the learner. Wrong
-  /// tries explain themselves and can be retried, but the answer keeps each pair's first try, so
-  /// finding it by elimination still teaches without counting as knowing it.
   struct Progress: Hashable, Sendable {
     var firstTries: [String: String] = [:]
     var matched: [String] = []
-    var traps: [String] = []
   }
 
   struct SolvedRow: Hashable, Sendable {
-    let left: MatchCard?
-    let right: MatchCard?
+    let left: MatchCard
+    let right: MatchCard
   }
 
   private static let maxAttempts = 32
 
   static func cards(_ fields: MatchPairsFields, side: Side) -> [MatchCard] {
-    let pairs = fields.pairs.map {
-      MatchCard(id: $0.id, isTrap: false, text: side == .left ? $0.left : $0.right, why: $0.why)
+    fields.pairs.map {
+      MatchCard(id: $0.id, text: side == .left ? $0.left : $0.right, why: $0.why)
     }
-
-    let traps = fields.distractors.filter { $0.side == side.rawValue }.enumerated().map {
-      index, distractor in
-      MatchCard(
-        id: "\(side.rawValue)-trap-\(index)", isTrap: true, text: distractor.text,
-        why: distractor.why)
-    }
-
-    return pairs + traps
   }
 
   /// Both columns in a shuffled order that's the same on every load and on the web, with no pair
@@ -84,35 +61,25 @@ enum MatchPairs {
   }
 
   private static func hasAlignedPair(_ left: [MatchCard], _ right: [MatchCard]) -> Bool {
-    left.enumerated().contains { index, card in
-      !card.isTrap && index < right.count && right[index].id == card.id
-    }
+    zip(left, right).contains { $0.id == $1.id }
   }
 
   static func solvedRows(left: [MatchCard], right: [MatchCard]) -> [SolvedRow] {
-    let partners = Dictionary(
-      right.filter { !$0.isTrap }.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-
-    return left.map { SolvedRow(left: $0, right: $0.isTrap ? nil : partners[$0.id]) }
-      + right.filter(\.isTrap).map { SolvedRow(left: nil, right: $0) }
-  }
-
-  static func isMatch(_ left: MatchCard, _ right: MatchCard) -> Bool {
-    !left.isTrap && left.id == right.id
+    let partners = Dictionary(right.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    return left.compactMap { card in partners[card.id].map { SolvedRow(left: card, right: $0) } }
   }
 
   static func recordTry(_ progress: Progress, left: MatchCard, right: MatchCard) -> Progress {
     var next = progress
 
-    if !left.isTrap, next.firstTries[left.id] == nil {
+    if next.firstTries[left.id] == nil {
       next.firstTries[left.id] = right.id
     }
 
-    if isMatch(left, right) {
+    if left.id == right.id {
       next.matched.append(left.id)
     }
 
-    next.traps += [left, right].filter(\.isTrap).map(\.id)
     return next
   }
 
@@ -132,13 +99,6 @@ enum MatchPairs {
       return Progress()
     }
 
-    return Progress(firstTries: pairs, matched: Array(pairs.keys), traps: [])
-  }
-
-  /// Why two cards don't go together, from the writer's notes: the trap among them (the right one
-  /// first) with its own reason, or else the reason on the pairs the learner mixed up.
-  static func mismatch(left: MatchCard, right: MatchCard) -> (reason: String?, trap: MatchCard?) {
-    let trap = [right, left].first(where: \.isTrap)
-    return (trap?.why ?? right.why ?? left.why, trap)
+    return Progress(firstTries: pairs, matched: Array(pairs.keys))
   }
 }

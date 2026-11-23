@@ -1,7 +1,7 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { validateActivity } from "../validate-activity";
-import { findErrorTemplate } from "./reasoning-writing";
+import { findErrorTemplate, matchPairsTemplate } from "./reasoning-writing";
 
 describe(findErrorTemplate.id, () => {
   const spotTheAi = {
@@ -58,5 +58,26 @@ describe(findErrorTemplate.id, () => {
     });
 
     expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("invalidSchema");
+  });
+});
+
+describe(matchPairsTemplate.id, () => {
+  const { pairs } = activityContentFixtures.matchPairs.fields;
+
+  it.each([
+    { pairs },
+    { distractors: [{ side: "right", text: "library", why: "A library lends books." }], pairs },
+  ])("serves all pairs and an empty distractor list to existing clients", (fields) => {
+    const content = matchPairsTemplate.content.parse({
+      ...activityContentFixtures.matchPairs,
+      fields,
+    });
+
+    expect(content.fields).toStrictEqual({ distractors: [], pairs });
+
+    expect(matchPairsTemplate.computeExpected(content.fields)).toStrictEqual({
+      kind: "assignment",
+      pairs: Object.fromEntries(pairs.map(({ id }) => [id, id])),
+    });
   });
 });

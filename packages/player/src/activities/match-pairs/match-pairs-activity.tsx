@@ -14,12 +14,7 @@ import { usePlayerInteractionState } from "../../player-context";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
-import {
-  type MatchCard,
-  arrangeMatchColumns,
-  explainMismatch,
-  solvedRows,
-} from "./match-pairs-columns";
+import { type MatchCard, arrangeMatchColumns, solvedRows } from "./match-pairs-columns";
 import {
   type MatchProgress,
   isMatch,
@@ -35,29 +30,22 @@ type Selection = Record<Side, string | null>;
 type Miss = { explanation: string | null; left: string; right: string };
 
 const NO_SELECTION: Selection = { left: null, right: null };
-const SETTLED = new Set<MatchEntryState>(["none", "right"]);
 
 function cardState({
   card,
-  isComplete,
   miss,
   progress,
   selection,
   side,
 }: {
   card: MatchCard;
-  isComplete: boolean;
   miss: Miss | null;
   progress: MatchProgress;
   selection: Selection;
   side: Side;
 }): MatchEntryState {
-  if (!card.isTrap && progress.matched.includes(card.id)) {
+  if (progress.matched.includes(card.id)) {
     return "right";
-  }
-
-  if (card.isTrap && (isComplete || progress.traps.includes(card.id))) {
-    return "none";
   }
 
   if (miss?.[side] === card.id) {
@@ -93,7 +81,6 @@ export function MatchPairsActivity({
   const { fields } = content;
   const { left, right } = arrangeMatchColumns(fields);
   const pairIds = fields.pairs.map((pair) => pair.id);
-  const trapCount = fields.distractors.length;
   const isChecked = phase === "checked";
   const [progress, setProgress] = useState<MatchProgress>(() => progressFromAnswer(answer));
   const [selection, setSelection] = useState<Selection>(NO_SELECTION);
@@ -131,9 +118,7 @@ export function MatchPairsActivity({
       return;
     }
 
-    const { reason, trap } = explainMismatch({ left: leftCard, right: rightCard });
-    const trapNote = trap ? t("“{card}” has no match.", { card: trap.text }) : null;
-    const explanation = [trapNote, reason].filter(Boolean).join(space) || null;
+    const explanation = rightCard.why ?? leftCard.why;
 
     setMiss({ explanation, left: leftCard.id, right: rightCard.id });
 
@@ -169,11 +154,11 @@ export function MatchPairsActivity({
       return t("{text}, matched", { text });
     }
 
-    return state === "none" ? t("{text}, no match", { text }) : text;
+    return text;
   }
 
   const stateOf = (side: Side, card: MatchCard) =>
-    cardState({ card, isComplete, miss, progress, selection, side });
+    cardState({ card, miss, progress, selection, side });
 
   useNumberKeys({
     count: left.length + right.length,
@@ -182,7 +167,7 @@ export function MatchPairsActivity({
       const side: Side = index < left.length ? "left" : "right";
       const card = side === "left" ? left[index] : right[index - left.length];
 
-      if (!card || SETTLED.has(stateOf(side, card))) {
+      if (!card || stateOf(side, card) === "right") {
         return false;
       }
 
@@ -200,7 +185,7 @@ export function MatchPairsActivity({
         index={side === "left" ? index : left.length + index}
         label={cardLabel(card, state)}
         onClick={() => pick(side, card)}
-        pair={left.findIndex((other) => !other.isTrap && other.id === card.id)}
+        pair={left.findIndex((other) => other.id === card.id)}
         state={state}
       >
         <LessonRichText text={card.text} />
@@ -210,7 +195,7 @@ export function MatchPairsActivity({
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <MatchBoardCount matched={progress.matched.length} total={pairIds.length} traps={trapCount} />
+      <MatchBoardCount matched={progress.matched.length} total={pairIds.length} />
 
       <MatchBoard
         label={t("Cards to match")}
@@ -236,8 +221,8 @@ export function MatchPairsActivity({
 
       <ActivityTextAlternative>
         {t(
-          "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
-          { count: trapCount, matched: progress.matched.length, total: String(pairIds.length) },
+          "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
+          { matched: progress.matched.length, total: String(pairIds.length) },
         )}
       </ActivityTextAlternative>
     </ActivityCanvas>

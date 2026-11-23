@@ -114,7 +114,6 @@ function columnCount(cards: readonly Element[]) {
 
 async function openMatchPairs({ longWord }: { longWord?: string } = {}) {
   const fixture = activityContentFixtures.matchPairs;
-  const { distractors } = fixture.fields;
 
   openActivity({
     content: longWord
@@ -122,9 +121,9 @@ async function openMatchPairs({ longWord }: { longWord?: string } = {}) {
           ...fixture,
           fields: {
             ...fixture.fields,
-            distractors: [
-              ...distractors,
-              { side: "right", text: longWord, why: "It has no match." },
+            pairs: [
+              ...fixture.fields.pairs,
+              { id: "long", left: "brain wave recording", right: longWord },
             ],
           },
         }

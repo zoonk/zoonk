@@ -9,25 +9,23 @@ import { ANSWER_BOX_CLASS, ANSWER_TONE } from "./answer-tone";
 
 /**
  * `matched` is a pair the learner made that nothing has checked yet; `right` is a pair checked and
- * kept; `wrong` is a try that didn't go together; `none` is an entry shown to have no pair.
+ * kept; `wrong` is a try that didn't go together.
  */
-export type MatchEntryState = "idle" | "matched" | "none" | "right" | "selected" | "wrong";
+export type MatchEntryState = "idle" | "matched" | "right" | "selected" | "wrong";
 
 const ENTRY_TONE: Record<MatchEntryState, string> = {
   idle: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
   matched: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
-  none: "text-muted-foreground outline-input outline-1 -outline-offset-1 outline-dashed",
   right: ANSWER_TONE.right,
   selected: cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
   wrong: cn(ANSWER_TONE.wrong, "motion-safe:animate-shake"),
 };
 
 const PAIRED = new Set<MatchEntryState>(["matched", "right"]);
-const SETTLED = new Set<MatchEntryState>(["none", "right"]);
 
 /**
  * The box at an entry's start shows the key that picks it. Once the entry is in a pair, the pair's
- * number fills the same box, so matching moves no text; an entry with no pair leaves it empty.
+ * number fills the same box, so matching moves no text.
  */
 function EntryMarker({
   index,
@@ -43,7 +41,7 @@ function EntryMarker({
 
   return (
     <LineMarker aria-hidden="true" className="w-5">
-      {state !== "none" && cap && (
+      {cap && (
         <Kbd
           className={paired ? "bg-foreground text-background ring-0" : "hidden pointer-fine:flex"}
         >
@@ -78,7 +76,7 @@ export function MatchEntry({
   pair?: number;
   state?: MatchEntryState;
 }) {
-  const settled = SETTLED.has(state);
+  const settled = state === "right";
   const locked = disabled || settled;
   const keyed = !locked && !PAIRED.has(state);
 

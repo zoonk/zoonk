@@ -61226,6 +61226,8 @@
                         "type": "object",
                         "properties": {
                           "distractors": {
+                            "default": [],
+                            "maxItems": 0,
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -61254,8 +61256,7 @@
                                 "why"
                               ],
                               "additionalProperties": false
-                            },
-                            "description": "Aim for 3 or fewer."
+                            }
                           },
                           "pairs": {
                             "minItems": 2,

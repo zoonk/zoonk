@@ -1677,11 +1677,6 @@ msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs ma
 msgstr "Emparejaste {left} con {right}. {matched, plural, other {# de {total} pares emparejados.}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "95nYEN"
-msgid "“{card}” has no match."
-msgstr "“{card}” no tiene pareja."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "5sU5Ih"
 msgid "{left} and {right} don't go together."
 msgstr "{left} y {right} no forman pareja."
@@ -1692,19 +1687,14 @@ msgid "{text}, matched"
 msgstr "{text}, emparejada"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aj5odZ"
-msgid "{text}, no match"
-msgstr "{text}, sin pareja"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Tarjetas para emparejar"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Dzn88L"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para emparejarlas. {count, plural, =0 {} one {# tarjeta no tiene pareja.} other {# tarjetas no tienen pareja.}} {matched, plural, other {# de {total} pares emparejados.}}"
+msgctxt "jih4mf"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
+msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para emparejarlas. {matched, plural, other {# de {total} pares emparejados.}}"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "rnH_6_"
@@ -1715,11 +1705,6 @@ msgstr "<left></left> va con <right></right>, no con <guess></guess>."
 msgctxt "kzygtu"
 msgid "Missed on the first try"
 msgstr "Errores en el primer intento"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "_Hm0lS"
-msgid "Look-alikes with no match"
-msgstr "Opciones parecidas sin pareja"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2879,11 +2864,6 @@ msgstr "Traduce"
 msgctxt "nDkRHw"
 msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
 msgstr "{matched, plural, other {# de {total} pares emparejados}}"
-
-#: src/components/match-board.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# tarjeta no tiene pareja} other {# tarjetas no tienen pareja}}"
 
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"

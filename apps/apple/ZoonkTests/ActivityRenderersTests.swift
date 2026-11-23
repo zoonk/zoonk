@@ -216,7 +216,7 @@ final class ActivityRenderersTests: XCTestCase {
     let columns = MatchPairs.columns(fields)
 
     XCTAssertEqual(columns.left.map(\.id), ["c", "a", "b"])
-    XCTAssertEqual(columns.right.map(\.id), ["a", "right-trap-0", "c", "right-trap-1", "b"])
+    XCTAssertEqual(columns.right.map(\.id), ["b", "c", "a"])
   }
 
   func testMatchPairsMatchingEachPairOnTheFirstTryIsRight() throws {
@@ -237,24 +237,19 @@ final class ActivityRenderersTests: XCTestCase {
         try XCTUnwrap(MatchPairs.answer(pairIds: ["a", "b", "c"], progress: progress))))
   }
 
-  func testMatchPairsAMissKeepsItsFirstTryAndATrapIsMarked() throws {
+  func testMatchPairsAMissKeepsItsFirstTry() throws {
     let content = try content(matchPairsJSON)
     let (left, right) = MatchPairs.columns(try content.fields(as: MatchPairsFields.self))
     let card = { (side: [MatchCard], id: String) in side.first { $0.id == id }! }
 
     var progress = MatchPairs.recordTry(
-      MatchPairs.Progress(), left: card(left, "a"), right: card(right, "right-trap-0"))
-    XCTAssertEqual(progress.traps, ["right-trap-0"])
-    XCTAssertEqual(
-      MatchPairs.mismatch(left: card(left, "a"), right: card(right, "right-trap-0")).reason,
-      "Embarrassed is avergonzada.")
-
+      MatchPairs.Progress(), left: card(left, "a"), right: card(right, "b"))
     for id in ["a", "b", "c"] {
       progress = MatchPairs.recordTry(progress, left: card(left, id), right: card(right, id))
     }
 
     let answer = try XCTUnwrap(MatchPairs.answer(pairIds: ["a", "b", "c"], progress: progress))
-    XCTAssertEqual(answer.pairs?["a"], "right-trap-0")
+    XCTAssertEqual(answer.pairs?["a"], "b")
     XCTAssertFalse(grade(.matchPairs, content, answer), "matching by elimination doesn't count")
     XCTAssertEqual(MatchPairs.progress(from: answer).matched.sorted(), ["a", "b", "c"])
   }

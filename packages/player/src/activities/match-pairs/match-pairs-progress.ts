@@ -4,13 +4,12 @@ import { type MatchCard } from "./match-pairs-columns";
 export type MatchProgress = {
   firstTries: Readonly<Record<string, string>>;
   matched: readonly string[];
-  traps: readonly string[];
 };
 
-const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [], traps: [] };
+const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [] };
 
 export function isMatch(left: MatchCard, right: MatchCard): boolean {
-  return !left.isTrap && left.id === right.id;
+  return left.id === right.id;
 }
 
 export function recordTry(
@@ -18,14 +17,13 @@ export function recordTry(
   { left, right }: { left: MatchCard; right: MatchCard },
 ): MatchProgress {
   const firstTries =
-    left.isTrap || progress.firstTries[left.id] !== undefined
-      ? progress.firstTries
-      : { ...progress.firstTries, [left.id]: right.id };
+    progress.firstTries[left.id] === undefined
+      ? { ...progress.firstTries, [left.id]: right.id }
+      : progress.firstTries;
 
   const matched = isMatch(left, right) ? [...progress.matched, left.id] : progress.matched;
-  const traps = [left, right].filter((card) => card.isTrap).map((card) => card.id);
 
-  return { firstTries, matched, traps: [...progress.traps, ...traps] };
+  return { firstTries, matched };
 }
 
 export function matchAnswer(
@@ -47,5 +45,5 @@ export function progressFromAnswer(answer: ActivityAnswer | null): MatchProgress
     return EMPTY_MATCH_PROGRESS;
   }
 
-  return { firstTries: answer.pairs, matched: Object.keys(answer.pairs), traps: [] };
+  return { firstTries: answer.pairs, matched: Object.keys(answer.pairs) };
 }
