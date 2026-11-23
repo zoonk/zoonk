@@ -76,6 +76,11 @@ class MistakesNotebookFailureTest {
                 )
             }
 
+            override suspend fun openLesson(
+                session: AuthenticatedSession,
+                mistakeId: UUID,
+            ): UUID = error("Unexpected lesson request")
+
             override suspend fun pattern(
                 session: AuthenticatedSession,
                 goalId: UUID,

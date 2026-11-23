@@ -7474,6 +7474,11 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
 
 #: src/mistakes/mistake-entry.tsx
+msgctxt "UuiQw6"
+msgid "Open the lesson"
+msgstr "レッスンを開く"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
 msgid "Practice tomorrow"
 msgstr "明日から練習できます"
@@ -7482,11 +7487,6 @@ msgstr "明日から練習できます"
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "このトピックを練習する"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "UuiQw6"
-msgid "Open the lesson"
-msgstr "レッスンを開く"
 
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"

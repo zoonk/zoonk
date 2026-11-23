@@ -66,9 +66,12 @@ class MistakesNotebookScreenshots {
         correct: String,
         explanation: String? = null,
         format: String? = null,
-    ) = """{"cause":${cause?.let { "\"$it\"" } ?: "null"},"createdAt":"2026-10-2${id}T12:00:00Z","fixedAt":null,
+        hasLesson: Boolean = true,
+    ): String {
+        val lesson = if (hasLesson) """{"id":"00000000-0000-4000-8000-0000000000c$id","title":"Lesson"}""" else "null"
+        return """{"cause":${cause?.let { "\"$it\"" } ?: "null"},"createdAt":"2026-10-2${id}T12:00:00Z","fixedAt":null,
         "id":"00000000-0000-4000-8000-00000000000$id","itemId":null,
-        "lesson":{"id":"00000000-0000-4000-8000-0000000000c$id","title":"Lesson"},"practiceAvailable":${id != 3},
+        "lesson":$lesson,"practiceAvailable":${id != 3},
         "practiceAvailableTomorrow":${id == 3},
         "skill":${skill?.let {
         """{"id":"00000000-0000-4000-8000-0000000000${if (it.startsWith(
@@ -86,6 +89,7 @@ class MistakesNotebookScreenshots {
         ""","explanation":"$it""""
     } ?: ""}},
         "status":"open"}"""
+    }
 
     private val notebook: MistakeList =
         ApiJson.decodeFromString(
@@ -100,6 +104,7 @@ class MistakesNotebookScreenshots {
                 "R$55",
                 "R$60",
                 "25% de 80 é 20, então você paga 80 − 20 = 60.",
+                hasLesson = false,
             )},
               ${mistake(2, "misread", "Porcentagem", "Qual é 10% de 250?", "2,5", "25")},
               ${mistake(3, "gap", "Razão e proporção", "Se 3 cadernos custam R$12, quanto custam 5?", "R$15", "R$20")}],
@@ -159,6 +164,11 @@ class MistakesNotebookScreenshots {
                     cursor: String?,
                     timeZone: String,
                 ) = page
+
+                override suspend fun openLesson(
+                    session: AuthenticatedSession,
+                    mistakeId: UUID,
+                ): UUID = error("Unexpected lesson request")
 
                 override suspend fun pattern(
                     session: AuthenticatedSession,

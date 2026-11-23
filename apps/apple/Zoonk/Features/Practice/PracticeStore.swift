@@ -36,6 +36,12 @@ final class PracticeStore {
     return list
   }
 
+  func openLesson(mistakeId: String) async -> MutationResult<String> {
+    await cache.mutate(invalidating: [.learnerModel]) { [api] session in
+      try await api.openMistakeLesson(token: session.bearerToken, mistakeId: mistakeId)
+    }
+  }
+
   func pattern(goalId: String) -> Resource<NoticedPattern> {
     if let pattern = patterns[goalId] {
       return pattern
