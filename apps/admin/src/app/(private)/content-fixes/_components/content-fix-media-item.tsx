@@ -57,7 +57,7 @@ export function ReviewClip({
 }
 
 /** A new screen's picture: drawn at proposal time, so the reviewer sees it before approving. */
-export function ScreenPicture({ item }: { item: MediaItem }) {
+function ScreenPicture({ item }: { item: MediaItem }) {
   const { need, result } = item;
   const request = need.kind === "picture" ? need.request : null;
 

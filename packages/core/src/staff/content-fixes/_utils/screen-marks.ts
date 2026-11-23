@@ -74,7 +74,7 @@ export function lacksQuotes({
  * version of the screen may share) stays, and the screen's idea and icon stay as reviewed.
  * Without new quotes, as when marking failed, the screen keeps what still fits.
  */
-export function withMarkedText({
+function withMarkedText({
   marked,
   marks,
   text,

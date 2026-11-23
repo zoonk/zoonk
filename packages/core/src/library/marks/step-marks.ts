@@ -61,7 +61,7 @@ export function isTaggedScreen(screen: MarkedScreen): boolean {
   }
 }
 
-export function getMarkedText(screen: MarkedScreen): string | null {
+function getMarkedText(screen: MarkedScreen): string | null {
   if (screen.kind === "explanation") {
     return screen.content.text;
   }
