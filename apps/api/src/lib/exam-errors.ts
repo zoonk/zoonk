@@ -1,11 +1,12 @@
+import { type WritingNeedsChoice } from "@zoonk/core/exams/essays/writing-contract";
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
 import { signUpRequiredError } from "./lesson-player-errors";
 import { studySessionErrorCodes } from "./study-session-errors";
 
 const examErrorCodes = {
-  essayLimitReached: "ESSAY_LIMIT_REACHED",
   invalidMockOption: "INVALID_MOCK_OPTION",
   mockAnswerLocked: "MOCK_ANSWER_LOCKED",
+  mockAnswerStale: "MOCK_ANSWER_STALE",
   mockExpired: "MOCK_EXPIRED",
   mockFinished: "MOCK_FINISHED",
   mockNotFinished: "MOCK_NOT_FINISHED",
@@ -30,7 +31,6 @@ type ExamRefusal = {
     | "invalidItem"
     | "invalidOption"
     | "invalidSet"
-    | "limitReached"
     | "locked"
     | "noGoal"
     | "notEnoughQuestions"
@@ -42,6 +42,7 @@ type ExamRefusal = {
     | "notSpeaking"
     | "plusRequired"
     | "signUpRequired"
+    | "staleAnswer"
     | "timeUp"
     | "tooEarly"
     | "unauthorized"
@@ -89,11 +90,6 @@ const REFUSALS = {
     message: "This recording isn't in the running listening section",
     status: httpStatus.unprocessableEntity,
   },
-  limitReached: {
-    code: examErrorCodes.essayLimitReached,
-    message: "Today's essay grades are used up",
-    status: httpStatus.tooManyRequests,
-  },
   locked: {
     code: examErrorCodes.mockAnswerLocked,
     message: "This section never goes back to a question left behind",
@@ -134,6 +130,11 @@ const REFUSALS = {
     message: "Mock exams come with Plus",
     status: httpStatus.paymentRequired,
   },
+  staleAnswer: {
+    code: examErrorCodes.mockAnswerStale,
+    message: "A newer edit to this answer is already saved",
+    status: httpStatus.conflict,
+  },
   timeUp: {
     code: examErrorCodes.timeUp,
     message: "This section's time ran out",
@@ -151,7 +152,24 @@ const REFUSALS = {
   },
 } as const;
 
-export function examError(result: ExamRefusal) {
+export function writingExtraLimitErrorFields(returnsOn: string) {
+  return {
+    code: "USAGE_LIMIT_REACHED",
+    details: { returnsOn },
+    message: "Today's extra writing allowance is used",
+  } as const;
+}
+
+export function examError(result: ExamRefusal | WritingNeedsChoice) {
+  if (result.status === "needsChoice") {
+    return createErrorResponse({
+      code: "EXAM_CHOICE_REQUIRED",
+      details: { choiceGroups: result.choiceGroups },
+      message: "Choose the exam options required for this written test",
+      status: httpStatus.conflict,
+    });
+  }
+
   if (result.status === "unauthorized") {
     return errors.unauthorized();
   }

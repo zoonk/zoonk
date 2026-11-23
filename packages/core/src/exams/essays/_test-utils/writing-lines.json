@@ -1,0 +1,52 @@
+[
+  {
+    "charactersPerLine": 2,
+    "estimatedLines": 4,
+    "ignoredFrom": 8,
+    "limit": 2,
+    "text": "é🙂\r\n\r\nnext"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": "aaaaaaaaaa\n"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r\n"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": "aaaaaaaaaa\u2028"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": "aaaaaaaaaa\u2029"
+  },
+  {
+    "charactersPerLine": 10,
+    "estimatedLines": 2,
+    "ignoredFrom": 12,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r\n\r\n"
+  },
+  { "charactersPerLine": 10, "estimatedLines": 0, "ignoredFrom": null, "limit": 1, "text": "" }
+]

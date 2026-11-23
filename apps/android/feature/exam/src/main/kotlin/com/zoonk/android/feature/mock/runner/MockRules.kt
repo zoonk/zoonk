@@ -110,12 +110,14 @@ data class SectionPlace(
     val total: Int,
 )
 
-fun MockRun.sectionPlace(): SectionPlace? {
-    val question = question ?: return null
-    if (question.essay) return null
+fun MockRun.sectionPlace(
+    question: MockQuestion,
+    index: Int = position,
+): SectionPlace? {
     val total = view.current?.questionTotal?.toInt()
+    if (question.essay && (total == null || total <= 1 || question.number > total)) return null
     return SectionPlace(
-        number = if (total == null) position + 1 else question.number,
+        number = if (total == null) index + 1 else question.number,
         total = total ?: questions.count { !it.essay },
     )
 }

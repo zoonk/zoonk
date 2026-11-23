@@ -1,6 +1,7 @@
 import { StateMark } from "@/components/state-mark";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
+import { stepMarksKey } from "@zoonk/core/staff/content-fixes/media-schema";
 import Image from "next/image";
 import { CheckAgainButton } from "./check-again-button";
 import {
@@ -45,6 +46,8 @@ function mediaLabel(need: MediaItem["need"]): string {
       return need.alt ?? need.request;
     case "ideaIcon":
       return need.need.description;
+    case "marks":
+      return "The example box and underline";
     default:
       return need satisfies never;
   }
@@ -59,6 +62,10 @@ function MediaPreview({ item: { need, result } }: { item: MediaItem }) {
 
   if (result === "failed") {
     return <StateMark state="failed">Couldn&apos;t prepare {label}</StateMark>;
+  }
+
+  if (result.kind === "marks") {
+    return null;
   }
 
   return (
@@ -80,14 +87,19 @@ function MediaPreview({ item: { need, result } }: { item: MediaItem }) {
   );
 }
 
-/** Media a new screen list shows in place: a screen's picture, a word's clip, an idea's icon. */
+/**
+ * Media a change shows in place: a screen's picture, a word's clip, an idea's icon, a screen's
+ * example box and underline.
+ */
 function shownInPlace(changes: ContentFixDetail["changes"]): Set<string> {
   return new Set(
-    changes.flatMap((change) =>
-      change.model === "Lesson" && change.op === "setScreens"
-        ? (change.mediaLinks ?? []).map((link) => link.key)
-        : [],
-    ),
+    changes.flatMap((change) => {
+      if (change.model === "Lesson" && change.op === "setScreens") {
+        return (change.mediaLinks ?? []).map((link) => link.key);
+      }
+
+      return change.model === "Step" && change.op === "set" ? [stepMarksKey(change.id)] : [];
+    }),
   );
 }
 
@@ -117,13 +129,17 @@ const MEDIA_WORDS: Record<MediaItem["need"]["kind"], { one: string; many: string
   {
     clip: { many: "clips", one: "clip", verb: "record" },
     ideaIcon: { many: "icons", one: "icon", verb: "draw" },
+    marks: { many: "screens' examples", one: "screen's example", verb: "mark" },
     picture: { many: "pictures", one: "picture", verb: "draw" },
   };
 
 /** "draw 1 picture and 1 icon, record 2 clips": the media still owed, said once per verb. */
 function mediaInWords(items: readonly MediaItem[], verb: (base: string) => string): string {
-  const counted = (["picture", "ideaIcon", "clip"] as const).flatMap((kind) => {
-    const count = items.filter((item) => item.need.kind === kind).length;
+  const counted = (["picture", "ideaIcon", "clip", "marks"] as const).flatMap((kind) => {
+    const count = items
+      .filter((item) => item.need.kind === kind)
+      .reduce((sum, item) => sum + (item.need.kind === "marks" ? item.need.screens.length : 1), 0);
+
     const words = MEDIA_WORDS[kind];
 
     return count > 0
@@ -140,6 +156,8 @@ function mediaInWords(items: readonly MediaItem[], verb: (base: string) => strin
 
   return phrase.charAt(0).toUpperCase() + phrase.slice(1);
 }
+
+const VERB_ING: Record<string, string> = { draw: "drawing", mark: "marking", record: "recording" };
 
 /** A wrapped line starts under the words, past the state's mark and its gap. */
 const HANGING_LINE_CLASS = "ps-[calc(1em+0.375rem)] -indent-[calc(1em+0.375rem)]";
@@ -165,7 +183,7 @@ export function MediaWaitingNote({ media }: { media: readonly MediaItem[] }) {
     <p className={HANGING_LINE_CLASS}>
       <StateMark state="running">
         {pending.length > 0
-          ? mediaInWords(pending, (verb) => (verb === "draw" ? "drawing" : "recording"))
+          ? mediaInWords(pending, (verb) => VERB_ING[verb] ?? verb)
           : "Preparing its media"}
       </StateMark>
       <span className="text-muted-foreground">

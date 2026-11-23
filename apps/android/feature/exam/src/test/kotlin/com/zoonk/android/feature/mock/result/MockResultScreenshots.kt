@@ -23,7 +23,6 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.feature.mock.runner.EssayGradeOutcome
 import com.zoonk.android.feature.mock.runner.FakeMockRunApi
 import com.zoonk.android.feature.mock.runner.ITEM_TWO
 import com.zoonk.android.feature.mock.runner.MockRunStore
@@ -268,15 +267,6 @@ class MockResultScreenshots {
         api.gradeGate = CompletableDeferred()
         compose.onNodeWithText("See result").performClick()
         capture("result-essay-grading")
-    }
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun essayLimitReached() {
-        val api = show(runningMock(current = "null"), afterFinish = essaysOnly(pendingEssay()))
-        api.gradeOutcome = EssayGradeOutcome.LimitReached
-        compose.onNodeWithText("See result").performClick()
-        capture("result-essay-limit")
     }
 
     @Test

@@ -5,6 +5,7 @@ import { generateLessonIconImage } from "@zoonk/ai/tasks/icons/image";
 import { checkLessonImage } from "@zoonk/ai/tasks/images/check";
 import { generateLessonImage } from "@zoonk/ai/tasks/images/generate";
 import { generateImageScene } from "@zoonk/ai/tasks/images/scene";
+import { tagLesson } from "@zoonk/ai/tasks/lesson-marks";
 import { uploadImage } from "@zoonk/core/images/upload";
 import {
   type ContentFixMediaNeed,
@@ -239,5 +240,50 @@ describe("preparing media for a proposed content fix", () => {
     await expect(
       prisma.mediaAsset.count({ where: { reuseKey: { startsWith: `image:fix:${fix.id}:` } } }),
     ).resolves.toBe(0);
+  });
+
+  it("marks the example a rewritten explanation lacks, and a failed marking never holds the fix", async () => {
+    const marks = {
+      kept: [{ example: null, underline: null }],
+      key: "marks",
+      kind: "marks" as const,
+      language: "en",
+      lessonTitle: "Halves",
+      screens: [
+        {
+          hasVisual: false,
+          kind: "explanation" as const,
+          text: "Halves are equal parts. Two halves of an orange make one orange.",
+          title: null,
+        },
+      ],
+    };
+
+    const example = "Two halves of an orange make one orange.";
+
+    vi.mocked(tagLesson).mockResolvedValueOnce({
+      data: { ideas: [], screens: [{ example, icon: null, ideaIndex: null, underline: null }] },
+    } as never);
+
+    const marked = await owedWordFix([marks]);
+    await mediaTask({ fixId: marked.fix.id, userId: marked.proposer.id });
+
+    await expect(
+      prisma.contentFix.findUniqueOrThrow({ where: { id: marked.fix.id } }),
+    ).resolves.toMatchObject({
+      media: [{ result: { kind: "marks", screens: [{ example, underline: null }] } }],
+      mediaOwedAt: null,
+    });
+
+    vi.mocked(tagLesson).mockRejectedValue(new Error("The model is unavailable"));
+    const failed = await owedWordFix([marks]);
+    await mediaTask({ fixId: failed.fix.id, userId: failed.proposer.id });
+
+    await expect(
+      prisma.contentFix.findUniqueOrThrow({ where: { id: failed.fix.id } }),
+    ).resolves.toMatchObject({
+      media: [{ result: { kind: "marks", screens: [] } }],
+      mediaOwedAt: null,
+    });
   });
 });

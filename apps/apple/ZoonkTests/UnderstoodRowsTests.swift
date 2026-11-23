@@ -89,6 +89,35 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertNil(examCountry.badge)
   }
 
+  func testOnlyANamedExamWaitsForItsNotice() throws {
+    func note(_ details: [String: Any]) throws -> String? {
+      let goal = try understoodGoal(
+        draft: [
+          "kind": "exam", "language": "en", "prompt": "test on Friday",
+          "title": "Pass the cell cycle test", "displayName": "Cell cycle", "details": details,
+        ])
+
+      return try XCTUnwrap(
+        UnderstoodRows.rows(for: goal, today: today).first { $0.id == "targetDate" }
+      ).note
+    }
+
+    XCTAssertEqual(try note([:]), "Know the date? Set it here.")
+
+    XCTAssertEqual(
+      try note(["examName": "OAB"]),
+      "The official date comes out in the exam's notice. Know it already? Set it here.")
+  }
+
+  func testTheMaterialRowNamesEachSourceAndPastedTextAsYourText() throws {
+    let row = try XCTUnwrap(
+      UnderstoodRows.materialRow(titles: ["Cell cycle.pdf", ""], missing: false))
+
+    XCTAssertEqual(row.value, "Cell cycle.pdf, Your text")
+    XCTAssertNil(row.field, "The material is changed from the goal's words, not on the card")
+    XCTAssertNil(UnderstoodRows.materialRow(titles: [], missing: false))
+  }
+
   private func examDay(_ date: String) -> [String: Any] {
     [
       "date": date, "estimated": false, "label": "", "registrationClosed": false,

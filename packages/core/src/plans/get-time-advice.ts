@@ -89,7 +89,9 @@ function getSearchWeekdayMinutes({
   input: PlanTimeToCoverInput;
   state: PlanState;
 }): number {
-  return input.weekendMinutes === undefined ? state.goal.dailyMinutes : MIN_DAILY_MINUTES;
+  return input.studyDays === undefined && input.weekendMinutes === undefined
+    ? state.goal.dailyMinutes
+    : MIN_DAILY_MINUTES;
 }
 
 function withStudyWeek({

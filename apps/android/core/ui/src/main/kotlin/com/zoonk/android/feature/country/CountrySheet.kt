@@ -12,16 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +50,7 @@ import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.MediaPending
@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.controlInk
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.launch
 import java.text.Normalizer
@@ -103,7 +104,7 @@ fun CountrySheet(
         }
     val matches = query.takeIf { it.isNotBlank() }?.let { text -> (all.value ?: suggested).filter { matchesCountry(text, it.name) } }
 
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberExpandedBottomSheetState()) {
         Column(Modifier.fillMaxHeight()) {
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
@@ -131,22 +132,33 @@ fun CountrySheet(
                     if (matches.isEmpty() && all.hasContent) {
                         item(key = "no-match") { Quiet(stringResource(R.string.country_no_match)) }
                     }
-                    items(matches, key = { "match-${it.code}" }, contentType = { "country" }) { row(it) }
+                    countries("match", matches, selected, row)
                     unloaded(all) { scope.launch { catalog?.refresh() } }
                     return@LazyColumn
                 }
                 if (suggested.isNotEmpty()) {
                     label("suggested", R.string.country_suggested)
-                    items(suggested, key = { "suggested-${it.code}" }, contentType = { "country" }) { row(it) }
+                    countries("suggested", suggested, selected, row)
                 }
                 label("all", R.string.country_all)
                 if (all is LoadState.Loaded) {
-                    items(all.value, key = { "all-${it.code}" }, contentType = { "country" }) { row(it) }
+                    countries("all", all.value, selected, row)
                 }
                 unloaded(all) { scope.launch { catalog?.refresh() } }
             }
         }
     }
+}
+
+/** A run of country rows with main's hairlines between them, gone beside the [selected] one. */
+private fun LazyListScope.countries(
+    key: String,
+    choices: List<CountryChoice>,
+    selected: String?,
+    row: @Composable (CountryChoice) -> Unit,
+) = itemsIndexed(choices, key = { _, choice -> "$key-${choice.code}" }, contentType = { _, _ -> "country" }) { index, choice ->
+    if (index > 0) ListDivider(besideHighlight = choice.code == selected || choices[index - 1].code == selected)
+    row(choice)
 }
 
 /** Until every country loads: skeleton rows, or the failure with its retry, which a search keeps showing. */
@@ -201,7 +213,6 @@ private fun CountryRow(
                 .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),
         trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
     )
-    HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
 }
 
 @Composable

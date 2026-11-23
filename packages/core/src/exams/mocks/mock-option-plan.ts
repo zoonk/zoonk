@@ -4,6 +4,7 @@ import { type MockOption, findAreaSubject, getSubjectShares, isOptionArea } from
 import { type MockCandidate, type MockPlan, getMockDays, planMock } from "./mock-plan";
 import { type MockEssayCandidate } from "./written-parts";
 import { isQuestionSubject } from "./written-subject";
+import { onlyObjectiveStructure, planWrittenTest } from "./written-test-plan";
 
 export function toSubjectCandidates({
   candidates,
@@ -87,6 +88,18 @@ export function planOptionMock({
   speaking?: boolean;
   structure: ExamStructure | null;
 }): MockPlan {
+  if (option.kind === "written") {
+    return planWrittenTest({ day: option.day, essays, structure });
+  }
+
+  if (option.kind === "objective") {
+    return planOptionMock({
+      candidates,
+      option: { ...option, kind: "full" },
+      structure: onlyObjectiveStructure(structure),
+    });
+  }
+
   if (option.kind === "area" && structure) {
     const section = getSubjectSectionName(option);
     const parts = option.areas.filter((name) => name !== section);

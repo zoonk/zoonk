@@ -18,7 +18,7 @@ async function getLearnerSources(request: NextRequest) {
   return NextResponse.json({
     sources: links.map((link) => ({
       addedAt: link.createdAt.toISOString(),
-      goalId: link.goalId,
+      goalIds: link.goalIds,
       origin: link.origin,
       source: toSourceResource(link.source),
     })),

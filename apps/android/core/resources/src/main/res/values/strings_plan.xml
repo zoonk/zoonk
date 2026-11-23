@@ -547,13 +547,11 @@
     <string name="plan_tool_writing_setup_line_3">Adding a quick check that it works…</string>
     <string name="plan_tool_device">Your device</string>
     <string name="plan_what_you_practice">What you practice</string>
-    <string name="plan_when_to_practice">When to practice %1$s</string>
+    <string name="plan_when_to_practice_writing">When to practice writing</string>
     <string name="plan_cadence_weekly">Every week</string>
     <string name="plan_cadence_biweekly">Every other week</string>
     <string name="plan_cadence_final_weeks">Only the final weeks</string>
-    <string name="plan_cadence_weekly_effect">Recommended: a little every week, which improves writing the most.</string>
-    <string name="plan_cadence_biweekly_effect">The same practice in alternate weeks: less spread out, more at a time.</string>
-    <string name="plan_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
+    <string name="plan_cadence_weekly_recommended">Every week (recommended)</string>
 
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">There isn\'t enough time to cover everything by %1$s.</string>
@@ -855,4 +853,14 @@
     <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
     <string name="plan_outside_past_basics">Skipped · you already know the basics</string>
     <string name="plan_outside_skipped_base">Skipped · your choice</string>
+    <string name="plan_written_below_minimum">Below the minimum to pass</string>
+    <string name="plan_written_asks_for">%1$s needs %2$s points, whatever your other scores.</string>
+    <string name="plan_written_asks_for_share">%1$s needs %2$s of its points, whatever your other scores.</string>
+    <string name="plan_written_not_measured">%1$s isn\'t measured yet.</string>
+    <string name="plan_written_not_measured_half">%1$s, half your final score, isn\'t measured yet.</string>
+    <string name="plan_written_not_measured_share">%1$s, %2$s of your final score, isn\'t measured yet.</string>
+    <string name="plan_written_objective">Objective test</string>
+    <string name="plan_written_above_minimum">Above the %1$s points needed</string>
+    <string name="plan_written_points_below">%1$s points short of the %2$s needed</string>
+    <string name="plan_written_close_to_minimum">Close to the %1$s points needed</string>
 </resources>

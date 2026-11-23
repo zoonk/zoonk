@@ -18,7 +18,9 @@ import {
   getConfirmingCount,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
+import { getWritingSkillIds } from "../learner/writing-skills";
 import { fitsExamChoice, fitsExamOptions } from "../library/exams/exam-choice-format";
+import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../library/items/item-field";
 import { loadUsedSituations } from "../library/items/used-situations";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
@@ -159,6 +161,21 @@ function toPick({
   };
 }
 
+function getNonObjectiveSkillIds(
+  goal: (PickingGoal & Parameters<typeof toListeningExam>[0]) | null,
+) {
+  const graph = parsePlanGraph(goal?.plan?.graph);
+
+  const blueprintStructure = goal?.examBlueprint
+    ? readBlueprintContent(goal.examBlueprint).structure
+    : null;
+
+  return new Set([
+    ...(goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : []),
+    ...getWritingSkillIds({ graph, structure: blueprintStructure }),
+  ]);
+}
+
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
 export async function pickPlacementItemSkills({
   choice,
@@ -192,9 +209,7 @@ export async function pickPlacementItemSkills({
     where: { id: goalId },
   });
 
-  const listeningSkillIds = goal
-    ? getListeningSkillIds({ exam: toListeningExam(goal), graph: parsePlanGraph(goal.plan?.graph) })
-    : new Set<string>();
+  const listeningSkillIds = getNonObjectiveSkillIds(goal);
 
   const picked = await readPickedSkillIds({ forPlacement, goal, listeningSkillIds, skillIds });
 

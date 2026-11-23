@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { certificateFixture } from "@zoonk/testing/fixtures/certificates";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -711,6 +712,38 @@ describe(getLearnerSummary, () => {
       nextChangeAt: lastActivity.getTime() + 60 * MINUTE_MS,
     });
   });
+
+  it.each([1, 3])(
+    "offers Continue for an unfinished written answer from %i days ago",
+    async (days) => {
+      const { goal, user } = await learnerWithGoal({ kind: "exam" });
+      const localDate = new Date(TODAY.getTime() - days * DAY_MS);
+
+      const day = await studySessionFixture({
+        goalId: goal.id,
+        localDate,
+        startedAt: localDate,
+        status: "active",
+        userId: user.id,
+      });
+
+      await studySessionBlockFixture({
+        estimatedMinutes: 45,
+        kind: "produce",
+        payload: toBlockPayload({
+          title: "Written answer",
+          writing: { admissionId: randomUUID(), draft: null, taskKey: "written", unit: "answer" },
+        }),
+        sessionId: day.id,
+        startedAt: localDate,
+        status: "active",
+      });
+
+      await expect(getLearnerSummary()).resolves.toMatchObject({
+        today: { blocksLeft: 1, next: { minutes: 45, sessionId: day.id, title: "Written answer" } },
+      });
+    },
+  );
 
   it("draws the buddy from progress and tags analytics with the plan's phase", async () => {
     const { goal, user } = await learnerWithGoal();

@@ -149,6 +149,35 @@ describe(buildPlan, () => {
     expect(plan.items.some((item) => item.skillId === "notice")).toBe(true);
   });
 
+  it("keeps official writing in the phase totals when adding optional study", () => {
+    const input = planInput({
+      bringBackSetAside: true,
+      goal: { dailyMinutes: 60, kind: "exam", targetDate: addDays(TODAY, 14) },
+      graph: {
+        phases: [{ milestone: null, name: "Exam" }],
+        skills: [
+          skill("notice", { area: "Math", lessons: 1, topics: ["Fractions"] }),
+          skill("strategy", { area: "Strategy", extra: true, lessons: 1 }),
+        ],
+      },
+      lessons: [lesson("fractions", ["notice"]), lesson("clock", ["strategy"])],
+      writing: {
+        practice: [{ minutes: 10, taskKey: "essay", title: "Essay", unit: "answer" }],
+        skillIds: new Set(),
+        tests: [],
+      },
+    });
+
+    const plan = buildPlan(input);
+
+    expect(plan.items.some((item) => item.skillId === "strategy")).toBe(true);
+    expect(plan.writingSchedule?.length).toBeGreaterThan(0);
+
+    expect(plan.phases.reduce((sum, phase) => sum + phase.minutes, 0)).toBe(
+      plan.estimate.totalMinutes,
+    );
+  });
+
   it("lays lessons, placeholders and phase checkpoints on days at the learner's time", () => {
     const plan = buildPlan(planInput());
 

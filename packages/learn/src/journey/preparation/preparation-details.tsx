@@ -17,6 +17,7 @@ import {
   usePreparationParts,
 } from "./use-preparation-parts";
 import { type StillNeededItem, useStillNeeded } from "./use-still-needed";
+import { WrittenProjectionScore } from "./written-projection";
 
 function EstimateWaits({ preparation }: { preparation: Preparation }) {
   const t = useExtracted();
@@ -60,6 +61,16 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   const scoreRange = useScoreRange();
   const score = preparation.estimatedScore;
   const source = useEstimateSource({ count: score?.mocks ?? 0, preparation });
+
+  if (preparation.writtenProjection) {
+    return (
+      <WrittenProjectionScore
+        goalId={preparation.goalId}
+        projection={preparation.writtenProjection}
+        source={score ? source : null}
+      />
+    );
+  }
 
   if (!score) {
     return <EstimateWaits preparation={preparation} />;

@@ -10,6 +10,7 @@ import { readClaimEvents } from "./claim-events";
 import { readOwnedGoal } from "./owned-goal";
 import { getRequestInstant } from "./request-instant";
 import { readSavedPlan } from "./saved-plan";
+import { readScheduledAnswers } from "./scheduled-answers";
 import { readActiveSubscription } from "./subscription";
 
 /** GET-only, after ownership authorization; Today and its readers share the unbuilt day's selection and blocks. */
@@ -41,6 +42,7 @@ export async function readPlannedDay(userId: string, goalId: string, timeZone: s
     now,
     readClaims: (skillIds: readonly string[]) => readClaimEvents(userId, goalId, toIdKey(skillIds)),
     readSubscription: readActiveSubscription,
+    readWritingAnswers: readScheduledAnswers,
     selection,
     timeZone,
     userId,

@@ -1,4 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
+import { apportion } from "@zoonk/utils/apportion";
 import { followCourseLessonOrder, keepCourseLevels } from "./course-unit-order";
 import { countStandInLessons } from "./stand-in-size";
 
@@ -53,6 +54,7 @@ export type QueueUnit = {
   reduced?: boolean;
   skillId: string | null;
   title: string;
+  teachingShare?: number;
 };
 
 /**
@@ -126,41 +128,33 @@ function toPlaceholderUnit({
   } satisfies QueueUnit;
 }
 
-function apportion({ needs, total }: { needs: readonly number[]; total: number }): number[] {
-  const sum = needs.reduce((acc, need) => acc + need, 0);
-  const exact = needs.map((need) => (sum > 0 ? (total * need) / sum : total / needs.length));
-  const whole = exact.map((share) => Math.floor(share));
-  const left = total - whole.reduce((acc, count) => acc + count, 0);
-
-  const extra = new Set(
-    exact
-      .map((share, index) => ({ index, remainder: share - (whole[index] ?? 0) }))
-      .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index)
-      .slice(0, left)
-      .map((entry) => entry.index),
-  );
-
-  const counts = whole.map((count, index) => count + (extra.has(index) ? 1 : 0));
+function apportionLessonShares({
+  needs,
+  total,
+}: {
+  needs: readonly number[];
+  total: number;
+}): number[] {
+  const counts = apportion({ total, weights: needs });
 
   if (total < needs.length) {
     return counts;
   }
 
-  return counts.reduce<number[]>((shares, count, index) => {
+  const shares = [...counts];
+
+  counts.forEach((count, index) => {
     if (count > 0) {
-      return shares;
+      return;
     }
 
-    const largest = shares.indexOf(Math.max(...shares));
+    const largestShare = Math.max(...shares);
+    const largestIndex = shares.indexOf(largestShare);
+    shares[largestIndex] = largestShare - 1;
+    shares[index] = 1;
+  });
 
-    return shares.map((share, at) => {
-      if (at === index) {
-        return 1;
-      }
-
-      return at === largest ? share - 1 : share;
-    });
-  }, counts);
+  return shares;
 }
 
 export function assignLessonSkills({
@@ -197,7 +191,7 @@ export function assignLessonSkills({
   const shared = [...groups.values()].flatMap((group) => {
     const skillIds = group[0]?.skillIds ?? [];
 
-    const counts = apportion({
+    const counts = apportionLessonShares({
       needs: skillIds.map((skillId) =>
         Math.max(1, (sizes.get(skillId) ?? 1) - (alone.get(skillId)?.length ?? 0)),
       ),

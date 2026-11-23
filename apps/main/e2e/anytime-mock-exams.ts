@@ -46,7 +46,14 @@ const WRITTEN_STRUCTURE = {
     scoring: { description: "", method: "raw" },
     sections: [
       { day: null, kind: "objective", minutes: 12, name: "Prova objetiva", questions: 8 },
-      { day: null, kind: "written", minutes: 30, name: "Prova discursiva", questions: null },
+      {
+        day: null,
+        kind: "written",
+        minutes: 30,
+        name: "Prova discursiva",
+        questions: null,
+        tasks: [{ count: 1, description: "Uma dissertação", key: "essay", lines: 30 }],
+      },
     ],
     timeLimitMinutes: 42,
     totalQuestions: 8,
@@ -68,6 +75,37 @@ export const WRITTEN_ESSAY = {
   ],
   sampleOutline: "Thesis, two arguments, conclusion.",
 };
+
+const ESSAY_CRITERIA = [
+  { id: "thesis", name: "Thesis", points: null },
+  { id: "law", name: "Legal basis", points: null },
+];
+
+/** The essay as a written prompt of the exam's one written task, as the prompt writer saves it. */
+export function writtenEssayContent(skillId: string) {
+  return {
+    ...WRITTEN_ESSAY,
+    writing: {
+      aspects: ESSAY_CRITERIA.map(({ id, name }) => ({
+        criterionId: id,
+        description: name,
+        points: null,
+      })),
+      assessedSkillIds: [skillId],
+      charactersPerLine: 55,
+      criteria: ESSAY_CRITERIA,
+      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+      keySource: "practiceKey",
+      lines: 30,
+      minimumWords: 5,
+      part: "Prova discursiva",
+      points: null,
+      taskKey: "essay",
+      title: "Controle externo",
+      unit: "answer",
+    },
+  };
+}
 
 export function getStructure({ written }: { written: boolean }) {
   return written ? WRITTEN_STRUCTURE : STRUCTURE;

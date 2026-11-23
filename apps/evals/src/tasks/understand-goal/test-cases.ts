@@ -1,8 +1,8 @@
 import { type TestCase } from "@/lib/types";
-import { type UnderstandGoalInput } from "@zoonk/ai/tasks/goals/understand-goal";
+import { type UnderstandGoalCaseInput } from "./material-cases";
 import { type UnderstandGoalExpected } from "./scorer";
 
-type UnderstandGoalCase = TestCase<UnderstandGoalExpected, UnderstandGoalInput>;
+type UnderstandGoalCase = TestCase<UnderstandGoalExpected, UnderstandGoalCaseInput>;
 
 const TODAY = "2026-09-26";
 

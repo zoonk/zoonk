@@ -28,6 +28,7 @@ import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speak
 import { hasMindMapsPage } from "../../mind-maps/mind-map-contract";
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { CONTINUING_ANSWER_SESSION_WHERE } from "../../sessions/_utils/current-session";
 import { getSession } from "../../users/get-session";
 import { findWaitingGoals } from "../../view-models/onboarding/_utils/waiting-goals";
 import { isGoalSetupLeft } from "../../view-models/onboarding/onboarding-steps";
@@ -244,6 +245,12 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   }
 
   const now = await getRequestInstant();
+  const recentSessions = getRecentSessionRange(now);
+
+  const olderWriting = {
+    ...CONTINUING_ANSWER_SESSION_WHERE,
+    localDate: { lt: recentSessions.gte },
+  };
 
   const [profile, goals, subscription, sessions, phaseFacts, facts, courseStarts] =
     await Promise.all([
@@ -252,7 +259,8 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
       isAnonymous ? null : getActiveSubscription(),
       prisma.studySession.findMany({
         include: { blocks: { orderBy: { position: "asc" } } },
-        where: { localDate: getRecentSessionRange(now), userId },
+        orderBy: { localDate: "desc" },
+        where: { OR: [{ localDate: recentSessions }, olderWriting], userId },
       }),
       loadPlanPhaseFacts({ userId }),
       loadLearnerFacts(userId),

@@ -72,7 +72,6 @@ struct ReadDraftView: View {
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
-  var sourceIDs: [String] = []
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
@@ -97,8 +96,7 @@ struct ReadDraftView: View {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
-            from: draft.id, schedule: understood.schedule, sourceIDs: sourceIDs,
-            timeZone: draft.timeZone)
+            from: draft.id, schedule: understood.schedule, timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
@@ -351,14 +349,17 @@ private struct UnderstoodCard: View {
     let rows = UnderstoodRows.rows(
       for: understood.goals[index], countryAsked: countryAsked.contains(index))
 
-    // The schedule goes with the first goal that starts, so it leaves when none can.
-    guard index == 0, !startable.isEmpty,
-      let schedule = UnderstoodRows.scheduleRow(understood)
-    else {
+    // The material and the schedule go with the first goal that starts, so they leave when none can.
+    guard index == 0, !startable.isEmpty else {
       return rows
     }
 
-    return rows + [schedule]
+    return rows
+      + [
+        UnderstoodRows.materialRow(
+          titles: draft.sources.map(\.title), missing: draft.materialMissing),
+        UnderstoodRows.scheduleRow(understood),
+      ].compactMap(\.self)
   }
 
   /// False when it couldn't be saved, so the editor stays open to try again.
@@ -622,12 +623,15 @@ private struct UnderstoodRowView: View {
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
 
-          HStack(alignment: .firstTextBaseline) {
-            if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
-            if let badge = row.badge {
-              Text(badge)
-                .typeStyle(.meta)
-                .foregroundStyle(.mutedForeground)
+          // Material that's all gone leaves only its note.
+          if !row.value.isEmpty || !row.valueFacts.isEmpty {
+            HStack(alignment: .firstTextBaseline) {
+              if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
+              if let badge = row.badge {
+                Text(badge)
+                  .typeStyle(.meta)
+                  .foregroundStyle(.mutedForeground)
+              }
             }
           }
 

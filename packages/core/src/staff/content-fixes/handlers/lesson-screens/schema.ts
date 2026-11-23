@@ -72,6 +72,7 @@ const common = {
 const kept = z.strictObject({
   ...common,
   id: idSchema,
+  remark: z.literal(true).optional(),
   variants: z.array(z.strictObject({ content, id: idSchema })).optional(),
 });
 
@@ -159,6 +160,7 @@ const mediaLink = z.discriminatedUnion("target", [
   z.object({ key: text, position: z.int(), target: z.literal("picture") }),
   z.object({ key: text, position: z.int(), target: z.literal("alphabet") }),
   z.object({ key: text, position: z.int(), target: z.literal("idea") }),
+  z.object({ key: text, positions: z.array(z.int()), target: z.literal("marks") }),
   z.object({
     create: z.boolean(),
     id: idSchema,

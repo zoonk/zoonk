@@ -10,8 +10,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -103,6 +105,11 @@ internal fun ActivitySliderTrack(
     val track = MaterialTheme.colorScheme.surfaceContainerHigh
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val twoStops = if (positions == 1 && enabled) Modifier.betweenTwoStops(position, rtl, onPositionChange) else Modifier
+    val slider =
+        remember(positions) {
+            SliderState(value = position.toFloat(), steps = (positions - 1).coerceAtLeast(0), trackRange = 0f..positions.toFloat())
+        }
+    slider.value = position.toFloat()
     val colors =
         SliderDefaults.colors(
             activeTrackColor = fill ?: track,
@@ -113,12 +120,10 @@ internal fun ActivitySliderTrack(
         )
 
     Slider(
-        value = position.toFloat(),
+        state = slider,
         onValueChange = { onPositionChange(it.roundToInt()) },
         modifier = modifier.fillMaxWidth().then(twoStops),
         enabled = enabled,
-        valueRange = 0f..positions.toFloat(),
-        steps = (positions - 1).coerceAtLeast(0),
         colors = colors,
         track = { state ->
             Box {

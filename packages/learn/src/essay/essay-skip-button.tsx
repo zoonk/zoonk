@@ -3,10 +3,10 @@
 import { Button } from "@zoonk/ui/components/button";
 import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type useFinishEssay } from "./use-finish-essay";
+import { type useFinishTask } from "./use-finish-essay";
 
 /** Leaves the essay as it is: the same second action while writing and after a grade. */
-export function EssaySkipButton({ finishing }: { finishing: ReturnType<typeof useFinishEssay> }) {
+export function EssaySkipButton({ finishing }: { finishing: ReturnType<typeof useFinishTask> }) {
   const t = useExtracted();
 
   return (

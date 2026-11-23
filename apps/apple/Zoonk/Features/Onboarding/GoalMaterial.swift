@@ -24,7 +24,7 @@ struct GoalMaterialButton: View {
             "Your plan and lessons will use it.", tableName: "Onboarding",
             comment: "Over the ways to add material to a goal, in their menu")
         ) {
-          paperclip
+          Paperclip()
         } onAttached: { source in
           material.attach(source)
         }
@@ -32,16 +32,22 @@ struct GoalMaterialButton: View {
         Button {
           draft.showsSignUp.toggle()
         } label: {
-          paperclip
+          Paperclip()
         }
       }
     }
     // Only the paperclip, not the box's row it's in, opens it.
     .menuStyle(.button)
     .buttonStyle(.borderless)
+    .disabled(!material.hasRoom)
   }
+}
 
-  private var paperclip: some View {
+/// Its muted ink overrides the borderless style's disabled look, so it fades as ghost buttons do.
+private struct Paperclip: View {
+  @Environment(\.isEnabled) private var isEnabled
+
+  var body: some View {
     Label {
       Text(
         "Add your material", tableName: "Onboarding",
@@ -51,12 +57,87 @@ struct GoalMaterialButton: View {
     }
     .labelStyle(.iconOnly)
     .foregroundStyle(.mutedForeground)
+    .opacity(isEnabled ? 1 : 0.5)
     .frame(minWidth: 44, minHeight: 44, alignment: .leading)
     .contentShape(.rect)
   }
 }
 
-/// What `GoalMaterialButton` added and is adding, after the goal box.
+/// What `GoalMaterialButton` added, as main's chips with what they need to say under them. One
+/// row of the goal box's section, so it sits under the box as main's does.
+struct GoalMaterialChips: View {
+  @Binding var material: [AttachedSource]
+
+  var body: some View {
+    if !material.isEmpty {
+      VStack(alignment: .leading, spacing: 12) {
+        FlowLayout {
+          ForEach(material) { source in
+            MaterialChip(title: title(of: source), isUnavailable: source.isUnavailable) {
+              material.removeAll { $0.id == source.id }
+            }
+          }
+        }
+
+        if let unavailableLine {
+          FailureLine(message: unavailableLine)
+        }
+
+        if let fullLine {
+          Text(fullLine)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .announcesStatus(fullLine)
+      .listRowSeparator(.hidden)
+    }
+  }
+
+  private func title(of source: AttachedSource) -> String {
+    source.title.flatMap { $0.isEmpty ? nil : $0 }
+      ?? String(
+        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+  }
+
+  /// Why the paperclip is off once the goal holds all the material it can use.
+  private var fullLine: String? {
+    material.hasRoom
+      ? nil
+      : String(
+        localized: LocalizedStringResource(
+          "\(AttachedSource.maxPerGoal) files is the most for one goal. Remove one to add another.",
+          table: "Onboarding",
+          comment:
+            "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5."
+        ))
+  }
+
+  /// Names the one file a goal found gone; several are said together.
+  private var unavailableLine: LocalizedStringResource? {
+    let unavailable = material.filter(\.isUnavailable)
+
+    guard let first = unavailable.first else {
+      return nil
+    }
+
+    return unavailable.count == 1
+      ? LocalizedStringResource(
+        "We can't read “\(title(of: first))” anymore. Remove it and add it again.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\"."
+      )
+      : LocalizedStringResource(
+        "We can't read some of your files anymore. Remove them and add them again.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's attached material when several items sent with their goal can't be read anymore."
+      )
+  }
+}
+
+/// What `GoalMaterialButton` is adding, and what to do with the material, after the goal box.
 struct GoalMaterialSections: View {
   @Binding var material: [AttachedSource]
   @Binding var intent: MaterialIntent?
@@ -66,38 +147,6 @@ struct GoalMaterialSections: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    if !material.isEmpty {
-      Section {
-        FlowLayout {
-          ForEach(material) { source in
-            let title = title(of: source)
-
-            HStack(spacing: 6) {
-              Image(systemName: "doc.text")
-                .accessibilityHidden(true)
-
-              Text(title)
-                .lineLimit(1)
-
-              Button {
-                material.removeAll { $0.id == source.id }
-              } label: {
-                Image(systemName: "xmark")
-                  .frame(minWidth: 44, minHeight: 44)
-                  .contentShape(.rect)
-                  .accessibilityLabel(Text("Remove \(title)", tableName: "Onboarding"))
-              }
-              .buttonStyle(.plain)
-            }
-            .typeStyle(.body)
-            .padding(.leading, 12)
-            .background(.muted, in: .rect(cornerRadius: Radius.md))
-          }
-        }
-        .listRowSeparator(.hidden)
-      }
-    }
-
     Section {
       if learner.canAttachMaterial {
         MaterialAttachProgress(draft: $draft) { source in
@@ -167,11 +216,47 @@ struct GoalMaterialSections: View {
       }
     }
   }
+}
 
-  private func title(of source: AttachedSource) -> String {
-    source.title.flatMap { $0.isEmpty ? nil : $0 }
-      ?? String(
-        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+/// One attached source, removed with its ✕ as main's chip is, or by swiping. One a goal found gone
+/// takes main's soft error look.
+private struct MaterialChip: View {
+  let title: String
+  let isUnavailable: Bool
+  let remove: () -> Void
+
+  var body: some View {
+    HStack(spacing: 6) {
+      Image(systemName: isUnavailable ? "exclamationmark.circle" : "doc.text")
+        .accessibilityHidden(true)
+
+      Text(title)
+        .lineLimit(1)
+        .accessibilityValue(
+          Text(
+            "Can't be read", tableName: "Onboarding",
+            comment:
+              "Read by screen readers after the name of an attached file that can't be read anymore."
+          ),
+          isEnabled: isUnavailable)
+
+      Button(action: remove) {
+        Image(systemName: "xmark")
+          .frame(minWidth: 44, minHeight: 44)
+          .contentShape(.rect)
+          .accessibilityLabel(Text("Remove \(title)", tableName: "Onboarding"))
+      }
+      .buttonStyle(.plain)
+      // Laid out as main's 28pt button, so the chip is main's height; its 44pt target reaches past
+      // the chip.
+      .padding(-8)
+    }
+    .typeStyle(.body)
+    .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
+    .padding(.leading, 12)
+    .padding([.vertical, .trailing], 4)
+    .background(
+      isUnavailable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
   }
 }
 
@@ -182,7 +267,23 @@ extension LearnerSummaryStore {
   }
 }
 
+extension AttachedSource {
+  /// Core's `MAX_GOAL_SOURCES`: a goal is sent with this many at most.
+  static let maxPerGoal = 5
+}
+
 extension [AttachedSource] {
+  var hasRoom: Bool { count < AttachedSource.maxPerGoal }
+
+  /// Marks the sources a goal found gone, by id, for the learner to remove.
+  func marking(unavailable ids: [String]) -> [AttachedSource] {
+    map { source in
+      var source = source
+      source.isUnavailable = ids.contains(source.id)
+      return source
+    }
+  }
+
   /// The same source added again replaces itself at the end.
   fileprivate mutating func attach(_ source: AttachedSource) {
     self = filter { $0.id != source.id } + [source]

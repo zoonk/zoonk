@@ -7,6 +7,7 @@ import {
   uniquePassages,
 } from "./blueprint-passages";
 import { pointsFacts } from "./blueprint-points-facts";
+import { writtenRuleFacts } from "./blueprint-written-facts";
 
 type Mock = NonNullable<BlueprintExtraction["mock"]>;
 type Task = Mock["sections"][number]["tasks"][number];
@@ -72,7 +73,7 @@ function taskFacts({
     const taskId = `${id}.tasks.${taskIndex}`;
     const part = `${name}: ${namePart({ task, taskIndex })}`;
 
-    return toFacts({
+    const facts = toFacts({
       claims: [
         isListening
           ? { id: taskId, statement: `${part} has ${task.count} questions` }
@@ -80,6 +81,26 @@ function taskFacts({
         isListening && {
           id: `${taskId}.description`,
           statement: `${name} has a recording part: ${task.description}`,
+        },
+        Boolean(task.officialIdentifier) && {
+          id: `${taskId}.officialIdentifier`,
+          statement: `${task.description} is identified as "${task.officialIdentifier}"`,
+        },
+        typeof task.lines === "number" && {
+          id: `${taskId}.lines`,
+          statement: `${task.description} has a maximum of ${task.lines} lines per answer`,
+        },
+        typeof task.points === "number" && {
+          id: `${taskId}.points`,
+          statement: `${task.description} is worth ${task.points} points per answer`,
+        },
+        Boolean(task.subjects?.length) && {
+          id: `${taskId}.subjects`,
+          statement: `${task.description} asks about: ${task.subjects?.join("; ")}`,
+        },
+        typeof task.handwritten === "boolean" && {
+          id: `${taskId}.handwritten`,
+          statement: `${task.description} ${task.handwritten ? "is handwritten" : "is explicitly not handwritten"}`,
         },
         task.plays !== null && {
           id: `${taskId}.plays`,
@@ -89,6 +110,8 @@ function taskFacts({
       documents,
       passages: uniquePassages([...task.passages, ...passages]),
     });
+
+    return [...facts, ...writtenRuleFacts({ documents, id: taskId, task })];
   });
 }
 
@@ -120,11 +143,15 @@ function sectionFacts({
         },
         section.minutes !== null && {
           id: `${id}.minutes`,
-          statement: `${name} lasts ${section.minutes} minutes`,
+          statement: `The sitting for ${name}${section.day === null ? "" : ` on exam day ${section.day}`} lasts ${section.minutes} minutes`,
         },
         section.day !== null && {
           id: `${id}.day`,
           statement: `${name} is on exam day ${section.day}`,
+        },
+        Boolean(section.session) && {
+          id: `${id}.session`,
+          statement: `${name} takes place in the "${section.session}" session`,
         },
         Boolean(section.tools) && {
           id: `${id}.tools`,

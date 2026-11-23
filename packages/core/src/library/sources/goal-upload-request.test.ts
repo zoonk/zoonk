@@ -4,6 +4,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
+import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
 import { mockSession } from "../../_test-utils/mock-session";
 import {
   answerGoalUploadRequest,
@@ -40,6 +41,12 @@ async function examGoalWaitingForNotice() {
   });
 
   return { goal, user };
+}
+
+function readAnsweredIds(goalId: string) {
+  return prisma.goalSource
+    .findMany({ select: { sourceId: true }, where: { answeredAt: { not: null }, goalId } })
+    .then((links) => links.map((link) => link.sourceId).toSorted());
 }
 
 function readReason(goalId: string) {
@@ -134,12 +141,10 @@ describe(answerGoalUploadRequest, () => {
       status: "ready",
     });
 
-    const links = await prisma.learnerSource.findMany({
-      select: { goalId: true },
-      where: { userId: user.id },
-    });
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual(
+      [upload.id, unlinked.id].toSorted(),
+    );
 
-    expect(links).toStrictEqual([{ goalId: goal.id }, { goalId: goal.id }]);
     await expect(readReason(goal.id)).resolves.toBeNull();
   });
 
@@ -178,6 +183,46 @@ describe(answerGoalUploadRequest, () => {
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, second.id] }),
     ).resolves.toMatchObject({ sourceIds: [first.id, second.id], status: "ready" });
+  });
+
+  it("lets one upload answer each goal's ask once", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+
+    const [other, notice] = await Promise.all([
+      goalFixture({ kind: "exam", researchUploadReason: "noOfficialSource", userId: user.id }),
+      privateUploadFixture(user.id, goal.id),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [notice.id] }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      answerGoalUploadRequest({ goalId: other.id, sourceIds: [notice.id] }),
+    ).resolves.toMatchObject({ sourceIds: [notice.id], status: "ready" });
+
+    await recordGoalResearchOutcome({ goalId: other.id, uploadReason: "unverified" });
+
+    await expect(
+      answerGoalUploadRequest({ goalId: other.id, sourceIds: [notice.id] }),
+    ).resolves.toStrictEqual({ status: "alreadyAnswered" });
+
+    await expect(readAnsweredIds(other.id)).resolves.toStrictEqual([notice.id]);
+  });
+
+  it("answers with an upload merged into a shared copy since the learner sent it", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+    const { shared, upload } = await uploadWithSharedCopyFixture(user.id);
+    await mergeIntoSharedCopy(upload);
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [upload.id] }),
+    ).resolves.toMatchObject({ sourceIds: [shared.id], status: "ready" });
+
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual([shared.id]);
   });
 
   it("keeps the ask when an upload isn't the learner's", async () => {

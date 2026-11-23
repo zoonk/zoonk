@@ -25,7 +25,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +76,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -91,8 +91,10 @@ import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamSectionsInner
+import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -191,7 +193,7 @@ internal fun MockRunnerView(
     if (sheetOpen) {
         ModalBottomSheet(
             onDismissRequest = { sheetOpen = false },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            sheetState = rememberExpandedBottomSheetState(),
         ) {
             Column(Modifier.navigationBarsPadding()) {
                 Column(
@@ -297,8 +299,8 @@ private fun RunnerProgress(
 ) {
     val question = run.question ?: return
     val counts = run.counts
-    val place = run.sectionPlace()
-    val spokenPlace = questionPlace(place, question.question.area)
+    val place = run.sectionPlace(question)
+    val spokenPlace = questionPlace(place, question)
 
     val progressLabel = stringResource(R.string.mock_progress_label)
 
@@ -326,11 +328,13 @@ private fun RunnerProgress(
                 style = meta,
             )
             run.moves.itemSeconds?.let { key(question.itemId) { ItemCountdown(it, onTimeUp = onQuestionTimeUp) } }
-            Text(
-                place?.let { stringResource(R.string.mock_place, it.number, it.total) } ?: stringResource(R.string.mock_written_part),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = meta,
-            )
+            if (place != null || run.view.shape?.kind != MockShape.Kind.WRITTEN) {
+                Text(
+                    place?.let { stringResource(R.string.mock_place, it.number, it.total) } ?: stringResource(R.string.mock_written_part),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = meta,
+                )
+            }
         }
     }
 }
@@ -339,13 +343,18 @@ private fun RunnerProgress(
 @Composable
 private fun questionPlace(
     place: SectionPlace?,
-    area: String?,
+    question: MockQuestion,
 ): String {
+    val area = question.question.area
     if (place == null) {
         return area?.let { stringResource(R.string.mock_written_part_area, it) }
             ?: stringResource(R.string.mock_written_part)
     }
-    return mockQuestionPlace(place.number, place.total, area)
+    return if (question.essay) {
+        stringResource(R.string.mock_written_question_place, place.number, place.total)
+    } else {
+        mockQuestionPlace(place.number, place.total, area)
+    }
 }
 
 /** A timer isn't a live region, so it never reads every second. */
@@ -489,11 +498,17 @@ private fun HandInDialog(
                 ""
             }
         }
+    // An ENEM essay is an essay; any other written answer is a question, and only a written test's own questions go uncounted above.
+    val enem = run.view.essayRubric == MockExam.EssayRubric.ENEM
+    val blankEssays = counts.blankEssays
     val essays =
         when {
-            counts.blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
-            counts.blankEssays > 1 -> pluralStringResource(R.plurals.mock_essays_blank, counts.blankEssays, counts.blankEssays)
-            else -> ""
+            blankEssays == 0 -> ""
+            enem && blankEssays == 1 -> stringResource(R.string.mock_essay_blank)
+            enem -> pluralStringResource(R.plurals.mock_essays_blank, blankEssays, blankEssays)
+            counts.total == counts.essays -> pluralStringResource(R.plurals.mock_left_blank_only, blankEssays, blankEssays)
+            blankEssays == 1 -> stringResource(R.string.mock_written_question_blank)
+            else -> pluralStringResource(R.plurals.mock_written_questions_blank, blankEssays, blankEssays)
         }
 
     AlertDialog(

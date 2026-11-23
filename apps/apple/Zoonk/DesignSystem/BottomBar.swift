@@ -13,60 +13,44 @@ extension View {
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
   ) -> some View {
-    modifier(BottomBarPlacement(bar: BottomBar(note: note, actions: actions())))
+    modifier(BottomBarPlacement(note: note, actions: actions()))
   }
 }
 
 /// Reads the screen's readable columns for the bar.
 private struct BottomBarPlacement<Actions: View>: ViewModifier {
-  let bar: BottomBar<Actions>
+  let note: BarNote?
+  let actions: Actions
 
+  @Environment(\.stacksContent) private var isStacked
+  @Environment(\.isTaskScreen) private var isTask
   @State private var columns: [ColumnMargins] = []
+  @State private var width: CGFloat = 0
+  @State private var listMargins: NSDirectionalEdgeInsets?
+
+  private var column: ColumnMargins? { columns.count == 1 ? columns.first : nil }
+  private var isWide: Bool { width >= WideBar.width && !isStacked }
 
   func body(content: Content) -> some View {
     content
-      .announcesStatus(bar.note?.politeLine)
+      .barNote(note) {
+        $0.barNoteLines(isWide: isWide).barColumn(column, listMargins: listMargins, isTask: isTask)
+      }
       .onPreferenceChange(ColumnMarginsKey.self) { columns = $0 }
       .safeAreaBar(edge: .bottom) {
-        bar.environment(\.barColumn, columns.count == 1 ? columns.first : nil)
+        Group(subviews: actions) { buttons in
+          // A bar whose buttons all hide takes no room unless it has a note.
+          if !buttons.isEmpty || note != nil {
+            bar(buttons)
+          }
+        }
       }
       // A soft edge would fade the page above the bar's hairline, over the backing it ends at.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
-}
-
-extension EnvironmentValues {
-  @Entry fileprivate var barColumn: ColumnMargins?
-}
-
-private struct BottomBar<Actions: View>: View {
-  let note: BarNote?
-  let actions: Actions
-
-  @Environment(\.barColumn) private var column
-  @Environment(\.isTaskScreen) private var isTask
-
-  @Environment(\.stacksContent) private var isStacked
-  /// The bar's own width: a page beside another (an iPad's lesson spread) is as narrow as a phone,
-  /// whatever the window's size class says.
-  @State private var width: CGFloat = 0
-  /// The margins a list's rows sit in, so over a list the buttons end where the rows do.
-  @State private var listMargins: NSDirectionalEdgeInsets?
-
-  var body: some View {
-    // A bar whose buttons all hide draws nothing, so it takes no room under the content.
-    Group(subviews: actions) { buttons in
-      if !buttons.isEmpty || note != nil {
-        bar(buttons)
-      }
-    }
-  }
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
-    // Wide, a filling button would read as a banner across the page.
-    let isWide = width >= WideBar.width && !isStacked
-
-    return Group {
+    Group {
       if isWide || isStacked || buttons.count < 2 {
         AccessibilityStack(spacing: 8) {
           buttons
@@ -104,14 +88,6 @@ private struct BottomBar<Actions: View>: View {
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
     .barBackdrop(hairline: note == nil)
-    .floatingAbove {
-      if let note {
-        note
-          .barNoteLines(isWide: isWide)
-          .barColumn(column, listMargins: listMargins, isTask: isTask)
-          .barNoteBackdrop()
-      }
-    }
   }
 }
 
@@ -148,18 +124,20 @@ extension View {
     }
   }
 
-  /// `content` over the screen, its bottom on this view's top edge, so this view never moves when
-  /// it shows.
-  func floatingAbove<Above: View>(@ViewBuilder _ content: () -> Above) -> some View {
-    overlay(alignment: .top) {
-      Color.clear
-        .frame(height: 0)
-        .overlay(alignment: .bottom) {
-          content()
-            .fixedSize(horizontal: false, vertical: true)
-        }
+  /// The page's bottom overlay ends at the bar and can receive taps on note actions.
+  func barNote(
+    _ note: BarNote?,
+    @ViewBuilder column: (BarNote) -> some View
+  ) -> some View {
+    overlay(alignment: .bottom) {
+      if let note {
+        column(note)
+          .barNoteBackdrop()
+      }
     }
+    .announcesStatus(note?.politeLine)
   }
+
 }
 
 /// A bar from main's `sm` (less the scene's margins) puts its main action at its end, at least

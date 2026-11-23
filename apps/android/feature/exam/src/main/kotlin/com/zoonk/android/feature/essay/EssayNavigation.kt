@@ -11,4 +11,5 @@ fun EntryProviderScope<NavKey>.essayEntries(
     navigator: AppNavigator,
 ) {
     entry<AppRoute.Essay> { EssayScreen(it, app, navigator) }
+    entry<AppRoute.WritingAnswer> { WritingAnswerScreen(it, app, navigator) }
 }

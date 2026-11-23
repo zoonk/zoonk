@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "95efe10142c1b355ad581dd087f46ad282346ebc20b05901cd72285c403c12ec",
+  "mock_chooser_both_tests": "71366aed4a14bf87945a1bb8b865d8f7ad1bd15fffb727dd324ca9910615840a",
   "mock_chooser_day": "fdefa2f49263d35c47e7cc05f426e09c4684e83a3c62873b0d4c6f6cf86bf791",
   "mock_chooser_day_without": "9b6c53bf9fcf53712b512a02b8bf11dff76fe4826738031bb91f1a8577fdaadb",
+  "mock_chooser_exam_tests": "926100b91515a1be9af52a9d655fc8c942bb485005d83aa84bd3a3927e192617",
   "mock_chooser_failed": "f7317a980213b87e0930228f5a592899d30bdbe5de4ccd01170a196e816b9fdc",
   "mock_chooser_full_exam": "65ded4bc1469dd4d1cfe78ff25f104a6e4561fcbec04e58650d093c08ae40233",
   "mock_chooser_full_exam_without": "8740abbed6a78aed8fefb1c28960809dd9ee6ec0b70281e61f3d5e66beca35d4",
@@ -11,6 +14,7 @@
   "mock_chooser_last_mock": "b2e972243280a3559ab4134d39bca3b8bd0623035af9359da85ee0a784402e29",
   "mock_chooser_line": "e885d701ddf66cb643d7f78fe06fcac465ecdf74e1694ef9bb4ff46c8b202e72",
   "mock_chooser_no_written_part": "1b7dace157b5d686698d046230c29dd1f87bcfacb0882c4b4e8b91877ab7e07f",
+  "mock_chooser_objective_only": "1d270c24ef2860f0097c8d837ed4ff8e73d2769b77c6fe2376a005205b148c59",
   "mock_chooser_one_subject": "7dda8105567554fac64b787135170ffa872153a626b7af6ee5323c419c1a5ee5",
   "mock_chooser_option_size": "148d020240c7e4c01ffa5b231a2ffe71a0ba5cf973c89a240d709838ab0e56fb",
   "mock_chooser_start": "021340f3ccf74b4e97ffb10d15c9749be48e1f967086b087b5797e67416ccb23",
@@ -26,6 +30,21 @@
     <string name="mock_chooser_one_subject">Une matière</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">L’examen</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="one">Ton examen comporte %d test</item>
+        <item quantity="many">Ton examen comporte %d tests</item>
+        <item quantity="other">Ton examen comporte %d tests</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">Questions plus courtes, à réponse objective uniquement</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">Les deux tests</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="one">Les %1$d tests</item>
+        <item quantity="many">Les %1$d tests</item>
+        <item quantity="other">Les %1$d tests</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">Jour %1$d</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

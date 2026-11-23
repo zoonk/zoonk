@@ -2,7 +2,8 @@ import { z } from "zod";
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
-import { listChoiceGroups } from "./choice-groups";
+import { getWritingScope } from "../essays/_utils/writing-scope";
+import { findChosenOptions, listChoiceGroups } from "./choice-groups";
 import { examChoicePickSchema } from "./exam-choice-contract";
 import { scopeExamStructure } from "./exam-scope";
 
@@ -30,23 +31,6 @@ export function isSamePick(first: ExamChoice, second: ExamChoice): boolean {
     first.subjects.length === second.subjects.length &&
     first.subjects.every((subject) => second.subjects.includes(subject))
   );
-}
-
-/** The options a pick names, in the notice's order; null unless it names one to `take` of its choice's options. */
-export function findChosenOptions({
-  choice,
-  structure,
-}: {
-  choice: ExamChoice;
-  structure: ExamStructure;
-}): Subject[] | null {
-  const group = listChoiceGroups(structure).find((item) => item.name === choice.group);
-  const names = new Set(choice.subjects);
-  const options = group?.options.filter((option) => names.has(option.name)) ?? [];
-
-  return group && options.length > 0 && options.length === names.size && names.size <= group.take
-    ? options
-    : null;
 }
 
 function listUnchosenOptions({
@@ -148,15 +132,17 @@ function countChosenParts({
 }
 
 export function toChosenStructure({
+  includePendingWriting = false,
   picks,
   structure: whole,
 }: {
+  includePendingWriting?: boolean;
   picks: ExamPicks;
   structure: ExamStructure;
 }): ExamStructure {
   const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
 
-  if (listChoiceGroups(structure).length === 0) {
+  if (listChoiceGroups(whole).length === 0) {
     return structure;
   }
 
@@ -164,8 +150,35 @@ export function toChosenStructure({
   const kept = structure.subjects.filter((subject) => !unchosen.has(subject.name));
   const chosen = kept.filter((subject) => subject.choiceGroup && subject.partOf);
 
+  const mock = structure.mock && {
+    ...structure.mock,
+    sections: structure.mock.sections.flatMap((section) => {
+      if (section.kind !== "written" || !section.tasks?.length) {
+        return [section];
+      }
+
+      const tasks = section.tasks.filter(({ description, subjects }) => {
+        const scope = getWritingScope({
+          picks,
+          structure: whole,
+          task: { description, section: section.name, subjects: subjects ?? null },
+        });
+
+        return scope.available || (includePendingWriting && scope.missingChoices.length > 0);
+      });
+
+      return tasks.length > 0 ? [{ ...section, tasks }] : [];
+    }),
+  };
+
   return {
     ...structure,
+    formats:
+      structure.mock?.sections.some(({ kind }) => kind === "written") &&
+      !mock?.sections.some(({ kind }) => kind === "written")
+        ? structure.formats.filter(({ kind }) => kind !== "essay")
+        : structure.formats,
+    mock,
     subjects: kept.map((subject) => {
       const parts = countChosenParts({ chosen, structure, subject });
 

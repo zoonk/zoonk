@@ -83,6 +83,7 @@ const input: Required<BuildPlanInput> = {
   today: TODAY,
   todayShown: true,
   topicLevels: [{ level: "high", subject: "Math", topic: "Ratios" }],
+  writing: { practice: [], skillIds: new Set(), tests: [] },
 };
 
 const RUN_FIELDS = new Set([
@@ -110,12 +111,11 @@ const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
   it("keeps the bytes of the keys plans were saved with", () => {
-    expect(
-      getPlanInputsKey({
-        input: { ...input, extras: undefined },
-        items: [{ ...item, status: "done" }],
-      }),
-    ).toBe("480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189");
+    const { extras: _extras, writing: _writing, ...legacy } = input;
+
+    expect(getPlanInputsKey({ input: legacy, items: [{ ...item, status: "done" }] })).toBe(
+      "480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189",
+    );
   });
 
   it("reads a course lesson's published position and phase", () => {

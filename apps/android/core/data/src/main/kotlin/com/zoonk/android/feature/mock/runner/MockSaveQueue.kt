@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.UUID
 import kotlin.math.min
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -23,7 +24,21 @@ data class MockDraft(
     val durationMs: Long = 0,
     // The name drafts already kept on devices use, as the API does.
     @SerialName("flagged") val unsure: Boolean = false,
-)
+    val revision: String? = null,
+    val edit: Edit? = null,
+) {
+    @Serializable
+    data class Edit(
+        val base: String?,
+        val order: Int,
+        val writer: String,
+    )
+
+    fun nextEdit(): MockDraft =
+        copy(
+            edit = edit?.copy(order = edit.order + 1) ?: Edit(revision, 0, UUID.randomUUID().toString()),
+        )
+}
 
 /** `Refused` holds until every refused question's answer is stored. */
 enum class DraftSaveStatus { Saved, Saving, Retrying, Refused }
@@ -48,6 +63,8 @@ class MockSaveQueue(
     private var sending: MockDraft? = null
     private var attempt = 0
     private val refused = mutableSetOf<String>()
+    var refusals = 0
+        private set
     private var retry: Job? = null
     private var stopped = false
     private val state = MutableStateFlow(DraftSaveStatus.Saved)
@@ -55,6 +72,8 @@ class MockSaveQueue(
     val status: StateFlow<DraftSaveStatus> = state.asStateFlow()
 
     val isBusy: Boolean get() = sending != null || waiting.isNotEmpty()
+
+    fun wasRefused(itemId: String): Boolean = itemId in refused
 
     /** The newest answer to each question not stored yet, the one going out included. */
     val pending: List<MockDraft>
@@ -111,7 +130,12 @@ class MockSaveQueue(
 
                 SendResult.Stored, SendResult.Refused -> {
                     attempt = 0
-                    if (result == SendResult.Refused) refused += draft.itemId else refused -= draft.itemId
+                    if (result == SendResult.Refused) {
+                        refused += draft.itemId
+                        refusals++
+                    } else {
+                        refused -= draft.itemId
+                    }
                     onPendingChange()
                     sendNext()
                 }

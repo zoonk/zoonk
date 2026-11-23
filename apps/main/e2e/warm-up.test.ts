@@ -101,7 +101,17 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   userWithoutProgress: page,
 }) => {
   const events = await captureAnalytics(page);
+
+  const readDeck = page.waitForResponse(
+    (response) =>
+      response.request().method() === "GET" &&
+      new URL(response.url()).pathname.startsWith("/v1/warm-ups/"),
+  );
+
   const { deck, goal } = await openPlanWait({ page, userId: noProgressUser.id });
+  const deckResponse = await readDeck;
+
+  expect(deckResponse.status()).toBe(200);
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
 
   await expect.poll(() => events.filter((event) => event.name === "Warm-Up Shown").length).toBe(1);

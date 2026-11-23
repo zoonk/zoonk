@@ -24,7 +24,12 @@ const checkpointRefShape = {
 
 export const checkpointRefSchema = z.discriminatedUnion("mock", [
   z
-    .object({ ...checkpointRefShape, mock: z.literal(true), mockIdentity: mockIdentitySchema })
+    .object({
+      ...checkpointRefShape,
+      mock: z.literal(true),
+      mockIdentity: mockIdentitySchema,
+      written: z.literal(true).optional(),
+    })
     .strict(),
   z.object({ ...checkpointRefShape, mock: z.literal(false) }).strict(),
 ]);
@@ -111,7 +116,10 @@ export function toDayBlockRef(block: DayWork): DayBlockRef {
       ? checkpointRefSchema.parse({
           kind: block.checkpoint.kind,
           mock: block.checkpoint.mock,
-          ...(block.checkpoint.mock && { mockIdentity: block.checkpoint.mockIdentity }),
+          ...(block.checkpoint.mock && {
+            mockIdentity: block.checkpoint.mockIdentity,
+            written: "written" in block.checkpoint ? block.checkpoint.written : undefined,
+          }),
           phase: block.checkpoint.phase,
           rematch: block.checkpoint.rematch,
         })
@@ -144,6 +152,7 @@ function hasSameCheckpoint(first: DayBlockRef["checkpoint"], second: DayBlockRef
     first.rematch === second.rematch &&
     (!first.mock ||
       (second.mock &&
+        first.written === second.written &&
         first.mockIdentity.day === second.mockIdentity.day &&
         first.mockIdentity.fullLength === second.mockIdentity.fullLength))
   );

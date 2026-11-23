@@ -8,7 +8,12 @@ import { type ChallengeActions } from "./challenge-context";
 /** A retry after the timeout is safe: a started block resumes. */
 const START_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
-type StartProblem = "failed" | "plusRequired" | "preparing" | null;
+type NeedsChoice = Extract<
+  Awaited<ReturnType<ChallengeActions["start"]>>,
+  { status: "needsChoice" }
+>;
+
+type StartProblem = "failed" | "plusRequired" | "preparing" | NeedsChoice | null;
 
 export type ChallengeStartState = {
   busy: boolean;
@@ -37,7 +42,10 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
 
     // "started" keeps the button busy while the host opens the block. The host reads a changed day
     // itself, so it isn't a failure.
-    if (outcome === "writing" || outcome === "notToday" || typeof outcome === "object") {
+    if (typeof outcome === "object" && outcome.status === "needsChoice") {
+      setBusy(false);
+      setProblem(outcome);
+    } else if (outcome === "writing" || outcome === "notToday" || typeof outcome === "object") {
       setBusy(false);
     } else if (outcome !== "started") {
       setBusy(false);

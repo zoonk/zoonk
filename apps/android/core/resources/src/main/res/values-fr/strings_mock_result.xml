@@ -35,7 +35,6 @@
   "mock_result_grade_it": "4adff0c56eb8d628144846d40391212f9bdf804be8689c91c1459c1396a8bc15",
   "mock_result_grading": "5e172058740622ef0250954bec30dba7a96a327fc6f763f5319a79df821281c3",
   "mock_result_grading_failed": "2d2d45f97a948db707d466dc2cb0b875555204cb00cf6098e7b7e24eacc19636",
-  "mock_result_grading_limit": "52f5f2083c8182c02abe22a266b0c06194f34aea37d2a4ab1bde0d5897c97dbb",
   "mock_result_grading_slow": "56d311508af8b9c1953d621d3e7e659c3c4796a1d65595fb55d675fba04043f7",
   "mock_result_had_of": "582792852b901b965469338bfefb24cf6ba37951dedc2006c3fd2223e265f692",
   "mock_result_insights": "bab434f691fe7fad549502b7995253d125ae60d131403f50e24d4f0d813b5e98",
@@ -106,7 +105,6 @@
   "mock_result_timing": "d0762aedda9d66c325294289d1daa28a9378638356204ad7a868768ae792e477",
   "mock_result_timing_area": "4c69b8ccac5e0a4d0985c72e57d8fe8794813db4d411f022d991ef446a0b4a66",
   "mock_result_to_pass": "ab2426bd19ef889ed4d3c75b6b4630426788c1379e888abaa098895b5210e2c2",
-  "mock_result_too_short": "e8def405308b97398fe7bbba0895c71aa8b5a6f498a49456936425bc271a4e57",
   "mock_result_topics_and_more": "dd1cc5a2680cc36db725644b505c0e8b73e2e6054b707cee529848a9d355313d",
   "mock_result_typed_estimate": "acadb88c6f27f2df4fe78f55f80cfe910ca73f697aed4c0f1c8dd8a2786eed1c",
   "mock_result_typed_no_estimate": "e383896f6f008534158d1f0acac4fe2d90fb1819e0e936d68936f8b93e9a34cd",
@@ -120,7 +118,6 @@
   "mock_result_up": "c8d4669c3f0cd70ef62564952d5fa7e0350858780cea9297a9dcf258fc93c208",
   "mock_result_up_from": "676c29b46c3d44c3fb530497f601ad08022ca033108e1b03022345d25fe55117",
   "mock_result_work_on": "ba3251b71b39a8f628989f74b33d2c619c61c88e035ca33c09db66b29b630e25",
-  "mock_result_written_part": "571360212e0d705def739bdb8c451429ceda602ebbf6515dbb27c29df60ef1e1",
   "mock_result_wrong": "818c243108b5bde4e8e96e024309590fb0840ece59e4b71a6a6e82e544f62372",
   "mock_result_your_plan": "4b87b48678c0248148e94b9151c193f7232c30b79197d060099ab5aee9207af2",
   "mock_result_your_preparation": "c061fb6789925f8d6f61059c01e7a5c41016121b9e45148e314553634561652e"
@@ -325,13 +322,10 @@
     <string name="mock_result_review">Questions à réviser</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">Tu n’as pas répondu.</string>
-    <string name="mock_result_written_part">Partie écrite · %1$d sur %2$d</string>
-    <string name="mock_result_too_short">Trop courte pour être évaluée</string>
     <string name="mock_result_grading">Évaluation selon le barème de l’examen. Cela peut prendre jusqu’à 30 secondes.</string>
     <string name="mock_result_grading_slow">Évaluation toujours en cours. Ça prend plus de temps que d’habitude.</string>
     <string name="mock_result_grading_failed">Ça n’a pas fonctionné. Réessaie dans un instant.</string>
     <string name="mock_result_not_graded">Elle n’a pas encore été évaluée.</string>
-    <string name="mock_result_grading_limit">Tu as utilisé toutes tes évaluations de rédaction pour aujourd’hui. Réessaie demain.</string>
     <string name="mock_result_grade_it">Évaluer</string>
     <string name="mock_result_no_estimate">Aucune estimation</string>
     <!-- %1$s is the estimated points, %2$s the paper's total. -->

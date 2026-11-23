@@ -57,3 +57,11 @@ model ModelGrade {
   @@index([userId, questionId, createdAt])
   @@map("model_grades")
 }
+
+/// The guest prompt budget charge committed for a durable workflow run.
+model WritingPromptSpend {
+  runId String @id @map("run_id")
+  count Int
+
+  @@map("writing_prompt_spend")
+}

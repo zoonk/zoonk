@@ -28,6 +28,7 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
       },
       summary: true,
       targetLanguage: true,
+      title: true,
       words: { include: { word: true }, orderBy: { position: "asc" } },
     },
     where: { id },
@@ -60,6 +61,7 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
     language: lesson.language,
     skillIds: lesson.skills.map((link) => link.skillId),
     targetLanguage: lesson.targetLanguage,
+    title: lesson.title,
   };
 }
 export type ScreenLesson = NonNullable<Awaited<ReturnType<typeof readLessonScreens>>>;

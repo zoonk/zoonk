@@ -4,74 +4,28 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 12/13 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}",
+          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
           "kind": "majorErrors",
-          "score": 9.753846153846155
+          "score": 9.36
         },
         {
-          "conclusion": "Facts kept 12/13 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}",
+          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
           "kind": "minorErrors",
-          "score": 9.753846153846155
+          "score": 9.36
         },
         {
-          "conclusion": "Facts kept 12/13 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}",
+          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
           "kind": "potentialImprovements",
-          "score": 9.753846153846155
+          "score": 9.36
         }
       ],
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 },
-            { "kind": "testedLanguage", "language": null }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
             {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
-          "kind": "majorErrors",
-          "score": 9.36
-        },
-        {
-          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
-          "kind": "minorErrors",
-          "score": 9.36
-        },
-        {
-          "conclusion": "Facts kept 4/5 (read 4). passages found 14/14. problems left 0. missing: {\"kind\":\"topic\",\"subject\":\"Ciências Humanas e suas Tecnologias\",\"topic\":\"Diversidade cultural, conflitos e vida em sociedade\"}",
-          "kind": "potentialImprovements",
-          "score": 9.36
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "subject", "name": "Ciências da Natureza e suas Tecnologias" },
+              "kind": "subject",
+              "name": "Ciências da Natureza e suas Tecnologias"
+            },
             {
               "kind": "topic",
               "subject": "Ciências da Natureza e suas Tecnologias",
@@ -128,17 +82,53 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "kind": "questionCount", "value": 150 },
-            { "kind": "section", "questions": 35 },
-            { "kind": "section", "questions": 45 },
-            { "kind": "section", "questions": 70 },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "wrongPenalty", "value": 1 },
-            { "kind": "timeLimit", "minutes": 240 },
-            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
+            {
+              "kind": "questionCount",
+              "value": 150
+            },
+            {
+              "kind": "section",
+              "questions": 35
+            },
+            {
+              "kind": "section",
+              "questions": 45
+            },
+            {
+              "kind": "section",
+              "questions": 70
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "wrongPenalty",
+              "value": 1
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 240
+            },
+            {
+              "date": "2026-11-22",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-08-26",
+              "dateKind": "registrationStart",
+              "kind": "date"
+            },
+            {
+              "date": "2026-09-17",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            }
           ]
         },
         "id": "tcdf-2026-1",
@@ -175,15 +165,46 @@
       "testCase": {
         "expected": {
           "facts": [
-            { "date": "2027-01-17", "dateKind": "exam", "kind": "date" },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "section", "minutes": 300, "questions": 180 },
-            { "kind": "subject", "name": "Língua Portuguesa" },
-            { "kind": "subject", "name": "Linguística" },
-            { "kind": "subject", "name": "Ciência Política" },
-            { "group": "P1", "kind": "group", "subject": "Língua Portuguesa" },
-            { "group": "P2", "kind": "group", "subject": "Linguística" },
+            {
+              "date": "2027-01-17",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "format": "trueFalse",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "kind": "section",
+              "minutes": 300,
+              "questions": 180
+            },
+            {
+              "kind": "subject",
+              "name": "Língua Portuguesa"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguística"
+            },
+            {
+              "kind": "subject",
+              "name": "Ciência Política"
+            },
+            {
+              "group": "P1",
+              "kind": "group",
+              "subject": "Língua Portuguesa"
+            },
+            {
+              "group": "P2",
+              "kind": "group",
+              "subject": "Linguística"
+            },
             {
               "kind": "topic",
               "subject": "Língua Portuguesa",
@@ -218,6 +239,115 @@
           "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação"
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 12/15 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "majorErrors",
+          "score": 9.36
+        },
+        {
+          "conclusion": "Facts kept 12/15 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "minorErrors",
+          "score": 9.36
+        },
+        {
+          "conclusion": "Facts kept 12/15 (read 13). passages found 41/41. problems left 0. missing: {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
+          "kind": "potentialImprovements",
+          "score": 9.36
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "grading": "enem",
+              "kind": "writtenTask",
+              "lines": null,
+              "points": 1000,
+              "zeroing": true
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      },
+      "score": 9.36
     }
   ],
   "taskId": "extract-exam-blueprint"

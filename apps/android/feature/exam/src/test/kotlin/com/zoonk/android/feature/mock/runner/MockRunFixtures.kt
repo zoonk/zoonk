@@ -120,7 +120,6 @@ internal class FakeMockRunApi(
 
     /** The mock as read once its essays are graded; [gradeGate] holds grading until completed. */
     var afterGrade: MockExam? = null
-    var gradeOutcome = EssayGradeOutcome.Graded
     var gradeFailure: ApiException? = null
     var gradeGate: CompletableDeferred<Unit>? = null
     var grades = 0
@@ -195,12 +194,11 @@ internal class FakeMockRunApi(
         session: AuthenticatedSession,
         blockId: String,
         timeZone: String,
-    ): EssayGradeOutcome {
+    ) {
         grades++
         gradeGate?.await()
         gradeFailure?.let { throw it }
         afterGrade?.let { mock = it }
-        return gradeOutcome
     }
 
     override suspend fun adapt(

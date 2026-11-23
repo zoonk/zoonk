@@ -54,7 +54,8 @@ describe(listBlueprintFacts, () => {
       "mock.scoring.description": "Scoring: Proficiência pela TRI",
       "mock.sections.0": 'Exam section "Linguagens"',
       "mock.sections.0.day": 'Exam section "Linguagens" is on exam day 1',
-      "mock.sections.0.minutes": 'Exam section "Linguagens" lasts 330 minutes',
+      "mock.sections.0.minutes":
+        'The sitting for Exam section "Linguagens" on exam day 1 lasts 330 minutes',
       "mock.sections.0.questions": 'Exam section "Linguagens" has 45 questions',
       "subjects.0": 'Subject "Linguagens"',
       "subjects.0.questions": 'Subject "Linguagens" has 45 questions',

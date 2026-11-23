@@ -65,7 +65,7 @@ const baseInput: SessionBuildInput = {
   placementItemIds: [],
   practice,
   practiceShare: 0.2,
-  produce: null,
+  produces: [],
   reviewPlanItemId: null,
   topics: new Map([
     ["s0", { area: "Math", name: "Functions" }],
@@ -840,18 +840,21 @@ describe(getPracticeShare, () => {
     const { blocks, plannedMinutes } = buildSessionBlocks({
       ...baseInput,
       dailyMinutes: 60,
-      produce: {
-        itemId: "essay-1",
-        minutes: 20,
-        skillId: "s-essay",
-        title: "Intervention proposal",
-      },
+      produces: [
+        {
+          minutes: 20,
+          skillId: "s-essay",
+          taskKey: "essay-1",
+          title: "Intervention proposal",
+          unit: "answer",
+        },
+      ],
     });
 
     const kinds = blocks.map((block) => block.kind);
 
     expect(kinds.at(-1)).toBe("produce");
-    expect(blocks.at(-1)?.payload.itemIds).toStrictEqual(["essay-1"]);
+    expect(blocks.at(-1)?.payload.writing?.taskKey).toBe("essay-1");
     expect(plannedMinutes).toBeLessThanOrEqual(60 + 14);
   });
 });
@@ -887,7 +890,9 @@ describe("filling ordinary study days", () => {
       dailyMinutes: 120,
       fillLessons: [lesson("later", 10)],
       mockReplacesDay: true,
-      produce: { itemId: "essay-1", minutes: 20, skillId: "s-essay", title: "Essay" },
+      produces: [
+        { minutes: 20, skillId: "s-essay", taskKey: "essay-1", title: "Essay", unit: "answer" },
+      ],
     });
 
     expect(
@@ -895,6 +900,17 @@ describe("filling ordinary study days", () => {
     ).toStrictEqual([["checkpoint", true]]);
 
     expect(result.plannedMinutes).toBe(40);
+  });
+
+  it("reserves the day for a longer whole answer", () => {
+    const result = buildSessionBlocks({
+      ...baseInput,
+      dailyMinutes: 15,
+      produces: [{ minutes: 105, taskKey: "essay-1", title: "Essay", unit: "answer" }],
+    });
+
+    expect(result.plannedMinutes).toBe(105);
+    expect(result.blocks).toMatchObject([{ estimatedMinutes: 105, kind: "produce" }]);
   });
 
   it("puts lessons before practice on a class test's only day, which shares its short mock", () => {

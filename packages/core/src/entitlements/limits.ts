@@ -132,7 +132,6 @@ const MIND_MAP_COST_MICROS = 15_000;
 
 const OUTLINE_COST_MICROS = 150_000;
 
-/** A grade a feature's own cap admits; a guest's also takes from the day all guests share. */
 export const ESSAY_GRADE_COST_MICROS = 20_000;
 
 export const TYPED_GRADE_COST_MICROS = 5000;

@@ -45,6 +45,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.GoalUnderstandingInput
+import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.OnboardingDraftSource
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +61,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -138,7 +142,42 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText("Understanding your goal").assertIsDisplayed()
         rule.onNodeWithText("pass the bar exam").assertIsDisplayed()
-        assertEquals(emptyList<Pair<String, String>>(), api.understandCalls)
+        assertTrue(api.understandCalls.isEmpty())
+    }
+
+    @Test
+    fun aReopenedCardShowsItsMaterialAndSendsItAgainAfterEditing() {
+        val source = OnboardingDraftSource(id = UUID.fromString("3f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"), title = "Cell cycle notes")
+        api.draft =
+            understoodDraft(prompt = "test on Friday").copy(
+                materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                sources = listOf(source),
+            )
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+
+        rule.onNodeWithText("Your material").assertExists()
+        rule.onNodeWithText(source.title).assertExists()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText(source.title).assertExists()
+        rule.onNodeWithText("Build my plan").performClick()
+        rule.waitForIdle()
+
+        val sent = api.understandCalls.single()
+        assertEquals("test on Friday", sent.goal)
+        assertEquals(listOf(source.id), sent.sourceIds)
+        assertEquals(GoalUnderstandingInput.MaterialIntent.EXAM, sent.materialIntent)
+    }
+
+    @Test
+    fun fiveSourcesLeaveNoRoomForMoreMaterial() {
+        val sources = (1..5).map { OnboardingDraftSource(id = UUID.randomUUID(), title = "Chapter $it") }
+        api.draft = understoodDraft(prompt = "test on Friday").copy(sources = sources)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithContentDescription("Study your own material").assertIsNotEnabled()
+        rule.onNodeWithContentDescription("Remove Chapter 5").performClick()
+        rule.onNodeWithContentDescription("Study your own material").assertIsEnabled()
     }
 
     @Test

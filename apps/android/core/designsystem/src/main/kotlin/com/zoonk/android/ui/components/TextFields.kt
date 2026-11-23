@@ -65,6 +65,8 @@ import com.zoonk.android.ui.theme.zoonk
  * `MaterialTextField` lint check outside this file.
  */
 
+// These overloads edit caller-owned values and selection. The state overload below owns its edits in TextFieldState.
+@Suppress("DEPRECATION")
 @Composable
 fun OutlinedTextField(
     value: String,
@@ -118,6 +120,7 @@ fun OutlinedTextField(
 }
 
 /** The field over a [TextFieldValue], for a screen that keeps the learner's cursor where the field moves, as across a fold. */
+@Suppress("DEPRECATION")
 @Composable
 fun OutlinedTextField(
     value: TextFieldValue,
@@ -179,6 +182,7 @@ private class FieldLook(
 )
 
 /** Main's field around a [BasicTextField] showing [text], which [field] draws with the style, cursor and frame given to it. */
+@Suppress("DEPRECATION")
 @Composable
 private fun ZoonkField(
     text: String,
@@ -427,6 +431,18 @@ private fun FieldContainer(
 }
 
 private val FIELD_SHAPE = RoundedCornerShape(ZoonkRadius.lg)
+
+/**
+ * Main's writing editor: a long answer's field keeps its soft `input` line while focused, since its
+ * caret already shows where the learner is; more contrast still draws the ink ring.
+ */
+@Composable
+fun writingAreaColors(): TextFieldColors =
+    if (LocalMoreContrast.current) {
+        OutlinedTextFieldDefaults.colors()
+    } else {
+        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.outline)
+    }
 
 /** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
 private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)

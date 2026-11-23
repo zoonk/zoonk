@@ -30,13 +30,14 @@ export async function adaptPlanFromMock({
     return found;
   }
 
-  const { goal, mock, userId } = found.owned;
+  const { blueprint, goal, mock, userId } = found.owned;
 
   if (!goal || mock?.status !== "finished") {
     return { status: "notFound" };
   }
 
   const offers = await loadMockPlanOffers({
+    blueprint,
     goal,
     purpose: mock.conditions.purpose,
     result: mockResultSchema.safeParse(mock.result).data ?? null,

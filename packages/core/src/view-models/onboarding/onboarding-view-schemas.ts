@@ -6,6 +6,7 @@ import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
   type GoalUnderstandingView,
+  MATERIAL_INTENTS,
   ONBOARDING_DRAFT_STATUSES,
   type OnboardingDraftView,
   type OnboardingExamDate,
@@ -132,7 +133,35 @@ export const onboardingDraftViewSchema = z
       .nullable()
       .meta({ description: "The main goal created from the draft once the learner confirmed it" }),
     id: uuidSchema(),
+    materialIntent: z
+      .enum(MATERIAL_INTENTS)
+      .nullable()
+      .meta({
+        description:
+          "What the learner wants from `sources`: `exam` to prepare for a test on it, `understand` to learn what it covers; null when they didn't choose or sent no material. The main goal created from the draft carries it in `details.materialIntent`",
+      }),
+    materialMissing: z
+      .boolean()
+      .meta({
+        description:
+          "Material sent with the words is gone: an id no longer names one of the learner's uploads. `sources` leaves it out, and the goal is read and created without it",
+      }),
     prompt: z.string().meta({ description: "What the learner typed" }),
+    sources: z
+      .array(
+        z
+          .object({
+            id: uuidSchema(),
+            title: z
+              .string()
+              .meta({ description: "The file's name or the link's title; empty for pasted text" }),
+          })
+          .meta({ id: "OnboardingDraftSource" }),
+      )
+      .meta({
+        description:
+          "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent",
+      }),
     status: z
       .enum(ONBOARDING_DRAFT_STATUSES)
       .meta({

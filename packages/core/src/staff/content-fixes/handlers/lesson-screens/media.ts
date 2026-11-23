@@ -7,6 +7,12 @@ import {
   getPictureKey,
   getStepImageRequest,
 } from "../../../../library/media/_utils/step-image-request";
+import {
+  fittingQuotes,
+  isTaggedLesson,
+  lacksQuotes,
+  toMarksNeedScreen,
+} from "../../_utils/screen-marks";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
 import { type Screen, type ScreenList, type ScreenMediaLink } from "./schema";
 import { type ScreenLesson } from "./snapshot";
@@ -190,6 +196,70 @@ function prepareIdeaIcons(list: ScreenList): PendingLink[] {
   });
 }
 
+/**
+ * A screen's example and underline quote its text, so a screen whose text the fix rewrites, or
+ * that the proposer asks to mark again, gets the quotes it lacks marked before review.
+ */
+function prepareScreenMarks({
+  lesson,
+  list,
+  problems,
+  screens,
+}: {
+  lesson: ScreenLesson;
+  list: ScreenList;
+  problems: string[];
+  screens: Screen[];
+}): PendingLink[] {
+  const marked = !lesson.targetLanguage && isTaggedLesson(lesson.before.screens);
+
+  const targets = screens.flatMap((screen) => {
+    const entry = list.screens[screen.position];
+    const asked = entry && "id" in entry && entry.remark === true;
+    const target = toMarksNeedScreen(screen);
+
+    if (asked && (!marked || !target)) {
+      problems.push(
+        `screens[${String(screen.position)}].remark: only an explanation or worked example in a lesson with marks has an example and underline to mark.`,
+      );
+    }
+
+    const original =
+      entry && "id" in entry ? lesson.before.screens.find(({ id }) => id === entry.id) : undefined;
+
+    const rewritten = !original || toMarksNeedScreen(original)?.text !== target?.text;
+    const kept = target && fittingQuotes(screen.marks, target.text);
+
+    return marked &&
+      target &&
+      kept &&
+      (asked || rewritten) &&
+      lacksQuotes({ kept, kind: target.kind })
+      ? [{ kept, position: screen.position, screen: target }]
+      : [];
+  });
+
+  if (targets.length === 0) {
+    return [];
+  }
+
+  const key = "marks";
+
+  return [
+    {
+      link: { key, positions: targets.map(({ position }) => position), target: "marks" },
+      need: {
+        kept: targets.map(({ kept }) => kept),
+        key,
+        kind: "marks",
+        language: lesson.language,
+        lessonTitle: lesson.title,
+        screens: targets.map(({ screen }) => screen),
+      },
+    },
+  ];
+}
+
 export async function checkProposedMedia(
   db: TransactionClient,
   {
@@ -256,5 +326,10 @@ export async function checkProposedMedia(
   );
 
   problems.push(...links.flatMap(({ issues }) => issues));
-  return [...links.flatMap(({ pending }) => pending), ...prepareIdeaIcons(list)];
+
+  return [
+    ...links.flatMap(({ pending }) => pending),
+    ...prepareIdeaIcons(list),
+    ...prepareScreenMarks({ lesson, list, problems, screens }),
+  ];
 }

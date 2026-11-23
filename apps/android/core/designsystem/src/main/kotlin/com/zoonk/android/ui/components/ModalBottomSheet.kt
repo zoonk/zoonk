@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,6 +15,20 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import com.zoonk.android.app.SnackbarLayer
 import com.zoonk.android.ui.scaffold.HoldUntilFoldsRead
 import com.zoonk.android.ui.scaffold.screenSplit
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun rememberExpandedBottomSheetState(): SheetState =
+    rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+    )
+
+// Material's deprecated factory skips the partial anchor when a sheet fits in half the window.
+@Suppress("DEPRECATION")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun rememberHeightAwareBottomSheetState(): SheetState = rememberModalBottomSheetState()
 
 /**
  * Material's modal bottom sheet. Across an unfolded book foldable's fold, or a spread's split on a
@@ -26,7 +42,7 @@ import com.zoonk.android.ui.scaffold.screenSplit
 fun ModalBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberHeightAwareBottomSheetState(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val window =

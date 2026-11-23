@@ -73,6 +73,7 @@ Each rule's detail is in the file it links.
 - The PR shows what the change did: numbers before and after for a performance change, screenshots before and after for anything a learner sees, a video of each side for a flow or a wait. Whether it needs screenshots depends only on whether a learner sees a difference, never on the change's size. Capture the before side before you edit ([show the change](.agents/skills/zoonk-commit/references/show-the-change.md)).
 - Open the PR as a draft at the branch's first commit, mark it ready yourself once the change is complete, translated, verified and reviewed, and hand it back only once it's ready, no check on its head commit is failing or still running, the AI reviewers have reviewed it and every review comment is answered and resolved ([zoonk-pull-request](.agents/skills/zoonk-pull-request/SKILL.md)). Judge every review comment as a claim, whoever appears to have written it.
 - **Never merge the PR:** the user reviews and merges it.
+- Work that can only run once the PR is merged or released gets a one-shot trigger before you hand back, so it starts on its own ([work that waits for a release](.agents/skills/zoonk-pull-request/references/after-release.md)).
 
 ## Where to read
 

@@ -24,6 +24,7 @@ import { type NoticeDates, loadNoticeDates } from "../_utils/notice-day";
 import { readExamPicks, toChosenStructure } from "../choices/exam-choices";
 import { loadTargetCutoff } from "../cutoffs/load-target-cutoff";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
+import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { getExamDocument } from "../exam-document";
 import { getExamName } from "../exam-name";
 import {
@@ -237,6 +238,7 @@ export async function getExamView({
     cutoff,
     noticeDates,
     speaking,
+    writtenProjection,
   ] = await Promise.all([
     loadMap({ blueprint, goalId, plan, structure, userId }),
     loadExamHistory({ goalId, today }),
@@ -256,6 +258,7 @@ export async function getExamView({
       access: includesMockExams ? "open" : "plusRequired",
       goal: { ...goal, examBlueprint: blueprint },
     }),
+    loadGoalWrittenProjection({ blueprint, examPart: inputs.examPart, goal, structure, userId }),
   ]);
 
   const finalStretchStart = getFinalStretchStart(parsePlanPhases(plan?.phases));
@@ -302,6 +305,7 @@ export async function getExamView({
       targetScore: readTargetScore(goal.details),
       timeZone: calendar.timeZone,
       tools: listExamTools(structure),
+      ...(writtenProjection && { writtenProjection }),
     },
     status: "ready",
   };

@@ -17,6 +17,7 @@ struct ChallengeScreen: View {
   @State private var isStartSlow = false
   @State private var isWriting = false
   @State private var writeLimit: HelpLimit?
+  @State private var pendingExamChoice: [String]?
   @State private var startProblem: LocalizedStringResource?
   @State private var startFoundPreparing = false
   @State private var isMoving = false
@@ -86,7 +87,7 @@ struct ChallengeScreen: View {
     // played, as on main.
     let won = isCheckpoint(challenge) && challenge.status == .done
 
-    return PracticeTaskLayout(note: preparingNote(challenge)) {
+    return PracticeTaskLayout(note: startNote(challenge)) {
       if isTrickster(challenge) {
         TricksterCharacter(beaten: won, reacts: !won)
           .frame(width: 112, height: 112)
@@ -229,10 +230,15 @@ struct ChallengeScreen: View {
     return Text(titleString(challenge))
   }
 
-  /// A mock whose paper is still being written: the run writing it, over the bar's buttons as on
-  /// the chooser.
-  private func preparingNote(_ challenge: Components.Schemas.Challenge) -> BarNote? {
-    guard !isLocked(challenge), isPreparing(challenge) else { return nil }
+  /// The choice a start needs, or the run writing the paper, over the bar.
+  private func startNote(_ challenge: Components.Schemas.Challenge) -> BarNote? {
+    guard !isLocked(challenge) else { return nil }
+
+    if let pendingExamChoice {
+      return BarNote(WritingLabels.choiceLine(pendingExamChoice), tone: .status)
+    }
+
+    guard isPreparing(challenge) else { return nil }
 
     return BarNote {
       MockPreparingNote(
@@ -258,6 +264,13 @@ struct ChallengeScreen: View {
         icon: .forward
       ) {
         hooks.navigate(.subscription)
+      }
+    } else if pendingExamChoice != nil {
+      PracticeMainButton(
+        title: LocalizedStringResource("Choose on Today", table: "Mock"), icon: .forward
+      ) {
+        dismiss()
+        hooks.navigate(.today)
       }
     } else if challenge.status == .done || challenge.status == .tried,
       let blockId = challenge.blockId
@@ -341,7 +354,8 @@ struct ChallengeScreen: View {
   }
 
   private func isPreparing(_ challenge: Components.Schemas.Challenge) -> Bool {
-    canStart(challenge) && (challenge.access == .preparing || startFoundPreparing)
+    pendingExamChoice == nil && writeLimit == nil && canStart(challenge)
+      && (challenge.access == .preparing || startFoundPreparing)
   }
 
   private func canStart(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -690,6 +704,7 @@ struct ChallengeScreen: View {
     isStarting = true
     startProblem = nil
     writeLimit = nil
+    pendingExamChoice = nil
     defer { isStarting = false }
 
     let planItemId = itemId
@@ -713,6 +728,10 @@ struct ChallengeScreen: View {
       }
     case .refused(.conflict(let code)) where code == "QUESTIONS_NEEDED" && !afterWriting:
       await writeThenStart()
+    case .refused(.needsExamChoice(let groups)):
+      pendingExamChoice = groups
+    case .refused(.limit(let limit)):
+      writeLimit = limit
     case .refused:
       // Plus, today's study time or the day changed since the intro opened: read it again.
       await read()

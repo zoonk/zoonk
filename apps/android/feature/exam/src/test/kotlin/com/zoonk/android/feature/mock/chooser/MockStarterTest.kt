@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.mock.chooser
 
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
@@ -12,6 +14,7 @@ import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.exam.GOAL
 import com.zoonk.android.feature.exam.mockOptions
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MockOptionsRequested
 import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +25,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MockStarterTest {
@@ -83,5 +87,51 @@ class MockStarterTest {
 
             api.starts = listOf { throw refusal("GOAL_NOT_ACTIVE") }
             assertEquals(MutationResult.Failed::class, starter.start(GOAL, full)::class)
+        }
+
+    @Test
+    fun aWrittenStartRefusedForTheDaySaysTheDayGradingReturns() =
+        runTest(dispatcher) {
+            val starter = starter()
+            api.starts =
+                listOf {
+                    throw ApiException(
+                        ApiError.Unavailable,
+                        "USAGE_LIMIT_REACHED",
+                        status = 429,
+                        details = ApiJson.parseToJsonElement("""{"returnsOn":"2026-11-24"}"""),
+                    )
+                }
+
+            assertEquals(
+                MutationResult.Done(MockStartOutcome.GradesUsed(LocalDate.of(2026, 11, 24))),
+                starter.start(GOAL, full.copy(kind = MockShape.Kind.WRITTEN)),
+            )
+        }
+
+    @Test
+    fun aSpecialtyRefusalDoesNotRequestAPaper() =
+        runTest(dispatcher) {
+            val cache = cache()
+            val store = MockStore(FakeMockApi(mockOptions("")), cache)
+            val options = store.options[GOAL]
+            options.load()
+            api.starts =
+                listOf {
+                    throw ApiException(
+                        ApiError.Unavailable,
+                        "EXAM_CHOICE_REQUIRED",
+                        status = 409,
+                        details = ApiJson.parseToJsonElement("""{"choiceGroups":["Specialty"]}"""),
+                    )
+                }
+
+            val answer = MockStarter(api, cache, store).start(GOAL, full)
+            assertEquals(MutationResult.Done(MockStartOutcome.NeedsChoice(listOf("Specialty"))), answer)
+            assertEquals(
+                null,
+                options.state.value.value
+                    ?.requested,
+            )
         }
 }

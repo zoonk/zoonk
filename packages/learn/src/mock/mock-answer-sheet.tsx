@@ -17,12 +17,13 @@ import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
+import { TaskHeaderAction } from "../_components/task-header";
 import { FactSegments } from "../_components/task-meta";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { countsTowardMockProgress } from "./mock-answer-progress";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
-import { UnsureMark } from "./mock-labels";
+import { UnsureMark, isNumberedMockQuestion } from "./mock-labels";
 import { MovesNote } from "./mock-moves";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
@@ -72,12 +73,17 @@ function QuestionCell({
 }) {
   const { runner } = useMockScreen();
   const draft = runner.drafts[question.itemId];
-  const isEssay = question.format === "essay";
   const isCurrent = index === runner.position;
-  const isAnswered = countsTowardMockProgress(runner, question.itemId);
+
+  const numbered = isNumberedMockQuestion({
+    question,
+    total: runner.view.current?.questionTotal ?? 0,
+  });
 
   const unsure = Boolean(draft?.flagged);
-  const label = useQuestionCellLabel({ question, unsure });
+  const label = useQuestionCellLabel({ numbered, question, unsure });
+
+  const isAnswered = countsTowardMockProgress(runner, question.itemId);
 
   return (
     <button
@@ -93,7 +99,7 @@ function QuestionCell({
       onClick={() => onPick(index)}
       type="button"
     >
-      {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
+      {numbered ? question.number : <PenLineIcon aria-hidden="true" className="size-4" />}
       {unsure && <UnsureMark className="text-warning absolute inset-e-1.5 top-0" />}
     </button>
   );
@@ -284,7 +290,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger
         aria-label={t("Answer sheet")}
-        render={<Button className="with-aside:hidden shrink-0" size="sm" variant="outline" />}
+        render={<TaskHeaderAction className="with-aside:hidden" />}
       >
         {t({
           description:

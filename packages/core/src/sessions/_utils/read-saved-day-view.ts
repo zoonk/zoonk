@@ -22,6 +22,7 @@ import { loadStudySessionView } from "./load-session-view";
 import { planSavedMockReview } from "./saved-mock-review";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
+import { getBlueprintWritingTasks } from "./writing-block-tasks";
 
 /** A saved day can need a POST for entitlement-only free replacements, never invented IDs. */
 export async function readSavedDayView({
@@ -117,6 +118,8 @@ export async function readSavedDayView({
 
   const savedViews = new Map(view.blocks.map((block) => [block.id, block]));
 
+  const writingTasks = getBlueprintWritingTasks(blueprint);
+
   const blocks = inDayOrder(
     refill.blocks.map((block) => {
       const saved = block.id ? savedViews.get(block.id) : undefined;
@@ -132,6 +135,7 @@ export async function readSavedDayView({
         blockedTestOutChapters,
         blocks: refill.blocks,
         ...subjects.get(block.position),
+        writingTasks,
       });
     }),
   );
@@ -140,42 +144,46 @@ export async function readSavedDayView({
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
 
-  return withDayState<Omit<UnstartedDayView, "state">>({
-    ...fields,
-    blocks,
-    catchUp: catchUp
-      ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
-      : null,
-    emptyDay: null,
-    extraTime: getExtraTime({
-      blocks: refill.blocks.map((block) => ({
-        preparing: preparing.has(block.position),
-        status: block.status,
-      })),
-      current: view.current,
-    }),
-    minutes: getSessionMinutes({
-      blocks: refill.blocks,
-      dailyGoal: view.minutes.dailyGoal,
-      planned: getVisibleSessionTotal({
-        blocks: session.blocks,
-        planned: refill.plannedMinutes,
-        visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+  return withDayState<Omit<UnstartedDayView, "state">>(
+    {
+      ...fields,
+      blocks,
+      catchUp: catchUp
+        ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
+        : null,
+      emptyDay: null,
+      extraTime: getExtraTime({
+        blocks: refill.blocks.map((block) => ({
+          preparing: preparing.has(block.position),
+          status: block.status,
+        })),
+        current: view.current,
       }),
-      reserved: view.lessonsComing || view.lessonsToPrepare,
-    }),
-    missions: missions.map((mission): UnstartedDayView["missions"][number] => {
-      const { opens, ...rest } = mission;
+      minutes: getSessionMinutes({
+        blocks: refill.blocks,
+        dailyGoal: view.minutes.dailyGoal,
+        endedAt: session.endedAt,
+        planned: getVisibleSessionTotal({
+          blocks: session.blocks,
+          planned: refill.plannedMinutes,
+          visibleIds: new Set(refill.blocks.flatMap((block) => block.id ?? [])),
+        }),
+        reserved: view.lessonsComing || view.lessonsToPrepare,
+      }),
+      missions: missions.map((mission): UnstartedDayView["missions"][number] => {
+        const { opens, ...rest } = mission;
 
-      if (opens?.kind !== "block") {
-        return { ...rest, ...(opens && { opens }) };
-      }
+        if (opens?.kind !== "block") {
+          return { ...rest, ...(opens && { opens }) };
+        }
 
-      const target = view.blocks.find((block) => block.id === opens.blockId);
-      return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
-    }),
-    nextPosition: next?.position ?? null,
-    sessionBar: getSessionBar(refill.blocks),
-    status: "unstarted",
-  });
+        const target = view.blocks.find((block) => block.id === opens.blockId);
+        return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
+      }),
+      nextPosition: next?.position ?? null,
+      sessionBar: getSessionBar(refill.blocks),
+      status: "unstarted",
+    },
+    session.endedAt,
+  );
 }

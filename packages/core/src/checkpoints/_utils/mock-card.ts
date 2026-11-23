@@ -5,6 +5,7 @@ import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
 import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { loadWeeklyOutline, planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readScheduledStructure } from "../../exams/mocks/_utils/read-mock-structure";
+import { hasMockWriting } from "../../exams/mocks/written-test-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readFinishedMockCount } from "../../learner/facts/finished-mocks";
@@ -55,7 +56,6 @@ export async function loadMockCard({
     });
 
   const input = {
-    essays,
     finishedMocks: identity ? undefined : readFinishedMockCount(goal.userId, goal.id),
     goal,
     graph: goalPlan?.graph,
@@ -72,7 +72,16 @@ export async function loadMockCard({
 
   return {
     conditions: toMockConditions({ plan, structure, typed }),
-    preparing: planned !== null && !isScheduledPaperComplete(planned),
+    preparing:
+      planned !== null &&
+      !isScheduledPaperComplete(
+        planned,
+        hasMockWriting({
+          essays,
+          shape: { day: plan.day, kind: plan.fullLength ? "full" : "half" },
+          structure,
+        }),
+      ),
     startTime: getExamStartTime({ day: plan.day, edition: content?.edition ?? null }),
     timeZone: content?.edition.timeZone ?? null,
   };

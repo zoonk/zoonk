@@ -30,6 +30,12 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
     );
   }
 
+  if (result.status === FORBIDDEN && error?.code === "WRITING_REPAIR_SCOPE_REQUIRED") {
+    return new CliError(
+      `Log in to ${origin} with writing repair access: \`${loginCommand(origin)} --repair-writing\`.`,
+    );
+  }
+
   if (result.status === FORBIDDEN && error?.code !== "NOT_PROPOSER") {
     return new CliError(
       `This login to ${origin} has no staff access. Log in with a Zoonk staff account: ` +
@@ -96,7 +102,7 @@ async function run(argv: string[]) {
   }
 
   if (command.name === "login") {
-    await logIn({ file, origin });
+    await logIn({ file, origin, writingRepair: command.writingRepair });
     await runRequest({ file, origin, request: WHOAMI_REQUEST });
     return;
   }

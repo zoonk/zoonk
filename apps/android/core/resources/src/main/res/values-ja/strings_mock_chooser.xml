@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mock_chooser_all_tests": "a2cedf39fb250f033629b9888af1dce8590e23af4a9981538ed6e0def8d1d456",
+  "mock_chooser_both_tests": "4fd54f5eb8ccc8622aeba2bcf8f7aa717fc122fb7ad1bab322f63af4a16c3c5f",
   "mock_chooser_day": "414d4ed8946eedc770577df6019599df16926538cc8d84b34bbf5339cf1208d1",
   "mock_chooser_day_without": "d91b765600b597743c422db7061830992d28740492c538d507fe5b6168bc8248",
+  "mock_chooser_exam_tests": "9e151c341bd429d4196421439ff76caf428297681351d2631c3c0e6da813dd97",
   "mock_chooser_failed": "9b9476f15a9b05dd3e786993e4bb3d40401b85f68636bc5601a82a622b673713",
   "mock_chooser_full_exam": "a9aa2b8cf1cd1af9a394d0e15050c0a782c0e2fe12225f1df56412627fe6330e",
   "mock_chooser_full_exam_without": "5a9d8a6aec0fd37d8f8dd0c5a0824b3baec343ee20d01c800c1487bad0446d9e",
@@ -11,6 +14,7 @@
   "mock_chooser_last_mock": "5f93d093cd1b8418c611f269cdba232daa381a29bbb1bbd39121bf6f66d9e9b8",
   "mock_chooser_line": "6a88dd51570842b24e448e25f711d0dd60a9983e6f99ec7507d52a1c4f91dee7",
   "mock_chooser_no_written_part": "5c31e14245c1ecef1f18409f2662cd3857b86e53ac4e4f88d961cb00166577fa",
+  "mock_chooser_objective_only": "9679a3b03e806d3ad14845b6b6376bc566c9048e57ac4db36041326350c137e9",
   "mock_chooser_one_subject": "3d8c1764fb2465009277fbb2a852901709764481ab66061a4125e2d18804601c",
   "mock_chooser_option_size": "869f7879f9dc667c9f357e7c548b4ab1b06ecce494f2c7500e6e01e0d4d6e52f",
   "mock_chooser_start": "d8ea5868138ea2bf2fc4d361e2f99400494fa030b534cf38048b3438a62c9f25",
@@ -26,6 +30,17 @@
     <string name="mock_chooser_one_subject">1科目</string>
     <!-- The group of options that take all or part of the exam, above mock_chooser_one_subject. -->
     <string name="mock_chooser_the_exam">試験</string>
+    <!-- Over the options of an exam made of several tests, such as an objective test in the morning and a written one in the afternoon. -->
+    <plurals name="mock_chooser_exam_tests">
+        <item quantity="other">試験は%d件あります</item>
+    </plurals>
+    <string name="mock_chooser_objective_only">短い選択式の問題のみ</string>
+    <!-- The option that takes both tests of an exam of two tests. -->
+    <string name="mock_chooser_both_tests">両方のテスト</string>
+    <!-- The option that takes every test of an exam of several tests. %1$d is how many. -->
+    <plurals name="mock_chooser_all_tests">
+        <item quantity="other">全%1$d件のテスト</item>
+    </plurals>
     <!-- An option for one exam day, on an exam held over several days. -->
     <string name="mock_chooser_day">%1$d日目</string>
     <!-- An option for half of one exam day, on an exam held over several days. -->

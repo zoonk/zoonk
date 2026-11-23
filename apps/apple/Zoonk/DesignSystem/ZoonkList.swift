@@ -30,7 +30,8 @@ struct ZoonkList<Content: View>: View {
   }
 
   private var list: some View {
-    List {
+    let margin = rowMargin
+    return List {
       // Row and section traits reach a list's rows only from inside it. A separator tint set here
       // would bring back the hairline a footer hides above itself, so hairlines keep the system's.
       // Main's 11pt sits outside a 20pt line, which centers Geist's own 18pt line at 14pt.
@@ -39,13 +40,13 @@ struct ZoonkList<Content: View>: View {
       content
         .frame(maxWidth: .infinity, alignment: .leading)
         .listRowInsets(.vertical, 12)
-        .listRowInsets(.horizontal, rowMargin)
+        .listRowInsets(.horizontal, margin)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
         // With a margin of its own, a row's hairline ends where its content does, not at the
         // system's.
         .alignmentGuide(.listRowSeparatorTrailing) {
-          rowMargin == nil ? $0[.listRowSeparatorTrailing] : $0.width
+          margin == nil ? $0[.listRowSeparatorTrailing] : $0.width
         }
         .rowLabelColumn()
     }

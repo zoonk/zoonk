@@ -23,6 +23,7 @@ import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamCurrentPlaysInner
 import com.zoonk.api.models.MockExamCurrentQuestionsInner
 import com.zoonk.api.models.MockExamSectionsInner
+import com.zoonk.api.models.WritingPromptOutput
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -34,15 +35,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import java.util.UUID
 import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -54,6 +53,8 @@ data class MockQuestion(
     val question: Question,
     val number: Int,
     val essay: Boolean,
+    /** A written test's question: its line limit, counted as the answer is typed. */
+    val writing: WritingPromptOutput? = null,
 ) {
     val itemId: String get() = question.itemId
 }
@@ -66,12 +67,12 @@ fun MockExamCurrentQuestionsInner.toMockQuestion(): MockQuestion {
         ApiJson.decodeFromJsonElement<Question>(
             JsonObject(json + ("format" to JsonPrimitive(if (essay) "typed" else format.value))),
         )
-    return MockQuestion(question, number.toInt(), essay)
+    return MockQuestion(question, number.toInt(), essay, writing)
 }
 
 enum class MockStep { Submit, EndBreak, StartSpeaking, Finish }
 
-enum class EssayGrading { Idle, Grading, Failed, LimitReached }
+enum class EssayGrading { Idle, Grading, Failed }
 
 /** The running mock as the learner sees it; [view] is the mock as the server last answered. */
 data class MockRun(
@@ -150,7 +151,8 @@ class MockRunnerViewModel(
     private val unsent = owner?.let { store.unsent(it, blockId) }
     private val queue = MockSaveQueue(scope = viewModelScope, send = ::send, onPendingChange = ::keepOnDevice)
     private var questionTimeUp = isLastQuestionExpired(opened.view)
-    private val run = MutableStateFlow(start(opened.view, opened.keptHere))
+    private val kept = opened.keptHere
+    private val run = MutableStateFlow(start(opened.view, kept))
     private var shown: Pair<String, TimeMark>? = null
     private var unsavedText: MockDraft? = null
     private var textSave: Job? = null
@@ -160,7 +162,6 @@ class MockRunnerViewModel(
     private var timedOutDuringStep = false
     private var away = false
     private val grading = MutableStateFlow(EssayGrading.Idle)
-    private var gradesUsedOn: LocalDate? = null
 
     val state: StateFlow<MockRun> = run.asStateFlow()
 
@@ -173,13 +174,13 @@ class MockRunnerViewModel(
     val speakingPaper = writingWaits.create(GenerationKind.SpeakingPaper, viewModelScope)
 
     init {
-        enter(opened.view, opened.keptHere)
+        enter(opened.view, kept)
     }
 
     fun answer(answer: Answer?) {
         val question = run.value.question ?: return
         if (!canAnswer(answer)) return
-        persist(withTimeSpent(question.itemId).copy(answer = answer))
+        persist(withTimeSpent(question.itemId).copy(answer = answer).nextEdit())
     }
 
     /** The question's [index]th option, tapped or by its number key: picks toggle, and a single pick tapped again clears unless an answer is required. */
@@ -205,7 +206,7 @@ class MockRunnerViewModel(
     fun write(answer: Answer?) {
         val question = run.value.question ?: return
         if (!canAnswer(answer)) return
-        val draft = (run.value.drafts[question.itemId] ?: MockDraft(question.itemId)).copy(answer = answer)
+        val draft = (run.value.drafts[question.itemId] ?: MockDraft(question.itemId)).copy(answer = answer).nextEdit()
         run.update { it.copy(drafts = it.drafts + (draft.itemId to draft)) }
         unsavedText = draft
         keepOnDevice()
@@ -218,11 +219,13 @@ class MockRunnerViewModel(
     }
 
     fun toggleUnsure() {
-        val question = run.value.question ?: return
+        val current = run.value
+        val question = current.question ?: return
+        if (current.pending || current.timeUp) return
         unsavedText = null
         saveText()
         val draft = withTimeSpent(question.itemId)
-        persist(draft.copy(unsure = !draft.unsure))
+        persist(draft.copy(unsure = !draft.unsure).nextEdit())
     }
 
     fun go(target: Int) = move(target, timedOut = false)
@@ -339,15 +342,13 @@ class MockRunnerViewModel(
     fun gradeEssays() {
         if (grading.value == EssayGrading.Grading) return
         grading.value = EssayGrading.Grading
-        val askedOn = today()
         viewModelScope.launch {
             val result = withTimeoutOrNull(ESSAY_GRADING_TIMEOUT) { store.gradeEssays(blockId) }
             val graded = (result as? MutationResult.Done)?.value
-            if (graded != null) reset(graded.mock)
-            if (graded?.limitReached == true) gradesUsedOn = askedOn
+            if (graded != null) reset(graded)
             grading.value =
                 when {
-                    graded != null -> if (graded.limitReached) EssayGrading.LimitReached else EssayGrading.Idle
+                    graded != null -> EssayGrading.Idle
                     result == MutationResult.Obsolete -> EssayGrading.Idle
                     else -> EssayGrading.Failed
                 }
@@ -362,15 +363,11 @@ class MockRunnerViewModel(
     fun onStart() {
         if (!away) return
         away = false
-        // The day's essay grades come back at the learner's midnight.
-        if (grading.value == EssayGrading.LimitReached && today() != gradesUsedOn) grading.value = EssayGrading.Idle
         watchDeadline(run.value.view)
         val current = run.value.view.current ?: return
         val abandoned = clock.now() > current.deadline + ABANDONMENT_DELAY
         if (current.kind == MockExamCurrent.Kind.SPEAKING || abandoned) viewModelScope.launch { reread() }
     }
-
-    private fun today() = clock.todayIn(TimeZone.of(store.timeZone()))
 
     /** Off screen, what's typed reaches the disk now rather than after the pause. */
     fun onStop() {
@@ -407,6 +404,7 @@ class MockRunnerViewModel(
     ) {
         if (run.value.pending) return
         val wasFinished = run.value.view.status == MockExam.Status.FINISHED
+        val refusals = queue.refusals
         run.value.question?.let { leaveQuestion(it.itemId) }
         run.update { it.copy(busy = kind, error = false) }
         viewModelScope.launch {
@@ -414,14 +412,21 @@ class MockRunnerViewModel(
             val answered =
                 withTimeoutOrNull(STEP_TIMEOUT) {
                     saveText()
+                    queue.retryNow()
                     queue.idle()
-                    Answered(request())
+                    if (queue.refusals != refusals) null else Answered(request())
                 }
             slow.cancel()
             if (answered != null && answered.result == null) return@launch run.update { it.copy(busy = null, slow = false) }
             val result = answered?.result
             val next = (result as? MutationResult.Done)?.value
-            run.update { it.copy(busy = null, slow = false, error = next == null && result !is MutationResult.Obsolete) }
+            run.update {
+                it.copy(
+                    busy = null,
+                    slow = false,
+                    error = next == null && result !is MutationResult.Obsolete && queue.refusals == refusals,
+                )
+            }
             if (next == null) return@launch afterFailedStep()
             reset(next)
             if (kind in HANDING_IN && !wasFinished && next.hasPendingEssays) gradeEssays()
@@ -479,7 +484,7 @@ class MockRunnerViewModel(
         val storedDrafts =
             view.current?.drafts.orEmpty().associate {
                 it.itemId.toString() to
-                    MockDraft(it.itemId.toString(), it.answer?.toAnswer(), it.durationMs, it.flagged)
+                    MockDraft(it.itemId.toString(), it.answer?.toAnswer(), it.durationMs, it.flagged, it.revision?.toString())
             }
         val deadline = view.current?.deadline
         val stored =
@@ -545,17 +550,25 @@ class MockRunnerViewModel(
     }
 
     private fun withTimeSpent(itemId: String): MockDraft {
-        val draft = run.value.drafts[itemId] ?: MockDraft(itemId)
+        val current = run.value
+        val draft = current.drafts[itemId] ?: MockDraft(itemId)
         val since = shown?.takeIf { it.first == itemId }?.second
         shown = itemId to time.markNow()
-        return since?.let { draft.copy(durationMs = draft.durationMs + it.elapsedNow().inWholeMilliseconds) } ?: draft
+        val afterDeadline = current.view.current?.let { (clock.now() - it.deadline).coerceAtLeast(Duration.ZERO) } ?: Duration.ZERO
+        val elapsed = ((since?.elapsedNow() ?: Duration.ZERO) - afterDeadline).inWholeMilliseconds.coerceAtLeast(0)
+        val limit = if (current.question?.essay == true) 86_400_000L else 3_600_000L
+        return draft.copy(durationMs = (draft.durationMs + elapsed).coerceAtMost(limit))
     }
 
     private fun leaveQuestion(itemId: String) {
         if (shown?.first != itemId) return
+        val canSaveTime =
+            run.value.view.current
+                ?.let { clock.now() <= it.deadline + ANSWER_DEADLINE_GRACE } ?: true
+        val shouldSave = unsavedText != null || (canSaveTime && !queue.wasRefused(itemId))
         unsavedText = null
         saveText()
-        persist(withTimeSpent(itemId))
+        if (shouldSave) persist(withTimeSpent(itemId).nextEdit())
         shown = null
     }
 
@@ -568,7 +581,7 @@ class MockRunnerViewModel(
             return
         }
         shown = question.itemId to time.markNow()
-        if (current.moves.forwardOnly && question.itemId !in current.drafts) persist(MockDraft(question.itemId))
+        if (current.moves.forwardOnly && question.itemId !in current.drafts) persist(MockDraft(question.itemId).nextEdit())
     }
 
     private fun watchDeadline(view: MockExam) {
@@ -634,6 +647,7 @@ class MockRunnerViewModel(
 
     private companion object {
         val TEXT_SAVE_DELAY = 1500.milliseconds
+        val ANSWER_DEADLINE_GRACE = 30.seconds
         val LEAVE_WAIT = 5.seconds
         val SLOW_AFTER = 10.seconds
 
@@ -659,7 +673,7 @@ private val OpenedMock.keptHere: List<MockDraft>
                 .orEmpty()
                 .map { it.itemId.toString() }
                 .toSet()
-        return unsent.filter { it.itemId in items }
+        return unsent.filter { it.itemId in items }.map { if (it.edit == null) it.nextEdit() else it }
     }
 
 /** The questions the server already charged a review change for: each may change again for free. */

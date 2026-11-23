@@ -4,6 +4,9 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.InputModeManager
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -23,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +36,7 @@ class AnswerActionsTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
+    private lateinit var inputMode: InputModeManager
     private var run by mutableStateOf(QuestionRun(index = 0, phase = RunPhase.Answering, stage = DrillStage.Open))
     private val sent = mutableListOf<AnswerSender>()
 
@@ -64,6 +69,7 @@ class AnswerActionsTest {
 
         rule.setContent {
             ZoonkTheme {
+                inputMode = LocalInputModeManager.current
                 AnswerActions(
                     listOf(question),
                     question,
@@ -76,6 +82,7 @@ class AnswerActionsTest {
                 )
             }
         }
+        rule.runOnIdle { assertTrue(inputMode.requestInputMode(InputMode.Keyboard)) }
     }
 
     private fun checking(sender: AnswerSender) {

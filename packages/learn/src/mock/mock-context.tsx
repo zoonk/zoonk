@@ -14,7 +14,7 @@ export type MockPlanOfferOutcome =
   | { lessonsSkipped: number; status: "applied" }
   | { reason: "alreadyIn" | "cantMove" | null; status: "unchanged" };
 
-export type MockEssayGrading = { mock: MockView; status: "graded" | "limitReached" };
+export type MockEssayGrading = { mock: MockView; status: "graded" };
 
 export type MockPlayOutcome = { played: number; status: "counted" | "usedUp" };
 
@@ -33,7 +33,7 @@ export type MockActions = {
   submit: (section: number) => Promise<MockView | null>;
 };
 
-export type MockEssayGradingStatus = "failed" | "grading" | "idle" | "limitReached";
+export type MockEssayGradingStatus = "failed" | "grading" | "idle";
 
 export type MockPlanOffer = "focus" | "skip";
 
