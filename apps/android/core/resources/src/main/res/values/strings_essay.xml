@@ -101,6 +101,7 @@
     <string name="essay_more_tomorrow">You\'ll have more tomorrow.</string>
     <string name="essay_left_for_tomorrow">Left for tomorrow</string>
     <string name="essay_part_minimum">Minimum to pass the written test: %1$s of the points</string>
+    <string name="essay_part_minimum_points">Minimum to pass the written test: %1$s points in total</string>
     <string name="essay_part_minimum_total">Minimum to pass the written test: %1$s of %2$s points in total</string>
     <string name="essay_content">Content</string>
     <string name="essay_language_errors">Language errors</string>

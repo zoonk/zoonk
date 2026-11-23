@@ -63,6 +63,7 @@
   "essay_nothing_lost": "889948338b098a8dec483f6467cbf543de464a292af72d003ab503c5df8c061f",
   "essay_of_max": "38df44ee73923d9373b9a86daf1bb42a31f809c450802b08ec33a41b4ef79694",
   "essay_part_minimum": "fc0041c91ace52e884c4b961ed948b739c80a1783615b2e5a6c880ea8c8a7c72",
+  "essay_part_minimum_points": "4e16c46fb2c22d1ee2c6c892abc35fd9ced953ded1c65d198cf642fb530b63dc",
   "essay_part_minimum_total": "52f6823f8bfe8d374479182cf17f2cc2751728c9183699464664cb3a2c9c0bd5",
   "essay_past_limit": "73ffd840d723dbb999822b98426a46205ea737602f8070f8e643d5c5d55a5973",
   "essay_past_line": "6cc8a6aacf7f1f0b2b1321d539f39b9f04b933bfe570fefb1b49107f1784a737",
@@ -229,6 +230,7 @@
     <string name="essay_more_tomorrow">Morgen gibt es wieder mehr.</string>
     <string name="essay_left_for_tomorrow">Für morgen aufgehoben</string>
     <string name="essay_part_minimum">Zum Bestehen der schriftlichen Prüfung brauchst du mindestens %1$s der Punkte</string>
+    <string name="essay_part_minimum_points">Mindestpunktzahl zum Bestehen der schriftlichen Prüfung: insgesamt %1$s Punkte</string>
     <string name="essay_part_minimum_total">Zum Bestehen der schriftlichen Prüfung sind insgesamt mindestens %1$s von %2$s Punkten nötig</string>
     <string name="essay_content">Inhalte</string>
     <string name="essay_language_errors">Sprachfehler</string>

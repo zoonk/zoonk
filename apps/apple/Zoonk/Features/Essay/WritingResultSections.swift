@@ -52,17 +52,23 @@ private struct WritingPointsSection: View {
             range: points.total, max: points.max,
             minimum: sameScale ? part?.share.map { $0 * points.max } : nil)
 
-          if let part, let share = part.share {
-            if let max = part.max, !sameScale {
-              let minimum = WritingLabels.points(
-                part.minimum.unit == .points ? part.minimum.value : share * max)
-              Text(
-                "Minimum to pass the written test: \(minimum) of \(WritingLabels.points(max)) points in total",
-                tableName: "Essay"
-              )
+          if let part {
+            if !sameScale, let minimum = part.points {
+              let minimumLabel = WritingLabels.points(minimum)
+              Group {
+                if let max = part.max {
+                  Text(
+                    "Minimum to pass the written test: \(minimumLabel) of \(WritingLabels.points(max)) points in total",
+                    tableName: "Essay")
+                } else {
+                  Text(
+                    "Minimum to pass the written test: \(minimumLabel) points in total",
+                    tableName: "Essay")
+                }
+              }
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
-            } else {
+            } else if let share = part.share {
               let label = Text(
                 "Minimum to pass the written test: \(WritingLabels.share(share)) of the points",
                 tableName: "Essay")

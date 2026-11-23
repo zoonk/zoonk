@@ -13874,6 +13874,11 @@ msgid "For example: {example}"
 msgstr "Na przykład: {example}"
 
 #: src/writing/writing-points-header.tsx
+msgctxt "0ZJgEc"
+msgid "Minimum to pass the written test: {minimum} points in total"
+msgstr "Minimum do zaliczenia testu pisemnego: {minimum} pkt łącznie"
+
+#: src/writing/writing-points-header.tsx
 msgctxt "2Elj6c"
 msgid "Minimum to pass the written test: {minimum} of {max} points in total"
 msgstr "Minimum punktów potrzebne do zdania egzaminu pisemnego: łącznie {minimum} z {max} pkt"

@@ -119,6 +119,7 @@ private fun PointsHeader(
     val partMax = part?.max
     val percent = part?.minimum?.unit?.value == "percent"
     val share = part?.let { minimumShare(percent, it.minimum.value, it.max) }
+    val partPoints = if (percent) partMax?.let { share?.times(it) } else part?.minimum?.value
     val sameScale = partMax == points.max
     val decimals = points.decimals
 
@@ -139,15 +140,27 @@ private fun PointsHeader(
         }
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             RangeMeter(points.total.low, points.total.high, points.max, minimumShare = share.takeIf { sameScale })
-            if (share != null) {
-                val locale = currentLocale()
-                val label =
-                    if (partMax != null && !sameScale) {
-                        val minimum = if (percent) part.minimum.value / 100 * partMax else part.minimum.value
-                        stringResource(R.string.essay_part_minimum_total, formatPoints(minimum, locale), formatPoints(partMax, locale))
-                    } else {
+            val locale = currentLocale()
+            val label =
+                when {
+                    !sameScale && partPoints != null -> {
+                        val minimum = formatPoints(partPoints, locale)
+                        if (partMax == null) {
+                            stringResource(R.string.essay_part_minimum_points, minimum)
+                        } else {
+                            stringResource(R.string.essay_part_minimum_total, minimum, formatPoints(partMax, locale))
+                        }
+                    }
+
+                    share != null -> {
                         stringResource(R.string.essay_part_minimum, formatPercent(share, locale))
                     }
+
+                    else -> {
+                        null
+                    }
+                }
+            if (label != null) {
                 if (sameScale) {
                     MinimumLegend(label)
                 } else {

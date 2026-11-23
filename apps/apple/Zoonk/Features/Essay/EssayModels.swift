@@ -35,6 +35,13 @@ struct WritingPrompt: Hashable, Decodable, Sendable {
       case .points: max.map { minimum.value / $0 }
       }
     }
+
+    var points: Double? {
+      switch minimum.unit {
+      case .percent: max.map { minimum.value / 100 * $0 }
+      case .points: minimum.value
+      }
+    }
   }
 
   var charactersPerLine: Int

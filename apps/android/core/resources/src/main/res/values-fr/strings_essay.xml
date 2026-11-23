@@ -63,6 +63,7 @@
   "essay_nothing_lost": "3e203f1ed8069ecbe3055faa64a6dcafa6999cac1b5bc6f624b8f67519e0d03c",
   "essay_of_max": "7c8edebc5a3c9d3a0514f6ea3e0129e4ec0024dc3ec1b8301a137f28214fdc08",
   "essay_part_minimum": "64b0b9980d69f638521be607ac9427ce3d6886f6e28b22b33e44d03d4dfcfc7c",
+  "essay_part_minimum_points": "0a8b86b4d1d6769a9296350f1f2898c06dcf204a4a6db877bd42ce27cd5b412e",
   "essay_part_minimum_total": "09d44912a0ebc66edfdd063b277a859dd7b958ece77f4e5454ef2b8cd5ab7ab3",
   "essay_past_limit": "3c186054c4b61292fb5884afb1f5a30fbca54357005d7d5b01a6627c2696abdb",
   "essay_past_line": "0176c18aa614fd84aae04c985485965144e6d6639c352a4c9a1fb9311fc2e36d",
@@ -234,6 +235,7 @@
     <string name="essay_more_tomorrow">Tu pourras en faire corriger d’autres demain.</string>
     <string name="essay_left_for_tomorrow">Pour demain</string>
     <string name="essay_part_minimum">Minimum requis pour réussir l’épreuve écrite : %1$s des points</string>
+    <string name="essay_part_minimum_points">Minimum pour réussir l’épreuve écrite : %1$s points au total</string>
     <string name="essay_part_minimum_total">Minimum pour réussir l’épreuve écrite : %1$s points sur %2$s au total</string>
     <string name="essay_content">Contenu</string>
     <string name="essay_language_errors">Erreurs de langue</string>

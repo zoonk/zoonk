@@ -31,13 +31,17 @@ function PartMinimum({
   const share = getMinimumShare(part);
   const points = getMinimumPoints(part);
 
-  if (part.max !== null && part.max !== answerMax && points !== null) {
+  if (part.max !== answerMax && points !== null) {
+    const minimum = formatScore(points);
+
     return (
       <p className="text-muted-foreground text-xs">
-        {t("Minimum to pass the written test: {minimum} of {max} points in total", {
-          max: formatScore(part.max),
-          minimum: formatScore(points),
-        })}
+        {part.max === null
+          ? t("Minimum to pass the written test: {minimum} points in total", { minimum })
+          : t("Minimum to pass the written test: {minimum} of {max} points in total", {
+              max: formatScore(part.max),
+              minimum,
+            })}
       </p>
     );
   }
