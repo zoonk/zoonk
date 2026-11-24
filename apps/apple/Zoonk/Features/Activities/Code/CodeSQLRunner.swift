@@ -21,6 +21,11 @@ enum CodeSQLRunner {
   /// Core's `MAX_QUERY_ROWS` and `MAX_PROGRAM_OUTPUT_LENGTH`: the most an answer can carry.
   private static let maxRows = 200
   private static let maxCellLength = 10_000
+  /// Apple builds SQLite with the percentile extension, which the sql.js that the web, Android and
+  /// the server's check run doesn't have, so a query calling one fails here with their message.
+  private static let percentileFunctions: Set<String> = [
+    "median", "percentile", "percentile_cont", "percentile_disc",
+  ]
 
   static func run(
     query: String, tables: [SQLPlaygroundFields.Table],
@@ -46,8 +51,16 @@ enum CodeSQLRunner {
       sqlite3_limit(database, SQLITE_LIMIT_LENGTH, 1_000_000)
       sqlite3_set_authorizer(
         database,
-        { _, action, _, _, _, _ in
-          action == SQLITE_ATTACH || action == SQLITE_DETACH ? SQLITE_DENY : SQLITE_OK
+        { _, action, _, function, _, _ in
+          switch action {
+          case SQLITE_ATTACH, SQLITE_DETACH:
+            SQLITE_DENY
+          case SQLITE_FUNCTION:
+            function.map { CodeSQLRunner.percentileFunctions.contains(String(cString: $0)) } == true
+              ? SQLITE_DENY : SQLITE_OK
+          default:
+            SQLITE_OK
+          }
         }, nil)
 
       do {
@@ -169,8 +182,14 @@ enum CodeSQLRunner {
   }
 
   private static func failure(_ database: OpaquePointer) -> SQLRun {
-    sqlite3_errcode(database) == SQLITE_INTERRUPT
-      ? .timeout : .error(String(cString: sqlite3_errmsg(database)))
+    guard sqlite3_errcode(database) != SQLITE_INTERRUPT else {
+      return .timeout
+    }
+
+    let message = String(cString: sqlite3_errmsg(database))
+    return .error(
+      message.replacingOccurrences(
+        of: "not authorized to use function:", with: "no such function:"))
   }
 }
 

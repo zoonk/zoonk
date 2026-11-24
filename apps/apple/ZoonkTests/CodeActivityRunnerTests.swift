@@ -110,6 +110,22 @@ struct CodeActivityRunnerTests {
         == .done(SQLResult(columns: ["name"], rows: [])))
   }
 
+  @Test func queriesRunTheFunctionsTheServerChecksWith() {
+    #expect(
+      CodeSQLRunner.run(
+        query: "SELECT log(100) AS log, ln(1) AS ln, mod(7, 3) AS mod, sqrt(16) AS root",
+        tables: [])
+        == .done(
+          SQLResult(
+            columns: ["log", "ln", "mod", "root"],
+            rows: [[.number(2), .number(0), .number(1), .number(4)]])))
+    #expect(
+      CodeSQLRunner.run(query: "SELECT stdev(1)", tables: []) == .error("no such function: stdev"))
+    #expect(
+      CodeSQLRunner.run(query: "SELECT MEDIAN(1)", tables: []) == .error("no such function: MEDIAN")
+    )
+  }
+
   @Test func queriesFailWithSQLitesMessageOrStop() {
     #expect(
       CodeSQLRunner.run(query: "SELECT * FROM missing", tables: [])
