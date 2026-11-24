@@ -41,35 +41,22 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       .archiveGoalConfirmation(isPresented: $isArchiving) {
         set(.archived)
       }
-      .alert(
-        Text(
-          "Rename goal", tableName: "Plan", comment: "Title of the dialog that renames the goal"),
-        isPresented: Bindable(changes).isRenaming
-      ) {
-        TextField(text: $name) {
-          Text("Name", tableName: "Plan", comment: "Field holding the goal's name")
-        }
-        .onChange(of: name) { _, value in
-          name = String(value.prefix(goalNameLimit))
-        }
-
-        Button(role: .cancel) {}
-
-        Button(role: .confirm) {
-          rename()
-        } label: {
-          Text("Save", tableName: "Plan", comment: "Saves the goal's new name")
-        }
-        .disabled(trimmedName.isEmpty)
-      } message: {
-        if changes.renameFailed {
-          Text(
-            "Check your connection and try again.", tableName: "Plan",
-            comment: "Explains a failed save")
-        } else {
-          Text(
+      .sheet(isPresented: Bindable(changes).isRenaming) {
+        EditTextSheet(
+          title: Text(
+            "Rename goal", tableName: "Plan", comment: "Title of the dialog that renames the goal"),
+          label: Text("Name", tableName: "Plan", comment: "Field holding the goal's name"),
+          description: Text(
             "Choose a name you recognize. Your study plan stays the same.", tableName: "Plan",
-            comment: "Explains that renaming a goal changes only its name")
+            comment: "Explains that renaming a goal changes only its name"),
+          text: $name, limit: goalNameLimit, original: goal.displayName, isSaving: changes.isSaving,
+          failure: changes.renameFailed
+            ? Text(
+              "Check your connection and try again.", tableName: "Plan",
+              comment: "Explains a failed save")
+            : nil
+        ) { displayName in
+          changes.rename(displayName, goalId: goal.id, store: store)
         }
       }
       .alert(
@@ -165,26 +152,12 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     }
   }
 
-  private var trimmedName: String {
-    name.trimmingCharacters(in: .whitespacesAndNewlines)
-  }
-
   private var hasFailed: Binding<Bool> {
     Binding(get: { changes.failure != nil }, set: { if !$0 { changes.failure = nil } })
   }
 
   private func resume() {
     changes.resume(goalId: goal.id, store: store, router: router)
-  }
-
-  private func rename() {
-    let displayName = trimmedName
-
-    guard !displayName.isEmpty else {
-      return
-    }
-
-    changes.rename(displayName, goalId: goal.id, store: store)
   }
 
   private func set(_ status: GoalStatusChange) {
@@ -256,10 +229,9 @@ final class GoalChanges {
 
       switch result {
       case .done(true), .obsolete:
-        break
+        self.isRenaming = false
       case .done(false), .failed:
         self.renameFailed = true
-        self.isRenaming = true
       }
     }
   }

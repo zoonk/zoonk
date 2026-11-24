@@ -43,7 +43,7 @@ struct BuddyGoalStart: View {
         // The typed words share the button's line, and stay level with it as the field grows.
         AccessibilityStack(alignment: .lastTextBaseline, spacing: 8, stackedSpacing: 0) {
           MultilineTextField(
-            text: $goal,
+            text: $goal, limit: SentGoal.promptLimit,
             prompt: Text(
               "What you want to learn", tableName: "Buddy", comment: "Placeholder of the goal field"
             ),

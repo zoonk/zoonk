@@ -471,14 +471,21 @@ private struct RewritableWords: View {
   @State private var value = ""
   @FocusState private var isFocused: Bool
 
+  private func rewrite() {
+    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !isDisabled, !trimmed.isEmpty else { return }
+    onRewrite(trimmed)
+  }
+
   var body: some View {
     if rewriting {
       Section {
         MultilineTextField(
-          text: $value,
-          label: label
+          text: $value, limit: SentGoal.promptLimit,
+          label: label, onSubmit: rewrite
         )
         .lineLimit(1...8)
+        .submitLabel(.go)
         .focused($isFocused)
         .onAppear {
           value = words
@@ -486,13 +493,7 @@ private struct RewritableWords: View {
         }
 
         ButtonRow {
-          Button {
-            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if !trimmed.isEmpty {
-              onRewrite(trimmed)
-            }
-          } label: {
+          Button(action: rewrite) {
             Text("Read it again", tableName: "Onboarding", comment: "Reads the changed words again")
           }
           .buttonStyle(.mainAction)

@@ -700,6 +700,8 @@ struct LabeledField: View {
   let label: Text
   let prompt: Text?
   @Binding var text: String
+  var limit: Int?
+  var multiline = true
   /// The screen's, where it moves focus into the field itself.
   var focus: FocusState<Bool>.Binding?
 
@@ -710,8 +712,18 @@ struct LabeledField: View {
 
     FormField(title: label, isFocused: focus.wrappedValue) {
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
-      MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
-        .focused(focus)
+      let placeholder = prompt ?? Text(verbatim: "")
+
+      if let limit, !multiline {
+        FittedTextInput(text: $text, limit: limit) { text, selection in
+          TextField(text: text, selection: selection, prompt: placeholder) { label }
+            .submitLabel(.done)
+            .focused(focus)
+        }
+      } else {
+        MultilineTextField(text: $text, limit: limit, prompt: placeholder, label: label)
+          .focused(focus)
+      }
     }
   }
 }
@@ -1361,12 +1373,14 @@ private struct BuddyQuestion: View {
         ))
 
       BuddyPickerSections(kind: $kind, name: $name)
+        .onSubmit(submit)
         .locksWhileSaving()
-
     } buttons: {
-      StepButtons {
-        onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
-      }
+      StepButtons(onContinue: submit)
     }
+  }
+
+  private func submit() {
+    onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
   }
 }

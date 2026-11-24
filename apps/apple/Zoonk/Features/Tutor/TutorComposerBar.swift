@@ -50,7 +50,7 @@ struct TutorComposerBar: View {
   private var composer: some View {
     HStack(alignment: .bottom, spacing: 8) {
       MultilineTextField(
-        text: $conversation.draft, prompt: placeholder,
+        text: $conversation.draft, limit: 2000, prompt: placeholder,
         label: Text(
           "Message \(buddyName)", tableName: "Tutor",
           comment: "The buddy's composer for VoiceOver; the argument is the buddy's name")

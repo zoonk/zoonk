@@ -672,7 +672,7 @@ struct MaterialQuestionsView: View {
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
-          text: $question,
+          text: $question, limit: Self.maxLength,
           prompt: Text(
             "E.g., why does glycolysis net only 2 ATP?", tableName: "Onboarding",
             comment: "Placeholder of the box for a question about the learner's material"),
@@ -684,11 +684,6 @@ struct MaterialQuestionsView: View {
         .lineLimit(1...5)
         .focused($isFocused)
         .submitLabel(.send)
-        .onChange(of: question) { _, value in
-          if value.count > Self.maxLength {
-            question = String(value.prefix(Self.maxLength))
-          }
-        }
         .padding(.vertical, 10)
         .padding(.leading, 10)
 

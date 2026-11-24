@@ -106,51 +106,24 @@ struct MemoryView: View {
     }
     .loads(settings.memory)
     .onDisappear { changes.leave() }
-    .alert(
-      Text(
-        "Edit memory", tableName: "Settings",
-        comment:
-          "A memory is one fact Zoonk remembers about the learner."),
-      isPresented: isEditingBinding,
-      presenting: editing
-    ) { fact in
-      TextField(text: $statement) {
-        Text(
-          "What Zoonk remembers", tableName: "Settings")
-      }
-      .onChange(of: statement) { _, value in
-        statement = String(value.prefix(memoryStatementLimit))
-      }
-
-      Button(role: .cancel) {}
-
-      Button(role: .confirm) {
-        let trimmed = statement.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !trimmed.isEmpty, trimmed != fact.statement else {
-          return
-        }
-
+    .sheet(item: $editing) { fact in
+      EditTextSheet(
+        title: Text(
+          "Edit memory", tableName: "Settings",
+          comment: "A memory is one fact Zoonk remembers about the learner."),
+        label: Text("What Zoonk remembers", tableName: "Settings"),
+        description: Text(
+          "Say it the way it's true for you.", tableName: "Settings",
+          comment: "\"It\" is the note Zoonk keeps about the learner, edited in this dialog."),
+        text: $statement, limit: MemoryFact.statementLimit, original: fact.statement,
+        multiline: true
+      ) { trimmed in
+        editing = nil
         changes.save(.edit(fact.id)) {
           await settings.updateMemoryFact(id: fact.id, statement: trimmed)
         }
       }
-    } message: { _ in
-      Text(
-        "Say it the way it's true for you.", tableName: "Settings",
-        comment:
-          "\"It\" is the note Zoonk keeps about the learner, edited in this dialog.")
     }
-  }
-
-  private var isEditingBinding: Binding<Bool> {
-    Binding(
-      get: { editing != nil },
-      set: { isPresented in
-        if !isPresented {
-          editing = nil
-        }
-      })
   }
 
   private func edit(_ fact: MemoryFact) {
@@ -286,8 +259,6 @@ final class MemoryChanges {
 }
 
 /// Core's `MAX_MEMORY_STATEMENT_LENGTH`.
-private let memoryStatementLimit = 300
-
 private struct MemoryFactRow: View {
   let fact: MemoryFact
   let edit: () -> Void
