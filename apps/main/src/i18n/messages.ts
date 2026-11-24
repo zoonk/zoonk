@@ -33,7 +33,8 @@ async function loadSiteMessages(locale: string): Promise<Messages> {
 
 /**
  * A production build's catalogs never change, so each locale is merged once per server. In
- * development extraction rewrites the catalogs as code changes, so each render merges them again.
+ * development they change whenever `eloqnt extract` or a translation run rewrites them, so each
+ * render merges them again.
  */
 const merged = new Map<string, Promise<Messages>>();
 

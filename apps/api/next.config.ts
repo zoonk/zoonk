@@ -130,12 +130,17 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: true },
 };
 
+/**
+ * `extract` compiles `useExtracted` calls, which a production build can't run without.
+ * `eloqnt extract` (`pnpm i18n:extract`) writes the catalogs, so with no `locales` the app only
+ * reads them.
+ */
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     extract: { path: "./messages" },
     messages: {
       format: "po",
-      locales: "infer",
+      locales: [],
       path: ["./messages", "../../packages/player/messages"],
       precompile: true,
       sourceLocale: "en",

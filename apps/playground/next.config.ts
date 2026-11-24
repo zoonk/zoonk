@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
 
 /**
  * `extract` compiles the packages' `useExtracted` calls, which a production build can't run
- * without. Their own extraction writes these catalogs, so with no `locales` the playground only
- * reads them.
+ * without. `eloqnt extract` (`pnpm i18n:extract`) writes these catalogs, so with no `locales` the
+ * playground only reads them.
  */
 const withNextIntl = createNextIntlPlugin({
   experimental: {
