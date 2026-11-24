@@ -128,6 +128,10 @@ struct CodeActivityRunnerTests {
     #expect(
       await runner.run(query: "SELECT MEDIAN(1)", tables: [])
         == .error("no such function: MEDIAN"))
+    #expect(
+      await runner.run(query: "SELECT 1e999 AS big", tables: [])
+        == .done(SQLResult(columns: ["big"], rows: [[.null]])),
+      "an infinite number arrives as null, as the server reads it")
   }
 
   @Test func queriesFailWithSQLitesMessageOrStop() async {

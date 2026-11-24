@@ -1,5 +1,5 @@
 import { type ActivityCell } from "../activity-expected-answer";
-import { capProgramText } from "./program-limits";
+import { MAX_QUERY_ROWS, capProgramText } from "./program-limits";
 
 type ColumnType = "integer" | "real" | "text";
 
@@ -20,15 +20,21 @@ export const SQL_JS_CONFIG = { useOldExtensionFunctions: false };
 
 /**
  * `lastTable(db, query)` for every sql.js runner: the last statement that returned a table, with
- * its columns even when no row matched, which sql.js's `db.exec` leaves out.
+ * its columns even when no row matched, which sql.js's `db.exec` leaves out. It keeps one row past
+ * what an answer can hold, so a runaway join is refused without carrying every row, and reads an
+ * infinite number as null, as JSON carries it to the server.
  */
 export const SQL_LAST_TABLE_SOURCE = `function lastTable(db, query) {
+  const cell = (value) => {
+    if (value instanceof Uint8Array) return "[blob]";
+    return typeof value === "number" && !Number.isFinite(value) ? null : value;
+  };
   let table = { columns: [], rows: [] };
   for (const statement of db.iterateStatements(query)) {
     const columns = statement.getColumnNames();
     const rows = [];
     while (statement.step()) {
-      rows.push(statement.get().map((value) => (value instanceof Uint8Array ? "[blob]" : value)));
+      if (rows.length <= ${MAX_QUERY_ROWS}) rows.push(statement.get().map(cell));
     }
     if (columns.length > 0) table = { columns, rows };
   }

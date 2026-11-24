@@ -348,12 +348,16 @@ enum CodeWorkerSources {
     importScripts(BASE_URL + "sql-wasm.js");
     const post = self.postMessage.bind(self);
     function lastTable(db, query) {
+      const cell = (value) => {
+        if (value instanceof Uint8Array) return "[blob]";
+        return typeof value === "number" && !Number.isFinite(value) ? null : value;
+      };
       let table = { columns: [], rows: [] };
       for (const statement of db.iterateStatements(query)) {
         const columns = statement.getColumnNames();
         const rows = [];
         while (statement.step()) {
-          rows.push(statement.get().map((value) => (value instanceof Uint8Array ? "[blob]" : value)));
+          if (rows.length <= 200) rows.push(statement.get().map(cell));
         }
         if (columns.length > 0) table = { columns, rows };
       }

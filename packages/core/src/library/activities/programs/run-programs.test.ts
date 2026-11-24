@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MAX_QUERY_ROWS } from "./program-limits";
 import { runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 
@@ -106,6 +107,21 @@ describe(runPrograms, () => {
     ]);
 
     expect(empty).toMatchObject({ status: "done", table: { columns: ["name"], rows: [] } });
+  });
+
+  it("keeps one row past what an answer holds, and reads an infinite number as null", async () => {
+    const [many, infinite] = await runPrograms([
+      {
+        kind: "sql",
+        query:
+          "WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM n WHERE x < 5000) SELECT x FROM n;",
+        setup: [],
+      },
+      { kind: "sql", query: "SELECT 1e999 AS big, -1e999 AS small;", setup: [] },
+    ]);
+
+    expect(many?.table?.rows).toHaveLength(MAX_QUERY_ROWS + 1);
+    expect(infinite).toMatchObject({ status: "done", table: { rows: [[null, null]] } });
   });
 
   it("runs SQL with SQLite's own functions, the same on every client", async () => {
