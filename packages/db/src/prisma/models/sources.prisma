@@ -247,17 +247,13 @@ enum LearnerSourceOrigin {
 /// Public uploads are stored once and shared, so this row is how a learner keeps their own material
 /// and how uploads are counted per day. The goals it serves are `GoalSource` rows.
 model LearnerSource {
-  id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId     String              @map("user_id") @db.Uuid
-  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sourceId   String              @map("source_id") @db.Uuid
-  source     Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  /// Unused.
-  goalId     String?             @map("goal_id") @ignore @db.Uuid
-  origin     LearnerSourceOrigin
-  /// Unused.
-  answeredAt DateTime?           @map("answered_at") @ignore
-  createdAt  DateTime            @default(now()) @map("created_at")
+  id        String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId  String              @map("source_id") @db.Uuid
+  source    Source              @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  origin    LearnerSourceOrigin
+  createdAt DateTime            @default(now()) @map("created_at")
 
   @@unique([userId, sourceId], name: "learnerSource")
   @@index([userId, createdAt])
