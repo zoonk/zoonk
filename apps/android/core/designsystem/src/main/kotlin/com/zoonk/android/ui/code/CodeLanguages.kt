@@ -120,8 +120,8 @@ private val LANGUAGES =
                     "group having in index inner insert into is join key left like limit not null offset on or order outer primary " +
                     "references right select set table then true union update values view when where with",
             builtins =
-                "abs acos asin atan atan2 avg ceil ceiling coalesce cos count degrees exp floor length ln log log10 log2 lower max " +
-                    "min mod now pi pow power radians round sign sin sqrt substr sum tan trunc upper",
+                "abs acos acosh asin asinh atan atan2 atanh avg ceil ceiling coalesce cos cosh count degrees exp floor length ln " +
+                    "log log10 log2 lower max min mod now pi pow power radians round sign sin sinh sqrt substr sum tan tanh trunc upper",
             ignoreCase = true,
         ),
         Language(
