@@ -66,7 +66,7 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
   );
 }
 
-/** Where each code block starts and ends in the text, counted in characters. */
+/** Where each code block starts and ends in the text, from its opening fence to its closing one. */
 function findCodeSpans(text: string): { end: number; start: number }[] {
   const lines = text.split("\n");
 
@@ -76,10 +76,14 @@ function findCodeSpans(text: string): { end: number; start: number }[] {
     starts.push((starts.at(-1) ?? 0) + line.length + 1);
   }
 
-  return findCodeFences(lines).map(({ end, start }) => ({
-    end: (starts[end] ?? text.length + 1) - 1,
-    start: starts[start] ?? 0,
-  }));
+  return findCodeFences(lines).map(({ end, start }) => {
+    const fence = lines[start] ?? "";
+
+    return {
+      end: (starts[end] ?? text.length + 1) - 1,
+      start: (starts[start] ?? 0) + fence.length - fence.trimStart().length,
+    };
+  });
 }
 
 /** The example box splits the text around the quote, so it takes a code block whole or not at all. */
@@ -105,6 +109,8 @@ function withListMarker({ quote, text }: { quote: string; text: string }): strin
 }
 
 const REGEXP_SYNTAX = /[\\^$.*+?()[\]{}|]/gu;
+const LINE_BREAKS = /(?:\r?\n)+/u;
+const INTRODUCES = /[:：]$/u;
 
 /** Copying across a code block's closing fence, models often drop the blank line after it. */
 function withTextLineBreaks({ quote, text }: { quote: string; text: string }): string {
@@ -112,8 +118,30 @@ function withTextLineBreaks({ quote, text }: { quote: string; text: string }): s
     return quote;
   }
 
-  const lines = quote.split(/\n+/u).map((line) => line.replaceAll(REGEXP_SYNTAX, String.raw`\$&`));
-  return new RegExp(lines.join("\n+"), "u").exec(text)?.[0] ?? quote;
+  const lines = quote
+    .split(LINE_BREAKS)
+    .map((line) => line.replaceAll(REGEXP_SYNTAX, String.raw`\$&`));
+
+  return new RegExp(lines.join(LINE_BREAKS.source), "u").exec(text)?.[0] ?? quote;
+}
+
+/** Where the quote sits in the text's prose: a program can print the same words. */
+function findInProse({
+  quote,
+  spans,
+  text,
+}: {
+  quote: string;
+  spans: readonly { end: number; start: number }[];
+  text: string;
+}): number {
+  let start = text.indexOf(quote);
+
+  while (start !== -1 && spans.some((code) => start >= code.start && start < code.end)) {
+    start = text.indexOf(quote, start + 1);
+  }
+
+  return start;
 }
 
 /**
@@ -121,17 +149,19 @@ function withTextLineBreaks({ quote, text }: { quote: string; text: string }): s
  * with that program, so the frame takes the block too and the program never sits outside it.
  */
 function withAdjacentCode({ quote, text }: { quote: string; text: string }): string {
-  const start = text.indexOf(quote);
+  const spans = findCodeSpans(text);
+  const start = findInProse({ quote, spans, text });
+  const end = start + quote.length;
 
-  if (start === -1) {
+  if (start === -1 || spans.some((code) => code.start >= start && code.end <= end)) {
     return quote;
   }
 
-  const end = start + quote.length;
-  const spans = findCodeSpans(text);
-  const traced = spans.find((code) => code.end <= start && text.slice(code.end, start).trim() === "");
+  const traced = spans.find(
+    (code) => code.end <= start && text.slice(code.end, start).trim() === "",
+  );
 
-  const introduced = quote.endsWith(":")
+  const introduced = INTRODUCES.test(quote)
     ? spans.find((code) => code.start >= end && text.slice(end, code.start).trim() === "")
     : undefined;
 

@@ -175,6 +175,54 @@ describe(normalizeLessonMarks, () => {
     it("keeps a frame around the block alone", () => {
       expect(exampleFor({ example: block })).toBe(block);
     });
+
+    it("never adds another program to a quote that already holds its own", () => {
+      const twoPrograms: MarksScreen = {
+        ...program,
+        text: "```js\nconsole.log(1);\n```\n\nThe second program prints two:\n\n```js\nconsole.log(2);\n```\n\nEach call prints its number.",
+      };
+
+      const second = "The second program prints two:\n\n```js\nconsole.log(2);\n```";
+
+      expect(exampleFor({ example: second, screen: twoPrograms })).toBe(second);
+    });
+
+    it("finds the sentence after the block, not the same words inside the code", () => {
+      const echoed: MarksScreen = {
+        ...program,
+        text: 'Run this:\n\n```js\nconsole.log("It prints two.");\n```\n\nIt prints two. A call prints its argument.',
+      };
+
+      expect(exampleFor({ example: "It prints two.", screen: echoed })).toBe(
+        '```js\nconsole.log("It prints two.");\n```\n\nIt prints two.',
+      );
+    });
+
+    it("frames an indented block, a full-width colon's block and a block with CRLF line breaks", () => {
+      const indented: MarksScreen = {
+        ...program,
+        text: `Look:\n\n  ${block.replaceAll("\n", "\n  ")}\n\n${trace} The rule follows.`,
+      };
+
+      expect(exampleFor({ example: trace, screen: indented })).toBe(
+        `${block.replaceAll("\n", "\n  ")}\n\n${trace}`,
+      );
+
+      const japanese: MarksScreen = {
+        ...program,
+        text: `コンストラクタは名前がクラスと同じです。このコードを見てください：\n\n${block}`,
+      };
+
+      expect(exampleFor({ example: "このコードを見てください：", screen: japanese })).toBe(
+        `このコードを見てください：\n\n${block}`,
+      );
+
+      const crlf: MarksScreen = { ...program, text: program.text.replaceAll("\n", "\r\n") };
+
+      expect(exampleFor({ example: `${block}\n${trace}`, screen: crlf })).toBe(
+        `${block}\n\n${trace}`.replaceAll("\n", "\r\n"),
+      );
+    });
   });
 
   it("drops what the screens don't have: a changed word, half a sentence, the whole text, an idea past the map", () => {
