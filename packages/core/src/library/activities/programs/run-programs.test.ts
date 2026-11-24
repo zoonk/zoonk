@@ -96,6 +96,27 @@ describe(runPrograms, () => {
     expect(after).toMatchObject({ status: "done", table: { rows: [[2]] } });
   });
 
+  it("runs SQL with SQLite's own functions, as the iPhone app's SQLite does", async () => {
+    const [math, notSqlite] = await runPrograms([
+      {
+        kind: "sql",
+        query: "SELECT log(100) AS log, ln(1) AS ln, mod(7, 3) AS mod, sqrt(16) AS root;",
+        setup: [],
+      },
+      { kind: "sql", query: "SELECT stdev(pop) FROM countries;", setup: countries },
+    ]);
+
+    expect(math).toMatchObject({
+      status: "done",
+      table: { columns: ["log", "ln", "mod", "root"], rows: [[2, 0, 1, 4]] },
+    });
+
+    expect(notSqlite).toMatchObject({
+      error: { message: "no such function: stdev" },
+      status: "error",
+    });
+  });
+
   it("runs Python like the player, with errors on their line, no network, host files or JavaScript, and traced runs", async () => {
     const [sum, failing, sandboxed, traced] = await runPrograms([
       { code: "total = 0\nfor n in range(1, 101):\n    total += n\nprint(total)", kind: "python" },

@@ -11,6 +11,9 @@ export type SqlTable = {
 
 export type SqlStatement = { params: ActivityCell[]; sql: string };
 
+/** The iPhone app runs queries on the system SQLite, which has only SQLite's own functions. */
+export const SQL_JS_CONFIG = { useOldExtensionFunctions: false };
+
 const SQL_TYPES: Record<ColumnType, string> = { integer: "INTEGER", real: "REAL", text: "TEXT" };
 
 function quoteIdentifier(name: string): string {

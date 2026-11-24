@@ -1,6 +1,7 @@
 import { JAVASCRIPT_PRELUDE } from "./javascript-prelude";
 import { MAX_TRACE_STEPS, PROGRAM_TIME_LIMIT_MS, type ProgramKind } from "./program-limits";
 import { PYTHON_HARNESS } from "./python-harness";
+import { SQL_JS_CONFIG } from "./sql-setup";
 
 export type RunnerPaths = { pyodide: string; quickjs: string; quickjsWasm: string; sqlJs: string };
 
@@ -36,7 +37,7 @@ async function load() {
   }
   if (KINDS.includes("sql")) {
     const initSqlJs = (await import(PATHS.sqlJs)).default;
-    runtimes.sql = await initSqlJs();
+    runtimes.sql = await initSqlJs(SQL_JS_CONFIG);
   }
   if (KINDS.includes("python")) {
     const { loadPyodide } = await import(PATHS.pyodide);
@@ -191,6 +192,7 @@ export function programRunnerSource({
     `const MAX_LOG_LENGTH = ${MAX_LOG_LENGTH};`,
     `const MAX_TRACE_STEPS = ${MAX_TRACE_STEPS};`,
     `const MEMORY_BYTES = ${JAVASCRIPT_MEMORY_BYTES};`,
+    `const SQL_JS_CONFIG = ${JSON.stringify(SQL_JS_CONFIG)};`,
   ];
 
   return `${settings.join("\n")}\n${RUNNER_BODY}`;
