@@ -223,7 +223,9 @@ struct CodeSyntax {
           keywords: words(
             "all alter and as asc between by case create cross delete desc distinct drop else end exists false foreign from full group having in index inner insert into is join key left like limit not null offset on or order outer primary references right select set table then true union update values view when where with"
           ),
-          builtins: words("avg coalesce count length lower max min now round substr sum upper"),
+          builtins: words(
+            "abs acos asin atan atan2 avg ceil ceiling coalesce cos count degrees exp floor length ln log log10 log2 lower max min mod now pi pow power radians round sign sin sqrt substr sum tan trunc upper"
+          ),
           ignoresCase: true,
           rules: [
             Rule(kind: .comment, pattern: #/--[^\n]*|\/\*[\s\S]*?(?:\*\/|$)/#),
