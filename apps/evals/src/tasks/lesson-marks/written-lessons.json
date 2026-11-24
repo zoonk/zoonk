@@ -96,10 +96,7 @@
   },
   "en-heart-chambers": {
     "ideas": [
-      {
-        "label": "Atria",
-        "text": "The two upper chambers, the atria, receive blood."
-      },
+      { "label": "Atria", "text": "The two upper chambers, the atria, receive blood." },
       {
         "label": "Ventricles",
         "text": "The two lower chambers, the ventricles, pump blood out: the right to the lungs and the left to the whole body."
@@ -214,10 +211,7 @@
   },
   "en-percent-change": {
     "ideas": [
-      {
-        "label": "The change",
-        "text": "The change is the new value minus the starting value."
-      },
+      { "label": "The change", "text": "The change is the new value minus the starting value." },
       {
         "label": "Percent change",
         "text": "Percent change is the change divided by the starting value, multiplied by 100."
@@ -287,10 +281,7 @@
         "label": "Start and stop",
         "text": "In `range(start, stop)`, counting starts at the start and leaves out the stop, even when counting down."
       },
-      {
-        "label": "Reach 5",
-        "text": "`range(1, 6)` reaches 5 because it stops before 6."
-      },
+      { "label": "Reach 5", "text": "`range(1, 6)` reaches 5 because it stops before 6." },
       {
         "label": "Number of values",
         "text": "When counting up by ones, the number of values is stop minus start."
@@ -417,10 +408,7 @@
   },
   "ja-teko": {
     "ideas": [
-      {
-        "label": "支点",
-        "text": "支点は、てこが回る中心です。"
-      },
+      { "label": "支点", "text": "支点は、てこが回る中心です。" },
       {
         "label": "力点と作用点",
         "text": "力点はてこを動かす力を加える場所で、作用点はてこが相手に力を加える場所です。"
@@ -1139,10 +1127,7 @@
   },
   "pt-receitas-despesas": {
     "ideas": [
-      {
-        "label": "Receita",
-        "text": "O salário é uma receita porque é dinheiro que você ganhou."
-      },
+      { "label": "Receita", "text": "O salário é uma receita porque é dinheiro que você ganhou." },
       {
         "label": "Empréstimo",
         "text": "O dinheiro emprestado não é receita porque você precisa devolvê-lo."

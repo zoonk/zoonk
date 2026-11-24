@@ -192,6 +192,7 @@ export const TEST_CASES = [
       - In Brazilian Portuguese, an intermediate JavaScript lesson
       ${CODE_EXAMPLES}
       - Where the rule comes first and the block ends the screen ("Rejeição vira erro no await"), the frame holds the sentence that introduces the block and the block, never the rule before them
+      - "Erro não tratado rejeita a Promise" frames the sentence on what falhar().catch(console.log) prints with the falhar program after it, never neither
     `,
     id: "pt-js-async-await",
     origin: "production",
