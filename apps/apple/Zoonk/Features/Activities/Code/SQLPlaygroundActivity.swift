@@ -410,6 +410,10 @@ private struct SQLPlaygroundCanvas: View {
       activeRun = nil
       queryRun = run
       isStale = revision != started
+      // A worker a timeout ended reloads sql.js on the next run, which can fail offline.
+      if run == .unavailable {
+        runtime = .failed
+      }
       context.setAnswer(
         isStale ? nil : { if case .done(let result) = run { .rows(result) } else { nil } }())
     }
