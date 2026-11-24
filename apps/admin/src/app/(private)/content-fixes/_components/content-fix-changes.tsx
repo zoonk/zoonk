@@ -212,7 +212,12 @@ export async function ContentFixChanges({
             </h3>
             <ChangeBody change={change} compact={compact} names={fix.names} />
             {change.model === "Step" && change.op === "set" && (
-              <FixMarks index={0} item={media.get(stepMarksKey(change.id))} lang={lang} />
+              <FixMarks
+                index={0}
+                item={media.get(stepMarksKey(change.id))}
+                lang={lang}
+                remarked={false}
+              />
             )}
           </li>
         );

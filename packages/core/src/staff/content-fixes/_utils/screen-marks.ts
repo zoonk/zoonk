@@ -11,6 +11,7 @@ import {
 import {
   type ContentFixMediaNeed,
   type ProducedContentFixMedia,
+  applyMarkedQuotes,
   stepMarksKey,
 } from "../media-schema";
 import { type Json } from "./resolved-change";
@@ -84,20 +85,17 @@ export function toMarksTarget({
   position: number;
   target: MarksNeed["screens"][number];
 }) {
-  const fitting = fittingQuotes(marks, target.text);
+  const kept = fittingQuotes(marks, target.text);
   const remarked = asked && target.kind === "explanation";
-  const kept = remarked ? { ...fitting, example: null } : fitting;
 
-  return lacksQuotes({ kept, kind: target.kind })
+  return remarked || lacksQuotes({ kept, kind: target.kind })
     ? [{ kept, position, remarked, screen: target }]
     : [];
 }
 
 /**
- * Fills only the quotes the screen lacks, so a quote that still fits (which a learner's own
- * version of the screen may share) stays, and the screen's idea and icon stay as reviewed. A
- * screen asked to mark again takes the new example box in place of its own. Without new quotes,
- * as when marking failed, the screen keeps what still fits.
+ * A quote that still fits (which a learner's own version of the screen may share) stays unless the
+ * screen was asked to mark again, and the screen's idea and icon stay as reviewed.
  */
 function withMarkedText({
   marked,
@@ -110,13 +108,9 @@ function withMarkedText({
   remarked?: boolean;
   text: string;
 }): SavedStepMarks {
-  const fitting = fittingQuotes(marks, text);
-
   return {
     ...(readSavedStepMarks(marks) ?? UNTAGGED),
-    example:
-      remarked && marked ? marked.example : (fitting.example ?? marked?.example ?? null),
-    underline: fitting.underline ?? marked?.underline ?? null,
+    ...applyMarkedQuotes({ kept: fittingQuotes(marks, text), marked, remarked }),
   };
 }
 

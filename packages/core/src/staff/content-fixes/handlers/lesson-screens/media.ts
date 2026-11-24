@@ -234,13 +234,14 @@ function prepareScreenMarks({
   }
 
   const key = "marks";
+  const remarked = targets.flatMap(({ position, remarked: asked }) => (asked ? [position] : []));
 
   return [
     {
       link: {
         key,
         positions: targets.map(({ position }) => position),
-        remarked: targets.flatMap(({ position, remarked }) => (remarked ? [position] : [])),
+        ...(remarked.length > 0 && { remarked }),
         target: "marks",
       },
       need: {
