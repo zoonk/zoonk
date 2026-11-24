@@ -2542,6 +2542,952 @@
           ]
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All five lines are short questions in Brazilian Portuguese. They identify the topic without supplying the condition for a default constructor, the overload-selection rule, or the mechanism for delegation. The third is valid but broad: “pode fazer” asks about capability rather than when the routine runs.",
+          "score": 9,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The explanations follow the map order, and the Rota and Canal screens correctly focus on chaining. The final Protocolo question also brings chaining into an overload problem, but its index points to the earlier idea instead of the later one.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The Pedido frame has exactly the intended boundary: the whole class and what `new Pedido(31)` runs, without the general rule or bold term. Both Bilhete frames likewise keep code and behavior together. Alerta is the exception: no frame pairs the class with the explanation that `new Alerta()` uses the default constructor and does not call the method. The Caixa underline is relevant but would be more informative if it emphasized the absence of a declared constructor.",
+          "score": 8,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The box fits Caixa, the only eligible screen. All icon names and descriptions are English, and the objects are distinct. The button suggests explicit invocation and the chain suggests delegation. The key is a loose cue for construction, while the spring and puzzle piece give little indication of what distinguishes a default constructor from constructor overloading.",
+          "score": 7,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "12 of 15 parts passed. Screen 4: example isn't whole exact sentences Screen 7: underline isn't an exact quote Screen 8: example isn't whole exact sentences",
+          "score": 8.2,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3974,
+          "outputTokens": 697,
+          "reasoningTokens": 61
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final Protocolo question is assigned to overloading alone (index 3). Adding `Protocolo() { this(100); }` combines an overload with delegation to the existing constructor, so the later idea, chaining (index 4), should own the question. The Alerta explanation also lacks the required example frame around its code and behavior.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several map icons are hard to interpret without their labels: a spring does not convey a compiler-supplied default, and a lone puzzle piece does not show a choice among parameter lists. The Caixa underline emphasizes what the compiler supplies but not the condition that makes it do so.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the third about line more focused: “Quando roda uma rotina com o nome da classe?” directs attention to invocation without revealing the answer. For overloading, a selector dial would suggest a choice among alternatives more clearly than a puzzle piece.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate Java lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - On \"A rotina que cria o objeto\", the frame holds the Pedido class and the sentence on what new Pedido(31) runs, not the sentence saying a constructor has the class's name\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-java-construtores-1",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Construtor",
+              "text": "O construtor tem o nome da classe, não tem tipo de retorno e é executado quando `new` cria o objeto."
+            },
+            {
+              "label": "Construtor padrão",
+              "text": "Java cria um construtor sem parâmetros apenas quando a classe não declara nenhum construtor."
+            },
+            {
+              "label": "Método com nome da classe",
+              "text": "Uma rotina com tipo de retorno, mesmo com o nome da classe, é um método, que só roda quando algum código o chama, e não é executada automaticamente pelo `new` por ter esse nome."
+            },
+            {
+              "label": "Sobrecarga de construtores",
+              "text": "Uma classe pode ter construtores com listas de parâmetros diferentes, e o compilador escolhe um pela quantidade e pelos tipos dos argumentos."
+            },
+            {
+              "label": "Encadeamento com this(...)",
+              "text": "Com `this(...)` como primeira instrução, um construtor executa outro da mesma classe e só depois continua seu próprio corpo."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Classes, construtores e membros estáticos",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Pedido {\n    Pedido(int codigo) {}\n}\n```\n\nA expressão `new Pedido(31)` executa `Pedido(int codigo)` com 31, no momento em que o objeto nasce. Essa rotina tem o nome da classe e nenhum tipo de retorno. Ela se chama **construtor**.",
+              "title": "A rotina que cria o objeto"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "A classe `class Caixa {}` não declara construtor algum. O que acontece com a linha `new Caixa();`?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "`class Caixa {}` não declara construtor, então o compilador cria um sem parâmetros, e `new Caixa()` compila. Mas, se a classe declarar só `Caixa(int n) {}`, ele não cria mais nada, e `new Caixa()` deixa de compilar. Esse é o **construtor padrão**.",
+              "title": "O construtor que Java cria"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Veja esta outra classe:\n\n```java\nclass Alerta {\n    void Alerta() {}\n}\n```\n\nO `void` faz de `Alerta` um método comum, que só roda quando alguém o chama. Como a classe não declara construtor, `new Alerta()` usa o construtor padrão e não executa esse método.",
+              "title": "Com tipo de retorno, é método"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere esta classe:\n\n```java\nclass Aviso {\n    void Aviso() {\n        System.out.print(\"A\");\n    }\n}\n```\nJulgue o item: executar `new Aviso()` compila e não imprime A.",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Bilhete {\n    Bilhete() {}\n    Bilhete(int setor) {}\n}\n```\n\nEla aceita tanto `new Bilhete()` quanto `new Bilhete(3)`. O compilador escolhe o construtor pela quantidade e pelos tipos dos argumentos. Isso é **sobrecarga** de construtores.",
+              "title": "Várias formas de criar"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe este construtor:\n\n```java\nBilhete() {\n    this(8);\n}\n```\n\nA chamada `this(8)` executa `Bilhete(int setor)` com 8 e só depois o resto do corpo de `Bilhete()`. Escreva-a como primeira instrução, forma aceita em qualquer versão do Java. Isso é **encadeamento** de construtores.",
+              "title": "Um construtor chama outro"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "O que `new Rota()` imprime com esta classe?\n\n```java\nclass Rota {\n    Rota() {\n        this(6);\n        System.out.print(\"B\");\n    }\n\n    Rota(int n) {\n        System.out.print(n);\n    }\n}\n```",
+              "title": "Seguindo a delegação"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere esta classe:\n\n```java\nclass Canal {\n    Canal() {\n        this(9);\n        System.out.print(\"X\");\n    }\n\n    Canal(int n) {\n        System.out.print(n);\n    }\n}\n```\nJulgue o item: `new Canal()` imprime X9.",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "O sistema da ouvidoria municipal de Uberlândia tem esta classe:\n\n```java\nclass Protocolo {\n    Protocolo(int n) {\n        System.out.print(n);\n    }\n}\n```\n\nAgora `new Protocolo()` também precisa compilar e imprimir 100, sem mudar o que `new Protocolo(5)` faz.\nQual é a alteração mínima na classe?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All five lines are short questions in Brazilian Portuguese. Asking what happens when no constructor is declared does not reveal what the compiler supplies, and asking how delegation works does not disclose `this(...)` or execution order. The overloading preview is broader than necessary: initialization can involve more than choosing among constructors.",
+          "score": 9,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The first nine assignments track what the learner is studying, including the Aviso question under the same-name method rather than the earlier default-constructor idea. The final question incorrectly uses index 1 instead of 4, triggering the wrong-idea cap.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The Pedido frame has the exact instructional boundary requested: the full class and the effect of `new Pedido(31)`, without the naming rule or bold term. The Bilhete frames likewise pair each block with its concrete behavior. The Caixa selection is valid as a case but misses the useful contrast with `Caixa(int n)`; its underline is accurate but less informative without the condition.",
+          "score": 8,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Only the eligible Caixa explanation has a screen icon, and its cardboard box is grounded in the case and distinct from the idea's key. All names and descriptions are in English. The telephone, forked road and chain suggest calling, alternatives and linkage. The door and key are distinct drawable objects, but neither makes its particular constructor concept recognizable at a glance, so the several-weak-icons cap applies.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 15 parts passed. Screen 4: underline isn't an exact quote Screen 7: underline isn't an exact quote",
+          "score": 8.8,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4061,
+          "outputTokens": 706,
+          "reasoningTokens": 72
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final Protocolo question is assigned to the default-constructor idea. That idea explains why `new Protocolo()` does not yet compile, but not how to make it print 100. The minimal addition, `Protocolo() { this(100); }`, combines overloading and chaining. Chaining is the later idea, so the question belongs at index 4.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The Caixa example stops before the contrasting case, and its underline highlights the compiler's action without the condition that makes it distinctive. The door and key are also weak map icons: neither clearly distinguishes a constructor from an implicitly supplied constructor.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the overloading preview more specific without giving the selection rule away, for example: “Qual construtor será usado nesta chamada?” For Caixa, frame both concrete outcomes and leave the bold naming sentence outside.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate Java lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - On \"A rotina que cria o objeto\", the frame holds the Pedido class and the sentence on what new Pedido(31) runs, not the sentence saying a constructor has the class's name\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-java-construtores-2",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Construtor",
+              "text": "O construtor tem o nome da classe, não tem tipo de retorno e é executado quando `new` cria o objeto."
+            },
+            {
+              "label": "Construtor padrão",
+              "text": "Java cria um construtor sem parâmetros apenas quando a classe não declara nenhum construtor."
+            },
+            {
+              "label": "Método com nome da classe",
+              "text": "Uma rotina com tipo de retorno, mesmo com o nome da classe, é um método, que só roda quando algum código o chama, e não é executada automaticamente pelo `new` por ter esse nome."
+            },
+            {
+              "label": "Sobrecarga de construtores",
+              "text": "Uma classe pode ter construtores com listas de parâmetros diferentes, e o compilador escolhe um pela quantidade e pelos tipos dos argumentos."
+            },
+            {
+              "label": "Encadeamento com this(...)",
+              "text": "Com `this(...)` como primeira instrução, um construtor executa outro da mesma classe e só depois continua seu próprio corpo."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Classes, construtores e membros estáticos",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Pedido {\n    Pedido(int codigo) {}\n}\n```\n\nA expressão `new Pedido(31)` executa `Pedido(int codigo)` com 31, no momento em que o objeto nasce. Essa rotina tem o nome da classe e nenhum tipo de retorno. Ela se chama **construtor**.",
+              "title": "A rotina que cria o objeto"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "A classe `class Caixa {}` não declara construtor algum. O que acontece com a linha `new Caixa();`?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "`class Caixa {}` não declara construtor, então o compilador cria um sem parâmetros, e `new Caixa()` compila. Mas, se a classe declarar só `Caixa(int n) {}`, ele não cria mais nada, e `new Caixa()` deixa de compilar. Esse é o **construtor padrão**.",
+              "title": "O construtor que Java cria"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Veja esta outra classe:\n\n```java\nclass Alerta {\n    void Alerta() {}\n}\n```\n\nO `void` faz de `Alerta` um método comum, que só roda quando alguém o chama. Como a classe não declara construtor, `new Alerta()` usa o construtor padrão e não executa esse método.",
+              "title": "Com tipo de retorno, é método"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere esta classe:\n\n```java\nclass Aviso {\n    void Aviso() {\n        System.out.print(\"A\");\n    }\n}\n```\nJulgue o item: executar `new Aviso()` compila e não imprime A.",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Bilhete {\n    Bilhete() {}\n    Bilhete(int setor) {}\n}\n```\n\nEla aceita tanto `new Bilhete()` quanto `new Bilhete(3)`. O compilador escolhe o construtor pela quantidade e pelos tipos dos argumentos. Isso é **sobrecarga** de construtores.",
+              "title": "Várias formas de criar"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe este construtor:\n\n```java\nBilhete() {\n    this(8);\n}\n```\n\nA chamada `this(8)` executa `Bilhete(int setor)` com 8 e só depois o resto do corpo de `Bilhete()`. Escreva-a como primeira instrução, forma aceita em qualquer versão do Java. Isso é **encadeamento** de construtores.",
+              "title": "Um construtor chama outro"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "O que `new Rota()` imprime com esta classe?\n\n```java\nclass Rota {\n    Rota() {\n        this(6);\n        System.out.print(\"B\");\n    }\n\n    Rota(int n) {\n        System.out.print(n);\n    }\n}\n```",
+              "title": "Seguindo a delegação"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere esta classe:\n\n```java\nclass Canal {\n    Canal() {\n        this(9);\n        System.out.print(\"X\");\n    }\n\n    Canal(int n) {\n        System.out.print(n);\n    }\n}\n```\nJulgue o item: `new Canal()` imprime X9.",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "O sistema da ouvidoria municipal de Uberlândia tem esta classe:\n\n```java\nclass Protocolo {\n    Protocolo(int n) {\n        System.out.print(n);\n    }\n}\n```\n\nAgora `new Protocolo()` também precisa compilar e imprimir 100, sem mudar o que `new Protocolo(5)` faz.\nQual é a alteração mínima na classe?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All five previews are short questions in Portuguese and withhold their answers. “O que uma classe mantém de outra?” is the least clear: “de outra” could refer to something inherited from the other class rather than to a question about a field.",
+          "score": 8,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The assignments follow the map. The ambulance and digital-file screens ask learners to contrast an `extends` declaration with a field, so the later composition idea fits both. The last two questions go beyond whether extension is allowed and ask about calling the held object’s method, making delegation the appropriate later idea.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The two block-based explanations frame exactly the useful material: the complete class and the sentence describing its behavior. In particular, the `Emissor` frame ends after what `emitir()` does, before the delegation rule and name. Elsewhere, the chain frame includes a general verdict, the first assignment frame loses its setup, and the worked-example underline marks a prompt rather than the main point.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Icons appear only on eligible screens, have English names and descriptions, and do not duplicate the map icons. The paper sheet and window are grounded in their cases, and the relay baton communicates delegation well. The brick wall is not in its screen’s case, however, and the spool risks pointing a Java learner toward threads, a different concept from composition.",
+          "score": 6,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 15 parts passed. Screen 4: underline isn't an exact quote Screen 7: underline isn't an exact quote",
+          "score": 8.8,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4037,
+          "outputTokens": 824,
+          "reasoningTokens": 176
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The brick wall illustrates a restriction, not the case on the `final` screen. The text supplies a drawable object in `Chave`: a key would distinguish the example from the idea’s padlock. The thread spool is also a poor map icon for composition; it suggests threading rather than one object holding another.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "“Quais atribuições compilam” underlines the exercise instruction, not a Java insight. The first example starts at “Por isso,” leaving the class declarations that explain the assignment outside the frame. The hierarchy example has the opposite issue: it includes the general claim “Já uma cadeia vale” along with the concrete `Janela` and `Tela` declarations.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the spool with an open toolbox containing a tool to make the holding relationship visible. A more natural preview for that idea would be “Como interpretar um campo do tipo de outra classe?” It identifies what learners will inspect without telling them what the field implies.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate Java lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - On \"Repassar a tarefa\", the frame holds the Emissor class and the sentence on what emitir() does, not the sentence that names delegation\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-java-heranca-1",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Herança cria subtipo",
+              "text": "Com `extends`, a herança torna a nova classe um subtipo, que pode ocupar o lugar da outra classe."
+            },
+            {
+              "label": "Uma superclasse direta",
+              "text": "Em Java, uma classe tem no máximo uma superclasse direta, só `Object` não tem nenhuma, e uma classe pode estar no fim de uma cadeia de heranças."
+            },
+            {
+              "label": "Composição: ter um objeto",
+              "text": "Na composição, uma classe guarda uma referência a outro objeto, e esse campo não a torna um subtipo dele."
+            },
+            {
+              "label": "Classe final",
+              "text": "Uma classe final não aceita subclasses, porque bloqueia só o `extends`."
+            },
+            {
+              "label": "Delegação",
+              "text": "Na delegação, a classe repassa uma operação ao objeto que guarda, chamando o método dele."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Herança, interfaces e composição",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Com `class Documento {}` e `class Oficio extends Documento {}`, todo ofício também é um documento. Por isso `Documento d = new Oficio();` compila. Essa relação se chama **herança**: `Oficio` vira um subtipo de `Documento` e pode ocupar o lugar dele.",
+              "title": "Extends cria um subtipo"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Para aproveitar recursos de duas classes prontas, uma equipe escreve `class Tela extends Janela, Registro {}`. O que acontece?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A classe escrita logo após `extends` é a **superclasse direta**, e em Java uma classe tem no máximo uma. Por isso `Tela extends Janela, Registro` não compila: juntar recursos de dois pais não é permitido. Já uma cadeia vale: `Janela extends Componente` e `Tela extends Janela`. Toda classe tem exatamente uma superclasse direta, exceto `Object`, que fica no topo e não tem nenhuma.",
+              "title": "Só um pai direto"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Relatorio {\n    Impressora impressora;\n}\n```\n\nO relatório guarda uma referência a uma impressora para usá-la. Isso se chama **composição**. Esse campo não torna `Relatorio` um subtipo de `Impressora`, então `Impressora i = new Relatorio();` não compila.",
+              "title": "Ter um objeto não é ser ele"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "Considere estas classes:\n\n```java\nclass Motor {}\nclass Veiculo {}\n\nclass Ambulancia extends Veiculo {\n    Motor motor;\n}\n```\n\nQuais atribuições compilam: `Veiculo v = new Ambulancia();` e `Motor m = new Ambulancia();`?",
+              "title": "Lendo uma declaração"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere estas classes:\n\n```java\nclass Arquivo {}\nclass Leitor {}\n\nclass ArquivoDigital extends Arquivo {\n    Leitor leitor;\n}\n```\n\nAgora veja as atribuições `Arquivo a = new ArquivoDigital();` e `Leitor l = new ArquivoDigital();`.\nQuais atribuições compilam?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Com `final class Chave {}`, a linha `class ChaveEspecial extends Chave {}` não compila, mesmo com a nova classe vazia. Uma classe **final** não aceita subclasses. O que ela bloqueia é só o `extends`.",
+              "title": "Classe que não aceita filhas"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Emissor {\n    Impressora p = new Impressora();\n\n    void emitir() {\n        p.imprimir();\n    }\n}\n```\n\nChamar `emitir()` faz a impressora trabalhar. O emissor não imprime sozinho: ele repassa a operação ao objeto que guarda. Isso se chama **delegação**.",
+              "title": "Repassar a tarefa"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Julgue o item: mesmo que `Impressora` seja declarada `final`, a classe `Emissor` pode guardar uma referência a ela e chamar seu método público `imprimir()`.\nQual é o julgamento correto?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "No sistema que exporta dados para o Portal da Transparência, `Exportador` precisa ser um `Servico` e compactar arquivos com esta classe:\n\n```java\nfinal class Compactador {\n    public void compactar() {}\n}\n```\nQual declaração atende às duas exigências e executa a compactação?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All five lines are short questions in Brazilian Portuguese. They identify what the learner will investigate without answering it: for example, the delegation line asks how an operation is passed on without revealing the call to the stored object’s method.",
+          "score": 10,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The mixed Ambulancia worked example correctly has no single idea, while the mixed ArquivoDigital question correctly takes composition. The final Exportador screen is a question, not a multi-idea overview: executing the compression requires delegation, the latest idea it tests. Its null assignment misses that distinction.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The Relatorio and Emissor frames correctly include the complete classes and explain their behavior without including the bold naming sentences. The underlines target main points. However, “juntar recursos de dois pais não é permitido” states a general rule inside the Tela example, triggering the cap of 7. The Oficio frame also omits the concrete assignment that shows substitution.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The idea icons are distinct and described in English. The document and key are grounded in their screens, and no ineligible screen has an icon. The clearest omission is the eligible Tela screen: Janela supplies a concrete window that would not duplicate the ladder. The plug is also a less immediate symbol for substitution than the relay baton is for delegation.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "13 of 15 parts passed. Screen 4: underline isn't an exact quote Screen 7: underline isn't an exact quote",
+          "score": 8.8,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4011,
+          "outputTokens": 591,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final Exportador question has no idea assigned. It mixes inheritance, composition, final classes and delegation, so the later-idea rule places it under Delegação (ideaIndex 4). The “Só um pai direto” example also frames the general prohibition on two parents, not just the failed Tela declaration.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Só um pai direto” is eligible for an icon and names a drawable window (Janela), distinct from the idea’s ladder. The first example also stops before the successful Documento assignment, which is the concrete demonstration that an Oficio can stand in for a Documento.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The first idea’s plug would communicate substitutability more clearly if its fit with a socket were visible. The prongs alone primarily suggest electricity.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate Java lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - On \"Repassar a tarefa\", the frame holds the Emissor class and the sentence on what emitir() does, not the sentence that names delegation\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-java-heranca-2",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Herança cria subtipo",
+              "text": "Com `extends`, a herança torna a nova classe um subtipo, que pode ocupar o lugar da outra classe."
+            },
+            {
+              "label": "Uma superclasse direta",
+              "text": "Em Java, uma classe tem no máximo uma superclasse direta, só `Object` não tem nenhuma, e uma classe pode estar no fim de uma cadeia de heranças."
+            },
+            {
+              "label": "Composição: ter um objeto",
+              "text": "Na composição, uma classe guarda uma referência a outro objeto, e esse campo não a torna um subtipo dele."
+            },
+            {
+              "label": "Classe final",
+              "text": "Uma classe final não aceita subclasses, porque bloqueia só o `extends`."
+            },
+            {
+              "label": "Delegação",
+              "text": "Na delegação, a classe repassa uma operação ao objeto que guarda, chamando o método dele."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Herança, interfaces e composição",
+          "screens": [
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Com `class Documento {}` e `class Oficio extends Documento {}`, todo ofício também é um documento. Por isso `Documento d = new Oficio();` compila. Essa relação se chama **herança**: `Oficio` vira um subtipo de `Documento` e pode ocupar o lugar dele.",
+              "title": "Extends cria um subtipo"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "Para aproveitar recursos de duas classes prontas, uma equipe escreve `class Tela extends Janela, Registro {}`. O que acontece?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "A classe escrita logo após `extends` é a **superclasse direta**, e em Java uma classe tem no máximo uma. Por isso `Tela extends Janela, Registro` não compila: juntar recursos de dois pais não é permitido. Já uma cadeia vale: `Janela extends Componente` e `Tela extends Janela`. Toda classe tem exatamente uma superclasse direta, exceto `Object`, que fica no topo e não tem nenhuma.",
+              "title": "Só um pai direto"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Relatorio {\n    Impressora impressora;\n}\n```\n\nO relatório guarda uma referência a uma impressora para usá-la. Isso se chama **composição**. Esse campo não torna `Relatorio` um subtipo de `Impressora`, então `Impressora i = new Relatorio();` não compila.",
+              "title": "Ter um objeto não é ser ele"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "Considere estas classes:\n\n```java\nclass Motor {}\nclass Veiculo {}\n\nclass Ambulancia extends Veiculo {\n    Motor motor;\n}\n```\n\nQuais atribuições compilam: `Veiculo v = new Ambulancia();` e `Motor m = new Ambulancia();`?",
+              "title": "Lendo uma declaração"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere estas classes:\n\n```java\nclass Arquivo {}\nclass Leitor {}\n\nclass ArquivoDigital extends Arquivo {\n    Leitor leitor;\n}\n```\n\nAgora veja as atribuições `Arquivo a = new ArquivoDigital();` e `Leitor l = new ArquivoDigital();`.\nQuais atribuições compilam?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Com `final class Chave {}`, a linha `class ChaveEspecial extends Chave {}` não compila, mesmo com a nova classe vazia. Uma classe **final** não aceita subclasses. O que ela bloqueia é só o `extends`.",
+              "title": "Classe que não aceita filhas"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Observe esta classe:\n\n```java\nclass Emissor {\n    Impressora p = new Impressora();\n\n    void emitir() {\n        p.imprimir();\n    }\n}\n```\n\nChamar `emitir()` faz a impressora trabalhar. O emissor não imprime sozinho: ele repassa a operação ao objeto que guarda. Isso se chama **delegação**.",
+              "title": "Repassar a tarefa"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Julgue o item: mesmo que `Impressora` seja declarada `final`, a classe `Emissor` pode guardar uma referência a ela e chamar seu método público `imprimir()`.\nQual é o julgamento correto?",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "No sistema que exporta dados para o Portal da Transparência, `Exportador` precisa ser um `Servico` e compactar arquivos com esta classe:\n\n```java\nfinal class Compactador {\n    public void compactar() {}\n}\n```\nQual declaração atende às duas exigências e executa a compactação?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four previews are short questions in Brazilian Portuguese and none supplies its answer. In particular, “enquanto uma função espera” does not reveal what the outside code does. The failure preview is narrower than its idea, and the final preview is so broad that it does not identify `finally` as the topic.",
+          "score": 8,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "All ten assignments match the map. The worked trace focuses on suspension, the external `catch` question tests rejection, and the final question correctly takes the later `finally` idea despite also involving rejection and suspension.",
+          "score": 10,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "Both kept underlines target main points. “Rejeição vira erro no await” has exactly the right boundary: the output prediction and the full block are inside, and the preceding rule is outside. The `finally` frame, however, includes the general `return` rule, triggering the cap of 7. The `falhar()` explanation also lacks the frame for its prediction and program.",
+          "score": 7,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "The idea icons are distinct and named in English. The hourglass, warning triangle and broom readily suggest waiting, failure and cleanup. The gear is less specific. Only the eligible screen gets a screen icon, but its blank monitor illustrates neither a thing described in the text nor the order of the two logs; leaving that screen without an icon would be better grounded.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "9 of 14 parts passed. Screen 3: underline isn't an exact quote Screen 4: underline isn't an exact quote Screen 6: underline isn't an exact quote Screen 7: example isn't whole exact sentences Screen 9: underline isn't an exact quote",
+          "score": 6.7857142857142865,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4045,
+          "outputTokens": 682,
+          "reasoningTokens": 49
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The `finally` example frames the rule as part of the case: “O `return` não encerra a função na hora” is a general claim, not an observation about `ler()`. Conversely, “Erro não tratado rejeita a Promise” leaves its concrete case unframed, even though the sentence predicting `offline` and the entire `falhar()` block form a clear example.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The monitor on “O corpo começa na chamada” is not grounded in the screen: `console.log` names a logging operation, not a physical display. The gear is also a weak cue for an async function; it could stand for almost any computation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the failure-topic preview broad enough to cover an uncaught `throw` as well as failure at `await`. Naming `finally` in the last preview would likewise make its topic easier to recognize without revealing when it runs.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate JavaScript lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - Where the rule comes first and the block ends the screen (\"Rejeição vira erro no await\"), the frame holds the sentence that introduces the block and the block, never the rule before them\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-js-async-await-1",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Função assíncrona",
+              "text": "Uma função marcada com async sempre devolve uma Promise e começa a executar o corpo no momento da chamada."
+            },
+            {
+              "label": "Suspensão no await",
+              "text": "O await suspende só a função assíncrona, e o código de fora segue antes de ela retomar, mesmo quando a Promise já deu certo."
+            },
+            {
+              "label": "Falhas e rejeição",
+              "text": "Uma Promise rejeitada faz o await lançar a falha ali, e um throw sem try na função assíncrona rejeita a Promise devolvida em vez de escapar para quem chamou."
+            },
+            {
+              "label": "Limpeza com finally",
+              "text": "O finally roda antes de a função assíncrona entregar seu resultado, mesmo quando o try já fez return."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Fluxo assíncrono com async/await",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Quando você marca uma função com `async`, ela passa a devolver uma Promise, aquele objeto que guarda um resultado, mesmo que você retorne um número. Veja esta função:\n\n```javascript\nasync function obter() {\n  return 12;\n}\n```\n\nCom ela, `obter().then(console.log)` recebe `12`. Isso é uma **função assíncrona**.",
+              "title": "async sempre devolve Promise"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "```javascript\nasync function consultar() {\n  console.log('dentro');\n  return 12;\n}\n\nconsultar();\nconsole.log('fora');\n```\n\nQual é a saída, em ordem, desse código?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Chamar `consultar()` executa o corpo na hora, como numa função comum. Por isso `console.log('dentro')` roda antes de a chamada devolver o controle, e só então vem `fora`. O `async` muda o que a função devolve, não quando ela começa.",
+              "title": "O corpo começa na chamada"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Dentro da função assíncrona, `await` pausa só ela até a Promise trazer o resultado. Neste trecho, `mostrar` espera os dados, mas o código de fora segue em frente:\n\n```javascript\nconst dados = await consultar();\nmostrar(dados);\n```\n\nEssa pausa é a **suspensão**.",
+              "title": "await pausa só a função"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "Qual é a saída deste código?\n\n```javascript\nasync function carregar() {\n  console.log('início');\n  const n = await Promise.resolve(8);\n  console.log(n);\n}\n\ncarregar();\nconsole.log('fora');\n```",
+              "title": "Rastreando um await"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Se a Promise aguardada é rejeitada, o `await` lança a falha ali mesmo, como um `throw`. Numa função assíncrona, este trecho nunca chega a `ok` e imprime `offline`:\n\n```javascript\ntry {\n  await Promise.reject('offline');\n  console.log('ok');\n} catch (e) {\n  console.log(e);\n}\n```",
+              "title": "Rejeição vira erro no await"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Um `throw` sem `try` dentro da função assíncrona não escapa para quem chamou: ele vira a rejeição da Promise devolvida, mesmo antes de qualquer `await`. Por isso, com esta função, `falhar().catch(console.log)` imprime `offline`:\n\n```javascript\nasync function falhar() {\n  throw 'offline';\n}\n```",
+              "title": "Erro não tratado rejeita a Promise"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere o código:\n\n```javascript\nasync function validar() {\n  throw 'CPF inválido';\n}\n\ntry {\n  validar().catch(() => {});\n} catch (e) {\n  console.log('externo');\n}\n```\nJulgue o item: _Ao executar o código, o console imprime externo._",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Veja esta função:\n\n```javascript\nasync function ler() {\n  try {\n    return await Promise.resolve('dados');\n  } finally {\n    console.log('fim');\n  }\n}\n```\n\nO `return` não encerra a função na hora. O `finally` roda antes, por isso `fim` aparece antes de quem chamou receber `dados`.",
+              "title": "finally roda antes da entrega"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "No portal Consulta Clara, a equipe revisa este código:\n\n```javascript\nasync function abrir() {\n  try {\n    return await Promise.reject('offline');\n  } catch (e) {\n    return 'cópia';\n  } finally {\n    console.log('fechado');\n  }\n}\n\nabrir().then(console.log);\nconsole.log('tela');\n```\nQual análise da saída está correta?",
+              "title": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "about",
+          "reasoning": "All four previews are short Portuguese questions. The first two ask what happens without identifying the return value, start time, or code that continues. The last two avoid spoilers as well, but “lidar com falhas” and “encerramento de uma operação” are less precise about the topics actually taught.",
+          "score": 8,
+          "label": "About lines that don't give the answer away",
+          "weight": 30
+        },
+        {
+          "categoryId": "ideas",
+          "reasoning": "The guess about `consultar()` belongs to the first idea, not the second: the order follows from immediate execution of the body, with no suspension involved. This triggers the wrong-idea cap. The final mixed question correctly takes the later `finally` idea.",
+          "score": 6,
+          "label": "Each screen under its idea",
+          "weight": 20
+        },
+        {
+          "categoryId": "marks",
+          "reasoning": "The retained underlines identify main points, and “Rejeição vira erro no await” frames exactly the concrete introductory sentence and block. The `mostrar` frame omits its case explanation, the `falhar` case is unframed, and the `ler` frame includes “O `return` não encerra a função na hora,” a rule rather than an observation specific to `ler`. That rule inclusion triggers the cap.",
+          "score": 6,
+          "label": "Underlines on the main point, examples on the case",
+          "weight": 20
+        },
+        {
+          "categoryId": "icons",
+          "reasoning": "Only the eligible explanation receives a screen icon. Its terminal fits the console output and differs from the gear above it. The English-named map icons are distinct; the hourglass, broken link, and broom suggest waiting, failure, and cleanup. The main weakness is the gear's loose connection to the first idea.",
+          "score": 8,
+          "label": "Concrete, fitting icons",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "11 of 14 parts passed. Screen 6: underline isn't an exact quote Screen 7: example isn't whole exact sentences Screen 9: underline isn't an exact quote",
+          "score": 8.071428571428571,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4031,
+          "outputTokens": 792,
+          "reasoningTokens": 59
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The `consultar()` guess is assigned to “Suspensão no await,” but it contains no `await`. Predicting `dentro` before `fora` tests whether the learner knows that an `async` function starts executing when called, so its `ideaIndex` should be 0. The example frames also miss two important cases: “await pausa só a função” keeps the block without the sentence explaining what `mostrar` waits for, and “Erro não tratado rejeita a Promise” has no frame for the block and its `.catch` outcome. Conversely, the `finally` frame includes the general statement about `return` rather than isolating the program and its observed output.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Como lidar com falhas” suggests a lesson on handling strategies rather than on how rejection and `throw` propagate. The closing-operation question is also broad enough to obscure its `finally` topic. Neither gives away the answer. The gear is drawable but conveys a generic mechanism more readily than a function starting on invocation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the rejection-at-`await` screen as the model for rule-first screens: start the example at the sentence describing this particular run and include the entire block. For a more focused preview of the last idea, “Qual é a ordem entre `return` e `finally`?” names the question without settling it.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - In Brazilian Portuguese, an intermediate JavaScript lesson\n      \n  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term\n  - A sentence about a block is never framed without the block\n\n      - Where the rule comes first and the block ends the screen (\"Rejeição vira erro no await\"), the frame holds the sentence that introduces the block and the block, never the rule before them\n    \n\n  - A screen \"may get an icon\" when its kind is `explanation` and `hasVisual` is false; no other screen has one. Such a screen goes without when its case has no concrete thing besides its idea's icon\n  - A screen's icon is never its idea's icon (code already dropped one that was), and no two ideas share an icon (code dropped the later one)\n  - Quotes were already checked by code: judge only whether each kept underline and example is the right part of its screen\n  - Icon names and descriptions are in English whatever the lesson's language; about lines are in the lesson's language\n  - Don't evaluate JSON formatting\n",
+        "id": "pt-js-async-await-2",
+        "origin": "production",
+        "userInput": {
+          "ideas": [
+            {
+              "label": "Função assíncrona",
+              "text": "Uma função marcada com async sempre devolve uma Promise e começa a executar o corpo no momento da chamada."
+            },
+            {
+              "label": "Suspensão no await",
+              "text": "O await suspende só a função assíncrona, e o código de fora segue antes de ela retomar, mesmo quando a Promise já deu certo."
+            },
+            {
+              "label": "Falhas e rejeição",
+              "text": "Uma Promise rejeitada faz o await lançar a falha ali, e um throw sem try na função assíncrona rejeita a Promise devolvida em vez de escapar para quem chamou."
+            },
+            {
+              "label": "Limpeza com finally",
+              "text": "O finally roda antes de a função assíncrona entregar seu resultado, mesmo quando o try já fez return."
+            }
+          ],
+          "language": "pt",
+          "lessonTitle": "Fluxo assíncrono com async/await",
+          "screens": [
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Quando você marca uma função com `async`, ela passa a devolver uma Promise, aquele objeto que guarda um resultado, mesmo que você retorne um número. Veja esta função:\n\n```javascript\nasync function obter() {\n  return 12;\n}\n```\n\nCom ela, `obter().then(console.log)` recebe `12`. Isso é uma **função assíncrona**.",
+              "title": "async sempre devolve Promise"
+            },
+            {
+              "hasVisual": true,
+              "kind": "guess",
+              "text": "```javascript\nasync function consultar() {\n  console.log('dentro');\n  return 12;\n}\n\nconsultar();\nconsole.log('fora');\n```\n\nQual é a saída, em ordem, desse código?",
+              "title": null
+            },
+            {
+              "hasVisual": false,
+              "kind": "explanation",
+              "text": "Chamar `consultar()` executa o corpo na hora, como numa função comum. Por isso `console.log('dentro')` roda antes de a chamada devolver o controle, e só então vem `fora`. O `async` muda o que a função devolve, não quando ela começa.",
+              "title": "O corpo começa na chamada"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Dentro da função assíncrona, `await` pausa só ela até a Promise trazer o resultado. Neste trecho, `mostrar` espera os dados, mas o código de fora segue em frente:\n\n```javascript\nconst dados = await consultar();\nmostrar(dados);\n```\n\nEssa pausa é a **suspensão**.",
+              "title": "await pausa só a função"
+            },
+            {
+              "hasVisual": true,
+              "kind": "workedExample",
+              "text": "Qual é a saída deste código?\n\n```javascript\nasync function carregar() {\n  console.log('início');\n  const n = await Promise.resolve(8);\n  console.log(n);\n}\n\ncarregar();\nconsole.log('fora');\n```",
+              "title": "Rastreando um await"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Se a Promise aguardada é rejeitada, o `await` lança a falha ali mesmo, como um `throw`. Numa função assíncrona, este trecho nunca chega a `ok` e imprime `offline`:\n\n```javascript\ntry {\n  await Promise.reject('offline');\n  console.log('ok');\n} catch (e) {\n  console.log(e);\n}\n```",
+              "title": "Rejeição vira erro no await"
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Um `throw` sem `try` dentro da função assíncrona não escapa para quem chamou: ele vira a rejeição da Promise devolvida, mesmo antes de qualquer `await`. Por isso, com esta função, `falhar().catch(console.log)` imprime `offline`:\n\n```javascript\nasync function falhar() {\n  throw 'offline';\n}\n```",
+              "title": "Erro não tratado rejeita a Promise"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "Considere o código:\n\n```javascript\nasync function validar() {\n  throw 'CPF inválido';\n}\n\ntry {\n  validar().catch(() => {});\n} catch (e) {\n  console.log('externo');\n}\n```\nJulgue o item: _Ao executar o código, o console imprime externo._",
+              "title": null
+            },
+            {
+              "hasVisual": true,
+              "kind": "explanation",
+              "text": "Veja esta função:\n\n```javascript\nasync function ler() {\n  try {\n    return await Promise.resolve('dados');\n  } finally {\n    console.log('fim');\n  }\n}\n```\n\nO `return` não encerra a função na hora. O `finally` roda antes, por isso `fim` aparece antes de quem chamou receber `dados`.",
+              "title": "finally roda antes da entrega"
+            },
+            {
+              "hasVisual": true,
+              "kind": "question",
+              "text": "No portal Consulta Clara, a equipe revisa este código:\n\n```javascript\nasync function abrir() {\n  try {\n    return await Promise.reject('offline');\n  } catch (e) {\n    return 'cópia';\n  } finally {\n    console.log('fechado');\n  }\n}\n\nabrir().then(console.log);\nconsole.log('tela');\n```\nQual análise da saída está correta?",
+              "title": null
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "lesson-marks"

@@ -15,14 +15,26 @@ const SHARED_EXPECTATIONS = `
 function marksCase({
   expectations,
   id,
+  origin,
 }: {
   expectations: string;
   id: MarksLessonId;
+  origin?: "production";
 }): TestCase<never, MarksCaseInput> {
   const { level: _level, ...input } = getMarksLesson(id);
 
-  return { expectations: `${expectations}\n${SHARED_EXPECTATIONS}`, id, userInput: input };
+  return {
+    expectations: `${expectations}\n${SHARED_EXPECTATIONS}`,
+    id,
+    ...(origin && { origin }),
+    userInput: input,
+  };
 }
+
+const CODE_EXAMPLES = `
+  - On an explanation with a code block, the program is the case: the example frames the whole block with the sentences right before or after it that say what this code does, and leaves out the sentence that states the general rule and the bold term
+  - A sentence about a block is never framed without the block
+`;
 
 export const TEST_CASES = [
   marksCase({
@@ -156,5 +168,32 @@ export const TEST_CASES = [
       - About lines don't say which chambers receive or pump blood
     `,
     id: "en-heart-chambers",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, an intermediate Java lesson
+      ${CODE_EXAMPLES}
+      - On "A rotina que cria o objeto", the frame holds the Pedido class and the sentence on what new Pedido(31) runs, not the sentence saying a constructor has the class's name
+    `,
+    id: "pt-java-construtores",
+    origin: "production",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, an intermediate Java lesson
+      ${CODE_EXAMPLES}
+      - On "Repassar a tarefa", the frame holds the Emissor class and the sentence on what emitir() does, not the sentence that names delegation
+    `,
+    id: "pt-java-heranca",
+    origin: "production",
+  }),
+  marksCase({
+    expectations: `
+      - In Brazilian Portuguese, an intermediate JavaScript lesson
+      ${CODE_EXAMPLES}
+      - Where the rule comes first and the block ends the screen ("Rejeição vira erro no await"), the frame holds the sentence that introduces the block and the block, never the rule before them
+    `,
+    id: "pt-js-async-await",
+    origin: "production",
   }),
 ];
