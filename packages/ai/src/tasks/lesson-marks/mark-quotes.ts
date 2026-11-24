@@ -98,10 +98,50 @@ function keepsCodeWhole({
 }
 
 /** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
-export function withListMarker({ quote, text }: { quote: string; text: string }): string {
+function withListMarker({ quote, text }: { quote: string; text: string }): string {
   const start = text.indexOf(quote);
   const marker = start === -1 ? null : LIST_MARKER.exec(text.slice(0, start));
   return marker ? `${marker[0].trimStart()}${quote}` : quote;
+}
+
+const REGEXP_SYNTAX = /[\\^$.*+?()[\]{}|]/gu;
+
+/** Copying across a code block's closing fence, models often drop the blank line after it. */
+function withTextLineBreaks({ quote, text }: { quote: string; text: string }): string {
+  if (text.includes(quote)) {
+    return quote;
+  }
+
+  const lines = quote.split(/\n+/u).map((line) => line.replaceAll(REGEXP_SYNTAX, String.raw`\$&`));
+  return new RegExp(lines.join("\n+"), "u").exec(text)?.[0] ?? quote;
+}
+
+/**
+ * A sentence that traces the code block before it, or introduces the one after it, shows the case
+ * with that program, so the frame takes the block too and the program never sits outside it.
+ */
+function withAdjacentCode({ quote, text }: { quote: string; text: string }): string {
+  const start = text.indexOf(quote);
+
+  if (start === -1) {
+    return quote;
+  }
+
+  const end = start + quote.length;
+  const spans = findCodeSpans(text);
+  const traced = spans.find((code) => code.end <= start && text.slice(code.end, start).trim() === "");
+
+  const introduced = quote.endsWith(":")
+    ? spans.find((code) => code.start >= end && text.slice(end, code.start).trim() === "")
+    : undefined;
+
+  return text.slice(traced?.start ?? start, introduced?.end ?? end);
+}
+
+/** The text's own span for an example the model copied, widened to what the frame must not split. */
+export function fitExampleQuote({ quote, text }: { quote: string; text: string }): string {
+  const copied = withTextLineBreaks({ quote, text });
+  return withAdjacentCode({ quote: withListMarker({ quote: copied, text }), text });
 }
 
 /**

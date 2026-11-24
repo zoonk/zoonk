@@ -121,6 +121,62 @@ describe(normalizeLessonMarks, () => {
     expect(marks.screens[0]?.example).toBe("2. Some R$ 2.000 do caixa e o forno.");
   });
 
+  describe("a screen with a code block", () => {
+    const program: MarksScreen = {
+      ...pictured,
+      text: [
+        "Observe esta classe:",
+        "",
+        "```java",
+        "class Pedido {",
+        "    Pedido(int codigo) {}",
+        "}",
+        "```",
+        "",
+        "A expressão `new Pedido(31)` executa `Pedido(int codigo)` com 31. Essa rotina tem o nome da classe. Ela se chama **construtor**.",
+      ].join("\n"),
+    };
+
+    const block = "```java\nclass Pedido {\n    Pedido(int codigo) {}\n}\n```";
+    const trace = "A expressão `new Pedido(31)` executa `Pedido(int codigo)` com 31.";
+
+    function exampleFor({ example, screen = program }: { example: string; screen?: MarksScreen }) {
+      const marks = normalizeLessonMarks({
+        ideas,
+        output: {
+          ideas: [],
+          screens: [{ example, icon: null, idea: 1, screen: 1, underline: null }],
+        },
+        screens: [screen],
+      });
+
+      return marks.screens[0]?.example;
+    }
+
+    it("keeps the block with the sentence that traces it when the quote loses the blank line between them", () => {
+      expect(exampleFor({ example: `${block}\n${trace}` })).toBe(`${block}\n\n${trace}`);
+    });
+
+    it("frames the block a sentence traces with it, so the program never sits outside the frame", () => {
+      expect(exampleFor({ example: trace })).toBe(`${block}\n\n${trace}`);
+    });
+
+    it("frames the block a sentence introduces with it", () => {
+      const introduced: MarksScreen = {
+        ...program,
+        text: `Um construtor roda quando o objeto nasce. Neste código, ele roda com 31:\n\n${block}`,
+      };
+
+      expect(exampleFor({ example: "Neste código, ele roda com 31:", screen: introduced })).toBe(
+        `Neste código, ele roda com 31:\n\n${block}`,
+      );
+    });
+
+    it("keeps a frame around the block alone", () => {
+      expect(exampleFor({ example: block })).toBe(block);
+    });
+  });
+
   it("drops what the screens don't have: a changed word, half a sentence, the whole text, an idea past the map", () => {
     const marks = normalizeLessonMarks({
       ideas,
