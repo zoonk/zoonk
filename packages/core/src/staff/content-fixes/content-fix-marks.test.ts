@@ -166,6 +166,33 @@ describe("marks on screens a fix rewrites", () => {
     await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({ marks: savedMarks });
   });
 
+  it("replaces a kept screen's example box when asked, keeping its underline", async () => {
+    const { check, lesson, reading } = await markedLesson();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: { screens: [{ id: reading.id, remark: true }, { id: check.id }], version: 1 },
+        },
+      ],
+      reason: "Frame the whole case",
+    });
+
+    markedAs({ example: before, underline: "a different phrase" });
+    const need = await prepareMarks(fix.id);
+
+    expect(need).toMatchObject({ kept: [{ example: null, underline: "joins numbers" }] });
+
+    await approveFix(fix.id);
+
+    await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({
+      marks: { ...savedMarks, example: before },
+    });
+  });
+
   it("keeps the quotes that still fit when marking fails", async () => {
     const { check, lesson, reading } = await markedLesson();
     await signInProposer();

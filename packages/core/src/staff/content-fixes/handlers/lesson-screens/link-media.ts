@@ -79,7 +79,13 @@ function linkLessonMedia({
   }
 
   if (link.target === "marks" && media?.kind === "marks") {
-    linkScreenMarks({ marked: media, positions: link.positions, screens: after.screens });
+    linkScreenMarks({
+      marked: media,
+      positions: link.positions,
+      remarked: link.remarked ?? [],
+      screens: after.screens,
+    });
+
     return true;
   }
 
