@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.feedback
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.FakeSession
 import com.zoonk.api.models.FeedbackSubmission
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -36,8 +38,8 @@ class FeedbackViewModelTest {
     fun aSaveReportSendsWithoutAReplyEmail() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-            val form = FeedbackViewModel(sender, saveTarget, "I couldn't save my answers.")
-            form.onEmailChange("   ")
+            val form = FeedbackViewModel(sender, saveTarget, "I couldn't save my answers.", handle = SavedStateHandle())
+            form.emailField.setTextAndPlaceCursorAtEnd("   ")
 
             assertTrue(form.canSend(null))
             form.send(null)
@@ -54,9 +56,9 @@ class FeedbackViewModelTest {
     @Test
     fun aMalformedReplyEmailBlocksASaveReport() =
         runTest {
-            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
+            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.", handle = SavedStateHandle())
             for (email in listOf("invalid", "learner@", "learner@example", "learner @example.com")) {
-                form.onEmailChange(email)
+                form.emailField.setTextAndPlaceCursorAtEnd(email)
                 assertFalse(form.canSend(null))
                 form.send(null)
             }
@@ -67,13 +69,13 @@ class FeedbackViewModelTest {
     fun regularFeedbackStillRequiresAReplyEmail() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-            val form = FeedbackViewModel(sender, FeedbackTarget("support"))
-            form.onMessageChange("The timer skips a second.")
+            val form = FeedbackViewModel(sender, FeedbackTarget("support"), handle = SavedStateHandle())
+            form.messageField.setTextAndPlaceCursorAtEnd("The timer skips a second.")
             assertFalse(form.canSend(null))
             form.send(null)
             assertTrue(sent.isEmpty())
 
-            form.onEmailChange(" learner@example.com ")
+            form.emailField.setTextAndPlaceCursorAtEnd(" learner@example.com ")
             assertTrue(form.canSend(null))
             form.send(null)
             advanceUntilIdle()
@@ -85,7 +87,7 @@ class FeedbackViewModelTest {
     fun anAccountReportUsesTheAccountEmail() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
+            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.", handle = SavedStateHandle())
             form.send("account@example.com")
             advanceUntilIdle()
             assertEquals("account@example.com", sent.single().email)
@@ -95,8 +97,8 @@ class FeedbackViewModelTest {
     fun aFailedReportKeepsTheEditedMessageForRetry() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
-            form.onMessageChange("The second answer still won't save.")
+            val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.", handle = SavedStateHandle())
+            form.messageField.setTextAndPlaceCursorAtEnd("The second answer still won't save.")
             reachable = false
             form.send(null)
             advanceUntilIdle()
@@ -112,35 +114,35 @@ class FeedbackViewModelTest {
 
     @Test
     fun anAccountEmailWithAnApostropheCanSendFeedback() {
-        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
-        form.onMessageChange("The timer skips a second.")
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"), handle = SavedStateHandle())
+        form.messageField.setTextAndPlaceCursorAtEnd("The timer skips a second.")
 
         assertTrue(form.canSend("o'brien@example.com"))
     }
 
     @Test
     fun aTypedEmailWithAnApostropheCanSendFeedback() {
-        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
-        form.onMessageChange("The timer skips a second.")
-        form.onEmailChange("o'brien@example.com")
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"), handle = SavedStateHandle())
+        form.messageField.setTextAndPlaceCursorAtEnd("The timer skips a second.")
+        form.emailField.setTextAndPlaceCursorAtEnd("o'brien@example.com")
 
         assertTrue(form.canSend(null))
     }
 
     @Test
     fun typedEmailsTheServerRejectsStayBlocked() {
-        val form = FeedbackViewModel(sender, FeedbackTarget("support"))
-        form.onMessageChange("The timer skips a second.")
+        val form = FeedbackViewModel(sender, FeedbackTarget("support"), handle = SavedStateHandle())
+        form.messageField.setTextAndPlaceCursorAtEnd("The timer skips a second.")
         for (email in listOf("name@gmail.com.", "name@gmail..com", "joão@gmail.com")) {
-            form.onEmailChange(email)
+            form.emailField.setTextAndPlaceCursorAtEnd(email)
             assertFalse(email, form.canSend(null))
         }
     }
 
     @Test
     fun aSaveReportStillNeedsAMessage() {
-        val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.")
-        form.onMessageChange(" ")
+        val form = FeedbackViewModel(sender, saveTarget, "My answers won't save.", handle = SavedStateHandle())
+        form.messageField.setTextAndPlaceCursorAtEnd(" ")
         assertFalse(form.canSend(null))
     }
 }

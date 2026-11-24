@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,6 +71,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeOfDayDialog
 import com.zoonk.android.ui.components.iconButtonEdge
+import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -259,20 +263,21 @@ private fun RewriteWords(
     onCancel: () -> Unit,
     onRewrite: (String) -> Unit,
 ) {
-    var value by rememberSaveable { mutableStateOf(words) }
+    val valueField = rememberTextFieldState(words)
+    val value = valueField.text.toString()
     val focus = remember { FocusRequester() }
     val submit = { value.trim().takeIf { it.isNotEmpty() && !disabled }?.let(onRewrite) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
-            value = value,
-            onValueChange = { value = it.take(MAX_GOAL_LENGTH) },
-            modifier = Modifier.fillMaxWidth().focusRequester(focus),
+            state = valueField,
+            inputTransformation = InputTransformation.maxLengthTrim(MAX_GOAL_LENGTH),
+            modifier = Modifier.fillMaxWidth().focusRequester(focus).submitOnEnter(valueField) { submit() },
             label = stringResource(R.string.onboarding_what_you_wrote),
             supportingText = { Text(stringResource(R.string.onboarding_rewrite_hint)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
-            keyboardActions = KeyboardActions(onGo = { submit() }),
-            minLines = 2,
+            onKeyboardAction = { submit() },
+            lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = 2),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
@@ -460,19 +465,19 @@ private fun TextEditor(
     onCancel: () -> Unit,
     onSave: (String) -> Unit,
 ) {
-    var value by rememberSaveable { mutableStateOf(initial) }
+    val valueField = rememberTextFieldState(initial)
+    val value = valueField.text.toString()
     val focus = remember { FocusRequester() }
     val submit = { value.trim().takeIf { it.isNotEmpty() }?.let(onSave) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
-            value = value,
-            onValueChange = { value = it },
+            state = valueField,
             modifier = Modifier.fillMaxWidth().focusRequester(focus),
             label = label,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { submit() }),
+            onKeyboardAction = { submit() },
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(busy = saving, onClick = { submit() }) {

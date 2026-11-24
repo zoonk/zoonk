@@ -11,15 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -274,7 +273,7 @@ private fun FirstGoal(
     navigator: AppNavigator,
     padding: PaddingValues,
 ) {
-    var goal by rememberSaveable { mutableStateOf("") }
+    val goal = rememberTextFieldState()
     val start = { words: String -> navigator.open(AppRoute.StartGoal(goal = words)) }
     val explanation =
         summary?.goals?.lastOrNull {
@@ -297,7 +296,7 @@ private fun FirstGoal(
             TodayPageHeader(stringResource(R.string.today_title))
             if (explanation != null) ExplanationContinue(explanation, navigator)
             UnfinishedGoal(onboarding, navigator::open)
-            GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
+            GoalBox(state = goal, onSubmit = start)
             if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = start)
         }
     }

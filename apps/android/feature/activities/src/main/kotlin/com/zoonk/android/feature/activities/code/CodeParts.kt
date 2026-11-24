@@ -20,6 +20,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldBuffer
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.insert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,7 +39,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -54,19 +58,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -96,20 +92,17 @@ internal val CodeLanguage.fenceName: String
             CodeLanguage.Sql -> "sql"
         }
 
-@Suppress("DEPRECATION")
 private data class Highlighting(
     private val language: CodeLanguage,
     private val colors: CodeColors,
-) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val annotated =
-            buildAnnotatedString {
-                highlightCode(text.text, language.fenceName).forEachIndexed { index, tokens ->
-                    if (index > 0) append('\n')
-                    append(styledCodeLine(tokens, colors, field = true))
-                }
-            }
-        return TransformedText(annotated, OffsetMapping.Identity)
+) : OutputTransformation {
+    override fun TextFieldBuffer.transformOutput() {
+        var offset = 0
+        highlightCode(asCharSequence().toString(), language.fenceName).forEach { tokens ->
+            val line = styledCodeLine(tokens, colors, field = true)
+            line.spanStyles.forEach { span -> addStyle(span.item, offset + span.start, offset + span.end) }
+            offset += line.length + 1
+        }
     }
 }
 
@@ -133,11 +126,9 @@ private fun Modifier.reachingNeighbors(line: Dp): Modifier =
 private val TOUCH_HEIGHT = 48.dp
 
 /** Main's `ActivityCodeLineInput`: one line of code to edit in place; Enter runs the program. */
-@Suppress("DEPRECATION")
 @Composable
 internal fun CodeLineField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     language: CodeLanguage,
     label: String,
     readOnly: Boolean,
@@ -145,8 +136,7 @@ internal fun CodeLineField(
     modifier: Modifier = Modifier,
 ) {
     BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
+        state = state,
         modifier =
             modifier
                 .reachingNeighbors(
@@ -162,10 +152,11 @@ internal fun CodeLineField(
         readOnly = readOnly,
         textStyle = MaterialTheme.zoonkType.codeField.copy(color = MaterialTheme.colorScheme.onSurface),
         keyboardOptions = codeKeyboard,
-        singleLine = true,
-        visualTransformation = Highlighting(language, codeColors()),
+        lineLimits = TextFieldLineLimits.SingleLine,
+        onKeyboardAction = { onSubmit() },
+        outputTransformation = Highlighting(language, codeColors()),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { field() } },
+        decorator = { field -> Box(contentAlignment = Alignment.CenterStart) { field() } },
     )
 }
 
@@ -173,11 +164,9 @@ internal fun CodeLineField(
  * Main's `ActivityCodeEditor`: highlighted code that scrolls sideways instead of wrapping. Enter
  * starts a new line and Ctrl or Cmd with Enter runs it.
  */
-@Suppress("DEPRECATION")
 @Composable
 internal fun CodeEditor(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+    state: TextFieldState,
     language: CodeLanguage,
     label: String,
     placeholder: String,
@@ -185,7 +174,6 @@ internal fun CodeEditor(
     onSubmit: () -> Unit,
     readOnly: Boolean,
     modifier: Modifier = Modifier,
-    wrap: Boolean = false,
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
@@ -199,13 +187,13 @@ internal fun CodeEditor(
     ) {
         val inner = maxWidth - EDITOR_PADDING * 2
         BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
+            state = state,
             modifier =
                 Modifier
-                    .then(
-                        if (wrap) Modifier.fillMaxWidth() else Modifier.fadingHorizontalScroll(rememberScrollState()).widthIn(min = inner),
-                    ).padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
+                    .fadingHorizontalScroll(
+                        rememberScrollState(),
+                    ).widthIn(min = inner)
+                    .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
                     .heightIn(min = 48.dp)
                     .focusRequester(focusRequester)
                     .semantics { contentDescription = label }
@@ -217,11 +205,11 @@ internal fun CodeEditor(
             readOnly = readOnly,
             textStyle = style,
             keyboardOptions = codeKeyboard,
-            visualTransformation = Highlighting(language, codeColors()),
+            outputTransformation = Highlighting(language, codeColors()),
             cursorBrush = SolidColor(colors.primary),
-            decorationBox = { field ->
+            decorator = { field ->
                 Box {
-                    if (value.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = style, softWrap = false)
+                    if (state.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = style, softWrap = false)
                     field()
                 }
             },
@@ -245,15 +233,14 @@ data class CodeSnippet(
 )
 
 /** Main's `insertAtCursor`: wraps the selection in the snippet and puts the cursor after what it wrapped. */
-fun TextFieldValue.inserting(snippet: CodeSnippet): TextFieldValue {
-    val start = minOf(selection.min, text.length)
-    val end = minOf(selection.max, text.length)
-    val selected = text.substring(start, end)
-    val inserted = snippet.before + selected + snippet.after
-    return TextFieldValue(
-        text = text.substring(0, start) + inserted + text.substring(end),
-        selection = TextRange(start + snippet.before.length + selected.length),
-    )
+fun TextFieldState.insertSnippet(snippet: CodeSnippet) {
+    edit {
+        val start = selection.min
+        val end = selection.max
+        insert(end, snippet.after)
+        insert(start, snippet.before)
+        selection = TextRange(end + snippet.before.length)
+    }
 }
 
 /** Main's `ActivitySnippetBar`: buttons that type a symbol or name, each named for TalkBack when its label is a symbol. */

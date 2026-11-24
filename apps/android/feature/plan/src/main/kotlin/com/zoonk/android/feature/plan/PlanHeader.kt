@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -168,7 +171,8 @@ private fun RenameGoalDialog(
     dialog: RenameDialog,
     rename: GoalRename,
 ) {
-    var name by rememberSaveable { mutableStateOf(displayName) }
+    val nameField = rememberTextFieldState(displayName)
+    val name = nameField.text.toString()
     val trimmed = name.trim()
     val save = { if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed) }
 
@@ -179,15 +183,15 @@ private fun RenameGoalDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.plan_rename_description))
                 OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it.take(MAX_GOAL_NAME_LENGTH) },
+                    state = nameField,
+                    inputTransformation = InputTransformation.maxLengthTrim(MAX_GOAL_NAME_LENGTH),
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.plan_rename_label),
                     supportingText = if (dialog.failed) ({ Text(stringResource(R.string.plan_save_failed)) }) else null,
                     isError = dialog.failed,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { save() }),
-                    singleLine = true,
+                    onKeyboardAction = { save() },
+                    lineLimits = TextFieldLineLimits.SingleLine,
                 )
             }
         },

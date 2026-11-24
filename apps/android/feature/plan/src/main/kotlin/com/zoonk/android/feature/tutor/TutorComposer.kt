@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthReject
+import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -45,6 +39,7 @@ import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
@@ -88,14 +83,10 @@ internal fun TutorComposer(
                     // Main's 48dp composer, under Material's 56dp field.
                     .heightIn(min = COMPOSER_HEIGHT)
                     .focusRequester(focus)
-                    .onPreviewKeyEvent { event ->
-                        val send = event.key == Key.Enter && !event.isShiftPressed
-                        if (send && event.type == KeyEventType.KeyDown && canSend) vm.send()
-                        send
-                    },
+                    .submitOnEnter(vm.draft) { if (canSend) vm.send() },
             placeholder = { Text(placeholder) },
             trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
-            inputTransformation = InputTransformation.maxLengthReject(MAX_QUESTION_LENGTH),
+            inputTransformation = InputTransformation.maxLengthTrim(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
             shape = RoundedCornerShape(ZoonkRadius.xl),
             contentPadding = PaddingValues(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),

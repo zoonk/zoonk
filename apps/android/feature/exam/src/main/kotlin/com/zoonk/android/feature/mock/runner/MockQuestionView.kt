@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -68,6 +72,7 @@ import com.zoonk.android.feature.questions.isMulti
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.format.currentLocale
@@ -261,11 +266,13 @@ private fun EssayAnswer(
     writing: WritingPromptOutput?,
 ) {
     val text = (draft?.answer as? Answer.Text)?.text.orEmpty()
-    val words = countWords(text)
+    val field = rememberTextFieldState(text)
+    field.ObserveEdits { viewModel.write(Answer.Text(it)) }
+    val words = countWords(field.text.toString())
 
     OutlinedTextField(
-        value = text,
-        onValueChange = { viewModel.write(Answer.Text(it.take(MAX_WRITING_CHARACTERS))) },
+        state = field,
+        inputTransformation = InputTransformation.maxLengthTrim(MAX_WRITING_CHARACTERS),
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
         colors = writingAreaColors(),
@@ -276,7 +283,7 @@ private fun EssayAnswer(
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
             if (writing != null) {
-                WritingLineCount(text, writing)
+                WritingLineCount(field.text.toString(), writing)
             } else {
                 Text(
                     if (words > 0) pluralStringResource(R.plurals.mock_words, words, words) else "",
@@ -284,7 +291,7 @@ private fun EssayAnswer(
                 )
             }
         },
-        minLines = ESSAY_LINES,
+        lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = ESSAY_LINES),
     )
 }
 

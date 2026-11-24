@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,12 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -75,6 +76,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -247,8 +249,7 @@ private fun ColumnScope.Entry(
     )
 
     GoalBox(
-        value = flow.words,
-        onValueChange = vm::setWords,
+        state = vm.words,
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
@@ -534,11 +535,12 @@ private fun ColumnScope.MaterialQuestions(
     language: String,
     actions: StartActions,
 ) {
-    var question by rememberSaveable { mutableStateOf("") }
+    val questionField = rememberTextFieldState()
+    val question = questionField.text.toString()
     val ask = {
         if (question.isNotBlank() && !vm.isAsking) {
             vm.ask(question.trim(), language)
-            question = ""
+            questionField.clearText()
         }
     }
 
@@ -566,14 +568,14 @@ private fun ColumnScope.MaterialQuestions(
 
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
-            value = question,
-            onValueChange = { question = it.take(MAX_QUESTION_LENGTH) },
-            modifier = Modifier.weight(1f),
+            state = questionField,
+            inputTransformation = InputTransformation.maxLengthTrim(MAX_QUESTION_LENGTH),
+            modifier = Modifier.weight(1f).submitOnEnter(questionField, ask),
             label = stringResource(R.string.onboarding_your_question),
             placeholder = { Text(stringResource(R.string.onboarding_question_placeholder)) },
-            maxLines = 6,
+            lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 6),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { ask() }),
+            onKeyboardAction = { ask() },
         )
         FilledIconButton(busy = vm.isAsking, onClick = ask, enabled = question.isNotBlank()) {
             Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = stringResource(R.string.onboarding_ask))

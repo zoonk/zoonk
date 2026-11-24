@@ -7,10 +7,11 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
@@ -91,6 +92,7 @@ data class TutorConversationState(
         }
 }
 
+@OptIn(SavedStateHandleSaveableApi::class)
 class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
@@ -128,11 +130,11 @@ class TutorViewModel internal constructor(
      * The question being written, which comes back with the suggestion it started from after Android
      * closes the app in the background, even while it was being sent.
      */
-    val draft = TextFieldState(saved.get<String>(DRAFT).orEmpty().ifEmpty { saved.get<String>(SENT_DRAFT).orEmpty() })
+    val draft = saved.saveable(key = "draftField", saver = TextFieldState.Saver) { TextFieldState(saved.remove<String>(DRAFT).orEmpty()) }
 
     init {
-        saved.remove<String>(SENT_DRAFT)
-        viewModelScope.launch { snapshotFlow { draft.text.toString() }.collect { saved[DRAFT] = it } }
+        val sent = saved.remove<String>(SENT_DRAFT)
+        if (draft.text.isEmpty() && sent != null) draft.setTextAndPlaceCursorAtEnd(sent)
     }
 
     /** One at a time, so two opens never race. */

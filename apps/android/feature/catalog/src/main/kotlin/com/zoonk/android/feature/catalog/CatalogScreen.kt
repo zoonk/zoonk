@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -115,7 +117,7 @@ fun CatalogScreen(
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val categories = categoryLinks(countsState.value, category, locale)
     val gridState = rememberSaveable(category, saver = LazyGridState.Saver) { LazyGridState() }
-    var goal by rememberSaveable { mutableStateOf("") }
+    val goal = rememberTextFieldState()
     val title = category?.let { stringResource(R.string.catalog_category_title, stringResource(Subject.of(it).label!!)) }
 
     PageScaffold(
@@ -143,7 +145,6 @@ fun CatalogScreen(
                         CatalogHeader(
                             title ?: stringResource(R.string.catalog_title),
                             goal,
-                            { goal = it },
                             onGoal = { navigator.open(AppRoute.StartGoal(goal = it)) },
                         )
                     },
@@ -256,8 +257,7 @@ private fun List<CategoryLink>.asTabs(): List<FilterTab> =
 @Composable
 private fun CatalogHeader(
     title: String,
-    goal: String,
-    onGoalChange: (String) -> Unit,
+    goal: TextFieldState,
     onGoal: (String) -> Unit,
 ) {
     Column(Modifier.padding(top = 8.dp, bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -268,8 +268,7 @@ private fun CatalogHeader(
         )
 
         GoalBox(
-            value = goal,
-            onValueChange = onGoalChange,
+            state = goal,
             onSubmit = onGoal,
             modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH),
             placeholder = stringResource(R.string.catalog_goal_example),

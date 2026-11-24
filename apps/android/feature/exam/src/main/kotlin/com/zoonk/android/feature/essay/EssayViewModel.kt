@@ -1,6 +1,9 @@
 package com.zoonk.android.feature.essay
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.DraftHandle
@@ -23,8 +26,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -56,7 +63,7 @@ data class EssayUi(
     /** The essay's graded answers, newest first; null until it and the text kept on the device are both in. */
     val results: List<GradedAnswer>? = null,
     val mode: WritingMode = WritingMode.Question,
-    val text: String = "",
+    val field: TextFieldState = TextFieldState(),
     val send: WritingSend = WritingSend.Idle,
     /** Another device saved this answer since it was typed here: nothing saves until the learner picks one. */
     val conflict: WritingDraft? = null,
@@ -79,6 +86,7 @@ data class EssayUi(
     /** The learner moved between screens, so TalkBack follows where they went. */
     val switched: Boolean = false,
 ) {
+    val text get() = field.text.toString()
     val latest: GradedAnswer? get() = results?.firstOrNull()
 
     /** It shows what it is and takes no answer; a block finished in this visit goes on to the session instead. */
@@ -137,6 +145,11 @@ class EssayViewModel(
 
     init {
         viewModelScope.launch {
+            ui.map { it.field }.distinctUntilChanged().collectLatest { field ->
+                snapshotFlow { field.text.toString() }.drop(1).collect { edited() }
+            }
+        }
+        viewModelScope.launch {
             keptText = kept?.value?.first()
             keptRead = true
             open()
@@ -167,8 +180,12 @@ class EssayViewModel(
     /** The field stops at the API's longest answer, so what's typed can always be saved and graded. */
     fun write(text: String) {
         if (mutableUi.value.send == WritingSend.Pending || text.length > MAX_WRITING_CHARACTERS) return
+        if (mutableUi.value.text != text) mutableUi.value.field.setTextAndPlaceCursorAtEnd(text)
+        edited()
+    }
+
+    private fun edited() {
         if (writingSince == null) writingSince = clock.markNow()
-        mutableUi.update { it.copy(text = text) }
         val draft = currentDraft()
         if (draft == null) {
             replaceKept(null)
@@ -199,7 +216,7 @@ class EssayViewModel(
         val other = mutableUi.value.conflict ?: return
         revision = other.revision
         savedText = other.text
-        mutableUi.update { it.copy(conflict = null, saveFailed = false, text = other.text) }
+        mutableUi.update { it.copy(conflict = null, saveFailed = false, field = TextFieldState(other.text)) }
         replaceKept(null)
     }
 
@@ -345,7 +362,7 @@ class EssayViewModel(
             mutableUi.update {
                 it.copy(
                     results = results,
-                    text = start.text,
+                    field = TextFieldState(start.text),
                     unsent = unsent,
                     conflict = (start as? DraftStart.Conflict)?.saved,
                     mode = if (graded) WritingMode.Result else WritingMode.Question,
@@ -497,7 +514,7 @@ class EssayViewModel(
                 results = if (known) results else listOf(GradedAnswer(grade, text, null)) + results,
                 send = WritingSend.Idle,
                 saveFailed = false,
-                text = "",
+                field = TextFieldState(),
                 mode = WritingMode.Result,
                 switched = true,
             )
@@ -524,7 +541,7 @@ class EssayViewModel(
                 results = listOf(GradedAnswer(grade, recorded, null)) + results,
                 send = WritingSend.Idle,
                 saveFailed = false,
-                text = "",
+                field = TextFieldState(),
                 unsent = changed,
                 mode = WritingMode.Result,
                 switched = true,

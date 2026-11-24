@@ -16,8 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -60,6 +64,13 @@ import java.util.Locale
 /** The same limit core applies to a typed goal. */
 const val MAX_GOAL_LENGTH = 2000
 
+private val GoalInput =
+    InputTransformation {
+        for (index in 0 until length) {
+            if (charAt(index) == '\n') replace(index, index + 1, " ")
+        }
+    }.then(InputTransformation.maxLengthTrim(MAX_GOAL_LENGTH))
+
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
  * [onSubmit] gets the trimmed words; Build my plan waits for them unless [canSubmitEmpty] (material and
@@ -67,11 +78,9 @@ const val MAX_GOAL_LENGTH = 2000
  * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
  * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
-@Suppress("DEPRECATION")
 @Composable
 fun GoalBox(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     onSubmit: (String) -> Unit,
     modifier: Modifier = Modifier,
     note: String? = null,
@@ -82,8 +91,10 @@ fun GoalBox(
     placeholder: String? = null,
     hiddenLabel: String? = null,
 ) {
-    var isAskingForWords by rememberSaveable { mutableStateOf(false) }
+    var askedForWords by rememberSaveable { mutableStateOf(false) }
 
+    val value = state.text.toString()
+    val isAskingForWords = askedForWords && value.isBlank()
     val submit: () -> Unit = {
         val goal = value.trim()
 
@@ -95,12 +106,13 @@ fun GoalBox(
             }
 
             else -> {
-                isAskingForWords = true
+                askedForWords = true
                 focusRequester.requestFocus()
             }
         }
     }
 
+    state.ObserveEdits { askedForWords = false }
     val line = if (isAskingForWords) stringResource(R.string.goal_box_write_first) else note
     val label = hiddenLabel ?: stringResource(R.string.goal_box_label)
     val colors = MaterialTheme.colorScheme
@@ -120,20 +132,13 @@ fun GoalBox(
         ) {
             val textField: @Composable () -> Unit = {
                 BasicTextField(
-                    value = value,
-                    onValueChange = { typed ->
-                        isAskingForWords = false
-                        // A typed Enter sends; pasted lines join into one goal.
-                        if (typed.length == value.length + 1 && typed.endsWith('\n')) {
-                            submit()
-                        } else {
-                            onValueChange(typed.replace('\n', ' ').take(MAX_GOAL_LENGTH))
-                        }
-                    },
+                    state = state,
+                    inputTransformation = GoalInput,
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
+                            .submitOnEnter(state, submit)
                             .semantics {
                                 contentDescription = label
                                 if (isAskingForWords) line?.let { error(it) }
@@ -142,10 +147,10 @@ fun GoalBox(
                     textStyle = words,
                     cursorBrush = SolidColor(colors.primary),
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),
-                    keyboardActions = KeyboardActions(onGo = { submit() }),
-                    maxLines = 8,
+                    onKeyboardAction = { submit() },
+                    lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 8),
                     interactionSource = interaction,
-                    decorationBox = { field ->
+                    decorator = { field ->
                         Box(Modifier.heightIn(min = 44.dp).padding(vertical = WORDS_PADDING)) {
                             if (value.isEmpty()) {
                                 Text(

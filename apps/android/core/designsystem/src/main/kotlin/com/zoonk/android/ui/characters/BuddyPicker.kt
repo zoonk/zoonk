@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -38,9 +42,8 @@ import com.zoonk.android.ui.components.answerTone
 @Composable
 fun BuddyPicker(
     kind: BuddyKind,
-    name: String,
+    name: TextFieldState,
     onSelect: (BuddyKind) -> Unit,
-    onNameChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     glasses: BuddyGlasses = BuddyGlasses.Round,
     look: BuddyLook = BuddyLook(energy = NEW_BUDDY_ENERGY),
@@ -65,12 +68,12 @@ fun BuddyPicker(
         }
 
         OutlinedTextField(
-            value = name,
-            onValueChange = { onNameChange(it.take(MAX_NAME_LENGTH)) },
+            state = name,
+            inputTransformation = InputTransformation.maxLengthTrim(MAX_NAME_LENGTH),
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.buddy_picker_name),
             placeholder = { Text(buddyName(kind, null), color = MaterialTheme.colorScheme.onSurface) },
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
         )
     }

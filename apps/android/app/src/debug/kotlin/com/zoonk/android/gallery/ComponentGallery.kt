@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -352,21 +354,33 @@ private fun Buttons() {
 @Composable
 private fun Fields() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        OutlinedTextField(value = "", onValueChange = {}, label = "Email", placeholder = { Text("you@example.com") }, singleLine = true)
-        OutlinedTextField(value = "Ana Souza", onValueChange = {}, label = "Name", singleLine = true)
+        OutlinedTextField(state = rememberTextFieldState(), label = "Email", placeholder = {
+            Text("you@example.com")
+        }, lineLimits = TextFieldLineLimits.SingleLine)
+        OutlinedTextField(state = rememberTextFieldState("Ana Souza"), label = "Name", lineLimits = TextFieldLineLimits.SingleLine)
         OutlinedTextField(
-            value = "ana@",
-            onValueChange = {},
+            state = rememberTextFieldState("ana@"),
             label = "Email",
             supportingText = { Text("Enter a valid email address") },
             isError = true,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
         )
-        OutlinedTextField(value = "", onValueChange = {}, label = "Message", placeholder = { Text("What happened?") }, minLines = 3)
-        OutlinedTextField(value = "Read only", onValueChange = {}, label = "Disabled", enabled = false, singleLine = true)
-        OutlinedTextField(value = "", onValueChange = {}, placeholder = { Text("Without a label") }, singleLine = true)
-        GoalBox(value = "", onValueChange = {}, onSubmit = {})
-        GoalBox(value = "Speak Spanish for a job interview", onValueChange = {}, onSubmit = {})
+        OutlinedTextField(state = rememberTextFieldState(), label = "Message", placeholder = {
+            Text("What happened?")
+        }, lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = 3))
+        OutlinedTextField(
+            state = rememberTextFieldState("Read only"),
+            label = "Disabled",
+            enabled = false,
+            lineLimits = TextFieldLineLimits.SingleLine,
+        )
+        OutlinedTextField(
+            state = rememberTextFieldState(),
+            placeholder = { Text("Without a label") },
+            lineLimits = TextFieldLineLimits.SingleLine,
+        )
+        GoalBox(state = rememberTextFieldState(""), onSubmit = {})
+        GoalBox(state = rememberTextFieldState("Speak Spanish for a job interview"), onSubmit = {})
         GoalExamples(
             listOf(GoalExample("Pass the ENEM"), GoalExample("How does inflation work?", "Quick explanation · 5 min")),
             onPick = {},

@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.settings
 
 import android.net.Uri
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
@@ -61,7 +63,8 @@ class AccountDeletionTest {
             )
         sessions.restore()
         advanceUntilIdle()
-        return sessions to YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test") { null }
+        return sessions to
+            YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test", SavedStateHandle()) { null }
     }
 
     @Test
@@ -90,19 +93,19 @@ class AccountDeletionTest {
             assertEquals(listOf("ana@zoonk.test"), api.deletionCodesSent)
 
             api.deletionFailures += ApiException(ApiError.Unavailable, "ACCOUNT_DELETION_INVALID_OTP", 400)
-            profile.onCodeChange("111111")
+            profile.codeField.setTextAndPlaceCursorAtEnd("111111")
             profile.delete()
             advanceUntilIdle()
             assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
             assertTrue(sessions.state.value is SessionState.SignedIn)
 
-            profile.onCodeChange("111 111")
+            profile.codeField.setTextAndPlaceCursorAtEnd("111111")
             profile.delete()
             advanceUntilIdle()
             assertTrue(api.deletions.isEmpty())
             assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
 
-            profile.onCodeChange("123456")
+            profile.codeField.setTextAndPlaceCursorAtEnd("123456")
             profile.delete()
             advanceUntilIdle()
             assertEquals(listOf<String?>("123456"), api.deletions)

@@ -4,8 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -57,7 +61,8 @@ fun NumericAnswerField(
     initialText: String = "",
 ) {
     val locale = currentLocale()
-    var text by rememberSaveable { mutableStateOf(initialText) }
+    val field = rememberTextFieldState(initialText)
+    val text = field.text.toString()
     var invalid by rememberSaveable { mutableStateOf(false) }
     val locked = !enabled || mark != null
 
@@ -67,13 +72,12 @@ fun NumericAnswerField(
         if (value == null) invalid = true else onSubmit(Answer.Numeric(value))
     }
 
+    field.ObserveEdits {
+        invalid = false
+        onAnswer(parseEntryAnswer(entry, it, locale)?.let(Answer::Numeric))
+    }
     OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-            invalid = false
-            onAnswer(parseEntryAnswer(entry, it, locale)?.let(Answer::Numeric))
-        },
+        state = field,
         modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge.withTabularFigures(),
@@ -112,8 +116,8 @@ fun NumericAnswerField(
                 imeAction = ImeAction.Done,
                 autoCorrectEnabled = false,
             ),
-        keyboardActions = KeyboardActions(onDone = { submit() }),
-        singleLine = true,
+        onKeyboardAction = { submit() },
+        lineLimits = TextFieldLineLimits.SingleLine,
         colors = markColors(mark),
     )
 }
@@ -128,15 +132,14 @@ fun TypedAnswerField(
     modifier: Modifier = Modifier,
     initialText: String = "",
 ) {
-    var text by rememberSaveable { mutableStateOf(initialText) }
+    val field = rememberTextFieldState(initialText)
+    val text = field.text.toString()
     val locked = !enabled || mark != null
 
+    field.ObserveEdits { onAnswer(it.trim().takeIf(String::isNotEmpty)?.let(Answer::Text)) }
     OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it.take(MAX_TYPED_ANSWER)
-            onAnswer(text.trim().takeIf(String::isNotEmpty)?.let(Answer::Text))
-        },
+        state = field,
+        inputTransformation = InputTransformation.maxLengthTrim(MAX_TYPED_ANSWER),
         modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge,
@@ -148,12 +151,11 @@ fun TypedAnswerField(
                 autoCorrectEnabled = false,
                 imeAction = ImeAction.Done,
             ),
-        keyboardActions =
-            KeyboardActions(onDone = {
-                val answer = text.trim()
-                if (!locked && answer.isNotEmpty()) onSubmit(Answer.Text(answer))
-            }),
-        singleLine = true,
+        onKeyboardAction = {
+            val answer = text.trim()
+            if (!locked && answer.isNotEmpty()) onSubmit(Answer.Text(answer))
+        },
+        lineLimits = TextFieldLineLimits.SingleLine,
         colors = markColors(mark),
     )
 }

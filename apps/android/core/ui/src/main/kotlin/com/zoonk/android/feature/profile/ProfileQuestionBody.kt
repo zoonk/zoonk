@@ -10,8 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +40,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.maxTextLength
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -46,6 +51,7 @@ import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.TextButton
@@ -284,14 +290,16 @@ fun ProfileQuestionBody(
                                         }.label,
                                 )
                             }
-                        ProfileField(
-                            draft.subjects[id].orEmpty(),
-                            field,
-                            80,
-                            enabled,
-                            placeholder = R.string.profile_questions_subject_placeholder,
-                        ) {
-                            onChange(draft.copy(subjects = draft.subjects + (id to it), declined = false))
+                        key(id) {
+                            ProfileField(
+                                draft.subjects[id].orEmpty(),
+                                field,
+                                80,
+                                enabled,
+                                placeholder = R.string.profile_questions_subject_placeholder,
+                            ) {
+                                onChange(draft.copy(subjects = draft.subjects + (id to it), declined = false))
+                            }
                         }
                     }
                 } else {
@@ -333,8 +341,19 @@ private fun TypedTools(
     enabled: Boolean,
     onChange: (ProfileDraft) -> Unit,
 ) {
-    val canAdd = draft.canAdd(question.options)
-    val add = { onChange(draft.added(question.options)) }
+    val field = remember { TextFieldState(draft.text) }
+    val entry = draft.copy(text = field.text.toString())
+    val canAdd = entry.canAdd(question.options)
+    val add = {
+        val added = entry.added(question.options)
+        field.setTextAndPlaceCursorAtEnd(added.text)
+        onChange(added)
+    }
+    field.ObserveEdits { text ->
+        val next = draft.typing(text, question.options)
+        if (next.text != text) field.setTextAndPlaceCursorAtEnd(next.text)
+        onChange(next)
+    }
     val newest = remember { BringIntoViewRequester() }
     var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
     LaunchedEffect(draft.typed.size) {
@@ -343,9 +362,15 @@ private fun TypedTools(
         shownTyped = draft.typed.size
     }
     OutlinedTextField(
-        draft.text,
-        { onChange(draft.typing(it, question.options)) },
+        field,
         Modifier.fillMaxWidth(),
+        inputTransformation =
+            InputTransformation {
+                val original = originalText.toString()
+                val edited = asCharSequence().toString()
+                val previous = draft.copy(text = original)
+                if (previous.typing(edited, question.options) === previous) revertAllChanges()
+            },
         enabled = enabled,
         label = stringResource(R.string.profile_questions_tools_other),
         placeholder = { Text(stringResource(R.string.profile_questions_tools_placeholder)) },
@@ -357,8 +382,8 @@ private fun TypedTools(
             ) { Text(stringResource(R.string.profile_questions_add)) }
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { if (canAdd) add() else defaultKeyboardAction(ImeAction.Done) }),
-        singleLine = true,
+        onKeyboardAction = { performDefault -> if (canAdd) add() else performDefault() },
+        lineLimits = TextFieldLineLimits.SingleLine,
     )
     if (draft.typed.isNotEmpty()) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -427,10 +452,12 @@ private fun ProfileField(
     help: Int? = null,
     onChange: (String) -> Unit,
 ) {
+    val field = remember { TextFieldState(value) }
+    field.ObserveEdits(onChange)
     OutlinedTextField(
-        value,
-        { onChange(it.take(limit)) },
-        modifier.fillMaxWidth().semantics { maxTextLength = limit },
+        state = field,
+        inputTransformation = InputTransformation.maxLengthTrim(limit),
+        modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         label = label,
         placeholder = placeholder?.let { { Text(stringResource(it)) } },

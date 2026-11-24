@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import com.zoonk.android.ui.components.DatePickerDialog
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.readOnlyFieldState
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -64,8 +66,7 @@ internal fun PlanDateSection(
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
-            value = shown?.let { formatDate(it, locale, DateStyle.Long) }.orEmpty(),
-            onValueChange = {},
+            state = readOnlyFieldState(shown?.let { formatDate(it, locale, DateStyle.Long) }.orEmpty()),
             modifier =
                 Modifier.fillMaxWidth().pointerInput(Unit) {
                     awaitEachGesture {
@@ -81,7 +82,7 @@ internal fun PlanDateSection(
                 }
             },
             supportingText = note?.let { { Text(it) } },
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
         )
 
         schedule.noticeDay?.let { day ->

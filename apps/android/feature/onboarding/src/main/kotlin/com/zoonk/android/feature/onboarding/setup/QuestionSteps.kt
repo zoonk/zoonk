@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -60,6 +64,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.readOnlyFieldState
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -386,7 +391,7 @@ internal fun ColumnScope.TextStep(
     words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var value by words.field(0)
+    val value = words.values[0]
     val answer = { text: String? ->
         onAnswer(
             OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value(
@@ -432,8 +437,7 @@ internal fun ColumnScope.TextStep(
         AnswerField(
             stringResource(label),
             placeholder?.let { stringResource(it) },
-            value,
-            onValueChange = { value = it },
+            words.fields[0],
             onDone = { if (value.isNotBlank() && !pending) continueStep() },
         )
     }
@@ -466,8 +470,7 @@ internal fun ColumnScope.FollowUpsStep(
             AnswerField(
                 label = question,
                 placeholder = stringResource(R.string.onboarding_your_answer),
-                value = answers.getOrElse(index) { "" },
-                onValueChange = { typed -> words.set(index, typed) },
+                state = words.fields[index],
                 focusFirst = index == 0,
             )
         }
@@ -481,8 +484,8 @@ internal fun ColumnScope.RoleStep(
     words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var role by words.field(0)
-    var second by words.field(1)
+    val role = words.values[0]
+    val second = words.values[1]
     val answer = { text: String -> text.trim().ifEmpty { null } }
 
     StepForm(
@@ -522,39 +525,28 @@ internal fun ColumnScope.RoleStep(
                     R.string.onboarding_row_role_you_want,
                 ),
                 stringResource(R.string.onboarding_role_wanted_placeholder),
-                second,
-                {
-                    second =
-                        it
-                },
+                words.fields[1],
             )
             AnswerField(
                 stringResource(
                     R.string.onboarding_row_what_you_do,
                 ),
                 stringResource(R.string.onboarding_role_now_placeholder),
-                role,
-                {
-                    role =
-                        it
-                },
+                words.fields[0],
                 focusFirst = false,
             )
         } else {
-            AnswerField(stringResource(R.string.onboarding_row_your_role), stringResource(R.string.onboarding_role_placeholder), role, {
-                role =
-                    it
-            })
+            AnswerField(
+                stringResource(R.string.onboarding_row_your_role),
+                stringResource(R.string.onboarding_role_placeholder),
+                words.fields[0],
+            )
             AnswerField(
                 stringResource(
                     R.string.onboarding_role_tasks,
                 ),
                 stringResource(R.string.onboarding_role_tasks_placeholder),
-                second,
-                {
-                    second =
-                        it
-                },
+                words.fields[1],
                 focusFirst = false,
             )
         }
@@ -650,8 +642,7 @@ internal fun ColumnScope.DateStep(
             presses.interactions.collect { if (it is PressInteraction.Release) picking = true }
         }
         OutlinedTextField(
-            value = shown,
-            onValueChange = {},
+            state = readOnlyFieldState(shown),
             modifier =
                 Modifier.fillMaxWidth().clearAndSetSemantics {
                     contentDescription = listOf(label, shown).filter(String::isNotEmpty).joinToString(", ")
@@ -831,7 +822,7 @@ internal fun ColumnScope.BuddyStep(
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
     var kind by rememberSaveable { mutableStateOf(BuddyKind.Zu) }
-    var name by rememberSaveable { mutableStateOf("") }
+    val name = rememberTextFieldState()
 
     StepForm(
         title = stringResource(R.string.onboarding_buddy_title),
@@ -841,14 +832,21 @@ internal fun ColumnScope.BuddyStep(
             onAnswer(
                 OnboardingAnswerInput.OnboardingAnswerInputOneOf11Value(
                     OnboardingAnswerInputOneOf11(
-                        BuddyInput(kind = BuddyInput.Kind.entries.first { it.value == kind.key }, name = name.trim().ifEmpty { null }),
+                        BuddyInput(
+                            kind = BuddyInput.Kind.entries.first { it.value == kind.key },
+                            name =
+                                name.text
+                                    .toString()
+                                    .trim()
+                                    .ifEmpty { null },
+                        ),
                         OnboardingAnswerInputOneOf11.Question.BUDDY,
                     ),
                 ),
             )
         },
     ) {
-        BuddyPicker(kind = kind, name = name, onSelect = { kind = it }, onNameChange = { name = it })
+        BuddyPicker(kind = kind, name = name, onSelect = { kind = it })
     }
 }
 
@@ -857,19 +855,18 @@ internal fun ColumnScope.BuddyStep(
 private fun AnswerField(
     label: String,
     placeholder: String?,
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     focusFirst: Boolean = true,
     onDone: (() -> Unit)? = null,
 ) {
     val focus = remember { FocusRequester() }
     OutlinedTextField(
-        value = value,
-        onValueChange = { onValueChange(it.take(MAX_ANSWER_LENGTH)) },
+        state = state,
+        inputTransformation = InputTransformation.maxLengthTrim(MAX_ANSWER_LENGTH),
         modifier = Modifier.fillMaxWidth().focusRequester(focus),
         label = label,
         placeholder = placeholder?.let { { Text(it) } },
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions =
             KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
@@ -882,9 +879,9 @@ private fun AnswerField(
                         ImeAction.Next
                     },
             ),
-        keyboardActions = KeyboardActions(onDone = { onDone?.invoke() }),
+        onKeyboardAction = onDone?.let { { it() } },
     )
     if (focusFirst) LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
-private const val MAX_ANSWER_LENGTH = 200
+internal const val MAX_ANSWER_LENGTH = 200

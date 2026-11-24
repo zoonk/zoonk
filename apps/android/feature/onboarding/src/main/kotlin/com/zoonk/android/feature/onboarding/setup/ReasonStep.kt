@@ -3,14 +3,20 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.Choice
@@ -32,8 +38,8 @@ internal fun ColumnScope.ReasonStep(
     words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var reason by words.field(0)
-    var typed by words.field(1)
+    val reason = words.values[0]
+    val typed = words.values[1]
     val certificate = reason == "certificate"
     StepForm(
         title = stringResource(R.string.onboarding_reason_title),
@@ -82,16 +88,22 @@ internal fun ColumnScope.ReasonStep(
             readOnly = pending,
             onChange = { key ->
                 if (reason != key) {
-                    reason = key
-                    typed = ""
+                    words.fields[0].setTextAndPlaceCursorAtEnd(key)
+                    words.fields[1].clearText()
                 }
             },
             afterChoice = { key ->
                 if (reason == key && (certificate || key == "other")) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
-                            value = typed,
-                            onValueChange = { typed = it },
+                            state = words.fields[1],
+                            inputTransformation = InputTransformation.maxLengthTrim(MAX_ANSWER_LENGTH),
+                            lineLimits = TextFieldLineLimits.SingleLine,
+                            keyboardOptions =
+                                KeyboardOptions(
+                                    capitalization = KeyboardCapitalization.Sentences,
+                                    imeAction = ImeAction.Next,
+                                ),
                             enabled = !pending,
                             label =
                                 stringResource(

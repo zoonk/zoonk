@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.maxLengthTrim
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -306,7 +309,8 @@ private fun EditFactDialog(
     onClose: () -> Unit,
     onSave: (String) -> Unit,
 ) {
-    var statement by rememberSaveable { mutableStateOf(fact.statement) }
+    val statementField = rememberTextFieldState(fact.statement)
+    val statement = statementField.text.toString()
     val original = rememberSaveable { fact.statement }
     val trimmed = statement.trim()
     val changed = trimmed.isNotEmpty() && trimmed != original
@@ -318,8 +322,8 @@ private fun EditFactDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.memory_edit_description))
                 OutlinedTextField(
-                    value = statement,
-                    onValueChange = { statement = it.take(MAX_STATEMENT_LENGTH) },
+                    state = statementField,
+                    inputTransformation = InputTransformation.maxLengthTrim(MAX_STATEMENT_LENGTH),
                     label = stringResource(R.string.memory_edit_label),
                     supportingText = if (edit.failed) ({ Text(stringResource(R.string.memory_save_failed)) }) else null,
                     isError = edit.failed,
