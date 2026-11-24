@@ -11,8 +11,29 @@ export type SqlTable = {
 
 export type SqlStatement = { params: ActivityCell[]; sql: string };
 
-/** The iPhone app runs queries on the system SQLite, which has only SQLite's own functions. */
+/**
+ * SQLite's own functions only: sql.js's legacy extensions (a natural-log `log`, `stdev`, `median`…)
+ * are deprecated and leave in its next major (https://github.com/sql-js/sql.js/pull/647). The
+ * player and the iPhone's worker start sql.js with it too.
+ */
 export const SQL_JS_CONFIG = { useOldExtensionFunctions: false };
+
+/**
+ * `lastTable(db, query)` for every sql.js runner: the last statement that returned a table, with
+ * its columns even when no row matched, which sql.js's `db.exec` leaves out.
+ */
+export const SQL_LAST_TABLE_SOURCE = `function lastTable(db, query) {
+  let table = { columns: [], rows: [] };
+  for (const statement of db.iterateStatements(query)) {
+    const columns = statement.getColumnNames();
+    const rows = [];
+    while (statement.step()) {
+      rows.push(statement.get().map((value) => (value instanceof Uint8Array ? "[blob]" : value)));
+    }
+    if (columns.length > 0) table = { columns, rows };
+  }
+  return table;
+}`;
 
 const SQL_TYPES: Record<ColumnType, string> = { integer: "INTEGER", real: "REAL", text: "TEXT" };
 

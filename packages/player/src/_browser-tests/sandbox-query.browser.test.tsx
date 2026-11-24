@@ -18,4 +18,14 @@ describe(runQuery, () => {
 
     expect(notSqlite).toStrictEqual({ message: "no such function: stdev", status: "error" });
   });
+
+  it("returns the columns of a table no row matched", async () => {
+    const tables = [
+      { columns: [{ name: "name", type: "text" as const }], name: "items", rows: [["a"]] },
+    ];
+
+    await expect(
+      runQuery({ query: "SELECT name FROM items WHERE name = 'b';", tables }),
+    ).resolves.toStrictEqual({ result: { columns: ["name"], rows: [] }, status: "done" });
+  });
 });

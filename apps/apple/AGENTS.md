@@ -18,6 +18,7 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 - The deployment target is iOS 26: use iOS 26 APIs (Liquid Glass, the current `TabView` and toolbar APIs) directly, and guard only newer APIs with `if #available(iOS 27, *)` or `27.1`. The app is unreleased, so don't add fallbacks for older systems.
 - Keep one `Zoonk` application target with the same feature code for iPhone and iPad, and keep the Designed for iPad destinations on Mac and Vision Pro enabled; they run the iPad app and aren't separate targets.
+- Learner code (JavaScript, Python, SQL, regexes) runs only in `CodeWorkerSources`' port of main's sandbox, at the runtime versions core checks with; never the system SQLite, `NSRegularExpression` or JavaScriptCore directly, whose results differ from what core graded.
 - Keep application lifecycle and dependency composition in the `App` folder. Organize product code vertically by feature rather than creating global `Views`, `Models`, or `ViewModels` buckets.
 - The local `ZoonkAPI` package owns the generated client and its hand-written lesson wire models, so app edits don't recompile it; app runtime glue stays in `Zoonk`. The [README](README.md#api-client) says how to add an operation and regenerate the contract.
 - Keep UI-test fixtures in `ZoonkUITests` and limit app-side launch decoding to the Debug-only `Zoonk/Testing` boundary. Inject ordinary initial state through the app composition root; never parse test arguments or embed fixture data in product views, stores, or clients.

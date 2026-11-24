@@ -1,7 +1,7 @@
 import { JAVASCRIPT_PRELUDE } from "./javascript-prelude";
 import { MAX_TRACE_STEPS, PROGRAM_TIME_LIMIT_MS, type ProgramKind } from "./program-limits";
 import { PYTHON_HARNESS } from "./python-harness";
-import { SQL_JS_CONFIG } from "./sql-setup";
+import { SQL_JS_CONFIG, SQL_LAST_TABLE_SOURCE } from "./sql-setup";
 
 export type RunnerPaths = { pyodide: string; quickjs: string; quickjsWasm: string; sqlJs: string };
 
@@ -150,11 +150,7 @@ function runSql({ query, setup }) {
   const db = new runtimes.sql.Database();
   try {
     for (const statement of setup) db.run(statement.sql, statement.params);
-    const results = db.exec(query);
-    const last = results[results.length - 1];
-    const cell = (value) => (value instanceof Uint8Array ? "[blob]" : value);
-    const table = last ? { columns: last.columns, rows: last.values.map((row) => row.map(cell)) } : { columns: [], rows: [] };
-    return { status: "done", table };
+    return { status: "done", table: lastTable(db, query) };
   } catch (error) {
     return { error: String((error && error.message) || error), status: "error" };
   } finally {
@@ -193,6 +189,7 @@ export function programRunnerSource({
     `const MAX_TRACE_STEPS = ${MAX_TRACE_STEPS};`,
     `const MEMORY_BYTES = ${JAVASCRIPT_MEMORY_BYTES};`,
     `const SQL_JS_CONFIG = ${JSON.stringify(SQL_JS_CONFIG)};`,
+    SQL_LAST_TABLE_SOURCE,
   ];
 
   return `${settings.join("\n")}\n${RUNNER_BODY}`;

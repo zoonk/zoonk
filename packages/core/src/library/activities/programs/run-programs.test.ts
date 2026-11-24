@@ -96,7 +96,19 @@ describe(runPrograms, () => {
     expect(after).toMatchObject({ status: "done", table: { rows: [[2]] } });
   });
 
-  it("runs SQL with SQLite's own functions, as the iPhone app's SQLite does", async () => {
+  it("returns the columns of a last table no row matched, after statements that return none", async () => {
+    const [empty] = await runPrograms([
+      {
+        kind: "sql",
+        query: "UPDATE countries SET pop = 0; SELECT name FROM countries WHERE pop > 100;",
+        setup: countries,
+      },
+    ]);
+
+    expect(empty).toMatchObject({ status: "done", table: { columns: ["name"], rows: [] } });
+  });
+
+  it("runs SQL with SQLite's own functions, the same on every client", async () => {
     const [math, notSqlite] = await runPrograms([
       {
         kind: "sql",

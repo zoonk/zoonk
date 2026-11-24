@@ -91,7 +91,8 @@ struct CodeActivityRunnerTests {
     #expect(await runner.run("console.log(2)").output == "2\n")
   }
 
-  @Test func queriesRunOnAFreshDatabaseEachTime() {
+  @Test func queriesRunOnAFreshDatabaseEachTime() async {
+    let runner = CodeSQLRunner()
     let tables = [
       SQLPlaygroundFields.Table(
         columns: [.init(name: "name", type: "text"), .init(name: "value", type: "integer")],
@@ -99,63 +100,59 @@ struct CodeActivityRunnerTests {
     ]
 
     #expect(
-      CodeSQLRunner.run(query: "SELECT name, value FROM items ORDER BY name", tables: tables)
+      await runner.run(query: "SELECT name, value FROM items ORDER BY name", tables: tables)
         == .done(SQLResult(columns: ["name", "value"], rows: tables[0].rows)))
-    _ = CodeSQLRunner.run(query: "DROP TABLE items", tables: tables)
+    _ = await runner.run(query: "DROP TABLE items", tables: tables)
     #expect(
-      CodeSQLRunner.run(query: "SELECT count(*) AS n FROM items", tables: tables)
+      await runner.run(query: "SELECT count(*) AS n FROM items", tables: tables)
         == .done(SQLResult(columns: ["n"], rows: [[.number(2)]])))
     #expect(
-      CodeSQLRunner.run(query: "SELECT name FROM items WHERE value > 5", tables: tables)
+      await runner.run(query: "SELECT name FROM items WHERE value > 5", tables: tables)
         == .done(SQLResult(columns: ["name"], rows: [])))
   }
 
-  @Test func queriesRunTheFunctionsTheServerChecksWith() {
+  @Test func queriesRunTheSQLiteTheServerChecksWith() async {
+    let runner = CodeSQLRunner()
+
     #expect(
-      CodeSQLRunner.run(
-        query: "SELECT log(100) AS log, ln(1) AS ln, mod(7, 3) AS mod, sqrt(16) AS root",
+      await runner.run(
+        query:
+          "SELECT log(100) AS log, ln(1) AS ln, mod(7, 3) AS mod, sqrt(16) AS root, log(3, 27) AS log3",
         tables: [])
         == .done(
           SQLResult(
-            columns: ["log", "ln", "mod", "root"],
-            rows: [[.number(2), .number(0), .number(1), .number(4)]])))
+            columns: ["log", "ln", "mod", "root", "log3"],
+            rows: [[.number(2), .number(0), .number(1), .number(4), .number(3.0000000000000004)]])))
     #expect(
-      CodeSQLRunner.run(query: "SELECT stdev(1)", tables: []) == .error("no such function: stdev"))
+      await runner.run(query: "SELECT stdev(1)", tables: []) == .error("no such function: stdev"))
     #expect(
-      CodeSQLRunner.run(query: "SELECT MEDIAN(1)", tables: []) == .error("no such function: MEDIAN")
-    )
+      await runner.run(query: "SELECT MEDIAN(1)", tables: [])
+        == .error("no such function: MEDIAN"))
   }
 
-  @Test func queriesFailWithSQLitesMessageOrStop() {
+  @Test func queriesFailWithSQLitesMessageOrStop() async {
     #expect(
-      CodeSQLRunner.run(query: "SELECT * FROM missing", tables: [])
+      await CodeSQLRunner().run(query: "SELECT * FROM missing", tables: [])
         == .error("no such table: missing"))
     #expect(
-      CodeSQLRunner.run(query: "ATTACH DATABASE 'other.db' AS other", tables: [])
-        == .error("not authorized"))
-    #expect(
-      CodeSQLRunner.run(
+      await CodeSQLRunner(timeLimit: 0.01).run(
         query:
           "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n) SELECT sum(x) FROM n",
-        tables: [], timeLimit: 0.01) == .timeout)
-    #expect(
-      CodeSQLRunner.run(
-        query:
-          "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n WHERE x < 5000) SELECT x FROM n",
-        tables: []) == .tooManyRows)
+        tables: []) == .timeout)
   }
 
-  @Test func aQueryStopsPastTheRowsAnAnswerCanHoldAndCutsLongCells() {
+  @Test func aQueryStopsPastTheRowsAnAnswerCanHoldAndCutsLongCells() async {
+    let runner = CodeSQLRunner()
     let rows = { (count: Int) in
       "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n WHERE x < \(count)) SELECT x FROM n"
     }
-    let long = CodeSQLRunner.run(
+    let long = await runner.run(
       query: "SELECT replace(hex(zeroblob(20000)), '00', 'x') AS text", tables: [])
 
-    #expect(CodeSQLRunner.run(query: rows(200), tables: []) != .tooManyRows)
-    #expect(CodeSQLRunner.run(query: rows(201), tables: []) == .tooManyRows)
+    #expect(await runner.run(query: rows(200), tables: []) != .tooManyRows)
+    #expect(await runner.run(query: rows(201), tables: []) == .tooManyRows)
     #expect(
-      CodeSQLRunner.run(query: "\(rows(201)); SELECT 1 AS one", tables: [])
+      await runner.run(query: "\(rows(201)); SELECT 1 AS one", tables: [])
         == .done(SQLResult(columns: ["one"], rows: [[.number(1)]])),
       "only the last table is the result")
     #expect(

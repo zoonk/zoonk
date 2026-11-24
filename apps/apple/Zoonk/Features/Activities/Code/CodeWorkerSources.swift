@@ -8,10 +8,12 @@ import Foundation
 /// removes its network and storage globals. The host page keeps the worker, times each run out
 /// and turns its messages into output, like main's `sandbox-host.ts` and `run-program.ts`.
 ///
-/// Pyodide loads from jsDelivr only when a Python activity appears, at the version core checks
-/// programs with on the server (`scripts/verify/code-runtimes.test.mts` fails when they differ).
+/// Pyodide and sql.js load from jsDelivr only when a Python or SQL activity appears, at the versions
+/// core checks programs with on the server (`scripts/verify/code-runtimes.test.mts` fails when they
+/// differ).
 enum CodeWorkerSources {
   private static let pyodideIndexURL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/"
+  private static let sqlJsBaseURL = "https://cdn.jsdelivr.net/npm/sql.js@1.17.0/dist/"
 
   /// The page that hosts the language's worker. `warmUp()` loads the runtime; `run({ code })`
   /// resolves with how the run ended and what it printed.
@@ -25,6 +27,12 @@ enum CodeWorkerSources {
   /// where it matches each sample, or with how the run ended.
   static func regexPage(timeLimit: TimeInterval) -> String {
     page(kind: "regex", worker: regex, runtime: "", timeLimit: timeLimit)
+  }
+
+  /// The page that runs SQL in a worker: `run({ query, setup })` resolves with the last table the
+  /// query returned, or with how the run ended.
+  static func sqlPage(timeLimit: TimeInterval) -> String {
+    page(kind: "sql", worker: sql, runtime: sqlJsBaseURL, timeLimit: timeLimit)
   }
 
   private static func page(
@@ -49,6 +57,7 @@ enum CodeWorkerSources {
   }
 
   private static let host = #"""
+    const REUSED = KIND === "python" || KIND === "sql";
     let host = null;
     let nextId = 1;
 
@@ -74,13 +83,13 @@ enum CodeWorkerSources {
     }
 
     function getHost() {
-      if (KIND !== "python") return createHost();
+      if (!REUSED) return createHost();
       host = host ?? createHost();
       return host;
     }
 
     async function warmUp() {
-      if (KIND !== "python") return true;
+      if (!REUSED) return true;
       const current = getHost();
       const isReady = await current.ready;
       if (!isReady) discardHost(current);
@@ -93,7 +102,7 @@ enum CodeWorkerSources {
       return { line: programLine ? Number(programLine) : null, message: lines.at(-1)?.trim() ?? traceback };
     }
 
-    /** One run, in Python's warm worker or a fresh one. Output is kept when it fails or runs out of time. */
+    /** One run, in Python's or SQL's warm worker or a fresh one. Output is kept when it fails or runs out of time. */
     async function run(request) {
       const current = getHost();
       if (!(await current.ready)) {
@@ -107,13 +116,13 @@ enum CodeWorkerSources {
         function finish(outcome, keepWorker) {
           clearTimeout(timer);
           current.worker.removeEventListener("message", handleMessage);
-          if (!keepWorker || KIND !== "python") discardHost(current);
+          if (!keepWorker || !REUSED) discardHost(current);
           resolve({ errorOutput: streams.stderr, output: streams.stdout.slice(0, MAX_OUTPUT_LENGTH), ...outcome });
         }
 
         function handleMessage({ data }) {
           if (data.id !== id) return;
-          if (data.type === "done") return finish({ matches: data.matches, stop: "done" }, true);
+          if (data.type === "done") return finish({ matches: data.matches, stop: "done", table: data.table }, true);
           if (data.type === "error") {
             const error = KIND === "python" ? pythonError(data.message) : { line: data.line ?? null, message: data.message };
             return finish({ stop: "error", ...error }, true);
@@ -327,6 +336,56 @@ enum CodeWorkerSources {
     };
 
     self.postMessage({ type: "ready" });
+    """#
+
+  /// Main's `SQL_WORKER_SOURCE`: SQLite through sql.js with core's `SQL_JS_CONFIG` and
+  /// `SQL_LAST_TABLE_SOURCE`, a fresh database per query.
+  private static let sql = #"""
+    "use strict";
+    \#(lockDown)
+    const BASE_URL = \#(json(sqlJsBaseURL));
+    const SQL_JS_CONFIG = {"useOldExtensionFunctions":false};
+    importScripts(BASE_URL + "sql-wasm.js");
+    const post = self.postMessage.bind(self);
+    function lastTable(db, query) {
+      let table = { columns: [], rows: [] };
+      for (const statement of db.iterateStatements(query)) {
+        const columns = statement.getColumnNames();
+        const rows = [];
+        while (statement.step()) {
+          rows.push(statement.get().map((value) => (value instanceof Uint8Array ? "[blob]" : value)));
+        }
+        if (columns.length > 0) table = { columns, rows };
+      }
+      return table;
+    }
+
+    const ready = initSqlJs({ ...SQL_JS_CONFIG, locateFile: (file) => BASE_URL + file }).then(
+      (SQL) => {
+        lockDown();
+        post({ type: "ready" });
+        return SQL;
+      },
+      (error) => {
+        post({ message: String(error), type: "loadError" });
+        return null;
+      },
+    );
+
+    self.onmessage = async (event) => {
+      const SQL = await ready;
+      if (!SQL) return;
+      const { id, query, setup } = event.data;
+      const db = new SQL.Database();
+      try {
+        for (const statement of setup) db.run(statement.sql, statement.params);
+        post({ id, table: lastTable(db, query), type: "done" });
+      } catch (error) {
+        post({ id, message: String((error && error.message) || error), type: "error" });
+      } finally {
+        db.close();
+      }
+    };
     """#
 
   /// Python through Pyodide, in a module worker. Booting takes a few seconds, so one worker is

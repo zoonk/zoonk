@@ -99,6 +99,7 @@ private struct SQLPlaygroundCanvas: View {
   let context: ActivityCanvasContext
   let fields: SQLPlaygroundFields
 
+  @State private var runner = CodeSQLRunner()
   @ActivityState private var query: String
   @State private var selection: TextSelection?
   @ActivityState private var queryRun: SQLRun?
@@ -106,6 +107,8 @@ private struct SQLPlaygroundCanvas: View {
   @State private var revision = 0
   @ActivityState("isStale") private var isStale = false
   @State private var verifiedSolution: String?
+  @State private var runtime = CodeRuntimeStatus.loading
+  @State private var runtimeAttempt = 0
 
   init(context: ActivityCanvasContext, fields: SQLPlaygroundFields) {
     self.context = context
@@ -153,6 +156,10 @@ private struct SQLPlaygroundCanvas: View {
     }
     .announcesStatus(errorLine)
     .announcesStatus(result.map(resultLine))
+    .task(id: runtimeAttempt) {
+      runtime = .loading
+      runtime = await runner.warmUp() ? .ready : .failed
+    }
     .task(id: isChecked) {
       guard isChecked else {
         return
@@ -161,8 +168,7 @@ private struct SQLPlaygroundCanvas: View {
       // Shown only once code has run it and it passes the learner's check, so a solution the
       // writer got wrong is never shown as one that works.
       let solution = fields.solution
-      let tables = fields.tables
-      let run = await Task.detached { CodeSQLRunner.run(query: solution, tables: tables) }.value
+      let run = await runner.run(query: solution, tables: fields.tables)
       if case .done(let result) = run, fields.expected.matches(result) {
         verifiedSolution = solution
       }
@@ -178,6 +184,7 @@ private struct SQLPlaygroundCanvas: View {
     }
     .onDisappear {
       activeRun = nil
+      runner.close()
     }
   }
 
@@ -205,10 +212,10 @@ private struct SQLPlaygroundCanvas: View {
       }
 
       CodeRunBar(
-        runtimeName: "SQLite", status: .ready, hasRun: queryRun != nil,
+        runtimeName: "SQLite", status: runtime, hasRun: queryRun != nil,
         isExploring: context.phase == .explore, isRunning: activeRun != nil,
         canRun: !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, run: runQuery,
-        retry: {})
+        retry: { runtimeAttempt += 1 })
     }
   }
 
@@ -330,7 +337,7 @@ private struct SQLPlaygroundCanvas: View {
     }
 
     switch queryRun {
-    case .done:
+    case .done, .unavailable:
       return nil
     case .error(let message):
       return message
@@ -391,11 +398,10 @@ private struct SQLPlaygroundCanvas: View {
     let id = UUID()
     let started = revision
     let sql = query
-    let tables = fields.tables
     activeRun = id
 
     Task {
-      let run = await Task.detached { CodeSQLRunner.run(query: sql, tables: tables) }.value
+      let run = await runner.run(query: sql, tables: fields.tables)
 
       guard activeRun == id else {
         return
