@@ -29,7 +29,6 @@ export async function readUploadedBlob(urlOrPathname: string): Promise<UploadedB
   };
 }
 
-/** An upload is signed to expire; a source keeps its file for as long as the source lasts. */
 export async function keepUploadedBlob(url: string): Promise<void> {
   await setTtl(url, { ttlDays: null, ...getPrivateBlobStore() });
 }
