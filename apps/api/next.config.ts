@@ -133,7 +133,8 @@ const nextConfig: NextConfig = {
 /**
  * `extract` compiles `useExtracted` calls, which a production build can't run without.
  * `eloqnt extract` (`pnpm i18n:extract`) writes the catalogs, so with no `locales` the app only
- * reads them.
+ * reads them. Development skips precompiling, so a string the catalogs don't have yet still fills
+ * in its placeholders.
  */
 const withNextIntl = createNextIntlPlugin({
   experimental: {
@@ -142,7 +143,7 @@ const withNextIntl = createNextIntlPlugin({
       format: "po",
       locales: [],
       path: ["./messages", "../../packages/player/messages"],
-      precompile: true,
+      precompile: process.env.NODE_ENV !== "development",
       sourceLocale: "en",
     },
     srcPath: "./src",

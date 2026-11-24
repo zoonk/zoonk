@@ -77,6 +77,11 @@ async function runMain() {
     return;
   }
 
+  // The builds below run outside turbo, which would otherwise extract the catalogs they read.
+  if (!(await run({ args: ["--recursive", "run", "i18n:extract"] }))) {
+    return;
+  }
+
   const [port, mainPort] = await Promise.all([findFreePort(), findFreePort()]);
   process.env.E2E_API_URL = `http://localhost:${port}`;
   process.env.MAIN_APP_URL = `http://localhost:${mainPort}`;
