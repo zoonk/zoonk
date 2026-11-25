@@ -425,9 +425,11 @@ struct LessonAnswerField: View {
 
     if isNumber {
       FittedTextInput(text: answer, limit: Self.answerLimit) { text, selection in
-        TextField(text: text, selection: selection, prompt: prompt) { label ?? prompt }
-          .keyboardType(.numbersAndPunctuation)
-          .onSubmit(submit)
+        TextField(text: text, selection: selection, prompt: prompt.fieldPrompt()) {
+          label ?? prompt
+        }
+        .keyboardType(.numbersAndPunctuation)
+        .onSubmit(submit)
       }
     } else {
       MultilineTextField(

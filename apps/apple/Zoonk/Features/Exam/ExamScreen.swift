@@ -522,7 +522,7 @@ private struct ExamResultSection: View {
         }
       }
 
-      TextField(text: $form.score) {
+      TextField(text: $form.score, prompt: scoreLabel.fieldPrompt()) {
         scoreLabel
       }
       .keyboardType(.decimalPad)
@@ -541,11 +541,10 @@ private struct ExamResultSection: View {
       }
 
       if scale == "points" {
-        TextField(text: $form.maxScore) {
-          Text("out of", tableName: "Exam", comment: "The score's maximum")
-        }
-        .keyboardType(.decimalPad)
-        .focused($focusedField, equals: .maxScore)
+        let outOf = Text("out of", tableName: "Exam", comment: "The score's maximum")
+        TextField(text: $form.maxScore, prompt: outOf.fieldPrompt()) { outOf }
+          .keyboardType(.decimalPad)
+          .focused($focusedField, equals: .maxScore)
       }
 
       Picker(selection: $form.passed) {

@@ -95,7 +95,8 @@ struct BuddyPickerSections: View {
       ) {
         FittedTextInput(text: $name, limit: buddyNameMaxLength) { text, selection in
           TextField(
-            text: text, selection: selection, prompt: Text(buddyName(kind: kind, name: nil))
+            text: text, selection: selection,
+            prompt: Text(buddyName(kind: kind, name: nil)).fieldPrompt()
           ) {
             Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
           }

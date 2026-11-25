@@ -91,7 +91,7 @@ describe(repairMarkdown, () => {
     expect(
       repairMarkdown({
         layout: "blocks",
-        text: String.raw`<b>Se</b> \(0<a\), veja [isto](https://a.com) e $b>0$.`,
+        text: String.raw`**Se \(0<a\), veja [isto](https://a.com) e $b>0$.`,
       }),
     ).toBe(String.raw`Se \(0<a\), veja isto e $b>0$.`);
   });
@@ -118,20 +118,41 @@ describe(repairMarkdown, () => {
 | **norm** $\|v\|$  |`);
   });
 
-  it("turns headings, quote marks, links and styling tags into plain words", () => {
-    const text = [
-      "## Resumo",
-      "> citação do texto",
-      "Veja [a lei](https://example.com/lei) e <strong>leia</strong> tudo.<br>Depois responda.",
-    ].join("\n");
+  it("turns headings, quote marks and links into plain words", () => {
+    const text = ["## Resumo", "> citação do texto", "Veja [a lei](https://example.com/lei)."].join(
+      "\n",
+    );
 
     const repaired = repairMarkdown({ layout: "blocks", text });
 
-    expect(repaired).toBe(
-      ["Resumo", "citação do texto", "Veja a lei e leia tudo.", "Depois responda."].join("\n"),
-    );
-
+    expect(repaired).toBe(["Resumo", "citação do texto", "Veja a lei."].join("\n"));
     expect(findUnrenderedMarkdown({ layout: "blocks", text: repaired })).toStrictEqual([]);
+  });
+
+  it("never takes out a tag, which can be what the lesson teaches, and leaves it for a writer", () => {
+    const tags = [
+      "Wrap the description in <p> and </p> inside the section.",
+      'A link starts with <a href="/menu"> and ends with </a>.',
+      "Linha um<br>linha dois e <strong>leia</strong>.",
+      "Use ``<a title={`Ver`}>Ver</a>`` aqui.",
+    ];
+
+    for (const layout of ["blocks", "inline"] as const) {
+      for (const text of tags) {
+        expect(repairMarkdown({ layout, text: `## ${text}` })).toBe(text);
+        expect(findUnrenderedMarkdown({ layout, text })).not.toStrictEqual([]);
+      }
+    }
+
+    expect(
+      repairMarkdown({ layout: "inline", text: "Use <xsl:text>Sim</xsl:text> e <https://x.y>." }),
+    ).toBe("Use <xsl:text>Sim</xsl:text> e https://x.y.");
+
+    const cell = "| Tag | Job |\n|---|---|\n| <h1> | **main heading |";
+
+    expect(repairMarkdown({ layout: "blocks", text: cell })).toBe(
+      "| Tag | Job |\n|---|---|\n| <h1> | main heading |",
+    );
   });
 
   it("turns a link with a title and an angle-bracket link into plain words", () => {
@@ -179,7 +200,7 @@ describe(repairMarkdown, () => {
   });
 
   it("keeps inline code as written while repairing the words around it", () => {
-    expect(repairMarkdown({ layout: "inline", text: "O que `<div>` contém em <b>HTML</b>?" })).toBe(
+    expect(repairMarkdown({ layout: "inline", text: "O que `<div>` contém em **HTML?" })).toBe(
       "O que `<div>` contém em HTML?",
     );
 
@@ -253,10 +274,14 @@ describe(toPlainLine, () => {
     );
   });
 
-  it("takes out headings, links, tags and marks nobody can pair", () => {
-    expect(toPlainLine("# [Ler gráficos](https://x.y) <em>e tabelas</em> **já")).toBe(
+  it("takes out headings, links and marks nobody can pair", () => {
+    expect(toPlainLine("# [Ler gráficos](https://x.y) e tabelas **já")).toBe(
       "Ler gráficos e tabelas já",
     );
+  });
+
+  it("keeps a tag as the characters a plain line shows", () => {
+    expect(toPlainLine("Agrupe com <div> e `<span>`")).toBe("Agrupe com <div> e <span>");
   });
 
   it("keeps angle quotes and multiplication as text", () => {

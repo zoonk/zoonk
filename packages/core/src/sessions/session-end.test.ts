@@ -556,6 +556,30 @@ const MS_PER_SECOND = 1000;
 const at = (second: number) => new Date(SESSION_NOW.getTime() + second * MS_PER_SECOND);
 
 describe(scoreLessonAnswers, () => {
+  it("scores the first answer to a step once when a later replay links to the bank", async () => {
+    const user = await userFixture();
+
+    const first = {
+      answeredAt: at(1),
+      id: crypto.randomUUID(),
+      isCorrect: false,
+      itemId: null,
+      stepId: crypto.randomUUID(),
+    };
+
+    const replay = {
+      ...first,
+      answeredAt: at(2),
+      id: crypto.randomUUID(),
+      isCorrect: true,
+      itemId: crypto.randomUUID(),
+    };
+
+    await expect(
+      scoreLessonAnswers({ answers: [first, replay], userId: user.id }),
+    ).resolves.toStrictEqual({ brainPower: 0, topHyperdrive: 0 });
+  });
+
   it("scores new answers with Hyperdrive and pays replayed questions less", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 

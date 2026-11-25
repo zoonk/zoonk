@@ -718,7 +718,7 @@ struct LabeledField: View {
 
       if let limit, !multiline {
         FittedTextInput(text: $text, limit: limit) { text, selection in
-          TextField(text: text, selection: selection, prompt: placeholder) { label }
+          TextField(text: text, selection: selection, prompt: placeholder.fieldPrompt()) { label }
             .submitLabel(.done)
             .focused(focus)
         }

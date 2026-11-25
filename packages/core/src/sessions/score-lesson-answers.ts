@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { loadSessionAnswers } from "./_utils/session-answers";
 import { STUDY_SESSION_INCLUDE } from "./_utils/study-session-access";
-import { type AnswerRecord, classifyAnswers } from "./answer-material";
+import { type AnswerRecord, classifyAnswers, isSameQuestion } from "./answer-material";
 import { scoreAnswers } from "./brain-power";
 
 type LessonAnswersScore = { brainPower: number; topHyperdrive: number };
@@ -62,9 +62,7 @@ const ONE_SITTING: readonly LessonSitting[] = [{ startedAt: new Date(0), studySe
 function getFirstAnswers(answers: readonly AnswerRecord[]): AnswerRecord[] {
   return answers.filter(
     (answer, index) =>
-      answers.findIndex(
-        (other) => (other.itemId ?? other.stepId) === (answer.itemId ?? answer.stepId),
-      ) === index,
+      !answers.some((other, earlier) => earlier < index && isSameQuestion(answer, other)),
   );
 }
 

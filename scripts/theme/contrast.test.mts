@@ -42,11 +42,23 @@ function contrastRatio({ background, foreground }: { background: Rgba; foregroun
 
 const { palette, subjects, tokens } = readPalette();
 const modes: Mode[] = ["light", "dark", "lightMoreContrast", "darkMoreContrast"];
-const textRoles = ["foreground", "muted-foreground", "faint"];
 const surfaces = ["background", "card", "muted"];
 
-/** Colored words are AA in the regular theme and AAA when more contrast is asked for. */
-function coloredMinimum(mode: Mode): number {
+/**
+ * Where each step's words sit: every row, menu and band, and for the two stronger steps the
+ * learner's pick (a picked row's second line) and the third step (a highlighted search result).
+ */
+const PAGE_SURFACES = [...surfaces, "popover", "ground"];
+const PICK_SURFACES = [...PAGE_SURFACES, "selected-tint", "surface-3"];
+
+const TEXT_SURFACES = {
+  faint: PAGE_SURFACES,
+  foreground: PICK_SURFACES,
+  "muted-foreground": PICK_SURFACES,
+};
+
+/** Words are AA in the regular theme and AAA when more contrast is asked for. */
+function textMinimum(mode: Mode): number {
   return mode.endsWith("MoreContrast") ? MINIMUM_MORE_CONTRAST : MINIMUM_TEXT_CONTRAST;
 }
 
@@ -74,13 +86,14 @@ function pick(colors: Map<string, Rgba>, name: string): Rgba {
   return color;
 }
 
-const pairs = Object.entries(tokens).flatMap(([mode, values]) =>
-  textRoles.flatMap((text) =>
-    surfaces.map((surface) => ({
+const pairs = modes.flatMap((mode) =>
+  Object.entries(TEXT_SURFACES).flatMap(([text, textSurfaces]) =>
+    textSurfaces.map((surface) => ({
+      minimum: textMinimum(mode),
       mode,
       ratio: contrastRatio({
-        background: resolveColor({ name: surface, palette, tokens: values }),
-        foreground: resolveColor({ name: text, palette, tokens: values }),
+        background: resolveColor({ name: surface, palette, tokens: tokens[mode] }),
+        foreground: resolveColor({ name: text, palette, tokens: tokens[mode] }),
       }),
       surface,
       text,
@@ -89,8 +102,37 @@ const pairs = Object.entries(tokens).flatMap(([mode, values]) =>
 );
 
 describe("neutral text accessibility", () => {
-  it.each(pairs)("$mode: $text on $surface meets WCAG AA", ({ ratio }) => {
-    expect(ratio).toBeGreaterThanOrEqual(MINIMUM_TEXT_CONTRAST);
+  it.each(pairs)("$mode: $text on $surface meets $minimum:1", ({ minimum, ratio }) => {
+    expect(ratio).toBeGreaterThanOrEqual(minimum);
+  });
+});
+
+/**
+ * A quiet step stays a step away from the text color in every mode, more contrast included, so a
+ * field's example never reads as words the learner typed.
+ */
+const MINIMUM_STEP_APART = 2;
+
+const steps = modes.flatMap((mode) =>
+  ["muted-foreground", "faint"].map((text) => ({
+    mode,
+    ratio: contrastRatio({
+      background: resolveColor({ name: "foreground", palette, tokens: tokens[mode] }),
+      foreground: resolveColor({ name: text, palette, tokens: tokens[mode] }),
+    }),
+    text,
+  })),
+);
+
+describe("text steps", () => {
+  it.each(steps)("$mode: $text stays apart from foreground", ({ ratio }) => {
+    expect(ratio).toBeGreaterThanOrEqual(MINIMUM_STEP_APART);
+  });
+
+  it.each(modes)("%s: faint is the quietest step", (mode) => {
+    const [muted, faint] = steps.filter((step) => step.mode === mode).map((step) => step.ratio);
+
+    expect(faint).toBeGreaterThan(muted ?? Number.POSITIVE_INFINITY);
   });
 });
 
@@ -107,7 +149,7 @@ const coloredPairs = modes.flatMap((mode) => {
 
       return grounds.map((ground) => ({
         ground,
-        minimum: coloredMinimum(mode),
+        minimum: textMinimum(mode),
         mode,
         ratio: contrastRatio({ background: pick(colors, ground), foreground: pick(colors, text) }),
         text,
@@ -208,7 +250,7 @@ const filledPairs = modes.flatMap((mode) => {
   return FILLS.filter((entry) => !entry.modes || entry.modes.includes(mode)).flatMap(
     ({ fill, share, text, where }) =>
       ["background", "card"].map((surface) => ({
-        minimum: coloredMinimum(mode),
+        minimum: textMinimum(mode),
         mode,
         ratio: contrastRatio({
           background: over({ ...pick(colors, fill), alpha: share }, pick(colors, surface)),

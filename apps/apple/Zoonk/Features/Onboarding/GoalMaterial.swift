@@ -707,16 +707,15 @@ private struct PasteMaterialRow: View {
       Group {
         if isLink {
           FittedTextInput(text: $value, limit: Self.linkLimit) { text, selection in
-            TextField(text: text, selection: selection) {
-              Text(
-                "https://… an article, a class page or a PDF", tableName: "Onboarding",
-                comment: "Placeholder of the box for a material link")
-            }
-            .keyboardType(.URL)
-            .textContentType(.URL)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .onSubmit(add)
+            let example = Text(
+              "https://… an article, a class page or a PDF", tableName: "Onboarding",
+              comment: "Placeholder of the box for a material link")
+            TextField(text: text, selection: selection, prompt: example.fieldPrompt()) { example }
+              .keyboardType(.URL)
+              .textContentType(.URL)
+              .textInputAutocapitalization(.never)
+              .autocorrectionDisabled()
+              .onSubmit(add)
           }
         } else {
           MultilineTextField(

@@ -6,17 +6,14 @@ import {
 } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
 import { type MockOptionView, type MockShape } from "./mock-contract";
-import { isPartOfAnother, listDayOptions } from "./mock-day-options";
+import { listDayOptions } from "./mock-day-options";
 import { estimateMockMinutes } from "./mock-estimate";
 import { type MockTypedPart, listMockLeftOut } from "./mock-left-out";
 import { type SubjectShare } from "./mock-subject-shares";
 import { type UnpickedChoice } from "./mock-unpicked";
+import { countSubjectPaperQuestions, isPartOfAnother } from "./subject-paper-size";
 import { getSubjectPace } from "./subject-sections";
-import { isObjectiveSection, isQuestionSubject } from "./written-subject";
-
-const DEFAULT_SUBJECT_QUESTIONS = 20;
-
-const MIN_SUBJECT_QUESTIONS = 5;
+import { isQuestionSubject } from "./written-subject";
 
 export type MockOption = MockOptionView;
 
@@ -98,19 +95,6 @@ function getObjectiveSubjects({
   );
 }
 
-function getEvenSubjectQuestions(structure: ExamStructure): number | null {
-  const subjects = structure.subjects.filter((subject) =>
-    isQuestionSubject({ structure, subject }),
-  );
-
-  const sections = (structure.mock?.sections ?? [])
-    .filter((section) => isObjectiveSection(section))
-    .reduce((sum, section) => sum + (section.questions ?? 0), 0);
-
-  const total = sections || structure.mock?.totalQuestions;
-  return total && subjects.length > 0 ? Math.round(total / subjects.length) : null;
-}
-
 function toSubjectOption({
   pace,
   parts,
@@ -124,19 +108,7 @@ function toSubjectOption({
   structure: ExamStructure;
   typed: readonly MockTypedPart[];
 }): MockOption {
-  const partQuestions = parts.reduce(
-    (sum, part) => sum + (getPlannedSubjectQuestions({ structure, subject: part }) ?? 0),
-    0,
-  );
-
-  const questions = Math.max(
-    Math.round(
-      (getPlannedSubjectQuestions({ structure, subject }) ??
-        getEvenSubjectQuestions(structure) ??
-        DEFAULT_SUBJECT_QUESTIONS) + partQuestions,
-    ),
-    MIN_SUBJECT_QUESTIONS,
-  );
+  const questions = countSubjectPaperQuestions({ parts, structure, subject });
 
   const minutes = Math.max(1, Math.round(questions * getSubjectPace({ structure, subject })));
 

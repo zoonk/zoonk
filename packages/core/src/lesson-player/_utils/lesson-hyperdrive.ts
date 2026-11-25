@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { scoreAnswers } from "../../sessions/brain-power";
 import { loadStudySessionAnswers } from "../../sessions/score-lesson-answers";
 import { type LibraryLessonRun } from "../contract";
@@ -53,27 +52,22 @@ async function getKnownStepIds({
   const known = new Set(rightAnswers.flatMap((answer) => [answer.itemId, answer.stepId]));
 
   return steps
-    .filter((step) => (step.itemId ? known.has(step.itemId) : known.has(step.id)))
+    .filter((step) => known.has(step.id) || (step.itemId !== null && known.has(step.itemId)))
     .map((step) => step.id);
 }
 
 /** Uses the streak and known screens from run start, so resumed answers replay against the same baseline. */
 export async function getRunHyperdrive({
-  lessonId,
   run,
+  steps,
   studySessionId,
   userId,
 }: {
-  lessonId: string;
   run: { startedAt: Date };
+  steps: readonly LessonQuestionRow[];
   studySessionId: string | null;
   userId: string;
 }): Promise<LibraryLessonRun["hyperdrive"]> {
-  const steps = await prisma.step.findMany({
-    select: { id: true, itemId: true },
-    where: { lessonId, ...CURRENT_STEPS },
-  });
-
   const [knownStepIds, sessionAnswers] = await Promise.all([
     getKnownStepIds({ before: run.startedAt, steps, userId }),
     loadStudySessionAnswers({ studySessionId, userId }),

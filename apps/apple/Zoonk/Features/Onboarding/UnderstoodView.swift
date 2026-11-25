@@ -748,7 +748,7 @@ private struct RowEditor: View {
         FittedTextInput(
           text: $text, limit: field == .displayName ? Self.goalNameLimit : onboardingAnswerLimit
         ) { text, selection in
-          TextField(text: text, selection: selection) {
+          TextField(text: text, selection: selection, prompt: Text(row.label).fieldPrompt()) {
             Text(row.label)
           }
           .focused($isFocused)

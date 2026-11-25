@@ -258,6 +258,7 @@
             }
           ],
           "question": "Julgue o item: _sem remuneração nem dano ao erário, não houve conflito de interesses_.",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -302,6 +303,7 @@
             }
           ],
           "question": "Julgue o item: _Rosana pode continuar instruindo o processo até receber um substituto_.",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -333,6 +335,7 @@
             }
           ],
           "question": "Julgue o item: _esse contato basta para arguir a suspeição de Valéria por amizade íntima_.",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -367,6 +370,7 @@
             }
           ],
           "question": "Como Juliana deve agir?",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -734,6 +738,7 @@
             }
           ],
           "question": "Julgue a afirmação do deputado.",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -798,6 +803,7 @@
             }
           ],
           "question": "Essa regra mantém a forma republicana?",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
@@ -873,6 +879,7 @@
             }
           ],
           "question": "Quais frases estão corretas?",
+          "standsAlone": true,
           "kind": "check",
           "image": null,
           "visual": null
