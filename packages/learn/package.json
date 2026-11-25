@@ -251,11 +251,9 @@
     "./rich-text/typography": "./src/rich-text/rich-text-typography.ts"
   },
   "scripts": {
-    "build": "pnpm extract:messages",
-    "build:e2e": "pnpm extract:messages",
-    "extract:messages": "tsx extract-messages.ts",
+    "i18n:extract": "eloqnt extract",
     "i18n:lint": "eloqnt lint --strict",
-    "i18n": "reuse-translations && eloqnt translate",
+    "i18n": "eloqnt extract && reuse-translations && eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsrs --noEmit"
@@ -278,7 +276,6 @@
     "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "fast-check": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
