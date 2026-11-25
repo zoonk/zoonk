@@ -25,11 +25,19 @@ function ChipIcon({ item }: { item: StartAttachment }) {
 function useChipState(item: StartAttachment): string | null {
   const t = useExtracted();
 
-  if (isUnreadable(item)) {
+  if (item.missing) {
     return t({
       description:
-        "Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read.",
-      message: "Can't be read",
+        "Read by screen readers after the name of an attached file that's gone, so it must be added again.",
+      message: "Can't be read anymore",
+    });
+  }
+
+  if (item.readStatus === "unreadable") {
+    return t({
+      description:
+        "Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.",
+      message: "Nothing on it could be read",
     });
   }
 
@@ -116,8 +124,8 @@ export function useNoWordsHint() {
     return others.length > 0
       ? t({
           description:
-            "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes.",
-          message: "We couldn't read some of your files. Try sharper photos or paste the text.",
+            "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.",
+          message: "We couldn't read these files. Try sharper photos or paste the text.",
         })
       : t({
           description:
@@ -164,8 +172,6 @@ export function AttachedChips({
           <AttachedChip item={item} key={item.id} onRemove={onRemove} />
         ))}
       </ul>
-
-      <UnreadableNote items={items} />
 
       {items.length >= MAX_GOAL_SOURCES && (
         <p className="text-muted-foreground text-sm" role="status">

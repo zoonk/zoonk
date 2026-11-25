@@ -18,12 +18,13 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
-import { AttachedChips } from "./attached-chips";
+import { AttachedChips, UnreadableNote } from "./attached-chips";
 import { GoalEntry } from "./goal-entry";
 import { GoalLimitBar } from "./goal-limit-notice";
 import { type StartAttachment, type StartMaterial } from "./material-goal";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 import { useFollowReading } from "./use-follow-reading";
+import { useSendAfterAdding } from "./use-send-after-adding";
 
 function GoalAttachments({
   attach,
@@ -31,8 +32,9 @@ function GoalAttachments({
   intent,
   items,
   language,
-  onChange,
+  onAdded,
   onIntentChange,
+  onRemove,
   open,
   ref,
   signUpHref,
@@ -42,8 +44,9 @@ function GoalAttachments({
   intent: MaterialIntent | null;
   items: StartAttachment[];
   language: string;
-  onChange: (items: StartAttachment[]) => void;
+  onAdded: () => void;
   onIntentChange: (intent: MaterialIntent) => void;
+  onRemove: (id: string) => void;
   open: boolean;
   ref: React.Ref<HTMLDivElement>;
   signUpHref: string;
@@ -68,16 +71,14 @@ function GoalAttachments({
         )}
       </p>
 
-      {items.length > 0 && (
-        <AttachedChips
-          items={items}
-          onRemove={(id) => onChange(items.filter((item) => item.id !== id))}
-        />
-      )}
+      {items.length > 0 && <AttachedChips items={items} onRemove={onRemove} />}
 
       {items.length > 0 && !open && (
-        <MaterialIntentChoice onChange={onIntentChange} value={intent} />
+        <MaterialIntentChoice className="mt-3" onChange={onIntentChange} value={intent} />
       )}
+
+      {/* Under the choices: a read that settles while the learner picks one moves nothing above it. */}
+      <UnreadableNote items={items} />
 
       {open && !canAttach && <SignUpPrompt signUpHref={signUpHref} />}
 
@@ -87,7 +88,7 @@ function GoalAttachments({
           language={language}
           onAttached={(source) => {
             setAdded(source);
-            onChange([...items.filter((item) => item.id !== source.id), source]);
+            onAdded();
           }}
         />
       )}
@@ -121,6 +122,13 @@ function AttachableGoalEntry({
 
   useFollowReading({ onSettled: settle, read: attach.readStatus, sources: attached });
 
+  const sending = useSendAfterAdding({
+    attach,
+    onAdded: (source) =>
+      setAttached((current) => [...current.filter((item) => item.id !== source.id), source]),
+    onSend: onSubmit,
+  });
+
   // Not the new material's Remove: a learner still pressing Enter would remove what they added.
   useFocusOnRemovedControl(material, () => toggle.current);
 
@@ -131,16 +139,17 @@ function AttachableGoalEntry({
       attachRef={toggle}
       attachment={
         <GoalAttachments
-          attach={attach}
+          attach={sending.attach}
           canAttach={canAttach}
           intent={intent}
           items={attached}
           language={locale}
-          onChange={(items) => {
-            setAttached(items);
+          onAdded={() => setOpen(false)}
+          onIntentChange={setIntent}
+          onRemove={(id) => {
+            setAttached((current) => current.filter((item) => item.id !== id));
             setOpen(false);
           }}
-          onIntentChange={setIntent}
           open={open}
           ref={material}
           signUpHref={routes.signUp}
@@ -152,7 +161,8 @@ function AttachableGoalEntry({
       fromSharedPlan={fromSharedPlan}
       hasAccount={canAttach}
       onAttach={() => setOpen((previous) => !previous)}
-      onSubmit={onSubmit}
+      onSubmit={sending.send}
+      sending={sending.held}
       signUpHref={routes.signUp}
     />
   );

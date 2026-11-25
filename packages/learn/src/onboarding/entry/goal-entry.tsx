@@ -33,6 +33,7 @@ export function GoalEntry({
   hasAccount,
   onAttach,
   onSubmit,
+  sending = false,
   signUpHref,
 }: {
   attachDisabled?: boolean;
@@ -46,6 +47,8 @@ export function GoalEntry({
   hasAccount: boolean;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
+  /** Sent, and waiting for material still being added before it goes. */
+  sending?: boolean;
   signUpHref: string;
 }) {
   const t = useExtracted();
@@ -61,7 +64,7 @@ export function GoalEntry({
 
   return (
     <OnboardingColumn
-      bar={!section && <GoalEntrySubmit disabled={goal.disabled} form={formId} />}
+      bar={!section && <GoalEntrySubmit busy={sending} disabled={goal.disabled} form={formId} />}
       className={cn(section && "gap-4")}
     >
       {section ? (
@@ -99,7 +102,7 @@ export function GoalEntry({
           </Button>
         )}
 
-        {section && <GoalEntrySubmit disabled={goal.disabled} />}
+        {section && <GoalEntrySubmit busy={sending} disabled={goal.disabled} />}
       </GoalBox>
 
       {section && !hasAccount && <FreeStartNote className="min-[72rem]:hidden" />}
