@@ -157,7 +157,12 @@ describe(listAnsweredWrong, () => {
 
 const day = (offset: number) => new Date(Date.UTC(2026, 9, 8 + offset));
 
-const quick: OwnAnswer = { format: "multipleChoice", isCorrect: true, itemId: "quick" };
+const quick: OwnAnswer = {
+  content: { options: ["a", "b", "c", "d"], select: 1 },
+  format: "multipleChoice",
+  isCorrect: true,
+  itemId: "quick",
+};
 
 const match: OwnAnswer = {
   content: { pairs: ["a", "b", "c", "d"] },

@@ -1,6 +1,7 @@
 import { GENERATED_ITEM_SCHEMAS } from "@zoonk/ai/tasks/items/schemas";
 import { StepKind, StepVariantKind } from "@zoonk/db";
 import { z } from "zod";
+import { screenQuestionSchema } from "../../../../library/lessons/_utils/screen-question-item";
 import { stepImageRequestSchema } from "../../../../library/steps/contract/content-schemas";
 import { idSchema } from "../fix-handler";
 import { sourcePageSchema } from "../source-page";
@@ -186,9 +187,7 @@ export const storedScreensSchema = z.object({
   id: idSchema,
   mediaLinks: z.array(mediaLink).optional(),
   model: z.literal("Lesson"),
-  newItems: z.array(
-    z.object({ id: idSchema, question: GENERATED_ITEM_SCHEMAS.numeric, skillId: idSchema }),
-  ),
+  newItems: z.array(z.object({ id: idSchema, question: screenQuestionSchema, skillId: idSchema })),
   op: z.literal("setScreens"),
   proposal: setScreensSchema.nullable(),
 });

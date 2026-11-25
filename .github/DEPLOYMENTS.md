@@ -76,7 +76,7 @@ For the regular release, choose a commit that passed CI on `main`, create a `v*`
 
 For a patch, branch from the last successfully deployed release tag, apply the fix, and push a new patch `v*` tag. CI runs for that commit, even when it is outside `main`. Publish its stable GitHub release; the release workflow waits for that commit's CI to succeed. Bring the fix back to `main` through a PR, using a cherry-pick when merging the hotfix branch would reintroduce unrelated release history. Hotfix branches must include this deployment automation; tags predating its introduction need the automation brought forward first.
 
-App builds generate Prisma but never migrate a database. Each deployment workflow migrates once before starting the builds. Migrations must support the previously deployed apps while the new builds run and switch domains. Hotfix migrations must not depend on unreleased migrations from `main`.
+App builds generate Prisma but never migrate a database. Each deployment workflow migrates once before starting the builds. Migrations must support the previously deployed apps while the new builds run and switch domains. So before migrating, a production release stops if its apps serve different releases, as a failed release can leave them, and moves each project's Skew Protection boundary to the deployment its domain serves, so open tabs stop reaching older deployments. Hotfix migrations must not depend on unreleased migrations from `main`.
 
 ## Local verification
 

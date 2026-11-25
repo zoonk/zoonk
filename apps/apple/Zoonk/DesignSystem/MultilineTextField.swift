@@ -20,16 +20,22 @@ struct MultilineTextField: View {
   private var field: some View {
     if let limit {
       FittedTextInput(text: $text, limit: limit) { text, selection in
-        TextField(text: submitting(text), selection: selection, prompt: prompt, axis: .vertical) {
+        TextField(
+          text: submitting(text), selection: selection, prompt: prompt?.fieldPrompt(),
+          axis: .vertical
+        ) {
           label
         }
       }
     } else if let selection {
-      TextField(text: submitting($text), selection: selection, prompt: prompt, axis: .vertical) {
+      TextField(
+        text: submitting($text), selection: selection, prompt: prompt?.fieldPrompt(),
+        axis: .vertical
+      ) {
         label
       }
     } else {
-      TextField(text: submitting($text), prompt: prompt, axis: .vertical) { label }
+      TextField(text: submitting($text), prompt: prompt?.fieldPrompt(), axis: .vertical) { label }
     }
   }
 

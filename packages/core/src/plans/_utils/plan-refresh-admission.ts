@@ -26,8 +26,10 @@ export function addsLessonsAfterLessonsDone({
     targetDate: goal.targetDate,
   });
 
+  // Lessons a written skill's test-out stood in for still come back: only writing shows it.
   return (
     done &&
+    computed.reopenedItemIds.length === 0 &&
     computed.built.items.some((item) => LEARN_KINDS.has(item.kind) && item.status === "todo")
   );
 }

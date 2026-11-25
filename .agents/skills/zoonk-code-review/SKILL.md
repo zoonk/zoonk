@@ -4,7 +4,7 @@ description: Review Zoonk diffs or assess supplied review comments against actua
 license: MIT
 metadata:
   author: zoonk
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # Zoonk code review

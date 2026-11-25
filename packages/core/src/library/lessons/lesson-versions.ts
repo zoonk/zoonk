@@ -85,14 +85,18 @@ export async function readCurrentLessonVersion(lessonId: string): Promise<number
  */
 export async function retireUnaskedQuestions(
   tx: TransactionClient,
-  askedBy: StepWhereInput,
+  askedBy: StepWhereInput | { itemIds: string[] },
   { sourcesLocked = false }: { sourcesLocked?: boolean } = {},
 ): Promise<void> {
   const unasked = await tx.item.findMany({
     select: { id: true, skillId: true },
     where: {
+      ...("itemIds" in askedBy && { id: { in: askedBy.itemIds } }),
       retiredAt: null,
-      steps: { none: { ...CURRENT_STEPS, lesson: { setAsideAt: null } }, some: askedBy },
+      steps: {
+        none: { ...CURRENT_STEPS, lesson: { setAsideAt: null } },
+        ...("itemIds" in askedBy ? {} : { some: askedBy }),
+      },
     },
   });
 

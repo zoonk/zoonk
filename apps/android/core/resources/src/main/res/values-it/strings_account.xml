@@ -13,7 +13,7 @@
   "account_continue_with_google": "d451df455c0a1362f5501323da1f0fbb5787c92d436d1b9a08c17dfd56bd6b04",
   "account_did_not_get_it": "d417a9e68a6e61079446ec037007ff8dd6f4fa80fb6b86f8fe5fbed8d822351a",
   "account_email": "1640bfa2abba9bd3eefabfe89af0960ab21037053644909a2c3153b2f609a356",
-  "account_email_placeholder": "60acadb0f36f7ec9f84d360377e1599990f93d6493e34fcf5328cd78c0d71a27",
+  "account_email_placeholder": "d112dc84e034a4d63e23c152165b6a3f8d0940cd18426ba514f5b191d539641f",
   "account_failure_code_expired": "a3e3f8b769f7d1e52f4eabe371eab65df7f0beceaf5f489736ca0cf591953899",
   "account_failure_code_locked": "a86e9b7bd82b28a360f6a1e797528cfe1fe2019b0c189258d98c13f6bd300292",
   "account_failure_disposable_email": "3052f2a7950387d85dfbe9ba5a3b9d477d3094196623e0dcecb18f0c95c3d042",
@@ -69,7 +69,8 @@
     <string name="account_continue_with_apple">Continua con Apple</string>
     <string name="account_or">Oppure</string>
     <string name="account_email">Email</string>
-    <string name="account_email_placeholder">me@gmail.com</string>
+    <!-- An example email address in an empty email field. Localize "you" and keep example.com. -->
+    <string name="account_email_placeholder">tu@example.com</string>
     <string name="account_continue">Continua</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <string name="account_agreement">Continuando, accetti i %1$s e l’%2$s di Zoonk.</string>

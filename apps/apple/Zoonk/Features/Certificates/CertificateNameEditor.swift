@@ -40,7 +40,8 @@ struct CertificateNameEditor: View {
         TextField(
           text: $name,
           prompt: Text(
-            "Your full name", tableName: "Certificates")
+            "Your full name", tableName: "Certificates"
+          ).fieldPrompt()
         ) {
           label
         }

@@ -168,7 +168,7 @@ private struct ZoonkButton: View {
 
     switch variant {
     case .main:
-      return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
+      return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : Color(.secondary)
     case .outline, .ghost:
       return isPressed ? .muted : .clear
     }

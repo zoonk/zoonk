@@ -19,6 +19,7 @@ export function createLearnerAttempt({
       answeredAt,
       durationMs: input.graded.durationMs,
       focusTestId: input.focusTestId ?? null,
+      fromLesson: Boolean(input.stepId) || input.practiceQuestion?.kind === "lesson",
       isCorrect: input.graded.isCorrect,
       isPlacement: input.isPlacement ?? false,
       itemId: input.itemId ?? null,

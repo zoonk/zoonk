@@ -43,6 +43,7 @@ function check(question: string, options: [string, string] = ["Yes", "No"]): Wri
       { isCorrect: false, picture: null, reason: "Not quite.", text: options[1] },
     ],
     question,
+    standsAlone: false,
     visual: null,
   };
 }

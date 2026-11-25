@@ -460,6 +460,7 @@ describe(checkWrittenLesson, () => {
         { isCorrect: true, picture: null, reason: "Also right?", text: "3 °C" },
       ],
       question: "Which one?",
+      standsAlone: false,
       visual: null,
     };
 

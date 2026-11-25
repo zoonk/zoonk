@@ -4,7 +4,7 @@ description: Verify finished work before calling it done, committing, or opening
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Verify

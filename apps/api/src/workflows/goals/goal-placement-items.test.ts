@@ -84,6 +84,12 @@ const QUICK_ITEMS = {
         reason: "You applied the rule backwards.",
         text: "Wrong",
       },
+      {
+        isCorrect: false,
+        misconception: "Skips a step",
+        reason: "It misses a step the rule requires.",
+        text: "Incomplete",
+      },
     ],
     question: "Which answer follows the rule?",
     visual: null,

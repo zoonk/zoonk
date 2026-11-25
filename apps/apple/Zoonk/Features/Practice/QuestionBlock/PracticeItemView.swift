@@ -467,6 +467,10 @@ struct OrderItemView: View {
   }
 }
 
+private var answerPlaceholder: String {
+  String(localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field.")
+}
+
 struct NumericItemView: View {
   let entry: PracticeNumericEntry?
   let unit: PracticeNumericUnit?
@@ -485,10 +489,11 @@ struct NumericItemView: View {
         }
 
         TextField(
-          String(
-            localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-          text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type)
-        )
+          text: Binding(get: { typedText ?? NumericEntryParser.text(for: draft) }, set: type),
+          prompt: Text(answerPlaceholder).fieldPrompt()
+        ) {
+          Text(answerPlaceholder)
+        }
         .typeStyle(.lessonText.monospacedDigit())
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
         .submitLabel(.done)
@@ -599,10 +604,10 @@ struct TypedItemView: View {
     HStack {
       FittedTextInput(text: Binding(get: { shown }, set: type), limit: 500) { text, selection in
         TextField(
-          String(
-            localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-          text: text, selection: selection
-        )
+          text: text, selection: selection, prompt: Text(answerPlaceholder).fieldPrompt()
+        ) {
+          Text(answerPlaceholder)
+        }
         .typeStyle(.lessonText)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()

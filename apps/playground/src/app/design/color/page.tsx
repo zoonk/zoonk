@@ -50,8 +50,8 @@ export default function ColorPage() {
       <DocHeader title="Color">
         Every token with what it means and where it goes, and its value in each mode, read live from
         `globals.css`. Ratios are WCAG 2 contrast against the mode&apos;s page: marks are measured
-        against 3:1, words against 4.5:1, and a ratio under its bar shows in amber. The regular
-        theme stays soft on purpose; the more-contrast modes are strict.
+        against 3:1, words against 4.5:1 (7:1 in the more-contrast modes), and a ratio under its bar
+        shows in amber. The regular theme stays soft on purpose; the more-contrast modes are strict.
       </DocHeader>
 
       <DocSection title="Rules">

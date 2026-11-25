@@ -394,6 +394,26 @@ describe(generateSkillGraph, () => {
     expect(data.phases.map((phase) => phase.title)).toStrictEqual(["Entender português"]);
   });
 
+  it("keeps a skill named after a tag instead of drafting it again, since a name shows it as written", async () => {
+    const [skill] = WHOLE_GRAPH.skills;
+
+    vi.mocked(streamText).mockReset();
+
+    vi.mocked(streamText).mockReturnValue(
+      answer({ ...WHOLE_GRAPH, skills: [{ ...skill!, name: "Agrupar texto com `<p>`" }] }) as never,
+    );
+
+    const { data } = await generateSkillGraph({
+      goal: "Aprender HTML",
+      goalKind: "learn",
+      language: "pt",
+      purpose: "overview",
+    });
+
+    expect(streamText).toHaveBeenCalledOnce();
+    expect(data.skills.map((item) => item.name)).toStrictEqual(["Agrupar texto com <p>"]);
+  });
+
   it("repairs em dashes, Markdown and a skill written twice in code, and reports them", async () => {
     const [skill] = WHOLE_GRAPH.skills;
 

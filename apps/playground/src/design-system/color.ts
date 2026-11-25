@@ -9,7 +9,7 @@ export type ColorToken = {
   name: string;
   /** The token it sits on, when that isn't the page (words on the main action). */
   on?: string;
-  /** Read as words, so its contrast is checked against text's 4.5:1. */
+  /** Read as words, so its contrast is checked against text's 4.5:1, or 7:1 with more contrast. */
   text?: boolean;
   /** A faint fill under something else, so it has no contrast of its own. */
   tint?: boolean;
@@ -72,7 +72,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   {
     id: "text",
     intro:
-      "Three text steps, each AA on every surface it sits on in every mode. Size and weight lead the hierarchy; the steps only quiet what supports it.",
+      "Three text steps, each AA on every surface it sits on in every mode and AAA with more contrast. The quiet two stay grays there too, so a field's example never looks like words the learner typed. Size and weight lead the hierarchy; the steps only quiet what supports it.",
     title: "Text",
     tokens: [
       {
@@ -265,7 +265,7 @@ export const COLOR_RULES: readonly string[] = [
   "Neutral by default: tone steps and hairlines separate a page's parts; color only signals.",
   "One meaning per hue, the same on every screen. Before giving something a color, find its token; if none fits, it stays neutral.",
   "Never color alone: a word, an icon or a shape says the same, so a soft mark loses no meaning.",
-  "Soft in the regular theme; the more-contrast modes make every color strict. Every text color is AA on what it sits on.",
+  "Soft in the regular theme; the more-contrast modes make every color strict. Every text color is AA on what it sits on, and AAA with more contrast.",
   "A tint belongs on something whose color is its meaning (a checked answer, a plan diff's line, a subject's label), never on a button, a section or a heading.",
   "Mix in sRGB (`color-mix(in srgb, …)` or `/15` opacity): mixing in oklch against a see-through black pulls hues toward red.",
   "Navigation stays neutral, and so do the sidebar's icons; kinds' hues live in content.",

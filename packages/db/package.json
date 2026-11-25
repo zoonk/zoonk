@@ -9,6 +9,7 @@
     "./enums": "./src/generated/prisma/enums.ts",
     "./learner-writes": "./src/learner-writes.ts",
     "./live-call-enums": "./src/live-call-enums.ts",
+    "./lesson-answer": "./src/lesson-answer.ts",
     "./local-database": "./src/local-database.ts",
     "./schema": "./src/schema.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",

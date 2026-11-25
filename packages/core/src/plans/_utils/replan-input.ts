@@ -10,6 +10,7 @@ import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
 import { getBossKey } from "../planner/plan-units";
 import { getSettledSkillIds, getStartedSkillIds } from "../planner/settled-skills";
+import { reopenWrittenTestOuts } from "../planner/written-test-outs";
 import { loadRunBossFacts } from "./boss-plan-facts";
 import { isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
@@ -97,7 +98,15 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
   const targetDate = getStateTargetDate(state);
 
   const [
-    { areaShares, examSubjects, materialExam, topicLevels, writtenSkillIds, ...loaded },
+    {
+      areaShares,
+      examSubjects,
+      materialExam,
+      topicLevels,
+      unprovenWrittenSkillIds,
+      writtenSkillIds,
+      ...loaded
+    },
     carryOver,
     todayShown,
     quick,
@@ -117,10 +126,22 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     loadQuickBaseLessons(state.settings),
   ]);
 
-  const { fullGraph, graph, inputs } = shapePlannerInputs({ context, loaded, resolved, state });
+  const { items, reopenedItemIds } = reopenWrittenTestOuts({
+    items: context.items,
+    unprovenSkillIds: unprovenWrittenSkillIds,
+  });
 
-  const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
-  const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
+  const planned = { ...context, items };
+
+  const { fullGraph, graph, inputs } = shapePlannerInputs({
+    context: planned,
+    loaded,
+    resolved,
+    state,
+  });
+
+  const bossFacts = loadRunBossFacts({ context: planned, graph, lessons: inputs.lessons, quick });
+  const settings = await choosePlanSettings({ context: planned, inputs, now, paceSource, state });
 
   const extras = graph.skills.filter((skill) => skill.extra);
 
@@ -134,7 +155,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
-    bossMinutes: listSavedBossMinutes(context.items),
+    bossMinutes: listSavedBossMinutes(items),
     bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver: carryOver && {
       ...carryOver,
@@ -146,20 +167,21 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
       bringBack: options.bringBackExtras ?? false,
       previousSkillIds: new Set(extraSkills.keys()),
     },
-    finishedOn: listFinishedDays({ items: context.items, timeZone: context.timeZone }),
+    finishedOn: listFinishedDays({ items, timeZone: context.timeZone }),
     goal: { dailyMinutes: state.goal.dailyMinutes, kind: context.goal.kind, targetDate },
     goalId: context.goal.id,
     graph: { ...weighted, skills: [...weighted.skills, ...extras] },
-    items: context.items,
+    items,
     knownAreas: new Set([...getKnownSubjects(context.goal), ...state.settings.pastBasicsAreas]),
-    mode,
+    // Like a test-out ahead (`withTestOutsAhead`), reopened lessons lay the plan out again from today.
+    mode: reopenedItemIds.length > 0 ? "forced" : mode,
     movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
     noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
     openedKeys: options.openedKeys,
     paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
-          items: context.items,
+          items,
           moved: movedEnds,
           phases: context.phases,
           released: releasedPhases,
@@ -181,6 +203,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     graph,
     input,
     materialExam,
+    reopenedItemIds,
     settings,
     writtenSkillIds,
   };

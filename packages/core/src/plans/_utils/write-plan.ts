@@ -29,6 +29,7 @@ export type PlanWrite = {
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
   sourceSkillIds: readonly string[];
+  reopenedItemIds?: readonly string[];
   summary?: PlanSummary | null;
 };
 
@@ -181,6 +182,17 @@ export async function writePlan({
       ...(keptUndo && { changeId: { not: keptUndo } }),
     },
   });
+
+  if (plan.reopenedItemIds && plan.reopenedItemIds.length > 0) {
+    await tx.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: {
+        id: { in: [...plan.reopenedItemIds] },
+        planId: context.plan.id,
+        status: "testedOut",
+      },
+    });
+  }
 
   const mockScheduled = await savePlanItems({
     existing: context.items,

@@ -427,14 +427,14 @@ class OnboardingStore(
         )
     }
 
-    /** A name can't nest folders or climb out with "..", and its own id keeps two files of the same name apart. */
+    /** The file sits right in the learner's folder, under a name a URL reads as written, and its own id keeps two files of the same name apart. */
     suspend fun attachFile(
         file: PickedFile,
         language: String,
         goalId: UUID? = null,
     ): WriteOutcome<AttachedSource> =
         attach { session ->
-            val name = file.name.replace('/', '-').replace(Regex("\\.{2,}"), ".")
+            val name = file.name.replace(Regex("[/\\\\%?#\\p{Cc}]"), "-").trimEnd()
             val pathname = "sources/${session.accountId}/${UUID.randomUUID()}-$name"
             api.uploadFile(session, pathname, file)
             api.attach(

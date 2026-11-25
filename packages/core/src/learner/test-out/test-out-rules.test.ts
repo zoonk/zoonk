@@ -24,7 +24,13 @@ describe(pickTestOutSkills, () => {
 
 function confirmation(skillId: string) {
   return [
-    { format: "multipleChoice" as const, isCorrect: true, itemId: "quick", skillId },
+    {
+      content: { options: ["a", "b", "c", "d"], select: 1 },
+      format: "multipleChoice" as const,
+      isCorrect: true,
+      itemId: "quick",
+      skillId,
+    },
     ...[1, 2, 3].map((index) => ({
       content: { steps: ["A", "B", "C", "D"] },
       format: "order" as const,

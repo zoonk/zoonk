@@ -25,6 +25,7 @@ function check(question: string, option = "Two"): WrittenScreen {
       { isCorrect: false, picture: null, reason: "Not quite.", text: "Four" },
     ],
     question,
+    standsAlone: false,
     visual: null,
   };
 }

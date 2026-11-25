@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { withSessionAppendLock } from "./extra-blocks";
 import { oweStartedDaySettlements } from "./owe-started-day-settlements";
@@ -69,6 +70,7 @@ export async function dropSessionTestQuestions({
       const answers = await transaction.attempt.findMany({
         select: { itemId: true },
         where: {
+          ...NOT_LESSON_ANSWER_FILTER,
           itemId: { in: open.flatMap(({ payload }) => payload.placementItemIds) },
           studySessionId: locked.id,
         },

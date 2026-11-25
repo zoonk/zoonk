@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -235,6 +235,40 @@ describe("study session blocks", () => {
         where: { kind: "review", lessonKind: "capsule", userId: user.id },
       }),
     ).resolves.toBe(1);
+  });
+
+  it("keeps a lesson check answer separate from the same study block question", async () => {
+    const { session, user } = await setup();
+    const blockId = session.blocks[0]?.id ?? "";
+    const sessionId = session.id;
+
+    await startStudyBlock({ blockId, input: {}, sessionId });
+    const detail = await getStudyBlock({ blockId, sessionId });
+    const itemId = detail.status === "ready" ? detail.detail.questions[0]?.itemId : undefined;
+
+    if (!itemId) {
+      throw new Error("Expected a study block question");
+    }
+
+    await attemptFixture({ fromLesson: true, itemId, studySessionId: sessionId, userId: user.id });
+
+    await expect(getStudyBlock({ blockId, sessionId })).resolves.toMatchObject({
+      detail: {
+        questions: expect.arrayContaining([expect.objectContaining({ answered: null, itemId })]),
+      },
+      status: "ready",
+    });
+
+    await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toStrictEqual({
+      status: "noAnswers",
+    });
+
+    const answers = await answerBlockInOrder({ blockId, sessionId });
+    expect(answers[0]).toMatchObject({ feedback: { isCorrect: true }, status: "ready" });
+
+    await expect(finishStudyBlock({ blockId, input: {}, sessionId })).resolves.toMatchObject({
+      status: "ready",
+    });
   });
 
   it("keeps sessions private to their learner", async () => {

@@ -57,15 +57,16 @@ const STRUCTURE = {
 const MATH_SHAPE = { area: "Mathematics", day: null, kind: "area" } as const;
 
 async function anytimeSetup({
+  areas = AREAS,
   itemsPerSkill = 4,
   plus = true,
   structure = STRUCTURE,
-}: { itemsPerSkill?: number; plus?: boolean; structure?: object } = {}) {
+}: { areas?: readonly string[]; itemsPerSkill?: number; plus?: boolean; structure?: object } = {}) {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
     examBlueprintFixture({ structure }),
     Promise.all(
-      AREAS.flatMap((area) =>
+      areas.flatMap((area) =>
         Array.from({ length: SKILLS_PER_AREA }, (_, index) =>
           skillFixture({ name: `${area} topic ${index + 1} ${crypto.randomUUID()}` }),
         ),
@@ -73,7 +74,7 @@ async function anytimeSetup({
     ),
   ]);
 
-  const areaOf = (index: number) => AREAS[Math.floor(index / SKILLS_PER_AREA)] ?? "";
+  const areaOf = (index: number) => areas[Math.floor(index / SKILLS_PER_AREA)] ?? "";
 
   const goal = await goalFixture({
     examBlueprintId: blueprint.id,
@@ -278,6 +279,76 @@ describe("mocks taken any time", () => {
     const refill = await listMockPrepWrites({ goalId: goal.id });
     expect(refill.papers.map(({ key }) => key)).toContain(mockPaperKey(shape));
     expect(refill.papers.map(({ key }) => key)).not.toContain(scheduledFor.toISOString());
+  });
+
+  it("writes ahead at most one real exam's worth of questions, whatever the notice claims", async () => {
+    const subjects = Array.from({ length: 40 }, (_, index) => `Subject ${index + 1}`);
+
+    const { goal } = await anytimeSetup({
+      areas: subjects,
+      itemsPerSkill: 0,
+      structure: {
+        ...STRUCTURE,
+        mock: {
+          ...STRUCTURE.mock,
+          sections: [{ ...STRUCTURE.mock.sections[0], questions: 100 }],
+          timeLimitMinutes: 200,
+          totalQuestions: 100,
+        },
+        subjects: subjects.map((name) => ({
+          citation: CITATION,
+          name,
+          questions: 50,
+          topics: [],
+          weight: null,
+        })),
+      },
+    });
+
+    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+
+    const written = papers.flatMap((paper) =>
+      paper.writes.map((write) => write.questionsPerSkill * write.skillIds.length),
+    );
+
+    expect(papers.map((paper) => paper.key)).toContain(
+      mockPaperKey({ area: null, day: null, kind: "full" }),
+    );
+
+    expect(written.reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(1200);
+  });
+
+  it("sizes a notice's mock without the counts no real exam has", async () => {
+    const { goal } = await anytimeSetup({
+      itemsPerSkill: 0,
+      structure: {
+        ...STRUCTURE,
+        mock: {
+          ...STRUCTURE.mock,
+          sections: STRUCTURE.mock.sections.map((section) => ({ ...section, questions: 100_000 })),
+          totalQuestions: 200_000,
+        },
+      },
+    });
+
+    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
+      view: {
+        options: [
+          { kind: "full", minutes: 24, questions: 90 },
+          { kind: "half", questions: 45 },
+          { area: "Mathematics", kind: "area", questions: 20 },
+          { area: "Languages", kind: "area", questions: 20 },
+        ],
+      },
+    });
+
+    const { papers } = await listMockPrepWrites({ goalId: goal.id });
+
+    const written = papers.flatMap((paper) =>
+      paper.writes.map((write) => write.questionsPerSkill * write.skillIds.length),
+    );
+
+    expect(written.reduce((sum, count) => sum + count, 0)).toBeLessThanOrEqual(90 + 45 + 20 + 20);
   });
 
   it("sweeps paid exam plans that have neither a scheduled mock nor a saved request", async () => {

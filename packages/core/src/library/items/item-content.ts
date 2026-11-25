@@ -80,7 +80,7 @@ function withAnswerFormat<Content extends object>({
   return format === "numeric" ? { ...content, entry } : content;
 }
 
-export function toStoredItem(
+export function normalizeItem(
   item: GeneratedItem,
   {
     citesSource = false,
@@ -96,22 +96,21 @@ export function toStoredItem(
 
   const content = withAnswerFormat({ ...answerFormat, content: labeled, format });
 
-  if (quoted) {
-    return {
-      content: { ...content, quoted: true },
-      difficulty: DIFFICULTY_SCALE[difficulty],
-      format,
-    };
-  }
+  return {
+    content: quoted ? { ...content, quoted: true } : content,
+    difficulty: DIFFICULTY_SCALE[difficulty],
+    format,
+  };
+}
 
-  const keepsOrder = "fixedOrder" in content && content.fixedOrder;
+export function toStoredItem(item: GeneratedItem, options?: Parameters<typeof normalizeItem>[1]) {
+  const stored = normalizeItem(item, options);
+  const { content } = stored;
+  const keepsOrder = options?.quoted || ("fixedOrder" in content && content.fixedOrder);
 
-  const stored =
-    "options" in content && !keepsOrder
-      ? { ...content, options: shuffleAnswerOptions(content.options) }
-      : content;
-
-  return { content: stored, difficulty: DIFFICULTY_SCALE[difficulty], format };
+  return "options" in content && !keepsOrder
+    ? { ...stored, content: { ...content, options: shuffleAnswerOptions(content.options) } }
+    : stored;
 }
 
 /** Throws on invalid stored content, which indicates corrupted data. */

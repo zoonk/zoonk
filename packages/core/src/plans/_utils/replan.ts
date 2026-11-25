@@ -42,6 +42,8 @@ export type ComputedPlan = {
   state: PlanState;
   selected: SelectedSummary;
   summarizeRetained: () => SelectedSummary | null;
+  /** Test-outs of written skills no written answer shows, which this plan brings back. */
+  reopenedItemIds: readonly string[];
 };
 
 export type ComputedChange = {
@@ -101,12 +103,15 @@ export async function computePlan({
     graph,
     input,
     materialExam,
+    reopenedItemIds,
     settings,
     writtenSkillIds,
   } = await readReplanInputs({ ...request, state });
 
   const savedKey =
-    writtenSkillIds && !state.settings.writtenSkillIds ? null : context.plan.inputsKey;
+    reopenedItemIds.length > 0 || (writtenSkillIds && !state.settings.writtenSkillIds)
+      ? null
+      : context.plan.inputsKey;
 
   if (shouldSkipPlanBuild({ input, savedKey, skipUnchangedInputs })) {
     return null;
@@ -174,6 +179,7 @@ export async function computePlan({
     materialExam,
     mode,
     pace: settings.pace,
+    reopenedItemIds,
     get selected() {
       return selected();
     },
