@@ -517,7 +517,7 @@ internal fun PlanContent(
                             }
                         }
                         item(key = "structure", contentType = "structure") {
-                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin))
+                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(LIST_ITEM_INSET))
                         }
                     } else {
                         item(key = "path", contentType = "path") {

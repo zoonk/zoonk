@@ -40,7 +40,8 @@ import com.zoonk.api.models.SyllabusSubject
 /**
  * The Plan's structure (main's `SyllabusSection`): an exam's subjects or the plan's modules, grouped
  * as the notice groups them, each with its progress and opening its page through [onOpenSubject]
- * with the subject's key. Show it only when [hasSubjectPages].
+ * with the subject's key. Show it only when [hasSubjectPages]. Its words start a row's inset in, so a column
+ * bleeds it by `LIST_ITEM_INSET`: only a highlighted row's fill reaches past the column's edge.
  */
 @Composable
 fun PlanSyllabusSection(
@@ -65,15 +66,14 @@ fun PlanSyllabusSection(
             if (exam) {
                 // Main's legend for the bars (`bars-meaning`): quiet words, not a mono fact.
                 SectionHeader(stringResource(R.string.goalcontent_subjects), Modifier.padding(horizontal = PAGE_PADDING)) {
-                    // Ends where the rows' values end: before the chevron's slot.
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            stringResource(R.string.goalcontent_preparation),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        ListRowChevronSpace()
-                    }
+                    BarsMeaning(
+                        questionsWidth =
+                            QUESTIONS_WIDTH.takeIf {
+                                layout == RowLayout.WithQuestions &&
+                                    syllabus.subjects.any { (it.questions ?: 0) > 0 }
+                            },
+                        shareColumn = barWidth + COLUMN_GAP + SHARE_WIDTH,
+                    )
                 }
                 SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
             } else {
@@ -112,6 +112,40 @@ fun PlanSyllabusSection(
 }
 
 private enum class RowLayout { Stacked, BarBeside, WithQuestions }
+
+/**
+ * Main's `BarsMeaning`: each heading over its column, laid out as the rows are. "On the exam" ends where the
+ * question counts end, when rows show them ([questionsWidth]); "Preparation" ends where the shares end, before
+ * the chevron's slot, and may overhang toward the bars.
+ */
+@Composable
+private fun BarsMeaning(
+    questionsWidth: Dp?,
+    shareColumn: Dp,
+) {
+    val words = @Composable { text: String, modifier: Modifier ->
+        Text(
+            text,
+            modifier,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = layoutEnd(),
+            maxLines = 1,
+        )
+    }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(COLUMN_GAP), verticalAlignment = Alignment.CenterVertically) {
+        if (questionsWidth != null) {
+            words(stringResource(R.string.goalcontent_on_the_exam), Modifier.width(questionsWidth))
+            Box(Modifier.width(shareColumn), contentAlignment = Alignment.CenterEnd) {
+                words(stringResource(R.string.goalcontent_preparation), Modifier)
+            }
+        } else {
+            words(stringResource(R.string.goalcontent_preparation), Modifier)
+        }
+        ListRowChevronSpace()
+    }
+}
 
 @Composable
 private fun SubjectRow(
@@ -277,6 +311,9 @@ private val BAR_MIN = 112.dp
 private val BAR_MAX = 224.dp
 private val QUESTIONS_WIDTH = 104.dp
 private val SHARE_WIDTH = 40.dp
+
+/** The gap between a row's columns: the headline's own, and the list row's before its value and its chevron. */
+private val COLUMN_GAP = 12.dp
 
 @Composable
 internal fun planOutsideReason(reason: String?): String =
