@@ -54,6 +54,7 @@ struct KindMark: View {
       .typeStyle(.rowTitle)
       .imageScale(.medium)
       .foregroundStyle(kind.color)
+      .fitsMarkColumn()
       .accessibilityHidden(true)
   }
 }
