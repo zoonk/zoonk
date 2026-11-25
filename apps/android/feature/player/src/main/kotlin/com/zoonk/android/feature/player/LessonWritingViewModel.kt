@@ -113,6 +113,8 @@ class LessonWritingViewModel(
             when {
                 readiness?.status == LessonReadiness.Status.READY -> mutableWriting.value = LessonWriting.Ready
                 readiness?.status == LessonReadiness.Status.GENERATING && generationId != null -> follow(generationId)
+                readiness?.setAside == true -> mutableWriting.value = LessonWriting.SetAside
+                readiness?.status == LessonReadiness.Status.FAILED -> mutableWriting.value = LessonWriting.Failed
                 else -> mutableWriting.value = LessonWriting.NotStarted
             }
         }

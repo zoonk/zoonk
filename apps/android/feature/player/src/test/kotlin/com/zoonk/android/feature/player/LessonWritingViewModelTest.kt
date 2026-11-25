@@ -83,6 +83,24 @@ class LessonWritingViewModelTest {
         }
 
     @Test
+    fun openingALessonWhoseWritingFailedSaysSoAndOneItsChecksSetAsideSaysWhy() =
+        runTest(dispatcher) {
+            api.readinessStates += "failed"
+            val failed = writing()
+            failed.open()
+            advanceUntilIdle()
+            assertEquals(LessonWriting.Failed, failed.writing.value)
+
+            api.readinessStates += "failed"
+            api.readinessSetAside = true
+            val setAside = writing()
+            setAside.open()
+            advanceUntilIdle()
+            assertEquals(LessonWriting.SetAside, setAside.writing.value)
+            assertEquals(0, api.writes)
+        }
+
+    @Test
     fun theTapWritesItAndFollowsItsRun() =
         runTest(dispatcher) {
             api.readinessStates += "notStarted"
