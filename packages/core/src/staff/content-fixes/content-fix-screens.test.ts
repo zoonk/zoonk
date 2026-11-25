@@ -138,6 +138,39 @@ describe("banked lesson checks", () => {
       { id: item.id, retiredAt },
     ]);
   });
+
+  it("keeps a retired bank question out of the bank after a lesson screens edit", async () => {
+    const { content, item, skill, step } = await bankedCheckFixture();
+    await prisma.item.update({ data: { retiredAt: new Date() }, where: { id: item.id } });
+
+    await signInProposer();
+    const changed = { ...content, question: "Which number is the sum of two and two?" };
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: step.lessonId,
+          model: "Lesson",
+          setScreens: { screens: [{ content: changed, id: step.id }], version: step.version },
+        },
+      ],
+      reason: "Clarify the question.",
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.step.findMany({ where: { lessonId: step.lessonId, version: step.version + 1 } }),
+    ).resolves.toMatchObject([{ content: { question: changed.question }, itemId: null }]);
+
+    await expect(
+      prisma.item.count({ where: { retiredAt: null, skillId: skill.id } }),
+    ).resolves.toBe(0);
+  });
 });
 
 describe("language exercise screens", () => {

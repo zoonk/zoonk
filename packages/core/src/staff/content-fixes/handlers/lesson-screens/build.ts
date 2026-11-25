@@ -129,11 +129,21 @@ function updateCheckLink({
 
   if (!question || !screen.skillId) {
     screen.itemId = null;
-  } else if (!findQuestionMatch({ items: [item], question, skillId: screen.skillId })) {
-    const id = allocatedItemId ?? randomUUID();
-    screen.itemId = id;
-    newItems.push({ id, question, skillId: screen.skillId });
+    return;
   }
+
+  if (findQuestionMatch({ items: [item], question, skillId: screen.skillId })) {
+    return;
+  }
+
+  if (item.retiredAt) {
+    screen.itemId = null;
+    return;
+  }
+
+  const id = allocatedItemId ?? randomUUID();
+  screen.itemId = id;
+  newItems.push({ id, question, skillId: screen.skillId });
 }
 
 export function buildScreens({

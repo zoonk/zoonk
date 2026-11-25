@@ -19,7 +19,9 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
       skills: { orderBy: [{ createdAt: "asc" }, { skillId: "asc" }], select: { skillId: true } },
       steps: {
         include: {
-          item: { select: { content: true, format: true, id: true, skillId: true } },
+          item: {
+            select: { content: true, format: true, id: true, retiredAt: true, skillId: true },
+          },
           optionPictures: { orderBy: { optionId: "asc" } },
           sources: { orderBy: { sourceId: "asc" } },
           variants: { orderBy: [{ kind: "asc" }, { key: "asc" }] },
