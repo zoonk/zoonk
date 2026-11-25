@@ -39,7 +39,7 @@ export async function answerResearchUploadWorkflow(
     return { status: "notNeeded" };
   }
 
-  await waitForMaterialReading({ kind: "sources", sourceIds: answer.sourceIds }, "1s");
+  await waitForMaterialReading({ kind: "sources", sourceIds: answer.sourceIds });
   const readable = await readAnswerSourcesStep(answer.sourceIds);
 
   if (readable.length === 0) {

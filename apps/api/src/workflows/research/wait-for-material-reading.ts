@@ -12,10 +12,7 @@ async function findOwedMaterialStep(scope: MaterialReadingScope) {
 }
 
 /* oxlint-disable no-await-in-loop -- Read the new state after each joined run has settled. */
-export async function waitForMaterialReading(
-  scope: MaterialReadingScope,
-  poll?: Parameters<typeof waitForRun>[1],
-): Promise<void> {
+export async function waitForMaterialReading(scope: MaterialReadingScope): Promise<void> {
   for (;;) {
     const sourceIds = await findOwedMaterialStep(scope);
 
@@ -24,7 +21,7 @@ export async function waitForMaterialReading(
     }
 
     await Promise.all(
-      sourceIds.map(async (sourceId) => waitForRun(await startUploadReading(sourceId), poll)),
+      sourceIds.map(async (sourceId) => waitForRun(await startUploadReading(sourceId), "1s")),
     );
   }
 }
