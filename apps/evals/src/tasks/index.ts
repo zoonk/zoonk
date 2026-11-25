@@ -45,6 +45,7 @@ import { goalOpeningTask } from "./goal-opening/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
 import { goalTutorSearchTask } from "./goal-tutor-search/task";
 import { goalTutorTask } from "./goal-tutor/task";
+import { gradeEssayBlindKeyTask } from "./grade-essay-blind-key/task";
 import { gradeEssayTask } from "./grade-essay/task";
 import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
 import { iconMatchTask } from "./icon-match/task";
@@ -212,6 +213,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       pastQuestionsTask,
       gradeTypedAnswerTask,
       gradeEssayTask,
+      gradeEssayBlindKeyTask,
       explainWrongAnswerTask,
       mistakeCauseTask,
     ],
