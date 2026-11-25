@@ -700,8 +700,7 @@ struct MaterialQuestionsView: View {
           }
           .labelStyle(.iconOnly)
         }
-        .buttonStyle(.mainAction)
-        .buttonBorderShape(.circle)
+        .buttonStyle(.mainAction.icon)
         .controlSize(.large)
         .disabled(trimmed.isEmpty)
       }
