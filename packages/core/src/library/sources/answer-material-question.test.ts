@@ -54,6 +54,29 @@ describe(answerMaterialQuestion, () => {
     vi.mocked(headers).mockResolvedValue(new Headers());
   });
 
+  it("waits to claim an assist while any asked-about source is being read", async () => {
+    const { slides, user } = await learnerWithSlides();
+
+    const photo = await sourceFixture({
+      ownerId: user.id,
+      readState: "owed",
+      visibility: "private",
+    });
+
+    await learnerSourceFixture({ sourceId: photo.id, userId: user.id });
+
+    await expect(
+      answerMaterialQuestion({
+        language: "pt",
+        question: "Qual o saldo da glicólise?",
+        sourceIds: [slides.id, photo.id],
+      }),
+    ).resolves.toStrictEqual({ status: "materialReading" });
+
+    expect(answerFromMaterial).not.toHaveBeenCalled();
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("answers from the learner's own material with the slides it came from", async () => {
     const { slides, user } = await learnerWithSlides();
     mockAnswer({ answer: "Sobram 2 ATP por glicose.", found: true, refs: ["S1:2", "S1:7"] });

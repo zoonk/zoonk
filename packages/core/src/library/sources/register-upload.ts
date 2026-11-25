@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type Source, prisma } from "@zoonk/db";
+import { type Source, type TransactionClient, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../../entitlements/claim-usage";
@@ -11,12 +11,13 @@ import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { toSourceUrl } from "./fetch-document";
-import { linkGoalSources } from "./link-goal-sources";
+import { type AdoptedUpload, linkUpload } from "./link-upload";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
-import { SOURCE_READ_VERSION } from "./source-contract";
+import { SOURCE_READ_VERSION, type SourceStructure } from "./source-contract";
+import { hasWords, withSourceReadStatus } from "./source-read-status";
 import { deleteUploadedBlob, keepUploadedBlob } from "./upload-blob";
 
-type UploadedSource = Omit<Source, "extractedText">;
+type UploadedSource = ReturnType<typeof withSourceReadStatus<Omit<Source, "extractedText">>>;
 
 export type SourceUploadInput = {
   goalId?: string | null;
@@ -32,49 +33,24 @@ export type SourceUploadResult =
   | RefusedUsage
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
-async function linkUpload({
-  goalId,
-  sourceId,
-  uploadId,
+function findStoredCopy({
+  content,
+  db = prisma,
   userId,
 }: {
-  goalId: string | null;
-  sourceId: string;
-  uploadId: string;
+  content: UploadContent;
+  db?: TransactionClient;
   userId: string;
 }) {
-  await writeLearnerChange({ userId }, async (tx) => {
-    const uploads = await tx.sourceUpload.createMany({
-      data: { id: uploadId, sourceId, userId },
-      skipDuplicates: true,
-    });
-
-    const linked = await tx.learnerSource.createMany({
-      data: { origin: "upload", sourceId, userId },
-      skipDuplicates: true,
-    });
-
-    const uploaded =
-      linked.count > 0
-        ? linked
-        : await tx.learnerSource.updateMany({
-            data: { origin: "upload" },
-            where: { origin: { not: "upload" }, sourceId, userId },
-          });
-
-    const attached = goalId
-      ? await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: [sourceId], userId })
-      : 0;
-
-    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
-  });
-}
-
-function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
-  return prisma.source.findFirst({
+  return db.source.findFirst({
     omit: { extractedText: true },
     orderBy: { createdAt: "asc" },
-    where: { ...libraryRowsVisibleTo(userId), contentHash: hash },
+    where: {
+      ...(content.parsed.visualPages
+        ? { kind: "upload", ownerId: userId, visibility: "private" }
+        : libraryRowsVisibleTo(userId)),
+      contentHash: content.hash,
+    },
   });
 }
 
@@ -94,6 +70,18 @@ async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId
   const goal = await prisma.goal.findFirst({ select: { id: true }, where: { id: goalId, userId } });
 
   return goal?.id ?? null;
+}
+
+function getUploadStructure({ parsed }: UploadContent): SourceStructure {
+  return {
+    images: parsed.images.length,
+    pages: parsed.pages,
+    topic: null,
+    ...(parsed.visualPages && {
+      ...(hasWords(parsed.text) && { mixedPdf: true }),
+      visualPages: parsed.visualPages,
+    }),
+  };
 }
 
 async function createPrivateSource({
@@ -118,10 +106,12 @@ async function createPrivateSource({
   }
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const stored = await tx.source.findUnique({
-      omit: { extractedText: true },
-      where: { languageIdentity: { identityKey, language: input.language } },
-    });
+    const stored = content.parsed.visualPages
+      ? await findStoredCopy({ content, db: tx, userId })
+      : await tx.source.findUnique({
+          omit: { extractedText: true },
+          where: { languageIdentity: { identityKey, language: input.language } },
+        });
 
     if (stored) {
       return unchanged({ created: false, source: stored });
@@ -138,12 +128,9 @@ async function createPrivateSource({
         language: input.language,
         mimeType: content.contentType,
         ownerId: userId,
+        readState: content.parsed.visualPages ? "owed" : null,
         readVersion: SOURCE_READ_VERSION,
-        structure: {
-          images: content.parsed.images.length,
-          pages: content.parsed.pages,
-          topic: null,
-        },
+        structure: getUploadStructure(content),
         title,
         url: content.url ?? null,
         visibility: "private",
@@ -153,7 +140,12 @@ async function createPrivateSource({
 
     await oweFollowUps({
       db: tx,
-      followUps: [{ input: { sourceId: source.id }, kind: "checkUploadVisibility" }],
+      followUps: [
+        {
+          input: { sourceId: source.id },
+          kind: content.parsed.visualPages ? "readUpload" : "checkUploadVisibility",
+        },
+      ],
       userId,
     });
 
@@ -180,14 +172,14 @@ function getSentUploadId({ input, userId }: { input: UploadRead; userId: string 
 }
 
 async function removeUnusedBlob({
-  content,
-  storedBlobUrl,
+  blobUrl,
+  keptUrl,
 }: {
-  content: UploadContent;
-  storedBlobUrl: string | null;
+  blobUrl: string | null;
+  keptUrl: string | null;
 }): Promise<void> {
-  if (content.blobUrl && content.blobUrl !== storedBlobUrl) {
-    await deleteUploadedBlob(content.blobUrl);
+  if (blobUrl && blobUrl !== keptUrl) {
+    await deleteUploadedBlob(blobUrl);
   }
 }
 
@@ -207,14 +199,14 @@ async function storeUpload({
 }): Promise<SourceUploadResult> {
   const [goalId, storedCopy, uploadedBefore] = await Promise.all([
     getOwnGoalId({ goalId: input.goalId, userId }),
-    findStoredCopy({ hash: content.hash, userId }),
+    findStoredCopy({ content, userId }),
     hasUploaded({ hash: content.hash, userId }),
   ]);
 
   const refusal = claimId && !uploadedBefore ? await claimUpload(claimId) : null;
 
   if (refusal) {
-    await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
+    await removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: storedCopy?.blobUrl ?? null });
     return refusal;
   }
 
@@ -222,10 +214,44 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
-  await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
+  const adopt: AdoptedUpload | undefined =
+    content.parsed.visualPages && source.ownerId === userId && source.readState === null
+      ? {
+          blobUrl: content.blobUrl,
+          mimeType: content.contentType,
+          structure: getUploadStructure(content),
+        }
+      : undefined;
 
-  return { checkVisibility: created, source, status: "ready" };
+  if (adopt?.blobUrl) {
+    await keepUploadedBlob(adopt.blobUrl);
+  }
+
+  const adopted = await linkUpload({
+    goalId,
+    sourceId: source.id,
+    uploadId,
+    userId,
+    visualReading: content.parsed.visualPages ? { adopt } : undefined,
+  });
+
+  const current =
+    source.readState === "failed" || adopt
+      ? await prisma.source.findUniqueOrThrow({
+          omit: { extractedText: true },
+          where: { id: source.id },
+        })
+      : source;
+
+  await (adopted && adopt
+    ? removeUnusedBlob({ blobUrl: source.blobUrl, keptUrl: content.blobUrl })
+    : removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: current.blobUrl }));
+
+  return {
+    checkVisibility: created && source.readState === null,
+    source: withSourceReadStatus(current),
+    status: "ready",
+  };
 }
 
 /**
@@ -253,7 +279,7 @@ async function answerSentUpload({
   const goalId = await getOwnGoalId({ goalId: input.goalId, userId });
   await linkUpload({ goalId, sourceId: upload.sourceId, uploadId, userId });
 
-  return { checkVisibility: false, source: upload.source, status: "ready" };
+  return { checkVisibility: false, source: withSourceReadStatus(upload.source), status: "ready" };
 }
 
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {

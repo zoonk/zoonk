@@ -39,6 +39,16 @@ export function isSourceUploadContentType(value: string): value is SourceUploadC
   return SOURCE_UPLOAD_CONTENT_TYPES.some((contentType) => contentType === value);
 }
 
+export const sourceReadStatusSchema = z
+  .enum(["reading", "readable", "unreadable"])
+  .meta({
+    description:
+      "Whether the source is still being read, has readable text, or has no readable text",
+    id: "SourceReadStatus",
+  });
+
+export type SourceReadStatus = z.infer<typeof sourceReadStatusSchema>;
+
 export const reusePolicySchema = z.object({
   basis: z.string(),
   honorTakedowns: z.boolean(),
@@ -60,8 +70,10 @@ export function hasOwnFreshnessChecks(topic: SourceTopic): boolean {
 
 export const sourceStructureSchema = z.object({
   images: z.number().int().nonnegative(),
+  mixedPdf: z.literal(true).optional(),
   pages: z.number().int().nonnegative().nullable(),
   topic: z.enum(SOURCE_TOPICS).nullable(),
+  visualPages: z.array(z.int().nonnegative()).optional(),
 });
 
 export type SourceStructure = z.infer<typeof sourceStructureSchema>;

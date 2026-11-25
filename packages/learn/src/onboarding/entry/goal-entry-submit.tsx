@@ -8,10 +8,12 @@ import { GoalFieldSubmit } from "./goal-field";
 
 /** In a section the box holds its own button; on its own page the button is the page's main action. */
 export function GoalEntrySubmit({
+  busy,
   disabled,
   form,
   pinned = Boolean(form),
 }: {
+  busy?: boolean;
   disabled?: boolean;
   form?: string;
   pinned?: boolean;
@@ -21,7 +23,7 @@ export function GoalEntrySubmit({
 
   if (!pinned) {
     return (
-      <GoalFieldSubmit disabled={disabled} ref={ref}>
+      <GoalFieldSubmit busy={busy} disabled={disabled} ref={ref}>
         {t("Build my plan")}
       </GoalFieldSubmit>
     );
@@ -30,7 +32,7 @@ export function GoalEntrySubmit({
   return (
     <OnboardingActions>
       {/* Enter in the goal's field submits its form, so the key is the field's. */}
-      <EnterButton disabled={disabled} enter="host" form={form} ref={ref} type="submit">
+      <EnterButton busy={busy} disabled={disabled} enter="host" form={form} ref={ref} type="submit">
         {t("Build my plan")}
       </EnterButton>
     </OnboardingActions>

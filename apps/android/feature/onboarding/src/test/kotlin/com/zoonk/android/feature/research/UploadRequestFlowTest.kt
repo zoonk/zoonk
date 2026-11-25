@@ -23,9 +23,11 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.uploadAskOf
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,7 +42,7 @@ class UploadRequestFlowTest {
 
     private val api = FakeOnboardingApi()
     private val goalId = UUID.fromString(GOAL_ID)
-    private val request = uploadAskOf()
+    private var request = uploadAskOf()
     private var layout by mutableStateOf(SuggestionLayout.Panel)
 
     private fun show() {
@@ -103,4 +105,83 @@ class UploadRequestFlowTest {
         rule.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
         thanks().assertDoesNotExist()
     }
+
+    @Test
+    fun anUploadWithNothingReadableKeepsTheAskAndNamesIt() {
+        api.researchFailure = ApiException(ApiError.Unavailable, "UPLOAD_UNREADABLE", status = 422)
+        show()
+
+        pasteText("Edital 2027")
+
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        thanks().assertDoesNotExist()
+    }
+
+    @Test
+    fun anUploadWithNothingReadableIsNeverSentToResearch() {
+        api.readStatuses = listOf("unreadable")
+        show()
+
+        pasteText("Edital 2027")
+
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        thanks().assertDoesNotExist()
+        assertEquals(emptyList<List<UUID>>(), api.researchAnswers)
+    }
+
+    @Test
+    fun anAskBackAfterNothingCouldBeReadSaysWhichUpload() {
+        request = uploadAskOf(unreadable = "IMG_2041.jpg")
+        show()
+
+        rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        rule.onNodeWithText("Upload the notice").assertIsDisplayed()
+    }
+
+    @Test
+    fun anUploadStillBeingReadBringsTheAskBackWhenNothingInItCanBeRead() {
+        api.readStatuses = listOf("reading", "unreadable")
+        show()
+
+        pasteText("Edital 2027")
+        thanks().assertIsDisplayed()
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        rule.onNodeWithText("Paste text").assertIsDisplayed()
+    }
+
+    @Test
+    fun theSameUploadSentAgainIsFollowedUntilItsReadEndsAgain() {
+        api.readStatuses = listOf("reading", "unreadable")
+        show()
+
+        pasteText("Edital 2027")
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        val adding = CompletableDeferred<Unit>()
+        api.attachGate = adding
+        rule.onNodeWithText("Paste text").performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("Edital 2027")
+        rule.onNodeWithText("Add text").performClick()
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+
+        adding.complete(Unit)
+        rule.waitForIdle()
+        thanks().assertIsDisplayed()
+
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        assertEquals(2, api.researchAnswers.size)
+    }
 }
+
+private const val READ_CHECK_MS = 3_000L

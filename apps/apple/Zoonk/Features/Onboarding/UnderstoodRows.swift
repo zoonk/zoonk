@@ -248,19 +248,17 @@ enum UnderstoodRows {
       editValue: schedule.studyTime ?? "")
   }
 
-  /// The material the draft was sent with, by title; pasted text has none. Material gone since
-  /// shows only in the note, which says so even when nothing is left.
-  static func materialRow(titles: [String], missing: Bool) -> UnderstoodRow? {
-    guard !titles.isEmpty || missing else {
+  /// The material the plan follows, by title; pasted text has none. Material with nothing to read
+  /// on it, or gone since, is said in the note; with nothing readable, the files stay named so the
+  /// note has something to point at.
+  static func materialRow(sources: [OnboardingDraftSource], missing: Bool) -> UnderstoodRow? {
+    guard !sources.isEmpty || missing else {
       return nil
     }
 
-    let names = titles.map {
-      $0.isEmpty
-        ? String(
-          localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
-        : $0
-    }
+    let followed = sources.filter { $0.readStatus != .unreadable }
+    let unread = sources.filter { $0.readStatus == .unreadable }
+    let names = (followed.isEmpty ? sources : followed).map { title(of: $0) }
 
     return UnderstoodRow(
       id: "material",
@@ -268,28 +266,67 @@ enum UnderstoodRows {
         "Your material", table: "Onboarding",
         comment: "Header over the material attached to a goal"),
       value: names.joined(separator: ", "),
-      note: missingNote(missing: missing, anyLeft: !titles.isEmpty)
-        ?? String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+      note: materialNote(
+        followed: followed, unread: unread, missing: missing, attached: sources.count))
   }
 
-  private static func missingNote(missing: Bool, anyLeft: Bool) -> String? {
-    guard missing else {
-      return nil
+  private static func title(of source: OnboardingDraftSource) -> String {
+    source.title.isEmpty
+      ? String(
+        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+      : source.title
+  }
+
+  /// Names the one file it couldn't read beside what it follows; several, or files gone since, are
+  /// said together.
+  private static func materialNote(
+    followed: [OnboardingDraftSource], unread: [OnboardingDraftSource], missing: Bool,
+    attached: Int
+  ) -> String {
+    if !missing && unread.isEmpty {
+      return String(localized: "Your plan and lessons follow this material", table: "Onboarding")
     }
 
-    return anyLeft
+    if followed.isEmpty {
+      return attached > 1
+        ? String(
+          localized: "We couldn't read these files, so your plan won't follow them.",
+          table: "Onboarding",
+          comment:
+            "Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone."
+        )
+        : String(
+          localized: "We couldn't read it, so your plan won't follow it.",
+          table: "Onboarding",
+          comment:
+            "Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. \"It\" is that material."
+        )
+    }
+
+    if let only = unread.first, unread.count == 1, !missing {
+      return String(
+        localized: LocalizedStringResource(
+          "Your plan and lessons follow only this material. We couldn't read “\(title(of: only))”.",
+          table: "Onboarding",
+          comment:
+            "Under the learner's material on the goal card, when nothing could be read on one of their files. \"This material\" is what the row lists; {title} is the file it couldn't read, like \"Notes.jpg\"."
+        ))
+    }
+
+    // Past the one-file note, a file it couldn't read means two or more weren't read.
+    return unread.isEmpty
       ? String(
-        localized:
-          "Your plan and lessons follow only this material. The rest can't be read anymore.",
+        localized: "Your plan and lessons follow only this material. We couldn't read the rest.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists."
+          "Under the learner's material on the goal card, when some of it is gone. \"This material\" is what the row lists."
       )
       : String(
-        localized: "It can't be read anymore, so your plan won't follow it.",
+        localized:
+          "Your plan and lessons follow only this material. We couldn't read the other files.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
+          "Under the learner's material on the goal card, when nothing could be read on several of their files. \"This material\" is what the row lists."
       )
   }
 

@@ -158,7 +158,7 @@ export async function findKeptReading(draft: UnderstandingRunDraft): Promise<Goa
 async function readMaterial(draft: UnderstandingRunDraft) {
   const sources = await loadDraftMaterial(draft);
   const overview = formatReadingMaterial({ sources });
-  return overview === null ? null : { intent: draft.materialIntent, overview };
+  return { intent: draft.materialIntent, overview };
 }
 
 export async function understandGoalWords(draft: UnderstandingRunDraft): Promise<UnderstoodWords> {

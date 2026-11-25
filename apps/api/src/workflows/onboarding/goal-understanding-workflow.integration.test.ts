@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { get } from "@vercel/blob";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
+import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
 import { understandGoalWords } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { prisma } from "@zoonk/db";
@@ -14,9 +17,20 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { startUploadReading } from "../research/read-upload-workflow";
 import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
+
+vi.mock("@vercel/blob", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  get: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/material/transcribe", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  transcribeMaterial: vi.fn(),
+}));
 
 vi.mock("@zoonk/ai/tasks/goals/understand-goal", async (importOriginal) => ({
   ...(await importOriginal<object>()),
@@ -37,6 +51,72 @@ vi.mock("@zoonk/ai/tasks/research/exam-identity-decision", async (importOriginal
   ...(await importOriginal<object>()),
   decideExamIdentity: vi.fn(),
 }));
+
+describe(startUploadReading, () => {
+  it("saves a mixed PDF's scanned pages without owing a visibility check", async () => {
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_test");
+    const user = await userFixture();
+    const pathname = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
+
+    const bytes = await readFile(
+      new URL(
+        "../../../../../packages/core/src/library/sources/_test-fixtures/typed-with-scan.pdf",
+        import.meta.url,
+      ),
+    );
+
+    vi.mocked(get).mockImplementation(async () => ({
+      blob: {
+        cacheControl: "",
+        contentDisposition: "",
+        contentType: "application/pdf",
+        downloadUrl: url,
+        etag: "",
+        pathname,
+        size: bytes.length,
+        uploadedAt: new Date(),
+        url,
+      },
+      headers: new Headers(),
+      statusCode: 200,
+      stream: new Blob([bytes]).stream(),
+    }));
+
+    const source = await sourceFixture({
+      blobUrl: url,
+      extractedText: "Biology notes\f\fCell division",
+      kind: "upload",
+      mimeType: "application/pdf",
+      ownerId: user.id,
+      readState: "owed",
+      structure: { images: 0, mixedPdf: true, pages: 3, topic: null, visualPages: [1] },
+      url: null,
+      visibility: "private",
+    });
+
+    vi.mocked(transcribeMaterial).mockResolvedValue(taskResult({ text: "Scanned drawing" }));
+
+    try {
+      const runId = await startUploadReading(source.id);
+      await getRun(runId).returnValue;
+
+      await expect(
+        prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+      ).resolves.toMatchObject({
+        extractedText: "Biology notes\fScanned drawing\fCell division",
+        readState: "read",
+        visibility: "private",
+      });
+
+      await expect(
+        prisma.followUp.count({ where: { kind: "checkUploadVisibility", userId: user.id } }),
+      ).resolves.toBe(0);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+});
 
 describe(goalUnderstandingWorkflow, () => {
   beforeEach(() => {
@@ -156,6 +236,98 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: { goals: [{ draft: { title: "Pass the cell cycle test" }, examDates: [] }] },
     });
   });
+
+  it.each([
+    { readState: "read", text: "Mitosis starts after interphase." },
+    { readState: "read", text: "[illegible]" },
+    { readState: "failed", text: null },
+  ])(
+    "waits for a photo to settle as $readState with transcript $text before reading the goal",
+    async ({ readState, text }) => {
+      vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_test");
+      vi.mocked(classifyCourseIntent).mockResolvedValue(taskResult({ intent: "learn" as const }));
+      vi.mocked(understandGoal).mockResolvedValue(taskResult({ route: "unclear" }));
+      const wordless = text === null || text === "[illegible]";
+
+      vi.mocked(transcribeMaterial).mockImplementation(async () => {
+        expect(understandGoal).not.toHaveBeenCalled();
+
+        if (text === null) {
+          throw new Error("Transcription service is unavailable");
+        }
+
+        return taskResult({ text });
+      });
+
+      const user = await userFixture();
+      const pathname = `sources/${user.id}/${randomUUID()}-notes.png`;
+      const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
+
+      const image = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4//8/AAX+Av5Y8msOAAAAAElFTkSuQmCC",
+        "base64",
+      );
+
+      vi.mocked(get).mockImplementation(async () => ({
+        blob: {
+          cacheControl: "",
+          contentDisposition: "",
+          contentType: "image/png",
+          downloadUrl: url,
+          etag: "",
+          pathname,
+          size: image.length,
+          uploadedAt: new Date(),
+          url,
+        },
+        headers: new Headers(),
+        statusCode: 200,
+        stream: new Blob([image]).stream(),
+      }));
+
+      const photo = await sourceFixture({
+        blobUrl: url,
+        contentHash: randomUUID(),
+        kind: "upload",
+        mimeType: "image/png",
+        ownerId: user.id,
+        readState: "owed",
+        structure: { images: 0, pages: null, topic: null, visualPages: [0] },
+        visibility: "private",
+      });
+
+      await learnerSourceFixture({ sourceId: photo.id, userId: user.id });
+
+      const draft = await onboardingDraftFixture({
+        materialIntent: "exam",
+        prompt: "test tomorrow",
+        sourceIds: [photo.id],
+        status: "understanding",
+        userId: user.id,
+      });
+
+      const run = await start(goalUnderstandingWorkflow, [{ draftId: draft.id }]);
+      await expect(run.returnValue).resolves.toMatchObject({ status: "understood" });
+
+      expect(transcribeMaterial).toHaveBeenCalledTimes(text === null ? 4 : 1);
+
+      expect(understandGoal).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          goal: "test tomorrow",
+          material: expect.objectContaining({ intent: "exam" }),
+        }),
+      );
+
+      const overview = vi.mocked(understandGoal).mock.lastCall?.[0].material?.overview;
+      expect(overview?.includes(text ?? "") ?? null).toBe(wordless ? null : true);
+
+      await expect(
+        prisma.source.findUniqueOrThrow({ where: { id: photo.id } }),
+      ).resolves.toMatchObject({ readState });
+
+      vi.unstubAllEnvs();
+    },
+  );
 
   it("looks up the dates of a public exam the words name, even with the learner's material", async () => {
     const exam = `ENEM ${randomUUID().slice(0, 8)}`;

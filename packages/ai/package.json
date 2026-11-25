@@ -133,6 +133,7 @@
     "./tasks/lesson-writer/schema": "./src/tasks/lesson-writer/written-lesson-schema.ts",
     "./tasks/material/answer": "./src/tasks/material/answer-from-material.ts",
     "./tasks/material/cite": "./src/tasks/material/cite-material.ts",
+    "./tasks/material/transcribe": "./src/tasks/material/transcribe-material.ts",
     "./tasks/quality/lesson-check": "./src/tasks/quality/lesson-quality-check.ts",
     "./tasks/variants/example-lines": "./src/tasks/variants/example-lines.ts",
     "./tasks/variants/step-variant-key": "./src/tasks/variants/step-variant-key.ts",

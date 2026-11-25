@@ -42,6 +42,17 @@ describe("nothing rests under a pinned bar at the scroll's end", () => {
     assert.deepEqual(under(790), ['"Save" covers 30 of row r0']);
   });
 
+  it("leaves a sheet's rows alone: the sheet covers the page and its bar", () => {
+    const capture = lastRow(790);
+
+    assert.deepEqual(
+      evaluateCapture({ ...capture, activeSurface: '"Upload" #1' }).filter(
+        (finding) => finding.rule === "pinned",
+      ),
+      [],
+    );
+  });
+
   it("leaves the bar's own rows alone: they are what it pins", () => {
     const capture = lastRow(752);
 

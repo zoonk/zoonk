@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -33,15 +32,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -53,7 +56,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
@@ -74,6 +84,10 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.MaterialCitation
+import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceReadStatus
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 /** What the uploads route reads. */
 private val ACCEPTED_TYPES =
@@ -308,29 +322,69 @@ private fun PanelCard(content: @Composable () -> Unit) {
 }
 
 /**
- * Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked,
- * and a [limitReached] says why no more can be added.
+ * Material still being read is asked about again every few seconds while its chip is on screen and the app is in the
+ * foreground, and at once when the learner comes back, until the reading ends; any other material keeps the status it
+ * was added with.
+ */
+@Composable
+internal fun shownReadStatus(
+    sources: KeyedResources<String, Source>,
+    item: AttachedSource,
+): SourceReadStatus {
+    if (item.readStatus != SourceReadStatus.READING) return item.readStatus
+    val resource = remember(sources, item.id) { sources[item.id] }
+    val state by resource.collectShown()
+    val status = state.value?.readStatus ?: item.readStatus
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    if (status == SourceReadStatus.READING) {
+        LaunchedEffect(resource, lifecycle) {
+            var returned = false
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                if (returned) resource.refresh()
+                returned = true
+                while (true) {
+                    delay(READ_CHECK)
+                    resource.refresh()
+                }
+            }
+        }
+    }
+    return status
+}
+
+internal val READ_CHECK = 3.seconds
+
+/** [attached] as the learner sees it now, each still being read followed until its reading ends. */
+@Composable
+internal fun followedReads(
+    sources: KeyedResources<String, Source>,
+    attached: List<AttachedSource>,
+): List<AttachedSource> = attached.map { key(it.id) { it.copy(readStatus = shownReadStatus(sources, it)) } }
+
+/**
+ * Removing material takes its own button, never a tap on its name. Material still being read shows a spinner; material
+ * with nothing readable in it, or that can't be read anymore ([gone]), is marked, and a [limitReached] says why no more
+ * can be added.
  */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
-    unreadable: Set<String>,
+    gone: Set<String>,
     limitReached: Int?,
     onRemove: (String) -> Unit,
 ) {
-    val marked = items.filter { it.id in unreadable }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items.forEach { item -> AttachedChip(item, item in marked, onRemove) }
-        }
-        if (marked.isNotEmpty()) {
-            Text(
-                marked.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
-                    ?: stringResource(R.string.onboarding_material_unreadable_some),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            items.forEach { item ->
+                val status =
+                    when {
+                        item.id in gone -> ChipStatus.Gone
+                        item.readStatus == SourceReadStatus.UNREADABLE -> ChipStatus.Unreadable
+                        item.readStatus == SourceReadStatus.READING -> ChipStatus.Reading
+                        else -> ChipStatus.Read
+                    }
+                AttachedChip(item, status, onRemove)
+            }
         }
         if (limitReached != null) {
             Text(
@@ -343,18 +397,69 @@ internal fun AttachedChips(
     }
 }
 
+/** What to do about attached material that's [gone] or has nothing readable in it; nothing when all of it can be read. */
+@Composable
+internal fun UnreadableNote(
+    items: List<AttachedSource>,
+    gone: Set<String>,
+) {
+    val missing = items.filter { it.id in gone }
+    val unread = items.filter { it.id !in gone && it.readStatus == SourceReadStatus.UNREADABLE }
+    if (missing.isEmpty() && unread.isEmpty()) return
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (missing.isNotEmpty()) {
+            MaterialNote(
+                missing.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
+                    ?: stringResource(R.string.onboarding_material_unreadable_some),
+            )
+        }
+        if (unread.isNotEmpty()) UnreadLine(unreadHint(unread.map { it.title }))
+    }
+}
+
+/** What to do about material with nothing readable in it ([titles], empty for pasted text), on Start and on Today's ask. */
+@Composable
+internal fun unreadHint(titles: List<String>) =
+    titles.singleOrNull()?.let {
+        stringResource(R.string.onboarding_material_unread_one, it.ifBlank { stringResource(R.string.onboarding_your_text) })
+    } ?: stringResource(R.string.onboarding_material_unread_some)
+
+@Composable
+internal fun UnreadLine(hint: String) = MaterialNote(hint)
+
+@Composable
+private fun MaterialNote(text: String) {
+    Text(
+        text,
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
 @Composable
 private fun materialTitle(item: AttachedSource) = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
+
+private enum class ChipStatus { Read, Reading, Unreadable, Gone }
 
 @Composable
 private fun AttachedChip(
     item: AttachedSource,
-    unreadable: Boolean,
+    status: ChipStatus,
     onRemove: (String) -> Unit,
 ) {
     val title = materialTitle(item)
-    val state = stringResource(R.string.onboarding_material_unreadable_state)
+    val unreadable = status == ChipStatus.Unreadable || status == ChipStatus.Gone
+    val state =
+        when (status) {
+            ChipStatus.Read -> null
+            ChipStatus.Reading -> stringResource(R.string.onboarding_material_reading_state)
+            ChipStatus.Unreadable -> stringResource(R.string.onboarding_material_unreadable_state)
+            ChipStatus.Gone -> stringResource(R.string.onboarding_material_gone_state)
+        }
     val colors = MaterialTheme.colorScheme
+    // Main's icons are sized in rem, so they grow with the text; sp converts as the text does, nonlinear scaling included.
+    val icon = with(LocalDensity.current) { 16.sp.toDp() }
     Surface(
         shape = RoundedCornerShape(ZoonkRadius.md),
         color = if (unreadable) colors.errorContainer else colors.surfaceContainerHigh,
@@ -365,26 +470,33 @@ private fun AttachedChip(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = LocalContentColor.current,
-            )
+            if (status == ChipStatus.Reading) {
+                // Drawn inside the icon's box, as main's spinner replaces its icon.
+                Box(Modifier.size(icon), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(Modifier.size(icon - 2.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
+                }
+            } else {
+                Icon(
+                    painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
+                    contentDescription = null,
+                    modifier = Modifier.size(icon),
+                    tint = LocalContentColor.current,
+                )
+            }
             Text(
                 title,
-                modifier = Modifier.widthIn(max = 240.dp).semantics { if (unreadable) stateDescription = state },
+                modifier = Modifier.weight(1f, fill = false).semantics { state?.let { stateDescription = it } },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
             )
             // Main's 28dp ✕ keeps the chip at main's height; a tap anywhere in the 48dp target around it still removes.
             CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
-                IconButton(onClick = { onRemove(item.id) }, modifier = Modifier.size(28.dp)) {
+                IconButton(onClick = { onRemove(item.id) }, modifier = Modifier.size(icon + 12.dp)) {
                     Icon(
                         painterResource(R.drawable.ic_close),
                         contentDescription = stringResource(R.string.onboarding_remove_material, title),
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(icon),
                     )
                 }
             }

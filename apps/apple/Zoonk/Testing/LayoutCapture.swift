@@ -119,14 +119,27 @@
   final class LayoutRuns: Sendable {
     static let shared = LayoutRuns()
 
-    private let drawn = Mutex<[UUID: [String: DrawnLine]]>([:])
+    /// A part's lines as last drawn at one text size and weight: a change in Settings draws them
+    /// again elsewhere, and the lines drawn before are gone from the screen.
+    private struct Drawn {
+      let setting: LayoutRunsProbe.Setting
+      var lines: [String: DrawnLine] = [:]
+    }
 
-    func record(_ line: DrawnLine, key: String, part: UUID) {
-      drawn.withLock { $0[part, default: [:]][key] = line }
+    private let drawn = Mutex<[UUID: Drawn]>([:])
+
+    func record(_ line: DrawnLine, key: String, part: UUID, setting: LayoutRunsProbe.Setting) {
+      drawn.withLock {
+        if $0[part]?.setting != setting {
+          $0[part] = Drawn(setting: setting)
+        }
+
+        $0[part]?.lines[key] = line
+      }
     }
 
     func lines(of part: UUID) -> [DrawnLine] {
-      drawn.withLock { Array(($0[part] ?? [:]).values) }
+      drawn.withLock { Array(($0[part]?.lines ?? [:]).values) }
     }
 
     func forget(_ part: UUID) {
@@ -136,13 +149,19 @@
 
   /// Draws text as it would draw anyway, noting each text's first line.
   struct LayoutRunsProbe: TextRenderer {
+    struct Setting: Equatable, Sendable {
+      let dynamicTypeSize: DynamicTypeSize
+      let legibility: LegibilityWeight?
+    }
+
     let part: UUID
+    let setting: Setting
 
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {
       if let first = layout.first {
         LayoutRuns.shared.record(
           DrawnLine(ascents: first.map(\.typographicBounds.ascent), lines: layout.count),
-          key: "\(first.typographicBounds.rect)", part: part)
+          key: "\(first.typographicBounds.rect)", part: part, setting: setting)
       }
 
       for line in layout {
@@ -280,7 +299,10 @@
     func body(content: Content) -> some View {
       if LayoutCapture.isOn {
         content
-          .textRenderer(LayoutRunsProbe(part: id))
+          .textRenderer(
+            LayoutRunsProbe(
+              part: id, setting: .init(dynamicTypeSize: dynamicTypeSize, legibility: legibility))
+          )
           .overlayPreferenceValue(LayoutTypeKey.self) { entries in
             GeometryReader { proxy in
               let origin = proxy.frame(in: .global).origin

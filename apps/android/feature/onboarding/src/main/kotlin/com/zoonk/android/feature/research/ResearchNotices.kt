@@ -1,31 +1,35 @@
 package com.zoonk.android.feature.research
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.AttachControls
+import com.zoonk.android.feature.onboarding.start.shownReadStatus
+import com.zoonk.android.feature.onboarding.start.unreadHint
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.api.models.ExamDocument
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import java.util.UUID
 
@@ -52,12 +56,18 @@ fun UploadRequestNotice(
 
     val copy = requestCopy(shown)
     val thanks = stringResource(R.string.research_upload_thanks)
-    val answered = answer.answered != null
+    // An upload still being read when it answered the ask is followed: if nothing in it can be read, the ask is back.
+    val sent = answer.sent
+    val sentUnreadable = sent != null && key(sent.id) { shownReadStatus(store.sources, sent) } == SourceReadStatus.UNREADABLE
+    // Sending another upload clears `sent`, so the ask stays open while it's added.
+    val answered = sent != null && !sentUnreadable
+    val unreadable = answer.unreadable ?: sent?.title?.takeIf { sentUnreadable } ?: shown.unreadableUpload?.title
+    val hint = unreadable?.let { unreadHint(listOf(it)) }
     val idle = vm.work == null
 
     Suggestion(
         label = stringResource(R.string.research_upload_label),
-        summary = if (answered) thanks else copy.title,
+        summary = if (answered) thanks else hint ?: copy.title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_document_search),
@@ -70,6 +80,13 @@ fun UploadRequestNotice(
             SuggestionResult(thanks)
         } else {
             SuggestionDescription(copy.body)
+            hint?.let {
+                SuggestionDescription(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                )
+            }
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
@@ -84,18 +101,16 @@ fun UploadRequestNotice(
                 )
             } else {
                 SuggestionActions {
-                    SuggestionAction(
+                    SuggestionMainAction(
+                        copy.action,
                         onClick = {
                             onAnswering()
                             vm.upload(visit)
                             focus()
                         },
                         enabled = idle,
-                    ) {
-                        Icon(painterResource(R.drawable.ic_upload), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(copy.action)
-                    }
+                        leadingIcon = { ButtonIcon(R.drawable.ic_upload) },
+                    )
                     SuggestionAction(stringResource(R.string.research_not_now), {
                         onAnswering()
                         vm.dismiss(visit)

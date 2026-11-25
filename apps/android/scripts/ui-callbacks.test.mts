@@ -30,6 +30,8 @@ const REASONS: Record<string, string> = {
   "core/data MindMapStore.watchReads(arrived)":
     "MindMapViewModel's own listener on its maps' state, held by the view model, never a frame.",
   "core/data MockRunStore.step(write)": "Private: the store's own write.",
+  "core/data OnboardingStore.attach(upload)":
+    "Private: the store's own upload call, awaited at once.",
   "core/data OnboardingStore.write(replacing, write)":
     "Private: the store's own write and cache replacement.",
   "core/data PlanStore.saveGoal(write, saved)":

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { get, setTtl } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import sharp from "sharp";
 import { Response as PageResponse, fetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -125,6 +126,27 @@ describe("uploads that can't be read", () => {
 
     await expectNoSource({ userId: user.id });
     expect(setTtl).not.toHaveBeenCalled();
+  });
+
+  it("refuses an image whose file signature differs from its declared type", async () => {
+    const { pathname, user } = await signedIn();
+    const file = pathname(`notes-${randomUUID()}.png`);
+
+    const bytes = await sharp({ create: { background: "white", channels: 3, height: 8, width: 8 } })
+      .jpeg()
+      .toBuffer();
+
+    mockStoredFile({ bytes, contentType: "image/png", pathname: file });
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname: file }),
+    ).resolves.toStrictEqual({ status: "unsupported" });
+
+    await expectNoSource({ userId: user.id });
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "readUpload", userId: user.id } }),
+    ).resolves.toBe(0);
   });
 
   it("says a link is missing when the page can't be fetched, and counts it as an upload", async () => {

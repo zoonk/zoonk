@@ -1,4 +1,4 @@
-import { errors } from "@/lib/api-errors";
+import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { readBody } from "@/lib/request-input";
@@ -17,6 +17,14 @@ async function askMaterialQuestion(request: NextRequest) {
 
   if (result.status === "notFound") {
     return errors.notFound("Material not found");
+  }
+
+  if (result.status === "materialReading") {
+    return createErrorResponse({
+      code: "materialReading",
+      message: "The material is still being read",
+      status: httpStatus.conflict,
+    });
   }
 
   return usageDecisionError(result);

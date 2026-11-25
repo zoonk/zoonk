@@ -4,10 +4,16 @@ import { type Context, EDGE, box, finding, tenths } from "./alignment-geometry.m
 /**
  * At the scroll's end nothing rests under a pinned bar: the page keeps room for it, so its last
  * row ends above the bar's top (#12's Save bar over a condition's caption). The probe records a
- * pinned bar only when the page is at its scroll's end, where this can be judged.
+ * pinned bar only when the page is at its scroll's end, where this can be judged. A dialog or sheet
+ * on top covers the page and its bar, so its rows rest over the bar, not under it.
  */
 export function pinnedLeads(context: Context): AlignmentFinding[] {
-  const { elements } = context.capture;
+  const { activeSurface, elements } = context.capture;
+
+  if (activeSurface !== "page") {
+    return [];
+  }
+
   const bars = elements.filter((element) => element.part === "pinned");
   const rows = elements.filter((element) => element.part === "row");
 

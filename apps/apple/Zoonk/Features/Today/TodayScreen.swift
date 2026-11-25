@@ -156,12 +156,10 @@ struct UnfinishedGoalSection: View {
   var body: some View {
     if let draft = onboarding.resume.value?.draft {
       Section {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(draft.prompt)
-          UnfinishedGoalLine()
-        }
-        ContinueDraftButton(draft: draft)
+        UnfinishedGoalCard(draft: draft)
       }
+      // Main keeps it with the day's notice, a card's small gap under it.
+      .listSectionSpacing(12)
     }
   }
 }
@@ -172,47 +170,43 @@ private struct UnfinishedGoalPanel: View {
 
   var body: some View {
     if let draft = onboarding.resume.value?.draft {
-      GroupBox {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(draft.prompt)
-            .lineLimit(3)
-          UnfinishedGoalLine()
-        }
-
-        ContinueDraftButton(draft: draft)
-          .buttonStyle(.outline)
-          .controlSize(.small)
-      }
-      .groupBoxStyle(.panel)
-      .padding(.horizontal, 16)
-      .padding(.top, 8)
+      UnfinishedGoalCard(draft: draft)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
   }
 }
 
-private struct UnfinishedGoalLine: View {
-  var body: some View {
-    Text(
-      "You didn't finish setting this up.", tableName: "Today",
-      comment: "Under a goal the learner typed and didn't confirm"
-    )
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
-  }
-}
-
-private struct ContinueDraftButton: View {
+/// Main's `UnfinishedGoalNotice`: the goal's words, what's left, and Continue.
+private struct UnfinishedGoalCard: View {
   @Environment(AppRouter.self) private var router
 
   let draft: OnboardingResume.Draft
 
   var body: some View {
-    Button {
-      router.open(.startGoal(draftId: draft.draftId))
-    } label: {
-      Text(
-        "Continue", tableName: "Today",
-        comment: "Opens the goal the learner typed and hasn't confirmed yet")
+    TodaySuggestionCard(mark: .symbol("pencil.line")) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(draft.prompt)
+          .typeStyle(.body.weight(.medium))
+          .lineLimit(2)
+
+        Text(
+          "You didn't finish setting this up.", tableName: "Today",
+          comment: "Under a goal the learner typed and didn't confirm"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
+
+      Button {
+        router.open(.startGoal(draftId: draft.draftId))
+      } label: {
+        Text(
+          "Continue", tableName: "Today",
+          comment: "Opens the goal the learner typed and hasn't confirmed yet")
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
     }
   }
 }

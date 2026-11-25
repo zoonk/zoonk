@@ -4,6 +4,7 @@ import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
 import { goalContentCountrySchema, suggestedCountriesSchema } from "../../goals/country-contract";
 import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
+import { sourceReadStatusSchema } from "../../library/sources/source-contract";
 import {
   type GoalUnderstandingView,
   MATERIAL_INTENTS,
@@ -152,6 +153,7 @@ export const onboardingDraftViewSchema = z
         z
           .object({
             id: uuidSchema(),
+            readStatus: sourceReadStatusSchema,
             title: z
               .string()
               .meta({ description: "The file's name or the link's title; empty for pasted text" }),
@@ -160,7 +162,7 @@ export const onboardingDraftViewSchema = z
       )
       .meta({
         description:
-          "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent",
+          "The learner's uploads in the order they attached them, including uploads with no readable text. A merged upload is its shared copy. The draft's main goal is created with every upload `sourceIds` still names",
       }),
     status: z
       .enum(ONBOARDING_DRAFT_STATUSES)

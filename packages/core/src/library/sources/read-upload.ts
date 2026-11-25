@@ -3,6 +3,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { fetchDocument, toSourceUrl } from "./fetch-document";
 import { type ParsedDocument, hashDocument, parseDocument } from "./parse-document";
 import { MAX_PASTED_TEXT_LENGTH, isSourceUploadContentType } from "./source-contract";
+import { matchesSourceImageSignature } from "./source-image-signature";
 import { readUploadedBlob } from "./upload-blob";
 
 export type UploadRead =
@@ -123,8 +124,12 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
     return { status: "unsupported" };
   }
 
+  if (blob.contentType.startsWith("image/") && !matchesSourceImageSignature(blob)) {
+    return { status: "unsupported" };
+  }
+
   const { data: parsed } = await safeAsync(() =>
-    parseDocument({ bytes: blob.bytes, contentType: blob.contentType }),
+    parseDocument({ bytes: blob.bytes, contentType: blob.contentType, forUpload: true }),
   );
 
   if (!parsed) {
@@ -135,7 +140,7 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
     content: {
       blobUrl: blob.url,
       contentType: blob.contentType,
-      hash: hashDocument({ bytes: blob.bytes, text: parsed.text }),
+      hash: hashDocument({ bytes: blob.bytes, text: parsed.visualPages ? null : parsed.text }),
       parsed,
     },
     status: "ready",

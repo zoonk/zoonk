@@ -146,12 +146,18 @@ struct TodayView: Decodable, Equatable, Sendable {
       case unverified
     }
 
+    struct UnreadableUpload: Decodable, Equatable, Sendable {
+      let title: String
+    }
+
     let examDocument: ExamDocument
     let goalId: String
     let goalKind: Goal.Kind
     /// The goal's language, which uploads are read in.
     let language: String
     let reason: Reason
+    /// The upload that last answered it had nothing to read on it, so it's asked for again.
+    let unreadableUpload: UnreadableUpload?
   }
 
   let earlierWork: [EarlierWork]
@@ -217,6 +223,8 @@ enum UploadAnswer: Equatable, Sendable {
   case answered
   /// Research read these uploads for an earlier ask (`UPLOAD_ALREADY_READ`).
   case alreadyRead
+  /// Nothing could be read on them (`UPLOAD_UNREADABLE`).
+  case unreadable
 }
 
 struct APIProblem: Decodable, Sendable {

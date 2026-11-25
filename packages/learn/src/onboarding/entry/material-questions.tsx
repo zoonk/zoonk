@@ -7,7 +7,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toHelpLimit } from "../../_components/comes-back-words";
 import { HelpLimitNotice } from "../../_components/help-limit-notice";
 import { SURFACE_CLASS } from "../../_components/surface";
@@ -35,7 +35,46 @@ import {
 import { GOAL_PANEL_CLASS } from "./goal-field";
 import { TypedGoal } from "./goal-outcomes";
 
-type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
+const READ_CHECK_MS = 3000;
+
+/** No `outcome` yet while the question waits for the material's reading or for its answer. */
+type Turn = { id: string; outcome: MaterialQuestionOutcome | null; question: string };
+
+function wait(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+/**
+ * Sending is the request: while the material is still being read the server says so before it
+ * answers or counts anything, so the question is asked again until it's read. Null once the learner
+ * left the screen, so nothing is answered for no one.
+ */
+function useAskWhenRead(ask: OnboardingActions["askMaterial"]) {
+  const screen = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    screen.current = controller;
+    return () => controller.abort();
+  }, []);
+
+  const askWhenRead = async (
+    input: Parameters<typeof ask>[0],
+  ): Promise<MaterialQuestionOutcome | null> => {
+    const outcome = await ask(input).catch((): MaterialQuestionOutcome => ({ status: "failed" }));
+
+    if (outcome.status !== "reading") {
+      return outcome;
+    }
+
+    await wait(READ_CHECK_MS);
+    return screen.current?.signal.aborted ? null : askWhenRead(input);
+  };
+
+  return askWhenRead;
+}
 
 function TurnAnswer({
   identity,
@@ -61,9 +100,14 @@ function TurnAnswer({
     );
   }
 
+  // Never kept: the question waits and is asked again instead.
+  if (outcome.status === "reading") {
+    return null;
+  }
+
   if (outcome.status !== "answered") {
     const messages: Record<
-      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached">,
+      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached" | "reading">,
       string
     > = {
       failed: t("We couldn't answer that. Try again in a moment."),
@@ -117,14 +161,15 @@ export function MaterialQuestions({
   const inputId = useId();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
-  const [isPending, startTransition] = useTransition();
   const trimmed = question.trim();
   const identity = useTutorIdentity(buddy);
   const formRef = useRef<HTMLFormElement>(null);
+  const askWhenRead = useAskWhenRead(ask);
+  const waiting = turns.some((turn) => turn.outcome === null);
 
   /**
-   * What lands above the box (the reading line, an answer) pushes it down while scroll anchoring holds the
-   * transcript still, so a learner still typing gets the box back.
+   * What lands above the box (the pending line, an answer) pushes it down while scroll anchoring holds
+   * the transcript still, so a learner still typing gets the box back.
    */
   const keepBoxInView = (landed: HTMLElement | null) => {
     const form = formRef.current;
@@ -135,23 +180,30 @@ export function MaterialQuestions({
   };
 
   const submit = () => {
-    if (!trimmed || isPending) {
+    if (!trimmed || waiting) {
       return;
     }
 
+    const id = crypto.randomUUID();
     setQuestion("");
+    setTurns((previous) => [...previous, { id, outcome: null, question: trimmed }]);
 
-    startTransition(async () => {
-      const outcome = await ask({
-        language: locale,
-        question: trimmed,
-        sourceIds: sources.map((source) => source.id),
-      }).catch((): MaterialQuestionOutcome => ({ status: "failed" }));
+    void askWhenRead({
+      language: locale,
+      question: trimmed,
+      sourceIds: sources.map((source) => source.id),
+    }).then((outcome) => {
+      if (outcome) {
+        setTurns((previous) =>
+          previous.map((turn) => (turn.id === id ? { ...turn, outcome } : turn)),
+        );
 
-      setTurns((previous) => [
-        ...previous,
-        { id: crypto.randomUUID(), outcome, question: trimmed },
-      ]);
+        return;
+      }
+
+      // Left before the material was read: the question goes back to the box to be asked on return.
+      setTurns((previous) => previous.filter((turn) => turn.id !== id));
+      setQuestion((typed) => typed || trimmed);
     });
   };
 
@@ -168,16 +220,18 @@ export function MaterialQuestions({
         {turns.map((turn) => (
           <div className="flex flex-col gap-3" key={turn.id} ref={keepBoxInView}>
             <TypedGoal goal={turn.question} />
-            <TurnAnswer identity={identity} outcome={turn.outcome} />
+            {turn.outcome ? (
+              <div ref={keepBoxInView}>
+                <TurnAnswer identity={identity} outcome={turn.outcome} />
+              </div>
+            ) : (
+              <p className="flex items-center gap-2 text-sm" ref={keepBoxInView} role="status">
+                <Spinner className="size-4" />
+                {t("Reading your material…")}
+              </p>
+            )}
           </div>
         ))}
-
-        {isPending && (
-          <p className="flex items-center gap-2 text-sm" ref={keepBoxInView} role="status">
-            <Spinner className="size-4" />
-            {t("Reading your material…")}
-          </p>
-        )}
       </div>
 
       <form
@@ -215,7 +269,7 @@ export function MaterialQuestions({
         />
         <Button
           aria-label={t("Ask")}
-          busy={isPending}
+          busy={waiting}
           className="shrink-0"
           disabled={!trimmed}
           focusableWhenDisabled

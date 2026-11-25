@@ -519,6 +519,14 @@ final class OnboardingStore {
     }.value
   }
 
+  func readStatus(sourceID: String) async throws -> SourceReadStatus {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.readStatus(sourceID: sourceID, token: token)
+  }
+
   func askMaterial(question: String, sourceIDs: [String]) async throws -> MaterialAnswer {
     try await cache.onboardingWrite { [api] identity in
       try await api.askMaterial(

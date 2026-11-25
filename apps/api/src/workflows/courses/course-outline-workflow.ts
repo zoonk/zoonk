@@ -12,6 +12,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { deliverCourseContent } from "../_shared/course-content-notification";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
+import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { claimCourseWhenFree } from "./claim-course-when-free";
 import {
   courseDetailsWorkflow,
@@ -291,6 +292,10 @@ export async function courseOutlineWorkflow(
         ? { entityId: conflict.runId, status: "started", step: "joinCourseOutline" }
         : { status: "started", step: "writeCourseOutline" },
     );
+
+    if (input.scope.ownerId) {
+      await waitForMaterialReading({ courseId: input.courseId, kind: "course" });
+    }
 
     const result = await outlineCourse({ conflict, context: { ...input, workflowRunId }, input });
     handedOn = Boolean("nextRunId" in result && result.nextRunId);

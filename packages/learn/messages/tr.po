@@ -8754,8 +8754,9 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "Hedefine bir PDF, notlarının fotoğrafını veya istediğin bir metni eklemek için ücretsiz hesap oluştur."
 
 #: src/onboarding/entry/attach-panel.tsx
+#: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
+#: src/onboarding/understood/understood-material-row.ts
 #: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
@@ -8796,6 +8797,65 @@ msgctxt "4vgz15"
 msgid "Your plan and lessons will use it."
 msgstr "Planında ve derslerinde bu materyali kullanacağız."
 
+#. Read by screen readers after the name of an attached file that's gone, so it must be added again.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "S2mc8R"
+msgid "Can't be read anymore"
+msgstr "Artık mevcut değil"
+
+#. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "vx1YAK"
+msgid "Nothing on it could be read"
+msgstr "İçeriği okunamadı"
+
+#. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "3oioAz"
+msgid "Being read"
+msgstr "Okunuyor"
+
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "{title} öğesini kaldır"
+
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr "Dosyalarının bir kısmını artık okuyamıyoruz. Kaldırıp yeniden ekle."
+
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr "“{title}” dosyasını artık okuyamıyoruz. Kaldırıp yeniden ekle."
+
+#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "XtqQ1X"
+msgid "We couldn't read these files. Try sharper photos or paste the text."
+msgstr "Bu dosyaları okuyamadık. Daha net fotoğraflar çekmeyi veya metni yapıştırmayı dene."
+
+#. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "v6A3gc"
+msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
+msgstr "“{title}” dosyasını okuyamadık. Daha net bir fotoğraf çekmeyi veya metni yapıştırmayı dene."
+
+#: src/onboarding/entry/attached-chips.tsx
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2d2ZJ4"
+msgid "Your material"
+msgstr "Materyalin"
+
+#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "EAbhzH"
+msgid "{count, number} files is the most for one goal. Remove one to add another."
+msgstr "Bir hedefe en fazla {count, number} dosya ekleyebilirsin. Bir tane daha eklemek için bir dosyayı kaldır."
+
 #: src/onboarding/entry/draft-goals.ts
 msgctxt "FMaXag"
 msgid "musicianship"
@@ -8805,41 +8865,6 @@ msgstr "müzik temelleri"
 msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "{instrument} için müzik temelleri"
-
-#. Read by screen readers after the name of an attached file that can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "yJQoIT"
-msgid "Can't be read"
-msgstr "Artık okunamıyor"
-
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "G5e8UX"
-msgid "Remove {title}"
-msgstr "{title} öğesini kaldır"
-
-#. Under the learner's attached material when several items sent with their goal can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "2FABsh"
-msgid "We can't read some of your files anymore. Remove them and add them again."
-msgstr "Dosyalarının bir kısmını artık okuyamıyoruz. Kaldırıp yeniden ekle."
-
-#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "-9IdF4"
-msgid "We can't read “{title}” anymore. Remove it and add it again."
-msgstr "“{title}” dosyasını artık okuyamıyoruz. Kaldırıp yeniden ekle."
-
-#: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "2d2ZJ4"
-msgid "Your material"
-msgstr "Materyalin"
-
-#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "EAbhzH"
-msgid "{count, number} files is the most for one goal. Remove one to add another."
-msgstr "Bir hedefe en fazla {count, number} dosya ekleyebilirsin. Bir tane daha eklemek için bir dosyayı kaldır."
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
@@ -9963,6 +9988,41 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî tarihler açıklanınca haber vereceğiz."
 
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "d68iA8"
+msgid "Your plan and lessons follow this material"
+msgstr "Planın ve derslerin bu materyale göre hazırlanır"
+
+#. Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "UiJtWT"
+msgid "We couldn't read these files, so your plan won't follow them."
+msgstr "Bu dosyaları okuyamadık, bu yüzden planın bunları temel almayacak."
+
+#. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "tbSSWy"
+msgid "We couldn't read it, so your plan won't follow it."
+msgstr "Bunu okuyamadık, bu yüzden planın bunu temel almayacak."
+
+#. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2cV0mq"
+msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. “{title}” dosyasını okuyamadık."
+
+#. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "c_KACv"
+msgid "Your plan and lessons follow only this material. We couldn't read the other files."
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. Diğer dosyaları okuyamadık."
+
+#. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "nT35Ny"
+msgid "Your plan and lessons follow only this material. We couldn't read the rest."
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. Kalan dosyalara erişemedik."
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
@@ -10081,23 +10141,6 @@ msgstr "Nerede"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "Neden"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "d68iA8"
-msgid "Your plan and lessons follow this material"
-msgstr "Planın ve derslerin bu materyale göre hazırlanır"
-
-#. Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "83Uigi"
-msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr "Planın ve derslerin yalnızca bu materyale göre ilerliyor. Geri kalanı artık okunamıyor."
-
-#. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "YOP-LJ"
-msgid "It can't be read anymore, so your plan won't follow it."
-msgstr "Artık okunamıyor, bu yüzden planın bu materyali temel almayacak."
 
 #: src/placement-test/placement-test-flow.tsx
 msgctxt "gnlQcT"

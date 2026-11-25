@@ -14,6 +14,7 @@ import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.AttachDraft
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -24,9 +25,14 @@ internal enum class UploadWork { Attaching, Sending, Dismissing }
 internal data class UploadAnswer(
     val visit: Int,
     val uploading: Boolean = false,
+    /** The ask as it was answered on this visit, still shown once Today no longer lists it. */
     val answered: TodayUploadRequest? = null,
+    /** The upload that answered it, followed while it's still being read. */
+    val sent: AttachedSource? = null,
     val dismissed: Boolean = false,
     val attachFailure: WriteOutcome<*>? = null,
+    /** The title of what research couldn't read on this visit, as Today's `unreadableUpload` says on the next. */
+    val unreadable: String? = null,
     val saveFailed: Boolean = false,
 )
 
@@ -93,21 +99,29 @@ internal class UploadRequestViewModel(
     ) {
         if (work != null) return
         work = UploadWork.Attaching
-        update(visit) { it.copy(attachFailure = null, saveFailed = false) }
+        update(visit) { it.copy(attachFailure = null, unreadable = null, sent = null, saveFailed = false) }
         viewModelScope.launch {
             when (val attached = attach()) {
+                is WriteOutcome.Done if attached.value.readStatus == SourceReadStatus.UNREADABLE -> {
+                    update(visit) { it.copy(unreadable = attached.value.title) }
+                }
+
                 is WriteOutcome.Done -> {
                     work = UploadWork.Sending
                     when (val answered = store.answerUploadRequest(goalId, listOf(attached.value.id))) {
                         is WriteOutcome.Done -> {
                             draft.clear()
-                            update(visit) { it.copy(answered = request) }
+                            update(visit) { it.copy(answered = request, sent = attached.value) }
                         }
 
                         WriteOutcome.Obsolete -> {}
 
                         WriteOutcome.Refused(Refusal.AlreadyRead) -> {
                             update(visit) { it.copy(attachFailure = answered) }
+                        }
+
+                        WriteOutcome.Refused(Refusal.UploadUnreadable) -> {
+                            update(visit) { it.copy(unreadable = attached.value.title) }
                         }
 
                         else -> {

@@ -15,6 +15,7 @@ import {
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
+import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
 import { readLessonLaws } from "./read-lesson-laws";
@@ -242,6 +243,7 @@ async function planAndWrite({
   const failed = { analytics: input.analytics, contentKind: "lesson", task: LESSON_TASK } as const;
 
   try {
+    await waitForMaterialReading({ kind: "lesson", lessonId: input.lessonId });
     await readLessonLaws({ analytics: input.analytics, lessonId: input.lessonId, workflowRunId });
     const spec = await planWhenFree({ input, workflowRunId });
 

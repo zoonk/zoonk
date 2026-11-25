@@ -108,6 +108,7 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "step-variant": "Rewrites a screen for the learner's field",
   "teaching-chapters": "Finds the chapter that already teaches a skill",
   "topic-skill-names": "Names the topics a learner adds as skills",
+  "transcribe-material": "Writes down a learner's photo or scanned page",
   "transcribe-speech": "Writes down a spoken answer as said",
   "translate-pass-marks": "Translates an exam's pass marks",
   "understand-goal": "Reads a goal typed in the learner's own words",

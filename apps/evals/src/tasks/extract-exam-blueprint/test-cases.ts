@@ -849,6 +849,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
       facts: [
         { format: "shortAnswer", kind: "format" },
         { format: "essay", kind: "format" },
+        { kind: "shortTopics" },
       ],
     },
     id: "pt-class-notes-biologia-celular",
@@ -868,6 +869,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
       facts: [
         { format: "multipleChoice", kind: "format" },
         { format: "essay", kind: "format" },
+        { kind: "shortTopics" },
       ],
     },
     id: "en-class-notes-ap-biology-unit-2",
@@ -880,6 +882,64 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "AP Biology unit 2 test",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "topic", topic: "Velocidade média" },
+        { kind: "topic", topic: "Aceleração" },
+        { kind: "topic", topic: "Função horária" },
+        { kind: "shortTopics" },
+      ],
+    },
+    id: "pt-photo-notes-transcript-with-latex",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          text: String.raw`# Cinemática - MUV
+
+Velocidade média: $v_m = \Delta s / \Delta t$
+
+Aceleração: $a = \Delta v / \Delta t$ (unidade: $m/s^2$)
+
+Função horária: $s = s_0 + v_0 \cdot t + a \cdot t^2 / 2$
+
+Ex.: $s = 12 - 3,5 \cdot t$ → $v_0 = -3,5$ m/s
+
+(movimento retrógrado)
+
+Freando: $a = -2,5$ m/s² (sinal contrário ao de v)
+
+Mov. uniformemente variado: $a$ constante $\neq 0$
+
+Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?`,
+          title: "Foto das anotações de física",
+        },
+      ],
+      exam: "Prova de física (1º ano), cinemática",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "topic", topic: "Boyle's law" },
+        { kind: "topic", topic: "Charles's law" },
+        { kind: "topic", topic: "Ideal gas law" },
+        { kind: "shortTopics" },
+      ],
+    },
+    id: "en-typed-notes-with-formulas-and-a-worked-example",
+    language: "en",
+    userInput: {
+      documents: [
+        {
+          text: "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+          title: "Gas laws notes",
+        },
+      ],
+      exam: "Chemistry quiz on gas laws",
     },
   },
 ];

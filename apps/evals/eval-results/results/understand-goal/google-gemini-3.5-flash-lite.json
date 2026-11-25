@@ -14841,6 +14841,735 @@
           "today": "2026-09-26"
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-exam-choice-1",
+        "userInput": {
+          "goal": "chemistry test on Friday",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-exam-choice-2",
+        "userInput": {
+          "goal": "chemistry test on Friday",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-exam-choice-3",
+        "userInput": {
+          "goal": "chemistry test on Friday",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-material-uma-foto-ilegivel-mantem-a-prova-1",
+        "userInput": {
+          "goal": "prova de história na sexta",
+          "language": "pt",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-material-uma-foto-ilegivel-mantem-a-prova-2",
+        "userInput": {
+          "goal": "prova de história na sexta",
+          "language": "pt",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-material-uma-foto-ilegivel-mantem-a-prova-3",
+        "userInput": {
+          "goal": "prova de história na sexta",
+          "language": "pt",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "reason": null,
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-understand-choice-1",
+        "userInput": {
+          "goal": "photosynthesis",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "reason": null,
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-understand-choice-2",
+        "userInput": {
+          "goal": "photosynthesis",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "reason": null,
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-an-unread-photo-keeps-the-understand-choice-3",
+        "userInput": {
+          "goal": "photosynthesis",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-and-test-tomorrow-say-no-subject-1",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-and-test-tomorrow-say-no-subject-2",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-and-test-tomorrow-say-no-subject-3",
+        "userInput": {
+          "goal": "I have a test tomorrow",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-file-name-is-no-subject-1",
+        "userInput": {
+          "goal": "Understand my material: IMG_2041.jpg",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-file-name-is-no-subject-2",
+        "userInput": {
+          "goal": "Understand my material: IMG_2041.jpg",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "unclear",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "route": "unclear"
+        },
+        "id": "en-material-an-unread-photo-file-name-is-no-subject-3",
+        "userInput": {
+          "goal": "Understand my material: IMG_2041.jpg",
+          "language": "en",
+          "material": {
+            "intent": "understand",
+            "sources": [
+              {
+                "mimeType": "image/jpeg",
+                "text": "",
+                "title": "IMG_2041.jpg"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
     }
   ],
   "taskId": "understand-goal"

@@ -8,7 +8,6 @@ import {
   isLanguageReason,
 } from "@zoonk/core/language/aims";
 import {
-  type OnboardingDraftView,
   type OnboardingExamDate,
   type UnderstoodGoalView,
 } from "@zoonk/core/view-models/onboarding/contract";
@@ -295,48 +294,5 @@ export function useUnderstoodRows(timeZone: string) {
     ];
 
     return rows.filter((row): row is UnderstoodRow => Boolean(row));
-  };
-}
-
-type DraftMaterial = Pick<OnboardingDraftView, "materialMissing" | "sources">;
-
-function useMaterialNote() {
-  const t = useExtracted();
-
-  return ({ materialMissing, sources }: DraftMaterial): string => {
-    if (!materialMissing) {
-      return t("Your plan and lessons follow this material");
-    }
-
-    return sources.length > 0
-      ? t({
-          description:
-            "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists.",
-          message:
-            "Your plan and lessons follow only this material. The rest can't be read anymore.",
-        })
-      : t({
-          description:
-            'Under the learner\'s material on the goal card, when none of it can be read anymore. "It" is that material.',
-          message: "It can't be read anymore, so your plan won't follow it.",
-        });
-  };
-}
-
-export function useMaterialRow() {
-  const t = useExtracted();
-  const materialNote = useMaterialNote();
-
-  return function toMaterialRow(material: DraftMaterial): UnderstoodRow | null {
-    if (material.sources.length === 0 && !material.materialMissing) {
-      return null;
-    }
-
-    return {
-      id: "material",
-      label: t("Your material"),
-      note: materialNote(material),
-      value: material.sources.map((source) => source.title || t("Your text")).join(", "),
-    };
   };
 }

@@ -9,6 +9,7 @@ import { postFromBrowser } from "../api/browser-api";
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_FORBIDDEN = 403;
+const HTTP_CONFLICT = 409;
 
 function isAnswer(body: unknown): body is MaterialQuestionAnswer {
   return isJsonObject(body) && typeof body.answer === "string" && Array.isArray(body.citations);
@@ -19,6 +20,10 @@ async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
 
   if (response.ok && isAnswer(body)) {
     return { answer: body, status: "answered" };
+  }
+
+  if (response.status === HTTP_CONFLICT) {
+    return { status: "reading" };
   }
 
   const refusal = getUsageRefusal(body);

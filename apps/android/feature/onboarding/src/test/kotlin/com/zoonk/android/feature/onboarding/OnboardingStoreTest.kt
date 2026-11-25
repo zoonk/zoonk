@@ -7,6 +7,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -15,6 +16,7 @@ import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalDraft
 import com.zoonk.api.models.PlanLinkStartInput
+import com.zoonk.api.models.SourceReadStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.toList
@@ -251,5 +253,32 @@ class OnboardingStoreTest {
             assertEquals("plan-1", planId)
             assertEquals(PlanLinkStartInput(studyTime = "07:00", title = "Pass the bar exam"), start)
             assertTrue(api.created.isEmpty())
+        }
+
+    @Test
+    fun materialAddedAgainAfterItsReadFailedShowsItBeingReadAgain() =
+        runTest {
+            val session = FakeSession(ana)
+            val api = FakeOnboardingApi().apply { readStatuses = listOf("reading", "unreadable") }
+            val store =
+                OnboardingStore(
+                    api,
+                    AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
+                    session,
+                ) { SignInResult.SignedIn }
+            val notes = PickedFile("notes.jpg", "image/jpeg", 3) { "abc".byteInputStream() }
+
+            fun shownStatus() =
+                store.sources[UPLOAD_ID]
+                    .state.value.value
+                    ?.readStatus
+
+            store.attachFile(notes, "en")
+            store.sources[UPLOAD_ID].refresh()
+            assertEquals(SourceReadStatus.UNREADABLE, shownStatus())
+
+            store.attachFile(notes, "en")
+
+            assertEquals(SourceReadStatus.READING, shownStatus())
         }
 }

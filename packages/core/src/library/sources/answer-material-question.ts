@@ -20,24 +20,23 @@ import {
   type MaterialQuestionInput,
 } from "./material-question-contract";
 import { findOwnSources } from "./own-sources";
+import { materialSourceFields, toReadableMaterial } from "./readable-material";
 
 export type MaterialQuestionResult =
   | { answer: MaterialQuestionAnswer; status: "answered" }
   | { status: "notFound" }
+  | { status: "materialReading" }
   | Exclude<UsageDecision, { status: "allowed" }>;
 
 async function findOwnMaterial({ sourceIds, userId }: { sourceIds: string[]; userId: string }) {
   const { resolved } = await findOwnSources({ sourceIds, userId });
 
   const sources = await prisma.source.findMany({
-    select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
-    where: { extractedText: { not: null }, id: { in: resolved } },
+    select: materialSourceFields,
+    where: { id: { in: resolved } },
   });
 
-  return resolved.flatMap((sourceId) => {
-    const source = sources.find((candidate) => candidate.id === sourceId);
-    return source?.extractedText ? [{ ...source, text: source.extractedText }] : [];
-  });
+  return resolved.flatMap((sourceId) => sources.find((source) => source.id === sourceId) ?? []);
 }
 
 function toCitations({
@@ -63,7 +62,13 @@ export async function answerMaterialQuestion(
   }
 
   const userId = session.user.id;
-  const material = await findOwnMaterial({ sourceIds: input.sourceIds, userId });
+  const sources = await findOwnMaterial({ sourceIds: input.sourceIds, userId });
+
+  if (sources.some((source) => source.readState === "owed")) {
+    return { status: "materialReading" };
+  }
+
+  const material = toReadableMaterial(sources);
 
   if (material.length === 0) {
     return { status: "notFound" };

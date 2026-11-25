@@ -8754,8 +8754,9 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "Erstelle ein kostenloses Konto, um deinem Ziel eine PDF-Datei, ein Foto deiner Notizen oder einen beliebigen Text hinzuzufügen."
 
 #: src/onboarding/entry/attach-panel.tsx
+#: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
+#: src/onboarding/understood/understood-material-row.ts
 #: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
@@ -8796,6 +8797,65 @@ msgctxt "4vgz15"
 msgid "Your plan and lessons will use it."
 msgstr "Dein Plan und deine Lektionen nutzen es."
 
+#. Read by screen readers after the name of an attached file that's gone, so it must be added again.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "S2mc8R"
+msgid "Can't be read anymore"
+msgstr "Nicht mehr verfügbar"
+
+#. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "vx1YAK"
+msgid "Nothing on it could be read"
+msgstr "Es ließ sich nichts darauf lesen"
+
+#. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "3oioAz"
+msgid "Being read"
+msgstr "Wird gelesen"
+
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "{title} entfernen"
+
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr "Einige deiner Dateien können nicht mehr gelesen werden. Entferne sie und füge sie noch einmal hinzu."
+
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr "„{title}“ kann nicht mehr gelesen werden. Entferne die Datei und füge sie noch einmal hinzu."
+
+#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "XtqQ1X"
+msgid "We couldn't read these files. Try sharper photos or paste the text."
+msgstr "Wir konnten diese Dateien nicht lesen. Versuch es mit schärferen Fotos oder füge den Text ein."
+
+#. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "v6A3gc"
+msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
+msgstr "Wir konnten „{title}“ nicht lesen. Versuch es mit einem schärferen Foto oder füge den Text ein."
+
+#: src/onboarding/entry/attached-chips.tsx
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2d2ZJ4"
+msgid "Your material"
+msgstr "Dein Material"
+
+#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "EAbhzH"
+msgid "{count, number} files is the most for one goal. Remove one to add another."
+msgstr "Für ein Ziel sind höchstens {count, number} Dateien möglich. Entferne eine, um eine weitere hinzuzufügen."
+
 #: src/onboarding/entry/draft-goals.ts
 msgctxt "FMaXag"
 msgid "musicianship"
@@ -8805,41 +8865,6 @@ msgstr "musikalische Grundlagen"
 msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "Musikalische Grundlagen für {instrument}"
-
-#. Read by screen readers after the name of an attached file that can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "yJQoIT"
-msgid "Can't be read"
-msgstr "Nicht mehr lesbar"
-
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "G5e8UX"
-msgid "Remove {title}"
-msgstr "{title} entfernen"
-
-#. Under the learner's attached material when several items sent with their goal can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "2FABsh"
-msgid "We can't read some of your files anymore. Remove them and add them again."
-msgstr "Einige deiner Dateien können nicht mehr gelesen werden. Entferne sie und füge sie noch einmal hinzu."
-
-#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "-9IdF4"
-msgid "We can't read “{title}” anymore. Remove it and add it again."
-msgstr "„{title}“ kann nicht mehr gelesen werden. Entferne die Datei und füge sie noch einmal hinzu."
-
-#: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "2d2ZJ4"
-msgid "Your material"
-msgstr "Dein Material"
-
-#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "EAbhzH"
-msgid "{count, number} files is the most for one goal. Remove one to add another."
-msgstr "Für ein Ziel sind höchstens {count, number} Dateien möglich. Entferne eine, um eine weitere hinzuzufügen."
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
@@ -9963,6 +9988,41 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "Basierend auf den üblichen Terminen. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen."
 
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "d68iA8"
+msgid "Your plan and lessons follow this material"
+msgstr "Dein Plan und deine Lektionen richten sich nach diesem Material"
+
+#. Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "UiJtWT"
+msgid "We couldn't read these files, so your plan won't follow them."
+msgstr "Wir konnten diese Dateien nicht lesen, deshalb richtet sich dein Plan nicht danach."
+
+#. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "tbSSWy"
+msgid "We couldn't read it, so your plan won't follow it."
+msgstr "Wir konnten das Material nicht lesen, deshalb richtet sich dein Plan nicht danach."
+
+#. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2cV0mq"
+msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
+msgstr "Dein Plan und deine Lektionen richten sich nur nach diesem Material. „{title}“ konnten wir nicht lesen."
+
+#. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "c_KACv"
+msgid "Your plan and lessons follow only this material. We couldn't read the other files."
+msgstr "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Die anderen Dateien konnten wir nicht lesen."
+
+#. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "nT35Ny"
+msgid "Your plan and lessons follow only this material. We couldn't read the rest."
+msgstr "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Den Rest konnten wir nicht lesen."
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
@@ -10081,23 +10141,6 @@ msgstr "Wo"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "Grund"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "d68iA8"
-msgid "Your plan and lessons follow this material"
-msgstr "Dein Plan und deine Lektionen richten sich nach diesem Material"
-
-#. Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "83Uigi"
-msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Der Rest lässt sich nicht mehr lesen."
-
-#. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "YOP-LJ"
-msgid "It can't be read anymore, so your plan won't follow it."
-msgstr "Dein Material kann nicht mehr gelesen werden, deshalb kann dein Plan es nicht berücksichtigen."
 
 #: src/placement-test/placement-test-flow.tsx
 msgctxt "gnlQcT"
