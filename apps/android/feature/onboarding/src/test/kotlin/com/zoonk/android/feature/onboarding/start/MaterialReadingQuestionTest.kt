@@ -27,7 +27,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** A question about material still being read stays asked and goes again every few seconds until it's read; leaving stops it. */
+/** A question about material still being read stays asked and goes again every few seconds until it's read; leaving the questions or the screen stops it. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class MaterialReadingQuestionTest {
@@ -67,7 +67,12 @@ class MaterialReadingQuestionTest {
         }
 
     @Test
-    fun leavingTheQuestionsStopsAQuestionStillWaiting() =
+    fun leavingTheQuestionsStopsAQuestionStillWaiting() = leavingStopsAQuestionStillWaiting { it.backToEntry("") }
+
+    @Test
+    fun leavingTheScreenStopsAQuestionStillWaiting() = leavingStopsAQuestionStillWaiting { it.visit.end() }
+
+    private fun leavingStopsAQuestionStillWaiting(leave: (StartGoalViewModel) -> Unit) =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             val models = ViewModelStore()
@@ -81,7 +86,8 @@ class MaterialReadingQuestionTest {
                 vm.question.setTextAndPlaceCursorAtEnd("What is the mitotic spindle?")
                 vm.ask("en")
                 runCurrent()
-                vm.backToEntry("")
+                leave(vm)
+                api.askFailure = ApiException(ApiError.Unavailable)
                 advanceTimeBy(READ_CHECK.inWholeMilliseconds * 3)
 
                 assertEquals(listOf("What is the mitotic spindle?"), api.asked)
