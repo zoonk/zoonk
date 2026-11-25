@@ -4,11 +4,18 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions, chooseServiceTier } from "../../provider-options";
+import { toMaterialTranscript } from "./material-transcript";
 import systemPrompt from "./transcribe-material.prompt.md";
 
-/** The upload-visibility chain, which already reads learners' photos and PDF pages, until this task's eval picks one. */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "google/gemini-3.5-flash-lite"] as const;
+/**
+ * On the transcribe-material eval (15 pages, 3 runs each, 25 Nov 2026) Haiku 5.5 and Luna passed
+ * every sign, relation and invention check; Haiku read dense cursive better, at about half the cost
+ * per page ($0.58/1k against $1.17/1k) and 2.5 s p50. Gemini 3.8 Flash was as accurate but took
+ * 12 s p50 at $13/1k, so it only backs up both; Flash Lite kept struck-out words and changed
+ * decimals.
+ */
+const defaultModel = "anthropic/claude-haiku-5.5";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
 
 const USER_PROMPT = "Write down this page.";
 
@@ -17,7 +24,10 @@ const schema = z.object({ text: z.string() });
 export type MaterialTranscription = z.infer<typeof schema>;
 
 export type TranscribeMaterialParams = {
-  /** One photo or one PDF page as an image; a string is base64. */
+  /**
+   * One photo or one PDF page as an image; a string is base64. Claude refuses images over 5 MB, so
+   * callers send it scaled down, about 2000 px on its long side, which also keeps the cost per page.
+   */
   image: { data: Uint8Array | string; mediaType: string };
   analytics?: AiGenerationContext;
   model?: string;
@@ -64,7 +74,7 @@ export async function transcribeMaterial({
   });
 
   return {
-    data: { text: result.output.text.trim() },
+    data: { text: toMaterialTranscript(result.output.text) },
     provenance,
     systemPrompt,
     usage: result.usage,
