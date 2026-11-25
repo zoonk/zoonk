@@ -199,7 +199,7 @@ class UnderstoodRows(
     }
 
     /**
-     * Lists the material the plan follows. When some couldn't be read (nothing readable in it, or gone: [missing]), the row
+     * Lists the material the plan follows (a file still being read counts: the plan waits for it). When some couldn't be read (nothing readable in it, or gone: [missing]), the row
      * stays, even with none left, to say the plan won't follow it.
      */
     fun materialRow(
@@ -209,10 +209,11 @@ class UnderstoodRows(
         val read = material.filter { it.readStatus != SourceReadStatus.UNREADABLE }
         val unread = missing || read.size < material.size
         if (read.isEmpty() && !unread) return null
+        // With nothing readable, the files it couldn't read stay named, so the note's "it" has something to point at.
         return UnderstoodRow(
             id = "material",
             label = text(R.string.onboarding_row_material),
-            value = read.joinToString(", ") { it.title.ifBlank { text(R.string.onboarding_your_text) } },
+            value = read.ifEmpty { material }.joinToString(", ") { it.title.ifBlank { text(R.string.onboarding_your_text) } },
             note =
                 text(
                     when {

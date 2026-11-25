@@ -526,12 +526,17 @@ class OnboardingScreenshots {
         captureUploadAskUnreadable("phone-font200")
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun uploadAskUnreadableLine() = captureUploadAskUnreadable("line-phone-screen", layout = SuggestionLayout.Line)
+
     private fun captureUploadAskUnreadable(
         name: String,
         dark: Boolean = false,
+        layout: SuggestionLayout = SuggestionLayout.Panel,
     ) {
         compose.setContent {
-            ZoonkTheme(darkTheme = dark) { Surface { ResearchNotices(SuggestionLayout.Panel, uploadAskOf(unreadable = "IMG_2041.jpg")) } }
+            ZoonkTheme(darkTheme = dark) { Surface { ResearchNotices(layout, uploadAskOf(unreadable = "IMG_2041.jpg")) } }
         }
         compose.waitForIdle()
         write("research-upload-unreadable-$name", compose.onRoot().captureRender().asAndroidBitmap())

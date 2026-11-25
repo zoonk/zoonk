@@ -14,6 +14,7 @@ import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.AttachDraft
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -100,6 +101,10 @@ internal class UploadRequestViewModel(
         update(visit) { it.copy(attachFailure = null, unreadable = null, sent = null, saveFailed = false) }
         viewModelScope.launch {
             when (val attached = attach()) {
+                is WriteOutcome.Done if attached.value.readStatus == SourceReadStatus.UNREADABLE -> {
+                    update(visit) { it.copy(unreadable = attached.value.title) }
+                }
+
                 is WriteOutcome.Done -> {
                     work = UploadWork.Sending
                     when (val answered = store.answerUploadRequest(goalId, listOf(attached.value.id))) {

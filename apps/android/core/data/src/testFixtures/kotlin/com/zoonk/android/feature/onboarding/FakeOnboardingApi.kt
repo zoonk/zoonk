@@ -399,12 +399,15 @@ class FakeOnboardingApi : OnboardingApi {
         goalId: UUID,
     ) = Unit
 
+    val researchAnswers = mutableListOf<List<UUID>>()
+
     override suspend fun answerUploadRequest(
         session: AuthenticatedSession,
         goalId: UUID,
         sourceIds: List<UUID>,
     ) {
         researchFailure?.let { throw it }
+        researchAnswers += sourceIds
     }
 
     var askFailure = ApiException(ApiError.Unavailable)

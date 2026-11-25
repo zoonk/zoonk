@@ -26,6 +26,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -113,6 +114,18 @@ class UploadRequestFlowTest {
 
         rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
         thanks().assertDoesNotExist()
+    }
+
+    @Test
+    fun anUploadWithNothingReadableIsNeverSentToResearch() {
+        api.readStatuses = listOf("unreadable")
+        show()
+
+        pasteText("Edital 2027")
+
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        thanks().assertDoesNotExist()
+        assertEquals(emptyList<List<UUID>>(), api.researchAnswers)
     }
 
     @Test

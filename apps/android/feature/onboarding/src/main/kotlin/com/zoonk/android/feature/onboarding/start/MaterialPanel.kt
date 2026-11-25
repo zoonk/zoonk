@@ -55,6 +55,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.collectShown
@@ -317,8 +320,9 @@ private fun PanelCard(content: @Composable () -> Unit) {
 }
 
 /**
- * Material still being read is asked about again every few seconds while its chip is on screen, until the reading ends;
- * any other material keeps the status it was added with.
+ * Material still being read is asked about again every few seconds while its chip is on screen and the app is in the
+ * foreground, and at once when the learner comes back, until the reading ends; any other material keeps the status it
+ * was added with.
  */
 @Composable
 internal fun shownReadStatus(
@@ -329,11 +333,17 @@ internal fun shownReadStatus(
     val resource = remember(sources, item.id) { sources[item.id] }
     val state by resource.collectShown()
     val status = state.value?.readStatus ?: item.readStatus
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     if (status == SourceReadStatus.READING) {
-        LaunchedEffect(resource) {
-            while (true) {
-                delay(READ_CHECK)
-                resource.refresh()
+        LaunchedEffect(resource, lifecycle) {
+            var returned = false
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                if (returned) resource.refresh()
+                returned = true
+                while (true) {
+                    delay(READ_CHECK)
+                    resource.refresh()
+                }
             }
         }
     }
@@ -388,13 +398,16 @@ internal fun AttachedChips(
 
 /** What to do about material with nothing readable in it ([titles], empty for pasted text), on Start and on Today's ask. */
 @Composable
-internal fun UnreadNote(titles: List<String>) {
-    MaterialNote(
-        titles.singleOrNull()?.let {
-            stringResource(R.string.onboarding_material_unread_one, it.ifBlank { stringResource(R.string.onboarding_your_text) })
-        } ?: stringResource(R.string.onboarding_material_unread_some),
-    )
-}
+internal fun unreadHint(titles: List<String>) =
+    titles.singleOrNull()?.let {
+        stringResource(R.string.onboarding_material_unread_one, it.ifBlank { stringResource(R.string.onboarding_your_text) })
+    } ?: stringResource(R.string.onboarding_material_unread_some)
+
+@Composable
+internal fun UnreadNote(titles: List<String>) = UnreadLine(unreadHint(titles))
+
+@Composable
+internal fun UnreadLine(hint: String) = MaterialNote(hint)
 
 @Composable
 private fun MaterialNote(text: String) {

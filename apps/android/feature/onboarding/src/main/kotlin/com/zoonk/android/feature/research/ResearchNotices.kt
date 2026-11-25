@@ -16,8 +16,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.AttachControls
-import com.zoonk.android.feature.onboarding.start.UnreadNote
+import com.zoonk.android.feature.onboarding.start.UnreadLine
 import com.zoonk.android.feature.onboarding.start.shownReadStatus
+import com.zoonk.android.feature.onboarding.start.unreadHint
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -61,11 +62,12 @@ fun UploadRequestNotice(
     val sentUnreadable = sent != null && key(sent.id) { shownReadStatus(store.sources, sent) } == SourceReadStatus.UNREADABLE
     val answered = answer.answered != null && !sentUnreadable
     val unreadable = answer.unreadable ?: sent?.title?.takeIf { sentUnreadable } ?: shown.unreadableUpload?.title
+    val hint = unreadable?.let { unreadHint(listOf(it)) }
     val idle = vm.work == null
 
     Suggestion(
         label = stringResource(R.string.research_upload_label),
-        summary = if (answered) thanks else copy.title,
+        summary = if (answered) thanks else hint ?: copy.title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_document_search),
@@ -78,7 +80,7 @@ fun UploadRequestNotice(
             SuggestionResult(thanks)
         } else {
             SuggestionDescription(copy.body)
-            unreadable?.let { UnreadNote(listOf(it)) }
+            hint?.let { UnreadLine(it) }
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
