@@ -55,8 +55,6 @@ fun DayStepRow(
     isNext: Boolean,
     examDocument: ExamDocument,
     modifier: Modifier = Modifier,
-    lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
-    writingStalled: Boolean = false,
     onOpen: (() -> Unit)? = null,
     busy: Boolean = false,
     openFailed: Boolean = false,
@@ -87,7 +85,7 @@ fun DayStepRow(
                 {
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
-                        StepLines(lessonStatus, writingStalled, step, examDocument)
+                        StepLines(step, examDocument)
                         testOut?.invoke()
                     }
                 }
@@ -125,8 +123,6 @@ fun DayStepRow(
 /** A row's one line: what a lesson belongs to, what practice is on, or how long a challenge is. */
 @Composable
 private fun StepLines(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
     step: DayStep,
     examDocument: ExamDocument,
 ) {
@@ -134,7 +130,7 @@ private fun StepLines(
     val extra = step.subjectExtra
     val line =
         when {
-            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
+            step.isGettingReady -> stringResource(R.string.today_step_being_written)
 
             step.writing == WritingRow.Tomorrow -> blockDetail(step)
 
@@ -213,13 +209,11 @@ fun DayMinutes(minutes: Double) {
 }
 
 /**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
+ * Only a lesson the day's read says is being written claims to be: one nobody has started is
+ * written when the learner opens it, and one whose writing stopped reads as failed.
  */
-fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+val DayStep.isBeingWritten: Boolean
+    get() = kind == StudyBlock.Kind.LEARN && lesson?.status == LessonGenerationStatus.GENERATING
 
-fun DayStep.isGettingReady(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
-): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))
+val DayStep.isGettingReady: Boolean
+    get() = preparing || isBeingWritten

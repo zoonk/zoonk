@@ -184,6 +184,7 @@ class ExamOverTestActivity : ComponentActivity() {
                             buddyName = "Zu",
                             snackbars = ExamOverTest.app.snackbars,
                             refreshIfChanged = { false },
+                            refreshIfLessonsMoved = {},
                         )
                         SnackbarHost(snackbars, Modifier.align(Alignment.BottomCenter))
                     }

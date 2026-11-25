@@ -2,9 +2,10 @@ package com.zoonk.android.feature.today
 
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
-import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudySession
+import java.util.UUID
 
 val DayView.started: Boolean
     get() = steps.any { it.status != StudyBlock.Status.PENDING }
@@ -42,13 +43,17 @@ fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
 fun DayView.studiedToday(): Long = week.days.firstOrNull { it.isToday }?.minutes ?: 0
 
-/** While lessons are written or outlined, Today reads itself again until they land. */
-fun DayView.isWaitingForLessons(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    lessonsComing ||
-        state == StudySession.State.WAITING ||
-        steps.any { step ->
-            (step.status == StudyBlock.Status.PENDING || step.status == StudyBlock.Status.ACTIVE) && step.isBeingWritten(lessonStatus)
-        }
+/** While the day's lessons are outlined, Today reads itself again until they land. */
+val DayView.isWaitingForOutline: Boolean
+    get() = lessonsComing || state == StudySession.State.WAITING
+
+/** The day's lessons still to do that its read says are being written, each with what the read says of it. */
+val DayView.lessonsBeingWritten: Map<UUID, StudyBlockLesson>
+    get() =
+        steps
+            .filter { (it.status == StudyBlock.Status.PENDING || it.status == StudyBlock.Status.ACTIVE) && it.isBeingWritten }
+            .mapNotNull { step -> step.lessonId?.let { id -> step.lesson?.let { id to it } } }
+            .toMap()
 
 /** Being done for the day, resting, or waiting on a mock never hides what comes next; core lists them only then. */
 fun DayView.upNextLessons(pastDate: Boolean): List<com.zoonk.api.models.StudyExtraTimeLessonsInner> =
