@@ -39,6 +39,7 @@ export function TimeAnswer({
   onRetry,
   onUseOffer,
   split = null,
+  subjectsTakenOut = false,
   updating = false,
 }: {
   /** A language goal's aim above the learner's level, which its finish is when they reach. */
@@ -50,6 +51,8 @@ export function TimeAnswer({
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split?: DaySplit | null;
+  /** The learner took a subject out of their plan, so "everything" is only what it kept. */
+  subjectsTakenOut?: boolean;
   updating?: boolean;
 }) {
   const t = useExtracted();
@@ -68,7 +71,14 @@ export function TimeAnswer({
       )}
     >
       <span>
-        <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
+        <LineWords
+          aim={aim}
+          date={date}
+          exam={exam}
+          line={line}
+          minutes={minutes}
+          subjectsTakenOut={subjectsTakenOut}
+        />
       </span>
 
       {split && (
