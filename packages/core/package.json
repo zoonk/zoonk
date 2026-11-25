@@ -492,6 +492,7 @@
     "./library/sources/stored": "./src/library/sources/stored-research-sources.ts",
     "./library/sources/material-reading-scope": "./src/library/sources/material-reading-scope.ts",
     "./library/sources/read-upload-pages": "./src/library/sources/read-upload-pages.ts",
+    "./library/sources/research-upload-answer": "./src/library/sources/research-upload-answer.ts",
     "./library/sources/upload-request": "./src/library/sources/goal-upload-request.ts",
     "./library/sources/upload-token": "./src/library/sources/create-upload-token.ts",
     "./library/sources/visibility": "./src/library/sources/source-visibility.ts",

@@ -16,4 +16,11 @@ export const uploadRequestSchema = z.object({
       description:
         "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes",
     }),
+  unreadableUpload: z
+    .object({ title: z.string() })
+    .nullable()
+    .meta({
+      description:
+        "The latest upload that answered this request and yielded no readable text. Null when there is none",
+    }),
 });

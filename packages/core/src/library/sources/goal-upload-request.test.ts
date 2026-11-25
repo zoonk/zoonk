@@ -19,6 +19,7 @@ async function privateUploadFixture(ownerId: string, goalId: string | null = nul
 
   const source = await sourceFixture({
     contentHash,
+    extractedText: "Biology class notes",
     identityKey: `private:${ownerId}:upload:${contentHash}`,
     kind: "upload",
     ownerId,
@@ -71,6 +72,7 @@ describe(getGoalUploadRequest, () => {
         goalKind: "exam",
         language: "en",
         reason: "noOfficialSource",
+        unreadableUpload: null,
       },
       status: "ready",
     });
@@ -159,6 +161,27 @@ describe(answerGoalUploadRequest, () => {
 
     await expect(readReason(goal.id)).resolves.toBe("noOfficialSource");
     await expect(prisma.learnerSource.count({ where: { sourceId: shared.id } })).resolves.toBe(0);
+  });
+
+  it("leaves the request open and records no answer for a settled unreadable source", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+
+    const photo = await sourceFixture({
+      kind: "upload",
+      ownerId: user.id,
+      readState: "read",
+      visibility: "private",
+    });
+
+    await learnerSourceFixture({ sourceId: photo.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
+
+    await expect(readReason(goal.id)).resolves.toBe("noOfficialSource");
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual([]);
   });
 
   it("takes each upload once, so research asking again needs a new upload", async () => {

@@ -76,6 +76,11 @@ async function linkUpload({
         : { count: 0 };
 
     if (retried.count > 0) {
+      await tx.goalSource.updateMany({
+        data: { answeredAt: null },
+        where: { answeredAt: { not: null }, goal: { userId }, sourceId },
+      });
+
       await oweFollowUps({
         db: tx,
         followUps: [{ input: { sourceId }, kind: "readUpload" }],

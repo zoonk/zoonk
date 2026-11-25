@@ -23852,7 +23852,7 @@
     },
     "/research": {
       "post": {
-        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once, so when research asks that goal again, the answer needs a new upload; the same upload can still answer another goal's request.",
+        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once. A pending read settles before research starts, and when none of the uploads yield text the request reopens.",
         "operationId": "createResearch",
         "security": [
           {
@@ -23919,6 +23919,16 @@
           },
           "409": {
             "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer to this goal (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "No readable text in the submitted uploads (`UPLOAD_UNREADABLE`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -102762,6 +102772,20 @@
                   "classMaterial"
                 ],
                 "description": "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes"
+              },
+              "unreadableUpload": {
+                "nullable": true,
+                "description": "The latest upload that answered this request and yielded no readable text. Null when there is none",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -102769,7 +102793,8 @@
               "goalId",
               "goalKind",
               "language",
-              "reason"
+              "reason",
+              "unreadableUpload"
             ],
             "additionalProperties": false
           }
@@ -104911,6 +104936,20 @@
                   "classMaterial"
                 ],
                 "description": "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes"
+              },
+              "unreadableUpload": {
+                "nullable": true,
+                "description": "The latest upload that answered this request and yielded no readable text. Null when there is none",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -104918,7 +104957,8 @@
               "goalId",
               "goalKind",
               "language",
-              "reason"
+              "reason",
+              "unreadableUpload"
             ],
             "additionalProperties": false
           },
