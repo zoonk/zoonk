@@ -168,8 +168,6 @@ struct TodayView: Decodable, Equatable, Sendable {
   let goal: Goal
   /// At most one, until it's answered.
   let insight: MemoryInsight?
-  /// `ready`, `generating`, `notStarted` or `failed`, by lesson.
-  var lessonStatus: [String: String]
   let mockFunding: MockFunding?
   let notice: Notice?
   let pattern: Pattern?
@@ -184,7 +182,7 @@ struct TodayView: Decodable, Equatable, Sendable {
   let weeklyChallenge: WeeklyChallenge?
 
   func isBeingWritten(_ block: StudyBlock) -> Bool {
-    block.kind == .learn && block.lessonId.map { lessonStatus[$0] == "generating" } == true
+    block.kind == .learn && block.lesson?.status == .generating
   }
 
   /// Mirrors main's `useUpNextLessons`. Once extras are on the list, Continue plays them first.

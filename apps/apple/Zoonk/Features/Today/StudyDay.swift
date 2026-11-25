@@ -56,6 +56,9 @@ struct StudyDay: Decodable, Equatable, Sendable {
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
   let id: String?
+  /// The block core offers while the next one's lesson is written or failed; nil from a server that
+  /// doesn't send it yet.
+  let alternativePosition: Int?
   var blocks: [StudyBlock]
   let brainPower: Int
   let catchUp: CatchUp?
@@ -82,6 +85,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
+  }
+
+  var alternative: StudyBlock? {
+    alternativePosition.flatMap { position in blocks.first { $0.position == position } }
   }
 
   /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
@@ -250,6 +257,8 @@ enum DayState: String, Decodable, Sendable {
   case waiting
 }
 
+typealias LessonStatus = Components.Schemas.LessonGenerationStatus
+
 struct StudyBlock: Decodable, Hashable, Sendable {
   enum Kind: String, Codable, Sendable {
     case checkpoint
@@ -291,6 +300,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     let title: String?
   }
 
+  /// The saved state of the lesson the block teaches, as the day was read.
+  struct Lesson: Decodable, Hashable, Sendable {
+    var status: LessonStatus
+    var setAside: Bool
+  }
+
   struct Checkpoint: Codable, Hashable, Sendable {
     struct MockIdentity: Codable, Hashable, Sendable {
       let day: Int?
@@ -321,6 +336,8 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let extra: Bool
   let fullReview: Bool
   let kind: Kind
+  /// Nil for a block with no lesson to teach, and from a server that doesn't send it yet.
+  var lesson: Lesson?
   let lessonId: String?
   let mistakesOnly: Bool
   let mockPreparationReview: Bool?

@@ -218,7 +218,8 @@ private struct NextStopView: View {
   @State private var isStopping = false
   private var failed: Bool { action.outcome?.failed ?? false }
   private var stopFailed: Bool { action.outcome?.stopFailed ?? false }
-  @State private var lessonStatus: String?
+  /// The lesson's readiness, read after the day's snapshot.
+  @State private var read: LessonRead?
   @State private var lessonKind = GenerationWait.Kind.lesson
   /// The block whose lesson this screen showed being written.
   @State private var waitedFor: String?
@@ -292,7 +293,7 @@ private struct NextStopView: View {
 
     return NextStopWait(
       kind: lessonKind, deckID: deckID, goalID: day.goalId, held: held,
-      isWritten: lessonStatus == "ready",
+      isWritten: lessonStatus == .ready,
       isWaiting: isLessonWorkRunning || held != nil, note: failureNote
     ) {
       daySoFar
@@ -363,7 +364,7 @@ private struct NextStopView: View {
             open(next)
           }
         }
-      } else if writing == .setAside {
+      } else if isSetAside {
         Section {
           StateMessage {
             Label {
@@ -413,9 +414,8 @@ private struct NextStopView: View {
 
       if let alternative, isLessonWorkRunning || isLessonUnavailable || isLessonFailed {
         mainButton(alternativeTitle(alternative), block: alternative)
-      } else if let next, !isLessonUnavailable, !isLessonFailed, !isHeld {
+      } else if let next, lesson.canStart, !isHeld {
         mainButton(continueTitle, block: next)
-          .disabled(isLessonWorkRunning)
           .accessibilityFocused($isStartFocused)
       }
     }
@@ -442,24 +442,28 @@ private struct NextStopView: View {
     next.flatMap(today.writing(for:))
   }
 
-  /// A lesson nobody is writing keeps Continue, whose tap asks for it.
-  private var isLessonWorkRunning: Bool {
-    next?.kind == .learn && lessonStatus != "failed" && lessonStatus != "ready"
-      && (lessonStatus == "generating" || writing?.isRunning == true)
+  private var lesson: NextStopLesson {
+    NextStopLesson(block: next, read: read, writing: writing)
   }
+
+  private var lessonStatus: LessonStatus? { lesson.status }
+  private var isSetAside: Bool { lesson.isSetAside }
+  private var isLessonWorkRunning: Bool { lesson.isWriting }
+  private var isLessonUnavailable: Bool { lesson.isUnavailable }
+  private var isLessonFailed: Bool { lesson.isFailed }
 
   /// Offered, never opened on its own: the learner may be reading, or doing what "While you wait"
   /// offered.
   private var isWrittenWhileWaiting: Bool {
-    lessonStatus == "ready" && waitedFor != nil && waitedFor == next?.id
+    lessonStatus == .ready && waitedFor != nil && waitedFor == next?.id
   }
 
   private var notWrittenLine: String? {
-    switch writing {
-    case .refused(let refusal): LessonUnavailableView(refusal: refusal) {}.said
-    case .setAside: [Self.setAsideTitle, Self.setAsideReason].joinedSentences()
-    default: nil
+    if case .refused(let refusal) = writing {
+      return LessonUnavailableView(refusal: refusal) {}.said
     }
+
+    return isSetAside ? [Self.setAsideTitle, Self.setAsideReason].joinedSentences() : nil
   }
 
   private static let setAsideTitle = String(
@@ -469,18 +473,6 @@ private struct NextStopView: View {
   private static let setAsideReason = String(
     localized: "Your plan goes on without it.",
     table: "Session", comment: "A lesson its quality checks set aside")
-
-  private var isLessonUnavailable: Bool {
-    switch writing {
-    case .refused, .setAside: true
-    default: false
-    }
-  }
-
-  /// Its failure notice asks for it again, so the main button offers other work instead.
-  private var isLessonFailed: Bool {
-    next?.kind == .learn && (writing == .failed || lessonStatus == "failed")
-  }
 
   private var continueTitle: Text {
     next?.status == .active
@@ -503,7 +495,7 @@ private struct NextStopView: View {
   }
 
   private var lessonLine: AnyView? {
-    guard next?.kind == .learn, writing != .setAside else {
+    guard next?.kind == .learn, !isSetAside else {
       return nil
     }
 
@@ -527,12 +519,9 @@ private struct NextStopView: View {
       .foregroundStyle(.mutedForeground))
   }
 
-  /// Mirrors core's `findAlternativeStudyBlock`.
+  /// What core offers meanwhile.
   private var alternative: StudyBlock? {
-    day.blocks.first {
-      $0.id != next?.id && $0.status == .pending && $0.kind != .learn && $0.waitReason == nil
-        && !$0.preparing && $0.writingAvailability?.returnsOn == nil
-    }
+    day.alternative.flatMap { $0.position == next?.position ? nil : $0 }
   }
 
   private func mainButton(_ title: Text, block: StudyBlock) -> some View {
@@ -557,6 +546,8 @@ private struct NextStopView: View {
 
       switch result {
       case .done(.lessonWait):
+        // What the tap was told is newer than any earlier read.
+        read = nil
         waits += 1
       case .done(.session):
         // The session shows this step itself.
@@ -618,53 +609,29 @@ private struct NextStopView: View {
     }
   }
 
-  /// A run that ended without writing the lesson reads as failed, with Try again, unless its checks
-  /// set it aside: that one is never written again, so it isn't read again. Only the plan's
-  /// preparation has no run to follow yet (it picks the lesson, then starts writing it), so that
-  /// wait reads again for a few minutes at most.
+  /// Asks the lesson's readiness on arrival and every few seconds until it's written, following
+  /// the run while one writes it. Only readiness says how it stands: each answer shows at once, and
+  /// one that changes what this screen shows reads the day again. A read that fails keeps what's
+  /// shown. A lesson its checks set aside is never written, so it isn't read again.
   private func followLesson() async {
-    guard let next, next.kind == .learn, writing != .setAside else {
-      lessonStatus = nil
+    guard let next, next.kind == .learn, let lessonID = next.lessonId else {
       return
     }
 
-    for _ in 0..<60 {
-      if let lessonID = next.lessonId {
-        let readiness = await store.lessonReadiness(lessonID: lessonID)
-        lessonStatus = readiness?.status.rawValue
+    while lessonStatus != .ready, !isSetAside {
+      if let readiness = await store.lessonReadiness(lessonID: lessonID), !Task.isCancelled {
+        show(readiness, of: lessonID)
 
-        if let readiness {
-          lessonKind = GenerationWait.Kind(readiness)
-        }
-
-        // Read only while the lesson isn't written, so it's kept for a learner still guessing.
-        if let deckID = readiness?.warmUpId {
-          warmUp = FirstLessonWarmUp(lessonID: lessonID, deckID: deckID)
-        }
-
-        if lessonStatus == "generating" || (writing?.run != nil && lessonStatus != "ready") {
-          lessonStatus = "generating"
-          let followed = await store.followWriting(lessonID: lessonID, run: writing?.run)
-
-          guard !Task.isCancelled else {
-            return
-          }
-
-          lessonStatus = followed?.status.rawValue ?? "failed"
-        }
-
-        if lessonStatus == "ready" {
-          return
-        }
-      } else {
-        lessonStatus = nil
-
-        if let sessionID {
-          await store.session(id: sessionID).refresh()
+        if readiness.status == .generating,
+          let followed = await store.followWriting(
+            lessonID: lessonID, run: readiness.generationId),
+          !Task.isCancelled
+        {
+          show(followed, of: lessonID)
         }
       }
 
-      guard writing == .preparing, lessonStatus != "failed" else {
+      guard lessonStatus != .ready, !isSetAside else {
         return
       }
 
@@ -673,6 +640,26 @@ private struct NextStopView: View {
       } catch {
         return
       }
+    }
+  }
+
+  private func show(_ readiness: Components.Schemas.LessonReadiness, of lessonID: String) {
+    lessonKind = GenerationWait.Kind(readiness)
+
+    // Read only while the lesson isn't written, so it's kept for a learner still guessing.
+    if let deckID = readiness.warmUpId {
+      warmUp = FirstLessonWarmUp(lessonID: lessonID, deckID: deckID)
+    }
+
+    guard let status = LessonStatus(rawValue: readiness.status.rawValue) else {
+      return
+    }
+
+    let shown = (lessonStatus, isSetAside)
+    read = LessonRead(lessonID: lessonID, status: status, setAside: readiness.setAside)
+
+    if shown != (lessonStatus, isSetAside) {
+      store.lessonChanged()
     }
   }
 }

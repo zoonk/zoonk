@@ -23,24 +23,16 @@ enum StudyTap: Sendable {
   case mission
 }
 
+/// What the learner's tap to write a lesson was told.
 enum LessonWriting: Hashable, Sendable {
   case writing(run: String?)
-  case preparing
   /// Every draft was held back by its checks; the plan moved on without it.
   case setAside
   case refused(LessonRunRefusal)
   case failed
 
   var isRunning: Bool {
-    switch self {
-    case .writing, .preparing: true
-    case .setAside, .refused, .failed: false
-    }
-  }
-
-  /// The run the learner's tap started.
-  var run: String? {
-    if case .writing(let run) = self { run } else { nil }
+    if case .writing = self { true } else { false }
   }
 }
 
@@ -57,12 +49,6 @@ final class TodayStore {
   private var answered:
     (owner: AuthenticatedSession, day: OpenedSession.Day, value: AnsweredPlanChange)?
   private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
-  /// Lessons whose run ended without writing them, or that couldn't be followed, while Today still
-  /// reads them as being written; main's Today stops saying so once its wait gives up. Asking for
-  /// one again clears it.
-  private var stalledLessons: [String: AuthenticatedSession] = [:]
-  /// Lessons whose readiness said their checks set them aside: they're never written again.
-  private var setAsideLessons: [String: AuthenticatedSession] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -118,19 +104,12 @@ final class TodayStore {
     return resource
   }
 
-  func isBeingWritten(_ block: StudyBlock, in view: TodayView) -> Bool {
-    view.isBeingWritten(block) && !(block.lessonId.map(isStalled) ?? false)
-  }
-
   func isGettingReady(_ block: StudyBlock, in view: TodayView?) -> Bool {
-    block.preparing || view.map { isBeingWritten(block, in: $0) } == true
+    block.preparing || view?.isBeingWritten(block) == true
   }
 
-  func writingLessonIDs(in view: TodayView) -> [String] {
-    view.writingLessonIDs.filter { !isStalled($0) }
-  }
-
-  /// Reads Today again as each lesson's writing ends.
+  /// Follows each lesson until readiness says no run writes it, then shows its answer at once and
+  /// reads Today again. Only readiness says a lesson stopped.
   func followWriting(lessonIDs: [String]) async {
     guard let owner = cache.session.authenticatedSession else {
       return
@@ -143,40 +122,40 @@ final class TodayStore {
         group.addTask {
           let lesson = try? await api.followWriting(
             token: owner.bearerToken, lessonID: lessonID, run: nil)
-          await self.followed(lessonID, endedAs: lesson?.status.rawValue, owner: owner)
+          await self.followed(lessonID, endedAs: lesson, owner: owner)
         }
       }
     }
   }
 
-  /// What the follow found shows even if Today can't be read again.
-  private func followed(_ lessonID: String, endedAs status: String?, owner: AuthenticatedSession)
-    async
-  {
+  private func followed(
+    _ lessonID: String, endedAs lesson: Components.Schemas.LessonReadiness?,
+    owner: AuthenticatedSession
+  ) async {
     guard !Task.isCancelled, owner == cache.session.authenticatedSession else {
       return
     }
 
-    if let status, status != "failed" {
+    if let lesson, let status = LessonStatus(rawValue: lesson.status.rawValue) {
       today.update { content in
         guard case .day(var view) = content else {
           return content
         }
 
-        view.lessonStatus[lessonID] = status
+        view.session.blocks = view.session.blocks.map { block in
+          var block = block
+          if block.lessonId == lessonID {
+            block.lesson = StudyBlock.Lesson(status: status, setAside: lesson.setAside)
+          }
+          return block
+        }
         return .day(view)
       }
-    } else {
-      stalledLessons[lessonID] = owner
     }
 
     // A read already on its way may predate the lesson's end.
     today.invalidate()
     await today.refresh()
-  }
-
-  private func isStalled(_ lessonID: String) -> Bool {
-    stalledLessons[lessonID].map { $0 == cache.session.authenticatedSession } ?? false
   }
 
   var day: TodayView? {
@@ -199,15 +178,8 @@ final class TodayStore {
     return opened.sessionID
   }
 
-  /// What the learner's tap was told, or that the lesson's checks set it aside once its readiness
-  /// says so, as main's next stop reads it.
+  /// What the learner's tap was told.
   func writing(for block: StudyBlock) -> LessonWriting? {
-    if let lessonID = block.lessonId,
-      setAsideLessons[lessonID].map({ $0 == cache.session.authenticatedSession }) == true
-    {
-      return .setAside
-    }
-
     guard let blockID = block.id, let asked = writings[blockID],
       asked.owner == cache.session.authenticatedSession
     else {
@@ -215,10 +187,6 @@ final class TodayStore {
     }
 
     return asked.writing
-  }
-
-  func setAside(lessonID: String, owner: AuthenticatedSession) {
-    setAsideLessons[lessonID] = owner
   }
 
   /// A step that couldn't open fails after Today is read again, so the learner sees why.
@@ -500,7 +468,6 @@ final class TodayStore {
       throw CancellationError()
     }
 
-    stalledLessons[lesson.lessonId] = nil
     let token = identity.bearerToken
 
     switch try await api.writeLesson(token: token, lessonID: lesson.lessonId) {
@@ -596,8 +563,9 @@ extension StudyDestination {
       self = .lesson(lessonID: lesson.lessonId, sessionID: lesson.sessionId)
     case .unwrittenLesson:
       self = .session
-    case .preparingLesson(let step):
-      self = .lessonWait(blockID: step.blockId, writing: .preparing)
+    // No server sends it any more; a step without its lesson goes back to Today, as `today` does.
+    case .preparingLesson:
+      self = .today
     case .essay(let essay):
       self = .essay(blockID: essay.blockId, start: nil)
     case .checkpoint(let checkpoint):

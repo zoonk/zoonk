@@ -435,17 +435,18 @@ final class TodayStoreTests: XCTestCase {
   }
 
   func testALessonsEndShowsOverAReadOfTodayThatStartedBeforeIt() async throws {
-    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
-    let session = try day(blocks: [lesson], nextPosition: 0, id: "s1")
+    let writing = try block(
+      position: 0, kind: "learn", id: "b1", lessonID: "l1", lesson: .generating)
+    let written = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1", lesson: .ready)
     let api = StudyAPIStub(
-      today: .day(try today(session: session, lessonStatus: ["l1": "generating"])))
+      today: .day(try today(session: day(blocks: [writing], nextPosition: 0, id: "s1"))))
     let store = TodayStore(api: api, cache: signedInCache())
     await store.today.load()
 
     await api.holdNextTodayRead()
     let pull = Task { await store.today.refresh() }
     await api.waitForHeldTodayRead()
-    await api.serve(.day(try today(session: session, lessonStatus: ["l1": "ready"])))
+    await api.serve(.day(try today(session: day(blocks: [written], nextPosition: 0, id: "s1"))))
 
     let followed = expectation(description: "the lesson's end doesn't wait on the older read")
     let follow = Task {
@@ -458,17 +459,15 @@ final class TodayStoreTests: XCTestCase {
     await pull.value
 
     let shown = try XCTUnwrap(store.day)
-    XCTAssertEqual(shown.lessonStatus["l1"], "ready")
-    XCTAssertEqual(store.writingLessonIDs(in: shown), [])
+    XCTAssertEqual(shown.session.blocks.first?.lesson?.status, .ready)
+    XCTAssertEqual(shown.writingLessonIDs, [])
   }
 
   func testAWrittenLessonStopsShowingAsBeingWrittenWhenTodayCantBeReadAgain() async throws {
-    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let lesson = try block(
+      position: 0, kind: "learn", id: "b1", lessonID: "l1", lesson: .generating)
     let api = StudyAPIStub(
-      today: .day(
-        try today(
-          session: day(blocks: [lesson], nextPosition: 0, id: "s1"),
-          lessonStatus: ["l1": "generating"])))
+      today: .day(try today(session: day(blocks: [lesson], nextPosition: 0, id: "s1"))))
     let store = TodayStore(api: api, cache: signedInCache())
     await store.today.load()
     await api.failTodayReads()
@@ -476,32 +475,29 @@ final class TodayStoreTests: XCTestCase {
     await store.followWriting(lessonIDs: ["l1"])
 
     let shown = try XCTUnwrap(store.day)
-    XCTAssertFalse(store.isBeingWritten(lesson, in: shown))
-    XCTAssertEqual(store.writingLessonIDs(in: shown), [])
+    XCTAssertFalse(shown.isBeingWritten(try XCTUnwrap(shown.session.blocks.first)))
+    XCTAssertEqual(shown.writingLessonIDs, [])
   }
 
-  func testALessonWhoseWritingStalledStopsShowingAsBeingWrittenUntilAskedAgain() async throws {
-    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
-    let other = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
-    let view = try today(
-      session: day(blocks: [lesson, other], nextPosition: 0, id: "s1"),
-      lessonStatus: ["l1": "generating", "l2": "generating"])
+  /// A follow that couldn't finish leaves the lesson as the day says; a failed answer from
+  /// readiness shows at once, without waiting for Today's next read.
+  func testOnlyReadinessSaysALessonStoppedBeingWritten() async throws {
+    let failed = try block(
+      position: 0, kind: "learn", id: "b1", lessonID: "l1", lesson: .generating)
+    let unread = try block(
+      position: 1, kind: "learn", id: "b2", lessonID: "l2", lesson: .generating)
     let api = StudyAPIStub(
-      openings: [try unwrittenLesson(block: "b1", lesson: "l1")], today: .day(view),
+      today: .day(try today(session: day(blocks: [failed, unread], nextPosition: 0, id: "s1"))),
       unwrittenLessons: ["l1"], unreachableLessons: ["l2"])
     let store = TodayStore(api: api, cache: signedInCache())
     await store.today.load()
+    await api.failTodayReads()
 
-    await store.followWriting(lessonIDs: ["l1"])
-    await store.followWriting(lessonIDs: ["l2"])
+    await store.followWriting(lessonIDs: ["l1", "l2"])
 
-    XCTAssertFalse(store.isBeingWritten(lesson, in: view), "main stops saying so once it gives up")
-    XCTAssertEqual(store.writingLessonIDs(in: view), [], "nothing is left to follow")
-
-    _ = await store.open(lesson, as: .block, in: view)
-
-    XCTAssertTrue(store.isBeingWritten(lesson, in: view), "the tap asked for it again")
-    XCTAssertFalse(store.isBeingWritten(other, in: view), "a run that couldn't be followed")
+    let shown = try XCTUnwrap(store.day)
+    XCTAssertEqual(shown.session.blocks.map(\.lesson?.status), [.failed, .generating])
+    XCTAssertEqual(shown.writingLessonIDs, ["l2"])
   }
 
   func testAnUnwrittenLessonIsAskedForByTheTap() async throws {
@@ -536,28 +532,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(destination, .lesson(lessonID: "l1", sessionID: "s1"))
     let openings = await api.openedBlocks
     XCTAssertEqual(openings, ["next:b1@s1", "block:b1"], "the server starts it once it's written")
-  }
-
-  func testALessonItsChecksSetAsideShowsSoOnTheNextStopInsteadOfTryAgain() async throws {
-    let read = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
-    let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
-    let api = StudyAPIStub(
-      readiness: try decode(
-        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":true,"status":"failed"}"#
-      ))
-    let cache = signedInCache()
-    let today = TodayStore(api: api, cache: cache)
-    let store = StudySessionStore(api: api, cache: cache, today: today)
-
-    _ = await store.lessonReadiness(lessonID: "l1")
-    _ = await store.followWriting(lessonID: "l2", run: "run-1")
-
-    XCTAssertEqual(today.writing(for: read), .setAside)
-    XCTAssertEqual(today.writing(for: followed), .setAside, "its checks set it aside as it waited")
-
-    await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
-
-    XCTAssertNil(today.writing(for: read), "only for the learner who read it")
   }
 
   func testALessonReadAnsweredAfterItsLearnerLeftIsDropped() async throws {
@@ -600,25 +574,8 @@ final class TodayStoreTests: XCTestCase {
     }
   }
 
-  func testAFailedLessonItsChecksDidntSetAsideStaysOneToTryAgain() async throws {
-    let read = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
-    let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
-    let api = StudyAPIStub(
-      readiness: try decode(
-        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":false,"status":"failed"}"#
-      ))
-    let cache = signedInCache()
-    let today = TodayStore(api: api, cache: cache)
-    let store = StudySessionStore(api: api, cache: cache, today: today)
-
-    _ = await store.lessonReadiness(lessonID: "l1")
-    _ = await store.followWriting(lessonID: "l2", run: "run-1")
-
-    XCTAssertNil(today.writing(for: read))
-    XCTAssertNil(today.writing(for: followed))
-  }
-
-  func testAStepWhoseLessonIsntPickedYetWaitsWhileTheServerPreparesIt() async throws {
+  /// No server sends it any more: a step without its lesson goes back to Today.
+  func testALegacyPreparingLessonOpeningGoesBackToToday() async throws {
     let placeholder = try block(position: 0, kind: "learn", id: "b1")
     let view = try today(session: day(blocks: [placeholder], nextPosition: 0, id: "s1"))
     let api = StudyAPIStub(openings: [
@@ -628,8 +585,8 @@ final class TodayStoreTests: XCTestCase {
 
     let destination = await store.open(placeholder, as: .block, in: view).destination
 
-    XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .preparing))
-    XCTAssertEqual(store.writing(for: placeholder), .preparing)
+    XCTAssertEqual(destination, .today)
+    XCTAssertNil(store.writing(for: placeholder))
   }
 
   func testGettingTodaysLessonsAsksForThemAndReadsTodayAgain() async throws {
@@ -1001,28 +958,33 @@ private func json(_ value: String?) -> String {
 
 private func blockJSON(
   position: Int, kind: String, status: String, id: String?, lessonID: String?,
-  planItemID: String?, checkpoint: String?
+  planItemID: String?, checkpoint: String?, lesson: StudyBlock.Lesson? = nil
 ) -> String {
-  """
-  {"answered":0,"areaId":null,"brainPower":0,"canDo":null,"areas": [], "topics": [], "canTestOut":false,"capsules":[],
-  "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
-  "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
-  "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
-  "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"preparing":false,"questions":3,
-  "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
-  "subject":null,"title":"Block",
-  "waitReason":null,"weakest":false\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
-  """
+  let lessonJSON = lesson.map {
+    #"{"setAside":\#($0.setAside),"status":"\#($0.status.rawValue)"}"#
+  }
+
+  return """
+    {"answered":0,"lesson":\(lessonJSON ?? "null"),"areaId":null,"brainPower":0,"canDo":null,"areas": [], "topics": [], "canTestOut":false,"capsules":[],
+    "chapterId":null,"checkpoint":\(checkpoint ?? "null"),"estimatedBrainPower":5,
+    "estimatedMinutes":5,"extra":false,"fullReview":false,"kind":"\(kind)",
+    "lessonId":\(json(lessonID)),"mistakesOnly":false,"netScored":false,"opensInPlayer":false,"oftenTested":false,
+    "planItemId":\(json(planItemID)),"planItemKey":null,"position":\(position),"preparing":false,"questions":3,
+    "refresh":false,"reinforcement":false,"screen":"session","status":"\(status)",
+    "subject":null,"title":"Block",
+    "waitReason":null,"weakest":false\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
+    """
 }
 
 private func block(
   position: Int, kind: String = "practice", id: String? = nil, lessonID: String? = nil,
-  planItemID: String? = nil, checkpoint: String? = nil
+  planItemID: String? = nil, checkpoint: String? = nil, lesson: LessonStatus? = nil
 ) throws -> StudyBlock {
   try decode(
     blockJSON(
       position: position, kind: kind, status: "pending", id: id, lessonID: lessonID,
-      planItemID: planItemID, checkpoint: checkpoint))
+      planItemID: planItemID, checkpoint: checkpoint,
+      lesson: lesson.map { StudyBlock.Lesson(status: $0, setAside: false) }))
 }
 
 private func dayJSON(
@@ -1033,7 +995,7 @@ private func dayJSON(
     blockJSON(
       position: $0.position, kind: $0.kind.rawValue,
       status: $0.status == .completed ? "completed" : "pending", id: $0.id, lessonID: $0.lessonId,
-      planItemID: $0.planItemId, checkpoint: nil)
+      planItemID: $0.planItemId, checkpoint: nil, lesson: $0.lesson)
   }
 
   return """
@@ -1073,14 +1035,14 @@ private func planChange(
     """)
 }
 
-private func today(
-  session: StudyDay, planChange: TodayView.PlanChange? = nil, lessonStatus: [String: String] = [:]
-) throws -> TodayView {
+private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) throws
+  -> TodayView
+{
   TodayView(
     earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
-    insight: nil, lessonStatus: lessonStatus, mockFunding: nil, notice: nil, pattern: nil,
+    insight: nil, mockFunding: nil, notice: nil, pattern: nil,
     planChange: planChange, progress: nil, session: session, sourceChange: nil,
     studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }
