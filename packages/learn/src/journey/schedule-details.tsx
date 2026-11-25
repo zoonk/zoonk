@@ -151,6 +151,11 @@ export function ScheduleDetails({
             <DailyTimeValue perDay />
           </p>
         )}
+        {showsPaused && (
+          <p className="text-muted-foreground text-sm">
+            {t("Nothing is planned until you resume it.")}
+          </p>
+        )}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
         {(line?.adjust || status.kind === "pastDate") && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">
