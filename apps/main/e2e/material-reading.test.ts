@@ -294,7 +294,10 @@ test.describe("Material that's read after it's added", () => {
 
 async function openUploads(page: Page) {
   await page.goto("/today");
+  await pasteNotes(page);
+}
 
+async function pasteNotes(page: Page) {
   const upload = page.getByRole("button", { name: "Upload a document" });
   const open = page.getByRole("button", { exact: true, name: "Upload" });
 
@@ -347,6 +350,40 @@ test.describe("Today's upload request with material that's read after it's added
       await prisma.source.update({ data: { readState: "read" }, where: { id: photo.id } });
 
       await expect(page.getByText(UNREADABLE_LINE).filter({ visible: true }).first()).toBeVisible();
+      await expect(thanks).toBeHidden();
+    });
+  });
+
+  test("asks again when the same upload, sent again, still has nothing to read", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "stocks" }, async ({ page, user }) => {
+      await prisma.goal.update({
+        data: { researchUploadReason: "noOfficialSource" },
+        where: { id: user.goalId },
+      });
+
+      const photo = await addUpload({ readState: "owed", userId: user.id });
+      const answers = await attachAs(page, { id: photo.id, readStatus: "reading" });
+      const thanks = page.getByText(THANKS).filter({ visible: true }).first();
+      const unreadable = page.getByText(UNREADABLE_LINE).filter({ visible: true }).first();
+
+      await openUploads(page);
+      await page.getByRole("button", { name: "Add text" }).click();
+      await expect(thanks).toBeVisible();
+
+      await prisma.source.update({ data: { readState: "failed" }, where: { id: photo.id } });
+      await expect(unreadable).toBeVisible();
+
+      // Sending it again owes its reading again, and the upload answers with the same source.
+      await prisma.source.update({ data: { readState: "owed" }, where: { id: photo.id } });
+      await pasteNotes(page);
+      await page.getByRole("button", { name: "Add text" }).click();
+      await expect(thanks).toBeVisible();
+      expect(answers).toHaveLength(2);
+
+      await prisma.source.update({ data: { readState: "failed" }, where: { id: photo.id } });
+      await expect(unreadable).toBeVisible();
       await expect(thanks).toBeHidden();
     });
   });
