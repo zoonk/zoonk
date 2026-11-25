@@ -8793,11 +8793,17 @@ msgctxt "4vgz15"
 msgid "Your plan and lessons will use it."
 msgstr "계획과 레슨에 이 자료를 사용할 거예요."
 
-#. Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read.
+#. Read by screen readers after the name of an attached file that's gone, so it must be added again.
 #: src/onboarding/entry/attached-chips.tsx
-msgctxt "yJQoIT"
-msgid "Can't be read"
-msgstr "읽을 수 없음"
+msgctxt "S2mc8R"
+msgid "Can't be read anymore"
+msgstr ""
+
+#. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "vx1YAK"
+msgid "Nothing on it could be read"
+msgstr ""
 
 #. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
 #: src/onboarding/entry/attached-chips.tsx
@@ -8822,10 +8828,10 @@ msgctxt "-9IdF4"
 msgid "We can't read “{title}” anymore. Remove it and add it again."
 msgstr "“{title}”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
 
-#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes.
+#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.
 #: src/onboarding/entry/attached-chips.tsx
-msgctxt "NRfYKw"
-msgid "We couldn't read some of your files. Try sharper photos or paste the text."
+msgctxt "XtqQ1X"
+msgid "We couldn't read these files. Try sharper photos or paste the text."
 msgstr ""
 
 #. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
@@ -9097,12 +9103,6 @@ msgstr "자료에서 답을 찾아 출처 페이지와 함께 보여 드려요."
 msgctxt "Se8ZuD"
 msgid "Reading your material…"
 msgstr "자료를 읽고 있어요…"
-
-#. Shown above the question box when the learner asked about material, like a photo of notes, that's still being read. Their question stays in the box.
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "1gfOeY"
-msgid "We're still reading your material. Ask again in a moment."
-msgstr ""
 
 #. Label of the field where the learner types a question.
 #: src/onboarding/entry/material-questions.tsx
@@ -9989,16 +9989,34 @@ msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
 
-#. Under the learner's material on the goal card, when some of it couldn't be read: nothing on it could be read, or it's gone. "This material" is what the row lists.
+#. Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone.
 #: src/onboarding/understood/understood-material-row.ts
-msgctxt "nT35Ny"
-msgid "Your plan and lessons follow only this material. We couldn't read the rest."
+msgctxt "UiJtWT"
+msgid "We couldn't read these files, so your plan won't follow them."
 msgstr ""
 
 #. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "tbSSWy"
 msgid "We couldn't read it, so your plan won't follow it."
+msgstr ""
+
+#. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2cV0mq"
+msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
+msgstr ""
+
+#. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "c_KACv"
+msgid "Your plan and lessons follow only this material. We couldn't read the other files."
+msgstr ""
+
+#. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "nT35Ny"
+msgid "Your plan and lessons follow only this material. We couldn't read the rest."
 msgstr ""
 
 #: src/onboarding/understood/understood-screen.tsx
