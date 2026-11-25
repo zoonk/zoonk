@@ -4,7 +4,12 @@ import { type ActivityStepContent } from "../activity-templates";
 import { type ActivityIssue } from "../define-activity-template";
 import { issue } from "../templates/_utils/template-helpers";
 import { instrumentJavaScript } from "./instrument-javascript";
-import { MAX_TRACE_STEPS, PROGRAM_TIME_LIMIT_MS, type ProgramKind } from "./program-limits";
+import {
+  MAX_QUERY_ROWS,
+  MAX_TRACE_STEPS,
+  PROGRAM_TIME_LIMIT_MS,
+  type ProgramKind,
+} from "./program-limits";
 import { type ProgramRun } from "./program-runs";
 import { type ProgramJob, runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
@@ -137,7 +142,10 @@ function codeTracerCheck(content: ContentOf<"codeTracer">): ProgramCheck {
 }
 
 function describeTable(table: NonNullable<ProgramRun["table"]>): string {
-  const more = table.rows.length > PREVIEW_ROWS ? ` (${table.rows.length} rows in all)` : "";
+  const count =
+    table.rows.length > MAX_QUERY_ROWS ? `more than ${MAX_QUERY_ROWS}` : String(table.rows.length);
+
+  const more = table.rows.length > PREVIEW_ROWS ? ` (${count} rows in all)` : "";
   return `columns ${JSON.stringify(table.columns)} and rows ${JSON.stringify(table.rows.slice(0, PREVIEW_ROWS))}${more}`;
 }
 

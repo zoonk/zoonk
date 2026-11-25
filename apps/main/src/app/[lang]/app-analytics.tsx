@@ -19,6 +19,7 @@ import {
 } from "@zoonk/core/analytics/posthog-browser";
 import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
+import { afterFirstInput, hadFirstInput } from "@zoonk/utils/after-first-input";
 import {
   getUsageDataChoice,
   parseUsageDataCookie,
@@ -130,12 +131,28 @@ function isUntrackedPage(): boolean {
 // oxlint-disable-next-line no-empty-function -- useSyncExternalStore requires a subscribe that returns an unsubscribe
 const subscribeToNothing = () => () => {};
 
+function subscribeToFirstInput(listener: () => void) {
+  let listening = true;
+
+  void afterFirstInput().then(() => {
+    if (listening) {
+      listener();
+    }
+  });
+
+  return () => {
+    listening = false;
+  };
+}
+
 /** Reads the learner summary in the browser, so no page's render reads who is looking. */
 export function AppAnalytics({ locale }: { locale: string }) {
   const learner = useLearnerSummary();
   const viewer = useMemo(() => getAnalyticsViewer({ learner, locale }), [learner, locale]);
   const share = useUsageDataSharing(viewer?.shareUsageData ?? null);
   const untracked = useSyncExternalStore(subscribeToNothing, isUntrackedPage, () => true);
+  // Vercel counts a visitor when its script loads, so it loads on a person's first input, as PostHog does.
+  const touched = useSyncExternalStore(subscribeToFirstInput, hadFirstInput, () => false);
 
   if (!viewer || share === undefined || untracked) {
     return null;
@@ -157,7 +174,9 @@ export function AppAnalytics({ locale }: { locale: string }) {
           username={viewer.username}
         />
       )}
-      {share && !viewer.disabled ? <Analytics beforeSend={keepWhileSharing} debug={false} /> : null}
+      {share && touched && !viewer.disabled ? (
+        <Analytics beforeSend={keepWhileSharing} debug={false} />
+      ) : null}
     </>
   );
 }

@@ -25,6 +25,17 @@ function countedFormat({
   };
 }
 
+function examDate(date: string, passage: string) {
+  return {
+    date,
+    document: 1,
+    kind: "exam" as const,
+    label: passage.split(" | ")[0]!,
+    passage,
+    startTime: null,
+  };
+}
+
 describe(listBlueprintFacts, () => {
   it("marks facts whose passage isn't in the cited document, or cite a missing one", () => {
     const facts = listBlueprintFacts({ documents: DOCUMENTS, extraction: blueprintExtraction() });
@@ -110,6 +121,7 @@ describe(listBlueprintFacts, () => {
       "14.3 O cálculo das proficiências terá como base a Teoria de Resposta ao Item (TRI).",
       "Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
       "LINGUAGENS: 1 Língua Portuguesa. 2 Literatura.",
+      "| Aplicação | 8/11 e 15/11/2026 |",
     ]);
 
     expect(passages["mock.sections.1"]).toHaveLength(2);
@@ -293,6 +305,59 @@ describe(listBlueprintFacts, () => {
     expect(cited("mock.sections.0.minutes")).toStrictEqual([time, count, overview]);
     expect(cited("mock.sections.0.questions")).toStrictEqual([time, count, overview]);
     expect(facts.find((fact) => fact.id === "mock.sections.0.minutes")?.found).toBe(true);
+  });
+
+  it("checks a section's exam day against every exam date, and a total apart from written tasks", () => {
+    const objective = "Aplicação da prova objetiva da Primeira Fase | 29/3/2026";
+    const portuguese = "Aplicação da prova escrita de Língua Portuguesa (manhã) | 25/4/2026";
+    const law = "Aplicação da prova escrita de Direito (manhã) | 3/5/2026";
+    const lasts = "Direito | 5 horas | Duas questões discursivas de até 60 linhas";
+    const extraction = blueprintExtraction();
+
+    const facts = listBlueprintFacts({
+      documents: [{ sourceId: "notice", text: [objective, portuguese, law, lasts].join("\n") }],
+      extraction: {
+        ...extraction,
+        dates: [
+          examDate("2026-03-29", objective),
+          examDate("2026-04-25", portuguese),
+          examDate("2026-05-03", law),
+        ],
+        mock: {
+          ...extraction.mock!,
+          passages: [],
+          sections: [
+            {
+              breakAfterMinutes: null,
+              day: 3,
+              kind: "written",
+              minutes: 300,
+              name: "Direito",
+              navigation: null,
+              passages: [
+                { document: 1, passage: lasts },
+                { document: 1, passage: law },
+              ],
+              questions: null,
+              tasks: [],
+              tools: null,
+            },
+          ],
+          totalQuestions: 240,
+        },
+      },
+    });
+
+    const cited = (id: string) =>
+      facts.find((fact) => fact.id === id)?.citations.map((citation) => citation.passage);
+
+    expect(facts.find((fact) => fact.id === "mock.totalQuestions")?.statement).toBe(
+      "The exam has 240 questions or items in total, not counting its written tasks",
+    );
+
+    expect(cited("mock.sections.0.day")).toStrictEqual([lasts, law, objective, portuguese]);
+    expect(cited("mock.sections.0.minutes")).toStrictEqual([lasts, law, objective, portuguese]);
+    expect(cited("mock.sections.0")).toStrictEqual([lasts, law]);
   });
 
   it("checks a format's partial credit against the marking it quotes apart from the format", () => {
