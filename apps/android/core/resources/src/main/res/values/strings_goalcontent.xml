@@ -109,13 +109,13 @@
     <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
     <string name="goalcontent_subject_time">This subject isn\'t in your plan. Other subjects come first.</string>
     <string name="goalcontent_subject_missing">This subject isn\'t in your plan yet.</string>
-    <!-- On a module's page, on a plan that isn't an exam: the learner took the module out of their plan. Followed by a button to add it back. -->
+    <!-- On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back. -->
     <string name="goalcontent_module_skipped">You took this module out of your plan.</string>
-    <!-- On a module's page, on a plan that isn't an exam: their study time goes to other modules first. Followed by a link to change the plan. -->
+    <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
     <string name="goalcontent_module_time">This module isn\'t in your plan. Other modules come first.</string>
-    <!-- On a module's page, on a plan that isn't an exam: the plan doesn't teach the module yet. -->
+    <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">This module isn\'t in your plan yet.</string>
-    <!-- Heads the list of what a module or subject out of the learner's plan would teach, one name per row. -->
+    <!-- Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it. -->
     <string name="goalcontent_covers">What it covers</string>
     <string name="goalcontent_adjust_plan">Adjust plan</string>
     <string name="goalcontent_add_back">Add it back</string>
