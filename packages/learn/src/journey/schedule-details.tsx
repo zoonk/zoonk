@@ -21,8 +21,7 @@ import { usePlanScreen } from "../plan/plan-context";
 import { usePlanStateLine } from "../plan/plan-notice";
 import { DailyTimeValue } from "../plan/plan-properties";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
-import { useStudyDaysText } from "../plan/use-study-days-text";
-import { showsResumeSchedule } from "./schedule-state";
+import { showsPausedSchedule } from "./schedule-state";
 
 const WEEK_TITLE_ID = "schedule-week-title";
 
@@ -75,10 +74,14 @@ function PlanWeek() {
   );
 }
 
-function useResumeScheduleDays() {
-  const studyDays = useStudyDaysText();
-  const { weekdayMinutes } = usePlanScreen().plan.schedule;
-  return studyDays(weekdayMinutes);
+/** "Paused", the schedule's state while nothing is planned. */
+function usePausedText() {
+  const t = useExtracted();
+
+  return t({
+    description: "The plan's schedule while the learner has paused the goal.",
+    message: "Paused",
+  });
 }
 
 export function useScheduleNumber({
@@ -92,13 +95,11 @@ export function useScheduleNumber({
 }) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
-  const scheduleDays = useResumeScheduleDays();
-  const formatDuration = useFormatDuration();
-  const { dailyMinutes } = usePlanScreen().plan.schedule;
+  const pausedText = usePausedText();
   const label = t("Schedule");
 
-  if (showsResumeSchedule({ paused, status })) {
-    return { detail: scheduleDays, label, value: <DailyTimeValue readout /> };
+  if (showsPausedSchedule({ paused, status })) {
+    return { detail: null, label, value: pausedText };
   }
 
   if (status.kind === "pastDate") {
@@ -116,10 +117,7 @@ export function useScheduleNumber({
   }
 
   return {
-    detail:
-      status.kind === "needsAdjusting" || timeShownBeside
-        ? null
-        : t("About {time} a day", { time: formatDuration(dailyMinutes) }),
+    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : <DailyTimeValue readout />,
     label,
     value: statusText(status),
   };
@@ -139,22 +137,18 @@ export function ScheduleDetails({
   const t = useExtracted();
   const routes = useLearnRoutes();
   const statusText = usePlanStatusText();
+  const pausedText = usePausedText();
   const stateLine = usePlanStateLine();
-
-  const scheduleDays = useResumeScheduleDays();
-  const formatDuration = useFormatDuration();
-  const { dailyMinutes } = usePlanScreen().plan.schedule;
-  const resume = showsResumeSchedule({ paused, status });
-  const line = resume ? null : stateLine;
+  const showsPaused = showsPausedSchedule({ paused, status });
+  const line = showsPaused ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{resume ? <DailyTimeValue readout /> : statusText(status)}</p>
-        {resume && <p className="text-muted-foreground text-sm">{scheduleDays}</p>}
-        {!resume && status.kind === "onTrack" && (
+        <p className="font-medium">{showsPaused ? pausedText : statusText(status)}</p>
+        {!showsPaused && status.kind === "onTrack" && (
           <p className="text-muted-foreground text-sm">
-            {t("About {time} a day", { time: formatDuration(dailyMinutes) })}
+            <DailyTimeValue readout />
           </p>
         )}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
