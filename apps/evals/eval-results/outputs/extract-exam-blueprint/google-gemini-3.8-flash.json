@@ -19,9 +19,29 @@
       "message": "google/gemini-3.8-flash stopped the blueprint reading for its content.",
       "reason": "other",
       "testCaseId": "enem-2026-matriz-1"
+    },
+    {
+      "calls": [
+        {
+          "gatewayCharge": {
+            "coversUsage": false,
+            "usd": 0
+          },
+          "modelId": "google/gemini-3.8-flash",
+          "usage": {
+            "cacheReadTokens": 39562,
+            "inputTokens": 40430,
+            "outputTokens": 31101,
+            "reasoningTokens": 15261
+          }
+        }
+      ],
+      "message": "google/gemini-3.8-flash stopped the blueprint reading for its content.",
+      "reason": "other",
+      "testCaseId": "cacd-2026-full-notice-1"
     }
   ],
-  "generatedAt": "2026-11-20T23:13:22.125Z",
+  "generatedAt": "2026-11-25T01:01:23.734Z",
   "modelId": "google/gemini-3.8-flash",
   "outputs": [
     {

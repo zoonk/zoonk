@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -74,6 +76,7 @@ import com.zoonk.android.ui.components.ICON_BUTTON_SHAPE
 import com.zoonk.android.ui.components.LearnerBubble
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.format.WORDS_MARK
 import com.zoonk.android.ui.format.formatClock
@@ -557,31 +560,36 @@ private fun TypedReply(
 ) {
     val field = remember { FocusRequester() }
     LaunchedEffect(Unit) { if (focusOnStart) field.requestFocus() }
-    var text by rememberSaveable { mutableStateOf("") }
+    val input = rememberTextFieldState()
+    // Clearing a sent reply isn't the learner typing; the next reply's first letters, seen before the clear, are.
+    var sent by remember { mutableStateOf(false) }
+    input.ObserveEdits { text ->
+        val clearing = sent && text.isEmpty()
+        sent = false
+        if (!clearing) onTyping()
+    }
     val send = {
+        val text = input.text.toString()
         if (text.isNotBlank()) {
             onSend(text)
-            text = ""
+            sent = true
+            input.clearText()
         }
     }
     val label = stringResource(R.string.conversation_type_reply)
     OutlinedTextField(
-        value = text,
-        onValueChange = {
-            text = it
-            onTyping()
-        },
+        state = input,
         modifier = Modifier.fillMaxWidth().focusRequester(field).semantics { contentDescription = label },
         enabled = canSend,
         placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
         trailingIcon = {
-            IconButton(onClick = send, enabled = canSend && text.isNotBlank()) {
+            IconButton(onClick = send, enabled = canSend && input.text.isNotBlank()) {
                 Icon(painterResource(R.drawable.ic_send), contentDescription = stringResource(R.string.conversation_send))
             }
         },
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-        keyboardActions = KeyboardActions(onSend = { send() }),
+        onKeyboardAction = { send() },
     )
 }
 

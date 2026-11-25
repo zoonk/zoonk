@@ -400,6 +400,8 @@ struct LessonAnswerField: View {
   let check: (@MainActor () -> Void)?
   let onChange: @MainActor (String) -> Void
 
+  private static let answerLimit = 1000
+
   private var prompt: Text {
     isNumber
       ? Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
@@ -407,19 +409,38 @@ struct LessonAnswerField: View {
   }
 
   var body: some View {
-    MultilineTextField(
-      text: Binding(get: { text }, set: onChange), prompt: prompt, label: label ?? prompt
-    ) {
-      isFocused.wrappedValue = false
-      check?()
+    field
+      .submitLabel(.done)
+      .focused(isFocused)
+      .disabled(isLocked)
+      .typeStyle(isNumber ? .reading.monospacedDigit() : .reading)
+      .fieldBorder(isFocused: isFocused.wrappedValue, minHeight: isNumber ? 48 : 40)
+      // The lesson scrolls to the field's layout bounds, which omit its outer focus ring.
+      .padding(.bottom, 4)
+  }
+
+  @ViewBuilder
+  private var field: some View {
+    let answer = Binding(get: { text }, set: onChange)
+
+    if isNumber {
+      FittedTextInput(text: answer, limit: Self.answerLimit) { text, selection in
+        TextField(text: text, selection: selection, prompt: prompt) { label ?? prompt }
+          .keyboardType(.numbersAndPunctuation)
+          .onSubmit(submit)
+      }
+    } else {
+      MultilineTextField(
+        text: answer, limit: Self.answerLimit, prompt: prompt, label: label ?? prompt,
+        onSubmit: submit
+      )
+      .lineLimit(4...8)
     }
-    .lineLimit(isNumber ? 1...1 : 4...8)
-    .keyboardType(isNumber ? .numbersAndPunctuation : .default)
-    .submitLabel(.done)
-    .focused(isFocused)
-    .disabled(isLocked)
-    .typeStyle(isNumber ? .reading.monospacedDigit() : .reading)
-    .fieldBorder(isFocused: isFocused.wrappedValue, minHeight: isNumber ? 48 : 40)
+  }
+
+  private func submit() {
+    isFocused.wrappedValue = false
+    check?()
   }
 }
 

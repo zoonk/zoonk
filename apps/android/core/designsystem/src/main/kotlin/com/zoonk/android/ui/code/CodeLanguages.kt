@@ -119,7 +119,9 @@ private val LANGUAGES =
                 "all alter and as asc between by case create cross delete desc distinct drop else end exists false foreign from full " +
                     "group having in index inner insert into is join key left like limit not null offset on or order outer primary " +
                     "references right select set table then true union update values view when where with",
-            builtins = "avg coalesce count length lower max min now round substr sum upper",
+            builtins =
+                "abs acos acosh asin asinh atan atan2 atanh avg ceil ceiling coalesce cos cosh count degrees exp floor length ln " +
+                    "log log10 log2 lower max min mod now pi pow power radians round sign sin sinh sqrt substr sum tan tanh trunc upper",
             ignoreCase = true,
         ),
         Language(

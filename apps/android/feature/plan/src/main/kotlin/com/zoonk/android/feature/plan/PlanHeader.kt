@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,6 +45,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -168,9 +171,11 @@ private fun RenameGoalDialog(
     dialog: RenameDialog,
     rename: GoalRename,
 ) {
-    var name by rememberSaveable { mutableStateOf(displayName) }
-    val trimmed = name.trim()
-    val save = { if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed) }
+    val nameField = rememberTextFieldState(displayName)
+    val save = {
+        val trimmed = nameField.text.trim().toString()
+        if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed)
+    }
 
     AlertDialog(
         onDismissRequest = rename.onClose,
@@ -179,20 +184,20 @@ private fun RenameGoalDialog(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.plan_rename_description))
                 OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it.take(MAX_GOAL_NAME_LENGTH) },
+                    state = nameField,
+                    inputTransformation = InputTransformation.fitTo(MAX_GOAL_NAME_LENGTH),
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.plan_rename_label),
                     supportingText = if (dialog.failed) ({ Text(stringResource(R.string.plan_save_failed)) }) else null,
                     isError = dialog.failed,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { save() }),
-                    singleLine = true,
+                    onKeyboardAction = { save() },
+                    lineLimits = TextFieldLineLimits.SingleLine,
                 )
             }
         },
         confirmButton = {
-            TextButton(onClick = save, enabled = trimmed.isNotEmpty(), busy = dialog.saving) {
+            TextButton(onClick = save, enabled = nameField.text.isNotBlank(), busy = dialog.saving) {
                 Text(stringResource(R.string.plan_save))
             }
         },

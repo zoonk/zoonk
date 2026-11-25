@@ -62,6 +62,8 @@ struct GoalStartEntry: View {
 }
 
 struct SentGoal {
+  static let promptLimit = 2000
+
   var words: String
   var material: [AttachedSource] = []
   var intent: MaterialIntent?
@@ -166,9 +168,6 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
 
   @FocusState private var isFocused: Bool
 
-  /// The same limit core applies to a typed goal.
-  private var maxLength: Int { 2000 }
-
   var body: some View {
     Section {
       VStack(spacing: 8) {
@@ -186,7 +185,8 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
           .onTapGesture { isFocused = true }
 
           MultilineTextField(
-            text: $words, prompt: Text(placeholder).foregroundStyle(.mutedForeground),
+            text: $words, limit: SentGoal.promptLimit,
+            prompt: Text(placeholder).foregroundStyle(.mutedForeground),
             label: Text(
               "I want to", tableName: "Onboarding",
               comment: "The goal box's label, before the learner's words"),
@@ -195,12 +195,7 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
           .typeStyle(.lead)
           .lineLimit(1...6)
           .focused($isFocused)
-          .submitLabel(.send)
-          .onChange(of: words) { _, value in
-            if value.count > maxLength {
-              words = String(value.prefix(maxLength))
-            }
-          }
+          .submitLabel(.go)
         }
 
         HStack(alignment: .bottom, spacing: 4) {

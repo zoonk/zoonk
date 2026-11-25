@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.answerTone
+import com.zoonk.android.ui.components.fitTo
 
 /**
  * Main's `BuddyPicker`: the four buddies, each with its art, name and tagline, then an optional
@@ -38,9 +42,8 @@ import com.zoonk.android.ui.components.answerTone
 @Composable
 fun BuddyPicker(
     kind: BuddyKind,
-    name: String,
+    name: TextFieldState,
     onSelect: (BuddyKind) -> Unit,
-    onNameChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     glasses: BuddyGlasses = BuddyGlasses.Round,
     look: BuddyLook = BuddyLook(energy = NEW_BUDDY_ENERGY),
@@ -65,13 +68,13 @@ fun BuddyPicker(
         }
 
         OutlinedTextField(
-            value = name,
-            onValueChange = { onNameChange(it.take(MAX_NAME_LENGTH)) },
+            state = name,
+            inputTransformation = InputTransformation.fitTo(MAX_NAME_LENGTH),
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.buddy_picker_name),
             placeholder = { Text(buddyName(kind, null), color = MaterialTheme.colorScheme.onSurface) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+            lineLimits = TextFieldLineLimits.SingleLine,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         )
     }
 }

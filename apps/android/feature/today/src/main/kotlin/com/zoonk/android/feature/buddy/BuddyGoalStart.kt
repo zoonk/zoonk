@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,7 +64,7 @@ internal fun BuddyGoalStart(
     val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.studyOpener) }
     val look = status.look()
     val name = buddyName(look.kind, status.buddy.name)
-    var goal by rememberSaveable(ask) { mutableStateOf(ask.orEmpty()) }
+    val goal = androidx.compose.runtime.key(ask) { rememberTextFieldState(ask.orEmpty()) }
     var wearing by rememberSaveable { mutableStateOf(false) }
     val examples = rememberGoalExamples().take(EXAMPLES).map { it.label }
 
@@ -101,11 +103,10 @@ internal fun BuddyGoalStart(
                     Modifier.semantics { contentDescription = examplesLabel },
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    examples.forEach { example -> GoalChip(example) { goal = example } }
+                    examples.forEach { example -> GoalChip(example) { goal.setTextAndPlaceCursorAtEnd(example) } }
                 }
                 GoalBox(
-                    value = goal,
-                    onValueChange = { goal = it },
+                    state = goal,
                     onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) },
                     placeholder = stringResource(R.string.buddy_page_goal_placeholder),
                     hiddenLabel = stringResource(R.string.buddy_page_goal_label),

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./after-first-input": "./src/after-first-input.ts",
     "./after-page-load": "./src/after-page-load.ts",
     "./aggregation": "./src/aggregation.ts",
     "./android-apps": "./src/android-apps.ts",

@@ -19,6 +19,12 @@ const SCORING_WORDS: Record<Exclude<Mock["scoring"]["method"], "other">, string>
   wrongCancelsRight: "a wrong answer loses points",
 };
 
+/** Boards count true-false "itens"; mocks size objective sittings from it, so written tasks stay out. */
+function describeQuestionTotal({ mock, total }: { mock: Mock; total: number }) {
+  const written = mock.sections.some((section) => section.kind === "written");
+  return `The exam has ${total} questions or items in total${written ? ", not counting its written tasks" : ""}`;
+}
+
 function describeScoring(scoring: Mock["scoring"]): string {
   return scoring.method === "other" ? scoring.description : SCORING_WORDS[scoring.method];
 }
@@ -115,15 +121,26 @@ function taskFacts({
   });
 }
 
+/** A day number counts the notice's exam dates, so its claim reads them all. */
+function listExamDayPassages({ extraction, found }: FactSource): Passage[] {
+  return found.filter((passage) =>
+    extraction.dates.some(
+      (date) =>
+        date.kind === "exam" &&
+        date.document === passage.document &&
+        date.passage === passage.passage,
+    ),
+  );
+}
+
 function sectionFacts({
   documents,
+  extraction,
   found,
   mock,
-}: {
-  documents: ExtractionDocument[];
-  found: Passage[];
-  mock: Mock;
-}): FactEntry[] {
+}: FactSource & { mock: Mock }): FactEntry[] {
+  const examDays = listExamDayPassages({ documents, extraction, found });
+
   return mock.sections.flatMap((section, index) => {
     const id = `mock.sections.${index}`;
     const name = `Exam section "${section.name}"`;
@@ -134,13 +151,8 @@ function sectionFacts({
       own: [...section.passages, ...mock.passages],
     });
 
-    const claims = toFacts({
+    const dayClaims = toFacts({
       claims: [
-        { id, statement: name },
-        section.questions !== null && {
-          id: `${id}.questions`,
-          statement: `${name} has ${section.questions} questions`,
-        },
         section.minutes !== null && {
           id: `${id}.minutes`,
           statement: `The sitting for ${name}${section.day === null ? "" : ` on exam day ${section.day}`} lasts ${section.minutes} minutes`,
@@ -148,6 +160,18 @@ function sectionFacts({
         section.day !== null && {
           id: `${id}.day`,
           statement: `${name} is on exam day ${section.day}`,
+        },
+      ],
+      documents,
+      passages: section.day === null ? passages : uniquePassages([...passages, ...examDays]),
+    });
+
+    const claims = toFacts({
+      claims: [
+        { id, statement: name },
+        section.questions !== null && {
+          id: `${id}.questions`,
+          statement: `${name} has ${section.questions} questions`,
         },
         Boolean(section.session) && {
           id: `${id}.session`,
@@ -170,7 +194,7 @@ function sectionFacts({
       passages,
     });
 
-    return [...claims, ...taskFacts({ documents, id, name, passages, section })];
+    return [...claims, ...dayClaims, ...taskFacts({ documents, id, name, passages, section })];
   });
 }
 
@@ -213,7 +237,7 @@ export function mockFacts({ documents, extraction, found }: FactSource): FactEnt
     claims: [
       mock.totalQuestions !== null && {
         id: "mock.totalQuestions",
-        statement: `The exam has ${mock.totalQuestions} questions in total`,
+        statement: describeQuestionTotal({ mock, total: mock.totalQuestions }),
       },
       mock.timeLimitMinutes !== null && {
         id: "mock.timeLimitMinutes",
@@ -233,6 +257,6 @@ export function mockFacts({ documents, extraction, found }: FactSource): FactEnt
     ...scoring,
     ...conditions,
     ...pointsFacts({ documents, found, scoring: mock.scoring }),
-    ...sectionFacts({ documents, found, mock }),
+    ...sectionFacts({ documents, extraction, found, mock }),
   ];
 }

@@ -6,8 +6,9 @@ import {
   type SuggestedGoal,
   prisma,
 } from "@zoonk/db";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
 import { lessonSkillFixture } from "./library-lessons";
 import { skillFixture } from "./skills";
@@ -47,6 +48,14 @@ export async function goalFixture({
       ...attrs,
     },
   });
+}
+
+/**
+ * A date column keeps an instant's UTC date, so `Date.now() + days` is a day off whenever the
+ * learner's date and UTC's differ.
+ */
+export function daysAfterLearnerToday({ days, timeZone }: { days: number; timeZone: string }) {
+  return new Date(getDateInTimeZone({ date: new Date(), timeZone }).getTime() + days * MS_PER_DAY);
 }
 
 type PlanAttrs = FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> &
@@ -166,9 +175,9 @@ function graphFromItems({
   return { ...graph, phases: graphPhases, skills: [...skills, ...plannedSkills(added)] };
 }
 
-function datePhases(value: unknown) {
+function datePhases({ timeZone, value }: { timeZone: string; value: unknown }) {
   const phases = Array.isArray(value) ? value.filter((phase) => isStoredPhase(phase)) : [];
-  const startDate = toIsoDay(toUTCMidnight(new Date()));
+  const startDate = toIsoDay(daysAfterLearnerToday({ days: 0, timeZone }));
 
   if (phases.some((phase) => phase.startDate)) {
     return phases;
@@ -208,11 +217,14 @@ function placeChallenges({
  */
 export async function layOutPlanFixture(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({
-    include: { items: { include: { skill: true }, orderBy: { position: "asc" } } },
+    include: {
+      goal: { select: { timezone: true } },
+      items: { include: { skill: true }, orderBy: { position: "asc" } },
+    },
     where: { id: planId },
   });
 
-  const phases = datePhases(plan.phases);
+  const phases = datePhases({ timeZone: plan.goal.timezone ?? "UTC", value: plan.phases });
 
   const lessons = plan.items.filter(
     (item) => LEARN_KINDS.has(item.kind) && item.status !== "skipped",

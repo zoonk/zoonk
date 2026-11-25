@@ -1,5 +1,7 @@
 import SwiftUI
 
+let onboardingAnswerLimit = 200
+
 /// A single choice moves on as soon as it's picked; boxes wait for Continue, and optional ones can be
 /// skipped.
 struct QuestionStep: View {
@@ -587,13 +589,13 @@ private struct ReasonQuestion: View {
         label: Text(
           "Which certificate?", tableName: "Onboarding",
           comment: "Box for the certificate a language learner wants to pass"),
-        prompt: nil, text: $words)
+        prompt: nil, text: $words, limit: onboardingAnswerLimit)
     } else {
       LabeledField(
         label: Text(
           "In your own words", tableName: "Onboarding",
           comment: "Box for a language learner's own reason"),
-        prompt: nil, text: $words)
+        prompt: nil, text: $words, limit: onboardingAnswerLimit)
     }
   }
 
@@ -658,28 +660,28 @@ private struct RoleQuestion: View {
             prompt: Text(
               "E.g., data analyst, nurse", tableName: "Onboarding",
               comment: "Example roles a career change aims for"),
-            text: $second)
+            text: $second, limit: onboardingAnswerLimit)
           LabeledField(
             label: Text(
               "What you do now", tableName: "Onboarding",
               comment: "Box for the learner's work before a career change"),
             prompt: Text(
               "E.g., teacher, student", tableName: "Onboarding", comment: "Example current roles"),
-            text: $role)
+            text: $role, limit: onboardingAnswerLimit)
         } else {
           LabeledField(
             label: Text(
               "Your role", tableName: "Onboarding", comment: "Box for the learner's role at work"),
             prompt: Text(
               "E.g., nurse, teacher", tableName: "Onboarding", comment: "Example roles at work"),
-            text: $role)
+            text: $role, limit: onboardingAnswerLimit)
           LabeledField(
             label: Text(
               "What you'll use it for", tableName: "Onboarding",
               comment: "Box for what the learner uses the subject for at work"),
             prompt: Text(
               "E.g., reports, A/B tests", tableName: "Onboarding", comment: "Example uses at work"),
-            text: $second)
+            text: $second, limit: onboardingAnswerLimit)
         }
       }
       .locksWhileSaving()
@@ -700,6 +702,8 @@ struct LabeledField: View {
   let label: Text
   let prompt: Text?
   @Binding var text: String
+  var limit: Int?
+  var multiline = true
   /// The screen's, where it moves focus into the field itself.
   var focus: FocusState<Bool>.Binding?
 
@@ -710,8 +714,18 @@ struct LabeledField: View {
 
     FormField(title: label, isFocused: focus.wrappedValue) {
       // Without a prompt, the field would repeat its label, already shown above, as its placeholder.
-      MultilineTextField(text: $text, prompt: prompt ?? Text(verbatim: ""), label: label)
-        .focused(focus)
+      let placeholder = prompt ?? Text(verbatim: "")
+
+      if let limit, !multiline {
+        FittedTextInput(text: $text, limit: limit) { text, selection in
+          TextField(text: text, selection: selection, prompt: placeholder) { label }
+            .submitLabel(.done)
+            .focused(focus)
+        }
+      } else {
+        MultilineTextField(text: $text, limit: limit, prompt: placeholder, label: label)
+          .focused(focus)
+      }
     }
   }
 }
@@ -750,7 +764,7 @@ private struct TextQuestion: View {
       StepHeader(subject: subject, title: title, description: nil)
 
       Section {
-        LabeledField(label: label, prompt: prompt, text: $text)
+        LabeledField(label: label, prompt: prompt, text: $text, limit: onboardingAnswerLimit)
       }
       .locksWhileSaving()
 
@@ -1085,7 +1099,7 @@ private struct FollowUpsQuestion: View {
             label: Text(questions[index]),
             prompt: Text(
               "Your answer", tableName: "Onboarding", comment: "Box answering a follow-up question"),
-            text: $answers[index])
+            text: $answers[index], limit: onboardingAnswerLimit)
         }
       }
       .locksWhileSaving()
@@ -1361,12 +1375,14 @@ private struct BuddyQuestion: View {
         ))
 
       BuddyPickerSections(kind: $kind, name: $name)
+        .onSubmit(submit)
         .locksWhileSaving()
-
     } buttons: {
-      StepButtons {
-        onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
-      }
+      StepButtons(onContinue: submit)
     }
+  }
+
+  private func submit() {
+    onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
   }
 }

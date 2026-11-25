@@ -39,6 +39,7 @@ import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.readOnlyFieldState
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.PlanBase
@@ -232,8 +233,7 @@ private fun SubjectChoice(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it && enabled }) {
         OutlinedTextField(
-            value = value?.let { label(it) } ?: stringResource(R.string.plan_different_choices),
-            onValueChange = {},
+            state = readOnlyFieldState(value?.let { label(it) } ?: stringResource(R.string.plan_different_choices)),
             modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
             enabled = enabled,
             readOnly = true,

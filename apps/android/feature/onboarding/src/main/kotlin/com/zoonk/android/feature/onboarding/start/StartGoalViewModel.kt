@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.onboarding.start
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +9,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.EventTracker
 import com.zoonk.android.data.GenerationFailure
@@ -62,7 +66,6 @@ sealed interface StartScreen {
 @Serializable
 data class StartFlowState(
     val screen: StartScreen = StartScreen.Entry,
-    val words: String = "",
     val attached: List<AttachedSource> = emptyList(),
     val intent: MaterialIntent? = null,
     /** When the wait for the draft's read began on this device: its send, a Try again that starts it over or the screen opening on it. */
@@ -81,6 +84,7 @@ data class CreatedGoal(
 )
 
 /** Reading words, reading them again and creating goals are POSTs from the learner's taps; opening a draft only reads it. */
+@OptIn(SavedStateHandleSaveableApi::class)
 class StartGoalViewModel(
     private val store: OnboardingStore,
     handle: SavedStateHandle,
@@ -100,14 +104,13 @@ class StartGoalViewModel(
     private var saved by handle.saved {
         StartFlowState(
             screen = draftId?.let(StartScreen::Draft) ?: StartScreen.Entry,
-            words = goal.orEmpty(),
             waitStartedAt = draftId?.let { System.currentTimeMillis() },
         )
     }
 
     var flow by mutableStateOf(
         saved.let {
-            if (it.screen is StartScreen.Sending) it.copy(screen = StartScreen.Entry, words = it.screen.goal) else it
+            if (it.screen is StartScreen.Sending) it.copy(screen = StartScreen.Entry) else it
         },
     )
         private set
@@ -192,7 +195,10 @@ class StartGoalViewModel(
         }
     }
 
-    fun setWords(words: String) = update { it.copy(words = words) }
+    val words =
+        handle.saveable(key = "goalWords", saver = TextFieldState.Saver) {
+            TextFieldState((saved.screen as? StartScreen.Sending)?.goal ?: goal.orEmpty())
+        }
 
     fun setAttached(attached: List<AttachedSource>) = update { it.copy(attached = attached) }
 
@@ -599,7 +605,8 @@ class StartGoalViewModel(
         creationFailure.clear()
         entryError = error
         unreadable = emptySet()
-        update { it.copy(screen = StartScreen.Entry, words = words) }
+        this.words.setTextAndPlaceCursorAtEnd(words)
+        update { it.copy(screen = StartScreen.Entry) }
     }
 
     /** Leaving the draft takes back what the tap that sent it allowed, so a later visit only reads it. */
