@@ -198,7 +198,7 @@ test.describe("Sources API", () => {
 
     expect(own).toMatchObject({
       id: upload.id,
-      readStatus: "unreadable",
+      readStatus: "readable",
       url: null,
       visibility: "private",
     });
