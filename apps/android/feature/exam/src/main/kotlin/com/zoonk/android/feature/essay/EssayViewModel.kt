@@ -177,11 +177,9 @@ class EssayViewModel(
 
     fun seeQuestion() = mutableUi.update { it.copy(mode = WritingMode.Question, switched = true) }
 
-    /** The field stops at the API's longest answer, so what's typed can always be saved and graded. */
-    fun write(text: String) {
-        if (mutableUi.value.send == WritingSend.Pending || text.length > MAX_WRITING_CHARACTERS) return
-        if (mutableUi.value.text != text) mutableUi.value.field.setTextAndPlaceCursorAtEnd(text)
-        edited()
+    /** Puts [text] back in the field, which saves it as an edit; text it already holds is kept for the new attempt now. */
+    private fun putBack(text: String) {
+        if (mutableUi.value.text == text) edited() else mutableUi.value.field.setTextAndPlaceCursorAtEnd(text)
     }
 
     private fun edited() {
@@ -280,7 +278,7 @@ class EssayViewModel(
                     writingMs = 0
                     writingSince = null
                     mutableUi.update { it.copy(rewriting = false, unsent = null, mode = WritingMode.Write, switched = true) }
-                    write(ui.unsent ?: latest.text)
+                    putBack(ui.unsent ?: latest.text)
                 }
 
                 is WritingStartAnswer.LimitReached -> {
