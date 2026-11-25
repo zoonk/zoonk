@@ -179,8 +179,8 @@ test.describe("Material that's read after it's added", () => {
       ),
     ).toBeVisible();
 
-    await expect(materialRow(page)).toContainText("Mitosis.txt");
-    await expect(materialRow(page)).not.toContainText(PHOTO);
+    await expect(materialRow(page).getByText("Mitosis.txt", { exact: true })).toBeVisible();
+    await expect(materialRow(page).getByText(PHOTO, { exact: true })).toBeHidden();
   });
 
   test("files with nothing to read are called these files on the card and on Start", async ({
@@ -214,14 +214,16 @@ test.describe("Material that's read after it's added", () => {
     let read = false;
 
     // Real answers while it's read (refused before anything is counted); a faked one after.
-    await page.route("**/v1/material-questions", async (route) => {
-      if (read) {
-        return route.fulfill({ json: { answer: "DNA is copied in S.", citations: [] } });
-      }
+    await page.route("**/v1/material-questions", (route) =>
+      read
+        ? route.fulfill({ json: { answer: "DNA is copied in S.", citations: [] } })
+        : route.continue(),
+    );
 
-      const response = await route.fetch();
-      refusals.push(response.status());
-      return route.fulfill({ response });
+    page.on("response", (response) => {
+      if (response.url().endsWith("/v1/material-questions")) {
+        refusals.push(response.status());
+      }
     });
 
     await page.goto(`/start?draft=${draft.id}`);
@@ -230,7 +232,7 @@ test.describe("Material that's read after it's added", () => {
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await page.getByRole("textbox", { name: "Your question" }).fill("What happens in S?");
-    await page.getByRole("button", { name: "Ask" }).click();
+    await page.getByRole("button", { exact: true, name: "Ask" }).click();
 
     await expect(page.getByText("What happens in S?")).toBeVisible();
     await expect(page.getByText("Reading your material…")).toBeVisible();
