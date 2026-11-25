@@ -172,9 +172,10 @@ private fun RenameGoalDialog(
     rename: GoalRename,
 ) {
     val nameField = rememberTextFieldState(displayName)
-    val name = nameField.text.toString()
-    val trimmed = name.trim()
-    val save = { if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed) }
+    val save = {
+        val trimmed = nameField.text.trim().toString()
+        if (trimmed.isNotEmpty() && !dialog.saving) rename.onSave(trimmed)
+    }
 
     AlertDialog(
         onDismissRequest = rename.onClose,
@@ -196,7 +197,7 @@ private fun RenameGoalDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = save, enabled = trimmed.isNotEmpty(), busy = dialog.saving) {
+            TextButton(onClick = save, enabled = nameField.text.isNotBlank(), busy = dialog.saving) {
                 Text(stringResource(R.string.plan_save))
             }
         },

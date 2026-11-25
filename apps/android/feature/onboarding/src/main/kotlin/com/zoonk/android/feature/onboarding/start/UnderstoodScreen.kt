@@ -264,9 +264,14 @@ private fun RewriteWords(
     onRewrite: (String) -> Unit,
 ) {
     val valueField = rememberTextFieldState(words)
-    val value = valueField.text.toString()
     val focus = remember { FocusRequester() }
-    val submit = { value.trim().takeIf { it.isNotEmpty() && !disabled }?.let(onRewrite) }
+    val submit = {
+        valueField.text
+            .trim()
+            .toString()
+            .takeIf { it.isNotEmpty() && !disabled }
+            ?.let(onRewrite)
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
@@ -282,7 +287,7 @@ private fun RewriteWords(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = { submit() },
-                enabled = value.isNotBlank() && !disabled,
+                enabled = valueField.text.isNotBlank() && !disabled,
             ) { Text(stringResource(R.string.onboarding_read_again)) }
             TextButton(onClick = onCancel) { Text(stringResource(R.string.onboarding_cancel)) }
         }
@@ -466,9 +471,14 @@ private fun TextEditor(
     onSave: (String) -> Unit,
 ) {
     val valueField = rememberTextFieldState(initial)
-    val value = valueField.text.toString()
     val focus = remember { FocusRequester() }
-    val submit = { value.trim().takeIf { it.isNotEmpty() }?.let(onSave) }
+    val submit = {
+        valueField.text
+            .trim()
+            .toString()
+            .takeIf { it.isNotEmpty() }
+            ?.let(onSave)
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(

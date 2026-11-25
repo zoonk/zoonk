@@ -72,8 +72,10 @@ internal fun TutorComposer(
     // Main keeps the composer shut until the learner signs in again, sees Plus, or leaves a gone lesson.
     val blocked = failure == TutorFailure.SignedOut || failure == TutorFailure.PlusRequired || failure == TutorFailure.Gone
     val resending = state.unresolvedQuestion != null
-    val canSend =
-        turns != null && state.canAsk(turns) && !blocked && (vm.draft.text.isNotBlank() || resending)
+    val canAsk = turns != null && state.canAsk(turns) && !blocked
+    val canSend = canAsk && (vm.draft.text.isNotBlank() || resending)
+    // The draft is read when the key is pressed: an edit in the same frame isn't in this composition's `canSend`.
+    val sendByKey = { if (canAsk && (vm.draft.text.isNotBlank() || resending)) vm.send() }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
@@ -82,7 +84,7 @@ internal fun TutorComposer(
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(focus)
-                    .submitOnEnter(vm.draft) { if (canSend) vm.send() },
+                    .submitOnEnter(vm.draft, sendByKey),
             placeholder = { Text(placeholder) },
             inputTransformation = InputTransformation.fitTo(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
@@ -103,7 +105,7 @@ internal fun TutorComposer(
                 )
             },
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
-            onKeyboardAction = { if (canSend) vm.send() },
+            onKeyboardAction = { sendByKey() },
         )
 
         if (failure != null) {

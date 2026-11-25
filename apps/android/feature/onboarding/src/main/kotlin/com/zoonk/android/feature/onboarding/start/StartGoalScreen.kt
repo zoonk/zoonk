@@ -549,10 +549,10 @@ private fun ColumnScope.MaterialQuestions(
     actions: StartActions,
 ) {
     val questionField = rememberTextFieldState()
-    val question = questionField.text.toString()
     val ask = {
-        if (question.isNotBlank() && !vm.isAsking) {
-            vm.ask(question.trim(), language)
+        val question = questionField.text.trim().toString()
+        if (question.isNotEmpty() && !vm.isAsking) {
+            vm.ask(question, language)
             questionField.clearText()
         }
     }

@@ -829,12 +829,17 @@ private fun AnswerField(
 ) {
     val field = rememberTextFieldState(text)
     field.ObserveEdits { onChange(it.takeIf(String::isNotEmpty)) }
+    // An edit's observer runs a dispatch later, so the answer goes to the player again as the key is pressed.
+    val submit = {
+        onChange(field.text.toString().takeIf(String::isNotEmpty))
+        actions.runPrimary()
+    }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             state = field,
             inputTransformation = InputTransformation.fitTo(MAX_TYPED_ANSWER_LENGTH),
             modifier =
-                if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth().submitOnEnter(field, actions::runPrimary),
+                if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth().submitOnEnter(field, submit),
             readOnly = state.phase != LessonPhase.Playing,
             label = stringResource(R.string.player_your_answer),
             placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
@@ -845,7 +850,7 @@ private fun AnswerField(
                     imeAction = ImeAction.Done,
                 ),
             onKeyboardAction = { performDefault ->
-                actions.runPrimary()
+                submit()
                 performDefault()
             },
             textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },

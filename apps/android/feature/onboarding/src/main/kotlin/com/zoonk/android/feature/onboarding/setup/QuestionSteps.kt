@@ -431,14 +431,14 @@ internal fun ColumnScope.TextStep(
         subject = subject,
         canContinue = value.isNotBlank(),
         pending = pending,
-        onContinue = { answer(value.trim()) },
+        onContinue = { answer(words.values[0].trim()) },
         onSkip = { answer(null) },
     ) { continueStep ->
         AnswerField(
             stringResource(label),
             placeholder?.let { stringResource(it) },
             words.fields[0],
-            onDone = { if (value.isNotBlank() && !pending) continueStep() },
+            onDone = { if (words.values[0].isNotBlank() && !pending) continueStep() },
         )
     }
 }

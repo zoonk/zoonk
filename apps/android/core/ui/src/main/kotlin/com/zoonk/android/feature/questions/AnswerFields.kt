@@ -62,13 +62,12 @@ fun NumericAnswerField(
 ) {
     val locale = currentLocale()
     val field = rememberTextFieldState(initialText)
-    val text = field.text.toString()
     var invalid by rememberSaveable { mutableStateOf(false) }
     val locked = !enabled || mark != null
 
     fun submit() {
         if (locked) return
-        val value = parseEntryAnswer(entry, text, locale)
+        val value = parseEntryAnswer(entry, field.text.toString(), locale)
         if (value == null) invalid = true else onSubmit(Answer.Numeric(value))
     }
 
@@ -134,7 +133,6 @@ fun TypedAnswerField(
     initialText: String = "",
 ) {
     val field = rememberTextFieldState(initialText)
-    val text = field.text.toString()
     val locked = !enabled || mark != null
 
     field.ObserveEdits { onAnswer(it.trim().takeIf(String::isNotEmpty)?.let(Answer::Text)) }
@@ -153,7 +151,7 @@ fun TypedAnswerField(
                 imeAction = ImeAction.Done,
             ),
         onKeyboardAction = {
-            val answer = text.trim()
+            val answer = field.text.trim().toString()
             if (!locked && answer.isNotEmpty()) onSubmit(Answer.Text(answer))
         },
         lineLimits = TextFieldLineLimits.SingleLine,

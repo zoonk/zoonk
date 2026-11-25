@@ -94,7 +94,7 @@ fun GoalBox(
     val value = state.text.toString()
     val isAskingForWords = askedForWords && value.isBlank()
     val submit: () -> Unit = {
-        val goal = value.trim()
+        val goal = state.text.trim().toString()
 
         when {
             isSubmitting -> {}
