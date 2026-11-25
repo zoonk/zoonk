@@ -154,7 +154,7 @@ function RoadmapLegend() {
             ? t("Call")
             : t({
                 description:
-                  "In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.",
+                  "In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.",
                 message: "Phase questions",
               })}
         </span>

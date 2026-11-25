@@ -179,7 +179,11 @@ export function MakeRoomSheet({
 
           <div className="flex flex-col gap-2">
             <p className="text-muted-foreground text-sm">
-              {t("Or subscribe to study more goals at once.")}
+              {t({
+                description:
+                  "Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.",
+                message: "Or subscribe to study more goals at once.",
+              })}
             </p>
             <LearnLink
               className={buttonVariants({
