@@ -265,6 +265,12 @@ fun ListRowChevron() {
     EndGlyph(R.drawable.ic_row_chevron, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
 }
 
+/** Main's `ListRowChevronSpace`: the chevron's empty slot, so a header's words end where the rows' values do. */
+@Composable
+fun ListRowChevronSpace() {
+    Spacer(Modifier.width(END_SLOT * glyphScale()))
+}
+
 /**
  * A row's end glyph in main's 16dp slot, its ink on the slot's end: the drawables are cut to their ink, so
  * the value before a chevron ends where the value before a fold arrow, or before an empty slot, does. Slot and
