@@ -26,8 +26,21 @@ async function settled<T>(promise: Promise<T>): Promise<T | "pending"> {
   ]);
 }
 
+type Listener = (event: { isTrusted: boolean }) => void;
+const listeners = new Map<string, Listener[]>();
+
+function dispatch(type: string, isTrusted = true) {
+  listeners.get(type)?.forEach((listener) => listener({ isTrusted }));
+}
+
 describe("PostHog in the browser", () => {
   beforeEach(() => {
+    listeners.clear();
+
+    vi.stubGlobal("addEventListener", (type: string, listener: Listener) => {
+      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+    });
+
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_HOST", "https://posthog.test");
     vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "project-token");
     vi.stubGlobal("document", { readyState: "complete" });
@@ -59,8 +72,10 @@ describe("PostHog in the browser", () => {
 
   it("loads once and records the session of anyone who shares", async () => {
     const posthog = await loadModule();
+    const start = posthog.startPostHog();
 
-    await posthog.startPostHog();
+    dispatch("pointermove");
+    await start;
 
     expect(client.init).toHaveBeenCalledExactlyOnceWith("project-token", {
       api_host: "https://posthog.test",
@@ -78,8 +93,10 @@ describe("PostHog in the browser", () => {
 
   it("opts out once turned off, and back in without an event when turned on again", async () => {
     const posthog = await loadModule();
-    await posthog.startPostHog();
+    const start = posthog.startPostHog();
 
+    dispatch("keydown");
+    await start;
     await posthog.stopPostHog();
 
     expect(client.stopSessionRecording).toHaveBeenCalledWith();
@@ -93,21 +110,42 @@ describe("PostHog in the browser", () => {
   });
 
   it("never loads when the visitor says no before the page has loaded", async () => {
-    const listeners: (() => void)[] = [];
     vi.stubGlobal("document", { readyState: "loading" });
-
-    vi.stubGlobal("addEventListener", (_type: string, listener: () => void) => {
-      listeners.push(listener);
-    });
 
     const posthog = await loadModule();
     const start = posthog.startPostHog();
     const stop = posthog.stopPostHog();
 
-    listeners.forEach((listener) => listener());
+    dispatch("pointerdown");
+    dispatch("load");
     await Promise.all([start, stop]);
 
     expect(client.init).not.toHaveBeenCalled();
+  });
+
+  it("never loads for a visit nobody touches, and lets it stop and log out at once", async () => {
+    const posthog = await loadModule();
+    const start = posthog.startPostHog();
+
+    dispatch("pointerdown", false);
+
+    await expect(settled(start)).resolves.toBe("pending");
+    expect(client.init).not.toHaveBeenCalled();
+    await expect(settled(posthog.getStartedPostHog())).resolves.toBeNull();
+    await expect(settled(posthog.stopPostHog())).resolves.toBeUndefined();
+    expect(client.opt_out_capturing).not.toHaveBeenCalled();
+  });
+
+  it("holds the events of a visit until its first input, then sends them", async () => {
+    const posthog = await loadModule();
+    void posthog.startPostHog();
+    const held = posthog.loadPostHog();
+
+    await expect(settled(held)).resolves.toBe("pending");
+
+    dispatch("touchstart");
+
+    await expect(held).resolves.toBe(client);
   });
 
   it("tells other analytics whether the page shares, even without PostHog", async () => {

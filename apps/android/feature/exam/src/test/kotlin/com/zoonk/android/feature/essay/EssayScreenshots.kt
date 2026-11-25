@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.essay
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -87,7 +88,8 @@ class EssayScreenshots {
         fold: Boolean = false,
     ) = show(name, fold = fold, prepare = {
         it.startWriting()
-        it.write(text)
+        it.ui.value.field
+            .setTextAndPlaceCursorAtEnd(text)
     }) { viewModel, ui, essay -> WriteScreen(essay, ui, viewModel, rememberAppNavigator()) }
 
     private fun result(

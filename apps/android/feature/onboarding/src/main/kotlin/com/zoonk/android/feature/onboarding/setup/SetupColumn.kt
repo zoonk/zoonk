@@ -33,9 +33,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.requireDensity
+import androidx.compose.ui.node.requireLayoutCoordinates
+import androidx.compose.ui.relocation.BringIntoViewModifierNode
+import androidx.compose.ui.relocation.bringIntoView
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
@@ -163,6 +172,7 @@ private fun SetupColumnBody(
                                         .widthIn(max = COLUMN_WIDTH)
                                         .fillMaxWidth()
                                         .heightIn(min = height)
+                                        .endInView(EDGE + noteRoom.height)
                                         .padding(horizontal = pageMargin(), vertical = EDGE)
                                         .padding(bottom = noteRoom.height)
                                 } else {
@@ -326,6 +336,41 @@ internal fun ColumnScope.QuestionPages(
                     content = read,
                 )
             }
+        }
+    }
+}
+
+/**
+ * Brings the page's [end] padding into view with what's last on the page, as it shows when the page is short:
+ * a request that reaches into the padding (the question panel and its ring) extends to the page's end, so the
+ * scroll settles with the same room under it as above the keyboard on a short page.
+ */
+private fun Modifier.endInView(end: Dp): Modifier = this then EndInViewElement(end)
+
+private data class EndInViewElement(
+    val end: Dp,
+) : ModifierNodeElement<EndInViewNode>() {
+    override fun create() = EndInViewNode(end)
+
+    override fun update(node: EndInViewNode) {
+        node.end = end
+    }
+}
+
+private class EndInViewNode(
+    var end: Dp,
+) : Modifier.Node(),
+    BringIntoViewModifierNode {
+    override suspend fun bringIntoView(
+        childCoordinates: LayoutCoordinates,
+        boundsProvider: () -> Rect?,
+    ) {
+        bringIntoView {
+            val own = requireLayoutCoordinates()
+            val asked = boundsProvider()?.translate(own.localPositionOf(childCoordinates, Offset.Zero)) ?: return@bringIntoView null
+            val pageEnd = own.size.height.toFloat()
+            val padding = with(requireDensity()) { end.toPx() }
+            if (asked.bottom > pageEnd - padding) asked.copy(bottom = pageEnd) else asked
         }
     }
 }

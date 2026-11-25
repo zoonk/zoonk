@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.account
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
@@ -63,16 +65,24 @@ class SignInTest {
             sessions.restore()
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
-            form.onNameChange("")
-            form.onUsernameChange("")
+            form.nameField.setTextAndPlaceCursorAtEnd("")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
+            form.usernameField.setTextAndPlaceCursorAtEnd("")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             assertTrue(form.canContinue)
             assertFalse(form.canSave)
             form.continueSetup()
             assertTrue(form.showNameRequired)
             assertTrue(form.showUsernameRequired)
             assertFalse(form.isSaving)
-            form.onNameChange("Bia")
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             assertFalse(form.showNameRequired)
         }
 
@@ -83,17 +93,20 @@ class SignInTest {
             sessions.restore()
             val signIn = SignInViewModel(account, sessions, SavedStateHandle())
 
-            signIn.onEmailChange("  Ana@Zoonk.test ")
+            signIn.observeCode()
+            signIn.emailField.setTextAndPlaceCursorAtEnd("  Ana@Zoonk.test ")
             signIn.sendCode()
             advanceUntilIdle()
             assertEquals(listOf("ana@zoonk.test"), api.codesSent)
             assertEquals("ana@zoonk.test", signIn.codeSentTo)
 
-            signIn.onCodeChange("12 34 5")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("12345")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertTrue(sessions.state.value is SessionState.SignedOut)
 
-            signIn.onCodeChange("123456")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("123456")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             val state = sessions.state.value as SessionState.SignedIn
             assertEquals(BIA, state.session.accountId)
@@ -125,12 +138,14 @@ class SignInTest {
             val (sessions, account) = stores()
             sessions.restore()
             val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-            signIn.onEmailChange("ana@zoonk.test")
+            signIn.observeCode()
+            signIn.emailField.setTextAndPlaceCursorAtEnd("ana@zoonk.test")
             signIn.sendCode()
             advanceUntilIdle()
 
             api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_INVALID")
-            signIn.onCodeChange("111111")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111111")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertEquals(AccountFailure.WrongCode, signIn.failure)
 
@@ -139,7 +154,8 @@ class SignInTest {
             advanceUntilIdle()
             assertTrue(api.signInBearers.isEmpty())
 
-            signIn.onCodeChange("111 111")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111111")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertTrue(api.signInBearers.isEmpty())
             assertTrue(signIn.isCodeRejected)
@@ -147,7 +163,10 @@ class SignInTest {
 
             signIn.resendCode()
             advanceUntilIdle()
-            signIn.onCodeChange("111111")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111111")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertEquals(listOf<String?>(null), api.signInBearers)
         }
@@ -158,26 +177,57 @@ class SignInTest {
             val (sessions, account) = stores()
             sessions.restore()
             val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-            signIn.onEmailChange("ana@zoonk.test")
+            signIn.observeCode()
+            signIn.emailField.setTextAndPlaceCursorAtEnd("ana@zoonk.test")
             signIn.sendCode()
             advanceUntilIdle()
 
             api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_INVALID")
-            signIn.onCodeChange("111111")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111111")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertEquals(AccountFailure.WrongCode, signIn.failure)
 
             api.codeFailure = null
-            signIn.onCodeChange("11111")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("11111")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertFalse(signIn.isCodeRejected)
             assertNull(signIn.failure)
             assertTrue(api.signInBearers.isEmpty())
 
-            signIn.onCodeChange("111112")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111112")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertEquals(listOf<String?>(null), api.signInBearers)
             assertTrue(sessions.state.value is SessionState.SignedIn)
+        }
+
+    @Test
+    fun aCodeRejectedAfterLeavingIsNotAnErrorOnTheNextVisit() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+            signIn.emailField.setTextAndPlaceCursorAtEnd("ana@zoonk.test")
+            signIn.sendCode()
+            advanceUntilIdle()
+            signIn.observeCode()
+            val reply = CompletableDeferred<Unit>().also { api.codeGate = it }
+            api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_INVALID")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("111111")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
+            assertEquals(SignInWork.CheckCode, signIn.work)
+
+            signIn.codeVisit.end()
+            signIn.observeCode()
+            reply.complete(Unit)
+            advanceUntilIdle()
+
+            assertNull(signIn.failure)
+            assertFalse(signIn.isCodeRejected)
+            assertEquals("", signIn.code)
         }
 
     @Test
@@ -186,16 +236,17 @@ class SignInTest {
             val (sessions, account) = stores()
             sessions.restore()
             val signIn = SignInViewModel(account, sessions, SavedStateHandle())
-            signIn.onEmailChange("ana@zoonk.test")
+            signIn.observeCode()
+            signIn.emailField.setTextAndPlaceCursorAtEnd("ana@zoonk.test")
             signIn.sendCode()
             advanceUntilIdle()
 
             api.codeFailure = ApiException(ApiError.Unavailable, "EMAIL_SIGN_IN_CODE_EXPIRED")
-            signIn.onCodeChange("222222")
+            signIn.codeField.setTextAndPlaceCursorAtEnd("222222")
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertTrue(signIn.needsNewCode)
 
-            signIn.onCodeChange("333333")
             assertEquals("222222", signIn.code)
 
             signIn.resendCode()
@@ -242,9 +293,13 @@ class SignInTest {
             sessions.restore()
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
-            form.onNameChange("Bia")
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             form.save()
             advanceUntilIdle()
 
@@ -261,9 +316,13 @@ class SignInTest {
             sessions.restore()
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
-            form.onNameChange("Bia")
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             form.save()
             form.visit.end()
             advanceUntilIdle()
@@ -284,11 +343,15 @@ class SignInTest {
             sessions.restore()
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             val held = CompletableDeferred<Unit>().also { api.saveGate = it }
             api.saveFailure = ApiException(ApiError.Network)
 
-            form.onNameChange("Bia")
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             form.save()
             runCurrent()
             if (leaveFirst) form.visit.end()
@@ -303,18 +366,21 @@ class SignInTest {
         }
 
     @Test
-    fun aProfileBeingSavedCantBeEdited() =
+    fun aProfileSaveSendsTheNameAndUsernameFromTheTap() =
         runTest {
             val (sessions, account) = stores()
             sessions.restore()
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
-            form.onNameChange("Bia")
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             form.save()
-            form.onUsernameChange("someone_else")
-            form.onNameChange("Other")
+            assertTrue(form.isSaving)
             advanceUntilIdle()
 
             assertEquals(listOf("Bia" to "ana_learner"), api.saved)
@@ -332,19 +398,27 @@ class SignInTest {
             assertTrue(user.needsProfileSetup)
 
             val form = ProfileFormViewModel(account, user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
             assertEquals("ana_learner", form.username)
             assertEquals(UsernameStatus.Available, form.usernameStatus)
 
             api.takenUsernames = setOf("bia")
-            form.onUsernameChange(" Bia ")
+            form.usernameField.setTextAndPlaceCursorAtEnd("bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             assertEquals(UsernameStatus.Checking, form.usernameStatus)
             assertFalse(form.canSave)
             advanceTimeBy(301)
             assertEquals(UsernameStatus.Taken, form.usernameStatus)
 
-            form.onUsernameChange("bia_2")
-            form.onNameChange("Bia")
+            form.usernameField.setTextAndPlaceCursorAtEnd("bia_2")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
+            form.nameField.setTextAndPlaceCursorAtEnd("Bia")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             advanceUntilIdle()
             form.save()
             advanceUntilIdle()
@@ -361,6 +435,8 @@ class SignInTest {
             account.signInWithEmailCode("bia@zoonk.test", "123456")
             val user = (sessions.state.value as SessionState.SignedIn).account.user
             val form = ProfileFormViewModel(account, user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
             api.saveFailure = ApiException(ApiError.Unavailable, "CONFLICT")
@@ -389,14 +465,22 @@ class SignInTest {
             val longName = " ${"a".repeat(151)} "
             val user = (sessions.state.value as SessionState.SignedIn).account.user.copy(name = longName)
             val form = ProfileFormViewModel(account, user, SavedStateHandle())
+            runCurrent()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
-            form.onNameChange("${longName}b")
+            form.nameField.setTextAndPlaceCursorAtEnd("${longName}b")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             assertTrue(form.isNameTooLong)
             assertFalse(form.canSave)
 
-            form.onNameChange(longName)
-            form.onUsernameChange("bia_2")
+            form.nameField.setTextAndPlaceCursorAtEnd(longName)
+            Snapshot.sendApplyNotifications()
+            runCurrent()
+            form.usernameField.setTextAndPlaceCursorAtEnd("bia_2")
+            Snapshot.sendApplyNotifications()
+            runCurrent()
             advanceUntilIdle()
             assertFalse(form.isNameTooLong)
             form.save()

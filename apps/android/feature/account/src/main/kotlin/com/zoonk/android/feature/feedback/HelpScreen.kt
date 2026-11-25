@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -49,7 +50,7 @@ fun HelpScreen(
     val context = LocalContext.current
     val portuguese = currentLocale().language == "pt"
 
-    val form = viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support")) }
+    val form = viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support"), handle = createSavedStateHandle()) }
     val accountEmail = accountEmail(app)
 
     PageScaffold(

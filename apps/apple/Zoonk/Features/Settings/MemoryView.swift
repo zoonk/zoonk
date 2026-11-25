@@ -118,9 +118,7 @@ struct MemoryView: View {
         Text(
           "What Zoonk remembers", tableName: "Settings")
       }
-      .onChange(of: statement) { _, value in
-        statement = String(value.prefix(memoryStatementLimit))
-      }
+      .fitsAlertText($statement, limit: MemoryFact.statementLimit)
 
       Button(role: .cancel) {}
 
@@ -134,6 +132,8 @@ struct MemoryView: View {
         changes.save(.edit(fact.id)) {
           await settings.updateMemoryFact(id: fact.id, statement: trimmed)
         }
+      } label: {
+        Text("Save", tableName: "Settings")
       }
     } message: { _ in
       Text(
@@ -284,9 +284,6 @@ final class MemoryChanges {
     }
   }
 }
-
-/// Core's `MAX_MEMORY_STATEMENT_LENGTH`.
-private let memoryStatementLimit = 300
 
 private struct MemoryFactRow: View {
   let fact: MemoryFact

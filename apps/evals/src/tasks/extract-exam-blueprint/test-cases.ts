@@ -642,6 +642,51 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        { in: "mock", kind: "questionCount", value: 240 },
+        { format: "trueFalse", kind: "format" },
+        { kind: "wrongPenalty", value: 0.25 },
+        { kind: "totalMinimum", minimum: { unit: "points", value: 120 } },
+        { date: "2026-03-29", dateKind: "exam", kind: "date" },
+        { date: "2026-04-25", dateKind: "exam", kind: "date" },
+        { date: "2026-04-26", dateKind: "exam", kind: "date" },
+        { date: "2026-05-02", dateKind: "exam", kind: "date" },
+        { date: "2026-05-03", dateKind: "exam", kind: "date" },
+        { day: 1, kind: "section", minutes: 210 },
+        { day: 2, kind: "section", minutes: 240, name: "Língua Portuguesa" },
+        { day: 2, kind: "section", minutes: 300, name: "História do Brasil" },
+        { day: 3, kind: "section", minutes: 240, name: "Língua Inglesa" },
+        { day: 3, kind: "section", minutes: 300, name: "Geografia" },
+        { day: 4, kind: "section", minutes: 300, name: "Política Internacional" },
+        { day: 4, kind: "section", minutes: 300, name: "Economia" },
+        { day: 5, kind: "section", minutes: 300, name: "Direito" },
+        {
+          count: 1,
+          kind: "writtenTask",
+          language: { factor: 0.5, method: "perError" },
+          lines: 70,
+          points: 70,
+        },
+        { count: 1, kind: "writtenTask", lines: 30, points: 30 },
+        { count: 2, kind: "writtenTask", lines: 60, points: 30 },
+        { count: 2, kind: "writtenTask", lines: 40, points: 20 },
+        { count: 1, kind: "writtenTask", lines: 60, points: 50 },
+      ],
+    },
+    id: "cacd-2026-full-notice",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Edital nº 1, de 28 de janeiro de 2026 (CACD 2026, Instituto Rio Branco)",
+          url: "https://cdn.cebraspe.org.br/concursos/irbr_26_diplomacia/arquivos/7FA89C5320E2811FDD1A8276DD6526120704864996EA8C6DED7A6DDB5D0987D7.pdf",
+        },
+      ],
+      exam: "Concurso de Admissão à Carreira de Diplomata (CACD)",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { kind: "questionCount", value: 70 },
         { format: "multipleChoice", kind: "format" },
         { format: "essay", kind: "format" },

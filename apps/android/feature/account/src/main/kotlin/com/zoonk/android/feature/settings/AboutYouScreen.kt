@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -255,14 +256,16 @@ fun ProfileQuestionScreen(
                     if (!canEdit) {
                         MemoryOffNotice(navigator)
                     }
-                    ProfileQuestionBody(
-                        question,
-                        editor.draft,
-                        editor::change,
-                        enabled = canEdit && !editor.saving && editor.source == question,
-                        memoryEnabled = memoryEnabled,
-                        inSettings = true,
-                    )
+                    key(editor.source) {
+                        ProfileQuestionBody(
+                            question,
+                            editor.draft,
+                            editor::change,
+                            enabled = canEdit && !editor.saving && editor.source == question,
+                            memoryEnabled = memoryEnabled,
+                            inSettings = true,
+                        )
+                    }
                 }
             }
 

@@ -1,3 +1,4 @@
+import { afterFirstInput, hadFirstInput } from "@zoonk/utils/after-first-input";
 import { afterPageLoad } from "@zoonk/utils/after-page-load";
 import { getPostHogConfig } from "@zoonk/utils/posthog";
 import { type PostHog } from "posthog-js";
@@ -7,11 +8,22 @@ let postHog: Promise<PostHog | null> | null = null;
 let sharing = false;
 const decided = Promise.withResolvers<null>();
 
-/** Loaded once, after the page has, so its size never delays the first paint; a "no" before then cancels it. */
+/**
+ * Downloaded once, after the page has, so its size never delays the first paint, and started on
+ * the visitor's first input, so a bot that loads a page and leaves is never counted. It starts in
+ * that input's turn, before a tapped link navigates, so the landing page is the first one counted.
+ * A "no" before then cancels it.
+ */
 function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
+  const firstInput = afterFirstInput();
+
   postHog ??= afterPageLoad()
     .then(() => (sharing ? import("posthog-js") : null))
-    .then((module) => {
+    .then(async (module) => {
+      if (module && sharing) {
+        await firstInput;
+      }
+
       if (!module || !sharing) {
         postHog = null;
         return null;
@@ -60,7 +72,7 @@ export async function stopPostHog(): Promise<void> {
   sharing = false;
   decided.resolve(null);
 
-  const client = await postHog;
+  const client = hadFirstInput() ? await postHog : null;
   client?.stopSessionRecording();
   client?.opt_out_capturing();
 }
@@ -76,9 +88,12 @@ export async function loadPostHog(): Promise<PostHog | null> {
   return sharing ? postHog : null;
 }
 
-/** Doesn't wait for a decision: logging out must never hang on one that won't come. */
+/**
+ * Doesn't wait for a decision or a first input: logging out must never hang on one that won't come,
+ * and before both, PostHog has stored nothing to clear.
+ */
 export function getStartedPostHog(): Promise<PostHog | null> {
-  return (sharing && postHog) || Promise.resolve(null);
+  return (sharing && hadFirstInput() && postHog) || Promise.resolve(null);
 }
 
 const SHARED_PROPERTIES_WAIT_MS = 5000;
