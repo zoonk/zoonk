@@ -538,6 +538,9 @@ extension MaterialDraft {
 }
 
 private struct PasteMaterialRow: View {
+  private static let linkLimit = 2_000
+  private static let textLimit = 200_000
+
   @Binding var value: String
   let isLink: Bool
   let isAdding: Bool
@@ -550,19 +553,21 @@ private struct PasteMaterialRow: View {
     VStack(alignment: .leading, spacing: 12) {
       Group {
         if isLink {
-          TextField(text: $value) {
-            Text(
-              "https://… an article, a class page or a PDF", tableName: "Onboarding",
-              comment: "Placeholder of the box for a material link")
+          FittedTextInput(text: $value, limit: Self.linkLimit) { text, selection in
+            TextField(text: text, selection: selection) {
+              Text(
+                "https://… an article, a class page or a PDF", tableName: "Onboarding",
+                comment: "Placeholder of the box for a material link")
+            }
+            .keyboardType(.URL)
+            .textContentType(.URL)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .onSubmit(add)
           }
-          .keyboardType(.URL)
-          .textContentType(.URL)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled()
-          .onSubmit(add)
         } else {
           MultilineTextField(
-            text: $value,
+            text: $value, limit: Self.textLimit,
             prompt: Text(
               "Paste the syllabus, your notes or a chapter", tableName: "Onboarding",
               comment: "Placeholder of the box for pasted material"),

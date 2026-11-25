@@ -706,6 +706,8 @@ private struct SourceLinkLabelStyle: LabelStyle {
 }
 
 private struct RowEditor: View {
+  private static let goalNameLimit = 120
+
   let row: UnderstoodRow
   let field: UnderstoodField
   let timeZone: String
@@ -741,12 +743,16 @@ private struct RowEditor: View {
           .disabled(isSaving)
         }
       case .text:
-        TextField(text: $text) {
-          Text(row.label)
+        FittedTextInput(
+          text: $text, limit: field == .displayName ? Self.goalNameLimit : onboardingAnswerLimit
+        ) { text, selection in
+          TextField(text: text, selection: selection) {
+            Text(row.label)
+          }
+          .focused($isFocused)
+          .submitLabel(.done)
+          .onSubmit(save)
         }
-        .focused($isFocused)
-        .submitLabel(.done)
-        .onSubmit(save)
       case .date:
         DatePicker(selection: $date, in: dateRange, displayedComponents: .date) {
           Text(row.label)
