@@ -255,7 +255,7 @@ class TodayStoreTest {
             val store = TodayStore(api, AppCache(FakeSession(ana), backgroundScope), backgroundScope, { "UTC" }, now = { READ_AT })
             store.today.refresh()
 
-            // The server couldn't tell yet (503): the row keeps saying it's being written.
+            // Its readiness can't be read yet, so the day isn't read again.
             store.refreshIfLessonsMoved(shown)
             assertEquals(1, api.reads)
 

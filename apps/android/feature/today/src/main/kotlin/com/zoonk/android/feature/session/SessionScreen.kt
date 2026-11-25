@@ -575,7 +575,7 @@ internal fun NextStop(
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
                             } else if (waiting || hold.holding) {
-                                // A run whose updates stopped decides nothing: its lesson's readiness, asked again, does.
+                                // Only the lesson's readiness says whether its writing stopped.
                                 val shown =
                                     when {
                                         ready -> {

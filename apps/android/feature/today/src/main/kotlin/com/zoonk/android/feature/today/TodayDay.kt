@@ -275,11 +275,7 @@ fun TodayDay(
     }
 }
 
-/**
- * While the day shows lessons being written, asks their readiness every few seconds in the
- * foreground: the day's read can't tell a writer that stopped, so only the live answer moves a row
- * on, for as long as it takes.
- */
+/** The day's read can't tell a writer that stopped, so only readiness moves a row on. */
 @Composable
 private fun FollowLessonsBeingWritten(
     lessons: Map<UUID, StudyBlockLesson>,

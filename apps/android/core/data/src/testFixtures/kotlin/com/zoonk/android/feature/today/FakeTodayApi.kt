@@ -35,7 +35,7 @@ class FakeTodayApi(
         return changed
     }
 
-    /** Readiness answers by lesson, in order and then the last one again; a lesson without any can't be read. */
+    /** Answered in order, then the last one again; a lesson without any can't be read. */
     val readiness = mutableMapOf<UUID, MutableList<() -> LessonReadiness>>()
     val readinessAsked = mutableListOf<UUID>()
 

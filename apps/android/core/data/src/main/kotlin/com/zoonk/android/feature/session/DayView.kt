@@ -41,7 +41,7 @@ data class DayView(
     val steps: List<DayStep>,
     val sessionBar: SessionBar,
     val nextPosition: Long?,
-    /** Core's pick of the work to do while the next step's lesson is written: a step's position, never the next step itself. */
+    /** What to do while the next step's lesson is written; never the next step itself. */
     val alternativePosition: Long?,
     val state: StudySession.State,
     val missions: List<DayMission>,
@@ -114,7 +114,6 @@ data class DayStep(
     val questions: Long,
     val answered: Long,
     val lessonId: UUID?,
-    /** The lesson's writing as the day's read found it; null for a step with no lesson, or from a server that doesn't say. */
     val lesson: StudyBlockLesson? = null,
     val chapterId: UUID?,
     val areaId: String?,

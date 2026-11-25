@@ -78,7 +78,6 @@ interface TodayApi {
         since: Instant,
     ): Boolean
 
-    /** The live verdict on a lesson's writing, which may differ from what the day's read last saw. */
     suspend fun lessonReadiness(
         session: AuthenticatedSession,
         lessonId: UUID,
@@ -195,12 +194,6 @@ class TodayStore(
         return (reads != polledReads).also { polledReads = reads }
     }
 
-    /**
-     * While Today shows lessons being written: asks each one's readiness and reads the day again once
-     * an answer differs from what the day shows of it ([shown]), so a lesson that's written, or whose
-     * writing stopped, shows as the server now has it. An answer that couldn't be read (the server
-     * couldn't tell yet) changes nothing until the next ask.
-     */
     suspend fun refreshIfLessonsMoved(shown: Map<UUID, StudyBlockLesson>) {
         val moved =
             shown.any { (lessonId, lesson) ->

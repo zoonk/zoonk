@@ -73,19 +73,18 @@ class NextStopTest {
     private val practice = step(1, kind = StudyBlock.Kind.PRACTICE, screen = StudyBlock.Screen.SESSION, lessonId = null)
     private var shown by mutableStateOf(unwritten(LessonGenerationStatus.GENERATING))
 
-    /** Readiness answers in order, then [settled]; each may throw, as an expired sign-in or a server that can't tell does. */
+    /** Answered in order, then [settled]. */
     private val answers = mutableListOf<() -> LessonReadiness.Status>()
     private var settled = LessonReadiness.Status.READY
     private var setAside = false
     private var warmUpId: UUID? = null
     private var readinessReads = 0
 
-    /** Holds every readiness read until it opens, as a slow network does. */
     private var readinessGate: CompletableDeferred<Unit>? = null
 
     private var lastAnswer: LessonReadiness.Status? = null
 
-    /** What each read of the day shows of the step, in order; then the lesson as its readiness last said, as the server reads it. */
+    /** Each day read in order; then the lesson as readiness last answered. */
     private val dayReadsShow = mutableListOf<(DayStep) -> DayStep>()
     private val written: (DayStep) -> DayStep = { it.copy(screen = StudyBlock.Screen.LESSON, lesson = null) }
     private val asLastAnswered: (DayStep) -> DayStep = { step ->
@@ -118,7 +117,6 @@ class NextStopTest {
         statuses.forEach { status -> answers += { status } }
     }
 
-    /** Draws the next stop of [shown]; returns a way to draw the screen anew. */
     private fun show(
         onStop: (() -> Unit)? = null,
         alternative: DayStep? = null,
@@ -213,7 +211,6 @@ class NextStopTest {
         rule.onNodeWithContentDescription("Leave").assertIsFocused()
     }
 
-    /** #2799: the readiness read hasn't answered, so the first frames show only what the day's read says. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     @GraphicsMode(GraphicsMode.Mode.NATIVE)

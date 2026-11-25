@@ -43,11 +43,9 @@ fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
 fun DayView.studiedToday(): Long = week.days.firstOrNull { it.isToday }?.minutes ?: 0
 
-/** While the day's lessons are outlined, Today reads itself again until they land. */
 val DayView.isWaitingForOutline: Boolean
     get() = lessonsComing || state == StudySession.State.WAITING
 
-/** The day's lessons still to do that its read says are being written, each with what the read says of it. */
 val DayView.lessonsBeingWritten: Map<UUID, StudyBlockLesson>
     get() =
         steps

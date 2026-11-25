@@ -282,7 +282,6 @@ fun StudyBlockOpening.route(): AppRoute? =
             AppRoute.Session(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
-        // No server sends it any more; a step without its lesson goes back to Today, as a deleted lesson's does.
         is StudyBlockOpening.PreparinglessonWrapper -> {
             AppRoute.Today
         }

@@ -562,7 +562,6 @@ class TodayFlowTest {
 
         assertEquals(2, todayApi.readinessAsked.size)
         assertEquals(1, todayApi.reads)
-        // Only an outline wait asks whether the day changed.
         assertEquals(emptyList<Instant>(), todayApi.asked)
     }
 

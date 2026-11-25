@@ -48,8 +48,7 @@ class SessionViewModel(
     var writtenWhileWaiting by mutableStateOf<Long?>(null)
         private set
 
-    /** The position of the step the learner is waiting on. */
-    private var waiting: Long? = null
+    private var waitingPosition: Long? = null
 
     /** The shown step's lesson as its last readiness read found it, while the next stop waits on it. */
     var lesson by mutableStateOf<LessonState?>(null)
@@ -168,7 +167,7 @@ class SessionViewModel(
     }
 
     fun waitForLesson(position: Long) {
-        waiting = position
+        waitingPosition = position
     }
 
     /**
@@ -221,8 +220,8 @@ class SessionViewModel(
     }
 
     fun lessonWritten(position: Long) {
-        if (waiting != position) return
-        waiting = null
+        if (waitingPosition != position) return
+        waitingPosition = null
         writtenWhileWaiting = position
     }
 
@@ -272,7 +271,7 @@ class SessionViewModel(
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
 
-/** Main's `NextStopLesson`: what the next stop shows of its step's lesson; [Unknown] until a server that doesn't say answers its readiness. */
+/** Main's `NextStopLesson`; [Unknown] until readiness answers for a step whose day read didn't say. */
 enum class NextStopLesson { Ready, Unknown, Writing, Failed }
 
 private fun LessonReadiness.toState(lessonId: UUID) =
