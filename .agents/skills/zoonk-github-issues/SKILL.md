@@ -4,7 +4,7 @@ description: Create or update problem-focused Zoonk GitHub issues, their type, p
 license: MIT
 metadata:
   author: zoonk
-  version: "2.6.0"
+  version: "2.7.0"
 ---
 
 # GitHub issues
