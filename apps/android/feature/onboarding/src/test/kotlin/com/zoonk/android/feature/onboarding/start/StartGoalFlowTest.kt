@@ -245,6 +245,28 @@ class StartGoalFlowTest {
     }
 
     @Test
+    fun aGoalSentWhileMaterialIsBeingAddedIsNotSentWhenTheLearnerComesBackAfterLeaving() {
+        api.attachGate = CompletableDeferred()
+        show()
+        rule.onNode(hasSetTextAction()).performTextInput("test on Friday")
+        addText()
+        rule.onNodeWithText("Build my plan").performClick()
+        rule.waitForIdle()
+
+        val left = requireNotNull(owner)
+        owner = null
+        rule.waitForIdle()
+        api.attachGate?.complete(Unit)
+        rule.waitForIdle()
+        owner = left
+        rule.waitForIdle()
+
+        assertTrue(api.understandCalls.isEmpty())
+        rule.onNodeWithText("test on Friday").assertExists()
+        rule.onNodeWithText("Build my plan").assertIsEnabled()
+    }
+
+    @Test
     fun aGoalSentWhileMaterialFailsToBeAddedStaysToShowWhy() {
         api.attachGate = CompletableDeferred()
         api.attachFailure = ApiException(ApiError.Unavailable)

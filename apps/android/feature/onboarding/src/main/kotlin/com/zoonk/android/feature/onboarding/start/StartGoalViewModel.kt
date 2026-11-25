@@ -98,7 +98,7 @@ class StartGoalViewModel(
     private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
     /** This visit to the start screen: the goal it made opens, or its failure shows, only on it. */
-    val visit = Visit(::stopAsking)
+    val visit = Visit(::stopWaiting)
 
     /** The goal the card made, for the screen to open. */
     val created = visit.outcome<CreatedGoal>()
@@ -649,15 +649,15 @@ class StartGoalViewModel(
         editing = null
         creationFailure.clear()
         entryError = error
-        heldGoal = null
-        stopAsking()
+        stopWaiting()
         gone = emptySet()
         this.words.setTextAndPlaceCursorAtEnd(words)
         update { it.copy(screen = StartScreen.Entry) }
     }
 
-    /** Leaving the questions or the screen stops a question still waiting: nothing is answered for no one. */
-    private fun stopAsking() {
+    /** Leaving the questions or the screen stops what still waits: nothing is answered or sent for no one. */
+    private fun stopWaiting() {
+        heldGoal = null
         askJob?.cancel()
         asking = null
     }
