@@ -415,6 +415,8 @@ struct LessonAnswerField: View {
       .disabled(isLocked)
       .typeStyle(isNumber ? .reading.monospacedDigit() : .reading)
       .fieldBorder(isFocused: isFocused.wrappedValue, minHeight: isNumber ? 48 : 40)
+      // The lesson scrolls to the field's layout bounds, which omit its outer focus ring.
+      .padding(.bottom, 4)
   }
 
   @ViewBuilder
