@@ -69,6 +69,7 @@ struct GoalMaterialChips: View {
   @Binding var material: [AttachedSource]
 
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(\.scenePhase) private var scenePhase
 
   var body: some View {
     if !material.isEmpty {
@@ -97,9 +98,10 @@ struct GoalMaterialChips: View {
       }
       .announcesStatus(fullLine)
       .listRowSeparator(.hidden)
-      // Read only: a file still being read is followed until it's read, while its chip shows.
-      .task(id: reading) {
-        await follow(reading)
+      // Read only: a file still being read is followed until it's read, while its chip shows, and
+      // checked again as soon as the learner comes back to it.
+      .task(id: scenePhase == .active ? reading : []) {
+        await follow(scenePhase == .active ? reading : [])
       }
     }
   }
@@ -110,12 +112,6 @@ struct GoalMaterialChips: View {
 
   private func follow(_ ids: [String]) async {
     while !ids.isEmpty {
-      do {
-        try await Task.sleep(for: .seconds(3))
-      } catch {
-        return
-      }
-
       for id in ids {
         do {
           let status = try await onboarding.readStatus(sourceID: id)
@@ -128,6 +124,12 @@ struct GoalMaterialChips: View {
         } catch {
           // Asked again on the next beat.
         }
+      }
+
+      do {
+        try await Task.sleep(for: .seconds(3))
+      } catch {
+        return
       }
     }
   }

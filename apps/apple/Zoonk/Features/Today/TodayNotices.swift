@@ -287,6 +287,7 @@ struct AnsweredUpload: Equatable {
 struct TodayUploadRequestSection: View {
   @Environment(TodayStore.self) private var store
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(\.scenePhase) private var scenePhase
 
   let request: TodayView.UploadRequest
   /// Answered here, it thanks the learner while they stay and it's being read, whatever Today
@@ -374,9 +375,12 @@ struct TodayUploadRequestSection: View {
           }
         }
       }
-      // Read only: an answered upload is followed while it's read, to ask again if it can't be.
-      .task(id: answer) {
-        await followAnswer()
+      // Read only: an answered upload is followed while it's read, to ask again if it can't be,
+      // and checked again as soon as the learner comes back to it.
+      .task(id: scenePhase == .active ? answer : nil) {
+        if scenePhase == .active {
+          await followAnswer()
+        }
       }
     }
   }
@@ -389,21 +393,23 @@ struct TodayUploadRequestSection: View {
 
     while true {
       do {
-        try await Task.sleep(for: .seconds(3))
-
         switch try await onboarding.readStatus(sourceID: answer.source.id) {
         case .reading:
-          continue
+          break
         case .unreadable:
           onUnreadable()
           return
         case .readable:
           return
         }
-      } catch is CancellationError {
-        return
       } catch {
         // Asked again on the next beat.
+      }
+
+      do {
+        try await Task.sleep(for: .seconds(3))
+      } catch {
+        return
       }
     }
   }
