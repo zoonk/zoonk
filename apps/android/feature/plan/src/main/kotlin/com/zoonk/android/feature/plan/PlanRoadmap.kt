@@ -275,13 +275,11 @@ private fun RoadmapFull(
     val overrun = page.plan.overrun(page.goal.kind)
     val axisDated = page.plan.axisDatedPhases(page.goal.kind, page.today)
     val weights = phases.map { it.weight() }
-    // Each name's parts kept whole when every band fits its widest part; otherwise the names break between words.
     val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
     val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
-    val partedBands = bandLayout(parted, weights, width)
-    val looseBands = bandLayout(loose, weights, width)
-    val names = if (partedBands.fitsWords) parted else loose
-    val bands = if (partedBands.fitsWords) partedBands else looseBands
+    // Main's `EndDateSizer`: the last band is never narrower than the date under it, so the date keeps one line.
+    val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
+    val bands = bandLayout(parted, loose, weights, width, endDate)
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -302,7 +300,7 @@ private fun RoadmapFull(
                 PhaseColumn(
                     page = page,
                     phase = phase,
-                    name = names[index],
+                    name = bands.names[index],
                     width = bands.widths[index],
                     bandHeight = bands.height,
                     isLast = index == phases.lastIndex,
@@ -379,11 +377,15 @@ private fun LegendPair(
     }
 }
 
-/** A band's name; a done phase's check sits in its first line, so a narrow band's lines get its whole width. */
+/**
+ * A band's name; a done phase's check sits in its first line, so a narrow band's lines get its whole width. It
+ * [hyphenates] only when not even each band's longest word fits the row.
+ */
 private class BandName(
     val plain: String,
     val text: AnnotatedString,
     val placeholders: List<AnnotatedString.Range<Placeholder>>,
+    val hyphenates: Boolean = false,
 )
 
 private fun bandName(
@@ -439,51 +441,111 @@ internal fun axisStyle() =
         .copy(fontFamily = Geist)
         .wrappedAs(MaterialTheme.typography.labelMedium)
 
-/** Names wrap and hyphenate rather than being cut. */
+/** Names wrap between words, and inside them only when they must ([BandName.hyphenates]), rather than being cut. */
 @Composable
-private fun bandStyle() =
+private fun bandStyle(hyphenates: Boolean = false) =
     MaterialTheme.typography.labelMedium
-        .copy(hyphens = Hyphens.Auto)
+        .copy(hyphens = if (hyphenates) Hyphens.Auto else Hyphens.None)
         .balanced()
 
 private class BandLayout(
+    val names: List<BandName>,
     val widths: List<Dp>,
     val height: Dp,
-    /** Every band is at least as wide as its name's longest unbreakable run. */
-    val fitsWords: Boolean,
+)
+
+internal enum class BandFit { PARTS, WORDS, LETTERS }
+
+/** A band's fit, and the width it's held to when the row sets one. */
+internal data class BandSize(
+    val fit: BandFit,
+    val width: Int?,
 )
 
 /**
- * Main's bands: each drawn to its phase's time but never narrower than its name's longest word, and
- * every band in the row as tall as the one whose name takes the most lines. When the longest words
- * don't fit the row, each band keeps only the floor and its name hyphenates. Sizes are whole pixels
- * rounded as the band's padding and the row's gaps round them, so a name measured to fit does.
+ * Main's `fitBandSizes`: how the bands share a row [available] wide (gaps left out), from each band's least width
+ * with its name's parts kept whole ([parts]) and with it broken between words ([words]). When every band fits its
+ * parts, they keep them. Otherwise each band is held to one shared width, never under its longest word nor over
+ * its parts, the widest that fits the row, so a short name keeps its two lines and only the longest take more.
+ * When not even the longest words fit, the names break inside words.
+ */
+internal fun fitBandSizes(
+    available: Int,
+    parts: List<Int>,
+    words: List<Int>,
+): List<BandSize> {
+    if (parts.sum() <= available) return parts.map { BandSize(BandFit.PARTS, null) }
+    if (words.sum() > available) return parts.map { BandSize(BandFit.LETTERS, null) }
+
+    fun widthsAt(cap: Int) = parts.mapIndexed { index, part -> minOf(part, maxOf(words[index], cap)) }
+
+    var low = 0
+    var high = parts.max()
+    while (low < high) {
+        val cap = (low + high + 1) / 2
+        if (widthsAt(cap).sum() <= available) low = cap else high = cap - 1
+    }
+    return widthsAt(low).mapIndexed { index, width -> BandSize(if (width >= parts[index]) BandFit.PARTS else BandFit.WORDS, width) }
+}
+
+/**
+ * Main's bands: each drawn to its phase's time but never narrower than its name ([fitBandSizes] picks how the
+ * names break), and every band in the row as tall as the one whose name takes the most lines. Sizes are whole
+ * pixels rounded as the band's padding and the row's gaps round them, so a name measured to fit does.
  */
 @Composable
 private fun bandLayout(
-    names: List<BandName>,
+    parted: List<BandName>,
+    loose: List<BandName>,
     weights: List<Float>,
     width: Dp,
+    endDate: AnnotatedString?,
 ): BandLayout {
     val measurer = rememberTextMeasurer()
     val style = bandStyle()
+    val dateStyle = axisStyle()
 
     with(LocalDensity.current) {
         fun measure(
             name: BandName,
             maxWidth: Int = Constraints.Infinity,
-        ) = measurer.measure(name.text, style, constraints = Constraints(maxWidth = maxWidth), placeholders = name.placeholders)
+        ) = measurer.measure(
+            name.text,
+            if (name.hyphenates) style.copy(hyphens = Hyphens.Auto) else style,
+            constraints = Constraints(maxWidth = maxWidth),
+            placeholders = name.placeholders,
+        )
 
         val padding = BAND_PADDING_X.roundToPx() * 2
         val narrowest = MIN_BAND_WIDTH.roundToPx()
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
-        val words = names.map { max(narrowest, ceil(measure(it).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding) }
-        val fitsWords = words.sum() + gap * (names.size - 1) <= total
-        val minimums = if (fitsWords) words else List(names.size) { narrowest }
-        val widths = weightedWidths(weights, total.toFloat(), minimums.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
+        val lastFloor = endDate?.let { measurer.measure(it, dateStyle).size.width + padding } ?: 0
+
+        fun least(names: List<BandName>) =
+            names.mapIndexed { index, name ->
+                val floor = if (index == names.lastIndex) max(narrowest, lastFloor) else narrowest
+                max(floor, ceil(measure(name).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding)
+            }
+
+        val partsLeast = least(parted)
+        val sizes = fitBandSizes(total - gap * (parted.size - 1), partsLeast, least(loose))
+        val names =
+            sizes.mapIndexed { index, size ->
+                when (size.fit) {
+                    BandFit.PARTS -> parted[index]
+                    BandFit.WORDS -> loose[index]
+                    BandFit.LETTERS -> loose[index].let { BandName(it.plain, it.text, it.placeholders, hyphenates = true) }
+                }
+            }
+        val minimums =
+            sizes.mapIndexed { index, size ->
+                size.width ?: if (size.fit == BandFit.PARTS) partsLeast[index] else narrowest
+            }
+        val floors = minimums.mapIndexed { index, minimum -> if (index == names.lastIndex) max(minimum, lastFloor) else minimum }
+        val widths = weightedWidths(weights, total.toFloat(), floors.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
-        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp(), fitsWords)
+        return BandLayout(names, widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
     }
 }
 
@@ -573,7 +635,7 @@ private val TODAY_LINE = 1.5.dp
 private const val COVERED_ALPHA = 0.3f
 private val BAND_HEIGHT = 32.dp
 private val BAND_RADIUS = ZoonkRadius.md
-private val BAND_GAP = 3.dp
+private val BAND_GAP = 8.dp
 private val BAND_PADDING_X = 10.dp
 private val BAND_PADDING_Y = 4.dp
 private val MIN_BAND_WIDTH = 72.dp
@@ -638,7 +700,7 @@ private fun PhaseBand(
             Text(
                 text = name.text,
                 modifier = Modifier.padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y).align(Alignment.CenterStart),
-                style = bandStyle(),
+                style = bandStyle(name.hyphenates),
                 onTextLayout = { nameSize = it.size },
                 inlineContent =
                     mapOf(

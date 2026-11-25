@@ -31,6 +31,28 @@ class PlanPhasesTest {
     }
 
     @Test
+    fun bandsKeepTheirNamesPartsWhenTheyAllFitThem() {
+        assertEquals(List(2) { BandSize(BandFit.PARTS, null) }, fitBandSizes(300, listOf(100, 120), listOf(80, 90)))
+    }
+
+    @Test
+    fun onlyTheWidestNamesBreakBetweenWordsAtTheWidestWidthThatFitsTheRow() {
+        assertEquals(
+            listOf(BandSize(BandFit.PARTS, 80), BandSize(BandFit.WORDS, 92), BandSize(BandFit.WORDS, 92), BandSize(BandFit.WORDS, 136)),
+            fitBandSizes(400, listOf(80, 110, 150, 140), listOf(72, 90, 80, 136)),
+        )
+        assertEquals(
+            listOf(BandSize(BandFit.WORDS, 130), BandSize(BandFit.WORDS, 120)),
+            fitBandSizes(250, listOf(150, 150), listOf(130, 72)),
+        )
+    }
+
+    @Test
+    fun namesBreakInsideWordsOnlyWhenNotEvenTheLongestWordsFit() {
+        assertEquals(List(2) { BandSize(BandFit.LETTERS, null) }, fitBandSizes(100, listOf(90, 90), listOf(72, 72)))
+    }
+
+    @Test
     fun aPhaseIsWeighedByItsDaysCountingBothEnds() {
         assertEquals(14f, plan.phases[0].weight())
         assertEquals(27f, plan.phases[1].weight())
