@@ -55,6 +55,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
@@ -83,6 +84,8 @@ fun FeedbackForm(
 ) {
     val accountEmail = accountEmail(app)
     val isSending = form.status == FeedbackStatus.Sending
+    form.messageField.ObserveEdits { form.edited() }
+    form.emailField.ObserveEdits { form.edited() }
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(

@@ -93,9 +93,17 @@ class FeedbackViewModel(
     val emailField = handle.saveable(key = "email", saver = TextFieldState.Saver) { TextFieldState() }
     val message get() = messageField.text.toString()
     private val typedEmail get() = emailField.text.toString()
-    private var result by mutableStateOf(FeedbackStatus.Idle)
-    private var resultFor by mutableStateOf<Pair<String, String>?>(null)
-    val status get() = if (resultFor == null || resultFor == (message to typedEmail)) result else FeedbackStatus.Idle
+    var status by mutableStateOf(FeedbackStatus.Idle)
+        private set
+    private var sentFrom: Pair<String, String>? = null
+
+    /** Main's change handlers: an edit clears Sent or Failed, except the clear of a message that was just sent. */
+    fun edited() {
+        if (status != FeedbackStatus.Sending && (message to typedEmail) != sentFrom) {
+            status = FeedbackStatus.Idle
+            sentFrom = null
+        }
+    }
 
     /** [accountEmail] is the signed-in account's; without one the learner types it. */
     fun canSend(accountEmail: String?): Boolean {
@@ -123,13 +131,12 @@ class FeedbackViewModel(
         if (!canSend(accountEmail)) return
         val email = (accountEmail ?: typedEmail).trim()
         val submitted = message
-        resultFor = null
-        result = FeedbackStatus.Sending
+        status = FeedbackStatus.Sending
         viewModelScope.launch {
             val sent = sender.send(target, email, submitted.trim())
             if (sent) messageField.clearText()
-            resultFor = message to typedEmail
-            result = if (sent) FeedbackStatus.Sent else FeedbackStatus.Failed
+            sentFrom = message to typedEmail
+            status = if (sent) FeedbackStatus.Sent else FeedbackStatus.Failed
         }
     }
 }
