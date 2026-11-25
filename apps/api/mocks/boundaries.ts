@@ -77,6 +77,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/lesson-writer/fix": { fixLessonDraft: vi.fn() },
   "@zoonk/ai/tasks/lessons/question": { streamLessonQuestionAnswer: vi.fn() },
   "@zoonk/ai/tasks/listening/write-set": { writeListeningSet: vi.fn() },
+  "@zoonk/ai/tasks/material/transcribe": { transcribeMaterial: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/check": { checkMindMapImage: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/image": { generateMindMapImage: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/structure": { generateMindMapStructure: vi.fn() },
