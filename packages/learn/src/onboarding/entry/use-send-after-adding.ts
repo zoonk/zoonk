@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useEffect, useEffectEvent, useOptimistic, useRef } from "react";
+import { startTransition, useEffect, useEffectEvent, useOptimistic, useRef, useState } from "react";
 import {
   type AttachOutcome,
   type AttachedSource,
@@ -13,6 +13,7 @@ import {
  *
  * Adding runs in the attach controls' transition, and React holds every transition's updates until
  * it ends, so the count and the busy send are optimistic: both end with it, once the material is in.
+ * The box's form is reset then too, back to `heldWords`, so words that don't go stay in it.
  */
 export function useSendAfterAdding({
   attach,
@@ -26,6 +27,7 @@ export function useSendAfterAdding({
   const [adding, startAdding] = useOptimistic(0, (count, change: number) => count + change);
   const [waiting, showWaiting] = useOptimistic(false);
   const held = useRef<string | null>(null);
+  const [heldWords, setHeldWords] = useState<string | null>(null);
   const sendHeld = useEffectEvent(onSend);
 
   const track = async (run: () => Promise<AttachOutcome>): Promise<AttachOutcome> => {
@@ -40,6 +42,14 @@ export function useSendAfterAdding({
 
     return outcome;
   };
+
+  // Activity runs this when Start hides too: words held for the material aren't sent on return.
+  useEffect(
+    () => () => {
+      held.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
     const goal = held.current;
@@ -57,7 +67,11 @@ export function useSendAfterAdding({
     }
 
     held.current = goal;
-    startTransition(() => showWaiting(true));
+
+    startTransition(() => {
+      showWaiting(true);
+      setHeldWords(goal);
+    });
   };
 
   return {
@@ -67,6 +81,7 @@ export function useSendAfterAdding({
       link: (input) => track(() => attach.link(input)),
       text: (input) => track(() => attach.text(input)),
     } satisfies GoalAttachActions,
+    heldWords,
     send,
     waiting,
   };

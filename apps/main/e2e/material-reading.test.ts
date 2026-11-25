@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Page } from "@playwright/test";
+import { type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { type SourceReadState } from "@zoonk/db/enums";
 import { expectHydrated } from "@zoonk/e2e/hydration";
@@ -95,6 +95,37 @@ async function editGoal(page: Page) {
   const back = page.getByRole("button", { exact: true, name: "Back" });
   await expectHydrated(back);
   await back.click();
+}
+
+/** Pastes notes on Start and sends a goal while they're still being added, until `finishAdding`. */
+async function sendWhileAdding(page: Page, answer: (route: Route) => Promise<void>) {
+  const words = `test on Friday ${randomUUID().slice(0, 8)}`;
+  const { promise: added, resolve } = Promise.withResolvers<null>();
+
+  await stopRuns({ page });
+
+  await page.route("**/v1/uploads", async (route) => {
+    await added;
+    await answer(route);
+  });
+
+  await page.goto("/start");
+
+  const attach = page.getByRole("button", { name: "Study your own material" });
+  const send = page.getByRole("button", { name: "Build my plan" });
+
+  await expectHydrated(attach);
+  await attach.click();
+  await page.getByRole("button", { name: "Paste text" }).click();
+  await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);
+  await page.getByRole("button", { name: "Add text" }).click();
+  await expect(page.getByText("Adding your material…")).toBeVisible();
+
+  await page.getByRole("textbox", { name: "I want to" }).fill(words);
+  await send.click();
+  await expect(send).toHaveAttribute("aria-busy", "true");
+
+  return { finishAdding: () => resolve(null), words };
 }
 
 test.describe("Material that's read after it's added", () => {
@@ -300,33 +331,9 @@ test.describe("Material that's read after it's added", () => {
     noProgressUser: user,
     userWithoutProgress: page,
   }) => {
-    const words = `test on Friday ${randomUUID().slice(0, 8)}`;
-    const { promise: added, resolve: finishAdding } = Promise.withResolvers<null>();
+    const { finishAdding, words } = await sendWhileAdding(page, (route) => route.continue());
 
-    await stopRuns({ page });
-
-    await page.route("**/v1/uploads", async (route) => {
-      await added;
-      await route.continue();
-    });
-
-    await page.goto("/start");
-
-    const attach = page.getByRole("button", { name: "Study your own material" });
-    const send = page.getByRole("button", { name: "Build my plan" });
-
-    await expectHydrated(attach);
-    await attach.click();
-    await page.getByRole("button", { name: "Paste text" }).click();
-    await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);
-    await page.getByRole("button", { name: "Add text" }).click();
-    await expect(page.getByText("Adding your material…")).toBeVisible();
-
-    await page.getByRole("textbox", { name: "I want to" }).fill(words);
-    await send.click();
-    await expect(send).toHaveAttribute("aria-busy", "true");
-
-    finishAdding(null);
+    finishAdding();
 
     await expect(page).toHaveURL(DRAFT_URL);
 
@@ -336,6 +343,51 @@ test.describe("Material that's read after it's added", () => {
     ]);
 
     expect(draft.sourceIds).toEqual([upload.sourceId]);
+  });
+
+  test("a goal sent while its material fails to be added stays in the box to show why", async ({
+    userWithoutProgress: page,
+  }) => {
+    const { finishAdding, words } = await sendWhileAdding(page, (route) =>
+      route.fulfill({ json: {}, status: 503 }),
+    );
+
+    finishAdding();
+
+    await expect(page.getByText("We couldn't add that. Try again in a moment.")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(words);
+    await expect(page).toHaveURL(/\/start$/u);
+  });
+
+  test("a goal sent while its material is being added isn't sent once the learner leaves and comes back", async ({
+    userWithoutProgress: page,
+  }) => {
+    const { finishAdding, words } = await sendWhileAdding(page, (route) => route.continue());
+
+    // Leaving waits for the material: the navigation's transition ends with the add's.
+    await page.getByRole("link", { exact: true, name: "Level" }).click();
+    finishAdding();
+    await expect(page).toHaveURL(/\/level$/u);
+
+    const actions: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.headers()["next-action"]) {
+        actions.push(request.url());
+      }
+    });
+
+    await page.goBack();
+    await expect(page.getByRole("list", { name: "Your material" })).toBeVisible();
+
+    const send = page.getByRole("button", { name: "Build my plan" });
+
+    await expect(send).toBeEnabled();
+    await expect(send).not.toHaveAttribute("aria-busy", "true");
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(words);
+    await expect(page).toHaveURL(/\/start$/u);
+    expect(actions).toEqual([]);
+    await expect(prisma.onboardingDraft.count({ where: { prompt: words } })).resolves.toBe(0);
   });
 });
 

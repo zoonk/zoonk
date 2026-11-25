@@ -156,7 +156,7 @@ function AttachableGoalEntry({
         />
       }
       canSubmitEmpty={attached.length > 0 && intent !== null}
-      defaultGoal={defaultGoal}
+      defaultGoal={sending.heldWords ?? defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
       hasAccount={canAttach}
