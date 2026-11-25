@@ -142,24 +142,7 @@ fun SessionScreen(
         }
 
         shown != null -> {
-            val day = shown.day
-            val step = day.steps.firstOrNull { it.position == day.nextPosition }
-            if (step == null) {
-                LaunchedEffect(Unit) { navigator.closeTask() }
-            } else {
-                NextStop(
-                    viewModel,
-                    day,
-                    step,
-                    day.goalId ?: shown.today.goal.id,
-                    notWritten = null,
-                    alternative = null,
-                    refresh = null,
-                    onStop = null,
-                    navigator = navigator,
-                    warmUps = app.warmUps,
-                )
-            }
+            UnopenedDay(viewModel, shown, { app.today.today.refresh() }, navigator, app.warmUps)
         }
 
         else -> {
@@ -168,6 +151,35 @@ fun SessionScreen(
             SessionLoading(navigator::closeTask)
         }
     }
+}
+
+/** A day Today holds that isn't opened yet: Today's read is its only read, so it's what readiness refreshes. */
+@Composable
+internal fun UnopenedDay(
+    viewModel: SessionViewModel,
+    read: TodayRead.Day,
+    refreshToday: suspend () -> Unit,
+    navigator: AppNavigator,
+    warmUps: WarmUpStore,
+) {
+    val day = read.day
+    val step = day.steps.firstOrNull { it.position == day.nextPosition }
+    if (step == null) {
+        LaunchedEffect(Unit) { navigator.closeTask() }
+        return
+    }
+    NextStop(
+        viewModel = viewModel,
+        day = day,
+        step = step,
+        goalId = day.goalId ?: read.today.goal.id,
+        notWritten = null,
+        alternative = day.steps.firstOrNull { it.position == day.alternativePosition },
+        refresh = refreshToday,
+        onStop = null,
+        navigator = navigator,
+        warmUps = warmUps,
+    )
 }
 
 @Composable
@@ -367,8 +379,8 @@ private fun SessionSummaryContent(
  * that readiness until the day has the lesson, then says it's ready and focuses Start, never opening
  * it on its own: the learner may be reading, or doing the other step it offers. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is
- * core's pick of work to do meanwhile or instead. [refresh] is null on a day not opened yet, which
- * has no lesson to wait for; [onStop] once the session has work done. A goal's first lesson deals
+ * core's pick of work to do meanwhile or instead; [refresh] reads the day again; [onStop] is set
+ * once the session has work done. A goal's first lesson deals
  * its guesses while it's written, and a learner who guessed finishes the card once Start shows.
  */
 @Composable
@@ -379,7 +391,7 @@ internal fun NextStop(
     goalId: UUID?,
     notWritten: LessonWriting?,
     alternative: DayStep?,
-    refresh: (suspend () -> Unit)?,
+    refresh: suspend () -> Unit,
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
     warmUps: WarmUpStore,
@@ -388,7 +400,7 @@ internal fun NextStop(
         val refused = notWritten?.takeIf { step.isUnwrittenLesson() }
         val watched =
             step.lessonId?.takeIf {
-                refresh != null && refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
+                refused == null && step.kind == StudyBlock.Kind.LEARN && step.screen != StudyBlock.Screen.LESSON
             }
         val known = viewModel.lesson?.takeIf { it.id == watched }
         val status = known?.status?.value ?: step.lesson?.status?.value
@@ -431,11 +443,10 @@ internal fun NextStop(
         val lifecycle = LocalLifecycleOwner.current.lifecycle
         LaunchedEffect(watched) {
             val lessonId = watched ?: return@LaunchedEffect
-            val readDay = refresh ?: return@LaunchedEffect
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, step.lesson, readDay) }
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followLesson(lessonId, step.lesson, refresh) }
         }
         val runWrote = run.status == GenerationRun.Status.Ready && lesson == NextStopLesson.Writing
-        LaunchedEffect(runWrote) { if (runWrote) refresh?.invoke() }
+        LaunchedEffect(runWrote) { if (runWrote) refresh() }
         val retry = { goalId?.let { viewModel.start(day, step, it) } }
 
         TaskScaffold(

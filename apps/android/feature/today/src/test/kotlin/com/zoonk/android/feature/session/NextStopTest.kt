@@ -28,6 +28,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
@@ -40,6 +41,7 @@ import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockLesson
+import com.zoonk.api.models.Today
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,32 +119,34 @@ class NextStopTest {
         statuses.forEach { status -> answers += { status } }
     }
 
+    private val cache = AppCache(signIn, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+
+    private fun viewModel() =
+        SessionViewModel(
+            StudyOpener(api, api::writeLesson, cache, { "UTC" }),
+            StudySessionStore(api, cache) { "UTC" },
+            cache,
+            readiness = { _, _ ->
+                readinessGate?.await()
+                readinessReads++
+                val status = (answers.removeFirstOrNull()?.invoke() ?: settled).also { lastAnswer = it }
+                LessonReadiness(
+                    alternative = null,
+                    generationId = "run-1".takeIf { status == LessonReadiness.Status.GENERATING },
+                    kind = LessonReadiness.Kind.LESSON,
+                    setAside = setAside,
+                    status = status,
+                    warmUpId = warmUpId,
+                )
+            },
+            generations = { generations },
+        )
+
     private fun show(
         onStop: (() -> Unit)? = null,
         alternative: DayStep? = null,
     ): () -> Unit {
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        val cache = AppCache(signIn, scope)
-        val viewModel =
-            SessionViewModel(
-                StudyOpener(api, api::writeLesson, cache, { "UTC" }),
-                StudySessionStore(api, cache) { "UTC" },
-                cache,
-                readiness = { _, _ ->
-                    readinessGate?.await()
-                    readinessReads++
-                    val status = (answers.removeFirstOrNull()?.invoke() ?: settled).also { lastAnswer = it }
-                    LessonReadiness(
-                        alternative = null,
-                        generationId = "run-1".takeIf { status == LessonReadiness.Status.GENERATING },
-                        kind = LessonReadiness.Kind.LESSON,
-                        setAside = setAside,
-                        status = status,
-                        warmUpId = warmUpId,
-                    )
-                },
-                generations = { generations },
-            )
+        val viewModel = viewModel()
         var drawn by mutableIntStateOf(0)
 
         rule.setContent {
@@ -274,6 +278,47 @@ class NextStopTest {
         rule.onNodeWithText("Start").assertExists()
         rule.onNodeWithText("Practice now").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertDoesNotExist()
+    }
+
+    @Test
+    fun aDayNotOpenedYetSaysItsLessonFailedAndAsksTodayAgainOnceItsWritten() {
+        val gate = CompletableDeferred<Unit>()
+        readinessGate = gate
+        settled = LessonReadiness.Status.GENERATING
+        val lesson =
+            step(
+                0,
+                screen = StudyBlock.Screen.SESSION,
+                saved = false,
+                lessonId = WRITTEN,
+                lesson = StudyBlockLesson(false, LessonGenerationStatus.FAILED),
+            )
+        val unopened = day(steps = listOf(lesson, practice.copy(id = null)), saved = false).copy(alternativePosition = 1)
+        val viewModel = viewModel()
+
+        rule.setContent {
+            ZoonkTheme {
+                UnopenedDay(
+                    viewModel = viewModel,
+                    read = TodayRead.Day(decodeFixture<Today>("today"), unopened),
+                    refreshToday = { dayReads++ },
+                    navigator = rememberAppNavigator(),
+                    warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, signIn),
+                )
+            }
+        }
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
+        rule.onNodeWithText("Practice now").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        gate.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(1, readinessReads)
+        assertEquals(1, dayReads)
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
     }
 
     @Test
