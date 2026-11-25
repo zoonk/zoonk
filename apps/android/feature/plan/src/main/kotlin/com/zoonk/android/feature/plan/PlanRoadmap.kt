@@ -146,6 +146,30 @@ private fun PhaseEndLine(end: PlanDateWords) {
     )
 }
 
+/**
+ * "Phase 1 of 4 · Basics" on one line, or the name under the number when they don't fit, so a wrapped line never
+ * starts on a dot, as web's `FactSegments` cuts it.
+ */
+@Composable
+private fun PositionLine(
+    position: RoadmapPosition,
+    modifier: Modifier,
+) {
+    val style = MaterialTheme.typography.labelMedium.balanced()
+    val number = stringResource(R.string.plan_roadmap_phase_number, position.number, position.total)
+    val oneLine = positionWords(number, listOf(position.name))
+    val measurer = rememberTextMeasurer()
+    BoxWithConstraints(modifier) {
+        val fits = measurer.measure(oneLine, style, softWrap = false, maxLines = 1).size.width <= constraints.maxWidth
+        Text(
+            text = if (fits) oneLine else positionWords(number, listOf(position.name), separator = "\n"),
+            style = style,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
 @Composable
 private fun RoadmapCompact(
     page: PlanPageState,
@@ -171,17 +195,7 @@ private fun RoadmapCompact(
         RoadmapMeter(phases)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (position != null) {
-                Text(
-                    text =
-                        positionWords(
-                            stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
-                            listOf(position.name),
-                        ),
-                    modifier = Modifier.weight(1f),
-                    style = small.balanced(),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                PositionLine(position, Modifier.weight(1f))
                 position.end?.let { PhaseEndLine(it) }
             } else {
                 Text(
@@ -855,11 +869,12 @@ private fun FractionRow(
 private fun positionWords(
     name: String,
     details: List<String>,
+    separator: String = FACT_SEPARATOR,
 ): AnnotatedString {
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
     return buildAnnotatedString {
         append(name)
-        withStyle(SpanStyle(color = quiet)) { details.forEach { append("$FACT_SEPARATOR$it") } }
+        withStyle(SpanStyle(color = quiet)) { details.forEach { append("$separator$it") } }
     }
 }
 
