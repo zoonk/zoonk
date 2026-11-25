@@ -342,17 +342,23 @@ private fun TypedTools(
     onChange: (ProfileDraft) -> Unit,
 ) {
     val field = remember { TextFieldState(draft.text) }
+    // What the field was set to after its names became chips: not the learner's edit, and this frame's draft, from
+    // before those chips, would drop them if it handled it.
+    var reset by remember { mutableStateOf<String?>(null) }
     val entry = draft.copy(text = field.text.toString())
     val canAdd = entry.canAdd(question.options)
-    val add = {
-        val added = entry.added(question.options)
-        field.setTextAndPlaceCursorAtEnd(added.text)
-        onChange(added)
-    }
-    field.ObserveEdits { text ->
-        val next = draft.typing(text, question.options)
-        if (next.text != text) field.setTextAndPlaceCursorAtEnd(next.text)
+    val show = { next: ProfileDraft ->
+        if (next.text != field.text.toString()) {
+            reset = next.text
+            field.setTextAndPlaceCursorAtEnd(next.text)
+        }
         onChange(next)
+    }
+    val add = { show(entry.added(question.options)) }
+    field.ObserveEdits { text ->
+        val own = text == reset
+        reset = null
+        if (!own) show(draft.typing(text, question.options))
     }
     val newest = remember { BringIntoViewRequester() }
     var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
