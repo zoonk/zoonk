@@ -137,7 +137,10 @@ export async function waitForRunToken(token: string): Promise<boolean> {
 }
 
 /** False when the run failed, was cancelled, stalled or outlasted any run's work. */
-export async function waitForRun(runId: string, poll = JOIN_POLL): Promise<boolean> {
+export async function waitForRun(
+  runId: string,
+  poll: typeof JOIN_POLL | "1s" = JOIN_POLL,
+): Promise<boolean> {
   const state = await repeatUntil<JoinedState>({
     done: (current) => current !== "working",
     run: () => checkJoinedRunStep(runId),

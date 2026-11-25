@@ -54,6 +54,13 @@ export async function toGoalUploadRequest(goal: Goal): Promise<GoalUploadRequest
 
 export type ResearchUploadAnswerKey = { answerId: string; userId: string };
 
+type ResearchUploadAccess = ResearchAccess & { pendingUploadAnswer?: ResearchUploadAnswerKey };
+
+type ResearchUploadRefusal =
+  | { status: "alreadyAnswered" }
+  | { status: "noUploadRequest" }
+  | { status: "unreadable" };
+
 export async function getGoalUploadRequest({
   goalId,
 }: {
@@ -101,12 +108,7 @@ export async function answerGoalUploadRequest({
 }: {
   goalId: string;
   sourceIds?: string[];
-}): Promise<
-  | (ResearchAccess & { pendingUploadAnswer?: ResearchUploadAnswerKey })
-  | { status: "alreadyAnswered" }
-  | { status: "noUploadRequest" }
-  | { status: "unreadable" }
-> {
+}): Promise<ResearchUploadAccess | ResearchUploadRefusal> {
   const [access, session] = await Promise.all([
     getResearchAccess({ goalId, sourceIds }),
     getSession(),
@@ -118,7 +120,10 @@ export async function answerGoalUploadRequest({
 
   const userId = session.user.id;
 
-  const answered = await writeLearnerChange({ userId }, async (transaction) => {
+  const answered = await writeLearnerChange<
+    Extract<ResearchUploadAccess, { status: "ready" }>,
+    ResearchUploadRefusal
+  >({ userId }, async (transaction) => {
     const goal = await transaction.goal.findFirst({
       select: { researchUploadReason: true },
       where: { id: goalId, userId },
