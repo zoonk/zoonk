@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -578,6 +579,8 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
+    // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
+    Spacer(Modifier.weight(1f))
     QuestionPanel(questionField, ask, vm.isAsking)
 }
 
