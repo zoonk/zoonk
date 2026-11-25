@@ -1037,7 +1037,7 @@ struct TodayProgressSection: View {
             comment: "What the goal's progress number is made of")
         ) {
           if lessons.total > 0 {
-            CoverageBar(done: Double(lessons.done) / Double(lessons.total))
+            CoverageBar(studied: Double(lessons.done) / Double(lessons.total))
           }
         }
       }
