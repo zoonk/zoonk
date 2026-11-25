@@ -762,6 +762,22 @@ private fun TopicFrequencySource(
     }
 }
 
+/** What a subject out of the plan would teach, by name, when it has no chapters or topics to show it. */
+internal fun LazyListScope.subjectCovers(covers: List<String>) {
+    if (covers.isEmpty()) return
+
+    sectionTitle(key = "covers-title", title = { stringResource(R.string.goalcontent_covers) })
+
+    item(key = "covers", contentType = "covers") {
+        Column {
+            covers.forEachIndexed { index, name ->
+                if (index > 0) ListDivider()
+                ListRow(headline = { Text(name) })
+            }
+        }
+    }
+}
+
 internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
     if (matrix.isEmpty()) return
 

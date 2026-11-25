@@ -115,6 +115,8 @@
     <string name="goalcontent_module_time">This module isn\'t in your plan. Other modules come first.</string>
     <!-- On a module's page, on a plan that isn't an exam: the plan doesn't teach the module yet. -->
     <string name="goalcontent_module_missing">This module isn\'t in your plan yet.</string>
+    <!-- Heads the list of what a module or subject out of the learner's plan would teach, one name per row. -->
+    <string name="goalcontent_covers">What it covers</string>
     <string name="goalcontent_adjust_plan">Adjust plan</string>
     <string name="goalcontent_add_back">Add it back</string>
     <string name="goalcontent_save_failed">That didn\'t save. Try again.</string>

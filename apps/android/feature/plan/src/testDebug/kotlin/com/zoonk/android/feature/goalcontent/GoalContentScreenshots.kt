@@ -202,13 +202,18 @@ class GoalContentScreenshots {
             SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
-        /** The Python plan with its Data module out for [reason], as core sends a module the plan doesn't teach: no lessons. */
+        /** The Python plan with its Data module out for [reason], as core sends a module the plan doesn't teach: its skills, no lessons. */
         fun modulesWithDataOut(reason: String): Syllabus {
             val syllabus = modulesSyllabus()
+            val skills = listOf("Lists and tuples", "Dictionaries and sets", "Reading and writing CSV files", "Cleaning messy data")
             return syllabus.copy(
                 subjects =
                     syllabus.subjects.map {
-                        if (it.key == "data") it.copy(notPlannedReason = reason, chapters = emptyList(), lessonsTotal = 0, nextDate = null) else it
+                        if (it.key == "data") {
+                            it.copy(notPlannedReason = reason, chapters = emptyList(), covers = skills, lessonsTotal = 0, nextDate = null)
+                        } else {
+                            it
+                        }
                     },
             )
         }

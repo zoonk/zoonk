@@ -290,6 +290,7 @@ internal fun SubjectPage(
         }
 
         item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, module = !syllabus.isExam, writes, actions) }
+        subjectCovers(subject.covers)
         written?.let { subjectWritten(it, actions.openAnswer, standing = !asideBeside) }
 
         subjectChapters(subject, today, actions)
