@@ -4,7 +4,7 @@ import { dirname, join, sep } from "node:path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { type DocumentImage } from "./parse-document";
 
-const MAX_PAGE_EDGE = 1800;
+export const MAX_PAGE_EDGE = 1800;
 const MAX_EMBEDDED_IMAGE_PIXELS = 40_000_000;
 
 const require = createRequire(import.meta.url);

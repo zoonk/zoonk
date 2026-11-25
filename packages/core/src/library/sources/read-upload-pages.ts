@@ -3,7 +3,8 @@ import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../cache/tags";
-import { renderPdfPage } from "./render-pdf-page";
+import { optimizeImage } from "../../images/optimize-image";
+import { MAX_PAGE_EDGE, renderPdfPage } from "./render-pdf-page";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, sourceStructureSchema } from "./source-contract";
 import { readUploadedBlob } from "./upload-blob";
 
@@ -30,6 +31,20 @@ export async function findOwedUpload(sourceId: string) {
 
 export type UploadReading = NonNullable<Awaited<ReturnType<typeof findOwedUpload>>>;
 
+async function renderPhotoPage(bytes: Uint8Array) {
+  const { data, error } = await optimizeImage({
+    format: "jpeg",
+    image: bytes,
+    maxEdge: MAX_PAGE_EDGE,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return { data, mediaType: "image/jpeg" };
+}
+
 export async function readUploadPage({
   index,
   upload,
@@ -46,7 +61,7 @@ export async function readUploadPage({
   const image =
     blob.contentType === PDF_CONTENT_TYPE
       ? await renderPdfPage({ bytes: blob.bytes, index })
-      : { data: blob.bytes, mediaType: blob.contentType };
+      : await renderPhotoPage(blob.bytes);
 
   const { data } = await transcribeMaterial({
     analytics: { contentScope: "personal", distinctId: upload.ownerId },

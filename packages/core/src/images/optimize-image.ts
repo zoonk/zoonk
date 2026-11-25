@@ -6,20 +6,28 @@ import sharp from "sharp";
 export async function optimizeImage({
   image,
   format = "webp",
+  maxEdge,
   quality = DEFAULT_IMAGE_QUALITY,
 }: {
-  image: Buffer;
+  image: Uint8Array;
   format?: "webp" | "jpeg" | "png";
+  maxEdge?: number;
   quality?: number;
 }): Promise<SafeReturn<Buffer>> {
   const { data, error } = await safeAsync(() => {
     const pipeline = sharp(image);
 
+    if (maxEdge !== undefined) {
+      pipeline
+        .autoOrient()
+        .resize({ fit: "inside", height: maxEdge, width: maxEdge, withoutEnlargement: true });
+    }
+
     switch (format) {
       case "webp":
         return pipeline.webp({ quality }).toBuffer();
       case "jpeg":
-        return pipeline.jpeg({ quality }).toBuffer();
+        return pipeline.flatten({ background: "white" }).jpeg({ quality }).toBuffer();
       case "png":
         return pipeline.png({ quality }).toBuffer();
       default:
