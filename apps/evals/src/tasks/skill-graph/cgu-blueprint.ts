@@ -1,5 +1,11 @@
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 
+/** The notice describes each discursive question in one sentence, its lines and points included. */
+export const CGU_WRITTEN_TASKS = [
+  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos",
+];
+
 export const CGU_BLUEPRINT: ExamOutline = {
   name: "CGU, Auditor Federal de Finanças e Controle - Auditoria (Cebraspe)",
   notes: [

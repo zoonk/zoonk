@@ -6453,6 +6453,140 @@
           "ownLevel": "basic"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every supplied topic is mapped. The four skills for planning, formal writing, and answering the two questions are outcomes in the exact area “Prova discursiva”; neither task sentence is used as an area or skill name. The 70-point task correctly outweighs the 30-point task. No topic-frequency data supports demanding a more precise ranking within ethics.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The main sequences are usable: recognizing a statutory conflict precedes choosing a response, and planning and formal writing precede the two complete answers. The phases have distinct, neutral stage titles. The second milestone accurately describes the ethics work but gives no indication that the learner can also plan and draft a formal answer by then.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Most ethics skills separate useful decisions, such as distinguishing impediment from suspicion before deciding when to communicate and abstain. The clear sizing problem is written practice: the lesson counts look substantial, but the final phase's hours do not budget credible time for full-length answers and revision.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Strategy is confined to extras. The legal skills stay within the cited provisions, and skills sharing a topic generally teach distinct actions rather than repeating it. Planning and formal expression are taught once for both written tasks.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map uses Brazilian Portuguese, preserves the actual writing limits, and does not invent complementary or specialty subjects absent from the supplied blueprint. The null exam weights on the extras conflict with the stated weight convention, and a few skill names unnecessarily tie reusable actions to this institution or statute.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The ethics path emphasizes judgment: weighing competing values, distinguishing support from fact-finding, and choosing when to abstain. Manual composition fits what the exam actually scores; an AI-tool skill is not needed. The case-writing outcome could better specify how the learner checks whether the facts support the conclusion.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7961,
+          "outputTokens": 901,
+          "reasoningTokens": 93
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final phase leaves too little time to practice the two written tasks. Its 58 three-minute lessons use 2.9 of the allotted 4.2 hours, leaving 78 minutes for writing and review. That is not enough for even one rehearsal at the notice's 3h30 timing, let alone feedback and a second attempt.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The three strategy extras have null weights despite the stated 1–5 rule for exam goals. Some names are also less reusable than requested: “Aplicar deveres de conduta da CGU” could name the general action and leave the institution in the description. The phase 2 milestone omits the written planning and formal expression taught there.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the 60-line task more actionable without inventing specialty content: specify that the learner must identify the issue in a supplied case, connect the relevant criterion to the facts, and justify a conclusion. Assess that reasoning separately from formal Portuguese. For the 30-line task, focus feedback on answering each command concisely.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The notice lists its discursive test as the subject \"Prova discursiva\", whose two topics and two written tasks are the notice's sentences describing each question (lines and points). Every skill that practices those questions, or the written Portuguese the test grades, is an outcome skill in the area \"Prova discursiva\", word for word\n      - No area and no skill name copies a task's sentence (\"uma questão envolvendo situação-problema, …, no valor de 70,00 pontos\"): a learner reads area names as the plan's subjects\n      - Every topic id of every subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-cgu-discursive-test-subject-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Auditoria (Cebraspe)",
+            "notes": [
+              "Format: itens de certo ou errado; P1 (conhecimentos básicos) com 40 itens, P2 (conhecimentos complementares) com 40 itens e P3 (conhecimentos específicos) com 90 itens, em 5 horas; prova discursiva de 3h30 com duas questões, uma de até 30 linhas (30 pontos) e uma situação-problema de até 60 linhas (70 pontos).",
+              "Scoring: na P1 e na P2, cada item certo vale 1,00 ponto e cada item errado desconta 1,00 ponto; na P3, cada item certo vale 2,00 pontos e cada item errado desconta 2,00 pontos; itens sem marcação valem 0,00.",
+              "Rule: a prova discursiva avalia o conteúdo, a capacidade de expressão na modalidade escrita e o uso das normas do registro formal culto da Língua Portuguesa."
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "1.1 Interesse público, dignidade, justiça e responsabilidade; relações entre deveres, consequências e virtudes profissionais; conflitos entre valores em decisões públicas",
+                  "2 Deveres profissionais",
+                  "2.2 Aplicação dos valores e deveres de conduta ética da CGU a situações de trabalho",
+                  "3 Conflitos de interesses e imparcialidade",
+                  "3.1 Identificação de interesses privados em conflito com a função pública e medidas de prevenção, consulta e encaminhamento, nos termos dos arts. 3º a 5º, 8º e 10 da Lei nº 12.813/2013",
+                  "3.2 Impedimento e suspeição no processo administrativo federal, nos termos dos arts. 18 a 21 da Lei nº 9.784/1999; comunicação e abstenção quando exigidas",
+                  "4 Relações de trabalho e atendimento",
+                  "4.1 Dignidade, diversidade e relações de poder; reconhecimento e prevenção de assédio e discriminação; respeito, escuta e não retaliação",
+                  "4.2 Distinção entre acolher uma pessoa, verificar fatos e atribuir responsabilidade",
+                  "5 Integridade como responsabilidade institucional",
+                  "5.1 Coerência entre regras e práticas; ambiente organizacional e incentivos; canais de orientação e relato; papel do exemplo, da confiança e da prestação de contas"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Prova discursiva (P4)",
+                "name": "Prova discursiva",
+                "questions": 2,
+                "topics": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

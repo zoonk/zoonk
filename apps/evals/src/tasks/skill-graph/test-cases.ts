@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
-import { CGU_BLUEPRINT } from "./cgu-blueprint";
+import { CGU_BLUEPRINT, CGU_WRITTEN_TASKS } from "./cgu-blueprint";
 import { DISCIPLINE_ALIAS_CASES } from "./discipline-alias-cases";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
@@ -599,6 +599,38 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     id: "pt-cgu-2026-notice-subjects-only",
     userInput: {
       examBlueprint: CGU_BLUEPRINT,
+      goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The notice lists its discursive test as the subject "Prova discursiva", whose two topics and two written tasks are the notice's sentences describing each question (lines and points). Every skill that practices those questions, or the written Portuguese the test grades, is an outcome skill in the area "Prova discursiva", word for word
+      - No area and no skill name copies a task's sentence ("uma questão envolvendo situação-problema, …, no valor de 70,00 pontos"): a learner reads area names as the plan's subjects
+      - Every topic id of every subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cgu-discursive-test-subject",
+    userInput: {
+      examBlueprint: {
+        ...CGU_BLUEPRINT,
+        subjects: [
+          ...CGU_BLUEPRINT.subjects.filter((subject) =>
+            ["Ética Pública e Responsabilidade Profissional"].includes(subject.name),
+          ),
+          {
+            group: "Prova discursiva (P4)",
+            name: "Prova discursiva",
+            questions: 2,
+            topics: CGU_WRITTEN_TASKS,
+            weight: null,
+            writtenTasks: CGU_WRITTEN_TASKS,
+          },
+        ],
+      },
       goal: "Passar no concurso da CGU",
       goalKind: "exam",
       language: "pt",

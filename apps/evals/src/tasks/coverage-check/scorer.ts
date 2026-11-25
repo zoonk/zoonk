@@ -13,7 +13,8 @@ export type CoverageCheckExpected = {
   /** Each gap's course key, in the order of `gaps`. */
   gapCourses?: string[];
   gapWeights?: WeightRange[];
-  placements?: { key: string; topics: string[] }[];
+  /** `area`, when given, is the subject the placement must name. */
+  placements?: { area?: string; key: string; topics: string[] }[];
 };
 
 type Flagged = {
@@ -24,7 +25,7 @@ type Flagged = {
 };
 
 type WeightChange = { examWeight: number; key: string };
-type Placement = { key: string; topics: string[] };
+type Placement = { area: string; key: string; topics: string[] };
 type Output = { flagged: Flagged[]; placements: Placement[]; weightChanges: WeightChange[] };
 
 const MIN_SCORE = 6;
@@ -68,6 +69,7 @@ function toPlacement(placement: unknown): Placement[] {
     Array.isArray(placement.topics)
     ? [
         {
+          area: typeof placement.area === "string" ? placement.area : "",
           key: placement.key,
           topics: placement.topics.filter((topic): topic is string => typeof topic === "string"),
         },
@@ -292,17 +294,30 @@ function scorePlacements({
   );
 
   const unexpected = placements.filter((item) => !expected.some((other) => other.key === item.key));
+  const areas = expected.filter((item) => item.area !== undefined);
+
+  const wrongAreas = areas.filter(
+    (item) => placements.find((placement) => placement.key === item.key)?.area !== item.area,
+  );
 
   const details = [
     missed.length > 0 &&
       `Topics not placed: ${missed.map((item) => `${item.key}: ${item.topic}`).join("; ")}.`,
     unexpected.length > 0 &&
       `Unexpected placements: ${unexpected.map((item) => item.key).join(", ")}.`,
+    wrongAreas.length > 0 &&
+      `Not placed in their subject: ${wrongAreas.map((item) => `${item.key} → ${item.area}`).join("; ")}.`,
   ].filter(Boolean);
+
+  const areaHits = areas.length - wrongAreas.length;
 
   return {
     details,
-    f1: toF1({ found: hits.length + unexpected.length, hits: hits.length, total: wanted.length }),
+    f1: toF1({
+      found: hits.length + areaHits + unexpected.length,
+      hits: hits.length + areaHits,
+      total: wanted.length + areas.length,
+    }),
   };
 }
 
