@@ -27,6 +27,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS, type CefrLevel } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
@@ -925,6 +926,8 @@ describe("a level's size, each written lesson counted once", () => {
   it.each([5, 10, 15, 20])(
     "earns no level below half for a dated plan whose lessons teach two levels, at %s minutes a day",
     async (dailyMinutes) => {
+      freezeClock();
+
       const fixture = await italianPlan({
         items: [
           ...Array.from({ length: 3 }, () => ({ skill: 0 })),
@@ -1085,6 +1088,8 @@ describe("a course level's half, its skills taken from the plan's graph", () => 
   it.each([false, true])(
     "keeps a skill a dated plan left wholly out in the level's size (its lessons written: %s)",
     async (outlined) => {
+      freezeClock();
+
       const fixture = await italianPlan({
         items: [{ skill: 0 }, { skill: 0 }],
         skills: [
