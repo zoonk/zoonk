@@ -2,7 +2,6 @@ import { QuestionTitle } from "@zoonk/learn/question-title";
 import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
-import { cn } from "@zoonk/ui/lib/utils";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 
@@ -43,5 +42,5 @@ export function useTermHighlighter(): string | null {
 }
 
 export function LessonBody({ children }: { children: string }) {
-  return <RichTextBlocks className={cn(LESSON_BODY_CLASS, "lg:max-w-xl")} text={children} />;
+  return <RichTextBlocks className={LESSON_BODY_CLASS} text={children} />;
 }

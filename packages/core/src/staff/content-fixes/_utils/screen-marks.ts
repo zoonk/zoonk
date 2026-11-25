@@ -11,6 +11,7 @@ import {
 import {
   type ContentFixMediaNeed,
   type ProducedContentFixMedia,
+  applyMarkedQuotes,
   stepMarksKey,
 } from "../media-schema";
 import { type Json } from "./resolved-change";
@@ -45,7 +46,7 @@ export function isTaggedLesson(screens: readonly { marks: unknown }[]): boolean 
 }
 
 /** The saved quotes that still fit the text; one that no longer does is gone. */
-export function fittingQuotes(marks: unknown, text: string): MarkedText {
+function fittingQuotes(marks: unknown, text: string): MarkedText {
   const saved = readSavedStepMarks(marks);
 
   return {
@@ -59,7 +60,7 @@ export function fittingQuotes(marks: unknown, text: string): MarkedText {
 }
 
 /** Only an explanation frames an example, so a worked example lacks no more than its underline. */
-export function lacksQuotes({
+function lacksQuotes({
   kept,
   kind,
 }: {
@@ -70,25 +71,46 @@ export function lacksQuotes({
 }
 
 /**
- * Fills only the quotes the screen lacks, so a quote that still fits (which a learner's own
- * version of the screen may share) stays, and the screen's idea and icon stay as reviewed.
- * Without new quotes, as when marking failed, the screen keeps what still fits.
+ * The quotes a screen keeps and the ones it gets marked. A screen asked to mark again gets a new
+ * example box in place of its own, and like a rewritten one, only the underline it lacks.
+ */
+export function toMarksTarget({
+  asked,
+  marks,
+  position,
+  target,
+}: {
+  asked: boolean;
+  marks: unknown;
+  position: number;
+  target: MarksNeed["screens"][number];
+}) {
+  const kept = fittingQuotes(marks, target.text);
+  const remarked = asked && target.kind === "explanation";
+
+  return remarked || lacksQuotes({ kept, kind: target.kind })
+    ? [{ kept, position, remarked, screen: target }]
+    : [];
+}
+
+/**
+ * A quote that still fits (which a learner's own version of the screen may share) stays unless the
+ * screen was asked to mark again, and the screen's idea and icon stay as reviewed.
  */
 function withMarkedText({
   marked,
   marks,
+  remarked = false,
   text,
 }: {
   marked?: MarkedText;
   marks: unknown;
+  remarked?: boolean;
   text: string;
 }): SavedStepMarks {
-  const fitting = fittingQuotes(marks, text);
-
   return {
     ...(readSavedStepMarks(marks) ?? UNTAGGED),
-    example: fitting.example ?? marked?.example ?? null,
-    underline: fitting.underline ?? marked?.underline ?? null,
+    ...applyMarkedQuotes({ kept: fittingQuotes(marks, text), marked, remarked }),
   };
 }
 
@@ -171,10 +193,12 @@ export async function remarkedStep(
 export function linkScreenMarks({
   marked,
   positions,
+  remarked,
   screens,
 }: {
   marked: Extract<ProducedContentFixMedia, { kind: "marks" }>;
   positions: readonly number[];
+  remarked: readonly number[];
   screens: { content: Record<string, unknown>; kind: StepKind; marks: unknown; position: number }[];
 }): void {
   for (const [index, position] of positions.entries()) {
@@ -182,7 +206,12 @@ export function linkScreenMarks({
     const text = screen && toMarksNeedScreen(screen)?.text;
 
     if (screen && text !== undefined) {
-      screen.marks = withMarkedText({ marked: marked.screens[index], marks: screen.marks, text });
+      screen.marks = withMarkedText({
+        marked: marked.screens[index],
+        marks: screen.marks,
+        remarked: remarked.includes(position),
+        text,
+      });
     }
   }
 }
