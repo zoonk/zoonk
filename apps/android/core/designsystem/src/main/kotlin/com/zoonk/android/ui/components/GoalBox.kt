@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import java.util.Locale
@@ -119,15 +118,15 @@ fun GoalBox(
     val words = MaterialTheme.zoonkType.lead.copy(color = colors.onSurface, lineHeight = GOAL_LINE_HEIGHT)
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
-    val ring = if (LocalMoreContrast.current) 3.dp else 2.dp
     val shape = RoundedCornerShape(ZoonkRadius.xl)
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
             Modifier
                 .fillMaxWidth()
+                .then(if (focused) Modifier.focusRing(shape, colors.primary) else Modifier)
                 .background(colors.surfaceContainerLow, shape)
-                .border(if (focused) ring else 1.dp, if (focused) colors.primary else colors.outline, shape)
+                .border(1.dp, if (focused) colors.primary else colors.outline, shape)
                 .padding(16.dp),
         ) {
             val textField: @Composable () -> Unit = {

@@ -75,6 +75,7 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.writingAreaColors
+import com.zoonk.android.ui.components.writingAreaFocusRing
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formatNumber
@@ -276,6 +277,7 @@ private fun EssayAnswer(
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
         colors = writingAreaColors(),
+        focusRing = writingAreaFocusRing(),
         label =
             stringResource(
                 if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,

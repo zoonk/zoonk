@@ -88,6 +88,7 @@ internal fun TutorComposer(
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
             colors = composerColors(),
             focusedBorderThickness = composerFocusThickness(),
+            focusRing = false,
             shape = RoundedCornerShape(ZoonkRadius.xl),
             // Main's `min-h-11`: 44dp on one line, the send button 8dp in from the end on the last line.
             contentPadding = PaddingValues(start = 14.dp, end = SEND_INSET + SEND_SIZE + 12.dp, top = 10.dp, bottom = 10.dp),

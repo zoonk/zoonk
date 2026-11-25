@@ -100,6 +100,7 @@ import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.writingAreaColors
+import com.zoonk.android.ui.components.writingAreaFocusRing
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -628,6 +629,7 @@ internal fun WriteScreen(
                     textStyle = MaterialTheme.typography.bodyLarge,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     colors = writingAreaColors(),
+                    focusRing = writingAreaFocusRing(),
                 )
                 WritingLineCount(ui.text, essay.writing)
             }

@@ -71,9 +71,9 @@ import kotlinx.coroutines.flow.drop
 
 /*
  * Main's field (`Input`, `Textarea` under a `Label`): the label above the field, never floating inside
- * it, a 1dp `input` line with `rounded-lg` corners, 44dp tall on one line, and an ink ring while
- * focused (thicker with more contrast): Material's outlined colors already draw the line in `outline`
- * (`input`) and the ring in `primary` (ink). An invalid field draws main's `destructive` mark with its
+ * it, a 1dp `input` line with `rounded-lg` corners, 44dp tall on one line; focused, the line in ink
+ * with main's soft ink ring outside it: Material's outlined colors already draw the line in `outline`
+ * (`input`) and in `primary` (ink) while focused. An invalid field draws main's `destructive` mark with its
  * soft 3dp ring, while its message keeps Material's `error` (`destructive-text`) words. Built as Material builds its own outlined field, from
  * `BasicTextField` and Material's decoration and container, so IME, autofill, selection, supporting
  * text and TalkBack behave as Material's; the label is part of the field, so TalkBack reads it as the
@@ -102,7 +102,8 @@ fun OutlinedTextField(
     onKeyboardAction: KeyboardActionHandler? = null,
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    focusedBorderThickness: Dp = if (LocalMoreContrast.current) 3.dp else 2.dp,
+    focusedBorderThickness: Dp = 1.dp,
+    focusRing: Boolean = true,
     shape: Shape = FIELD_SHAPE,
     contentPadding: PaddingValues = FIELD_PADDING,
     minHeight: Dp = FIELD_MIN_HEIGHT,
@@ -182,7 +183,17 @@ fun OutlinedTextField(
                 LabeledField(label, enabled, supporting) {
                     FieldBox(
                         minHeight = minHeight,
-                        container = { FieldContainer(enabled, isError, interaction, colors, focusedBorderThickness, shape) },
+                        container = {
+                            FieldContainer(
+                                enabled,
+                                isError,
+                                focused && focusRing,
+                                interaction,
+                                colors,
+                                focusedBorderThickness,
+                                shape,
+                            )
+                        },
                         leading = leadingIcon?.let { { CompositionLocalProvider(LocalContentColor provides iconColor, it) } },
                         trailing = trailingIcon?.let { { CompositionLocalProvider(LocalContentColor provides trailingIconColor, it) } },
                         endAction = endAction,
@@ -344,14 +355,15 @@ private fun PaddingValues.besideMarks(
 }
 
 /**
- * A 1dp `input` line; focused, a ring of [focusedBorderThickness] in the colors' focused line. Invalid,
- * main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with a 3dp ring of it
- * outside (20%, 40% in dark), both solid with more contrast.
+ * A 1dp `input` line; focused, [focusedBorderThickness] of the colors' focused line, with main's focus
+ * ring outside it while [ringed]. Invalid, main's `aria-invalid:` look instead: the line in `destructive`
+ * (half strength in dark) with a 3dp ring of it outside (20%, 40% in dark), both solid with more contrast.
  */
 @Composable
 private fun FieldContainer(
     enabled: Boolean,
     isError: Boolean,
+    ringed: Boolean,
     interactionSource: MutableInteractionSource,
     colors: TextFieldColors,
     focusedBorderThickness: Dp,
@@ -367,7 +379,13 @@ private fun FieldContainer(
         enabled = enabled,
         isError = isError,
         interactionSource = interactionSource,
-        modifier = if (isError && enabled) Modifier.ringOutside(shape, ring, INVALID_RING) else Modifier,
+        modifier =
+            when {
+                !enabled -> Modifier
+                isError -> Modifier.ringOutside(shape, ring, INVALID_RING)
+                ringed -> Modifier.focusRing(shape, MaterialTheme.colorScheme.primary)
+                else -> Modifier
+            },
         colors = colors.copy(errorIndicatorColor = line),
         shape = shape,
         focusedBorderThickness = focusedBorderThickness,
@@ -375,8 +393,14 @@ private fun FieldContainer(
     )
 }
 
+/** Main's `ring-[3px] ring-ring/50` outside a focused field's [ink] line, more contrast included. */
+internal fun Modifier.focusRing(
+    shape: Shape,
+    ink: Color,
+): Modifier = ringOutside(shape, ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH)
+
 /** A ring [width] wide just outside [shape], its corners following the shape's own. */
-internal fun Modifier.ringOutside(
+private fun Modifier.ringOutside(
     shape: Shape,
     color: Color,
     width: Dp,
@@ -443,20 +467,24 @@ fun readOnlyFieldState(value: String): TextFieldState = remember(value) { TextFi
 private val FIELD_SHAPE = RoundedCornerShape(ZoonkRadius.lg)
 
 /**
- * Main's writing editor: a long answer's field keeps its soft `input` line while focused, since its
- * caret already shows where the learner is; more contrast still draws the ink ring.
+ * Main's writing editor: a long answer's field only darkens its line to ink at 35% while focused, with no ring,
+ * since its caret already shows where the learner is; more contrast still draws the ink line and its ring
+ * ([writingAreaFocusRing]).
  */
 @Composable
 fun writingAreaColors(): TextFieldColors =
     if (LocalMoreContrast.current) {
         OutlinedTextFieldDefaults.colors()
     } else {
-        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.outline)
+        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f))
     }
+
+@Composable
+fun writingAreaFocusRing(): Boolean = LocalMoreContrast.current
 
 /**
  * Main's composer (`TUTOR_COMPOSER_FRAME_CLASS`): on `card`; focused, its `input` line gives way to a
- * soft ink ring at 35%, solid with more contrast. Its ring is [composerFocusThickness] wide.
+ * soft ink ring at 35%, solid with more contrast, [composerFocusThickness] wide and with no `focusRing` outside it.
  */
 @Composable
 fun composerColors(): TextFieldColors {
@@ -478,6 +506,7 @@ private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
 
 /** Main's `aria-invalid:ring-[3px]`, outside the field's line. */
 private val INVALID_RING = 3.dp
+private val FOCUS_RING_WIDTH = 3.dp
 private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
