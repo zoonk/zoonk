@@ -8,10 +8,20 @@ import { type PlanContext } from "./plan-context";
 import { computePlan } from "./replan";
 import { getChangePlanning } from "./steered-areas";
 
-/** A change is planned by its kind alone, so any time stands for the one asked about. */
-export const TIME_CHANGE = getChangePlanning([
-  { kind: "setDailyMinutes", minutes: MIN_DAILY_MINUTES },
-]);
+/**
+ * A time is planned as the save that sets it plans it: a week asked about is onboarding's, saved
+ * with a rebuild, and the goal's own week takes a learner's change, which brings set-aside work
+ * back and lays today out again. A change is planned by its kind alone, so any time stands in.
+ */
+export function getTimePlanning(week: PlanTimeToCoverInput) {
+  return isAskedWeek(week)
+    ? { mode: "forced" as const }
+    : getChangePlanning([{ kind: "setDailyMinutes", minutes: MIN_DAILY_MINUTES }]);
+}
+
+function isAskedWeek(week: PlanTimeToCoverInput) {
+  return week.studyDays !== undefined || week.weekendMinutes !== undefined;
+}
 
 export function withStudyWeek({
   aim,
@@ -48,10 +58,7 @@ export function withStudyWeek({
   return result.state;
 }
 
-/**
- * Plans each daily time as setting it would, today laid out again included, so the time the question
- * and the Plan suggest is the time that covers the goal once applied.
- */
+/** The time the question and the Plan suggest is the time that covers the goal once it's set. */
 export function searchPlanTime({
   context,
   week = {},
@@ -61,13 +68,10 @@ export function searchPlanTime({
 }) {
   const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
 
-  const searchStart =
-    week.studyDays === undefined && week.weekendMinutes === undefined
-      ? context.state.goal.dailyMinutes
-      : MIN_DAILY_MINUTES;
+  const searchStart = isAskedWeek(week) ? MIN_DAILY_MINUTES : context.state.goal.dailyMinutes;
 
   return computePlan({
-    ...TIME_CHANGE,
+    ...getTimePlanning(week),
     context,
     state: stateAt(searchStart),
     studyScheduleAt: (dailyMinutes) => {

@@ -10,7 +10,7 @@ import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
-import { TIME_CHANGE, searchPlanTime, withStudyWeek } from "./_utils/plan-time-search";
+import { getTimePlanning, searchPlanTime, withStudyWeek } from "./_utils/plan-time-search";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
@@ -182,7 +182,7 @@ export async function getPlanTimeAdvice({
 
   const [computed, dateKind] = await Promise.all([
     computePlan({
-      ...TIME_CHANGE,
+      ...getTimePlanning(input),
       context,
       state: withStudyWeek({ aim: input.aim, context, dailyMinutes, fullCourse, input: week }),
     }),
