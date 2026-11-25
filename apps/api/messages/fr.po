@@ -39,11 +39,11 @@ msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Adresse e-mail"
 
-#. An example address shown in the empty email field. Keep it as written, like the app's other example addresses.
+#. An example email address in an empty email field. Localize "you" and keep example.com.
 #: src/app/auth/[locale]/login/email-login-form.tsx
-msgctxt "apQW0E"
-msgid "me@gmail.com"
-msgstr "me@gmail.com"
+msgctxt "PwhG9W"
+msgid "you@example.com"
+msgstr "toi@example.com"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx

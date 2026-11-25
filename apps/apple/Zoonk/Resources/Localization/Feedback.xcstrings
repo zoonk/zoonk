@@ -891,48 +891,48 @@
       }
     },
     "you@example.com" : {
-      "comment" : "Example email address in the feedback form.",
+      "comment" : "An example email address in an empty email field. Localize \"you\" and keep example.com.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "du@example.com"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "tu@example.com"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "toi@example.com"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "tu@example.com"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "taro@example.com"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "이름@example.com"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "ty@example.com"
           }
         },
         "pt" : {
@@ -944,7 +944,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "you@example.com"
+            "value" : "sen@example.com"
           }
         }
       }
