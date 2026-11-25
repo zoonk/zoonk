@@ -9,20 +9,56 @@ import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { AttachControls } from "../onboarding/entry/attach-panel";
-import { type GoalAttachActions } from "../onboarding/onboarding-actions";
+import { UnreadableNote } from "../onboarding/entry/attached-chips";
+import { useFollowReading } from "../onboarding/entry/use-follow-reading";
+import { type AttachedSource, type GoalAttachActions } from "../onboarding/onboarding-actions";
 
-/** `alreadyRead`: research read these uploads for an earlier ask, so it needs a different one. */
-export type UploadAnswer = "alreadyRead" | "answered" | "failed";
+/**
+ * `alreadyRead`: research read these uploads for an earlier ask, so it needs a different one.
+ * `unreadable`: nothing on the upload could be read, so the ask stays open.
+ */
+export type UploadAnswer = "alreadyRead" | "answered" | "failed" | "unreadable";
+
+export type UploadRequestView = Pick<GoalUploadRequest, "examDocument" | "goalKind" | "reason"> & {
+  /** The upload that answered this ask last, when nothing on it could be read. */
+  unreadableUpload?: { title: string } | null;
+};
 
 type UploadRequestActions = {
-  answer: (sourceIds: string[]) => Promise<UploadAnswer>;
+  answer: (source: AttachedSource) => Promise<UploadAnswer>;
   attach: GoalAttachActions;
   dismiss: () => Promise<boolean>;
 };
 
 type CardState = "answered" | "asking" | "dismissed" | "uploading";
 
-type Failure = Exclude<UploadAnswer, "answered">;
+type Failure = Exclude<UploadAnswer, "answered" | "unreadable">;
+
+type Unreadable = Pick<AttachedSource, "title">;
+
+/** While an answered upload is still being read; `onUnreadable` once nothing on it could be read. */
+export function useAnsweredUploadRead({
+  answered,
+  onUnreadable,
+  read,
+}: {
+  answered: AttachedSource | null;
+  onUnreadable: (source: AttachedSource) => void;
+  read: GoalAttachActions["readStatus"];
+}) {
+  useFollowReading({
+    onSettled: (settled) => {
+      if (
+        answered &&
+        settled.some((item) => item.id === answered.id && item.readStatus === "unreadable")
+      ) {
+        onUnreadable(answered);
+      }
+    },
+    read,
+    sources: answered ? [answered] : [],
+  });
+}
 
 export function useRequestCopy({
   examDocument: document,
@@ -87,13 +123,14 @@ export function UploadRequestCard({
   actions: UploadRequestActions;
   className?: string;
   language: string;
-  request: Pick<GoalUploadRequest, "examDocument" | "goalKind" | "reason">;
+  request: UploadRequestView;
 }) {
   const t = useExtracted();
   const titleId = useId();
   const copy = useRequestCopy(request);
   const [state, setState] = useState<CardState>("asking");
   const [failure, setFailure] = useState<Failure | null>(null);
+  const [unreadable, setUnreadable] = useState<Unreadable | null>(request.unreadableUpload ?? null);
   const [isPending, startTransition] = useTransition();
 
   const run = (action: () => Promise<Failure | null>, done: CardState) =>
@@ -107,10 +144,32 @@ export function UploadRequestCard({
       }
     });
 
-  const answer = async (sourceId: string): Promise<Failure | null> => {
-    const outcome = await actions.answer([sourceId]);
-    return outcome === "answered" ? null : outcome;
+  const backToAsking = (source: Unreadable) => {
+    setUnreadable(source);
+    setState("asking");
   };
+
+  /** Nothing to read on it: answering would only bring the ask back. */
+  const attached = (source: AttachedSource) =>
+    startTransition(async () => {
+      setFailure(null);
+      setUnreadable(null);
+
+      if (source.readStatus === "unreadable") {
+        backToAsking(source);
+        return;
+      }
+
+      const outcome = await actions.answer(source).catch((): UploadAnswer => "failed");
+
+      if (outcome === "unreadable") {
+        backToAsking(source);
+      } else if (outcome === "answered") {
+        setState("answered");
+      } else {
+        setFailure(outcome);
+      }
+    });
 
   if (state === "dismissed") {
     return null;
@@ -175,7 +234,7 @@ export function UploadRequestCard({
           attach={actions.attach}
           autoFocus
           language={language}
-          onAttached={(source) => run(() => answer(source.id), "answered")}
+          onAttached={attached}
         />
       )}
 
@@ -184,6 +243,10 @@ export function UploadRequestCard({
           <Spinner className="size-4" />
           {t("Sending it to be read…")}
         </p>
+      )}
+
+      {unreadable && state !== "answered" && (
+        <UnreadableNote items={[{ ...unreadable, id: "", readStatus: "unreadable" }]} />
       )}
 
       {failure === "alreadyRead" && (

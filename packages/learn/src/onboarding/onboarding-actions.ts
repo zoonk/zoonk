@@ -4,6 +4,7 @@ import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type PlacementAnswerInput } from "@zoonk/core/learner/placement/contract";
 import { type FocusTestView } from "@zoonk/core/learner/placement/focus-test-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type SourceReadStatus } from "@zoonk/core/library/sources/contract";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
@@ -93,7 +94,7 @@ export type AnswerOutcome =
 
 export type WaitlistOutcome = "failed" | "joined" | "signInRequired";
 
-export type AttachedSource = { id: string; title: string };
+export type AttachedSource = { id: string; readStatus: SourceReadStatus; title: string };
 
 /** The material a goal is sent with; the draft keeps it from then on. */
 export type SentMaterial = { materialIntent?: "exam" | "understand"; sourceIds?: string[] };
@@ -113,13 +114,15 @@ export type AttachOutcome =
 export type GoalAttachActions = {
   file: (input: { file: File; language: string }) => Promise<AttachOutcome>;
   link: (input: { language: string; url: string }) => Promise<AttachOutcome>;
+  /** Null when it couldn't be checked. */
+  readStatus: (sourceId: string) => Promise<SourceReadStatus | null>;
   text: (input: { language: string; text: string }) => Promise<AttachOutcome>;
 };
 
 export type MaterialQuestionOutcome =
   | { answer: MaterialQuestionAnswer; status: "answered" }
   | ({ status: "limitReached" } & UsageCap)
-  | { status: "failed" | "signInRequired" | "slowDown" };
+  | { status: "failed" | "reading" | "signInRequired" | "slowDown" };
 
 /** Never says which answer is right. `left` and `right` are a match's columns; `select` is how many options to pick. */
 export type PlacementQuestion = {

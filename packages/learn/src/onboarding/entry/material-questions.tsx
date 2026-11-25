@@ -61,9 +61,13 @@ function TurnAnswer({
     );
   }
 
+  if (outcome.status === "reading") {
+    return null;
+  }
+
   if (outcome.status !== "answered") {
     const messages: Record<
-      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached">,
+      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached" | "reading">,
       string
     > = {
       failed: t("We couldn't answer that. Try again in a moment."),
@@ -117,6 +121,7 @@ export function MaterialQuestions({
   const inputId = useId();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
+  const [stillReading, setStillReading] = useState(false);
   const [isPending, startTransition] = useTransition();
   const trimmed = question.trim();
   const identity = useTutorIdentity(buddy);
@@ -140,6 +145,7 @@ export function MaterialQuestions({
     }
 
     setQuestion("");
+    setStillReading(false);
 
     startTransition(async () => {
       const outcome = await ask({
@@ -147,6 +153,13 @@ export function MaterialQuestions({
         question: trimmed,
         sourceIds: sources.map((source) => source.id),
       }).catch((): MaterialQuestionOutcome => ({ status: "failed" }));
+
+      // Nothing was asked yet, so the question goes back in the box for the learner to send again.
+      if (outcome.status === "reading") {
+        setQuestion((typed) => typed || trimmed);
+        setStillReading(true);
+        return;
+      }
 
       setTurns((previous) => [
         ...previous,
@@ -176,6 +189,16 @@ export function MaterialQuestions({
           <p className="flex items-center gap-2 text-sm" ref={keepBoxInView} role="status">
             <Spinner className="size-4" />
             {t("Reading your material…")}
+          </p>
+        )}
+
+        {stillReading && !isPending && (
+          <p className="text-muted-foreground text-sm" ref={keepBoxInView} role="status">
+            {t({
+              description:
+                "Shown above the question box when the learner asked about material, like a photo of notes, that's still being read. Their question stays in the box.",
+              message: "We're still reading your material. Ask again in a moment.",
+            })}
           </p>
         )}
       </div>
