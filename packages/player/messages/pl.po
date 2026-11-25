@@ -3663,6 +3663,11 @@ msgid "Ask {name} about your plan"
 msgstr "Zapytaj o swój plan. Odpowie {name}"
 
 #: src/questions/ask-tutor.tsx
+msgctxt "VgQdYo"
+msgid "Ask {name} about this module"
+msgstr ""
+
+#: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Zapytaj o ten przedmiot. Odpowie {name}"
@@ -3784,6 +3789,11 @@ msgid "Ask questions about your plan"
 msgstr "Zadawaj pytania o swój plan"
 
 #: src/questions/lesson-question-panel.tsx
+msgctxt "eDiytU"
+msgid "Ask questions about this module"
+msgstr ""
+
+#: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
 msgstr "Zadawaj pytania o ten przedmiot"
@@ -3827,6 +3837,11 @@ msgstr "Pytania o ten egzamin próbny"
 msgctxt "Nx3NqL"
 msgid "Questions about your plan"
 msgstr "Pytania o twój plan"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KCTpmM"
+msgid "Questions about this module"
+msgstr ""
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3882,6 +3897,11 @@ msgstr "O twoim planie"
 msgctxt "e0zkbG"
 msgid "About this part"
 msgstr "O tej części"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr ""
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"
