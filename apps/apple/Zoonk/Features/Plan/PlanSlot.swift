@@ -61,7 +61,7 @@ extension PlanContext {
     let unclaimed =
       goal.kind == .exam ? store.planEnd(goalId: goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(plan: plan, courseComplete: !unclaimed.isEmpty)
-    .filter { !state.dismissed.contains($0) }
+      .filter { !state.dismissed.contains($0) }
 
     let index = min(state.position, max(items.count - 1, 0))
     return (items, index, items.indices.contains(index) ? items[index] : nil)
