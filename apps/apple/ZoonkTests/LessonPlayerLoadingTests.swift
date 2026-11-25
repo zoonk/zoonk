@@ -984,6 +984,19 @@ final class LessonPlayerLoadingTests: XCTestCase {
       LessonPlayerStore.WarmUp(deckID: "019a482c-6a00-7000-8000-000000000001", outline: outline))
   }
 
+  func testOpeningALessonItsChecksSetAsideSaysWhyInsteadOfOfferingToTryAgain() async {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let outline = LessonOutline(id: "lesson", title: "Swarms", description: "", estimatedMinutes: 5)
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .notGenerated(outline)
+    }
+    let store = player(cache: cache, content: content, transport: SetAsideLessonTransport())
+
+    await store.load()
+
+    XCTAssertEqual(store.screen, .waiting(outline, .setAside))
+  }
+
   /// The first screen's miss reached the server but its reply didn't; the second screen's miss and
   /// its retry never did.
   func testKeptAnswersGoOutBeforeTheRunAndPlaceTheLearnerWithIt() async throws {
@@ -1498,6 +1511,27 @@ private actor FirstLessonWritingTransport: ClientTransport {
       XCTFail("Unexpected player request: \(operationID)")
       throw APIError.network
     }
+  }
+}
+
+/// Readiness says the lesson's checks set it aside; any other request fails the test.
+private actor SetAsideLessonTransport: ClientTransport {
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    guard operationID == "getLibraryLessonReadiness" else {
+      XCTFail("Unexpected player request: \(operationID)")
+      throw APIError.network
+    }
+
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+    return (
+      HTTPResponse(status: .ok, headerFields: headerFields),
+      HTTPBody(
+        #"{"alternative": null, "generationId": null, "kind": "lesson", "setAside": true, "status": "failed", "warmUpId": null}"#
+      )
+    )
   }
 }
 

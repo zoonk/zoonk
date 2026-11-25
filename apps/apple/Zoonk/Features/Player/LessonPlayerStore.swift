@@ -604,6 +604,7 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
+    case .failed where lesson?.setAside == true: screen = .waiting(outline, .setAside)
     case .failed: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
     }
