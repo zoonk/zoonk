@@ -6,8 +6,9 @@ import {
   type SuggestedGoal,
   prisma,
 } from "@zoonk/db";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
 import { lessonSkillFixture } from "./library-lessons";
 import { skillFixture } from "./skills";
@@ -47,6 +48,15 @@ export async function goalFixture({
       ...attrs,
     },
   });
+}
+
+/**
+ * The date `days` after the learner's today in `timeZone`, as a date column such as
+ * `Goal.targetDate` stores it. A date column keeps an instant's UTC date, so `Date.now() + days`
+ * is a day off whenever the learner's date and UTC's differ.
+ */
+export function daysAfterLearnerToday({ days, timeZone }: { days: number; timeZone: string }) {
+  return new Date(getDateInTimeZone({ date: new Date(), timeZone }).getTime() + days * MS_PER_DAY);
 }
 
 type PlanAttrs = FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> &

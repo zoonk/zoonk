@@ -7,7 +7,12 @@ import {
   prisma,
 } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import {
+  daysAfterLearnerToday,
+  goalFixture,
+  planFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import {
   courseChapterFixture,
@@ -940,7 +945,7 @@ describe("a level's size, each written lesson counted once", () => {
         data: {
           dailyMinutes,
           details: { level: "none", targetLevel: "A1" },
-          targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          targetDate: daysAfterLearnerToday({ days: 1, timeZone: TIME_ZONE }),
         },
         where: { id: fixture.goal.id },
       });
@@ -1101,7 +1106,10 @@ describe("a course level's half, its skills taken from the plan's graph", () => 
       await prisma.planItem.deleteMany({ where: { planId: fixture.plan.id } });
 
       await prisma.goal.update({
-        data: { dailyMinutes: 5, targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        data: {
+          dailyMinutes: 5,
+          targetDate: daysAfterLearnerToday({ days: 1, timeZone: TIME_ZONE }),
+        },
         where: { id: fixture.goal.id },
       });
 
