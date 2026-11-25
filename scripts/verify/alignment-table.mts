@@ -286,7 +286,7 @@ export const EXCEPTIONS: AlignmentException[] = [
     configuration: "laptop keys",
     issue: 3228,
     piece: "page",
-    reason: "Start's laptop close button misses the column edge its hanging ink should meet, on main too",
+    reason: "Start's laptop close button's ink misses the column edge, on main too",
     relation: "column",
     scenario: "/start",
   },
