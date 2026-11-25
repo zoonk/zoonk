@@ -84,10 +84,10 @@ test.describe("Research upload requests API", () => {
     await Promise.all([learner.api.dispose(), other.api.dispose()]);
   });
 
-  test("refuses a settled unreadable upload and reopens an answer that becomes unreadable", async () => {
+  test("requires newly readable material to answer a reopened upload request", async () => {
     const learner = await createBearerLearner({ baseURL, prefix: "upload-unreadable" });
 
-    const [goal, photo] = await Promise.all([
+    const [goal, photo, priorUpload] = await Promise.all([
       examGoalWaitingForNotice(learner.userId),
       sourceFixture({
         kind: "upload",
@@ -97,15 +97,26 @@ test.describe("Research upload requests API", () => {
         title: "Blurry notes",
         visibility: "private",
       }),
+      privateUploadFixture({ ownerId: learner.userId }),
     ]);
 
-    await learnerSourceFixture({ sourceId: photo.id, userId: learner.userId });
+    await Promise.all([
+      learnerSourceFixture({ sourceId: photo.id, userId: learner.userId }),
+      learnerSourceFixture({ sourceId: priorUpload.id, userId: learner.userId }),
+    ]);
 
-    const data = { goalId: goal.id, sourceIds: [photo.id] };
+    await prisma.goalSource.create({
+      data: { answeredAt: new Date(), goalId: goal.id, origin: "upload", sourceId: priorUpload.id },
+    });
+
+    const data = { goalId: goal.id, sourceIds: [priorUpload.id, photo.id] };
     const refused = await learner.api.post("/v1/research", { data });
     expect(refused.status()).toBe(422);
     await expect(refused.json()).resolves.toMatchObject({ error: { code: "UPLOAD_UNREADABLE" } });
-    await expect(prisma.goalSource.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.goalSource.count({ where: { goalId: goal.id, sourceId: photo.id } }),
+    ).resolves.toBe(0);
 
     await prisma.source.update({ data: { readState: "owed" }, where: { id: photo.id } });
 

@@ -26,8 +26,14 @@ type OwedResearchUploadAnswer = NonNullable<
   Awaited<ReturnType<typeof getOwedResearchUploadAnswer>>
 >;
 
-export async function getReadableResearchUploadIds(sourceIds: string[]): Promise<string[]> {
-  const ids = await followSourceRedirects(sourceIds);
+export async function getReadableResearchUploadIds({
+  claimedSourceIds,
+  sourceIds,
+}: Pick<OwedResearchUploadAnswer, "claimedSourceIds" | "sourceIds">): Promise<string[]> {
+  const [ids, claimedIds] = await Promise.all([
+    followSourceRedirects(sourceIds),
+    followSourceRedirects(claimedSourceIds),
+  ]);
 
   const sources = await prisma.source.findMany({
     select: { extractedText: true, id: true, readState: true },
@@ -38,7 +44,7 @@ export async function getReadableResearchUploadIds(sourceIds: string[]): Promise
     sources.filter((source) => getSourceReadStatus(source) === "readable").map(({ id }) => id),
   );
 
-  return ids.filter((id) => readable.has(id));
+  return claimedIds.some((id) => readable.has(id)) ? ids.filter((id) => readable.has(id)) : [];
 }
 
 export async function reopenResearchUploadAnswer({

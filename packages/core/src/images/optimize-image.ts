@@ -6,16 +6,18 @@ import sharp from "sharp";
 export async function optimizeImage({
   image,
   format = "webp",
+  limitInputPixels,
   maxEdge,
   quality = DEFAULT_IMAGE_QUALITY,
 }: {
   image: Uint8Array;
   format?: "webp" | "jpeg" | "png";
+  limitInputPixels?: number;
   maxEdge?: number;
   quality?: number;
 }): Promise<SafeReturn<Buffer>> {
   const { data, error } = await safeAsync(() => {
-    const pipeline = sharp(image);
+    const pipeline = sharp(image, { limitInputPixels });
 
     if (maxEdge !== undefined) {
       pipeline

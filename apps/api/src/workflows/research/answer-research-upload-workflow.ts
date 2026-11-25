@@ -16,10 +16,10 @@ async function loadAnswerStep(key: ResearchUploadAnswerKey) {
   return getOwedResearchUploadAnswer(key);
 }
 
-async function readAnswerSourcesStep(sourceIds: string[]) {
+async function readAnswerSourcesStep(input: Parameters<typeof getReadableResearchUploadIds>[0]) {
   "use step";
 
-  return getReadableResearchUploadIds(sourceIds);
+  return getReadableResearchUploadIds(input);
 }
 
 async function reopenAnswerStep(input: Parameters<typeof reopenResearchUploadAnswer>[0]) {
@@ -40,7 +40,11 @@ export async function answerResearchUploadWorkflow(
   }
 
   await waitForMaterialReading({ kind: "sources", sourceIds: answer.sourceIds });
-  const readable = await readAnswerSourcesStep(answer.sourceIds);
+
+  const readable = await readAnswerSourcesStep({
+    claimedSourceIds: answer.claimedSourceIds,
+    sourceIds: answer.sourceIds,
+  });
 
   if (readable.length === 0) {
     await reopenAnswerStep(answer);

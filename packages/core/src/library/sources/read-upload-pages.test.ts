@@ -12,11 +12,11 @@ vi.mock("@zoonk/ai/tasks/material/transcribe", () => ({
   transcribeMaterial: vi.fn().mockResolvedValue({ data: { text: "Notes" } }),
 }));
 
-async function readPhoto({ bytes, contentType }: { bytes: Uint8Array; contentType: string }) {
+function readStoredPhoto({ bytes, contentType }: { bytes: Uint8Array; contentType: string }) {
   const url = "https://store.private.blob.vercel-storage.com/sources/learner/notes";
   vi.mocked(readUploadedBlob).mockResolvedValueOnce({ bytes, contentType, url });
 
-  await readUploadPage({
+  return readUploadPage({
     index: 0,
     upload: {
       blobUrl: url,
@@ -26,7 +26,10 @@ async function readPhoto({ bytes, contentType }: { bytes: Uint8Array; contentTyp
       updatedAt: new Date(),
     },
   });
+}
 
+async function readPhoto(input: Parameters<typeof readStoredPhoto>[0]) {
+  await readStoredPhoto(input);
   const image = vi.mocked(transcribeMaterial).mock.lastCall?.[0].image;
 
   if (!image) {
@@ -40,6 +43,16 @@ async function readPhoto({ bytes, contentType }: { bytes: Uint8Array; contentTyp
 }
 
 describe(readUploadPage, () => {
+  it("refuses to resize a photo whose bytes no longer match its saved type", async () => {
+    const bytes = await sharp({ create: { background: "white", channels: 3, height: 8, width: 8 } })
+      .webp()
+      .toBuffer();
+
+    const precedingCalls = vi.mocked(transcribeMaterial).mock.calls.length;
+    await expect(readStoredPhoto({ bytes, contentType: "image/png" })).rejects.toThrow();
+    expect(transcribeMaterial).toHaveBeenCalledTimes(precedingCalls);
+  });
+
   it("sends a large photo as a JPEG within the model's byte limit and the PDF page edge", async () => {
     const raw = { channels: 3, height: 2000, width: 3000 } as const;
 

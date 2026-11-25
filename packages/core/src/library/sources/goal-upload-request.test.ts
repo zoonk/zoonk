@@ -13,6 +13,10 @@ import {
   recordGoalResearchOutcome,
   recordGoalResearchRun,
 } from "./goal-upload-request";
+import {
+  getOwedResearchUploadAnswer,
+  getReadableResearchUploadIds,
+} from "./research-upload-answer";
 
 async function privateUploadFixture(ownerId: string, goalId: string | null = null) {
   const contentHash = `hash-${randomUUID()}`;
@@ -42,6 +46,29 @@ async function examGoalWaitingForNotice() {
   });
 
   return { goal, user };
+}
+
+async function reopenWithPriorUpload() {
+  const { goal, user } = await examGoalWaitingForNotice();
+  const first = await privateUploadFixture(user.id, goal.id);
+  mockSession(user.id);
+
+  await answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id] });
+  await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "unverified" });
+
+  return { first, goal, user };
+}
+
+async function uploadPhoto(userId: string, readState: "read" | "owed") {
+  const photo = await sourceFixture({
+    kind: "upload",
+    ownerId: userId,
+    readState,
+    visibility: "private",
+  });
+
+  await learnerSourceFixture({ sourceId: photo.id, userId });
+  return photo;
 }
 
 function readAnsweredIds(goalId: string) {
@@ -206,6 +233,53 @@ describe(answerGoalUploadRequest, () => {
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, second.id] }),
     ).resolves.toMatchObject({ sourceIds: [first.id, second.id], status: "ready" });
+  });
+
+  it("keeps a reopened request when only the previously answered upload has text", async () => {
+    const { first, goal, user } = await reopenWithPriorUpload();
+    const photo = await uploadPhoto(user.id, "read");
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
+
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual([first.id]);
+    await expect(readReason(goal.id)).resolves.toBe("unverified");
+  });
+
+  it("requires newly claimed text after a deferred answer finishes reading", async () => {
+    const { first, goal, user } = await reopenWithPriorUpload();
+    const photo = await uploadPhoto(user.id, "owed");
+
+    const answer = await answerGoalUploadRequest({
+      goalId: goal.id,
+      sourceIds: [first.id, photo.id],
+    });
+
+    if (answer.status !== "ready" || !answer.pendingUploadAnswer) {
+      throw new Error("The answer did not wait for the new photo");
+    }
+
+    const pending = await getOwedResearchUploadAnswer(answer.pendingUploadAnswer);
+
+    if (!pending) {
+      throw new Error("The pending answer was not recorded");
+    }
+
+    expect(pending.claimedSourceIds).toStrictEqual([photo.id]);
+
+    await prisma.source.update({ data: { readState: "read" }, where: { id: photo.id } });
+    await expect(getReadableResearchUploadIds(pending)).resolves.toStrictEqual([]);
+
+    await prisma.source.update({
+      data: { extractedText: "New material" },
+      where: { id: photo.id },
+    });
+
+    await expect(getReadableResearchUploadIds(pending)).resolves.toStrictEqual([
+      first.id,
+      photo.id,
+    ]);
   });
 
   it("lets one upload answer each goal's ask once", async () => {

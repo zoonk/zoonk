@@ -27,6 +27,7 @@ const mindMapLaunchSchema = z.object({
 
 export const researchUploadAnswerSchema = z.object({
   answerId: uuidSchema(),
+  claimedSourceIds: z.array(uuidSchema()).min(1),
   goalId: uuidSchema(),
   reason: z.enum(ResearchUploadReason),
   sourceIds: z.array(uuidSchema()).min(1),

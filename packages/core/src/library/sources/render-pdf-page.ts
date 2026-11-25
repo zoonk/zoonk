@@ -5,6 +5,7 @@ import { type DocumentImage } from "./parse-document";
 
 export const MAX_PAGE_EDGE = 1800;
 const MAX_EMBEDDED_IMAGE_PIXELS = 40_000_000;
+const PDF_RENDER_TIMEOUT_MS = 30_000;
 
 // The workflow bundle can turn an imported loader's resolve call into a numeric module ID.
 const { createRequire } = process.getBuiltinModule("node:module");
@@ -16,7 +17,7 @@ export async function renderPdfPage({
 }: {
   bytes: Uint8Array;
   index: number;
-}): Promise<DocumentImage> {
+}): Promise<DocumentImage | null> {
   const assets = dirname(require.resolve("pdfjs-dist/package.json"));
 
   const loading = getDocument({
@@ -51,7 +52,19 @@ export async function renderPdfPage({
       Math.max(1, Math.ceil(viewport.height)),
     );
 
-    await page.render({ canvas, viewport }).promise;
+    const task = page.render({ canvas, viewport });
+    const expired = Promise.withResolvers<boolean>();
+    const timer = setTimeout(() => expired.resolve(false), PDF_RENDER_TIMEOUT_MS);
+
+    const completed = await Promise.race([task.promise.then(() => true), expired.promise]).finally(
+      () => clearTimeout(timer),
+    );
+
+    if (!completed) {
+      task.cancel();
+      return null;
+    }
+
     return { data: canvas.toBuffer("image/jpeg").toString("base64"), mediaType: "image/jpeg" };
   } finally {
     await loading.destroy();

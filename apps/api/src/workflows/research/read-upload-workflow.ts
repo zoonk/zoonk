@@ -5,6 +5,7 @@ import {
   readUploadPage,
   saveUploadReading,
 } from "@zoonk/core/library/sources/read-upload-pages";
+import { FatalError } from "workflow";
 import { startOnce } from "../_shared/run-token";
 
 const CONCURRENT_PAGES = 4;
@@ -21,7 +22,13 @@ async function readUploadPageStep(input: {
 }): Promise<UploadPage> {
   "use step";
 
-  return { index: input.index, text: await readUploadPage(input) };
+  const text = await readUploadPage(input);
+
+  if (text === null) {
+    throw new FatalError("PDF page rendering exceeded its time limit");
+  }
+
+  return { index: input.index, text };
 }
 
 async function saveUploadReadingStep(input: Parameters<typeof saveUploadReading>[0]) {

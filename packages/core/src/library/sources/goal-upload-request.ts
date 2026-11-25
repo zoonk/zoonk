@@ -133,21 +133,6 @@ export async function answerGoalUploadRequest({
       return unchanged({ status: "noUploadRequest" } as const);
     }
 
-    const sources = await transaction.source.findMany({
-      select: { extractedText: true, id: true, readState: true },
-      where: { id: { in: access.sourceIds } },
-    });
-
-    const statuses = new Map(sources.map((source) => [source.id, getSourceReadStatus(source)]));
-
-    if (
-      !access.sourceIds.some(
-        (id) => statuses.get(id) === "readable" || statuses.get(id) === "reading",
-      )
-    ) {
-      return unchanged({ status: "unreadable" } as const);
-    }
-
     await linkGoalSources(transaction, {
       goalId,
       origin: "upload",
@@ -155,13 +140,30 @@ export async function answerGoalUploadRequest({
       userId,
     });
 
-    const fresh = await transaction.goalSource.updateMany({
+    const claimed = await transaction.goalSource.updateManyAndReturn({
       data: { answeredAt: new Date() },
+      select: { sourceId: true },
       where: { answeredAt: null, goalId, sourceId: { in: access.sourceIds } },
     });
 
-    if (fresh.count === 0) {
+    if (claimed.length === 0) {
       return unchanged({ status: "alreadyAnswered" } as const);
+    }
+
+    const sources = await transaction.source.findMany({
+      select: { extractedText: true, id: true, readState: true },
+      where: { id: { in: access.sourceIds } },
+    });
+
+    const statuses = new Map(sources.map((source) => [source.id, getSourceReadStatus(source)]));
+    const claimedSourceIds = claimed.map(({ sourceId }) => sourceId);
+
+    if (
+      !claimedSourceIds.some(
+        (id) => statuses.get(id) === "readable" || statuses.get(id) === "reading",
+      )
+    ) {
+      return unchanged({ status: "unreadable" } as const);
     }
 
     await transaction.goal.update({ data: { researchUploadReason: null }, where: { id: goalId } });
@@ -181,6 +183,7 @@ export async function answerGoalUploadRequest({
         {
           input: {
             answerId,
+            claimedSourceIds,
             goalId,
             reason: goal.researchUploadReason,
             sourceIds: access.sourceIds,
