@@ -5,7 +5,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
-import { type StreamEvent, followRun } from "./generation-run";
+import { type StreamEvent, confirmLessonWriter, followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
 import { createStudyDay, openAs, writeStudyLesson } from "./study-day";
 
@@ -87,11 +87,14 @@ async function addFirstLessonBeingWritten({ goalId, page }: { goalId: string; pa
 
   await planItemFixture({ lessonId: lesson.id, planId: plan.id });
 
-  await followRun({
-    events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
-    page,
-    runId,
-  });
+  await Promise.all([
+    followRun({
+      events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
+      page,
+      runId,
+    }),
+    confirmLessonWriter({ lessonId: lesson.id, page, runId }),
+  ]);
 
   return lesson;
 }
@@ -249,6 +252,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
 
   const page = await openAs(browser, user);
   await followRun({ events, page, runId });
+  await confirmLessonWriter({ lessonId: lesson.id, page, runId });
   await page.goto("/session");
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
