@@ -25,6 +25,7 @@ internal enum class UploadWork { Attaching, Sending, Dismissing }
 internal data class UploadAnswer(
     val visit: Int,
     val uploading: Boolean = false,
+    /** The ask as it was answered on this visit, still shown once Today no longer lists it. */
     val answered: TodayUploadRequest? = null,
     /** The upload that answered it, followed while it's still being read. */
     val sent: AttachedSource? = null,

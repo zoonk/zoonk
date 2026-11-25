@@ -23,6 +23,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.uploadAskOf
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -150,6 +151,36 @@ class UploadRequestFlowTest {
         thanks().assertDoesNotExist()
         rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
         rule.onNodeWithText("Paste text").assertIsDisplayed()
+    }
+
+    @Test
+    fun theSameUploadSentAgainIsFollowedUntilItsReadEndsAgain() {
+        api.readStatuses = listOf("reading", "unreadable")
+        show()
+
+        pasteText("Edital 2027")
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        val adding = CompletableDeferred<Unit>()
+        api.attachGate = adding
+        rule.onNodeWithText("Paste text").performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("Edital 2027")
+        rule.onNodeWithText("Add text").performClick()
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+
+        adding.complete(Unit)
+        rule.waitForIdle()
+        thanks().assertIsDisplayed()
+
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        assertEquals(2, api.researchAnswers.size)
     }
 }
 

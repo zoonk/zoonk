@@ -59,7 +59,8 @@ fun UploadRequestNotice(
     // An upload still being read when it answered the ask is followed: if nothing in it can be read, the ask is back.
     val sent = answer.sent
     val sentUnreadable = sent != null && key(sent.id) { shownReadStatus(store.sources, sent) } == SourceReadStatus.UNREADABLE
-    val answered = answer.answered != null && !sentUnreadable
+    // Sending another upload clears `sent`, so the ask stays open while it's added.
+    val answered = sent != null && !sentUnreadable
     val unreadable = answer.unreadable ?: sent?.title?.takeIf { sentUnreadable } ?: shown.unreadableUpload?.title
     val hint = unreadable?.let { unreadHint(listOf(it)) }
     val idle = vm.work == null
