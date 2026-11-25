@@ -57,21 +57,13 @@ function getLessonsBeingWritten(today: TodayView): string[] {
 }
 
 /** A row says a lesson is being written only while the API confirms it; any other answer reads the day again. */
-function useLessonsBeingWritten({
-  actions,
-  readAt,
-  today,
-}: {
-  actions: TodayActions;
-  readAt: number;
-  today: TodayView;
-}) {
+function useLessonsBeingWritten({ actions, today }: { actions: TodayActions; today: TodayView }) {
   const lessonIds = getLessonsBeingWritten(today);
 
   usePoll({
     active: lessonIds.length > 0,
     intervalMs: WRITING_REFRESH_MS,
-    key: `${readAt}:${lessonIds.join(",")}`,
+    key: lessonIds.join(","),
     onPoll: async (signal) => {
       const reads = await Promise.all(lessonIds.map((lessonId) => actions.readLesson(lessonId)));
 
@@ -79,7 +71,6 @@ function useLessonsBeingWritten({
         actions.reread();
       }
     },
-    startNow: false,
     timeoutMs: Number.POSITIVE_INFINITY,
   });
 }
@@ -126,7 +117,7 @@ export function TodayScreen({
     analytics.track({ name: "Today Viewed" });
   }, [analytics]);
 
-  useLessonsBeingWritten({ actions, readAt, today });
+  useLessonsBeingWritten({ actions, today });
 
   const poll = usePoll({
     active: isWaitingForOutlines(today),
