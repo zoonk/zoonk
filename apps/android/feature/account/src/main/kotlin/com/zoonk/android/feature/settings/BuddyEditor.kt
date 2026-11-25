@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -56,7 +57,7 @@ fun BuddyEditor(
 ) {
     var kind by rememberSaveable { mutableStateOf(look.kind) }
     var glasses by rememberSaveable { mutableStateOf(look.glasses) }
-    var typed by rememberSaveable { mutableStateOf(name) }
+    val typed = rememberTextFieldState(name)
 
     ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberExpandedBottomSheetState()) {
         Column(Modifier.navigationBarsPadding().imePadding()) {
@@ -73,7 +74,6 @@ fun BuddyEditor(
                     kind = kind,
                     name = typed,
                     onSelect = { kind = it },
-                    onNameChange = { typed = it },
                     glasses = glasses,
                     look = look,
                 )
@@ -104,7 +104,7 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }) {
+                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed.text.toString()) }) {
                     Text(stringResource(R.string.settings_save))
                 }
             }

@@ -4,7 +4,8 @@
   /// `ZOONK_DEBUG_GALLERY=1` opens every color role and shared piece in one scroll, the native side
   /// of main's `/design` and Android's `GalleryActivity`, to check light, dark, more contrast,
   /// accessibility sizes and right to left in a few screenshots. `=buttons`, `=lists` and the other
-  /// section names open at that section; `=challenge` plays a case with a chart.
+  /// section names open at that section; `=challenge` plays a case with a chart; `=composer` opens
+  /// the buddy's composer, ready to type in.
   struct DebugComponentGallery: ViewModifier {
     /// Also a launch argument (`-ZOONK_DEBUG_GALLERY lists`), which device tools can pass.
     private let section = debugLaunchValue("ZOONK_DEBUG_GALLERY")
@@ -23,6 +24,8 @@
               DebugRowStack()
             } else if section == "challenge" {
               DebugChallenge()
+            } else if section == "composer" {
+              DebugComposer()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -873,6 +876,68 @@
       }
       .navigationTitle(Text(verbatim: "Limits"))
       .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  /// The buddy's composer under an empty conversation, as the buddy's page draws it.
+  private struct DebugComposer: View {
+    @State private var conversation = TutorConversation(
+      scope: .plan(goalId: "debug"), api: DebugTutorAPI(),
+      cache: AppCache(
+        session: .preview(
+          account: CurrentAccount(
+            account: AccountAccess(
+              deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
+            user: AccountUser(
+              email: "debug@zoonk.test", id: "debug", image: nil, name: "Debug",
+              username: "debug")))))
+
+    var body: some View {
+      ZoonkList {
+        Text(verbatim: "Black holes bend light around them.")
+          .typeStyle(.reading)
+      }
+      .safeAreaBar(edge: .bottom) {
+        TutorComposerBar(
+          conversation: conversation, canTalk: true, buddyName: "Zu", suggestions: [],
+          placeholder: Text(verbatim: "Ask about your plan…"))
+      }
+      .task { await conversation.thread.load() }
+      .navigationTitle(Text(verbatim: "Composer"))
+      .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  private struct DebugTutorAPI: TutorAPIClient {
+    func thread(_ scope: TutorScope, cursor: String?, token: String) async throws
+      -> TutorThreadPage
+    {
+      TutorThreadPage(turns: [], hasMore: false, nextCursor: nil)
+    }
+
+    func ask(
+      _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
+    ) async throws -> TutorAskedQuestion {
+      throw TutorFailure.failed
+    }
+
+    func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error> {
+      AsyncThrowingStream { $0.finish(throwing: TutorFailure.failed) }
+    }
+
+    func question(id: String, token: String) async throws -> TutorTurn {
+      throw APIError.notFound
+    }
+
+    func decidePlanChange(
+      goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+      token: String
+    ) async throws -> Components.Schemas.PlanChange {
+      throw APIError.unavailable
+    }
+
+    func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool {
+      throw APIError.unavailable
     }
   }
 

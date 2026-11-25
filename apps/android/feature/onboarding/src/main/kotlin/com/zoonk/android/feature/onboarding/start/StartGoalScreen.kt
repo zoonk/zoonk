@@ -1,19 +1,18 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,20 +21,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
@@ -62,14 +56,13 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.QuestionPanel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
@@ -247,8 +240,7 @@ private fun ColumnScope.Entry(
     )
 
     GoalBox(
-        value = flow.words,
-        onValueChange = vm::setWords,
+        state = vm.words,
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
         leading = {
@@ -534,11 +526,12 @@ private fun ColumnScope.MaterialQuestions(
     language: String,
     actions: StartActions,
 ) {
-    var question by rememberSaveable { mutableStateOf("") }
+    val questionField = rememberTextFieldState()
     val ask = {
-        if (question.isNotBlank() && !vm.isAsking) {
-            vm.ask(question.trim(), language)
-            question = ""
+        val question = questionField.text.trim().toString()
+        if (question.isNotEmpty() && !vm.isAsking) {
+            vm.ask(question, language)
+            questionField.clearText()
         }
     }
 
@@ -564,21 +557,17 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
-            value = question,
-            onValueChange = { question = it.take(MAX_QUESTION_LENGTH) },
-            modifier = Modifier.weight(1f),
-            label = stringResource(R.string.onboarding_your_question),
-            placeholder = { Text(stringResource(R.string.onboarding_question_placeholder)) },
-            maxLines = 6,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { ask() }),
-        )
-        FilledIconButton(busy = vm.isAsking, onClick = ask, enabled = question.isNotBlank()) {
-            Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = stringResource(R.string.onboarding_ask))
-        }
-    }
+    // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
+    Spacer(Modifier.weight(1f))
+    QuestionPanel(
+        state = questionField,
+        onAsk = ask,
+        isAsking = vm.isAsking,
+        label = stringResource(R.string.onboarding_your_question),
+        placeholder = stringResource(R.string.onboarding_question_placeholder),
+        askLabel = stringResource(R.string.onboarding_ask),
+        maxLength = MAX_QUESTION_LENGTH,
+    )
 }
 
 @Composable

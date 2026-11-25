@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,7 +131,7 @@ class AccountScreenshots {
                 val signIn =
                     remember {
                         SignInViewModel(stores.second, stores.first, SavedStateHandle()).apply {
-                            onEmailChange("ana@zoonk.test")
+                            emailField.setTextAndPlaceCursorAtEnd("ana@zoonk.test")
                             sendCode()
                         }
                     }

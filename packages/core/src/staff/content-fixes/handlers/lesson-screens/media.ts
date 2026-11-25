@@ -7,12 +7,7 @@ import {
   getPictureKey,
   getStepImageRequest,
 } from "../../../../library/media/_utils/step-image-request";
-import {
-  fittingQuotes,
-  isTaggedLesson,
-  lacksQuotes,
-  toMarksNeedScreen,
-} from "../../_utils/screen-marks";
+import { isTaggedLesson, toMarksNeedScreen, toMarksTarget } from "../../_utils/screen-marks";
 import { type ContentFixMediaNeed, clipMediaKey } from "../../media-schema";
 import { type Screen, type ScreenList, type ScreenMediaLink } from "./schema";
 import { type ScreenLesson } from "./snapshot";
@@ -215,7 +210,7 @@ function prepareScreenMarks({
 
   const targets = screens.flatMap((screen) => {
     const entry = list.screens[screen.position];
-    const asked = entry && "id" in entry && entry.remark === true;
+    const asked = entry !== undefined && "id" in entry && entry.remark === true;
     const target = toMarksNeedScreen(screen);
 
     if (asked && (!marked || !target)) {
@@ -228,14 +223,9 @@ function prepareScreenMarks({
       entry && "id" in entry ? lesson.before.screens.find(({ id }) => id === entry.id) : undefined;
 
     const rewritten = !original || toMarksNeedScreen(original)?.text !== target?.text;
-    const kept = target && fittingQuotes(screen.marks, target.text);
 
-    return marked &&
-      target &&
-      kept &&
-      (asked || rewritten) &&
-      lacksQuotes({ kept, kind: target.kind })
-      ? [{ kept, position: screen.position, screen: target }]
+    return marked && target && (asked || rewritten)
+      ? toMarksTarget({ asked, marks: screen.marks, position: screen.position, target })
       : [];
   });
 
@@ -244,10 +234,16 @@ function prepareScreenMarks({
   }
 
   const key = "marks";
+  const remarked = targets.flatMap(({ position, remarked: asked }) => (asked ? [position] : []));
 
   return [
     {
-      link: { key, positions: targets.map(({ position }) => position), target: "marks" },
+      link: {
+        key,
+        positions: targets.map(({ position }) => position),
+        ...(remarked.length > 0 && { remarked }),
+        target: "marks",
+      },
       need: {
         kept: targets.map(({ kept }) => kept),
         key,

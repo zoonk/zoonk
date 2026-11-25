@@ -114,6 +114,14 @@ describe("marks on screens a fix rewrites", () => {
       reason,
     });
 
+    const { changes } = await prisma.contentFix.findUniqueOrThrow({
+      select: { changes: true },
+      where: { id: fix.id },
+    });
+
+    // A fix stored before `remarked` existed is rebuilt the same at approval, so it never goes stale.
+    expect(JSON.stringify(changes)).not.toContain("remarked");
+
     markedAs({ example, underline: "a different phrase" });
     const need = await prepareMarks(fix.id);
 
@@ -161,6 +169,62 @@ describe("marks on screens a fix rewrites", () => {
 
     markedAs({ example: "`2 + 2` gives 4.", underline: null });
     await prepareMarks(fix.id);
+    await approveFix(fix.id);
+
+    await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({ marks: savedMarks });
+  });
+
+  it("replaces a kept screen's example box when asked, keeping its underline", async () => {
+    const { check, lesson, reading } = await markedLesson();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: { screens: [{ id: reading.id, remark: true }, { id: check.id }], version: 1 },
+        },
+      ],
+      reason: "Frame the whole case",
+    });
+
+    markedAs({ example: before, underline: "a different phrase" });
+    const need = await prepareMarks(fix.id);
+
+    expect(need).toMatchObject({
+      kept: [{ example: savedMarks.example, underline: "joins numbers" }],
+    });
+
+    await approveFix(fix.id);
+
+    await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({
+      marks: { ...savedMarks, example: before },
+    });
+  });
+
+  it("keeps a kept screen's example box when marking it again fails", async () => {
+    const { check, lesson, reading } = await markedLesson();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: lesson.id,
+          model: "Lesson",
+          setScreens: { screens: [{ id: reading.id, remark: true }, { id: check.id }], version: 1 },
+        },
+      ],
+      reason: "Frame the whole case",
+    });
+
+    const [need] = await listPendingFixMedia(fix.id);
+
+    if (!need) {
+      throw new Error("Expected the fix to owe marks");
+    }
+
+    await failFixMedia({ fixId: fix.id, need });
     await approveFix(fix.id);
 
     await expect(explanationMarks(lesson.id)).resolves.toStrictEqual({ marks: savedMarks });

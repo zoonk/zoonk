@@ -116,26 +116,9 @@ final class EssayWriter {
     // What's being graded is what was sent: nothing typed meanwhile would be read.
     guard status != .grading else { return }
 
-    // The field stops at the longest answer the server saves.
-    text = Self.fitted(next)
+    text = next
     keep(typed: true)
     scheduleSave(after: Self.saveAfter)
-  }
-
-  /// The longest start of `text` the server takes, cut between characters.
-  nonisolated static func fitted(_ text: String) -> String {
-    guard text.utf16.count > maxLength else { return text }
-
-    var length = 0
-    var end = text.startIndex
-
-    for index in text.indices {
-      length += text[index].utf16.count
-      if length > maxLength { break }
-      end = text.index(after: index)
-    }
-
-    return String(text[..<end])
   }
 
   /// Writing time is the time the editor is in use: a day away, the app in the background or a

@@ -2,7 +2,7 @@ import { type FeedbackContentKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-const MAX_FEEDBACK_MESSAGE_LENGTH = 5000;
+export const MAX_FEEDBACK_MESSAGE_LENGTH = 5000;
 
 const MAX_FEEDBACK_SCREEN_LENGTH = 100;
 const MAX_FEEDBACK_URL_LENGTH = 2000;

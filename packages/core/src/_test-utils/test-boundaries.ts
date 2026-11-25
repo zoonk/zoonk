@@ -48,6 +48,7 @@ export const boundaries = {
     issueSignedToken: vi.fn(),
     list: vi.fn(),
     put: vi.fn(),
+    setTtl: vi.fn(),
   },
   "@vercel/oidc": { getVercelOidcToken: vi.fn() },
   "@zoonk/ai/tasks/audio": { generateLanguageAudio: vi.fn() },

@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.essay
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.snapshots.Snapshot
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -99,6 +101,17 @@ class EssayViewModelTest {
 
     private suspend fun TestScope.opened(api: FakeEssayApi): EssayViewModel = with(Device(this, api)) { open() }
 
+    /** Types into the field as the learner does: the edit is applied and the field's observer sees it. */
+    private fun TestScope.type(
+        viewModel: EssayViewModel,
+        text: String,
+    ) {
+        viewModel.ui.value.field
+            .setTextAndPlaceCursorAtEnd(text)
+        Snapshot.sendApplyNotifications()
+        runCurrent()
+    }
+
     @Test
     fun everyResultShapeDecodes() {
         val levels = result(LEVELS_RESULT).toGrade()
@@ -121,9 +134,9 @@ class EssayViewModelTest {
             val viewModel = with(device) { open() }
 
             viewModel.startWriting()
-            viewModel.write("Started on the phone, and finished here.")
+            type(viewModel, "Started on the phone, and finished here.")
             advanceUntilIdle()
-            viewModel.write("Started on the phone, and finished here. More.")
+            type(viewModel, "Started on the phone, and finished here. More.")
             advanceUntilIdle()
 
             assertEquals(listOf(1L), device.api.saved.map { it.revision })
@@ -157,7 +170,7 @@ class EssayViewModelTest {
             device.api.saveAnswers += DraftSave.Conflict(WritingDraft(ADMISSION, 2, "Edited on the laptop."))
             val viewModel = with(device) { open() }
 
-            viewModel.write("Typed here.")
+            type(viewModel, "Typed here.")
             advanceUntilIdle()
             viewModel.useOther()
             advanceUntilIdle()
@@ -166,7 +179,7 @@ class EssayViewModelTest {
             assertEquals(1, device.api.saved.size)
             assertNull(device.keptOnDisk())
 
-            viewModel.write("Edited on the laptop, then here.")
+            type(viewModel, "Edited on the laptop, then here.")
             advanceUntilIdle()
             assertEquals(
                 2L,
@@ -186,7 +199,7 @@ class EssayViewModelTest {
             val device = Device(this, api)
             val viewModel = with(device) { open() }
 
-            viewModel.write(ANSWER_TEXT)
+            type(viewModel, ANSWER_TEXT)
             viewModel.send()
             advanceUntilIdle()
 
@@ -204,10 +217,10 @@ class EssayViewModelTest {
             val gate = CompletableDeferred<Unit>()
             device.api.saveGate = gate
 
-            viewModel.write("first")
+            type(viewModel, "first")
             advanceTimeBy(2_000)
             assertEquals(listOf("first"), device.api.saved.map { it.text })
-            viewModel.write("first plus a new paragraph")
+            type(viewModel, "first plus a new paragraph")
             device.api.saveGate = null
             gate.complete(Unit)
             advanceTimeBy(100)
@@ -232,10 +245,10 @@ class EssayViewModelTest {
             val gate = CompletableDeferred<Unit>()
             device.api.saveGate = gate
 
-            first.write("First editor")
+            type(first, "First editor")
             advanceTimeBy(2_000)
             assertEquals(listOf("First editor"), device.api.saved.map { it.text })
-            second.write("Unsaved in the second editor")
+            type(second, "Unsaved in the second editor")
             runCurrent()
             device.api.saveGate = null
             gate.complete(Unit)
@@ -251,7 +264,7 @@ class EssayViewModelTest {
             val viewModel = with(device) { open() }
             device.api.saveError = ApiException(ApiError.Network)
 
-            viewModel.write("Typed offline.")
+            type(viewModel, "Typed offline.")
             advanceUntilIdle()
             assertEquals("Typed offline.", device.keptOnDisk()?.text)
             assertEquals(true, viewModel.ui.value.saveFailed)
@@ -278,7 +291,7 @@ class EssayViewModelTest {
             val viewModel = with(device) { open() }
             device.api.saveError = ApiException(ApiError.Network)
 
-            viewModel.write("Typed offline.")
+            type(viewModel, "Typed offline.")
             advanceUntilIdle()
             device.api.saveError = null
             network.emit(Unit)
@@ -381,7 +394,7 @@ class EssayViewModelTest {
             val first = with(device) { open() }
             val text = "Public money must be spent lawfully.\nEach branch checks its own acts.\nCongress exercises external control."
             first.startWriting()
-            first.write(text)
+            type(first, text)
             first.onStop()
             advanceUntilIdle()
 
@@ -396,14 +409,14 @@ class EssayViewModelTest {
             reopened.startWriting()
             assertEquals(text, reopened.ui.value.text)
 
-            reopened.write("$text\nThe two controls complement each other.")
+            type(reopened, "$text\nThe two controls complement each other.")
             reopened.onStop()
             advanceUntilIdle()
             assertEquals(1L, api.saved.last().revision)
         }
 
     @Test
-    fun nothingTypedWhileGradingIsTakenAndTheResultIsForWhatWasSent() =
+    fun theResultIsForWhatWasSent() =
         runTest(dispatcher) {
             val api = FakeEssayApi()
             val answer = CompletableDeferred<Unit>()
@@ -415,11 +428,9 @@ class EssayViewModelTest {
             val viewModel = opened(api)
 
             viewModel.startWriting()
-            viewModel.write(ANSWER_TEXT)
+            type(viewModel, ANSWER_TEXT)
             viewModel.send()
             runCurrent()
-            viewModel.write("$ANSWER_TEXT And more.")
-            assertEquals(ANSWER_TEXT, viewModel.ui.value.text)
 
             answer.complete(Unit)
             advanceUntilIdle()
@@ -441,7 +452,7 @@ class EssayViewModelTest {
             val device = Device(this, api)
             val viewModel = with(device) { open() }
 
-            viewModel.write(ANSWER_TEXT)
+            type(viewModel, ANSWER_TEXT)
             viewModel.send()
             advanceUntilIdle()
             assertEquals(WritingSend.Failed, viewModel.ui.value.send)
@@ -449,7 +460,7 @@ class EssayViewModelTest {
             // The first send was graded; its answer was lost. The server replays that grade for any text.
             api.read = essay(graded = listOf(LEVELS_RESULT))
             api.grade = { result(LEVELS_RESULT) }
-            viewModel.write("$ANSWER_TEXT Changed after the failure.")
+            type(viewModel, "$ANSWER_TEXT Changed after the failure.")
             viewModel.send()
             advanceUntilIdle()
 
@@ -472,6 +483,9 @@ class EssayViewModelTest {
             api.defaultStart = WritingStartAnswer.Ready(UUID.randomUUID())
             restored.rewrite()
             advanceUntilIdle()
+            // The field's observer saves what the rewrite put back, once Compose applies the edit.
+            Snapshot.sendApplyNotifications()
+            advanceUntilIdle()
             assertEquals("$ANSWER_TEXT Changed after the failure.", restored.ui.value.text)
             assertEquals(api.defaultStart, WritingStartAnswer.Ready(api.saved.last().admissionId))
         }
@@ -486,7 +500,7 @@ class EssayViewModelTest {
             val changed = "$ANSWER_TEXT Changed after the failure."
 
             writer.startWriting()
-            writer.write(ANSWER_TEXT)
+            type(writer, ANSWER_TEXT)
             writer.send()
             advanceUntilIdle()
 
@@ -495,7 +509,7 @@ class EssayViewModelTest {
                 api.readError = ApiException(ApiError.Network)
                 result(LEVELS_RESULT)
             }
-            writer.write(changed)
+            type(writer, changed)
             writer.send()
             advanceUntilIdle()
 
@@ -526,14 +540,14 @@ class EssayViewModelTest {
             val first = with(device) { open() }
             val changed = "$ANSWER_TEXT Changed after the failure."
 
-            first.write(ANSWER_TEXT)
+            type(first, ANSWER_TEXT)
             first.send()
             advanceUntilIdle()
             assertEquals(WritingSend.Failed, first.ui.value.send)
 
             // The server graded the first text before the response was lost, so it no longer takes draft saves.
             repeat(3) { api.saveAnswers += DraftSave.Closed }
-            first.write(changed)
+            type(first, changed)
             first.onStop()
             advanceUntilIdle()
             assertEquals(changed, device.keptOnDisk()?.text)
@@ -619,27 +633,17 @@ class EssayViewModelTest {
         }
 
     @Test
-    fun theFieldStopsAtTheLongestAnswerTheApiTakes() =
-        runTest(dispatcher) {
-            val viewModel = opened(FakeEssayApi())
-            viewModel.write("a".repeat(MAX_WRITING_CHARACTERS + 1))
-            assertEquals("", viewModel.ui.value.text)
-            viewModel.write("a".repeat(MAX_WRITING_CHARACTERS))
-            assertEquals(MAX_WRITING_CHARACTERS, viewModel.ui.value.text.length)
-        }
-
-    @Test
     fun writingTimeIsTimeOnScreenAndNeverPastWhatTheApiTakes() =
         runTest(dispatcher) {
             val api = FakeEssayApi()
             api.grade = { result(LEVELS_RESULT) }
             val viewModel = opened(api)
 
-            viewModel.write("Started.")
+            type(viewModel, "Started.")
             clock += 5.minutes
             viewModel.onStop()
             clock += 3.days
-            viewModel.write(ANSWER_TEXT)
+            type(viewModel, ANSWER_TEXT)
             clock += 2.minutes
             viewModel.send()
             advanceUntilIdle()
@@ -648,7 +652,7 @@ class EssayViewModelTest {
             val long = FakeEssayApi()
             long.grade = { result(LEVELS_RESULT) }
             val left = opened(long)
-            left.write(ANSWER_TEXT)
+            type(left, ANSWER_TEXT)
             clock += 2.days
             left.send()
             advanceUntilIdle()
@@ -697,6 +701,8 @@ class EssayViewModelTest {
             val viewModel = opened(api)
 
             viewModel.rewrite()
+            advanceUntilIdle()
+            Snapshot.sendApplyNotifications()
             advanceUntilIdle()
 
             assertEquals(WritingMode.Write, viewModel.ui.value.mode)

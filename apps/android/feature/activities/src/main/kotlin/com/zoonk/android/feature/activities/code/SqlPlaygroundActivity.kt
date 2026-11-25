@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -45,7 +47,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -73,6 +74,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.ActivityExpectedRows
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
@@ -108,17 +110,22 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val isLocked by rememberUpdatedState(props.isLocked)
     val focus = remember { FocusRequester() }
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(if (props.isExploring) fields.solution else ""))
-    }
+    val query = rememberTextFieldState(if (props.isExploring) fields.solution else "")
     var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
     val expected = (props.expected.interaction as? ActivityExpectedAnswer.RowsWrapper)?.value
     val result = (run as? QueryRun.Done)?.result
 
     fun runQuery() {
-        if (props.isLocked || query.text.jsTrim().isEmpty()) return
+        if (props.isLocked ||
+            query.text
+                .toString()
+                .jsTrim()
+                .isEmpty()
+        ) {
+            return
+        }
         val revision = editorRun.start() ?: return
-        val text = query.text
+        val text = query.text.toString()
         scope.launch {
             val next = sandbox.runQuery(text, fields.tables)
             val current = editorRun.finish(revision)
@@ -128,10 +135,8 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
         }
     }
 
-    fun change(next: TextFieldValue) {
-        val edited = next.text != query.text
-        query = next
-        if (edited) {
+    LaunchedEffect(query) {
+        snapshotFlow { query.text.toString() }.drop(1).collect {
             editorRun.edit()
             onAnswerChange(null)
         }
@@ -144,15 +149,13 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
             val label = stringResource(if (props.isExploring) R.string.activities_code_query else R.string.activities_code_your_query)
             Text(label, style = MaterialTheme.typography.titleSmall)
             CodeEditor(
-                value = query,
-                onValueChange = ::change,
+                state = query,
                 language = CodeLanguage.Sql,
                 label = label,
                 placeholder = "SELECT",
                 focusRequester = focus,
                 onSubmit = ::runQuery,
                 readOnly = props.isLocked || props.isChecked,
-                wrap = true,
             )
             if (!props.isChecked) {
                 SnippetBar(
@@ -160,14 +163,18 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     label = stringResource(R.string.activities_code_sql_words),
                     enabled = !props.isLocked,
                 ) { snippet ->
-                    change(query.inserting(snippet))
+                    query.insertSnippet(snippet)
                     focus.requestFocus()
                 }
                 SandboxRunBar(
                     SQLITE,
                     runtime,
                     isExploring = props.isExploring,
-                    canRun = query.text.jsTrim().isNotEmpty(),
+                    canRun =
+                        query.text
+                            .toString()
+                            .jsTrim()
+                            .isNotEmpty(),
                     hasRun = run != null,
                     isRunning = editorRun.isRunning,
                     onRun = ::runQuery,

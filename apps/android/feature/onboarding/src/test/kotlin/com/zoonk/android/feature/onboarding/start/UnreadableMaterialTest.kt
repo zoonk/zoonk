@@ -62,7 +62,7 @@ class UnreadableMaterialTest {
                 advanceUntilIdle()
 
                 assertEquals(StartScreen.Entry, vm.flow.screen)
-                assertEquals("", vm.flow.words)
+                assertEquals("", vm.words.text.toString())
                 assertEquals(listOf(notes, slides), vm.flow.attached)
                 assertEquals(MaterialIntent.Exam, vm.flow.intent)
                 assertEquals(setOf(notes.id), vm.unreadable)

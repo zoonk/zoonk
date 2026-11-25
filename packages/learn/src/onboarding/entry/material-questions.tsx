@@ -7,7 +7,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import { toHelpLimit } from "../../_components/comes-back-words";
 import { HelpLimitNotice } from "../../_components/help-limit-notice";
 import { SURFACE_CLASS } from "../../_components/surface";
@@ -120,6 +120,19 @@ export function MaterialQuestions({
   const [isPending, startTransition] = useTransition();
   const trimmed = question.trim();
   const identity = useTutorIdentity(buddy);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  /**
+   * What lands above the box (the reading line, an answer) pushes it down while scroll anchoring holds the
+   * transcript still, so a learner still typing gets the box back.
+   */
+  const keepBoxInView = (landed: HTMLElement | null) => {
+    const form = formRef.current;
+
+    if (landed && form?.contains(document.activeElement)) {
+      form.scrollIntoView({ block: "nearest" });
+    }
+  };
 
   const submit = () => {
     if (!trimmed || isPending) {
@@ -153,14 +166,14 @@ export function MaterialQuestions({
 
       <div aria-live="polite" className="flex flex-col gap-4">
         {turns.map((turn) => (
-          <div className="flex flex-col gap-3" key={turn.id}>
+          <div className="flex flex-col gap-3" key={turn.id} ref={keepBoxInView}>
             <TypedGoal goal={turn.question} />
             <TurnAnswer identity={identity} outcome={turn.outcome} />
           </div>
         ))}
 
         {isPending && (
-          <p className="flex items-center gap-2 text-sm" role="status">
+          <p className="flex items-center gap-2 text-sm" ref={keepBoxInView} role="status">
             <Spinner className="size-4" />
             {t("Reading your material…")}
           </p>
@@ -168,11 +181,15 @@ export function MaterialQuestions({
       </div>
 
       <form
-        className={cn(GOAL_PANEL_CLASS, "mt-auto flex items-end gap-2 p-1.5 pl-4 lg:mt-0")}
+        className={cn(
+          GOAL_PANEL_CLASS,
+          "mt-auto flex scroll-my-1 items-end gap-2 p-1.5 pl-4 lg:mt-0",
+        )}
         onSubmit={(event) => {
           event.preventDefault();
           submit();
         }}
+        ref={formRef}
       >
         <label className="sr-only" htmlFor={inputId}>
           {t({
@@ -182,7 +199,7 @@ export function MaterialQuestions({
         </label>
         <Textarea
           autoFocus
-          className="field-sizing-content max-h-40 min-h-11 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+          className="field-sizing-content max-h-40 min-h-(--control-height) border-0 bg-transparent px-0 py-[calc((var(--control-height)-1lh)/2)] shadow-none focus-visible:ring-0"
           id={inputId}
           maxLength={MAX_MATERIAL_QUESTION_LENGTH}
           onChange={(event) => setQuestion(event.target.value)}
@@ -199,7 +216,7 @@ export function MaterialQuestions({
         <Button
           aria-label={t("Ask")}
           busy={isPending}
-          className="shrink-0 rounded-full"
+          className="shrink-0"
           disabled={!trimmed}
           focusableWhenDisabled
           icon={<ArrowUpIcon aria-hidden="true" className="size-5" />}
