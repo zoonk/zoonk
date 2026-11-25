@@ -200,17 +200,23 @@ function useEstimatedFinish() {
   return goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate ? finish : null;
 }
 
+/** The date the learner set, never the day a finished plan was done. */
 function GoalDateValue() {
   const t = useExtracted();
-  const { goal } = usePlanScreen();
-  const finish = useRoadmapFinish();
-  const estimated = useEstimatedFinish();
+  const { goal, plan } = usePlanScreen();
+  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
-  if (!finish || estimated) {
+  if (!targetDate) {
     return goal.kind === "exam" ? t("To be confirmed") : t("None set");
   }
 
-  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
+  return (
+    <PlanDateText
+      estimate={targetDateEstimated}
+      isoDate={targetDate}
+      month={targetDateNamedMonth}
+    />
+  );
 }
 
 /**

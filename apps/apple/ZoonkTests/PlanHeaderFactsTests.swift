@@ -17,9 +17,8 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertEqual(planDaysLeft(plan, goal: goal(.exam, .paused))?.shown, "60 days left")
   }
 
-  func testAnEndDateNotSetSaysOnlyThatWhileThePlanEstimatesItsFinish() {
-    let value = PlanEndDateValue(
-      targetDate: nil, isExam: false, finish: ("2027-02-10", true, false), today: "2027-01-04")
+  func testAnEndDateNotSetSaysOnlyThat() {
+    let value = PlanEndDateValue(target: nil, isExam: false, today: "2027-01-04")
 
     XCTAssertEqual(value.shown, "None set")
     XCTAssertFalse(value.isDate)

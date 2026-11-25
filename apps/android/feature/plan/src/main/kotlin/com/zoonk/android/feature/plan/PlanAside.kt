@@ -267,13 +267,12 @@ private fun PropertyRow(
 
 @Composable
 private fun goalDateValue(page: PlanPageState): AnnotatedString {
-    val finish = page.finish
-    // Without a date of its own the row says so; the timeline's flag and the path's last row show the estimate.
-    if (finish == null || (finish.estimate && page.plan.schedule.targetDate == null)) {
-        val unset = if (page.isExam && finish == null) R.string.plan_to_be_confirmed else R.string.plan_end_none_set
-        return AnnotatedString(stringResource(unset))
-    }
-    return dateValue(planDate(finish.date, page.today, finish.estimate, finish.month).text)
+    // The date the learner set, never the day a finished plan was done; the estimate is the timeline's and the path's.
+    val schedule = page.plan.schedule
+    val target =
+        schedule.targetDate?.toJavaLocalDate()
+            ?: return AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
+    return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
 }
 
 /**
