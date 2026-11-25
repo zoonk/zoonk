@@ -6,7 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { FactSegments } from "../_components/task-meta";
 import { getPhaseWeight } from "../plan/phase-weight";
-import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
 import { PhaseWhen } from "./phase-when";
 import { RoadmapFull } from "./roadmap-full";
@@ -46,9 +45,6 @@ function RoadmapCompact({
               )}
               style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
             />
-            {phase.state === "current" && (
-              <CurrentPhaseMark className="absolute top-1/2 left-1/2 size-1 -translate-1/2 ring-1" />
-            )}
           </MeterPart>
         ))}
       </MeterParts>
@@ -68,7 +64,7 @@ function RoadmapCompact({
             className="text-muted-foreground flex shrink-0 items-center gap-2"
             data-slot="plan-roadmap-when"
           >
-            <PhaseWhen phase={position.phase} />
+            <PhaseWhen labelled phase={position.phase} />
             {onOpen && <RowChevron />}
           </span>
         </span>

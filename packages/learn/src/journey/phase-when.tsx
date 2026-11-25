@@ -25,11 +25,25 @@ export function usePhaseEnd() {
   };
 }
 
+/** "Ends Dec 12", or "Ends ~Dec 12" where the date is shown as an estimate. */
+function useEndsWords() {
+  const t = useExtracted();
+
+  return (date: string) =>
+    t({
+      description:
+        'When a phase of the plan ends. {date} is a day, like "Dec 12", shown as "~Dec 12" or "~Jan" when it\'s an estimate.',
+      message: "Ends {date}",
+      values: { date },
+    });
+}
+
 /** How a phase's end is read aloud: "Ends Dec 12", "Ends around Dec 12", or a short plan's days. */
 export function usePhaseEndSpoken() {
   const t = useExtracted();
   const phaseEnd = usePhaseEnd();
   const formatPlanDate = useFormatPlanDate();
+  const endsWords = useEndsWords();
 
   return function phaseEndSpoken(phase: PlanPhaseView): string | null {
     const end = phaseEnd(phase);
@@ -51,23 +65,30 @@ export function usePhaseEndSpoken() {
           message: "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}",
           values: { date, dateKind: end.month ? "month" : "day" },
         })
-      : t({
-          description: 'When a phase of the plan ends. {date} is a day, like "Dec 12".',
-          message: "Ends {date}",
-          values: { date },
-        });
+      : endsWords(date);
   };
 }
 
 /**
- * When a phase ends, at the end of its row or under the roadmap's bar: "Dec 12", "~Dec 12" or
- * "~Jan", read aloud as "Ends around Dec 12". The place says it's the end, so it has no "until".
+ * When a phase ends. In a column of dates (a row's end, the timeline's axis) the place says it's
+ * the end, so the date stands alone in the data face: "Dec 12", "~Dec 12" or "~Jan". Under the
+ * compact bar nothing else says so, so `labelled` names it in words: "Ends ~Dec 12". Either is read
+ * aloud as "Ends around Dec 12".
  */
-export function PhaseWhen({ className, phase }: { className?: string; phase: PlanPhaseView }) {
+export function PhaseWhen({
+  className,
+  labelled = false,
+  phase,
+}: {
+  className?: string;
+  labelled?: boolean;
+  phase: PlanPhaseView;
+}) {
   const t = useExtracted();
   const phaseEnd = usePhaseEnd();
   const phaseEndSpoken = usePhaseEndSpoken();
   const formatPlanDate = useFormatPlanDate();
+  const endsWords = useEndsWords();
   const end = phaseEnd(phase);
 
   if (!end) {
@@ -83,13 +104,18 @@ export function PhaseWhen({ className, phase }: { className?: string; phase: Pla
   }
 
   const date = formatPlanDate(end.isoDate, { month: end.month });
+  const shownDate = end.estimate ? t("~{date}", { date }) : date;
 
   return (
     <span
-      className={cn("font-mono whitespace-nowrap tabular-nums", className)}
+      className={cn(
+        "whitespace-nowrap tabular-nums",
+        labelled ? "font-sans" : "font-mono",
+        className,
+      )}
       data-slot="phase-when"
     >
-      <span aria-hidden="true">{end.estimate ? t("~{date}", { date }) : date}</span>
+      <span aria-hidden="true">{labelled ? endsWords(shownDate) : shownDate}</span>
       <span className="sr-only">{phaseEndSpoken(phase)}</span>
     </span>
   );

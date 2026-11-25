@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
-import { useRoadmapFinish } from "../journey/use-roadmap";
+import { useRoadmapFinish, useRoadmapPhases } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -160,9 +160,12 @@ function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
       : days;
   }
 
-  const date = <PlanDateText isoDate={mocks.nextDate} />;
+  if (mocks.count <= 1) {
+    return <PlanDateText isoDate={mocks.nextDate} />;
+  }
 
-  return mocks.count > 1 ? t.rich("Next <date></date>", { date: () => date }) : date;
+  const date = <PlanDateText inWords isoDate={mocks.nextDate} />;
+  return t.rich("Next <date></date>", { date: () => date });
 }
 
 /** Mock exams aren't a setting, so the row opens the exam's page, where they are. */
@@ -188,31 +191,45 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
   );
 }
 
-function GoalDateValue() {
-  const t = useExtracted();
+/** The finish the plan works out when the learner set no end date. */
+function useEstimatedFinish() {
   const { goal, plan } = usePlanScreen();
   const finish = useRoadmapFinish();
 
-  if (!finish) {
+  return goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate ? finish : null;
+}
+
+function GoalDateValue() {
+  const t = useExtracted();
+  const { goal } = usePlanScreen();
+  const finish = useRoadmapFinish();
+  const estimated = useEstimatedFinish();
+
+  if (!finish || estimated) {
     return goal.kind === "exam" ? t("To be confirmed") : t("None set");
   }
 
-  const date = (
-    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-  );
+  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
+}
 
-  if (goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate) {
-    return (
-      <>
-        {t("None set")}
-        <span className="text-muted-foreground block text-xs">
-          {t.rich("Estimated finish <date></date>", { date: () => date })}
-        </span>
-      </>
-    );
+/**
+ * The timeline's flag dates the estimated finish; a plan of one phase draws no timeline, so its
+ * own row says it.
+ */
+function EstimatedFinishRow() {
+  const t = useExtracted();
+  const finish = useEstimatedFinish();
+  const { phases } = useRoadmapPhases();
+
+  if (!finish || phases.length > 1) {
+    return null;
   }
 
-  return date;
+  return (
+    <ReadOnlyRow label={t("Estimated finish")}>
+      <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+    </ReadOnlyRow>
+  );
 }
 
 export function PlanProperties({
@@ -246,6 +263,8 @@ export function PlanProperties({
           <GoalDateValue />
         </PropertyRow>
 
+        <EstimatedFinishRow />
+
         <PropertyRow label={t("Daily study time")} onOpen={() => onOpen("time")}>
           <DailyTimeValue />
         </PropertyRow>
@@ -273,7 +292,7 @@ export function PlanProperties({
         {goal.kind === "language" && practiced.length > 0 && (
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>
             {practiced.length === LANGUAGE_ACTIVITY_TYPES.length
-              ? t("Everything")
+              ? t("All activities")
               : practiced.map((activity) => activityName(activity)).join(FACT_SEPARATOR)}
           </PropertyRow>
         )}

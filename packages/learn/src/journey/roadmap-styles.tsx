@@ -22,8 +22,14 @@ const BAND_NAME_CLASS = cn(BAND_CELL_CLASS, "leading-4 text-balance");
 
 const ONE_LINE_NAME_LENGTH = 16;
 
-/** A short name is one part; a longer one is cut between words where its longer part is shortest. */
-function splitBandName(name: string): [string, string | null] {
+const SHORT_WORD_LENGTH = 3;
+
+/**
+ * A short name is one part; a longer one is cut between words. A cut that leaves a short word at
+ * the end of the first line ("Médico e") or one word alone on the second is taken only when no
+ * other cut exists; among the rest, the one whose longer part is shortest.
+ */
+export function splitBandName(name: string): [string, string | null] {
   const words = name.split(" ");
 
   if (name.length <= ONE_LINE_NAME_LENGTH || words.length === 1) {
@@ -31,12 +37,24 @@ function splitBandName(name: string): [string, string | null] {
   }
 
   const cuts = words.slice(1).map((_word, index) => {
-    const first = words.slice(0, index + 1).join(" ");
-    const second = words.slice(index + 1).join(" ");
-    return { first, longest: Math.max(first.length, second.length), second };
+    const first = words.slice(0, index + 1);
+    const second = words.slice(index + 1);
+
+    return {
+      first: first.join(" "),
+      longest: Math.max(first.join(" ").length, second.join(" ").length),
+      reads: (first.at(-1)?.length ?? 0) > SHORT_WORD_LENGTH && second.length > 1,
+      second: second.join(" "),
+    };
   });
 
-  const best = cuts.reduce((shortest, cut) => (cut.longest < shortest.longest ? cut : shortest));
+  const readable = cuts.filter((cut) => cut.reads);
+  const candidates = readable.length > 0 ? readable : cuts;
+
+  const best = candidates.reduce((shortest, cut) =>
+    cut.longest < shortest.longest ? cut : shortest,
+  );
+
   return [best.first, best.second];
 }
 

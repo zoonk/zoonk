@@ -1525,7 +1525,6 @@ msgstr "今日の{buddy}"
 
 #: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
-#: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだです"
@@ -2601,7 +2600,6 @@ msgstr "まだどの問題にも答えていなかったため、このチャレ
 
 #: src/checkpoints/checkpoint-labels.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
 #: src/session/use-block-copy.ts
 msgctxt "2yz8Wb"
 msgid "The Trickster"
@@ -4738,10 +4736,16 @@ msgstr "{studied, plural, =0 {まだ学習していません} other {#レッス�
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/session/summary/summary-parts.tsx
+#: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 msgctxt "sIMS7i"
 msgid "Progress"
 msgstr "進み具合"
+
+#: src/journey/journey-hero.tsx
+msgctxt "yaK5-i"
+msgid "Not tested yet"
+msgstr ""
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -4840,9 +4844,9 @@ msgid "Won"
 msgstr "勝利"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "f0UFlY"
-msgid "In your next session"
-msgstr "次の学習で"
+msgctxt "gfKKsY"
+msgid "Next time"
+msgstr ""
 
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
@@ -4949,17 +4953,17 @@ msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number}レッスン完了（全#レッスン）} other {{done, number}レッスン完了（#レッスン中）}}"
 
+#. When a phase of the plan ends. {date} is a day, like "Dec 12", shown as "~Dec 12" or "~Jan" when it's an estimate.
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date}に終了"
+
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
 msgctxt "fC-Q4J"
 msgid "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
 msgstr "{dateKind, select, month {{date}ごろに終了} other {{date}ごろに終了}}"
-
-#. When a phase of the plan ends. {date} is a day, like "Dec 12".
-#: src/journey/phase-when.tsx
-msgctxt "JQlKi_"
-msgid "Ends {date}"
-msgstr "{date}に終了"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
@@ -5095,9 +5099,9 @@ msgid "Review what you're starting to forget"
 msgstr "忘れかけている内容を復習する"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "HRQ_zL"
-msgid "Needed to go past 75%"
-msgstr "75%を超えるために必要"
+msgctxt "vn_iV0"
+msgid "Needed to go past 75% preparation"
+msgstr ""
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "v5t0w3"
@@ -5231,11 +5235,11 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "完了予定日"
 
-#. After a date on the plan's timeline, naming what happens that day.
-#: src/journey/roadmap-lane.tsx
-msgctxt "pwcc1H"
-msgid "exam"
-msgstr "試験"
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.
+#: src/journey/roadmap-full.tsx
+msgctxt "q5LbXf"
+msgid "Phase questions"
+msgstr ""
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -5254,6 +5258,12 @@ msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}：{status}"
 
+#. The plan's schedule while the learner has paused the goal.
+#: src/journey/schedule-details.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr ""
+
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
 msgid "Schedule"
@@ -5264,11 +5274,6 @@ msgstr "日程"
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {あと#レッスン}}"
-
-#: src/journey/schedule-details.tsx
-msgctxt "dVA-0b"
-msgid "About {time} a day"
-msgstr "1日約{time}"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -10635,14 +10640,14 @@ msgid "Next <date></date>"
 msgstr "次回 <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "G6h29P"
-msgid "Estimated finish <date></date>"
-msgstr "完了予定日 <date></date>"
+msgctxt "-0-sO9"
+msgid "Estimated finish"
+msgstr ""
 
 #: src/plan/plan-properties.tsx
-msgctxt "mWKPwa"
-msgid "Everything"
-msgstr "すべて"
+msgctxt "1KfRoB"
+msgid "All activities"
+msgstr ""
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
@@ -12849,6 +12854,11 @@ msgid "That's as many goals as you can study at once. Pause one to start this on
 msgstr "同時に進められる目標の数が上限に達しました。この目標を始めるには、ほかの目標を1つ一時停止してください。"
 
 #: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.1LEHvj"
+msgid "Or subscribe to study more goals at once."
+msgstr ""
+
+#: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
 msgid "Subscribe"
 msgstr "登録する"
@@ -12956,11 +12966,6 @@ msgstr "次回の学習日"
 msgctxt "z50pCl"
 msgid "Grading"
 msgstr "採点"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "jSqwdW"
-msgid "Coverage"
-msgstr "学習状況"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "JeoRv8"
@@ -13220,6 +13225,12 @@ msgstr "{count, plural, other {#科目}}"
 msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, other {#単元}}"
+
+#. Heads the column of how many questions each subject has on the exam, like "45 questions".
+#: src/syllabus/syllabus-section.tsx
+msgctxt "uZd7hU"
+msgid "On the exam"
+msgstr ""
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

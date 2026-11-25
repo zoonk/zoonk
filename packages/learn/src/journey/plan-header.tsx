@@ -5,22 +5,19 @@ import { useExtracted } from "next-intl";
 import { DaysLeft } from "../_components/days-left";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
+import { getPlanDaysLeft } from "./schedule-state";
 
 /**
- * The days left to the goal's date, under the Plan's title. The top bar names the goal on every
- * width, so the line doesn't; a goal without a date to come has none.
+ * The days left to the goal's date, under the Plan's title (`getPlanDaysLeft`). The top bar names
+ * the goal on every width, so the line doesn't.
  */
 export function usePlanDaysLeft(): React.ReactNode {
-  const { plan, today } = usePlanScreen();
+  const { goal, paused = false, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
+  const days = getPlanDaysLeft({ exam: goal.kind === "exam", paused, targetDate, today });
 
-  if (!targetDate || targetDate < today) {
-    return null;
-  }
-
-  return <DaysLeft days={daysBetween(today, targetDate)} estimated={targetDateEstimated} />;
+  return days === null ? null : <DaysLeft days={days} estimated={targetDateEstimated} />;
 }
 
 export function PlanHeader({

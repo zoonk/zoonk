@@ -71,22 +71,13 @@ function OutlineChapters({
 }
 
 function FarTopicBody({
-  actions,
   chapterHref,
-  onLanded,
-  open,
-  skillId,
+  outline,
 }: {
-  actions: TopicOutlineActions;
   chapterHref: (chapterId: string) => string;
-  onLanded: () => void;
-  open: boolean;
-  skillId: string;
+  outline: ReturnType<typeof useTopicOutline>;
 }) {
   const routes = useLearnRoutes();
-
-  const outline = useTopicOutline({ actions, onLanded, open, skillId });
-
   const { chapters, isPending, request, retry, shown } = outline;
   const limit = useLiveLimit(outline.limit);
   const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
@@ -138,6 +129,49 @@ function FarTopicBody({
 }
 
 /**
+ * The topic's start goes under its title until the outline says it has no more lessons to get
+ * ready: a start with nothing to start would be a line with no action.
+ */
+function FarTopicPanel({
+  actions,
+  chapterHref,
+  lessons,
+  nextDate,
+  onLanded,
+  open,
+  skillId,
+  title,
+}: {
+  actions: TopicOutlineActions;
+  chapterHref: (chapterId: string) => string;
+  lessons: number | null;
+  nextDate: string | null;
+  onLanded: () => void;
+  open: boolean;
+  skillId: string;
+  title: string;
+}) {
+  const line = useFarTopicLine();
+  const outline = useTopicOutline({ actions, onLanded, open, skillId });
+  const description = outline.shown === "unavailable" ? null : line({ lessons, nextDate });
+
+  return (
+    <>
+      <SheetHeader>
+        <div className="flex min-w-0 flex-col gap-1">
+          <DrawerTitle>{title}</DrawerTitle>
+          {description && <DrawerDescription>{description}</DrawerDescription>}
+        </div>
+      </SheetHeader>
+
+      <DrawerContent className="pt-2">
+        <FarTopicBody chapterHref={chapterHref} outline={outline} />
+      </DrawerContent>
+    </>
+  );
+}
+
+/**
  * The page is read again only when the sheet closes after the lessons landed: read while open, the
  * plan could take away the row the sheet opened from. `trigger` is a submit button: opening reads
  * the topic's lessons, so the form keeps a press made before the page hydrates and opens it once it
@@ -164,7 +198,6 @@ export function FarTopicSheet({
 }) {
   const [open, setOpen] = useState(false);
   const landed = useRef(false);
-  const line = useFarTopicLine();
 
   const changeOpen = (next: boolean) => {
     setOpen(next);
@@ -182,24 +215,18 @@ export function FarTopicSheet({
       </form>
 
       <DrawerPopup>
-        <SheetHeader>
-          <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle>{title}</DrawerTitle>
-            <DrawerDescription>{line({ lessons, nextDate })}</DrawerDescription>
-          </div>
-        </SheetHeader>
-
-        <DrawerContent className="pt-2">
-          <FarTopicBody
-            actions={actions}
-            chapterHref={chapterHref}
-            onLanded={() => {
-              landed.current = true;
-            }}
-            open={open}
-            skillId={skillId}
-          />
-        </DrawerContent>
+        <FarTopicPanel
+          actions={actions}
+          chapterHref={chapterHref}
+          lessons={lessons}
+          nextDate={nextDate}
+          onLanded={() => {
+            landed.current = true;
+          }}
+          open={open}
+          skillId={skillId}
+          title={title}
+        />
       </DrawerPopup>
     </Drawer>
   );

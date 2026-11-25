@@ -75,13 +75,18 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
   });
 }
 
+/** From this width a row shows its exam's question count in a column of its own. */
+const QUESTIONS_COLUMNS_CLASS = "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]";
+
 const ROW_GRID_CLASS = cn(
   // A bar has no leading under it, so a phone's stacked row ending in one keeps the room the name
   // has over its capitals.
   "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3 @max-lg/subjects:has-data-[slot=coverage-bar]:pb-4",
   "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-2",
-  "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
+  QUESTIONS_COLUMNS_CLASS,
 );
+
+const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   const t = useExtracted();
@@ -90,16 +95,36 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
     return <CoverageLegend />;
   }
 
+  const counted = syllabus.subjects.some((subject) => (subject.questions ?? 0) > 0);
+
+  // Laid out as the rows are, so each heading sits over its column: the questions' column where
+  // rows show it, and the shares' column, which the word may overhang toward the bars.
   return (
-    // Ends where the rows' values end: before the chevron's slot.
-    <span className="flex items-center gap-3" data-slot="bars-meaning">
-      <span className="text-muted-foreground text-2xs">{t("Preparation")}</span>
+    <span
+      className="text-muted-foreground text-2xs flex min-w-0 flex-1 items-center justify-end gap-3"
+      data-slot="bars-meaning"
+    >
+      {counted && (
+        <span
+          className={cn(
+            "hidden min-w-0 flex-1 gap-x-3.5 @2xl/subjects:grid",
+            QUESTIONS_COLUMNS_CLASS,
+          )}
+        >
+          <span className="col-start-2 text-right">
+            {t({
+              description:
+                'Heads the column of how many questions each subject has on the exam, like "45 questions".',
+              message: "On the exam",
+            })}
+          </span>
+        </span>
+      )}
+      <span className={cn(SHARE_CLASS, "flex whitespace-nowrap")}>{t("Preparation")}</span>
       <ListRowChevronSpace />
     </span>
   );
 }
-
-const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function SubjectRow({
   href,
