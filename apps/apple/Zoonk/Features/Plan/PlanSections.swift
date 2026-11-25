@@ -51,32 +51,23 @@ func planDurationText(minutes: Double) -> String {
   progressLearningTime(Int((minutes * 60).rounded()))
 }
 
-struct PlanRoadmapSection: View {
-  let context: PlanContext
-  let structure: GoalSyllabus?
-  var listsPhases = false
+/// Main's `DailyTimeValue`: the time a day, and the weekend's when it has its own, in the same words
+/// wherever the plan says it.
+func dailyTimeText(_ shape: GoalPlan.WeekShape) -> (text: String, hasWeekend: Bool) {
+  let weekdays = planDurationText(minutes: Double(shape.weekdays))
 
-  var body: some View {
-    let phases = context.plan.roadPhases
-
-    if !phases.isEmpty {
-      if listsPhases {
-        Section {
-          RoadmapCompact(context: context, opens: false, hasLine: false)
-          ForEach(phases) { phase in
-            RoadmapPhaseRow(phase: phase, end: context.plan.phaseEnd(phase))
-          }
-        } header: {
-          SectionTitle(
-            Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases"))
-        }
-      } else {
-        Section {
-          PlanRoadmapContent(context: context, structure: structure)
-        }
-      }
-    }
+  guard let weekend = shape.weekend else {
+    return (weekdays, false)
   }
+
+  return (
+    String(
+      localized: "\(weekdays) · \(planDurationText(minutes: Double(weekend))) weekends",
+      table: "Plan",
+      comment:
+        "A plan's time a day, then its own weekend time, like '20 min · 30 min weekends'"),
+    true
+  )
 }
 
 struct PlanRoadmapContent: View {
@@ -84,7 +75,8 @@ struct PlanRoadmapContent: View {
   let structure: GoalSyllabus?
 
   var body: some View {
-    if !context.plan.roadPhases.isEmpty {
+    // Main's: one phase is the whole plan, so there's nothing to place the learner in.
+    if context.plan.roadPhases.count >= 2 {
       if structure != nil {
         Button {
           context.show(.path)
@@ -130,8 +122,6 @@ private struct RoadmapCompact: View {
 
   let context: PlanContext
   let opens: Bool
-  /// Over a list that names each phase and its date, the line would say it again.
-  var hasLine = true
 
   var body: some View {
     let phases = context.plan.roadPhases
@@ -144,11 +134,9 @@ private struct RoadmapCompact: View {
             weight: phase.weight,
             fill: phase.state == .current
               ? .currentPhase(phase.lessonShare) : .share(phase.lessonShare))
-        })
+        }, minimumWidth: 24)
 
-      if hasLine {
-        line(phases: phases, currentIndex: currentIndex)
-      }
+      line(phases: phases, currentIndex: currentIndex)
     }
     .accessibilityElement(children: .combine)
   }
@@ -164,8 +152,7 @@ private struct RoadmapCompact: View {
           position(phase: phase, number: currentIndex + 1, count: phases.count)
         } value: {
           if !context.isPaused, let end = context.plan.phaseEnd(phase) {
-            Text(verbatim: end.shown)
-              .typeStyle(.data)
+            Text(verbatim: end.line)
               .foregroundStyle(.mutedForeground)
               .accessibilityLabel(Text(verbatim: end.spoken))
           }
@@ -212,10 +199,11 @@ private struct RoadmapCompact: View {
   }
 }
 
-/// Where a phase ends, at the end of its row or under the roadmap's bar: "Dec 12", "~Dec 12" or
-/// "~Mar". The place says it's the end, so it has no "until".
+/// Where a phase ends: at the end of its row, in a column of dates, "Dec 12", "~Dec 12" or "~Mar";
+/// under the roadmap's bar, on its own, "Ends Dec 12" or "Ends ~Dec 12".
 struct PhaseEnd: Equatable {
   let shown: String
+  let line: String
   let spoken: String
 
   init(_ isoDate: String, estimate: Bool, month: Bool, today: String) {
@@ -226,24 +214,40 @@ struct PhaseEnd: Equatable {
       shown = date
       spoken = String(
         localized: "Ends \(date)", table: "Plan",
-        comment: "When a phase of the plan ends, read aloud; the argument is a day like 'Dec 12'")
+        comment:
+          "When a phase of the plan ends, under the plan's phase bar and read aloud; the argument is a day like 'Dec 12'"
+      )
+      line = spoken
       return
     }
 
     shown = String(
       localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
-    spoken =
-      month
-      ? String(
+
+    if month {
+      line = String(
+        localized: LocalizedStringResource(
+          "endsAboutMonthShown", defaultValue: "Ends ~\(date)", table: "Plan",
+          comment:
+            "Under the plan's phase bar: when the current phase ends, about; the argument is a month like 'Jan' or 'Jan 2028'"
+        ))
+      spoken = String(
         localized: LocalizedStringResource(
           "endsAboutMonth", defaultValue: "Ends around \(date)", table: "Plan",
           comment:
             "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'"
         ))
-      : String(
+    } else {
+      line = String(
+        localized: "Ends ~\(date)", table: "Plan",
+        comment:
+          "Under the plan's phase bar: when the current phase ends, about; the argument is a day like 'Dec 12'"
+      )
+      spoken = String(
         localized: "Ends around \(date)", table: "Plan",
         comment:
           "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
+    }
   }
 }
 
@@ -456,9 +460,9 @@ struct PlanNumbersSection: View {
       share: share)
   }
 
-  /// Main's `useScheduleNumber`: the plan's state, then the time a day while it's under way, or the
-  /// lessons left once its date passed. Beside the plan's settings, whose "Daily study time" row says
-  /// it, the time isn't said again.
+  /// Main's `useScheduleNumber`: the plan's state, then the time a day in the "Daily study time"
+  /// setting's words while it's under way, or the lessons left once its date passed. Beside the
+  /// plan's settings, whose row says it, the time isn't said again.
   private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
@@ -472,12 +476,7 @@ struct PlanNumbersSection: View {
           localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
           locale: .appLanguage, comment: "Lessons left in a plan whose date passed")
       case .ahead, .behind, .onTrack:
-        timeShownBeside
-          ? nil
-          : String(
-            localized:
-              "About \(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
-            table: "Plan")
+        timeShownBeside ? nil : dailyTimeText(context.plan.schedule.shape).text
       default:
         nil
       }
@@ -614,8 +613,7 @@ struct PlanSettingsSection: View {
 
       setting(
         label: Text("Daily study time", tableName: "Plan"),
-        value: Text(planDurationText(minutes: Double(schedule.dailyMinutes))).typeStyle(.data),
-        section: .time)
+        value: dailyTimeValue(schedule.shape), section: .time)
 
       setting(
         label: Text(
@@ -722,18 +720,18 @@ struct PlanSettingsSection: View {
       return Text(verbatim: days)
     }
 
-    let date = Text(verbatim: PlanDate.text(mocks.nextDate, today: context.plan.today))
-      .font(TypeStyle.data.font(in: environment))
+    let date = PlanDate.text(mocks.nextDate, today: context.plan.today)
 
+    // A date alone is a value, in the data face; inside words, the words' face.
     return mocks.count > 1
       ? Text(
         "Next \(date)", tableName: "Plan",
         comment:
           "When a plan's next mock exam comes, of several; the argument is a day like 'Dec 13'")
-      : date
+      : Text(verbatim: date).font(TypeStyle.data.font(in: environment))
   }
 
-  /// What a language plan practices: everything, or the activities it keeps.
+  /// What a language plan practices: all activities, or the ones it keeps.
   private var practicedText: String? {
     let skipped = Set(context.plan.steering.skippedActivities)
     let practiced = planActivities.filter { !skipped.contains($0) }
@@ -744,7 +742,7 @@ struct PlanSettingsSection: View {
 
     return practiced.count == planActivities.count
       ? String(
-        localized: "Everything", table: "Plan",
+        localized: "All activities", table: "Plan",
         comment: "A language plan practices every activity: new words, listening, writing, speaking"
       )
       : practiced.map(planActivityName).joinedFacts()
@@ -769,6 +767,18 @@ struct PlanSettingsSection: View {
     }
   }
 
+  /// A time alone is a value, in the data face; with the weekend's words, the words' face.
+  @ViewBuilder
+  private func dailyTimeValue(_ shape: GoalPlan.WeekShape) -> some View {
+    let time = dailyTimeText(shape)
+
+    if time.hasWeekend {
+      Text(verbatim: time.text)
+    } else {
+      Text(verbatim: time.text).typeStyle(.data)
+    }
+  }
+
   private var dateValue: some View {
     let value = PlanEndDateValue(
       targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
@@ -781,17 +791,9 @@ struct PlanSettingsSection: View {
         }
         : context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
       today: context.plan.today)
-    return VStack(alignment: .leading, spacing: 2) {
-      Text(verbatim: value.shown)
-        .typeStyle(value.isDate ? .data : .body)
-        .accessibilityLabel(Text(verbatim: value.spoken))
-      if let detail = value.detail {
-        Text(verbatim: detail.shown)
-          .typeStyle(.note)
-          .accessibilityLabel(Text(verbatim: detail.spoken))
-      }
-    }
-    .fixedSize(horizontal: false, vertical: true)
+    return Text(verbatim: value.shown)
+      .typeStyle(value.isDate ? .data : .body)
+      .accessibilityLabel(Text(verbatim: value.spoken))
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {

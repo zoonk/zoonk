@@ -9,8 +9,7 @@ struct MeterParts: View {
       case color(Color)
       /// The track, filled in `success` from its start this far (0 to 1).
       case share(Double)
-      /// Main's current phase on the roadmap: the track, faintly filled this far (0 to 1), with
-      /// its `CurrentPhaseMark` in the middle.
+      /// Main's current phase on the roadmap: the track, faintly filled this far (0 to 1).
       case currentPhase(Double)
     }
 
@@ -21,8 +20,9 @@ struct MeterParts: View {
   let parts: [Part]
   var height = 6.0
   var gap = 2.0
+  /// The narrowest a part gets, however little it weighs.
+  var minimumWidth = 4.0
 
-  private let minimumWidth = 4.0
   private let ringWidth = 1.5
 
   /// Where each part sits across a bar this wide.
@@ -62,12 +62,6 @@ struct MeterParts: View {
           fill(rect, share: filled, with: .success, radius: radius, in: context)
         case .currentPhase(let filled):
           fill(rect, share: filled, with: .success.opacity(0.3), radius: radius, in: context)
-          let mark = CGRect(x: rect.midX, y: rect.midY, width: 0, height: 0)
-          context.fill(
-            Path(ellipseIn: mark.insetBy(dx: -3, dy: -3)),
-            with: .color(Color(.foreground).opacity(0.15)))
-          context.fill(
-            Path(ellipseIn: mark.insetBy(dx: -2, dy: -2)), with: .color(Color(.foreground)))
         }
       }
     }

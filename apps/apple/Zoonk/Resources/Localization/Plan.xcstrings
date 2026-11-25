@@ -19757,7 +19757,7 @@
       }
     },
     "Ends %@" : {
-      "comment" : "When a phase of the plan ends, read aloud; the argument is a day like 'Dec 12'",
+      "comment" : "When a phase of the plan ends, under the plan's phase bar and read aloud; the argument is a day like 'Dec 12'",
       "localizations" : {
         "de" : {
           "stringUnit" : {

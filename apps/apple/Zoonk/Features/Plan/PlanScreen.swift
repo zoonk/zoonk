@@ -23,7 +23,7 @@ private struct GoalPlanView: View {
   let goal: LearnerGoal
 
   private func daysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
-    goal.isSettingUp ? nil : planDaysLeft(plan)
+    goal.isSettingUp ? nil : planDaysLeft(plan, goal: goal)
   }
 
   var body: some View {
@@ -95,9 +95,11 @@ private struct GoalPlanView: View {
 }
 
 /// The days left to a date still to come; nothing while the plan is set up or built, as main's.
-/// An estimated date's "~60 days left" reads "About 60 days left".
-func planDaysLeft(_ plan: GoalPlan?) -> (shown: String, spoken: String)? {
-  guard let plan, plan.ready, let targetDate = plan.schedule.targetDate, targetDate >= plan.today
+/// An estimated date's "~60 days left" reads "About 60 days left". A paused goal counts no days
+/// down to its own date; an exam's comes all the same.
+func planDaysLeft(_ plan: GoalPlan?, goal: LearnerGoal) -> (shown: String, spoken: String)? {
+  guard let plan, plan.ready, let targetDate = plan.schedule.targetDate, targetDate >= plan.today,
+    goal.kind == .exam || goal.status != .paused
   else {
     return nil
   }
@@ -383,7 +385,7 @@ private struct PlanContent: View {
 
   /// Main's `PlanHeader` subtitle: the days left to the goal's date, under the title.
   private func daysLeft(_ context: PlanContext) -> Text? {
-    planDaysLeft(context.plan).map {
+    planDaysLeft(context.plan, goal: context.goal).map {
       Text(verbatim: $0.shown).accessibilityLabel(Text(verbatim: $0.spoken))
     }
   }

@@ -8,7 +8,6 @@ struct PlanEndDateValue: Equatable {
 
   let shown: String
   let spoken: String
-  var detail: Line?
   var isDate = false
 
   init(
@@ -25,10 +24,10 @@ struct PlanEndDateValue: Equatable {
     }
 
     if finish.estimate {
+      // Without a date of its own, the estimated finish is the path's flag row's, not a setting.
       if targetDate == nil {
         shown = String(localized: "None set", table: "Plan")
         spoken = shown
-        detail = Self.estimatedFinish(finish.isoDate, today: today, month: finish.month)
       } else {
         let value = PlanDate.estimate(finish.isoDate, today: today, month: finish.month)
         shown = value.text

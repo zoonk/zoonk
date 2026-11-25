@@ -485,7 +485,9 @@ extension PlanPhase.Checkpoint {
       .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
       .words(
-        Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+        Text(
+          "Next time", tableName: "Plan",
+          comment: "When the phase's challenge comes: the next time the learner studies")
       )
     case .date, .queued:
       date.map { .date(PlanDate.estimateText($0, today: today)) }
