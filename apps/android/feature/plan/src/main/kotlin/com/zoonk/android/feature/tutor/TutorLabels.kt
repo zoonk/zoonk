@@ -39,20 +39,6 @@ internal fun descriptionLabel(scope: TutorScope): String =
     )
 
 @Composable
-internal fun placeholderLabel(scope: TutorScope): String =
-    stringResource(
-        when (scope) {
-            is TutorScope.Chapter -> R.string.tutor_placeholder_chapter
-            is TutorScope.Mock -> R.string.tutor_placeholder_mock
-            is TutorScope.Plan -> R.string.tutor_placeholder_plan
-            is TutorScope.Subject -> R.string.tutor_placeholder_subject
-            is TutorScope.Item -> R.string.tutor_placeholder_item
-            is TutorScope.Answer -> R.string.tutor_placeholder_answer
-            is TutorScope.Lesson, is TutorScope.Step -> R.string.tutor_placeholder_lesson
-        },
-    )
-
-@Composable
 internal fun aboutLabel(about: TutorTurn.About): String =
     stringResource(
         when (about) {

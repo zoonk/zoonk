@@ -59,13 +59,6 @@
     <string name="tutor_sign_in">Log in</string>
     <string name="tutor_try_again">Try again</string>
 
-    <string name="tutor_placeholder_chapter">Ask about this chapter…</string>
-    <string name="tutor_placeholder_mock">Ask about this mock exam…</string>
-    <string name="tutor_placeholder_plan">Ask about your plan…</string>
-    <string name="tutor_placeholder_subject">Ask about this subject…</string>
-    <string name="tutor_placeholder_item">Ask about this question…</string>
-    <string name="tutor_placeholder_answer">Ask about your answer…</string>
-    <string name="tutor_placeholder_lesson">Ask about the lesson content…</string>
     <string name="tutor_send">Send</string>
     <string name="tutor_retry_last_question">Retry last question</string>
 
