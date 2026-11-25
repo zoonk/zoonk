@@ -10,19 +10,16 @@ import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
+import { TIME_CHANGE, searchPlanTime, withStudyWeek } from "./_utils/plan-time-search";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { getSuggestedTime } from "./_utils/suggested-time";
-import { MIN_DAILY_MINUTES, getCandidateDailyMinutesLimit } from "./daily-minutes";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { type MostCoverage } from "./planner/most-coverage";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
-import { applyPlanOperations } from "./planner/plan-operations";
-import { type PlanState } from "./planner/plan-state";
-import { getScheduleOperations } from "./planner/schedule-operations";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
@@ -80,41 +77,6 @@ function toDayMinutes({ day, minutes }: { day: SharedDay; minutes: number | null
 function toMostDay({ day, most }: { day: SharedDay; most: MostCoverage | null }) {
   const minutes = toDayMinutes({ day, minutes: most?.minutes ?? null });
   return most && minutes !== null ? { coveredShare: most.coveredShare, minutes } : null;
-}
-
-function withStudyWeek({
-  aim,
-  context,
-  dailyMinutes,
-  fullCourse = false,
-  input,
-}: Pick<PlanTimeAdviceInput, "aim" | "fullCourse"> & {
-  context: PlanContext;
-  dailyMinutes: number;
-  input: PlanTimeToCoverInput;
-}): PlanState {
-  const schedule = getScheduleOperations({
-    input: { ...input, dailyMinutes },
-    state: context.state,
-  });
-
-  const result = applyPlanOperations({
-    goalKind: context.goal.kind,
-    maxDailyMinutes: getCandidateDailyMinutesLimit(dailyMinutes),
-    operations: [
-      ...schedule,
-      ...(fullCourse ? [{ fullCourse, kind: "setFullCourse" } as const] : []),
-      ...(aim && context.goal.kind === "language" ? [{ aim, kind: "setAim" } as const] : []),
-    ],
-    state: context.state,
-    today: context.today,
-  });
-
-  if ("error" in result) {
-    throw new Error(`Cannot evaluate the study schedule: ${result.error}`);
-  }
-
-  return result.state;
 }
 
 async function loadAskedPlan(
@@ -220,9 +182,8 @@ export async function getPlanTimeAdvice({
 
   const [computed, dateKind] = await Promise.all([
     computePlan({
+      ...TIME_CHANGE,
       context,
-      mode: "forced",
-      pace: "saved",
       state: withStudyWeek({ aim: input.aim, context, dailyMinutes, fullCourse, input: week }),
     }),
     loadGoalDateKind(context.goal),
@@ -289,29 +250,9 @@ export async function findPlanTimeToCover({
 
   const { context } = asked;
   const day = await loadSharedDay({ context, input });
-  const week = toGoalWeek({ day, week: input });
-  const stateAt = (dailyMinutes: number) => withStudyWeek({ context, dailyMinutes, input: week });
-
-  const searchStart =
-    week.studyDays === undefined && week.weekendMinutes === undefined
-      ? context.state.goal.dailyMinutes
-      : MIN_DAILY_MINUTES;
 
   const [computed, dateKind] = await Promise.all([
-    computePlan({
-      context,
-      mode: "forced",
-      pace: "saved",
-      state: stateAt(searchStart),
-      studyScheduleAt: (dailyMinutes) => {
-        const state = stateAt(dailyMinutes);
-
-        return {
-          dailyMinutes: state.goal.dailyMinutes,
-          weekdayMinutes: state.settings.weekdayMinutes,
-        };
-      },
-    }),
+    searchPlanTime({ context, week: toGoalWeek({ day, week: input }) }),
     loadGoalDateKind(context.goal),
   ]);
 

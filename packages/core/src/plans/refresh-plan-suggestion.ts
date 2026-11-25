@@ -2,8 +2,9 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { writePlanMetadata } from "./_utils/plan-metadata-write";
 import { readPlanSummary } from "./_utils/plan-summary";
+import { searchPlanTime } from "./_utils/plan-time-search";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { computePlan, revalidatePlanTags } from "./_utils/replan";
+import { revalidatePlanTags } from "./_utils/replan";
 import { findPlanSuggestion, maySuggestPlanTime } from "./_utils/suggested-time";
 import { PlanConflictError } from "./plan-conflict";
 
@@ -43,7 +44,7 @@ export async function refreshPlanSuggestion({
     shown: { ...summary.advice.feasibility, deadline: targetDate },
   });
 
-  const computed = maySuggest ? await computePlan({ context, mode: "automatic" }) : null;
+  const computed = maySuggest ? await searchPlanTime({ context }) : null;
 
   const suggested =
     computed && findPlanSuggestion({ dailyMinutes, feasibility: computed.feasibility });
