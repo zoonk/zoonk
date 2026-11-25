@@ -195,6 +195,40 @@ describe(placeInExam, () => {
     ).toStrictEqual({ area: "Expresión e interacción escritas", topics: [] });
   });
 
+  it("places practice for a written task in the subject the notice lists the task under", () => {
+    const task =
+      "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos de auditoria, a ser respondida em até 60 linhas, no valor de 70,00 pontos";
+
+    const notice: ExamOutline = {
+      name: "Concurso Exemplo",
+      notes: [],
+      subjects: [
+        { group: null, name: "Auditoria Governamental", questions: 90, topics: [], weight: null },
+        {
+          group: "Prova discursiva (P4)",
+          name: "Prova discursiva",
+          questions: 2,
+          topics: [task],
+          weight: null,
+          writtenTasks: [task, "peça técnica de até 50 linhas, valendo 30 pontos"],
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    for (const area of [task, ` ${task.toUpperCase()} `, "Peça técnica"]) {
+      expect(placeInExam({ area, outline: notice, topics: [] })).toStrictEqual({
+        area: "Prova discursiva",
+        topics: [],
+      });
+    }
+
+    expect(placeInExam({ area: "Auditoria", outline: notice, topics: [] })).toStrictEqual({
+      area: "Auditoria Governamental",
+      topics: [],
+    });
+  });
+
   it("keeps an area the notice has no subject for", () => {
     expect(placeInExam({ area: "Estratégia de prova", outline: OAB, topics: [] })).toStrictEqual({
       area: "Estratégia de prova",

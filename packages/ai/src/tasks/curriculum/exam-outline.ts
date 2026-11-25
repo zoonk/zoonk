@@ -103,6 +103,24 @@ function findTopic({ outline, value }: { outline: ExamOutline; value: string }):
   }, null);
 }
 
+/**
+ * A written task's description says its limits and points, so practice for it goes in the subject
+ * the notice lists it under.
+ */
+function findWritingSubject({
+  matches,
+  outline,
+}: {
+  matches: (task: string) => boolean;
+  outline: ExamOutline;
+}): number {
+  const listing = outline.subjects.flatMap((subject, index) =>
+    (subject.writtenTasks ?? []).some((task) => matches(normalizeString(task))) ? [index] : [],
+  );
+
+  return listing.length === 1 ? (listing[0] ?? -1) : -1;
+}
+
 function findSubjectByName({ name, outline }: { name: string; outline: ExamOutline }) {
   const wanted = normalizeString(name);
 
@@ -125,12 +143,24 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
     return short;
   }
 
+  const task = findWritingSubject({ matches: (text) => text === wanted, outline });
+
+  if (task !== -1) {
+    return task;
+  }
+
   const partial = names.flatMap((subject, index) =>
     subject.includes(wanted) || wanted.includes(subject) ? [index] : [],
   );
 
   if (partial.length > 0) {
     return partial.length === 1 ? (partial[0] ?? -1) : -1;
+  }
+
+  const shortTask = findWritingSubject({ matches: (text) => text.includes(wanted), outline });
+
+  if (shortTask !== -1) {
+    return shortTask;
   }
 
   const respelled = outline.subjects.flatMap((subject, index) =>

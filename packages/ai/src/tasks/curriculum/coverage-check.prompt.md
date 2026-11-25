@@ -35,7 +35,7 @@ Return the skills the graph is missing: topics a reference lists, that the goal 
 
 Only when there's an `EXAM_NOTICE`. The learner sees the plan as the notice's subjects, each with every topic of its syllabus, and trusts it only when nothing is missing. So place the whole graph in the notice:
 
-- In `placements`, give each skill whose line has no area, or an area that isn't a notice subject, its subject (`area`, the subject's name exactly as the notice writes it) and the ids of the topics it teaches (`topics`). Also add each topic of `UNCOVERED_TOPICS` that a skill already teaches, even partly or under another name, to that skill, listing all of its topics. A skill that practices a written task the notice scores, such as the essay, takes that task's name as `area`, exactly as its `Written task` line writes it, and no topics. Any other skill that belongs to no subject gets no placement.
+- In `placements`, give each skill whose line has no area, or an area that isn't a notice subject, its subject (`area`, the subject's name exactly as the notice writes it) and the ids of the topics it teaches (`topics`). Also add each topic of `UNCOVERED_TOPICS` that a skill already teaches, even partly or under another name, to that skill, listing all of its topics. A skill that practices a written task the notice scores, such as the essay, takes as `area` the subject its `Written task` line is listed under, exactly as the notice writes that subject's name, never the task's own words. Any other skill that belongs to no subject gets no placement.
 - For each topic of `UNCOVERED_TOPICS` that no skill teaches, add a missing skill with the topic's id as `syllabusLine`, its subject as `area` and the ids of the topics it teaches as `topics`. One skill can cover neighboring small topics of the same subject.
 - Leave out every skill that is already placed right.
 
@@ -64,14 +64,14 @@ For each missing skill:
 - `examWeight`: for an exam, 1 to 5 as described in "Exam weights"; null otherwise.
 {{/exam}}
 {{#notice}}
-- `area` and `topics`: with an `EXAM_NOTICE`, the subject or scored written task it belongs to and the ids of the topics it teaches; otherwise an empty `area` and no topics.
+- `area` and `topics`: with an `EXAM_NOTICE`, the subject it belongs to and the ids of the topics it teaches; otherwise an empty `area` and no topics.
 {{/notice}}
 {{#notice}}
 
 For each change in `placements`:
 
 - `key`: the skill's key from `SKILLS`.
-- `area`: the subject or scored written task, as the notice writes it.
+- `area`: the subject, as the notice writes it.
 - `topics`: the ids of every notice topic it teaches.
 {{/notice}}
 {{#exam}}
