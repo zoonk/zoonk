@@ -62,7 +62,7 @@ class CertificateNameModel(
     /** The field's visit: a name that didn't save says so only on it. */
     val visit = Visit()
 
-    val field = saved.saveable(key = "nameField", saver = TextFieldState.Saver) { TextFieldState(saved.remove<String>(NAME).orEmpty()) }
+    val field = saved.saveable(key = "nameField", saver = TextFieldState.Saver) { TextFieldState() }
     val name get() = field.text.toString()
 
     var changing by mutableStateOf(saved.get<Boolean>(CHANGING) == true)
@@ -106,7 +106,6 @@ class CertificateNameModel(
     }
 
     private companion object {
-        const val NAME = "name"
         const val CHANGING = "changing"
     }
 }

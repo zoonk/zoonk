@@ -130,7 +130,7 @@ class TutorViewModel internal constructor(
      * The question being written, which comes back with the suggestion it started from after Android
      * closes the app in the background, even while it was being sent.
      */
-    val draft = saved.saveable(key = "draftField", saver = TextFieldState.Saver) { TextFieldState(saved.remove<String>(DRAFT).orEmpty()) }
+    val draft = saved.saveable(key = "draftField", saver = TextFieldState.Saver) { TextFieldState() }
 
     init {
         val sent = saved.remove<String>(SENT_DRAFT)
@@ -699,7 +699,6 @@ internal fun pollDelay(
     return (base * (MIN_JITTER + random * JITTER_RANGE)).toLong()
 }
 
-private const val DRAFT = "draft"
 private const val SENT_DRAFT = "sentDraft"
 private const val OFFERED_LABEL = "offeredLabel"
 private const val OFFERED_ID = "offeredId"
