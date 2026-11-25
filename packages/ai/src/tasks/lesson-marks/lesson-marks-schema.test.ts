@@ -324,6 +324,12 @@ describe(normalizeLessonMarks, () => {
       expect(exampleOf({ example: 'Run console.log("a  b").', text })).toBe(
         'Run `console.log("a  b")`.',
       );
+
+      const stars = 'A rule. Run `console.log("a*b")`. Then compare. Run `console.log("ab")`. End.';
+
+      expect(exampleOf({ example: 'Run console.log("ab").', text: stars })).toBe(
+        'Run `console.log("ab")`.',
+      );
     });
 
     it("frames the whole bold sentence, after an emoji too", () => {

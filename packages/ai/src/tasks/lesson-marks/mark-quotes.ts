@@ -1,4 +1,5 @@
 import { findCodeFences, removeCodeFences } from "@zoonk/utils/code-fence";
+import { type InlineMarkup, parseInlineMarkupRanges } from "@zoonk/utils/inline-markup";
 
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
@@ -107,6 +108,27 @@ const INTRODUCES = /[:：]$/u;
 
 type Span = { end: number; start: number };
 
+/** How many characters open and close each mark a copy may leave out. */
+const MARK_SIZE: Partial<Record<InlineMarkup["kind"], number>> = { bold: 2, code: 1 };
+
+/** Where the prose's inline code and bold marks sit; what's inside them stays as written. */
+function findMarkPlaces(text: string): Set<number> {
+  const bounds = [0, ...findCodeSpans(text).flatMap(({ end, start }) => [start, end]), text.length];
+
+  return new Set(
+    bounds.flatMap((from, index) =>
+      index % 2 === 0
+        ? parseInlineMarkupRanges(text.slice(from, bounds[index + 1])).flatMap((range) =>
+            Array.from({ length: MARK_SIZE[range.kind] ?? 0 }, (_, at) => [
+              from + range.start + at,
+              from + range.end - 1 - at,
+            ]).flat(),
+          )
+        : [],
+    ),
+  );
+}
+
 /**
  * The text as a model copies it: prose without its inline code and bold marks and with single
  * line breaks, since models drop a blank line; everything else as written. `offsets` holds each
@@ -114,6 +136,7 @@ type Span = { end: number; start: number };
  */
 function readCopy(text: string): { offsets: number[]; value: string } {
   const code = findCodeSpans(text);
+  const marks = findMarkPlaces(text);
 
   return text.split("").reduce<{ offsets: number[]; value: string }>(
     (read, char, at) => {
@@ -121,7 +144,7 @@ function readCopy(text: string): { offsets: number[]; value: string } {
 
       if (
         char === "\r" ||
-        (!inCode && INLINE_MARK.test(char)) ||
+        marks.has(at) ||
         (!inCode && char === "\n" && read.value.endsWith("\n"))
       ) {
         return read;
