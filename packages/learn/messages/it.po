@@ -4642,19 +4642,6 @@ msgctxt "hrgo-E"
 msgid "Archive"
 msgstr "Archivia"
 
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "98OHZH"
-msgid "This goal is paused"
-msgstr "Questo obiettivo è in pausa"
-
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "Non ci sono attività in programma finché non riprendi l’obiettivo."
-
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
@@ -4893,9 +4880,20 @@ msgid "Mock exam"
 msgstr "Simulazione d’esame"
 
 #: src/journey/journey-planless.tsx
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "Questo obiettivo è in pausa"
+
+#: src/journey/journey-planless.tsx
 msgctxt "NIpBgv"
 msgid "Your plan comes after a few questions"
 msgstr "Qualche domanda e poi il tuo piano"
+
+#: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Non ci sono attività in programma finché non riprendi l’obiettivo."
 
 #: src/journey/journey-planless.tsx
 msgctxt "mMlLhC"
