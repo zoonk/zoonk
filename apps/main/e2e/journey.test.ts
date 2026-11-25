@@ -39,12 +39,11 @@ test.describe("Journey", () => {
 
       const finish = page.locator('[data-state="finish"] [data-slot="plan-date"]');
       await expect(finish).toContainText(/^~/u);
+      const finishText = (await finish.textContent()) ?? "";
 
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const endDate = properties.getByRole("button", { name: /^End date/u });
-      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveText(
-        (await finish.textContent()) ?? "",
-      );
+      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveText(finishText);
       await expect(endDate).not.toContainText("None set");
     });
   });
@@ -65,11 +64,10 @@ test.describe("Journey", () => {
       await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
       await expect(estimate).toHaveCount(0);
       await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
-      await expect(
-        page
-          .getByRole("region", { exact: true, name: "Your plan" })
-          .getByRole("button", { name: /^End date/u }),
-      ).toContainText("None set");
+
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
     });
   });
 
