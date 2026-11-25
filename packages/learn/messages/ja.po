@@ -8750,8 +8750,9 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "無料アカウントを作成すると、PDFやノートの写真、テキストを目標に追加できます。"
 
 #: src/onboarding/entry/attach-panel.tsx
+#: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
+#: src/onboarding/understood/understood-material-row.ts
 #: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
@@ -8792,6 +8793,59 @@ msgctxt "4vgz15"
 msgid "Your plan and lessons will use it."
 msgstr "学習計画とレッスンに使います。"
 
+#. Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "yJQoIT"
+msgid "Can't be read"
+msgstr "読み取れません"
+
+#. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "3oioAz"
+msgid "Being read"
+msgstr ""
+
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "{title}を取り除く"
+
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr "ファイルの一部を読み取れなくなりました。削除して、もう一度追加してください。"
+
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr "「{title}」を読み取れなくなりました。削除して、もう一度追加してください。"
+
+#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "NRfYKw"
+msgid "We couldn't read some of your files. Try sharper photos or paste the text."
+msgstr ""
+
+#. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "v6A3gc"
+msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
+msgstr ""
+
+#: src/onboarding/entry/attached-chips.tsx
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2d2ZJ4"
+msgid "Your material"
+msgstr "資料"
+
+#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "EAbhzH"
+msgid "{count, number} files is the most for one goal. Remove one to add another."
+msgstr "1つの目標に添付できる資料は最大{count, number}件です。1件削除すると、別の資料を追加できます。"
+
 #: src/onboarding/entry/draft-goals.ts
 msgctxt "FMaXag"
 msgid "musicianship"
@@ -8801,41 +8855,6 @@ msgstr "音楽の基礎"
 msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "{instrument}のための音楽の基礎"
-
-#. Read by screen readers after the name of an attached file that can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "yJQoIT"
-msgid "Can't be read"
-msgstr "読み取れません"
-
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "G5e8UX"
-msgid "Remove {title}"
-msgstr "{title}を取り除く"
-
-#. Under the learner's attached material when several items sent with their goal can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "2FABsh"
-msgid "We can't read some of your files anymore. Remove them and add them again."
-msgstr "ファイルの一部を読み取れなくなりました。削除して、もう一度追加してください。"
-
-#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "-9IdF4"
-msgid "We can't read “{title}” anymore. Remove it and add it again."
-msgstr "「{title}」を読み取れなくなりました。削除して、もう一度追加してください。"
-
-#: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "2d2ZJ4"
-msgid "Your material"
-msgstr "資料"
-
-#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "EAbhzH"
-msgid "{count, number} files is the most for one goal. Remove one to add another."
-msgstr "1つの目標に添付できる資料は最大{count, number}件です。1件削除すると、別の資料を追加できます。"
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
@@ -9078,6 +9097,12 @@ msgstr "資料の内容をもとに回答し、参照したページも表示し
 msgctxt "Se8ZuD"
 msgid "Reading your material…"
 msgstr "資料を読み込んでいます…"
+
+#. Shown above the question box when the learner asked about material, like a photo of notes, that's still being read. Their question stays in the box.
+#: src/onboarding/entry/material-questions.tsx
+msgctxt "1gfOeY"
+msgid "We're still reading your material. Ask again in a moment."
+msgstr ""
 
 #. Label of the field where the learner types a question.
 #: src/onboarding/entry/material-questions.tsx
@@ -9959,6 +9984,23 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "例年の日程から予想しています。正式な日程が発表されたらお知らせします。"
 
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "d68iA8"
+msgid "Your plan and lessons follow this material"
+msgstr "この資料に沿って学習計画とレッスンを作成します"
+
+#. Under the learner's material on the goal card, when some of it couldn't be read: nothing on it could be read, or it's gone. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "nT35Ny"
+msgid "Your plan and lessons follow only this material. We couldn't read the rest."
+msgstr ""
+
+#. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "tbSSWy"
+msgid "We couldn't read it, so your plan won't follow it."
+msgstr ""
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
@@ -10076,23 +10118,6 @@ msgstr "志望先"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "理由"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "d68iA8"
-msgid "Your plan and lessons follow this material"
-msgstr "この資料に沿って学習計画とレッスンを作成します"
-
-#. Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "83Uigi"
-msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr "学習計画とレッスンはこの資料だけに基づいています。残りは読み取れなくなりました。"
-
-#. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "YOP-LJ"
-msgid "It can't be read anymore, so your plan won't follow it."
-msgstr "読み取れなくなったため、学習計画に反映されません。"
 
 #: src/placement-test/placement-test-flow.tsx
 msgctxt "gnlQcT"
