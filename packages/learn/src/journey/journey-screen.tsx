@@ -160,7 +160,6 @@ function JourneyBody({
               className={IN_ASIDE_CLASS}
               examHref={links.exam}
               onOpen={editor.open}
-              pathShown={structure === null}
             />
           </>
         }

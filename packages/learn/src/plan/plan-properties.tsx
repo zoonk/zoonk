@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
-import { useRoadmapFinish, useRoadmapPhases } from "../journey/use-roadmap";
+import { useRoadmapFinish } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -192,64 +192,41 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
   );
 }
 
-/** The finish the plan works out when the learner set no end date. */
-function useEstimatedFinish() {
-  const { goal, plan } = usePlanScreen();
-  const finish = useRoadmapFinish();
-
-  return goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate ? finish : null;
-}
-
-/** The date the learner set, never the day a finished plan was done. */
+/**
+ * The date the learner set, or with none the finish the plan works out, as the timeline says it.
+ * Never the day a finished plan was done.
+ */
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
+  const finish = useRoadmapFinish();
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
-  if (!targetDate) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("None set");
+  if (targetDate) {
+    return (
+      <PlanDateText
+        estimate={targetDateEstimated}
+        isoDate={targetDate}
+        month={targetDateNamedMonth}
+      />
+    );
   }
 
-  return (
-    <PlanDateText
-      estimate={targetDateEstimated}
-      isoDate={targetDate}
-      month={targetDateNamedMonth}
-    />
-  );
-}
-
-/**
- * The path's last row and the timeline's flag date the estimated finish. A plan of subjects with
- * one phase shows neither (no path list, no timeline), so its own row says it.
- */
-function EstimatedFinishRow({ pathShown }: { pathShown: boolean }) {
-  const t = useExtracted();
-  const finish = useEstimatedFinish();
-  const { phases } = useRoadmapPhases();
-
-  if (!finish || pathShown || phases.length > 1) {
-    return null;
+  if (!plan.end && finish) {
+    return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
   }
 
-  return (
-    <ReadOnlyRow label={t("Estimated finish")}>
-      <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-    </ReadOnlyRow>
-  );
+  return goal.kind === "exam" ? t("To be confirmed") : t("None set");
 }
 
 export function PlanProperties({
   className,
   examHref = null,
   onOpen,
-  pathShown,
 }: {
   className?: string;
   examHref?: string | null;
   onOpen: (section: PlanEditorSection) => void;
-  /** The page lists the path, whose last row dates the finish. */
-  pathShown: boolean;
 }) {
   const t = useExtracted();
   const activityName = useActivityName();
@@ -272,8 +249,6 @@ export function PlanProperties({
         >
           <GoalDateValue />
         </PropertyRow>
-
-        <EstimatedFinishRow pathShown={pathShown} />
 
         <PropertyRow label={t("Daily study time")} onOpen={() => onOpen("time")}>
           <DailyTimeValue />

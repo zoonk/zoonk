@@ -240,7 +240,6 @@
   "plan_estimate_based_on_last": "3691f6601bb15a1f8352d18193fcb926a64b72c684460090c9ce4362e5234229",
   "plan_estimate_based_on_reviews": "e73415e05169f98ca1c3f5db24c35cf068c77dc5cf53f889362eab3ab504fb1d",
   "plan_estimate_waits": "15e8e0857257cd54dc64bb638abba2fc31c75b52b9e2e2000cb8a8931a41b795",
-  "plan_estimated_finish_label": "3d58b31b37c7a504e74b8c7d14b0304b424081c04b06137395e1c8848549ecb5",
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "b2fc82a21f2dba978d723814cc517f38796edac30cb941c9bb6b095ca65e1dca",
@@ -693,7 +692,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">Günde %1$s</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">Tahmini bitiş</string>
     <string name="plan_every_day">Her gün</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Sıradaki: %1$s</string>

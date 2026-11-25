@@ -270,7 +270,7 @@ private struct PlanContent: View {
               PlanNumbersSection(context: context, syllabus: syllabus, timeShownBeside: true)
               testedOutChange
               PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
-              PlanSettingsSection(context: context, pathShown: structure == nil)
+              PlanSettingsSection(context: context)
               PlanMoreSection(goal: goal)
             }
           }

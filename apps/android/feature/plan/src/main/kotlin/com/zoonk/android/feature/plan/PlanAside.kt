@@ -95,7 +95,6 @@ private fun LinkRow(
 internal fun PlanProperties(
     page: PlanPageState,
     links: PlanLinks,
-    pathShown: Boolean,
     modifier: Modifier = Modifier,
     onOpen: ((PlanSection) -> Unit)? = null,
 ) {
@@ -112,9 +111,6 @@ internal fun PlanProperties(
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,
             )
-            estimatedFinish(page, pathShown)?.let { finish ->
-                PropertyRow(stringResource(R.string.plan_estimated_finish_label), finish, onClick = null)
-            }
             PropertyRow(
                 stringResource(R.string.plan_daily_study_time),
                 dailyTimeValue(page),
@@ -265,29 +261,16 @@ private fun PropertyRow(
     }
 }
 
+/** Main's `GoalDateValue`: the date the learner set, or with none the timeline's estimated finish; never the day a finished plan was done. */
 @Composable
 private fun goalDateValue(page: PlanPageState): AnnotatedString {
-    // The date the learner set, never the day a finished plan was done; the estimate is the timeline's and the path's.
     val schedule = page.plan.schedule
-    val target =
-        schedule.targetDate?.toJavaLocalDate()
-            ?: return AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
-    return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
-}
-
-/**
- * Main's `EstimatedFinishRow`: the path's last row and the timeline date the estimated finish; a plan of
- * subjects with one phase shows neither, so its own row says it.
- */
-@Composable
-private fun estimatedFinish(
-    page: PlanPageState,
-    pathShown: Boolean,
-): AnnotatedString? {
-    val finish = page.finish
-    val shown = pathShown || page.plan.roadmapPhases.size > 1
-    if (shown || page.isExam || finish == null || !finish.estimate || page.plan.schedule.targetDate != null) return null
-    return dateValue(planDate(finish.date, page.today, estimate = true, month = finish.month).text)
+    schedule.targetDate?.toJavaLocalDate()?.let { target ->
+        return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
+    }
+    val finish = page.finish?.takeIf { !page.isExam && it.estimate }
+    return finish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month).text) }
+        ?: AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
 }
 
 /** Main's `DailyTimeValue`: a time alone is a value, in the data face; "20 min · 30 min weekends" is a phrase, in the words' face. */

@@ -552,7 +552,7 @@ internal fun PlanContent(
                 ) {
                     numbers(NumberVariant.Stats)
                     if (!examOver) suggestion(SuggestionLayout.Panel)
-                    PlanProperties(page, links, pathShown = structure == null, onOpen = onAdjust)
+                    PlanProperties(page, links, onOpen = onAdjust)
                 }
             }
         },

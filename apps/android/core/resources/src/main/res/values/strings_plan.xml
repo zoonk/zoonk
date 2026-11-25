@@ -176,7 +176,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">%1$s a day</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">Estimated finish</string>
     <string name="plan_every_day">Every day</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Next %1$s</string>

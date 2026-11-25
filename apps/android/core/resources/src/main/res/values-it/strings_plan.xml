@@ -240,7 +240,6 @@
   "plan_estimate_based_on_last": "350dceddbcfa44bf83d870c49efd0aef3fc569acd27cccc79909924479b35573",
   "plan_estimate_based_on_reviews": "24c0dac88528b99b4816c9a8cf4eb7f96c41f7060246f0404203d802a3039431",
   "plan_estimate_waits": "805cdda73fb1e8c13ea804e201a1849b3151af634388f71e22f557c83a7b637a",
-  "plan_estimated_finish_label": "809db310e3a7ccae810abb40d58609c8f6b44bf7409f9d12240f3e4a2dbd0a7d",
   "plan_estimated_score": "a5f3493f456525da369d4b4ade74873f15b5c397c33b9e8537c95c1ec18cff83",
   "plan_every_day": "3d707b01ec095a3e9f24cb968bd9077bd2e99f66edee0206181c3a2a6f5d9680",
   "plan_everything": "26ed160262085274d04f313ef9d7e3c5bd491e46e86de339562ec0457d2e356c",
@@ -705,7 +704,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">%1$s al giorno</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">Fine prevista</string>
     <string name="plan_every_day">Ogni giorno</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Prossima il %1$s</string>
