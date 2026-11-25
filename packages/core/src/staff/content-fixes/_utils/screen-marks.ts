@@ -46,7 +46,7 @@ export function isTaggedLesson(screens: readonly { marks: unknown }[]): boolean 
 }
 
 /** The saved quotes that still fit the text; one that no longer does is gone. */
-export function fittingQuotes(marks: unknown, text: string): MarkedText {
+function fittingQuotes(marks: unknown, text: string): MarkedText {
   const saved = readSavedStepMarks(marks);
 
   return {
@@ -60,7 +60,7 @@ export function fittingQuotes(marks: unknown, text: string): MarkedText {
 }
 
 /** Only an explanation frames an example, so a worked example lacks no more than its underline. */
-export function lacksQuotes({
+function lacksQuotes({
   kept,
   kind,
 }: {
