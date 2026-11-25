@@ -142,7 +142,13 @@ function RoadmapLegend() {
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
           <PhaseCheckpointMark />
-          {goal.kind === "language" ? t("Call") : t("The Trickster")}
+          {goal.kind === "language"
+            ? t("Call")
+            : t({
+                description:
+                  "In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.",
+                message: "Phase questions",
+              })}
         </span>
       )}
       {finish && (

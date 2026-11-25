@@ -2,12 +2,10 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
-import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { PhaseCheckpointMark } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
@@ -92,36 +90,15 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   );
 }
 
+/** The legend names it ("Exam date", "End date"), so the date stands alone on the axis. */
 function GoalDate() {
-  const t = useExtracted();
-  const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
 
   if (!finish) {
     return null;
   }
 
-  const date = (
-    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-  );
-
-  if (goal.kind !== "exam") {
-    return date;
-  }
-
-  const exam = t({
-    description: "After a date on the plan's timeline, naming what happens that day.",
-    message: "exam",
-  });
-
-  // The word takes no height, so a row it wraps to has none and is cut with its dot: it shows only
-  // beside the date, and a second line never starts on the dot. The date keeps every line it needs.
-  return (
-    <span className="flex flex-wrap items-start justify-end overflow-hidden">
-      {date}
-      <span className="h-0 whitespace-pre">{`${FACT_SEPARATOR}${exam}`}</span>
-    </span>
-  );
+  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
 }
 
 /** In the last phase's band, so that phase is never narrower than the date under it. */
@@ -169,23 +146,35 @@ function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
   );
 }
 
+/** The band's corner radius (`rounded-md`), so the tick never lands on its curve. */
+const BAND_CORNER = "0.375rem";
+
+/**
+ * "Today" over the current band, and a tick from under the word through the band's full height, so
+ * the word points at a day on the bar. The tick spans the column's first two rows (its containing
+ * block is their grid area), and stays off the band's rounded corners.
+ */
 export function TodayTick({ share }: { share: number | null }) {
   const t = useExtracted();
 
+  if (share === null) {
+    return <span aria-hidden="true" />;
+  }
+
   return (
-    <span aria-hidden="true" className="relative flex items-end">
-      {share !== null && (
-        <>
-          <AxisLabel share={share}>
-            <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
-          </AxisLabel>
-          <span
-            className="bg-foreground absolute bottom-0 h-1 w-px"
-            style={{ left: `${share * PERCENT}%` }}
-          />
-        </>
-      )}
-    </span>
+    <>
+      <span aria-hidden="true" className="flex items-end">
+        <AxisLabel share={share}>
+          <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
+        </AxisLabel>
+      </span>
+      <span
+        aria-hidden="true"
+        className="bg-foreground pointer-events-none absolute top-4 bottom-0 z-10 col-start-1 row-start-1 row-end-3 w-[1.5px] -translate-x-1/2"
+        data-slot="today-tick"
+        style={{ left: `clamp(${BAND_CORNER}, ${share * PERCENT}%, 100% - ${BAND_CORNER})` }}
+      />
+    </>
   );
 }
 
