@@ -5,11 +5,27 @@ import {
   type MaterialAnswer,
   answerFromMaterial,
 } from "@zoonk/ai/tasks/material/answer";
+import { findBareLatexText } from "@zoonk/utils/bare-latex";
+import { findMathSpans } from "@zoonk/utils/math-spans";
 import { normalizeString } from "@zoonk/utils/string";
 import { type AnswerFromMaterialExpected, TEST_CASES } from "./test-cases";
 
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
+
+const LATEX_COMMAND = /\\[A-Za-z]+/u;
+
+/**
+ * The answer views print plain text, so math markup reaches the learner as typed: delimiters, a
+ * command (`\frac`) or a script written with `^` or `_` (`x^2`, `v_m`).
+ */
+function hasMathMarkup(text: string): boolean {
+  return (
+    LATEX_COMMAND.test(text) ||
+    text.split("\n").some((line) => findMathSpans(line).length > 0) ||
+    findBareLatexText({ layout: "blocks", text }).length > 0
+  );
+}
 
 function parseOutput(output: string): MaterialAnswer | null {
   try {
@@ -36,6 +52,7 @@ function listChecks({
         ? answer.refs.some((ref) => expected.refs.includes(ref))
         : answer.refs.length === 0,
     },
+    { label: "plain math", passed: !hasMathMarkup(answer.answer) },
     ...expected.mentions.map((options) => ({
       label: `mentions ${options[0]}`,
       passed: options.some((option) => text.includes(normalizeString(option))),
