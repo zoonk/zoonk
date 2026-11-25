@@ -13,7 +13,6 @@ export type CoverageCheckExpected = {
   /** Each gap's course key, in the order of `gaps`. */
   gapCourses?: string[];
   gapWeights?: WeightRange[];
-  /** `area`, when given, is the subject the placement must name. */
   placements?: { area?: string; key: string; topics: string[] }[];
 };
 
