@@ -318,18 +318,25 @@ struct TodayUploadRequestSection: View {
   var body: some View {
     if dismissal.outcome != true {
       Section {
-        TodaySuggestionCard(mark: .symbol("doc.text.magnifyingglass")) {
+        // Main's suggestion panel: its words, what went wrong with the last upload, then the ways
+        // to answer it, all on one edge.
+        TodaySuggestionCard {
           VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-              .typeStyle(.body.weight(.semibold))
-              .accessibilityAddTraits(.isHeader)
-            Text(description)
-              .foregroundStyle(.mutedForeground)
+            SuggestionHeader(Text(title))
+            SuggestionDescription(Text(description))
+
+            // A newer upload's failure takes its place.
+            if !answered, draft.error == nil, let unreadableTitle {
+              let line = LocalizedStringResource.unreadableMaterial(title: unreadableTitle)
+
+              SuggestionDescription(Text(line), color: .destructiveText)
+                .announcesAlert(String(localized: line))
+            }
           }
           .announcesStatus(answered ? thanks : nil)
 
           if answered {
-            Text(thanks)
+            SuggestionResult(text: thanks)
           } else {
             actions
           }
@@ -363,13 +370,9 @@ struct TodayUploadRequestSection: View {
       .buttonStyle(.outline)
 
       BusyButton(isBusy: dismissal.isRunning, action: dismiss) {
-        Label {
-          Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
-        } icon: {
-          Image(systemName: "xmark")
-        }
+        Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
       }
-      .buttonStyle(.ghost)
+      .buttonStyle(.outline)
     }
     .controlSize(.small)
 
@@ -377,10 +380,6 @@ struct TodayUploadRequestSection: View {
       try await answer(with: source)
     } onAttached: { source in
       onAnswered(source)
-    }
-
-    if let unreadableTitle, draft.error == nil {
-      FailureLine(message: .unreadableMaterial(title: unreadableTitle))
     }
 
     if dismissal.outcome == false {
@@ -395,9 +394,10 @@ struct TodayUploadRequestSection: View {
 
   /// Answers the ask with the added source; a throw shows as a failure to add it.
   private func answer(with source: AttachedSource) async throws {
-    // Nothing to read on it: answering would only bring the ask back.
+    // Nothing to read on it: answering would only bring the ask back, so it's kept as this
+    // answer, which asks again and names it above the buttons.
     guard source.readStatus != .unreadable else {
-      throw OnboardingError.unreadable(title: source.title ?? "")
+      return
     }
 
     switch await store.answer(request, sourceID: source.id) {
