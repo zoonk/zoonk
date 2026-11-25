@@ -14,6 +14,7 @@ export function toComputedPlanWrite({ computed }: { computed: ComputedPlan }): P
     inputsKey: computed.inputsKey,
     items: withSelectedItemFacts({ facts: computed.itemFacts, items: built.items }),
     phases: built.phases,
+    reopenedItemIds: computed.reopenedItemIds,
     sourceSkillIds: selected.sourceSkillIds,
     standInLessons: getFittedStandInLessons({
       skillMinutes: built.skillMinutes,
