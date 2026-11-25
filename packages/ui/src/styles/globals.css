@@ -492,13 +492,13 @@
       --popover-foreground: var(--color-white);
       --primary: var(--color-white);
       --primary-foreground: var(--color-black);
-      --secondary: var(--color-neutral-800);
+      --secondary: var(--color-neutral-700);
       --secondary-foreground: var(--color-white);
       --muted: var(--color-neutral-800);
       --muted-foreground: oklch(0.78 0 0);
       --faint: oklch(0.76 0 0);
       --surface-3: oklch(0.29 0 0);
-      --accent: var(--color-neutral-800);
+      --accent: var(--color-neutral-700);
       --accent-foreground: var(--color-white);
       --destructive: var(--color-pink-300);
       --destructive-text: var(--color-pink-50);

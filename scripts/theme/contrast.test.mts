@@ -48,7 +48,7 @@ const surfaces = ["background", "card", "muted"];
  * Where each step's words sit: every row, menu and band, and for the two stronger steps the
  * learner's pick (a picked row's second line) and the third step (a highlighted search result).
  */
-const PAGE_SURFACES = [...surfaces, "popover", "ground", "secondary"];
+const PAGE_SURFACES = [...surfaces, "popover", "ground"];
 const PICK_SURFACES = [...PAGE_SURFACES, "selected-tint", "surface-3"];
 
 const TEXT_SURFACES = {

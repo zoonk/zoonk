@@ -91,7 +91,6 @@ private struct ZoonkButton: View {
   @Environment(\.controlsShareHeight) private var sharesHeight
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.buttonTone) private var tone
-  @Environment(\.colorSchemeContrast) private var contrast
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
@@ -125,9 +124,6 @@ private struct ZoonkButton: View {
       .overlay {
         if variant == .outline && !isDestructive {
           shape.strokeBorder(tone == .warning ? Color.warning : Color(.input))
-        } else if variant == .main && !isEnabled && contrast == .increased {
-          // Main's `contrast-more:disabled:border-input`: a sheet's own gray can match the fill.
-          shape.strokeBorder(Color(.input))
         }
       }
       .opacity(isEnabled || variant == .main ? 1 : 0.5)
@@ -172,7 +168,7 @@ private struct ZoonkButton: View {
 
     switch variant {
     case .main:
-      return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
+      return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : Color(.secondary)
     case .outline, .ghost:
       return isPressed ? .muted : .clear
     }

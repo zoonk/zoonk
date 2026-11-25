@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 
@@ -126,7 +125,6 @@ private fun FilledButton(
             shape = shape,
             colors = colors.disabledWhen(held && !busy),
             elevation = null,
-            border = disabledLine(variant, enabled = enabled, busy = busy),
             contentPadding = NO_PADDING,
             interactionSource = interactionSource,
             content = { Labeled(size) { ButtonContent(busy, leadingIcon, trailingIcon, size.iconSize(), contentPadding, content) } },
@@ -374,11 +372,11 @@ fun sendButtonColors(): IconButtonColors =
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-/** Main's disabled main action: `muted` with its words in `muted-foreground`, not Material's translucent ink. */
+/** Main's disabled main action: `secondary` with its words in `muted-foreground`, not Material's translucent ink. */
 @Composable
 private fun mainButtonColors(): ButtonColors =
     ButtonDefaults.buttonColors(
-        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        disabledContainerColor = MaterialTheme.zoonk.secondary,
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
@@ -490,19 +488,6 @@ private fun outlinedBorder(
     val outline = MaterialTheme.colorScheme.outline
     return BorderStroke(material.width, if (enabled) outline else outline.copy(alpha = outline.alpha * DISABLED_ALPHA))
 }
-
-/** Main's `contrast-more:disabled:border-input`: with more contrast a disabled main action keeps its box by its line. */
-@Composable
-private fun disabledLine(
-    variant: LayoutPart.Variant,
-    enabled: Boolean,
-    busy: Boolean,
-): BorderStroke? =
-    if (variant == LayoutPart.Variant.Filled && !enabled && !busy && LocalMoreContrast.current) {
-        BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-    } else {
-        null
-    }
 
 private const val DISABLED_ALPHA = 0.5f
 
