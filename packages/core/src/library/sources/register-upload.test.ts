@@ -267,6 +267,54 @@ describe(registerSourceUpload, () => {
     ]);
   });
 
+  it("keeps the adopted file when the same new photo of a pre-reading copy is registered twice at once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const bytes = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4//8/AAX+Av5Y8msOAAAAAElFTkSuQmCC",
+      "base64",
+    );
+
+    const contentHash = hashDocument({ bytes, text: null });
+
+    const source = await sourceFixture({
+      blobUrl: `https://store.private.blob.vercel-storage.com/sources/${user.id}/old-notes.png`,
+      contentHash,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      mimeType: "image/png",
+      ownerId: user.id,
+      url: null,
+      visibility: "private",
+    });
+
+    const pathname = `sources/${user.id}/${randomUUID()}-notes.png`;
+    const newUrl = mockUploadedFile({ bytes, contentType: "image/png", pathname });
+    const bothReading = Promise.withResolvers<null>();
+    const readBlob = vi.mocked(get).getMockImplementation();
+
+    vi.mocked(get).mockImplementation(async (...args) => {
+      if (vi.mocked(get).mock.calls.length === 2) {
+        bothReading.resolve(null);
+      }
+
+      await bothReading.promise;
+      return readBlob?.(...args) ?? null;
+    });
+
+    await Promise.all([
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+    ]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ blobUrl: newUrl, readState: "owed" });
+
+    expect(del).not.toHaveBeenCalledWith(newUrl, expect.anything());
+  });
+
   it("creates a private reading source when the learner's legacy mixed PDF has a text hash", async () => {
     const user = await userFixture();
     mockSession(user.id);

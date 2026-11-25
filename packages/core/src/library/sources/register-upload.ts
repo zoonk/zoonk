@@ -245,7 +245,7 @@ async function storeUpload({
 
   await (adopted && adopt
     ? removeUnusedBlob({ blobUrl: source.blobUrl, keptUrl: content.blobUrl })
-    : removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: source.blobUrl }));
+    : removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: current.blobUrl }));
 
   return {
     checkVisibility: created && source.readState === null,
