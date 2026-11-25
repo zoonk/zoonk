@@ -137,3 +137,19 @@ test("a hovered row's fill is a highlight, and still fails an unequal bleed", ()
   hover.mockRestore();
   assert.equal(faults("column").length, 1);
 });
+
+test("a hovered kit button past the column is still a box off the column", () => {
+  document.body.innerHTML = `<main data-slot="page" data-box="260,0,840,600">
+    <button id="save" style="--button-variant:default; background-color:rgb(20,20,20)" data-box="250,0,860,44">Save</button>
+  </main>`;
+
+  const hover = vi.spyOn(Element.prototype, "matches").mockImplementation(function hovered(
+    this: Element,
+    selector: string,
+  ) {
+    return selector === ":hover" ? this.id === "save" : this.closest(selector) === this;
+  });
+
+  assert.equal(faults("column").length, 1);
+  hover.mockRestore();
+});
