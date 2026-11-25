@@ -32,7 +32,7 @@ class YourDataViewModel(
     private val account: AccountStore,
     private val session: AuthenticatedSession,
     private val email: String,
-    handle: SavedStateHandle,
+    private val handle: SavedStateHandle,
     private val open: (Uri) -> OutputStream?,
 ) : ViewModel() {
     /** This visit to Privacy: a download that fails says so only on it. */
@@ -46,8 +46,15 @@ class YourDataViewModel(
     /** The download didn't save, on this visit. */
     val exportFailed get() = exportFailure.value != null
 
-    var deletionStep by mutableStateOf(DeletionStep.None)
-        private set
+    private var step by mutableStateOf(handle.get<DeletionStep>(DELETION_STEP) ?: DeletionStep.None)
+
+    /** The dialog the learner is in, with its code, survives a reclaimed process; what a deletion answered doesn't. */
+    var deletionStep: DeletionStep
+        get() = step
+        private set(value) {
+            step = value
+            handle[DELETION_STEP] = value.takeIf { it == DeletionStep.Confirm || it == DeletionStep.Code }
+        }
     var isDeleting by mutableStateOf(false)
         private set
     private var error by mutableStateOf<AccountFailure?>(null)
@@ -170,5 +177,6 @@ class YourDataViewModel(
 
     private companion object {
         const val CODE_LENGTH = 6
+        const val DELETION_STEP = "deletionStep"
     }
 }

@@ -49,7 +49,7 @@ class AccountDeletionTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun TestScope.signedIn(): Pair<SessionStore, YourDataViewModel> {
+    private suspend fun TestScope.signedIn(handle: SavedStateHandle = SavedStateHandle()): Pair<SessionStore, YourDataViewModel> {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         val main = CoroutineScope(SupervisorJob() + dispatcher)
@@ -64,8 +64,25 @@ class AccountDeletionTest {
         sessions.restore()
         advanceUntilIdle()
         return sessions to
-            YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test", SavedStateHandle()) { null }
+            YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test", handle) { null }
     }
+
+    @Test
+    fun theCodeDialogComesBackWithItsCodeAfterAndroidReclaimsTheApp() =
+        runTest {
+            val handle = SavedStateHandle()
+            val (_, profile) = signedIn(handle)
+            api.deletionFailures += ApiException(ApiError.Unavailable, "FORBIDDEN", 403)
+            profile.askToDelete()
+            profile.delete()
+            advanceUntilIdle()
+            profile.codeField.setTextAndPlaceCursorAtEnd("123")
+
+            val (_, restored) = signedIn(SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+            assertEquals(DeletionStep.Code, restored.deletionStep)
+            assertEquals("123", restored.codeField.text.toString())
+        }
 
     @Test
     fun deletingTheAccountEndsTheFlow() =
