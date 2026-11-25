@@ -4,7 +4,6 @@ import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
-import { type UnprovenWritten, forgetUnprovenWrittenClaims } from "../../learner/written-claims";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { owePlanSuggestion } from "./owe-plan-suggestion";
@@ -30,8 +29,8 @@ export type PlanWrite = {
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
   sourceSkillIds: readonly string[];
+  reopenedItemIds?: readonly string[];
   summary?: PlanSummary | null;
-  unproven?: UnprovenWritten;
 };
 
 async function creditFinishedNewLessons({
@@ -184,12 +183,14 @@ export async function writePlan({
     },
   });
 
-  if (plan.unproven) {
-    await forgetUnprovenWrittenClaims({
-      planId: context.plan.id,
-      tx,
-      unproven: plan.unproven,
-      userId: context.goal.userId,
+  if (plan.reopenedItemIds && plan.reopenedItemIds.length > 0) {
+    await tx.planItem.updateMany({
+      data: { completedAt: null, status: "todo" },
+      where: {
+        id: { in: [...plan.reopenedItemIds] },
+        planId: context.plan.id,
+        status: "testedOut",
+      },
     });
   }
 

@@ -3,7 +3,6 @@ import { type PlanChangeStatus } from "@zoonk/db";
 import { once } from "@zoonk/utils/once";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
-import { type UnprovenWritten } from "../../learner/written-claims";
 import { type BuiltPlan, type PlanningMode, buildPlan } from "../planner/build-plan";
 import { getChosenStandInLessons } from "../planner/chosen-bases";
 import { withPlannedLessons } from "../planner/core-first";
@@ -43,8 +42,8 @@ export type ComputedPlan = {
   state: PlanState;
   selected: SelectedSummary;
   summarizeRetained: () => SelectedSummary | null;
-  /** Written skills with no written answer, and the test-outs of them this plan brings back. */
-  unproven: UnprovenWritten;
+  /** Test-outs of written skills no written answer shows, which this plan brings back. */
+  reopenedItemIds: readonly string[];
 };
 
 export type ComputedChange = {
@@ -104,13 +103,13 @@ export async function computePlan({
     graph,
     input,
     materialExam,
+    reopenedItemIds,
     settings,
-    unproven,
     writtenSkillIds,
   } = await readReplanInputs({ ...request, state });
 
   const savedKey =
-    unproven.itemIds.length > 0 || (writtenSkillIds && !state.settings.writtenSkillIds)
+    reopenedItemIds.length > 0 || (writtenSkillIds && !state.settings.writtenSkillIds)
       ? null
       : context.plan.inputsKey;
 
@@ -180,6 +179,7 @@ export async function computePlan({
     materialExam,
     mode,
     pace: settings.pace,
+    reopenedItemIds,
     get selected() {
       return selected();
     },
@@ -187,7 +187,6 @@ export async function computePlan({
     state: { ...state, graph: saved, settings: savedSettings },
     summarizeRetained: () =>
       summarizeRetainedPlan({ built, context, examSubjects, input: builtInput }),
-    unproven,
   };
 }
 

@@ -9,28 +9,30 @@ import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const PLACED_AT = new Date("2020-09-28T12:05:00Z");
 
+function toStructure(writtenSections: string[]) {
+  return {
+    formats: [
+      {
+        citation: { passage: "", sourceId: "notice" },
+        description: "Discursive answer",
+        kind: "essay",
+        options: null,
+        sections: writtenSections,
+      },
+    ],
+    mock: null,
+    rules: [],
+    subjects: [],
+  };
+}
+
 async function setup() {
   const user = await userFixture();
-
-  const blueprint = await examBlueprintFixture({
-    structure: {
-      formats: [
-        {
-          citation: { passage: "", sourceId: "notice" },
-          description: "Discursive answer",
-          kind: "essay",
-          options: null,
-          sections: ["Discursiva"],
-        },
-      ],
-      mock: null,
-      rules: [],
-      subjects: [],
-    },
-  });
+  const blueprint = await examBlueprintFixture({ structure: toStructure(["Discursiva"]) });
 
   const library = await planLibraryFixture({
     phases: ["Preparação"],
@@ -78,6 +80,7 @@ async function setup() {
   });
 
   return {
+    blueprint,
     goal,
     languageId,
     moved: toGraph(new Set([essay?.skillId ?? "", languageId])),
@@ -103,7 +106,7 @@ describe("a skill that joins an exam's written part", () => {
     vi.useRealTimers();
   });
 
-  it("brings back the lessons it was tested out of and forgets what objective answers claimed", async () => {
+  it("brings back the lessons a rebuild's graph moved into it, and keeps the learner's memory", async () => {
     const { goal, languageId, moved, plan, user } = await setup();
 
     const before = await lessonsOf({ planId: plan.id, skillId: languageId });
@@ -131,6 +134,28 @@ describe("a skill that joins an exam's written part", () => {
       prisma.learnerSkill.findUniqueOrThrow({
         where: { userSkill: { skillId: languageId, userId: user.id } },
       }),
-    ).resolves.toMatchObject({ reps: 0, state: "new" });
+    ).resolves.toMatchObject({ reps: 7, state: "solid" });
+  });
+
+  it("brings back lessons a notice change moved into it, after every lesson was finished", async () => {
+    const { blueprint, goal, languageId, plan } = await setup();
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: PLACED_AT, status: "done" },
+      where: { kind: "lesson", planId: plan.id, status: "todo" },
+    });
+
+    await prisma.examBlueprint.update({
+      data: { structure: toStructure(["Discursiva", "Português"]) },
+      where: { id: blueprint.id },
+    });
+
+    vi.setSystemTime(new Date("2020-09-30T12:00:00Z"));
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const after = await lessonsOf({ planId: plan.id, skillId: languageId });
+
+    expect(after.length).toBeGreaterThan(0);
+    expect(after.every((item) => item.status === "todo" && item.completedAt === null)).toBe(true);
   });
 });

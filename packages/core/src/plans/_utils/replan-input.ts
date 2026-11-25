@@ -202,8 +202,8 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     graph,
     input,
     materialExam,
+    reopenedItemIds,
     settings,
-    unproven: { itemIds: reopenedItemIds, skillIds: unprovenWrittenSkillIds },
     writtenSkillIds,
   };
 }
