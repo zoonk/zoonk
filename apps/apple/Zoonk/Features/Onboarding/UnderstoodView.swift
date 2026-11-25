@@ -740,7 +740,7 @@ private struct RowEditor: View {
           .disabled(isSaving)
         }
       case .text:
-        TextField(text: $text) {
+        TextField(text: $text, prompt: Text(row.label).fieldPrompt()) {
           Text(row.label)
         }
         .focused($isFocused)

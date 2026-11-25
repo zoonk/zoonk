@@ -550,16 +550,15 @@ private struct PasteMaterialRow: View {
     VStack(alignment: .leading, spacing: 12) {
       Group {
         if isLink {
-          TextField(text: $value) {
-            Text(
-              "https://… an article, a class page or a PDF", tableName: "Onboarding",
-              comment: "Placeholder of the box for a material link")
-          }
-          .keyboardType(.URL)
-          .textContentType(.URL)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled()
-          .onSubmit(add)
+          let example = Text(
+            "https://… an article, a class page or a PDF", tableName: "Onboarding",
+            comment: "Placeholder of the box for a material link")
+          TextField(text: $value, prompt: example.fieldPrompt()) { example }
+            .keyboardType(.URL)
+            .textContentType(.URL)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .onSubmit(add)
         } else {
           MultilineTextField(
             text: $value,
