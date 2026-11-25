@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type Source, prisma } from "@zoonk/db";
+import { type Source, type TransactionClient, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../../entitlements/claim-usage";
@@ -88,13 +88,20 @@ async function linkUpload({
       });
     }
 
-    const pending = retried.count > 0;
-    return uploads.count + uploaded.count + attached === 0 ? unchanged(pending) : pending;
+    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
   });
 }
 
-function findStoredCopy({ content, userId }: { content: UploadContent; userId: string }) {
-  return prisma.source.findFirst({
+function findStoredCopy({
+  content,
+  db = prisma,
+  userId,
+}: {
+  content: UploadContent;
+  db?: TransactionClient;
+  userId: string;
+}) {
+  return db.source.findFirst({
     orderBy: { createdAt: "asc" },
     where: {
       ...(content.parsed.visualPages
@@ -145,9 +152,11 @@ async function createPrivateSource({
   }
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const stored = await tx.source.findUnique({
-      where: { languageIdentity: { identityKey, language: input.language } },
-    });
+    const stored = content.parsed.visualPages
+      ? await findStoredCopy({ content, db: tx, userId })
+      : await tx.source.findUnique({
+          where: { languageIdentity: { identityKey, language: input.language } },
+        });
 
     if (stored) {
       return unchanged({ created: false, source: stored });
@@ -254,12 +263,18 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  const retried = await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
+  await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
+
+  const current =
+    source.readState === "failed"
+      ? await prisma.source.findUniqueOrThrow({ where: { id: source.id } })
+      : source;
+
   await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
 
   return {
     checkVisibility: created && source.readState === null,
-    source: withSourceReadStatus({ ...source, readState: retried ? "owed" : source.readState }),
+    source: withSourceReadStatus(current),
     status: "ready",
   };
 }

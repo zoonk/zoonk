@@ -171,6 +171,31 @@ describe(registerSourceUpload, () => {
     expect(new Set(sources.map((source) => source.contentHash)).size).toBe(2);
   });
 
+  it("owes one read when the same scan arrives at once in two languages", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/tiled-scan.pdf", import.meta.url));
+    const firstPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    const secondPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    mockUploadedFile({ bytes, contentType: "application/pdf", pathname: firstPath });
+
+    const uploads = await Promise.all([
+      registerSourceUpload({ kind: "file", language: "en", pathname: firstPath }),
+      registerSourceUpload({ kind: "file", language: "pt", pathname: secondPath }),
+    ]);
+
+    expect(uploads).toMatchObject([
+      { source: { readStatus: "reading" }, status: "ready" },
+      { source: { readStatus: "reading" }, status: "ready" },
+    ]);
+
+    await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(1);
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "readUpload", userId: user.id } }),
+    ).resolves.toBe(1);
+  });
+
   it.each(["failed", "read"] as const)(
     "re-adding an empty scan after a %s read",
     async (readState) => {

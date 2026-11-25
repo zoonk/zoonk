@@ -98,13 +98,15 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   headers: async () => [...(await getPublicAppSecurityHeaders()), ...authLocaleCookies],
-  // Lesson code checks run model-written programs in a separate process that loads these
-  // WebAssembly runtimes from @zoonk/core's packages on disk, which tracing can't see.
+  // The PDF renderer and lesson code checks load native and WebAssembly assets from disk.
   outputFileTracingIncludes: {
     "/.well-known/workflow/**": [
       "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
       "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
       "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/pdfjs-dist/{cmaps,standard_fonts,wasm}/**",
+      "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/@napi-rs/canvas",
+      "../../node_modules/.pnpm/@napi-rs+canvas@*/node_modules/@napi-rs/**",
+      "../../node_modules/.pnpm/@napi-rs+canvas-*@*/node_modules/@napi-rs/**",
       "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
       "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
     ],
