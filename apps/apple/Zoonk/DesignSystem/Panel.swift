@@ -22,9 +22,9 @@ extension View {
     background(Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.xl, style: .continuous))
   }
 
-  /// Main's goal box: a panel with the field's `input` line, in ink while its words have focus,
-  /// thicker with more contrast. `softFocus` is main's composer instead: a 1pt ink ring at 35% while
-  /// focused, 3pt solid ink with more contrast.
+  /// Main's goal box: a panel with the field's `input` line, in ink with main's focus ring outside
+  /// it while its words have focus. `softFocus` is main's composer instead: a 1pt ink ring at 35%
+  /// while focused, 3pt solid ink with more contrast, and no ring outside it.
   func inputPanel(isFocused: Bool, softFocus: Bool = false) -> some View {
     modifier(InputPanel(isFocused: isFocused, softFocus: softFocus))
   }
@@ -42,6 +42,11 @@ private struct InputPanel: ViewModifier {
     content
       .background(.card, in: shape)
       .overlay(shape.strokeBorder(line, lineWidth: lineWidth))
+      .background {
+        if isFocused && !softFocus {
+          shape.focusRing()
+        }
+      }
   }
 
   private var line: Color {
@@ -54,15 +59,7 @@ private struct InputPanel: ViewModifier {
   }
 
   private var lineWidth: CGFloat {
-    guard isFocused else {
-      return 1
-    }
-
-    if contrast == .increased {
-      return 3
-    }
-
-    return softFocus ? 1 : 2
+    isFocused && softFocus && contrast == .increased ? 3 : 1
   }
 }
 
