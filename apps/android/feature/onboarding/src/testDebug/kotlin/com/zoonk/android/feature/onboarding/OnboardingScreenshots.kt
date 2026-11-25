@@ -308,6 +308,30 @@ class OnboardingScreenshots {
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    /** A photo of notes on Start, as added. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialPhoto() = captureMaterialPhoto("phone-screen")
+
+    private fun captureMaterialPhoto(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(FakeOnboardingApi(), AppRoute.StartGoal()) } }
+        }
+        compose.waitForIdle()
+        val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
+        compose.runOnUiThread {
+            vm.setAttached(listOf(AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg")))
+            vm.setIntent(MaterialIntent.Exam)
+        }
+        compose.onNode(hasSetTextAction()).performTextInput("test tomorrow")
+        compose.waitForIdle()
+        write("start-material-photo-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     /** A question about attached material: main's goal panel with its send inside, empty and with a question typed. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
