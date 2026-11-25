@@ -28,7 +28,7 @@ extension TutorScope {
     case .subject:
       Text(
         "Ask questions about this subject", tableName: "Tutor",
-        comment: "What the buddy's panel is about: a subject of the learner's exam or plan")
+        comment: "What the buddy's panel is about: a subject of the learner's exam")
     case .chapter:
       Text(
         "Ask questions about this chapter", tableName: "Tutor",
@@ -72,7 +72,7 @@ extension TutorScope {
       String(
         localized: "Ask \(name) about this subject", table: "Tutor",
         comment:
-          "Ask button for VoiceOver; the argument is the buddy's name, and the subject is one of the learner's exam or plan"
+          "Ask button for VoiceOver; the argument is the buddy's name, and the subject is one of the learner's exam"
       )
     case .chapter:
       String(
@@ -201,7 +201,7 @@ extension TutorTurn.About {
     case .subject:
       Text(
         "About this subject", tableName: "Tutor",
-        comment: "Above a question to the buddy about a subject of the learner's exam or plan")
+        comment: "Above a question to the buddy about a subject of the learner's exam")
     }
   }
 }

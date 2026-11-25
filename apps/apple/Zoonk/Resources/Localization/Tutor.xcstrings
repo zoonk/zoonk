@@ -652,6 +652,9 @@
         }
       }
     },
+    "About this module" : {
+      "comment" : "Above a question to the buddy about a module of the learner's plan. A module is a part of a plan that isn't for an exam."
+    },
     "About this part" : {
       "comment" : "Above a question to the buddy: one lesson screen",
       "localizations" : {
@@ -771,7 +774,7 @@
       }
     },
     "About this subject" : {
-      "comment" : "Above a question to the buddy about a subject of the learner's exam or plan",
+      "comment" : "Above a question to the buddy about a subject of the learner's exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1480,6 +1483,9 @@
         }
       }
     },
+    "Ask %@ about this module" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name. A module is a part of a plan that isn't for an exam."
+    },
     "Ask %@ about this question" : {
       "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
       "localizations" : {
@@ -1599,7 +1605,7 @@
       }
     },
     "Ask %@ about this subject" : {
-      "comment" : "Ask button for VoiceOver; the argument is the buddy's name, and the subject is one of the learner's exam or plan",
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name, and the subject is one of the learner's exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2129,8 +2135,11 @@
         }
       }
     },
+    "Ask questions about this module" : {
+      "comment" : "What the buddy's panel is about: a module of the learner's plan. A module is a part of a plan that isn't for an exam."
+    },
     "Ask questions about this subject" : {
-      "comment" : "What the buddy's panel is about: a subject of the learner's exam or plan",
+      "comment" : "What the buddy's panel is about: a subject of the learner's exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
