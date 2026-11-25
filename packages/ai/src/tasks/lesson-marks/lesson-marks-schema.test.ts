@@ -228,6 +228,7 @@ describe(normalizeLessonMarks, () => {
 
     it("gives up at once on a copy that repeats many blocks out of order", () => {
       const pair = "Run this:\n\n```js\nf();\n```";
+
       const repeated: MarksScreen = {
         ...program,
         text: Array.from({ length: 5 }, () => pair).join("\n\n"),
