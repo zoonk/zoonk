@@ -44,6 +44,7 @@ export type WritingPromptInput = {
 
 export async function writeWritingPrompt({
   analytics,
+  appendedInstructions,
   input,
   model = defaultModel,
   reasoning,
@@ -52,6 +53,8 @@ export async function writeWritingPrompt({
   wait,
 }: {
   analytics?: AiGenerationContext;
+  /** Evals append a rule here to have this prompt key a question a board already set. */
+  appendedInstructions?: string;
   input: WritingPromptInput;
   model?: string;
   reasoning?: Reasoning;
@@ -61,7 +64,7 @@ export async function writeWritingPrompt({
 }) {
   const systemPrompt = fillPromptLanguages({
     learnerLanguage: input.language,
-    template: taskPrompt,
+    template: appendedInstructions ? `${taskPrompt}\n${appendedInstructions}` : taskPrompt,
   });
 
   const userPrompt = JSON.stringify(input);
