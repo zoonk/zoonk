@@ -124,3 +124,13 @@ struct FittedTextInput<Content: View>: View {
       insertionPoint: String.Index(utf16Offset: fitted.caret, in: fitted.text))
   }
 }
+
+extension View {
+  func fitsAlertText(_ text: Binding<String>, limit: Int) -> some View {
+    onChange(of: text.wrappedValue) { old, proposed in
+      if proposed.utf16.count > limit {
+        text.wrappedValue = TextEdit(from: old, to: proposed).fitted(to: limit).text
+      }
+    }
+  }
+}
