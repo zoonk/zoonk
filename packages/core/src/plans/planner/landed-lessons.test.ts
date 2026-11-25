@@ -488,33 +488,40 @@ describe.each([0, 1, 2, 3, 4, 5, 6])(
           : entry,
       );
 
-      const next = buildPlan({
+      return buildPlan({
         ...outlining,
         items: moved,
         lessons: CHAIN.flatMap((skillId) => writeLessons({ count: 2, minutes: 5, skillId })),
         mode: "automatic",
       });
-
-      return next.items.filter((entry) => entry.kind === "lesson" && entry.status === "todo");
     }
 
-    function listStarts(ahead: ReturnType<typeof landAfter>) {
-      return CHAIN.slice(2).map((skillId) => ahead.find((entry) => entry.skillId === skillId));
+    function listStarts(plan: BuiltPlan) {
+      const ahead = plan.items.filter(
+        (entry) => entry.kind === "lesson" && entry.status === "todo",
+      );
+
+      return {
+        order: [...new Set(ahead.map((entry) => entry.skillId))],
+        starts: CHAIN.slice(2).map((skillId) => ahead.find((entry) => entry.skillId === skillId)),
+      };
     }
 
     it.each(["done", "testedOut"] as const)(
       "keeps each topic before the ones built on it after lessons %s ahead",
       (status) => {
-        const ahead = landAfter(status);
-        const startDays = listStarts(ahead).map((entry) => entry?.scheduledFor?.getTime() ?? 0);
+        const plan = landAfter(status);
+        const { order, starts } = listStarts(plan);
+        const startDays = starts.map((entry) => entry?.scheduledFor?.getTime() ?? 0);
 
-        expect([...new Set(ahead.map((entry) => entry.skillId))]).toStrictEqual(CHAIN.slice(2));
+        expect(order).toStrictEqual(CHAIN.slice(2));
         expect(startDays).toStrictEqual(startDays.toSorted((a, b) => a - b));
+        expect(busiestDay(plan)).toBeLessThanOrEqual(outlining.goal.dailyMinutes);
       },
     );
 
     it("starts the next topic today once the learner tests out of the ones before it", () => {
-      expect(listStarts(landAfter("testedOut"))[0]?.scheduledFor).toStrictEqual(today);
+      expect(listStarts(landAfter("testedOut")).starts[0]?.scheduledFor).toStrictEqual(today);
     });
   },
 );
