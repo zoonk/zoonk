@@ -33,7 +33,6 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
@@ -211,15 +210,6 @@ internal fun FrequencyChip(modifier: Modifier = Modifier) {
         maxLines = 1,
     )
 }
-
-/** "%1$s" filled with words drawn as [FrequencyChip]'s mark, inside a sentence. */
-@Composable
-internal fun frequencyMarkStyle(): SpanStyle =
-    SpanStyle(
-        background = MaterialTheme.zoonk.warning.copy(alpha = CHIP_TINT_ALPHA),
-        color = MaterialTheme.colorScheme.onSurface,
-        fontWeight = FontWeight.Medium,
-    )
 
 /** Annotates [parts] found in [text] in order: links open their site, styles mark their words. */
 internal fun annotate(
