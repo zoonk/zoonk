@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -57,6 +58,7 @@ import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -96,8 +98,11 @@ fun OutlinedTextField(
     onKeyboardAction: KeyboardActionHandler? = null,
     lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    focusedBorderThickness: Dp = if (LocalMoreContrast.current) 3.dp else 2.dp,
     shape: Shape = FIELD_SHAPE,
     contentPadding: PaddingValues = FIELD_PADDING,
+    minHeight: Dp = FIELD_MIN_HEIGHT,
+    endAction: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
 ) {
     val interaction = interactionSource ?: remember { MutableInteractionSource() }
@@ -126,7 +131,7 @@ fun OutlinedTextField(
             isError = isError,
             colors = colors,
             contentPadding = contentPadding,
-            container = { FieldContainer(enabled, isError, interaction, colors, shape) },
+            container = { FieldContainer(enabled, isError, interaction, colors, focusedBorderThickness, shape) },
         )
     CompositionLocalProvider(LocalTextSelectionColors provides colors.textSelectionColors) {
         BasicTextField(
@@ -159,8 +164,9 @@ fun OutlinedTextField(
                         }
                     }
                 LabeledField(label, enabled, supporting) {
-                    Box(Modifier.heightIn(min = FIELD_MIN_HEIGHT), propagateMinConstraints = true) {
+                    Box(Modifier.heightIn(min = minHeight), propagateMinConstraints = true) {
                         with(materialDecorator) { Decoration(inner) }
+                        if (endAction != null) Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomEnd) { endAction() }
                     }
                 }
             },
@@ -247,9 +253,9 @@ private fun LabeledField(
 }
 
 /**
- * A 1dp `input` line; focused, an ink ring of 2dp, 3dp with more contrast (main's `contrast-more:`
- * focus). Invalid, main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with
- * a 3dp ring of it outside (20%, 40% in dark), both solid with more contrast.
+ * A 1dp `input` line; focused, a ring of [focusedBorderThickness] in the colors' focused line. Invalid,
+ * main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with a 3dp ring of it
+ * outside (20%, 40% in dark), both solid with more contrast.
  */
 @Composable
 private fun FieldContainer(
@@ -257,6 +263,7 @@ private fun FieldContainer(
     isError: Boolean,
     interactionSource: MutableInteractionSource,
     colors: TextFieldColors,
+    focusedBorderThickness: Dp,
     shape: Shape,
 ) {
     val moreContrast = LocalMoreContrast.current
@@ -277,7 +284,7 @@ private fun FieldContainer(
             },
         colors = colors.copy(errorIndicatorColor = line),
         shape = shape,
-        focusedBorderThickness = if (moreContrast) 3.dp else 2.dp,
+        focusedBorderThickness = focusedBorderThickness,
         unfocusedBorderThickness = 1.dp,
     )
 }
@@ -354,6 +361,25 @@ fun writingAreaColors(): TextFieldColors =
     } else {
         OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.outline)
     }
+
+/**
+ * Main's composer (`TUTOR_COMPOSER_FRAME_CLASS`): on `card`; focused, its `input` line gives way to a
+ * soft ink ring at 35%, solid with more contrast. Its ring is [composerFocusThickness] wide.
+ */
+@Composable
+fun composerColors(): TextFieldColors {
+    val card = MaterialTheme.colorScheme.surfaceContainerLow
+    val ink = MaterialTheme.colorScheme.onSurface
+    return OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = card,
+        unfocusedContainerColor = card,
+        focusedBorderColor = if (LocalMoreContrast.current) ink else ink.copy(alpha = 0.35f),
+    )
+}
+
+/** Main's composer's focus ring: 1dp, 3dp with more contrast. */
+@Composable
+fun composerFocusThickness(): Dp = if (LocalMoreContrast.current) 3.dp else 1.dp
 
 /** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
 private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
