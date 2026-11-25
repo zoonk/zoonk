@@ -220,7 +220,7 @@ private struct PlanPhaseRow: View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
         checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
-        today: context.plan.today)
+        isPaused: context.isPaused, today: context.plan.today)
     }
   }
 
@@ -462,6 +462,7 @@ struct PlanChapterRow: View {
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
   let isLanguage: Bool
+  let isPaused: Bool
   let today: String
 
   var body: some View {
@@ -476,7 +477,8 @@ private struct PlanCheckpointRow: View {
       return .words(Text("Won", tableName: "Plan", comment: "A phase challenge the learner won"))
     }
 
-    return checkpoint.when(today: today)
+    // A paused plan has nothing planned until the learner resumes, as its phases' ends.
+    return isPaused ? nil : checkpoint.when(today: today)
   }
 }
 
