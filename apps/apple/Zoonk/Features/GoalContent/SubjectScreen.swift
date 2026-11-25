@@ -86,11 +86,7 @@ struct SubjectScreen: View {
                   "Subject options", tableName: "Plan",
                   comment: "Spoken label of the subject's … menu")
               } else {
-                Text(
-                  "Module options", tableName: "Plan",
-                  comment:
-                    "Spoken label of the module's … menu. A module is a part of a plan that isn't for an exam."
-                )
+                Text("Module options", tableName: "Plan")
               }
             } icon: {
               Image(systemName: "ellipsis")
@@ -362,7 +358,7 @@ private struct SubjectContent: View {
           Text(
             "What it covers", tableName: "Plan",
             comment:
-              "Section of what a subject or module out of the learner's plan would teach, under the notice that says it isn't in the plan"
+              "Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it."
           ))
       }
     }
@@ -823,7 +819,7 @@ private struct SubjectNotPlannedNotice: View {
             Text(
               "You took this module out of your plan.", tableName: "Plan",
               comment:
-                "Why a module isn't in the plan: the learner skipped it. A module is a part of a plan that isn't for an exam."
+                "On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back."
             )
           } else {
             Text(
@@ -852,7 +848,7 @@ private struct SubjectNotPlannedNotice: View {
           Text(
             "This module isn't in your plan yet.", tableName: "Plan",
             comment:
-              "Why a module isn't in the plan: no lesson teaches it yet. A module is a part of a plan that isn't for an exam."
+              "On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet."
           )
         case "missing":
           Text(
@@ -889,7 +885,7 @@ private struct SubjectNotPlannedNotice: View {
       ? String(
         localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
         comment:
-          "Why a module isn't in the learner's plan: their study time goes to modules that come first. Followed by a link to change the plan. A module is a part of a plan that isn't for an exam."
+          "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
       )
       : String(
         localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",

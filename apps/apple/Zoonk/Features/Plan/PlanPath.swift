@@ -1056,7 +1056,7 @@ func planOutsideReason(_ reason: String?, module: Bool) -> Text {
     Text(
       "Not in your plan\u{00A0}· you took this module out", tableName: "Plan",
       comment:
-        "Why a module or a step on the path isn't in the learner's plan: they took its module out. A module is a part of a plan that isn't for an exam."
+        "Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled \"Modules\"."
     )
   case "skipped":
     Text(

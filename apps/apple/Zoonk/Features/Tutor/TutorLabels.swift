@@ -20,11 +20,7 @@ extension TutorScope {
         "Ask questions about your plan", tableName: "Tutor",
         comment: "What the buddy's panel is about")
     case .subject(_, _, true):
-      Text(
-        "Ask questions about this module", tableName: "Tutor",
-        comment:
-          "What the buddy's panel is about: a module of the learner's plan. A module is a part of a plan that isn't for an exam."
-      )
+      Text("Ask questions about this module", tableName: "Tutor")
     case .subject:
       Text(
         "Ask questions about this subject", tableName: "Tutor",
@@ -63,11 +59,7 @@ extension TutorScope {
         localized: "Ask \(name) about your plan", table: "Tutor",
         comment: "Ask button for VoiceOver; the argument is the buddy's name")
     case .subject(_, _, true):
-      String(
-        localized: "Ask \(name) about this module", table: "Tutor",
-        comment:
-          "Ask button for VoiceOver; the argument is the buddy's name. A module is a part of a plan that isn't for an exam."
-      )
+      String(localized: "Ask \(name) about this module", table: "Tutor")
     case .subject:
       String(
         localized: "Ask \(name) about this subject", table: "Tutor",
@@ -193,11 +185,7 @@ extension TutorTurn.About {
         "About this part", tableName: "Tutor",
         comment: "Above a question to the buddy: one lesson screen")
     case .subject where module:
-      Text(
-        "About this module", tableName: "Tutor",
-        comment:
-          "Above a question to the buddy about a module of the learner's plan. A module is a part of a plan that isn't for an exam."
-      )
+      Text("About this module", tableName: "Tutor")
     case .subject:
       Text(
         "About this subject", tableName: "Tutor",

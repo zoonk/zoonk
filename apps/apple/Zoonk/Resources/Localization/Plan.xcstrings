@@ -25053,9 +25053,7 @@
         }
       }
     },
-    "Module options" : {
-      "comment" : "Spoken label of the module's … menu. A module is a part of a plan that isn't for an exam."
-    },
+    "Module options" : {},
     "Modules" : {
       "comment" : "Section of a plan's modules",
       "localizations" : {
@@ -27805,7 +27803,7 @@
       }
     },
     "Not in your plan · you took this module out" : {
-      "comment" : "Why a module or a step on the path isn't in the learner's plan: they took its module out. A module is a part of a plan that isn't for an exam."
+      "comment" : "Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled \"Modules\"."
     },
     "Not in your plan · you took this subject out" : {
       "comment" : "Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.",
@@ -36260,10 +36258,10 @@
       "comment" : "Shown for a module the learner's plan doesn't have. A module is a part of a plan that isn't for an exam."
     },
     "This module isn't in your plan yet." : {
-      "comment" : "Why a module isn't in the plan: no lesson teaches it yet. A module is a part of a plan that isn't for an exam."
+      "comment" : "On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet."
     },
     "This module isn't in your plan. Other modules come first." : {
-      "comment" : "Why a module isn't in the learner's plan: their study time goes to modules that come first. Followed by a link to change the plan. A module is a part of a plan that isn't for an exam."
+      "comment" : "Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan."
     },
     "This subject isn't in your plan" : {
       "comment" : "Shown for a subject the learner's plan doesn't have",
@@ -39054,7 +39052,7 @@
       }
     },
     "What it covers" : {
-      "comment" : "Section of what a subject or module out of the learner's plan would teach, under the notice that says it isn't in the plan"
+      "comment" : "Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it."
     },
     "What you practice" : {
       "comment" : "Section of a language plan's activities",
@@ -41005,7 +41003,7 @@
       }
     },
     "You took this module out of your plan." : {
-      "comment" : "Why a module isn't in the plan: the learner skipped it. A module is a part of a plan that isn't for an exam."
+      "comment" : "On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back."
     },
     "You took this subject out of your plan." : {
       "comment" : "Why a subject isn't in the plan: the learner skipped it",
