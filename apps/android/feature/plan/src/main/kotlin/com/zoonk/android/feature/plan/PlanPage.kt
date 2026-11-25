@@ -433,7 +433,6 @@ internal fun PlanContent(
                 page = page,
                 edits = edits,
                 links = links,
-                resume = resume,
                 onAdjust = { onAdjust?.invoke(it) },
                 layout = layout,
                 host = slot,

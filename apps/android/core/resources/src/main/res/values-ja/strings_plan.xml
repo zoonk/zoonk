@@ -279,7 +279,6 @@
   "plan_full_course_switch": "2ebef4584c23c7f1bf358133ba5935261d8154d5f81c650dc4bd40bbb8a55444",
   "plan_go_to_today": "b4d10b99e23e90272fe92b226ea28f0d183b6238ac890118a54cb246c3655194",
   "plan_goal_limit_reached": "144c776a2644eea115c77fac6ed4e6653475b449d4613d3e6320e1b8aa556d44",
-  "plan_goal_paused": "1045372d879d08c975679cc0279b44a73830d65339e66049f0126f6049bea082",
   "plan_going_deeper": "94fb0cff69cebfe4114dc7eda9f884837ed8d4d7e83be869c1e4eaaf323f3d46",
   "plan_how_calculated": "25827d5969869d99dfe361df9fc4b07849612b7a6ebfa656275201902691f853",
   "plan_keep_studying": "716930c38be9bec15a782e37c666f8fcec348cc911d62a9d833bc6c04bc5c032",
@@ -1093,7 +1092,6 @@
     <string name="plan_suggestion_previous">前へ</string>
     <string name="plan_suggestion_next">次へ</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
-    <string name="plan_goal_paused">目標「%1$s」は一時停止中です</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">残り時間に合わせて学習計画を調整する</string>
     <string name="plan_adjust">調整する</string>

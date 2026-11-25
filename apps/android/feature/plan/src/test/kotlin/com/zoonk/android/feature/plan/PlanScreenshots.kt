@@ -739,7 +739,6 @@ class PlanScreenshots {
                                     page,
                                     shot.edits,
                                     PlanLinks(navigator, page),
-                                    Resume.Plain,
                                     onAdjust = {},
                                     layout = layout,
                                     host = shot.host,

@@ -279,7 +279,6 @@
   "plan_full_course_switch": "5c89bc65448653c973b6b5143b679111909534a32f99e79ac1a03e5e54d3f2be",
   "plan_go_to_today": "a8a1c772bb3c86d7450e34cbf62c2768d27e5457136bd5b2a5b029fe8f8afc42",
   "plan_goal_limit_reached": "056046c764319e4c73e84a5d44ec0fc746edd5d0d29ec02fc95b166ae0fea3ac",
-  "plan_goal_paused": "5cd3e69f47ff81461b0b3bd04d2a039b7572b54696c75ec10e83b243e2537187",
   "plan_going_deeper": "7725d2ac4f133206f9a9041b03e70ccd96e27584ca20e400e8dfc6ff7c32260f",
   "plan_how_calculated": "4e3ef66d26681ec72edc3904d5fb9e0c63706a44ed556e117192657a58b993ff",
   "plan_keep_studying": "65c0935be11444b5b4f85f0652642cc07b5337f7b299e52ba57e318020b75d9c",
@@ -729,7 +728,7 @@
     <string name="plan_your_pace">Tu calendario</string>
     <string name="plan_pace_value_paused">En pausa</string>
     <!-- "It" is the learner's paused goal. -->
-    <string name="plan_nothing_planned_until_resume">No se planificará nada hasta que lo reanudes.</string>
+    <string name="plan_nothing_planned_until_resume">No hay nada programado hasta que lo reanudes.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">%d lección pendiente</item>
         <item quantity="many">%d lecciones pendientes</item>
@@ -1197,7 +1196,6 @@
     <string name="plan_suggestion_previous">Anterior</string>
     <string name="plan_suggestion_next">Siguiente</string>
     <string name="plan_suggestion_position">%1$s de %2$s</string>
-    <string name="plan_goal_paused">Tu objetivo de %1$s está en pausa</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">Ajustemos tu plan al tiempo que queda</string>
     <string name="plan_adjust">Ajustar</string>

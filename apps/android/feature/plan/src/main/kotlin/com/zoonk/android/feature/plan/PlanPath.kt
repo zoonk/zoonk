@@ -279,7 +279,8 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
-    if (phase.state != PlanPhase.State.CURRENT || open) return null
+    // Main's `PhaseResume`: nothing continues while the goal is paused.
+    if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
     if (phase.lessonsDone < phase.lessonsTotal) {
         val resumes =

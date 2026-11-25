@@ -11,12 +11,11 @@ enum PlanSlotItem: Hashable {
   case finished
   case fitLessons
   case pastDate
-  case paused
   case tooTight
 
   /// `courseComplete` while a finished part's certificate isn't written yet.
   static func items(
-    plan: GoalPlan, isPaused: Bool, courseComplete: Bool
+    plan: GoalPlan, courseComplete: Bool
   ) -> [PlanSlotItem] {
     let status = plan.status?.kind
     let finished = plan.end != nil
@@ -29,12 +28,8 @@ enum PlanSlotItem: Hashable {
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
-    // A paused goal and a passed date are what the page asks about first (the bar answers both on an
-    // exam).
-    if isPaused {
-      items.append(.paused)
-    }
-
+    // A passed date is what the page asks about first (the bar answers it on an exam). A paused goal's
+    // Schedule says so, and its bar resumes it.
     if status == .pastDate {
       items.append(.pastDate)
     }
@@ -65,9 +60,7 @@ extension PlanContext {
     let state = store.suggestionState(goalId: goal.id)
     let unclaimed =
       goal.kind == .exam ? store.planEnd(goalId: goal.id).value?.certificates?.unclaimed ?? [] : []
-    let items = PlanSlotItem.items(
-      plan: plan, isPaused: isPaused, courseComplete: !unclaimed.isEmpty
-    )
+    let items = PlanSlotItem.items(plan: plan, courseComplete: !unclaimed.isEmpty)
     .filter { !state.dismissed.contains($0) }
 
     let index = min(state.position, max(items.count - 1, 0))
@@ -453,7 +446,7 @@ struct PlanSuggestionSection: View {
 
   /// The page's bottom bar answers it, so its line says everything and opens nothing.
   private func isStatement(_ item: PlanSlotItem) -> Bool {
-    item == .paused || (item == .pastDate && context.goal.kind == .exam)
+    item == .pastDate && context.goal.kind == .exam
   }
 
   @ViewBuilder
@@ -463,8 +456,6 @@ struct PlanSuggestionSection: View {
       notNow: { notNow(item) })
 
     switch item {
-    case .paused:
-      PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
@@ -601,12 +592,6 @@ struct PlanSuggestionSection: View {
   /// What the line says for each suggestion, as main's `SuggestionSummary`: its title.
   private func summary(_ item: PlanSlotItem) -> (text: Text, mark: SuggestionMark.Kind) {
     switch item {
-    case .paused:
-      (
-        Text(
-          "This goal is paused", tableName: "Plan",
-          comment: "Title of the Plan's notice for a paused goal"), .symbol("pause")
-      )
     case .choice(let choice):
       (Text.examChoiceQuestion(group: choice.group, take: choice.take), .symbol("signpost.right"))
     case .pastDate:
@@ -692,34 +677,6 @@ struct PlanSuggestionSection: View {
         store.setSuggestionState(key, saved)
       }
     }
-  }
-}
-
-/// Its Resume is the Plan's bottom bar (`resumeGoalBar`), so it only says what pausing means.
-private struct PlanPausedSlot: View {
-  @Environment(PlanStore.self) private var store
-
-  let context: PlanContext
-  var isLine = false
-
-  var body: some View {
-    let preview = store.resumeChangesPlan(goalId: context.goal.id)
-
-    PlanStatement(
-      mark: .symbol("pause"),
-      title: Text(
-        "This goal is paused", tableName: "Plan",
-        comment: "Title of the Plan's notice for a paused goal"),
-      description: preview.value == true
-        ? Text(
-          "When you resume, your plan will pick up with the lessons planned for the days you paused.",
-          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-        : Text(
-          "Nothing is planned until you resume it.", tableName: "Plan",
-          comment: "Explains a paused goal"),
-      isLine: isLine
-    )
-    .loads(preview, refreshable: false)
   }
 }
 
