@@ -217,7 +217,7 @@ Geist for words, Geist Mono for data, a math face only in a formula. Weights are
 
 Numbers that are compared are Geist Mono with tabular figures and end on one edge.
 
-- **Check.** A column's values end together (ink rights within 1px) and line up digit under digit. A sentence in mono is a finding.
+- **Check.** A column's values end together (ink rights within 1px) and line up digit under digit. A sentence in mono, or a phrase in two faces, is a finding.
 - **Usual break.** A percentage column in the text face, ragged on the right.
 
 ### T5. A measure you can read
