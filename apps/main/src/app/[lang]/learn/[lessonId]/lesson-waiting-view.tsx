@@ -23,20 +23,20 @@ export function LessonWaitingView({
   waiting: Awaited<ReturnType<typeof getLessonWaitingState>> | null;
   warmUp: WarmUpDeck | null;
 }) {
-  const request: LessonRequest =
-    waiting?.status === "ready" && waiting.state.generationId
-      ? { generationId: waiting.state.generationId, status: "writing" }
-      : initialRequest;
+  const state = waiting?.status === "ready" ? waiting.state : null;
 
   return (
     <MainLearnProvider>
       <LessonWaiting
         goalId={goalId}
-        alternative={waiting?.status === "ready" ? waiting.state.alternative : null}
+        alternative={state?.alternative ?? null}
+        beingWritten={state?.status === "generating"}
         exitHref={inSession ? "/today" : (origin ?? "/")}
-        initialRequest={request}
-        key={request.status === "writing" ? request.generationId : request.status}
-        kind={waiting?.status === "ready" ? waiting.state.kind : "lesson"}
+        initialRequest={initialRequest}
+        key={
+          initialRequest.status === "writing" ? initialRequest.generationId : initialRequest.status
+        }
+        kind={state?.kind ?? "lesson"}
         lesson={lesson}
         warmUp={warmUp}
       />

@@ -3,14 +3,24 @@
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { Link, useRouter } from "@/i18n/navigation";
 import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-writing";
+import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type LessonKind } from "@zoonk/learn/generation/kinds";
-import { type GenerationRun, hasStopped, toHeldRun } from "@zoonk/learn/generation/run";
+import { useReportStopped } from "@zoonk/learn/generation/report-stopped";
+import {
+  type GenerationRun,
+  UNNAMED_RUN,
+  hasStopped,
+  toAwaitedRun,
+  toHeldRun,
+} from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
+import { useLessonReadiness } from "@zoonk/learn/session/lesson-readiness";
+import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
@@ -97,12 +107,15 @@ function WritingWaitBar({
   );
 }
 
+type Readiness = ReturnType<typeof useLessonReadiness>;
+
 function WritingWait({
   alternative,
   asked,
   footer,
   frame,
   kind,
+  readiness,
   warmUp,
   writing,
 }: {
@@ -111,28 +124,32 @@ function WritingWait({
   footer?: React.ReactNode;
   frame: LessonFrame;
   kind: LessonKind;
+  readiness: Readiness;
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
   const since = useMountTime().getTime();
 
   const followed = useWorkflowRun({
-    generationId: writing.generationId,
+    generationId: readiness.generationId,
     kind,
+    onInterrupted: readiness.check,
     restart: writing.restart,
   });
 
+  useReportStopped({ onStopped: readiness.runStopped, run: followed });
+
   const run: GenerationRun =
-    writing.request.status === "failed"
-      ? { failure: "notStarted", retry: writing.retry, status: "failed", steps: {} }
-      : followed;
+    readiness.lesson === "failed"
+      ? { failure: "generation", retry: writing.retry, status: "failed", steps: {} }
+      : toAwaitedRun(readiness.generationId ? followed : UNNAMED_RUN);
 
   const ready = run.status === "ready";
   const hold = useReadyHold(ready);
   const holding = hold.status === "hold";
   const progress = <WritingProgress holding={holding} kind={kind} run={run} since={since} />;
 
-  useOpenWhenReady(hold.status === "go");
+  useOpenWhenReady(hold.status === "go" || readiness.written);
 
   useVisibleWait({
     contentKind: "lesson",
@@ -211,15 +228,32 @@ function waitState({
   return asked ? "gettingReady" : "notReady";
 }
 
-function isWriting(request: LessonRequest): boolean {
-  return (
-    request.status === "requesting" || request.status === "writing" || request.status === "failed"
-  );
+/**
+ * What the page waits for: the run the learner just asked for, a failed ask, or the writing the
+ * saved lesson says is going on, which only the readiness read can confirm. Null shows no wait.
+ */
+function getWaitedLesson({
+  beingWritten,
+  request,
+}: {
+  beingWritten: boolean;
+  request: LessonRequest;
+}): NextStopLesson | null {
+  if (request.status === "writing") {
+    return "notStarted";
+  }
+
+  if (request.status === "failed") {
+    return "failed";
+  }
+
+  return request.status === "idle" && beingWritten ? "writing" : null;
 }
 
 export function LessonWaiting({
   goalId,
   alternative,
+  beingWritten,
   exitHref,
   initialRequest,
   kind,
@@ -228,17 +262,29 @@ export function LessonWaiting({
 }: {
   goalId: string | null;
   alternative: ReadyAlternative | null;
+  /** The saved lesson says a run is writing it. */
+  beingWritten: boolean;
   exitHref: string;
   initialRequest: LessonRequest;
   kind: LessonKind;
   lesson: LessonOutline;
   warmUp: WarmUpDeck | null;
 }) {
+  const router = useRouter();
   const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
   const [starting, setStarting] = useState(false);
   const signUpHref = useSignUpHref();
   const frame = { exitHref, goalId, lesson };
+  const waited = getWaitedLesson({ beingWritten, request });
+
+  const readiness = useLessonReadiness({
+    actions: { readLesson: readLessonReadiness, refresh: () => router.refresh() },
+    enabled: waited !== null,
+    generationId: writing.generationId,
+    lesson: waited ?? "ready",
+    lessonId: lesson.id,
+  });
 
   useOpenWhenReady(request.status === "ready");
 
@@ -247,13 +293,18 @@ export function LessonWaiting({
     void writing.start();
   };
 
-  const showsStart = request.status === "idle" || (starting && request.status === "requesting");
+  // Readiness found nothing writing the lesson the saved row said was being written: it's the learner's to start.
+  const unclaimed = waited === "writing" && readiness.lesson === "ready" && !readiness.written;
+  const awaited = waited !== null && !unclaimed;
+
+  const showsStart =
+    (request.status === "idle" && !awaited) || (starting && request.status === "requesting");
 
   const footer = showsStart && (
     <StartLessonBar busy={request.status === "requesting"} kind={kind} onStart={start} />
   );
 
-  if (isWriting(request)) {
+  if (request.status === "requesting" || awaited) {
     return (
       <WritingWait
         alternative={alternative}
@@ -262,6 +313,7 @@ export function LessonWaiting({
         key={writing.attempt}
         asked={!showsStart}
         kind={kind}
+        readiness={readiness}
         warmUp={warmUp}
         writing={writing}
       />
