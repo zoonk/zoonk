@@ -561,11 +561,15 @@ private fun TypedReply(
     val field = remember { FocusRequester() }
     LaunchedEffect(Unit) { if (focusOnStart) field.requestFocus() }
     val input = rememberTextFieldState()
-    val text = input.text.toString()
-    // Clearing a sent reply isn't the learner typing.
+    // Clearing a sent reply isn't the learner typing; the next reply's first letters, seen before the clear, are.
     var sent by remember { mutableStateOf(false) }
-    input.ObserveEdits { if (sent) sent = false else onTyping() }
+    input.ObserveEdits { text ->
+        val clearing = sent && text.isEmpty()
+        sent = false
+        if (!clearing) onTyping()
+    }
     val send = {
+        val text = input.text.toString()
         if (text.isNotBlank()) {
             onSend(text)
             sent = true
@@ -579,7 +583,7 @@ private fun TypedReply(
         enabled = canSend,
         placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
         trailingIcon = {
-            IconButton(onClick = send, enabled = canSend && text.isNotBlank()) {
+            IconButton(onClick = send, enabled = canSend && input.text.isNotBlank()) {
                 Icon(painterResource(R.drawable.ic_send), contentDescription = stringResource(R.string.conversation_send))
             }
         },
