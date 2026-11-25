@@ -650,8 +650,8 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Reading never writes anything. A run that ended without the lesson, or a follow that couldn't
-  /// finish, leaves it to the learner to try again.
+  /// Reading never writes anything. A lesson readiness says failed, or one that can't be read any
+  /// more, leaves it to the learner to try again.
   private func followWriting(
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
@@ -670,6 +670,7 @@ final class LessonPlayerStore {
     case .ready where warmUp != nil: screen = .waiting(outline, .written)
     case .ready: await load(refresh: true)
     case .failed, nil: screen = .waiting(outline, .failed)
+    // The follow returns only once no run writes it.
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
   }
