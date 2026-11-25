@@ -18,8 +18,7 @@ export function useGenerationEvents({
   connection: number;
   namespace: string | null;
   onComplete: (runId: string) => void;
-  /** With the response's status when the API answered with an error. */
-  onError: (status?: number) => void;
+  onError: (responseStatus?: number) => void;
   onMessage: (data: StepStreamMessage) => void;
   onOpen: (response: Response) => void;
   runId: string | null;

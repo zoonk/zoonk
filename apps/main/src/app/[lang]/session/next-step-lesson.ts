@@ -5,10 +5,7 @@ import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { type DayStep } from "@zoonk/learn/session/types";
 
-/**
- * The first frame, from the block's saved lesson state. A run the learner just started
- * (`?generation=`) is waited for even while the row still says the last try failed.
- */
+/** A run the learner just started is waited for even while the saved lesson still says the last try failed. */
 export function getNextStopLesson({
   limit,
   request,
@@ -43,7 +40,7 @@ export function getNextStopLesson({
   return request.status === "idle" && !limit ? "ready" : "notStarted";
 }
 
-/** Only the run the learner's tap started; a lesson's saved run may be long gone, so readiness names it. */
+/** A lesson's saved run may be long gone, so only readiness names it; this is the run the learner's tap started. */
 export function getAskedRunId({
   request,
   step,

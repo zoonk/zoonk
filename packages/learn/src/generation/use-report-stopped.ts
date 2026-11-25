@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffectEvent, useLayoutEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { type GenerationRun, hasStopped } from "./generation-run";
 
-/** Before the next paint, so a wait never shows its quiz under a run that stopped. */
 export function useReportStopped({
   onStopped,
   run,
@@ -14,7 +13,7 @@ export function useReportStopped({
   const stopped = hasStopped(run);
   const report = useEffectEvent(onStopped);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (stopped) {
       report();
     }

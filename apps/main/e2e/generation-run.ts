@@ -64,11 +64,7 @@ export async function stopRuns({ entityId, page }: { entityId?: string; page: Pa
   return () => Promise.all([page.unroute(ANY_RUN_EVENTS), page.unroute(ANY_RUN_STATUS)]);
 }
 
-/**
- * Only the API's readiness can say a run is writing a lesson, and it can't find a run faked with
- * `followRun`: it would call that lesson's writing stopped. This answers for the API as it would
- * for a live run.
- */
+/** The API can't find a run faked with `followRun`, so this answers its readiness as for a live run. */
 export async function confirmLessonWriter({
   lessonId,
   page,

@@ -228,10 +228,6 @@ function waitState({
   return asked ? "gettingReady" : "notReady";
 }
 
-/**
- * What the page waits for: the run the learner just asked for, a failed ask, or the writing the
- * saved lesson says is going on, which only the readiness read can confirm. Null shows no wait.
- */
 function getWaitedLesson({
   beingWritten,
   request,
@@ -262,7 +258,6 @@ export function LessonWaiting({
 }: {
   goalId: string | null;
   alternative: ReadyAlternative | null;
-  /** The saved lesson says a run is writing it. */
   beingWritten: boolean;
   exitHref: string;
   initialRequest: LessonRequest;
@@ -294,7 +289,6 @@ export function LessonWaiting({
     void writing.start();
   };
 
-  // Readiness found nothing writing the lesson the saved row said was being written: it's the learner's to start.
   const unclaimed = waited === "writing" && readiness.lesson === "ready" && !readiness.written;
   const awaited = waited !== null && !unclaimed;
 

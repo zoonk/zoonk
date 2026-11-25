@@ -8,10 +8,7 @@ export type FollowedRunProps = {
   children: (run: GenerationRun) => ReactNode;
   generationId: string | null;
   kind: GenerationKind;
-  /**
-   * The run's updates stopped short of ready: its stream ended or dropped, or the API couldn't find
-   * the run or tell its state. A host that can ask whether the work is still going asks then.
-   */
+  /** Called when the run's updates stop short of ready, so the host can ask whether the work goes on. */
   onInterrupted?: () => void;
   onReady?: () => void;
   readGenerationId?: () => Promise<string | { id: string; namespace: string } | null>;

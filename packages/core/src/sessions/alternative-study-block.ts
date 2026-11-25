@@ -5,10 +5,7 @@ type AlternativeBlock = Pick<
   "kind" | "position" | "preparing" | "status" | "waitReason" | "writingAvailability"
 >;
 
-/**
- * What a learner can do while a lesson is being written: the day's first available step that isn't
- * a lesson. Only a lesson waits, so the same step serves whichever lesson the learner opened.
- */
+/** Only a lesson waits, so one step serves whichever lesson the learner is waiting on. */
 export function getAlternativeStudyBlockPosition(
   blocks: readonly AlternativeBlock[],
 ): number | null {

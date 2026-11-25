@@ -20,12 +20,10 @@ const REOPEN_DELAY_MS = 1500;
 
 const MAX_RECONNECT_DELAY_MS = 16_000;
 
-/** The API couldn't tell the run's state this time, which says nothing about the run. */
 const UNAVAILABLE_RETRY_MS = 5000;
 
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
 
-/** What reading a run answered: its status, no such run (404), or a state the API couldn't tell (503). */
 export type RunLookup = RunStatus | "missing" | "unavailable";
 
 export type WorkflowRunState = {

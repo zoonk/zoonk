@@ -47,13 +47,9 @@ export function toHeldRun(run: GenerationRun): GenerationRun {
   return { ...run, failure: null, status: "ready" };
 }
 
-/**
- * A lesson's wait leaves a run that went away to the lesson's readiness to judge, so until that
- * answers, the run shows as still working.
- */
+/** Only the lesson's readiness says whether its writing stopped, so a lesson's wait shows a stopped run as working. */
 export function toAwaitedRun(run: GenerationRun): GenerationRun {
   return hasStopped(run) ? { ...run, failure: null, retry: undefined, status: "following" } : run;
 }
 
-/** Nothing to follow until a readiness read names the run writing the lesson. */
 export const UNNAMED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };

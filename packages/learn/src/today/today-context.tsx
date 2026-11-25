@@ -62,9 +62,7 @@ export type TodayActions = {
   /** Asks for the day's lessons nobody is outlining yet; resolves once the next read says they're coming. */
   prepareLessons: () => Promise<boolean>;
   mistakesHref: string;
-  /** The API's live verdict on a lesson's writing; null when it couldn't tell. */
   readLesson: (lessonId: string) => Promise<LessonReadiness | null>;
-  /** Reads the day again at once. */
   reread: () => void;
   /** Reads the day again only when the plan changed since it was read. */
   refresh: () => unknown;

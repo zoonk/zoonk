@@ -28,16 +28,13 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-const NOT_FOUND = 404;
-const SERVICE_UNAVAILABLE = 503;
+const LOOKUP_BY_RESPONSE_STATUS: Partial<Record<number, RunLookup>> = {
+  404: "missing",
+  503: "unavailable",
+};
 
-/** An error answer's lookup; any other error, or none, leaves the connection to retry. */
 function toLookup(responseStatus: number | undefined): RunLookup | null {
-  if (responseStatus === NOT_FOUND) {
-    return "missing";
-  }
-
-  return responseStatus === SERVICE_UNAVAILABLE ? "unavailable" : null;
+  return responseStatus === undefined ? null : (LOOKUP_BY_RESPONSE_STATUS[responseStatus] ?? null);
 }
 
 async function readRunStatus(runId: string): Promise<RunLookup | null> {

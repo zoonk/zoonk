@@ -19,7 +19,6 @@ import {
 
 const WAITING_CHECK_MS = 5000;
 
-/** A workflow run id that no run has: the claim of a run that crashed or was cleared. */
 const DEAD_RUN_ID = "wrun_01M8982VDS3WKDANEEEB0P3DWK";
 
 async function expectMoment(page: Page, title: string) {
@@ -456,7 +455,6 @@ test.describe("Today's session", () => {
     await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
     expect(asked).toStrictEqual(["POST"]);
 
-    // Try again's run is followed at once, though the saved lesson says failed until it takes it.
     await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
     await expect(retry).toHaveCount(0);
 

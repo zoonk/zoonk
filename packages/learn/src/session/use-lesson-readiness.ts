@@ -9,10 +9,6 @@ const READINESS_CHECK_MS = 5000;
 
 type Shown = { generationId: string | null; lesson: NextStopLesson };
 
-/**
- * `notStarted` is the wait for a run the learner just asked for. Until that run stops, a read that
- * finds nothing writing only means the run hasn't taken the lesson yet.
- */
 function toShown({
   generationId,
   lesson,
@@ -31,6 +27,7 @@ function toShown({
     return { generationId: read.generationId ?? generationId, lesson: "writing" };
   }
 
+  // Until the run the learner asked for stops, nothing writing the lesson means it hasn't taken it yet.
   if (lesson === "notStarted") {
     return { generationId, lesson: runStopped ? "failed" : "notStarted" };
   }
@@ -38,11 +35,6 @@ function toShown({
   return { generationId: null, lesson: read.status === "failed" ? "failed" : "ready" };
 }
 
-/**
- * The session's snapshot draws the first frame; the API's readiness, asked on mount and on each
- * tick while the lesson isn't ready, is what the screen shows from then on. A changed answer shows
- * at once, then the day is read again.
- */
 export function useLessonReadiness({
   actions,
   enabled,
@@ -90,13 +82,11 @@ export function useLessonReadiness({
   return {
     ...shown,
     check: poll.restart,
-    /** The run this wait followed stopped: the next read decides what that means for the lesson. */
     runStopped: () => {
       setStopped({ key, runId: generationId });
       poll.restart();
     },
     setAside: read?.setAside ?? false,
-    /** The API says the lesson is written, whatever the screen showed before. */
     written: read?.status === "ready",
   };
 }

@@ -76,7 +76,7 @@ async function findReadyAlternative({
   return dueSkills > 0 ? { dueSkills, kind: "review" } : null;
 }
 
-/** Without a workflow observer, renders use the saved row and have no confirmed live run ID. */
+/** Without `observeWriter`, the state is the saved row's and names no run to follow. */
 export async function getLessonWaitingState({
   lessonId,
   observeWriter,

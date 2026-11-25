@@ -31,14 +31,17 @@ function runningLesson() {
   return libraryLessonFixture({ contentRunId: OWNER, contentStatus: "running" });
 }
 
+function fakeRun(members: object): ReturnType<typeof getRun> {
+  // `Run` has private fields, so no plain object satisfies it; the route reads only these members.
+  return members as unknown as ReturnType<typeof getRun>;
+}
+
 function observeStatus(status: string) {
   const cancel = vi.fn();
 
-  vi.mocked(getRun).mockReturnValue({
-    cancel,
-    exists: Promise.resolve(true),
-    status: Promise.resolve(status),
-  } as unknown as ReturnType<typeof getRun>);
+  vi.mocked(getRun).mockReturnValue(
+    fakeRun({ cancel, exists: Promise.resolve(true), status: Promise.resolve(status) }),
+  );
 
   return cancel;
 }
@@ -172,12 +175,14 @@ describe("GET lesson readiness", () => {
   it("returns ready when completion wins the guarded release", async () => {
     const lesson = await runningLesson();
 
-    vi.mocked(getRun).mockReturnValueOnce({
-      get exists() {
-        return completeLessonContent({ lessonId: lesson.id, workflowRunId: OWNER });
-      },
-      status: Promise.resolve("completed"),
-    } as unknown as ReturnType<typeof getRun>);
+    vi.mocked(getRun).mockReturnValueOnce(
+      fakeRun({
+        get exists() {
+          return completeLessonContent({ lessonId: lesson.id, workflowRunId: OWNER });
+        },
+        status: Promise.resolve("completed"),
+      }),
+    );
 
     const response = await read(lesson.id);
     expect(response.status).toBe(200);

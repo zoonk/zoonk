@@ -56,10 +56,7 @@ function getLessonsBeingWritten(today: TodayView): string[] {
   );
 }
 
-/**
- * A row says a lesson is being written only while the API confirms it: each tick asks, and any
- * other answer reads the day again, so a lesson whose writing stopped shows what it is now.
- */
+/** A row says a lesson is being written only while the API confirms it; any other answer reads the day again. */
 function useLessonsBeingWritten({
   actions,
   readAt,

@@ -73,7 +73,6 @@ function FakeFollower({ children }: FollowedRunProps) {
 const WRITING: LessonReadiness = { generationId: "run-1", setAside: false, status: "generating" };
 const FAILED: LessonReadiness = { generationId: null, setAside: false, status: "failed" };
 
-/** What the API's readiness says each time the wait asks. */
 const readiness = { current: WRITING };
 
 function UpNext({
@@ -135,7 +134,6 @@ function Placement({ deck, run }: { deck: WarmUpDeck; run: GenerationRun }) {
   );
 }
 
-/** Longer than any lesson's writing has taken: the wait never calls it stuck on its own. */
 const LONG_QUIET_MS = 20 * 60_000;
 
 const question = () => page.getByText(QUESTION);

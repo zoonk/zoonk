@@ -44,7 +44,6 @@ export type NextStopLesson = "failed" | "notStarted" | "ready" | "writing";
 
 export type NextStopActions = {
   refresh: () => void;
-  /** Null when it couldn't be read, so the screen keeps what it shows and asks again. */
   readLesson?: (lessonId: string) => Promise<LessonReadiness | null>;
   start: (step: DayStep) => Promise<boolean>;
   stop: () => Promise<boolean>;
