@@ -7,7 +7,6 @@ import {
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { matchNoticeAreas } from "../../exams/_utils/match-areas";
 import { type GoalSkillGraph } from "./save-goal-skills";
-import { givePracticeItsTasks } from "./written-task-practice";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
 
@@ -275,11 +274,10 @@ function coverRemainingTopics({
   outline: ExamOutline;
 }): GoalSkillGraph {
   const uncovered = findUncoveredTopics({ outline, skills: graph.skills });
-  const practiced = givePracticeItsTasks({ graph, outline, uncovered });
 
   return addCoverageSkills({
-    graph: practiced.graph,
-    missing: practiced.rest.map(({ subject, topic }) => ({
+    graph,
+    missing: uncovered.map(({ subject, topic }) => ({
       area: subject,
       description: topic,
       examWeight: getSubjectWeight({ graph, subject }),
