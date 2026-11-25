@@ -22472,10 +22472,64 @@
     "We suggest %@ a day to cover everything in your plan by %@." : {
       "comment" : "When the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\".",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir empfehlen %1$@ pro Tag, damit du bis %2$@ alles in deinem Plan schaffst."
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "We suggest %1$@ a day to cover everything in your plan by %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te sugerimos dedicar %1$@ al día para cubrir todo lo que tienes en tu plan a más tardar en la fecha de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On te conseille de prévoir %1$@ par jour pour tout faire dans ton plan d’ici %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ti consigliamo di studiare %1$@ al giorno per completare tutto il tuo piano entro %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画の内容をすべて%2$@までに終えるには、1日あたり%1$@がおすすめです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에 있는 내용을 %2$@까지 모두 학습할 수 있도록 하루에 %1$@씩 학습하는 것을 추천해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugerujemy %1$@ nauki dziennie, aby cały materiał z planu zmieścił się do %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente sugere estudar %1$@ por dia para dar conta de tudo no seu plano até %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planındaki her şeyi %2$@ tarihine kadar yetiştirebilmen için günde %1$@ çalışmanı öneriyoruz."
           }
         }
       }
