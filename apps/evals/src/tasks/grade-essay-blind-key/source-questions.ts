@@ -59,7 +59,9 @@ function oabQuestion(cases: WritingCase[]): SourceQuestion {
     throw new Error("A source question needs a case.");
   }
 
-  const [, , exam = "", area = ""] = first.id.split("-");
+  const parts = first.id.split("-");
+  const exam = parts[2] ?? "";
+  const area = parts[3] ?? "";
   const notice = first.expected?.source?.notice ?? "";
   const { basis, context, question } = first.userInput;
   const subject = OAB_AREAS[area] ?? area;
@@ -77,7 +79,7 @@ function oabQuestion(cases: WritingCase[]): SourceQuestion {
     cutoffShare: OAB_CUTOFF.share,
     cutoffSource: OAB_CUTOFF.source,
     grading,
-    id: first.id.replace(/-pt$/, ""),
+    id: first.id.replace(/-pt$/u, ""),
     question,
     stratum: "fgv-oab",
     writerInput: {
@@ -116,7 +118,7 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
 
   const notice = first.expected?.source?.notice ?? "";
   const { basis, context, question } = first.userInput;
-  const id = first.id.replace(/-\d+-pt$/, "");
+  const id = first.id.replace(/-\d+-pt$/u, "");
   const year = id.split("-")[2];
 
   const grading = noticeGrading(
@@ -172,9 +174,9 @@ function groupBy(cases: WritingCase[], key: (testCase: WritingCase) => string) {
 }
 
 export const SOURCE_QUESTIONS: SourceQuestion[] = [
-  ...groupBy(FGV_PUBLISHED_CASES, ({ id }) => id).map(oabQuestion),
+  ...groupBy(FGV_PUBLISHED_CASES, ({ id }) => id).map((cases) => oabQuestion(cases)),
   ...groupBy(
     CEBRASPE_PUBLISHED_CASES.filter(({ id }) => id.includes("-history-")),
-    ({ id }) => id.replace(/-\d+-pt$/, ""),
-  ).map(cacdQuestion),
+    ({ id }) => id.replace(/-\d+-pt$/u, ""),
+  ).map((cases) => cacdQuestion(cases)),
 ];

@@ -16,6 +16,10 @@ import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 
+function print(line = "") {
+  process.stdout.write(`${line}\n`);
+}
+
 const SYSTEM = `You are an FGV examiner grading answers to the OAB Exam's practical questions (2nd phase) against the official answer key (espelho).
 
 For each element of the key, decide whether the answer earns it. An element is earned only when the answer states it correctly; a wrong or contradictory statement earns nothing. FGV's rule: the mere citation of a legal provision earns no points, and a citation earns its points only in support of the correct answer it belongs to. Equivalent wording and equivalent provisions the element names count. Ignore spelling and grammar.
@@ -69,6 +73,7 @@ async function read({ item, model }: { item: Item; model: string }): Promise<Rea
   const earned = new Set(
     output.elements.filter((element) => element.earned).map(({ index }) => index),
   );
+
   const mark = aspects.reduce(
     (sum, aspect, index) => sum + (earned.has(index) ? (aspect.points ?? 0) : 0),
     0,
@@ -94,7 +99,10 @@ async function main() {
       return [result.value];
     }
 
-    console.error(`Failed ${jobs[index]?.item.id} / ${jobs[index]?.model}:`, result.reason);
+    process.stderr.write(
+      `${[`Failed ${jobs[index]?.item.id} / ${jobs[index]?.model}:`, result.reason].join(" ")}\n`,
+    );
+
     return [];
   });
 
@@ -112,15 +120,17 @@ async function main() {
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(file, null, 2)}\n`);
 
-  console.log(`Wrote ${marks.length}/${jobs.length} reader marks; spent $${spent.toFixed(4)}`);
+  print(`Wrote ${marks.length}/${jobs.length} reader marks; spent $${spent.toFixed(4)}`);
 
   for (const item of ITEMS) {
     const byReader = marks
       .filter(({ id }) => id === item.id)
       .map(({ mark, model }) => `${model} ${mark}`);
+
     const ablation = ABLATIONS.find(({ id }) => id === item.id);
     const espelho = ablation ? getAblationSource(ablation).espelho : null;
-    console.log(
+
+    print(
       `${item.id}: ${byReader.join(" | ")}${espelho ? ` (espelho ${espelho.low}–${espelho.high})` : ""}`,
     );
   }

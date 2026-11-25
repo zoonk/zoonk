@@ -248,8 +248,10 @@ export function getAblationSource(ablation: Ablation) {
 
   const aspects = testCase.userInput.basis.aspects;
   const official = testCase.expected?.officialTotal ?? 0;
+
   const lose = (indexes: number[]) =>
     indexes.reduce((sum, index) => sum + (aspects[index]?.points ?? 0), 0);
+
   const high = Number((official - lose(ablation.removed)).toFixed(2));
   const low = Number((high - lose(ablation.dependent)).toFixed(2));
 

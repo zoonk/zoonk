@@ -7,7 +7,7 @@ import { ABLATIONS, getAblationSource } from "./ablations";
 import { type BlindKeyFile, blindKeyInput } from "./blind-keys";
 import { SOURCE_QUESTIONS, type SourceQuestion } from "./source-questions";
 
-export type BlindKeyStratum = SourceQuestion["stratum"] | "fgv-oab-ablation";
+type BlindKeyStratum = SourceQuestion["stratum"] | "fgv-oab-ablation";
 
 export type BlindKeyExpected = {
   board: MarkRange;
@@ -18,7 +18,7 @@ export type BlindKeyExpected = {
   kind: "real" | "ablation";
 };
 
-export type BlindKeyCase = TestCase<BlindKeyExpected, GradeWritingInput>;
+type BlindKeyCase = TestCase<BlindKeyExpected, GradeWritingInput>;
 
 const KEYS = (keyFile as BlindKeyFile).keys;
 

@@ -4,8 +4,8 @@ import { settleWithConcurrency } from "@/lib/concurrency";
 import { getCallsCost } from "@/lib/cost";
 import { getMeteredCalls, meterModelCalls } from "@/lib/spend-meter";
 import {
-  BLIND_KEY_INSTRUCTIONS,
   BLIND_KEYS_FILE,
+  BLIND_KEY_INSTRUCTIONS,
   type BlindKey,
   type BlindKeyFile,
 } from "@/tasks/grade-essay-blind-key/blind-keys";
@@ -20,6 +20,10 @@ import {
   writeWritingPrompt,
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
+
+function print(line = "") {
+  process.stdout.write(`${line}\n`);
+}
 
 /**
  * Has the production writer (same model chain and prompt) key each real question a board set,
@@ -67,7 +71,7 @@ async function main() {
       return [result.value];
     }
 
-    console.error(`Failed ${sources[index]?.id}:`, result.reason);
+    process.stderr.write(`${[`Failed ${sources[index]?.id}:`, result.reason].join(" ")}\n`);
     return [];
   });
 
@@ -84,12 +88,10 @@ async function main() {
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(file, null, 2)}\n`);
 
-  console.log(
-    `Wrote ${keys.length}/${sources.length} keys to ${target}; spent $${spent.toFixed(4)}`,
-  );
+  print(`Wrote ${keys.length}/${sources.length} keys to ${target}; spent $${spent.toFixed(4)}`);
 
   for (const key of keys) {
-    console.log(`${key.questionId}: ${key.model}, copied question ${key.copiedQuestion}`);
+    print(`${key.questionId}: ${key.model}, copied question ${key.copiedQuestion}`);
   }
 }
 
