@@ -33,7 +33,7 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertEqual(day.shown, "~Jan 22")
     XCTAssertEqual(day.spoken, "About Jan 22")
     XCTAssertTrue(day.isDate)
-    XCTAssertEqual(month.shown, "~Apr")
+    XCTAssertEqual(month.shown, "~Apr 2027")
   }
 
   func testASetEndDateWinsOverTheEstimatedFinish() {
