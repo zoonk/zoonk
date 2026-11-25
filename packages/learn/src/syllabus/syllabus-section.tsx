@@ -18,6 +18,7 @@ import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
 import { groupSubjects } from "./group-subjects";
+import { namesModules } from "./names-modules";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
 import { CourseWeightsNote, QuestionsSourceNote, SubjectGroupHeading } from "./syllabus-notes";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
@@ -33,7 +34,7 @@ export function hasSyllabusSection<Syllabus extends SyllabusSectionView>(
 
 function useSectionTitle(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
-  return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
+  return namesModules(syllabus.goal.kind) ? t("Modules") : t("Subjects");
 }
 
 /** From this width a row shows its exam's question count in a column of its own. */
@@ -89,16 +90,18 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
 
 function SubjectRow({
   href,
+  isModule,
   sharedExams,
   subject,
 }: {
   href: string;
+  isModule: boolean;
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSectionSubject;
 }) {
   const formatShare = useFormatProgressShare();
   const questionCount = useExamQuestionCount();
-  const progress = useSubjectProgress()(subject);
+  const progress = useSubjectProgress({ isModule })(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const notPlanned = subject.notPlannedReason !== null;
   const share = progress.bar ? getSubjectShare(progress.bar) : subject.preparation;
@@ -175,6 +178,7 @@ export function SyllabusSection({
                 <li key={subject.key}>
                   <SubjectRow
                     href={subjectHref(subject.key)}
+                    isModule={namesModules(syllabus.goal.kind)}
                     sharedExams={syllabus.sharedExams}
                     subject={subject}
                   />

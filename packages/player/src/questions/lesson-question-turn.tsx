@@ -20,6 +20,7 @@ import { type LessonQuestionContext, isSameTopic } from "./lesson-question-conte
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
+import { useModuleSubject } from "./module-subject";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function QuestionContextLabel({
@@ -28,6 +29,7 @@ function QuestionContextLabel({
   context: LessonQuestionContext | LessonQuestionContextSummary;
 }) {
   const t = useExtracted();
+  const isModule = useModuleSubject();
 
   switch (context.kind) {
     case "answer":
@@ -43,7 +45,7 @@ function QuestionContextLabel({
     case "step":
       return t("About this part");
     case "subject":
-      return t("About this subject");
+      return isModule ? t("About this module") : t("About this subject");
     case "item":
       return context.answered ? t("About your answer") : t("About this question");
     default:
