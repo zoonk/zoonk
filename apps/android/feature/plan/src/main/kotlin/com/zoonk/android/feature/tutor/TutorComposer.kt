@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +39,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.composerColors
 import com.zoonk.android.ui.components.composerFocusThickness
 import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.sendButtonColors
 import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.theme.ZoonkRadius
 
@@ -143,12 +143,7 @@ private fun SendButton(
         busy = asking,
         modifier = modifier.size(SEND_SIZE),
         shape = RoundedCornerShape(ZoonkRadius.lg),
-        // A copy of the defaults: Material's builder takes the arrow's color from around the button.
-        colors =
-            IconButtonDefaults.filledIconButtonColors().copy(
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        colors = sendButtonColors(),
     ) {
         Icon(
             painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward),

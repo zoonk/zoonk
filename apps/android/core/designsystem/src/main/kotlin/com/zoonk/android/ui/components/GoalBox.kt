@@ -118,96 +118,90 @@ fun GoalBox(
     val words = MaterialTheme.zoonkType.lead.copy(color = colors.onSurface, lineHeight = GOAL_LINE_HEIGHT)
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
-    val shape = RoundedCornerShape(ZoonkRadius.xl)
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .then(if (focused) Modifier.focusRing(shape, colors.primary) else Modifier)
-                .background(colors.surfaceContainerLow, shape)
-                .border(1.dp, if (focused) colors.primary else colors.outline, shape)
-                .padding(16.dp),
-        ) {
-            val textField: @Composable () -> Unit = {
-                BasicTextField(
-                    state = state,
-                    inputTransformation = GoalInput,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .submitOnEnter(state, submit)
-                            .semantics {
-                                contentDescription = label
-                                if (isAskingForWords) line?.let { error(it) }
-                            },
-                    readOnly = isSubmitting,
-                    textStyle = words,
-                    cursorBrush = SolidColor(colors.primary),
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),
-                    onKeyboardAction = { submit() },
-                    lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 8),
-                    interactionSource = interaction,
-                    decorator = { field ->
-                        Box(Modifier.heightIn(min = 44.dp).padding(vertical = WORDS_PADDING)) {
-                            if (value.isEmpty()) {
-                                Text(
-                                    placeholder ?: stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale())),
-                                    color = colors.onSurfaceVariant,
-                                    style = words,
-                                )
-                            }
-                            field()
-                        }
-                    },
-                )
-            }
-
-            val submitButton: @Composable () -> Unit = {
-                // As main's, it waits for words: a button that would send nothing doesn't look ready.
-                Button(
-                    onClick = submit,
-                    enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
-                    busy = isSubmitting,
-                    size = ButtonSize.Large,
-                ) {
-                    Text(stringResource(R.string.goal_box_submit))
-                }
-            }
-
-            if (hiddenLabel == null) {
-                LabelBeside(
-                    label = {
-                        Text(
-                            label,
+        GoalPanel(focused, Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                val textField: @Composable () -> Unit = {
+                    BasicTextField(
+                        state = state,
+                        inputTransformation = GoalInput,
+                        modifier =
                             Modifier
-                                .clearAndSetSemantics {}
-                                .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
-                                .padding(vertical = WORDS_PADDING),
-                            style = words.copy(fontWeight = FontWeight.Medium),
-                        )
-                    },
-                    modifier = Modifier,
-                    field = textField,
-                )
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
-                    Spacer(Modifier.weight(1f))
-                    submitButton()
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .submitOnEnter(state, submit)
+                                .semantics {
+                                    contentDescription = label
+                                    if (isAskingForWords) line?.let { error(it) }
+                                },
+                        readOnly = isSubmitting,
+                        textStyle = words,
+                        cursorBrush = SolidColor(colors.primary),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),
+                        onKeyboardAction = { submit() },
+                        lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 8),
+                        interactionSource = interaction,
+                        decorator = { field ->
+                            Box(Modifier.heightIn(min = 44.dp).padding(vertical = WORDS_PADDING)) {
+                                if (value.isEmpty()) {
+                                    Text(
+                                        placeholder ?: stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale())),
+                                        color = colors.onSurfaceVariant,
+                                        style = words,
+                                    )
+                                }
+                                field()
+                            }
+                        },
+                    )
                 }
-            } else {
-                ActionBeside(
-                    field = textField,
-                    action = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
-                            submitButton()
-                        }
-                    },
-                    modifier = Modifier.padding(start = 10.dp),
-                )
+
+                val submitButton: @Composable () -> Unit = {
+                    // As main's, it waits for words: a button that would send nothing doesn't look ready.
+                    Button(
+                        onClick = submit,
+                        enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
+                        busy = isSubmitting,
+                        size = ButtonSize.Large,
+                    ) {
+                        Text(stringResource(R.string.goal_box_submit))
+                    }
+                }
+
+                if (hiddenLabel == null) {
+                    LabelBeside(
+                        label = {
+                            Text(
+                                label,
+                                Modifier
+                                    .clearAndSetSemantics {}
+                                    .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
+                                    .padding(vertical = WORDS_PADDING),
+                                style = words.copy(fontWeight = FontWeight.Medium),
+                            )
+                        },
+                        modifier = Modifier,
+                        field = textField,
+                    )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                        Spacer(Modifier.weight(1f))
+                        submitButton()
+                    }
+                } else {
+                    ActionBeside(
+                        field = textField,
+                        action = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                                submitButton()
+                            }
+                        },
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                }
             }
         }
 
@@ -219,6 +213,26 @@ fun GoalBox(
             )
         }
     }
+}
+
+/**
+ * Main's goal panel (`GOAL_PANEL_CLASS`): `card` inside an `input` line with `rounded-xl` corners; while [focused],
+ * the line in ink with main's focus ring outside it. The goal box draws it, and so does a question about material.
+ */
+@Composable
+fun GoalPanel(
+    focused: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
+    Box(
+        modifier
+            .then(if (focused) Modifier.focusRing(shape, colors.primary) else Modifier)
+            .background(colors.surfaceContainerLow, shape)
+            .border(1.dp, if (focused) colors.primary else colors.outline, shape),
+    ) { content() }
 }
 
 /**
