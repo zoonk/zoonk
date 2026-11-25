@@ -27,6 +27,7 @@ class PlanPhasesTest {
         assertEquals(listOf("Médico", "e farmácia"), bandNameParts("Médico e farmácia"))
         assertEquals(listOf("Funções", "do primeiro grau"), bandNameParts("Funções do primeiro grau"))
         assertEquals(listOf("Supercalifragilistic", "expialidocious"), bandNameParts("Supercalifragilistic expialidocious"))
+        assertEquals(listOf("Art", "and architecture"), bandNameParts("Art and architecture"))
     }
 
     @Test

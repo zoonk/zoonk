@@ -24,10 +24,16 @@ const ONE_LINE_NAME_LENGTH = 16;
 
 const SHORT_WORD_LENGTH = 3;
 
+const LETTER = /\p{L}/gu;
+
+function countLetters(word: string): number {
+  return word.match(LETTER)?.length ?? 0;
+}
+
 /**
- * A short name is one part; a longer one is cut between words. A cut that leaves a short word at
- * the end of the first line ("Médico e") or one word alone on the second is taken only when no
- * other cut exists; among the rest, the one whose longer part is shortest.
+ * A short name is one part; a longer one is cut between words. A cut is worse for each thing that
+ * reads badly: a short word at the end of the first line ("Médico e") and one word alone on the
+ * second. The cut with the fewest wins; among those, the one whose longer part is shortest.
  */
 export function splitBandName(name: string): [string, string | null] {
   const words = name.split(" ");
@@ -37,22 +43,22 @@ export function splitBandName(name: string): [string, string | null] {
   }
 
   const cuts = words.slice(1).map((_word, index) => {
-    const first = words.slice(0, index + 1);
+    const first = words.slice(0, index + 1).join(" ");
     const second = words.slice(index + 1);
+    const endsShort = countLetters(words[index] ?? "") <= SHORT_WORD_LENGTH;
 
     return {
-      first: first.join(" "),
-      longest: Math.max(first.join(" ").length, second.join(" ").length),
-      reads: (first.at(-1)?.length ?? 0) > SHORT_WORD_LENGTH && second.length > 1,
+      faults: Number(endsShort) + Number(second.length === 1),
+      first,
+      longest: Math.max(first.length, second.join(" ").length),
       second: second.join(" "),
     };
   });
 
-  const readable = cuts.filter((cut) => cut.reads);
-  const candidates = readable.length > 0 ? readable : cuts;
-
-  const best = candidates.reduce((shortest, cut) =>
-    cut.longest < shortest.longest ? cut : shortest,
+  const best = cuts.reduce((chosen, cut) =>
+    cut.faults < chosen.faults || (cut.faults === chosen.faults && cut.longest < chosen.longest)
+      ? cut
+      : chosen,
   );
 
   return [best.first, best.second];

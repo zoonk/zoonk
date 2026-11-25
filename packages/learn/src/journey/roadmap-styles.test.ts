@@ -17,10 +17,19 @@ describe(splitBandName, () => {
   it("never ends the first line on a short word or leaves one word alone when another cut exists", () => {
     expect(splitBandName("Médico e farmácia")).toStrictEqual(["Médico", "e farmácia"]);
 
+    expect(splitBandName("Funções do primeiro grau")).toStrictEqual([
+      "Funções",
+      "do primeiro grau",
+    ]);
+
     expect(splitBandName("Como funcionam as negociações")).toStrictEqual([
       "Como funcionam",
       "as negociações",
     ]);
+  });
+
+  it("takes the cut that reads badly in fewer ways when every cut reads badly", () => {
+    expect(splitBandName("Art and architecture")).toStrictEqual(["Art", "and architecture"]);
   });
 
   it("takes the balanced cut when every cut leaves one word alone", () => {
