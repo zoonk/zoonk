@@ -21,7 +21,6 @@ struct TimeAnswer: View {
   var updating = false
   /// A language goal's aim above the learner's level, which its finish is when they reach.
   var aim: String?
-  /// The learner took a subject out of their plan, so "everything" is only what it kept.
   var subjectsTakenOut = false
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void

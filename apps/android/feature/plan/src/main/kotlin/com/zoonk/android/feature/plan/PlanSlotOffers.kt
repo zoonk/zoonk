@@ -58,7 +58,7 @@ private fun suggestedTimeOffer(
     )
 }
 
-/** The suggested time is enough to cover everything by the goal's date: with a subject taken out, everything in the plan. */
+/** The suggested time is enough to cover everything by the goal's date. */
 @Composable
 private fun enoughBy(
     page: PlanPageState,

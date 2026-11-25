@@ -51,7 +51,6 @@ export function TimeAnswer({
   onRetry: () => void;
   onUseOffer: (minutes: number) => void;
   split?: DaySplit | null;
-  /** The learner took a subject out of their plan, so "everything" is only what it kept. */
   subjectsTakenOut?: boolean;
   updating?: boolean;
 }) {

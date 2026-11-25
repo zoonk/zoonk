@@ -120,10 +120,7 @@ internal fun goalDateText(
     return if (date.estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
 }
 
-/**
- * The time we suggest: by the date when it covers everything (with a subject taken out, everything in the plan), or that
- * the plan starts with what matters most.
- */
+/** The time we suggest: by the date when it covers everything, or that the plan starts with what matters most. */
 @Composable
 private fun suggestWords(
     date: GoalDate?,

@@ -10,10 +10,7 @@ export function useTimeAnswerTexts() {
   const goalDate = useGoalDateValues();
 
   return {
-    /**
-     * Where the time suggested studies everything by the date: the line under its title. With a
-     * subject taken out, "everything" is only what the plan kept, so it says so.
-     */
+    /** Where the time suggested studies everything by the date: the line under its title. */
     enoughBy: ({
       date,
       exam,
