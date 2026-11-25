@@ -168,22 +168,58 @@ function occurrences({ of, within }: { of: string; within: string }): number[] {
 }
 
 /**
+ * A repaired copy may leave out the text's marks and blank lines, never change or add a character:
+ * a program's own stars and spaces tell two programs apart.
+ */
+function dropsOnlyMarks({ copy, span, text }: { copy: string; span: Span; text: string }): boolean {
+  const marks = findMarkPlaces(text);
+  const wanted = copy.replaceAll("\r", "").replaceAll(/\n+/gu, "\n");
+  let next = 0;
+  let previous = "";
+
+  for (let at = span.start; at < span.end; at += 1) {
+    const char = text[at] ?? "";
+
+    if (char === wanted[next]) {
+      next += 1;
+    } else if (!marks.has(at) && char !== "\r" && !(char === "\n" && previous === "\n")) {
+      return false;
+    }
+
+    previous = char === "\r" ? previous : char;
+  }
+
+  return next === wanted.length;
+}
+
+/**
  * Every place the text holds what the model copied: word for word first, then with the blank lines
  * and inline marks the copy dropped.
  */
 function locateCopies({ quote, text }: { quote: string; text: string }): Span[] {
-  const copy = readCopy(quote).value.trim();
   const { offsets, value } = readCopy(text);
+
+  /** The copy's own stars may be a program's or bold the model kept, so both readings are tried. */
+  const readings = new Set([
+    readCopy(quote).value.trim(),
+    quote.replaceAll("\r", "").replaceAll(/\n+/gu, "\n").trim(),
+  ]);
+
+  const repaired = [...readings]
+    .flatMap((copy) =>
+      occurrences({ of: copy, within: value }).map((at) => ({
+        end: (offsets[at + copy.length - 1] ?? 0) + 1,
+        start: offsets[at] ?? 0,
+      })),
+    )
+    .filter((span) => dropsOnlyMarks({ copy: quote.trim(), span, text }));
 
   return [
     ...occurrences({ of: quote, within: text }).map((at) => ({
       end: at + quote.length,
       start: at,
     })),
-    ...occurrences({ of: copy, within: value }).map((at) => ({
-      end: (offsets[at + copy.length - 1] ?? 0) + 1,
-      start: offsets[at] ?? 0,
-    })),
+    ...repaired,
   ];
 }
 

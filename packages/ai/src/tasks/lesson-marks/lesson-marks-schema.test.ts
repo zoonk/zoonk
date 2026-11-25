@@ -330,6 +330,13 @@ describe(normalizeLessonMarks, () => {
       expect(exampleOf({ example: 'Run console.log("ab").', text: stars })).toBe(
         'Run `console.log("ab")`.',
       );
+
+      const bolded =
+        'A rule. Run `console.log("ab")`. Then compare. Run `console.log("a**b**")`. End.';
+
+      expect(exampleOf({ example: 'Run console.log("a**b**").', text: bolded })).toBe(
+        'Run `console.log("a**b**")`.',
+      );
     });
 
     it("frames the whole bold sentence, after an emoji too", () => {
