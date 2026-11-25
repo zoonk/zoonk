@@ -240,7 +240,6 @@
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
   "plan_estimate_based_on_reviews": "9d8cd8d617836d733b3ae99238dcec4074f5474880a05ac26f98b5890236ac58",
   "plan_estimate_waits": "78afcb50def71c2ad7a1040355ad86cc97fbbbe07773966330af09bbda378cba",
-  "plan_estimated_finish_label": "d68615b8938fac8d4461d41c83f2e30663a2b3a81a5c89dd7518c529e7ec79c2",
   "plan_estimated_score": "471ba09383b266bb1ae2d1e0e64492502e45da480ab3d606f34d5fe572793f58",
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
   "plan_everything": "6ec76e76cdb65fded32dda7ad838e52144e3b7fa9eb66aadc7676897d609c2fd",
@@ -705,7 +704,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">%1$s par jour</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">Fin estimée</string>
     <string name="plan_every_day">Tous les jours</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Prochain examen blanc : %1$s</string>

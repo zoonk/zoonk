@@ -85,8 +85,9 @@ struct PlanRoadmapContent: View {
   let structure: GoalSyllabus?
 
   var body: some View {
-    // Main's: one phase is the whole plan, so there's nothing to place the learner in.
-    if context.plan.roadPhases.count >= 2 {
+    // Main's: one phase is the whole plan, so there's nothing to place the learner in, and a
+    // paused plan has no place in time until the learner resumes.
+    if context.plan.roadPhases.count >= 2, !context.isPaused {
       if structure != nil {
         Button {
           context.show(.path)
@@ -619,8 +620,6 @@ struct PlanMoreSection: View {
 
 struct PlanSettingsSection: View {
   let context: PlanContext
-  /// The page lists the path, whose last row dates the finish.
-  let pathShown: Bool
 
   @Environment(\.self) private var environment
 
@@ -633,15 +632,6 @@ struct PlanSettingsSection: View {
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
           : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date"),
         value: dateValue, section: .date)
-
-      if let finish = estimatedFinish {
-        fact(
-          label: Text(
-            "Estimated finish", tableName: "Plan",
-            comment: "Label of the row with the day a plan with no end date should finish"),
-          value: Text(verbatim: finish.text).font(TypeStyle.data.font(in: environment))
-            .accessibilityLabel(Text(verbatim: finish.spoken)))
-      }
 
       setting(
         label: Text("Daily study time", tableName: "Plan"),
@@ -799,19 +789,18 @@ struct PlanSettingsSection: View {
     }
   }
 
-  /// Main's `EstimatedFinishRow`: the path's last row dates the estimated finish. Without main's
-  /// timeline (#2873), a plan of subjects shows no path, so its own row says it; a paused goal has
-  /// no pace to estimate from.
-  private var estimatedFinish: (text: String, spoken: String)? {
+  /// The finish the plan works out when the learner set no date; a paused goal has no pace to
+  /// estimate from.
+  private var estimatedFinish: (isoDate: String, month: Bool)? {
     let plan = context.plan
 
-    guard !pathShown, !context.isPaused, context.goal.kind != .exam, plan.end == nil,
+    guard !context.isPaused, context.goal.kind != .exam, plan.end == nil,
       plan.schedule.targetDate == nil, let finish = plan.roadmapFinish(isExam: false)
     else {
       return nil
     }
 
-    return PlanDate.estimate(finish.isoDate, today: plan.today, month: finish.month)
+    return (finish.isoDate, finish.month)
   }
 
   /// A time alone is a value, in the data face; with the weekend's words, the words' face.
@@ -832,7 +821,7 @@ struct PlanSettingsSection: View {
       target: schedule.targetDate.map {
         (isoDate: $0, estimate: schedule.targetDateEstimated, month: schedule.targetDateNamedMonth)
       },
-      isExam: context.goal.kind == .exam, today: context.plan.today)
+      finish: estimatedFinish, isExam: context.goal.kind == .exam, today: context.plan.today)
     return Text(verbatim: value.shown)
       .typeStyle(value.isDate ? .data : .body)
       .accessibilityLabel(Text(verbatim: value.spoken))

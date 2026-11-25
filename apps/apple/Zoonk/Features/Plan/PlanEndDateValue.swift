@@ -10,9 +10,13 @@ struct PlanEndDateValue: Equatable {
   let spoken: String
   var isDate = false
 
-  /// The date the learner set, never the day a finished plan was done.
-  init(target: (isoDate: String, estimate: Bool, month: Bool)?, isExam: Bool, today: String) {
-    guard let target else {
+  /// The date the learner set, or with none the finish the plan works out, as the timeline says
+  /// it. Never the day a finished plan was done.
+  init(
+    target: (isoDate: String, estimate: Bool, month: Bool)?,
+    finish: (isoDate: String, month: Bool)? = nil, isExam: Bool, today: String
+  ) {
+    guard let target = target ?? finish.map({ ($0.isoDate, true, $0.month) }) else {
       shown =
         isExam
         ? String(localized: "To be confirmed", table: "Plan")

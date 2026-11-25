@@ -24,6 +24,26 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertFalse(value.isDate)
   }
 
+  func testAnEndDateNotSetSaysTheEstimatedFinishAsEveryEstimate() {
+    let day = PlanEndDateValue(
+      target: nil, finish: ("2027-01-22", false), isExam: false, today: "2027-01-04")
+    let month = PlanEndDateValue(
+      target: nil, finish: ("2027-04-20", true), isExam: false, today: "2027-01-04")
+
+    XCTAssertEqual(day.shown, "~Jan 22")
+    XCTAssertEqual(day.spoken, "About Jan 22")
+    XCTAssertTrue(day.isDate)
+    XCTAssertEqual(month.shown, "~Apr 2027")
+  }
+
+  func testASetEndDateWinsOverTheEstimatedFinish() {
+    let value = PlanEndDateValue(
+      target: ("2027-03-05", false, false), finish: ("2027-01-22", false), isExam: false,
+      today: "2027-01-04")
+
+    XCTAssertEqual(value.shown, "Mar 5")
+  }
+
   func testTheDailyTimeNamesTheWeekendsOwnTime() throws {
     let weekdays = try shape(weekend: nil)
     let both = try shape(weekend: 30)

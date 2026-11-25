@@ -240,7 +240,6 @@
   "plan_estimate_based_on_last": "9a84f00f05c74328076349e2458e239aff2e9911838f181955099513493110eb",
   "plan_estimate_based_on_reviews": "cd65fa14c4b8e2c8972e9170b591649984f95567250ffe5ef1c7dc9a637ced61",
   "plan_estimate_waits": "c63f829e2767dd057670c6ff6718fa658235b8f26302f531bccee5aa1cf85056",
-  "plan_estimated_finish_label": "7e19db9b1dfbc67342a4e2bd20c45d7f2444ff710afafd7b0b1198d4ebc03a6e",
   "plan_estimated_score": "00ea4b92cc768f8cf84ef9c5e6a016641daf37dcb8db005fc4c3a6c772f6a2bf",
   "plan_every_day": "7b0616256cd2d2a7a3ba3ac2fc38f80686583f7a2b0235be2bfe8ad01d36b471",
   "plan_everything": "d53477af5909b41801dc4f8b988b5d3996d05b4df7c56e0837ffdd52b8c9b524",
@@ -681,7 +680,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">하루 %1$s</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">예상 완료일</string>
     <string name="plan_every_day">매일</string>
     <string name="plan_day_range">%1$s ~ %2$s</string>
     <string name="plan_mocks_next">다음 일정: %1$s</string>

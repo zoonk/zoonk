@@ -27,7 +27,7 @@ async function openJourney(page: Page) {
 }
 
 test.describe("Journey", () => {
-  test("dates the estimated finish on the path, not in the End date row, when the learner set no date", async ({
+  test("the End date row says the timeline's estimated finish when the learner set no date", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
@@ -37,14 +37,14 @@ test.describe("Journey", () => {
       await page.setViewportSize({ height: 900, width: 1440 });
       await openJourney(page);
 
+      const finish = page.locator('[data-state="finish"] [data-slot="plan-date"]');
+      await expect(finish).toContainText(/^~/u);
+      const finishText = (await finish.textContent()) ?? "";
+
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const endDate = properties.getByRole("button", { name: /^End date/u });
-      await expect(endDate).toContainText("None set");
-      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveCount(0);
-
-      await expect(page.locator('[data-state="finish"] [data-slot="plan-date"]')).toContainText(
-        /^~/u,
-      );
+      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveText(finishText);
+      await expect(endDate).not.toContainText("None set");
     });
   });
 
@@ -64,6 +64,10 @@ test.describe("Journey", () => {
       await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
       await expect(estimate).toHaveCount(0);
       await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
+
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
     });
   });
 

@@ -523,6 +523,9 @@ internal fun CheckpointRow(
         when {
             done -> sameWords(stringResource(R.string.plan_challenge_won))
 
+            // A paused plan has nothing planned until the learner resumes, as [PhaseRow]'s end.
+            page.isPaused -> null
+
             // Dated today, the next session is today's, which may already be under way.
             whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
 

@@ -240,7 +240,6 @@
   "plan_estimate_based_on_last": "29b89e4d6487d09d50898d656d285382b046762a40d9cd89a04f105dce5b40c7",
   "plan_estimate_based_on_reviews": "4159db1567950eefd3b81b518413578f0abacd1234ea59e0f1818150e11464ca",
   "plan_estimate_waits": "987848e34cf7812dcce47d137259666e40ffd2a4c19e4184da0a81e0ce243362",
-  "plan_estimated_finish_label": "4d2c13d4363e4ddaba3f277acda9786e2d787791ad9410a75c907949cb76387f",
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "020e3d2b1215025c0f75a09789731213b3f5aac74890df408257f4795ffccbf6",
@@ -681,7 +680,6 @@
     <!-- A plan's time a day when every day has the same, like "15 min a day". -->
     <string name="plan_time_per_day">1日%1$s</string>
     <!-- Label of the row with the day a plan with no end date should finish. -->
-    <string name="plan_estimated_finish_label">完了予定日</string>
     <string name="plan_every_day">毎日</string>
     <string name="plan_day_range">%1$s〜%2$s</string>
     <string name="plan_mocks_next">次回は%1$s</string>

@@ -29,7 +29,6 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.GoalContentGoal
@@ -97,7 +96,6 @@ fun PlanSyllabusSection(
                 }
             }
 
-            SectionNote(annotate(sectionCount(syllabus)), Modifier.padding(top = 12.dp))
             // Main's quiet "Sources": where the question counts and the course's weights come from, for who wants to check.
             if (syllabus.questionsSource != null || syllabus.courseWeights?.source != null) {
                 QuietDisclosure(stringResource(R.string.plan_sources), Modifier.padding(horizontal = PAGE_PADDING)) {
@@ -220,36 +218,6 @@ private fun SubjectRow(
             )
         },
     )
-}
-
-/** How much the section holds, as the plan's reveal counted it: the notice's own subjects, not the plan's extras. */
-@Composable
-private fun sectionCount(syllabus: Syllabus): String {
-    val subjects = syllabus.subjects.count { it.source == SyllabusSubject.Source.NOTICE }
-    val topics = syllabus.topicCount.toInt()
-
-    return when {
-        syllabus.fromMaterial -> {
-            val count = if (topics > 0) topics else subjects
-            pluralStringResource(R.plurals.goalcontent_material_topic_count, count, count)
-        }
-
-        syllabus.kind == Syllabus.Kind.NOTICE && topics > 0 -> {
-            listOf(
-                pluralStringResource(R.plurals.goalcontent_subject_count, subjects, subjects),
-                pluralStringResource(R.plurals.goalcontent_topic_count, topics, topics),
-            ).factsLine()
-        }
-
-        syllabus.goal.kind == GoalContentGoal.Kind.EXAM -> {
-            val count = if (syllabus.kind == Syllabus.Kind.NOTICE) subjects else syllabus.subjects.count { !it.isExtra }
-            pluralStringResource(R.plurals.goalcontent_subject_count, count, count)
-        }
-
-        else -> {
-            pluralStringResource(R.plurals.goalcontent_module_count, syllabus.subjects.size, syllabus.subjects.size)
-        }
-    }
 }
 
 /** Optional study isn't on the exam, so its row counts the lessons done instead of a readiness share. */
