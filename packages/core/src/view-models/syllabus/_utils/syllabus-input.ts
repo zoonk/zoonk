@@ -24,8 +24,6 @@ export type NoticeSubject = {
   /** The notice's heading each of its topics sits under, by the topic's words (ENEM's "Physics"). */
   topicHeadings?: ReadonlyMap<string, string>;
   topics: readonly string[];
-  /** Written-task areas belong to the subject whose test asks them. */
-  writtenTasks: readonly string[];
 };
 
 export type SyllabusSkill = {

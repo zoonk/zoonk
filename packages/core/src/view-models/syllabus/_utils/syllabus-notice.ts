@@ -1,6 +1,5 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
-import { getWrittenTasks } from "../../../exams/_utils/written-tasks";
 import { type ExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
 import { getPassMarks } from "../../../library/exams/pass-marks";
@@ -72,7 +71,6 @@ export async function loadNotice(
     ),
     topicHeadings: getTopicHeadings(subject.topicGroups),
     topics: subject.topics,
-    writtenTasks: getWrittenTasks({ structure, subject }),
   }));
 
   return {

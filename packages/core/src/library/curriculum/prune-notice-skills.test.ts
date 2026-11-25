@@ -1,14 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findOutsideNoticeSkills } from "./prune-notice-skills";
 
-const subjects = [
-  {
-    name: "Public Finance",
-    shortName: "Finance",
-    topics: ["Budget laws"],
-    writtenTasks: ["Fiscal opinion"],
-  },
-];
+const subjects = [{ name: "Public Finance", shortName: "Finance", topics: ["Budget laws"] }];
 
 describe(findOutsideNoticeSkills, () => {
   it("keeps scored parts and matched content, walking prerequisites only from notice content", () => {

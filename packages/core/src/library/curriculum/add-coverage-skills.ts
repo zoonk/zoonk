@@ -5,7 +5,7 @@ import {
   findUncoveredTopics,
   isWrittenTestSubject,
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
-import { matchNoticeAreas } from "../../exams/_utils/match-areas";
+import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
@@ -166,9 +166,9 @@ function isWrittenTestArea({
     return false;
   }
 
-  const { named, parts } = matchNoticeAreas({ areas: [area], subjects: outline.subjects });
+  const named = matchAreasToSubjects({ areas: [area], subjects: outline.subjects });
   const subject = outline.subjects[named.get(area) ?? -1];
-  return parts.has(area) || Boolean(subject && isWrittenTestSubject(subject));
+  return Boolean(subject && isWrittenTestSubject(subject));
 }
 
 function addCoverageSkills({

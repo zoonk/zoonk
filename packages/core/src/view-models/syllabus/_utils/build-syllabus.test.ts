@@ -40,7 +40,6 @@ const notice: SyllabusInput["notice"] = {
       share: 0.5,
       shortName: null,
       topics: ["Ortografia", "Coesão textual", "Tempos verbais"],
-      writtenTasks: [],
     },
     {
       group: "Conhecimentos básicos (P1)",
@@ -49,7 +48,6 @@ const notice: SyllabusInput["notice"] = {
       share: 0.3,
       shortName: null,
       topics: ["Princípios fundamentais", "Regimento Interno da Câmara dos Deputados"],
-      writtenTasks: [],
     },
     {
       group: "Conhecimentos específicos (P2)",
@@ -58,7 +56,6 @@ const notice: SyllabusInput["notice"] = {
       share: 0.2,
       shortName: null,
       topics: ["Procedimento legislativo", "Regimento Interno da Câmara dos Deputados"],
-      writtenTasks: [],
     },
   ],
   url: "https://example.com/edital.pdf",
@@ -550,39 +547,6 @@ describe(buildSyllabus, () => {
     });
   });
 
-  it("puts the plan's area for part of a written test under the subject whose test asks it", () => {
-    const discursive = {
-      group: "Prova discursiva (P3)",
-      name: "Prova discursiva",
-      questions: null,
-      share: null,
-      shortName: null,
-      topics: ["Questões discursivas sobre os conhecimentos específicos"],
-      writtenTasks: [
-        "questões discursivas sobre conhecimentos específicos, de até 20 linhas",
-        "peça técnica sobre conhecimentos específicos, de até 50 linhas",
-      ],
-    };
-
-    const input = oldGraphInput();
-
-    const syllabus = buildSyllabus({
-      ...input,
-      notice: input.notice && { ...input.notice, subjects: [...input.notice.subjects, discursive] },
-      skills: [
-        ...input.skills,
-        { area: "Peça técnica", name: "Redigir uma peça técnica", skillId: "s-peca", topics: [] },
-      ],
-    });
-
-    expect(syllabus.subjects.find((subject) => subject.name === "Prova discursiva")).toMatchObject({
-      areas: ["Peça técnica"],
-      shortName: "Prova discursiva",
-    });
-
-    expect(syllabus.subjects.some((subject) => subject.name === "Peça técnica")).toBe(false);
-  });
-
   it("says a notice topic no skill teaches isn't in the plan yet", () => {
     const syllabus = buildSyllabus({
       ...oldGraphInput(),
@@ -766,7 +730,6 @@ describe(buildSyllabus, () => {
             share: 0.1,
             shortName: "Ética Profissional",
             topics: [],
-            writtenTasks: [],
           },
         ],
         url: null,
@@ -804,7 +767,6 @@ describe(buildSyllabus, () => {
       share: null,
       shortName: null,
       topics: ["Membrana plasmática", "Organelas", "Teoria celular", "Vírus"],
-      writtenTasks: [],
     };
 
     const input: SyllabusInput = {
@@ -1126,7 +1088,6 @@ describe(buildSyllabus, () => {
             share: null,
             shortName: "Natureza",
             topics: ["Moléculas, células e tecidos", "Hereditariedade e diversidade da vida"],
-            writtenTasks: [],
           },
         ],
         url: null,
@@ -1176,7 +1137,6 @@ describe(buildSyllabus, () => {
               ["Transformações químicas", "Química"],
             ]),
             topics: ["Energia, trabalho e potência", "Transformações químicas"],
-            writtenTasks: [],
           },
         ],
         url: null,
@@ -1233,7 +1193,6 @@ describe(buildSyllabus, () => {
             share: 0.4,
             shortName: null,
             topics: ["Estudo do texto argumentativo"],
-            writtenTasks: [],
           },
           {
             group: null,
@@ -1243,7 +1202,6 @@ describe(buildSyllabus, () => {
             share: 0.05,
             shortName: "Inglês",
             topics: ["Vocábulos e expressões de textos em inglês e seu tema"],
-            writtenTasks: [],
           },
           {
             group: null,
@@ -1253,7 +1211,6 @@ describe(buildSyllabus, () => {
             share: 0.45,
             shortName: null,
             topics: ["Razões e proporções"],
-            writtenTasks: [],
           },
         ],
         url: null,
@@ -1332,16 +1289,7 @@ function readLaw({
 }
 
 function noticeSubjectOf(name: string, partOf: string | null, share: number) {
-  return {
-    group: null,
-    name,
-    partOf,
-    questions: 5,
-    share,
-    shortName: null,
-    topics: [],
-    writtenTasks: [],
-  };
+  return { group: null, name, partOf, questions: 5, share, shortName: null, topics: [] };
 }
 
 describe("an exam subject out of the plan", () => {

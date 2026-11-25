@@ -83,29 +83,3 @@ export function followsNotice({
 }): boolean {
   return areas.length > 0 && matches.size * 2 >= areas.length;
 }
-
-export function matchNoticeAreas({
-  areas,
-  subjects,
-}: {
-  areas: readonly string[];
-  subjects: readonly (SubjectNames & { writtenTasks?: readonly string[] })[];
-}) {
-  const named = matchAreasToSubjects({ areas, subjects });
-
-  const parts = new Map(
-    areas.flatMap((area) => {
-      if (named.has(area)) {
-        return [];
-      }
-
-      const asking = subjects.flatMap((subject, index) =>
-        subject.writtenTasks?.some((task) => namesMatch(area, task)) ? [index] : [],
-      );
-
-      return asking.length === 1 ? [[area, asking[0] ?? 0] as const] : [];
-    }),
-  );
-
-  return { matches: new Map([...named, ...parts]), named, parts };
-}
