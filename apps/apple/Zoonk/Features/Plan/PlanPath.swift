@@ -351,7 +351,10 @@ struct PlanChapterRow: View {
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
-        context.show(.farTopic(skillId: skillId, title: chapter.title))
+        context.show(
+          .farTopic(
+            skillId: skillId, title: chapter.title, lessons: chapter.lessonsTotal,
+            start: chapter.nextDate))
       } label: {
         content(isMuted: false)
           .disclosureChevron()
@@ -545,6 +548,11 @@ extension PlanDate {
 }
 
 struct PlanSyllabusSection: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+  /// The rows' width, which decides their columns, so each heading sits over its own.
+  @State private var rowWidth: CGFloat = 0
+
   let goalKind: LearnerGoal.Kind
   let syllabus: GoalSyllabus
   /// The exam's choices the plan follows, each named in a line with Change, as main's
@@ -595,7 +603,8 @@ struct PlanSyllabusSection: View {
         ForEach(group.subjects) { subject in
           PageLink(route: .subject(subjectKey: subject.key)) {
             SyllabusSubjectRow(
-              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject),
+              width: $rowWidth)
           }
         }
       }
@@ -605,17 +614,15 @@ struct PlanSyllabusSection: View {
           ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
           : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
       ) {
-        Group {
-          if isExam {
-            Text("Preparation", tableName: "Plan", comment: "What the subjects' bars measure")
-          } else {
-            Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
-          }
+        if isExam {
+          barsMeaning
+            // Main's legend for the bars is quiet words, not a mono fact.
+            .typeStyle(.small)
+            // Over the values' column: the rows keep the chevron's room after their values.
+            .chevronSlot()
+        } else {
+          CoverageLegend()
         }
-        // Main's legend for the bars is quiet words, not a mono fact.
-        .typeStyle(.small)
-        // Over the values' column: the rows keep the chevron's room after their values.
-        .chevronSlot()
       }
     } footer: {
       SectionFooter {
@@ -624,6 +631,37 @@ struct PlanSyllabusSection: View {
           SyllabusSources(syllabus: syllabus)
         }
       }
+    }
+  }
+
+  /// Main's `BarsMeaning`: "On the exam" over the question counts where rows show them, and
+  /// "Preparation" ending where the shares end, overhanging toward the bars.
+  @ViewBuilder private var barsMeaning: some View {
+    let preparation = Text(
+      "Preparation", tableName: "Plan", comment: "What the subjects' bars measure")
+
+    if SyllabusSubjectRow.showsQuestions(rowWidth),
+      syllabus.subjects.contains(where: { ($0.questions ?? 0) > 0 })
+    {
+      HStack(spacing: SyllabusSubjectRow.columnGap) {
+        Text(
+          "On the exam", tableName: "Plan",
+          comment:
+            "Heads the column of how many questions each subject has on the exam, like \"45 questions\"."
+        )
+        .frame(width: SyllabusSubjectRow.questionsWidth, alignment: .trailing)
+
+        preparation
+          .fixedSize()
+          .frame(
+            width: SyllabusSubjectRow.barWidth(rowWidth) + 12
+              + SyllabusSubjectRow.shareWidth(
+                dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+            alignment: .trailing)
+      }
+      .lineLimit(1)
+    } else {
+      preparation
     }
   }
 
@@ -820,11 +858,31 @@ struct SyllabusSubjectRow: View {
   let subject: SyllabusSubject
   let isExam: Bool
   var sharedExams: [GoalSyllabus.SharedExam] = []
+  /// The row's own width, which its section's headings follow.
+  @Binding var width: CGFloat
 
   /// Main's container widths: the bar beside the name from 32rem, the question count too from 42rem.
-  @State private var width: CGFloat = 0
   private static let barBesideFrom: CGFloat = 512
   private static let questionsFrom: CGFloat = 672
+  static let questionsWidth: CGFloat = 104
+  static let columnGap: CGFloat = 14
+
+  static func showsQuestions(_ width: CGFloat) -> Bool {
+    width >= questionsFrom
+  }
+
+  static func barWidth(_ width: CGFloat) -> CGFloat {
+    min(max(width * 0.3, 112), 224)
+  }
+
+  /// As wide as the widest share, so every subject's bar ends on one edge.
+  static func shareWidth(dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?)
+    -> CGFloat
+  {
+    TypeStyle.data.width(
+      of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
+      dynamicTypeSize: dynamicTypeSize, legibility: legibility)
+  }
 
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
@@ -837,19 +895,18 @@ struct SyllabusSubjectRow: View {
     RowLayout {
     } words: {
       if isWide {
-        HStack(spacing: 14) {
+        HStack(spacing: Self.columnGap) {
           name
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          if width >= Self.questionsFrom {
+          if Self.showsQuestions(width) {
             questions
-              .frame(width: 104, alignment: .trailing)
+              .frame(width: Self.questionsWidth, alignment: .trailing)
           }
 
           if measured {
-            Meter(value: share, fill: .success)
-              .frame(width: min(max(width * 0.3, 112), 224))
-              .accessibilityHidden(true)
+            bar
+              .frame(width: Self.barWidth(width))
           }
         }
       } else {
@@ -857,20 +914,17 @@ struct SyllabusSubjectRow: View {
           name
 
           if measured {
-            Meter(value: share, fill: .success)
-              .accessibilityHidden(true)
+            bar
           }
         }
       }
     } value: {
       if !subject.isExtra {
-        // As wide as the widest share, so every subject's bar ends on one edge.
         Text(share, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
           .frame(
-            minWidth: TypeStyle.data.width(
-              of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
+            minWidth: Self.shareWidth(
               dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
             alignment: .trailing)
       }
@@ -881,6 +935,16 @@ struct SyllabusSubjectRow: View {
       width = $0
     }
     .accessibilityElement(children: .combine)
+  }
+
+  /// Main's subject bar: an exam's preparation, else the lessons studied and those already known.
+  @ViewBuilder private var bar: some View {
+    if isExam {
+      Meter(value: subject.preparation ?? 0, fill: .success)
+        .accessibilityHidden(true)
+    } else {
+      CoverageBar(studied: subject.coverage.studied, known: subject.coverage.known)
+    }
   }
 
   /// Its name, the other exams that share it, and why it isn't in the plan.

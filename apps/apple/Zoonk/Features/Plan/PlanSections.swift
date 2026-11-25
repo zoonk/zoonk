@@ -52,12 +52,22 @@ func planDurationText(minutes: Double) -> String {
 }
 
 /// Main's `DailyTimeValue`: the time a day, and the weekend's when it has its own, in the same words
-/// wherever the plan says it.
-func dailyTimeText(_ shape: GoalPlan.WeekShape) -> (text: String, hasWeekend: Bool) {
+/// wherever the plan says it. Alone in the "Daily study time" row the time is a value; anywhere
+/// else ([perDay]) it says "a day".
+func dailyTimeText(_ shape: GoalPlan.WeekShape, perDay: Bool = false) -> (
+  text: String, hasWeekend: Bool
+) {
   let weekdays = planDurationText(minutes: Double(shape.weekdays))
 
   guard let weekend = shape.weekend else {
-    return (weekdays, false)
+    return (
+      perDay
+        ? String(
+          localized: "\(weekdays) a day", table: "Plan",
+          comment: "A plan's time a day when every day has the same, like '15 min a day'")
+        : weekdays,
+      false
+    )
   }
 
   return (
@@ -476,7 +486,7 @@ struct PlanNumbersSection: View {
           localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
           locale: .appLanguage, comment: "Lessons left in a plan whose date passed")
       case .ahead, .behind, .onTrack:
-        timeShownBeside ? nil : dailyTimeText(context.plan.schedule.shape).text
+        timeShownBeside ? nil : dailyTimeText(context.plan.schedule.shape, perDay: true).text
       default:
         nil
       }
@@ -598,6 +608,8 @@ struct PlanMoreSection: View {
 
 struct PlanSettingsSection: View {
   let context: PlanContext
+  /// The page lists the path, whose last row dates the finish.
+  let pathShown: Bool
 
   @Environment(\.self) private var environment
 
@@ -610,6 +622,15 @@ struct PlanSettingsSection: View {
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
           : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date"),
         value: dateValue, section: .date)
+
+      if let finish = estimatedFinish {
+        fact(
+          label: Text(
+            "Estimated finish", tableName: "Plan",
+            comment: "Label of the row with the day a plan with no end date should finish"),
+          value: Text(verbatim: finish.text).font(TypeStyle.data.font(in: environment))
+            .accessibilityLabel(Text(verbatim: finish.spoken)))
+      }
 
       setting(
         label: Text("Daily study time", tableName: "Plan"),
@@ -765,6 +786,20 @@ struct PlanSettingsSection: View {
     } icon: {
       EmptyView()
     }
+  }
+
+  /// Main's `EstimatedFinishRow`: the path's last row and the timeline date the estimated finish;
+  /// a plan of subjects with one phase shows neither, so its own row says it.
+  private var estimatedFinish: (text: String, spoken: String)? {
+    let plan = context.plan
+
+    guard !pathShown, plan.roadPhases.count < 2, context.goal.kind != .exam, plan.end == nil,
+      plan.schedule.targetDate == nil, let finish = plan.roadmapFinish(isExam: false)
+    else {
+      return nil
+    }
+
+    return PlanDate.estimate(finish.isoDate, today: plan.today, month: finish.month)
   }
 
   /// A time alone is a value, in the data face; with the weekend's words, the words' face.

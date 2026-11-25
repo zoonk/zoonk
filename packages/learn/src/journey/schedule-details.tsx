@@ -117,7 +117,7 @@ export function useScheduleNumber({
   }
 
   return {
-    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : <DailyTimeValue readout />,
+    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : <DailyTimeValue perDay />,
     label,
     value: statusText(status),
   };
@@ -148,7 +148,7 @@ export function ScheduleDetails({
         <p className="font-medium">{showsPaused ? pausedText : statusText(status)}</p>
         {!showsPaused && status.kind === "onTrack" && (
           <p className="text-muted-foreground text-sm">
-            <DailyTimeValue readout />
+            <DailyTimeValue perDay />
           </p>
         )}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}

@@ -53,6 +53,8 @@
     <string name="goalcontent_new">New</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparation</string>
+    <!-- Heads the column of how many questions each subject has on the exam, like "45 questions". -->
+    <string name="goalcontent_on_the_exam">On the exam</string>
     <string name="goalcontent_not_in_plan">Not in your plan</string>
     <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
     <string name="goalcontent_not_in_notice">Not in the official guide</string>

@@ -104,14 +104,14 @@ private struct SubjectContent: View {
     } secondary: {
       // As on the web, only the side pane names the questions and the next date.
       ZoonkList {
-        numbers
+        numbers(titled: true)
         SubjectDetails(subject: subject, edition: syllabus.questionsSource?.edition)
         topics
       }
     } single: {
       ZoonkList {
         header
-        numbers
+        numbers(titled: false)
         chaptersSection
         topics
       }
@@ -297,9 +297,10 @@ private struct SubjectContent: View {
     }
   }
 
-  /// Main's `SubjectCoverage`: the preparation an exam measures, or else the lessons studied.
+  /// Main's `SubjectCoverage`: the preparation an exam measures, or else its progress, titled
+  /// beside the page as main's aside titles it.
   @ViewBuilder
-  private var numbers: some View {
+  private func numbers(titled: Bool) -> some View {
     if let written {
       SubjectWrittenSections(written: written)
     } else if let preparation = subject.preparation {
@@ -308,10 +309,7 @@ private struct SubjectContent: View {
       }
     } else if subject.notPlannedReason == nil {
       Section {
-        meter(
-          label: Text(
-            "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
-          share: subject.lessonShare)
+        SubjectProgress(coverage: subject.coverage, titled: titled)
       }
     }
   }
@@ -378,21 +376,6 @@ private struct SubjectContent: View {
         }
       }
     }
-  }
-
-  private func meter(label: Text, share: Double) -> some View {
-    VStack(alignment: .leading, spacing: 6) {
-      LabeledContent {
-        Text(share, format: .percent.precision(.fractionLength(0)))
-          .monospacedDigit()
-      } label: {
-        label
-      }
-
-      Meter(value: share, fill: .success)
-        .accessibilityHidden(true)
-    }
-    .accessibilityElement(children: .combine)
   }
 
   private func chapterRoute(_ chapterId: String) -> AppRoute {
@@ -474,6 +457,26 @@ private struct SubjectChapterRow: View {
 }
 
 /// Main's `SubjectPreparation`: the share in big type over its bar, and the mastery under them.
+/// The lessons studied, the ones the learner already knew and the new ones, on one bar.
+private struct SubjectProgress: View {
+  let coverage: CoverageLegend.Shares
+  let titled: Bool
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      if titled {
+        Text("Progress", tableName: "Plan", comment: "Label of the goal's progress number")
+          .typeStyle(.sectionTitle)
+      }
+
+      CoverageBar(studied: coverage.studied, known: coverage.known)
+
+      CoverageLegend(shares: coverage)
+    }
+    .padding(.vertical, 4)
+  }
+}
+
 private struct SubjectPreparation: View {
   let share: Double
   let mastery: SyllabusSubject.Mastery?

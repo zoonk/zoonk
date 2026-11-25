@@ -35,6 +35,15 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertTrue(dailyTimeText(both).hasWeekend)
   }
 
+  func testTheDailyTimeSaysADayOutsideItsOwnSetting() throws {
+    let weekdays = try shape(weekend: nil)
+    let both = try shape(weekend: 30)
+
+    XCTAssertEqual(dailyTimeText(weekdays, perDay: true).text, "20\u{00A0}min a day")
+    XCTAssertEqual(
+      dailyTimeText(both, perDay: true).text, "20\u{00A0}min · 30\u{00A0}min weekends")
+  }
+
   private func goal(_ kind: LearnerGoal.Kind, _ status: LearnerGoal.Status) -> LearnerGoal {
     LearnerGoal(
       dailyMinutes: 30, id: "goal", kind: kind, language: "en", status: status,

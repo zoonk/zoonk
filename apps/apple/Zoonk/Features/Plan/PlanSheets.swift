@@ -7,7 +7,8 @@ enum PlanSheet: Identifiable, Hashable {
   case path
   case standing
   case schedule
-  case farTopic(skillId: String, title: String)
+  /// `lessons` and `start` say what its row says: how many lessons and when they start.
+  case farTopic(skillId: String, title: String, lessons: Int, start: String?)
   case certificate(code: String)
   case suggestion(PlanSlotItem)
   case language
@@ -76,8 +77,10 @@ private struct PlanSheets: ViewModifier {
               }
             }
             .presentationDetents([.medium, .large])
-          case .farTopic(let skillId, let title):
-            FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
+          case .farTopic(let skillId, let title, let lessons, let start):
+            FarTopicSheet(
+              goal: context.goal, skillId: skillId, title: title,
+              line: planNotReadyLine(lessons: lessons, start: start, today: context.plan.today))
           case .certificate(let code):
             CertificateSheet(code: code)
           case .suggestion(let item):
@@ -175,16 +178,19 @@ private struct PlanPathSheet: View {
     .sheet(item: $outline, onDismiss: openPendingRoute) { sheet in
       if case .mockSchedule(let id) = sheet {
         MockScheduleSheet(planItemId: id, today: context.plan.today).zoonkSheet()
-      } else if case .farTopic(let skillId, let title) = sheet {
-        FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
-          .environment(
-            \.planSheetOpen,
-            PlanSheetOpen { route in
-              pendingRoute = route
-              outline = nil
-            }
-          )
-          .zoonkSheet()
+      } else if case .farTopic(let skillId, let title, let lessons, let start) = sheet {
+        FarTopicSheet(
+          goal: context.goal, skillId: skillId, title: title,
+          line: planNotReadyLine(lessons: lessons, start: start, today: context.plan.today)
+        )
+        .environment(
+          \.planSheetOpen,
+          PlanSheetOpen { route in
+            pendingRoute = route
+            outline = nil
+          }
+        )
+        .zoonkSheet()
       }
     }
   }

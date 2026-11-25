@@ -156,7 +156,12 @@ function JourneyBody({
               <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             </PageHasMainAction>
             <MoreSection links={links} />
-            <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
+            <PlanProperties
+              className={IN_ASIDE_CLASS}
+              examHref={links.exam}
+              onOpen={editor.open}
+              pathShown={structure === null}
+            />
           </>
         }
         asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
