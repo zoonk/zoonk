@@ -67,8 +67,11 @@ const schema = z.object({
 type GoalMaterial = {
   /** What the learner chose to do with it; null when they didn't say. */
   intent: "exam" | "understand" | null;
-  /** The learner's files, links or pasted text: whole when short, one line per page when long. */
-  overview: string;
+  /**
+   * The learner's files, links or pasted text: whole when short, one line per page when long. Null
+   * when nothing in them could be read, so the model still learns the intent.
+   */
+  overview: string | null;
 };
 
 export type UnderstandGoalInput = {
@@ -88,23 +91,40 @@ export type UnderstandGoalParams = UnderstandGoalInput & {
   useFallback?: boolean;
 };
 
+/** Material with nothing readable says only what the learner chose; without a choice it says nothing. */
+function getMaterialPrompt(material: GoalMaterial | null | undefined) {
+  if (material?.overview) {
+    return { intent: material.intent, overview: material.overview };
+  }
+
+  if (material?.intent) {
+    return { intent: material.intent, overview: null };
+  }
+
+  return null;
+}
+
 function getSystemPrompt({
-  hasMaterial,
   language,
+  material,
 }: {
-  hasMaterial: boolean;
   language: string;
+  material: GoalMaterial | null;
 }): string {
+  const variants = {
+    material: Boolean(material?.overview),
+    unreadMaterial: material?.overview === null,
+  };
+
   return fillPromptLanguages({
     learnerLanguage: language,
-    template: selectPromptVariants({ template, variants: { material: hasMaterial } }),
+    template: selectPromptVariants({ template, variants }),
   });
 }
 
 function toUntrustedFields(input: UnderstandGoalInput): Record<string, string> {
-  return input.material
-    ? { GOAL: input.goal, MATERIAL: input.material.overview }
-    : { GOAL: input.goal };
+  const overview = getMaterialPrompt(input.material)?.overview;
+  return overview ? { GOAL: input.goal, MATERIAL: overview } : { GOAL: input.goal };
 }
 
 const DAYS_PER_WEEK = 7;
@@ -121,11 +141,13 @@ function listComingDays(today: string): string {
 }
 
 function buildMaterialLines(input: UnderstandGoalInput): string {
-  if (!input.material) {
+  const material = getMaterialPrompt(input.material);
+
+  if (!material) {
     return "";
   }
 
-  const intent = input.material.intent ? `\n    MATERIAL_INTENT: ${input.material.intent}` : "";
+  const intent = material.intent ? `\n    MATERIAL_INTENT: ${material.intent}` : "";
   return `\n    COMING_DAYS: ${listComingDays(input.today)}${intent}`;
 }
 
@@ -144,8 +166,8 @@ export async function understandGoal(params: UnderstandGoalParams) {
   const userPrompt = buildUserPrompt(params);
 
   const systemPrompt = getSystemPrompt({
-    hasMaterial: Boolean(params.material),
     language: params.language,
+    material: getMaterialPrompt(params.material),
   });
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
@@ -177,7 +199,10 @@ export async function understandGoal(params: UnderstandGoalParams) {
 
 /** Only the route: evaluation models can pick one but can't fill goals, dates or titles. */
 export const goalRouteClassifier = {
-  instructions: selectPromptVariants({ template, variants: { material: false } }),
+  instructions: selectPromptVariants({
+    template,
+    variants: { material: false, unreadMaterial: false },
+  }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",
     goals: "Something to study for: an exam, a language, a subject, a skill or a project.",

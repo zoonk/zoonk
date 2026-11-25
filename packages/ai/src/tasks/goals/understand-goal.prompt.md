@@ -12,6 +12,10 @@ You read what a learner typed into the first screen of a learning app, where the
 - `MATERIAL_INTENT`, when given: what the learner chose to do with the material: `exam` (prepare for a test on it) or `understand` (learn what it covers).
 - `COMING_DAYS`: the seven days after `TODAY`, each with its weekday.
 {{/material}}
+{{#unreadMaterial}}
+- `MATERIAL_INTENT`: the learner attached study material and chose what to do with it, `exam` (prepare for a test on it) or `understand` (learn what it covers), but nothing in the material could be read, so you don't see it.
+- `COMING_DAYS`: the seven days after `TODAY`, each with its weekday.
+{{/unreadMaterial}}
 
 # Route
 
@@ -26,6 +30,10 @@ Pick one `route`:
 
 `MATERIAL` already says what to learn, so the route is never `unclear`, however little `GOAL` says: a date alone ("quiz on the 12th"), a few words, or only a line the app wrote from the learner's choice. With `MATERIAL_INTENT`, the route is `goals` (or `unsafe` for a harmful goal) with one goal: `exam` gives an `exam` goal and `understand` a `learn` goal. Without it, take the route and kind from `GOAL`.
 {{/material}}
+{{#unreadMaterial}}
+
+`MATERIAL_INTENT` says what the learner wants to do, and only `GOAL` can say what to study. When `GOAL` names a subject, a topic or an exam, the route is `goals` (or `unsafe` for a harmful goal) with one goal: `exam` gives an `exam` goal and `understand` a `learn` goal. When it doesn't ("test tomorrow", "help me with this", or only a line the app wrote from the learner's choice, such as "Understand my material: IMG_2041.jpg"), the route is `unclear`: a file name isn't a subject, and there's nothing to plan from.
+{{/unreadMaterial}}
 
 For every route but `goals`, return an empty `goals` list and null goal-level fields.
 
@@ -49,6 +57,9 @@ Fields for each goal (null when the text doesn't say):
 {{#material}}
 - With `MATERIAL`, `targetDate` comes from `GOAL`, like `dailyMinutes` and `studyDays`. A weekday `GOAL` names, in any language, is that weekday's date in `COMING_DAYS`. A date printed in the material, even an exam's date in a syllabus, never sets `targetDate`, `examYear` or `examMonth`.
 {{/material}}
+{{#unreadMaterial}}
+- With `MATERIAL_INTENT`, `targetDate` comes from `GOAL`: a weekday `GOAL` names, in any language, is that weekday's date in `COMING_DAYS`. `examName` only when `GOAL` names a public exam (an entrance exam, a certificate, a public-service exam): a school or class test has no `examName`, `examDay` or `examTarget`, and its date works like any deadline. `reason` only when `GOAL` gives one.
+{{/unreadMaterial}}
 - `targetScore`: the score, grade or band the learner is aiming for, in their words ("about 700 on average", "band 7"). For a `language` goal, it's the CEFR level they aim for, as "B2": the level they name or the one their words mean ("fluent" is C1). When they name none but say why they learn it, the level of the reason it fits: travel or a trip, A2; talking with people (a partner's family, friends, neighbors, day-to-day life at home or abroad), B1; work, study, classes or a job interview in the language, B2; speaking it fluently, C1; any other reason, B1. The learner sees it on their card and can change it. Null when they give neither.
 - `targetCourse`: for entrance exams, the course or major ("Nursing").
 - `institution`: the school, university or organization they're aiming for ("a federal university", "USP").
