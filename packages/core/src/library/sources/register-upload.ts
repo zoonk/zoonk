@@ -11,7 +11,7 @@ import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { toSourceUrl } from "./fetch-document";
-import { linkUpload } from "./link-upload";
+import { type AdoptedUpload, linkUpload } from "./link-upload";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { SOURCE_READ_VERSION, type SourceStructure } from "./source-contract";
 import { withSourceReadStatus } from "./source-read-status";
@@ -170,14 +170,14 @@ function getSentUploadId({ input, userId }: { input: UploadRead; userId: string 
 }
 
 async function removeUnusedBlob({
-  content,
-  storedBlobUrl,
+  blobUrl,
+  keptUrl,
 }: {
-  content: UploadContent;
-  storedBlobUrl: string | null;
+  blobUrl: string | null;
+  keptUrl: string | null;
 }): Promise<void> {
-  if (content.blobUrl && content.blobUrl !== storedBlobUrl) {
-    await deleteUploadedBlob(content.blobUrl);
+  if (blobUrl && blobUrl !== keptUrl) {
+    await deleteUploadedBlob(blobUrl);
   }
 }
 
@@ -204,7 +204,7 @@ async function storeUpload({
   const refusal = claimId && !uploadedBefore ? await claimUpload(claimId) : null;
 
   if (refusal) {
-    await removeUnusedBlob({ content, storedBlobUrl: storedCopy?.blobUrl ?? null });
+    await removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: storedCopy?.blobUrl ?? null });
     return refusal;
   }
 
@@ -212,30 +212,38 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  await linkUpload({
+  const adopt: AdoptedUpload | undefined =
+    content.parsed.visualPages && source.ownerId === userId && source.readState === null
+      ? {
+          blobUrl: content.blobUrl,
+          mimeType: content.contentType,
+          structure: getUploadStructure(content),
+        }
+      : undefined;
+
+  if (adopt?.blobUrl) {
+    await keepUploadedBlob(adopt.blobUrl);
+  }
+
+  const adopted = await linkUpload({
     goalId,
     sourceId: source.id,
     uploadId,
     userId,
-    visualReading: content.parsed.visualPages
-      ? {
-          legacyStructure:
-            content.visualOnly && source.readState === null
-              ? getUploadStructure(content)
-              : undefined,
-        }
-      : undefined,
+    visualReading: content.parsed.visualPages ? { adopt } : undefined,
   });
 
   const current =
-    source.readState === "failed" || (content.visualOnly && source.readState === null)
+    source.readState === "failed" || adopt
       ? await prisma.source.findUniqueOrThrow({
           omit: { extractedText: true },
           where: { id: source.id },
         })
       : source;
 
-  await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
+  await (adopted && adopt
+    ? removeUnusedBlob({ blobUrl: source.blobUrl, keptUrl: content.blobUrl })
+    : removeUnusedBlob({ blobUrl: content.blobUrl, keptUrl: source.blobUrl }));
 
   return {
     checkVisibility: created && source.readState === null,

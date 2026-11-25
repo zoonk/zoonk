@@ -4,6 +4,14 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { linkGoalSources } from "./link-goal-sources";
 import { type SourceStructure } from "./source-contract";
 
+/** The learner's own copy that owed no reading becomes the file just sent, so its pictured pages are read from it. */
+export type AdoptedUpload = {
+  blobUrl: string | null;
+  mimeType: string;
+  structure: SourceStructure;
+};
+
+/** True when it owed the source's reading again. */
 export async function linkUpload({
   goalId,
   sourceId,
@@ -15,8 +23,8 @@ export async function linkUpload({
   sourceId: string;
   uploadId: string;
   userId: string;
-  visualReading?: { legacyStructure?: SourceStructure };
-}) {
+  visualReading?: { adopt?: AdoptedUpload };
+}): Promise<boolean> {
   return writeLearnerChange({ userId }, async (tx) => {
     const uploads = await tx.sourceUpload.createMany({
       data: { id: uploadId, sourceId, userId },
@@ -43,11 +51,11 @@ export async function linkUpload({
     const reowed =
       uploads.count > 0 && visualReading
         ? await tx.source.updateMany({
-            data: { readState: "owed", structure: visualReading.legacyStructure },
+            data: { readState: "owed", ...visualReading.adopt },
             where: {
               id: sourceId,
               ownerId: userId,
-              readState: visualReading.legacyStructure ? null : "failed",
+              readState: visualReading.adopt ? null : "failed",
             },
           })
         : { count: 0 };
@@ -65,6 +73,6 @@ export async function linkUpload({
       });
     }
 
-    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
+    return uploads.count + uploaded.count + attached === 0 ? unchanged(false) : reowed.count > 0;
   });
 }

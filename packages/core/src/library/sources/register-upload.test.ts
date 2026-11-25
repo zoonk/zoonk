@@ -273,6 +273,66 @@ describe(registerSourceUpload, () => {
     ]);
   });
 
+  it("reads the scanned pages of the learner's pre-reading mixed PDF when they upload it again", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/typed-with-scan.pdf", import.meta.url));
+    const text = "Biology notes\f\fCell division";
+    const contentHash = hashDocument({ bytes, text });
+
+    const source = await sourceFixture({
+      blobUrl: `https://store.private.blob.vercel-storage.com/sources/${user.id}/old-mixed.pdf`,
+      contentHash,
+      createdAt: new Date("2026-01-05T12:00:00Z"),
+      extractedText: text,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      mimeType: "application/pdf",
+      ownerId: user.id,
+      readState: null,
+      structure: { images: 0, pages: 3, topic: null },
+      url: null,
+      visibility: "private",
+    });
+
+    const pathname = `sources/${user.id}/${randomUUID()}-mixed.pdf`;
+    const url = mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: false,
+      source: { id: source.id, readStatus: "reading" },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({
+      blobUrl: url,
+      contentHash,
+      readState: "owed",
+      structure: { mixedPdf: true, visualPages: [1] },
+    });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { input: { sourceId: source.id }, kind: "readUpload" },
+    ]);
+
+    expect(del).not.toHaveBeenCalledWith(url, PRIVATE_STORE);
+    expect(del).toHaveBeenCalledWith(source.blobUrl, PRIVATE_STORE);
+
+    await saveUploadReading({
+      failed: false,
+      pages: [{ index: 1, text: "Scanned drawing" }],
+      sourceId: source.id,
+    });
+
+    await expect(
+      prisma.followUp.findMany({ where: { kind: "checkUploadVisibility", userId: user.id } }),
+    ).resolves.toMatchObject([{ input: { sourceId: source.id } }]);
+  });
+
   it("keeps two different scans with the same text layer as separate private sources", async () => {
     const user = await userFixture();
     mockSession(user.id);
