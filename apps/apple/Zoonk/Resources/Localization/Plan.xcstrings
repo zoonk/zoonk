@@ -45403,65 +45403,6 @@
     "Your time covers everything in your plan by %@" : {
       "comment" : "When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
     },
-    "Your time covers everything by the start of %@" : {
-      "comment" : "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit deiner Lernzeit schaffst du alles bis Anfang %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tienes tiempo para estudiar todo de aquí al inicio de %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as le temps de tout étudier d’ici début %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con il tuo tempo di studio, puoi completare tutto entro l’inizio di %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今の学習時間なら、%@の初めまでにすべて学べます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "정해 둔 하루 학습 시간이면 %@ 첫날까지 모두 마칠 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przy twoim czasie nauki plan obejmuje cały materiał do początku miesiąca: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com seu tempo diário, dá para estudar tudo até o início de %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük çalışma süren %@ ayının başına kadar her şeyi bitirmeye yetiyor"
-          }
-        }
-      }
-    },
     "Your weekly challenge will be on %@." : {
       "comment" : "A plan change's consequence: the weekly challenge moves; the argument is a weekday",
       "localizations" : {

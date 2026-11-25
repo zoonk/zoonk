@@ -204,25 +204,3 @@ struct PlanFullCourseSection: View {
     }
   }
 }
-
-/// Nil for a plan without a date.
-func planCoversEverythingText(_ plan: GoalPlan) -> Text? {
-  let schedule = plan.schedule
-
-  guard let targetDate = schedule.targetDate else {
-    return nil
-  }
-
-  let date = PlanDate.text(targetDate, today: plan.today, month: schedule.targetDateNamedMonth)
-
-  return schedule.targetDateNamedMonth
-    ? Text(
-      "Your time covers everything by the start of \(date)", tableName: "Plan",
-      comment:
-        "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'"
-    )
-    : Text(
-      "Your time covers everything by \(date)", tableName: "Plan",
-      comment:
-        "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
-}
