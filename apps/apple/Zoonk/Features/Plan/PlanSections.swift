@@ -85,8 +85,9 @@ struct PlanRoadmapContent: View {
   let structure: GoalSyllabus?
 
   var body: some View {
-    // Main's: one phase is the whole plan, so there's nothing to place the learner in.
-    if context.plan.roadPhases.count >= 2 {
+    // Main's: one phase is the whole plan, so there's nothing to place the learner in, and a
+    // paused plan has no place in time until the learner resumes.
+    if context.plan.roadPhases.count >= 2, !context.isPaused {
       if structure != nil {
         Button {
           context.show(.path)

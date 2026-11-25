@@ -490,8 +490,11 @@ internal fun PlanContent(
                             )
                         }
                     }
-                    item(key = "roadmap", contentType = "roadmap") {
-                        PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                    // Main's: a paused plan has no place in time to show until the learner resumes.
+                    if (!page.isPaused) {
+                        item(key = "roadmap", contentType = "roadmap") {
+                            PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                        }
                     }
                     // The exam-over question sits in the page's pane with its answers, the page's bar, never across panes.
                     if (asideBeside && examOver && hasSuggestion) {
