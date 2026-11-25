@@ -293,6 +293,53 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await page.context().close();
 });
 
+test("a learner who guessed on the lesson page's wait stays once readiness finds the lesson written", async ({
+  browser,
+}) => {
+  const [{ goal, lesson, user }, deck] = await Promise.all([
+    createStudyDay({ reviewDone: true, writtenLesson: false }),
+    warmUpFixture(),
+  ]);
+
+  const runId = `e2e-warm-up-lesson-page-${randomUUID()}`;
+
+  await Promise.all([
+    prisma.goal.update({ data: { warmUpId: deck.id }, where: { id: goal.id } }),
+    prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    }),
+  ]);
+
+  const page = await openAs(browser, user);
+
+  await followRun({
+    events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
+    page,
+    runId,
+  });
+
+  await confirmLessonWriter({ lessonId: lesson.id, page, runId });
+  await page.goto(`/learn/${lesson.id}`);
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await writeStudyLesson(lesson.id);
+  await page.unroute(`**/v1/library/lessons/${lesson.id}/readiness`);
+
+  await expect(page.getByRole("heading", { level: 1, name: "Your lesson is ready" })).toBeVisible({
+    timeout: NEXT_CHECK_TIMEOUT_MS,
+  });
+
+  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
+
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+  await page.context().close();
+});
+
 test("a learner who guessed while the exam notice is read stays once it is ready", async ({
   noProgressUser,
   userWithoutProgress: page,

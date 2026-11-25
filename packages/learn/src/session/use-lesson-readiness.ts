@@ -72,11 +72,13 @@ export function useLessonReadiness({
       const after = toShown({ generationId, lesson, read: next, runStopped });
       setAnswer({ key, read: next });
 
-      // A new run to follow changes nothing the day shows.
-      if (next.setAside || after.lesson !== shown.lesson) {
+      // A new run to follow changes nothing the day shows, and a written lesson moves on through the
+      // caller's ready hold, so a learner using the wait isn't pulled out of it.
+      if (next.setAside || (after.lesson !== shown.lesson && after.lesson !== "ready")) {
         actions.refresh();
       }
     },
+    timeoutMs: Number.POSITIVE_INFINITY,
   });
 
   return {

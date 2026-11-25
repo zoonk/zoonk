@@ -7,6 +7,7 @@ import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
+import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type LessonKind } from "@zoonk/learn/generation/kinds";
 import { useReportStopped } from "@zoonk/learn/generation/report-stopped";
@@ -34,6 +35,10 @@ import { LessonRouteFrame } from "./lesson-route-frame";
 import { StartLessonBar, WaitNote, type WaitState, useWaitWords } from "./lesson-wait-note";
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
+
+type SavedLesson =
+  | Extract<LessonWaitingResult, { status: "ready" }>["state"]["status"]
+  | null;
 
 const OPEN_RETRY_MS = 2000;
 
@@ -144,12 +149,11 @@ function WritingWait({
       ? { failure: "generation", retry: writing.retry, status: "failed", steps: {} }
       : toAwaitedRun(readiness.generationId ? followed : UNNAMED_RUN);
 
-  const ready = run.status === "ready";
-  const hold = useReadyHold(ready);
+  const hold = useReadyHold(run.status === "ready" || readiness.written);
   const holding = hold.status === "hold";
   const progress = <WritingProgress holding={holding} kind={kind} run={run} since={since} />;
 
-  useOpenWhenReady(hold.status === "go" || readiness.written);
+  useOpenWhenReady(hold.status === "go");
 
   useVisibleWait({
     contentKind: "lesson",
@@ -229,40 +233,40 @@ function waitState({
 }
 
 function getWaitedLesson({
-  beingWritten,
   request,
+  saved,
 }: {
-  beingWritten: boolean;
   request: LessonRequest;
+  saved: SavedLesson;
 }): NextStopLesson | null {
   if (request.status === "writing") {
     return "notStarted";
   }
 
-  if (request.status === "failed") {
+  if (request.status === "failed" || (request.status === "idle" && saved === "failed")) {
     return "failed";
   }
 
-  return request.status === "idle" && beingWritten ? "writing" : null;
+  return request.status === "idle" && saved === "generating" ? "writing" : null;
 }
 
 export function LessonWaiting({
   goalId,
   alternative,
-  beingWritten,
   exitHref,
   initialRequest,
   kind,
   lesson,
+  saved,
   warmUp,
 }: {
   goalId: string | null;
   alternative: ReadyAlternative | null;
-  beingWritten: boolean;
   exitHref: string;
   initialRequest: LessonRequest;
   kind: LessonKind;
   lesson: LessonOutline;
+  saved: SavedLesson;
   warmUp: WarmUpDeck | null;
 }) {
   const router = useRouter();
@@ -271,12 +275,12 @@ export function LessonWaiting({
   const [starting, setStarting] = useState(false);
   const signUpHref = useSignUpHref();
   const frame = { exitHref, goalId, lesson };
-  const waited = getWaitedLesson({ beingWritten, request });
+  const waited = getWaitedLesson({ request, saved });
 
   const readiness = useLessonReadiness({
     actions: { readLesson: readLessonReadiness, refresh: () => router.refresh() },
     // A failed ask is the request's own answer: there's no run for readiness to confirm.
-    enabled: waited === "writing" || waited === "notStarted",
+    enabled: waited !== null && request.status !== "failed",
     generationId: writing.generationId,
     lesson: waited ?? "ready",
     lessonId: lesson.id,
