@@ -75,6 +75,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -574,16 +575,22 @@ internal fun NextStop(
                                     }
                                 }
                             }
-                            if (waiting || hold.holding) {
+                            if (failed) {
+                                GenerationFailureNotice(
+                                    GenerationFailure.Generation,
+                                    onRetry = { retry() },
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    title =
+                                        stringResource(
+                                            R.string.session_next_lesson_failed,
+                                        ).takeIf { waitKind == GenerationKind.Lesson },
+                                )
+                            } else if (waiting || hold.holding) {
                                 // A run whose updates stopped decides nothing: its lesson's readiness, asked again, does.
                                 val shown =
                                     when {
                                         ready -> {
                                             GenerationRun(status = GenerationRun.Status.Ready)
-                                        }
-
-                                        failed -> {
-                                            run.copy(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
                                         }
 
                                         run.status == GenerationRun.Status.Failed -> {
@@ -621,10 +628,6 @@ internal fun NextStop(
                                         { retry() },
                                         stringResource(R.string.session_next_writing_note).takeUnless { ready },
                                         progressShare = share,
-                                        failureTitle =
-                                            stringResource(
-                                                R.string.session_next_lesson_failed,
-                                            ).takeIf { waitKind == GenerationKind.Lesson },
                                     )
                                 }
                             }
