@@ -284,6 +284,14 @@ export type AlignmentException = {
 export const EXCEPTIONS: AlignmentException[] = [
   {
     configuration: "laptop keys",
+    issue: 3228,
+    piece: "page",
+    reason: "Start's laptop close button misses the column edge its hanging ink should meet, on main too",
+    relation: "column",
+    scenario: "/start",
+  },
+  {
+    configuration: "laptop keys",
     issue: 2982,
     piece: "action",
     reason: "The Plan page shows the missed-days and post-exam actions filled on main too",
