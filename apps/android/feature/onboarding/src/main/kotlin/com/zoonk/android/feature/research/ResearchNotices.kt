@@ -15,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.AttachControls
+import com.zoonk.android.feature.onboarding.start.UnreadNote
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -70,6 +71,7 @@ fun UploadRequestNotice(
             SuggestionResult(thanks)
         } else {
             SuggestionDescription(copy.body)
+            (answer.unreadable ?: shown.unreadableUpload?.title)?.let { UnreadNote(listOf(it)) }
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,

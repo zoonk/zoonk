@@ -27,6 +27,8 @@ internal data class UploadAnswer(
     val answered: TodayUploadRequest? = null,
     val dismissed: Boolean = false,
     val attachFailure: WriteOutcome<*>? = null,
+    /** The title of what research couldn't read on this visit, as Today's `unreadableUpload` says on the next. */
+    val unreadable: String? = null,
     val saveFailed: Boolean = false,
 )
 
@@ -93,7 +95,7 @@ internal class UploadRequestViewModel(
     ) {
         if (work != null) return
         work = UploadWork.Attaching
-        update(visit) { it.copy(attachFailure = null, saveFailed = false) }
+        update(visit) { it.copy(attachFailure = null, unreadable = null, saveFailed = false) }
         viewModelScope.launch {
             when (val attached = attach()) {
                 is WriteOutcome.Done -> {
@@ -108,6 +110,10 @@ internal class UploadRequestViewModel(
 
                         WriteOutcome.Refused(Refusal.AlreadyRead) -> {
                             update(visit) { it.copy(attachFailure = answered) }
+                        }
+
+                        WriteOutcome.Refused(Refusal.UploadUnreadable) -> {
+                            update(visit) { it.copy(unreadable = attached.value.title) }
                         }
 
                         else -> {

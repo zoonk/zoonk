@@ -40,7 +40,7 @@ class UploadRequestFlowTest {
 
     private val api = FakeOnboardingApi()
     private val goalId = UUID.fromString(GOAL_ID)
-    private val request = uploadAskOf()
+    private var request = uploadAskOf()
     private var layout by mutableStateOf(SuggestionLayout.Panel)
 
     private fun show() {
@@ -102,5 +102,25 @@ class UploadRequestFlowTest {
 
         rule.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
         thanks().assertDoesNotExist()
+    }
+
+    @Test
+    fun anUploadWithNothingReadableKeepsTheAskAndNamesIt() {
+        api.researchFailure = ApiException(ApiError.Unavailable, "UPLOAD_UNREADABLE", status = 422)
+        show()
+
+        pasteText("Edital 2027")
+
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        thanks().assertDoesNotExist()
+    }
+
+    @Test
+    fun anAskBackAfterNothingCouldBeReadSaysWhichUpload() {
+        request = uploadAskOf(unreadable = "IMG_2041.jpg")
+        show()
+
+        rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        rule.onNodeWithText("Upload the notice").assertIsDisplayed()
     }
 }
