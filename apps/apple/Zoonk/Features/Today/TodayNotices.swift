@@ -274,12 +274,14 @@ struct TodayAdjustPlanSheet: View {
   }
 }
 
-/// What the learner answered the upload request with, kept by Today while they stay.
+/// What the learner answered the upload request with, kept by Today while they stay, with what
+/// reading it found.
 struct AnsweredUpload: Equatable {
   let request: TodayView.UploadRequest
-  let source: AttachedSource
+  var source: AttachedSource
+
   /// Reading it found nothing, so the request asks again.
-  var isUnreadable = false
+  var isUnreadable: Bool { source.readStatus == .unreadable }
 }
 
 /// Main's `UploadRequestClient`: research couldn't read the official document or class material,
@@ -297,7 +299,8 @@ struct TodayUploadRequestSection: View {
   /// Today's, ended as its visit ends; true once Not now saved.
   let dismissal: VisitRequest<Bool>
   let onAnswered: (AttachedSource) -> Void
-  let onUnreadable: () -> Void
+  /// Once reading the answer ends: readable, or with nothing to read on it.
+  let onRead: (SourceReadStatus) -> Void
 
   private var answered: Bool {
     answer.map { !$0.isUnreadable } ?? false
@@ -315,63 +318,20 @@ struct TodayUploadRequestSection: View {
   var body: some View {
     if dismissal.outcome != true {
       Section {
-        Label {
+        TodaySuggestionCard(mark: .symbol("doc.text.magnifyingglass")) {
           VStack(alignment: .leading, spacing: 4) {
             Text(title)
               .typeStyle(.body.weight(.semibold))
+              .accessibilityAddTraits(.isHeader)
             Text(description)
               .foregroundStyle(.mutedForeground)
           }
-        } icon: {
-          Image(systemName: "doc.text.magnifyingglass")
-        }
-        .announcesStatus(answered ? thanks : nil)
+          .announcesStatus(answered ? thanks : nil)
 
-        if answered {
-          Text(thanks)
-        } else {
-          MaterialAttachControls(goal: (request.goalId, request.language), draft: $draft) {
-            Label {
-              Text(action)
-            } icon: {
-              Image(systemName: "arrow.up.doc")
-            }
-          } save: { source in
-            // Nothing to read on it: answering would only bring the ask back.
-            guard source.readStatus != .unreadable else {
-              throw OnboardingError.unreadable(title: source.title ?? "")
-            }
-
-            switch await store.answer(request, sourceID: source.id) {
-            case .done(.alreadyRead):
-              throw OnboardingError.alreadyRead
-            case .done(.unreadable):
-              throw OnboardingError.unreadable(title: source.title ?? "")
-            case .failed(let error):
-              throw error
-            case .done(.answered), .obsolete:
-              break
-            }
-          } onAttached: { source in
-            onAnswered(source)
-          }
-
-          Button(action: dismiss) {
-            Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
-          }
-          .disabled(dismissal.isRunning)
-
-          if let unreadableTitle, draft.error == nil {
-            FailureLine(message: .unreadableMaterial(title: unreadableTitle))
-          }
-
-          if dismissal.outcome == false {
-            FailureLine(
-              message: LocalizedStringResource(
-                "That didn't save. Try again.", table: "Today",
-                comment: "A change couldn't be saved")
-            )
-            .typeStyle(.note)
+          if answered {
+            Text(thanks)
+          } else {
+            actions
           }
         }
       }
@@ -385,21 +345,86 @@ struct TodayUploadRequestSection: View {
     }
   }
 
-  /// While the answered upload is read; once nothing on it could be read, the ask comes back.
+  /// The ways to add the document and Not now, then what adding it said, under them as main's.
+  @ViewBuilder private var actions: some View {
+    ButtonRow(wraps: true) {
+      MaterialAttachMenu(goal: (request.goalId, request.language), draft: $draft) {
+        Label {
+          Text(action)
+        } icon: {
+          Image(systemName: "arrow.up.doc")
+        }
+      } save: { source in
+        try await answer(with: source)
+      } onAttached: { source in
+        onAnswered(source)
+      }
+      .menuStyle(.button)
+      .buttonStyle(.outline)
+
+      BusyButton(isBusy: dismissal.isRunning, action: dismiss) {
+        Label {
+          Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
+        } icon: {
+          Image(systemName: "xmark")
+        }
+      }
+      .buttonStyle(.ghost)
+    }
+    .controlSize(.small)
+
+    MaterialAttachProgress(goal: (request.goalId, request.language), draft: $draft) { source in
+      try await answer(with: source)
+    } onAttached: { source in
+      onAnswered(source)
+    }
+
+    if let unreadableTitle, draft.error == nil {
+      FailureLine(message: .unreadableMaterial(title: unreadableTitle))
+    }
+
+    if dismissal.outcome == false {
+      FailureLine(
+        message: LocalizedStringResource(
+          "That didn't save. Try again.", table: "Today",
+          comment: "A change couldn't be saved")
+      )
+      .typeStyle(.note)
+    }
+  }
+
+  /// Answers the ask with the added source; a throw shows as a failure to add it.
+  private func answer(with source: AttachedSource) async throws {
+    // Nothing to read on it: answering would only bring the ask back.
+    guard source.readStatus != .unreadable else {
+      throw OnboardingError.unreadable(title: source.title ?? "")
+    }
+
+    switch await store.answer(request, sourceID: source.id) {
+    case .done(.alreadyRead):
+      throw OnboardingError.alreadyRead
+    case .done(.unreadable):
+      throw OnboardingError.unreadable(title: source.title ?? "")
+    case .failed(let error):
+      throw error
+    case .done(.answered), .obsolete:
+      break
+    }
+  }
+
+  /// While the answered upload is read; once reading it ends, Today keeps what it found, so a
+  /// readable one isn't checked again and one with nothing to read on it brings the ask back.
   private func followAnswer() async {
-    guard let answer, !answer.isUnreadable, answer.source.readStatus == .reading else {
+    guard let answer, answer.source.readStatus == .reading else {
       return
     }
 
     while true {
       do {
-        switch try await onboarding.readStatus(sourceID: answer.source.id) {
-        case .reading:
-          break
-        case .unreadable:
-          onUnreadable()
-          return
-        case .readable:
+        let status = try await onboarding.readStatus(sourceID: answer.source.id)
+
+        if status != .reading {
+          onRead(status)
           return
         }
       } catch {

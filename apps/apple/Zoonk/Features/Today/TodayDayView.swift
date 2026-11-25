@@ -367,8 +367,8 @@ struct TodayDayView: View {
         ) { source in
           holdShownNotice()
           answeredUpload = AnsweredUpload(request: request, source: source)
-        } onUnreadable: {
-          answeredUpload?.isUnreadable = true
+        } onRead: { status in
+          answeredUpload?.source.readStatus = status
         }
       }
     case nil:
