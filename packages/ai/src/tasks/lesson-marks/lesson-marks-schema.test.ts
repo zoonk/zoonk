@@ -172,6 +172,28 @@ describe(normalizeLessonMarks, () => {
       );
     });
 
+    it("frames the text's order when the quote puts the block before the sentence that introduces it", () => {
+      const introduced: MarksScreen = {
+        ...program,
+        text: `Um construtor roda quando o objeto nasce. Neste código, ele roda com 31:\n\n${block}`,
+      };
+
+      expect(
+        exampleFor({ example: `${block}\nNeste código, ele roda com 31:`, screen: introduced }),
+      ).toBe(`Neste código, ele roda com 31:\n\n${block}`);
+    });
+
+    it("frames the text's own words when the quote drops their inline code and bold marks", () => {
+      const marked: MarksScreen = {
+        ...program,
+        text: `${block}\n\nCom 31, o \`Pedido\` nasce **pronto**. Ela se chama **construtor**.`,
+      };
+
+      expect(
+        exampleFor({ example: `${block}\n\nCom 31, o Pedido nasce pronto.`, screen: marked }),
+      ).toBe(`${block}\n\nCom 31, o \`Pedido\` nasce **pronto**.`);
+    });
+
     it("keeps a frame around the block alone", () => {
       expect(exampleFor({ example: block })).toBe(block);
     });

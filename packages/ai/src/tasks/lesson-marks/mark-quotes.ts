@@ -109,20 +109,72 @@ function withListMarker({ quote, text }: { quote: string; text: string }): strin
 }
 
 const REGEXP_SYNTAX = /[\\^$.*+?()[\]{}|]/gu;
-const LINE_BREAKS = /(?:\r?\n)+/u;
+const INLINE_MARKS = /[`*]/gu;
+const WHITESPACE = /^\s+$/u;
 const INTRODUCES = /[:：]$/u;
 
-/** Copying across a code block's closing fence, models often drop the blank line after it. */
-function withTextLineBreaks({ quote, text }: { quote: string; text: string }): string {
-  if (text.includes(quote)) {
-    return quote;
+type Span = { end: number; start: number };
+
+/**
+ * Where a copy of the text sits in it. Models copying across lines and markup often drop a blank
+ * line, inline code's backticks or a bold run's stars, so those may differ.
+ */
+function locateCopy({ quote, text }: { quote: string; text: string }): Span | null {
+  const exact = text.indexOf(quote);
+
+  if (exact !== -1) {
+    return { end: exact + quote.length, start: exact };
   }
 
-  const lines = quote
-    .split(LINE_BREAKS)
-    .map((line) => line.replaceAll(REGEXP_SYNTAX, String.raw`\$&`));
+  const tokens =
+    quote
+      .replaceAll(INLINE_MARKS, "")
+      .trim()
+      .match(/\s+|\S/gu) ?? [];
 
-  return new RegExp(lines.join(LINE_BREAKS.source), "u").exec(text)?.[0] ?? quote;
+  const pattern = tokens
+    .map((token) =>
+      WHITESPACE.test(token) ? "[\\s`*]+" : token.replaceAll(REGEXP_SYNTAX, String.raw`\$&`),
+    )
+    .join("[`*]*");
+
+  const found = tokens.length > 0 ? new RegExp(`[\`*]*${pattern}[\`*]*`, "u").exec(text) : null;
+
+  return found ? { end: found.index + found[0].length, start: found.index } : null;
+}
+
+/** A model sometimes copies a block ahead of the sentence that introduces it; the text's order stands. */
+function locateReordered({ quote, text }: { quote: string; text: string }): Span | null {
+  const cuts = [0, ...findCodeSpans(quote).flatMap(({ end, start }) => [start, end]), quote.length];
+
+  const parts = cuts
+    .slice(1)
+    .map((end, index) => quote.slice(cuts[index], end).trim())
+    .filter(Boolean);
+
+  const spans = parts.map((part) => locateCopy({ quote: part, text }));
+
+  if (parts.length < 2 || spans.includes(null)) {
+    return null;
+  }
+
+  const [first, ...rest] = spans
+    .filter((span): span is Span => span !== null)
+    .toSorted((a, b) => a.start - b.start);
+
+  return rest.reduce<Span | null>(
+    (joined, span) =>
+      joined && span.start >= joined.end && text.slice(joined.end, span.start).trim() === ""
+        ? { end: span.end, start: joined.start }
+        : null,
+    first ?? null,
+  );
+}
+
+/** The text's own span for what the model copied, or the copy itself when the text has no such span. */
+function findCopy({ quote, text }: { quote: string; text: string }): string {
+  const span = locateCopy({ quote, text }) ?? locateReordered({ quote, text });
+  return span ? text.slice(span.start, span.end) : quote;
 }
 
 /** Where the quote sits in the text's prose: a program can print the same words. */
@@ -170,7 +222,7 @@ function withAdjacentCode({ quote, text }: { quote: string; text: string }): str
 
 /** The text's own span for an example the model copied, widened to what the frame must not split. */
 export function fitExampleQuote({ quote, text }: { quote: string; text: string }): string {
-  const copied = withTextLineBreaks({ quote, text });
+  const copied = findCopy({ quote, text });
   return withAdjacentCode({ quote: withListMarker({ quote: copied, text }), text });
 }
 
