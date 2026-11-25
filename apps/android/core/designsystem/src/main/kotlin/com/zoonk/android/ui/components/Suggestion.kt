@@ -214,8 +214,8 @@ fun SuggestionHeader(text: String) {
 @Composable
 fun SuggestionDescription(
     text: String,
-    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Text(text = text, modifier = modifier, style = descriptionStyle(), color = color)
 }
