@@ -11,7 +11,7 @@ import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
 import { linkGoalSources } from "./link-goal-sources";
-import { getSourceReadStatus } from "./source-read-status";
+import { getSourceReadStatus, sourceReadStatusFields } from "./source-read-status";
 
 export type GoalUploadRequest = {
   examDocument: ExamDocument;
@@ -27,14 +27,15 @@ export type GoalUploadRequestResult =
   | { request: GoalUploadRequest | null; status: "ready" };
 
 async function findLatestUnreadableUpload(goalId: string) {
-  const answered = await prisma.goalSource.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: { source: { select: { extractedText: true, readState: true, title: true } } },
+  const latest = await prisma.goalSource.findFirst({
+    orderBy: [{ answeredAt: "desc" }, { source: { hasReadableText: "desc" } }, { sourceId: "asc" }],
+    select: { source: { select: { ...sourceReadStatusFields, title: true } } },
     where: { answeredAt: { not: null }, goalId, origin: "upload" },
   });
 
-  const latest = answered.find(({ source }) => getSourceReadStatus(source) === "unreadable");
-  return latest ? { title: latest.source.title } : null;
+  return latest && getSourceReadStatus(latest.source) === "unreadable"
+    ? { title: latest.source.title }
+    : null;
 }
 
 export async function toGoalUploadRequest(goal: Goal): Promise<GoalUploadRequest | null> {
@@ -147,7 +148,7 @@ export async function answerGoalUploadRequest({
     });
 
     const sources = await transaction.source.findMany({
-      select: { extractedText: true, id: true, readState: true },
+      select: { ...sourceReadStatusFields, id: true },
       where: { id: { in: access.sourceIds } },
     });
 

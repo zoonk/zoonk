@@ -13,7 +13,7 @@ async function findMergedSource(sourceId: string) {
   }
 
   const redirect = await prisma.sourceRedirect.findFirst({
-    include: { to: true },
+    include: { to: { omit: { extractedText: true } } },
     where: { fromId: sourceId, userId: session.user.id },
   });
 
@@ -25,7 +25,10 @@ export async function getSource({ sourceId }: { sourceId: string }) {
     return null;
   }
 
-  const source = await prisma.source.findUnique({ where: { id: sourceId } });
+  const source = await prisma.source.findUnique({
+    omit: { extractedText: true },
+    where: { id: sourceId },
+  });
 
   if (!source) {
     return findMergedSource(sourceId);

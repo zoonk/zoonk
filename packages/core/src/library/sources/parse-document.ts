@@ -9,6 +9,7 @@ import {
   parseOffice,
 } from "officeparser";
 import { decodePage } from "./decode-page";
+import { findPdfImagePages } from "./pdf-image-pages";
 import {
   DOCX_CONTENT_TYPE,
   IMAGE_CONTENT_TYPES,
@@ -48,13 +49,6 @@ export type ParsedDocument = {
 };
 
 const MAX_VISUAL_PAGES = 40;
-
-function findVisualPages(text: string): number[] {
-  return text
-    .split(PAGE_BREAK)
-    .flatMap((page, index) => (hasWords(page) ? [] : [index]))
-    .slice(0, MAX_VISUAL_PAGES);
-}
 
 function hashContent(content: Uint8Array | string): string {
   return createHash("sha256").update(content).digest("hex");
@@ -193,7 +187,13 @@ async function parseOfficeDocument({
 
   const visualPages =
     reading.forUpload && fileType === "pdf" && !isCutText(clean, reading.maxLength)
-      ? findVisualPages(clean)
+      ? await findPdfImagePages({
+          bytes,
+          candidates: clean
+            .split(PAGE_BREAK)
+            .flatMap((page, index) => (hasWords(page) ? [] : [index])),
+          limit: MAX_VISUAL_PAGES,
+        })
       : [];
 
   return {

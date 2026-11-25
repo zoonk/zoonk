@@ -6,7 +6,10 @@ import {
   materialSourceFields,
   toReadableMaterial,
 } from "../../../library/sources/readable-material";
-import { getSourceReadStatus } from "../../../library/sources/source-read-status";
+import {
+  getSourceReadStatus,
+  sourceReadStatusFields,
+} from "../../../library/sources/source-read-status";
 import { type DraftSource } from "../onboarding-contract";
 
 type DraftMaterialKey = Pick<OnboardingDraft, "sourceIds" | "userId">;
@@ -36,7 +39,7 @@ export async function readDraftSources(
   const uploads = await findDraftUploads(draft);
 
   const found = await prisma.source.findMany({
-    select: { extractedText: true, id: true, readState: true, title: true },
+    select: { ...sourceReadStatusFields, id: true, title: true },
     where: { id: { in: uploads.resolved } },
   });
 

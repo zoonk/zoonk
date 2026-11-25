@@ -11,13 +11,13 @@ import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { getUploadClaimId, isOwnUploadPathname } from "./create-upload-token";
 import { toSourceUrl } from "./fetch-document";
-import { linkGoalSources } from "./link-goal-sources";
+import { linkUpload } from "./link-upload";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
-import { SOURCE_READ_VERSION } from "./source-contract";
+import { SOURCE_READ_VERSION, type SourceStructure } from "./source-contract";
 import { withSourceReadStatus } from "./source-read-status";
 import { deleteUploadedBlob, keepUploadedBlob } from "./upload-blob";
 
-type UploadedSource = ReturnType<typeof withSourceReadStatus<Source>>;
+type UploadedSource = ReturnType<typeof withSourceReadStatus<Omit<Source, "extractedText">>>;
 
 export type SourceUploadInput = {
   goalId?: string | null;
@@ -33,65 +33,6 @@ export type SourceUploadResult =
   | RefusedUsage
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
-async function linkUpload({
-  goalId,
-  sourceId,
-  uploadId,
-  userId,
-}: {
-  goalId: string | null;
-  sourceId: string;
-  uploadId: string;
-  userId: string;
-}) {
-  return writeLearnerChange({ userId }, async (tx) => {
-    const uploads = await tx.sourceUpload.createMany({
-      data: { id: uploadId, sourceId, userId },
-      skipDuplicates: true,
-    });
-
-    const linked = await tx.learnerSource.createMany({
-      data: { origin: "upload", sourceId, userId },
-      skipDuplicates: true,
-    });
-
-    const uploaded =
-      linked.count > 0
-        ? linked
-        : await tx.learnerSource.updateMany({
-            data: { origin: "upload" },
-            where: { origin: { not: "upload" }, sourceId, userId },
-          });
-
-    const attached = goalId
-      ? await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: [sourceId], userId })
-      : 0;
-
-    const retried =
-      uploads.count > 0
-        ? await tx.source.updateMany({
-            data: { readState: "owed" },
-            where: { id: sourceId, ownerId: userId, readState: "failed" },
-          })
-        : { count: 0 };
-
-    if (retried.count > 0) {
-      await tx.goalSource.updateMany({
-        data: { answeredAt: null },
-        where: { answeredAt: { not: null }, goal: { userId }, sourceId },
-      });
-
-      await oweFollowUps({
-        db: tx,
-        followUps: [{ input: { sourceId }, kind: "readUpload" }],
-        userId,
-      });
-    }
-
-    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
-  });
-}
-
 function findStoredCopy({
   content,
   db = prisma,
@@ -102,11 +43,10 @@ function findStoredCopy({
   userId: string;
 }) {
   return db.source.findFirst({
+    omit: { extractedText: true },
     orderBy: { createdAt: "asc" },
     where: {
-      ...(content.parsed.visualPages
-        ? { ownerId: userId, readState: { not: null } }
-        : libraryRowsVisibleTo(userId)),
+      ...(content.visualOnly ? { kind: "upload", ownerId: userId } : libraryRowsVisibleTo(userId)),
       contentHash: content.hash,
     },
   });
@@ -128,6 +68,18 @@ async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId
   const goal = await prisma.goal.findFirst({ select: { id: true }, where: { id: goalId, userId } });
 
   return goal?.id ?? null;
+}
+
+function getUploadStructure({ parsed, visualOnly }: UploadContent): SourceStructure {
+  return {
+    images: parsed.images.length,
+    pages: parsed.pages,
+    topic: null,
+    ...(parsed.visualPages && {
+      ...(!visualOnly && { mixedPdf: true }),
+      visualPages: parsed.visualPages,
+    }),
+  };
 }
 
 async function createPrivateSource({
@@ -152,9 +104,10 @@ async function createPrivateSource({
   }
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const stored = content.parsed.visualPages
+    const stored = content.visualOnly
       ? await findStoredCopy({ content, db: tx, userId })
       : await tx.source.findUnique({
+          omit: { extractedText: true },
           where: { languageIdentity: { identityKey, language: input.language } },
         });
 
@@ -175,16 +128,12 @@ async function createPrivateSource({
         ownerId: userId,
         readState: content.parsed.visualPages ? "owed" : null,
         readVersion: SOURCE_READ_VERSION,
-        structure: {
-          images: content.parsed.images.length,
-          pages: content.parsed.pages,
-          topic: null,
-          ...(content.parsed.visualPages && { visualPages: content.parsed.visualPages }),
-        },
+        structure: getUploadStructure(content),
         title,
         url: content.url ?? null,
         visibility: "private",
       },
+      omit: { extractedText: true },
     });
 
     await oweFollowUps({
@@ -263,11 +212,27 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
+  await linkUpload({
+    goalId,
+    sourceId: source.id,
+    uploadId,
+    userId,
+    visualReading: content.parsed.visualPages
+      ? {
+          legacyStructure:
+            content.visualOnly && source.readState === null
+              ? getUploadStructure(content)
+              : undefined,
+        }
+      : undefined,
+  });
 
   const current =
-    source.readState === "failed"
-      ? await prisma.source.findUniqueOrThrow({ where: { id: source.id } })
+    source.readState === "failed" || (content.visualOnly && source.readState === null)
+      ? await prisma.source.findUniqueOrThrow({
+          omit: { extractedText: true },
+          where: { id: source.id },
+        })
       : source;
 
   await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
@@ -293,7 +258,7 @@ async function answerSentUpload({
   userId: string;
 }): Promise<SourceUploadResult | null> {
   const upload = await prisma.sourceUpload.findFirst({
-    include: { source: true },
+    include: { source: { omit: { extractedText: true } } },
     where: { id: uploadId, userId },
   });
 

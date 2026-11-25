@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  goalSourceFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
@@ -109,6 +113,35 @@ describe(getGoalUploadRequest, () => {
 
     await expect(getGoalUploadRequest({ goalId: goal.id })).resolves.toStrictEqual({
       request: null,
+      status: "ready",
+    });
+  });
+
+  it("uses the latest answer when deciding whether to mention an unreadable upload", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+
+    const [oldPhoto, recentText] = await Promise.all([
+      uploadPhoto(user.id, "read"),
+      privateUploadFixture(user.id),
+    ]);
+
+    await Promise.all([
+      goalSourceFixture({
+        answeredAt: new Date("2026-11-24T12:00:00Z"),
+        goalId: goal.id,
+        sourceId: oldPhoto.id,
+      }),
+      goalSourceFixture({
+        answeredAt: new Date("2026-11-24T12:00:01Z"),
+        goalId: goal.id,
+        sourceId: recentText.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getGoalUploadRequest({ goalId: goal.id })).resolves.toMatchObject({
+      request: { unreadableUpload: null },
       status: "ready",
     });
   });

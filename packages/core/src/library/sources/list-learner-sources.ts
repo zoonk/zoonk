@@ -22,7 +22,10 @@ export async function listLearnerSources({ goalId }: { goalId?: string | null } 
 
   const links = await prisma.learnerSource.findMany({
     include: {
-      source: { include: { goalSources: { orderBy: { createdAt: "asc" }, where: ownGoals } } },
+      source: {
+        include: { goalSources: { orderBy: { createdAt: "asc" }, where: ownGoals } },
+        omit: { extractedText: true },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: MAX_LEARNER_SOURCES,

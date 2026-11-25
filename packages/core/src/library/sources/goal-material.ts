@@ -19,13 +19,15 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
   const sources = await prisma.source.findMany({
     orderBy: { createdAt: "asc" },
     select: materialSourceFields,
+    take: MAX_MATERIAL_SOURCES,
     where: {
-      extractedText: { not: null },
+      OR: [{ readState: null }, { readState: { not: "owed" } }],
       goalSources: { some: { goalId: { in: [...goalIds] }, origin: "upload" } },
+      hasReadableText: true,
     },
   });
 
-  return toReadableMaterial(sources).slice(0, MAX_MATERIAL_SOURCES);
+  return toReadableMaterial(sources);
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */

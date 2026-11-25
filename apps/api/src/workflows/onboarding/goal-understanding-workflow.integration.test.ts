@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { get } from "@vercel/blob";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
+import { classifyUploadVisibility } from "@zoonk/ai/tasks/research/upload-visibility";
 import { understandGoalWords } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
@@ -16,8 +18,10 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { start } from "workflow/api";
+import { getRun, start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { registerFollowUpRuns } from "../follow-ups/register-follow-up-runs";
+import { startUploadReading } from "../research/read-upload-workflow";
 import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
 
 vi.mock("@vercel/blob", async (importOriginal) => ({
@@ -49,6 +53,91 @@ vi.mock("@zoonk/ai/tasks/research/exam-identity-decision", async (importOriginal
   ...(await importOriginal<object>()),
   decideExamIdentity: vi.fn(),
 }));
+
+vi.mock("@zoonk/ai/tasks/research/upload-visibility", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  classifyUploadVisibility: vi.fn(),
+}));
+
+describe(startUploadReading, () => {
+  it("starts mixed PDF visibility checking after saving its picture pages", async () => {
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_test");
+    registerFollowUpRuns();
+    const user = await userFixture();
+    const pathname = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
+
+    const bytes = await readFile(
+      new URL(
+        "../../../../../packages/core/src/library/sources/_test-fixtures/typed-with-scan.pdf",
+        import.meta.url,
+      ),
+    );
+
+    vi.mocked(get).mockImplementation(async () => ({
+      blob: {
+        cacheControl: "",
+        contentDisposition: "",
+        contentType: "application/pdf",
+        downloadUrl: url,
+        etag: "",
+        pathname,
+        size: bytes.length,
+        uploadedAt: new Date(),
+        url,
+      },
+      headers: new Headers(),
+      statusCode: 200,
+      stream: new Blob([bytes]).stream(),
+    }));
+
+    const source = await sourceFixture({
+      blobUrl: url,
+      extractedText: "Biology notes\f\fCell division",
+      kind: "upload",
+      mimeType: "application/pdf",
+      ownerId: user.id,
+      readState: "owed",
+      structure: { images: 0, mixedPdf: true, pages: 3, topic: null, visualPages: [1] },
+      url: null,
+      visibility: "private",
+    });
+
+    vi.mocked(transcribeMaterial).mockResolvedValue(taskResult({ text: "Scanned drawing" }));
+
+    vi.mocked(classifyUploadVisibility).mockResolvedValue(
+      taskResult({
+        documentKind: "classMaterial",
+        language: "en",
+        publisher: null,
+        title: "Notes",
+        visibility: "private",
+      }),
+    );
+
+    try {
+      const runId = await startUploadReading(source.id);
+      await getRun(runId).returnValue;
+
+      await vi.waitFor(
+        () => {
+          expect(classifyUploadVisibility).toHaveBeenCalledWith(
+            expect.objectContaining({
+              document: expect.objectContaining({
+                file: { data: new Uint8Array(bytes), mediaType: "application/pdf" },
+                text: "Biology notes\fScanned drawing\fCell division",
+              }),
+            }),
+          );
+        },
+        { timeout: 10_000 },
+      );
+    } finally {
+      vi.unstubAllEnvs();
+      globalThis.zoonkFollowUpStarter = undefined;
+    }
+  });
+});
 
 describe(goalUnderstandingWorkflow, () => {
   beforeEach(() => {

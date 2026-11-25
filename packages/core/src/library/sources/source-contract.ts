@@ -70,6 +70,7 @@ export function hasOwnFreshnessChecks(topic: SourceTopic): boolean {
 
 export const sourceStructureSchema = z.object({
   images: z.number().int().nonnegative(),
+  mixedPdf: z.literal(true).optional(),
   pages: z.number().int().nonnegative().nullable(),
   topic: z.enum(SOURCE_TOPICS).nullable(),
   visualPages: z.array(z.int().nonnegative()).optional(),

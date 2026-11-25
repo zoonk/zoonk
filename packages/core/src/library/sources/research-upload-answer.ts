@@ -6,7 +6,7 @@ import { researchUploadAnswerSchema } from "../../follow-ups/follow-up-contract"
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type ResearchUploadAnswerKey } from "./goal-upload-request";
 import { followSourceRedirects } from "./own-sources";
-import { getSourceReadStatus } from "./source-read-status";
+import { getSourceReadStatus, sourceReadStatusFields } from "./source-read-status";
 
 export async function getOwedResearchUploadAnswer({ answerId, userId }: ResearchUploadAnswerKey) {
   const row = await prisma.followUp.findUnique({
@@ -36,7 +36,7 @@ export async function getReadableResearchUploadIds({
   ]);
 
   const sources = await prisma.source.findMany({
-    select: { extractedText: true, id: true, readState: true },
+    select: { ...sourceReadStatusFields, id: true },
     where: { id: { in: ids } },
   });
 

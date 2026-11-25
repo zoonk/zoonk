@@ -24,7 +24,7 @@ export async function sourceVisibilityWorkflow(input: {
     traceId: workflowRunId,
   };
 
-  const decision = await classifyUploadStep({ analytics, sourceId: input.sourceId });
+  const decision = await classifyUploadStep({ analytics, ...input });
 
   if (!decision) {
     return { status: "missing" };

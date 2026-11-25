@@ -2,26 +2,27 @@ import { type Source } from "@zoonk/db";
 import { type SourceReadStatus } from "./source-contract";
 
 export function hasWords(text: string | null): text is string {
-  return text !== null && /[\p{L}\p{N}]/u.test(text.replaceAll(/\[illegible\]/giu, ""));
+  return (
+    text !== null &&
+    /[\p{Alphabetic}\p{Decimal_Number}]/u.test(text.replaceAll(/\[illegible\]/giu, ""))
+  );
 }
 
+export const sourceReadStatusFields = { hasReadableText: true, readState: true } as const;
+
+type SourceReading = Pick<Source, keyof typeof sourceReadStatusFields>;
+
 export function getSourceReadStatus({
-  extractedText,
+  hasReadableText,
   readState,
-}: Pick<Source, "extractedText" | "readState">): SourceReadStatus {
+}: SourceReading): SourceReadStatus {
   if (readState === "owed") {
     return "reading";
   }
 
-  return hasWords(extractedText) ? "readable" : "unreadable";
+  return hasReadableText ? "readable" : "unreadable";
 }
 
-export function withSourceReadStatus<T extends Pick<Source, "extractedText" | "readState">>({
-  extractedText,
-  ...source
-}: T) {
-  return {
-    ...source,
-    readStatus: getSourceReadStatus({ extractedText, readState: source.readState }),
-  };
+export function withSourceReadStatus<T extends SourceReading>(source: T) {
+  return { ...source, readStatus: getSourceReadStatus(source) };
 }

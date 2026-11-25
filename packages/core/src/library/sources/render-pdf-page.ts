@@ -11,16 +11,10 @@ const PDF_RENDER_TIMEOUT_MS = 30_000;
 const { createRequire } = process.getBuiltinModule("node:module");
 const require = createRequire(import.meta.url);
 
-export async function renderPdfPage({
-  bytes,
-  index,
-}: {
-  bytes: Uint8Array;
-  index: number;
-}): Promise<DocumentImage | null> {
+export function openPdf(bytes: Uint8Array) {
   const assets = dirname(require.resolve("pdfjs-dist/package.json"));
 
-  const loading = getDocument({
+  return getDocument({
     cMapUrl: join(assets, "cmaps") + sep,
     data: bytes,
     maxImageSize: MAX_EMBEDDED_IMAGE_PIXELS,
@@ -28,6 +22,16 @@ export async function renderPdfPage({
     stopAtErrors: true,
     wasmUrl: join(assets, "wasm") + sep,
   });
+}
+
+export async function renderPdfPage({
+  bytes,
+  index,
+}: {
+  bytes: Uint8Array;
+  index: number;
+}): Promise<DocumentImage | null> {
+  const loading = openPdf(bytes);
 
   try {
     const document = await loading.promise;
