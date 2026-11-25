@@ -104,7 +104,7 @@
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
     <!-- Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists. -->
     <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. We couldn\'t read the rest.</string>
-    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; %1$s is the file it couldn't read, like "Notes.jpg". -->
+    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg". -->
     <string name="onboarding_row_material_unread_one_note">Your plan and lessons follow only this material. We couldn\'t read “%1$s”.</string>
     <!-- Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists. -->
     <string name="onboarding_row_material_unread_some_note">Your plan and lessons follow only this material. We couldn\'t read the other files.</string>
@@ -183,7 +183,7 @@
     <string name="onboarding_material_unreadable_one">We can\'t read “%1$s” anymore. Remove it and add it again.</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">We can\'t read some of your files anymore. Remove them and add them again.</string>
-    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. %1$s is its name, like "Notes.jpg". -->
+    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg". -->
     <string name="onboarding_material_unread_one">We couldn\'t read “%1$s”. Try a sharper photo or paste the text.</string>
     <!-- Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above. -->
     <string name="onboarding_material_unread_some">We couldn\'t read these files. Try sharper photos or paste the text.</string>

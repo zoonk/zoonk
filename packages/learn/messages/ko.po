@@ -8797,19 +8797,19 @@ msgstr "계획과 레슨에 이 자료를 사용할 거예요."
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "S2mc8R"
 msgid "Can't be read anymore"
-msgstr ""
+msgstr "더 이상 읽을 수 없음"
 
 #. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "vx1YAK"
 msgid "Nothing on it could be read"
-msgstr ""
+msgstr "읽을 수 있는 내용 없음"
 
 #. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "3oioAz"
 msgid "Being read"
-msgstr ""
+msgstr "읽는 중"
 
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "G5e8UX"
@@ -8832,13 +8832,13 @@ msgstr "“{title}”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "XtqQ1X"
 msgid "We couldn't read these files. Try sharper photos or paste the text."
-msgstr ""
+msgstr "파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
 
 #. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "v6A3gc"
 msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
-msgstr ""
+msgstr "“{title}” 파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
 
 #: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/understood/understood-material-row.ts
@@ -9993,31 +9993,31 @@ msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "UiJtWT"
 msgid "We couldn't read these files, so your plan won't follow them."
-msgstr ""
+msgstr "파일을 읽을 수 없어 계획에 반영되지 않아요."
 
 #. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "tbSSWy"
 msgid "We couldn't read it, so your plan won't follow it."
-msgstr ""
+msgstr "자료를 읽을 수 없어 계획에 반영되지 않아요."
 
 #. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "2cV0mq"
 msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
-msgstr ""
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. “{title}” 파일은 읽을 수 없어요."
 
 #. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "c_KACv"
 msgid "Your plan and lessons follow only this material. We couldn't read the other files."
-msgstr ""
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 파일은 읽을 수 없어요."
 
 #. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "nT35Ny"
 msgid "Your plan and lessons follow only this material. We couldn't read the rest."
-msgstr ""
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 자료는 읽을 수 없어요."
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"

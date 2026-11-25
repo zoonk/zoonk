@@ -8797,19 +8797,19 @@ msgstr "Planında ve derslerinde bu materyali kullanacağız."
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "S2mc8R"
 msgid "Can't be read anymore"
-msgstr ""
+msgstr "Artık mevcut değil"
 
 #. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "vx1YAK"
 msgid "Nothing on it could be read"
-msgstr ""
+msgstr "İçeriği okunamadı"
 
 #. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "3oioAz"
 msgid "Being read"
-msgstr ""
+msgstr "Okunuyor"
 
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "G5e8UX"
@@ -8832,13 +8832,13 @@ msgstr "“{title}” dosyasını artık okuyamıyoruz. Kaldırıp yeniden ekle.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "XtqQ1X"
 msgid "We couldn't read these files. Try sharper photos or paste the text."
-msgstr ""
+msgstr "Bu dosyaları okuyamadık. Daha net fotoğraflar çekmeyi veya metni yapıştırmayı dene."
 
 #. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "v6A3gc"
 msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
-msgstr ""
+msgstr "“{title}” dosyasını okuyamadık. Daha net bir fotoğraf çekmeyi veya metni yapıştırmayı dene."
 
 #: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/understood/understood-material-row.ts
@@ -9993,31 +9993,31 @@ msgstr "Planın ve derslerin bu materyale göre hazırlanır"
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "UiJtWT"
 msgid "We couldn't read these files, so your plan won't follow them."
-msgstr ""
+msgstr "Bu dosyaları okuyamadık, bu yüzden planın bunları temel almayacak."
 
 #. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "tbSSWy"
 msgid "We couldn't read it, so your plan won't follow it."
-msgstr ""
+msgstr "Bunu okuyamadık, bu yüzden planın bunu temel almayacak."
 
 #. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "2cV0mq"
 msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
-msgstr ""
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. “{title}” dosyasını okuyamadık."
 
 #. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "c_KACv"
 msgid "Your plan and lessons follow only this material. We couldn't read the other files."
-msgstr ""
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. Diğer dosyaları okuyamadık."
 
 #. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "nT35Ny"
 msgid "Your plan and lessons follow only this material. We couldn't read the rest."
-msgstr ""
+msgstr "Planın ve derslerin yalnızca bu materyali temel alacak. Kalan dosyalara erişemedik."
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"

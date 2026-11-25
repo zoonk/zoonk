@@ -8797,19 +8797,19 @@ msgstr "Seu plano e suas aulas vão usar esse material."
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "S2mc8R"
 msgid "Can't be read anymore"
-msgstr ""
+msgstr "Não dá mais para ler"
 
 #. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "vx1YAK"
 msgid "Nothing on it could be read"
-msgstr ""
+msgstr "Não foi possível ler nada do arquivo"
 
 #. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "3oioAz"
 msgid "Being read"
-msgstr ""
+msgstr "Sendo lido"
 
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "G5e8UX"
@@ -8832,13 +8832,13 @@ msgstr "Não dá mais para ler “{title}”. Remova esse arquivo e adicione-o d
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "XtqQ1X"
 msgid "We couldn't read these files. Try sharper photos or paste the text."
-msgstr ""
+msgstr "Não conseguimos ler esses arquivos. Tente enviar fotos mais nítidas ou colar o texto."
 
 #. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
 #: src/onboarding/entry/attached-chips.tsx
 msgctxt "v6A3gc"
 msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
-msgstr ""
+msgstr "Não conseguimos ler “{title}”. Tente enviar uma foto mais nítida ou colar o texto."
 
 #: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/understood/understood-material-row.ts
@@ -9993,31 +9993,31 @@ msgstr "Seu plano e suas aulas seguem este material"
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "UiJtWT"
 msgid "We couldn't read these files, so your plan won't follow them."
-msgstr ""
+msgstr "Não conseguimos ler esses arquivos, então seu plano não vai se basear neles."
 
 #. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "tbSSWy"
 msgid "We couldn't read it, so your plan won't follow it."
-msgstr ""
+msgstr "Não conseguimos ler esse material, então seu plano não vai se basear nele."
 
 #. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "2cV0mq"
 msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
-msgstr ""
+msgstr "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler “{title}”."
 
 #. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "c_KACv"
 msgid "Your plan and lessons follow only this material. We couldn't read the other files."
-msgstr ""
+msgstr "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler os outros arquivos."
 
 #. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
 #: src/onboarding/understood/understood-material-row.ts
 msgctxt "nT35Ny"
 msgid "Your plan and lessons follow only this material. We couldn't read the rest."
-msgstr ""
+msgstr "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler o restante."
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
