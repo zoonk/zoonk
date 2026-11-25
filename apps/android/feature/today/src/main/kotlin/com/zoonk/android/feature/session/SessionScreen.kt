@@ -404,7 +404,6 @@ internal fun NextStop(
             }
         val waiting = lesson == NextStopLesson.Writing || lesson == NextStopLesson.Failed
         val waitKind = known?.kind ?: GenerationKind.Lesson
-        val beingWritten = lesson == NextStopLesson.Writing && waitKind == GenerationKind.Lesson
         val run by viewModel.run.collectAsStateWithLifecycle()
         val failed = lesson == NextStopLesson.Failed
         val busy = viewModel.busy != null
@@ -547,15 +546,9 @@ internal fun NextStop(
                             }
                             StepFacts(step)
                             ReviewIntro(step, reviewStarts.openAtFirst(goalId), Modifier.padding(top = 16.dp))
-                            val line =
-                                when {
-                                    written && !hold.holding -> R.string.session_next_lesson_ready
-                                    beingWritten -> R.string.session_next_being_written
-                                    else -> null
-                                }
-                            line?.let {
+                            if (written && !hold.holding) {
                                 Text(
-                                    stringResource(it),
+                                    stringResource(R.string.session_next_lesson_ready),
                                     Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                                     style = MaterialTheme.typography.bodyMedium,
                                 )
@@ -580,10 +573,6 @@ internal fun NextStop(
                                     GenerationFailure.Generation,
                                     onRetry = { retry() },
                                     modifier = Modifier.padding(top = 16.dp),
-                                    title =
-                                        stringResource(
-                                            R.string.session_next_lesson_failed,
-                                        ).takeIf { waitKind == GenerationKind.Lesson },
                                 )
                             } else if (waiting || hold.holding) {
                                 // A run whose updates stopped decides nothing: its lesson's readiness, asked again, does.

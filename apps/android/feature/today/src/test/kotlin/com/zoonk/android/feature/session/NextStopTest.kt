@@ -223,7 +223,7 @@ class NextStopTest {
         rule.waitForIdle()
         shot("next-stop-first-frame-writing", "session.next-stop.first-frame.writing")
 
-        rule.onNodeWithText("This lesson is being written for you").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
@@ -241,7 +241,7 @@ class NextStopTest {
         rule.waitForIdle()
         shot("next-stop-first-frame-failed", "session.next-stop.first-frame.failed")
 
-        rule.onNodeWithText("We couldn't write this lesson").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
@@ -295,7 +295,7 @@ class NextStopTest {
         gate.complete(Unit)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
     }
 
@@ -320,7 +320,7 @@ class NextStopTest {
         show()
         rule.waitForIdle()
 
-        rule.onNodeWithText("We couldn't write this lesson").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
         assertEquals(1, dayReads)
     }
@@ -353,7 +353,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Try again").assertDoesNotExist()
         assertEquals(0, dayReads)
     }
@@ -371,7 +371,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Connection lost").assertDoesNotExist()
         rule.onNodeWithText("Try again").assertDoesNotExist()
         assertTrue("read $readinessReads times", readinessReads >= 2)
@@ -442,7 +442,7 @@ class NextStopTest {
         rule.waitForIdle()
         shot("next-stop-writing-failed-phone", "session.lesson-wait.failed")
 
-        rule.onNodeWithText("We couldn't write this lesson").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
     }
 
@@ -462,7 +462,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("We couldn't write this lesson").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
@@ -510,7 +510,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("This lesson isn't available").assertExists()
-        rule.onNodeWithText("We couldn't write this lesson").assertDoesNotExist()
+        rule.onNodeWithText("Something went wrong on our side").assertDoesNotExist()
         rule.onNodeWithText("Try again").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -526,8 +526,8 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(601_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you").assertExists()
-        rule.onNodeWithText("We couldn't write this lesson").assertDoesNotExist()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertDoesNotExist()
         rule.onNodeWithText("Try again").assertDoesNotExist()
     }
 
@@ -540,7 +540,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("We couldn't write this lesson").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
