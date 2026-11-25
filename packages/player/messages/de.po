@@ -3665,7 +3665,7 @@ msgstr "Frag {name} zu deinem Plan"
 #: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
-msgstr ""
+msgstr "Frag {name} etwas zu diesem Modul"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
@@ -3791,7 +3791,7 @@ msgstr "Stell Fragen zu deinem Plan"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "eDiytU"
 msgid "Ask questions about this module"
-msgstr ""
+msgstr "Stell Fragen zu diesem Modul"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
@@ -3841,7 +3841,7 @@ msgstr "Fragen zu deinem Plan"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "KCTpmM"
 msgid "Questions about this module"
-msgstr ""
+msgstr "Fragen zu diesem Modul"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3901,7 +3901,7 @@ msgstr "Zu diesem Abschnitt"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "W40WkX"
 msgid "About this module"
-msgstr ""
+msgstr "Über dieses Modul"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

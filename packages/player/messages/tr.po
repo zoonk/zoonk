@@ -3665,7 +3665,7 @@ msgstr "{name} ile planın hakkında konuş"
 #: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
-msgstr ""
+msgstr "Bu modül hakkında {name} ile konuş"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
@@ -3791,7 +3791,7 @@ msgstr "Planınla ilgili sorular sor"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "eDiytU"
 msgid "Ask questions about this module"
-msgstr ""
+msgstr "Bu modül hakkında soru sor"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
@@ -3841,7 +3841,7 @@ msgstr "Planınla ilgili sorular"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "KCTpmM"
 msgid "Questions about this module"
-msgstr ""
+msgstr "Bu modül hakkındaki sorular"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3901,7 +3901,7 @@ msgstr "Bu kısım hakkında"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "W40WkX"
 msgid "About this module"
-msgstr ""
+msgstr "Bu modül hakkında"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

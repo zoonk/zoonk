@@ -3665,7 +3665,7 @@ msgstr "Pergunte para {name} sobre seu plano"
 #: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
-msgstr ""
+msgstr "Pergunte para {name} sobre este módulo"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
@@ -3791,7 +3791,7 @@ msgstr "Faça perguntas sobre seu plano"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "eDiytU"
 msgid "Ask questions about this module"
-msgstr ""
+msgstr "Faça perguntas sobre este módulo"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
@@ -3841,7 +3841,7 @@ msgstr "Perguntas sobre seu plano"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "KCTpmM"
 msgid "Questions about this module"
-msgstr ""
+msgstr "Perguntas sobre este módulo"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3901,7 +3901,7 @@ msgstr "Sobre esta parte"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "W40WkX"
 msgid "About this module"
-msgstr ""
+msgstr "Sobre este módulo"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"

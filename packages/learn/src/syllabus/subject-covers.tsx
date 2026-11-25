@@ -17,7 +17,7 @@ export function SubjectCovers({ covers }: { covers: readonly string[] }) {
         <PageSectionTitle id={COVERS_TITLE_ID}>
           {t({
             description:
-              "Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it.",
+              "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.",
             message: "What it covers",
           })}
         </PageSectionTitle>

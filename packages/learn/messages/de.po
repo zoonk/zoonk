@@ -13026,11 +13026,11 @@ msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number} von {total, number} Kapiteln"
 
-#. Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it.
+#. Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.
 #: src/syllabus/subject-covers.tsx
 msgctxt "PllRqz"
 msgid "What it covers"
-msgstr ""
+msgstr "Das sind die Inhalte"
 
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
@@ -13057,7 +13057,7 @@ msgstr "Wieder hinzufügen"
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "6pJpYl"
 msgid "You took this module out of your plan."
-msgstr ""
+msgstr "Du hast dieses Modul aus deinem Plan genommen."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
@@ -13068,7 +13068,7 @@ msgstr "Du hast dieses Fach aus deinem Plan genommen."
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "NmEJhW"
 msgid "This module isn't in your plan. Other modules come first."
-msgstr ""
+msgstr "Dieses Modul ist nicht in deinem Plan. Andere Module kommen zuerst."
 
 #. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
@@ -13080,7 +13080,7 @@ msgstr "Dieses Fach ist nicht in deinem Plan. Andere Fächer haben Vorrang."
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "6YC_jf"
 msgid "This module isn't in your plan yet."
-msgstr ""
+msgstr "Dieses Modul ist noch nicht in deinem Plan."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13111,7 +13111,7 @@ msgstr "{total, plural, one {{done, number} von # Thema} other {{done, number} v
 #: src/syllabus/subject-screen.tsx
 msgctxt "W40WkX"
 msgid "About this module"
-msgstr ""
+msgstr "Über dieses Modul"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "XHGiOR"
@@ -13121,7 +13121,7 @@ msgstr "Über dieses Fach"
 #: src/syllabus/subject-screen.tsx
 msgctxt "qsKSNx"
 msgid "Module options"
-msgstr ""
+msgstr "Moduloptionen"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"
@@ -13289,7 +13289,7 @@ msgstr "In der Prüfung"
 #: src/syllabus/topic-note.tsx
 msgctxt "i2ZFZr"
 msgid "Not in your plan · you took this module out"
-msgstr ""
+msgstr "Nicht in deinem Plan · du hast dieses Modul herausgenommen"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

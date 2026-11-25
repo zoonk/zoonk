@@ -3665,7 +3665,7 @@ msgstr "{name}에게 내 계획에 대해 질문하기"
 #: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
-msgstr ""
+msgstr "이 모듈에 대해 {name}님에게 질문하기"
 
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
@@ -3791,7 +3791,7 @@ msgstr "내 계획에 대해 질문해 보세요"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "eDiytU"
 msgid "Ask questions about this module"
-msgstr ""
+msgstr "이 모듈에 대해 질문하기"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
@@ -3841,7 +3841,7 @@ msgstr "내 계획에 대한 질문"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "KCTpmM"
 msgid "Questions about this module"
-msgstr ""
+msgstr "이 모듈 관련 질문"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3901,7 +3901,7 @@ msgstr "이 부분에 대해"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "W40WkX"
 msgid "About this module"
-msgstr ""
+msgstr "이 모듈 정보"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"
