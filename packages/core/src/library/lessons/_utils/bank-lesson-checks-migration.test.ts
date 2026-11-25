@@ -41,12 +41,15 @@ describe("lesson check bank migration", () => {
       throw new Error("Expected both fixture checks");
     }
 
-    const [, baseAttempt, variantAttempt, mistake] = await Promise.all([
+    const [, baseAttempt, variantAttempt, standaloneAttempt, mistake] = await Promise.all([
       stepVariantFixture({ content, key: "excel", kind: "tool", stepId: varied.id }),
       attemptFixture({ stepId: base.id, userId: user.id }),
       attemptFixture({ stepId: varied.id, userId: user.id }),
+      attemptFixture({ userId: user.id }),
       mistakeFixture({ skillId: skill.id, stepId: base.id, userId: user.id }),
     ]);
+
+    expect(standaloneAttempt.fromLesson).toBeNull();
 
     const migration = readFileSync(
       new URL(
@@ -115,6 +118,7 @@ describe("lesson check bank migration", () => {
         SELECT id, from_lesson AS "fromLesson", item_id AS "itemId" FROM attempts
       `).resolves.toStrictEqual(
         expect.arrayContaining([
+          { fromLesson: false, id: standaloneAttempt.id, itemId: null },
           { fromLesson: true, id: baseAttempt.id, itemId: linked.itemId },
           { fromLesson: true, id: variantAttempt.id, itemId: null },
         ]),

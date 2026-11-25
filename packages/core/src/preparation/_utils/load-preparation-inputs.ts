@@ -9,7 +9,7 @@ import {
   prisma,
   sql,
 } from "@zoonk/db";
-import { LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
+import { LESSON_ANSWER_FILTER, NOT_LESSON_ANSWER_SQL } from "@zoonk/db/lesson-answer";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
@@ -41,17 +41,18 @@ async function loadUnseenAnswers({
   userId: string;
 }): Promise<UnseenAnswer[]> {
   const firstAnswers = await loadAnswerPerItem<
-    Pick<Attempt, "answeredAt" | "isCorrect" | "skillId">
+    Pick<Attempt, "answeredAt" | "isCorrect" | "skillId"> & { isCold: boolean }
   >({
-    columns: sql`answered_at AS "answeredAt", is_correct AS "isCorrect", skill_id AS "skillId"`,
+    columns: sql`answered_at AS "answeredAt", is_correct AS "isCorrect", skill_id AS "skillId",
+      (${NOT_LESSON_ANSWER_SQL}) AS "isCold"`,
     order: "first",
     userId,
     where: sql`skill_id = ANY(${skillIds}::uuid[]) AND answer <> ${JSON.stringify(DONT_KNOW)}::jsonb`,
   });
 
-  return firstAnswers.flatMap((answer) => {
-    const skillId = answer.skillId ? owners.get(answer.skillId) : undefined;
-    return skillId ? [{ ...answer, skillId }] : [];
+  return firstAnswers.flatMap(({ isCold, skillId, ...answer }) => {
+    const ownerSkillId = skillId ? owners.get(skillId) : undefined;
+    return isCold && ownerSkillId ? [{ ...answer, skillId: ownerSkillId }] : [];
   });
 }
 

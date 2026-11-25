@@ -8,8 +8,11 @@ export type AnswerRecord = {
   stepId: string | null;
 };
 
-function getQuestionKey(answer: Pick<AnswerRecord, "itemId" | "stepId">): string | null {
-  return answer.itemId ?? answer.stepId;
+export function isSameQuestion(answer: AnswerRecord, other: AnswerRecord): boolean {
+  return (
+    (answer.itemId !== null && answer.itemId === other.itemId) ||
+    (answer.stepId !== null && answer.stepId === other.stepId)
+  );
 }
 
 function getMaterial({
@@ -39,14 +42,11 @@ export function classifyAnswers<TAnswer extends AnswerRecord>({
   history: readonly AnswerRecord[];
 }): (TAnswer & ScoredAnswer)[] {
   return answers.map((answer) => {
-    const key = getQuestionKey(answer);
-
     const priorRightAnswers = history.filter(
       (earlier) =>
         earlier.id !== answer.id &&
         earlier.isCorrect &&
-        key !== null &&
-        getQuestionKey(earlier) === key &&
+        isSameQuestion(answer, earlier) &&
         earlier.answeredAt < answer.answeredAt,
     ).length;
 

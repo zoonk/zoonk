@@ -18,6 +18,25 @@ function answer({
 }
 
 describe(classifyAnswers, () => {
+  it("counts a prior correct answer through either matching ID once", () => {
+    const history = [
+      answer({ at: "2026-09-20T10:00:00Z", id: "step", stepId: "check" }),
+      answer({ at: "2026-09-21T10:00:00Z", id: "item", itemId: "bank" }),
+      answer({ at: "2026-09-22T10:00:00Z", id: "both", itemId: "bank", stepId: "check" }),
+    ];
+
+    const replayed = answer({
+      at: "2026-09-30T10:00:00Z",
+      id: "replay",
+      itemId: "bank",
+      stepId: "check",
+    });
+
+    expect(classifyAnswers({ answers: [replayed], dueItemIds: new Set(), history })).toMatchObject([
+      { material: "repeat", priorRightAnswers: 3 },
+    ]);
+  });
+
   it("marks capsule and drill questions due, first right answers new and later ones repeats", () => {
     const history = [
       answer({ at: "2026-09-20T10:00:00Z", id: "old-right", itemId: "known" }),
