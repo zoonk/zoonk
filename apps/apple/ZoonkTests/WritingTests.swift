@@ -183,7 +183,8 @@ final class WritingResultDecodingTests: XCTestCase {
       SyllabusSubject.self,
       """
       {
-        "areas":["Writing"],"chapters":[],"group":"Written test (P2)","key":"writing","lessonsDone":0,
+        "areas":["Writing"],"chapters":[],"covers":[],"group":"Written test (P2)","key":"writing",
+        "lessonsDone":0,
         "lessonsKnown":0,"lessonsTotal":1,"name":"Writing","sharedWith":[],"shortName":"Writing",
         "source":"notice","topics":[],"writtenPart":"Written test"
       }

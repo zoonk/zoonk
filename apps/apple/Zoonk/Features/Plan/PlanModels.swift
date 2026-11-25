@@ -819,6 +819,9 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   /// The plan's areas it gathers, as plan changes name them.
   let areas: [String]
   let chapters: [Chapter]
+  /// What it would teach, by its skills' names, while it's out of the plan with no topics or
+  /// chapters to say it; empty otherwise.
+  let covers: [String]
   let displayWeight: DisplayWeight?
   /// Set on the exam's optional study, such as its strategy, which the exam doesn't test.
   let extra: Bool?

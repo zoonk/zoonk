@@ -124,6 +124,7 @@ private struct SubjectContent: View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
+        coversSection
         chaptersSection
       }
     } secondary: {
@@ -137,6 +138,7 @@ private struct SubjectContent: View {
       ZoonkList {
         header
         numbers(titled: false)
+        coversSection
         chaptersSection
         topics
       }
@@ -344,6 +346,25 @@ private struct SubjectContent: View {
   private var topics: some View {
     if !subject.topics.isEmpty {
       SubjectTopicsSection(goal: goal, syllabus: syllabus, subject: subject, open: $openTopics)
+    }
+  }
+
+  /// What a subject out of the plan would teach, when it has no chapters or topics to say it.
+  @ViewBuilder
+  private var coversSection: some View {
+    if !subject.covers.isEmpty {
+      Section {
+        ForEach(Array(subject.covers.enumerated()), id: \.offset) { _, name in
+          ListRow(Text(name))
+        }
+      } header: {
+        SectionTitle(
+          Text(
+            "What it covers", tableName: "Plan",
+            comment:
+              "Section of what a subject or module out of the learner's plan would teach, under the notice that says it isn't in the plan"
+          ))
+      }
     }
   }
 
