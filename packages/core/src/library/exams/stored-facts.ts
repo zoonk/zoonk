@@ -15,7 +15,7 @@ function countFacts(value: unknown): number {
       .reduce((sum, [, item]) => sum + countFacts(item), 0);
   }
 
-  return value === null || value === undefined || value === "" || value === false ? 0 : 1;
+  return value === null || value === undefined || value === "" ? 0 : 1;
 }
 
 /**

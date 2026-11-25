@@ -95,6 +95,25 @@ describe(keepStoredFacts, () => {
     ).toStrictEqual(corrected.structure.mock);
   });
 
+  it("takes a re-read of the same notice that corrects a rule from true to false", () => {
+    const navigation = {
+      answerChanges: null,
+      forwardOnly: true,
+      itemSeconds: null,
+      mustAnswer: true,
+    };
+
+    const stored = content({ conditions: mock([{ ...LISTENING, navigation }]) });
+
+    const read = content({
+      conditions: mock([{ ...LISTENING, navigation: { ...navigation, forwardOnly: false } }]),
+    });
+
+    expect(keepStoredFacts({ isCited: () => false, read, stored }).structure.mock).toBe(
+      read.structure.mock,
+    );
+  });
+
   it("keeps both essays when a re-read of the same notice found only one", () => {
     const formats = [format("essay", "Letter"), format("essay", "Report")];
     const stored = content({ formats });
