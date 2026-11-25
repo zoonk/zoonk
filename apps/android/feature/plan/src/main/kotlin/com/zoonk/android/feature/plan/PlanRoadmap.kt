@@ -128,7 +128,7 @@ private fun roadmapPosition(
     val current = phases.getOrNull(index) ?: return null
     return RoadmapPosition(
         phaseName(current, page.mocksRequirePlus),
-        phaseEnd(page, current),
+        phaseEnd(page, current).takeUnless { page.isPaused },
         index + 1,
         phases.size,
     )

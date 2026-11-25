@@ -132,6 +132,7 @@ private fun PhaseItem(
                 page.plan,
                 phase,
                 phaseMeta(page, phase, open),
+                paused = page.isPaused,
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
@@ -146,7 +147,7 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
     if (!hasContent) {
-        PhaseRow(page.plan, phase, phaseMeta(page, phase, open))
+        PhaseRow(page.plan, phase, phaseMeta(page, phase, open), paused = page.isPaused)
         return
     }
 
@@ -159,6 +160,7 @@ private fun PhaseItem(
             page.plan,
             phase,
             phaseMeta(page, phase, open),
+            paused = page.isPaused,
             onClick = { expanded = !expanded },
             expanded = expanded,
             // The current phase keeps its name open, as main's does.
@@ -182,8 +184,10 @@ internal fun PhaseRow(
     expanded: Boolean? = null,
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
+    paused: Boolean = false,
 ) {
-    val date = phaseEnd(plan, phase, plan.today)
+    // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
+    val date = if (paused) null else phaseEnd(plan, phase, plan.today)
     val name = phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
@@ -680,7 +684,7 @@ internal fun ColumnScope.PhaseDetails(
     val byPlace = learn && phase.isNamedLikeAChapter(name)
     // From the phase's start to the end it's named by everywhere, or a short plan's days.
     val range =
-        when (val end = page.plan.phaseEnd(phase)) {
+        when (val end = page.plan.phaseEnd(phase).takeUnless { page.isPaused }) {
             null -> {
                 null
             }
