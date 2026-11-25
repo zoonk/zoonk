@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -342,24 +343,24 @@ private fun TypedTools(
     onChange: (ProfileDraft) -> Unit,
 ) {
     val field = remember { TextFieldState(draft.text) }
-    // What the field was set to after its names became chips: not the learner's edit, and this frame's draft, from
-    // before those chips, would drop them if it handled it.
-    var reset by remember { mutableStateOf<String?>(null) }
-    val entry = draft.copy(text = field.text.toString())
-    val canAdd = entry.canAdd(question.options)
-    val show = { next: ProfileDraft ->
-        if (next.text != field.text.toString()) {
-            reset = next.text
-            field.setTextAndPlaceCursorAtEnd(next.text)
-        }
+    // The draft with every change sent so far: an edit or an Add that lands before the parent shows the last change
+    // builds on it, since this composition's draft would drop the chips that change made.
+    val latest = remember { LatestDraft(draft) }
+    SideEffect { latest.draft = draft }
+    val canAdd = draft.copy(text = field.text.toString()).canAdd(question.options)
+    val send = { next: ProfileDraft ->
+        latest.draft = next
         onChange(next)
     }
-    val add = { show(entry.added(question.options)) }
-    field.ObserveEdits { text ->
-        val own = text == reset
-        reset = null
-        if (!own) show(draft.typing(text, question.options))
+    val show = { next: ProfileDraft ->
+        if (next.text != field.text.toString()) field.setTextAndPlaceCursorAtEnd(next.text)
+        send(next)
     }
+    val add = {
+        val entry = latest.draft.copy(text = field.text.toString())
+        entry.canAdd(question.options).also { if (it) show(entry.added(question.options)) }
+    }
+    field.ObserveEdits { text -> if (text != latest.draft.text) show(latest.draft.typing(text, question.options)) }
     val newest = remember { BringIntoViewRequester() }
     var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
     LaunchedEffect(draft.typed.size) {
@@ -374,7 +375,7 @@ private fun TypedTools(
             InputTransformation {
                 val original = originalText.toString()
                 val edited = asCharSequence().toString()
-                val previous = draft.copy(text = original)
+                val previous = latest.draft.copy(text = original)
                 if (previous.typing(edited, question.options) === previous) revertAllChanges()
             },
         enabled = enabled,
@@ -382,19 +383,19 @@ private fun TypedTools(
         placeholder = { Text(stringResource(R.string.profile_questions_tools_placeholder)) },
         trailingIcon = {
             TextButton(
-                onClick = add,
+                onClick = { add() },
                 enabled = enabled && canAdd,
                 size = ButtonSize.Small,
             ) { Text(stringResource(R.string.profile_questions_add)) }
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        onKeyboardAction = { performDefault -> if (canAdd) add() else performDefault() },
+        onKeyboardAction = { performDefault -> if (!add()) performDefault() },
         lineLimits = TextFieldLineLimits.SingleLine,
     )
     if (draft.typed.isNotEmpty()) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             draft.typed.forEachIndexed { index, tool ->
-                val remove = { onChange(draft.removing(tool)) }
+                val remove = { send(latest.draft.removing(tool)) }
                 val name = stringResource(R.string.profile_questions_remove_tool, tool)
                 SelectionChip(
                     text = tool,
@@ -480,3 +481,7 @@ private fun favoritesWords(question: ProfileQuestion): Pair<Int, Int> =
         ProfileQuestion.READ -> R.string.profile_questions_read_favorites to R.string.profile_questions_read_placeholder
         else -> R.string.profile_questions_activities_favorites to R.string.profile_questions_activities_placeholder
     }
+
+private class LatestDraft(
+    var draft: ProfileDraft,
+)
