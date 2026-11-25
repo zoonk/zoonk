@@ -162,7 +162,7 @@ function AttachableGoalEntry({
       hasAccount={canAttach}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={sending.send}
-      sending={sending.held}
+      sending={sending.waiting}
       signUpHref={routes.signUp}
     />
   );

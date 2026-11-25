@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { startTransition, useEffect, useEffectEvent, useOptimistic, useRef } from "react";
 import {
   type AttachOutcome,
   type AttachedSource,
@@ -10,6 +10,9 @@ import {
 /**
  * A goal sent while material is still being added waits for it, so the material goes with the goal.
  * When adding fails, nothing is sent and the learner stays to see why.
+ *
+ * Adding runs in the attach controls' transition, and React holds every transition's updates until
+ * it ends, so the count and the busy send are optimistic: both end with it, once the material is in.
  */
 export function useSendAfterAdding({
   attach,
@@ -20,32 +23,42 @@ export function useSendAfterAdding({
   onAdded: (source: AttachedSource) => void;
   onSend: (goal: string) => void;
 }) {
-  const [adding, setAdding] = useState(0);
-  const [held, setHeld] = useState<{ goal: string } | null>(null);
-  const sent = useRef<{ goal: string } | null>(null);
+  const [adding, startAdding] = useOptimistic(0, (count, change: number) => count + change);
+  const [waiting, showWaiting] = useOptimistic(false);
+  const held = useRef<string | null>(null);
   const sendHeld = useEffectEvent(onSend);
 
-  // The count drops in the same update that adds the material, so the held goal never goes without it.
   const track = async (run: () => Promise<AttachOutcome>): Promise<AttachOutcome> => {
-    setAdding((count) => count + 1);
+    startAdding(1);
     const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
-    setAdding((count) => count - 1);
 
     if (outcome.status === "attached") {
       onAdded(outcome.source);
     } else {
-      setHeld(null);
+      held.current = null;
     }
 
     return outcome;
   };
 
   useEffect(() => {
-    if (held && adding === 0 && sent.current !== held) {
-      sent.current = held;
-      sendHeld(held.goal);
+    const goal = held.current;
+
+    if (adding === 0 && goal !== null) {
+      held.current = null;
+      sendHeld(goal);
     }
-  }, [adding, held]);
+  }, [adding]);
+
+  const send = (goal: string) => {
+    if (adding === 0) {
+      onSend(goal);
+      return;
+    }
+
+    held.current = goal;
+    startTransition(() => showWaiting(true));
+  };
 
   return {
     attach: {
@@ -54,7 +67,7 @@ export function useSendAfterAdding({
       link: (input) => track(() => attach.link(input)),
       text: (input) => track(() => attach.text(input)),
     } satisfies GoalAttachActions,
-    held: held !== null && adding > 0,
-    send: (goal: string) => (adding > 0 ? setHeld({ goal }) : onSend(goal)),
+    send,
+    waiting,
   };
 }
