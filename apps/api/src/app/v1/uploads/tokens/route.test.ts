@@ -40,11 +40,11 @@ describe("POST /v1/uploads/tokens", () => {
     vi.mocked(createSourceUploadToken).mockResolvedValue({
       status: "ready",
       token: signedToken(),
-      urlOptions: { addRandomSuffix: false, allowOverwrite: false },
+      urlOptions: { addRandomSuffix: false, allowOverwrite: false, ttlDays: 1 },
     });
   });
 
-  it("answers Vercel Blob's presign event with a signed upload of the requested file", async () => {
+  it("answers Vercel Blob's presign event with a signed upload of the requested file, set to expire", async () => {
     const response = await createUploadToken(tokenRequest(PRESIGN_EVENT));
 
     expect(response.status).toBe(200);
@@ -55,6 +55,7 @@ describe("POST /v1/uploads/tokens", () => {
         params: {
           "vercel-blob-add-random-suffix": "false",
           "vercel-blob-allow-overwrite": "false",
+          "vercel-blob-ttl-days": "1",
         },
         signature: expect.any(String),
       },

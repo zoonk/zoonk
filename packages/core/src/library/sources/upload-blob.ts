@@ -1,5 +1,5 @@
 import "server-only";
-import { del, get } from "@vercel/blob";
+import { del, get, setTtl } from "@vercel/blob";
 import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 import { normalizeContentType } from "@zoonk/utils/upload";
 import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
@@ -27,6 +27,10 @@ export async function readUploadedBlob(urlOrPathname: string): Promise<UploadedB
     contentType: normalizeContentType(result.blob.contentType),
     url: result.blob.url,
   };
+}
+
+export async function keepUploadedBlob(url: string): Promise<void> {
+  await setTtl(url, { ttlDays: null, ...getPrivateBlobStore() });
 }
 
 export async function deleteUploadedBlob(url: string): Promise<void> {

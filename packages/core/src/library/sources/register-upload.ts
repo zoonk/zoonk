@@ -14,7 +14,7 @@ import { toSourceUrl } from "./fetch-document";
 import { linkGoalSources } from "./link-goal-sources";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { SOURCE_READ_VERSION } from "./source-contract";
-import { deleteUploadedBlob } from "./upload-blob";
+import { deleteUploadedBlob, keepUploadedBlob } from "./upload-blob";
 
 type UploadedSource = Omit<Source, "extractedText">;
 
@@ -96,7 +96,7 @@ async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId
   return goal?.id ?? null;
 }
 
-function createPrivateSource({
+async function createPrivateSource({
   content,
   input,
   userId,
@@ -111,6 +111,11 @@ function createPrivateSource({
   });
 
   const title = input.title?.trim() || getDefaultTitle(input);
+
+  // Before the source points at the file, so no source is left with a file that expires.
+  if (content.blobUrl) {
+    await keepUploadedBlob(content.blobUrl);
+  }
 
   return writeLearnerChange({ userId }, async (tx) => {
     const stored = await tx.source.findUnique({

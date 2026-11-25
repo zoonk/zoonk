@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { del, get, issueSignedToken } from "@vercel/blob";
+import { del, get, issueSignedToken, setTtl } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
@@ -114,7 +114,7 @@ describe(registerSourceUpload, () => {
     expect(get).not.toHaveBeenCalled();
   });
 
-  it("stores a new file as a private source of its owner, titled by its name, and asks for a visibility check", async () => {
+  it("stores a new file as a private source of its owner, titled by its name, keeps the file and asks for a visibility check", async () => {
     const user = await userFixture();
     mockSession(user.id);
     const text = uniqueText();
@@ -140,7 +140,29 @@ describe(registerSourceUpload, () => {
     expect(source.title).toBe("edital");
     expect(source.identityKey).toBe(`private:${user.id}:upload:${source.contentHash}`);
     expect(source.learnerSources).toMatchObject([{ origin: "upload", userId: user.id }]);
+    expect(setTtl).toHaveBeenCalledExactlyOnceWith(url, { ttlDays: null, ...PRIVATE_STORE });
     expect(del).not.toHaveBeenCalled();
+  });
+
+  it("stores no source while its file would still expire, so trying again stores it", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const { pathname, url } = uploadNotice({ text: uniqueText(), userId: user.id });
+    vi.mocked(setTtl).mockRejectedValueOnce(new Error("Blob storage is unavailable"));
+
+    await expect(registerSourceUpload({ kind: "file", language: "pt", pathname })).rejects.toThrow(
+      "Blob storage is unavailable",
+    );
+
+    await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(0);
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "pt", pathname }),
+    ).resolves.toMatchObject({ checkVisibility: true, status: "ready" });
+
+    await expect(
+      prisma.source.findFirstOrThrow({ where: { ownerId: user.id } }),
+    ).resolves.toMatchObject({ blobUrl: url });
   });
 
   it("reads a pasted link as the learner's own source, titled by its address", async () => {
