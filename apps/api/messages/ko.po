@@ -43,7 +43,7 @@ msgstr "이메일"
 #: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "PwhG9W"
 msgid "you@example.com"
-msgstr "이름@example.com"
+msgstr "honggildong@example.com"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx

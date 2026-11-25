@@ -3762,7 +3762,7 @@ msgstr "이메일 주소(답변을 원하는 경우)"
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.PwhG9W"
 msgid "you@example.com"
-msgstr "이름@example.com"
+msgstr "honggildong@example.com"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.Xx0WZV"
