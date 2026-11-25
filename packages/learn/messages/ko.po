@@ -4650,6 +4650,7 @@ msgstr "이 목표는 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
@@ -4745,7 +4746,7 @@ msgstr "진도"
 #: src/journey/journey-hero.tsx
 msgctxt "yaK5-i"
 msgid "Not tested yet"
-msgstr ""
+msgstr "아직 테스트 전"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -4846,7 +4847,7 @@ msgstr "승리"
 #: src/journey/journey-phase-events.tsx
 msgctxt "gfKKsY"
 msgid "Next time"
-msgstr ""
+msgstr "다음 학습 때"
 
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
@@ -5101,7 +5102,7 @@ msgstr "잊혀 가는 내용 복습하기"
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "vn_iV0"
 msgid "Needed to go past 75% preparation"
-msgstr ""
+msgstr "준비도를 75% 넘기려면 필요"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "v5t0w3"
@@ -5235,11 +5236,11 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "계획 완료"
 
-#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.
 #: src/journey/roadmap-full.tsx
 msgctxt "q5LbXf"
 msgid "Phase questions"
-msgstr ""
+msgstr "단계 문제"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -5262,7 +5263,7 @@ msgstr "{day}: {status}"
 #: src/journey/schedule-details.tsx
 msgctxt "C2iTEH"
 msgid "Paused"
-msgstr ""
+msgstr "일시 중지됨"
 
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
@@ -10043,6 +10044,7 @@ msgid "Exam country"
 msgstr "시험 국가"
 
 #: src/onboarding/understood/use-schedule-row.ts
+#: src/plan/plan-properties.tsx
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "하루 {time}"
@@ -10615,9 +10617,9 @@ msgid "Test what you know"
 msgstr "아는 내용 확인하기"
 
 #: src/plan/plan-properties.tsx
-msgctxt "oOY_q2"
-msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
-msgstr "<mono>{weekdays}</mono> · 주말 <mono>{weekend}</mono>"
+msgctxt "xqyYxG"
+msgid "{weekdays} · {weekend} weekends"
+msgstr "{weekdays} · 주말 {weekend}"
 
 #: src/plan/plan-properties.tsx
 msgctxt "7X2m8_"
@@ -10642,12 +10644,12 @@ msgstr "다음 <date></date>"
 #: src/plan/plan-properties.tsx
 msgctxt "-0-sO9"
 msgid "Estimated finish"
-msgstr ""
+msgstr "예상 완료일"
 
 #: src/plan/plan-properties.tsx
 msgctxt "1KfRoB"
 msgid "All activities"
-msgstr ""
+msgstr "모든 활동"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
@@ -12853,10 +12855,11 @@ msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
 msgstr "한 번에 학습할 수 있는 목표 수를 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요."
 
+#. Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.1LEHvj"
 msgid "Or subscribe to study more goals at once."
-msgstr ""
+msgstr "또는 구독하면 목표를 더 많이 동시에 공부할 수 있어요."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -13230,7 +13233,7 @@ msgstr "{count, plural, other {모듈 #개}}"
 #: src/syllabus/syllabus-section.tsx
 msgctxt "uZd7hU"
 msgid "On the exam"
-msgstr ""
+msgstr "시험 문제 수"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

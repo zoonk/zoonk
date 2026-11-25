@@ -4650,6 +4650,7 @@ msgstr "Este objetivo está en pausa"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "No hay nada programado hasta que lo reanudes."
@@ -4745,7 +4746,7 @@ msgstr "Progreso"
 #: src/journey/journey-hero.tsx
 msgctxt "yaK5-i"
 msgid "Not tested yet"
-msgstr ""
+msgstr "Aún no se evaluó"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -4846,7 +4847,7 @@ msgstr "Ganaste"
 #: src/journey/journey-phase-events.tsx
 msgctxt "gfKKsY"
 msgid "Next time"
-msgstr ""
+msgstr "La próxima vez"
 
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
@@ -5101,7 +5102,7 @@ msgstr "Repasar lo que empiezas a olvidar"
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "vn_iV0"
 msgid "Needed to go past 75% preparation"
-msgstr ""
+msgstr "Necesario para superar el 75% de preparación"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "v5t0w3"
@@ -5235,11 +5236,11 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "Terminas"
 
-#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.
 #: src/journey/roadmap-full.tsx
 msgctxt "q5LbXf"
 msgid "Phase questions"
-msgstr ""
+msgstr "Preguntas de la fase"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -5262,7 +5263,7 @@ msgstr "{day}: {status}"
 #: src/journey/schedule-details.tsx
 msgctxt "C2iTEH"
 msgid "Paused"
-msgstr ""
+msgstr "En pausa"
 
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
@@ -10043,6 +10044,7 @@ msgid "Exam country"
 msgstr "País del examen"
 
 #: src/onboarding/understood/use-schedule-row.ts
+#: src/plan/plan-properties.tsx
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "{time} al día"
@@ -10615,9 +10617,9 @@ msgid "Test what you know"
 msgstr "Comprobar lo que sabes"
 
 #: src/plan/plan-properties.tsx
-msgctxt "oOY_q2"
-msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
-msgstr "<mono>{weekdays}</mono> · <mono>{weekend}</mono> los fines de semana"
+msgctxt "xqyYxG"
+msgid "{weekdays} · {weekend} weekends"
+msgstr "{weekdays} · {weekend} los fines de semana"
 
 #: src/plan/plan-properties.tsx
 msgctxt "7X2m8_"
@@ -10642,12 +10644,12 @@ msgstr "Próximo: <date></date>"
 #: src/plan/plan-properties.tsx
 msgctxt "-0-sO9"
 msgid "Estimated finish"
-msgstr ""
+msgstr "Fecha estimada de finalización"
 
 #: src/plan/plan-properties.tsx
 msgctxt "1KfRoB"
 msgid "All activities"
-msgstr ""
+msgstr "Todas las actividades"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
@@ -12853,10 +12855,11 @@ msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
 msgstr "Alcanzaste el límite de objetivos que puedes estudiar a la vez. Pausa uno para empezar a estudiar este."
 
+#. Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.1LEHvj"
 msgid "Or subscribe to study more goals at once."
-msgstr ""
+msgstr "O suscríbete para estudiar más objetivos a la vez."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -13230,7 +13233,7 @@ msgstr "{count, plural, one {# módulo} other {# módulos}}"
 #: src/syllabus/syllabus-section.tsx
 msgctxt "uZd7hU"
 msgid "On the exam"
-msgstr ""
+msgstr "En el examen"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

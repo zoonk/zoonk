@@ -4650,6 +4650,7 @@ msgstr "This goal is paused"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "Nothing is planned until you resume it."
@@ -5235,7 +5236,7 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "You finish"
 
-#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints.
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.
 #: src/journey/roadmap-full.tsx
 msgctxt "q5LbXf"
 msgid "Phase questions"
@@ -10043,6 +10044,7 @@ msgid "Exam country"
 msgstr "Exam country"
 
 #: src/onboarding/understood/use-schedule-row.ts
+#: src/plan/plan-properties.tsx
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "{time} a day"
@@ -10615,9 +10617,9 @@ msgid "Test what you know"
 msgstr "Test what you know"
 
 #: src/plan/plan-properties.tsx
-msgctxt "oOY_q2"
-msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
-msgstr "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
+msgctxt "xqyYxG"
+msgid "{weekdays} · {weekend} weekends"
+msgstr "{weekdays} · {weekend} weekends"
 
 #: src/plan/plan-properties.tsx
 msgctxt "7X2m8_"
@@ -12853,6 +12855,7 @@ msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
 msgstr "That's as many goals as you can study at once. Pause one to start this one."
 
+#. Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.1LEHvj"
 msgid "Or subscribe to study more goals at once."
