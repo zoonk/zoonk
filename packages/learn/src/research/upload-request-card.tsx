@@ -36,7 +36,7 @@ type Failure = Exclude<UploadAnswer, "answered" | "unreadable">;
 
 type Unreadable = Pick<AttachedSource, "title">;
 
-/** While an answered upload is still being read; `onUnreadable` once nothing on it could be read. */
+/** Follows an answered upload until its read settles; `onUnreadable` once nothing on it could be read. */
 export function useAnsweredUploadRead({
   answered,
   onUnreadable,
@@ -46,17 +46,25 @@ export function useAnsweredUploadRead({
   onUnreadable: (source: AttachedSource) => void;
   read: GoalAttachActions["readStatus"];
 }) {
+  const [settledId, setSettledId] = useState<string | null>(null);
+  const following = answered && answered.id !== settledId ? [answered] : [];
+
   useFollowReading({
     onSettled: (settled) => {
-      if (
-        answered &&
-        settled.some((item) => item.id === answered.id && item.readStatus === "unreadable")
-      ) {
+      const answeredRead = settled.find((item) => item.id === answered?.id);
+
+      if (!answered || !answeredRead) {
+        return;
+      }
+
+      setSettledId(answeredRead.id);
+
+      if (answeredRead.readStatus === "unreadable") {
         onUnreadable(answered);
       }
     },
     read,
-    sources: answered ? [answered] : [],
+    sources: following,
   });
 }
 
