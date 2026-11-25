@@ -367,7 +367,7 @@ private fun PaddingValues.besideMarks(
 /**
  * A 1dp `input` line; focused, [focusedBorderThickness] of the colors' focused line, with main's focus
  * ring outside it while [ringed]. Invalid, main's `aria-invalid:` look instead: the line in `destructive`
- * (half strength in dark) with a 3dp ring of it outside (20%, 40% in dark), both solid with more contrast.
+ * (half strength in dark) with a 3dp ring of it outside (20%, 40% in dark); with more contrast, the line at full strength and no ring.
  */
 @Composable
 private fun FieldContainer(
