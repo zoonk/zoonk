@@ -36,7 +36,10 @@ const ANSWER_RUN = {
   runId: "run-goal-tutor",
 };
 
-async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
+async function setup({
+  dailyMinutes = 12,
+  skippedAreas = [],
+}: { dailyMinutes?: number; skippedAreas?: string[] } = {}) {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
@@ -50,7 +53,7 @@ async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes,
-    settings: { startDate: "2020-09-28" },
+    settings: { skippedAreas, startDate: "2020-09-28" },
     userId: user.id,
   });
 
@@ -267,6 +270,16 @@ describe("app tools the buddy offers", () => {
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.questionId } }),
     ).resolves.toMatchObject({ toolOffer: null });
+  });
+
+  it("says a plan with one subject left has no focus to choose, not that everything fits", async () => {
+    const { goal } = await setup({ skippedAreas: ["Law"] });
+    const asked = await askBuddy(goal.id);
+
+    await expect(offerTutorTool({ ...asked, tool: "chooseFocus" })).resolves.toStrictEqual({
+      reason: "oneSubject",
+      status: "unavailable",
+    });
   });
 
   it("only lets the generation answering the learner's own question offer a tool", async () => {
