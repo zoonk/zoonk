@@ -251,7 +251,7 @@ private struct PlanPhaseRow: View {
   private var meta: Text? {
     switch phase.leftOut {
     case .notInPlan:
-      return planOutsideReason(phase.notPlannedReason)
+      return planOutsideReason(phase.notPlannedReason, module: context.goal.kind != .exam)
     case .lessons(let count):
       return Text(
         "\(count) lessons not studied", tableName: "Plan",
@@ -931,7 +931,7 @@ struct SyllabusSubjectRow: View {
       }
 
       if subject.notPlannedReason != nil {
-        planOutsideReason(subject.notPlannedReason)
+        planOutsideReason(subject.notPlannedReason, module: !isExam)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
@@ -1048,8 +1048,16 @@ struct PlanChallengeLabel: View {
   }
 }
 
-func planOutsideReason(_ reason: String?) -> Text {
+/// `module` names what the learner took out as the Plan's list does: an exam's subjects, any other
+/// goal's modules.
+func planOutsideReason(_ reason: String?, module: Bool) -> Text {
   switch reason {
+  case "skipped" where module:
+    Text(
+      "Not in your plan\u{00A0}· you took this module out", tableName: "Plan",
+      comment:
+        "Why a module or a step on the path isn't in the learner's plan: they took its module out. A module is a part of a plan that isn't for an exam."
+    )
   case "skipped":
     Text(
       "Not in your plan\u{00A0}· you took this subject out", tableName: "Plan",

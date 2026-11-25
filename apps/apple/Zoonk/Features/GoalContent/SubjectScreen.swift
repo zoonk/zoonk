@@ -22,9 +22,17 @@ struct SubjectScreen: View {
           case .failed(let error) where error != .notFound:
             PageLoadFailure {
               Label {
-                Text(
-                  "Couldn't load this subject", tableName: "Plan",
-                  comment: "Title shown when a subject failed to load")
+                if goal.kind == .exam {
+                  Text(
+                    "Couldn't load this subject", tableName: "Plan",
+                    comment: "Title shown when a subject failed to load")
+                } else {
+                  Text(
+                    "Couldn't load this module", tableName: "Plan",
+                    comment:
+                      "Title shown when a module failed to load. A module is a part of a plan that isn't for an exam."
+                  )
+                }
               } icon: {
                 Image(systemName: "wifi.exclamationmark")
               }
@@ -34,9 +42,17 @@ struct SubjectScreen: View {
           default:
             StateMessage {
               Label {
-                Text(
-                  "This subject isn't in your plan", tableName: "Plan",
-                  comment: "Shown for a subject the learner's plan doesn't have")
+                if goal.kind == .exam {
+                  Text(
+                    "This subject isn't in your plan", tableName: "Plan",
+                    comment: "Shown for a subject the learner's plan doesn't have")
+                } else {
+                  Text(
+                    "This module isn't in your plan", tableName: "Plan",
+                    comment:
+                      "Shown for a module the learner's plan doesn't have. A module is a part of a plan that isn't for an exam."
+                  )
+                }
               } icon: {
                 Image(systemName: "books.vertical")
               }
@@ -47,7 +63,8 @@ struct SubjectScreen: View {
       }
       .barTitleAfterHero(subject?.shortName ?? String(localized: AppTab.plan.title))
       .toolbar {
-        TutorAskToolbarItem(scope: .subject(goalId: goal.id, subjectKey: subjectKey))
+        TutorAskToolbarItem(
+          scope: .subject(goalId: goal.id, subjectKey: subjectKey, module: goal.kind != .exam))
 
         ToolbarItem(placement: .primaryAction) {
           Menu {
@@ -64,9 +81,17 @@ struct SubjectScreen: View {
             }
           } label: {
             Label {
-              Text(
-                "Subject options", tableName: "Plan",
-                comment: "Spoken label of the subject's … menu")
+              if goal.kind == .exam {
+                Text(
+                  "Subject options", tableName: "Plan",
+                  comment: "Spoken label of the subject's … menu")
+              } else {
+                Text(
+                  "Module options", tableName: "Plan",
+                  comment:
+                    "Spoken label of the module's … menu. A module is a part of a plan that isn't for an exam."
+                )
+              }
             } icon: {
               Image(systemName: "ellipsis")
             }
@@ -290,7 +315,8 @@ private struct SubjectContent: View {
 
       if let reason = subject.notPlannedReason, !reason.isEmpty {
         SubjectNotPlannedNotice(
-          goalId: goal.id, reason: reason, areas: subject.areas, restoring: restoring
+          goalId: goal.id, reason: reason, areas: subject.areas, module: goal.kind != .exam,
+          restoring: restoring
         )
         .listRowSeparator(.hidden)
       }
@@ -741,7 +767,7 @@ struct SubjectTopicRow: View {
 
   private var note: Text? {
     let reason = topic.status == "known" ? "known" : topic.notPlannedReason
-    return reason.map { planOutsideReason($0) }
+    return reason.map { planOutsideReason($0, module: goal.kind != .exam) }
   }
 
   private var status: StatusMark.Status {
@@ -763,6 +789,8 @@ private struct SubjectNotPlannedNotice: View {
   let goalId: String
   let reason: String
   let areas: [String]
+  /// A goal that isn't an exam lists modules, so the notice says "module" too.
+  let module: Bool
   let restoring: VisitRequest<Bool>
 
   var body: some View {
@@ -770,9 +798,17 @@ private struct SubjectNotPlannedNotice: View {
       VStack(alignment: .leading, spacing: 10) {
         switch reason {
         case "skipped":
-          Text(
-            "You took this subject out of your plan.", tableName: "Plan",
-            comment: "Why a subject isn't in the plan: the learner skipped it")
+          if module {
+            Text(
+              "You took this module out of your plan.", tableName: "Plan",
+              comment:
+                "Why a module isn't in the plan: the learner skipped it. A module is a part of a plan that isn't for an exam."
+            )
+          } else {
+            Text(
+              "You took this subject out of your plan.", tableName: "Plan",
+              comment: "Why a subject isn't in the plan: the learner skipped it")
+          }
 
           BusyButton(isBusy: restoring.isRunning, icon: .addLessons) {
             restore()
@@ -791,6 +827,12 @@ private struct SubjectNotPlannedNotice: View {
           }
           // Borderless, so in a list row only the sentence answers a tap.
           .buttonStyle(.borderless)
+        case "missing" where module:
+          Text(
+            "This module isn't in your plan yet.", tableName: "Plan",
+            comment:
+              "Why a module isn't in the plan: no lesson teaches it yet. A module is a part of a plan that isn't for an exam."
+          )
         case "missing":
           Text(
             "This subject isn't in your plan yet.", tableName: "Plan",
@@ -821,11 +863,18 @@ private struct SubjectNotPlannedNotice: View {
 
   /// The reason, then "Adjust plan" in ink and underlined, as two sentences sit.
   private var timeLine: AttributedString {
-    let reason = String(
-      localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
-      comment:
-        "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
-    )
+    let reason =
+      module
+      ? String(
+        localized: "This module isn't in your plan. Other modules come first.", table: "Plan",
+        comment:
+          "Why a module isn't in the learner's plan: their study time goes to modules that come first. Followed by a link to change the plan. A module is a part of a plan that isn't for an exam."
+      )
+      : String(
+        localized: "This subject isn't in your plan. Other subjects come first.", table: "Plan",
+        comment:
+          "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan."
+      )
     var link = AttributedString(
       localized: "Adjust plan", table: "Plan", comment: "Opens the plan's settings to change them")
     link.underlineStyle = .single
