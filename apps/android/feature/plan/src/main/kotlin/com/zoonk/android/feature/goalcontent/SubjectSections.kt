@@ -248,7 +248,7 @@ private fun SaveFailed() {
     )
 }
 
-/** When the exam's written tests are practiced, on a written test's own page. */
+/** When the exam's written tests are practiced, on a written test's own page while the plan teaches it. */
 @Composable
 internal fun SubjectWrittenPractice(
     syllabus: Syllabus,
@@ -257,7 +257,7 @@ internal fun SubjectWrittenPractice(
     actions: SubjectActions,
 ) {
     val practice = syllabus.writtenPractice ?: return
-    if (subject.areas.none { it in practice.parts }) return
+    if (subject.notPlannedReason != null || subject.areas.none { it in practice.parts }) return
 
     WrittenCadenceChoice(
         practice = practice,
