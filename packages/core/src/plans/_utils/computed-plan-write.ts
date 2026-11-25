@@ -20,5 +20,6 @@ export function toComputedPlanWrite({ computed }: { computed: ComputedPlan }): P
       standInLessons: computed.standInLessons,
     }),
     state: computed.state,
+    unproven: computed.unproven,
   };
 }

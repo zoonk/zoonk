@@ -6,6 +6,7 @@ import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getWritingSkillIds } from "../learner/writing-skills";
+import { forgetUnprovenWrittenClaims } from "../learner/written-claims";
 import { loadWritingEvidence } from "../learner/written-evidence";
 import { getSharedExamNotice } from "../library/exams/exam-identity";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
@@ -104,7 +105,7 @@ async function identifyFalseClaims({
     ...testedOut.flatMap(({ skillId }) => skillId ?? []),
   ]);
 
-  return { invalid: [...invalid], testedOut };
+  return { invalid: [...invalid], planId: goal.plan.id, testedOut, unsupported };
 }
 
 type RepairMode = { apply: false } | { apply: true; actor: { clientId: string; userId: string } };
@@ -128,23 +129,11 @@ export async function repairWrittenGoal({
         return unchanged(null);
       }
 
-      await tx.learnerSkill.updateMany({
-        data: {
-          difficulty: 0,
-          due: null,
-          lapses: 0,
-          lastReviewedAt: null,
-          recallDays: 0,
-          reps: 0,
-          stability: 0,
-          state: "new",
-        },
-        where: { skillId: { in: result.invalid }, userId },
-      });
-
-      await tx.planItem.updateMany({
-        data: { completedAt: null, status: "todo" },
-        where: { id: { in: result.testedOut.map(({ id }) => id) } },
+      await forgetUnprovenWrittenClaims({
+        planId: result.planId,
+        tx,
+        unproven: { itemIds: result.testedOut.map(({ id }) => id), skillIds: result.unsupported },
+        userId,
       });
 
       await oweFollowUps({

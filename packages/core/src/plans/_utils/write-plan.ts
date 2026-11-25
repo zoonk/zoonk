@@ -4,6 +4,7 @@ import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
+import { type UnprovenWritten, forgetUnprovenWrittenClaims } from "../../learner/written-claims";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { owePlanSuggestion } from "./owe-plan-suggestion";
@@ -30,6 +31,7 @@ export type PlanWrite = {
   state: PlanState;
   sourceSkillIds: readonly string[];
   summary?: PlanSummary | null;
+  unproven?: UnprovenWritten;
 };
 
 async function creditFinishedNewLessons({
@@ -181,6 +183,15 @@ export async function writePlan({
       ...(keptUndo && { changeId: { not: keptUndo } }),
     },
   });
+
+  if (plan.unproven) {
+    await forgetUnprovenWrittenClaims({
+      planId: context.plan.id,
+      tx,
+      unproven: plan.unproven,
+      userId: context.goal.userId,
+    });
+  }
 
   const mockScheduled = await savePlanItems({
     existing: context.items,
