@@ -236,8 +236,9 @@ export function movesExamDays({
 }
 
 /**
- * The latest reading of the notice decides its subjects and formats; a section it leaves empty keeps
- * the stored one, and the lookups beside it stay only for what it didn't change.
+ * The latest reading of the notice decides its subjects and formats, once `readOverStored` gave it
+ * back what it only missed; a section it leaves empty keeps the stored one, and the lookups beside it
+ * stay only for what it didn't change.
  */
 export function mergeBlueprintContent({
   current,

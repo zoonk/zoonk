@@ -8,6 +8,7 @@ import {
   saveExamBlueprint,
 } from "@zoonk/core/library/exams/save";
 import { recordReusePolicy } from "@zoonk/core/library/sources/record-reuse-policy";
+import { logInfo } from "@zoonk/utils/logger";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { type BlueprintReading } from "./extract-blueprint-step";
 
@@ -107,6 +108,17 @@ export async function saveBlueprintStep({
 
   if (reading.reusePolicy) {
     await recordReusePolicy(reading.reusePolicy);
+  }
+
+  // A re-read of the same notice writes no learner notice, so this is the only record of what it replaced.
+  if (reread && saved.changes.length > 0) {
+    logInfo(
+      JSON.stringify({
+        changes: saved.changes,
+        event: "blueprint.reread",
+        examBlueprintId: saved.blueprint.id,
+      }),
+    );
   }
 
   return {
