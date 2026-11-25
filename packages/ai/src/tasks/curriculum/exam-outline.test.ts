@@ -4,6 +4,7 @@ import {
   findUncoveredTopics,
   formatExamOutline,
   isTopicId,
+  isWrittenTestSubject,
   placeInExam,
 } from "./exam-outline";
 
@@ -195,7 +196,7 @@ describe(placeInExam, () => {
     ).toStrictEqual({ area: "Expresión e interacción escritas", topics: [] });
   });
 
-  it("places practice for a written task in the subject the notice lists the task under", () => {
+  it("places an area copied from a written task's line in the subject that is that written test", () => {
     const task =
       "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos de auditoria, a ser respondida em até 60 linhas, no valor de 70,00 pontos";
 
@@ -203,28 +204,62 @@ describe(placeInExam, () => {
       name: "Concurso Exemplo",
       notes: [],
       subjects: [
-        { group: null, name: "Auditoria Governamental", questions: 90, topics: [], weight: null },
+        { group: null, name: "Auditoria", questions: 90, topics: [], weight: null },
         {
           group: "Prova discursiva (P4)",
           name: "Prova discursiva",
           questions: 2,
           topics: [task],
           weight: null,
-          writtenTasks: [task, "peça técnica de até 50 linhas, valendo 30 pontos"],
+          writtenTasks: [task],
         },
       ],
       topicFrequency: [],
     };
 
-    for (const area of [task, ` ${task.toUpperCase()} `, "Peça técnica"]) {
+    for (const area of [task, ` ${task.toUpperCase()}.`]) {
       expect(placeInExam({ area, outline: notice, topics: [] })).toStrictEqual({
         area: "Prova discursiva",
         topics: [],
       });
     }
+  });
 
-    expect(placeInExam({ area: "Auditoria", outline: notice, topics: [] })).toStrictEqual({
-      area: "Auditoria Governamental",
+  it("keeps a written part's own area when an ordinary subject lists its task", () => {
+    const essay = "redação de 65 a 70 linhas, valendo 60 pontos";
+
+    const notice: ExamOutline = {
+      name: "CACD",
+      notes: [],
+      subjects: [
+        {
+          group: null,
+          name: "Língua Portuguesa",
+          questions: null,
+          topics: ["1 Compreensão de textos"],
+          weight: null,
+          writtenTasks: [essay],
+        },
+        {
+          choiceGroup: "Idioma",
+          group: null,
+          name: "Língua Inglesa",
+          questions: null,
+          topics: [],
+          weight: null,
+          writtenTasks: ["uma redação na língua inglesa."],
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    expect(placeInExam({ area: "Redação", outline: notice, topics: [] })).toStrictEqual({
+      area: "Redação",
+      topics: [],
+    });
+
+    expect(placeInExam({ area: "Inglesa.", outline: notice, topics: [] })).toStrictEqual({
+      area: "Língua Inglesa",
       topics: [],
     });
   });
@@ -234,5 +269,20 @@ describe(placeInExam, () => {
       area: "Estratégia de prova",
       topics: [],
     });
+  });
+});
+
+describe(isWrittenTestSubject, () => {
+  it("knows a subject whose syllabus is only its written tasks, whatever the notice calls it", () => {
+    const tasks = ["Redactar una respuesta a partir de una carta; entre 100 y 150 palabras."];
+    const writing = { group: null, name: "Expresión e interacción escritas" };
+
+    expect(isWrittenTestSubject({ ...writing, topics: [], writtenTasks: tasks })).toBe(true);
+    expect(isWrittenTestSubject({ ...writing, topics: tasks, writtenTasks: tasks })).toBe(true);
+    expect(isWrittenTestSubject(writing)).toBe(false);
+
+    expect(
+      isWrittenTestSubject({ ...writing, topics: ["1 Cartas formales"], writtenTasks: tasks }),
+    ).toBe(false);
   });
 });

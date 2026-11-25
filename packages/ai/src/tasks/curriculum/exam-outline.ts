@@ -103,19 +103,25 @@ function findTopic({ outline, value }: { outline: ExamOutline; value: string }):
   }, null);
 }
 
+function toComparable(text: string): string {
+  return normalizeString(text)
+    .replaceAll(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
 /**
- * A written task's description says its limits and points, so practice for it goes in the subject
- * the notice lists it under.
+ * A written task's line describes the task, its lines and points, so an area copied from it goes to
+ * the subject that is that written test. A task an ordinary subject lists keeps an area of its own,
+ * named by the model, since the plan schedules a written test by its area.
  */
-function findWritingSubject({
-  matches,
-  outline,
-}: {
-  matches: (task: string) => boolean;
-  outline: ExamOutline;
-}): number {
+function findWrittenTestByTask({ name, outline }: { name: string; outline: ExamOutline }): number {
+  const wanted = toComparable(name);
+
   const listing = outline.subjects.flatMap((subject, index) =>
-    (subject.writtenTasks ?? []).some((task) => matches(normalizeString(task))) ? [index] : [],
+    isWrittenTestSubject(subject) &&
+    (subject.writtenTasks ?? []).some((task) => toComparable(task) === wanted)
+      ? [index]
+      : [],
   );
 
   return listing.length === 1 ? (listing[0] ?? -1) : -1;
@@ -143,10 +149,10 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
     return short;
   }
 
-  const task = findWritingSubject({ matches: (text) => text === wanted, outline });
+  const writtenTest = findWrittenTestByTask({ name, outline });
 
-  if (task !== -1) {
-    return task;
+  if (writtenTest !== -1) {
+    return writtenTest;
   }
 
   const partial = names.flatMap((subject, index) =>
@@ -155,12 +161,6 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
 
   if (partial.length > 0) {
     return partial.length === 1 ? (partial[0] ?? -1) : -1;
-  }
-
-  const shortTask = findWritingSubject({ matches: (text) => text.includes(wanted), outline });
-
-  if (shortTask !== -1) {
-    return shortTask;
   }
 
   const respelled = outline.subjects.flatMap((subject, index) =>
@@ -287,8 +287,17 @@ export function getTopicId({
 const WRITTEN_TEST = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
 /**
- * Every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole.
+ * Every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole. A
+ * subject whose syllabus is only its written tasks is the test itself, whatever the notice calls it.
  */
-export function isWrittenTestSubject(subject: Pick<ExamSubject, "group" | "name">): boolean {
-  return WRITTEN_TEST.test(`${subject.name} ${subject.group ?? ""}`);
+export function isWrittenTestSubject(
+  subject: Pick<ExamSubject, "group" | "name"> &
+    Partial<Pick<ExamSubject, "topics" | "writtenTasks">>,
+): boolean {
+  const tasks = subject.writtenTasks ?? [];
+
+  return (
+    WRITTEN_TEST.test(`${subject.name} ${subject.group ?? ""}`) ||
+    (tasks.length > 0 && (subject.topics ?? []).every((topic) => tasks.includes(topic)))
+  );
 }
