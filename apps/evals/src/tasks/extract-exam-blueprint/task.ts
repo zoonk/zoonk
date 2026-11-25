@@ -22,7 +22,7 @@ type ExpectedFact =
   | { kind: "group"; subject: string; group: string }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
-  | { kind: "section"; minutes?: number; questions?: number }
+  | { kind: "section"; day?: number; minutes?: number; name?: string; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
   | {
       kind: "format";
@@ -156,13 +156,21 @@ function hasSection({
 }) {
   const sections = [
     ...(reading.mock?.sections ?? []),
-    ...reading.subjects.map((subject) => ({ minutes: null, questions: subject.questions })),
+    ...reading.subjects.map((subject) => ({
+      day: null,
+      minutes: null,
+      name: subject.name,
+      questions: subject.questions,
+    })),
   ];
 
   return sections.some(
     (section) =>
       (fact.questions === undefined || section.questions === fact.questions) &&
-      (fact.minutes === undefined || section.minutes === fact.minutes),
+      (fact.minutes === undefined || section.minutes === fact.minutes) &&
+      (fact.day === undefined || section.day === fact.day) &&
+      (fact.name === undefined ||
+        normalizeString(section.name).includes(normalizeString(fact.name))),
   );
 }
 
