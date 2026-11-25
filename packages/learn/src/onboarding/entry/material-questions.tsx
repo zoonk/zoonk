@@ -197,7 +197,13 @@ export function MaterialQuestions({
         setTurns((previous) =>
           previous.map((turn) => (turn.id === id ? { ...turn, outcome } : turn)),
         );
+
+        return;
       }
+
+      // Left before the material was read: the question goes back to the box to be asked on return.
+      setTurns((previous) => previous.filter((turn) => turn.id !== id));
+      setQuestion((typed) => typed || trimmed);
     });
   };
 

@@ -327,6 +327,70 @@ test.describe("Material that's read after it's added", () => {
     await expect(page.getByText("Reading your material…")).toBeHidden();
   });
 
+  test("a question left waiting for the material comes back to the box to be asked again", async ({
+    noProgressUser: user,
+    userWithoutProgress: page,
+  }) => {
+    const photo = await addUpload({ readState: "owed", userId: user.id });
+    const refusals: number[] = [];
+    let read = false;
+
+    // The photo is added as the learner adds it, so Start stays on its own URL to come back to.
+    await page.route("**/v1/uploads", (route) =>
+      route.fulfill({
+        json: { source: { id: photo.id, readStatus: "reading", title: PHOTO } },
+        status: 201,
+      }),
+    );
+
+    await page.route("**/v1/material-questions", (route) =>
+      read
+        ? route.fulfill({ json: { answer: "DNA is copied in S.", citations: [] } })
+        : route.continue(),
+    );
+
+    page.on("response", (response) => {
+      if (response.url().endsWith("/v1/material-questions")) {
+        refusals.push(response.status());
+      }
+    });
+
+    await page.clock.install();
+    await page.goto("/start");
+
+    const attach = page.getByRole("button", { name: "Study your own material" });
+
+    await expectHydrated(attach);
+    await attach.click();
+    await page.getByRole("button", { name: "Paste text" }).click();
+    await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);
+    await page.getByRole("button", { name: "Add text" }).click();
+    await expect(page.getByRole("list", { name: "Your material" })).toContainText("Being read");
+
+    await page.getByRole("radio", { name: /^Ask questions/u }).click();
+    await page.getByRole("button", { name: "Build my plan" }).click();
+
+    const box = page.getByRole("textbox", { name: "Your question" });
+
+    await box.fill("What happens in S?");
+    await page.getByRole("button", { exact: true, name: "Ask" }).click();
+    await expect.poll(() => refusals).toContain(409);
+
+    await page.getByRole("link", { exact: true, name: "Level" }).click();
+    await expect(page).toHaveURL(/\/level$/u);
+    await page.clock.runFor(3000);
+    await page.goBack();
+
+    await expect(box).toHaveValue("What happens in S?");
+    await expect(page.getByText("Reading your material…")).toBeHidden();
+
+    read = true;
+    await page.getByRole("button", { exact: true, name: "Ask" }).click();
+
+    await expect(page.getByText("DNA is copied in S.")).toBeVisible();
+    await expect(page.getByText("What happens in S?")).toHaveCount(1);
+  });
+
   test("a goal sent while its material is still being added waits for it and goes with it", async ({
     noProgressUser: user,
     userWithoutProgress: page,
