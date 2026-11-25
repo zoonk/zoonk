@@ -251,7 +251,10 @@ private struct NextStopView: View {
         isStartFocused = true
       }
     }
-    .taskThroughPush(id: FollowedLesson(lessonID: next?.lessonId, writing: writing, waits: waits)) {
+    .taskThroughPush(
+      id: FollowedLesson(
+        lessonID: next?.lessonId, snapshot: next?.lesson, writing: writing, waits: waits)
+    ) {
       await followLesson()
     }
     .onChange(of: isLessonWorkRunning, initial: true) { _, running in
@@ -754,8 +757,11 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   }
 }
 
+/// A day read again while this screen shows it can say the lesson moved on (a run took it, or it
+/// stopped), so the follow starts over from it.
 private struct FollowedLesson: Equatable {
   let lessonID: String?
+  let snapshot: StudyBlock.Lesson?
   let writing: LessonWriting?
   let waits: Int
 }
