@@ -5,11 +5,7 @@ import { carryConfirmedGaps } from "./confirmed-gaps";
 import { isPassageInDocument } from "./passage-check";
 import { isSameNotice, keepStoredFacts } from "./stored-facts";
 
-/**
- * Whether the documents a reading read still hold a stored passage. A changed notice may live in a
- * new source, so a passage counts wherever the reading found it, and a document with no text proves
- * nothing.
- */
+/** A changed notice may live in a new source, so a passage counts in any document the reading read. */
 async function loadCitedCheck({
   read,
   stored,
@@ -32,7 +28,6 @@ async function loadCitedCheck({
     texts.some((text) => isPassageInDocument({ passage: citation.passage, text }));
 }
 
-/** A new reading over the stored one, keeping what the stored one found that the new one only missed. */
 export async function readOverStored({
   read,
   stored,

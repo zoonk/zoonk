@@ -6,9 +6,8 @@ type Section = Mock["sections"][number];
 type Scoring = Mock["scoring"];
 type KindedItem = { citation: Citation; kind?: string };
 
-const RESTATING_KEYS = new Set(["citation", "citations", "key", "translations"]);
+const NON_FACT_KEYS = new Set(["citation", "citations", "key", "translations"]);
 
-/** How many facts a value states, so two readings of one part can be weighed. */
 function countFacts(value: unknown): number {
   if (Array.isArray(value)) {
     return value.reduce<number>((sum, item) => sum + countFacts(item), 0);
@@ -16,7 +15,7 @@ function countFacts(value: unknown): number {
 
   if (value && typeof value === "object") {
     return Object.entries(value)
-      .filter(([key]) => !RESTATING_KEYS.has(key))
+      .filter(([key]) => !NON_FACT_KEYS.has(key))
       .reduce((sum, [, item]) => sum + countFacts(item), 0);
   }
 
@@ -27,10 +26,7 @@ function kindOf(item: KindedItem): string {
   return item.kind ?? "other";
 }
 
-/**
- * A kind the reading left out keeps the stored items of it that the documents still say, in the
- * stored order, so keeping them isn't news.
- */
+/** In the stored order, so a kept item isn't reported as a change. */
 function keepLeftOutKinds<T extends KindedItem>({
   isCited,
   read,
@@ -158,17 +154,15 @@ export function isSameNotice({
 }
 
 /**
- * A reading keeps only the facts its model calls stated and its check confirmed that run, so a fact
- * it leaves out may still be in the documents. What the stored reading found stays while the
- * documents still say it: the formats, rules and dates of a kind the reading left out, while their
- * passage is still there, and, for the same notice, every part of the mock the reading left empty.
+ * A reading holds only what one extraction stated and one check confirmed, so a fact it leaves out
+ * may still be in the documents. The mock's parts carry no passage of their own, so only a re-read
+ * of the same notice fills them from the stored mock.
  */
 export function keepStoredFacts({
   isCited,
   read,
   stored,
 }: {
-  /** Whether the documents the reading read still hold this passage. */
   isCited: (citation: Citation) => boolean;
   read: BlueprintContent;
   stored: BlueprintContent;

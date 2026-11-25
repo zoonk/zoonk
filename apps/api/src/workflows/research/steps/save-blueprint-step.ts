@@ -110,7 +110,7 @@ export async function saveBlueprintStep({
     await recordReusePolicy(reading.reusePolicy);
   }
 
-  // A re-read of the same notice writes no learner notice, so this is the only record of what it replaced.
+  // A re-read of the same notice writes no notice, so this log is the only record of what it replaced.
   if (reread && saved.changes.length > 0) {
     logInfo(
       JSON.stringify({

@@ -78,7 +78,6 @@ function stored({ sourceHash, sourceId }: { sourceHash: string; sourceId: string
   } satisfies BlueprintContent;
 }
 
-/** One run's extractor or fact check kept fewer facts from the same documents. */
 function thinner(content: BlueprintContent): BlueprintContent {
   const { mock } = content.structure;
 
