@@ -2,9 +2,9 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
+import androidx.compose.foundation.text.input.delete
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.maxTextLength
-import androidx.compose.ui.text.TextRange
 import java.text.BreakIterator
 
 /**
@@ -23,34 +23,44 @@ private class FittedLength(
 
     override fun TextFieldBuffer.transformInput() {
         if (length <= maxLength) return
-        val old = originalText
-        val new = asCharSequence()
-        var before = 0
-        val shortest = minOf(old.length, new.length)
-        while (before < shortest && old[before] == new[before]) before++
-        var after = 0
-        while (after < shortest - before && old[old.length - 1 - after] == new[new.length - 1 - after]) after++
-        val inserted = new.subSequence(before, new.length - after).toString()
-        val kept = inserted.fittingPrefix(maxLength - before - after)
-        if (kept.isEmpty() && inserted.isNotEmpty()) {
-            revertAllChanges()
+        val changeCount = changes.changeCount
+        if (
+            length < originalText.length &&
+            (0 until changeCount).all { changes.getRange(it).length <= changes.getOriginalRange(it).length }
+        ) {
             return
         }
-        replace(before, new.length - after, kept)
-        selection = TextRange(before + kept.length)
+
+        for (index in changeCount - 1 downTo 0) {
+            if (length <= maxLength) break
+            val range = changes.getRange(index)
+            if (range.collapsed) continue
+
+            val inserted = asCharSequence().subSequence(range.min, range.max).toString()
+            val kept = inserted.fittingPrefixLength(range.length - (length - maxLength))
+            if (kept == 0 && changeCount == 1) {
+                revertAllChanges()
+                return
+            }
+
+            val originalRange = changes.getOriginalRange(index)
+            if (kept == 0 && !originalRange.collapsed) {
+                replace(range.min, range.max, originalText.subSequence(originalRange.min, originalRange.max))
+            } else {
+                delete(range.min + kept, range.max)
+            }
+        }
     }
 }
 
-/** The longest run of whole characters (grapheme clusters) from this text's start that fits in [room] UTF-16 units. */
-private fun String.fittingPrefix(room: Int): String {
-    if (room <= 0) return ""
-    if (length <= room) return this
-    val characters = BreakIterator.getCharacterInstance().apply { setText(this@fittingPrefix) }
+private fun String.fittingPrefixLength(room: Int): Int {
+    if (room <= 0) return 0
+    val characters = BreakIterator.getCharacterInstance().apply { setText(this@fittingPrefixLength) }
     var end = 0
     var next = characters.next()
     while (next != BreakIterator.DONE && next <= room) {
         end = next
         next = characters.next()
     }
-    return substring(0, end)
+    return end
 }
