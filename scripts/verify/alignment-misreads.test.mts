@@ -117,3 +117,23 @@ test.each([8, 9])(
     assert.equal(faults("lone-word").length, 0);
   },
 );
+
+test("a hovered row's fill is a highlight, and still fails an unequal bleed", () => {
+  document.body.innerHTML = `<main data-slot="page" data-box="260,0,840,600">
+    <a href="/phase" id="row" style="display:block; background-color:rgb(240,240,240)" data-box="250,0,860,44">Expressions and first equations</a>
+  </main>`;
+
+  const hover = vi.spyOn(Element.prototype, "matches").mockImplementation(function hovered(
+    this: Element,
+    selector: string,
+  ) {
+    return selector === ":hover" ? this.id === "row" : this.closest(selector) === this;
+  });
+
+  assert.deepEqual(faults("column"), []);
+  resize("#row", "245,0,865,44");
+  assert.equal(faults("column").length, 1);
+  resize("#row", "250,0,860,44");
+  hover.mockRestore();
+  assert.equal(faults("column").length, 1);
+});
