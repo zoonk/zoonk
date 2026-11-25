@@ -43,34 +43,13 @@ Describe the current experience, who it affects, and why it matters.
 Describe how that experience should improve.
 ```
 
-For a bug someone hit using Zoonk's website or apps, follow [zoonk-bug-report](../zoonk-bug-report/SKILL.md) instead. For other bugs, add observed versus expected behavior and reproduction evidence when available. An idea or feature request from someone who can't write to zoonk/zoonk (`gh api repos/zoonk/zoonk --jq .permissions.push` doesn't print `true`) goes to Discussions, not issues, following [zoonk-feature-request](../zoonk-feature-request/SKILL.md). A security hole never goes in an issue: [file a private advisory](#a-security-hole). A motivating example may illustrate a broader problem; do not silently narrow the scope to that example or speculate about an unverified fix.
+For a bug someone hit using Zoonk's website or apps, follow [zoonk-bug-report](../zoonk-bug-report/SKILL.md) instead. For other bugs, add observed versus expected behavior and reproduction evidence when available. An idea or feature request from someone who can't write to zoonk/zoonk (`gh api repos/zoonk/zoonk --jq .permissions.push` doesn't print `true`) goes to Discussions, not issues, following [zoonk-feature-request](../zoonk-feature-request/SKILL.md). A security hole never goes in an issue: [file a private advisory](references/security-advisory.md). A motivating example may illustrate a broader problem; do not silently narrow the scope to that example or speculate about an unverified fix.
 
 Do not add architecture, file lists, scope/non-goals, implementation steps, acceptance checklists, tests, commands, or delivery phases by default. Include technical detail when the user asks for a specification or implementation task. Keep parent epics focused on the overall problem.
 
 ## A find from another task
 
-A thread started for a find outside someone's task ([scope](../../../AGENTS.md#scope-and-completion)) confirms it before filing: reproduce a bug, check a suspected one, or work out what the improvement is and why it matters. Ask whether it is a symptom of a design that should change ([question it](../zoonk-address-issue/SKILL.md#5-question-them)), and say so in the issue. File one issue with what you found and how to reproduce it, opening with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure); a security hole gets a [private advisory](#a-security-hole) instead. A find that doesn't hold up gets no issue: say why.
-
-## A security hole
-
-A security hole, such as one learner seeing another's data, never goes in an issue, a comment or a PR body: zoonk/zoonk is public. It still gets tracked: file a draft repository security advisory, which only repository admins and the collaborators added to it can see, and give the user its link. A draft about the same problem may already exist (`gh api "repos/zoonk/zoonk/security-advisories?state=draft" --jq '.[] | "\(.ghsa_id): \(.summary)"'`); update that one instead of filing another.
-
-The advisory says:
-
-- the problem: what an attacker can do, and to whose data or money
-- where it's reachable: the entry point and the steps
-- its limits: what an attacker needs, and what you tested and didn't
-- the recommended fix
-
-Write the request body outside the repository and post it:
-
-```sh
-gh api -X POST repos/zoonk/zoonk/security-advisories --input advisory.json
-```
-
-The body has `summary`, `description`, `severity` (`critical`, `high`, `medium` or `low`; `moderate` is rejected), `cwe_ids`, and `vulnerabilities: [{ "package": { "ecosystem": "other", "name": "zoonk" }, "vulnerable_version_range": "<range>", "patched_versions": null }]`. The response's `html_url` is the link. The user decides how the fix ships, such as in the advisory's private fork, so don't open a public PR for it on your own.
-
-Filing needs admin or security-manager rights (`gh api repos/zoonk/zoonk --jq .permissions.admin` prints `true`). Without them, give the user the same four points privately, such as in your handoff, and say you couldn't file the advisory.
+A thread started for a find outside someone's task ([scope](../../../AGENTS.md#scope-and-completion)) confirms it before filing: reproduce a bug, check a suspected one, or work out what the improvement is and why it matters. Ask whether it is a symptom of a design that should change ([question it](../zoonk-address-issue/SKILL.md#5-question-them)), and say so in the issue. File one issue with what you found and how to reproduce it, opening with the [disclosure](../zoonk-post-on-behalf/SKILL.md#the-disclosure); a security hole gets a [private advisory](references/security-advisory.md) instead. A find that doesn't hold up gets no issue: say why.
 
 ## Type, priority, labels and links
 
