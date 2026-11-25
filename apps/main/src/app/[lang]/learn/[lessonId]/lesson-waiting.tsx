@@ -280,7 +280,8 @@ export function LessonWaiting({
 
   const readiness = useLessonReadiness({
     actions: { readLesson: readLessonReadiness, refresh: () => router.refresh() },
-    enabled: waited !== null,
+    // A failed ask is the request's own answer: there's no run for readiness to confirm.
+    enabled: waited === "writing" || waited === "notStarted",
     generationId: writing.generationId,
     lesson: waited ?? "ready",
     lessonId: lesson.id,
