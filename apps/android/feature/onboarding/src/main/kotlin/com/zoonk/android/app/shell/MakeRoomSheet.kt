@@ -109,6 +109,11 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
+            Text(
+                stringResource(R.string.goal_switcher_make_room_subscribe),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
             SubscribeButton(onSubscribe, Modifier.fillMaxWidth(), ButtonSize.Large)
         }
     }
