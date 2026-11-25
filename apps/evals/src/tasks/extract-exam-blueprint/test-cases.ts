@@ -924,9 +924,11 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
   {
     expected: {
       facts: [
-        { kind: "topic", topic: "Current" },
-        { kind: "topic", topic: "Ohm's law" },
-        { kind: "topic", topic: "Power" },
+        { kind: "subject", name: "Electricity" },
+        { kind: "topic", subject: "Electricity", topic: "Current" },
+        { kind: "topic", subject: "Electricity", topic: "Ohm's law" },
+        { kind: "topic", subject: "Electricity", topic: "Power" },
+        { kind: "topic", subject: "Electricity", topic: "Series circuit" },
         { kind: "shortTopics" },
       ],
     },

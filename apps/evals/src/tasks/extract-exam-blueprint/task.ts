@@ -5,8 +5,8 @@ import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit"
 import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
 import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { getMarkingPenalty } from "@zoonk/core/library/exams/marking-penalty";
+import { toMaterialTopicName } from "@zoonk/core/library/exams/material-topics";
 import { findTaskSubjects } from "@zoonk/core/library/exams/written-task-subjects";
-import { markdownToPlainText } from "@zoonk/utils/markdown-text";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type ExtractionEvalInput,
@@ -601,7 +601,7 @@ const COPIED_LINE = /[$\\=]|^ex(?:emplo)?\b|:\s*\S/iu;
 const isCopiedLine = (topic: string) => COPIED_LINE.test(topic);
 
 const isTitleOf = ({ name, topic }: { name: string; topic: string }) =>
-  normalizeString(markdownToPlainText(topic)) === normalizeString(name);
+  normalizeString(toMaterialTopicName(topic)) === normalizeString(toMaterialTopicName(name));
 
 function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }): boolean {
   if (isMockFact(fact)) {
