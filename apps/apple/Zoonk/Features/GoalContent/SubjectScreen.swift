@@ -358,7 +358,7 @@ private struct SubjectContent: View {
           Text(
             "What it covers", tableName: "Plan",
             comment:
-              "Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it."
+              "Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them."
           ))
       }
     }
