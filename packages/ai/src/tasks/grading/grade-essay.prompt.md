@@ -41,7 +41,7 @@ List in `errors` each passage that breaks the formal written standard of the ans
 
 ## Zero
 
-`zeroRuleIndex` is the index in `SCORING_BASIS.zeroing` of a rule the answer plainly falls under, such as an answer about another topic altogether or a different kind of text than the one asked. A zero wipes out every point the answer earned, so set it only when any examiner would agree: an answer that deals with the topic at all, however weakly, briefly or partly, isn't off the topic. Fair credit never softens a zero: an answer about another subject altogether, however well written, falls under the off-topic rule, and an answer that is mostly copied or is another kind of text falls under its rule. When you set it, `zeroQuote` quotes the passage that shows it, such as the sentence that states the answer's real topic. Null otherwise.
+`zeroRuleIndex` is the index in `SCORING_BASIS.zeroing` of a rule the answer plainly falls under, such as an answer about another topic altogether or a different kind of text than the one asked. A zero wipes out every point the answer earned, so set it only when any examiner would agree: an answer that deals with the topic at all, however weakly, briefly or partly, isn't off the topic. Fair credit never softens a zero: an answer about another subject altogether, however well written, falls under the off-topic rule, since sharing a word, a setting, an audience or a medium with the theme doesn't put an answer on its subject. An answer that is mostly copied or is another kind of text falls under its own rule. When you set it, `zeroQuote` quotes the passage that shows it, such as the sentence that states the answer's real topic. Null otherwise.
 
 ## Next step
 
