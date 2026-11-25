@@ -351,7 +351,10 @@ struct PlanChapterRow: View {
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
-        context.show(.farTopic(skillId: skillId, title: chapter.title))
+        context.show(
+          .farTopic(
+            skillId: skillId, title: chapter.title, lessons: chapter.lessonsTotal,
+            start: chapter.nextDate))
       } label: {
         content(isMuted: false)
           .disclosureChevron()

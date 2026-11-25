@@ -10,6 +10,9 @@ struct FarTopicSheet: View {
   let goal: LearnerGoal
   let skillId: String
   let title: String
+  /// Its row's line under the title, until the topic turns out to have nothing left to get ready:
+  /// a start with nothing to start would be a line with no action.
+  let line: Text
 
   private enum Request: Equatable {
     case idle
@@ -28,6 +31,7 @@ struct FarTopicSheet: View {
       }
       .announcesStatus(announcement(outline))
       .navigationTitle(Text(title))
+      .modifier(Subtitle(text: request == .unavailable ? nil : line))
       .toolbarTitleDisplayMode(.inline)
       .sheetClose { dismiss() }
       .loads(outline, refreshable: false)
@@ -178,5 +182,17 @@ struct FarTopicSheet: View {
 
   private func chapterRoute(_ chapterId: String) -> AppRoute {
     goal.kind == .language ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
+  }
+}
+
+private struct Subtitle: ViewModifier {
+  let text: Text?
+
+  func body(content: Content) -> some View {
+    if let text {
+      content.navigationSubtitle(text)
+    } else {
+      content
+    }
   }
 }
