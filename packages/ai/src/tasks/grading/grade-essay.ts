@@ -15,10 +15,11 @@ import promptTemplate from "./grade-essay.prompt.md";
 /**
  * The learner waits on the grade, so a fallback must be quick too. On the 108-case eval (25 Nov
  * 2026), Muse Ember at high made all 62 pass/fail calls right at 10 s p50 for $2.98/1k. Gemini
- * 3.8 Flash at low did too, at 10 s p50 (23 s p95) for $9.16/1k; at high it took 108 s p50 (767 s
- * slowest) for $60/1k. Haiku 5.5 at high made them all at 37 s p50 (82 s p95) for $6.10/1k, and a
- * blind GPT-6.1 Sol read preferred Ember's grading to Haiku's (11 Nov 2026). Gemini 3.5 Flash-Lite
- * and GPT-6 Luna at high scored an off-topic essay instead of giving it the zero it gets.
+ * 3.8 Flash at low did too in two runs, at 10 s p50 (23 s p95) for $8.75/1k; at high it took
+ * 108 s p50 (767 s slowest) for $60/1k. Haiku 5.5 at high made them all at 37 s p50 (82 s p95)
+ * for $6.10/1k, and a blind GPT-6.1 Sol read preferred Ember's grading to Haiku's (11 Nov 2026).
+ * Gemini 3.5 Flash-Lite and GPT-6 Luna at high scored an off-topic essay instead of giving it the
+ * zero it gets.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
