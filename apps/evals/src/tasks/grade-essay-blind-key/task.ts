@@ -39,5 +39,8 @@ export const gradeEssayBlindKeyTask: Task<GradeWritingInput, GradeWritingOutput,
     name: "Grade essay against blind keys",
     priorities: gradeEssayTask.priorities,
     score: scoreBlindKeyGrade,
+    skippedLanguages: {
+      en: "its cases are real answers Brazilian exam boards marked, all written in Portuguese",
+    },
     testCases: TEST_CASES,
   };
