@@ -1,0 +1,2390 @@
+{
+  "appendedInstructions": "## A question the board already set\n\nThis input also has `givenQuestion` and `givenContext`: a question the exam's board itself set for this task. Don't write a new question: copy `givenQuestion` into `question` and `givenContext` into `context` word for word, give it a `title`, and write the private key (`criteria`, `aspects`, `keyPoints`, `sampleOutline`, `assessedSkillIds`) for that question, under the rules that really govern it.",
+  "generatedAt": "2026-11-25T21:57:59.612Z",
+  "keys": [
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.007007050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Afirma que não é necessário comum acordo para instaurar o dissídio coletivo de natureza jurídica.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que a controvérsia apresentada diz respeito à interpretação da convenção coletiva.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a resposta na exigência constitucional de comum acordo para o dissídio coletivo de natureza econômica.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica que o prazo máximo de vigência da sentença normativa é de quatro anos.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta o prazo máximo no art. 868, parágrafo único, da CLT.",
+            "points": 0.15
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.85
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.4
+          }
+        ],
+        "keyPoints": [
+          "O dissídio coletivo de natureza jurídica destina-se à interpretação de norma coletiva preexistente, como a convenção discutida no caso.",
+          "Não se exige comum acordo para instaurar dissídio coletivo de natureza jurídica.",
+          "O art. 114, § 2º, da Constituição Federal prevê o comum acordo para o ajuizamento de dissídio coletivo de natureza econômica.",
+          "A sentença normativa tem prazo máximo de vigência de quatro anos, conforme o art. 868, parágrafo único, da CLT."
+        ],
+        "question": "O sindicato dos empregados nas usinas de açúcar de Linhares (ES) entabulou convenção coletiva contemplando diversos direitos para os trabalhadores, dentre os quais a entrega de uma cesta básica mensal. Porém, logo após, iniciou-se divergência sobre a quantidade e a qualidade dos produtos que deveriam integrar a referida cesta básica, tendo o sindicato dos empregados decidido ajuizar ação na Justiça do Trabalho.\n\nDiante desse quadro, responda aos itens a seguir.\n\nA) De acordo com a lei, é necessário, ou não, comum acordo para que seja instaurado dissídio coletivo de natureza jurídica? (Valor: 0,85)\n\nB) De acordo com a lei, qual é o prazo máximo de vigência de uma sentença normativa? Apresente fundamento legal que justifique sua resposta. (Valor: 0,40)\n\nO examinando deve fundamentar suas respostas. A mera citação do dispositivo legal não confere pontuação.",
+        "sampleOutline": "No item A, identificar a controvérsia como interpretativa e explicar, com fundamento constitucional, por que não se exige comum acordo.\nNo item B, indicar o prazo máximo de quatro anos e fundamentá-lo na CLT.",
+        "title": "Dissídio coletivo e sentença normativa"
+      },
+      "latencyMs": 21099,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xv-labor-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.008977050000000002,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Indica o mandado de segurança como medida contra a tutela concedida a Pedro antes da sentença.",
+            "points": 0.4
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta o cabimento do mandado de segurança na ausência de recurso imediato contra a decisão interlocutória, conforme a Súmula 414, II, do TST.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o recurso ordinário para impugnar a sentença que concedeu a tutela a Paulo.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta o cabimento do recurso ordinário no art. 895, I, da CLT.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica a ação cautelar para obter efeito suspensivo ao recurso ordinário, conforme a solução aplicável à época da prova.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que o recurso trabalhista, em regra, não tem efeito suspensivo automático.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.6
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.65
+          }
+        ],
+        "keyPoints": [
+          "Na solução aplicável à época do exame, contra a antecipação de tutela concedida a Pedro antes da sentença cabia mandado de segurança, diante da ausência de recurso imediato contra a decisão interlocutória, conforme a Súmula 414, II, do TST.",
+          "No mandado de segurança, a empresa poderia requerer liminar para suspender os efeitos da decisão.",
+          "Contra a sentença que concedeu a tutela a Paulo cabia recurso ordinário, nos termos do art. 895, I, da CLT.",
+          "Os recursos trabalhistas, em regra, têm efeito meramente devolutivo, conforme o art. 899 da CLT.",
+          "Para obter efeito suspensivo ao recurso ordinário, a solução indicada à época era a ação cautelar, conforme a Súmula 414, I, do TST."
+        ],
+        "question": "Pedro e Paulo ajuizaram uma reclamação trabalhista cada. Ambas idênticas, sob o mesmo patrocínio e com pedido de antecipação de tutela para reintegração. Pedro obteve êxito na concessão da antecipação de tutela liminarmente, antes da audiência de instrução. Paulo só teve o pedido de antecipação de tutela deferido na sentença.\n\nA) Na qualidade de advogado da empresa, qual a medida judicial a ser utilizada para reverter os efeitos da tutela deferida a Pedro? (Valor: 0,60)\n\nB) Na qualidade de advogado da empresa, que medidas judiciais deverão ser adotadas para suspender e reverter os efeitos da tutela deferida a Paulo? (Valor: 0,65)\n\nO examinando deve fundamentar suas respostas. A mera citação do dispositivo legal não confere pontuação.",
+        "sampleOutline": "A) Indicar o mandado de segurança e explicar seu cabimento contra a decisão interlocutória que concedeu a tutela a Pedro.\nB) Indicar o recurso ordinário contra a sentença e a ação cautelar para obter efeito suspensivo, explicando a regra sobre os efeitos dos recursos trabalhistas.",
+        "title": "Tutela antecipada e impugnação"
+      },
+      "latencyMs": 24754,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xv-labor-q2"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.006871050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Conclui que não ocorreu a prescrição total.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que o prazo prescricional não correu enquanto Raquel era menor de 18 anos e passou a correr quando ela atingiu essa idade.",
+            "points": 0.3
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a resposta no art. 440 da CLT.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que Raquel não poderia ser designada para trabalho noturno durante o contrato.",
+            "points": 0.3
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que o trabalho noturno é proibido a menores de 18 anos e que Raquel tinha 16 anos durante o contrato.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta a resposta no art. 7º, XXXIII, da Constituição ou no art. 404 da CLT.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.65
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.6
+          }
+        ],
+        "keyPoints": [
+          "Contra menores de 18 anos não corre prazo de prescrição trabalhista, conforme o art. 440 da CLT.",
+          "Raquel tinha 16 anos na extinção do contrato e completou 18 anos em 5 de maio de 2013.",
+          "A reclamação foi ajuizada em 20 de dezembro de 2013, antes de transcorridos dois anos após a maioridade; portanto, não ocorreu a prescrição total.",
+          "O trabalho noturno é proibido a menores de 18 anos, conforme o art. 7º, XXXIII, da Constituição e o art. 404 da CLT.",
+          "Como Raquel tinha 16 anos durante todo o contrato, não poderia ser designada para trabalho noturno nesse período."
+        ],
+        "question": "Raquel Infante nasceu em 5 de maio de 1995 e foi admitida na empresa Asa Branca Refinaria S/A em 13 de maio de 2011, lá permanecendo por 4 meses, sendo dispensada em 13 de setembro de 2011. Em razão de direitos a que entende fazer jus e que não foram pagos, Raquel ajuizou reclamação trabalhista em 20 de dezembro de 2013. Em contestação, a empresa suscitou prescrição total (extintiva), pois a ação teria sido ajuizada mais de 2 anos após o rompimento do contrato.\n\nA respeito do caso apresentado, responda, fundamentadamente, aos itens a seguir.\n\nA) Analise se ocorreu prescrição total (extintiva) na hipótese, justificando. (Valor: 0,65)\n\nB) Analise se Raquel poderia ser designada para trabalhar em jornada noturna, justificando. (Valor: 0,60)\n\nO examinando deve fundamentar suas respostas. A mera citação do dispositivo legal não confere pontuação.",
+        "sampleOutline": "A) Afastar a prescrição total, explicando a suspensão do curso do prazo até os 18 anos e aplicando-a às datas do caso, com fundamento no art. 440 da CLT.\nB) Afastar a possibilidade de trabalho noturno, relacionando a idade de Raquel durante o contrato à proibição constitucional ou legal.",
+        "title": "Prescrição e trabalho do menor"
+      },
+      "latencyMs": 16834,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xv-labor-q3"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.00704305,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Atribui ao empregado o ônus de provar o nexo entre a doença e o trabalho.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que o nexo alegado é fato constitutivo do direito à estabilidade e foi negado pela empregadora.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica a base legal da distribuição do ônus da prova.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica a perícia médica como meio de prova utilizável.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que a perícia pode esclarecer a existência de nexo entre a doença e o trabalho.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica a base legal para a produção da prova pericial.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.65
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.6
+          }
+        ],
+        "keyPoints": [
+          "Cabe ao empregado provar o nexo causal entre a doença e o trabalho, pois se trata de fato constitutivo do direito alegado, negado pela empregadora.",
+          "À época do exame, a distribuição do ônus da prova decorria do art. 818 da CLT e do art. 333, I, do CPC de 1973. Na legislação atual, o fundamento correspondente está no art. 818, I, da CLT e no art. 373, I, do CPC.",
+          "A carta de concessão de benefício por doença comum, por si só, não comprova o nexo com o trabalho.",
+          "A perícia médica pode ser utilizada para esclarecer se há relação entre a doença e as atividades desempenhadas.",
+          "A prova pericial era prevista no art. 420 do CPC de 1973; atualmente, está prevista no art. 464 do CPC. O art. 765 da CLT confere ao juiz poderes para determinar diligências necessárias ao esclarecimento da causa."
+        ],
+        "question": "Determinado empregado ajuizou ação trabalhista em face de seu empregador (empresa de serviço fornecedora de mão de obra na área de limpeza), logo após haver sido dispensado. Na ação aduziu que era detentor de estabilidade decorrente de doença acidentária, supostamente causada pelo trabalho. Para tanto, juntou aos autos carta de concessão de benefício previdenciário por doença comum, não produzindo qualquer outra prova. A empregadora ré apenas negou que a doença era decorrente do trabalho desempenhado.\n\nSobre o caso apresentado, utilizando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso, responda aos itens a seguir.\n\nA) Indique, sob o aspecto da distribuição do ônus da prova, a quem caberia comprovar se a doença do empregado decorre ou não do trabalho. (Valor: 0,65)\n\nB) Qual o outro meio de prova passível de utilização no caso em tela? (Valor: 0,60)\n\nO examinando deve fundamentar suas respostas. A mera citação do dispositivo legal não confere pontuação.",
+        "sampleOutline": "No item A, atribuir ao empregado o ônus de provar o nexo, explicando que é fato constitutivo do direito e indicando o fundamento legal.\nNo item B, indicar a perícia médica, sua utilidade para apurar o nexo e o fundamento para sua produção.",
+        "title": "Prova da doença ocupacional"
+      },
+      "latencyMs": 20259,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xv-labor-q4"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01338205,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Conclui que o casamento não pode ser regularmente celebrado nas condições narradas.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Identifica que Cristina ainda não atingiu a idade núbil de 16 anos.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que a discordância entre os pais de Mário pode ser submetida ao juiz.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a resposta nos dispositivos pertinentes do Código Civil.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica que o casamento celebrado nessas condições é anulável.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica a produção de efeitos do casamento putativo em relação ao cônjuge de boa-fé até a sentença anulatória.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica a emancipação pelo casamento, ressalvada a questão de sua invalidade.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que Cristina pode confirmar o casamento após atingir a idade núbil, observada a autorização ou o suprimento judicial quando necessário.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica a possibilidade de pedir a anulação do casamento e apresenta fundamento legal pertinente.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Possibilidade do casamento",
+            "points": 0.6
+          },
+          {
+            "id": "b",
+            "name": "Efeitos e providências",
+            "points": 0.65
+          }
+        ],
+        "keyPoints": [
+          "Cristina não atingiu a idade núbil de 16 anos; o consentimento de seus pais não supre esse requisito. Art. 1.517 do Código Civil.",
+          "Na redação vigente à época do exame, o art. 1.520 do Código Civil previa exceções à idade núbil; nenhuma delas é indicada no enunciado. A redação atual proíbe, em qualquer caso, o casamento de quem não atingiu a idade núbil.",
+          "Mário atingiu a idade núbil, mas ainda necessita de autorização dos pais ou representantes legais. A divergência entre os pais pode ser submetida ao juiz, independentemente de a mãe deter a guarda. Art. 1.517, parágrafo único, do Código Civil.",
+          "Se celebrado nas condições narradas, o casamento é anulável em razão da idade de Cristina. A falta da autorização necessária para Mário também constitui causa de anulabilidade. Art. 1.550, incisos I e II, do Código Civil.",
+          "O casamento putativo, embora anulado, produz efeitos até a sentença anulatória em favor do cônjuge que o contraiu de boa-fé. Art. 1.561 do Código Civil.",
+          "O casamento é causa de cessação da incapacidade do menor; diante da anulabilidade, devem ser consideradas as regras do casamento putativo. Arts. 5º, parágrafo único, inciso II, e 1.561 do Código Civil.",
+          "Após completar 16 anos, Cristina pode confirmar o casamento, com autorização dos representantes legais, se necessária, ou suprimento judicial. Art. 1.553 do Código Civil.",
+          "A anulação por falta de idade núbil pode ser requerida pelo próprio cônjuge menor, por seus representantes legais ou por seus ascendentes. Art. 1.552 do Código Civil.",
+          "O prazo para pedir a anulação por falta de idade núbil é de 180 dias: para o menor, conta-se do dia em que completar 16 anos; para seus representantes legais ou ascendentes, da data do casamento. Art. 1.560, § 1º, do Código Civil.",
+          "A anulação por falta de autorização para o casamento de menor em idade núbil obedece às regras próprias do art. 1.555 do Código Civil."
+        ],
+        "question": "Após o período de relacionamento amoroso de dois anos, Mário Alberto, jovem com 17 anos de idade, e Cristina, com apenas 15 anos, decidem casar. A mãe de Mário, que detém a sua guarda, autoriza o casamento, apesar da discordância de seu pai. Já os pais de Cristina consentem com o casamento.\n\nCom base na situação apresentada, responda aos itens a seguir.\n\nA) É possível o casamento entre Mário Alberto e Cristina? (Valor: 0,60)\n\nB) Caso os jovens se casem, quais os efeitos desse casamento? Há alguma providência judicial ou extrajudicial a ser tomada pelos jovens? (Valor: 0,65)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Concluir pela impossibilidade nas condições narradas, examinando a idade de Cristina e a divergência entre os pais de Mário.\nB) Explicar a anulabilidade, os efeitos do casamento putativo e a emancipação; em seguida, tratar da confirmação e da possibilidade de anulação, com os respectivos fundamentos.",
+        "title": "Casamento de menores de idade"
+      },
+      "latencyMs": 41847,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-civil-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.00811705,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Afirma que os direitos do nascituro podem ser protegidos antes do nascimento.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "a",
+            "description": "Relaciona a proteção à ofensa à honra da criança concebida.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a proteção no artigo 2º do Código Civil.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Reconhece a legitimidade de Emília para demandar em nome próprio pela lesão à sua honra.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Reconhece que Emília pode representar o nascituro em juízo para proteger os direitos dele.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica a possibilidade de pedir reparação pelos danos morais decorrentes das ofensas.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta a representação legal do filho no artigo 1.634, VII, do Código Civil.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta a reparação nos artigos 186 e 927 do Código Civil ou no artigo 5º, X, da Constituição Federal.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.45
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.8
+          }
+        ],
+        "keyPoints": [
+          "A personalidade civil começa com o nascimento com vida, mas a lei põe a salvo, desde a concepção, os direitos do nascituro: artigo 2º do Código Civil.",
+          "A proteção alcança a honra do nascituro, atingida pelas ofensas narradas.",
+          "Emília tem legitimidade para demandar em nome próprio pela lesão à sua honra.",
+          "Emília também pode atuar em juízo como representante do nascituro na defesa dos direitos dele: artigo 1.634, VII, do Código Civil.",
+          "As ofensas podem fundamentar pedido de reparação por danos morais, nos termos dos artigos 186 e 927 do Código Civil e do artigo 5º, X, da Constituição Federal."
+        ],
+        "question": "A famosa entrevistadora Emília Juris anunciou, em seu programa, estar grávida de uma menina. Contudo, na semana seguinte, seu marido afirmou que não podia ter filhos, comprovando, por laudo médico de infertilidade, sua afirmativa. Em rede nacional, acusou-a de adultério.\n\nDiante da notícia avassaladora, Etanael Castro publicou texto no seu blog ofendendo Emília com palavrões e expressões chulas, principalmente no âmbito sexual, atingindo-a intensamente em sua honra, e, em relação à futura filha da entrevistadora, usou os mesmos termos, até de forma mais grosseira.\n\nEmília procura um advogado para assisti-la na defesa de seus direitos, questionando-o, inclusive, quanto aos direitos de sua filha que já foi ofendida mesmo antes de nascer.\n\nDiante da situação narrada, responda aos itens a seguir, fundamentando-as com os dispositivos pertinentes.\n\nA) Mesmo antes da criança nascer, Emília pode reclamar direitos do nascituro? (Valor: 0,45)\n\nB) Emília possui legitimidade para ajuizar ação em seu nome e do nascituro? (Valor: 0,80)\n\nObs.: responda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Afirmar a proteção dos direitos do nascituro desde a concepção e aplicá-la à ofensa à honra, com fundamento no Código Civil.\nB) Distinguir a atuação de Emília em nome próprio de sua atuação como representante do nascituro e fundamentar a reparação pelas ofensas.",
+        "title": "Honra e direitos do nascituro"
+      },
+      "latencyMs": 23363,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-civil-q2"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.009585050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Afirma que Roberval podia beneficiar Caio por testamento.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que Ângelo, como irmão, não é herdeiro necessário.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica o fundamento legal relativo aos herdeiros necessários.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Afirma que o filho de Caio adquire a propriedade do imóvel da Tijuca.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Afirma que o direito de Caio sobre o imóvel da Tijuca se converte em usufruto.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o fundamento legal da conversão do direito do fiduciário em usufruto.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que o imóvel do Flamengo cabe a Ângelo.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que o imóvel não abrangido pelo testamento é transmitido pela sucessão legítima.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica fundamento legal pertinente à sucessão legítima de Ângelo.",
+            "points": 0.05
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.45
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.8
+          }
+        ],
+        "keyPoints": [
+          "Roberval podia beneficiar Caio por testamento, pois não deixou herdeiros necessários que limitassem sua liberdade de testar.",
+          "O irmão é herdeiro colateral, não incluído entre os herdeiros necessários enumerados no Art. 1.845 do Código Civil.",
+          "A disposição relativa ao imóvel da Tijuca instituiu substituição fideicomissária, com Caio como fiduciário e seu filho como fideicomissário.",
+          "Como o filho de Caio já havia nascido ao tempo da morte de Roberval, ele adquire a propriedade do imóvel da Tijuca, convertendo-se o direito de Caio em usufruto, conforme o Art. 1.952, parágrafo único, do Código Civil.",
+          "O imóvel do Flamengo, não abrangido pela disposição testamentária, transmite-se pela sucessão legítima, nos termos do Art. 1.788 do Código Civil.",
+          "Ângelo recebe o imóvel do Flamengo como único parente sucessível indicado no caso, na qualidade de colateral, conforme o Art. 1.829, inciso IV, do Código Civil."
+        ],
+        "question": "Roberval não possuía filhos e seus pais já eram falecidos. Seu único parente era seu irmão Ângelo, sendo certo que tanto Roberval quanto Ângelo jamais se casaram ou viveram em união estável. Roberval, que tinha um imóvel na Tijuca e outro menor no Flamengo, decidiu beneficiar Caio, seu melhor amigo, em sua sucessão, razão pela qual estabeleceu em seu testamento que, por ocasião de sua morte, o imóvel da Tijuca deveria ser destinado a Caio, passando para os filhos de Caio quando do falecimento deste. Quando Roberval faleceu, Caio já tinha um filho de 05 anos.\n\nCom base no enunciado acima, responda aos itens a seguir.\n\nA) Roberval poderia beneficiar seu amigo Caio em sua sucessão? (Valor: 0,45)\n\nB) Descreva a sucessão de Roberval e como deverá ser dividida a sua herança, consistente nos seus dois imóveis, a saber, o da Tijuca e o do Flamengo. (Valor: 0,80)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Explicar que Roberval podia testar em favor de Caio, pois Ângelo não é herdeiro necessário.\nB) Identificar a substituição fideicomissária e explicar a propriedade do filho de Caio e o usufruto de Caio sobre o imóvel da Tijuca. Em seguida, apontar a transmissão do imóvel do Flamengo a Ângelo pela sucessão legítima, com os fundamentos legais.",
+        "title": "Testamento e substituição fideicomissária"
+      },
+      "latencyMs": 27065,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-civil-q3"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.010052050000000002,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Conclui que João não pode exigir passagem forçada.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que o imóvel de João possui acesso próprio à via pública, não estando encravado.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica o art. 1.285 do Código Civil como fundamento.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que João pode requerer judicialmente o reconhecimento da usucapião da servidão.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica a aparência da servidão pelos sinais visíveis do caminho, como a pavimentação e a drenagem.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica o exercício contínuo e incontestado da passagem durante o período anterior ao impedimento.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Aponta que o exercício por mais de vinte anos satisfaz o prazo legal mesmo na ausência de título.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o art. 1.379 do Código Civil como fundamento.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.6
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.65
+          }
+        ],
+        "keyPoints": [
+          "A passagem forçada pressupõe que o prédio não tenha acesso à via pública, nascente ou porto, conforme o art. 1.285 do Código Civil.",
+          "O imóvel de João tem acesso próprio à via pública; a maior comodidade de um trajeto mais curto não basta para exigir passagem forçada.",
+          "O exercício contínuo e incontestado de servidão aparente pode conduzir à sua aquisição por usucapião, conforme o art. 1.379 do Código Civil.",
+          "A pavimentação e o sistema de drenagem são sinais visíveis da passagem, que evidenciam a aparência da servidão.",
+          "O uso diário por mais de vinte anos, sem oposição até a instalação da grade, satisfaz o prazo previsto no parágrafo único do art. 1.379, mesmo sem título.",
+          "A sentença que julgar consumada a usucapião servirá de título para o registro da servidão no Registro de Imóveis, conforme o art. 1.379 do Código Civil."
+        ],
+        "question": "João e Maurício são proprietários e moradores de imóveis vizinhos, situados na Cidade do Rio de Janeiro. Embora o seu imóvel disponha de acesso próprio à via pública, há mais de vinte anos João atravessa diariamente o terreno de Maurício para chegar ao ponto de ônibus mais próximo da sua moradia, pois esse é o trajeto mais curto existente. Ademais, o caminho utilizado por João é pavimentado e conta com sistema de drenagem para as águas pluviais. Além disso, na cerca que separa os dois imóveis, há uma porteira, de onde tem início o caminho.\n\nDeterminado dia, Maurício decide impedir João de continuar a atravessar o seu terreno. Com esse intuito, instala uma grade no lugar da porteira existente na cerca que separa os dois imóveis. Inconformado, João decide consultar um advogado.\n\nNa condição de advogado(a) consultado(a) por João, responda aos itens a seguir.\n\nA) Tem João direito a constranger Maurício a lhe dar passagem forçada, de modo a continuar a usar o caminho existente no terreno de Maurício? (Valor: 0,60)\n\nB) Independentemente da resposta ao item anterior, pode João ingressar em juízo para que seja reconhecida a aquisição de direito real de servidão de passagem, por meio de usucapião? (Valor: 0,65)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Negar o direito à passagem forçada, pois o imóvel possui acesso à via pública, fundamentando no art. 1.285 do Código Civil.\nB) Afirmar a possibilidade de reconhecimento da usucapião: a passagem é aparente e foi exercida de modo contínuo e incontestado por mais de vinte anos. Fundamentar no art. 1.379 do Código Civil e mencionar o registro com base na sentença.",
+        "title": "Passagem forçada e servidão"
+      },
+      "latencyMs": 26446,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-civil-q4"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01006605,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Afirma que o tráfico não exige, automaticamente, o regime inicial fechado.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "a",
+            "description": "Identifica a possibilidade de regime semiaberto para a pena de cinco anos, observados os requisitos legais.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que a fixação do regime depende da reincidência e das circunstâncias judiciais do caso.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica fundamento jurídico pertinente para a escolha do regime.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que a reclassificação prejudicial não poderia ser feita no recurso exclusivo da defesa.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que a vedação da reformatio in pejus alcança o agravamento qualitativo, mesmo sem aumento da pena total.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Identifica o prejuízo decorrente da incorporação da pena pelo crime comum à pena do tráfico, com reflexos na execução.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o artigo 617 do Código de Processo Penal como fundamento da vedação.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.6
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.65
+          }
+        ],
+        "keyPoints": [
+          "A) É possível fixar regime inicial diverso do fechado para o tráfico: o STF declarou inconstitucional a imposição obrigatória do regime fechado prevista no artigo 2º, § 1º, da Lei nº 8.072/1990, no HC 111.840.",
+          "Para pena de cinco anos, o regime semiaberto é possível se Carlos não for reincidente e se as circunstâncias judiciais o permitirem, conforme o artigo 33, §§ 2º, b, e 3º, do Código Penal.",
+          "O regime fechado pode ser fixado quando houver fundamentação concreta e juridicamente adequada; não decorre automaticamente da natureza do delito.",
+          "B) Em recurso exclusivo da defesa, o tribunal não pode agravar a situação do réu, nos termos do artigo 617 do Código de Processo Penal.",
+          "A manutenção do total de seis anos não elimina o prejuízo: a reclassificação incorpora à pena pelo tráfico a parcela antes aplicada por crime comum, sujeitando-a às consequências executórias mais gravosas do tráfico.",
+          "Assim, a reclassificação adotada configura reformatio in pejus e não poderia ser realizada de ofício na hipótese narrada."
+        ],
+        "question": "Carlos foi condenado pelos crimes de tráfico de entorpecentes e posse de arma de fogo de uso permitido, em concurso material, sendo sua conduta tipificada da seguinte forma: Art. 33 da Lei nº 11.343/06 e Art. 12 da Lei nº 10.826/03, na forma do Art. 69 do Código Penal. A pena ficou estabelecida em 05 anos de reclusão em regime fechado para o crime de tráfico e 01 ano de detenção em regime semiaberto pelo crime de posse de arma de fogo. Apenas a defesa técnica apelou, requerendo a mudança do regime de pena aplicado para o crime do Art. 33 da Lei nº 11.343/06, tendo o feito transitado em julgado para a acusação. O recurso foi desprovido. Todavia, de ofício, sem reflexo no quantum, que permaneceu em 06 anos de pena privativa de liberdade, o Tribunal reclassificou o fato para o Art. 33 c/c o Art. 40, IV, da Lei nº 11343/06, afastando o crime autônomo da lei de armas e aplicando a causa de aumento respectiva.\n\nConsiderando as informações narradas na hipótese, responda aos itens a seguir.\n\nA) Poderia ser aplicado regime inicial de cumprimento da pena diverso do fechado para o crime de tráfico ilícito de entorpecentes, previsto no Art. 33, caput, da Lei nº 11.343/06? (Valor: 0,60)\n\nB) Poderia o Tribunal de Justiça em sede de recurso da defesa realizar a reclassificação adotada? (Valor: 0,65)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Afirmar a possibilidade de regime diverso do fechado e indicar as condições para o semiaberto, com a fundamentação legal e constitucional.\nB) Afastar a reclassificação prejudicial, explicando seu reflexo qualitativo na execução e a vedação da reformatio in pejus.",
+        "title": "Regime e reformatio in pejus"
+      },
+      "latencyMs": 30046,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-penal-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.007770050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Identifica o crime de injúria.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que os termos ofensivos não imputam a Eduardo um fato criminoso determinado.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica o Art. 140, caput, do Código Penal como fundamento.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Sustenta que o perdão concedido a Rubens se estende a Enrico.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "b",
+            "description": "Ressalta que o perdão não produzirá efeito em relação a Enrico se ele o recusar.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o Art. 106, inciso I, do Código Penal ou o Art. 51 do Código de Processo Penal como fundamento da extensão.",
+            "points": 0.15
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.6
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.65
+          }
+        ],
+        "keyPoints": [
+          "Chamar Eduardo de “ladrão” e “estelionatário”, sem imputar-lhe fato criminoso determinado, configura, em tese, injúria, por ofensa à sua dignidade ou ao seu decoro, nos termos do Art. 140, caput, do Código Penal.",
+          "O perdão concedido a um dos querelados aproveita aos demais, ainda que o ofendido declare não querer concedê-lo a Enrico: Art. 106, inciso I, do Código Penal e Art. 51 do Código de Processo Penal.",
+          "O perdão não produz efeito em relação ao querelado que o recusa, conforme o Art. 106, inciso III, do Código Penal e o Art. 51 do Código de Processo Penal.",
+          "Se Enrico aceitar o perdão, expressa ou tacitamente, poderá obter a extinção da punibilidade, nos termos do Art. 107, inciso V, do Código Penal."
+        ],
+        "question": "Em uma discussão de futebol, Rubens e Enrico, em comunhão de ações e desígnios, chamaram Eduardo de “ladrão” e “estelionatário”, razão pela qual Eduardo formulou uma queixa-crime em face de ambos.\n\nNo curso da ação penal, porém, Rubens procurou Eduardo para pedir desculpas pelos seus atos, razão pela qual Eduardo expressamente concedeu perdão do ofendido em seu favor, sendo esse prontamente aceito e, consequentemente, extinta a punibilidade de Rubens. Eduardo, contudo, se recusou a conceder o perdão para Enrico, pois disse que não era a primeira vez que o querelado tinha esse tipo de atitude.\n\nConsiderando apenas as informações narradas, responda aos itens a seguir.\n\nA) Qual o crime praticado, em tese, por Rubens e Enrico? (Valor: 0,60)\n\nB) Que argumento poderá ser formulado pelo advogado de Enrico para evitar sua punição? (Valor: 0,65)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Identificar a injúria e explicar que não houve imputação de fato criminoso determinado, com fundamento no Art. 140 do Código Penal.\n\nB) Sustentar a extensão do perdão a Enrico, indicando a necessidade de que ele não o recuse e a consequente possibilidade de extinção da punibilidade.",
+        "title": "Injúria e perdão do ofendido"
+      },
+      "latencyMs": 21279,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-penal-q3"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.008952050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Indica o pedido de liberdade provisória como medida dirigida ao juízo.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta o pedido no artigo 310, inciso III, ou no artigo 321 do CPP.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Afirma que a representação não demonstra fundamento concreto suficiente para a prisão preventiva.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que o processo criminal em curso, apontado de forma genérica, não equivale a condenação definitiva nem basta, por si só, para demonstrar risco concreto à ordem pública.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que a receptação simples imputada tem pena máxima de quatro anos e, portanto, não satisfaz o requisito de pena superior a quatro anos.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica os artigos 312 e 313 do CPP como fundamentos pertinentes à análise da preventiva.",
+            "points": 0.15
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.5
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.75
+          }
+        ],
+        "keyPoints": [
+          "A defesa deve requerer ao juízo a liberdade provisória, pois o flagrante foi legal, mas não foram demonstrados fundamentos para a preventiva, nos termos dos artigos 310, III, e 321 do CPP.",
+          "A liberdade provisória pode ser concedida com imposição de medida cautelar diversa da prisão, se necessária e adequada, nos termos dos artigos 319 e 321 do CPP.",
+          "A conduta narrada amolda-se à receptação simples, cuja pena máxima é de quatro anos, conforme o artigo 180, caput, do Código Penal.",
+          "O artigo 313, I, do CPP exige pena máxima privativa de liberdade superior a quatro anos para a hipótese nele prevista.",
+          "O processo por furto qualificado ainda em curso não constitui condenação definitiva e não preenche a hipótese do artigo 313, II, do CPP.",
+          "A simples referência genérica ao processo em curso não demonstra, por si só, risco concreto à ordem pública que fundamente a preventiva, exigida pelo artigo 312 do CPP.",
+          "Não foram narrados fatos que indiquem outra hipótese legal de admissibilidade da preventiva.",
+          "A autoridade policial pode representar pela preventiva; a inadequação, no caso, está na falta de pressupostos e fundamentação suficientes, não na iniciativa de representar."
+        ],
+        "question": "Wesley, estudante, foi preso em flagrante no dia 03 de março de 2015 porque conduzia um veículo automotor que sabia ser produto de crime pretérito registrado em Delegacia da área em que residia. Na data dos fatos, Wesley tinha 20 anos, era primário, mas existia um processo criminal em curso em seu desfavor, pela suposta prática de um crime de furto qualificado. Diante dessa anotação em sua Folha de Antecedentes Criminais, a autoridade policial representou pela conversão da prisão em flagrante em preventiva, afirmando que existiria risco concreto para a ordem pública, pois o indiciado possuía outros envolvimentos com o aparato judicial. Você, como advogado(a) indicado por Wesley, é comunicado da ocorrência da prisão em flagrante, além de tomar conhecimento da representação formulada pelo Delegado. Da mesma forma, o comunicado de prisão já foi encaminhado para o Ministério Público e para o magistrado, sendo todas as legalidades da prisão em flagrante observadas.\n\nConsiderando as informações narradas, responda aos itens a seguir.\n\nA) Qual a medida processual, diferente de habeas corpus, a ser adotada pela defesa técnica de Wesley? (Valor: 0,50)\n\nB) A representação da autoridade policial foi elaborada de modo adequado? (Valor: 0,75)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Requerer liberdade provisória ao juízo, com fundamento no CPP, admitindo eventual cautelar diversa.\nB) Explicar por que o processo em curso não demonstra, pela referência genérica feita, risco concreto à ordem pública; examinar também a pena da receptação simples e a ausência das hipóteses do artigo 313 do CPP.",
+        "title": "Flagrante e liberdade provisória"
+      },
+      "latencyMs": 27458,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-penal-q4"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.007164050000000001,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Identifica o tributo como contribuição de melhoria.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Indica o artigo 145, inciso III, da Constituição Federal.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que o Município não é competente para instituir a contribuição pela obra descrita.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Justifica que a obra foi realizada pelo Estado, e não pelo Município.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Fundamenta a resposta no artigo 81 do CTN.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "c",
+            "description": "Conclui que a base de cálculo proposta está incorreta.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "c",
+            "description": "Explica que a cobrança por imóvel deve observar a valorização individual, que constitui seu limite individual.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "c",
+            "description": "Fundamenta a resposta no artigo 81 ou no artigo 82, § 1º, do CTN.",
+            "points": 0.1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.45
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.4
+          },
+          {
+            "id": "c",
+            "name": "Item C",
+            "points": 0.4
+          }
+        ],
+        "keyPoints": [
+          "A espécie tributária é a contribuição de melhoria, prevista no artigo 145, inciso III, da Constituição Federal.",
+          "Na hipótese apresentada, a obra foi realizada pelo Estado Alfa; por isso, o Município XYZ não é competente para instituir a contribuição em razão dessa obra, nos termos do artigo 81 do CTN.",
+          "O custo total da obra não pode ser tomado como base de cálculo de cada contribuinte, independentemente da valorização do respectivo imóvel.",
+          "A contribuição relativa a cada imóvel é determinada pelo rateio da parcela do custo da obra entre os imóveis beneficiados, em função dos respectivos fatores individuais de valorização, conforme o artigo 82, § 1º, do CTN.",
+          "O acréscimo de valor resultante da obra para cada imóvel é o limite individual da contribuição; a despesa realizada é seu limite total, conforme o artigo 81 do CTN."
+        ],
+        "question": "O Município XYZ resolveu instituir, por meio de lei específica, um tributo que tem como fato gerador a valorização imobiliária decorrente de obra realizada pelo Estado Alfa em seu território, sendo o contribuinte o proprietário do imóvel valorizado e a base de cálculo, independentemente da valorização experimentada por cada imóvel, o custo da obra estatal.\n\nSobre a hipótese descrita, responda aos itens a seguir.\n\nA) Qual seria a espécie tributária que o Município XYZ pretendeu instituir? Aponte o dispositivo constitucional aplicável. (Valor: 0,45)\n\nB) Na hipótese descrita, o Município XYZ é competente para instituir tal tributo? (Valor: 0,40)\n\nC) A base de cálculo do tributo está correta? (Valor: 0,40)\n\nObs.: responda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Identificar a contribuição de melhoria e indicar o dispositivo constitucional.\nB) Afastar a competência municipal, justificando-a pela realização da obra pelo Estado.\nC) Afastar a base proposta e explicar o rateio e os limites da contribuição, com fundamento no CTN.",
+        "title": "Contribuição de melhoria por obra estadual"
+      },
+      "latencyMs": 19773,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-tax-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.00893505,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Conclui que não ocorreu denúncia espontânea apta a afastar a multa de mora.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "a",
+            "description": "Explica que o tributo foi declarado e pago a destempo, hipótese em que não se aplica o benefício da denúncia espontânea.",
+            "points": 0.3
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a resposta no Art. 138 do CTN ou na Súmula 360 do STJ.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que a empresa não poderá discutir simultaneamente a mesma matéria nas duas vias.",
+            "points": 0.1
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que a propositura da ação judicial importa renúncia à discussão administrativa da matéria de mesmo objeto.",
+            "points": 0.35
+          },
+          {
+            "criterionId": "b",
+            "description": "Indica o Art. 38, parágrafo único, da Lei nº 6.830/1980 ou a Súmula 1 do CARF como fundamento.",
+            "points": 0.15
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.65
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.6
+          }
+        ],
+        "keyPoints": [
+          "A) O entendimento da empresa está incorreto: o benefício da denúncia espontânea não afasta a multa de mora no caso.",
+          "A Súmula 360 do STJ estabelece que o benefício da denúncia espontânea não se aplica aos tributos sujeitos a lançamento por homologação regularmente declarados, mas pagos a destempo.",
+          "O Art. 138 do CTN disciplina a exclusão da responsabilidade pela denúncia espontânea.",
+          "B) A ação anulatória destinada a desconstituir o auto impede a discussão administrativa simultânea da mesma matéria.",
+          "A propositura da ação importa renúncia à discussão administrativa de mesmo objeto, conforme o Art. 38, parágrafo único, da Lei nº 6.830/1980 e a orientação da Súmula 1 do CARF.",
+          "Matéria distinta daquela submetida ao Judiciário pode ser apreciada na via administrativa, conforme a Súmula 1 do CARF."
+        ],
+        "question": "Em 2008, constou na Declaração de Débitos e Créditos Tributários Federais (DCTF) da pessoa jurídica AB&C Participações Ltda. que era devido, a título de Contribuição para o Financiamento da Seguridade Social – COFINS, o valor de R$ 25.000,00 (vinte e cinco mil reais). No entanto, a AB&C Participações Ltda. não efetuou o recolhimento antes do vencimento do tributo.\n\nEm 2009, antes do início de qualquer fiscalização por parte da Fazenda Nacional, a AB&C Participações Ltda. efetuou o recolhimento daquele montante da COFINS informado no ano anterior na DCTF, sem, no entanto, o acréscimo da multa de mora, em razão da ocorrência da denúncia espontânea. Por não concordar com a AB&C Participações Ltda., a Fazenda Nacional lavrou auto de infração cobrando o valor integral do tributo (deduzido do montante já recolhido), sendo a AB&C Participações Ltda. intimada para pagar ou apresentar defesa.\n\nSobre o caso, responda aos itens a seguir.\n\nA) Está correto o entendimento da pessoa jurídica AB&C Participações Ltda. sobre a ocorrência da denúncia espontânea? (Valor: 0,65)\n\nB) Caso a pessoa jurídica proponha ação anulatória buscando desconstituir o auto de infração, poderá apresentar, simultaneamente, defesa no processo administrativo? (Valor: 0,60)\n\nResponda justificadamente, empregando os argumentos jurídicos apropriados e a fundamentação legal pertinente ao caso.",
+        "sampleOutline": "A) Concluir pela inexistência do benefício da denúncia espontânea e fundamentar na declaração do tributo seguida de pagamento tardio, com referência ao CTN ou à Súmula 360 do STJ.\nB) Afastar a discussão simultânea da mesma matéria e explicar a renúncia à via administrativa, com o fundamento pertinente.",
+        "title": "Denúncia espontânea e vias de impugnação"
+      },
+      "latencyMs": 24300,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-tax-q2"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.00791805,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "a",
+            "description": "Conclui que o lançamento do ITBI não é devido, consideradas as atividades informadas no caso.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Fundamenta a conclusão na imunidade aplicável à transmissão de bens em decorrência de incorporação de pessoa jurídica.",
+            "points": 0.25
+          },
+          {
+            "criterionId": "a",
+            "description": "Ressalva a exceção constitucional relativa à atividade imobiliária preponderante.",
+            "points": 0.15
+          },
+          {
+            "criterionId": "b",
+            "description": "Conclui que a pessoa jurídica Z tem direito à certidão positiva com efeitos de negativa.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que a impugnação administrativa regularmente apresentada suspende a exigibilidade do crédito tributário.",
+            "points": 0.2
+          },
+          {
+            "criterionId": "b",
+            "description": "Explica que o depósito integral não é necessário para a emissão da certidão nessa situação.",
+            "points": 0.2
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "a",
+            "name": "Item A",
+            "points": 0.65
+          },
+          {
+            "id": "b",
+            "name": "Item B",
+            "points": 0.6
+          }
+        ],
+        "keyPoints": [
+          "A Constituição afasta a incidência do ITBI sobre a transmissão de bens ou direitos decorrente de incorporação de pessoa jurídica, ressalvada a atividade imobiliária preponderante do adquirente: art. 156, § 2º, I, da Constituição Federal.",
+          "A exceção alcança a atividade preponderante de compra e venda desses bens ou direitos, locação de bens imóveis ou arrendamento mercantil.",
+          "Z é apresentada como fabricante de peças automotivas, sem indicação de atividade imobiliária preponderante; com base nos fatos informados, a transmissão está abrangida pela imunidade e o lançamento não é devido.",
+          "A impugnação administrativa regularmente apresentada suspende a exigibilidade do crédito tributário, nos termos do art. 151, III, do CTN.",
+          "A existência de crédito com exigibilidade suspensa permite a emissão de certidão positiva com efeitos de negativa, conforme o art. 206 do CTN.",
+          "O depósito do montante integral é uma causa distinta de suspensão da exigibilidade, prevista no art. 151, II, do CTN, e não é requisito para a certidão quando a impugnação já produz essa suspensão."
+        ],
+        "question": "O Município \"M\" notificou a pessoa jurídica \"Z\", fabricante de peças automotivas, para que efetuasse o pagamento do Imposto sobre a Transmissão inter vivos de Bens Imóveis (ITBI), incidente sobre a transmissão de bens decorrentes de processo de incorporação de outra pessoa jurídica. Inconformada com a cobrança, a pessoa jurídica \"Z\" decide apresentar impugnação. Verificando a inexistência de outros débitos, após a regular apresentação da impugnação, a pessoa jurídica \"Z\" requer a emissão da certidão de regularidade fiscal (no caso, Certidão Positiva de Débito com efeito de Negativa), que lhe é negada, sob o argumento de que, para a sua emissão, seria necessário o depósito do montante integral do crédito cobrado.\n\nDiante desta situação, responda aos itens a seguir.\n\nA) Está correto o lançamento do imposto pelo Município \"M\"? (Valor: 0,60)\n\nB) A pessoa jurídica \"Z\" tem direito à certidão de regularidade fiscal? (Valor: 0,65)\n\nObs.: as respostas devem ser juridicamente justificadas.",
+        "sampleOutline": "A) Concluir pela improcedência do lançamento, fundamentando a imunidade e apontando a exceção relativa à atividade imobiliária preponderante.\n\nB) Concluir pelo direito à certidão positiva com efeitos de negativa, explicando a suspensão da exigibilidade pela impugnação e a desnecessidade de depósito.",
+        "title": "ITBI na incorporação e certidão fiscal"
+      },
+      "latencyMs": 20812,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "fgv-oab-xvi-tax-q4"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01222105,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Identifica a neutralidade adotada pelo Brasil no início da guerra.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q1",
+            "description": "Explica que a neutralidade foi abandonada antes do reconhecimento do estado de guerra com a Alemanha.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q2",
+            "description": "Relaciona o torpedeamento do Paraná à deterioração das relações com a Alemanha.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica o Tijuca como navio brasileiro torpedeado durante a guerra.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica o Lapa como navio brasileiro torpedeado durante a guerra.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Menciona manifestações populares contra a Alemanha após ataques a navios brasileiros.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona essas manifestações à pressão interna sobre a posição brasileira diante da guerra.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Identifica a existência de debate intelectual brasileiro sobre os lados em conflito.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Caracteriza uma posição defendida nesse debate e sua relação com o conflito.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica a Liga Brasileira pelos Aliados como organização favorável aos Aliados.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q5",
+            "description": "Explica seu papel de mobilização da opinião pública brasileira.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q6",
+            "description": "Explica a guerra submarina irrestrita alemã como ameaça à navegação mercante.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q6",
+            "description": "Relaciona essa política aos ataques a navios de países neutros, inclusive brasileiros.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q7",
+            "description": "Identifica a entrada dos Estados Unidos na guerra contra a Alemanha em 1917.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q7",
+            "description": "Relaciona a mudança de posição norte-americana ao contexto diplomático da política brasileira.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q8",
+            "description": "Identifica o torpedeamento do Macau como motivo imediato para o reconhecimento brasileiro do estado de guerra.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q8",
+            "description": "Explica que o Decreto nº 3.361 reconheceu e proclamou o estado de guerra iniciado pelo Império Alemão contra o Brasil.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q9",
+            "description": "Apresenta uma contribuição naval brasileira ao esforço aliado.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q9",
+            "description": "Apresenta outra contribuição brasileira ao esforço aliado, distinta da naval.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q10",
+            "description": "Identifica a participação brasileira na Conferência da Paz de Paris.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q10",
+            "description": "Relaciona a participação brasileira à assinatura do Tratado de Versalhes ou à inserção do país na nova ordem internacional do pós-guerra.",
+            "points": 1.5
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Neutralidade",
+            "points": 3
+          },
+          {
+            "id": "q2",
+            "name": "Paraná, Tijuca e Lapa",
+            "points": 3
+          },
+          {
+            "id": "q3",
+            "name": "Manifestações populares",
+            "points": 3
+          },
+          {
+            "id": "q4",
+            "name": "Debate intelectual",
+            "points": 3
+          },
+          {
+            "id": "q5",
+            "name": "Liga Brasileira pelos Aliados",
+            "points": 3
+          },
+          {
+            "id": "q6",
+            "name": "Guerra submarina irrestrita",
+            "points": 3
+          },
+          {
+            "id": "q7",
+            "name": "Entrada dos Estados Unidos",
+            "points": 3
+          },
+          {
+            "id": "q8",
+            "name": "Motivo imediato",
+            "points": 3
+          },
+          {
+            "id": "q9",
+            "name": "Esforço aliado",
+            "points": 3
+          },
+          {
+            "id": "q10",
+            "name": "Conferência da Paz",
+            "points": 3
+          }
+        ],
+        "keyPoints": [
+          "Em 1914, o Brasil declarou-se neutro diante da guerra europeia.",
+          "O torpedeamento do navio brasileiro Paraná, em abril de 1917, contribuiu para o rompimento das relações diplomáticas com a Alemanha.",
+          "Os navios brasileiros Tijuca e Lapa também foram torpedeados em 1917.",
+          "Os ataques provocaram protestos populares e atos contra estabelecimentos associados à Alemanha, ampliando a pressão sobre o governo.",
+          "Intelectuais e publicistas debateram as posições dos beligerantes; Rui Barbosa foi uma das vozes favoráveis aos Aliados.",
+          "A Liga Brasileira pelos Aliados procurou mobilizar a opinião pública em favor da causa aliada.",
+          "A retomada da guerra submarina irrestrita pela Alemanha, em 1917, expôs navios mercantes, inclusive de países neutros, a ataques.",
+          "Os Estados Unidos entraram na guerra contra a Alemanha em abril de 1917; sua mudança de posição alterou o contexto diplomático no qual o Brasil atuava.",
+          "O Brasil revogou sua neutralidade na guerra entre os Estados Unidos e a Alemanha em junho de 1917, antes de reconhecer o estado de guerra com a Alemanha.",
+          "O torpedeamento do navio brasileiro Macau, em outubro de 1917, foi o motivo imediato para o reconhecimento do estado de guerra.",
+          "O Decreto nº 3.361, de 26 de outubro de 1917, reconheceu e proclamou o estado de guerra iniciado pelo Império Alemão contra o Brasil.",
+          "A Divisão Naval em Operações de Guerra integrou o esforço aliado em missões de patrulhamento no Atlântico.",
+          "O Brasil enviou uma missão médica à França como parte de sua contribuição ao esforço aliado.",
+          "O Brasil participou da Conferência da Paz de Paris e assinou o Tratado de Versalhes em 1919."
+        ],
+        "question": "Com referência ao Decreto nº 3.361, de 26 de outubro de 1917, discorra sobre o Brasil e a Primeira Guerra Mundial, abordando os dez aspectos a seguir.",
+        "sampleOutline": "Introduzir a neutralidade brasileira e sua erosão com a guerra submarina e os ataques ao Paraná, ao Tijuca e ao Lapa. Examinar as reações populares, o debate intelectual e a atuação da Liga Brasileira pelos Aliados. Relacionar a entrada dos Estados Unidos e o torpedeamento do Macau à mudança da posição brasileira e ao decreto de 1917. Concluir com as contribuições ao esforço aliado e a participação brasileira na Conferência da Paz.",
+        "title": "O Brasil na Primeira Guerra"
+      },
+      "latencyMs": 35004,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2024-history-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01571205,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Caracteriza a diplomacia pendular pela negociação com potências rivais em busca de vantagens para o Brasil.",
+            "points": 1
+          },
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a aproximação com os Estados Unidos ao financiamento da siderurgia brasileira.",
+            "points": 1
+          },
+          {
+            "criterionId": "q1",
+            "description": "Explica a passagem da barganha entre as potências ao alinhamento brasileiro com os Aliados.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica os ataques de submarinos do Eixo a navios brasileiros como fator de pressão pela entrada na guerra.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Relaciona os afundamentos à mobilização da opinião pública brasileira.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Associa a crise à declaração de guerra do Brasil à Alemanha e à Itália em 1942.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica a participação brasileira na luta dos Aliados contra o Eixo.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Reconhece a manutenção de uma ditadura no Brasil durante a guerra.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica como a contradição entre a luta externa e o autoritarismo interno fortaleceu a demanda por redemocratização.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Identifica a Lei Agamenon como a legislação eleitoral de 1945.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Relaciona a lei à organização das eleições e ao restabelecimento da Justiça Eleitoral.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Explica a exigência de organização nacional dos partidos para sua atuação eleitoral.",
+            "points": 1
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica o PSD como partido formado no processo de abertura de 1945.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica o PTB como partido formado no processo de abertura de 1945.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica a UDN como partido de oposição a Vargas.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q5",
+            "description": "Reconhece a atuação legal do PCB no processo político de 1945.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q6",
+            "description": "Associa o PSD a interventores, dirigentes estaduais e setores das elites regionais.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q6",
+            "description": "Associa o PTB ao trabalhismo e a setores do sindicalismo urbano.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q6",
+            "description": "Associa a UDN a setores liberais e a opositores do Estado Novo.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q6",
+            "description": "Associa o PCB a militantes comunistas e a setores dos trabalhadores urbanos.",
+            "points": 0.75
+          },
+          {
+            "criterionId": "q7",
+            "description": "Identifica Eurico Gaspar Dutra como vencedor da eleição presidencial de 1945.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Relaciona a candidatura de Dutra ao PSD e ao apoio posterior de Vargas e do PTB.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Identifica Eduardo Gomes como candidato apoiado pela UDN.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Relaciona a legislação trabalhista de Vargas à construção de apoio entre trabalhadores urbanos.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Identifica a Consolidação das Leis do Trabalho como marco da institucionalização desses direitos.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Reconhece a vinculação dos sindicatos oficiais ao controle estatal.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Identifica o DIP como órgão de propaganda do Estado Novo.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Relaciona a propaganda do DIP à construção da imagem de Vargas como protetor dos trabalhadores.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Reconhece a atuação do DIP na censura e no controle da informação.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Caracteriza o queremismo como movimento que defendia a permanência de Vargas e a convocação de uma Constituinte com sua participação.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Relaciona a deposição de Vargas à reação de chefes militares diante das incertezas da transição.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Identifica a deposição de Vargas em outubro de 1945 e a posse provisória de José Linhares.",
+            "points": 1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Diplomacia pendular",
+            "points": 3
+          },
+          {
+            "id": "q2",
+            "name": "Crise dos submarinos",
+            "points": 3
+          },
+          {
+            "id": "q3",
+            "name": "Contradição do regime",
+            "points": 3
+          },
+          {
+            "id": "q4",
+            "name": "Lei Agamenon Magalhães",
+            "points": 3
+          },
+          {
+            "id": "q5",
+            "name": "Partidos nacionais",
+            "points": 3
+          },
+          {
+            "id": "q6",
+            "name": "Bases partidárias",
+            "points": 3
+          },
+          {
+            "id": "q7",
+            "name": "Eleição presidencial",
+            "points": 3
+          },
+          {
+            "id": "q8",
+            "name": "Direitos trabalhistas",
+            "points": 3
+          },
+          {
+            "id": "q9",
+            "name": "DIP",
+            "points": 3
+          },
+          {
+            "id": "q10",
+            "name": "Deposição",
+            "points": 3
+          }
+        ],
+        "keyPoints": [
+          "Antes do alinhamento aos Aliados, Vargas negociou com Estados Unidos e Alemanha, procurando obter vantagens comerciais e apoio ao desenvolvimento brasileiro.",
+          "A aproximação com os Estados Unidos contribuiu para o financiamento da usina siderúrgica de Volta Redonda.",
+          "Ataques de submarinos do Eixo a navios brasileiros provocaram mobilização pública; em 1942, o Brasil declarou guerra à Alemanha e à Itália.",
+          "A luta brasileira ao lado dos Aliados contra o Eixo contrastava com a ditadura, a censura e a ausência de eleições competitivas no país.",
+          "Essa contradição favoreceu as pressões pela abertura política e pela redemocratização.",
+          "A Lei Agamenon, de 1945, organizou o processo eleitoral, restabeleceu a Justiça Eleitoral e exigiu organização nacional dos partidos.",
+          "O PSD reuniu interventores, dirigentes estaduais e setores das elites regionais ligados ao governo.",
+          "O PTB vinculou-se ao trabalhismo e a setores do sindicalismo urbano.",
+          "A UDN agregou setores liberais e opositores de Vargas; o PCB voltou à legalidade em 1945 e tinha apoio entre militantes comunistas e trabalhadores urbanos.",
+          "Na eleição presidencial de dezembro de 1945, venceu Eurico Gaspar Dutra, candidato do PSD, apoiado posteriormente por Vargas e pelo PTB.",
+          "Eduardo Gomes concorreu com o apoio da UDN; o PCB apresentou a candidatura de Yedo Fiúza.",
+          "A legislação trabalhista, consolidada na CLT em 1943, ajudou a construir apoio a Vargas entre trabalhadores urbanos, embora os sindicatos oficiais permanecessem sujeitos ao controle estatal.",
+          "O Departamento de Imprensa e Propaganda difundiu a imagem de Vargas como protetor dos trabalhadores e exerceu censura e controle da informação.",
+          "O queremismo mobilizou apoiadores em defesa da permanência de Vargas e de uma Constituinte com sua participação; o PCB também apoiou o movimento.",
+          "A nomeação de Benjamim Vargas para a chefia de polícia do Distrito Federal agravou a desconfiança de chefes militares quanto às intenções de Vargas.",
+          "Vargas foi deposto em 29 de outubro de 1945; José Linhares assumiu provisoriamente a Presidência, e as eleições previstas foram realizadas."
+        ],
+        "question": "Discorra sobre o final do Estado Novo e o queremismo, abordando os dez aspectos a seguir.",
+        "sampleOutline": "Inicie pela diplomacia pendular, pela crise dos submarinos e pelos efeitos políticos da participação na guerra. Em seguida, examine a Lei Agamenon, os partidos, suas bases e a eleição presidencial. Por fim, relacione direitos trabalhistas e propaganda à mobilização queremista e explique a deposição de Vargas e a transição.",
+        "title": "Final do Estado Novo"
+      },
+      "latencyMs": 45211,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2024-history-q2"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01212505,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a urbanização e a industrialização paulistanas à economia cafeeira.",
+            "points": 1
+          },
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a imigração e a formação de uma população urbana diversificada ao contexto social da cidade.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Relaciona os debates sobre a identidade nacional às comemorações do centenário da Independência.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica a crítica modernista ao conservadorismo intelectual e cultural.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica a influência das vanguardas artísticas europeias sobre os modernistas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Situa a contestação modernista das convenções acadêmicas no ambiente artístico brasileiro.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Identifica o Teatro Municipal de São Paulo como sede da Semana de 1922.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Caracteriza a Semana como evento que reuniu diferentes linguagens artísticas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica a busca de novas formas de representar o Brasil entre as temáticas modernistas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q5",
+            "description": "Identifica a experiência da modernidade urbana entre as temáticas modernistas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q6",
+            "description": "Apresenta uma proposta de renovação da linguagem literária, como o verso livre ou a aproximação com a fala cotidiana.",
+            "points": 1
+          },
+          {
+            "criterionId": "q6",
+            "description": "Apresenta a experimentação formal nas artes visuais como proposta de ruptura com padrões acadêmicos.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Identifica Mário de Andrade como participante das atividades literárias da Semana.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Identifica Anita Malfatti como artista que expôs obras na Semana.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Apresenta uma manifestação modernista em Minas Gerais durante a Primeira República.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Apresenta uma manifestação modernista em Pernambuco durante a Primeira República.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Situa o lançamento da revista Klaxon em 1922, após a Semana.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Explica o papel de Klaxon na divulgação de propostas modernistas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Identifica a antropofagia como desdobramento modernista posterior à Semana.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Explica a proposta antropofágica de assimilação crítica de influências culturais.",
+            "points": 1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Contexto social",
+            "points": 2
+          },
+          {
+            "id": "q2",
+            "name": "Contexto intelectual",
+            "points": 2
+          },
+          {
+            "id": "q3",
+            "name": "Contexto artístico",
+            "points": 2
+          },
+          {
+            "id": "q4",
+            "name": "Características da Semana",
+            "points": 2
+          },
+          {
+            "id": "q5",
+            "name": "Temáticas da Semana",
+            "points": 2
+          },
+          {
+            "id": "q6",
+            "name": "Propostas artísticas",
+            "points": 2
+          },
+          {
+            "id": "q7",
+            "name": "Participantes",
+            "points": 2
+          },
+          {
+            "id": "q8",
+            "name": "Outros modernismos",
+            "points": 2
+          },
+          {
+            "id": "q9",
+            "name": "Revista Klaxon",
+            "points": 2
+          },
+          {
+            "id": "q10",
+            "name": "Desdobramentos",
+            "points": 2
+          }
+        ],
+        "keyPoints": [
+          "A riqueza gerada pela economia cafeeira contribuiu para a expansão urbana e industrial de São Paulo.",
+          "A imigração e o crescimento da população trabalhadora contribuíram para a diversidade social da cidade.",
+          "O centenário da Independência estimulou reflexões sobre a formação e a identidade nacionais.",
+          "Intelectuais modernistas criticavam o conservadorismo cultural e buscavam novas interpretações do Brasil.",
+          "As vanguardas europeias influenciaram a experimentação modernista brasileira.",
+          "A renovação artística também contestava convenções acadêmicas predominantes no Brasil.",
+          "A Semana de Arte Moderna ocorreu no Teatro Municipal de São Paulo, em fevereiro de 1922.",
+          "O evento reuniu exposições e apresentações de literatura, música e artes visuais.",
+          "A busca de linguagens capazes de representar o Brasil foi uma preocupação modernista.",
+          "A vida urbana e a experiência da modernidade também apareceram nas obras e nos debates modernistas.",
+          "Na literatura, recursos como o verso livre e a aproximação com a fala cotidiana questionavam padrões consagrados.",
+          "Nas artes visuais, a experimentação formal se contrapôs a padrões acadêmicos.",
+          "Mário de Andrade participou das atividades literárias da Semana.",
+          "Anita Malfatti expôs obras no evento.",
+          "Em Minas Gerais, jovens modernistas, entre eles Carlos Drummond de Andrade, participaram da publicação de A Revista, em 1925.",
+          "Em Pernambuco, o modernismo contou com a atuação de escritores e divulgadores como Joaquim Inojosa.",
+          "Lançada em maio de 1922, Klaxon difundiu propostas modernistas após a Semana.",
+          "O Manifesto Antropófago, de Oswald de Andrade, foi publicado em 1928.",
+          "A antropofagia propunha a assimilação crítica e transformadora de influências culturais, em vez de sua simples imitação."
+        ],
+        "question": "Discorra sobre a cidade de São Paulo na década de 1920, a Semana de Arte Moderna de 1922 e os modernismos no Brasil da Primeira República.",
+        "sampleOutline": "Apresentar a transformação social e urbana de São Paulo e os debates intelectuais e artísticos do período.\nCaracterizar a Semana, seus participantes, suas temáticas e propostas de renovação.\nExaminar Klaxon e manifestações modernistas em outras regiões, distinguindo-as do núcleo paulista.\nConcluir com um desdobramento posterior, como a antropofagia e sua proposta de assimilação cultural.",
+        "title": "Semana de 1922 e Modernismos"
+      },
+      "latencyMs": 31383,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2024-history-q3"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01264205,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Relaciona o desenvolvimentismo de Juscelino Kubitschek à aceleração da industrialização.",
+            "points": 1
+          },
+          {
+            "criterionId": "q1",
+            "description": "Explica o papel do planejamento estatal na promoção do desenvolvimento.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica energia e transportes entre os setores prioritários do Plano de Metas.",
+            "points": 0.7
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica as indústrias de base entre os setores prioritários do Plano de Metas.",
+            "points": 0.7
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica a alimentação entre os setores contemplados pelo Plano de Metas.",
+            "points": 0.6
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica a educação como setor contemplado pelo Plano de Metas.",
+            "points": 1
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona a ênfase na formação técnica à demanda de mão de obra para a industrialização.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Caracteriza Brasília como meta-síntese do projeto de desenvolvimento.",
+            "points": 1
+          },
+          {
+            "criterionId": "q4",
+            "description": "Aponta um impacto econômico ou social da construção de Brasília, como a atração de trabalhadores ou a ampliação do gasto público.",
+            "points": 1
+          },
+          {
+            "criterionId": "q5",
+            "description": "Relaciona a transferência da capital ao objetivo de interiorização.",
+            "points": 1
+          },
+          {
+            "criterionId": "q5",
+            "description": "Explica o papel das rodovias na integração do interior aos mercados nacionais.",
+            "points": 1
+          },
+          {
+            "criterionId": "q6",
+            "description": "Identifica o BNDE como instrumento de financiamento público do desenvolvimento.",
+            "points": 1
+          },
+          {
+            "criterionId": "q6",
+            "description": "Relaciona a expansão dos gastos públicos ao esforço de investimento do governo.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Reconhece a participação do capital privado nacional no projeto desenvolvimentista.",
+            "points": 1
+          },
+          {
+            "criterionId": "q7",
+            "description": "Explica o estímulo ao investimento estrangeiro na indústria.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Relaciona o financiamento dos gastos e investimentos à aceleração inflacionária.",
+            "points": 1
+          },
+          {
+            "criterionId": "q8",
+            "description": "Aponta o crescimento do endividamento externo associado ao financiamento do desenvolvimento.",
+            "points": 1
+          },
+          {
+            "criterionId": "q9",
+            "description": "Identifica o Plano de Estabilização Monetária como tentativa de conter a inflação.",
+            "points": 0.7
+          },
+          {
+            "criterionId": "q9",
+            "description": "Aponta a contenção fiscal ou creditícia entre as medidas de estabilização.",
+            "points": 0.7
+          },
+          {
+            "criterionId": "q9",
+            "description": "Indica que a tentativa de estabilização não foi sustentada diante das prioridades desenvolvimentistas.",
+            "points": 0.6
+          },
+          {
+            "criterionId": "q10",
+            "description": "Relaciona as negociações com o FMI à busca de financiamento externo.",
+            "points": 1
+          },
+          {
+            "criterionId": "q10",
+            "description": "Explica a ruptura das negociações com o FMI em 1959 em conexão com o conflito sobre a estabilização.",
+            "points": 1
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Desenvolvimentismo",
+            "points": 2
+          },
+          {
+            "id": "q2",
+            "name": "Setores prioritários",
+            "points": 2
+          },
+          {
+            "id": "q3",
+            "name": "Educação",
+            "points": 2
+          },
+          {
+            "id": "q4",
+            "name": "Brasília",
+            "points": 2
+          },
+          {
+            "id": "q5",
+            "name": "Interiorização",
+            "points": 2
+          },
+          {
+            "id": "q6",
+            "name": "Financiamento público",
+            "points": 2
+          },
+          {
+            "id": "q7",
+            "name": "Capital privado e estrangeiro",
+            "points": 2
+          },
+          {
+            "id": "q8",
+            "name": "Inflação e dívida",
+            "points": 2
+          },
+          {
+            "id": "q9",
+            "name": "Plano de Estabilização Monetária",
+            "points": 2
+          },
+          {
+            "id": "q10",
+            "name": "FMI",
+            "points": 2
+          }
+        ],
+        "keyPoints": [
+          "O governo Juscelino Kubitschek, de 1956 a 1961, promoveu a industrialização acelerada sob o lema dos «cinquenta anos em cinco».",
+          "O Plano de Metas articulou planejamento estatal e investimentos públicos e privados para superar obstáculos ao crescimento.",
+          "O plano contemplou energia, transportes, alimentação, indústrias de base e educação.",
+          "Na educação, deu-se ênfase à formação de pessoal técnico para atender às necessidades da industrialização.",
+          "Brasília, apresentada como meta-síntese, mobilizou investimentos e atraiu trabalhadores para sua construção.",
+          "A transferência da capital e a expansão rodoviária favoreceram a interiorização e a integração territorial e econômica.",
+          "O BNDE foi instrumento de financiamento público de investimentos, em especial em infraestrutura e indústria.",
+          "O projeto combinou investimento estatal, capital privado nacional e capital estrangeiro.",
+          "Incentivos ao capital estrangeiro favoreceram a instalação de empresas industriais, inclusive no setor automobilístico.",
+          "A expansão de gastos e de meios de financiamento contribuiu para a aceleração da inflação.",
+          "A dependência de financiamento externo contribuiu para o aumento da dívida externa.",
+          "O Plano de Estabilização Monetária, lançado em 1958, buscou conter a inflação por meio de medidas de restrição fiscal e creditícia.",
+          "A estabilização entrou em tensão com a manutenção do ritmo de investimento e não foi sustentada.",
+          "As negociações com o FMI estavam associadas à obtenção de apoio financeiro externo e a medidas de estabilização.",
+          "Em 1959, o governo rompeu as negociações com o FMI diante do conflito entre as exigências de estabilização e as prioridades de crescimento."
+        ],
+        "question": "Discorra sobre a política econômica do governo Juscelino Kubitschek, o Plano de Metas e seus impactos econômicos e sociais.",
+        "sampleOutline": "Introdução: caracterizar o desenvolvimentismo e o papel do planejamento no governo JK.\nDesenvolvimento: apresentar os setores do Plano de Metas, a educação técnica e a combinação de financiamento público e capital privado, nacional e estrangeiro.\nEm seguida, analisar Brasília, a interiorização e seus efeitos econômicos e sociais.\nConclusão: discutir inflação, dívida, tentativa de estabilização e ruptura das negociações com o FMI.",
+        "title": "Plano de Metas e desenvolvimentismo"
+      },
+      "latencyMs": 33138,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2024-history-q4"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01205405,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a entrada do Brasil na guerra, em 1917, aos ataques alemães à navegação brasileira.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Caracteriza a contribuição brasileira ao esforço aliado.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica a participação do Brasil na Conferência da Paz de Paris.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Relaciona a assinatura do Tratado de Versalhes à condição brasileira de membro originário da Liga.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona a aproximação com os Estados Unidos à inserção internacional do Brasil no período.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica que a ausência dos Estados Unidos da Liga limitou o apoio que poderiam prestar ao Brasil dentro da organização.",
+            "points": 2
+          },
+          {
+            "criterionId": "q4",
+            "description": "Caracteriza a atuação brasileira no Conselho da Liga.",
+            "points": 2
+          },
+          {
+            "criterionId": "q4",
+            "description": "Explica o uso da negociação diplomática pelo Brasil para ampliar seu espaço na organização.",
+            "points": 2
+          },
+          {
+            "criterionId": "q4",
+            "description": "Explica a oposição brasileira, em 1926, à admissão da Alemanha nas condições então negociadas.",
+            "points": 2
+          },
+          {
+            "criterionId": "q5",
+            "description": "Relaciona a pretensão brasileira a um assento permanente à busca de prestígio e influência internacional.",
+            "points": 2
+          },
+          {
+            "criterionId": "q5",
+            "description": "Explica por que a candidatura alemã ao Conselho tornou mais aguda a disputa pelo assento permanente.",
+            "points": 2
+          },
+          {
+            "criterionId": "q6",
+            "description": "Relaciona o apoio à pretensão brasileira ao debate sobre o prestígio nacional.",
+            "points": 2
+          },
+          {
+            "criterionId": "q6",
+            "description": "Reconhece que a política brasileira perante a Liga também foi objeto de críticas e divergências.",
+            "points": 2
+          },
+          {
+            "criterionId": "q7",
+            "description": "Relaciona a decisão de retirada à frustração da pretensão brasileira a um assento permanente.",
+            "points": 2
+          },
+          {
+            "criterionId": "q7",
+            "description": "Explica a retirada à luz da regra de prévio aviso do artigo 1º do Pacto.",
+            "points": 2
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Brasil na Primeira Guerra",
+            "points": 4
+          },
+          {
+            "id": "q2",
+            "name": "Conferência da Paz de 1919",
+            "points": 4
+          },
+          {
+            "id": "q3",
+            "name": "Apoio dos Estados Unidos",
+            "points": 4
+          },
+          {
+            "id": "q4",
+            "name": "Atuação da diplomacia",
+            "points": 6
+          },
+          {
+            "id": "q5",
+            "name": "Assento permanente",
+            "points": 4
+          },
+          {
+            "id": "q6",
+            "name": "Opinião pública",
+            "points": 4
+          },
+          {
+            "id": "q7",
+            "name": "Retirada da Liga",
+            "points": 4
+          }
+        ],
+        "keyPoints": [
+          "O Brasil declarou guerra à Alemanha em 1917, após ataques de submarinos alemães a navios mercantes brasileiros.",
+          "A contribuição brasileira aos Aliados incluiu operações navais no Atlântico e o envio de uma missão médica à França.",
+          "O Brasil participou da Conferência da Paz de Paris e assinou o Tratado de Versalhes.",
+          "O Brasil figurou entre os membros originários da Liga das Nações, conforme o anexo ao Pacto, incorporado ao Tratado de Versalhes.",
+          "A aproximação com os Estados Unidos favorecia a projeção internacional brasileira, mas o país norte-americano não se tornou membro da Liga após a não ratificação do Tratado de Versalhes.",
+          "O Brasil ocupou um assento não permanente no Conselho da Liga desde o início de suas atividades e buscou ampliar sua influência por meio da diplomacia multilateral.",
+          "A pretensão a um assento permanente exprimia o desejo brasileiro de maior reconhecimento e participação nas decisões internacionais.",
+          "Em 1926, a perspectiva de um assento permanente para a Alemanha, sem solução equivalente para o Brasil, agravou a disputa sobre a composição do Conselho.",
+          "O Brasil opôs-se à admissão alemã nas condições então negociadas; a questão foi adiada, e a Alemanha ingressou posteriormente em 1926.",
+          "A disputa mobilizou argumentos de prestígio nacional na imprensa e na política, embora a atuação brasileira também suscitasse divergências.",
+          "Frustrada sua pretensão ao assento permanente, o Brasil comunicou sua retirada em 1926.",
+          "O artigo 1º do Pacto previa a retirada mediante aviso prévio de dois anos, desde que o membro tivesse cumprido suas obrigações internacionais e as decorrentes do Pacto no momento da retirada."
+        ],
+        "question": "Considerando o artigo 1º do Pacto da Liga das Nações, disserte sobre a participação do Brasil como membro originário da organização.",
+        "sampleOutline": "Apresentar a participação brasileira na guerra e na Conferência da Paz, vinculando-a à condição de membro originário.\nExaminar a aproximação com os Estados Unidos e a atuação brasileira no Conselho, inclusive a busca de um assento permanente.\nAnalisar a crise de 1926 e suas repercussões internas; concluir com a retirada e a regra aplicável do Pacto.",
+        "title": "O Brasil na Liga das Nações"
+      },
+      "latencyMs": 38529,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2025-history-q1"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.01098605,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Explica a centralidade da mão de obra escravizada na produção agroexportadora imperial.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Identifica o emprego de pessoas escravizadas em atividades voltadas ao mercado interno.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Descreve o emprego de pessoas escravizadas em serviços domésticos.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Explica o trabalho de ganho ou o aluguel de trabalhadores escravizados, sobretudo em meios urbanos.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a diversidade dos usos do trabalho escravizado à presença da escravidão em diferentes regiões e atividades econômicas.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica a pressão britânica pela supressão do tráfico transatlântico.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Apresenta a proibição do tráfico pela lei brasileira de 1831.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica a continuidade do tráfico ilegal após 1831.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica o papel da Lei Eusébio de Queirós, de 1850, e de sua repressão na redução decisiva do tráfico transatlântico.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Distingue a extinção do tráfico transatlântico da abolição da escravidão, mencionando a continuidade do comércio interno de pessoas escravizadas.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica formas de resistência das pessoas escravizadas, como fugas e formação de quilombos.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Apresenta uma revolta do período imperial relacionada à resistência à escravidão, como a Revolta dos Malês.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica a participação de pessoas escravizadas na Revolta dos Malês ou, caso escolha outro exemplo, caracteriza seus participantes e suas motivações.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica a atuação do movimento abolicionista por meio de mobilização pública, imprensa, associações ou ação parlamentar.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona as leis de emancipação gradual à persistência da escravidão até 1888.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona a intensificação da mobilização abolicionista e da resistência das pessoas escravizadas à crise final da escravidão.",
+            "points": 1.5
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Formas e usos do trabalho escravo",
+            "points": 10
+          },
+          {
+            "id": "q2",
+            "name": "Política de extinção do tráfico",
+            "points": 10
+          },
+          {
+            "id": "q3",
+            "name": "Revoltas e abolicionismo",
+            "points": 10
+          }
+        ],
+        "keyPoints": [
+          "Durante o Império, pessoas escravizadas trabalharam em lavouras de exportação, como as de açúcar e de café.",
+          "O trabalho escravizado também esteve presente na produção de alimentos e em outras atividades destinadas ao mercado interno.",
+          "Nas cidades e nos domicílios, pessoas escravizadas exerceram serviços domésticos, ofícios e atividades comerciais.",
+          "No trabalho de ganho, pessoas escravizadas realizavam atividades remuneradas e entregavam a seus senhores uma parcela dos rendimentos.",
+          "O aluguel de pessoas escravizadas permitia que seus senhores auferissem rendimentos de seu trabalho para terceiros.",
+          "A Grã-Bretanha pressionou o Império brasileiro a proibir o tráfico transatlântico de africanos escravizados.",
+          "A lei de 1831 proibiu a importação de pessoas escravizadas e declarou livres as pessoas introduzidas no Brasil em violação à proibição.",
+          "Apesar da lei de 1831, o tráfico transatlântico ilegal continuou em larga escala.",
+          "O Parlamento britânico aprovou, em 1845, o Aberdeen Act, que autorizava a repressão britânica ao tráfico associado ao Brasil.",
+          "A Lei Eusébio de Queirós, de 1850, estabeleceu medidas repressivas contra o tráfico, cuja aplicação contribuiu para sua rápida redução.",
+          "O fim do tráfico transatlântico não aboliu a escravidão; o comércio interno de pessoas escravizadas continuou.",
+          "Pessoas escravizadas resistiram por meio de fugas, formação de quilombos e revoltas, entre outras ações.",
+          "A Revolta dos Malês ocorreu em Salvador, em 1835, e contou com a participação de africanos muçulmanos escravizados e libertos.",
+          "O movimento abolicionista mobilizou associações, imprensa, tribunas parlamentares e ações de apoio à libertação.",
+          "A Lei do Ventre Livre, de 1871, declarou livres os filhos de mulheres escravizadas nascidos a partir de sua vigência, sob condições estabelecidas na própria lei.",
+          "A Lei dos Sexagenários, de 1885, previu a libertação de pessoas escravizadas com mais de 60 anos, sujeita a condições.",
+          "A intensificação das fugas e da mobilização abolicionista contribuiu para a crise final da escravidão.",
+          "A Lei Áurea aboliu legalmente a escravidão no Brasil em 1888."
+        ],
+        "question": "Discorra sobre a questão escrava no Brasil ao longo do período imperial, abordando as formas e os usos do trabalho escravo, a extinção do tráfico, as revoltas e o movimento abolicionista.",
+        "sampleOutline": "Apresentar a diversidade do trabalho escravizado no campo e nas cidades, relacionando-a à economia imperial.\nExplicar a pressão britânica, a proibição de 1831, a persistência do tráfico ilegal e a repressão após 1850, distinguindo o fim do tráfico da abolição.\nExaminar formas de resistência e uma revolta, como a dos Malês.\nDiscutir o movimento abolicionista, as leis de emancipação gradual e a crise que culminou na Lei Áurea.",
+        "title": "Escravidão e abolição no Império"
+      },
+      "latencyMs": 33926,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2025-history-q2"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.009608050000000002,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Situa a fase de crise das relações com Portugal e de ruptura política até 1822.",
+            "points": 1
+          },
+          {
+            "criterionId": "q1",
+            "description": "Situa a fase de consolidação da independência após a ruptura política.",
+            "points": 1
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica um primeiro fato da dimensão político-jurídica.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica a relevância do primeiro fato político-jurídico para a independência.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q2",
+            "description": "Identifica um segundo fato distinto da dimensão político-jurídica.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica a relevância do segundo fato político-jurídico para a independência.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica um primeiro fato da dimensão militar.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica a relevância do primeiro fato militar para a consolidação da independência.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Identifica um segundo fato distinto da dimensão militar.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica a relevância do segundo fato militar para a consolidação da independência.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Identifica um primeiro fato da dimensão diplomática.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Explica a relevância do primeiro fato diplomático para a independência.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Identifica um segundo fato distinto da dimensão diplomática.",
+            "points": 1.5
+          },
+          {
+            "criterionId": "q4",
+            "description": "Explica a relevância do segundo fato diplomático para a independência.",
+            "points": 1.5
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Fases da ruptura",
+            "points": 2
+          },
+          {
+            "id": "q2",
+            "name": "Político-jurídica",
+            "points": 6
+          },
+          {
+            "id": "q3",
+            "name": "Militar",
+            "points": 6
+          },
+          {
+            "id": "q4",
+            "name": "Diplomática",
+            "points": 6
+          }
+        ],
+        "keyPoints": [
+          "A transferência da corte portuguesa para o Rio de Janeiro, em 1808, alterou a posição do Brasil no Império português e constitui antecedente da ruptura.",
+          "A Revolução Liberal do Porto, em 1820, e as medidas das Cortes de Lisboa intensificaram conflitos sobre a autonomia política do Brasil.",
+          "A ruptura política em 1822 foi seguida por uma fase de consolidação interna e de busca de reconhecimento externo.",
+          "Na dimensão político-jurídica, o Dia do Fico, em janeiro de 1822, contrariou a exigência de retorno de D. Pedro a Portugal e fortaleceu a autonomia do governo no Rio de Janeiro.",
+          "Na mesma dimensão, a Constituição de 1824 organizou juridicamente o Império independente como uma monarquia constitucional.",
+          "Na dimensão militar, a batalha do Jenipapo, em 1823, integrou a resistência às forças portuguesas no Piauí.",
+          "Na Bahia, a campanha contra as forças portuguesas culminou na retirada dessas tropas de Salvador, em 2 de julho de 1823.",
+          "Na dimensão diplomática, os Estados Unidos reconheceram a independência brasileira em 1824.",
+          "Pelo tratado de 1825, Portugal reconheceu a independência do Brasil; a negociação contou com mediação britânica.",
+          "Os fatos indicados são exemplos: outros fatos distintos e historicamente pertinentes podem receber crédito, desde que sua relevância seja explicada."
+        ],
+        "question": "Discorra sobre o processo de independência do Brasil, consideradas as fases de ruptura com Portugal e dois fatos de cada dimensão: político-jurídica, militar e diplomática.",
+        "sampleOutline": "Introdução: situar os antecedentes, a crise com as Cortes e as fases de ruptura e consolidação.\nDesenvolvimento: examinar dois fatos político-jurídicos e dois militares, relacionando cada um ao processo de independência.\nConclusão: abordar dois fatos diplomáticos e relacionar o reconhecimento externo à consolidação do novo Estado.",
+        "title": "Processo de Independência do Brasil"
+      },
+      "latencyMs": 26337,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2025-history-q3"
+    },
+    {
+      "copiedQuestion": true,
+      "costUsd": 0.00751105,
+      "data": {
+        "aspects": [
+          {
+            "criterionId": "q1",
+            "description": "Explica a atuação do DIP na promoção de manifestações da cultura popular durante o Estado Novo.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Relaciona a valorização de manifestações populares, como o samba, à propaganda do regime.",
+            "points": 2
+          },
+          {
+            "criterionId": "q1",
+            "description": "Explica que essa valorização convivia com a censura e o controle estatal da produção cultural.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Explica como o Estado Novo mobilizou representações culturais para construir uma imagem de unidade nacional.",
+            "points": 3
+          },
+          {
+            "criterionId": "q2",
+            "description": "Relaciona a representação da mestiçagem ou de manifestações populares à imagem da identidade brasileira.",
+            "points": 2
+          },
+          {
+            "criterionId": "q2",
+            "description": "Analisa o caráter seletivo dessas representações, que atenuavam conflitos e desigualdades.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Relaciona a política da boa vizinhança à aproximação cultural e política entre Brasil e Estados Unidos.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Explica o uso do cinema como instrumento de aproximação e construção de imagens nacionais.",
+            "points": 2
+          },
+          {
+            "criterionId": "q3",
+            "description": "Analisa um exemplo cinematográfico pertinente, relacionando-o à representação do Brasil no contexto da boa vizinhança.",
+            "points": 3
+          }
+        ],
+        "assessedSkillIds": [
+          "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"
+        ],
+        "context": null,
+        "criteria": [
+          {
+            "id": "q1",
+            "name": "Valorização da cultura popular",
+            "points": 6
+          },
+          {
+            "id": "q2",
+            "name": "Representações nacionais",
+            "points": 7
+          },
+          {
+            "id": "q3",
+            "name": "Boa vizinhança e cinema",
+            "points": 7
+          }
+        ],
+        "keyPoints": [
+          "Criado em 1939, o DIP centralizou atividades de propaganda e censura do Estado Novo.",
+          "O departamento utilizou meios como o rádio para difundir mensagens oficiais e promover imagens associadas à nação e ao governo Vargas.",
+          "A incorporação de manifestações populares à cultura oficial foi seletiva e coexistiu com a censura e a repressão.",
+          "O samba foi valorizado como expressão nacional, inclusive em composições de exaltação do Brasil.",
+          "A propaganda estado-novista associou cultura e identidade nacional a uma imagem de unidade, atenuando a representação de conflitos e desigualdades.",
+          "Representações da mestiçagem e de práticas culturais populares contribuíram para imagens abrangentes da brasilidade, sem eliminar as hierarquias raciais e sociais.",
+          "A política da boa vizinhança favoreceu a aproximação entre os Estados Unidos e países latino-americanos; no contexto da Segunda Guerra Mundial, essa aproximação teve importância estratégica.",
+          "O cinema participou da diplomacia cultural norte-americana, difundindo imagens destinadas a aproximar públicos das Américas.",
+          "Em Alô, Amigos (Saludos Amigos), lançado em 1942, a Disney apresentou Zé Carioca e mobilizou elementos associados ao Brasil, como o samba, na construção de uma imagem amistosa do país.",
+          "A produção cinematográfica norte-americana e a propaganda do DIP integravam iniciativas distintas, embora inseridas em um contexto de aproximação entre os dois países."
+        ],
+        "question": "Discorra sobre o Departamento de Imprensa e Propaganda no Estado Novo, a cultura, a identidade nacional e a política da boa vizinhança.",
+        "sampleOutline": "Apresentar o DIP, sua ação propagandística e a combinação entre valorização da cultura popular e censura.\nExaminar a construção seletiva de representações da brasilidade e da unidade nacional.\nRelacionar a boa vizinhança à diplomacia cultural e analisar um exemplo cinematográfico, como Alô, Amigos.",
+        "title": "DIP, Cultura e Boa Vizinhança"
+      },
+      "latencyMs": 24142,
+      "model": "openai/gpt-6.1-terra",
+      "productionPromptVersion": "f9ad9da66673",
+      "promptVersion": "523548392d21",
+      "questionId": "cebraspe-cacd-2025-history-q4"
+    }
+  ],
+  "spentUsd": 0.21469910000000003
+}

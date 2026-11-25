@@ -1,0 +1,160 @@
+{
+  "answers": 47,
+  "callGate": {
+    "Margins rankable at 0.95": true,
+    "≥ 6 real answers below cutoff, plus ablations": true,
+    "Zero false “likely above” on held-out below-cutoff runs": false,
+    "Over + under ≤ 1/3 of max": false,
+    "Held-out stratum covered ≥ 80% per side": false
+  },
+  "floors": [
+    {
+      "answers": 14,
+      "over": 0.16,
+      "stratum": "fgv-oab",
+      "tooSmallAt": [
+        0.95
+      ],
+      "under": 0.48
+    },
+    {
+      "answers": 33,
+      "over": 0.5665,
+      "stratum": "cacd-history",
+      "tooSmallAt": [],
+      "under": 0.75
+    },
+    {
+      "answers": 18,
+      "over": 0,
+      "stratum": "fgv-oab-ablation",
+      "tooSmallAt": [
+        0.95
+      ],
+      "under": 0.48
+    }
+  ],
+  "generatedAt": "2026-11-25T22:16:51.020Z",
+  "grader": {
+    "model": "meta/muse-ember",
+    "promptVersions": {
+      "oab": "a18edc75544c",
+      "points": "e17bcddd4aa3"
+    },
+    "reasoning": "high"
+  },
+  "margins": {
+    "0.9": {
+      "over": 0.16,
+      "under": 0.55
+    },
+    "0.95": {
+      "over": 0.4223,
+      "under": 0.6667
+    }
+  },
+  "mechanism": "keyed",
+  "over": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0.08,
+    0.1,
+    0.16,
+    0.2335,
+    0.4223,
+    0.5665
+  ],
+  "under": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0.04,
+    0.0667,
+    0.08,
+    0.08,
+    0.1,
+    0.12,
+    0.125,
+    0.15,
+    0.167,
+    0.1805,
+    0.1917,
+    0.2165,
+    0.24,
+    0.2583,
+    0.2665,
+    0.2667,
+    0.2667,
+    0.28,
+    0.32,
+    0.3417,
+    0.35,
+    0.35,
+    0.35,
+    0.366,
+    0.4,
+    0.4333,
+    0.45,
+    0.45,
+    0.45,
+    0.45,
+    0.45,
+    0.4667,
+    0.48,
+    0.5,
+    0.55,
+    0.55,
+    0.6667,
+    0.75
+  ],
+  "writer": {
+    "model": "openai/gpt-6.1-terra",
+    "productionPromptVersion": "f9ad9da66673",
+    "promptVersion": "523548392d21"
+  }
+}
