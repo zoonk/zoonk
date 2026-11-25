@@ -499,7 +499,6 @@ private fun ColumnScope.QuestionStep(
                 store,
                 vm,
                 pending,
-                factsBeside = LocalWaitBeside.current,
                 startsOnRecommended = view.startsOnRecommended,
             )
         }

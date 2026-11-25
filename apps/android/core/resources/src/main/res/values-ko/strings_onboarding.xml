@@ -35,8 +35,6 @@
   "onboarding_buddy_description": "3d462e210c95da8532598bf1f522f5142cf034177aa64972b75b090699eba9af",
   "onboarding_buddy_title": "98ea45f84338bf4b61932937c88df63e9e3361f2993d505678ecb80f0666cd51",
   "onboarding_cancel": "0ac34f0f2dc62fd8b1b3a47061f6c11e2b7bf0e70849df2f4d5e6420f02477a3",
-  "onboarding_change_date": "f6436978fb8d9af3cea9ece875b3a71a339dcaed452ed10dc2773dbed03319e6",
-  "onboarding_choose_date": "200617d7a523067f2b7a0789d0fcc84d92ccef3c02e5bb73be92bf2c8ff27e0b",
   "onboarding_continue": "64393e0ccd7cc3b6790c81b16e4b579c3d79095cf83307672fb4368f9e42ccb8",
   "onboarding_country_description": "da5bcb450aa23bbd17a90d537d89c03ea586d481bcab195b77955b7c798375de",
   "onboarding_country_from_home": "b24a2cdff13af208c072f1bc9b37d29719538582279a63d143a7984ad6b9e6ea",
@@ -84,11 +82,6 @@
   "onboarding_fix_something": "0214e7c1d61b99d889d49bf40050d4d41057128081904bbb95cb4cac513892e0",
   "onboarding_follow_ups_description": "4f45e5df517794ee55a619ef4b089dad181cc12a6f6a87d33a20565d1e9ab397",
   "onboarding_follow_ups_title": "4c512b059e7ebb963e23a3f786c54eb971f777d3bb570979faf60afdc392f20c",
-  "onboarding_full_course": "60910dd8738674240fa2dcc49d4b2a903ce606a70a0a3e041065c8bbcc9be671",
-  "onboarding_full_course_finish": "e893de3acb0d8b20d86d07a530f294153cc3808485fa85e9216d5e9e3991de33",
-  "onboarding_full_course_finish_month": "d8943854399fa7f2f47538bf01be69004ed2eca43ec37584dab7fa16f9d9187c",
-  "onboarding_full_course_rule": "a3887ad5a7578776f312c8b6c0c32ce3fe2ac492f99dccc95ee643a76d0412d2",
-  "onboarding_full_course_until_exam": "75f4bd42efbe40d7d90ff5c7ffb50ca828df83d68446a7b24ed27f726213d421",
   "onboarding_go_to_plan": "5b41b9c6e811cf919b5034c1d19aa38d3c24d2074be445e3acce322c021c28ee",
   "onboarding_goals_at_once_line": "c7d0eb2251c2fa6c0e14a20b0c88e43f33cbcc656a96f113387cbb7860b4fa53",
   "onboarding_goals_at_once_title": "0b0e0088b309f79845abc33808bb1ea0d512d48d1efae0aa94df1b39a6037dcd",
@@ -734,18 +727,7 @@
         <item quantity="other">%d일</item>
     </plurals>
     <string name="onboarding_schedule_title">하루에 얼마나 공부할 수 있나요?</string>
-    <string name="onboarding_full_course">시험 후에도 계속 공부하기</string>
-    <string name="onboarding_full_course_rule">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
-    <string name="onboarding_full_course_until_exam">시험 전까지는 자주 출제되는 내용부터 배워요.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_full_course_finish">하루 %1$s씩 공부하면 %2$s에 마쳐요. 시험일인 %3$s보다 늦어요.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_full_course_finish_month">하루 %1$s씩 공부하면 %2$s에 마쳐요. 시험이 있는 %3$s보다 늦어요.</string>
     <string name="onboarding_schedule_time_label">하루 학습 시간</string>
-    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
-    <string name="onboarding_choose_date">날짜 정하기</string>
-    <!-- The same link when the goal has a date. -->
-    <string name="onboarding_change_date">날짜 변경하기</string>
     <string name="onboarding_study_days">학습 일수</string>
     <string name="onboarding_answers_saved">답변은 저장되어 있어요.</string>
     <!-- On a setup question when the plan's run never started. -->
