@@ -2756,7 +2756,7 @@ msgstr "科目"
 #: src/syllabus/syllabus-section.tsx
 msgctxt "TwcPrx"
 msgid "Modules"
-msgstr "単元"
+msgstr "モジュール"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/roadmap-full.tsx
