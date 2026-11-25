@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type GoalKind } from "@zoonk/db";
-import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
-import { goalFixture, planFixture, planItemFixture } from "./goals";
+import { daysAfterLearnerToday, goalFixture, planFixture, planItemFixture } from "./goals";
 import { libraryChapterFixture } from "./library-chapters";
 import { chapterLessonFixture, lessonSkillFixture, libraryLessonFixture } from "./library-lessons";
 import { skillFixture, skillPrerequisiteFixture } from "./skills";
@@ -138,7 +137,7 @@ export async function goalWithBasesFixture({
     details: { placementDeclined: true, ...details },
     examBlueprintId: blueprint?.id ?? null,
     kind,
-    targetDate: new Date(toUTCMidnight(new Date()).getTime() + days * MS_PER_DAY),
+    targetDate: daysAfterLearnerToday({ days, timeZone: "UTC" }),
     timezone: "UTC",
     title: isExam ? "Biology exam" : "Understand biology",
     userId,
