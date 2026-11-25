@@ -21,7 +21,6 @@
   "focustest_not_today_failed": "4cfc8b1b355db56c8c6fc08d4b3851eb7db5f6faee3277a406db699184e55b30",
   "focustest_offer_line": "97e0f845c341e00197171fd6825e6652aa9fdc15c4005603e073ba9f1c1b85ec",
   "focustest_offer_line_focus": "991c29bcfcb5e0924f6dbb09cf866c7cd5c663348407ccd5078c84fec3782f33",
-  "focustest_paused_in_sessions": "3dfea178247afb4a13b881d3b3561750ccbfecb8c35fa541395af7a5dfba4af1",
   "focustest_practical_not_checked": "0e75bd0d9232bc4326d6282b96d25c25725580c1b435bc6865e220d225f661fa",
   "focustest_proposal_applied": "beeb036449dcf8d42dba25e581ff46fb187297e06bb2c62f85a47637fbae5735",
   "focustest_proposal_declined": "940f4f42f29b3f86153003ffa33d7f24d795b820170b8cd829d25dac4722b083",
@@ -135,8 +134,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In Bearbeitung</string>
     <string name="focustest_see_your_result">Dein Ergebnis ansehen</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">In deinen Lerneinheiten pausiert</string>
     <string name="focustest_take_test">Fokustest machen</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Der Fokustest zeigt, welche Fächer die meiste Lernzeit brauchen.</string>

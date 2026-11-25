@@ -5,11 +5,10 @@
   "country_change_body": "cb7010968f728c7d8df937c392870d649544b74d915da5ea49abcd7938de902f",
   "country_change_confirm": "c92a08a050e0c7e780331a4f499881e1e910aa23d665d6fab2bb6699ef3f59bd",
   "country_change_title": "a54201538150a0733ebbf9ca6b2e8b34cd0d07d0888d7aa1831863d66dd0998c",
-  "country_content_label": "12e7a43685441fed20be9e3a99d74e43a0688727136e3c15469407acd760b543",
   "country_content_value": "119d759b25e822f2204765c97804729c0bb159db0dd1413f3e1b7872afd2f0fc",
   "country_exam_label": "5b6574323de8f7cb873da3b945fd7a122a93727fb4370d96f118d8ecb8c980d7",
   "country_home_label": "a2b38bb26790b41a66279846a84a5afe97f45d9e16ba567ac07677d9c859e13b",
-  "country_lesson_examples_label": "1cfc31ecb982ef7aa86b2bdc1ace13f9fe4b137f398d7d1e6dd6315932c9f9fc",
+  "country_label": "a5637e7d997dc47c27c21b86b6dda921d7936621eb58f893ac8e3f7c6f4b9724",
   "country_lesson_language_label": "8c7aa6c8f26fd93ff09e2056d5039c1747cadc6882f8d471aaf930a05b5255ce",
   "country_lesson_language_value": "82d31a4008ce0c07eb33c22ba432649289312a1087c75fd916533bab76166ca6",
   "country_load_failed": "e3d4e886807ebc7776e2292a7b47119b5f26dbb06b359784331881804c06ec51",
@@ -43,8 +42,8 @@
     <string name="country_load_failed">Non siamo riusciti a caricare l’elenco.</string>
     <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
     <string name="country_home_label">%1$s, dove vivi</string>
-    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
-    <string name="country_content_label">Paese di riferimento</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes, or whose examples it uses. The country's name follows it as a value. -->
+    <string name="country_label">Paese</string>
     <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_content_value">Paese di riferimento: %1$s</string>
     <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
@@ -53,8 +52,6 @@
     <string name="country_lesson_language_label">Lingua delle lezioni</string>
     <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_lesson_language_value">Lingua delle lezioni: %1$s</string>
-    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
-    <string name="country_lesson_examples_label">Esempi nelle lezioni</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
     <string name="country_change_title">Cambiare paese?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->

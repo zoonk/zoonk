@@ -7,6 +7,7 @@
   "goal_switcher_failed": "79915813750d6afd5c719904d0f7521281bb03d20a460fe89190ffc501f4e0eb",
   "goal_switcher_finished": "2e4274c6ec4774b783f741a9a54e86f9904447451af12ba9e94135fde0fb82c1",
   "goal_switcher_make_room_description": "bbd3e1c6c5b2552010cc83b0eed6c372d5b50ae4862502342dff526a85d48e28",
+  "goal_switcher_make_room_subscribe": "86c514b56b94d4e04a873614e7c7b3546d0f781df77eca8b3a225fa2e1ed8289",
   "goal_switcher_make_room_title": "32c2efe86d21edb2362a6f1cea91f0a394b9747b0f84943878b86c7a1c0bda7f",
   "goal_switcher_pause": "1e3d3ca4519df0c5e655f85d5d544e0b38f17e014fd875b30f92f7eb32f1a5de",
   "goal_switcher_pause_goal": "da878dfafa238b7b986448faf7ee9c0af6649a459df619da2ae842971c0006b1",
@@ -42,6 +43,8 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Platz für %1$s schaffen</string>
     <string name="goal_switcher_make_room_description">Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier eins, um dieses zu starten.</string>
+    <!-- Over the Subscribe button in the sheet that asks the learner to pause a goal to start another. -->
+    <string name="goal_switcher_make_room_subscribe">Oder abonniere, um gleichzeitig mehr Ziele zu verfolgen.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pausieren</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

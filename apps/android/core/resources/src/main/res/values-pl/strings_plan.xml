@@ -76,7 +76,7 @@
   "plan_call_not_in_plan": "fa2ff0dd20863578f8eea85b909b1c2f8224572bcc2fddec221fe6ff0e66d501",
   "plan_cancel": "1e3288ecb7786b06c058d3d51352510ffeec5c9195ec665ac06d72d99503d3ed",
   "plan_challenge_live_call": "5a1cf8c90f99334aff9f8b48b41c628b11f0f0e8404183c792e5739a29838967",
-  "plan_challenge_next_session": "9eb8a19775e39073646a279fc7b5f54feb786c0dafb2f399f10a63fd60a06feb",
+  "plan_challenge_next_session": "f43a3bc8970010f7077f0d47f420c2ba226bc35280216d83b22ca6832b02adaa",
   "plan_challenge_questions": "57c412efd764b99fd3dce39c8477f80199d1421aad276f02d6a141ad3667f281",
   "plan_challenge_won": "63228ed4955cd6c32071f704088b7298c2d452863dbeb9a84228ba27d6576f40",
   "plan_change_about_more_lessons": "f8a03e515b33c2a0a0c4dbb3f7bb92e557ff243fd3d92bf379c35c4245428d4b",
@@ -240,14 +240,13 @@
   "plan_estimate_based_on_last": "c8c179b311fc90f9718d1091bc0d622bbce1ec382746e494b0cfb7931e1cc33f",
   "plan_estimate_based_on_reviews": "62c1c11b470ea24370cc9581755ab487073ed4c878bbb1396f2eb769ed44b808",
   "plan_estimate_waits": "607190aa90db089b93f7347df8123c6a51f14ee59875b1c321b6d8aa4db56577",
-  "plan_estimated_finish": "6277a631fa85abb161c4e80f85abbd800d2f5179b40f18b87088afa0e3260ac4",
+  "plan_estimated_finish_label": "76a9a519b7ef08eff8817534e2f5f54d8a5a01a1c219ba775b6ce0968463276b",
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
-  "plan_everything": "86fc959e46220580cc0979bffb6eb63c5ce2abc50de2627797b59e315df25c42",
+  "plan_everything": "af6d5629a938b51737b4b97a78fcf7e42d68d376309eecfcbc971d49d47cff10",
   "plan_exam_choice_question": "5bf0d612f41c6edee011d9f92f0e56670c461ef6b4a1219ded876924709d184e",
   "plan_exam_choice_question_several": "ac44007e387bc1e9941b9641aa774e747d29336d9fc59c7f69d9ce85c405e551",
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
-  "plan_exam_date_label": "dc2242ff6e25e8702d7df8f1a88c458921ceb67b30668213e99acd6551677f7d",
   "plan_exam_over_ask": "c4655322404d2feb063c8390546fb0775a5de88814a64eaa2e5fd3555ef5edd0",
   "plan_extra_offer_title": "a05b19f880ce50e6dde2ccd1e4bbb6c6ab31fc5c192ea8695a0126e15ba0bb7a",
   "plan_far_count_from": "d1d49b7dabcfe0cf112baf7737dc2f3e1c78a41e6cb0db2a231dba2145e5c141",
@@ -284,6 +283,7 @@
   "plan_going_deeper": "89d4e05c735c996784212a36bd6fbd6c8bfd9ae4e2e7ca964da3f206ab6038e3",
   "plan_how_calculated": "81dd1ef57ddba8cefbed7bb3a15c5938912255ec77a1c9a3fcd4dec46562a7a4",
   "plan_keep_studying": "8472263ee8b0944d8959927aeda18f99380ddd8c9ccb6fd724fac14ee7941e3b",
+  "plan_legend_phase_questions": "33dc4b9cb9e8a459d54a7d00d4b49fc8b874aec94cdae254f779933c2df6866d",
   "plan_lessons": "399b9b30b38d7aa4df256a358ad172dd4ef14a0ce6fd5dfe8cdc308fb442665f",
   "plan_lessons_done_of": "f4c84491ff5aa95e5196c96cc7fa5d6d112bb1ddefe2dafe4097845afa0bea06",
   "plan_lessons_left": "d7d5a3253e27ad863442f62678ee6328a26c91cfa9f4f1cd421a23a6c20139f7",
@@ -307,13 +307,14 @@
   "plan_more_chapters": "ceb727843605f10bfe142bdb6c7a8eaf1706a8b463a99c301137d685b4418838",
   "plan_more_lessons": "d651013397d3881cd5ebe3e5cf7905bf8fe6f2063248a2b834af11b471b0ff28",
   "plan_more_lessons_fit": "8fe36fbb28b2d81d7608c7829874ca56816672e32ae301eeed90f8e20323de47",
+  "plan_more_tools_later": "92a601bd8e5e06be5388c680059bdd4f510ab9f06ba01b51874245e559c48c31",
   "plan_more_units": "d7b90244d1f37092d111b0f0285a68d798cb6b00b6909589bac2ca78883c2f43",
   "plan_move_date": "2cc7d9370bc4826889bcd09a41bb7e0507abc985487fe8fed57768e466b81cec",
   "plan_move_date_to": "d6106c8611394f71f99454b610e51f86b842e0ab76f5269e924820cfbab45c64",
   "plan_named_month_note": "1c334e496cbdd2cb68f97af1afac7a01da1241fd343985959a069ccc650d1b0b",
   "plan_next": "72a6d1f2a1c140db8ab099cf12d0fd0115e2223b851abe1e299912b5bb4a22a0",
   "plan_next_keep_going": "3ced907d92641f065ae2ada77b77a5da7502bf73b06e8f09ac94364f3e340047",
-  "plan_next_past_share": "058eca039a46fdf793156e06471b6673a9be9ddf1ef24b60e7fa0ac8a3934347",
+  "plan_next_past_share": "a8e9df989498ea98c0fa3ab5f409eac99e1907d1f9eb35350f09059053114f00",
   "plan_next_review_every_topic": "d14fc041b0d11eafc65f14999ae3d5557efdf32002baf0b9e8a1b8b49c1576bb",
   "plan_next_review_forgetting": "2aff0e1174885105aa8aa15de66728b416c4543886e066d9e27403eb9576fd04",
   "plan_next_topics_count_most": "f54f5d1ba1ae737c7d0ace3b947f9c88c68271a2389a688a4cda2a9f94c9aae5",
@@ -323,7 +324,7 @@
   "plan_no_lessons_studied_yet": "d1b13e1fe97fd075c800e0de2dff48720889f47368b17bf7eec3415ee82c1749",
   "plan_not_in_your_plan": "d09b8c80e4caee48ec2e1d83f10d4bc507545a995cffb958e865c5cb884657e1",
   "plan_not_now": "a80b32856f7edf2fe869c84912b5eacca63aa03ecbe5e584c210f44212b7cfe3",
-  "plan_not_yet": "f0e4e8c0e2ebd841c29e3a0dc0b7467773d4275e5020da1b5fc394283e3ecce8",
+  "plan_not_yet": "155d6fe25b367b199a1ee695fb7dc2a253b96d345fa09afd90c414325063838e",
   "plan_nothing_planned_until_resume": "2988f75d8e8eb6464e912f0ca9b5835e43be8cbb1e2507d71ff14c3d7acc3079",
   "plan_options": "3081bf9f165dda733291b7b65b67327040f2170a20e2f7bfa8e9a4e1a89841b1",
   "plan_outside_others_first": "07afe0927cb5426658cedc35d27d261832f2aec08d6cfe5f1ddb5550d8fc149c",
@@ -428,7 +429,6 @@
   "plan_tests_taken": "4f153db7d18c9f1b325a584aa91b47a48d482124431d47efb8bab60bfdba0437",
   "plan_this_week": "e1db378711067a3ab20d634bc9b2ef4024a34073e085de11997658db383aabda",
   "plan_thursdays": "6e9bbf765a10f8bd23f7f5de36a513bdf50ec83ebb88f70ce805860893b49eda",
-  "plan_time_a_day": "e4b12c0e917d20382684d3723ae34ca040618b428079e0152a24ca2c7a609d03",
   "plan_time_covers_everything_by": "ca6888a5eca58135179fed2a80f43c732ceb918d1516952cae224574b6c09ba0",
   "plan_time_covers_everything_by_month": "23f6e0c683e219e748d5fee05b3bb013ce78d680e9b94c0e5744252b80e48458",
   "plan_time_enough_exam": "6877ee1a860474cc8db05943114cd4609784edc0599ed39249a1485d7bc61e4d",
@@ -441,6 +441,7 @@
   "plan_time_no_days": "34ef9bf1738145a43ed6121e070b470f5758e2a7b0949bec5b798071fadec156",
   "plan_time_past_date": "0af90f2ee4301bb03efafb76ab48683a4776471002c935c77f921558579593e1",
   "plan_time_past_date_month": "ed28261d94175fa9ccb219cac8cb20fa242733b6d448f423f2b8d57f41057f98",
+  "plan_time_per_day": "d3dc474106c37fefd15dfc3d6b99d5e6ad1425579788b5e70591103b2675b498",
   "plan_time_split_many": "dff09c1aa82f46c1621a2f9848d731101f888af3bda5b899b9685009534ecbe6",
   "plan_time_split_one": "4ae83ab101668845ea5b1b8d16f871e8178ca77b623588e8c66d19c8ffeeedb6",
   "plan_time_suggest_exam": "346ef0a17be18c21b1e1f7e625edf17eebf2386571afaa4109fbf0877aae8a0f",
@@ -478,7 +479,6 @@
   "plan_tool_writing_setup_line_2": "3c28ff7b9d709aaa92ae17400861a13fb49f0069b0f811387065c15eace5863a",
   "plan_tool_writing_setup_line_3": "f10b5ccacbda32b7bff7861e6711f517e9fa4f2ae077a689a7c982145d3e8f19",
   "plan_tool_writing_setup_phase": "a2e781a2f235e3771c5bb536eba98136db6067b77a30a8002dad1cefd92a6c29",
-  "plan_tools_later": "24efd19b451bae60b0ac316efad5d0bce58966d5743267e04de07e188dbda7a9",
   "plan_tools_none": "9cf4e750907e661d3b94d543da4b0c8721c7dcea62a0379719c2c2932751bd4e",
   "plan_tools_title": "2733f7f416ad8380844f122a7ece8be06dd262be9d68310480ba2616e4484a87",
   "plan_tools_without": "2300793ce6e8e6148d90d048b3e38a574e8cd8f7559b1d2d4ea0a4d09c1ece84",
@@ -594,7 +594,8 @@
     <string name="plan_mock_exam">Egzamin próbny</string>
     <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
     <string name="plan_roadmap_you_finish">Ukończenie planu</string>
-    <string name="plan_exam_date_label">%1$s · egzamin</string>
+    <!-- In the roadmap's legend, beside the mark of each phase's end-of-phase questions (the Trickster, before the learner has met him). -->
+    <string name="plan_legend_phase_questions">Pytania z etapu</string>
     <string name="plan_you_are_here_suffix">, jesteś tutaj</string>
     <string name="plan_done_suffix">, ukończono</string>
     <string name="plan_up_next_suffix">, następny</string>
@@ -679,7 +680,7 @@
     <string name="plan_show_fewer_units">Pokaż mniej działów</string>
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Wygrane</string>
-    <string name="plan_challenge_next_session">Podczas następnej nauki</string>
+    <string name="plan_challenge_next_session">Następnym razem</string>
     <string name="plan_challenge_questions">Pytania z tego etapu, bez podpowiedzi</string>
     <string name="plan_challenge_live_call">Rozmowa na żywo, w której jasno wyrażasz swoje myśli</string>
     <plurals name="plan_mock_exams_count">
@@ -710,9 +711,13 @@
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Zmień</string>
     <string name="plan_practice">Poćwicz</string>
-    <string name="plan_everything">Wszystko</string>
+    <string name="plan_everything">Wszystkie aktywności</string>
     <string name="plan_to_be_confirmed">Do potwierdzenia</string>
     <string name="plan_time_weekends">%1$s · %2$s w weekendy</string>
+    <!-- A plan's time a day when every day has the same, like "15 min a day". -->
+    <string name="plan_time_per_day">%1$s dziennie</string>
+    <!-- Label of the row with the day a plan with no end date should finish. -->
+    <string name="plan_estimated_finish_label">Szacowany koniec</string>
     <string name="plan_every_day">Codziennie</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Następny: %1$s</string>
@@ -736,7 +741,6 @@
     <string name="plan_pace">Harmonogram</string>
     <string name="plan_your_pace">Twój harmonogram</string>
     <string name="plan_pace_value_paused">Wstrzymany</string>
-    <string name="plan_time_a_day">Około %1$s dziennie</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Dopóki nie wznowisz celu, nic nie planujemy.</string>
     <plurals name="plan_lessons_left">
@@ -841,7 +845,7 @@
     <string name="plan_score_range">%1$s–%2$s</string>
     <string name="plan_lessons">Lekcje</string>
     <string name="plan_topics_studied">Przerobione tematy</string>
-    <string name="plan_not_yet">Jeszcze nie</string>
+    <string name="plan_not_yet">Jeszcze nie sprawdzono</string>
     <!-- A count against a total in the preparation sheet's rows, such as "24 of 142". -->
     <string name="plan_done_of_total">%1$s z %2$s</string>
     <string name="plan_right_answers">Poprawne odpowiedzi</string>
@@ -879,7 +883,7 @@
         <item quantity="other">%d tematu w kolejnych powtórkach</item>
     </plurals>
     <!-- Under a next step toward an exam, such as "Take your first mock exam". %1$s is a share, such as "75%". -->
-    <string name="plan_next_past_share">Potrzebne, by przekroczyć %1$s</string>
+    <string name="plan_next_past_share">Potrzebne, by przekroczyć %1$s przygotowania</string>
     <string name="plan_next_review_every_topic">Powtórz każdy temat raz</string>
     <string name="plan_still_first_mock">Podejdź do pierwszego egzaminu próbnego</string>
     <string name="plan_still_first_challenge">Podejmij pierwsze wyzwanie tygodnia</string>
@@ -1145,7 +1149,13 @@
     <string name="plan_tool_choose_how">Wybierz sposób używania: %1$s</string>
     <string name="plan_tools_none">Nie masz narzędzi? Wszystko możesz przećwiczyć na przykładach.</string>
     <string name="plan_tools_without">Nie będziesz ćwiczyć na własnym urządzeniu. Lekcje opierają się na przykładach i symulacjach.</string>
-    <string name="plan_tools_later">Więcej na później: %1$s</string>
+    <!-- Opens the tools a plan uses later: %1$d is how many, %2$s lists their names, such as "Python, Docker". -->
+    <plurals name="plan_more_tools_later">
+        <item quantity="one">%1$d kolejne narzędzie później: %2$s</item>
+        <item quantity="few">%1$d kolejne narzędzia później: %2$s</item>
+        <item quantity="many">%1$d kolejnych narzędzi później: %2$s</item>
+        <item quantity="other">%1$d kolejnego narzędzia później: %2$s</item>
+    </plurals>
     <string name="plan_tool_have_question">Masz to?</string>
     <string name="plan_tool_have">Już mam</string>
     <string name="plan_tool_have_description">Będziesz ćwiczyć na swoim urządzeniu.</string>
@@ -1458,7 +1468,6 @@
     <string name="plan_ask_phase_end_off_rest">%1$s: przesunąć koniec na inny dzień niż %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s to dzień bez nauki.</string>
     <string name="plan_end_none_set">Nie ustawiono</string>
-    <string name="plan_estimated_finish">Przewidywane zakończenie: %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out". -->
     <string name="plan_outside_others_first">Poza twoim planem · najpierw inne tematy</string>

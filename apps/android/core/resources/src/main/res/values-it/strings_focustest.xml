@@ -21,7 +21,6 @@
   "focustest_not_today_failed": "b2ad3d148a8da3e34524883b5e7117dae0d35efc1742bd3d47330ba60182390b",
   "focustest_offer_line": "0b161f076dc0e8f3f5dbf44df0aa59681e1b25086ab495ef15359bcc2a14d87c",
   "focustest_offer_line_focus": "b1e42d42f0e50fc984d8250db4b590888d3bea62e9587f58471d96ca2da1f4bc",
-  "focustest_paused_in_sessions": "1fa41380d8448d8e84f2b08188e057fa5b48d271070ca454ddcad8752f179ddd",
   "focustest_practical_not_checked": "6de288cc4c0bd19cbb74c82982e8d7ed3770f4031e97676114583c5261204846",
   "focustest_proposal_applied": "7595ccafe93e204a9d052c812c76db3a15627c82335aa3cb28cbf1d9b5e562b8",
   "focustest_proposal_declined": "427695e5e2cd863c390fd97eb20177731bf11ee7c730aee4c774c173d862e818",
@@ -139,8 +138,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In corso</string>
     <string name="focustest_see_your_result">Vedi il tuo risultato</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">In pausa nelle tue sessioni</string>
     <string name="focustest_take_test">Fai il Test delle priorità</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Il Test delle priorità ti mostra cosa studiare di più.</string>

@@ -5,11 +5,10 @@
   "country_change_body": "bbc5de1e4426fab7c907ce1b84f8c2376ef232e67633a0f7920dee854c950898",
   "country_change_confirm": "41d366071e55fd4f679619dd4aa45c06a310a82fe7c709a40dd1b7b9afc9a9d4",
   "country_change_title": "edc07b830b1dd17e5587510a5167ce49b8005afa917001cd983c003624936545",
-  "country_content_label": "c3f63d271a6b43e5a8b15147cde3703031caa03b0f54871ac06bb17e96b39dfd",
   "country_content_value": "f45d95f30659a83fa41a2bc0490e8e40f59a57ef0b3b2e66b30af344f24e8040",
   "country_exam_label": "b325e323db589cb7fe9e55a1c24fd1349c64b31a400e8f0553710da2ce124ecd",
   "country_home_label": "c674fa8f406f956e39deae006bb1defef64e3800964253ae4bc7aeca34182620",
-  "country_lesson_examples_label": "6c799eec6b081722cedb4cbec00b9de4a5c5db602207bec57215c5bfcec31b25",
+  "country_label": "0b2a7874f79247ec277f53bc7c3b72c0d5f5e3c05ef486d93b43bf70ba11a9ba",
   "country_lesson_language_label": "9a325c43afef0e1c2879cc7c89544eda45ba249aa7e9add2d4ea304425d8f6d3",
   "country_lesson_language_value": "a2b357d4a28aa10f6759acafdfbfbef6efc60b30025157f175d10257efbea517",
   "country_load_failed": "43c8236385c1439d7baba0c065b5ce4970fa79b01677be02955727da96d2dc7f",
@@ -41,8 +40,8 @@
     <string name="country_load_failed">목록을 불러오지 못했어요.</string>
     <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
     <string name="country_home_label">%1$s, 현재 사는 나라</string>
-    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
-    <string name="country_content_label">콘텐츠 기준 국가</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes, or whose examples it uses. The country's name follows it as a value. -->
+    <string name="country_label">국가</string>
     <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_content_value">학습 기준 국가: %1$s</string>
     <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
@@ -51,8 +50,6 @@
     <string name="country_lesson_language_label">레슨 언어</string>
     <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_lesson_language_value">레슨 언어: %1$s</string>
-    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
-    <string name="country_lesson_examples_label">레슨 예시</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
     <string name="country_change_title">국가를 변경할까요?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->

@@ -21,7 +21,6 @@
   "focustest_not_today_failed": "58d5cd4e4127a3f8a818233fe6c62724cc9fcac9f03194f3affab020b69b42f2",
   "focustest_offer_line": "45d6bf9676841fd41446b1dbcda11962b2efb97fc38a2d9e984f62177f8a2969",
   "focustest_offer_line_focus": "4cf92b278146a6bf9e60d0f1a01a592e67a139f95957935a1d6bdf280212bf75",
-  "focustest_paused_in_sessions": "1b6460a1b0d25cab94d48624c969c79567ca20e525f94a6d576e58621f026a47",
   "focustest_practical_not_checked": "1b115796cb95487f946303cc2af9f09f304d3e0310d126ea1e7cc04651b8f60c",
   "focustest_proposal_applied": "a53a08a92d5a86cebdb86897cc75d5f344f5834fc236aa1f98f31c7059fa4209",
   "focustest_proposal_declined": "d8138e70a68c3930bc1ca820b2464060ab53b9cd7167d213fa2710b3bfd0ace7",
@@ -131,8 +130,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">進行中</string>
     <string name="focustest_see_your_result">結果を見る</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">学習中の追加問題は一時停止中</string>
     <string name="focustest_take_test">重点診断を受ける</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">重点診断で、重点的に学ぶ科目がわかります。</string>
