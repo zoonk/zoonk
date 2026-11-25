@@ -369,6 +369,44 @@ describe(applyGraphCoverage, () => {
     });
   });
 
+  it("gives a written task no practice cites to the written test's practice, never a skill titled with the task's line", () => {
+    const task = "uma questão discursiva de até 30 linhas, no valor de 30,00 pontos";
+
+    const outline: ExamOutline = {
+      ...OUTLINE,
+      subjects: [
+        ...OUTLINE.subjects,
+        {
+          group: "Prova discursiva (P3)",
+          name: "Prova discursiva",
+          questions: 1,
+          topics: [task],
+          weight: null,
+          writtenTasks: [task],
+        },
+      ],
+    };
+
+    const { graph: covered } = applyGraphCoverage({
+      coverage: { examWeights: [], missing: [], placements: [] },
+      graph: {
+        ...examGraph,
+        skills: [
+          ...examGraph.skills,
+          skill({ area: "Prova discursiva", course: "pt", key: "answer", outcome: true }),
+        ],
+      },
+      outline,
+    });
+
+    expect(covered.skills.some((item) => item.name === task)).toBe(false);
+
+    expect(covered.skills.find((item) => item.key === "answer")).toMatchObject({
+      area: "Prova discursiva",
+      topics: [task],
+    });
+  });
+
   it("asks for the check only with references or notice topics no skill teaches", () => {
     expect(needsCoverageCheck({ graph: examGraph, outline: OUTLINE, references: [] })).toBe(true);
     expect(needsCoverageCheck({ graph, references: [] })).toBe(false);
