@@ -5,15 +5,22 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.Generation
+import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudyBlockOpeningTarget
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -45,6 +52,7 @@ class SessionViewModelTest {
 
     private fun TestScope.viewModel(
         api: FakeStudyApi,
+        generations: GenerationSource? = null,
         readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness = { _, _ -> error("Not used") },
     ): SessionViewModel {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
@@ -54,8 +62,7 @@ class SessionViewModelTest {
             StudySessionStore(api, cache) { "UTC" },
             cache,
             readiness = readiness,
-            generations = { error("Not used") },
-            now = { testScheduler.currentTime },
+            generations = { generations ?: error("Not used") },
         )
     }
 
@@ -265,27 +272,74 @@ class SessionViewModelTest {
         }
 
     @Test
-    fun aFailedLessonIsReadForTenMinutesThenLeftToTryAgainEvenWhileReadsFail() =
+    fun aFailedLessonIsReadForAsLongAsItsWaitShowsSinceItMayBeWrittenAgainElsewhere() =
         runTest(dispatcher) {
             var reads = 0
-            val failed =
-                LessonReadiness(
-                    alternative = null,
-                    generationId = null,
-                    kind = LessonReadiness.Kind.LESSON,
-                    setAside = false,
-                    status = LessonReadiness.Status.FAILED,
-                    warmUpId = null,
-                )
-            val viewModel = viewModel(FakeStudyApi()) { _, _ -> if (reads++ == 0) failed else throw IOException("Offline") }
+            val viewModel = viewModel(FakeStudyApi()) { _, _ -> reads++.let { readiness(LessonReadiness.Status.FAILED) } }
 
-            val following = backgroundScope.launch { viewModel.followLesson(LESSON, asked = false) {} }
-            advanceTimeBy(FAILED_LESSON_READ_MILLIS - LESSON_CHECK_MILLIS)
+            val following = backgroundScope.launch { viewModel.followLesson(LESSON, null) {} }
+            advanceTimeBy(30 * 60_000L)
+
             assertTrue(following.isActive)
-
-            advanceTimeBy(2 * LESSON_CHECK_MILLIS)
-            assertTrue(following.isCompleted)
+            assertTrue("read $reads times", reads > 300)
         }
+
+    @Test
+    fun aReadTheServerCouldntAnswerKeepsTheLessonAsShownAndAsksAgain() =
+        runTest(dispatcher) {
+            var reads = 0
+            var dayReads = 0
+            val writing = StudyBlockLesson(setAside = false, status = LessonGenerationStatus.GENERATING)
+            val viewModel =
+                viewModel(FakeStudyApi()) { _, _ ->
+                    if (reads++ == 0) throw ApiException(ApiError.Unavailable, "SERVICE_UNAVAILABLE", 503)
+                    readiness(LessonReadiness.Status.FAILED)
+                }
+
+            backgroundScope.launch { viewModel.followLesson(LESSON, writing) { dayReads++ } }
+            runCurrent()
+
+            assertEquals(null, viewModel.lesson)
+            assertEquals(0, dayReads)
+
+            advanceTimeBy(LESSON_CHECK_MILLIS + 1)
+
+            assertEquals(LessonReadiness.Status.FAILED, viewModel.lesson?.status)
+            assertEquals(1, dayReads)
+        }
+
+    @Test
+    fun aRunWhoseUpdatesStopAsksTheLessonsReadinessAtOnceWhichDecides() =
+        runTest(dispatcher) {
+            var reads = 0
+            val lost =
+                object : GenerationSource {
+                    override fun events(id: String): Flow<GenerationEvent> = flow { throw IOException("Offline") }
+
+                    override suspend fun status(id: String) = Generation.Status.RUNNING
+                }
+            val writing = StudyBlockLesson(setAside = false, status = LessonGenerationStatus.GENERATING)
+            val viewModel =
+                viewModel(FakeStudyApi(), generations = lost) { _, _ ->
+                    readiness(if (reads++ == 0) LessonReadiness.Status.GENERATING else LessonReadiness.Status.FAILED)
+                }
+
+            backgroundScope.launch { viewModel.followLesson(LESSON, writing) {} }
+            advanceTimeBy(LESSON_CHECK_MILLIS / 2)
+
+            assertEquals(2, reads)
+            assertEquals(LessonReadiness.Status.FAILED, viewModel.lesson?.status)
+        }
+
+    private fun readiness(status: LessonReadiness.Status) =
+        LessonReadiness(
+            alternative = null,
+            generationId = "run-1".takeIf { status == LessonReadiness.Status.GENERATING },
+            kind = LessonReadiness.Kind.LESSON,
+            setAside = false,
+            status = status,
+            warmUpId = null,
+        )
 
     private companion object {
         val LESSON: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000a1")

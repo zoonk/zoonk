@@ -15,6 +15,7 @@
   "fullReview": false,
   "kind": "review",
   "lessonId": null,
+  "lesson": null,
   "mistakesOnly": false,
   "netScored": false,
   "oftenTested": false,

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.session
 
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudyExtraTime
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionExamAccess
@@ -24,6 +25,7 @@ fun step(
     screen: StudyBlock.Screen = StudyBlock.Screen.LESSON,
     saved: Boolean = true,
     lessonId: UUID? = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f%02d".format(Locale.ROOT, position)),
+    lesson: StudyBlockLesson? = null,
 ): DayStep =
     DayStep(
         id = if (saved) blockId(position) else null,
@@ -41,6 +43,7 @@ fun step(
         questions = 0,
         answered = 0,
         lessonId = lessonId,
+        lesson = lesson,
         chapterId = null,
         areaId = null,
         planItemId = null,
@@ -74,6 +77,7 @@ fun day(
                 total = steps.count { it.status != StudyBlock.Status.SKIPPED },
             ),
         nextPosition = nextPosition,
+        alternativePosition = null,
         state = StudySession.State.UNDERWAY,
         missions = emptyList(),
         fullMeal = StudySessionFullMeal(bonus = 0, earned = false, ready = false),

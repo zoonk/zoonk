@@ -17,10 +17,12 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.Milestone
+import com.zoonk.api.models.StudyBlockLesson
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.UUID
 
 enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
@@ -38,7 +40,6 @@ class SessionViewModel(
     private val cache: AppCache,
     private val readiness: suspend (AuthenticatedSession, UUID) -> LessonReadiness,
     private val generations: () -> GenerationSource,
-    private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     var busy by mutableStateOf<SessionAction?>(null)
         private set
@@ -47,7 +48,8 @@ class SessionViewModel(
     var writtenWhileWaiting by mutableStateOf<Long?>(null)
         private set
 
-    private var waiting: LessonWait? = null
+    /** The position of the step the learner is waiting on. */
+    private var waiting: Long? = null
 
     /** The shown step's lesson as its last readiness read found it, while the next stop waits on it. */
     var lesson by mutableStateOf<LessonState?>(null)
@@ -166,24 +168,26 @@ class SessionViewModel(
     }
 
     fun waitForLesson(position: Long) {
-        if (waiting?.position != position) waiting = LessonWait(position, now())
+        waiting = position
     }
 
     /**
-     * Reads [lessonId]'s readiness every few seconds and follows the run writing it, reading the day
-     * again once it's written: the wait shows until the day does, so its step is offered as ready. A
-     * lesson nobody writes is waited on only when the learner [asked] for it; a failed one is still
-     * read for as long as Main's wait reads it, since it may be written again elsewhere, unless its
-     * checks set it aside.
+     * Asks [lessonId]'s readiness now and every few seconds, following the run that writes it. An
+     * answer that differs from the last one, or from what the day showed ([shown]), shows at once and
+     * reads the day again ([readDay]); a written lesson reads it until the day has it. A run whose
+     * updates stop, and a read the server couldn't answer, decide nothing: they only ask again. It
+     * ends once nothing is on its way: a lesson nobody writes, or one its checks set aside.
      */
     suspend fun followLesson(
         lessonId: UUID,
-        asked: Boolean,
+        shown: StudyBlockLesson?,
         readDay: suspend () -> Unit,
     ) {
         try {
-            var failedSince: Long? = null
+            var last = shown?.let { it.status.value to it.setAside }
             while (true) {
+                // Taken before the read, since following its run can fail at once.
+                val seen = follower.run.value
                 when (val read = cache.mutate { readiness(it, lessonId) }) {
                     MutationResult.Obsolete -> {
                         return
@@ -192,32 +196,17 @@ class SessionViewModel(
                     is MutationResult.Failed -> {}
 
                     is MutationResult.Done -> {
-                        val status = read.value.status
-                        if (status == LessonReadiness.Status.READY) {
-                            readDay()
-                        } else {
-                            lesson =
-                                LessonState(
-                                    lessonId,
-                                    status,
-                                    read.value.setAside,
-                                    read.value.warmUpId?.toString(),
-                                    if (read.value.kind ==
-                                        LessonReadiness.Kind.CHALLENGE
-                                    ) {
-                                        GenerationKind.Challenge
-                                    } else {
-                                        GenerationKind.Lesson
-                                    },
-                                )
-                        }
-                        if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
-                        if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
-                        failedSince = if (status == LessonReadiness.Status.FAILED) failedSince ?: now() else null
+                        val answer = read.value
+                        val status = answer.status
+                        if (status != LessonReadiness.Status.READY) lesson = answer.toState(lessonId)
+                        if (status == LessonReadiness.Status.GENERATING) follow(answer.generationId)
+                        val moved = last != status.value to answer.setAside
+                        last = status.value to answer.setAside
+                        if (moved || status == LessonReadiness.Status.READY) readDay()
+                        if (status == LessonReadiness.Status.NOT_STARTED || answer.setAside) return
                     }
                 }
-                if (failedSince?.let { now() - it >= FAILED_LESSON_READ_MILLIS } == true) return
-                delay(LESSON_CHECK_MILLIS)
+                withTimeoutOrNull(LESSON_CHECK_MILLIS) { follower.run.first { it != seen && it.status == GenerationRun.Status.Failed } }
             }
         } finally {
             follower.stop()
@@ -225,35 +214,14 @@ class SessionViewModel(
         }
     }
 
-    /** The shown step's wait that went on too long, which says so with Try again. */
-    var stuckWait by mutableStateOf<Pair<Long, NextStopLesson>?>(null)
-        private set
-
-    private var currentWait: Pair<Pair<Long, NextStopLesson>, Long>? = null
-
-    /** Marks the wait for [lesson] on the step at [position] stuck [after] it began, counting from its start across a rotation. */
-    suspend fun awaitStuck(
-        position: Long,
-        lesson: NextStopLesson,
-        after: Long,
-    ) {
-        val wait = position to lesson
-        val began = currentWait?.takeIf { it.first == wait }?.second ?: now().also { currentWait = wait to it }
-        delay(began + after - now())
-        stuckWait = wait
-    }
-
-    /** Try again on a run whose updates stopped: it may still be writing. */
-    fun reconnect() = follower.retry()
-
     private fun follow(generationId: String?) {
-        if (generationId == null || generationId == followedRun) return
+        if (generationId == null || (generationId == followedRun && follower.run.value.status != GenerationRun.Status.Failed)) return
         followedRun = generationId
         follower.follow(generationId)
     }
 
     fun lessonWritten(position: Long) {
-        waiting?.takeIf { it.position == position } ?: return
+        if (waiting != position) return
         waiting = null
         writtenWhileWaiting = position
     }
@@ -304,10 +272,17 @@ class SessionViewModel(
 
 internal const val LESSON_CHECK_MILLIS = 5_000L
 
-internal const val FAILED_LESSON_READ_MILLIS = 600_000L
+/** Main's `NextStopLesson`: what the next stop shows of its step's lesson; [Unknown] until a server that doesn't say answers its readiness. */
+enum class NextStopLesson { Ready, Unknown, Writing, Failed }
 
-/** Main's `NextStopLesson` while it isn't ready: what the next stop waits on. */
-enum class NextStopLesson { NotStarted, Writing, Failed }
+private fun LessonReadiness.toState(lessonId: UUID) =
+    LessonState(
+        lessonId,
+        status,
+        setAside,
+        warmUpId?.toString(),
+        if (kind == LessonReadiness.Kind.CHALLENGE) GenerationKind.Challenge else GenerationKind.Lesson,
+    )
 
 data class LessonState(
     val id: UUID,
@@ -316,9 +291,4 @@ data class LessonState(
     /** The goal's deck while this is its first lesson; kept once the lesson is written, so a learner who guessed can finish the card. */
     val warmUpId: String?,
     val kind: GenerationKind,
-)
-
-private data class LessonWait(
-    val position: Long,
-    val since: Long,
 )

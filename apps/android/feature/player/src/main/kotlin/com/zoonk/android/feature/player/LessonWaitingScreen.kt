@@ -278,8 +278,9 @@ fun LessonWritingProgress(
     onRetry: (() -> Unit)?,
     note: String?,
     progressShare: Float? = null,
+    failureTitle: String? = null,
 ) {
-    GenerationWait(kind, run, onRetry, share = progressShare) {
+    GenerationWait(kind, run, onRetry, share = progressShare, failureTitle = failureTitle) {
         if (note != null && run.status != GenerationRun.Status.Failed) {
             Text(
                 note,

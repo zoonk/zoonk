@@ -113,6 +113,8 @@
     <string name="session_review_intro_first_week">A few quick questions to check what you already know.</string>
     <string name="session_next_writing_note">Your lesson is usually ready in a few minutes.</string>
     <string name="session_next_lesson_ready">Your lesson is ready.</string>
+    <string name="session_next_being_written">This lesson is being written for you</string>
+    <string name="session_next_lesson_failed">We couldn\'t write this lesson</string>
     <string name="session_next_stop">Stop for today</string>
     <string name="session_next_stop_failed">We couldn\'t stop the session. Try again.</string>
     <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->

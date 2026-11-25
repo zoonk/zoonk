@@ -6,6 +6,7 @@ import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudyBlockWritingAvailability
 import com.zoonk.api.models.StudyCheckpoint
 import com.zoonk.api.models.StudyDay
@@ -40,6 +41,8 @@ data class DayView(
     val steps: List<DayStep>,
     val sessionBar: SessionBar,
     val nextPosition: Long?,
+    /** Core's pick of the work to do while the next step's lesson is written: a step's position, never the next step itself. */
+    val alternativePosition: Long?,
     val state: StudySession.State,
     val missions: List<DayMission>,
     val fullMeal: StudySessionFullMeal,
@@ -111,6 +114,8 @@ data class DayStep(
     val questions: Long,
     val answered: Long,
     val lessonId: UUID?,
+    /** The lesson's writing as the day's read found it; null for a step with no lesson, or from a server that doesn't say. */
+    val lesson: StudyBlockLesson? = null,
     val chapterId: UUID?,
     val areaId: String?,
     val planItemId: UUID?,
@@ -254,6 +259,7 @@ fun StudySession.toDayView(): DayView =
         steps = blocks.map(StudyBlock::toDayStep),
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
+        alternativePosition = alternativePosition,
         state = state,
         missions = missions.map(StudyMission::toDayMission),
         fullMeal = fullMeal,
@@ -279,6 +285,7 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         steps = blocks.map(UnstartedStudyDayBlocksInner::toDayStep),
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
+        alternativePosition = alternativePosition,
         state = StudySession.State.entries.first { it.value == state.value },
         missions = missions.map(UnstartedStudyDayMissionsInner::toDayMission),
         fullMeal = fullMeal,
@@ -328,6 +335,7 @@ fun StudyBlock.toDayStep(): DayStep =
         questions = questions,
         answered = answered,
         lessonId = lessonId,
+        lesson = lesson,
         chapterId = chapterId,
         areaId = areaId,
         planItemId = planItemId,
@@ -369,6 +377,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         questions = questions,
         answered = answered,
         lessonId = lessonId,
+        lesson = lesson,
         chapterId = chapterId,
         areaId = areaId,
         planItemId = planItemId,

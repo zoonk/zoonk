@@ -77,6 +77,8 @@ fun GenerationWait(
     /** When the wait began ([System.currentTimeMillis]), so a screen that takes over another's wait goes on from its bar. */
     since: Long? = null,
     share: Float? = null,
+    /** What a failed run's notice calls the failure, in place of the generic title; a lost connection keeps its own. */
+    failureTitle: String? = null,
     header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val progress = kind.progress(run)
@@ -132,7 +134,9 @@ fun GenerationWait(
         }
 
         // Under the steps, as main's, so a failure moves none of them.
-        run.failure.takeIf { run.status == GenerationRun.Status.Failed }?.let { GenerationFailureNotice(it, onRetry) }
+        run.failure.takeIf { run.status == GenerationRun.Status.Failed }?.let { failure ->
+            GenerationFailureNotice(failure, onRetry, title = failureTitle.takeUnless { failure == GenerationFailure.Connection })
+        }
     }
 }
 
