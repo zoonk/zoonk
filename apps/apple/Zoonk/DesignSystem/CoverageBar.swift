@@ -45,7 +45,8 @@ struct CoverageLegend: View {
   var shares: Shares?
 
   var body: some View {
-    let legend = HStack(spacing: 12) {
+    // Rows that wrap like web's, so a large text size moves a part to the next line, never off the edge.
+    let legend = FlowLayout(spacing: 12, rowSpacing: 4) {
       item(
         Text(
           LocalizedStringResource(
