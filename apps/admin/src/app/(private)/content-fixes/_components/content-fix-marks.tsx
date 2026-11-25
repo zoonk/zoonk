@@ -45,12 +45,12 @@ export function FixMarks({
   return (
     <div className="flex flex-col gap-1">
       {!marked && (
-        <StateMark className="text-xs" state="failed">
+        <StateMark className="text-xs whitespace-normal" state="failed">
           Couldn&apos;t mark it again, so it keeps what still fits
         </StateMark>
       )}
       {framedNothing && (
-        <StateMark className="text-xs" state="skipped" tone="attention">
+        <StateMark className="text-xs whitespace-normal" state="skipped" tone="attention">
           Marking it again framed nothing, so it keeps its example box
         </StateMark>
       )}
