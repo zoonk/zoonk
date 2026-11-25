@@ -339,6 +339,14 @@ describe(normalizeLessonMarks, () => {
       );
     });
 
+    it("keeps a copy that has its bold marks but drops a blank line", () => {
+      const text = "A rule. **Example.**\n\nNext sentence. End.";
+
+      expect(exampleOf({ example: "**Example.**\nNext sentence.", text })).toBe(
+        "**Example.**\n\nNext sentence.",
+      );
+    });
+
     it("frames the whole bold sentence, after an emoji too", () => {
       expect(exampleOf({ example: "Try it.", text: "A rule. **Try it.**" })).toBe("**Try it.**");
 

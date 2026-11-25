@@ -212,6 +212,7 @@ function locateCopies({ quote, text }: { quote: string; text: string }): Span[] 
         start: offsets[at] ?? 0,
       })),
     )
+    .map((span) => withMarks({ span, text }))
     .filter((span) => dropsOnlyMarks({ copy: quote.trim(), span, text }));
 
   return [
