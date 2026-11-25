@@ -42,6 +42,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.PlanAreasInner
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
@@ -204,6 +205,19 @@ class PlanScreenshots {
             exam =
                 examPage(dated = true).let {
                     it.copy(plan = it.plan.copy(suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
+                },
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examWithASubjectTakenOutPhone() =
+        capture(
+            "plan-exam-subject-taken-out-phone",
+            exam =
+                examPage(dated = true).let {
+                    val takenOut = area("Essay").replace("\"skipped\":false", "\"skipped\":true")
+                    val areas = ApiJson.decodeFromString<List<PlanAreasInner>>("[${area("Mathematics")},$takenOut]")
+                    it.copy(plan = it.plan.copy(areas = areas, suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
                 },
         )
 
