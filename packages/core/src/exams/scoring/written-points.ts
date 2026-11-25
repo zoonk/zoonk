@@ -5,6 +5,7 @@ import { type WrittenProjection } from "./written-points-contract";
 
 type Part = WrittenProjection["parts"][number];
 export type WritingRange = NonNullable<Part["range"]>;
+const POINTS_TOLERANCE = 1e-6;
 const SCORE_PRECISION = 15;
 
 export type WrittenTask = ReturnType<typeof listWrittenTasks>[number];
@@ -43,11 +44,11 @@ export function writtenStanding({
 
   const threshold = minimum.unit === "percent" ? ((max ?? 0) * minimum.value) / 100 : minimum.value;
 
-  if (range.low >= threshold) {
+  if (range.low >= threshold - POINTS_TOLERANCE) {
     return "met";
   }
 
-  return range.high < threshold ? "below" : "overlaps";
+  return range.high < threshold - POINTS_TOLERANCE ? "below" : "overlaps";
 }
 
 export function scoreWrittenParts({
