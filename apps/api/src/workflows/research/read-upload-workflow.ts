@@ -61,7 +61,7 @@ async function readPages(upload: UploadReading) {
   }, Promise.resolve([]));
 }
 
-export async function readUploadWorkflow(sourceId: string): Promise<void> {
+async function readUploadWorkflow(sourceId: string): Promise<void> {
   "use workflow";
 
   const upload = await findOwedUploadStep(sourceId).catch(() => null);

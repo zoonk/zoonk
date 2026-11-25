@@ -28,9 +28,7 @@ async function reopenAnswerStep(input: Parameters<typeof reopenResearchUploadAns
   await reopenResearchUploadAnswer(input);
 }
 
-export async function answerResearchUploadWorkflow(
-  key: ResearchUploadAnswerKey,
-): Promise<ResearchResult> {
+async function answerResearchUploadWorkflow(key: ResearchUploadAnswerKey): Promise<ResearchResult> {
   "use workflow";
 
   const answer = await loadAnswerStep(key);

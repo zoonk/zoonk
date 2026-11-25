@@ -28,7 +28,7 @@ export type TranscriptionCheck = {
 const SUBSCRIPTS = "₀₁₂₃₄₅₆₇₈₉";
 
 /** LaTeX, Unicode and Markdown spell the same marks many ways; compare what they say. */
-export function normalizeTranscript(text: string): string {
+function normalizeTranscript(text: string): string {
   return text
     .normalize("NFC")
     .replaceAll(/\\(?:d|t)?frac\{(?<top>[^{}]*)\}\{(?<bottom>[^{}]*)\}/gu, "$<top>/$<bottom>")
@@ -53,7 +53,7 @@ export function normalizeTranscript(text: string): string {
 
 const ILLEGIBLE = /\[illegible\]/giu;
 
-export function hasNoWords(text: string): boolean {
+function hasNoWords(text: string): boolean {
   return !/[\p{L}\p{N}]/u.test(text.replaceAll(ILLEGIBLE, ""));
 }
 
