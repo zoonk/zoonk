@@ -74,14 +74,17 @@ function PlanWeek() {
   );
 }
 
-/** "Paused", the schedule's state while nothing is planned. */
+/** "Paused", the schedule's state while nothing is planned, and what that means. */
 function usePausedText() {
   const t = useExtracted();
 
-  return t({
-    description: "The plan's schedule while the learner has paused the goal.",
-    message: "Paused",
-  });
+  return {
+    detail: t("Nothing is planned until you resume it."),
+    value: t({
+      description: "The plan's schedule while the learner has paused the goal.",
+      message: "Paused",
+    }),
+  };
 }
 
 export function useScheduleNumber({
@@ -99,7 +102,7 @@ export function useScheduleNumber({
   const label = t("Schedule");
 
   if (showsPausedSchedule({ paused, status })) {
-    return { detail: null, label, value: pausedText };
+    return { detail: pausedText.detail, label, value: pausedText.value };
   }
 
   if (status.kind === "pastDate") {
@@ -145,17 +148,13 @@ export function ScheduleDetails({
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-1.5">
-        <p className="font-medium">{showsPaused ? pausedText : statusText(status)}</p>
+        <p className="font-medium">{showsPaused ? pausedText.value : statusText(status)}</p>
         {!showsPaused && status.kind === "onTrack" && (
           <p className="text-muted-foreground text-sm">
             <DailyTimeValue perDay />
           </p>
         )}
-        {showsPaused && (
-          <p className="text-muted-foreground text-sm">
-            {t("Nothing is planned until you resume it.")}
-          </p>
-        )}
+        {showsPaused && <p className="text-muted-foreground text-sm">{pausedText.detail}</p>}
         {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
         {(line?.adjust || status.kind === "pastDate") && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">
