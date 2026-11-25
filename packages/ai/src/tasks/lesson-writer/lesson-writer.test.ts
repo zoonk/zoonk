@@ -261,6 +261,7 @@ describe(writeLessonDraft, () => {
           kind: "check",
           options: [option("White", true), option("Purple", false)],
           question: "What color are the pp seedling's flowers?",
+          standsAlone: true,
           visual: null,
         },
       ],

@@ -9,6 +9,7 @@ import {
   prisma,
   sql,
 } from "@zoonk/db";
+import { LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
@@ -57,7 +58,7 @@ async function loadUnseenAnswers({
 const SHOWING_ANSWER = {
   OR: [
     { itemId: null },
-    { stepId: { not: null } },
+    LESSON_ANSWER_FILTER,
     { isCorrect: true, isPlacement: false, studySessionId: { not: null } },
   ],
 };

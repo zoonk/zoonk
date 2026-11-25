@@ -140,7 +140,12 @@ export async function loadLearnerVersions({
 }
 
 export async function withLearnerVersionRows<
-  TRow extends { content: StepVariant["content"]; id: string; kind: StepKind },
+  TRow extends {
+    content: StepVariant["content"];
+    id: string;
+    itemId: string | null;
+    kind: StepKind;
+  },
 >({ lessonId, rows, userId }: { lessonId: string; rows: TRow[]; userId: string }): Promise<TRow[]> {
   const keys = await loadLearnerVersionKeys({ lessonId, userId });
   const versions = await loadLearnerVersions({ keys, stepIds: rows.map((row) => row.id) });
@@ -151,6 +156,6 @@ export async function withLearnerVersionRows<
 
   return rows.map((row) => {
     const version = findLearnerVersion({ keys, step: row, versions });
-    return version ? { ...row, content: version.content } : row;
+    return version ? { ...row, content: version.content, itemId: null } : row;
   });
 }

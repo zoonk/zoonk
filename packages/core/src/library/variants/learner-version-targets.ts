@@ -66,7 +66,7 @@ async function loadVersionSteps(lessonIds: readonly string[]) {
     select: {
       content: true,
       id: true,
-      itemId: true,
+      item: { select: { format: true } },
       kind: true,
       lesson: { select: { ownerId: true } },
       lessonId: true,
@@ -112,7 +112,7 @@ function toToolTarget({
   if (
     !tool ||
     step.kind === "challenge" ||
-    step.itemId ||
+    step.item?.format === "numeric" ||
     shouldSkipVersion({ ...tool, kind: "tool", step })
   ) {
     return [];

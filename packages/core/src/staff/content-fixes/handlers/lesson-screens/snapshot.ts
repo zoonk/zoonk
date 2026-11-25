@@ -19,6 +19,7 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
       skills: { orderBy: [{ createdAt: "asc" }, { skillId: "asc" }], select: { skillId: true } },
       steps: {
         include: {
+          item: { select: { content: true, format: true, id: true, skillId: true } },
           optionPictures: { orderBy: { optionId: "asc" } },
           sources: { orderBy: { sourceId: "asc" } },
           variants: { orderBy: [{ kind: "asc" }, { key: "asc" }] },
@@ -58,6 +59,7 @@ export async function readLessonScreens(db: TransactionClient, id: string) {
 
   return {
     before,
+    items: new Map(lesson.steps.flatMap(({ item }) => (item ? [[item.id, item] as const] : []))),
     language: lesson.language,
     skillIds: lesson.skills.map((link) => link.skillId),
     targetLanguage: lesson.targetLanguage,

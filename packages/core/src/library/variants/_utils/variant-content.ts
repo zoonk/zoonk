@@ -20,7 +20,7 @@ function toWrittenScreen(written: WrittenVariant): WrittenScreen {
     case "explanation":
       return { ...written, exampleLineIdea: null, explore: null };
     case "check":
-      return { ...written, basis: null };
+      return { ...written, basis: null, standsAlone: null };
     case "workedExample":
       return written;
     default:

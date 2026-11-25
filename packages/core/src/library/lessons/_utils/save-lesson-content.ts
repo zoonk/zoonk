@@ -11,6 +11,7 @@ import {
   reconcileLessonReviewFlags,
   saveStepSources,
 } from "../../sources/content-review-flags";
+import { toCheckQuestion } from "../../steps/_utils/check-question";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type ScreenMathItem } from "../../steps/written-screens";
 import {
@@ -35,6 +36,7 @@ export type LessonScreenToSave = {
   kind: StepKind;
   content: object;
   mathItem: ScreenMathItem | null;
+  standsAlone?: boolean;
   mediaAssetId?: string | null;
   skillId: string | null;
   provenance: ScreenProvenance;
@@ -49,17 +51,19 @@ async function writeScreens(
     staged = false,
   }: { language: string; lessonId: string; screens: LessonScreenToSave[]; staged?: boolean },
 ): Promise<number> {
+  const questions = screens.map((screen) => ({
+    provenance: screen.provenance,
+    question:
+      toScreenQuestion(screen.mathItem) ??
+      (screen.kind === "check" && screen.standsAlone && !screen.mediaAssetId
+        ? toCheckQuestion(screen.content)
+        : null),
+    skillId: screen.skillId,
+  }));
+
   const itemIds = staged
     ? []
-    : await saveQuestionItems(tx, {
-        language,
-        lessonId,
-        screens: screens.map((screen) => ({
-          provenance: screen.provenance,
-          question: toScreenQuestion(screen.mathItem),
-          skillId: screen.skillId,
-        })),
-      });
+    : await saveQuestionItems(tx, { language, lessonId, screens: questions });
 
   const version = await startLessonVersion(tx, lessonId, { staged });
 
@@ -80,7 +84,7 @@ async function writeScreens(
       sourceId: screen.citation?.sourceId ?? null,
       sourcePage: screen.citation?.page ?? null,
       staged,
-      stagedItem: staged ? (toScreenQuestion(screen.mathItem) ?? undefined) : undefined,
+      stagedItem: staged ? (questions[position]?.question ?? undefined) : undefined,
       version,
     })),
     select: { id: true, position: true },

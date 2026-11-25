@@ -245,6 +245,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
           },
         ],
         question: "Why is −3 °C plus 5 degrees equal to 2 °C?",
+        standsAlone: null,
         visual: null,
       },
       {
@@ -274,6 +275,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
           },
         ],
         question: "What will the thermometer show?",
+        standsAlone: true,
         visual: null,
       },
     ],

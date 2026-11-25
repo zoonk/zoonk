@@ -44,8 +44,16 @@ export function getPlacementGuessRate({
     return guessPermutation(countOptions(content.steps));
   }
 
-  if (format === "multipleChoice" && content.select === "all") {
-    return 2 ** -countOptions(content.options);
+  if (format === "multipleChoice") {
+    const count = countOptions(content.options);
+
+    if (content.select === "all") {
+      return 2 ** -count;
+    }
+
+    if ((content.select ?? 1) === 1 && count > 0) {
+      return 1 / count;
+    }
   }
 
   return DEFAULT_GUESS_RATES[format];
@@ -69,5 +77,10 @@ export function isQuickChoice({
   content?: unknown;
   format: ItemFormat;
 }): boolean {
-  return format === "multipleChoice" && (!isJsonObject(content) || (content.select ?? 1) === 1);
+  return (
+    format === "multipleChoice" &&
+    isJsonObject(content) &&
+    (content.select ?? 1) === 1 &&
+    countOptions(content.options) >= 3
+  );
 }

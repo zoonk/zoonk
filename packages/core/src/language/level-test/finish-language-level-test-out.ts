@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -50,7 +51,7 @@ async function getPassedTopics({
       itemId: { not: null },
       mockExamId: null,
       skillId: { in: skillIds },
-      stepId: null,
+      ...NOT_LESSON_ANSWER_FILTER,
       userId,
     },
   });

@@ -56,6 +56,18 @@ export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
         reason: "You applied the rule backwards.",
         text: "Wrong answer",
       },
+      {
+        isCorrect: false,
+        misconception: "Skips a step",
+        reason: "An intermediate result is missing.",
+        text: "Incomplete answer",
+      },
+      {
+        isCorrect: false,
+        misconception: "Uses a different rule",
+        reason: "A different rule would solve a different question.",
+        text: "Unrelated answer",
+      },
     ],
     question,
     select: 1,

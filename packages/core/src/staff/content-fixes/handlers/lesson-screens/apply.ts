@@ -2,13 +2,18 @@ import { isDeepStrictEqual } from "node:util";
 import { DbNull, type TransactionClient, sql } from "@zoonk/db";
 import { toStoredItem } from "../../../../library/items/item-content";
 import {
+  matchCheckQuestion,
+  updateCheckQuestion,
+} from "../../../../library/lessons/_utils/screen-question-item";
+import {
   retireUnaskedQuestions,
   startLessonVersion,
 } from "../../../../library/lessons/lesson-versions";
+import { toCheckQuestion } from "../../../../library/steps/_utils/check-question";
 import { type FixContext } from "../fix-handler";
 import { linkVocabularyMedia, resolvePublishedScreens } from "./link-media";
 import { screenItemIds } from "./references";
-import { type StoredScreens } from "./schema";
+import { type ScreenSnapshot, type StoredScreens } from "./schema";
 
 async function copyKeptAnswers(tx: TransactionClient, { after, proposal }: StoredScreens) {
   const copies = (proposal?.screens ?? []).flatMap((entry, position) => {
@@ -40,6 +45,31 @@ async function copyKeptAnswers(tx: TransactionClient, { after, proposal }: Store
   `);
 }
 
+async function updateKeptCheckQuestions(tx: TransactionClient, after: ScreenSnapshot) {
+  const checks = after.screens.filter((screen) => screen.kind === "check" && screen.itemId);
+
+  if (checks.length === 0) {
+    return;
+  }
+
+  const items = await tx.item.findMany({
+    select: { content: true, format: true, id: true, skillId: true },
+    where: { format: "multipleChoice", id: { in: checks.flatMap(({ itemId }) => itemId ?? []) } },
+  });
+
+  await Promise.all(
+    items.map(async (item) => {
+      const screen = checks.find(({ itemId }) => itemId === item.id);
+      const question = screen && toCheckQuestion(screen.content);
+      const content = question && matchCheckQuestion(item.content, question);
+
+      if (content) {
+        await updateCheckQuestion(tx, item, content);
+      }
+    }),
+  );
+}
+
 export async function applyLessonScreens(
   tx: TransactionClient,
   change: StoredScreens,
@@ -66,6 +96,8 @@ export async function applyLessonScreens(
       })),
     });
   }
+
+  await updateKeptCheckQuestions(tx, after);
 
   const restored = after.screens.flatMap(({ itemId }) =>
     itemId && !before.screens.some((row) => row.itemId === itemId) ? [itemId] : [],
