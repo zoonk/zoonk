@@ -20,7 +20,13 @@ const REOPEN_DELAY_MS = 1500;
 
 const MAX_RECONNECT_DELAY_MS = 16_000;
 
+/** The API couldn't tell the run's state this time, which says nothing about the run. */
+const UNAVAILABLE_RETRY_MS = 5000;
+
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
+
+/** What reading a run answered: its status, no such run (404), or a state the API couldn't tell (503). */
+export type RunLookup = RunStatus | "missing" | "unavailable";
 
 export type WorkflowRunState = {
   ended: boolean;
@@ -47,7 +53,7 @@ export type WorkflowRunAction =
   | { kind: GenerationKind; message: StepStreamMessage; type: "event" }
   | { offsetMs: number; type: "serverClock" }
   | { namespace?: string; runId: string | null; type: "polled" }
-  | { runId: string; status: RunStatus; type: "runStatus" }
+  | { runId: string; status: RunLookup; type: "runStatus" }
   | { type: "connectionLost" }
   | { type: "notStarted" }
   | { type: "reconnect" }
@@ -173,7 +179,17 @@ function applyEvent({
 }
 
 /** A run still running behind a closed stream had its connection cut (a function timeout). */
-function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
+function applyRunStatus(state: WorkflowRunState, status: RunLookup): WorkflowRunState {
+  if (status === "unavailable") {
+    return isSettled(state) ? state : { ...state, reconnectIn: UNAVAILABLE_RETRY_MS };
+  }
+
+  if (status === "missing") {
+    return isSettled(state)
+      ? { ...state, ended: true }
+      : { ...state, ended: true, failure: "generation", lostConnections: 0, reconnectIn: null };
+  }
+
   if (state.ready) {
     return { ...state, ended: true, reconnectIn: null };
   }

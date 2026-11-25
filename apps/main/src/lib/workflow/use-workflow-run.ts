@@ -8,6 +8,7 @@ import { getString } from "@zoonk/utils/json";
 import { useEffect, useEffectEvent, useReducer } from "react";
 import {
   INITIAL_WORKFLOW_RUN_STATE,
+  type RunLookup,
   type RunStatus,
   getFollowedRunId,
   getRunStatus,
@@ -27,13 +28,25 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-async function readRunStatus(runId: string): Promise<RunStatus | null> {
+const NOT_FOUND = 404;
+const SERVICE_UNAVAILABLE = 503;
+
+/** An error answer's lookup; any other error, or none, leaves the connection to retry. */
+function toLookup(responseStatus: number | undefined): RunLookup | null {
+  if (responseStatus === NOT_FOUND) {
+    return "missing";
+  }
+
+  return responseStatus === SERVICE_UNAVAILABLE ? "unavailable" : null;
+}
+
+async function readRunStatus(runId: string): Promise<RunLookup | null> {
   const headers = await getWorkflowAuthHeaders();
   const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
   const { data: response } = await safeAsync(() => fetch(url, { headers }));
 
   if (!response?.ok) {
-    return null;
+    return toLookup(response?.status);
   }
 
   const { data } = await safeAsync<unknown>(() => response.json());
@@ -45,6 +58,7 @@ async function readRunStatus(runId: string): Promise<RunStatus | null> {
 export function useWorkflowRun({
   generationId,
   kind,
+  onInterrupted,
   onReady,
   readGenerationId,
   restart,
@@ -93,12 +107,18 @@ export function useWorkflowRun({
     return () => clearTimeout(timer);
   }, [state.reconnectIn]);
 
-  async function checkRun(id: string) {
-    const runStatus = await readRunStatus(id);
-
+  function applyLookup(id: string, lookup: RunLookup | null) {
     dispatch(
-      runStatus ? { runId: id, status: runStatus, type: "runStatus" } : { type: "connectionLost" },
+      lookup ? { runId: id, status: lookup, type: "runStatus" } : { type: "connectionLost" },
     );
+
+    if (lookup !== "completed") {
+      onInterrupted?.();
+    }
+  }
+
+  async function checkRun(id: string) {
+    applyLookup(id, await readRunStatus(id));
   }
 
   const isConnected =
@@ -109,10 +129,10 @@ export function useWorkflowRun({
     state.reconnectIn === null;
 
   const checkStopped = useEffectEvent(async (id: string) => {
-    const runStatus = await readRunStatus(id);
+    const lookup = await readRunStatus(id);
 
-    if (runStatus === "failed" || runStatus === "cancelled") {
-      dispatch({ runId: id, status: runStatus, type: "runStatus" });
+    if (lookup === "failed" || lookup === "cancelled" || lookup === "missing") {
+      applyLookup(id, lookup);
     }
   });
 
@@ -129,7 +149,11 @@ export function useWorkflowRun({
     connection: state.connection,
     namespace: runId === state.polled ? state.namespace : null,
     onComplete: (id) => void checkRun(id),
-    onError: () => dispatch({ type: "connectionLost" }),
+    onError: (responseStatus) => {
+      if (runId) {
+        applyLookup(runId, toLookup(responseStatus));
+      }
+    },
     onMessage: (message) => dispatch({ kind, message, type: "event" }),
     onOpen: (response) => {
       const serverNow = Date.parse(response.headers.get("date") ?? "");

@@ -188,6 +188,27 @@ describe(workflowRunReducer, () => {
     );
   });
 
+  it("stops following a run the API can't find, instead of reconnecting to it", () => {
+    const missing = run([{ runId: "run", status: "missing", type: "runStatus" }]);
+
+    expect(missing.failure).toBe("generation");
+    expect(missing.ended).toBe(true);
+    expect(missing.reconnectIn).toBeNull();
+  });
+
+  it("tries again when the API couldn't tell the run's state, however many times", () => {
+    const unavailable = Array.from(
+      { length: MAX_LOST_CONNECTIONS + 1 },
+      () => ({ runId: "run", status: "unavailable", type: "runStatus" }) as const,
+    );
+
+    const state = run(unavailable);
+
+    expect(state.failure).toBeNull();
+    expect(state.lostConnections).toBe(0);
+    expect(state.reconnectIn).not.toBeNull();
+  });
+
   it("waits longer after each lost connection in a row", () => {
     const delays = [1, 2, 3].map((count) => run(lostConnections(count)).reconnectIn ?? 0);
 
