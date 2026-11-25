@@ -7,7 +7,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { choiceFacts, describeChoice } from "./blueprint-choices";
 import { FORMAT_WORDS, type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
 import { testedLanguageFacts } from "./blueprint-language";
-import { describeQuestionTotal, mockFacts } from "./blueprint-mock-facts";
+import { mockFacts } from "./blueprint-mock-facts";
 import {
   type ExtractionDocument,
   type Passage,
@@ -213,7 +213,7 @@ function editionFacts({ documents, extraction }: FactSource): FactEntry[] {
       year !== null && { id: "edition.year", statement: `This is the exam's ${year} edition` },
       questionCount !== null && {
         id: "edition.questionCount",
-        statement: describeQuestionTotal({ mock: extraction.mock, total: questionCount }),
+        statement: `The exam has ${questionCount} questions or items in total`,
       },
     ],
     documents,

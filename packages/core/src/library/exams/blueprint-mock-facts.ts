@@ -19,9 +19,9 @@ const SCORING_WORDS: Record<Exclude<Mock["scoring"]["method"], "other">, string>
   wrongCancelsRight: "a wrong answer loses points",
 };
 
-/** Boards count true-false "itens", and written tasks aren't in the total. */
-export function describeQuestionTotal({ mock, total }: { mock: Mock | null; total: number }) {
-  const written = mock?.sections.some((section) => section.kind === "written");
+/** Boards count true-false "itens"; mocks size objective sittings from it, so written tasks stay out. */
+function describeQuestionTotal({ mock, total }: { mock: Mock; total: number }) {
+  const written = mock.sections.some((section) => section.kind === "written");
   return `The exam has ${total} questions or items in total${written ? ", not counting its written tasks" : ""}`;
 }
 
