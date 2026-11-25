@@ -23,8 +23,8 @@ export function settleReads<TSource extends AttachedSource>({
 }
 
 /**
- * Asks again while any of the shown sources is still being read, and again when the learner comes back
- * to the page, until every read settles.
+ * Asks again while any of the shown sources is still being read, a check that couldn't reach us
+ * included, and again when the learner comes back to the page, until every read settles.
  */
 export function useFollowReading({
   onSettled,
@@ -45,10 +45,6 @@ export function useFollowReading({
       const checked = await Promise.all(
         reading.map(async (id) => ({ id, readStatus: await read(id) })),
       );
-
-      if (checked.some((item) => item.readStatus === null)) {
-        throw new Error("A read couldn't be checked");
-      }
 
       const settled = checked.filter(
         (item): item is SettledRead => item.readStatus !== null && item.readStatus !== "reading",

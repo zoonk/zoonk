@@ -127,6 +127,53 @@ test.describe("Material that's read after it's added", () => {
     await expect(page.getByText(UNREADABLE_LINE)).toBeHidden();
   });
 
+  test("a photo still being read is checked again once the connection comes back", async ({
+    noProgressUser: user,
+    userWithoutProgress: page,
+  }) => {
+    const photo = await addUpload({ readState: "owed", userId: user.id });
+    const draft = await addUnderstoodDraft({ sourceIds: [photo.id], userId: user.id });
+    const isCheck = (url: string) => url.includes(`/v1/sources/${photo.id}`);
+    let failedChecks = 0;
+
+    page.on("requestfailed", (request) => {
+      if (isCheck(request.url())) {
+        failedChecks += 1;
+      }
+    });
+
+    await page.clock.install();
+    await page.goto(`/start?draft=${draft.id}`);
+    await editGoal(page);
+
+    const attached = page.getByRole("list", { name: "Your material" });
+    await expect(attached).toContainText(`${PHOTO}, Being read`);
+
+    const firstCheck = page.waitForResponse((response) => isCheck(response.url()));
+    await page.clock.runFor(3000);
+    await firstCheck;
+
+    await page.context().setOffline(true);
+
+    // Each check is scheduled once the one before it fails, so the clock moves until three have failed.
+    await expect(async () => {
+      await page.clock.runFor(3000);
+      expect(failedChecks).toBeGreaterThanOrEqual(3);
+    }).toPass({ timeout: 10_000 });
+
+    await prisma.source.update({
+      data: { extractedText: NOTES, readState: "read" },
+      where: { id: photo.id },
+    });
+
+    await page.context().setOffline(false);
+
+    await expect(async () => {
+      await page.clock.runFor(3000);
+      await expect(attached).not.toContainText("Being read", { timeout: 500 });
+    }).toPass({ timeout: 10_000 });
+  });
+
   test("a photo with nothing to read says so on the card and on Start, and still goes with the goal", async ({
     noProgressUser: user,
     userWithoutProgress: page,
