@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MAX_QUERY_ROWS } from "./program-limits";
 import { runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 
@@ -94,6 +95,54 @@ describe(runPrograms, () => {
 
     expect(endless?.status).toBe("timeout");
     expect(after).toMatchObject({ status: "done", table: { rows: [[2]] } });
+  });
+
+  it("returns the columns of a last table no row matched, after statements that return none", async () => {
+    const [empty] = await runPrograms([
+      {
+        kind: "sql",
+        query: "UPDATE countries SET pop = 0; SELECT name FROM countries WHERE pop > 100;",
+        setup: countries,
+      },
+    ]);
+
+    expect(empty).toMatchObject({ status: "done", table: { columns: ["name"], rows: [] } });
+  });
+
+  it("keeps one row past what an answer holds, and reads an infinite number as null", async () => {
+    const [many, infinite] = await runPrograms([
+      {
+        kind: "sql",
+        query:
+          "WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM n WHERE x < 5000) SELECT x FROM n;",
+        setup: [],
+      },
+      { kind: "sql", query: "SELECT 1e999 AS big, -1e999 AS small;", setup: [] },
+    ]);
+
+    expect(many?.table?.rows).toHaveLength(MAX_QUERY_ROWS + 1);
+    expect(infinite).toMatchObject({ status: "done", table: { rows: [[null, null]] } });
+  });
+
+  it("runs SQL with SQLite's own functions, the same on every client", async () => {
+    const [math, notSqlite] = await runPrograms([
+      {
+        kind: "sql",
+        query: "SELECT log(100) AS log, ln(1) AS ln, mod(7, 3) AS mod, sqrt(16) AS root;",
+        setup: [],
+      },
+      { kind: "sql", query: "SELECT stdev(pop) FROM countries;", setup: countries },
+    ]);
+
+    expect(math).toMatchObject({
+      status: "done",
+      table: { columns: ["log", "ln", "mod", "root"], rows: [[2, 0, 1, 4]] },
+    });
+
+    expect(notSqlite).toMatchObject({
+      error: { message: "no such function: stdev" },
+      status: "error",
+    });
   });
 
   it("runs Python like the player, with errors on their line, no network, host files or JavaScript, and traced runs", async () => {

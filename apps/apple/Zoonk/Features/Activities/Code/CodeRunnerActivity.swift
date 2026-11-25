@@ -267,6 +267,10 @@ private struct CodeRunnerCanvas: View {
       activeRun = nil
       run = result
       isStale = revision != started
+      // A worker a timeout ended reloads Pyodide on the next run, which can fail offline.
+      if result.stop == .unavailable, fields.language == .python {
+        runtime = .failed
+      }
       context.setAnswer(isStale || result.stop == .unavailable ? nil : .output(result.output))
     }
   }

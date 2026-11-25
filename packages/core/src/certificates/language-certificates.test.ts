@@ -7,7 +7,12 @@ import {
   prisma,
 } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
+import {
+  daysAfterLearnerToday,
+  goalFixture,
+  planFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import {
   courseChapterFixture,
@@ -22,6 +27,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS, type CefrLevel } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mergeSkills } from "../_test-utils/merge-skills";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateGoal } from "../goals/update-goal";
@@ -920,6 +926,8 @@ describe("a level's size, each written lesson counted once", () => {
   it.each([5, 10, 15, 20])(
     "earns no level below half for a dated plan whose lessons teach two levels, at %s minutes a day",
     async (dailyMinutes) => {
+      freezeClock();
+
       const fixture = await italianPlan({
         items: [
           ...Array.from({ length: 3 }, () => ({ skill: 0 })),
@@ -940,7 +948,7 @@ describe("a level's size, each written lesson counted once", () => {
         data: {
           dailyMinutes,
           details: { level: "none", targetLevel: "A1" },
-          targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          targetDate: daysAfterLearnerToday({ days: 1, timeZone: TIME_ZONE }),
         },
         where: { id: fixture.goal.id },
       });
@@ -1080,6 +1088,8 @@ describe("a course level's half, its skills taken from the plan's graph", () => 
   it.each([false, true])(
     "keeps a skill a dated plan left wholly out in the level's size (its lessons written: %s)",
     async (outlined) => {
+      freezeClock();
+
       const fixture = await italianPlan({
         items: [{ skill: 0 }, { skill: 0 }],
         skills: [
@@ -1101,7 +1111,10 @@ describe("a course level's half, its skills taken from the plan's graph", () => 
       await prisma.planItem.deleteMany({ where: { planId: fixture.plan.id } });
 
       await prisma.goal.update({
-        data: { dailyMinutes: 5, targetDate: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        data: {
+          dailyMinutes: 5,
+          targetDate: daysAfterLearnerToday({ days: 1, timeZone: TIME_ZONE }),
+        },
         where: { id: fixture.goal.id },
       });
 
