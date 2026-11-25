@@ -130,13 +130,40 @@ final class UnderstoodRowsTests: XCTestCase {
 
     XCTAssertEqual(some.value, "Cell cycle.pdf")
     XCTAssertEqual(
-      some.note, "Your plan and lessons follow only this material. We couldn't read the rest.")
+      some.note,
+      "Your plan and lessons follow only this material. We couldn't read “Notes.jpg”.")
+
+    let several = try XCTUnwrap(
+      UnderstoodRows.materialRow(
+        sources: [
+          source("Notes.jpg", .unreadable), source("Board.jpg", .unreadable),
+          source("Cell cycle.pdf", .readable),
+        ],
+        missing: false))
+
+    XCTAssertEqual(
+      several.note,
+      "Your plan and lessons follow only this material. We couldn't read the other files.")
+
+    let someGone = try XCTUnwrap(
+      UnderstoodRows.materialRow(sources: [source("Cell cycle.pdf", .readable)], missing: true))
+
+    XCTAssertEqual(
+      someGone.note, "Your plan and lessons follow only this material. We couldn't read the rest.")
 
     let none = try XCTUnwrap(
       UnderstoodRows.materialRow(sources: [source("Notes.jpg", .unreadable)], missing: false))
 
     XCTAssertEqual(none.value, "Notes.jpg", "The note's \"it\" points at what it couldn't read")
     XCTAssertEqual(none.note, "We couldn't read it, so your plan won't follow it.")
+
+    let noneOfSeveral = try XCTUnwrap(
+      UnderstoodRows.materialRow(
+        sources: [source("Notes.jpg", .unreadable), source("Board.jpg", .unreadable)],
+        missing: false))
+
+    XCTAssertEqual(
+      noneOfSeveral.note, "We couldn't read these files, so your plan won't follow them.")
 
     let gone = try XCTUnwrap(UnderstoodRows.materialRow(sources: [], missing: true))
 

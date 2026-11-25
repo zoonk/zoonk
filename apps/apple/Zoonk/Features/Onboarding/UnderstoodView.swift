@@ -626,7 +626,10 @@ private struct UnderstoodRowView: View {
           // Material that's all gone leaves only its note.
           if !row.value.isEmpty || !row.valueFacts.isEmpty {
             HStack(alignment: .firstTextBaseline) {
-              if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
+              Group {
+                if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
+              }
+              .typeWeight(.medium)
               if let badge = row.badge {
                 Text(badge)
                   .typeStyle(.meta)
