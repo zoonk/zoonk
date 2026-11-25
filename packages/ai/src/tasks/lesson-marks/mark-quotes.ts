@@ -109,7 +109,7 @@ type Span = { end: number; start: number };
 
 /**
  * The text as a model copies it: prose without its inline code and bold marks and with single
- * spaces, code as written. `offsets` holds each kept character's place in the text.
+ * spaces, code as written but for its line endings. `offsets` holds each kept character's place.
  */
 function readCopy(text: string): { offsets: number[]; value: string } {
   const code = findCodeSpans(text);
@@ -117,9 +117,13 @@ function readCopy(text: string): { offsets: number[]; value: string } {
   return text.split("").reduce<{ offsets: number[]; value: string }>(
     (read, char, at) => {
       const inCode = code.some((span) => at >= span.start && at < span.end);
-      const space = char.trim() === "";
+      const space = !inCode && char.trim() === "";
 
-      if ((!inCode && INLINE_MARK.test(char)) || (space && read.value.endsWith(" "))) {
+      if (
+        char === "\r" ||
+        (!inCode && INLINE_MARK.test(char)) ||
+        (space && read.value.endsWith(" "))
+      ) {
         return read;
       }
 
@@ -130,53 +134,69 @@ function readCopy(text: string): { offsets: number[]; value: string } {
   );
 }
 
-/** Every place the text holds what the model copied, its blank lines and inline marks included. */
+function occurrences({ of, within }: { of: string; within: string }): number[] {
+  const found: number[] = [];
+
+  for (let at = of ? within.indexOf(of) : -1; at !== -1; at = within.indexOf(of, at + 1)) {
+    found.push(at);
+  }
+
+  return found;
+}
+
+/**
+ * Every place the text holds what the model copied: word for word first, then with the blank lines
+ * and inline marks the copy dropped.
+ */
 function locateCopies({ quote, text }: { quote: string; text: string }): Span[] {
   const copy = readCopy(quote).value.trim();
   const { offsets, value } = readCopy(text);
-  const spans: Span[] = [];
 
-  for (let at = copy ? value.indexOf(copy) : -1; at !== -1; at = value.indexOf(copy, at + 1)) {
-    spans.push({ end: (offsets[at + copy.length - 1] ?? 0) + 1, start: offsets[at] ?? 0 });
-  }
-
-  return spans;
+  return [
+    ...occurrences({ of: quote, within: text }).map((at) => ({
+      end: at + quote.length,
+      start: at,
+    })),
+    ...occurrences({ of: copy, within: value }).map((at) => ({
+      end: (offsets[at + copy.length - 1] ?? 0) + 1,
+      start: offsets[at] ?? 0,
+    })),
+  ];
 }
+
+/** The copies seen swap a block and its intro; more parts would make the search grow by their factorial. */
+const MAX_REORDERED_PARTS = 4;
 
 /** A model sometimes copies a block ahead of the sentence that introduces it; the text's order stands. */
 function locateReordered({ quote, text }: { quote: string; text: string }): Span[] {
   const cuts = [0, ...findCodeSpans(quote).flatMap(({ end, start }) => [start, end]), quote.length];
 
-  const parts = cuts
+  const places = cuts
     .slice(1)
     .map((end, index) => quote.slice(cuts[index], end))
-    .filter((part) => part.trim() !== "");
+    .filter((part) => part.trim() !== "")
+    .map((part) => locateCopies({ quote: part, text }));
 
-  if (parts.length < 2) {
+  if (places.length < 2 || places.length > MAX_REORDERED_PARTS) {
     return [];
   }
 
-  const choices = parts.reduce<Span[][]>(
-    (combos, part) =>
-      combos.flatMap((combo) =>
-        locateCopies({ quote: part, text }).map((span) => [...combo, span]),
-      ),
-    [[]],
+  const extend = (span: Span, left: readonly Span[][]): Span[] =>
+    left.length === 0
+      ? [span]
+      : left.flatMap((spans, index) =>
+          spans
+            .filter(
+              (next) => next.start >= span.end && text.slice(span.end, next.start).trim() === "",
+            )
+            .flatMap((next) =>
+              extend({ end: next.end, start: span.start }, left.toSpliced(index, 1)),
+            ),
+        );
+
+  return places.flatMap((spans, index) =>
+    spans.flatMap((span) => extend(span, places.toSpliced(index, 1))),
   );
-
-  return choices.flatMap((combo) => {
-    const [first, ...rest] = combo.toSorted((a, b) => a.start - b.start);
-
-    const joined = rest.reduce<Span | null>(
-      (span, next) =>
-        span && next.start >= span.end && text.slice(span.end, next.start).trim() === ""
-          ? { end: next.end, start: span.start }
-          : null,
-      first ?? null,
-    );
-
-    return joined ? [joined] : [];
-  });
 }
 
 /** A copy that left out the marks around it ("**Try it.**") takes them back. */

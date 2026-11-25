@@ -216,6 +216,30 @@ describe(normalizeLessonMarks, () => {
       );
     });
 
+    it("tells programs apart by their code's own spaces", () => {
+      const spaced: MarksScreen = {
+        ...program,
+        text: '```js\nconsole.log("a b");\n```\n\nIt prints one space.\n\n```js\nconsole.log("a  b");\n```\n\nIt prints two.',
+      };
+
+      const second = '```js\nconsole.log("a  b");\n```';
+      expect(exampleFor({ example: second, screen: spaced })).toBe(second);
+    });
+
+    it("gives up at once on a copy that repeats many blocks out of order", () => {
+      const pair = "Run this:\n\n```js\nf();\n```";
+      const repeated: MarksScreen = {
+        ...program,
+        text: Array.from({ length: 5 }, () => pair).join("\n\n"),
+      };
+
+      const reversed = Array.from({ length: 5 }, () => "```js\nf();\n```\nRun this:").join("\n");
+      const started = performance.now();
+
+      exampleFor({ example: reversed, screen: repeated });
+      expect(performance.now() - started).toBeLessThan(500);
+    });
+
     it("tells programs apart by their code's own stars", () => {
       const twoPrograms: MarksScreen = {
         ...program,
