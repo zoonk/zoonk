@@ -706,6 +706,49 @@ describe(buildSyllabus, () => {
     expect(syllabus.subjects[1]?.notPlannedReason).toBe("time");
   });
 
+  it("names what a module out of the plan covers by its skills, in the graph's order, only when it has no chapters", () => {
+    const syllabus = buildSyllabus({
+      areaCourses: new Map(),
+      chapterTitles: new Map([["ch-talk", "Falar de dinheiro"]]),
+      items: [
+        lesson({ chapterId: "ch-budget", skillId: "s-budget" }),
+        lesson({ chapterId: "ch-talk", skillId: "s-talk", status: "done" }),
+      ],
+      knownSkillIds: new Set(),
+      notice: null,
+      pastBasicsSkillIds: new Set(),
+      skills: [
+        { area: "Orçamento", name: "Montar um orçamento", skillId: "s-budget", topics: [] },
+        { area: "Investimentos", name: "Comparar riscos", skillId: "s-risk", topics: [] },
+        { area: "Impostos", name: "Declarar impostos", skillId: "s-tax", topics: [] },
+        { area: "Investimentos", name: "Ler um extrato", skillId: "s-statement", topics: [] },
+        { area: "Comunicação", name: "Conversar sobre dinheiro", skillId: "s-talk", topics: [] },
+        { area: "Comunicação", name: "Negociar", skillId: "s-negotiate", topics: [] },
+      ],
+      skippedAreas: ["Impostos", "Comunicação"],
+    });
+
+    expect(
+      syllabus.subjects.map((subject) => [subject.name, subject.notPlannedReason, subject.covers]),
+    ).toStrictEqual([
+      ["Orçamento", null, []],
+      ["Investimentos", "time", ["Comparar riscos", "Ler um extrato"]],
+      ["Impostos", "skipped", ["Declarar impostos"]],
+      ["Comunicação", "skipped", []],
+    ]);
+  });
+
+  it("leaves what an exam subject out of the plan covers to its topics", () => {
+    const input = oldGraphInput();
+
+    const syllabus = buildSyllabus({
+      ...input,
+      items: input.items.filter((item) => item.skillId !== "s-process"),
+    });
+
+    expect(syllabus.subjects[2]).toMatchObject({ covers: [], notPlannedReason: "time" });
+  });
+
   it("names a subject by the notice's short name before its areas' and courses' names", () => {
     const shortNames = ["Português", "Direito Constitucional e Regimento", "Processo Legislativo"];
     const subjects = notice?.subjects ?? [];

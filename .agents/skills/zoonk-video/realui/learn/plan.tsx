@@ -285,6 +285,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     return {
       areas: [module.name],
       chapters: [],
+      covers: [],
       displayWeight: null,
       group: null,
       imageUrl: null,

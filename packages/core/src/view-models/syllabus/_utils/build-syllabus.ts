@@ -17,7 +17,12 @@ import {
   getItemAreas,
   withoutKey,
 } from "./syllabus-chapters";
-import { type SyllabusInput, type SyllabusItem, hasSyllabusNotice } from "./syllabus-input";
+import {
+  type SyllabusInput,
+  type SyllabusItem,
+  type SyllabusSkill,
+  hasSyllabusNotice,
+} from "./syllabus-input";
 import {
   draftSubjects,
   findWrittenPart,
@@ -100,6 +105,23 @@ function measureSubject({
     mastery: getSubjectMastery({ areas, sections: counted }),
     preparation: getSubjectPreparation({ areas, sections: counted }),
   };
+}
+
+/** Its topics and chapters say what a subject covers; one out of the plan without either still has its skills. */
+function listCovers({
+  chapters,
+  notPlannedReason,
+  skills,
+  topics,
+}: {
+  chapters: readonly unknown[];
+  notPlannedReason: NotPlannedReason | null;
+  skills: readonly SyllabusSkill[];
+  topics: readonly unknown[];
+}): string[] {
+  return notPlannedReason && topics.length === 0 && chapters.length === 0
+    ? skills.map((skill) => skill.name)
+    : [];
 }
 
 /** Topic status requires evidence from mapped plan skills; otherwise display notice topics without claiming coverage. */
@@ -218,6 +240,7 @@ export function buildSyllabus(
     return {
       areas: draft.areas,
       chapters: chapters.map((chapter) => withoutKey(chapter)),
+      covers: listCovers({ chapters, notPlannedReason, skills: ownSkills, topics }),
       displayWeight: displayWeights[index] ?? null,
       ...(extra && { extra: true }),
       group: draft.group,
