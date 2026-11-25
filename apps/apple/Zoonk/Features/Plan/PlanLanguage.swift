@@ -49,7 +49,8 @@ extension LanguageStanding {
   }
 
   private var noLevelYet: String {
-    String(localized: "Not yet", table: "Plan", comment: "A language level not measured yet")
+    String(
+      localized: "Not tested yet", table: "Plan", comment: "A language level not measured yet")
   }
 }
 
