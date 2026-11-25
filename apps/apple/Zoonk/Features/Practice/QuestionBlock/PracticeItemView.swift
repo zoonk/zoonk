@@ -602,19 +602,21 @@ struct TypedItemView: View {
 
   var body: some View {
     HStack {
-      TextField(
-        text: Binding(get: { shown }, set: type), prompt: Text(answerPlaceholder).fieldPrompt()
-      ) {
-        Text(answerPlaceholder)
-      }
-      .typeStyle(.lessonText)
-      .textInputAutocapitalization(.never)
-      .autocorrectionDisabled()
-      .submitLabel(.done)
-      .focused($isFocused)
-      .disabled(isLocked)
-      .onSubmit {
-        if let answer = draft?.complete { onSubmit(answer) }
+      FittedTextInput(text: Binding(get: { shown }, set: type), limit: 500) { text, selection in
+        TextField(
+          text: text, selection: selection, prompt: Text(answerPlaceholder).fieldPrompt()
+        ) {
+          Text(answerPlaceholder)
+        }
+        .typeStyle(.lessonText)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .submitLabel(.done)
+        .focused($isFocused)
+        .disabled(isLocked)
+        .onSubmit {
+          if let answer = draft?.complete { onSubmit(answer) }
+        }
       }
 
       if let mark {

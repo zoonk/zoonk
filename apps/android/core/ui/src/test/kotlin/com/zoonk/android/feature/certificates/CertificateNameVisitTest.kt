@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.certificates
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.SavedStateHandle
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -68,7 +69,7 @@ class CertificateNameVisitTest {
             api.saveFailure = ApiException(ApiError.Network)
 
             model.change("Ana")
-            model.type("Ana Lima")
+            model.field.setTextAndPlaceCursorAtEnd("Ana Lima")
             model.save("Ana")
             runCurrent()
             if (leaveFirst) model.visit.end()

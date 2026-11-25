@@ -3,11 +3,12 @@ import UIKit
 
 extension View {
   /// Main's input around a `TextField` or `TextEditor` drawn outside a list row: the stronger line,
-  /// 44pt tall (an answer's field is taller), and a thicker ink line while it has focus. An invalid
-  /// field draws main's `destructive` mark with a soft 3pt ring around it; its message keeps
-  /// `destructiveText`. A checked answer's field takes its verdict's line instead. A field that
-  /// `holdsFocus` for a whole task and fills the screen, such as a written answer, keeps a soft line
-  /// while focused, as main's writing field does; the ink line comes back with more contrast.
+  /// 44pt tall (an answer's field is taller), and while it has focus the line in ink with main's
+  /// focus ring outside it. An invalid field draws main's `destructive` mark with a soft 3pt ring
+  /// around it; its message keeps `destructiveText`. A checked answer's field takes its verdict's
+  /// line instead. A field that `holdsFocus` for a whole task and fills the screen, such as a
+  /// written answer, keeps a soft line and no ring while focused, as main's writing field does; the
+  /// ink line and its ring come back with more contrast.
   func fieldBorder(
     isFocused: Bool = false, isInvalid: Bool = false, isRight: Bool? = nil, minHeight: CGFloat = 44,
     holdsFocus: Bool = false
@@ -24,6 +25,19 @@ extension Text {
   /// system's prompt color, so it reads as a hint in every appearance.
   func fieldPrompt() -> Text {
     foregroundStyle(.mutedForeground)
+  }
+}
+
+extension InsettableShape {
+  /// Main's `ring-[3px] ring-ring/50` just outside a focused field's ink line, more contrast
+  /// included.
+  func focusRing() -> some View {
+    ringOutside(Color(.foreground).opacity(0.5))
+  }
+
+  /// A 3pt ring just outside the shape's line, its corners following the shape's own.
+  func ringOutside(_ color: Color) -> some View {
+    inset(by: -1.5).stroke(color, lineWidth: 3)
   }
 }
 
@@ -48,13 +62,15 @@ private struct FieldBorder: ViewModifier {
       .frame(minHeight: minHeight)
       .background(.boxBackground, in: shape)
       .overlay {
-        shape.strokeBorder(line, lineWidth: isFocused && isRight == nil && !softFocus ? 2 : 1)
+        shape.strokeBorder(line)
       }
       .background {
-        if isInvalid && isRight == nil && contrast != .increased {
-          shape
-            .inset(by: -1.5)
-            .stroke(Color.destructive.opacity(colorScheme == .dark ? 0.4 : 0.2), lineWidth: 3)
+        if isInvalid && isRight == nil {
+          if contrast != .increased {
+            shape.ringOutside(Color.destructive.opacity(colorScheme == .dark ? 0.4 : 0.2))
+          }
+        } else if isFocused && !softFocus {
+          shape.focusRing()
         }
       }
   }

@@ -1352,5 +1352,268 @@
         "title": null
       }
     ]
+  },
+  "pt-java-construtores": {
+    "ideas": [
+      {
+        "label": "Construtor",
+        "text": "O construtor tem o nome da classe, não tem tipo de retorno e é executado quando `new` cria o objeto."
+      },
+      {
+        "label": "Construtor padrão",
+        "text": "Java cria um construtor sem parâmetros apenas quando a classe não declara nenhum construtor."
+      },
+      {
+        "label": "Método com nome da classe",
+        "text": "Uma rotina com tipo de retorno, mesmo com o nome da classe, é um método, que só roda quando algum código o chama, e não é executada automaticamente pelo `new` por ter esse nome."
+      },
+      {
+        "label": "Sobrecarga de construtores",
+        "text": "Uma classe pode ter construtores com listas de parâmetros diferentes, e o compilador escolhe um pela quantidade e pelos tipos dos argumentos."
+      },
+      {
+        "label": "Encadeamento com this(...)",
+        "text": "Com `this(...)` como primeira instrução, um construtor executa outro da mesma classe e só depois continua seu próprio corpo."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Classes, construtores e membros estáticos",
+    "level": "intermediate",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Observe esta classe:\n\n```java\nclass Pedido {\n    Pedido(int codigo) {}\n}\n```\n\nA expressão `new Pedido(31)` executa `Pedido(int codigo)` com 31, no momento em que o objeto nasce. Essa rotina tem o nome da classe e nenhum tipo de retorno. Ela se chama **construtor**.",
+        "title": "A rotina que cria o objeto"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "A classe `class Caixa {}` não declara construtor algum. O que acontece com a linha `new Caixa();`?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "`class Caixa {}` não declara construtor, então o compilador cria um sem parâmetros, e `new Caixa()` compila. Mas, se a classe declarar só `Caixa(int n) {}`, ele não cria mais nada, e `new Caixa()` deixa de compilar. Esse é o **construtor padrão**.",
+        "title": "O construtor que Java cria"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Veja esta outra classe:\n\n```java\nclass Alerta {\n    void Alerta() {}\n}\n```\n\nO `void` faz de `Alerta` um método comum, que só roda quando alguém o chama. Como a classe não declara construtor, `new Alerta()` usa o construtor padrão e não executa esse método.",
+        "title": "Com tipo de retorno, é método"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Considere esta classe:\n\n```java\nclass Aviso {\n    void Aviso() {\n        System.out.print(\"A\");\n    }\n}\n```\nJulgue o item: executar `new Aviso()` compila e não imprime A.",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Observe esta classe:\n\n```java\nclass Bilhete {\n    Bilhete() {}\n    Bilhete(int setor) {}\n}\n```\n\nEla aceita tanto `new Bilhete()` quanto `new Bilhete(3)`. O compilador escolhe o construtor pela quantidade e pelos tipos dos argumentos. Isso é **sobrecarga** de construtores.",
+        "title": "Várias formas de criar"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Observe este construtor:\n\n```java\nBilhete() {\n    this(8);\n}\n```\n\nA chamada `this(8)` executa `Bilhete(int setor)` com 8 e só depois o resto do corpo de `Bilhete()`. Escreva-a como primeira instrução, forma aceita em qualquer versão do Java. Isso é **encadeamento** de construtores.",
+        "title": "Um construtor chama outro"
+      },
+      {
+        "hasVisual": true,
+        "kind": "workedExample",
+        "text": "O que `new Rota()` imprime com esta classe?\n\n```java\nclass Rota {\n    Rota() {\n        this(6);\n        System.out.print(\"B\");\n    }\n\n    Rota(int n) {\n        System.out.print(n);\n    }\n}\n```",
+        "title": "Seguindo a delegação"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Considere esta classe:\n\n```java\nclass Canal {\n    Canal() {\n        this(9);\n        System.out.print(\"X\");\n    }\n\n    Canal(int n) {\n        System.out.print(n);\n    }\n}\n```\nJulgue o item: `new Canal()` imprime X9.",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "O sistema da ouvidoria municipal de Uberlândia tem esta classe:\n\n```java\nclass Protocolo {\n    Protocolo(int n) {\n        System.out.print(n);\n    }\n}\n```\n\nAgora `new Protocolo()` também precisa compilar e imprimir 100, sem mudar o que `new Protocolo(5)` faz.\nQual é a alteração mínima na classe?",
+        "title": null
+      }
+    ]
+  },
+  "pt-java-heranca": {
+    "ideas": [
+      {
+        "label": "Herança cria subtipo",
+        "text": "Com `extends`, a herança torna a nova classe um subtipo, que pode ocupar o lugar da outra classe."
+      },
+      {
+        "label": "Uma superclasse direta",
+        "text": "Em Java, uma classe tem no máximo uma superclasse direta, só `Object` não tem nenhuma, e uma classe pode estar no fim de uma cadeia de heranças."
+      },
+      {
+        "label": "Composição: ter um objeto",
+        "text": "Na composição, uma classe guarda uma referência a outro objeto, e esse campo não a torna um subtipo dele."
+      },
+      {
+        "label": "Classe final",
+        "text": "Uma classe final não aceita subclasses, porque bloqueia só o `extends`."
+      },
+      {
+        "label": "Delegação",
+        "text": "Na delegação, a classe repassa uma operação ao objeto que guarda, chamando o método dele."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Herança, interfaces e composição",
+    "level": "intermediate",
+    "screens": [
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Com `class Documento {}` e `class Oficio extends Documento {}`, todo ofício também é um documento. Por isso `Documento d = new Oficio();` compila. Essa relação se chama **herança**: `Oficio` vira um subtipo de `Documento` e pode ocupar o lugar dele.",
+        "title": "Extends cria um subtipo"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "Para aproveitar recursos de duas classes prontas, uma equipe escreve `class Tela extends Janela, Registro {}`. O que acontece?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "A classe escrita logo após `extends` é a **superclasse direta**, e em Java uma classe tem no máximo uma. Por isso `Tela extends Janela, Registro` não compila: juntar recursos de dois pais não é permitido. Já uma cadeia vale: `Janela extends Componente` e `Tela extends Janela`. Toda classe tem exatamente uma superclasse direta, exceto `Object`, que fica no topo e não tem nenhuma.",
+        "title": "Só um pai direto"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Observe esta classe:\n\n```java\nclass Relatorio {\n    Impressora impressora;\n}\n```\n\nO relatório guarda uma referência a uma impressora para usá-la. Isso se chama **composição**. Esse campo não torna `Relatorio` um subtipo de `Impressora`, então `Impressora i = new Relatorio();` não compila.",
+        "title": "Ter um objeto não é ser ele"
+      },
+      {
+        "hasVisual": true,
+        "kind": "workedExample",
+        "text": "Considere estas classes:\n\n```java\nclass Motor {}\nclass Veiculo {}\n\nclass Ambulancia extends Veiculo {\n    Motor motor;\n}\n```\n\nQuais atribuições compilam: `Veiculo v = new Ambulancia();` e `Motor m = new Ambulancia();`?",
+        "title": "Lendo uma declaração"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Considere estas classes:\n\n```java\nclass Arquivo {}\nclass Leitor {}\n\nclass ArquivoDigital extends Arquivo {\n    Leitor leitor;\n}\n```\n\nAgora veja as atribuições `Arquivo a = new ArquivoDigital();` e `Leitor l = new ArquivoDigital();`.\nQuais atribuições compilam?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Com `final class Chave {}`, a linha `class ChaveEspecial extends Chave {}` não compila, mesmo com a nova classe vazia. Uma classe **final** não aceita subclasses. O que ela bloqueia é só o `extends`.",
+        "title": "Classe que não aceita filhas"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Observe esta classe:\n\n```java\nclass Emissor {\n    Impressora p = new Impressora();\n\n    void emitir() {\n        p.imprimir();\n    }\n}\n```\n\nChamar `emitir()` faz a impressora trabalhar. O emissor não imprime sozinho: ele repassa a operação ao objeto que guarda. Isso se chama **delegação**.",
+        "title": "Repassar a tarefa"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Julgue o item: mesmo que `Impressora` seja declarada `final`, a classe `Emissor` pode guardar uma referência a ela e chamar seu método público `imprimir()`.\nQual é o julgamento correto?",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "No sistema que exporta dados para o Portal da Transparência, `Exportador` precisa ser um `Servico` e compactar arquivos com esta classe:\n\n```java\nfinal class Compactador {\n    public void compactar() {}\n}\n```\nQual declaração atende às duas exigências e executa a compactação?",
+        "title": null
+      }
+    ]
+  },
+  "pt-js-async-await": {
+    "ideas": [
+      {
+        "label": "Função assíncrona",
+        "text": "Uma função marcada com async sempre devolve uma Promise e começa a executar o corpo no momento da chamada."
+      },
+      {
+        "label": "Suspensão no await",
+        "text": "O await suspende só a função assíncrona, e o código de fora segue antes de ela retomar, mesmo quando a Promise já deu certo."
+      },
+      {
+        "label": "Falhas e rejeição",
+        "text": "Uma Promise rejeitada faz o await lançar a falha ali, e um throw sem try na função assíncrona rejeita a Promise devolvida em vez de escapar para quem chamou."
+      },
+      {
+        "label": "Limpeza com finally",
+        "text": "O finally roda antes de a função assíncrona entregar seu resultado, mesmo quando o try já fez return."
+      }
+    ],
+    "language": "pt",
+    "lessonTitle": "Fluxo assíncrono com async/await",
+    "level": "intermediate",
+    "screens": [
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Quando você marca uma função com `async`, ela passa a devolver uma Promise, aquele objeto que guarda um resultado, mesmo que você retorne um número. Veja esta função:\n\n```javascript\nasync function obter() {\n  return 12;\n}\n```\n\nCom ela, `obter().then(console.log)` recebe `12`. Isso é uma **função assíncrona**.",
+        "title": "async sempre devolve Promise"
+      },
+      {
+        "hasVisual": true,
+        "kind": "guess",
+        "text": "```javascript\nasync function consultar() {\n  console.log('dentro');\n  return 12;\n}\n\nconsultar();\nconsole.log('fora');\n```\n\nQual é a saída, em ordem, desse código?",
+        "title": null
+      },
+      {
+        "hasVisual": false,
+        "kind": "explanation",
+        "text": "Chamar `consultar()` executa o corpo na hora, como numa função comum. Por isso `console.log('dentro')` roda antes de a chamada devolver o controle, e só então vem `fora`. O `async` muda o que a função devolve, não quando ela começa.",
+        "title": "O corpo começa na chamada"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Dentro da função assíncrona, `await` pausa só ela até a Promise trazer o resultado. Neste trecho, `mostrar` espera os dados, mas o código de fora segue em frente:\n\n```javascript\nconst dados = await consultar();\nmostrar(dados);\n```\n\nEssa pausa é a **suspensão**.",
+        "title": "await pausa só a função"
+      },
+      {
+        "hasVisual": true,
+        "kind": "workedExample",
+        "text": "Qual é a saída deste código?\n\n```javascript\nasync function carregar() {\n  console.log('início');\n  const n = await Promise.resolve(8);\n  console.log(n);\n}\n\ncarregar();\nconsole.log('fora');\n```",
+        "title": "Rastreando um await"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Se a Promise aguardada é rejeitada, o `await` lança a falha ali mesmo, como um `throw`. Numa função assíncrona, este trecho nunca chega a `ok` e imprime `offline`:\n\n```javascript\ntry {\n  await Promise.reject('offline');\n  console.log('ok');\n} catch (e) {\n  console.log(e);\n}\n```",
+        "title": "Rejeição vira erro no await"
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Um `throw` sem `try` dentro da função assíncrona não escapa para quem chamou: ele vira a rejeição da Promise devolvida, mesmo antes de qualquer `await`. Por isso, com esta função, `falhar().catch(console.log)` imprime `offline`:\n\n```javascript\nasync function falhar() {\n  throw 'offline';\n}\n```",
+        "title": "Erro não tratado rejeita a Promise"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "Considere o código:\n\n```javascript\nasync function validar() {\n  throw 'CPF inválido';\n}\n\ntry {\n  validar().catch(() => {});\n} catch (e) {\n  console.log('externo');\n}\n```\nJulgue o item: _Ao executar o código, o console imprime externo._",
+        "title": null
+      },
+      {
+        "hasVisual": true,
+        "kind": "explanation",
+        "text": "Veja esta função:\n\n```javascript\nasync function ler() {\n  try {\n    return await Promise.resolve('dados');\n  } finally {\n    console.log('fim');\n  }\n}\n```\n\nO `return` não encerra a função na hora. O `finally` roda antes, por isso `fim` aparece antes de quem chamou receber `dados`.",
+        "title": "finally roda antes da entrega"
+      },
+      {
+        "hasVisual": true,
+        "kind": "question",
+        "text": "No portal Consulta Clara, a equipe revisa este código:\n\n```javascript\nasync function abrir() {\n  try {\n    return await Promise.reject('offline');\n  } catch (e) {\n    return 'cópia';\n  } finally {\n    console.log('fechado');\n  }\n}\n\nabrir().then(console.log);\nconsole.log('tela');\n```\nQual análise da saída está correta?",
+        "title": null
+      }
+    ]
   }
 }

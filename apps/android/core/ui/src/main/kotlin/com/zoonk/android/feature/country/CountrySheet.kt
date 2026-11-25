@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +31,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -88,7 +89,8 @@ fun CountrySheet(
     val catalog = LocalCountryCatalog.current?.get(language)
     val all = catalog?.collectShown()?.value ?: LoadState.Loading
     val scope = rememberCoroutineScope()
-    var query by rememberSaveable { mutableStateOf("") }
+    val queryField = rememberTextFieldState()
+    val query = queryField.text.toString()
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
     val pick = { choice: CountryChoice ->
         if (choice.code == selected) {
@@ -117,13 +119,12 @@ fun CountrySheet(
                     )
                 }
                 OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
+                    state = queryField,
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.country_search),
                     leadingIcon = { Icon(painterResource(R.drawable.ic_search), contentDescription = null) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                 )
                 matches?.takeIf { all.hasContent }?.let { ResultCount(it.size) }
             }

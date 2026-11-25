@@ -90,20 +90,23 @@ struct ProfileEditorView: View {
                   .foregroundStyle(.mutedForeground)
                   .accessibilityHidden(true)
 
-                TextField(
-                  text: normalizedUsernameBinding,
-                  prompt: Text(
-                    "username",
-                    tableName: "Account",
-                    comment: "Placeholder for the username field"
-                  ).fieldPrompt()
-                ) {
-                  Text("Username", tableName: "Account", comment: "Profile username field label")
+                FittedTextInput(text: $username, limit: UsernameStatus.maxLength) {
+                  text, selection in
+                  TextField(
+                    text: text, selection: selection,
+                    prompt: Text(
+                      "username",
+                      tableName: "Account",
+                      comment: "Placeholder for the username field"
+                    ).fieldPrompt()
+                  ) {
+                    Text("Username", tableName: "Account", comment: "Profile username field label")
+                  }
+                  .textInputAutocapitalization(.never)
+                  .autocorrectionDisabled()
+                  .textContentType(.username)
+                  .focused($focusedField, equals: .username)
                 }
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .textContentType(.username)
-                .focused($focusedField, equals: .username)
               }
             } hint: {
               usernameHint
@@ -284,12 +287,6 @@ struct ProfileEditorView: View {
 
   private var normalizedUsername: String {
     username.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-  }
-
-  private var normalizedUsernameBinding: Binding<String> {
-    Binding(
-      get: { username },
-      set: { username = $0.lowercased() })
   }
 
   private var isNameTooLong: Bool {

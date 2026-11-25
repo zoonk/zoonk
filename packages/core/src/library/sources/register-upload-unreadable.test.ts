@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { get } from "@vercel/blob";
+import { get, setTtl } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { Response as PageResponse, fetch } from "undici";
@@ -102,7 +102,7 @@ describe("uploads that can't be read", () => {
     await expectNoSource({ userId: user.id });
   });
 
-  it("refuses a file type it can't read and a damaged PDF", async () => {
+  it("refuses a file type it can't read and a damaged PDF, and leaves each file to expire", async () => {
     const { pathname, user } = await signedIn();
     const video = pathname(`lecture-${randomUUID()}.mp4`);
     const pdf = pathname(`notice-${randomUUID()}.pdf`);
@@ -124,6 +124,7 @@ describe("uploads that can't be read", () => {
     ).resolves.toStrictEqual({ status: "unsupported" });
 
     await expectNoSource({ userId: user.id });
+    expect(setTtl).not.toHaveBeenCalled();
   });
 
   it("says a link is missing when the page can't be fetched, and counts it as an upload", async () => {

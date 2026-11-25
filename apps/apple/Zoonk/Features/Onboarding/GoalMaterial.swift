@@ -538,6 +538,9 @@ extension MaterialDraft {
 }
 
 private struct PasteMaterialRow: View {
+  private static let linkLimit = 2_000
+  private static let textLimit = 200_000
+
   @Binding var value: String
   let isLink: Bool
   let isAdding: Bool
@@ -550,18 +553,20 @@ private struct PasteMaterialRow: View {
     VStack(alignment: .leading, spacing: 12) {
       Group {
         if isLink {
-          let example = Text(
-            "https://… an article, a class page or a PDF", tableName: "Onboarding",
-            comment: "Placeholder of the box for a material link")
-          TextField(text: $value, prompt: example.fieldPrompt()) { example }
-            .keyboardType(.URL)
-            .textContentType(.URL)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .onSubmit(add)
+          FittedTextInput(text: $value, limit: Self.linkLimit) { text, selection in
+            let example = Text(
+              "https://… an article, a class page or a PDF", tableName: "Onboarding",
+              comment: "Placeholder of the box for a material link")
+            TextField(text: text, selection: selection, prompt: example.fieldPrompt()) { example }
+              .keyboardType(.URL)
+              .textContentType(.URL)
+              .textInputAutocapitalization(.never)
+              .autocorrectionDisabled()
+              .onSubmit(add)
+          }
         } else {
           MultilineTextField(
-            text: $value,
+            text: $value, limit: Self.textLimit,
             prompt: Text(
               "Paste the syllabus, your notes or a chapter", tableName: "Onboarding",
               comment: "Placeholder of the box for pasted material"),
@@ -671,7 +676,7 @@ struct MaterialQuestionsView: View {
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
-          text: $question,
+          text: $question, limit: Self.maxLength,
           prompt: Text(
             "E.g., why does glycolysis net only 2 ATP?", tableName: "Onboarding",
             comment: "Placeholder of the box for a question about the learner's material"),
@@ -683,11 +688,6 @@ struct MaterialQuestionsView: View {
         .lineLimit(1...5)
         .focused($isFocused)
         .submitLabel(.send)
-        .onChange(of: question) { _, value in
-          if value.count > Self.maxLength {
-            question = String(value.prefix(Self.maxLength))
-          }
-        }
         .padding(.vertical, 10)
         .padding(.leading, 10)
 
@@ -699,8 +699,7 @@ struct MaterialQuestionsView: View {
           }
           .labelStyle(.iconOnly)
         }
-        .buttonStyle(.mainAction)
-        .buttonBorderShape(.circle)
+        .buttonStyle(.mainAction.icon)
         .controlSize(.large)
         .disabled(trimmed.isEmpty)
       }

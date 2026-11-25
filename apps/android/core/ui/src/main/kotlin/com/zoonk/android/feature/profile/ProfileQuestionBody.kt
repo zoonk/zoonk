@@ -10,15 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +40,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.maxTextLength
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -46,9 +51,11 @@ import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 
@@ -284,14 +291,16 @@ fun ProfileQuestionBody(
                                         }.label,
                                 )
                             }
-                        ProfileField(
-                            draft.subjects[id].orEmpty(),
-                            field,
-                            80,
-                            enabled,
-                            placeholder = R.string.profile_questions_subject_placeholder,
-                        ) {
-                            onChange(draft.copy(subjects = draft.subjects + (id to it), declined = false))
+                        key(id) {
+                            ProfileField(
+                                draft.subjects[id].orEmpty(),
+                                field,
+                                80,
+                                enabled,
+                                placeholder = R.string.profile_questions_subject_placeholder,
+                            ) {
+                                onChange(draft.copy(subjects = draft.subjects + (id to it), declined = false))
+                            }
                         }
                     }
                 } else {
@@ -333,8 +342,25 @@ private fun TypedTools(
     enabled: Boolean,
     onChange: (ProfileDraft) -> Unit,
 ) {
-    val canAdd = draft.canAdd(question.options)
-    val add = { onChange(draft.added(question.options)) }
+    val field = remember { TextFieldState(draft.text) }
+    // The draft with every change sent so far: an edit or an Add that lands before the parent shows the last change
+    // builds on it, since this composition's draft would drop the chips that change made.
+    val latest = remember { LatestDraft(draft) }
+    SideEffect { latest.draft = draft }
+    val canAdd = draft.copy(text = field.text.toString()).canAdd(question.options)
+    val send = { next: ProfileDraft ->
+        latest.draft = next
+        onChange(next)
+    }
+    val show = { next: ProfileDraft ->
+        if (next.text != field.text.toString()) field.setTextAndPlaceCursorAtEnd(next.text)
+        send(next)
+    }
+    val add = {
+        val entry = latest.draft.copy(text = field.text.toString())
+        entry.canAdd(question.options).also { if (it) show(entry.added(question.options)) }
+    }
+    field.ObserveEdits { text -> if (text != latest.draft.text) show(latest.draft.typing(text, question.options)) }
     val newest = remember { BringIntoViewRequester() }
     var shownTyped by remember { mutableIntStateOf(draft.typed.size) }
     LaunchedEffect(draft.typed.size) {
@@ -343,27 +369,33 @@ private fun TypedTools(
         shownTyped = draft.typed.size
     }
     OutlinedTextField(
-        draft.text,
-        { onChange(draft.typing(it, question.options)) },
+        field,
         Modifier.fillMaxWidth(),
+        inputTransformation =
+            InputTransformation {
+                val original = originalText.toString()
+                val edited = asCharSequence().toString()
+                val previous = latest.draft.copy(text = original)
+                if (previous.typing(edited, question.options) === previous) revertAllChanges()
+            },
         enabled = enabled,
         label = stringResource(R.string.profile_questions_tools_other),
         placeholder = { Text(stringResource(R.string.profile_questions_tools_placeholder)) },
         trailingIcon = {
             TextButton(
-                onClick = add,
+                onClick = { add() },
                 enabled = enabled && canAdd,
                 size = ButtonSize.Small,
             ) { Text(stringResource(R.string.profile_questions_add)) }
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { if (canAdd) add() else defaultKeyboardAction(ImeAction.Done) }),
-        singleLine = true,
+        onKeyboardAction = { performDefault -> if (!add()) performDefault() },
+        lineLimits = TextFieldLineLimits.SingleLine,
     )
     if (draft.typed.isNotEmpty()) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             draft.typed.forEachIndexed { index, tool ->
-                val remove = { onChange(draft.removing(tool)) }
+                val remove = { send(latest.draft.removing(tool)) }
                 val name = stringResource(R.string.profile_questions_remove_tool, tool)
                 SelectionChip(
                     text = tool,
@@ -427,10 +459,12 @@ private fun ProfileField(
     help: Int? = null,
     onChange: (String) -> Unit,
 ) {
+    val field = remember { TextFieldState(value) }
+    field.ObserveEdits(onChange)
     OutlinedTextField(
-        value,
-        { onChange(it.take(limit)) },
-        modifier.fillMaxWidth().semantics { maxTextLength = limit },
+        state = field,
+        inputTransformation = InputTransformation.fitTo(limit),
+        modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         label = label,
         placeholder = placeholder?.let { { Text(stringResource(it)) } },
@@ -447,3 +481,7 @@ private fun favoritesWords(question: ProfileQuestion): Pair<Int, Int> =
         ProfileQuestion.READ -> R.string.profile_questions_read_favorites to R.string.profile_questions_read_placeholder
         else -> R.string.profile_questions_activities_favorites to R.string.profile_questions_activities_placeholder
     }
+
+private class LatestDraft(
+    var draft: ProfileDraft,
+)

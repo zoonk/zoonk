@@ -737,18 +737,6 @@ final class WritingDraftTests: XCTestCase {
     XCTAssertEqual(essay.value?.draft?.revision, 2)
   }
 
-  func testTheFieldStopsAtTheLongestAnswerTheServerTakes() {
-    let server = WritingServer(draft: .init(revision: 1, text: "Started."))
-    let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")
-
-    writer.write(String(repeating: "a", count: 48_001))
-    XCTAssertEqual(writer.text.utf16.count, 48_000)
-
-    // A character the limit would split stays out whole.
-    writer.write(String(repeating: "a", count: 47_999) + "👍🏽")
-    XCTAssertEqual(writer.text, String(repeating: "a", count: 47_999))
-  }
-
   func testAnAnswerSentIsGradedUnderItsAdmissionAndOpensTheResult() async {
     let server = WritingServer(draft: .init(revision: 1, text: "Started."))
     let writer = makeWriter(server, draftRevision: 1, draftText: "Started.")

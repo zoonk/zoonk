@@ -5,6 +5,7 @@ import SwiftUI
 /// `onSubmit` here instead: Return then submits, while pasted text keeps its lines.
 struct MultilineTextField: View {
   @Binding var text: String
+  var limit: Int?
   var selection: Binding<TextSelection?>?
   var prompt: Text?
   let label: Text
@@ -17,27 +18,39 @@ struct MultilineTextField: View {
 
   @ViewBuilder
   private var field: some View {
-    if let selection {
-      TextField(text: typed, selection: selection, prompt: prompt?.fieldPrompt(), axis: .vertical) {
+    if let limit {
+      FittedTextInput(text: $text, limit: limit) { text, selection in
+        TextField(
+          text: submitting(text), selection: selection, prompt: prompt?.fieldPrompt(),
+          axis: .vertical
+        ) {
+          label
+        }
+      }
+    } else if let selection {
+      TextField(
+        text: submitting($text), selection: selection, prompt: prompt?.fieldPrompt(),
+        axis: .vertical
+      ) {
         label
       }
     } else {
-      TextField(text: typed, prompt: prompt?.fieldPrompt(), axis: .vertical) { label }
+      TextField(text: submitting($text), prompt: prompt?.fieldPrompt(), axis: .vertical) { label }
     }
   }
 
-  private var typed: Binding<String> {
+  private func submitting(_ input: Binding<String>) -> Binding<String> {
     guard let onSubmit else {
-      return $text
+      return input
     }
 
     return Binding {
-      text
+      input.wrappedValue
     } set: { typed in
-      if Self.isReturn(from: text, to: typed) {
+      if Self.isReturn(from: input.wrappedValue, to: typed) {
         onSubmit()
       } else {
-        text = typed
+        input.wrappedValue = typed
       }
     }
   }
@@ -45,13 +58,7 @@ struct MultilineTextField: View {
   /// Return typed at the caret, over a selection or not, rather than a paste that happens to hold
   /// a new line.
   nonisolated static func isReturn(from text: String, to typed: String) -> Bool {
-    let old = Array(text)
-    let new = Array(typed)
-    let prefix = zip(old, new).prefix { $0 == $1 }.count
-    let suffix = min(
-      zip(old.reversed(), new.reversed()).prefix { $0 == $1 }.count,
-      old.count - prefix, new.count - prefix)
-    let inserted = new[prefix..<(new.count - suffix)]
+    let inserted = TextEdit(from: text, to: typed).inserted
 
     return inserted.count == 1 && inserted.first?.isNewline == true
   }

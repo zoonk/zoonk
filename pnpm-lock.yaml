@@ -1439,9 +1439,6 @@ importers:
       fast-check:
         specifier: 'catalog:'
         version: 4.10.3
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.1.0-beta

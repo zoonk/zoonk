@@ -22,21 +22,26 @@ struct EmailLoginView: View {
               title: Text("Code from the email", tableName: "Account"),
               isFocused: focusedField == .code
             ) {
-              TextField(
-                text: $code.text,
-                prompt: Text(
-                  "6-digit code",
-                  tableName: "Account",
-                  comment: "Placeholder for the email sign-in code"
-                ).fieldPrompt()
+              FittedTextInput(
+                text: $code.text, limit: EmailVerificationCode.length, digitsOnly: true
               ) {
-                Text("Code from the email", tableName: "Account")
+                text, selection in
+                TextField(
+                  text: text, selection: selection,
+                  prompt: Text(
+                    "6-digit code",
+                    tableName: "Account",
+                    comment: "Placeholder for the email sign-in code"
+                  ).fieldPrompt()
+                ) {
+                  Text("Code from the email", tableName: "Account")
+                }
+                .keyboardType(.asciiCapableNumberPad)
+                .textContentType(.oneTimeCode)
+                .focused($focusedField, equals: .code)
+                .onSubmit(signIn)
+                .disabled(session.isWorking)
               }
-              .keyboardType(.numberPad)
-              .textContentType(.oneTimeCode)
-              .focused($focusedField, equals: .code)
-              .onSubmit(signIn)
-              .disabled(session.isWorking)
             } hint: {
               Text(
                 "Enter the code we sent to \(normalizedEmail).", tableName: "Account",

@@ -361,6 +361,17 @@ fun FilledIconButton(
     content = { BusyContent(busy, content) },
 )
 
+/**
+ * A filled icon button that sends (a question, a message), disabled as main's main action is: `muted` with its glyph
+ * in `muted-foreground`. A copy of Material's colors, whose builder takes the glyph's color from around the button.
+ */
+@Composable
+fun sendButtonColors(): IconButtonColors =
+    IconButtonDefaults.filledIconButtonColors().copy(
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
 /** Main's disabled main action: `muted` with its words in `muted-foreground`, not Material's translucent ink. */
 @Composable
 private fun mainButtonColors(): ButtonColors =

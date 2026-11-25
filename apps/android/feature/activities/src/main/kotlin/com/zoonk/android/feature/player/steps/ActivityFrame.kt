@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
@@ -89,8 +89,10 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.readOnlyFieldState
 import com.zoonk.android.ui.components.unitBeforeNumber
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
@@ -187,6 +189,7 @@ internal fun ActivityView(
                 rounded,
                 content.minTolerance,
                 result?.isCorrect,
+                actions::runPrimary,
                 numericQuestion != null,
             )
         }
@@ -250,6 +253,7 @@ private fun ActivityCheckArea(
     rounded: ActivityRoundedAnswer?,
     minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
+    onSubmit: () -> Unit,
     questionAlreadyShown: Boolean = false,
 ) {
     if (check is ChoiceCheckValue) {
@@ -274,6 +278,7 @@ private fun ActivityCheckArea(
             rounded,
             minTolerance,
             isCorrect,
+            onSubmit,
             showQuestion = !questionAlreadyShown,
         )
     }
@@ -286,9 +291,9 @@ private fun CheckQuestion(text: String) {
 
 /**
  * Main's `NumericAnswerField`: the learner's own typing stays as typed until Check, which writes it with the fewest
- * digits that keep its grade, as core decides; money keeps its sign where the language writes it.
+ * digits that keep its grade, as core decides; money keeps its sign where the language writes it. The keyboard's
+ * Done checks, as main's Enter does.
  */
-@Suppress("DEPRECATION")
 @Composable
 private fun NumericCheckField(
     check: NumericCheck,
@@ -298,28 +303,22 @@ private fun NumericCheckField(
     rounded: ActivityRoundedAnswer?,
     minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
+    onSubmit: () -> Unit,
     showQuestion: Boolean = true,
 ) {
     val locale = currentLocale()
-    var typed by rememberSaveable { mutableStateOf<String?>(null) }
     val value = answer.numericValue
     val places = rounded?.places?.toInt()
+    val field = rememberTextFieldState(value?.let { formatNumber(it, locale, check.answerDigits(it, places), grouping = false) }.orEmpty())
+    field.ObserveEdits { text -> onAnswerChange(parseLocalizedNumber(text, locale)?.let(::numericAnswer)) }
     val shown =
-        when {
-            value != null && isCorrect != null -> {
-                formatNumber(
-                    value,
-                    locale,
-                    check.checkedAnswerDigits(value, isCorrect, rounded, minTolerance),
-                    grouping = false,
-                )
-            }
-
-            else -> {
-                typed?.takeIf { parseLocalizedNumber(it, locale) == value }
-            }
-        } ?: value?.let { formatNumber(it, locale, check.answerDigits(it, places), grouping = false) }
-            ?: typed.orEmpty()
+        if (value != null && isCorrect != null) {
+            readOnlyFieldState(
+                formatNumber(value, locale, check.checkedAnswerDigits(value, isCorrect, rounded, minTolerance), grouping = false),
+            )
+        } else {
+            field
+        }
     val unit = check.unit
     val unitFirst = unit != null && unitBeforeNumber(unit, locale)
 
@@ -329,30 +328,29 @@ private fun NumericCheckField(
             Text(decimalEntryRule(places), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
         }
         OutlinedTextField(
-            value = shown,
-            onValueChange = { text ->
-                typed = text
-                onAnswerChange(
-                    parseLocalizedNumber(text, locale)?.let {
-                        numericAnswer(it)
-                    },
-                )
-            },
+            state = shown,
             modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
             readOnly = locked,
             label = stringResource(R.string.player_your_answer),
             // A unit after the number waits for one, so an empty field doesn't hold a stray sign; one before it shows from the start.
-            visualTransformation =
-                unit?.takeIf { unitFirst || shown.isNotEmpty() }?.let {
+            outputTransformation =
+                unit?.takeIf { unitFirst || shown.text.isNotEmpty() }?.let {
                     com.zoonk.android.ui.components.NumberUnitTransformation(
                         it,
                         locale,
                         MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                },
+            lineLimits = TextFieldLineLimits.SingleLine,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+            // An edit's observer runs a dispatch later, so the answer goes to the player again as the key is pressed.
+            onKeyboardAction = { performDefault ->
+                if (!locked) {
+                    onAnswerChange(parseLocalizedNumber(field.text.toString(), locale)?.let(::numericAnswer))
+                    onSubmit()
                 }
-                    ?: androidx.compose.ui.text.input.VisualTransformation.None,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                performDefault()
+            },
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
         )
     }

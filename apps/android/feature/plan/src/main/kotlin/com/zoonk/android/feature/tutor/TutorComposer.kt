@@ -5,16 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthReject
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,12 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -44,7 +35,12 @@ import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.composerColors
+import com.zoonk.android.ui.components.composerFocusThickness
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.sendButtonColors
+import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
@@ -76,8 +72,10 @@ internal fun TutorComposer(
     // Main keeps the composer shut until the learner signs in again, sees Plus, or leaves a gone lesson.
     val blocked = failure == TutorFailure.SignedOut || failure == TutorFailure.PlusRequired || failure == TutorFailure.Gone
     val resending = state.unresolvedQuestion != null
-    val canSend =
-        turns != null && state.canAsk(turns) && !blocked && (vm.draft.text.isNotBlank() || resending)
+    val canAsk = turns != null && state.canAsk(turns) && !blocked
+    val canSend = canAsk && (vm.draft.text.isNotBlank() || resending)
+    // The draft is read when the key is pressed: an edit in the same frame isn't in this composition's `canSend`.
+    val sendByKey = { if (canAsk && (vm.draft.text.isNotBlank() || resending)) vm.send() }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
@@ -85,22 +83,29 @@ internal fun TutorComposer(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    // Main's 48dp composer, under Material's 56dp field.
-                    .heightIn(min = COMPOSER_HEIGHT)
                     .focusRequester(focus)
-                    .onPreviewKeyEvent { event ->
-                        val send = event.key == Key.Enter && !event.isShiftPressed
-                        if (send && event.type == KeyEventType.KeyDown && canSend) vm.send()
-                        send
-                    },
+                    .submitOnEnter(vm.draft, sendByKey),
             placeholder = { Text(placeholder) },
-            trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
-            inputTransformation = InputTransformation.maxLengthReject(MAX_QUESTION_LENGTH),
+            inputTransformation = InputTransformation.fitTo(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
+            colors = composerColors(),
+            focusedBorderThickness = composerFocusThickness(),
+            focusRing = false,
             shape = RoundedCornerShape(ZoonkRadius.xl),
-            contentPadding = PaddingValues(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
+            // Main's `min-h-11`: 44dp on one line, the send button 8dp in from the end on the last line.
+            contentPadding = PaddingValues(start = 14.dp, end = SEND_INSET + SEND_SIZE + 12.dp, top = 10.dp, bottom = 10.dp),
+            minHeight = COMPOSER_HEIGHT,
+            endAction = {
+                SendButton(
+                    state.asking,
+                    resending,
+                    enabled = canSend,
+                    onClick = vm::send,
+                    modifier = Modifier.padding(end = SEND_INSET, bottom = 7.dp),
+                )
+            },
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
-            onKeyboardAction = { if (canSend) vm.send() },
+            onKeyboardAction = { sendByKey() },
         )
 
         if (failure != null) {
@@ -129,6 +134,7 @@ private fun SendButton(
     resending: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val label = stringResource(if (resending) R.string.tutor_retry_last_question else R.string.tutor_send)
 
@@ -137,13 +143,9 @@ private fun SendButton(
         onClick = onClick,
         enabled = enabled,
         busy = asking,
-        modifier = Modifier.size(SEND_SIZE),
+        modifier = modifier.size(SEND_SIZE),
         shape = RoundedCornerShape(ZoonkRadius.lg),
-        colors =
-            IconButtonDefaults.filledIconButtonColors(
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        colors = sendButtonColors(),
     ) {
         Icon(
             painterResource(if (resending) R.drawable.ic_refresh else R.drawable.ic_arrow_upward),
@@ -153,7 +155,8 @@ private fun SendButton(
     }
 }
 
-private val COMPOSER_HEIGHT = 48.dp
+private val COMPOSER_HEIGHT = 44.dp
+private val SEND_INSET = 8.dp
 private val SEND_SIZE = 30.dp
 private val SEND_ICON = 16.dp
 private const val MAX_QUESTION_LENGTH = 2000

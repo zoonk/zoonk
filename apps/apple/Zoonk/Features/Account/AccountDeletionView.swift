@@ -198,29 +198,32 @@ struct AccountDeletionView: View {
       }
 
       if hasSentCode {
-        TextField(
-          text: $code.text,
-          prompt: Text(
-            "6-digit code",
-            tableName: "Account",
-            comment: "Placeholder for the account deletion verification code"
-          ).fieldPrompt()
-        ) {
-          Text(
-            "Verification code",
-            tableName: "Account",
-            comment: "Account deletion verification code field label")
+        FittedTextInput(text: $code.text, limit: EmailVerificationCode.length, digitsOnly: true) {
+          text, selection in
+          TextField(
+            text: text, selection: selection,
+            prompt: Text(
+              "6-digit code",
+              tableName: "Account",
+              comment: "Placeholder for the account deletion verification code"
+            ).fieldPrompt()
+          ) {
+            Text(
+              "Verification code",
+              tableName: "Account",
+              comment: "Account deletion verification code field label")
+          }
+          .keyboardType(.asciiCapableNumberPad)
+          .textContentType(.oneTimeCode)
+          .focused($isCodeFocused)
+          .accessibilityLabel(
+            Text(
+              "Verification code",
+              tableName: "Account",
+              comment: "Account deletion verification code field label")
+          )
+          .disabled(session.isWorking)
         }
-        .keyboardType(.numberPad)
-        .textContentType(.oneTimeCode)
-        .focused($isCodeFocused)
-        .accessibilityLabel(
-          Text(
-            "Verification code",
-            tableName: "Account",
-            comment: "Account deletion verification code field label")
-        )
-        .disabled(session.isWorking)
       }
     } footer: {
       SectionFooter {

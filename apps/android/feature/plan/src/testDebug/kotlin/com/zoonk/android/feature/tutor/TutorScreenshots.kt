@@ -100,6 +100,59 @@ class TutorScreenshots {
         captureMessagesUsed("phone-font200")
     }
 
+    /** The composer at rest, then focused with a question typed, as main draws it on the same page. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun composer() = captureComposer("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun composerDark() = captureComposer("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun composerMoreContrast() = captureComposer("phone-contrast", moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun composerDarkMoreContrast() = captureComposer("phone-dark-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun composerAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureComposer("phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun composerTablet() = captureComposer("tablet")
+
+    private fun captureComposer(
+        size: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val vm = viewModel(listOf(turn("t0", TutorTurn.Status.Completed, "Black holes bend light around them.", "What do black holes do?")))
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), ROUTES) }
+            }
+        }
+        write("tutor-composer-$size")
+        compose.onNode(hasSetTextAction()).performClick()
+        compose.onNode(hasSetTextAction()).performTextInput("Why can't light escape?")
+        write("tutor-composer-$size-focused")
+    }
+
+    private fun write(name: String) {
+        compose.waitForIdle()
+        // Past the press ripple, so the send button shows at rest.
+        compose.mainClock.advanceTimeBy(1_000)
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureMessagesUsed(size: String) {
         val opens = Instant.now().plus(9, ChronoUnit.DAYS)
         val limit = """{"availableAt":"$opens","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}"""
@@ -164,6 +217,19 @@ class TutorScreenshots {
             },
         refusal: ApiException? = null,
     ) {
+        val vm = viewModel(turns, refusal)
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), ROUTES) } }
+        }
+        compose.onNode(hasSetTextAction()).performTextInput("I like space")
+        compose.onNodeWithContentDescription("Send").performClick()
+        write(name)
+    }
+
+    private fun viewModel(
+        turns: List<TutorTurn>,
+        refusal: ApiException? = null,
+    ): TutorViewModel {
         val api = FakeTutorApi()
         api.thread = TutorThread(turns, hasMore = false, nextCursor = null)
         api.refusal = refusal
@@ -178,36 +244,17 @@ class TutorScreenshots {
         }
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
-        val vm =
-            TutorViewModel(
-                TutorScope.Plan("goal"),
-                TutorStore(api, cache, session, {
-                    MutationResult.Done(Unit)
-                }, { _, _ ->
-                    MutationResult.Done(
-                        Unit,
-                    )
-                }, { _, _ -> MutationResult.Done(Unit) }, { true }) { _, _, _ -> MutationResult.Obsolete },
-                SavedStateHandle(),
-            ) { MutationResult.Obsolete }
-        val routes =
-            TutorRoutes(
-                createAccount = {},
-                signIn = {},
-                subscribe = {},
-                open = {},
-                startCall = callStarter { CallStart.Failed },
-            )
-
-        compose.setContent {
-            ZoonkTheme(darkTheme = dark) { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), routes) } }
-        }
-        compose.onNode(hasSetTextAction()).performTextInput("I like space")
-        compose.onNodeWithContentDescription("Send").performClick()
-        compose.waitForIdle()
-
-        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
+        return TutorViewModel(
+            TutorScope.Plan("goal"),
+            TutorStore(api, cache, session, {
+                MutationResult.Done(Unit)
+            }, { _, _ ->
+                MutationResult.Done(
+                    Unit,
+                )
+            }, { _, _ -> MutationResult.Done(Unit) }, { true }) { _, _, _ -> MutationResult.Obsolete },
+            SavedStateHandle(),
+        ) { MutationResult.Obsolete }
     }
 
     private fun offer(json: String) = ApiJson.decodeFromString<TutorToolOffer>(json)
@@ -222,6 +269,15 @@ class TutorScreenshots {
     )
 
     private companion object {
+        val ROUTES =
+            TutorRoutes(
+                createAccount = {},
+                signIn = {},
+                subscribe = {},
+                open = {},
+                startCall = callStarter { CallStart.Failed },
+            )
+
         const val ID = "6a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
 
         val OFFERS =

@@ -31,6 +31,7 @@ struct BuddyEditor: View {
           SectionTitle(Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses"))
         }
       }
+      .onSubmit(saveChoice)
       .navigationTitle(
         Text("Your buddy", tableName: "Buddy", comment: "Title of the buddy editor")
       )
@@ -45,16 +46,18 @@ struct BuddyEditor: View {
         }
 
         ToolbarItem(placement: .confirmationAction) {
-          Button(role: .confirm) {
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            save(
-              BuddyChoice(
-                kind: choice.kind, name: trimmed.isEmpty ? nil : trimmed, glasses: choice.glasses))
-            dismiss()
-          }
+          Button(role: .confirm, action: saveChoice)
         }
       }
     }
+  }
+
+  private func saveChoice() {
+    let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+    save(
+      BuddyChoice(kind: choice.kind, name: trimmed.isEmpty ? nil : trimmed, glasses: choice.glasses)
+    )
+    dismiss()
   }
 
   private func glassesRow(_ glasses: BuddyGlasses) -> some View {
@@ -90,16 +93,16 @@ struct BuddyPickerSections: View {
         title: Text("Name", tableName: "Buddy", comment: "The buddy's custom name"),
         isFocused: isNameFocused
       ) {
-        TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil)).fieldPrompt()) {
-          Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
-        }
-        .textInputAutocapitalization(.words)
-        .autocorrectionDisabled()
-        .focused($isNameFocused)
-        .onChange(of: name) { _, newName in
-          if newName.count > buddyNameMaxLength {
-            name = String(newName.prefix(buddyNameMaxLength))
+        FittedTextInput(text: $name, limit: buddyNameMaxLength) { text, selection in
+          TextField(
+            text: text, selection: selection,
+            prompt: Text(buddyName(kind: kind, name: nil)).fieldPrompt()
+          ) {
+            Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
           }
+          .textInputAutocapitalization(.sentences)
+          .submitLabel(.done)
+          .focused($isNameFocused)
         }
       }
     }

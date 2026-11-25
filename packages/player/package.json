@@ -24,11 +24,9 @@
     "./usage-refusal": "./src/questions/lesson-question-usage.ts"
   },
   "scripts": {
-    "build": "pnpm extract:messages",
-    "build:e2e": "pnpm extract:messages",
-    "extract:messages": "tsx extract-messages.ts",
+    "i18n:extract": "eloqnt extract",
     "i18n:lint": "eloqnt lint --strict",
-    "i18n": "reuse-translations && eloqnt translate",
+    "i18n": "eloqnt extract && reuse-translations && eloqnt translate",
     "maps:build": "tsx scripts/base-maps/build-base-maps.ts",
     "test": "vitest run",
     "test:watch": "vitest",

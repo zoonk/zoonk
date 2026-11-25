@@ -471,14 +471,21 @@ private struct RewritableWords: View {
   @State private var value = ""
   @FocusState private var isFocused: Bool
 
+  private func rewrite() {
+    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !isDisabled, !trimmed.isEmpty else { return }
+    onRewrite(trimmed)
+  }
+
   var body: some View {
     if rewriting {
       Section {
         MultilineTextField(
-          text: $value,
-          label: label
+          text: $value, limit: SentGoal.promptLimit,
+          label: label, onSubmit: rewrite
         )
         .lineLimit(1...8)
+        .submitLabel(.go)
         .focused($isFocused)
         .onAppear {
           value = words
@@ -486,13 +493,7 @@ private struct RewritableWords: View {
         }
 
         ButtonRow {
-          Button {
-            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            if !trimmed.isEmpty {
-              onRewrite(trimmed)
-            }
-          } label: {
+          Button(action: rewrite) {
             Text("Read it again", tableName: "Onboarding", comment: "Reads the changed words again")
           }
           .buttonStyle(.mainAction)
@@ -705,6 +706,8 @@ private struct SourceLinkLabelStyle: LabelStyle {
 }
 
 private struct RowEditor: View {
+  private static let goalNameLimit = 120
+
   let row: UnderstoodRow
   let field: UnderstoodField
   let timeZone: String
@@ -740,12 +743,16 @@ private struct RowEditor: View {
           .disabled(isSaving)
         }
       case .text:
-        TextField(text: $text, prompt: Text(row.label).fieldPrompt()) {
-          Text(row.label)
+        FittedTextInput(
+          text: $text, limit: field == .displayName ? Self.goalNameLimit : onboardingAnswerLimit
+        ) { text, selection in
+          TextField(text: text, selection: selection, prompt: Text(row.label).fieldPrompt()) {
+            Text(row.label)
+          }
+          .focused($isFocused)
+          .submitLabel(.done)
+          .onSubmit(save)
         }
-        .focused($isFocused)
-        .submitLabel(.done)
-        .onSubmit(save)
       case .date:
         DatePicker(selection: $date, in: dateRange, displayedComponents: .date) {
           Text(row.label)

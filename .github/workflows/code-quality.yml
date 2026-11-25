@@ -68,6 +68,14 @@ jobs:
       - name: Check for i18n errors
         run: pnpm i18n:lint
 
+      - name: Check the web catalogs match their source
+        run: |
+          pnpm i18n:extract
+          git diff --exit-code -- '*.po' || {
+            echo "::error::The .po catalogs don't match the source. Run pnpm i18n:extract and commit the catalogs."
+            exit 1
+          }
+
       - name: Check catalog wording gates
         run: pnpm verify:catalog
 
