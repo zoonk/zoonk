@@ -100,6 +100,7 @@ import { stepVariantTask } from "./step-variant/task";
 import { suggestProfileToolsTask } from "./suggest-profile-tools/task";
 import { teachingChaptersTask } from "./teaching-chapters/task";
 import { topicSkillNamesTask } from "./topic-skill-names/task";
+import { transcribeMaterialTask } from "./transcribe-material/task";
 import { transcribeSpeechTask } from "./transcribe-speech/task";
 import { translatePassMarksTask } from "./translate-pass-marks/task";
 import { understandGoalTask } from "./understand-goal/task";
@@ -154,6 +155,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       checkExamReadingTask,
       examIdentityDecisionTask,
       uploadVisibilityTask,
+      transcribeMaterialTask,
       sourceChangeNoticeTask,
       translatePassMarksTask,
       citeMaterialTask,
