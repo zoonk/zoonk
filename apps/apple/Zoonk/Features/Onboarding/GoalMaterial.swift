@@ -76,18 +76,10 @@ struct GoalMaterialChips: View {
       VStack(alignment: .leading, spacing: 12) {
         FlowLayout {
           ForEach(material) { source in
-            MaterialChip(title: title(of: source), look: look(of: source)) {
+            MaterialChip(title: source.shownTitle, look: look(of: source)) {
               material.removeAll { $0.id == source.id }
             }
           }
-        }
-
-        if let unavailableLine {
-          FailureLine(message: unavailableLine)
-        }
-
-        if let unreadableLine {
-          FailureLine(message: unreadableLine)
         }
 
         if let fullLine {
@@ -134,14 +126,10 @@ struct GoalMaterialChips: View {
     }
   }
 
-  private func title(of source: AttachedSource) -> String {
-    source.title.flatMap { $0.isEmpty ? nil : $0 }
-      ?? String(
-        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
-  }
-
   private func look(of source: AttachedSource) -> MaterialChip.Look {
-    if source.isUnavailable || source.readStatus == .unreadable {
+    if source.isUnavailable {
+      .gone
+    } else if source.readStatus == .unreadable {
       .unreadable
     } else if source.readStatus == .reading {
       .reading
@@ -162,6 +150,28 @@ struct GoalMaterialChips: View {
             "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5."
         ))
   }
+}
+
+/// Why attached material won't be read: files a goal found gone, to add again, and files with
+/// nothing to read on them. After the choices of what to do with it, not under the chips: a read
+/// ends while the learner is choosing, and the line would push the choice under their finger.
+private struct MaterialUnreadLines: View {
+  let material: [AttachedSource]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      if let unavailableLine {
+        FailureLine(message: unavailableLine)
+      }
+
+      if let unreadableLine {
+        FailureLine(message: unreadableLine)
+      }
+    }
+    .textCase(nil)
+    // A plain list draws a footer like a row, between hairlines main doesn't have.
+    .listRowSeparator(.hidden)
+  }
 
   /// Names the one file a goal found gone; several are said together.
   private var unavailableLine: LocalizedStringResource? {
@@ -173,7 +183,7 @@ struct GoalMaterialChips: View {
 
     return unavailable.count == 1
       ? LocalizedStringResource(
-        "We can't read “\(title(of: first))” anymore. Remove it and add it again.",
+        "We can't read “\(first.shownTitle)” anymore. Remove it and add it again.",
         table: "Onboarding",
         comment:
           "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\"."
@@ -186,7 +196,8 @@ struct GoalMaterialChips: View {
       )
   }
 
-  /// Names the one file with nothing to read on it; several are said together.
+  /// Names the one file with nothing to read on it; several are said together, and their red chips
+  /// show which.
   private var unreadableLine: LocalizedStringResource? {
     let unreadable = material.filter { $0.readStatus == .unreadable && !$0.isUnavailable }
 
@@ -195,12 +206,12 @@ struct GoalMaterialChips: View {
     }
 
     return unreadable.count == 1
-      ? .unreadableMaterial(title: title(of: first))
+      ? .unreadableMaterial(title: first.shownTitle)
       : LocalizedStringResource(
-        "We couldn't read some of your files. Try sharper photos or paste the text.",
+        "We couldn't read these files. Try sharper photos or paste the text.",
         table: "Onboarding",
         comment:
-          "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes."
+          "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above."
       )
   }
 }
@@ -281,6 +292,8 @@ struct GoalMaterialSections: View {
           Text(
             "What do you want to do?", tableName: "Onboarding",
             comment: "Header over what to do with attached material"))
+      } footer: {
+        MaterialUnreadLines(material: material)
       }
     }
   }
@@ -294,6 +307,8 @@ private struct MaterialChip: View {
     case ready
     case reading
     case unreadable
+    /// A goal found it gone.
+    case gone
   }
 
   let title: String
@@ -302,7 +317,7 @@ private struct MaterialChip: View {
 
   var body: some View {
     HStack(spacing: 6) {
-      Image(systemName: look == .unreadable ? "exclamationmark.circle" : "doc.text")
+      Image(systemName: isAlert ? "exclamationmark.circle" : "doc.text")
         // The spinner takes the icon's place and size, so the chip doesn't move as it's read.
         .opacity(look == .reading ? 0 : 1)
         .overlay {
@@ -329,13 +344,16 @@ private struct MaterialChip: View {
       .padding(-8)
     }
     .typeStyle(.body)
-    .foregroundStyle(look == .unreadable ? .destructiveText : Color(.foreground))
+    .foregroundStyle(isAlert ? .destructiveText : Color(.foreground))
     .padding(.leading, 12)
     .padding([.vertical, .trailing], 4)
     .background(
-      look == .unreadable ? Color.destructiveSoft : Color(.muted),
+      isAlert ? Color.destructiveSoft : Color(.muted),
       in: .rect(cornerRadius: Radius.md))
   }
+
+  /// Gone or with nothing to read on it, it takes main's soft error look.
+  private var isAlert: Bool { look == .unreadable || look == .gone }
 
   private var status: Text? {
     switch look {
@@ -349,9 +367,15 @@ private struct MaterialChip: View {
       )
     case .unreadable:
       Text(
-        "Can't be read", tableName: "Onboarding",
+        "Nothing on it could be read", tableName: "Onboarding",
         comment:
-          "Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read."
+          "Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read."
+      )
+    case .gone:
+      Text(
+        "Can't be read anymore", tableName: "Onboarding",
+        comment:
+          "Read by screen readers after the name of an attached file that's gone, so it must be added again."
       )
     }
   }
@@ -385,6 +409,13 @@ extension LearnerSummaryStore {
 extension AttachedSource {
   /// Core's `MAX_GOAL_SOURCES`: a goal is sent with this many at most.
   static let maxPerGoal = 5
+
+  /// Pasted text has no title, so it's named as its chip is.
+  var shownTitle: String {
+    title.flatMap { $0.isEmpty ? nil : $0 }
+      ?? String(
+        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+  }
 }
 
 extension [AttachedSource] {
@@ -437,6 +468,9 @@ struct MaterialDraft {
   var pasting: Pasting?
   var value = ""
   var showsSignUp = false
+  /// Words sent while a source was still being added: they go with it once it's added, and not at
+  /// all if adding it fails.
+  var heldWords: String?
   let attaching = VisitRequest<Attached>()
 
   var isAdding: Bool { attaching.isRunning }
@@ -445,30 +479,16 @@ struct MaterialDraft {
     if case .failed(let failure)? = attaching.outcome { failure } else { nil }
   }
 
-  /// What the learner pasted stays; what was being added still saves, and shows nothing.
-  func leave() {
+  /// What the learner pasted stays; what was being added still saves, and shows nothing, and words
+  /// held for it aren't sent.
+  mutating func leave() {
+    heldWords = nil
     attaching.leave()
   }
 
   static var adding: String {
     String(
       localized: "Adding your material…", table: "Onboarding", comment: "While material is added")
-  }
-}
-
-/// A file, pasted text or a link, added as one source: the ways to add one, then what's being
-/// added. Only accounts add material, so callers show it to them alone.
-struct MaterialAttachControls<Label: View>: View {
-  var goal: (id: String, language: String)?
-  @Binding var draft: MaterialDraft
-  @ViewBuilder let label: Label
-  var save: (AttachedSource) async throws -> Void = { _ in }
-  let onAttached: (AttachedSource) -> Void
-
-  var body: some View {
-    MaterialAttachMenu(
-      goal: goal, draft: $draft, label: { label }, save: save, onAttached: onAttached)
-    MaterialAttachProgress(goal: goal, draft: $draft, save: save, onAttached: onAttached)
   }
 }
 
@@ -616,7 +636,9 @@ extension Binding<MaterialDraft> {
       }
     } then: { attached in
       if case .source(let source)? = attached {
+        let held = wrappedValue.heldWords
         wrappedValue = MaterialDraft()
+        wrappedValue.heldWords = held
         onAttached(source)
       }
     }
@@ -741,9 +763,9 @@ struct MaterialQuestionsView: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var question = ""
   @State private var turns: [Turn] = []
-  @State private var isAsking = false
-  /// The last question came before the material was read, so it waits in the box to ask again.
-  @State private var isStillReading = false
+  /// The question sent and not answered yet. It's asked once nothing it's about is still being
+  /// read; leaving drops it.
+  @State private var pending: String?
   @FocusState private var isFocused: Bool
 
   private struct Turn: Identifiable {
@@ -790,21 +812,25 @@ struct MaterialQuestionsView: View {
         }
       }
 
-      if isAsking {
-        HStack(spacing: 8) {
-          ProgressView()
-          Text(Self.reading)
-        }
-        .foregroundStyle(.mutedForeground)
-      } else if isStillReading {
-        Text(Self.stillReading)
+      if let pending {
+        Section {
+          Text(pending)
+            .typeWeight(.medium)
+
+          HStack(spacing: 8) {
+            ProgressView()
+            Text(Self.reading)
+          }
           .foregroundStyle(.mutedForeground)
+        }
       }
     }
-    .announcesStatus(
-      isAsking
-        ? Self.reading : isStillReading ? Self.stillReading : turns.last.flatMap(Self.spoken)
-    )
+    .announcesStatus(isAsking ? Self.reading : turns.last.flatMap(Self.spoken))
+    .task(id: pending) {
+      if let pending {
+        await answer(pending)
+      }
+    }
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -848,19 +874,12 @@ struct MaterialQuestionsView: View {
     question.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
+  private var isAsking: Bool { pending != nil }
+
   private static var reading: String {
     String(
       localized: "Reading your material…", table: "Onboarding",
       comment: "While a question about the learner's material is answered")
-  }
-
-  private static var stillReading: String {
-    String(
-      localized: "We're still reading your material. Ask again in a moment.",
-      table: "Onboarding",
-      comment:
-        "Shown above the question box when the learner asked about material, like a photo of notes, that's still being read. Their question stays in the box."
-    )
   }
 
   /// A failed answer is a `FailureLine`, which reads itself out.
@@ -879,27 +898,87 @@ struct MaterialQuestionsView: View {
     }
 
     question = ""
-    isAsking = true
-    isStillReading = false
+    pending = asked
+  }
 
-    Task {
-      defer { isAsking = false }
+  /// Waits while the material is still being read, then asks. Material still being read when it
+  /// asks makes it wait again.
+  private func answer(_ asked: String) async {
+    var reading = sources.filter { $0.readStatus == .reading }.map(\.id)
+
+    while true {
+      guard await settle(reading) else {
+        return
+      }
 
       do {
         let answer = try await onboarding.askMaterial(
           question: asked, sourceIDs: sources.map(\.id))
-        turns.append(Turn(question: asked, answer: .success(answer)))
+        finish(asked, .success(answer))
+        return
       } catch is CancellationError {
+        return
       } catch OnboardingError.materialReading {
-        isStillReading = true
+        reading = sources.map(\.id)
 
-        if question.isEmpty {
-          question = asked
+        guard await beat() else {
+          return
         }
       } catch {
-        turns.append(Turn(question: asked, answer: .failure(error)))
+        finish(asked, .failure(error))
+        return
       }
     }
+  }
+
+  /// Until none of these is still being read; false once the screen is left.
+  private func settle(_ ids: [String]) async -> Bool {
+    var waiting = ids
+
+    while !waiting.isEmpty {
+      var still: [String] = []
+
+      for id in waiting {
+        do {
+          if try await onboarding.readStatus(sourceID: id) == .reading {
+            still.append(id)
+          }
+        } catch APIError.notFound {
+          // Gone: nothing left to wait for, and the answer leaves it out.
+        } catch {
+          still.append(id)
+        }
+      }
+
+      waiting = still
+
+      if !waiting.isEmpty {
+        guard await beat() else {
+          return false
+        }
+      }
+    }
+
+    return !Task.isCancelled
+  }
+
+  /// The wait between checks; false once the screen is left.
+  private func beat() async -> Bool {
+    do {
+      try await Task.sleep(for: .seconds(3))
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  private func finish(_ asked: String, _ answer: Result<MaterialAnswer, Error>) {
+    guard !Task.isCancelled else {
+      return
+    }
+
+    turns.append(Turn(question: asked, answer: answer))
+    pending = nil
   }
 
   /// Pasted text has no title, so it's named as its chip is.

@@ -174,6 +174,7 @@ private struct GoalStartFlow: View {
             GoalEntrySections(
               words: $words, error: error,
               canSubmitEmpty: !material.isEmpty && intent != nil,
+              materialDraft: $materialDraft,
               onSubmit: submit,
               attach: {
                 GoalMaterialButton(material: $material, draft: $materialDraft)
