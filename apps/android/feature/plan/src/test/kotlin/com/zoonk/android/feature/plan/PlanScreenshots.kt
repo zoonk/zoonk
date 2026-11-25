@@ -215,10 +215,11 @@ class PlanScreenshots {
             "plan-exam-subject-taken-out-phone",
             exam =
                 examPage(dated = true).let {
-                    val takenOut = area("Essay").replace("\"skipped\":false", "\"skipped\":true")
-                    val areas = ApiJson.decodeFromString<List<PlanAreasInner>>("[${area("Mathematics")},$takenOut]")
+                    val takenOut = area("Spanish").replace("\"skipped\":false", "\"skipped\":true")
+                    val areas = ApiJson.decodeFromString<List<PlanAreasInner>>("[${area("Natural sciences")},$takenOut]")
                     it.copy(plan = it.plan.copy(areas = areas, suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
                 },
+            structure = examSyllabus(),
         )
 
     @Test
