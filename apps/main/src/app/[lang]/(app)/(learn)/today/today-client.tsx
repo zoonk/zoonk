@@ -19,6 +19,7 @@ import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { getStudyLessonHref } from "@/lib/session/lesson-opening";
+import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useDayTaps } from "@/lib/session/use-day-taps";
@@ -288,7 +289,9 @@ export function TodayClient({
         },
         plusHref: "/subscription",
         prepareLessons: taps.prepareLessons,
+        readLesson: readLessonReadiness,
         refresh: refreshOnPlanChange,
+        reread: refresh,
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
         studyEverythingHref: "/plan?focus=everything",

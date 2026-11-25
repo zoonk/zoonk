@@ -3,6 +3,7 @@
 import { type DayState } from "@zoonk/core/sessions/day-state";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { showsWelcomeBack } from "@zoonk/core/view-models/today/notice";
+import { type DayStep } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
 
 export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart">): boolean {
@@ -62,32 +63,19 @@ export function useTodayPastDate(): PastDate | null {
   return status?.kind === "pastDate" && (state === "rest" || state === "ahead") ? status : null;
 }
 
-type StopLesson = { kind: string; lessonId: string | null };
+type StopLesson = Pick<DayStep, "lesson">;
 
 /**
- * A lesson nobody has started making is made when the learner opens it, so it never claims to be
- * in progress.
+ * Only a lesson whose saved claim says it's being written; a lesson nobody has started making is
+ * made when the learner opens it, so it never claims to be in progress.
  */
-export function isStopBeingWritten({
-  block,
-  lessonStatus,
-}: {
-  block: StopLesson;
-  lessonStatus: TodayView["lessonStatus"];
-}): boolean {
-  return (
-    block.kind === "learn" &&
-    block.lessonId !== null &&
-    lessonStatus[block.lessonId] === "generating"
-  );
+export function isStopBeingWritten(block: StopLesson): boolean {
+  return block.lesson?.status === "generating";
 }
 
 export function useStepGettingReady() {
-  const { today, writingStalled } = useTodayScreen();
-
   return (block: StopLesson & { preparing: boolean }): boolean =>
-    block.preparing ||
-    (!writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus }));
+    block.preparing || isStopBeingWritten(block);
 }
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
