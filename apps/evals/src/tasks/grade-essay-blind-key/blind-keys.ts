@@ -59,7 +59,9 @@ export function blindKeyInput({
       grading,
       keySource: "practiceKey",
     },
+    context: source.context,
     keyPoints: key.data.keyPoints,
+    question: source.question,
     text,
   };
 }
