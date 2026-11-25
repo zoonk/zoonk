@@ -426,6 +426,7 @@
   "plan_sundays": "02f8fd69b8fc0e6f929b13d9aff9fce27e1a205a1827ff84af0a3ccbbbb3d965",
   "plan_system_phone": "704bad49ee8e05967c4e879796b01743d21c2780a9f02a8126ea90feb125cea1",
   "plan_tests_taken": "3aa50879925166fd08c229de3edd2c878e0c1f5e372f2edc29dfe1cc231a9a98",
+  "plan_this_goal_paused": "843862dcfd4e218f900dd2d811898618ebfe7ea3f0c921c161aa46cb37a895d6",
   "plan_this_week": "85133dac951f11877b39ed6450af8ef3aa6bc6108dfade20241a3dc2cfc943e0",
   "plan_thursdays": "2dcacb9b247d8cf3d9fc31aad0d40b35ab17360c48f9979b029180c9ddc57b0f",
   "plan_time_covers_everything_by": "525c464b1b64172349b1bf4c6495b1b715348afee6c03a819968744aa219347a",
@@ -727,6 +728,8 @@
     <string name="plan_pace">Calendario</string>
     <string name="plan_your_pace">Il tuo calendario</string>
     <string name="plan_pace_value_paused">In pausa</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">Questo obiettivo è in pausa</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Non ci sono attività in programma finché non riprendi l’obiettivo.</string>
     <plurals name="plan_lessons_left">

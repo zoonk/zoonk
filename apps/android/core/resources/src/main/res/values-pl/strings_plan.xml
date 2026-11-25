@@ -343,7 +343,7 @@
   "plan_pace_more_minutes_a_day": "56454249227c9f983ad17820458248ad381eb43ba5518da4975a46bea7ccce03",
   "plan_pace_needs_adjusting": "50b0616e90f6850d6a13b05a4964a1f84183296b7a5875ba4d799a85d19fad83",
   "plan_pace_up_to_date": "390f66fd9fb48cc9cc64f5788e12a7e46a4a506d4322c758f8a578930587e4a8",
-  "plan_pace_value_paused": "2975892bd69f407c674a54afadd7bd810a71901110fa6d57b5326eaa64835392",
+  "plan_pace_value_paused": "f666d5f0bcbfcea55b8a8353a4c9f99e07d67f3092960a56136f579a65f45101",
   "plan_pace_win_challenge": "695cfd726ac31a89bb0abe39b173674e0d90cc7219bb9b4ea09025aee4d07611",
   "plan_pace_win_challenges": "43379fbdfd7def00bb8b708d7d4fbebbfe8918725880b897e8395007b14ef9fe",
   "plan_past_date_exam_sentence": "a47537ddc8a4741f012e34453aead0d914b0091cb99f7a1be8fbffb1dbceab3c",
@@ -426,6 +426,7 @@
   "plan_sundays": "070c37db990db84cc22a0b819a2ff18cf04529b874b63103514fc82a4bf22337",
   "plan_system_phone": "cdaf5dd14870f8fad617f69da7ccec1cbf0162c22a91ecd164941638a04dc8df",
   "plan_tests_taken": "4f153db7d18c9f1b325a584aa91b47a48d482124431d47efb8bab60bfdba0437",
+  "plan_this_goal_paused": "20f3b74702e2c27b07172268094f9a103628acab44d83eab369befa5f847f01a",
   "plan_this_week": "e1db378711067a3ab20d634bc9b2ef4024a34073e085de11997658db383aabda",
   "plan_thursdays": "6e9bbf765a10f8bd23f7f5de36a513bdf50ec83ebb88f70ce805860893b49eda",
   "plan_time_covers_everything_by": "ca6888a5eca58135179fed2a80f43c732ceb918d1516952cae224574b6c09ba0",
@@ -739,7 +740,9 @@
     <string name="plan_activity_speaking">Mówienie</string>
     <string name="plan_pace">Harmonogram</string>
     <string name="plan_your_pace">Twój harmonogram</string>
-    <string name="plan_pace_value_paused">Wstrzymany</string>
+    <string name="plan_pace_value_paused">Wstrzymano</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">Ten cel jest wstrzymany</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Dopóki nie wznowisz celu, nic nie planujemy.</string>
     <plurals name="plan_lessons_left">

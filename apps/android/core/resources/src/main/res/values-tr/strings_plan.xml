@@ -426,6 +426,7 @@
   "plan_sundays": "c9b4c635df3f9ec7d80eababcdcd09cd94968a9b063c50c1323f5cbb2f5eb3c1",
   "plan_system_phone": "5a45c58e0b4dd5531591940871e38a83f12370c0e50fca1c30e9cc341a24853a",
   "plan_tests_taken": "ef3aa72320b9afd898788202dd6ef72e1e27275522346c4d2da34b3eabeddd9f",
+  "plan_this_goal_paused": "69a011921d29fcb8064ab699a4333b66af8613202e3b6764f63ecaafd1edea83",
   "plan_this_week": "2e54fbc27fc9a1b9e90f0b099d78f7ee01418248ac7826095b4680530047a789",
   "plan_thursdays": "3f23c4a01e21bf27547e341271ed55cf0da340f0e50d7337be6948e037a9bc25",
   "plan_time_covers_everything_by": "11383f1a726fbffd5dd0f5a2d6f36a5d8b58df9940f7df3f475c2333af6d1dc1",
@@ -714,6 +715,8 @@
     <string name="plan_pace">Takvim</string>
     <string name="plan_your_pace">Çalışma takvimin</string>
     <string name="plan_pace_value_paused">Duraklatıldı</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">Bu hedef duraklatıldı</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Devam edene kadar hiçbir şey planlanmaz.</string>
     <plurals name="plan_lessons_left">

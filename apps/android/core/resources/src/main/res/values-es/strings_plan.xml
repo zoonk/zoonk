@@ -324,7 +324,7 @@
   "plan_not_in_your_plan": "fa37615ca3b5e78725719088f7948d597469c275b111cb4c101cab2d80feb28c",
   "plan_not_now": "88ce01eb1e54fac09b7b2e0a1fbfbab0406f395bbb561cc68a9c4ce8e436331e",
   "plan_not_yet": "6005be2955279f51d6e303e37f9f465e2167871c2aa0a7830413a8bcf5119c8c",
-  "plan_nothing_planned_until_resume": "8eb9c50ff3fd83820d54a27bc7c3abce00968f58d70fd196d56f048f4ff146e6",
+  "plan_nothing_planned_until_resume": "4a9dd0e12d60e5de6fef787680b304dac510a01c9b7a8d5764e63d8f51841517",
   "plan_options": "c703bd1bf60cf761bff829d21d66567a1dccc97726c4a2dfd9dc0a13e29160f7",
   "plan_outside_others_first": "b8cd01168d766c711eba7d83121f9f44a0905a24d7b4a34c4df31f8b9ad34ce6",
   "plan_outside_past_basics": "ebaded7dbed716aab09ea30ebe662c9cfae909087d48c6d3d8ecccbf3ace40c8",
@@ -426,6 +426,7 @@
   "plan_sundays": "d2d9095a0c7fe5ad2736bf64d4500f7a71cc48834518620b15852c9fd955bde3",
   "plan_system_phone": "64996f07be84c345378463afcf41cd697a187bdf46225c986f05b61221dbaa61",
   "plan_tests_taken": "f51966187371229629b0a7c6af2157af2fd6c8d4451893e78f8b2b5f2f3cec1c",
+  "plan_this_goal_paused": "da547f8a2b25c1023d840475d5a30b37bb7c1195bf385cd178b3a42cdfe19e0e",
   "plan_this_week": "61162fd7f150738af12d823313df049e6f587c579cc8808427911d8c191dd80d",
   "plan_thursdays": "c11ed5612988dd59962680cd2e9470b4ad39f410f968c01ab745cd19dc808587",
   "plan_time_covers_everything_by": "4a77feb0d927745651f8d118ce7a7a11f3b0e86f58dad4a7481e689057cfe528",
@@ -727,8 +728,10 @@
     <string name="plan_pace">Calendario</string>
     <string name="plan_your_pace">Tu calendario</string>
     <string name="plan_pace_value_paused">En pausa</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">Este objetivo está en pausa</string>
     <!-- "It" is the learner's paused goal. -->
-    <string name="plan_nothing_planned_until_resume">No se planificará nada hasta que lo reanudes.</string>
+    <string name="plan_nothing_planned_until_resume">No hay nada programado hasta que lo reanudes.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">%d lección pendiente</item>
         <item quantity="many">%d lecciones pendientes</item>

@@ -426,6 +426,7 @@
   "plan_sundays": "769466baec8f2aecd8ada2a16b48cc8455b26d9f749a6b367164e29cad75f68b",
   "plan_system_phone": "602eeda2741b6cdcb14374bb17df0498af8fbcc8fec1b7b6288c0f19283b01f7",
   "plan_tests_taken": "097d1139eeecfa87849accc709b81dd47630d304248e3ee0ff935b8f10a41c30",
+  "plan_this_goal_paused": "d0ea2a5371d3ffaeee5346fc86ea4b1413ac4229784d107f4f18a2245247fa9c",
   "plan_this_week": "711721e0d9252c9ab4fbcce3378696713200538ee32e1701892fb69feb7139ca",
   "plan_thursdays": "40fa8d2e25c9b31fa6fb22721a4a676d6815eae0395597d3bdcfe89891d70928",
   "plan_time_covers_everything_by": "794c88837180a61dd92c24fe0c219108d3ca7581f6b433ad0699eecd87ad7b5c",
@@ -701,6 +702,8 @@
     <string name="plan_pace">日程</string>
     <string name="plan_your_pace">学習スケジュール</string>
     <string name="plan_pace_value_paused">一時停止中</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">この目標は一時停止中です</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">再開するまで、学習の予定は入りません。</string>
     <plurals name="plan_lessons_left">

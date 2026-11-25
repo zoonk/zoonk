@@ -426,6 +426,7 @@
   "plan_sundays": "1cbe53139fce734b53c79153b295f24c1694565f9b514aa88f2e1db63358f328",
   "plan_system_phone": "590e2b62607d52bd511bb755082d86e65420cb7469e41521281eaaf74260b6fd",
   "plan_tests_taken": "d2e0844a619e70dc2c5dee4f58346d31b87a7c400777578461ee09a0d04ef5f3",
+  "plan_this_goal_paused": "a051b169f3756aeac53b8bf57b0de5b70b113d28e3b0e99be29d1125abfdaa68",
   "plan_this_week": "44062bfe95423eba0ded476eeb0884ffc7e410ae398864af3f3f38a1613afe37",
   "plan_thursdays": "f9385653e23e1eb64a580e4a508ef623e7d99f9eb8f03deeb345a21045ee906c",
   "plan_time_covers_everything_by": "612ba8b7b5a86e9fd9f86957f4f426df25dae4e484a4487721df95c2ab2bfb91",
@@ -714,6 +715,8 @@
     <string name="plan_pace">Zeitplan</string>
     <string name="plan_your_pace">Dein Zeitplan</string>
     <string name="plan_pace_value_paused">Pausiert</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">Dieses Ziel ist pausiert</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Bis du dein Ziel fortsetzt, ist nichts geplant.</string>
     <plurals name="plan_lessons_left">
