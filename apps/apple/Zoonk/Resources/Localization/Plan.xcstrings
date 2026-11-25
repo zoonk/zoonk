@@ -20529,6 +20529,7 @@
         }
       }
     },
+    "Every part of your plan, with no end date." : {},
     "Every week" : {
       "comment" : "Written practice cadence",
       "localizations" : {
@@ -40656,6 +40657,7 @@
         }
       }
     },
+    "You study every topic in your plan. What doesn't fit before the exam comes after it." : {},
     "You study every topic. What doesn't fit before the exam comes after it." : {
       "comment" : "What studying after the exam does",
       "localizations" : {

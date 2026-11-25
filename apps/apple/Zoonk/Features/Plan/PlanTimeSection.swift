@@ -164,9 +164,14 @@ struct PlanFullCourseSection: View {
           button: Text(
             "Keep studying", tableName: "Plan",
             comment: "Keeps studying what's left after the exam"),
-          what: String(
-            localized: "You study every topic. What doesn't fit before the exam comes after it.",
-            table: "Plan", comment: "What studying after the exam does"),
+          what: plan.subjectsTakenOut
+            ? String(
+              localized:
+                "You study every topic in your plan. What doesn't fit before the exam comes after it.",
+              table: "Plan")
+            : String(
+              localized: "You study every topic. What doesn't fit before the exam comes after it.",
+              table: "Plan", comment: "What studying after the exam does"),
           asksOnAppear: asks && !on
         ) { isPreviewing, ask in
           Toggle(
