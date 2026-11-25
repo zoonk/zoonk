@@ -21,6 +21,8 @@ struct TimeAnswer: View {
   var updating = false
   /// A language goal's aim above the learner's level, which its finish is when they reach.
   var aim: String?
+  /// The learner took a subject out of their plan, so "everything" is only what it kept.
+  var subjectsTakenOut = false
   let onRetry: () -> Void
   let onUseOffer: (Int) -> Void
 
@@ -102,7 +104,10 @@ struct TimeAnswer: View {
 
     switch line {
     case .suggests(let suggested):
-      return shown.map { Self.suggestionWords(suggested, exam: exam, date: $0) }
+      return shown.map {
+        Self.suggestionWords(
+          suggested, exam: exam, date: $0, subjectsTakenOut: subjectsTakenOut)
+      }
     case .quiet:
       return nil
     case .pastDate:
@@ -167,12 +172,19 @@ struct TimeAnswer: View {
   /// Main's suggestion line: the time that gets the learner ready by their date, or, when that's
   /// more than a day can hold, the time the plan starts on with what matters most. `date` is a day,
   /// or the month the learner named.
-  static func suggestionWords(_ suggested: TimeToCover.Suggested, exam: Bool, date: String)
-    -> String
-  {
+  static func suggestionWords(
+    _ suggested: TimeToCover.Suggested, exam: Bool, date: String, subjectsTakenOut: Bool
+  ) -> String {
     let time = duration(suggested.minutes)
 
     return switch (suggested.kind, exam) {
+    case (.everything, _) where subjectsTakenOut:
+      String(
+        localized: "We suggest \(time) a day to cover everything in your plan by \(date).",
+        table: "Onboarding",
+        comment:
+          "When the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\"."
+      )
     case (.everything, true):
       String(
         localized: "We suggest \(time) a day to be ready for your exam by \(date).",

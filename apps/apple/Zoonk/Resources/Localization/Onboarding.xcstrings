@@ -22705,6 +22705,17 @@
         }
       }
     },
+    "We suggest %@ a day to cover everything in your plan by %@." : {
+      "comment" : "When the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\".",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "We suggest %1$@ a day to cover everything in your plan by %2$@."
+          }
+        }
+      }
+    },
     "We suggest %@ a day to reach your goal by %@." : {
       "comment" : "In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\". {time} is a daily study time, like \"2 h\".",
       "localizations" : {

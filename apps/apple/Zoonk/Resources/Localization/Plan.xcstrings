@@ -35151,6 +35151,9 @@
         }
       }
     },
+    "That's enough to cover everything in your plan by %@." : {
+      "comment" : "Said under \"We suggest {time} a day\" when the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+    },
     "That's enough to reach your goal by %@." : {
       "comment" : "Under \"We suggest {time} a day\": that time covers the whole goal by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\".",
       "localizations" : {
@@ -45396,6 +45399,9 @@
           }
         }
       }
+    },
+    "Your time covers everything in your plan by %@" : {
+      "comment" : "When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
     },
     "Your time covers everything by the start of %@" : {
       "comment" : "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'",

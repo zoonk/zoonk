@@ -70,7 +70,7 @@ struct PlanTimeSection: View {
         line: ScheduleTime.line(
           advice: nil, askFailed: false, dated: true, findFailed: Self.failed(time),
           found: found, hasDays: true, minutes: minutes),
-        minutes: minutes, updating: editor.isSaving
+        minutes: minutes, updating: editor.isSaving, subjectsTakenOut: plan.subjectsTakenOut
       ) {
         Task { await time.refresh() }
       } onUseOffer: { minutes in

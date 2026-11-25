@@ -390,6 +390,14 @@ struct PlanCoverageSlot: View {
     let date = PlanDate.goalText(
       targetDate, month: schedule.targetDateNamedMonth, estimated: schedule.targetDateEstimated)
 
+    if context.plan.subjectsTakenOut {
+      return String(
+        localized: "That's enough to cover everything in your plan by \(date).", table: "Plan",
+        comment:
+          "Said under \"We suggest {time} a day\" when the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+      )
+    }
+
     return exam
       ? String(
         localized: "That's enough to be ready for your exam by \(date).", table: "Plan",
@@ -510,12 +518,18 @@ struct PlanCoverageSlot: View {
   }
 
   private func dateTitle(_ fittingDate: String) -> String {
-    String(
-      localized:
-        "Your time covers everything by \(PlanDate.longDay(fittingDate, today: context.plan.today))",
-      table: "Plan",
-      comment:
-        "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
+    let date = PlanDate.longDay(fittingDate, today: context.plan.today)
+
+    return context.plan.subjectsTakenOut
+      ? String(
+        localized: "Your time covers everything in your plan by \(date)", table: "Plan",
+        comment:
+          "When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\"."
+      )
+      : String(
+        localized: "Your time covers everything by \(date)", table: "Plan",
+        comment:
+          "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'")
   }
 }
 
