@@ -6,12 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.AttachControls
-import com.zoonk.android.feature.onboarding.start.UnreadLine
 import com.zoonk.android.feature.onboarding.start.shownReadStatus
 import com.zoonk.android.feature.onboarding.start.unreadHint
 import com.zoonk.android.ui.components.ButtonIcon
@@ -77,6 +79,13 @@ fun UploadRequestNotice(
             SuggestionResult(thanks)
         } else {
             SuggestionDescription(copy.body)
+            hint?.let {
+                SuggestionDescription(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                )
+            }
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
@@ -107,8 +116,6 @@ fun UploadRequestNotice(
                     }, enabled = idle, secondary = true)
                 }
             }
-            // Main's line sits with the actions it's about, after them.
-            hint?.let { UnreadLine(it) }
         }
         if (answer.saveFailed) SuggestionSaveError()
     }
