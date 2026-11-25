@@ -176,17 +176,27 @@ export function TodayTick({ share }: { share: number | null }) {
   );
 }
 
+/** Half the band name's line height (`leading-4`). */
+const NAME_LINE_HALF = "0.5rem";
+
+/** The least of the tick shown over and under the name, so it always reaches into the band. */
+const TICK_MIN_SEGMENT = "0.25rem";
+
 /**
- * The tick through the current band's full height, over its fill and under its name, so the name
- * stays whole where Today falls on it. The current band is isolated, so `-z-10` stays inside it.
+ * The tick through the current band's full height, over its fill, broken where the name's lines
+ * are (`nameLines`, centered in the band), so it never reads as a stroke of a letter. The current
+ * band is isolated, so `-z-10` keeps it inside.
  */
-export function BandTodayTick({ share }: { share: number }) {
+export function BandTodayTick({ nameLines, share }: { nameLines: number; share: number }) {
+  const half = `min(${nameLines} * ${NAME_LINE_HALF} + 2px, 50% - ${TICK_MIN_SEGMENT})`;
+  const mask = `linear-gradient(to bottom, #000 calc(50% - ${half}), transparent calc(50% - ${half}), transparent calc(50% + ${half}), #000 calc(50% + ${half}))`;
+
   return (
     <span
       aria-hidden="true"
       className={cn(TICK_CLASS, "inset-y-0 -z-10")}
       data-slot="today-tick"
-      style={{ left: getTickLeft(share) }}
+      style={{ left: getTickLeft(share), mask }}
     />
   );
 }

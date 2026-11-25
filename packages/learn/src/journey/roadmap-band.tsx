@@ -7,7 +7,7 @@ import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { BandTodayTick, EndDateSizer } from "./roadmap-lane";
-import { BAND_CHECK_CLASS, BandName } from "./roadmap-styles";
+import { BAND_CHECK_CLASS, BandName, splitBandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -54,7 +54,9 @@ export function BandFace({
           />
         </span>
       )}
-      {todayShare !== null && <BandTodayTick share={todayShare} />}
+      {todayShare !== null && (
+        <BandTodayTick nameLines={splitBandName(name)[1] ? 2 : 1} share={todayShare} />
+      )}
     </>
   );
 }
