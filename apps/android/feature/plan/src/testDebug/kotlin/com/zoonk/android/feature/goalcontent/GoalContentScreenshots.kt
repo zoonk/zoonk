@@ -334,7 +334,8 @@ class GoalContentScreenshots {
                 },
                 "subject-module-taken-out" to { ModuleOut("skipped") },
                 "subject-module-left-out-for-time" to { ModuleOut("time") },
-                "plan-section-module-taken-out" to { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
+                "plan-section-module-taken-out" to
+                    { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
                 "reveal-module-taken-out" to { RevealStructure(plan(), modulesWithDataOut("skipped"), Modifier.padding(16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },

@@ -43,8 +43,9 @@ internal fun descriptionLabel(scope: TutorScope): String =
 internal fun aboutLabel(
     about: TutorTurn.About,
     scope: TutorScope,
-): String =
-    stringResource(
+): String {
+    val module = (scope as? TutorScope.Subject)?.module == true
+    return stringResource(
         when (about) {
             TutorTurn.About.Answer -> R.string.tutor_about_answer
             TutorTurn.About.Chapter -> R.string.tutor_about_chapter
@@ -52,10 +53,11 @@ internal fun aboutLabel(
             TutorTurn.About.Mock -> R.string.tutor_about_mock
             TutorTurn.About.Plan -> R.string.tutor_about_plan
             TutorTurn.About.Step -> R.string.tutor_about_step
-            TutorTurn.About.Subject -> if ((scope as? TutorScope.Subject)?.module == true) R.string.tutor_about_module else R.string.tutor_about_subject
+            TutorTurn.About.Subject -> if (module) R.string.tutor_about_module else R.string.tutor_about_subject
             TutorTurn.About.Item -> R.string.tutor_about_question
         },
     )
+}
 
 @Composable
 internal fun failureMessage(failure: TutorFailure?): String {
