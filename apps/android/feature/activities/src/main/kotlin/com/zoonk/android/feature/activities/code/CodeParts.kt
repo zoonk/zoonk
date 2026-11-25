@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -161,8 +160,8 @@ internal fun CodeLineField(
 }
 
 /**
- * Main's `ActivityCodeEditor`: highlighted code that scrolls sideways instead of wrapping. Enter
- * starts a new line and Ctrl or Cmd with Enter runs it.
+ * Main's `ActivityCodeEditor`: highlighted code that wraps at the editor's edge. Enter starts a new
+ * line and Ctrl or Cmd with Enter runs it.
  */
 @Composable
 internal fun CodeEditor(
@@ -178,21 +177,18 @@ internal fun CodeEditor(
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
     val style = MaterialTheme.zoonkType.codeField.copy(color = colors.onSurface)
-    BoxWithConstraints(
+    Box(
         modifier
             .fillMaxWidth()
             .clip(shape)
             .background(colors.surface)
             .border(1.dp, colors.outlineVariant, shape),
     ) {
-        val inner = maxWidth - EDITOR_PADDING * 2
         BasicTextField(
             state = state,
             modifier =
                 Modifier
-                    .fadingHorizontalScroll(
-                        rememberScrollState(),
-                    ).widthIn(min = inner)
+                    .fillMaxWidth()
                     .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
                     .heightIn(min = 48.dp)
                     .focusRequester(focusRequester)
@@ -209,7 +205,7 @@ internal fun CodeEditor(
             cursorBrush = SolidColor(colors.primary),
             decorator = { field ->
                 Box {
-                    if (state.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = style, softWrap = false)
+                    if (state.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = style)
                     field()
                 }
             },
