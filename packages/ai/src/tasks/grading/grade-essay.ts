@@ -13,16 +13,16 @@ import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * The learner waits on the grade. At high reasoning on 18 essays run twice (11 Nov 2026), Muse
- * Ember put all 36 totals in their band at 6 s p50 for $1.70/1k, and Haiku 5.5 put 31 (it marks
- * English IELTS essays too low) at 21 s p50 for $2.75/1k. A blind GPT-6.1 Sol read preferred
- * Ember's grading on 11 essays and Haiku's on 3: Haiku docked points for flaws the essays didn't
- * have. Gemini 3.8 Flash at high kept all 11 totals in band on 8 Nov 2026, at $16.59/1k; at
- * default reasoning, Haiku and Flash each missed one.
+ * The learner waits on the grade, so a fallback must be quick too. On the 108-case eval at high
+ * reasoning (25 Nov 2026), Muse Ember made all 62 pass/fail calls right at 9 s p50 for $2.88/1k.
+ * Gemini 3.5 Flash-Lite did too in two runs, at 17 s p50 (35 s slowest) for $18/1k. Haiku 5.5
+ * missed one at 39 s p50 (80 s p95) for $5.94/1k, and a blind GPT-6.1 Sol read preferred Ember's
+ * grading to Haiku's (11 Nov 2026). Gemini 3.8 Flash took 108 s p50 (767 s slowest) for $60/1k;
+ * GPT-6 Luna missed three at 46 s p50; Gemini 3.1 Flash-Lite missed one and may shut down in 2027.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
-const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
 
 const interventionElementsSchema = z.object({
   action: z.boolean(),
