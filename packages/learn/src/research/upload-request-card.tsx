@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
 import { AttachControls } from "../onboarding/entry/attach-panel";
-import { UnreadableNote } from "../onboarding/entry/attached-chips";
+import { UnreadableNote, useNoWordsHint } from "../onboarding/entry/attached-chips";
 import { useFollowReading } from "../onboarding/entry/use-follow-reading";
 import { type AttachedSource, type GoalAttachActions } from "../onboarding/onboarding-actions";
 
@@ -60,7 +60,16 @@ export function useAnsweredUploadRead({
   });
 }
 
-export function useRequestCopy({
+/** `summary` is the one line that stands for the request; it says when the last upload couldn't be read. */
+export function useRequestCopy(request: UploadRequestView) {
+  const noWordsHint = useNoWordsHint();
+  const copy = useAskCopy(request);
+  const hint = request.unreadableUpload ? noWordsHint([request.unreadableUpload]) : null;
+
+  return { ...copy, summary: hint ?? copy.title };
+}
+
+function useAskCopy({
   examDocument: document,
   goalKind,
   reason,

@@ -102,26 +102,34 @@ function MissingLine({ items }: { items: StartAttachment[] }) {
       });
 }
 
-function NoWordsLine({ items }: { items: StartAttachment[] }) {
+/** For files nothing could be read on; null when there are none. */
+export function useNoWordsHint() {
   const t = useExtracted();
-  const [only, ...others] = items;
 
-  if (!only) {
-    return null;
-  }
+  return function noWordsHint(items: readonly { title: string }[]): string | null {
+    const [only, ...others] = items;
 
-  return others.length > 0
-    ? t({
-        description:
-          "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes.",
-        message: "We couldn't read some of your files. Try sharper photos or paste the text.",
-      })
-    : t({
-        description:
-          'Under the learner\'s attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".',
-        message: "We couldn't read “{title}”. Try a sharper photo or paste the text.",
-        values: { title: only.title || t("Your text") },
-      });
+    if (!only) {
+      return null;
+    }
+
+    return others.length > 0
+      ? t({
+          description:
+            "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes.",
+          message: "We couldn't read some of your files. Try sharper photos or paste the text.",
+        })
+      : t({
+          description:
+            'Under the learner\'s attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".',
+          message: "We couldn't read “{title}”. Try a sharper photo or paste the text.",
+          values: { title: only.title || t("Your text") },
+        });
+  };
+}
+
+function NoWordsLine({ items }: { items: StartAttachment[] }) {
+  return useNoWordsHint()(items);
 }
 
 /** Gone files must be added again; files with nothing readable still go, so they get a hint instead. */

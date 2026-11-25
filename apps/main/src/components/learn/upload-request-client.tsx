@@ -72,7 +72,7 @@ export function UploadRequestClient({
           </SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>{copy.title}</SuggestionSummary>
+            <SuggestionSummary>{copy.summary}</SuggestionSummary>
             <SuggestionOpen>{t("Upload")}</SuggestionOpen>
           </>
         )}
