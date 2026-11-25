@@ -728,7 +728,7 @@
     <string name="plan_your_pace">Tu calendario</string>
     <string name="plan_pace_value_paused">En pausa</string>
     <!-- "It" is the learner's paused goal. -->
-    <string name="plan_nothing_planned_until_resume">No hay nada programado hasta que lo reanudes.</string>
+    <string name="plan_nothing_planned_until_resume">No se planificará nada hasta que lo reanudes.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">%d lección pendiente</item>
         <item quantity="many">%d lecciones pendientes</item>

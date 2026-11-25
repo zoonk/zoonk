@@ -739,7 +739,7 @@
     <string name="plan_activity_speaking">Mówienie</string>
     <string name="plan_pace">Harmonogram</string>
     <string name="plan_your_pace">Twój harmonogram</string>
-    <string name="plan_pace_value_paused">Wstrzymano</string>
+    <string name="plan_pace_value_paused">Wstrzymany</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Dopóki nie wznowisz celu, nic nie planujemy.</string>
     <plurals name="plan_lessons_left">
