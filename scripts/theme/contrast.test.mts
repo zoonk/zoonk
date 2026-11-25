@@ -128,6 +128,12 @@ describe("text steps", () => {
   it.each(steps)("$mode: $text stays apart from foreground", ({ ratio }) => {
     expect(ratio).toBeGreaterThanOrEqual(MINIMUM_STEP_APART);
   });
+
+  it.each(modes)("%s: faint is the quietest step", (mode) => {
+    const [muted, faint] = steps.filter((step) => step.mode === mode).map((step) => step.ratio);
+
+    expect(faint).toBeGreaterThan(muted ?? Number.POSITIVE_INFINITY);
+  });
 });
 
 // Words in a color sit on the neutral surfaces and on their own color's tint (a checked answer's
