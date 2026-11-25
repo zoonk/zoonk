@@ -5,7 +5,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -53,12 +55,14 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -124,15 +128,27 @@ fun OutlinedTextField(
             outputTransformation = outputTransformation,
             interactionSource = interaction,
             placeholder = placeholder,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon,
             prefix = prefix,
             suffix = suffix,
             isError = isError,
             colors = colors,
-            contentPadding = contentPadding,
-            container = { FieldContainer(enabled, isError, interaction, colors, focusedBorderThickness, shape) },
+            contentPadding = contentPadding.besideMarks(leadingIcon != null, trailingIcon != null, LocalLayoutDirection.current),
+            container = {},
         )
+    val iconColor =
+        when {
+            !enabled -> colors.disabledLeadingIconColor
+            isError -> colors.errorLeadingIconColor
+            focused -> colors.focusedLeadingIconColor
+            else -> colors.unfocusedLeadingIconColor
+        }
+    val trailingIconColor =
+        when {
+            !enabled -> colors.disabledTrailingIconColor
+            isError -> colors.errorTrailingIconColor
+            focused -> colors.focusedTrailingIconColor
+            else -> colors.unfocusedTrailingIconColor
+        }
     CompositionLocalProvider(LocalTextSelectionColors provides colors.textSelectionColors) {
         BasicTextField(
             state = state,
@@ -164,10 +180,13 @@ fun OutlinedTextField(
                         }
                     }
                 LabeledField(label, enabled, supporting) {
-                    Box(Modifier.heightIn(min = minHeight), propagateMinConstraints = true) {
-                        with(materialDecorator) { Decoration(inner) }
-                        if (endAction != null) Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomEnd) { endAction() }
-                    }
+                    FieldBox(
+                        minHeight = minHeight,
+                        container = { FieldContainer(enabled, isError, interaction, colors, focusedBorderThickness, shape) },
+                        leading = leadingIcon?.let { { CompositionLocalProvider(LocalContentColor provides iconColor, it) } },
+                        trailing = trailingIcon?.let { { CompositionLocalProvider(LocalContentColor provides trailingIconColor, it) } },
+                        endAction = endAction,
+                    ) { with(materialDecorator) { Decoration(inner) } }
                 }
             },
         )
@@ -253,6 +272,78 @@ private fun LabeledField(
 }
 
 /**
+ * The field's line behind its [words], with its [leading] and [trailing] marks beside them in slots as wide as
+ * Material's icon slot but only as tall as the mark: a field is main's [minHeight] on one line, and a mark coming in,
+ * such as a checked answer's ✕, moves nothing. [endAction] sits at the bottom end, level with the last line.
+ */
+@Composable
+private fun FieldBox(
+    minHeight: Dp,
+    container: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)?,
+    trailing: (@Composable () -> Unit)?,
+    endAction: (@Composable () -> Unit)?,
+    words: @Composable () -> Unit,
+) {
+    Layout(
+        contents =
+            listOf(
+                container,
+                { if (leading != null) MarkSlot(leading) },
+                words,
+                { if (trailing != null) MarkSlot(trailing) },
+                { if (endAction != null) endAction() },
+            ),
+    ) { (lines, leadings, fields, trailings, actions), constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val start = leadings.firstOrNull()?.measure(loose)
+        val end = trailings.firstOrNull()?.measure(loose)
+        val sides = (start?.width ?: 0) + (end?.width ?: 0)
+        val field =
+            fields.first().measure(
+                Constraints(
+                    minWidth = (constraints.minWidth - sides).coerceAtLeast(0),
+                    maxWidth = if (constraints.hasBoundedWidth) (constraints.maxWidth - sides).coerceAtLeast(0) else Constraints.Infinity,
+                    minHeight = maxOf(constraints.minHeight, minHeight.roundToPx()).coerceAtMost(constraints.maxHeight),
+                    maxHeight = constraints.maxHeight,
+                ),
+            )
+        val width = sides + field.width
+        val height = field.height
+        val line = lines.first().measure(Constraints.fixed(width, height))
+        val action = actions.firstOrNull()?.measure(loose)
+        layout(width, height) {
+            line.placeRelative(0, 0)
+            start?.placeRelative(0, (height - start.height) / 2)
+            field.placeRelative(start?.width ?: 0, 0)
+            end?.placeRelative(width - end.width, (height - end.height) / 2)
+            action?.placeRelative(width - action.width, height - action.height)
+        }
+    }
+}
+
+@Composable
+private fun MarkSlot(mark: @Composable () -> Unit) {
+    Box(Modifier.widthIn(min = MARK_SLOT), contentAlignment = Alignment.Center) { mark() }
+}
+
+/** Material's padding beside an icon: the words start [MARK_INSET] closer, since the icon's slot already holds that room. */
+private fun PaddingValues.besideMarks(
+    leading: Boolean,
+    trailing: Boolean,
+    direction: LayoutDirection,
+): PaddingValues {
+    val start = calculateStartPadding(direction)
+    val end = calculateEndPadding(direction)
+    return PaddingValues(
+        start = if (leading) (start - MARK_INSET).coerceAtLeast(0.dp) else start,
+        top = calculateTopPadding(),
+        end = if (trailing) (end - MARK_INSET).coerceAtLeast(0.dp) else end,
+        bottom = calculateBottomPadding(),
+    )
+}
+
+/**
  * A 1dp `input` line; focused, a ring of [focusedBorderThickness] in the colors' focused line. Invalid,
  * main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with a 3dp ring of it
  * outside (20%, 40% in dark), both solid with more contrast.
@@ -276,12 +367,7 @@ private fun FieldContainer(
         enabled = enabled,
         isError = isError,
         interactionSource = interactionSource,
-        modifier =
-            if (isError && enabled) {
-                Modifier.drawBehind { drawRingOutside(shape.createOutline(size, layoutDirection, this), ring, INVALID_RING.toPx()) }
-            } else {
-                Modifier
-            },
+        modifier = if (isError && enabled) Modifier.ringOutside(shape, ring, INVALID_RING) else Modifier,
         colors = colors.copy(errorIndicatorColor = line),
         shape = shape,
         focusedBorderThickness = focusedBorderThickness,
@@ -289,7 +375,13 @@ private fun FieldContainer(
     )
 }
 
-/** A ring [width] wide just outside [outline], its corners following the field's own. */
+/** A ring [width] wide just outside [shape], its corners following the shape's own. */
+internal fun Modifier.ringOutside(
+    shape: Shape,
+    color: Color,
+    width: Dp,
+): Modifier = drawBehind { drawRingOutside(shape.createOutline(size, layoutDirection, this), color, width.toPx()) }
+
 private fun DrawScope.drawRingOutside(
     outline: Outline,
     color: Color,
@@ -381,7 +473,7 @@ fun composerColors(): TextFieldColors {
 @Composable
 fun composerFocusThickness(): Dp = if (LocalMoreContrast.current) 3.dp else 1.dp
 
-/** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
+/** Main's `px-3`, and its `h-11` on one line of 24sp text. */
 private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
 
 /** Main's `aria-invalid:ring-[3px]`, outside the field's line. */
@@ -390,7 +482,12 @@ private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
 
-private val FIELD_MIN_HEIGHT = 48.dp
+/** Main's `h-11`: what a one-line field draws, while its touch target stays 48dp. */
+private val FIELD_MIN_HEIGHT = 44.dp
+
+/** Material's icon slot: as wide, so a mark keeps the room and inset Material gives it. */
+private val MARK_SLOT = 48.dp
+private val MARK_INSET = 12.dp
 
 /** Material's gap over a field's supporting text. */
 private val SUPPORTING_GAP = 4.dp

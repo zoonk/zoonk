@@ -119,6 +119,7 @@ fun NumericAnswerField(
         onKeyboardAction = { submit() },
         lineLimits = TextFieldLineLimits.SingleLine,
         colors = markColors(mark),
+        minHeight = ANSWER_FIELD_HEIGHT,
     )
 }
 
@@ -157,6 +158,7 @@ fun TypedAnswerField(
         },
         lineLimits = TextFieldLineLimits.SingleLine,
         colors = markColors(mark),
+        minHeight = ANSWER_FIELD_HEIGHT,
     )
 }
 
@@ -187,6 +189,9 @@ private fun MarkIcon(mark: AnswerMark) {
         tint = if (mark == AnswerMark.Correct) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.error,
     )
 }
+
+/** Main's answer field (`ANSWER_GROUP_CLASS`): `h-14`, taller than a form's field. */
+private val ANSWER_FIELD_HEIGHT = 56.dp
 
 /** A checked field keeps its words readable and takes the result's line. */
 @Composable

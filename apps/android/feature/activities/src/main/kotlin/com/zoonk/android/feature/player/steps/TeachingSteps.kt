@@ -849,6 +849,7 @@ private fun AnswerField(
                 performDefault()
             },
             textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },
+            minHeight = NUMBER_ANSWER_HEIGHT,
         )
         AnswerHint(state, isNumber)
     }
@@ -1045,3 +1046,6 @@ private fun PictureOption(
         caption()
     }
 }
+
+/** Main's number answer, `h-12 w-48`; a written answer's three lines are taller anyway. */
+private val NUMBER_ANSWER_HEIGHT = 48.dp
