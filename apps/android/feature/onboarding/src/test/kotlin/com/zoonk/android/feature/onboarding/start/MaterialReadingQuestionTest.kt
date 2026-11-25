@@ -27,7 +27,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** A question about material still being read stays asked and goes again every few seconds until it's read; leaving the questions or the screen stops it. */
+/** A question about material still being read stays asked and goes again every few seconds until it's read; leaving the questions or the screen stops it and puts it back in the box. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class MaterialReadingQuestionTest {
@@ -67,12 +67,12 @@ class MaterialReadingQuestionTest {
         }
 
     @Test
-    fun leavingTheQuestionsStopsAQuestionStillWaiting() = leavingStopsAQuestionStillWaiting { it.backToEntry("") }
+    fun leavingTheQuestionsPutsBackAQuestionStillWaiting() = leavingPutsBackAQuestionStillWaiting { it.backToEntry("") }
 
     @Test
-    fun leavingTheScreenStopsAQuestionStillWaiting() = leavingStopsAQuestionStillWaiting { it.visit.end() }
+    fun leavingTheScreenPutsBackAQuestionStillWaiting() = leavingPutsBackAQuestionStillWaiting { it.visit.end() }
 
-    private fun leavingStopsAQuestionStillWaiting(leave: (StartGoalViewModel) -> Unit) =
+    private fun leavingPutsBackAQuestionStillWaiting(leave: (StartGoalViewModel) -> Unit) =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             val models = ViewModelStore()
@@ -93,6 +93,7 @@ class MaterialReadingQuestionTest {
                 assertEquals(listOf("What is the mitotic spindle?"), api.asked)
                 assertNull(vm.asking)
                 assertEquals(emptyList<MaterialTurn>(), vm.turns)
+                assertEquals("What is the mitotic spindle?", vm.question.text.toString())
             } finally {
                 models.clear()
                 Dispatchers.resetMain()

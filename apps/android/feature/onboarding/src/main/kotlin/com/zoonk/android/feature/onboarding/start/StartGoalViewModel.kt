@@ -655,10 +655,11 @@ class StartGoalViewModel(
         update { it.copy(screen = StartScreen.Entry) }
     }
 
-    /** Leaving the questions or the screen stops what still waits: nothing is answered or sent for no one. */
+    /** Leaving the questions or the screen stops what still waits: nothing is answered or sent for no one, and a question goes back to the box. */
     private fun stopWaiting() {
         heldGoal = null
         askJob?.cancel()
+        asking?.let { if (question.text.isEmpty()) question.setTextAndPlaceCursorAtEnd(it) }
         asking = null
     }
 
