@@ -25,7 +25,7 @@ struct TodayDayView: View {
   @State private var examChoice: PlanEditor?
   @State private var examChoiceDraft: [String] = []
   @State private var adjusting: AdjustPlanSheet.Section?
-  @State private var answeredUpload: TodayView.UploadRequest?
+  @State private var answeredUpload: AnsweredUpload?
   /// The upload request's Not now; true once it saved.
   @State private var uploadDismissal = VisitRequest<Bool>()
   /// Today stops carrying an insight once it's answered, so its card keeps it to show the answer.
@@ -360,13 +360,15 @@ struct TodayDayView: View {
         SuggestedGoalSection(suggestion: suggestion, answer: suggestedGoalAnswer)
       }
     case .uploadRequest:
-      if let request = answeredUpload ?? view.uploadRequest {
+      if let request = answeredUpload?.request ?? view.uploadRequest {
         TodayUploadRequestSection(
-          request: request, answered: answeredUpload != nil, draft: $uploadDraft,
+          request: request, answer: answeredUpload, draft: $uploadDraft,
           dismissal: uploadDismissal
-        ) {
+        ) { source in
           holdShownNotice()
-          answeredUpload = request
+          answeredUpload = AnsweredUpload(request: request, source: source)
+        } onUnreadable: {
+          answeredUpload?.isUnreadable = true
         }
       }
     case nil:

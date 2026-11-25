@@ -135,7 +135,7 @@ final class UnderstoodRowsTests: XCTestCase {
     let none = try XCTUnwrap(
       UnderstoodRows.materialRow(sources: [source("Notes.jpg", .unreadable)], missing: false))
 
-    XCTAssertEqual(none.value, "")
+    XCTAssertEqual(none.value, "Notes.jpg", "The note's \"it\" points at what it couldn't read")
     XCTAssertEqual(none.note, "We couldn't read it, so your plan won't follow it.")
 
     let gone = try XCTUnwrap(UnderstoodRows.materialRow(sources: [], missing: true))

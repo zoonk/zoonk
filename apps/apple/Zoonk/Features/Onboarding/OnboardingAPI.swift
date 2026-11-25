@@ -850,8 +850,8 @@ struct OnboardingAPI: Sendable {
       throw Self.error(try response.body.json)
     case .forbidden(let response):
       throw Self.error(try response.body.json)
-    case .conflict(let response):
-      throw Self.error(try response.body.json)
+    case .conflict:
+      throw OnboardingError.materialReading
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
@@ -1021,8 +1021,6 @@ struct OnboardingAPI: Sendable {
     case "MATERIAL_UNAVAILABLE":
       return sourceIDs(from: payload.error.details).map(OnboardingError.materialUnavailable)
         ?? .failed(.unavailable)
-    case "materialReading":
-      return .materialReading
     default:
       return .failed(.unavailable)
     }

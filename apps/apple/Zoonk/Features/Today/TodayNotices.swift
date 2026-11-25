@@ -274,18 +274,42 @@ struct TodayAdjustPlanSheet: View {
   }
 }
 
+/// What the learner answered the upload request with, kept by Today while they stay.
+struct AnsweredUpload: Equatable {
+  let request: TodayView.UploadRequest
+  let source: AttachedSource
+  /// Reading it found nothing, so the request asks again.
+  var isUnreadable = false
+}
+
 /// Main's `UploadRequestClient`: research couldn't read the official document or class material,
 /// so the learner can upload it, and research reads it instead, or dismiss the ask.
 struct TodayUploadRequestSection: View {
   @Environment(TodayStore.self) private var store
+  @Environment(OnboardingStore.self) private var onboarding
 
   let request: TodayView.UploadRequest
-  /// Answered here, it thanks the learner while they stay, whatever Today reads since.
-  let answered: Bool
+  /// Answered here, it thanks the learner while they stay and it's being read, whatever Today
+  /// reads since.
+  let answer: AnsweredUpload?
   @Binding var draft: MaterialDraft
   /// Today's, ended as its visit ends; true once Not now saved.
   let dismissal: VisitRequest<Bool>
-  let onAnswered: () -> Void
+  let onAnswered: (AttachedSource) -> Void
+  let onUnreadable: () -> Void
+
+  private var answered: Bool {
+    answer.map { !$0.isUnreadable } ?? false
+  }
+
+  /// The upload that last answered it with nothing to read on it, by name.
+  private var unreadableTitle: String? {
+    if let answer, answer.isUnreadable {
+      answer.source.title ?? ""
+    } else {
+      request.unreadableUpload?.title
+    }
+  }
 
   var body: some View {
     if dismissal.outcome != true {
@@ -305,10 +329,6 @@ struct TodayUploadRequestSection: View {
         if answered {
           Text(thanks)
         } else {
-          if let unreadable = request.unreadableUpload, draft.error == nil {
-            FailureLine(message: .unreadableMaterial(title: unreadable.title))
-          }
-
           MaterialAttachControls(goal: (request.goalId, request.language), draft: $draft) {
             Label {
               Text(action)
@@ -316,6 +336,11 @@ struct TodayUploadRequestSection: View {
               Image(systemName: "arrow.up.doc")
             }
           } save: { source in
+            // Nothing to read on it: answering would only bring the ask back.
+            guard source.readStatus != .unreadable else {
+              throw OnboardingError.unreadable(title: source.title ?? "")
+            }
+
             switch await store.answer(request, sourceID: source.id) {
             case .done(.alreadyRead):
               throw OnboardingError.alreadyRead
@@ -326,14 +351,18 @@ struct TodayUploadRequestSection: View {
             case .done(.answered), .obsolete:
               break
             }
-          } onAttached: { _ in
-            onAnswered()
+          } onAttached: { source in
+            onAnswered(source)
           }
 
           Button(action: dismiss) {
             Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
           }
           .disabled(dismissal.isRunning)
+
+          if let unreadableTitle, draft.error == nil {
+            FailureLine(message: .unreadableMaterial(title: unreadableTitle))
+          }
 
           if dismissal.outcome == false {
             FailureLine(
@@ -344,6 +373,37 @@ struct TodayUploadRequestSection: View {
             .typeStyle(.note)
           }
         }
+      }
+      // Read only: an answered upload is followed while it's read, to ask again if it can't be.
+      .task(id: answer) {
+        await followAnswer()
+      }
+    }
+  }
+
+  /// While the answered upload is read; once nothing on it could be read, the ask comes back.
+  private func followAnswer() async {
+    guard let answer, !answer.isUnreadable, answer.source.readStatus == .reading else {
+      return
+    }
+
+    while true {
+      do {
+        try await Task.sleep(for: .seconds(3))
+
+        switch try await onboarding.readStatus(sourceID: answer.source.id) {
+        case .reading:
+          continue
+        case .unreadable:
+          onUnreadable()
+          return
+        case .readable:
+          return
+        }
+      } catch is CancellationError {
+        return
+      } catch {
+        // Asked again on the next beat.
       }
     }
   }

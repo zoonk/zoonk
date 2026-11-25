@@ -249,20 +249,22 @@ enum UnderstoodRows {
   }
 
   /// The material the plan follows, by title; pasted text has none. Material with nothing to read
-  /// on it, or gone since, shows only in the note, which says so even when nothing is left.
+  /// on it, or gone since, is said in the note; with nothing readable, the files stay named so the
+  /// note has something to point at.
   static func materialRow(sources: [OnboardingDraftSource], missing: Bool) -> UnderstoodRow? {
     guard !sources.isEmpty || missing else {
       return nil
     }
 
-    let names = sources.filter { $0.readStatus != .unreadable }.map {
+    let followed = sources.filter { $0.readStatus != .unreadable }
+    let names = (followed.isEmpty ? sources : followed).map {
       $0.title.isEmpty
         ? String(
           localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
         : $0.title
     }
 
-    let isPartial = missing || names.count < sources.count
+    let isPartial = missing || followed.count < sources.count
 
     return UnderstoodRow(
       id: "material",
@@ -271,7 +273,7 @@ enum UnderstoodRows {
         comment: "Header over the material attached to a goal"),
       value: names.joined(separator: ", "),
       note: isPartial
-        ? partialNote(anyLeft: !names.isEmpty)
+        ? partialNote(anyLeft: !followed.isEmpty)
         : String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
   }
 
@@ -281,13 +283,13 @@ enum UnderstoodRows {
         localized: "Your plan and lessons follow only this material. We couldn't read the rest.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when some of it couldn't be read or is gone. \"This material\" is what the row lists."
+          "Under the learner's material on the goal card, when some of it couldn't be read: nothing on it could be read, or it's gone. \"This material\" is what the row lists."
       )
       : String(
         localized: "We couldn't read it, so your plan won't follow it.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when none of it could be read or it's gone. \"It\" is that material."
+          "Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. \"It\" is that material."
       )
   }
 

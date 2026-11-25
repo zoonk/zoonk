@@ -3314,7 +3314,7 @@
       }
     },
     "Can't be read" : {
-      "comment" : "Read by screen readers after the name of an attached file that can't be read anymore.",
+      "comment" : "Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

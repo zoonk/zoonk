@@ -198,7 +198,7 @@ struct GoalMaterialChips: View {
         "We couldn't read some of your files. Try sharper photos or paste the text.",
         table: "Onboarding",
         comment:
-          "Under the learner's attached material when nothing could be read on several items, like blurry photos."
+          "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes."
       )
   }
 }
@@ -343,24 +343,32 @@ private struct MaterialChip: View {
       Text(
         "Being read", tableName: "Onboarding",
         comment:
-          "Read by screen readers after the name of an attached file that is still being read.")
+          "Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read."
+      )
     case .unreadable:
       Text(
         "Can't be read", tableName: "Onboarding",
         comment:
-          "Read by screen readers after the name of an attached file that can't be read anymore.")
+          "Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read."
+      )
     }
   }
 }
 
 extension LocalizedStringResource {
-  /// Under material with nothing to read on it, wherever it was added.
+  /// Under material with nothing to read on it, wherever it was added; pasted text has no title.
   nonisolated static func unreadableMaterial(title: String) -> LocalizedStringResource {
-    LocalizedStringResource(
+    let title =
+      title.isEmpty
+      ? String(
+        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+      : title
+
+    return LocalizedStringResource(
       "We couldn't read “\(title)”. Try a sharper photo or paste the text.",
       table: "Onboarding",
       comment:
-        "Under the learner's attached material when nothing could be read on one item, like a blurry photo. {title} is its name, like \"Biology notes.jpg\"."
+        "Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like \"Notes.jpg\"."
     )
   }
 }
@@ -637,12 +645,7 @@ extension MaterialDraft {
         "Create an account to add your own material.", table: "Onboarding",
         comment: "Only accounts add material")
     case .unreadable(let title):
-      .unreadableMaterial(
-        title: title.isEmpty
-          ? String(
-            localized: "Your text", table: "Onboarding",
-            comment: "Pasted material without a title")
-          : title)
+      .unreadableMaterial(title: title)
     case .alreadyRead:
       LocalizedStringResource(
         "We already read this document. Upload a different one.", table: "Onboarding",
@@ -854,7 +857,7 @@ struct MaterialQuestionsView: View {
       localized: "We're still reading your material. Ask again in a moment.",
       table: "Onboarding",
       comment:
-        "Under questions about the learner's material when a photo or scan they added is still being read"
+        "Shown above the question box when the learner asked about material, like a photo of notes, that's still being read. Their question stays in the box."
     )
   }
 
