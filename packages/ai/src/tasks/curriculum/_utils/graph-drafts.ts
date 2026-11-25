@@ -13,7 +13,10 @@ type DraftParams = {
   lessonBudget?: number | null;
 };
 
-/** Normalization repairs these, but evals still report them as the model's flaws. */
+/**
+ * Normalization repairs these, but evals still report them as the model's flaws. A name or title is
+ * plain text, so what Markdown normalization leaves (a tag like `<p>`) shows as written.
+ */
 const REPAIRED_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
   "cycle",
   "emDash",
@@ -58,7 +61,7 @@ export function findRedraftProblems({
     exam: params.goalKind === "exam",
     phases: data.phases,
     skills: data.skills,
-  }).filter((problem) => !KEPT_CODES.has(problem.code));
+  }).filter((problem) => !KEPT_CODES.has(problem.code) && !REPAIRED_CODES.has(problem.code));
 }
 
 type GraphFrame = Pick<RawSkillGraph, "courses" | "phases">;

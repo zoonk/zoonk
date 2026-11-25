@@ -1733,6 +1733,9 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: 0.10.1
         version: 0.10.1
+      decode-named-character-reference:
+        specifier: 1.3.0
+        version: 1.3.0
       mdast-util-from-markdown:
         specifier: 2.1.0
         version: 2.1.0(supports-color@10.2.2)

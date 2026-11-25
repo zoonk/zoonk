@@ -1,3 +1,4 @@
+import { decodeNamedCharacterReference } from "decode-named-character-reference";
 import { findCodeFenceLines, findCodeFences, readWholeCodeFence, removeCode } from "./code-fence";
 import { parseInlineMarkupRanges } from "./inline-markup";
 import { collectJsonStrings } from "./json";
@@ -17,7 +18,7 @@ export function keepsLines({ layout, text }: { layout: TextLayout; text: string 
 
 const LIST_MARK = /^\s*(?:[-*•]|\d{1,3}[.)])\s+/u;
 
-type Mark = { fix?: string; pattern: RegExp; problem: string };
+type Mark = { fix?: string; pattern: { test: (text: string) => boolean }; problem: string };
 
 const BLOCK_MARKS: readonly Mark[] = [
   { pattern: /^\s{0,3}#{1,6}\s+\S/u, problem: "a heading's # marks" },
@@ -29,8 +30,21 @@ const BLOCK_MARKS: readonly Mark[] = [
 export const MARKDOWN_LINK =
   /!?\[(?<text>[^\]\n]+)\]\([^)\s]+(?:\s+(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|\([^()\n]*\)))?\)/u;
 
-/** CommonMark's `<scheme:address>` and `<name@example.com>`, which renderers turn into links. */
-export const AUTOLINK = /<(?<address>[a-z][a-z\d+.-]{1,31}:[^\s<>]*|[^\s<>@]+@[^\s<>@]+)>/iu;
+/**
+ * CommonMark's `<scheme:address>` and `<name@example.com>`, which renderers turn into links. An XML
+ * tag with a namespace (`<xsl:text>`) reads the same way, so it stays a tag.
+ */
+export const AUTOLINK =
+  /<(?![a-z_][\w.-]*:[a-z_][\w.-]*>)(?<address>[a-z][a-z\d+.-]{1,31}:[^\s<>]*|[^\s<>@]+@[^\s<>@]+)>/iu;
+
+const ESCAPE = /&(?:#\d{1,7}|#x[\da-f]{1,6}|(?<name>[a-z][a-z\d]{1,31}));/giu;
+
+/** "B&Bs;" reads like a named escape, so a name counts only when HTML defines it. */
+function hasEscape(text: string): boolean {
+  return [...text.matchAll(ESCAPE)].some(
+    ({ groups }) => !groups?.name || decodeNamedCharacterReference(groups.name) !== false,
+  );
+}
 
 /**
  * No player renders HTML, and a tag can be what a lesson teaches, so code never takes one out: the
@@ -42,13 +56,12 @@ const INLINE_MARKS: readonly Mark[] = [
   { pattern: AUTOLINK, problem: "a link's angle brackets" },
   {
     fix: "Put a tag learners should read in backticks, as in `<h1>`, and write formatting in Markdown.",
-    pattern:
-      /<\/?(?:a|b|br|code|div|em|h[1-6]|hr|i|img|li|ol|p|pre|small|span|strong|sub|sup|table|td|th|tr|u|ul)\b[^>]*>/iu,
+    pattern: /(?<!<)<\/?[a-z][\w.:-]*(?:\s[^<>]*)?\/?>(?!>)/iu,
     problem: "an HTML tag",
   },
   {
     fix: "Write the character itself, with a tag in backticks as in `<h1>`; an escape the lesson teaches goes in backticks too.",
-    pattern: /&(?:[a-z][a-z\d]{1,31}|#\d{1,7}|#x[\da-f]{1,6});/iu,
+    pattern: { test: hasEscape },
     problem: "an HTML escape",
   },
   {

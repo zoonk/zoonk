@@ -144,6 +144,10 @@ describe(repairMarkdown, () => {
       }
     }
 
+    expect(
+      repairMarkdown({ layout: "inline", text: "Use <xsl:text>Sim</xsl:text> e <https://x.y>." }),
+    ).toBe("Use <xsl:text>Sim</xsl:text> e https://x.y.");
+
     const cell = "| Tag | Job |\n|---|---|\n| <h1> | **main heading |";
 
     expect(repairMarkdown({ layout: "blocks", text: cell })).toBe(

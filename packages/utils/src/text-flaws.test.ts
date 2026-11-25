@@ -58,6 +58,27 @@ describe(findUnrenderedMarkdown, () => {
     expect(
       findUnrenderedMarkdown({ layout: "inline", text: "Wrap it in <p> and </p>." }),
     ).toStrictEqual([expect.stringContaining("in backticks, as in `<h1>`")]);
+
+    for (const text of [
+      "<fieldset><legend>Contact</legend></fieldset>",
+      'Add <button type="submit"> inside the form.',
+      "Use <xsl:text>Yes</xsl:text> here.",
+      "Close it with <br/>.",
+    ]) {
+      expect(findUnrenderedMarkdown({ layout: "inline", text })).toStrictEqual([
+        expect.stringContaining("an HTML tag"),
+      ]);
+    }
+  });
+
+  it("keeps angle quotes, comparisons and links apart from tags", () => {
+    for (const text of ["O «bem comum» e o <<bem comum>>", "Se 3 < 5 e 7 > 2, então", "x<5"]) {
+      expect(findUnrenderedMarkdown({ layout: "inline", text })).toStrictEqual([]);
+    }
+
+    expect(
+      findUnrenderedMarkdown({ layout: "inline", text: "Abra <https://zoonk.com/a?b=1>." }),
+    ).toStrictEqual([expect.stringContaining("a link's angle brackets")]);
   });
 
   it("finds tags written as HTML escapes outside code, and keeps them in code", () => {
@@ -65,6 +86,8 @@ describe(findUnrenderedMarkdown, () => {
       "In &lt;h1&gt;Our Services&lt;/h1&gt;, visitors see only _Our Services_.",
       "&nbsp;&nbsp;<li>Home</li>",
       "Use &#60;p&#62; or &#x3C;p&#x3E;.",
+      "Caf&eacute; &mdash; aberto",
+      "Ein gro&szlig;er Balkon in M&uuml;nchen",
     ]) {
       expect(findUnrenderedMarkdown({ layout: "blocks", text })).toContainEqual(
         expect.stringContaining("an HTML escape"),
@@ -75,6 +98,7 @@ describe(findUnrenderedMarkdown, () => {
       "To show a `<` on a page, write `&lt;`.",
       "```html\n<p>Use &lt;h1&gt; for the title.</p>\n```",
       "AT&T and R&D; pay 5 & 6.",
+      "They stayed in B&Bs; hotels cost more.",
     ]) {
       expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
     }
