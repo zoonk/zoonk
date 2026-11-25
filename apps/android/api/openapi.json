@@ -4087,7 +4087,7 @@
     },
     "/library/lessons/{lessonId}/readiness": {
       "get": {
-        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete; a `challenge` (its `kind`) reports `planChallenge`, `writeChallenge`, `reviewChallenge`, then `fixChallenge` and `recheckChallenge` when its check finds errors and the writer fixes them, `redraftChallenge` when the draft is held back and written again, and `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "description": "The lesson's readiness, confirmed live writer and the learner's ready alternative. Generating covers a writer that holds the lesson's token before it claims the content. A confirmed-dead content claim is released and the current lesson state is returned. A set-aside lesson has no writer. Uncached.",
         "operationId": "getLibraryLessonReadiness",
         "security": [
           {
@@ -4158,6 +4158,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5572,7 +5582,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Current generation status",
+            "description": "Current generation status. A stalled run reports `failed`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5603,6 +5613,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5693,6 +5713,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -25491,7 +25521,7 @@
     },
     "/study-block-openings": {
       "post": {
-        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson was deleted returns to Today (`today`) and asks for the goal plan's lessons when there is a plan; review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "openStudyBlock",
         "security": [
           {
@@ -42352,8 +42382,8 @@
           },
           "generationId": {
             "nullable": true,
-            "type": "string",
-            "description": "The run writing the content: stream GET /generations/{generationId}/events"
+            "description": "The confirmed live writer, or null when no run is writing the lesson.",
+            "type": "string"
           },
           "kind": {
             "type": "string",
@@ -82548,6 +82578,15 @@
               "checkpoint"
             ]
           },
+          "lesson": {
+            "nullable": true,
+            "description": "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StudyBlockLesson"
+              }
+            ]
+          },
           "lessonId": {
             "nullable": true,
             "type": "string",
@@ -82739,6 +82778,7 @@
           "fullReview",
           "id",
           "kind",
+          "lesson",
           "lessonId",
           "mistakesOnly",
           "netScored",
@@ -82888,6 +82928,31 @@
           }
         ],
         "type": "object"
+      },
+      "StudyBlockLesson": {
+        "type": "object",
+        "properties": {
+          "setAside": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LessonGenerationStatus"
+          }
+        },
+        "required": [
+          "setAside",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "LessonGenerationStatus": {
+        "type": "string",
+        "enum": [
+          "ready",
+          "generating",
+          "notStarted",
+          "failed"
+        ]
       },
       "StudyDayProgress": {
         "type": "object",
@@ -83378,7 +83443,7 @@
           "sessionId"
         ],
         "additionalProperties": false,
-        "description": "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it"
+        "description": "Legacy opening for a study block without a lesson; current responses use `today`."
       },
       "StudyBlockOpeningEssay": {
         "type": "object",
@@ -99601,6 +99666,13 @@
       "StudySession": {
         "type": "object",
         "properties": {
+          "alternativePosition": {
+            "nullable": true,
+            "description": "Position of the first available non-lesson block other than the next block, or null when there is no next block or alternative.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "blocks": {
             "type": "array",
             "items": {
@@ -99903,6 +99975,7 @@
           }
         },
         "required": [
+          "alternativePosition",
           "blocks",
           "brainPower",
           "catchUp",
@@ -99987,6 +100060,13 @@
       "UnstartedStudyDay": {
         "type": "object",
         "properties": {
+          "alternativePosition": {
+            "nullable": true,
+            "description": "Position of the first available non-lesson block other than the next block, or null when there is no next block or alternative.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -100325,6 +100405,15 @@
                     "checkpoint"
                   ]
                 },
+                "lesson": {
+                  "nullable": true,
+                  "description": "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/StudyBlockLesson"
+                    }
+                  ]
+                },
                 "lessonId": {
                   "nullable": true,
                   "type": "string",
@@ -100515,6 +100604,7 @@
                 "extra",
                 "fullReview",
                 "kind",
+                "lesson",
                 "lessonId",
                 "mistakesOnly",
                 "netScored",
@@ -101006,6 +101096,7 @@
           }
         },
         "required": [
+          "alternativePosition",
           "brainPower",
           "current",
           "dayEndsAt",
@@ -105164,15 +105255,6 @@
           "minutes"
         ],
         "additionalProperties": false
-      },
-      "LessonGenerationStatus": {
-        "type": "string",
-        "enum": [
-          "ready",
-          "generating",
-          "notStarted",
-          "failed"
-        ]
       },
       "WarmUpDeck": {
         "type": "object",

@@ -7,7 +7,7 @@ import {
   type PlanGenerationManifest,
   admitPlanLessons,
 } from "@zoonk/core/lookahead/speculative-lessons";
-import { isRunActive } from "../../_shared/run-activity";
+import { observeRunActivity } from "../../_shared/run-activity";
 
 export type LessonContentClaim =
   | { status: "claimed" | "completed" | "missing" | "setAside" }
@@ -46,7 +46,7 @@ export async function claimLessonContentStep(input: {
 
   const ownerId = await readOwner(input.lessonId);
 
-  if (ownerId && (await isRunActive(ownerId))) {
+  if (ownerId && (await observeRunActivity(ownerId)) !== "ended") {
     return { runId: ownerId, status: "running" };
   }
 

@@ -5,6 +5,7 @@ import { readDayMissionProgress } from "../../learner/facts/day-mission-progress
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { getAlternativeStudyBlockPosition } from "../alternative-study-block";
 import { withDayState } from "../day-state";
 import { type UnstartedDayView } from "../day-view";
 import { asDayMission, loadMissionDayViews } from "../missions/mission-day-views";
@@ -136,6 +137,10 @@ export async function loadUnstartedDayView({
 
   return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
+    alternativePosition: getAlternativeStudyBlockPosition({
+      blocks: views,
+      nextPosition: fields.nextPosition,
+    }),
     blocks: views,
     catchUp: previewCatchUp,
     extraTime,

@@ -14,6 +14,14 @@ export const studyCheckpointSchema = z
   ])
   .meta({ id: "StudyCheckpoint" });
 
+export const lessonGenerationStatusSchema = z
+  .enum(["ready", "generating", "notStarted", "failed"])
+  .meta({ id: "LessonGenerationStatus" });
+
+const studyBlockLessonSchema = z
+  .object({ setAside: z.boolean(), status: lessonGenerationStatusSchema })
+  .meta({ id: "StudyBlockLesson" });
+
 export const studyBlockSchema = z
   .object({
     answered: z.number().int().min(0),
@@ -72,6 +80,11 @@ export const studyBlockSchema = z
       ),
     id: idSchema,
     kind: z.enum(StudyBlockKind),
+    lesson: studyBlockLessonSchema
+      .nullable()
+      .describe(
+        "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+      ),
     lessonId: idSchema.nullable(),
     mistakesOnly: z
       .boolean()

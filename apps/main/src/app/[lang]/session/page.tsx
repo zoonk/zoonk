@@ -254,7 +254,7 @@ async function SavedDayView({
 
   return (
     <NextStepView
-      alternative={findAlternativeStudyBlock({ blockId: step.id, blocks: session.blocks })}
+      alternative={findAlternativeStudyBlock({ day: session, position: step.position })}
       day={session}
       facts={facts}
       next={next}

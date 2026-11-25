@@ -19,6 +19,7 @@ import {
   guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
+  serviceUnavailableResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
   validationErrorResponse,
@@ -131,7 +132,7 @@ export const contentGenerationPaths = {
   "/library/lessons/{lessonId}/readiness": {
     get: {
       description:
-        "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete; a `challenge` (its `kind`) reports `planChallenge`, `writeChallenge`, `reviewChallenge`, then `fixChallenge` and `recheckChallenge` when its check finds errors and the writer fixes them, `redraftChallenge` when the draft is held back and written again, and `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "The lesson's readiness, confirmed live writer and the learner's ready alternative. Generating covers a writer that holds the lesson's token before it claims the content. A confirmed-dead content claim is released and the current lesson state is returned. A set-aside lesson has no writer. Uncached.",
       operationId: "getLibraryLessonReadiness",
       requestParams: { path: lessonPathParamsSchema },
       responses: {
@@ -142,6 +143,7 @@ export const contentGenerationPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
+        "503": serviceUnavailableResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get whether a lesson is ready",
