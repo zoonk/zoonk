@@ -2,7 +2,7 @@ import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { observeRunActivity } from "@/workflows/_shared/run-activity";
+import { settleRunActivity } from "@/workflows/_shared/run-activity";
 import { getLessonContentHookToken } from "@/workflows/lessons/lesson-content-result";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
@@ -12,7 +12,7 @@ import { getHookByToken } from "workflow/api";
 import { HookNotFoundError } from "workflow/errors";
 
 async function observeRun(runId: string) {
-  const status = await observeRunActivity(runId);
+  const status = await settleRunActivity(runId);
   return status === "alive" ? { runId, status } : { status };
 }
 

@@ -3,10 +3,11 @@ import { completeLessonContent } from "@zoonk/core/library/generation/state";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun, start } from "workflow/api";
 import { mockSession } from "../../../../../../../../../packages/core/src/_test-utils/mock-session";
 import { getHookByToken } from "../../../../../../../mocks/workflow-api";
+import { mockLastRunEvent } from "../../../../../../../mocks/workflow-runtime";
 import { POST as writeLesson } from "../generations/route";
 import { GET as readLesson } from "./route";
 
@@ -36,14 +37,27 @@ function fakeRun(members: object): ReturnType<typeof getRun> {
   return members as unknown as ReturnType<typeof getRun>;
 }
 
-function observeStatus(status: string) {
-  const cancel = vi.fn();
+type Cancel = () => Promise<void>;
 
+function observeStatus(status: string, cancel = vi.fn<Cancel>(() => Promise.resolve())) {
   vi.mocked(getRun).mockReturnValue(
     fakeRun({ cancel, exists: Promise.resolve(true), status: Promise.resolve(status) }),
   );
 
   return cancel;
+}
+
+function observeStalledOwner(cancel?: Mock<Cancel>) {
+  mockLastRunEvent(OWNER, {
+    createdAt: new Date(Date.now() - 31 * 60 * 1000),
+    eventType: "step_started",
+  });
+
+  return observeStatus("running", cancel);
+}
+
+function failCancel() {
+  return vi.fn<Cancel>(() => Promise.reject(new Error("Workflow storage unavailable")));
 }
 
 function failLookup() {
@@ -110,6 +124,30 @@ describe("GET lesson readiness", () => {
 
     await expect(row(lesson.id)).resolves.toMatchObject({ contentStatus: "failed" });
     expect(cancel).not.toHaveBeenCalled();
+  });
+
+  it("stops a stalled owner before releasing its claim, so it can't resume", async () => {
+    const lesson = await runningLesson();
+    const cancel = observeStalledOwner();
+
+    const response = await read(lesson.id);
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ status: "failed" });
+    await expect(row(lesson.id)).resolves.toMatchObject({ contentStatus: "failed" });
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+
+  it("keeps a stalled owner's claim when the owner can't be stopped", async () => {
+    const lesson = await runningLesson();
+    observeStalledOwner(failCancel());
+
+    const response = await read(lesson.id);
+    expect(response.status).toBe(503);
+
+    await expect(row(lesson.id)).resolves.toMatchObject({
+      contentRunId: OWNER,
+      contentStatus: "running",
+    });
   });
 
   it("returns a service error without changing the claim on unknown liveness", async () => {
@@ -239,4 +277,26 @@ describe("POST lesson writing", () => {
       expect(start).toHaveBeenCalledTimes(ended ? 1 : 0);
     },
   );
+
+  it("stops a stalled owner before writing the lesson again", async () => {
+    const lesson = await runningLesson();
+    const cancel = observeStalledOwner();
+
+    const response = await write(lesson.id);
+    expect(response.status).toBe(202);
+    await expect(response.json()).resolves.toMatchObject({ generationId: "started-run" });
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(start).toHaveBeenCalledOnce();
+  });
+
+  it("follows a stalled owner it can't stop instead of writing again", async () => {
+    const lesson = await runningLesson();
+    observeStalledOwner(failCancel());
+
+    const response = await write(lesson.id);
+    expect(response.status).toBe(202);
+    await expect(response.json()).resolves.toMatchObject({ generationId: OWNER });
+    await expect(row(lesson.id)).resolves.toMatchObject({ contentStatus: "running" });
+    expect(start).not.toHaveBeenCalled();
+  });
 });

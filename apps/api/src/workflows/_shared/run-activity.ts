@@ -95,9 +95,10 @@ export async function readRunState(runId: string): Promise<RunState> {
   return WorkflowRunNotFoundError.is(error) ? MISSING : UNKNOWN;
 }
 
-export async function observeRunActivity(runId: string): Promise<RunActivity> {
-  const { activity } = await readRunState(runId);
-  return activity;
+/** A stalled run is cancelled before it reads as ended, so a caller can release its claim knowing it won't resume. */
+export async function settleRunActivity(runId: string): Promise<RunActivity> {
+  const { data, error } = await safeAsync(() => stopStalledRun(runId));
+  return error ? "unknown" : data.activity;
 }
 
 function requireKnownState(state: RunState, runId: string): RunState {
