@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "f9fb1507f8031b3222a2843c98b10ae2ab92d7aec0940e194ba89a664455d585",
   "onboarding_buddy_title": "4548e539bc22f9d25027261d755a770b90baa4b9c9e808d8279e9c2a5841d063",
   "onboarding_cancel": "6d2896b005f8a5d929164a64bb51f62c8f7f3e338f9efb632d22840bc27dca5b",
+  "onboarding_change_end_date": "2a9b75ec39bd5585ad6e4e0f5ce85e4c35fc8d09ee20f786f61d810c97fe170d",
+  "onboarding_change_exam_date": "54be774533504f2f224d581db40c2a868f073389b2856ab5181bde789a05e9fb",
   "onboarding_continue": "f4c1323bd702f30b22713a0bd06010f47d8dccfa03ab79a47f87ed1830ca96d6",
   "onboarding_country_description": "9cdd145767194f458beec4b79dd7026c50d25827bed27573268b26d391f5e6e9",
   "onboarding_country_from_home": "362f6fe9a680dd79287a95fdb579621491b29a5ed115cef082ab82109f1f834a",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "849ba2c950d2a1a93c12f17c4933a1f7170ef87985791c0c684ac1b755ae9468",
   "onboarding_score_title": "792ccb2482748e807ebfae6416dd96d926620404baa1f0673c3ddcea8ce594c7",
   "onboarding_see_plan": "f873dd32648ccf369aaaaf10ad1b2af39d6aed547d227cf688fadfad6e6021aa",
+  "onboarding_set_end_date": "c04d4c54c4f7f5dc2caa17eddc64ce157e113073d50d559ff4159c40e5c0d261",
   "onboarding_skip": "3333e00ee78d91bed4e2d042b1cefc2d35603ed09962a1e2187cc3919ca7fb62",
   "onboarding_source": "8ee806d5199d759f3429f95b1d02571845cad108e7bce4b86161666f5eec876f",
   "onboarding_start_description": "7a6e577291ed451d7def826d5582a853f1f27c1fae79c3d8edefe2f2bfbc082b",
@@ -742,6 +745,9 @@
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo você pode estudar por dia?</string>
     <string name="onboarding_schedule_time_label">Tempo diário</string>
+    <string name="onboarding_change_exam_date">Mudar data da prova</string>
+    <string name="onboarding_change_end_date">Mudar data final</string>
+    <string name="onboarding_set_end_date">Definir data final</string>
     <string name="onboarding_study_days">Dias de estudo</string>
     <string name="onboarding_answers_saved">Suas respostas estão salvas.</string>
     <!-- On a setup question when the plan's run never started. -->

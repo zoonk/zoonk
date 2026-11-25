@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "af68f3efb439b65a20107e3c93a3542ee0402991cbac5384795ba736d1473aab",
   "onboarding_buddy_title": "ed19ec370e00c852c8343e201aa722fb58ed2efcaaada4b49d04ea4e8788ae8b",
   "onboarding_cancel": "63f4d6bf872960b3a566c8478a757ccbb3ec2645049f2e25239bcc9082393d82",
+  "onboarding_change_end_date": "43c26ad13b5583c257b480d899b6d32cbf8291bf89537be7f73f55a27ffc72b9",
+  "onboarding_change_exam_date": "ace8fc51548110a77cd884c8ecefc7ccdd8138f0277ece790a0e20574052fe05",
   "onboarding_continue": "66346dc40f787c5f51921d49e6b4b3cce5822b0a858636576dc45a2babb020b2",
   "onboarding_country_description": "d365adba0fb3989889d22c71c333b5bee8fb4856545d939fbd725461cca3f678",
   "onboarding_country_from_home": "dfdbd0649147952c08937e8ebd31e99e77ef1d9ff0cf6551669a23589ca820ae",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "976c17a4be8307eb615c058cb32933c1b198e23cb65fc8ed2a2d983e01e456cb",
   "onboarding_score_title": "65ed83818ed251e7e4fe3793ed3df4caea4c5fe3f75eb38c0be5b8f24f5479b5",
   "onboarding_see_plan": "7f96c648e281157ce91a3536fee9a3d4b30cd7020abeef7717be67f44252cfca",
+  "onboarding_set_end_date": "8908f46f819f2f79e8d309730b589a11d00a387ae70f81e7527fac3c451d1fa3",
   "onboarding_skip": "9970bbd186f0a59c6958adacf80161f7f8c8a867a89c4109f199ad389a48e217",
   "onboarding_source": "ff59000a3ce9b03de7772fc2392d9a2f4bc9440d21f91a42513eb368a9dd88cc",
   "onboarding_start_description": "2071e4c89b97676c76840ca37edd080ff1f407da39f952b614207ae617843da6",
@@ -749,6 +752,9 @@
     </plurals>
     <string name="onboarding_schedule_title">Ile czasu dziennie możesz poświęcić na naukę?</string>
     <string name="onboarding_schedule_time_label">Dzienny czas nauki</string>
+    <string name="onboarding_change_exam_date">Zmień datę egzaminu</string>
+    <string name="onboarding_change_end_date">Zmień datę zakończenia</string>
+    <string name="onboarding_set_end_date">Ustaw datę końcową</string>
     <string name="onboarding_study_days">Dni nauki</string>
     <string name="onboarding_answers_saved">Twoje odpowiedzi są zapisane.</string>
     <!-- On a setup question when the plan's run never started. -->

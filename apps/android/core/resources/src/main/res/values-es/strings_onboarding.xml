@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "4f8022dca0741797b5fe8758ca16521182f6484c9d4f9295090c15ffcd2151cf",
   "onboarding_buddy_title": "c5528bb44f1af5d8b1a054ab68c40c1d39cc7f1bbd198cefef2aa99cbb510785",
   "onboarding_cancel": "59b6f363e35ea4cbaadbd74f800fcc2469e87be4c9d65a1080e663d6c2a0056b",
+  "onboarding_change_end_date": "4a7e0b3f2f64b9bfb25355e93f43490c50181b75111cf2624ebfce553a1cd081",
+  "onboarding_change_exam_date": "0b22a6fcb471adec107562e522db88150890b790e5a515d5f8b91a26ee57b5bb",
   "onboarding_continue": "3f443789982207421ca6ea62fa0c25cfe9bd7577725c53bb803ef0d94c73e80c",
   "onboarding_country_description": "808b7b38b5756cbf36556acc367a1f081d5503c358d29db7cee89690cd0a69c8",
   "onboarding_country_from_home": "d322019ef8c7e16575f803665a00c019d070ce6e7977e53dea6f9f7d710f0090",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "9b8391b28297fdb48360d3c6a0d9dd2ce68a1b831e79b3fa2469ceba4adce9e3",
   "onboarding_score_title": "609fa83fcb79f08031c99e7070f8f9e62c819978b9735b2db3dbdea678131d84",
   "onboarding_see_plan": "b272b49a52156df8645b2307a320ac28c116ce61f5c8b4b3774020a4f64c2958",
+  "onboarding_set_end_date": "3d5decd00f7dfee7b820c4a878dc0b48d8d9bcfc4366635813059c1818c7d624",
   "onboarding_skip": "d01e3ba59a337ca38a8f6ce25edf387f357f8c21085d034d6b37a4b5c38da923",
   "onboarding_source": "adba9cde9e3d49ebe43ba641751efe7b76b642f0d5e6859fcb6872fe4a66f154",
   "onboarding_start_description": "469e04b6fd2d76c212567539efdcaaa21dba9ee31791519bca13debacb30079c",
@@ -742,6 +745,9 @@
     </plurals>
     <string name="onboarding_schedule_title">¿Cuánto tiempo puedes estudiar cada día?</string>
     <string name="onboarding_schedule_time_label">Tiempo diario</string>
+    <string name="onboarding_change_exam_date">Cambiar la fecha del examen</string>
+    <string name="onboarding_change_end_date">Cambiar la fecha de finalización</string>
+    <string name="onboarding_set_end_date">Establecer fecha de finalización</string>
     <string name="onboarding_study_days">Días de estudio</string>
     <string name="onboarding_answers_saved">Tus respuestas están guardadas.</string>
     <!-- On a setup question when the plan's run never started. -->

@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "7e0a9ff5e02d3e3b452bf23aa95de1db0bec6ab6a6f6425791f9d436309cdbb6",
   "onboarding_buddy_title": "b57b0948a0a14dd83f1128b912f54f5027a3a4ed2aaeb6d048d596199b14c68f",
   "onboarding_cancel": "549581de061f9a4fc500bbd51f25348aad3ba8d3e68146aa2fcd8c968bda8634",
+  "onboarding_change_end_date": "2c1c7dea8cae27eb26b05cf8243aaa1d22cfe1a4abe4617775d42e27a551fb09",
+  "onboarding_change_exam_date": "d56d7f8287ddbaee708fea798a9aa48d7ac4147f2de0184cd32edd9fa49e7665",
   "onboarding_continue": "c2eb49cc176f22d161eafb034252df622cd409ad39257f066d8a76b0f64274d6",
   "onboarding_country_description": "a83cc6077e6d923458f4241629ac3c8c3ab285b9ff52e0fd0802443763789790",
   "onboarding_country_from_home": "9147b7ac85f02e845d22c3edcb0730cf72b07e311acf47d6b34c8772d1a4491a",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "7397598125cc05886997b97767298ff17091ece5132c171dceaa49abfd56f362",
   "onboarding_score_title": "2aefab64b1154d530f08363269c87b6a1b70f10d54fea76341b0b49cc809474c",
   "onboarding_see_plan": "de318352feb7286fa3d3f2551dd72b67a02ced89998b2f636b400a313a84c370",
+  "onboarding_set_end_date": "2a674af53c6aad84016dd432614aba79378094aad7427369b96ce3a81b700acb",
   "onboarding_skip": "2592ff5d43c66e6d666e022e96f24024d0da324a9010a0e6da405325fec9fc2a",
   "onboarding_source": "318cfa6c1cf8434d85e41cb963bf9ff6a153660e4d8a0baf70251313cd56eda4",
   "onboarding_start_description": "0d27612d5ea39d357547a59d04b76c73b563bffccc3314678870caf2781f129e",
@@ -742,6 +745,9 @@
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo puoi dedicare allo studio ogni giorno?</string>
     <string name="onboarding_schedule_time_label">Tempo giornaliero</string>
+    <string name="onboarding_change_exam_date">Cambia la data dell’esame</string>
+    <string name="onboarding_change_end_date">Cambia la data di fine</string>
+    <string name="onboarding_set_end_date">Imposta la data di fine</string>
     <string name="onboarding_study_days">Giorni di studio</string>
     <string name="onboarding_answers_saved">Abbiamo salvato le tue risposte.</string>
     <!-- On a setup question when the plan's run never started. -->

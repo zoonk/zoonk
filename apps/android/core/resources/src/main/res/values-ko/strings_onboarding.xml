@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "3d462e210c95da8532598bf1f522f5142cf034177aa64972b75b090699eba9af",
   "onboarding_buddy_title": "98ea45f84338bf4b61932937c88df63e9e3361f2993d505678ecb80f0666cd51",
   "onboarding_cancel": "0ac34f0f2dc62fd8b1b3a47061f6c11e2b7bf0e70849df2f4d5e6420f02477a3",
+  "onboarding_change_end_date": "0d509688521e69594827a5c0e6ac9d002095053be9c65625f7851dc39339681d",
+  "onboarding_change_exam_date": "cc02f9ca09aa6be5982ff2e645d6a640fbbff1f8794575652852a55e5caca1a6",
   "onboarding_continue": "64393e0ccd7cc3b6790c81b16e4b579c3d79095cf83307672fb4368f9e42ccb8",
   "onboarding_country_description": "da5bcb450aa23bbd17a90d537d89c03ea586d481bcab195b77955b7c798375de",
   "onboarding_country_from_home": "b24a2cdff13af208c072f1bc9b37d29719538582279a63d143a7984ad6b9e6ea",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "bd30796be1ab8593eeb3cb9e82e8b15f47d8f526ced7d4bbf43f101de5bf0083",
   "onboarding_score_title": "c750bbbc95e8601c677fdd8c62e72dd3f42f86a06260f730e5a42bf03cf193c1",
   "onboarding_see_plan": "04a507a31e92750b17cc7897c61e89a7c3ad7bb54b5469d2259dd2952e8e0b68",
+  "onboarding_set_end_date": "128cb4ea50885753a8dc68a241373c7b7f97f0e7dcba70ca06a3174544dc5607",
   "onboarding_skip": "21912bb22a12f3ce214f727508fece15c7c1d793584a37ef9fb595cd4b66d93b",
   "onboarding_source": "11dcbda09c33491dba7d678c3191be2a9878f9f33b0dfa2457fc44cd201811c8",
   "onboarding_start_description": "5c0a660c683e72d2f1284a4927cc863ca7c5f37be96ccf23c2d92227359bcd54",
@@ -728,6 +731,9 @@
     </plurals>
     <string name="onboarding_schedule_title">하루에 얼마나 공부할 수 있나요?</string>
     <string name="onboarding_schedule_time_label">하루 학습 시간</string>
+    <string name="onboarding_change_exam_date">시험 날짜 바꾸기</string>
+    <string name="onboarding_change_end_date">종료일 바꾸기</string>
+    <string name="onboarding_set_end_date">종료일 설정</string>
     <string name="onboarding_study_days">학습 일수</string>
     <string name="onboarding_answers_saved">답변은 저장되어 있어요.</string>
     <!-- On a setup question when the plan's run never started. -->

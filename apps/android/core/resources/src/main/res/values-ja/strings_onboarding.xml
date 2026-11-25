@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "4deab14de496423fd347c846018a3cf518bd91e3285a397e5069800dd954c9b1",
   "onboarding_buddy_title": "6a67fc4117c2e75adaf3fa3b52991a7ccc36fe5bb3a3353bde878eab6d324471",
   "onboarding_cancel": "f38bf700f1e5d2d5d337be42237ce4c6df18c7e024fd50763ef149479b3b2206",
+  "onboarding_change_end_date": "90c534ce17cac9542b315495f871acf74ddbaaaa18f23d9ae65eb68c9bddca98",
+  "onboarding_change_exam_date": "b9a71663690b24b6d259424607dfa1d574a7f0f30e31e63879c2cdedab32b955",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
   "onboarding_country_description": "5efb2461e973eac172c3c847bf03091900e1dc943af0cf9f2c1bb3a8919ed08f",
   "onboarding_country_from_home": "b151c40c804b9812b88ef7e8f474a89235e0af9887708d1d08df771808be973f",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "a5d366dacbd42353e2c81e35fc6094974afbb93df232cb81cf4e15bdbeee08b8",
   "onboarding_score_title": "dc93538f21bc6779164b006c70ccdd6a55bf42932acefca66ea3a8979aa3aa00",
   "onboarding_see_plan": "aa9b25f8b74e7b7149ea464c6e764530e471d0fa7139146b34cdb2aeafdab9a5",
+  "onboarding_set_end_date": "cee08467b12f3f8cd3a46d7de5761e0e9c6fa5b402e052bc77dc55b2370fc093",
   "onboarding_skip": "f4bb9715c1139287c32c08cb89c03645356770a38e96707e40f44b49354eaa9d",
   "onboarding_source": "be0bb6fdb16c48a51b682135a0bc67570d5141dd763cad85862aeedcecbf40cd",
   "onboarding_start_description": "12fb39d8077781f6b473848707ebb92a1806fde2579f64ad41d066338465fe2e",
@@ -728,6 +731,9 @@
     </plurals>
     <string name="onboarding_schedule_title">1日にどれくらい学習時間を取れますか？</string>
     <string name="onboarding_schedule_time_label">1日の学習時間</string>
+    <string name="onboarding_change_exam_date">試験日を変更する</string>
+    <string name="onboarding_change_end_date">終了日を変更する</string>
+    <string name="onboarding_set_end_date">終了日を設定</string>
     <string name="onboarding_study_days">学習日数</string>
     <string name="onboarding_answers_saved">回答は保存されています。</string>
     <!-- On a setup question when the plan's run never started. -->

@@ -35,6 +35,8 @@
   "onboarding_buddy_description": "5e279b1d9e23cf1a6965dc1015b7d33f161b4e50e94c5c182cc25eb79d1e6b6d",
   "onboarding_buddy_title": "e860635b79cae6427181a12e5a993a1aebedb5ebe9e738fbfa45edf97f061206",
   "onboarding_cancel": "83483a9fe6c33e49f8c11b7b913c058f9d16f462b0715640386dd82491c019a8",
+  "onboarding_change_end_date": "81c6a7b76dddc686c6bafa55c527721a5142e41ce34cb23224ceabde4e80f3ae",
+  "onboarding_change_exam_date": "1c629bb726c7e0e2378fef5c2cb914ad0d78b2a8193a5bfd1e587cd5ac8928d6",
   "onboarding_continue": "b87f76bd23a8ea11eef65c0a385053f19df4563c0c5b79dd4761f396b14f50bc",
   "onboarding_country_description": "a3d926331823906705772eeab5f5d7b238cfda820790df34a750be75a0f1c2cb",
   "onboarding_country_from_home": "78223098a61e3f2c3d3df24dd0f1bad9d61a75c95b440e6f4447301652fadd59",
@@ -301,6 +303,7 @@
   "onboarding_score_placeholder": "66d39f5ad8076bbca960622a3fa74412801aa9c41c2813fbd07bb16fab3962f9",
   "onboarding_score_title": "504f695d6346346de89a53037391ff37b3cc866c463162acb8a9ec888341adaa",
   "onboarding_see_plan": "ecdd7b28b2915bb713848bd7ba198028734afc73af834948a8181a4211f3322c",
+  "onboarding_set_end_date": "97752170df833cd89c1f9529f9264b41c1877eb07df7ae06aa37f28a10a48ee8",
   "onboarding_skip": "fc3fd337290fc745602b20ff836a9834a526b8ed8e96d21ae2e74fe8144534dd",
   "onboarding_source": "a34616c9a5adf8b01f59af9e0145f0e857d878a45b596788126733360cbf1d4a",
   "onboarding_start_description": "3cec8181d16375056b8a68b820c0f937d1dec68b8a03ce616a37ea79d44d3df4",
@@ -735,6 +738,9 @@
     </plurals>
     <string name="onboarding_schedule_title">Her gün ne kadar süre ders çalışabilirsin?</string>
     <string name="onboarding_schedule_time_label">Günlük çalışma süresi</string>
+    <string name="onboarding_change_exam_date">Sınav tarihini değiştir</string>
+    <string name="onboarding_change_end_date">Bitiş tarihini değiştir</string>
+    <string name="onboarding_set_end_date">Bitiş tarihini belirle</string>
     <string name="onboarding_study_days">Çalıştığın günler</string>
     <string name="onboarding_answers_saved">Cevapların kaydedildi.</string>
     <!-- On a setup question when the plan's run never started. -->
