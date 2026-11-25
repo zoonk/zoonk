@@ -2,6 +2,7 @@ import Foundation
 import OpenAPIRuntime
 
 typealias OnboardingDraft = Components.Schemas.OnboardingDraft
+typealias OnboardingDraftSource = Components.Schemas.OnboardingDraftSource
 typealias GoalOnboarding = Components.Schemas.Onboarding
 
 extension GoalOnboarding {
@@ -41,6 +42,8 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// Material sent with a goal is gone from the learner's uploads (`MATERIAL_UNAVAILABLE`): its
   /// ids, in the order sent. Nothing was saved or charged.
   case materialUnavailable(sourceIDs: [String])
+  /// Material asked about is still being read, so nothing was charged (`MATERIAL_READING`).
+  case materialReading
   case failed(APIError)
 
   /// The server's own answer, as opposed to a request that may or may not have reached it.
@@ -53,14 +56,19 @@ enum OnboardingError: Error, Equatable, Sendable {
   }
 }
 
+typealias SourceReadStatus = Components.Schemas.SourceReadStatus
+
 struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let title: String?
+  /// A photo or a scanned page is read after it's added; one with nothing to read stays attached,
+  /// so the goal still knows what the learner wants to do with it.
+  var readStatus: SourceReadStatus
   /// A goal sent with it found it gone, so the learner removes it and adds it again.
   var isUnavailable = false
 
   private enum CodingKeys: String, CodingKey {
-    case id, title
+    case id, title, readStatus
   }
 }
 
@@ -808,6 +816,22 @@ struct OnboardingAPI: Sendable {
       signature: presigned.signature, params: presigned.params.additionalProperties)
   }
 
+  /// Where reading an attached source stands.
+  func readStatus(sourceID: String, token: String) async throws -> SourceReadStatus {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getSource(path: .init(sourceId: sourceID))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.readStatus
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
   func askMaterial(question: String, sourceIDs: [String], token: String) async throws
     -> MaterialAnswer
   {
@@ -992,6 +1016,8 @@ struct OnboardingAPI: Sendable {
     case "MATERIAL_UNAVAILABLE":
       return sourceIDs(from: payload.error.details).map(OnboardingError.materialUnavailable)
         ?? .failed(.unavailable)
+    case "MATERIAL_READING":
+      return .materialReading
     default:
       return .failed(.unavailable)
     }

@@ -111,11 +111,40 @@ final class UnderstoodRowsTests: XCTestCase {
 
   func testTheMaterialRowNamesEachSourceAndPastedTextAsYourText() throws {
     let row = try XCTUnwrap(
-      UnderstoodRows.materialRow(titles: ["Cell cycle.pdf", ""], missing: false))
+      UnderstoodRows.materialRow(
+        sources: [source("Cell cycle.pdf", .readable), source("", .readable)], missing: false))
 
     XCTAssertEqual(row.value, "Cell cycle.pdf, Your text")
+    XCTAssertEqual(row.note, "Your plan and lessons follow this material")
     XCTAssertNil(row.field, "The material is changed from the goal's words, not on the card")
-    XCTAssertNil(UnderstoodRows.materialRow(titles: [], missing: false))
+    XCTAssertNil(UnderstoodRows.materialRow(sources: [], missing: false))
+  }
+
+  /// A photo with nothing to read on it stays with the draft, so editing the goal keeps it, but the
+  /// card doesn't claim the plan follows it.
+  func testTheMaterialRowListsOnlyWhatCouldBeRead() throws {
+    let some = try XCTUnwrap(
+      UnderstoodRows.materialRow(
+        sources: [source("Notes.jpg", .unreadable), source("Cell cycle.pdf", .readable)],
+        missing: false))
+
+    XCTAssertEqual(some.value, "Cell cycle.pdf")
+    XCTAssertEqual(
+      some.note, "Your plan and lessons follow only this material. We couldn't read the rest.")
+
+    let none = try XCTUnwrap(
+      UnderstoodRows.materialRow(sources: [source("Notes.jpg", .unreadable)], missing: false))
+
+    XCTAssertEqual(none.value, "")
+    XCTAssertEqual(none.note, "We couldn't read it, so your plan won't follow it.")
+
+    let gone = try XCTUnwrap(UnderstoodRows.materialRow(sources: [], missing: true))
+
+    XCTAssertEqual(gone.note, "We couldn't read it, so your plan won't follow it.")
+  }
+
+  private func source(_ title: String, _ readStatus: SourceReadStatus) -> OnboardingDraftSource {
+    OnboardingDraftSource(id: UUID().uuidString, readStatus: readStatus, title: title)
   }
 
   private func examDay(_ date: String) -> [String: Any] {

@@ -248,19 +248,21 @@ enum UnderstoodRows {
       editValue: schedule.studyTime ?? "")
   }
 
-  /// The material the draft was sent with, by title; pasted text has none. Material gone since
-  /// shows only in the note, which says so even when nothing is left.
-  static func materialRow(titles: [String], missing: Bool) -> UnderstoodRow? {
-    guard !titles.isEmpty || missing else {
+  /// The material the plan follows, by title; pasted text has none. Material with nothing to read
+  /// on it, or gone since, shows only in the note, which says so even when nothing is left.
+  static func materialRow(sources: [OnboardingDraftSource], missing: Bool) -> UnderstoodRow? {
+    guard !sources.isEmpty || missing else {
       return nil
     }
 
-    let names = titles.map {
-      $0.isEmpty
+    let names = sources.filter { $0.readStatus != .unreadable }.map {
+      $0.title.isEmpty
         ? String(
           localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
-        : $0
+        : $0.title
     }
+
+    let isPartial = missing || names.count < sources.count
 
     return UnderstoodRow(
       id: "material",
@@ -268,28 +270,24 @@ enum UnderstoodRows {
         "Your material", table: "Onboarding",
         comment: "Header over the material attached to a goal"),
       value: names.joined(separator: ", "),
-      note: missingNote(missing: missing, anyLeft: !titles.isEmpty)
-        ?? String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
+      note: isPartial
+        ? partialNote(anyLeft: !names.isEmpty)
+        : String(localized: "Your plan and lessons follow this material", table: "Onboarding"))
   }
 
-  private static func missingNote(missing: Bool, anyLeft: Bool) -> String? {
-    guard missing else {
-      return nil
-    }
-
-    return anyLeft
+  private static func partialNote(anyLeft: Bool) -> String {
+    anyLeft
       ? String(
-        localized:
-          "Your plan and lessons follow only this material. The rest can't be read anymore.",
+        localized: "Your plan and lessons follow only this material. We couldn't read the rest.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when some of it can't be read anymore. \"This material\" is what the row lists."
+          "Under the learner's material on the goal card, when some of it couldn't be read or is gone. \"This material\" is what the row lists."
       )
       : String(
-        localized: "It can't be read anymore, so your plan won't follow it.",
+        localized: "We couldn't read it, so your plan won't follow it.",
         table: "Onboarding",
         comment:
-          "Under the learner's material on the goal card, when none of it can be read anymore. \"It\" is that material."
+          "Under the learner's material on the goal card, when none of it could be read or it's gone. \"It\" is that material."
       )
   }
 

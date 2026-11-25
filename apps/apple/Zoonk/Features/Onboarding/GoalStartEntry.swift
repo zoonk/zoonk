@@ -126,7 +126,9 @@ extension SentGoal {
 
     self.init(
       words: draft.prompt,
-      material: draft.sources.map { AttachedSource(id: $0.id, title: $0.title) },
+      material: draft.sources.map {
+        AttachedSource(id: $0.id, title: $0.title, readStatus: $0.readStatus)
+      },
       intent: intent)
   }
 }

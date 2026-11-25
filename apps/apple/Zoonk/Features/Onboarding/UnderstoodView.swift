@@ -356,8 +356,7 @@ private struct UnderstoodCard: View {
 
     return rows
       + [
-        UnderstoodRows.materialRow(
-          titles: draft.sources.map(\.title), missing: draft.materialMissing),
+        UnderstoodRows.materialRow(sources: draft.sources, missing: draft.materialMissing),
         UnderstoodRows.scheduleRow(understood),
       ].compactMap(\.self)
   }

@@ -185,12 +185,15 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
-  /// A draft opened again later still has the material it was sent with, so new words on it start
-  /// with that material.
+  /// A draft opened again later still has the material it was sent with, a photo with nothing to
+  /// read on it included, so new words on it start with that material and what it's for.
   func testNewWordsOnAReopenedDraftStartWithItsMaterial() async throws {
     var reopened = Self.draft(prompt: "test on Friday", goalsLeft: 2)
     reopened.materialIntent = .exam
-    reopened.sources = [.init(id: Self.sourceID, title: "Cell cycle notes")]
+    reopened.sources = [
+      .init(id: Self.sourceID, readStatus: .readable, title: "Cell cycle notes"),
+      .init(id: Self.otherSourceID, readStatus: .unreadable, title: "Whiteboard.jpg"),
+    ]
     let server = DraftServer(reopened)
     let store = makeStore(transport: server)
     let card = store.draft(id: Self.draftID)
@@ -203,7 +206,7 @@ final class OnboardingStoreTests: XCTestCase {
     let start = try XCTUnwrap(starts.first)
 
     XCTAssertEqual(start.goal, "biology test on Friday")
-    XCTAssertEqual(start.sourceIds, [Self.sourceID])
+    XCTAssertEqual(start.sourceIds, [Self.sourceID, Self.otherSourceID])
     XCTAssertEqual(start.materialIntent, .exam)
   }
 

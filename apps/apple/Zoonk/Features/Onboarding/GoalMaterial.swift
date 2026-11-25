@@ -68,12 +68,14 @@ private struct Paperclip: View {
 struct GoalMaterialChips: View {
   @Binding var material: [AttachedSource]
 
+  @Environment(OnboardingStore.self) private var onboarding
+
   var body: some View {
     if !material.isEmpty {
       VStack(alignment: .leading, spacing: 12) {
         FlowLayout {
           ForEach(material) { source in
-            MaterialChip(title: title(of: source), isUnavailable: source.isUnavailable) {
+            MaterialChip(title: title(of: source), look: look(of: source)) {
               material.removeAll { $0.id == source.id }
             }
           }
@@ -81,6 +83,10 @@ struct GoalMaterialChips: View {
 
         if let unavailableLine {
           FailureLine(message: unavailableLine)
+        }
+
+        if let unreadableLine {
+          FailureLine(message: unreadableLine)
         }
 
         if let fullLine {
@@ -91,6 +97,38 @@ struct GoalMaterialChips: View {
       }
       .announcesStatus(fullLine)
       .listRowSeparator(.hidden)
+      // Read only: a file still being read is followed until it's read, while its chip shows.
+      .task(id: reading) {
+        await follow(reading)
+      }
+    }
+  }
+
+  private var reading: [String] {
+    material.filter { $0.readStatus == .reading && !$0.isUnavailable }.map(\.id)
+  }
+
+  private func follow(_ ids: [String]) async {
+    while !ids.isEmpty {
+      do {
+        try await Task.sleep(for: .seconds(3))
+      } catch {
+        return
+      }
+
+      for id in ids {
+        do {
+          let status = try await onboarding.readStatus(sourceID: id)
+
+          if status != .reading {
+            material.update(id) { $0.readStatus = status }
+          }
+        } catch APIError.notFound {
+          material.update(id) { $0.isUnavailable = true }
+        } catch {
+          // Asked again on the next beat.
+        }
+      }
     }
   }
 
@@ -98,6 +136,16 @@ struct GoalMaterialChips: View {
     source.title.flatMap { $0.isEmpty ? nil : $0 }
       ?? String(
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+  }
+
+  private func look(of source: AttachedSource) -> MaterialChip.Look {
+    if source.isUnavailable || source.readStatus == .unreadable {
+      .unreadable
+    } else if source.readStatus == .reading {
+      .reading
+    } else {
+      .ready
+    }
   }
 
   /// Why the paperclip is off once the goal holds all the material it can use.
@@ -133,6 +181,29 @@ struct GoalMaterialChips: View {
         table: "Onboarding",
         comment:
           "Under the learner's attached material when several items sent with their goal can't be read anymore."
+      )
+  }
+
+  /// Names the one file with nothing to read on it; several are said together.
+  private var unreadableLine: LocalizedStringResource? {
+    let unreadable = material.filter { $0.readStatus == .unreadable && !$0.isUnavailable }
+
+    guard let first = unreadable.first else {
+      return nil
+    }
+
+    return unreadable.count == 1
+      ? LocalizedStringResource(
+        "We couldn't read “\(title(of: first))”. Try a sharper photo or paste the text.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's attached material when nothing could be read on one item, like a blurry photo. {title} is its name, like \"Biology notes.jpg\"."
+      )
+      : LocalizedStringResource(
+        "We couldn't read some of your files. Try sharper photos or paste the text.",
+        table: "Onboarding",
+        comment:
+          "Under the learner's attached material when nothing could be read on several items, like blurry photos."
       )
   }
 }
@@ -218,27 +289,36 @@ struct GoalMaterialSections: View {
   }
 }
 
-/// One attached source, removed with its ✕ as main's chip is, or by swiping. One a goal found gone
-/// takes main's soft error look.
+/// One attached source, removed with its ✕ as main's chip is, or by swiping. One still being read
+/// shows a spinner in place of its icon; one with nothing to read, or a goal found gone, takes
+/// main's soft error look.
 private struct MaterialChip: View {
+  enum Look {
+    case ready
+    case reading
+    case unreadable
+  }
+
   let title: String
-  let isUnavailable: Bool
+  let look: Look
   let remove: () -> Void
 
   var body: some View {
     HStack(spacing: 6) {
-      Image(systemName: isUnavailable ? "exclamationmark.circle" : "doc.text")
+      Image(systemName: look == .unreadable ? "exclamationmark.circle" : "doc.text")
+        // The spinner takes the icon's place and size, so the chip doesn't move as it's read.
+        .opacity(look == .reading ? 0 : 1)
+        .overlay {
+          if look == .reading {
+            ProgressView()
+              .controlSize(.mini)
+          }
+        }
         .accessibilityHidden(true)
 
       Text(title)
         .lineLimit(1)
-        .accessibilityValue(
-          Text(
-            "Can't be read", tableName: "Onboarding",
-            comment:
-              "Read by screen readers after the name of an attached file that can't be read anymore."
-          ),
-          isEnabled: isUnavailable)
+        .accessibilityValue(status ?? Text(verbatim: ""), isEnabled: status != nil)
 
       Button(action: remove) {
         Image(systemName: "xmark")
@@ -252,11 +332,27 @@ private struct MaterialChip: View {
       .padding(-8)
     }
     .typeStyle(.body)
-    .foregroundStyle(isUnavailable ? .destructiveText : Color(.foreground))
+    .foregroundStyle(look == .unreadable ? .destructiveText : Color(.foreground))
     .padding(.leading, 12)
     .padding([.vertical, .trailing], 4)
     .background(
-      isUnavailable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
+      look == .unreadable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
+  }
+
+  private var status: Text? {
+    switch look {
+    case .ready:
+      nil
+    case .reading:
+      Text(
+        "Being read", tableName: "Onboarding",
+        comment: "Read by screen readers after the name of an attached file that is still being read.")
+    case .unreadable:
+      Text(
+        "Can't be read", tableName: "Onboarding",
+        comment:
+          "Read by screen readers after the name of an attached file that can't be read anymore.")
+    }
   }
 }
 
@@ -281,6 +377,12 @@ extension [AttachedSource] {
       var source = source
       source.isUnavailable = ids.contains(source.id)
       return source
+    }
+  }
+
+  fileprivate mutating func update(_ id: String, _ change: (inout AttachedSource) -> Void) {
+    if let index = firstIndex(where: { $0.id == id }) {
+      change(&self[index])
     }
   }
 
@@ -619,6 +721,8 @@ struct MaterialQuestionsView: View {
   @State private var question = ""
   @State private var turns: [Turn] = []
   @State private var isAsking = false
+  /// The last question came before the material was read, so it waits in the box to ask again.
+  @State private var isStillReading = false
   @FocusState private var isFocused: Bool
 
   private struct Turn: Identifiable {
@@ -671,9 +775,14 @@ struct MaterialQuestionsView: View {
           Text(Self.reading)
         }
         .foregroundStyle(.mutedForeground)
+      } else if isStillReading {
+        Text(Self.stillReading)
+          .foregroundStyle(.mutedForeground)
       }
     }
-    .announcesStatus(isAsking ? Self.reading : turns.last.flatMap(Self.spoken))
+    .announcesStatus(
+      isAsking
+        ? Self.reading : isStillReading ? Self.stillReading : turns.last.flatMap(Self.spoken))
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
@@ -723,6 +832,15 @@ struct MaterialQuestionsView: View {
       comment: "While a question about the learner's material is answered")
   }
 
+  private static var stillReading: String {
+    String(
+      localized: "We're still reading your material. Ask again in a moment.",
+      table: "Onboarding",
+      comment:
+        "Under questions about the learner's material when a photo or scan they added is still being read"
+    )
+  }
+
   /// A failed answer is a `FailureLine`, which reads itself out.
   private static func spoken(_ turn: Turn) -> String? {
     switch turn.answer {
@@ -740,6 +858,7 @@ struct MaterialQuestionsView: View {
 
     question = ""
     isAsking = true
+    isStillReading = false
 
     Task {
       defer { isAsking = false }
@@ -749,6 +868,12 @@ struct MaterialQuestionsView: View {
           question: asked, sourceIDs: sources.map(\.id))
         turns.append(Turn(question: asked, answer: .success(answer)))
       } catch is CancellationError {
+      } catch OnboardingError.materialReading {
+        isStillReading = true
+
+        if question.isEmpty {
+          question = asked
+        }
       } catch {
         turns.append(Turn(question: asked, answer: .failure(error)))
       }
