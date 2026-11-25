@@ -691,7 +691,12 @@ const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) =
   const missing = (reading: Reading) => facts.filter((fact) => !isFactFound({ fact, reading }));
   const dropped = missing(fromKept(parsed));
   const unread = missing(fromExtraction(parsed));
-  const isUsable = isUsableBlueprint({ content: parsed.kept, shared: true });
+
+  const isUsable = isUsableBlueprint({
+    content: parsed.kept,
+    shared: !testCase.userInput.material,
+  });
+
   const usableWrong = usable !== undefined && isUsable !== usable;
   const expectedCount = facts.length + (usable === undefined ? 0 : 1);
   const right = expectedCount - dropped.length - (usableWrong ? 1 : 0);

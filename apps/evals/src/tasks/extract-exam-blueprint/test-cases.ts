@@ -862,6 +862,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "Prova de biologia (1º ano), a célula",
+      material: true,
     },
   },
   {
@@ -882,6 +883,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "AP Biology unit 2 test",
+      material: true,
     },
   },
   {
@@ -919,6 +921,7 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
         },
       ],
       exam: "Prova de física (1º ano), cinemática",
+      material: true,
     },
   },
   {
@@ -940,6 +943,7 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
         },
       ],
       exam: "Chemistry quiz on gas laws",
+      material: true,
     },
   },
 ];

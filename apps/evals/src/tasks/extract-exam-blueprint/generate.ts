@@ -18,6 +18,7 @@ import {
   toCitedFacts,
 } from "@zoonk/core/library/exams/blueprint-facts";
 import { listExtractionPassages } from "@zoonk/core/library/exams/blueprint-passages";
+import { toMaterialContent } from "@zoonk/core/library/exams/material-topics";
 import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
 import { findReadingProblems, toReadingCorrections } from "@zoonk/core/library/exams/reading-check";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
@@ -29,6 +30,8 @@ export type ExtractionEvalInput = {
   exam: string;
   documents: EvalDocument[];
   leftOut?: ReadingProblem[];
+  /** The learner's own material, read privately, rather than an exam's notice. */
+  material?: boolean;
 };
 
 export type ExtractionEvalOutput = BlueprintExtraction & {
@@ -92,34 +95,39 @@ function toSources(documents: ResearchDocument[]): EvalDocumentSource[] {
 async function keepCheckedFacts({
   documents,
   extraction,
+  material,
 }: {
   documents: ResearchDocument[];
   extraction: BlueprintExtraction;
+  material: boolean;
 }): Promise<Pick<ExtractionEvalOutput, "check" | "kept">> {
   const extractionDocuments = toSources(documents);
-  const facts = listBlueprintFacts({ documents: extractionDocuments, extraction });
+  const facts = listBlueprintFacts({ documents: extractionDocuments, extraction, material });
+  const cited = toCitedFacts(facts);
 
   const checks = await Promise.all(
-    toCheckBatches(toCitedFacts(facts)).map((batch) => checkCitedFacts({ facts: batch })),
+    toCheckBatches(cited).map((batch) => checkCitedFacts({ facts: batch })),
   );
 
   const supportedIds = checks.flatMap((check) => check.data.supportedIds);
 
+  const kept = toBlueprintContent({
+    documents: extractionDocuments,
+    extraction,
+    facts,
+    noticeUrl: null,
+    sourceHash: "eval",
+    supportedIds,
+  });
+
   return {
     check: {
-      claims: facts.length,
+      claims: cited.length,
       inputTokens: checks.reduce((total, check) => total + (check.usage.inputTokens ?? 0), 0),
       kept: supportedIds.length,
       outputTokens: checks.reduce((total, check) => total + (check.usage.outputTokens ?? 0), 0),
     },
-    kept: toBlueprintContent({
-      documents: extractionDocuments,
-      extraction,
-      facts,
-      noticeUrl: null,
-      sourceHash: "eval",
-      supportedIds,
-    }),
+    kept: material ? toMaterialContent({ content: kept, documents: extractionDocuments }) : kept,
   };
 }
 
@@ -148,7 +156,7 @@ async function readChecked({
   // The app runs these checks in a later step, so they're spent here but aren't the reading's cost.
   const [kept, findings] = await meterAsExtra(() =>
     Promise.all([
-      keepCheckedFacts({ documents, extraction: checked }),
+      keepCheckedFacts({ documents, extraction: checked, material: input.material ?? false }),
       checkExamReading({
         documents,
         exam: input.exam,

@@ -1680,7 +1680,8 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
@@ -1727,24 +1728,25 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1774,24 +1776,25 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1821,26 +1824,27 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 7.6
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 7.6
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 7.6
         }
       ],
       "testCase": {
@@ -1872,26 +1876,27 @@
               "title": "Foto das anotações de física"
             }
           ],
-          "exam": "Prova de física (1º ano), cinemática"
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "majorErrors",
-          "score": 7.6
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "minorErrors",
-          "score": 7.6
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "potentialImprovements",
-          "score": 7.6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1923,24 +1928,25 @@
               "title": "Foto das anotações de física"
             }
           ],
-          "exam": "Prova de física (1º ano), cinemática"
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1974,7 +1980,8 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     },
@@ -2025,7 +2032,8 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     }
