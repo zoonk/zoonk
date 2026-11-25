@@ -452,6 +452,6 @@ private fun failureMessage(failure: AccountFailure): String =
 internal val VerificationCodeInput =
     InputTransformation {
         for (index in length - 1 downTo 0) {
-            if (!charAt(index).isDigit()) delete(index, index + 1)
+            if (charAt(index) !in '0'..'9') delete(index, index + 1)
         }
     }.then(InputTransformation.fitTo(SignInViewModel.CODE_LENGTH))
