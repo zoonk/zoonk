@@ -153,24 +153,29 @@ struct GoalMaterialChips: View {
 }
 
 /// Why attached material won't be read: files a goal found gone, to add again, and files with
-/// nothing to read on them. After the choices of what to do with it, not under the chips: a read
-/// ends while the learner is choosing, and the line would push the choice under their finger.
-private struct MaterialUnreadLines: View {
+/// nothing to read on them, in one line as main's. After the choices of what to do with it, not
+/// under the chips: a read ends while the learner is choosing, and the line would push the choice
+/// under their finger.
+private struct MaterialUnreadSection: View {
   let material: [AttachedSource]
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      if let unavailableLine {
-        FailureLine(message: unavailableLine)
+    if let message {
+      Section {
+        FailureLine(message: message)
+          .listRowInsets(.top, 0)
       }
-
-      if let unreadableLine {
-        FailureLine(message: unreadableLine)
-      }
+      // Main's line sits a small gap under the choices it follows.
+      .listSectionSpacing(12)
     }
-    .textCase(nil)
-    // A plain list draws a footer like a row, between hairlines main doesn't have.
-    .listRowSeparator(.hidden)
+  }
+
+  private var message: AttributedString? {
+    let lines = [unavailableLine, unreadableLine].compactMap { $0 }.map {
+      AttributedString(localized: $0)
+    }
+
+    return lines.reduce(nil) { joined, line in joined.map { $0 + " " + line } ?? line }
   }
 
   /// Names the one file a goal found gone; several are said together.
@@ -292,9 +297,9 @@ struct GoalMaterialSections: View {
           Text(
             "What do you want to do?", tableName: "Onboarding",
             comment: "Header over what to do with attached material"))
-      } footer: {
-        MaterialUnreadLines(material: material)
       }
+
+      MaterialUnreadSection(material: material)
     }
   }
 }
