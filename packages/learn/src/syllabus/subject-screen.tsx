@@ -23,6 +23,7 @@ import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";
+import { SubjectCovers } from "./subject-covers";
 import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
@@ -283,6 +284,8 @@ export function SubjectScreen({
       </DetailAside>
 
       <DetailContent>
+        <SubjectCovers covers={subject.covers} />
+
         {written && hrefs.answer && (
           <SubjectWrittenScore answerHref={hrefs.answer} written={written} />
         )}
