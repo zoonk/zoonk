@@ -33,12 +33,16 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.input.key.Key
@@ -48,7 +52,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
@@ -254,14 +257,13 @@ private fun FieldContainer(
     isError: Boolean,
     interactionSource: MutableInteractionSource,
     colors: TextFieldColors,
-    shape: Shape = FIELD_SHAPE,
+    shape: Shape,
 ) {
     val moreContrast = LocalMoreContrast.current
     val dark = MaterialTheme.colorScheme.background.luminance() < HALF
     val mark = MaterialTheme.zoonk.destructive
     val line = if (dark && !moreContrast) mark.copy(alpha = 0.5f) else mark
     val ring = if (moreContrast) Color.Transparent else mark.copy(alpha = if (dark) 0.4f else 0.2f)
-    val radius = with(LocalDensity.current) { ZoonkRadius.lg.toPx() }
 
     OutlinedTextFieldDefaults.Container(
         enabled = enabled,
@@ -269,16 +271,7 @@ private fun FieldContainer(
         interactionSource = interactionSource,
         modifier =
             if (isError && enabled) {
-                Modifier.drawBehind {
-                    val width = INVALID_RING.toPx()
-                    drawRoundRect(
-                        color = ring,
-                        topLeft = Offset(-width / 2, -width / 2),
-                        size = Size(size.width + width, size.height + width),
-                        cornerRadius = CornerRadius(radius + width / 2),
-                        style = Stroke(width),
-                    )
-                }
+                Modifier.drawBehind { drawRingOutside(shape.createOutline(size, layoutDirection, this), ring, INVALID_RING.toPx()) }
             } else {
                 Modifier
             },
@@ -286,6 +279,44 @@ private fun FieldContainer(
         shape = shape,
         focusedBorderThickness = if (moreContrast) 3.dp else 2.dp,
         unfocusedBorderThickness = 1.dp,
+    )
+}
+
+/** A ring [width] wide just outside [outline], its corners following the field's own. */
+private fun DrawScope.drawRingOutside(
+    outline: Outline,
+    color: Color,
+    width: Float,
+) {
+    val box =
+        when (outline) {
+            is Outline.Rectangle -> {
+                RoundRect(outline.rect)
+            }
+
+            is Outline.Rounded -> {
+                outline.roundRect
+            }
+
+            is Outline.Generic -> {
+                clipPath(outline.path, ClipOp.Difference) { drawPath(outline.path, color, style = Stroke(width * 2)) }
+                return
+            }
+        }
+    drawOutline(Outline.Rounded(box.outset(width / 2)), color, style = Stroke(width))
+}
+
+private fun RoundRect.outset(by: Float): RoundRect {
+    val grow = CornerRadius(by)
+    return RoundRect(
+        left - by,
+        top - by,
+        right + by,
+        bottom + by,
+        topLeftCornerRadius + grow,
+        topRightCornerRadius + grow,
+        bottomRightCornerRadius + grow,
+        bottomLeftCornerRadius + grow,
     )
 }
 
