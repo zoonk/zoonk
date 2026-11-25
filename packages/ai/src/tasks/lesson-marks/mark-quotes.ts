@@ -13,6 +13,7 @@ const LOWERCASE_START = /^\p{Ll}/u;
 /** A numbered item's marker ("2. ") ends in a period, but the item's sentence starts after it. */
 const LIST_MARKER = /(?:^|\n)[^\S\n]*\d{1,3}[.)][^\S\n]+$/u;
 const BOLD = "**";
+const LEADING_BOLD = /^(?:\*\*)+/u;
 
 /**
  * Plain words the rendered text shows together: the text's own characters once its bold marks are
@@ -37,7 +38,7 @@ function startsSentence({ before, quote }: { before: string; quote: string }): b
   }
 
   return (
-    !LOWERCASE_START.test(quote) &&
+    !LOWERCASE_START.test(quote.replace(LEADING_BOLD, "")) &&
     !LIST_MARKER.test(before) &&
     (SENTENCE_BREAK.test(before) || CJK_SENTENCE_BREAK.test(before) || LINE_BREAK.test(before))
   );
@@ -59,7 +60,7 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
   }
 
   return (
-    !LOWERCASE_START.test(next) &&
+    !LOWERCASE_START.test(next.replace(LEADING_BOLD, "")) &&
     ((SENTENCE_END.test(quote) && /^\s/u.test(after)) ||
       CJK_SENTENCE_END.test(quote) ||
       (endsWithCodeBlock(quote) && after.startsWith("\n")))
@@ -101,129 +102,145 @@ function keepsCodeWhole({
   );
 }
 
-/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
-function withListMarker({ quote, text }: { quote: string; text: string }): string {
-  const start = text.indexOf(quote);
-  const marker = start === -1 ? null : LIST_MARKER.exec(text.slice(0, start));
-  return marker ? `${marker[0].trimStart()}${quote}` : quote;
-}
-
-const REGEXP_SYNTAX = /[\\^$.*+?()[\]{}|]/gu;
-const INLINE_MARKS = /[`*]/gu;
-const WHITESPACE = /^\s+$/u;
+const INLINE_MARK = /[`*]/u;
+const WHITESPACE = /\s/u;
 const INTRODUCES = /[:：]$/u;
 
 type Span = { end: number; start: number };
 
 /**
- * Where a copy of the text sits in it. Models copying across lines and markup often drop a blank
- * line, inline code's backticks or a bold run's stars, so those may differ.
+ * The text as a model copies it: prose without its inline code and bold marks and with single
+ * spaces, code as written. `offsets` holds each kept character's place in the text.
  */
-function locateCopy({ quote, text }: { quote: string; text: string }): Span | null {
-  const exact = text.indexOf(quote);
+function readCopy(text: string): { offsets: number[]; value: string } {
+  const code = findCodeSpans(text);
 
-  if (exact !== -1) {
-    return { end: exact + quote.length, start: exact };
+  return text.split("").reduce<{ offsets: number[]; value: string }>(
+    (read, char, at) => {
+      const inCode = code.some((span) => at >= span.start && at < span.end);
+      const space = WHITESPACE.test(char);
+
+      if ((!inCode && INLINE_MARK.test(char)) || (space && read.value.endsWith(" "))) {
+        return read;
+      }
+
+      read.offsets.push(at);
+      return { offsets: read.offsets, value: read.value + (space ? " " : char) };
+    },
+    { offsets: [], value: "" },
+  );
+}
+
+/** Every place the text holds what the model copied, its blank lines and inline marks included. */
+function locateCopies({ quote, text }: { quote: string; text: string }): Span[] {
+  const copy = readCopy(quote).value.trim();
+  const { offsets, value } = readCopy(text);
+  const spans: Span[] = [];
+
+  for (let at = copy ? value.indexOf(copy) : -1; at !== -1; at = value.indexOf(copy, at + 1)) {
+    spans.push({ end: (offsets[at + copy.length - 1] ?? 0) + 1, start: offsets[at] ?? 0 });
   }
 
-  const tokens =
-    quote
-      .replaceAll(INLINE_MARKS, "")
-      .trim()
-      .match(/\s+|\S/gu) ?? [];
-
-  const pattern = tokens
-    .map((token) =>
-      WHITESPACE.test(token) ? "[\\s`*]+" : token.replaceAll(REGEXP_SYNTAX, String.raw`\$&`),
-    )
-    .join("[`*]*");
-
-  const found = tokens.length > 0 ? new RegExp(`[\`*]*${pattern}[\`*]*`, "u").exec(text) : null;
-
-  return found ? { end: found.index + found[0].length, start: found.index } : null;
+  return spans;
 }
 
 /** A model sometimes copies a block ahead of the sentence that introduces it; the text's order stands. */
-function locateReordered({ quote, text }: { quote: string; text: string }): Span | null {
+function locateReordered({ quote, text }: { quote: string; text: string }): Span[] {
   const cuts = [0, ...findCodeSpans(quote).flatMap(({ end, start }) => [start, end]), quote.length];
 
   const parts = cuts
     .slice(1)
-    .map((end, index) => quote.slice(cuts[index], end).trim())
-    .filter(Boolean);
+    .map((end, index) => quote.slice(cuts[index], end))
+    .filter((part) => part.trim() !== "");
 
-  const spans = parts.map((part) => locateCopy({ quote: part, text }));
-
-  if (parts.length < 2 || spans.includes(null)) {
-    return null;
+  if (parts.length < 2) {
+    return [];
   }
 
-  const [first, ...rest] = spans
-    .filter((span): span is Span => span !== null)
-    .toSorted((a, b) => a.start - b.start);
-
-  return rest.reduce<Span | null>(
-    (joined, span) =>
-      joined && span.start >= joined.end && text.slice(joined.end, span.start).trim() === ""
-        ? { end: span.end, start: joined.start }
-        : null,
-    first ?? null,
+  const choices = parts.reduce<Span[][]>(
+    (combos, part) =>
+      combos.flatMap((combo) =>
+        locateCopies({ quote: part, text }).map((span) => [...combo, span]),
+      ),
+    [[]],
   );
+
+  return choices.flatMap((combo) => {
+    const [first, ...rest] = combo.toSorted((a, b) => a.start - b.start);
+
+    const joined = rest.reduce<Span | null>(
+      (span, next) =>
+        span && next.start >= span.end && text.slice(span.end, next.start).trim() === ""
+          ? { end: next.end, start: span.start }
+          : null,
+      first ?? null,
+    );
+
+    return joined ? [joined] : [];
+  });
 }
 
-/** The text's own span for what the model copied, or the copy itself when the text has no such span. */
-function findCopy({ quote, text }: { quote: string; text: string }): string {
-  const span = locateCopy({ quote, text }) ?? locateReordered({ quote, text });
-  return span ? text.slice(span.start, span.end) : quote;
-}
+/** A copy that left out the marks around it ("**Try it.**") takes them back. */
+function withMarks({ span, text }: { span: Span; text: string }): Span {
+  let { end, start } = span;
 
-/** Where the quote sits in the text's prose: a program can print the same words. */
-function findInProse({
-  quote,
-  spans,
-  text,
-}: {
-  quote: string;
-  spans: readonly { end: number; start: number }[];
-  text: string;
-}): number {
-  let start = text.indexOf(quote);
-
-  while (start !== -1 && spans.some((code) => start >= code.start && start < code.end)) {
-    start = text.indexOf(quote, start + 1);
+  while (INLINE_MARK.test(text[start - 1] ?? "")) {
+    start -= 1;
   }
 
-  return start;
+  while (INLINE_MARK.test(text[end] ?? "")) {
+    end += 1;
+  }
+
+  return { end, start };
+}
+
+/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
+function withListMarker({ span, text }: { span: Span; text: string }): Span {
+  const marker = LIST_MARKER.exec(text.slice(0, span.start));
+  return marker ? { ...span, start: span.start - marker[0].trimStart().length } : span;
 }
 
 /**
  * A sentence that traces the code block before it, or introduces the one after it, shows the case
  * with that program, so the frame takes the block too and the program never sits outside it.
  */
-function withAdjacentCode({ quote, text }: { quote: string; text: string }): string {
+function withAdjacentCode({ span, text }: { span: Span; text: string }): Span {
+  const { end, start } = span;
   const spans = findCodeSpans(text);
-  const start = findInProse({ quote, spans, text });
-  const end = start + quote.length;
 
-  if (start === -1 || spans.some((code) => code.start >= start && code.end <= end)) {
-    return quote;
+  if (spans.some((code) => code.start >= start && code.end <= end)) {
+    return span;
   }
 
   const traced = spans.find(
     (code) => code.end <= start && text.slice(code.end, start).trim() === "",
   );
 
-  const introduced = INTRODUCES.test(quote)
+  const introduced = INTRODUCES.test(text.slice(start, end))
     ? spans.find((code) => code.start >= end && text.slice(end, code.start).trim() === "")
     : undefined;
 
-  return text.slice(traced?.start ?? start, introduced?.end ?? end);
+  return { end: introduced?.end ?? end, start: traced?.start ?? start };
 }
 
-/** The text's own span for an example the model copied, widened to what the frame must not split. */
+/**
+ * The text's own span for an example the model copied, widened to what the frame must not split.
+ * A program can print the same words as the prose, so the first place that makes a frame wins.
+ */
 export function fitExampleQuote({ quote, text }: { quote: string; text: string }): string {
-  const copied = findCopy({ quote, text });
-  return withAdjacentCode({ quote: withListMarker({ quote: copied, text }), text });
+  const copies = locateCopies({ quote, text });
+
+  const fitted = (copies.length > 0 ? copies : locateReordered({ quote, text })).map((span) => {
+    const widened = withAdjacentCode({
+      span: withListMarker({ span: withMarks({ span, text }), text }),
+      text,
+    });
+
+    return text.slice(widened.start, widened.end);
+  });
+
+  return fitted.find((example) => isExampleQuote({ quote: example, text })) ?? fitted[0] ?? quote;
 }
 
 /**

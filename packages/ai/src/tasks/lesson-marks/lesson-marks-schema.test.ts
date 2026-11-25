@@ -32,6 +32,17 @@ const ideas = [
 const stamp = { description: "A wooden rubber stamp", name: "Rubber Stamp", searchWords: ["seal"] };
 const oven = { description: "A bakery's brick oven", name: "brick oven", searchWords: ["bakery"] };
 
+function exampleOf({ example, text }: { example: string; text: string }) {
+  return normalizeLessonMarks({
+    ideas: [],
+    output: {
+      ideas: [],
+      screens: [{ example, icon: null, idea: null, screen: 1, underline: null }],
+    },
+    screens: [{ ...explanation, text }],
+  }).screens[0]?.example;
+}
+
 describe(normalizeLessonMarks, () => {
   it("keeps an about line whole past its target, so the lesson's map still shows", () => {
     const about =
@@ -194,6 +205,39 @@ describe(normalizeLessonMarks, () => {
       ).toBe(`${block}\n\nCom 31, o \`Pedido\` nasce **pronto**.`);
     });
 
+    it("takes the intro beside the block when the text repeats it", () => {
+      const twice: MarksScreen = {
+        ...program,
+        text: "Run this:\n\n```js\nf(1);\n```\n\nNow change the value. Run this:\n\n```js\nf(2);\n```",
+      };
+
+      expect(exampleFor({ example: "```js\nf(2);\n```\nRun this:", screen: twice })).toBe(
+        "Run this:\n\n```js\nf(2);\n```",
+      );
+    });
+
+    it("tells programs apart by their code's own stars", () => {
+      const twoPrograms: MarksScreen = {
+        ...program,
+        text: "```js\nn ** 2\n```\n\nCheck the result.\n\n```js\nn * 2\n```\n\nCheck the result. Both are expressions.",
+      };
+
+      expect(
+        exampleFor({ example: "```js\nn * 2\n```\nCheck the result.", screen: twoPrograms }),
+      ).toBe("```js\nn * 2\n```\n\nCheck the result.");
+    });
+
+    it("finds the sentence in the prose when the code prints the same words without marks", () => {
+      const echoed: MarksScreen = {
+        ...program,
+        text: '```js\nconsole.log("Use Foo.");\n```\n\nUse `Foo`. Then continue.',
+      };
+
+      expect(exampleFor({ example: "Use Foo.", screen: echoed })).toBe(
+        '```js\nconsole.log("Use Foo.");\n```\n\nUse `Foo`.',
+      );
+    });
+
     it("keeps a frame around the block alone", () => {
       expect(exampleFor({ example: block })).toBe(block);
     });
@@ -244,6 +288,29 @@ describe(normalizeLessonMarks, () => {
       expect(exampleFor({ example: `${block}\n${trace}`, screen: crlf })).toBe(
         `${block}\n\n${trace}`.replaceAll("\n", "\r\n"),
       );
+    });
+  });
+
+  describe("an example copied without its bold marks", () => {
+    it("frames the whole bold sentence, after an emoji too", () => {
+      expect(exampleOf({ example: "Try it.", text: "A rule. **Try it.**" })).toBe("**Try it.**");
+
+      expect(exampleOf({ example: "Ana tem pão.", text: "🍞 Uma regra. Ana tem **pão**." })).toBe(
+        "Ana tem **pão**.",
+      );
+    });
+
+    it("never takes the bold rest of a sentence for a sentence", () => {
+      const text = "She whispered “Go.” **and left**. Another time she stayed.";
+      expect(exampleOf({ example: "and left.", text })).toBeNull();
+    });
+
+    it("gives up at once on a long screen the copy doesn't match", () => {
+      const text = Array.from({ length: 40 }, (_, at) => `A **bold** word ${at}.`).join(" ");
+      const started = performance.now();
+
+      expect(exampleOf({ example: `${text.replaceAll("**", "")} extra`, text })).toBeNull();
+      expect(performance.now() - started).toBeLessThan(500);
     });
   });
 
