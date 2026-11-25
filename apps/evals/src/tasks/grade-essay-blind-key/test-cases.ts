@@ -9,7 +9,6 @@ import { SOURCE_QUESTIONS, type SourceQuestion } from "./source-questions";
 
 type BlindKeyStratum = SourceQuestion["stratum"] | "fgv-oab-ablation";
 
-/** `answer` names the graded answer apart from the key draw, so its draws calibrate as one. */
 export type BlindKeyExpected = {
   answer: string;
   board: MarkRange;

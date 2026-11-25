@@ -30,8 +30,9 @@ function print(line = "") {
 const GRADER = "meta-muse-ember:high";
 const LEVELS = [0.9, 0.95];
 
-/** A part of k items calls at 1 − 0.10/k; CGU's written part has two. */
-const CALL_LEVEL = 0.95;
+const CALL_ERROR_PER_PART = 0.1;
+const CGU_WRITTEN_ITEMS = 2;
+const CALL_LEVEL = 1 - CALL_ERROR_PER_PART / CGU_WRITTEN_ITEMS;
 const MIN_REAL_BELOW = 6;
 const MIN_COVERAGE = 0.8;
 const MAX_MARGIN_SUM = 1 / 3;
@@ -332,7 +333,7 @@ function printKeyed(keyed: GradedAnswer[]) {
   print("## Keyed mechanism, blind keys (every key draw pooled per answer)\n");
   strataTable(keyed);
   marginsTable(keyed);
-  print(`### Call gate (level ${CALL_LEVEL}, k = 2)\n`);
+  print(`### Call gate (level ${CALL_LEVEL}, k = ${CGU_WRITTEN_ITEMS})\n`);
   const checks = callGate(keyed);
   print("### Residuals per answer (worst run across every key draw, share of the question)\n");
   residualRows(keyed);
@@ -368,7 +369,6 @@ function printEnem(enem: GradedAnswer[]) {
   print("Enem's notice sets no minimum for the redação, so it has no call gate to test.\n");
 }
 
-/** What core can import: pooled residual shares and the floors of strata too small to rank. */
 function buildCalibration({
   checks,
   keyed,
@@ -411,10 +411,7 @@ function buildCalibration({
   };
 }
 
-/**
- * One graded answer per board-marked answer or ablation, its runs pooled across the key draws:
- * production writes one key per question per learner pool, so a draw's variance is a learner's.
- */
+/** Draws pool as one answer: production writes one key per question per learner pool, so a draw's variance is a learner's. */
 function keyedAnswers(runs: Map<string, Range[]>, draw?: number): GradedAnswer[] {
   const answers = new Map<string, GradedAnswer>();
 

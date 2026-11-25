@@ -2,7 +2,6 @@ import { type Ablation, getAblationSource } from "./ablations";
 
 export const ABLATION_READERS_FILE = "eval-results/blind-keys/ablation-readers.json";
 
-/** One reader from each family scores the edits blind against the official key. */
 export const ABLATION_READERS = ["anthropic/claude-sonnet-5.5", "openai/gpt-6.1-sol"] as const;
 
 export type ReaderMark = { id: string; model: string; mark: number; earned: number[] };
@@ -17,10 +16,6 @@ export type AblationReaderFile = {
 
 export type MarkRange = { low: number; high: number };
 
-/**
- * A clean edit keeps the espelho's arithmetic. An ambiguous one keeps the range its two readers
- * span, held inside the espelho's bounds; readers who both fall outside give the bounds.
- */
 export function getAblationMark(ablation: Ablation, marks: ReaderMark[]): MarkRange {
   const { espelho } = getAblationSource(ablation);
 

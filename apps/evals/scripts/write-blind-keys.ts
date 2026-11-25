@@ -26,11 +26,7 @@ function print(line = "") {
   process.stdout.write(`${line}\n`);
 }
 
-/**
- * Has the production writer (same model chain and prompt) key each real question a board set,
- * from the notice's task and grading alone: never a candidate's answer, the board's standard,
- * its aspects or marks. The one eval-only change is the appended rule to keep the given question.
- */
+/** The writer sees only the notice's task and grading, never a candidate's answer or the board's standard, aspects or marks. */
 async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey> {
   const input: WritingPromptInput & { givenContext: string | null; givenQuestion: string } = {
     ...source.writerInput,
@@ -70,10 +66,6 @@ async function readSaved(target: string): Promise<BlindKeyFile | null> {
 
 const questionOrder = (id: string) => SOURCE_QUESTIONS.findIndex((source) => source.id === id);
 
-/**
- * `--draw <n>` writes that draw of each question's key (1 by default) and keeps every other key in
- * the file, so grades can be measured across the keys learners could get. Arguments pick questions.
- */
 async function main() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
   meterModelCalls();

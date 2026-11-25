@@ -113,7 +113,6 @@ function getWritingSystemPrompt(kind: WritingEvidenceParams["scoringBasis"]["kin
   return `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 }
 
-/** The model and prompt version that grade a rubric, for Core tests and the calibration eval. */
 export function getWritingGrader(kind: WritingEvidenceParams["scoringBasis"]["kind"]) {
   return {
     model: defaultModel,

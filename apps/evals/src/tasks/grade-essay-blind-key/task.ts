@@ -4,7 +4,6 @@ import { type GradeWritingInput } from "../grade-essay/cases/shared";
 import { type GradeWritingOutput, gradeEssayTask } from "../grade-essay/task";
 import { type BlindKeyExpected, TEST_CASES } from "./test-cases";
 
-/** Within a tenth of the question's points scores 10, and a fifth or more away scores 0. */
 function scoreBlindKeyGrade({
   output,
   testCase,
