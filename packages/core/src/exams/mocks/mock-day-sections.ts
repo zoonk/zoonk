@@ -1,4 +1,4 @@
-import { roundToTotal } from "@zoonk/utils/apportion";
+import { apportion, roundToTotal } from "@zoonk/utils/apportion";
 import { type ExamStructure, type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { listListeningParts } from "../listening/listening-parts";
 import { isObjectiveSection } from "./written-subject";
@@ -25,8 +25,43 @@ export function toSectionRules(section: BlueprintSection) {
   };
 }
 
+/**
+ * A notice can state only the exam's total ("240 itens" over two sittings): the objective
+ * sections without their own count share what the stated counts leave, by their minutes.
+ */
+function listCountedSections(structure: ExamStructure | null): StructureSection[] {
+  const sections = structure?.mock?.sections ?? [];
+  const total = structure?.mock?.totalQuestions ?? null;
+
+  const uncounted = sections.filter(
+    (section) => isObjectiveSection(section) && section.questions === null,
+  );
+
+  const stated = sections
+    .filter((section) => isObjectiveSection(section))
+    .reduce((sum, section) => sum + (section.questions ?? 0), 0);
+
+  if (total === null || uncounted.length === 0 || total <= stated) {
+    return sections;
+  }
+
+  const timed = uncounted.every((section) => section.minutes !== null);
+
+  const counts = apportion({
+    total: total - stated,
+    weights: uncounted.map((section) => (timed ? (section.minutes ?? 0) : 1)),
+  });
+
+  const filled = new Map(uncounted.map((section, index) => [section, counts[index] ?? 0]));
+
+  return sections.map((section) => {
+    const questions = filled.get(section);
+    return questions === undefined ? section : { ...section, questions };
+  });
+}
+
 export function getObjectiveSections(structure: ExamStructure | null): StructureSection[] {
-  return (structure?.mock?.sections ?? []).filter((section) => isObjectiveSection(section));
+  return listCountedSections(structure).filter((section) => isObjectiveSection(section));
 }
 
 export function getDaySections({
@@ -40,7 +75,7 @@ export function getDaySections({
   speaking?: boolean;
   structure: ExamStructure | null;
 }): BlueprintSection[] {
-  const sections = (structure?.mock?.sections ?? []).filter((section) => section.day === day);
+  const sections = listCountedSections(structure).filter((section) => section.day === day);
 
   if (sections.length > 0) {
     return sections
