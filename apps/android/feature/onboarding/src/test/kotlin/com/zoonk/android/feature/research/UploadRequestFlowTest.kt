@@ -123,4 +123,21 @@ class UploadRequestFlowTest {
         rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertIsDisplayed()
         rule.onNodeWithText("Upload the notice").assertIsDisplayed()
     }
+
+    @Test
+    fun anUploadStillBeingReadBringsTheAskBackWhenNothingInItCanBeRead() {
+        api.readStatuses = listOf("reading", "reading", "unreadable")
+        show()
+
+        pasteText("Edital 2027")
+        thanks().assertIsDisplayed()
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        thanks().assertDoesNotExist()
+        rule.onNodeWithText("We couldn't read “Edital”. Try a sharper photo or paste the text.").assertIsDisplayed()
+        rule.onNodeWithText("Paste text").assertIsDisplayed()
+    }
 }
+
+private const val READ_CHECK_MS = 3_000L
