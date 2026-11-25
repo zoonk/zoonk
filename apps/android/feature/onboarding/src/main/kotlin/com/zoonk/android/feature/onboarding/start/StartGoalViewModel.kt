@@ -6,7 +6,6 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
@@ -38,6 +37,7 @@ import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -159,14 +159,13 @@ class StartGoalViewModel(
     var turns by mutableStateOf(emptyList<MaterialTurn>())
         private set
 
-    /** The question on its way: asked, but held while the material is still being read, or waiting for its answer. */
+    /** The question on its way: asked, waiting for its answer or for the material to be read. */
     var asking by mutableStateOf<String?>(null)
         private set
 
     val isAsking get() = asking != null
 
-    /** Whether any attached material is still being read, as the screen showing it follows it. */
-    private var materialReading by mutableStateOf(false)
+    private var askJob: Job? = null
 
     /** Words sent while material was still being added: they go once it's added, with it. */
     var heldGoal by mutableStateOf<String?>(null)
@@ -246,30 +245,25 @@ class StartGoalViewModel(
         language: String,
     ) = attach { store.attachLink(url, language) }
 
-    fun followReading(reading: Boolean) {
-        materialReading = reading
-    }
-
-    /** Sending is the request: a question about material still being read waits for the reading, then goes. */
+    /** Sending is the request: a question about material still being read is asked again every few seconds until it's read. */
     fun ask(language: String) {
         val asked = question.text.trim().toString()
         if (isAsking || asked.isEmpty()) return
         asking = asked
         question.clearText()
-        viewModelScope.launch {
-            val outcome = askOnceRead(asked, language)
-            if (outcome != WriteOutcome.Obsolete) turns = turns + MaterialTurn(asked, outcome)
-            asking = null
-        }
+        askJob =
+            viewModelScope.launch {
+                val outcome = askOnceRead(asked, language)
+                if (outcome != WriteOutcome.Obsolete) turns = turns + MaterialTurn(asked, outcome)
+                asking = null
+            }
     }
 
-    /** The server still reading it is the guard: the question waits a moment and goes again. */
     private suspend fun askOnceRead(
         asked: String,
         language: String,
     ): WriteOutcome<MaterialQuestionAnswer> {
         while (true) {
-            snapshotFlow { materialReading }.first { !it }
             val outcome = store.askMaterial(asked, flow.attached.map { it.id }, language)
             if (outcome != WriteOutcome.Refused(Refusal.MaterialReading)) return outcome
             delay(READ_CHECK)
@@ -656,6 +650,9 @@ class StartGoalViewModel(
         creationFailure.clear()
         entryError = error
         heldGoal = null
+        // Leaving the questions stops a question still waiting: nothing is answered for no one.
+        askJob?.cancel()
+        asking = null
         gone = emptySet()
         this.words.setTextAndPlaceCursorAtEnd(words)
         update { it.copy(screen = StartScreen.Entry) }

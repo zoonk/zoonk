@@ -218,7 +218,7 @@ class StartGoalFlowTest {
         rule.waitForIdle()
 
         rule.onNode(hasStateDescription("Being read")).assertDoesNotExist()
-        rule.onNode(hasStateDescription("Couldn't be read")).assertExists()
+        rule.onNode(hasStateDescription("Nothing on it could be read")).assertExists()
         rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertExists()
         rule.mainClock.advanceTimeBy(READ_CHECK_MS * 2)
         rule.waitForIdle()
@@ -259,32 +259,6 @@ class StartGoalFlowTest {
         assertTrue(api.understandCalls.isEmpty())
         rule.onNodeWithText("We couldn't add that. Try again in a moment.").assertExists()
         rule.onNodeWithText("test on Friday").assertExists()
-    }
-
-    @Test
-    fun aQuestionAboutAPhotoBeingReadIsAskedAtOnceAndGoesOnceItsRead() {
-        api.readStatuses = listOf("reading", "reading", "readable")
-        val photo = AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", SourceReadStatus.READING)
-        show()
-        rule.runOnUiThread {
-            val vm = ViewModelProvider(requireNotNull(owner))[StartGoalViewModel::class.java]
-            vm.setAttached(listOf(photo))
-            vm.setIntent(MaterialIntent.Questions)
-        }
-        rule.onNodeWithText("Build my plan").performClick()
-        rule.onNode(hasSetTextAction()).performTextInput("What is the mitotic spindle?")
-        rule.onNodeWithContentDescription("Ask").performClick()
-        rule.waitForIdle()
-
-        rule.onNodeWithText("What is the mitotic spindle?").assertExists()
-        rule.onNodeWithText("Reading your material…").assertExists()
-        assertTrue(api.asked.isEmpty())
-
-        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
-        rule.waitForIdle()
-
-        assertEquals(listOf("What is the mitotic spindle?"), api.asked)
-        rule.onNodeWithText("We couldn't answer that. Try again in a moment.").assertExists()
     }
 
     private fun addText() {

@@ -27,7 +27,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** The server still reading the material is the guard: the question stays asked, waits a moment and goes again. */
+/** A question about material still being read stays asked and goes again every few seconds until it's read; leaving stops it. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class MaterialReadingQuestionTest {
@@ -60,6 +60,33 @@ class MaterialReadingQuestionTest {
                 assertEquals(listOf("What is the mitotic spindle?", "What is the mitotic spindle?"), api.asked)
                 assertNull(vm.asking)
                 assertEquals(listOf("What is the mitotic spindle?"), vm.turns.map { it.question })
+            } finally {
+                models.clear()
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
+    fun leavingTheQuestionsStopsAQuestionStillWaiting() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val models = ViewModelStore()
+            try {
+                val api = FakeOnboardingApi().apply { askFailure = ApiException(ApiError.Unavailable, "materialReading", status = 409) }
+                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                val store = OnboardingStore(api, AppCache(session, backgroundScope), session) { SignInResult.SignedIn }
+                val vm = StartGoalViewModel(store, SavedStateHandle(), null, null, null).also { models.put("start", it) }
+                vm.setAttached(listOf(photo))
+
+                vm.question.setTextAndPlaceCursorAtEnd("What is the mitotic spindle?")
+                vm.ask("en")
+                runCurrent()
+                vm.backToEntry("")
+                advanceTimeBy(READ_CHECK.inWholeMilliseconds * 3)
+
+                assertEquals(listOf("What is the mitotic spindle?"), api.asked)
+                assertNull(vm.asking)
+                assertEquals(emptyList<MaterialTurn>(), vm.turns)
             } finally {
                 models.clear()
                 Dispatchers.resetMain()

@@ -546,7 +546,7 @@ class OnboardingScreenshots {
         name: String,
         dark: Boolean = false,
     ) {
-        val api = FakeOnboardingApi().apply { readStatuses = listOf("reading") }
+        val api = FakeOnboardingApi().apply { askFailure = ApiException(ApiError.Unavailable, "materialReading", status = 409) }
         compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal()) } } }
         compose.waitForIdle()
         val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]

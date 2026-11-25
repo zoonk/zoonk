@@ -213,12 +213,17 @@ class UnderstoodRows(
         val note =
             when {
                 !missing && unread.isEmpty() -> text(R.string.onboarding_row_material_note)
-                missing && read.isEmpty() -> text(R.string.onboarding_row_material_all_missing_note)
-                missing -> text(R.string.onboarding_row_material_missing_note)
-                read.isEmpty() && unread.size > 1 -> text(R.string.onboarding_row_material_all_unread_note)
+
+                read.isEmpty() && material.size > 1 -> text(R.string.onboarding_row_material_all_unread_note)
+
                 read.isEmpty() -> text(R.string.onboarding_row_material_all_missing_note)
-                unread.size > 1 -> text(R.string.onboarding_row_material_unread_some_note)
-                else -> text(R.string.onboarding_row_material_unread_one_note, title(unread.single()))
+
+                !missing && unread.size == 1 -> text(R.string.onboarding_row_material_unread_one_note, title(unread.single()))
+
+                // Past the one-file note, a file it couldn't read means two or more weren't read.
+                unread.isNotEmpty() -> text(R.string.onboarding_row_material_unread_some_note)
+
+                else -> text(R.string.onboarding_row_material_missing_note)
             }
         // With nothing readable, the files it couldn't read stay named, so the note's "it" or "them" has something to point at.
         return UnderstoodRow(

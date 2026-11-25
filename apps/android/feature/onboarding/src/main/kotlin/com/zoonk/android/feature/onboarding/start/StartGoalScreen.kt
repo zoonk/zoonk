@@ -44,7 +44,6 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
@@ -74,7 +73,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalUnderstanding
 import com.zoonk.api.models.OnboardingDraft
-import com.zoonk.api.models.SourceReadStatus
 
 @Composable
 fun StartGoalScreen(
@@ -190,7 +188,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Questions -> {
-                        MaterialQuestions(vm, store, language, actions)
+                        MaterialQuestions(vm, language, actions)
                     }
 
                     screen is StartScreen.Sending -> {
@@ -264,7 +262,6 @@ private fun ColumnScope.Entry(
     }
 
     val shown = followedReads(store.sources, flow.attached)
-    FollowReading(vm, shown)
     if (shown.isNotEmpty()) AttachedChips(shown, vm.gone, vm.materialLimitReached, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
     // Under the choices: a read that settles while the learner picks one moves nothing above it.
@@ -534,12 +531,10 @@ private fun failedRun(failure: GenerationFailure) = GenerationRun(status = Gener
 @Composable
 private fun ColumnScope.MaterialQuestions(
     vm: StartGoalViewModel,
-    store: OnboardingStore,
     language: String,
     actions: StartActions,
 ) {
     val ask = { vm.ask(language) }
-    FollowReading(vm, followedReads(store.sources, vm.flow.attached))
 
     OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
 
@@ -550,7 +545,7 @@ private fun ColumnScope.MaterialQuestions(
                 MaterialAnswer(turn.outcome, actions.createAccount, actions.subscribe)
             }
         }
-        // Asked at once, its answer pending, whether the material is still being read or the answer is on its way.
+        // Asked at once, its answer pending while the material is still being read or the answer is on its way.
         vm.asking?.let { asked ->
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 TypedGoal(asked)
@@ -577,16 +572,6 @@ private fun ColumnScope.MaterialQuestions(
         askLabel = stringResource(R.string.onboarding_ask),
         maxLength = MAX_QUESTION_LENGTH,
     )
-}
-
-/** Tells the screen's view model whether any of [shown] is still being read, so a question held for it can go. */
-@Composable
-private fun FollowReading(
-    vm: StartGoalViewModel,
-    shown: List<AttachedSource>,
-) {
-    val reading = shown.any { it.readStatus == SourceReadStatus.READING }
-    LaunchedEffect(reading) { vm.followReading(reading) }
 }
 
 @Composable
