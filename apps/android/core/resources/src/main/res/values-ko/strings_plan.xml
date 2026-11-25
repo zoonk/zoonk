@@ -329,6 +329,7 @@
   "plan_outside_past_basics": "86f1763ff675b5b2930ca22cae1f88baae16c07f08afc8fd5928d574cfbb4514",
   "plan_outside_skipped": "1403af12560bb269e5c1cc3da5c540fbc2676d4386aa6817d9bde0d85363d64e",
   "plan_outside_skipped_base": "9b926754648143f2743bd0b2b4dc3b519503fe70612613ca7f4ec6a33bfb2da8",
+  "plan_outside_skipped_module": "a3e886bca05fdc5af40ee947b13146809fab099c570ed683f7553fa33edb3a30",
   "plan_pace": "962ea535e71a997de7721eee0885f72401199574a5a39f73e6fc14c0439acdb6",
   "plan_pace_challenges_to_go": "2de569275d344e101cc2dcccfcef3b2edacc3be5e078fa1de64ea8f66d37d728",
   "plan_pace_date_passed": "dc7f4a17bc1513372f477e3765be2d27362a8151b6607bfed60aa57dcd2324fe",
@@ -1271,6 +1272,8 @@
     <string name="plan_outside_others_first">계획에 없어요 · 다른 주제를 먼저 학습해요</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">계획에 없어요 · 직접 뺀 과목이에요</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">계획에 없음 · 계획에서 뺀 모듈</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">트릭스터는 계획에 없어요</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

@@ -115,7 +115,7 @@
     <string name="goalcontent_module_time">This module isn\'t in your plan. Other modules come first.</string>
     <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">This module isn\'t in your plan yet.</string>
-    <!-- Titles the list of what a subject or module out of the learner's plan would teach, so they can decide whether to make room for it. -->
+    <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">What it covers</string>
     <string name="goalcontent_adjust_plan">Adjust plan</string>
     <string name="goalcontent_add_back">Add it back</string>

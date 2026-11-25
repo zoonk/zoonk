@@ -329,6 +329,7 @@
   "plan_outside_past_basics": "fda670859c85eaec11331cf7b0e37f6546b301ce126070fcc15708120c730dc8",
   "plan_outside_skipped": "4c7f555b6de61272db12f73b6a14d8f81f95d470a1ebea23120f2e9efaca0d07",
   "plan_outside_skipped_base": "0022164f585162501d2450c1016d1cdfbc57efdc13c0f4cec1cb2a78e2d67875",
+  "plan_outside_skipped_module": "3f461b15cfc4084019c28f35cd30610fe1e27c46f871ab47e2f3af3d2481afdf",
   "plan_pace": "13902643d14f0c0de731bf1525cd3bd5516dca91a62a0d397592ce334c375fe9",
   "plan_pace_challenges_to_go": "26eb3347c699698374a2ba7f487836deadb86f0974cbce026be8b737d8ee2a91",
   "plan_pace_date_passed": "9eb6ed6f373a7c42938d58a6c393b116132acaf97b16ded9a9593faa83950af3",
@@ -1405,6 +1406,8 @@
     <string name="plan_outside_others_first">Non è nel tuo piano · prima vengono altri argomenti</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Non è nel tuo piano · hai tolto questa materia</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">Non previsto nel tuo piano · hai tolto questo modulo</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">Il Briccone non rientra nel tuo piano</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
