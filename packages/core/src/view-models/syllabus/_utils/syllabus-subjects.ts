@@ -1,5 +1,5 @@
 import { toSlug } from "@zoonk/utils/string";
-import { followsNotice, matchAreasToSubjects } from "../../../exams/_utils/match-areas";
+import { followsNotice, matchNoticeAreas } from "../../../exams/_utils/match-areas";
 import { namesMatch } from "../../../exams/_utils/name-match";
 import { subjectNamesSection } from "../../../exams/_utils/written-tasks";
 import { orderByQuestions } from "../../../library/exams/subject-questions";
@@ -19,7 +19,7 @@ export type SubjectDraft = Pick<
   frequencySource?: TopicFrequencySource | null;
   matrix?: readonly string[];
   noticeShortName: string | null;
-  /** Selected-option areas counted inside this subject. */
+  /** Written-task and selected-option areas counted inside this subject. */
   partAreas?: readonly string[];
   partOf?: NoticeSubject["partOf"];
   topicFrequency?: NoticeSubject["topicFrequency"];
@@ -110,7 +110,7 @@ export function draftSubjects({
 }): { drafts: SubjectDraft[]; kind: SyllabusView["kind"] } {
   const subjects = notice?.subjects ?? [];
 
-  const matches = matchAreasToSubjects({ areas, subjects });
+  const { matches, parts } = matchNoticeAreas({ areas, subjects });
 
   if (subjects.length === 0 || !followsNotice({ areas, matches })) {
     return { drafts: areas.map((area) => toModule(area)), kind: "modules" };
@@ -125,6 +125,7 @@ export function draftSubjects({
         matrix: subject.matrix,
         name: subject.name,
         noticeShortName: subject.shortName,
+        partAreas: areas.filter((area) => parts.get(area) === index),
         partOf: subject.partOf ?? null,
         questions: subject.questions,
         share: subject.share,

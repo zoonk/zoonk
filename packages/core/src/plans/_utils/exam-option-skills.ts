@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getWrittenTasks } from "../../exams/_utils/written-tasks";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
 import {
   type ExamPicks,
@@ -62,7 +63,10 @@ async function addTakenFromSharedGraph({
 
   const { graph: source } = await prunePlanNoticeGraph({
     graph: parsePlanGraph(stored?.graph),
-    subjects: structure.subjects,
+    subjects: structure.subjects.map((subject) => ({
+      ...subject,
+      writtenTasks: getWrittenTasks({ structure, subject }),
+    })),
   });
 
   const shared = joinOptionSkills(source);
