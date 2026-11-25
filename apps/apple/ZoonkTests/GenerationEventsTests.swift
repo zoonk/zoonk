@@ -376,8 +376,6 @@ final class GenerationEventsTests: XCTestCase {
     XCTAssertTrue(lesson.setAside)
   }
 
-  /// A run follow that ends, errors or can't find its run never says the lesson stopped: while
-  /// readiness names the same run, or can't answer, the follow asks again, until readiness says.
   func testOnlyReadinessSaysAFollowedLessonFailed() async throws {
     let writing =
       #"{"alternative":null,"generationId":"run-1","kind":"lesson","setAside":false,"status":"generating"}"#
@@ -568,8 +566,7 @@ private actor RunsTransport: ClientTransport {
   }
 }
 
-/// Readiness answers in turn, `nil` for `503`; each events request takes the next stream, `nil` for a
-/// run the API can't find (`404`), and the last one stays.
+/// Answers in turn, the last one staying; `nil` is a 503 for readiness and a 404 for events.
 private actor LessonWritingTransport: ClientTransport {
   private var readiness: [String?]
   private var events: [String?]

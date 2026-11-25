@@ -650,8 +650,6 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Reading never writes anything. A lesson readiness says failed, or one that can't be read any
-  /// more, leaves it to the learner to try again.
   private func followWriting(
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {

@@ -479,8 +479,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(shown.writingLessonIDs, [])
   }
 
-  /// A follow that couldn't finish leaves the lesson as the day says; a failed answer from
-  /// readiness shows at once, without waiting for Today's next read.
   func testOnlyReadinessSaysALessonStoppedBeingWritten() async throws {
     let failed = try block(
       position: 0, kind: "learn", id: "b1", lessonID: "l1", lesson: .generating)
@@ -574,7 +572,6 @@ final class TodayStoreTests: XCTestCase {
     }
   }
 
-  /// No server sends it any more: a step without its lesson goes back to Today.
   func testALegacyPreparingLessonOpeningGoesBackToToday() async throws {
     let placeholder = try block(position: 0, kind: "learn", id: "b1")
     let view = try today(session: day(blocks: [placeholder], nextPosition: 0, id: "s1"))

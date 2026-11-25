@@ -23,7 +23,6 @@ enum StudyTap: Sendable {
   case mission
 }
 
-/// What the learner's tap to write a lesson was told.
 enum LessonWriting: Hashable, Sendable {
   case writing(run: String?)
   /// Every draft was held back by its checks; the plan moved on without it.
@@ -108,8 +107,7 @@ final class TodayStore {
     block.preparing || view?.isBeingWritten(block) == true
   }
 
-  /// Follows each lesson until readiness says no run writes it, then shows its answer at once and
-  /// reads Today again. Only readiness says a lesson stopped.
+  /// Only readiness says a lesson stopped, so each is followed until it names no run writing it.
   func followWriting(lessonIDs: [String]) async {
     guard let owner = cache.session.authenticatedSession else {
       return
@@ -178,7 +176,6 @@ final class TodayStore {
     return opened.sessionID
   }
 
-  /// What the learner's tap was told.
   func writing(for block: StudyBlock) -> LessonWriting? {
     guard let blockID = block.id, let asked = writings[blockID],
       asked.owner == cache.session.authenticatedSession
@@ -563,7 +560,6 @@ extension StudyDestination {
       self = .lesson(lessonID: lesson.lessonId, sessionID: lesson.sessionId)
     case .unwrittenLesson:
       self = .session
-    // No server sends it any more; a step without its lesson goes back to Today, as `today` does.
     case .preparingLesson:
       self = .today
     case .essay(let essay):

@@ -56,8 +56,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
   let id: String?
-  /// The block core offers while the next one's lesson is written or failed; nil from a server that
-  /// doesn't send it yet.
+  /// The block core offers while the next one's lesson is written or failed.
   let alternativePosition: Int?
   var blocks: [StudyBlock]
   let brainPower: Int
@@ -300,7 +299,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     let title: String?
   }
 
-  /// The saved state of the lesson the block teaches, as the day was read.
+  /// As saved when the day was read; only readiness confirms `generating`.
   struct Lesson: Decodable, Hashable, Sendable {
     var status: LessonStatus
     var setAside: Bool
@@ -336,7 +335,6 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let extra: Bool
   let fullReview: Bool
   let kind: Kind
-  /// Nil for a block with no lesson to teach, and from a server that doesn't send it yet.
   var lesson: Lesson?
   let lessonId: String?
   let mistakesOnly: Bool

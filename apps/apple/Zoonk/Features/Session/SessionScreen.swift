@@ -218,7 +218,6 @@ private struct NextStopView: View {
   @State private var isStopping = false
   private var failed: Bool { action.outcome?.failed ?? false }
   private var stopFailed: Bool { action.outcome?.stopFailed ?? false }
-  /// The lesson's readiness, read after the day's snapshot.
   @State private var read: LessonRead?
   @State private var lessonKind = GenerationWait.Kind.lesson
   /// The block whose lesson this screen showed being written.
@@ -522,7 +521,6 @@ private struct NextStopView: View {
       .foregroundStyle(.mutedForeground))
   }
 
-  /// What core offers meanwhile.
   private var alternative: StudyBlock? {
     day.alternative.flatMap { $0.position == next?.position ? nil : $0 }
   }
@@ -612,10 +610,7 @@ private struct NextStopView: View {
     }
   }
 
-  /// Asks the lesson's readiness on arrival and every few seconds until it's written, following
-  /// the run while one writes it. Only readiness says how it stands: each answer shows at once, and
-  /// one that changes what this screen shows reads the day again. A read that fails keeps what's
-  /// shown. A lesson its checks set aside is never written, so it isn't read again.
+  /// A lesson its checks set aside is never written, so it isn't read again.
   private func followLesson() async {
     guard let next, next.kind == .learn, let lessonID = next.lessonId else {
       return
@@ -757,8 +752,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   }
 }
 
-/// A day read again while this screen shows it can say the lesson moved on (a run took it, or it
-/// stopped), so the follow starts over from it.
+/// A day read again can say the lesson moved on, so the follow starts over from it.
 private struct FollowedLesson: Equatable {
   let lessonID: String?
   let snapshot: StudyBlock.Lesson?

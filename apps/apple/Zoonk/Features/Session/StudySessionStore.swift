@@ -128,8 +128,7 @@ final class StudySessionStore {
     }
   }
 
-  /// Nil when it couldn't be read, or was answered after its learner left: the screen keeps what
-  /// it shows and asks again.
+  /// Nil when it couldn't be read, or was answered after its learner signed out.
   func lessonReadiness(lessonID: String) async -> Components.Schemas.LessonReadiness? {
     await read { token in
       try await api.lessonReadiness(token: token, lessonID: lessonID)
@@ -143,7 +142,6 @@ final class StudySessionStore {
     }
   }
 
-  /// A lesson's readiness changed what the day shows: every screen showing it reads it again.
   func lessonChanged() {
     cache.invalidate([.userSession])
   }

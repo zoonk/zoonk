@@ -343,17 +343,13 @@ struct LessonPlayerAPI: Sendable {
       throw APIError.unauthorized
     case .notFound, .badRequest:
       throw APIError.notFound
-    // `serviceUnavailable`: the server couldn't tell whether a run still writes it. Ask again.
     case .internalServerError, .serviceUnavailable, .undocumented:
       throw APIError.network
     }
   }
 
-  /// Follows the runs writing the lesson (`run`, when the learner's tap just started one) and
-  /// returns the first readiness that names none: the lesson ready, failed or not started. Only
-  /// readiness decides: a stream that ends, drops or fails asks it again. While it still names the
-  /// run just followed, or can't answer, it's asked again every `tick`, for as long as the caller
-  /// waits.
+  /// Returns the first readiness that names no run writing the lesson: only readiness decides, so a
+  /// stream that ends or fails asks it again.
   func followWriting(
     id: String, run: String?, token: String, tick: Duration = .seconds(5),
     progress: @escaping @MainActor @Sendable (_ run: String, _ event: GenerationEvent) -> Void = {

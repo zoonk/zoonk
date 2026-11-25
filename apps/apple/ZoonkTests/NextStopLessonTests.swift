@@ -2,8 +2,6 @@ import XCTest
 
 @testable import Zoonk
 
-/// The session's next stop draws its first frame from the day's snapshot, before readiness answers
-/// (#2799), and only readiness moves it after that.
 final class NextStopLessonTests: XCTestCase {
   func testTheFirstFrameShowsTheLessonAsTheDaySawIt() throws {
     let ready = NextStopLesson(block: try learn(.ready), read: nil, writing: nil)
