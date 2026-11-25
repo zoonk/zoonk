@@ -62,6 +62,8 @@ struct SuggestionResult: View {
   }
 }
 
+/// A Today notice's bordered card. Its border is its edge, so its row adds no space around it and
+/// the list's section gap alone sets it apart, as main's column gap does.
 struct TodaySuggestionCard<Content: View>: View {
   var mark: SuggestionMark.Kind? = nil
   @ViewBuilder let content: Content
@@ -81,6 +83,7 @@ struct TodaySuggestionCard<Content: View>: View {
     .padding(14)
     .panel()
     .listRowSeparator(.hidden)
+    .listRowInsets(.vertical, 0)
   }
 }
 

@@ -158,6 +158,8 @@ struct UnfinishedGoalSection: View {
       Section {
         UnfinishedGoalCard(draft: draft)
       }
+      // Main keeps it with the day's notice, a card's small gap under it.
+      .listSectionSpacing(12)
     }
   }
 }

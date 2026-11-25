@@ -335,7 +335,6 @@ struct TodayDayView: View {
           }
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(.vertical, 0)
       }
     case .practice:
       TodayLanguagePracticeSection(view: view, language: language)
