@@ -107,7 +107,7 @@ The lesson's skills applied to a realistic situation the learner can picture: th
 - Where a brief leaves a detail open (a name, a company, a number, a situation), pick one no other lesson uses (people and towns from `CAST`), and never copy another lesson's question.
 - An idea or term an earlier lesson explained gets a reminder in a few everyday words when this lesson needs it, never a full explanation again.
 {{#usedSituations}}
-- `USED_SITUATIONS` are questions the app keeps for mock exams, so no screen may let a learner answer one from memory: never use one of those cases, whether the same statement in other words or the same scenario with other names, numbers or places. When a brief uses one, give it a case of its own that teaches the same thing. The lesson may still teach the same fact or rule, in a case of its own.
+- `USED_SITUATIONS` are questions the app already asks about these skills in practice, mock exams and other lessons, so no screen may let a learner answer one from memory: never use one of those cases, whether the same statement in other words or the same scenario with other names, numbers or places. When a brief uses one, give it a case of its own that teaches the same thing. The lesson may still teach the same fact or rule, in a case of its own.
 {{/usedSituations}}
 
 {{#material}}
