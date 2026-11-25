@@ -39,11 +39,13 @@ function PhaseBand({
   isLast,
   links,
   phase,
+  todayShare,
 }: {
   focusable: boolean;
   isLast: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
+  todayShare: number | null;
 }) {
   const label = usePhaseLabel();
   const endSpoken = usePhaseEndSpoken();
@@ -66,7 +68,7 @@ function PhaseBand({
           />
         }
       >
-        <BandFace isLast={isLast} phase={phase} />
+        <BandFace isLast={isLast} phase={phase} todayShare={todayShare} />
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -94,7 +96,13 @@ function PhaseColumn({
   return (
     <li className={BAND_COLUMN_CLASS}>
       <TodayTick share={todayShare} />
-      <PhaseBand focusable={focusable} isLast={isLast} links={links} phase={phase} />
+      <PhaseBand
+        focusable={focusable}
+        isLast={isLast}
+        links={links}
+        phase={phase}
+        todayShare={todayShare}
+      />
 
       <PhaseLane isLast={isLast} phase={phase} />
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} />

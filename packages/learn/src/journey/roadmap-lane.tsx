@@ -149,32 +149,45 @@ function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
 /** The band's corner radius (`rounded-md`), so the tick never lands on its curve. */
 const BAND_CORNER = "0.375rem";
 
+const TICK_CLASS = "bg-foreground pointer-events-none absolute w-[1.5px] -translate-x-1/2";
+
+function getTickLeft(share: number): string {
+  return `clamp(${BAND_CORNER}, ${share * PERCENT}%, 100% - ${BAND_CORNER})`;
+}
+
 /**
- * "Today" over the current band, and a tick from under the word through the band's full height, so
- * the word points at a day on the bar. The tick spans the column's first two rows (its containing
- * block is their grid area), and stays off the band's rounded corners.
+ * "Today" over the current band, and the top of its tick, which `BandTodayTick` carries on through
+ * the band: the word points at a day on the bar.
  */
 export function TodayTick({ share }: { share: number | null }) {
   const t = useExtracted();
 
-  if (share === null) {
-    return <span aria-hidden="true" />;
-  }
-
   return (
-    <>
-      <span aria-hidden="true" className="flex items-end">
-        <AxisLabel share={share}>
-          <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
-        </AxisLabel>
-      </span>
-      <span
-        aria-hidden="true"
-        className="bg-foreground pointer-events-none absolute top-4 bottom-0 z-10 col-start-1 row-start-1 row-end-3 w-[1.5px] -translate-x-1/2"
-        data-slot="today-tick"
-        style={{ left: `clamp(${BAND_CORNER}, ${share * PERCENT}%, 100% - ${BAND_CORNER})` }}
-      />
-    </>
+    <span aria-hidden="true" className="relative flex items-end">
+      {share !== null && (
+        <>
+          <AxisLabel share={share}>
+            <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
+          </AxisLabel>
+          <span className={cn(TICK_CLASS, "bottom-0 h-1")} style={{ left: getTickLeft(share) }} />
+        </>
+      )}
+    </span>
+  );
+}
+
+/**
+ * The tick through the current band's full height, over its fill and under its name, so the name
+ * stays whole where Today falls on it. The current band is isolated, so `-z-10` stays inside it.
+ */
+export function BandTodayTick({ share }: { share: number }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(TICK_CLASS, "inset-y-0 -z-10")}
+      data-slot="today-tick"
+      style={{ left: getTickLeft(share) }}
+    />
   );
 }
 
