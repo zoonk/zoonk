@@ -54,8 +54,8 @@ jobs:
         run: pnpm deploy:require-ci
       - name: Load production database credentials
         run: pnpm deploy:database
-      - name: Stop open tabs reaching releases older than the running one
-        run: pnpm deploy skew-boundary
+      - name: Check every app runs one release and keep open tabs off older ones
+        run: pnpm deploy prepare-migration
       - name: Migrate production once
         run: pnpm --filter @zoonk/db db:deploy
       - name: Deploy all production apps concurrently on Turbo machines

@@ -1,7 +1,7 @@
 import { deployBlog } from "./blog.mts";
 import { requiredEnv } from "./config.mts";
 import { assertPullRequestOpen, cancelBuilds, deploy } from "./deployment.mts";
-import { limitSkewProtectionToRunningRelease } from "./skew-protection.mts";
+import { prepareProductionMigration } from "./production-migration.mts";
 
 const command = process.argv[2] ?? "";
 
@@ -29,11 +29,11 @@ switch (command) {
   case "production":
     await deploy(command);
     break;
-  case "skew-boundary":
-    await limitSkewProtectionToRunningRelease();
+  case "prepare-migration":
+    await prepareProductionMigration();
     break;
   default:
     throw new Error(
-      "Expected blog, blog-preview, check-preview, cancel-previews, cancel-run, preview, staging, production, or skew-boundary",
+      "Expected blog, blog-preview, check-preview, cancel-previews, cancel-run, prepare-migration, preview, staging, or production",
     );
 }
