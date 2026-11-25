@@ -71,7 +71,7 @@ const CINEMA_BASIS = basis({
 
 function cinemaInput(text: string) {
   return {
-    arithmetic: { rounding: null, zeroRules: [0] },
+    arithmetic: { rounding: null },
     basis: CINEMA_BASIS,
     context: CONTEXT,
     keyPoints: [],

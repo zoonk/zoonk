@@ -89,14 +89,12 @@ function matchesRule({
   basis,
   context,
   evidence,
-  index,
   rule,
   text,
 }: {
   basis: Basis;
   context: string | null;
   evidence: WritingEvidence;
-  index: number;
   rule: Rule;
   text: string;
 }): z.infer<typeof writingZeroKindSchema> | null {
@@ -110,15 +108,9 @@ function matchesRule({
     return "tooFewLines";
   }
 
-  const { onTopicQuote, zeroKind, zeroQuote, zeroRuleIndex } = evidence;
+  const { onTopicQuote, zeroKind, zeroQuote } = evidence;
 
-  if (
-    zeroRuleIndex !== index ||
-    !zeroKind ||
-    !kinds?.includes(zeroKind) ||
-    !zeroQuote?.trim() ||
-    !text.includes(zeroQuote)
-  ) {
+  if (!zeroKind || !kinds?.includes(zeroKind) || !zeroQuote?.trim() || !text.includes(zeroQuote)) {
     return null;
   }
 
@@ -140,21 +132,17 @@ export function verifiedWritingZero({
   context,
   eligible,
   evidence,
-  ruleIndexes,
 }: {
   basis: Basis;
   context: string | null;
   eligible: string;
   evidence: WritingEvidence;
-  ruleIndexes: readonly number[];
 }) {
-  for (const [index, rule] of basis.grading.zeroing.entries()) {
-    if (ruleIndexes.includes(index)) {
-      const kind = matchesRule({ basis, context, evidence, index, rule, text: eligible });
+  for (const rule of basis.grading.zeroing) {
+    const kind = matchesRule({ basis, context, evidence, rule, text: eligible });
 
-      if (kind) {
-        return { kind, reason: rule.text };
-      }
+    if (kind) {
+      return { kind, reason: rule.text };
     }
   }
 

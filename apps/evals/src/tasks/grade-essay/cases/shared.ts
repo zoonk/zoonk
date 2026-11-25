@@ -17,7 +17,6 @@ export type GradeWritingInput = {
   text: string;
   keyPoints: string[];
   basis: Basis;
-  /** The arithmetic a numeric enablement would pin for this basis; null grades in levels. */
   arithmetic: Arithmetic;
 };
 
@@ -141,7 +140,7 @@ export function publishedQuestion({
   const total = Number(criteria.reduce((sum, criterion) => sum + criterion.points, 0).toFixed(2));
 
   return {
-    arithmetic: { rounding: null, zeroRules: [] },
+    arithmetic: { rounding: null },
     basis: basis({
       aspects,
       criteria,

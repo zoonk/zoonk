@@ -147,6 +147,7 @@ export const mockPointsSchema = z
 export type MockPoints = z.infer<typeof mockPointsSchema>;
 
 const writtenTaskWithItems = writtenPartPointsSchema.shape.tasks.element.extend({
+  count: z.int().positive().optional(),
   itemIds: z.array(uuidSchema()),
 });
 

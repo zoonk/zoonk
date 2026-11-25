@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { normalizeString } from "@zoonk/utils/string";
 import { writtenGradingSchema } from "../../../library/exams/written-grading";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
@@ -62,15 +61,6 @@ function getWritingGradingFacts({ criteria, kind, language, rounding, zeroing }:
       maxLines: maxLines ?? null,
     })),
   };
-}
-
-export function getWritingRubricFingerprint({
-  grading,
-  points,
-}: Pick<Basis, "grading" | "points">): string {
-  return createHash("sha256")
-    .update(JSON.stringify({ ...getWritingGradingFacts(grading), points }))
-    .digest("hex");
 }
 
 export function getWritingTaskBasis({ grading, lines, points }: Basis): string {

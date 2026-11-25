@@ -5,9 +5,13 @@ import { type WrittenProjection } from "./written-points-contract";
 
 type Part = WrittenProjection["parts"][number];
 export type WritingRange = NonNullable<Part["range"]>;
-const POINTS_TOLERANCE = 1e-6;
+const SCORE_PRECISION = 15;
 
 export type WrittenTask = ReturnType<typeof listWrittenTasks>[number];
+
+export function addWritingPoints(first: number, second: number): number {
+  return Number((first + second).toPrecision(SCORE_PRECISION));
+}
 
 export function sumRanges(ranges: readonly (WritingRange | null)[]): WritingRange | null {
   if (ranges.length === 0 || ranges.some((range) => range === null)) {
@@ -39,11 +43,11 @@ export function writtenStanding({
 
   const threshold = minimum.unit === "percent" ? ((max ?? 0) * minimum.value) / 100 : minimum.value;
 
-  if (range.low >= threshold - POINTS_TOLERANCE) {
+  if (range.low >= threshold) {
     return "met";
   }
 
-  return range.high < threshold - POINTS_TOLERANCE ? "below" : "overlaps";
+  return range.high < threshold ? "below" : "overlaps";
 }
 
 export function scoreWrittenParts({
@@ -81,7 +85,7 @@ export function scoreWrittenParts({
       minimum,
       name,
       range,
-      standing: writtenStanding({ max, minimum, range }),
+      standing: writtenStanding({ max, minimum, range: null }),
       tasks: scored,
     };
   });

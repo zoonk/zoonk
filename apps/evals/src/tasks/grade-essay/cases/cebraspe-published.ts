@@ -118,7 +118,7 @@ function questionInput({
 
   input.context = question.context ?? null;
   input.basis.grading.zeroing = zeroing(year, noticeSection);
-  input.arithmetic = { rounding: null, zeroRules: [0, 1, 2] };
+  input.arithmetic = { rounding: null };
   return input;
 }
 

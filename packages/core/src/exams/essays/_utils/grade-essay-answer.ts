@@ -15,7 +15,7 @@ import {
   writtenAnswerSchema,
 } from "../writing-contract";
 import { countWritingLines } from "../writing-lines";
-import { getWritingArithmetic } from "../writing-rubric-policy";
+import { type WritingGrader, getWritingArithmetic } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 import { getWritingAttemptId } from "./writing-attempt-id";
@@ -36,7 +36,7 @@ export async function gradeWriting({
   language: string;
   previousNextSteps: readonly string[];
   text: string;
-}): Promise<WritingResult & { estimatedLines: number }> {
+}): Promise<WritingResult & { estimatedLines: number; grader?: WritingGrader }> {
   const basis = content.writing;
 
   const { estimatedLines, ignoredFrom } = countWritingLines({
@@ -106,7 +106,7 @@ export async function gradeWriting({
   });
 
   const grade = applyWritingArithmetic({
-    arithmetic: getWritingArithmetic(basis, provenance),
+    arithmetic: provenance ? getWritingArithmetic(basis, provenance) : null,
     basis,
     context: content.context,
     eligible,
@@ -115,7 +115,8 @@ export async function gradeWriting({
     feedback,
   });
 
-  return { ...grade, estimatedLines };
+  const grader = provenance && { model: provenance.model, promptVersion: provenance.promptVersion };
+  return { ...grade, estimatedLines, ...(grade.kind === "points" && grader && { grader }) };
 }
 
 export type EssayGradeConditions = Omit<WritingConditions, "estimatedLines">;
@@ -198,7 +199,7 @@ export async function recordEssayGrade(
   const {
     conditions,
     durationMs,
-    grade,
+    grade: { grader, ...grade },
     item,
     mockExamId,
     mockPrompt,
@@ -211,7 +212,7 @@ export async function recordEssayGrade(
   const attemptId = getWritingAttemptId({ admissionId: conditions.admissionId, itemId: item.id });
   const basis = readEssayContent(item)?.writing;
 
-  if (!basis || (grade.kind === "points" && !getWritingArithmetic(basis))) {
+  if (!basis || (grade.kind === "points" && !getWritingArithmetic(basis, grader))) {
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 
@@ -227,6 +228,7 @@ export async function recordEssayGrade(
         conditions: writtenConditions,
         examBlueprintId: item.examBlueprintId,
         grade,
+        ...(grader && { grader }),
         itemId: item.id,
         ...(mockPrompt && { mockPrompt }),
         text,

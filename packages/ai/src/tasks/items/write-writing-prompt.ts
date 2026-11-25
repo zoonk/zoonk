@@ -1,4 +1,5 @@
 import "server-only";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
@@ -41,6 +42,11 @@ export type WritingPromptInput = {
   unit: "answer" | "drill";
   usedTitles: string[];
 };
+
+/** @internal Calibration tracks the template shared across learner languages. */
+export function getWritingKeyWriter() {
+  return { model: defaultModel, promptVersion: getPromptVersion({ systemPrompt: taskPrompt }) };
+}
 
 export async function writeWritingPrompt({
   analytics,

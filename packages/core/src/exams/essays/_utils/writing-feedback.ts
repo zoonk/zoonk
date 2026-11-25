@@ -1,5 +1,6 @@
 import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
+import { addWritingPoints } from "../../scoring/written-points";
 import { type WritingResult, type writtenItemSchema } from "../writing-contract";
 import { type WritingArithmetic, supportsWritingArithmetic } from "../writing-rubric-policy";
 import { ENEM_WRITING_MAX, scoreEnemWriting } from "./enem-writing";
@@ -149,12 +150,6 @@ function round(value: number, rule: WritingArithmetic["rounding"]) {
   return snap(scaled + tolerance) / scale;
 }
 
-const SCORE_PRECISION = 15;
-
-function addPoints(first: number, second: number): number {
-  return Number((first + second).toPrecision(SCORE_PRECISION));
-}
-
 function scoreRows({
   basis,
   eligible,
@@ -179,7 +174,7 @@ function scoreRows({
       return [];
     }
 
-    const total = aspects.reduce((sum, [, aspect]) => addPoints(sum, aspect.points ?? 0), 0);
+    const total = aspects.reduce((sum, [, aspect]) => addWritingPoints(sum, aspect.points ?? 0), 0);
 
     if (total !== points) {
       return [];
@@ -195,7 +190,7 @@ function scoreRows({
       const [report] = reports;
 
       return report?.earned && report.criterionId === id && findQuote(report.quote)
-        ? addPoints(sum, aspect.points ?? 0)
+        ? addWritingPoints(sum, aspect.points ?? 0)
         : sum;
     }, 0);
 
@@ -259,18 +254,12 @@ export function applyWritingArithmetic({
     !arithmetic ||
     points === null ||
     grading.kind === "levels" ||
-    !supportsWritingArithmetic(grading, arithmetic)
+    !supportsWritingArithmetic(grading)
   ) {
     return levels();
   }
 
-  const zero = verifiedWritingZero({
-    basis,
-    context,
-    eligible,
-    evidence,
-    ruleIndexes: arithmetic.zeroRules,
-  });
+  const zero = verifiedWritingZero({ basis, context, eligible, evidence });
 
   if (belowWordFloor && !zero) {
     return levels();
@@ -307,12 +296,12 @@ export function applyWritingArithmetic({
   if (
     rows.length !== grading.criteria.length ||
     new Set(rows.map(({ id }) => id)).size !== rows.length ||
-    rows.reduce((sum, row) => addPoints(sum, row.max), 0) !== points
+    rows.reduce((sum, row) => addWritingPoints(sum, row.max), 0) !== points
   ) {
     return levels();
   }
 
-  const content = rows.reduce((sum, row) => addPoints(sum, row.earned), 0);
+  const content = rows.reduce((sum, row) => addWritingPoints(sum, row.earned), 0);
 
   const deduction = getDeduction({
     basis,

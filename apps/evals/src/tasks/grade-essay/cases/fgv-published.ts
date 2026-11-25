@@ -93,7 +93,7 @@ function oabCases({
       },
       userInput: {
         ...input,
-        arithmetic: { rounding: null, zeroRules: zeroing.map((_, index) => index) },
+        arithmetic: { rounding: null },
         basis: {
           ...input.basis,
           grading: { ...input.basis.grading, zeroing },

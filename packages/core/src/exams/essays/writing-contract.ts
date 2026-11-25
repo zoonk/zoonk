@@ -225,6 +225,7 @@ export const writtenAnswerSchema = z.object({
   conditions: writingConditionsSchema,
   examBlueprintId: uuidSchema().nullable(),
   grade: writingResultSchema.transform(withSavedNextStep),
+  grader: z.object({ model: z.string(), promptVersion: z.string() }).optional(),
   itemId: uuidSchema(),
   mockPrompt: z
     .object({ area: z.string().nullable(), context: z.string().nullable(), question: z.string() })

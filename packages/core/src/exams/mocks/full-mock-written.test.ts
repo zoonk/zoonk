@@ -15,8 +15,7 @@ import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { readEssayContent } from "../essays/_utils/essay-content";
-import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
-import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
+import { writingCalibration } from "../essays/_utils/writing-calibration";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
@@ -36,7 +35,10 @@ import { submitMockSection } from "./submit-mock-section";
 
 // Stub the model provider to keep mock grading off the network.
 vi.mock("@zoonk/ai/tasks/grading/grade-essay", () => ({ gradeWritingEvidence: vi.fn() }));
-vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+
+vi.mock("../essays/_utils/writing-calibration", () => ({
+  writingCalibration: { enem: null, keyed: null },
+}));
 
 const FULL = { area: null, day: null, kind: "full" } as const;
 const WRITTEN = { area: null, day: null, kind: "written" } as const;
@@ -235,9 +237,7 @@ describe("written mock sittings", () => {
     vi.useRealTimers();
     vi.mocked(gradeWritingEvidence).mockReset();
 
-    for (const fingerprint of Object.keys(passedWritingEvaluations)) {
-      Reflect.deleteProperty(passedWritingEvaluations, fingerprint);
-    }
+    Object.assign(writingCalibration, { keyed: null });
   });
 
   it("keeps a newer device's written answer when an offline edit arrives later", async () => {
@@ -917,18 +917,24 @@ describe("written mock sittings", () => {
       };
 
       task.grading = grading;
-      const fingerprint = getWritingRubricFingerprint({ grading, points });
-
-      Reflect.set(passedWritingEvaluations, fingerprint, {
-        arithmetic: { rounding: null, zeroRules: [] },
-        corpus: "fixture",
-        kind: "points",
-        model: provenance.model,
-        promptRevision: provenance.promptVersion,
-      });
     }
 
-    const { blueprint, goal, short, user } = await setup({ structure: numeric });
+    Object.assign(writingCalibration, {
+      keyed: {
+        grader: {
+          model: provenance.model,
+          promptRevision: { oab: provenance.promptVersion, points: provenance.promptVersion },
+        },
+        keyWriter: { model: "fixture/model", promptRevision: "fixture" },
+        over: Array.from({ length: 19 }, () => 0),
+        overFloor: 0,
+        points: true,
+        under: Array.from({ length: 19 }, () => 0),
+        underFloor: 0,
+      },
+    });
+
+    const { blueprint, goal, long, short, user } = await setup({ structure: numeric });
     const text = "The rule applies to this case.";
 
     vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({
@@ -939,8 +945,13 @@ describe("written mock sittings", () => {
       provenance,
     });
 
+    if (!long) {
+      throw new Error("Expected the long essay prompt");
+    }
+
     const id = await start(goal.id, WRITTEN);
     await expect(save({ id, itemId: short.id, text })).resolves.toMatchObject({ status: "saved" });
+    await expect(save({ id, itemId: long.id, text })).resolves.toMatchObject({ status: "saved" });
     await submitMockSection({ blockId: id, input: UTC, section: 0 });
 
     await expect(gradeMockEssays({ blockId: id, input: UTC })).resolves.toMatchObject({
@@ -958,25 +969,32 @@ describe("written mock sittings", () => {
         history:
           syllabus.status === "ready" && syllabus.syllabus.writtenPractice?.subjects?.[0]?.answers,
         projection: projection?.parts[0]?.tasks,
+        standing: projection?.parts[0]?.standing,
         written: mock.result?.points?.written,
       };
     }
 
     const before = await readScores(numeric);
     const range = { high: 30, low: 30 };
+    const longRange = { high: 70, low: 70 };
 
     expect(before).toMatchObject({
-      history: [{ range }],
+      history: expect.arrayContaining([
+        expect.objectContaining({ range }),
+        expect.objectContaining({ range: longRange }),
+      ]),
       projection: [
         { key: "short", range },
-        { key: "long", range: null },
+        { key: "long", range: longRange },
       ],
+      standing: "met",
       written: [
         {
-          range,
+          range: { high: 100, low: 100 },
+          standing: "met",
           tasks: [
             { key: "short", range },
-            { key: "long", range: { high: 0, low: 0 } },
+            { key: "long", range: longRange },
           ],
         },
       ],
@@ -998,6 +1016,29 @@ describe("written mock sittings", () => {
     await prisma.item.delete({ where: { id: short.id } });
     await expect(readScores(numeric)).resolves.toStrictEqual(before);
 
+    const sitting = await prisma.mockExam.findFirstOrThrow({
+      where: { goalId: goal.id, status: "finished" },
+    });
+
+    const latest = await prisma.mockExam.create({
+      data: {
+        conditions: sitting.conditions ?? {},
+        examBlueprintId: blueprint.id,
+        goalId: goal.id,
+        sectionStartedAt: SESSION_NOW,
+        userId: user.id,
+      },
+    });
+
+    await expect(readScores(numeric)).resolves.toStrictEqual(before);
+
+    await prisma.mockExam.update({
+      data: { finishedAt: new Date(SESSION_NOW.getTime() + 1), status: "finished" },
+      where: { id: latest.id },
+    });
+
+    await expect(readScores(numeric)).resolves.toStrictEqual({ ...before, standing: "unmeasured" });
+
     const structure = structuredClone(numeric);
     const task = structure.mock?.sections.find(({ kind }) => kind === "written")?.tasks?.[0];
 
@@ -1012,7 +1053,7 @@ describe("written mock sittings", () => {
       history: before.history,
       projection: [
         { key: "corrected", range: null },
-        { key: "long", range: null },
+        { key: "long", range: longRange },
       ],
       written: before.written,
     });

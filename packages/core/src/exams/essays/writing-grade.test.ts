@@ -19,17 +19,13 @@ import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
+import { writingCalibration } from "./_utils/writing-calibration";
 import {
   applyWritingArithmetic,
   buildWritingFeedback,
   createWritingQuoteLookup,
 } from "./_utils/writing-feedback";
-import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
-import {
-  getWritingRubricFingerprint,
-  getWritingTaskBasis,
-  matchesWritingTaskBasis,
-} from "./_utils/writing-task-basis";
+import { getWritingTaskBasis, matchesWritingTaskBasis } from "./_utils/writing-task-basis";
 import { MAX_ESSAY_CHARACTERS, MAX_WRITING_MS, essaySubmissionInputSchema } from "./essay-contract";
 import { getWritingAttempt } from "./get-writing-attempt";
 import {
@@ -50,7 +46,10 @@ vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) =>
   gradeWritingEvidence: vi.fn(),
 }));
 
-vi.mock("./_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+vi.mock("./_utils/writing-calibration", () => ({
+  writingCalibration: { enem: null, keyed: null },
+}));
+
 vi.mock("../../learner/written-evidence", () => ({ creditWrittenSkills: vi.fn() }));
 
 const citation = { passage: "Official grading rules", sourceId: "notice" };
@@ -127,10 +126,7 @@ const content = {
   writing: basis,
 };
 
-const arithmetic: WritingArithmetic = {
-  rounding: { mode: "nearest" as const, places: 2 },
-  zeroRules: [0],
-};
+const arithmetic: WritingArithmetic = { rounding: { mode: "nearest" as const, places: 2 } };
 
 function mockEvidence() {
   vi.mocked(gradeWritingEvidence, { partial: true }).mockResolvedValue({ data: evidence });
@@ -363,7 +359,7 @@ describe("writing grades", () => {
           aspects: [],
           zeroKind: kind === "blank" || kind === "tooFewLines" ? null : kind,
           zeroQuote: example.quote ?? null,
-          zeroRuleIndex: example.quote ? 0 : null,
+          zeroRuleIndex: example.quote ? 7 : null,
         },
         { context: example.context, rubric, text: example.text },
       );
@@ -548,7 +544,6 @@ describe("writing grades", () => {
     };
 
     const writing = { ...basis, grading: { ...basis.grading, rounding: null } };
-    const fingerprint = getWritingRubricFingerprint(writing);
 
     const input = {
       content: { ...content, writing },
@@ -557,21 +552,68 @@ describe("writing grades", () => {
       text: original,
     };
 
-    Object.assign(passedWritingEvaluations, {
-      [fingerprint]: {
-        arithmetic: { rounding: null, zeroRules: [] },
-        corpus: "fixture",
-        kind: "points",
-        model: grader.model,
-        promptRevision: grader.promptVersion,
+    const provider = vi.mocked(gradeWritingEvidence, { partial: true });
+    provider.mockResolvedValueOnce({ data: evidence, provenance });
+    await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
+
+    Object.assign(writingCalibration, {
+      keyed: {
+        grader: {
+          model: grader.model,
+          promptRevision: {
+            oab: getWritingGrader("oab").promptVersion,
+            points: grader.promptVersion,
+          },
+        },
+        keyWriter: { model: "fixture/model", promptRevision: "fixture" },
+        over: [],
+        overFloor: 0,
+        points: true,
+        under: [],
+        underFloor: 0,
       },
     });
 
     try {
-      const provider = vi.mocked(gradeWritingEvidence, { partial: true });
+      const unseen = {
+        ...input,
+        content: {
+          ...input.content,
+          writing: {
+            ...writing,
+            aspects: writing.aspects.map((aspect) => ({ ...aspect, points: 5 })),
+            grading: {
+              ...writing.grading,
+              criteria: writing.grading.criteria.map((criterion) => ({ ...criterion, points: 10 })),
+            },
+            points: 10,
+            taskKey: "unseen-exam-board",
+          },
+        },
+      };
 
       provider.mockResolvedValueOnce({ data: evidence, provenance });
-      await expect(gradeWriting(input)).resolves.toMatchObject({ decimals: 2, kind: "points" });
+
+      await expect(gradeWriting(unseen)).resolves.toMatchObject({
+        decimals: 0,
+        kind: "points",
+        max: 10,
+      });
+
+      expect(
+        getWritingArithmetic({
+          ...basis,
+          grading: {
+            ...basis.grading,
+            rounding: {
+              citation: { ...citation, passage: "Round to two places" },
+              text: "Precision",
+            },
+          },
+        }),
+      ).toStrictEqual({ rounding: { mode: "nearest", places: 2 } });
+
+      expect(getWritingArithmetic({ ...basis, points: 1 })).toBeNull();
 
       provider.mockResolvedValueOnce({
         data: evidence,
@@ -587,7 +629,7 @@ describe("writing grades", () => {
 
       await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
     } finally {
-      Reflect.deleteProperty(passedWritingEvaluations, fingerprint);
+      Object.assign(writingCalibration, { keyed: null });
     }
   });
 
@@ -682,7 +724,7 @@ describe("writing grades", () => {
 });
 
 const rounded = (passage: string) =>
-  getWritingRubricFingerprint({
+  getWritingTaskBasis({
     ...basis,
     grading: {
       ...basis.grading,
@@ -690,8 +732,8 @@ const rounded = (passage: string) =>
     },
   });
 
-describe(getWritingRubricFingerprint, () => {
-  it("keeps cosmetic changes out of the rubric and task compatibility keys", () => {
+describe(getWritingTaskBasis, () => {
+  it("keeps cosmetic changes out of the task compatibility key", () => {
     const revised = {
       ...basis,
       grading: {
@@ -710,11 +752,8 @@ describe(getWritingRubricFingerprint, () => {
 
     expect(matchesWritingTaskBasis({ prompt, task: revised })).toBe(true);
     expect(matchesWritingTaskBasis({ prompt, task: { ...revised, lines: 40 } })).toBe(false);
-    expect(getWritingRubricFingerprint(revised)).toBe(getWritingRubricFingerprint(basis));
 
-    expect(getWritingRubricFingerprint({ ...revised, points: 10 })).not.toBe(
-      getWritingRubricFingerprint(basis),
-    );
+    expect(getWritingTaskBasis({ ...revised, points: 10 })).not.toBe(getWritingTaskBasis(basis));
 
     expect(getWritingArithmetic(revised)).toBeNull();
   });

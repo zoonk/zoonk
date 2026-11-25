@@ -1,61 +1,67 @@
+import { type WrittenTask, addWritingPoints } from "../scoring/written-points";
 import { ENEM_WRITING_MAX, hasEnemCompetences } from "./_utils/enem-writing";
-import { passedWritingEvaluations } from "./_utils/writing-rubric-evaluations";
-import { getWritingRounding, getWritingRubricFingerprint } from "./_utils/writing-task-basis";
+import { writingCalibration } from "./_utils/writing-calibration";
+import { getWritingRounding } from "./_utils/writing-task-basis";
 
-export type WritingArithmetic = {
-  rounding: { mode: "nearest" | "down"; places: number } | null;
-  zeroRules: readonly number[];
-};
+export type WritingArithmetic = { rounding: { mode: "nearest" | "down"; places: number } | null };
 
-type Basis = Parameters<typeof getWritingRubricFingerprint>[0];
+type Basis = Pick<WrittenTask, "grading" | "points">;
+export type WritingGrader = { model: string; promptVersion: string };
 
-export function supportsWritingArithmetic(
-  { language, rounding }: Basis["grading"],
-  arithmetic: WritingArithmetic,
-) {
-  const rule = getWritingRounding(rounding);
-  const rounds = Boolean(rounding) && (typeof rule !== "object" || rule?.mode !== "none");
-
-  return (
-    rounds === Boolean(arithmetic.rounding) &&
-    (!language || (language.method !== "other" && language.factor !== null && language.formula))
-  );
+export function supportsWritingArithmetic({ language }: Basis["grading"]) {
+  return !language || (language.method !== "other" && language.factor !== null && language.formula);
 }
 
-export function getWritingArithmetic(
-  basis: Basis,
-  observed?: { model: string; promptVersion: string },
-): WritingArithmetic | null {
+export function getWritingCalibration({
+  basis,
+  observed,
+}: {
+  basis: Basis;
+  observed?: WritingGrader;
+}) {
   const { grading, points } = basis;
   const { criteria, kind } = grading;
-  const rounding = getWritingRounding(grading.rounding);
 
   if (
     points === null ||
     kind === "levels" ||
-    rounding === "unknown" ||
+    !supportsWritingArithmetic(grading) ||
+    getWritingRounding(grading.rounding) === "unknown" ||
     (kind === "enem"
       ? points !== ENEM_WRITING_MAX || !hasEnemCompetences(criteria)
-      : criteria.length === 0)
+      : criteria.length === 0 ||
+        criteria.some((criterion) => criterion.points === null) ||
+        criteria.reduce((total, criterion) => addWritingPoints(total, criterion.points ?? 0), 0) !==
+          points)
   ) {
     return null;
   }
 
-  const passed = passedWritingEvaluations[getWritingRubricFingerprint(basis)];
+  const entry = kind === "enem" ? writingCalibration.enem : writingCalibration.keyed;
 
-  if (
-    !passed ||
-    passed.kind !== kind ||
-    !supportsWritingArithmetic(grading, passed.arithmetic) ||
-    (observed &&
-      (passed.model !== observed.model || passed.promptRevision !== observed.promptVersion))
-  ) {
+  const revision =
+    kind === "enem"
+      ? writingCalibration.enem?.grader.promptRevision.enem
+      : writingCalibration.keyed?.grader.promptRevision[kind];
+
+  return entry?.points &&
+    (!observed || (observed.model === entry.grader.model && observed.promptVersion === revision))
+    ? entry
+    : null;
+}
+
+export function getWritingArithmetic(
+  basis: Basis,
+  observed?: WritingGrader,
+): WritingArithmetic | null {
+  if (!getWritingCalibration({ basis, observed })) {
     return null;
   }
 
-  return passed.arithmetic;
+  const rule = getWritingRounding(basis.grading.rounding);
+  return { rounding: rule && rule !== "unknown" && rule.mode !== "none" ? rule : null };
 }
 
 export function isNumericWritingRubric(basis: Basis): boolean {
-  return getWritingArithmetic(basis) !== null;
+  return getWritingCalibration({ basis }) !== null;
 }

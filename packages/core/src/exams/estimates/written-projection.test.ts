@@ -1,25 +1,39 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
-import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
-import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
-import { CGU, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
+import { writingCalibration } from "../essays/_utils/writing-calibration";
+import { CGU as CGU_NOTICE, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
 import { projectWritten } from "./written-projection";
 
-vi.mock("../essays/_utils/writing-rubric-evaluations", () => ({ passedWritingEvaluations: {} }));
+vi.mock("../essays/_utils/writing-calibration", () => ({
+  writingCalibration: { enem: null, keyed: null },
+}));
 
-function allowWritingPoints(points: number) {
-  const basis = { grading: CGU_WRITTEN_GRADING, points };
+const CALIBRATION = {
+  grader: {
+    model: "fixture/model",
+    promptRevision: { oab: "fixture-revision", points: "fixture-revision" },
+  },
+  keyWriter: { model: "fixture/model", promptRevision: "fixture-revision" },
+  over: [],
+  overFloor: 0,
+  points: true,
+  under: [],
+  underFloor: 0,
+};
 
-  Object.assign(passedWritingEvaluations, {
-    [getWritingRubricFingerprint(basis)]: {
-      arithmetic: { rounding: null, zeroRules: [] },
-      corpus: "fixture",
-      kind: "points",
-      model: "fixture/model",
-      promptRevision: "fixture-revision",
-    },
-  });
+const CGU = structuredClone(CGU_NOTICE);
+
+for (const section of CGU.mock?.sections ?? []) {
+  for (const task of section.tasks ?? []) {
+    task.grading = {
+      ...CGU_WRITTEN_GRADING,
+      criteria: CGU_WRITTEN_GRADING.criteria.map((criterion) => ({
+        ...criterion,
+        points: task.points ?? null,
+      })),
+    };
+  }
 }
 
 const OBJECTIVE: EstimatedScore = {
@@ -77,7 +91,10 @@ function sample({
     prompt: {
       assessedSkillIds: ["skill"],
       criteria: [],
-      grading: CGU_WRITTEN_GRADING,
+      grading: {
+        ...CGU_WRITTEN_GRADING,
+        criteria: CGU_WRITTEN_GRADING.criteria.map((criterion) => ({ ...criterion, points })),
+      },
       lines,
       part: "Written test",
       points,
@@ -90,10 +107,8 @@ function sample({
 }
 
 describe(projectWritten, () => {
-  const evaluatedPoints = [30, 70];
-
   beforeEach(() => {
-    evaluatedPoints.forEach((points) => allowWritingPoints(points));
+    Object.assign(writingCalibration, { keyed: CALIBRATION });
   });
 
   it("retains the objective and measured question while naming the missing written task", () => {
@@ -128,24 +143,21 @@ describe(projectWritten, () => {
     {
       combined: { high: 131, low: 118 },
       long: { high: 44, low: 39 },
-      standing: "met",
       written: { high: 63, low: 56 },
     },
     {
       combined: { high: 122, low: 107 },
       long: { high: 35, low: 28 },
-      standing: "overlaps",
       written: { high: 54, low: 45 },
     },
     {
       combined: { high: 115, low: 103 },
       long: { high: 28, low: 24 },
-      standing: "below",
       written: { high: 47, low: 41 },
     },
   ])(
-    "judges CGU on both questions together ($standing)",
-    ({ combined, long, standing, written }) => {
+    "estimates CGU points from both questions without a minimum call",
+    ({ combined, long, written }) => {
       const projection = projectWritten({
         objective: OBJECTIVE,
         samples: [sample({ high: 19, key: "short", low: 17 }), sample({ key: "long", ...long })],
@@ -154,7 +166,7 @@ describe(projectWritten, () => {
 
       expect(projection?.parts[0]?.range?.low).toBeCloseTo(written.low, 8);
       expect(projection?.parts[0]?.range?.high).toBeCloseTo(written.high, 8);
-      expect(projection?.parts[0]?.standing).toBe(standing);
+      expect(projection?.parts[0]?.standing).toBe("unmeasured");
       expect(projection?.combined?.low).toBeCloseTo(combined.low, 8);
       expect(projection?.combined?.high).toBeCloseTo(combined.high, 8);
     },
@@ -172,7 +184,13 @@ describe(projectWritten, () => {
     ];
 
     const result = projectWritten({ objective: null, samples, structure: CGU });
-    expect(result).toMatchObject({ combined: null, objective: null, parts: [{ standing: "met" }] });
+
+    expect(result).toMatchObject({
+      combined: null,
+      objective: null,
+      parts: [{ standing: "unmeasured" }],
+    });
+
     expect(result?.parts[0]?.range?.low).toBeCloseTo(53, 8);
     expect(result?.parts[0]?.range?.high).toBeCloseTo(70, 8);
   });
@@ -213,12 +231,7 @@ describe(projectWritten, () => {
   });
 
   it("reports levels for written tasks without a passed evaluation", () => {
-    for (const points of evaluatedPoints) {
-      Reflect.deleteProperty(
-        passedWritingEvaluations,
-        getWritingRubricFingerprint({ grading: CGU_WRITTEN_GRADING, points }),
-      );
-    }
+    Object.assign(writingCalibration, { keyed: null });
 
     const samples = [
       sample({ high: 20, key: "short", low: 15 }),

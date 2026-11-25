@@ -40,7 +40,7 @@ const OAB_NOTICE = "https://oab.fgv.br/arq/649/604111_46%20eou.%20edital%20de%20
 const OAB_STANDARD =
   "https://oab.fgv.br/arq/649/410537_OAB%2046%20-%20PADR%C3%83O%20DE%20RESPOSTA%20-%20B002%20-%20DIREITO%20CIVIL.pdf";
 
-const CEBRASPE_ARITHMETIC: Arithmetic = { rounding: null, zeroRules: [0] };
+const CEBRASPE_ARITHMETIC: Arithmetic = { rounding: null };
 
 /**
  * Built from Cebraspe's published definitive answer standard for MPO 2024, Cargo 1, Prova
@@ -435,7 +435,7 @@ function impact(text: string): GradeWritingInput {
   };
 }
 
-const ENEM_ARITHMETIC: Arithmetic = { rounding: null, zeroRules: [0] };
+const ENEM_ARITHMETIC: Arithmetic = { rounding: null };
 
 function heritage(text: string): GradeWritingInput {
   return {
@@ -969,7 +969,7 @@ function enemZeroCase({
     id: `enem-${id}-openai`,
     source: ENEM_SOURCE,
     userInput: {
-      arithmetic: { rounding: null, zeroRules: ENEM_ZERO_RULES.map((_, index) => index) },
+      arithmetic: { rounding: null },
       basis: { ...task, grading: { ...task.grading, zeroing: ENEM_ZERO_RULES }, lines: 30 },
       context: ENEM_ZERO_ANSWERS.support,
       keyPoints: [],

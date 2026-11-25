@@ -4,6 +4,10 @@ import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-c
 import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
 import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
+import {
+  type CalibratedWritingGrade,
+  getCalibratedWritingGrade,
+} from "../../scoring/calibrated-written-standing";
 import { type MockEssayView } from "../mock-view-contract";
 import { type MockEssayCandidate } from "../written-parts";
 import { readMockEssayText } from "./mock-answers";
@@ -53,11 +57,15 @@ export async function loadMockEssayViews({
 }: {
   areas: Map<string, string>;
   mock: MockSitting;
-}): Promise<{ numericBlankItems: ReadonlySet<string>; views: MockEssayView[] }> {
+}): Promise<{
+  grades: ReadonlyMap<string, CalibratedWritingGrade>;
+  numericBlankItems: ReadonlySet<string>;
+  views: MockEssayView[];
+}> {
   const itemIds = getEssayItemIds(mock.conditions);
 
   if (itemIds.length === 0) {
-    return { numericBlankItems: new Set(), views: [] };
+    return { grades: new Map(), numericBlankItems: new Set(), views: [] };
   }
 
   const attempts = await prisma.$queryRaw<{ answer: unknown }[]>`
@@ -76,12 +84,23 @@ export async function loadMockEssayViews({
   const items = await loadMockEssayItems(itemIds.filter((itemId) => !graded.has(itemId)));
 
   const numericBlankItems = new Set<string>();
+  const grades = new Map<string, CalibratedWritingGrade>();
 
   const views = itemIds.flatMap((itemId): MockEssayView[] => {
     const draft = mock.answers.find((answer) => answer.itemId === itemId);
     const saved = graded.get(itemId);
 
     if (saved?.mockPrompt) {
+      const grade = getCalibratedWritingGrade({
+        basis: saved.writing,
+        grade: saved.grade,
+        observed: saved.grader,
+      });
+
+      if (grade) {
+        grades.set(itemId, grade);
+      }
+
       return [
         {
           ...saved.mockPrompt,
@@ -124,5 +143,5 @@ export async function loadMockEssayViews({
     ];
   });
 
-  return { numericBlankItems, views };
+  return { grades, numericBlankItems, views };
 }

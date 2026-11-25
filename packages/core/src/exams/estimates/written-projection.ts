@@ -1,4 +1,5 @@
 import "server-only";
+import { readLatestWrittenMocks } from "../../learner/facts/written-mocks";
 import { type WrittenSample, readWrittenSamples } from "../../learner/facts/written-samples";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getPartMaxPoints } from "../../library/exams/part-points";
@@ -17,6 +18,7 @@ import {
   sumRanges,
 } from "../scoring/written-points";
 import { type WrittenProjection } from "../scoring/written-points-contract";
+import { withMockStanding } from "./written-projection-standing";
 
 const RECENT_PROMPTS = 3;
 const POINTS_TOLERANCE = 1e-6;
@@ -94,7 +96,6 @@ export function projectWrittenParts({
 }
 
 type ScorePart = { max: number | null; name: string; range: WritingRange | null };
-
 type Part = ScorePart & { objective: boolean };
 type Term = { max: number; parts: Part[]; share: number };
 type Scoring = NonNullable<ExamStructure["mock"]>["scoring"];
@@ -225,15 +226,21 @@ function combine({
 
 /** @internal */
 export function projectWritten({
+  mocks = [],
   objective,
   samples,
   structure,
 }: {
+  mocks?: Awaited<ReturnType<typeof readLatestWrittenMocks>>;
   objective: EstimatedScore | null;
   samples: readonly WrittenSample[];
   structure: ExamStructure;
 }): WrittenProjection | null {
-  const parts = projectWrittenParts({ samples, structure });
+  const parts = withMockStanding({
+    mocks,
+    parts: projectWrittenParts({ samples, structure }),
+    samples,
+  });
 
   if (parts.length === 0) {
     return null;
@@ -298,10 +305,18 @@ export async function loadWrittenProjection({
   structure: ExamStructure | null;
   userId: string;
 }): Promise<WrittenProjection | null> {
-  if (!structure || listWrittenTasks({ structure }).length === 0) {
+  const tasks = listWrittenTasks({ structure });
+
+  if (!structure || tasks.length === 0) {
     return null;
   }
 
-  const samples = await readWrittenSamples({ goalId, userId });
-  return projectWritten({ objective, samples, structure });
+  const [samples, mocks] = await Promise.all([
+    readWrittenSamples({ goalId, userId }),
+    tasks.some((task) => isNumericWritingRubric(task))
+      ? readLatestWrittenMocks({ goalId, userId })
+      : [],
+  ]);
+
+  return projectWritten({ mocks, objective, samples, structure });
 }
