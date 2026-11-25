@@ -36,6 +36,7 @@ import com.zoonk.android.feature.mindmaps.MindMapRowActions
 import com.zoonk.android.feature.mindmaps.MindMapShown
 import com.zoonk.android.feature.mindmaps.chapterMindMap
 import com.zoonk.android.feature.mindmaps.facts
+import com.zoonk.android.feature.plan.plan
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -49,6 +50,7 @@ import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
+import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.WritingTask
 import com.zoonk.api.models.WrittenPracticeSubjectsInner
 import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInnerCriteria
@@ -91,6 +93,10 @@ class GoalContentScreenshots {
     fun phone() = capture("phone")
 
     @Test
+    @Config(qualifiers = "pt-w411dp-h2600dp-xxhdpi")
+    fun phoneInPortuguese() = capture("phone-pt", opens = false)
+
+    @Test
     @Config(qualifiers = "w411dp-h2600dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("phone-dark-more-contrast", dark = true, moreContrast = true)
 
@@ -113,6 +119,7 @@ class GoalContentScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        opens: Boolean = true,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
@@ -125,8 +132,9 @@ class GoalContentScreenshots {
             compose.waitForIdle()
             val shot = SCREENS[screen].first
             write("$shot-$name", compose.onRoot().captureRender().asAndroidBitmap())
-            val opens = OPENED[shot] ?: return@forEach
-            opens.forEach { compose.onNodeWithText(it).performClick() }
+            // The taps find English words.
+            val taps = OPENED[shot]?.takeIf { opens } ?: return@forEach
+            taps.forEach { compose.onNodeWithText(it).performClick() }
             compose.waitForIdle()
             write("$shot-opened-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
@@ -192,6 +200,24 @@ class GoalContentScreenshots {
             val syllabus = if (key == "basics") modulesSyllabus() else examSyllabus()
             val (menu, ask) = tools(TutorScope.Subject(GOAL, key))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+        }
+
+        /** The Python plan with its Data module out for [reason], as core sends a module the plan doesn't teach: no lessons. */
+        fun modulesWithDataOut(reason: String): Syllabus {
+            val syllabus = modulesSyllabus()
+            return syllabus.copy(
+                subjects =
+                    syllabus.subjects.map {
+                        if (it.key == "data") it.copy(notPlannedReason = reason, chapters = emptyList(), lessonsTotal = 0, nextDate = null) else it
+                    },
+            )
+        }
+
+        @Composable
+        fun ModuleOut(reason: String) {
+            val syllabus = modulesWithDataOut(reason)
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, "data"))
+            SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
         /** The written subject as [edit] changes it: graded by level, or waiting for an exam choice. */
@@ -295,6 +321,16 @@ class GoalContentScreenshots {
                     SubjectPage(syllabus, subject, SubjectWrites(), NO_ACTIONS, TODAY, {}, {})
                 },
                 "subject-written" to { Subject("essay") },
+                "subject-written-left-out-for-time" to {
+                    val syllabus = examSyllabus()
+                    val essay = syllabus.subjects.first { it.key == "essay" }.copy(notPlannedReason = "time")
+                    val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay"))
+                    SubjectPage(syllabus, essay, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+                },
+                "subject-module-taken-out" to { ModuleOut("skipped") },
+                "subject-module-left-out-for-time" to { ModuleOut("time") },
+                "plan-section-module-taken-out" to { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
+                "reveal-module-taken-out" to { RevealStructure(plan(), modulesWithDataOut("skipped"), Modifier.padding(16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
