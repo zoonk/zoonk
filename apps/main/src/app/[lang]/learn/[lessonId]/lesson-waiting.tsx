@@ -36,9 +36,7 @@ import { StartLessonBar, WaitNote, type WaitState, useWaitWords } from "./lesson
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
-type SavedLesson =
-  | Extract<LessonWaitingResult, { status: "ready" }>["state"]["status"]
-  | null;
+type SavedLesson = Extract<LessonWaitingResult, { status: "ready" }>["state"]["status"] | null;
 
 const OPEN_RETRY_MS = 2000;
 
