@@ -311,7 +311,7 @@ private struct SubjectContent: View {
           .listRowSeparator(.hidden)
       }
 
-      if let reason = subject.notPlannedReason, !reason.isEmpty {
+      if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init) {
         SubjectNotPlannedNotice(
           goalId: goal.id, reason: reason, areas: subject.areas, module: goal.kind != .exam,
           restoring: restoring
@@ -803,8 +803,13 @@ private struct SubjectNotPlannedNotice: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
 
+  /// The reasons the notice has a sentence for; any other draws no notice, as on the web.
+  enum Reason: String {
+    case skipped, time, missing
+  }
+
   let goalId: String
-  let reason: String
+  let reason: Reason
   let areas: [String]
   /// A goal that isn't an exam lists modules, so the notice says "module" too.
   let module: Bool
@@ -814,7 +819,7 @@ private struct SubjectNotPlannedNotice: View {
     Label {
       VStack(alignment: .leading, spacing: 10) {
         switch reason {
-        case "skipped":
+        case .skipped:
           if module {
             Text(
               "You took this module out of your plan.", tableName: "Plan",
@@ -834,7 +839,7 @@ private struct SubjectNotPlannedNotice: View {
           }
           .buttonStyle(.outline)
           .controlSize(.small)
-        case "time":
+        case .time:
           Button {
             router.showRoot(of: .plan)
           } label: {
@@ -844,18 +849,16 @@ private struct SubjectNotPlannedNotice: View {
           }
           // Borderless, so in a list row only the sentence answers a tap.
           .buttonStyle(.borderless)
-        case "missing" where module:
+        case .missing where module:
           Text(
             "This module isn't in your plan yet.", tableName: "Plan",
             comment:
               "On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet."
           )
-        case "missing":
+        case .missing:
           Text(
             "This subject isn't in your plan yet.", tableName: "Plan",
             comment: "Why a subject isn't in the plan: no lesson teaches it yet")
-        default:
-          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
         }
 
         if restoring.outcome == false {
