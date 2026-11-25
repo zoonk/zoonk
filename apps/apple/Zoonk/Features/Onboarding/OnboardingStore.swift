@@ -499,8 +499,8 @@ final class OnboardingStore {
     }.value
   }
 
-  /// A name can't nest folders or climb out with "..", and its own id keeps two files of the same
-  /// name apart.
+  /// The file sits right in the learner's folder, under a name a URL reads as written, and its own
+  /// id keeps two files of the same name apart.
   func attachFile(_ file: URL, goal: (id: String, language: String)? = nil) async throws
     -> AttachedSource
   {
@@ -508,7 +508,8 @@ final class OnboardingStore {
       throw OnboardingError.signUpRequired
     }
 
-    let name = file.lastPathComponent.replacing("/", with: "-").replacing(/\.{2,}/, with: ".")
+    let name = file.lastPathComponent.replacing(/[\/\\%?#\p{Cc}]/, with: "-")
+      .replacing(/\s+$/, with: "")
     let pathname = "sources/\(userID)/\(UUID().uuidString.lowercased())-\(name)"
 
     return try await Task { [cache, api] in
