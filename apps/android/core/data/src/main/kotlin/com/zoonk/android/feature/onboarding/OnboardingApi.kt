@@ -190,6 +190,11 @@ interface OnboardingApi {
         request: CreateUploadRequest,
     ): Source
 
+    suspend fun source(
+        session: AuthenticatedSession,
+        id: String,
+    ): Source
+
     suspend fun askMaterial(
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
@@ -442,6 +447,11 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         request: CreateUploadRequest,
     ) = perform { api.clients(session).sources.createUpload(request) }.source
+
+    override suspend fun source(
+        session: AuthenticatedSession,
+        id: String,
+    ) = perform { api.clients(session).sources.getSource(UUID.fromString(id)) }
 
     override suspend fun askMaterial(
         session: AuthenticatedSession,

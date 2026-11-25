@@ -29,6 +29,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
@@ -43,6 +44,7 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TodayUploadRequest
@@ -55,6 +57,12 @@ import java.util.UUID
 
 const val DRAFT_ID = "6f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"
 const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+
+fun draftSource(
+    title: String,
+    readStatus: SourceReadStatus = SourceReadStatus.READABLE,
+    id: UUID = UUID.randomUUID(),
+) = OnboardingDraftSource(id = id, readStatus = readStatus, title = title)
 
 fun understoodDraft(
     prompt: String = "pass the bar exam",
@@ -100,9 +108,13 @@ internal fun goalCreated(): GoalCreateResponse =
 
 private const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
 
-fun uploadAskOf(): TodayUploadRequest =
+/** With [unreadable], the ask came back because nothing could be read in the upload of that title. */
+fun uploadAskOf(unreadable: String? = null): TodayUploadRequest =
     ApiJson.decodeFromString(
-        """{"examDocument":"notice","goalId":"$GOAL_ID","goalKind":"exam","language":"pt","reason":"noOfficialSource"}""",
+        """
+        {"examDocument":"notice","goalId":"$GOAL_ID","goalKind":"exam","language":"pt","reason":"noOfficialSource",
+         "unreadableUpload":${unreadable?.let { """{"title":"$it"}""" } ?: "null"}}
+        """.trimIndent(),
     )
 
 const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
@@ -351,14 +363,32 @@ class FakeOnboardingApi : OnboardingApi {
         file: PickedFile,
     ) = Unit
 
+    /** How the upload `attach` returns is read when it's added, and then each time it's read again. */
+    var readStatuses = listOf("readable")
+    val sourceReads = mutableListOf<String>()
+
     override suspend fun attach(
         session: AuthenticatedSession,
         request: CreateUploadRequest,
+    ): Source = uploadSource(UPLOAD_ID, readStatuses.first())
+
+    override suspend fun source(
+        session: AuthenticatedSession,
+        id: String,
+    ): Source {
+        sourceReads += id
+        return uploadSource(id, readStatuses.getOrElse(sourceReads.size) { readStatuses.last() })
+    }
+
+    private fun uploadSource(
+        id: String,
+        readStatus: String,
     ): Source =
         ApiJson.decodeFromString(
             """
-            {"fetchedAt":"2026-10-29T12:00:00Z","id":"$UPLOAD_ID","kind":"upload","language":"pt","mimeType":"text/plain",
-             "publisher":null,"reusePolicy":null,"title":"Edital","url":null,"validUntil":null,"visibility":"private"}
+            {"fetchedAt":"2026-10-29T12:00:00Z","id":"$id","kind":"upload","language":"pt","mimeType":"text/plain",
+             "publisher":null,"readStatus":"$readStatus","reusePolicy":null,"title":"Edital","url":null,"validUntil":null,
+             "visibility":"private"}
             """.trimIndent(),
         )
 
@@ -377,10 +407,12 @@ class FakeOnboardingApi : OnboardingApi {
         researchFailure?.let { throw it }
     }
 
+    var askFailure = ApiException(ApiError.Unavailable)
+
     override suspend fun askMaterial(
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
-    ): MaterialQuestionAnswer = throw ApiException(ApiError.Unavailable)
+    ): MaterialQuestionAnswer = throw askFailure
 
     override fun generations(session: AuthenticatedSession?): GenerationSource {
         generationSessions += session

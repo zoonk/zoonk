@@ -33,9 +33,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -54,6 +56,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
@@ -74,6 +79,10 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.MaterialCitation
+import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceReadStatus
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 /** What the uploads route reads. */
 private val ACCEPTED_TYPES =
@@ -308,30 +317,64 @@ private fun PanelCard(content: @Composable () -> Unit) {
 }
 
 /**
- * Removing material takes its own button, never a tap on its name; material that can't be read anymore ([unreadable]) is marked,
- * and a [limitReached] says why no more can be added.
+ * Material still being read is asked about again every few seconds while its chip is on screen, until the reading ends;
+ * any other material keeps the status it was added with.
+ */
+@Composable
+internal fun shownReadStatus(
+    sources: KeyedResources<String, Source>,
+    item: AttachedSource,
+): SourceReadStatus {
+    if (item.readStatus != SourceReadStatus.READING) return item.readStatus
+    val resource = remember(sources, item.id) { sources[item.id] }
+    val state by resource.collectShown()
+    val status = state.value?.readStatus ?: item.readStatus
+    if (status == SourceReadStatus.READING) {
+        LaunchedEffect(resource) {
+            while (true) {
+                delay(READ_CHECK)
+                resource.refresh()
+            }
+        }
+    }
+    return status
+}
+
+private val READ_CHECK = 3.seconds
+
+/**
+ * Removing material takes its own button, never a tap on its name. Material still being read shows a spinner; material
+ * with nothing readable in it, or that can't be read anymore ([gone]), is marked, and a [limitReached] says why no more
+ * can be added.
  */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
-    unreadable: Set<String>,
+    gone: Set<String>,
     limitReached: Int?,
     onRemove: (String) -> Unit,
 ) {
-    val marked = items.filter { it.id in unreadable }
+    val missing = items.filter { it.id in gone }
+    val unread = items.filter { it.id !in gone && it.readStatus == SourceReadStatus.UNREADABLE }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items.forEach { item -> AttachedChip(item, item in marked, onRemove) }
+            items.forEach { item ->
+                val status =
+                    when {
+                        item in missing || item in unread -> ChipStatus.Unreadable
+                        item.readStatus == SourceReadStatus.READING -> ChipStatus.Reading
+                        else -> ChipStatus.Read
+                    }
+                AttachedChip(item, status, onRemove)
+            }
         }
-        if (marked.isNotEmpty()) {
-            Text(
-                marked.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
+        if (missing.isNotEmpty()) {
+            MaterialNote(
+                missing.singleOrNull()?.let { stringResource(R.string.onboarding_material_unreadable_one, materialTitle(it)) }
                     ?: stringResource(R.string.onboarding_material_unreadable_some),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
             )
         }
+        if (unread.isNotEmpty()) UnreadNote(unread.map { it.title })
         if (limitReached != null) {
             Text(
                 stringResource(R.string.onboarding_material_limit, formatNumber(limitReached.toDouble(), currentLocale())),
@@ -343,17 +386,45 @@ internal fun AttachedChips(
     }
 }
 
+/** What to do about material with nothing readable in it ([titles], empty for pasted text), on Start and on Today's ask. */
+@Composable
+internal fun UnreadNote(titles: List<String>) {
+    MaterialNote(
+        titles.singleOrNull()?.let {
+            stringResource(R.string.onboarding_material_unread_one, it.ifBlank { stringResource(R.string.onboarding_your_text) })
+        } ?: stringResource(R.string.onboarding_material_unread_some),
+    )
+}
+
+@Composable
+private fun MaterialNote(text: String) {
+    Text(
+        text,
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+}
+
 @Composable
 private fun materialTitle(item: AttachedSource) = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
+
+private enum class ChipStatus { Read, Reading, Unreadable }
 
 @Composable
 private fun AttachedChip(
     item: AttachedSource,
-    unreadable: Boolean,
+    status: ChipStatus,
     onRemove: (String) -> Unit,
 ) {
     val title = materialTitle(item)
-    val state = stringResource(R.string.onboarding_material_unreadable_state)
+    val unreadable = status == ChipStatus.Unreadable
+    val state =
+        when (status) {
+            ChipStatus.Read -> null
+            ChipStatus.Reading -> stringResource(R.string.onboarding_material_reading_state)
+            ChipStatus.Unreadable -> stringResource(R.string.onboarding_material_unreadable_state)
+        }
     val colors = MaterialTheme.colorScheme
     Surface(
         shape = RoundedCornerShape(ZoonkRadius.md),
@@ -365,15 +436,22 @@ private fun AttachedChip(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = LocalContentColor.current,
-            )
+            if (status == ChipStatus.Reading) {
+                // Drawn inside the icon's 16dp box, as main's spinner replaces its icon.
+                Box(Modifier.size(16.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(Modifier.size(14.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
+                }
+            } else {
+                Icon(
+                    painterResource(if (unreadable) R.drawable.ic_error else R.drawable.ic_description),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = LocalContentColor.current,
+                )
+            }
             Text(
                 title,
-                modifier = Modifier.widthIn(max = 240.dp).semantics { if (unreadable) stateDescription = state },
+                modifier = Modifier.widthIn(max = 240.dp).semantics { state?.let { stateDescription = it } },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,

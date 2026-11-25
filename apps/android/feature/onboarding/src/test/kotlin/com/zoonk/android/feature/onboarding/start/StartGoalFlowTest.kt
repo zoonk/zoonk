@@ -6,6 +6,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -19,6 +21,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -32,10 +35,12 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.draftSource
 import com.zoonk.android.feature.onboarding.failedDraft
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.android.feature.onboarding.noAllowance
@@ -47,7 +52,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.OnboardingDraft
-import com.zoonk.api.models.OnboardingDraftSource
+import com.zoonk.api.models.SourceReadStatus
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +67,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.util.UUID
+
+private const val READ_CHECK_MS = 3_000L
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -147,7 +154,7 @@ class StartGoalFlowTest {
 
     @Test
     fun aReopenedCardShowsItsMaterialAndSendsItAgainAfterEditing() {
-        val source = OnboardingDraftSource(id = UUID.fromString("3f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"), title = "Cell cycle notes")
+        val source = draftSource("Cell cycle notes", id = UUID.fromString("3f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"))
         api.draft =
             understoodDraft(prompt = "test on Friday").copy(
                 materialIntent = OnboardingDraft.MaterialIntent.EXAM,
@@ -169,8 +176,59 @@ class StartGoalFlowTest {
     }
 
     @Test
+    fun aPhotoWithNothingReadableLeavesTheCardButGoesWithTheGoalAgain() {
+        val notes = draftSource("Cell cycle notes")
+        val photo = draftSource("IMG_2041.jpg", SourceReadStatus.UNREADABLE)
+        api.draft =
+            understoodDraft(prompt = "test tomorrow").copy(
+                materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                sources = listOf(notes, photo),
+            )
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+
+        rule.onNodeWithText(notes.title).assertExists()
+        rule.onNodeWithText(photo.title).assertDoesNotExist()
+        rule.onNodeWithText("Your plan and lessons follow only this material. We couldn't read the rest.").assertExists()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertExists()
+        rule.onNodeWithText("Build my plan").performClick()
+        rule.waitForIdle()
+
+        val sent = api.understandCalls.single()
+        assertEquals(listOf(notes.id, photo.id), sent.sourceIds)
+        assertEquals(GoalUnderstandingInput.MaterialIntent.EXAM, sent.materialIntent)
+    }
+
+    @Test
+    fun aPhotoBeingReadIsAskedAboutUntilItsReadingEnds() {
+        api.readStatuses = listOf("reading", "reading", "unreadable")
+        val photo = AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", SourceReadStatus.READING)
+        show()
+        rule.runOnUiThread {
+            val vm = ViewModelProvider(requireNotNull(owner))[StartGoalViewModel::class.java]
+            vm.setAttached(listOf(photo))
+            vm.setIntent(MaterialIntent.Exam)
+        }
+        rule.waitForIdle()
+
+        rule.onNode(hasStateDescription("Being read")).assertExists()
+        rule.onNodeWithText("Build my plan").assertIsEnabled()
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        rule.onNode(hasStateDescription("Being read")).assertDoesNotExist()
+        rule.onNode(hasStateDescription("Can't be read")).assertExists()
+        rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertExists()
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS * 2)
+        rule.waitForIdle()
+        assertEquals(listOf(photo.id, photo.id), api.sourceReads)
+    }
+
+    private fun hasStateDescription(state: String) = SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state)
+
+    @Test
     fun fiveSourcesLeaveNoRoomForMoreMaterial() {
-        val sources = (1..5).map { OnboardingDraftSource(id = UUID.randomUUID(), title = "Chapter $it") }
+        val sources = (1..5).map { draftSource("Chapter $it") }
         api.draft = understoodDraft(prompt = "test on Friday").copy(sources = sources)
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
 

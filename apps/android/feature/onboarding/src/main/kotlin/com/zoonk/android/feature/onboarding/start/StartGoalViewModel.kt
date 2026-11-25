@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -118,8 +119,8 @@ class StartGoalViewModel(
     var entryError by mutableStateOf<GoalError?>(null)
         private set
 
-    /** Ids of attached material the last send couldn't read, marked until it's removed or added again. */
-    var unreadable by mutableStateOf(emptySet<String>())
+    /** Ids of attached material the last send found gone, marked until it's removed or added again. */
+    var gone by mutableStateOf(emptySet<String>())
         private set
 
     /** A draft whose read hit a limit when started again. */
@@ -157,6 +158,13 @@ class StartGoalViewModel(
 
     var isAsking by mutableStateOf(false)
         private set
+
+    /** The last question came back unasked because the material is still being read: it's back in the box to ask again. */
+    var stillReading by mutableStateOf(false)
+        private set
+
+    /** The question being typed, kept here so one that comes back unasked returns to the box. */
+    val question = handle.saveable(key = "materialQuestion", saver = TextFieldState.Saver) { TextFieldState() }
 
     var isRetrying by mutableStateOf(false)
         private set
@@ -210,7 +218,7 @@ class StartGoalViewModel(
     }
 
     fun removeAttached(id: String) {
-        unreadable -= id
+        gone -= id
         update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
     }
 
@@ -229,15 +237,25 @@ class StartGoalViewModel(
         language: String,
     ) = attach { store.attachLink(url, language) }
 
-    fun ask(
-        question: String,
-        language: String,
-    ) {
-        if (isAsking || question.isBlank()) return
+    fun ask(language: String) {
+        val asked = question.text.trim().toString()
+        if (isAsking || asked.isEmpty()) return
         isAsking = true
+        stillReading = false
+        question.clearText()
         viewModelScope.launch {
-            val outcome = store.askMaterial(question, flow.attached.map { it.id }, language)
-            if (outcome != WriteOutcome.Obsolete) turns = turns + MaterialTurn(question, outcome)
+            when (val outcome = store.askMaterial(asked, flow.attached.map { it.id }, language)) {
+                WriteOutcome.Obsolete -> {}
+
+                WriteOutcome.Refused(Refusal.MaterialReading) -> {
+                    if (question.text.isEmpty()) question.setTextAndPlaceCursorAtEnd(asked)
+                    stillReading = true
+                }
+
+                else -> {
+                    turns = turns + MaterialTurn(asked, outcome)
+                }
+            }
             isAsking = false
         }
     }
@@ -256,7 +274,7 @@ class StartGoalViewModel(
             when (val outcome = add()) {
                 is WriteOutcome.Done -> {
                     isAttachOpen = false
-                    unreadable -= outcome.value.id
+                    gone -= outcome.value.id
                     update { it.copy(attached = it.attached.filterNot { source -> source.id == outcome.value.id } + outcome.value) }
                 }
 
@@ -326,7 +344,7 @@ class StartGoalViewModel(
                 else -> {
                     val missing = ((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.MaterialUnavailable)?.sourceIds
                     showEntry(words, outcome.startError().takeIf { missing == null })
-                    unreadable = missing.orEmpty().toSet()
+                    gone = missing.orEmpty().toSet()
                 }
             }
         }
@@ -458,7 +476,15 @@ class StartGoalViewModel(
                 OnboardingDraft.MaterialIntent.UNDERSTAND -> MaterialIntent.Understand
                 null -> null
             }
-        update { it.copy(attached = draft.sources.map { source -> AttachedSource(source.id.toString(), source.title) }, intent = intent) }
+        update {
+            it.copy(
+                attached =
+                    draft.sources.map { source ->
+                        AttachedSource(source.id.toString(), source.title, source.readStatus)
+                    },
+                intent = intent,
+            )
+        }
     }
 
     fun confirm(input: GoalCreateInput) = create(input, GoalOpens.Setup)
@@ -604,7 +630,7 @@ class StartGoalViewModel(
         editing = null
         creationFailure.clear()
         entryError = error
-        unreadable = emptySet()
+        gone = emptySet()
         this.words.setTextAndPlaceCursorAtEnd(words)
         update { it.copy(screen = StartScreen.Entry) }
     }

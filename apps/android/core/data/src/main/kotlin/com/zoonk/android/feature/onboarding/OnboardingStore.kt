@@ -52,6 +52,8 @@ import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.Source
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TapAnswer
@@ -92,6 +94,12 @@ sealed interface Refusal {
     /** Research already read this upload for an earlier ask, so it needs a different one. */
     data object AlreadyRead : Refusal
 
+    /** Material asked about is still being read: nothing was charged, so the same question can be asked again. */
+    data object MaterialReading : Refusal
+
+    /** Research was sent only uploads with nothing readable in them, so it recorded nothing. */
+    data object UploadUnreadable : Refusal
+
     /** Material sent with a goal that can't be read anymore, by the ids the app sent: nothing was saved or charged. */
     @Serializable
     data class MaterialUnavailable(
@@ -125,7 +133,10 @@ sealed interface WriteOutcome<out T> {
 data class AttachedSource(
     val id: String,
     val title: String,
+    val readStatus: SourceReadStatus = SourceReadStatus.READABLE,
 )
+
+private fun Source.attached() = AttachedSource(id.toString(), title, readStatus)
 
 /** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
 val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN && it.profileQuestion == null }
@@ -153,6 +164,9 @@ class OnboardingStore(
         cache.resource(Audience.SignedIn, setOf(DataDomain.Goals)) { session ->
             session?.let { (api.resume(it).resume as? OnboardingResumeResume.OnboardingResumeResumeOneOfValue)?.value }
         }
+
+    /** An upload as it is now, read again while it's still being read so its chip learns how the reading ended. */
+    val sources = cache.keyed<String, Source>(Audience.SignedIn) { session, id -> session?.let { api.source(it, id) } }
 
     /** A goal's setup; each answer replies with the whole new setup. */
     val onboardings =
@@ -434,7 +448,7 @@ class OnboardingStore(
                             goalId = goalId,
                         ),
                     ),
-                ).let { AttachedSource(it.id.toString(), it.title) }
+                ).attached()
         }
 
     suspend fun askMaterial(
@@ -457,7 +471,7 @@ class OnboardingStore(
 
     private suspend fun attach(request: CreateUploadRequest) =
         write(setOf(DataDomain.Allowance)) { session ->
-            api.attach(session, request).let { AttachedSource(it.id.toString(), it.title) }
+            api.attach(session, request).attached()
         }
 
     private fun replacingDraft(draft: OnboardingDraft) = listOf(drafts[draft.id.toString()].replacing(draft))
@@ -722,6 +736,14 @@ internal fun ApiException.refusal(receivedAt: Instant): Refusal? =
 
         "UPLOAD_ALREADY_READ" -> {
             Refusal.AlreadyRead
+        }
+
+        "materialReading" -> {
+            Refusal.MaterialReading
+        }
+
+        "UPLOAD_UNREADABLE" -> {
+            Refusal.UploadUnreadable
         }
 
         "MATERIAL_UNAVAILABLE" -> {

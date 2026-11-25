@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -91,7 +92,8 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
-import com.zoonk.api.models.OnboardingDraftSource
+import com.zoonk.api.models.SourceReadStatus
+import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -191,7 +193,7 @@ class OnboardingScreenshots {
     fun materialFull() {
         val sources =
             listOf("Cell cycle.pdf", "Mitosis slides.pptx", "", "Chapter 12: Meiosis", "Lab notes")
-                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+                .map { draftSource(it) }
         val api =
             FakeOnboardingApi().apply {
                 draft =
@@ -261,7 +263,7 @@ class OnboardingScreenshots {
                     understoodDraft(prompt = "test on Friday").copy(
                         materialIntent = OnboardingDraft.MaterialIntent.EXAM,
                         materialMissing = true,
-                        sources = titles.map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) },
+                        sources = titles.map { draftSource(it) },
                     )
             }
         compose.setContent { ZoonkTheme { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
@@ -277,7 +279,7 @@ class OnboardingScreenshots {
     ) {
         val sources =
             listOf("Cell cycle notes.pdf", "Mitosis slides.pptx", "Chapter 12: Meiosis")
-                .map { OnboardingDraftSource(id = UUID.randomUUID(), title = it) }
+                .map { draftSource(it) }
         val api =
             FakeOnboardingApi().apply {
                 draft =
@@ -308,28 +310,128 @@ class OnboardingScreenshots {
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
-    /** A photo of notes on Start, as added. */
+    /** A photo of notes on Start: read, being read (a spinner in place of its icon) and with nothing readable in it. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun materialPhoto() = captureMaterialPhoto("phone-screen")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialPhotoReading() = captureMaterialPhoto("reading-phone-screen", SourceReadStatus.READING)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialPhotoReadingDark() = captureMaterialPhoto("reading-phone-dark", SourceReadStatus.READING, dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialPhotoReadingAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialPhoto("reading-phone-font200", SourceReadStatus.READING)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialPhotoUnreadable() = captureMaterialPhoto("unreadable-phone-screen", SourceReadStatus.UNREADABLE)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialPhotoUnreadableDark() = captureMaterialPhoto("unreadable-phone-dark", SourceReadStatus.UNREADABLE, dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialPhotoUnreadableAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialPhoto("unreadable-phone-font200", SourceReadStatus.UNREADABLE)
+    }
+
     private fun captureMaterialPhoto(
         name: String,
+        status: SourceReadStatus = SourceReadStatus.READABLE,
         dark: Boolean = false,
-        moreContrast: Boolean = false,
     ) {
-        compose.setContent {
-            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(FakeOnboardingApi(), AppRoute.StartGoal()) } }
-        }
+        val api = FakeOnboardingApi().apply { readStatuses = listOf(status.value) }
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal()) } } }
         compose.waitForIdle()
         val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
         compose.runOnUiThread {
-            vm.setAttached(listOf(AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg")))
+            vm.setAttached(listOf(AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", status)))
             vm.setIntent(MaterialIntent.Exam)
         }
-        compose.onNode(hasSetTextAction()).performTextInput("test tomorrow")
         compose.waitForIdle()
         write("start-material-photo-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** The card's note on its material: all of it read, only some of it, or none. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialAllRead() = captureMaterialNote("all-read", "phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialAllReadDark() = captureMaterialNote("all-read", "phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialAllReadAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialNote("all-read", "phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialSomeRead() = captureMaterialNote("some-read", "phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialSomeReadDark() = captureMaterialNote("some-read", "phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialSomeReadAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialNote("some-read", "phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialNoneRead() = captureMaterialNote("none-read", "phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialNoneReadDark() = captureMaterialNote("none-read", "phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialNoneReadAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialNote("none-read", "phone-font200")
+    }
+
+    private fun captureMaterialNote(
+        card: String,
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val notes = draftSource("Cell cycle notes.pdf")
+        val photo = draftSource("IMG_2041.jpg", SourceReadStatus.UNREADABLE)
+        val sources =
+            when (card) {
+                "all-read" -> listOf(notes)
+                "some-read" -> listOf(notes, photo)
+                else -> listOf(photo)
+            }
+        val api =
+            FakeOnboardingApi().apply {
+                draft =
+                    understoodDraft(prompt = "test tomorrow").copy(
+                        materialIntent = OnboardingDraft.MaterialIntent.EXAM,
+                        sources = sources,
+                    )
+            }
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal(draftId = DRAFT_ID)) } } }
+        compose.waitForIdle()
+        write("understood-material-$card-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** A question about attached material: main's goal panel with its send inside, empty and with a question typed. */
@@ -346,6 +448,44 @@ class OnboardingScreenshots {
     fun materialQuestionsAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         captureMaterialQuestions("phone-font200")
+    }
+
+    /** A question about a photo still being read stays in the box, with a line saying so. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialQuestionStillReading() = captureQuestionStillReading("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialQuestionStillReadingDark() = captureQuestionStillReading("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun materialQuestionStillReadingAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureQuestionStillReading("phone-font200")
+    }
+
+    private fun captureQuestionStillReading(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val api = FakeOnboardingApi().apply { askFailure = ApiException(ApiError.Unavailable, "materialReading", status = 409) }
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal()) } } }
+        compose.waitForIdle()
+        val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
+        compose.runOnUiThread {
+            vm.setAttached(listOf(AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", SourceReadStatus.READING)))
+            vm.setIntent(MaterialIntent.Questions)
+            vm.submit("", "", "en")
+        }
+        compose.waitForIdle()
+        compose.runOnUiThread {
+            vm.question.setTextAndPlaceCursorAtEnd("What is the mitotic spindle?")
+            vm.ask("en")
+        }
+        compose.waitForIdle()
+        write("start-material-question-still-reading-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun captureMaterialQuestions(
@@ -368,6 +508,33 @@ class OnboardingScreenshots {
         compose.onNode(hasSetTextAction()).performTextInput("Why does glycolysis net only 2 ATP?")
         compose.waitForIdle()
         write("start-material-questions-typed-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** The ask back on Today after nothing could be read in the upload that answered it. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun uploadAskUnreadable() = captureUploadAskUnreadable("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun uploadAskUnreadableDark() = captureUploadAskUnreadable("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun uploadAskUnreadableAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureUploadAskUnreadable("phone-font200")
+    }
+
+    private fun captureUploadAskUnreadable(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) { Surface { ResearchNotices(SuggestionLayout.Panel, uploadAskOf(unreadable = "IMG_2041.jpg")) } }
+        }
+        compose.waitForIdle()
+        write("research-upload-unreadable-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test
@@ -917,12 +1084,15 @@ class OnboardingScreenshots {
         }
 
         @Composable
-        private fun ResearchNotices(layout: SuggestionLayout) {
+        private fun ResearchNotices(
+            layout: SuggestionLayout,
+            request: TodayUploadRequest = uploadAskOf(),
+        ) {
             val store = rememberStore(FakeOnboardingApi())
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 UploadRequestNotice(
                     UUID.fromString(GOAL_ID),
-                    uploadAskOf(),
+                    request,
                     store,
                     visit = 0,
                     layout = layout,

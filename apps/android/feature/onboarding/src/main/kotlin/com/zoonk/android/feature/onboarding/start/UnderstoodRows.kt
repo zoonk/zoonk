@@ -18,8 +18,10 @@ import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
 import com.zoonk.api.models.LanguageAim
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.OnboardingExamDate
 import com.zoonk.api.models.RegionChoice
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TargetCutoff
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -196,28 +198,31 @@ class UnderstoodRows(
         )
     }
 
-    /** A goal whose material can't all be read anymore ([missing]) keeps the row, even with none left, to say its plan won't follow it. */
+    /**
+     * Lists the material the plan follows. When some couldn't be read (nothing readable in it, or gone: [missing]), the row
+     * stays, even with none left, to say the plan won't follow it.
+     */
     fun materialRow(
-        material: List<String>,
+        material: List<OnboardingDraftSource>,
         missing: Boolean,
-    ): UnderstoodRow? =
-        if (material.isEmpty() && !missing) {
-            null
-        } else {
-            UnderstoodRow(
-                id = "material",
-                label = text(R.string.onboarding_row_material),
-                value = material.joinToString(", ") { it.ifBlank { text(R.string.onboarding_your_text) } },
-                note =
-                    text(
-                        when {
-                            !missing -> R.string.onboarding_row_material_note
-                            material.isEmpty() -> R.string.onboarding_row_material_all_missing_note
-                            else -> R.string.onboarding_row_material_missing_note
-                        },
-                    ),
-            )
-        }
+    ): UnderstoodRow? {
+        val read = material.filter { it.readStatus != SourceReadStatus.UNREADABLE }
+        val unread = missing || read.size < material.size
+        if (read.isEmpty() && !unread) return null
+        return UnderstoodRow(
+            id = "material",
+            label = text(R.string.onboarding_row_material),
+            value = read.joinToString(", ") { it.title.ifBlank { text(R.string.onboarding_your_text) } },
+            note =
+                text(
+                    when {
+                        !unread -> R.string.onboarding_row_material_note
+                        read.isEmpty() -> R.string.onboarding_row_material_all_missing_note
+                        else -> R.string.onboarding_row_material_missing_note
+                    },
+                ),
+        )
+    }
 
     /** A country the learner asked for shows, with how far it reaches, even when the title names the language. */
     fun languageRows(

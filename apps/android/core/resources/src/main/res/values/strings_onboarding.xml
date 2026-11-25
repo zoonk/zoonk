@@ -102,10 +102,10 @@
     <string name="onboarding_row_minutes_a_day">%1$s a day</string>
     <string name="onboarding_row_material">Your material</string>
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
-    <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. The rest can\'t be read anymore.</string>
-    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
-    <string name="onboarding_row_material_all_missing_note">It can\'t be read anymore, so your plan won\'t follow it.</string>
+    <!-- Under the learner's material on the goal card, when some of it couldn't be read (a blurry photo, or a file that's gone). "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. We couldn\'t read the rest.</string>
+    <!-- Under the learner's material on the goal card, when none of it could be read. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">We couldn\'t read it, so your plan won\'t follow it.</string>
     <string name="onboarding_row_exam_date">Exam date</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Exam dates</string>
@@ -177,8 +177,14 @@
     <string name="onboarding_material_unreadable_one">We can\'t read “%1$s” anymore. Remove it and add it again.</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">We can\'t read some of your files anymore. Remove them and add them again.</string>
-    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
+    <!-- Under the learner's attached material when we found no text we could read in one item, like a blurry photo of notes. %1$s is its name, like "IMG_2041.jpg". -->
+    <string name="onboarding_material_unread_one">We couldn\'t read “%1$s”. Try a sharper photo or paste the text.</string>
+    <!-- Under the learner's attached material when we found no text we could read in several items, like blurry photos of notes. -->
+    <string name="onboarding_material_unread_some">We couldn\'t read some of your files. Try sharper photos or paste the text.</string>
+    <!-- Read by screen readers after the name of an attached file that can't be read. -->
     <string name="onboarding_material_unreadable_state">Can\'t be read</string>
+    <!-- Read by screen readers after the name of an attached file while we read it, like a photo of notes. -->
+    <string name="onboarding_material_reading_state">Being read</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
     <string name="onboarding_material_limit">%1$s files is the most for one goal. Remove one to add another.</string>
     <string name="onboarding_intent_title">What do you want to do?</string>
@@ -199,6 +205,8 @@
     <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
     <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
+    <!-- Under the question box when the learner asked about material we're still reading, like a photo of notes; their question stays in the box. -->
+    <string name="onboarding_question_material_reading">We\'re still reading your material. Ask again in a moment.</string>
 
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">Reading your material takes a few minutes.</string>

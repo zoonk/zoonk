@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -186,7 +185,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
+                        Entry(vm, store, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
                     }
 
                     screen == StartScreen.Questions -> {
@@ -224,6 +223,7 @@ private class StartActions(
 @Composable
 private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
+    store: OnboardingStore,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
     language: String,
@@ -256,7 +256,10 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm.materialLimitReached, vm::removeAttached)
+    if (flow.attached.isNotEmpty()) {
+        val shown = flow.attached.map { key(it.id) { it.copy(readStatus = shownReadStatus(store.sources, it)) } }
+        AttachedChips(shown, vm.gone, vm.materialLimitReached, vm::removeAttached)
+    }
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {
@@ -459,7 +462,7 @@ private fun ColumnScope.DraftContent(
                 understanding = understanding.value,
                 activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
-                material = draft.sources.map { it.title },
+                material = draft.sources,
                 materialMissing = draft.materialMissing,
                 hasAccount = hasAccount,
                 isCreating = vm.isCreating || rereading,
@@ -526,14 +529,7 @@ private fun ColumnScope.MaterialQuestions(
     language: String,
     actions: StartActions,
 ) {
-    val questionField = rememberTextFieldState()
-    val ask = {
-        val question = questionField.text.trim().toString()
-        if (question.isNotEmpty() && !vm.isAsking) {
-            vm.ask(question, language)
-            questionField.clearText()
-        }
-    }
+    val ask = { vm.ask(language) }
 
     OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
 
@@ -557,10 +553,19 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
+    if (vm.stillReading) {
+        Text(
+            stringResource(R.string.onboarding_question_material_reading),
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+
     // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
     Spacer(Modifier.weight(1f))
     QuestionPanel(
-        state = questionField,
+        state = vm.question,
         onAsk = ask,
         isAsking = vm.isAsking,
         label = stringResource(R.string.onboarding_your_question),
