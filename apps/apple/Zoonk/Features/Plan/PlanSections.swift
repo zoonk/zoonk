@@ -474,7 +474,14 @@ struct PlanNumbersSection: View {
   /// setting's words while it's under way, the lessons left once its date passed, or what a pause
   /// means. Beside the plan's settings, whose row says it, the time isn't said again.
   private var scheduleNumber: PlanNumber? {
-    guard let status = context.plan.status else {
+    // A paused goal says so even before its plan has anything to pace.
+    guard
+      let status = context.plan.status
+        ?? (context.isPaused
+          ? GoalPlan.Status(
+            challenges: nil, days: nil, extraMinutesPerDay: nil, kind: .onTrack, lessons: nil)
+          : nil)
+    else {
       return nil
     }
 
