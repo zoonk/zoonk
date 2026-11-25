@@ -58,7 +58,7 @@ function describeGroup({ group, name, subject }: { group: string; name: string; 
   return namesEither(group, subject) ? `${name} is "${group}"` : `${name} is part of "${group}"`;
 }
 
-function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[] {
+function subjectFacts({ documents, extraction, found, material }: FactSource): FactEntry[] {
   return extraction.subjects.flatMap((subject, index) => {
     const id = `subjects.${index}`;
     const kind = isTestSubject({ extraction, subject }) ? "Exam test" : "Subject";
@@ -67,7 +67,7 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
 
     const claims = toFacts({
       claims: [
-        { id, statement: name },
+        { id, settled: material, statement: name },
         subject.questions !== null && {
           id: `${id}.questions`,
           statement: `${name} has ${subject.questions} questions`,
@@ -280,11 +280,14 @@ function reusePolicyFacts({ documents, extraction }: FactSource): FactEntry[] {
 export function listBlueprintFacts({
   documents,
   extraction,
+  material,
 }: {
   documents: ExtractionDocument[];
   extraction: BlueprintExtraction;
+  material?: boolean;
 }): FactEntry[] {
-  const source = { documents, extraction, found: listFoundPassages({ documents, extraction }) };
+  const found = listFoundPassages({ documents, extraction });
+  const source = { documents, extraction, found, material };
 
   return [
     ...subjectFacts(source),
@@ -307,7 +310,7 @@ export function toCheckBatches(facts: CitedFact[]): CitedFact[][] {
 
 export function toCitedFacts(facts: FactEntry[]): CitedFact[] {
   return facts
-    .filter((item) => item.found)
+    .filter((item) => item.found && !item.settled)
     .map((item) => ({
       id: item.id,
       passage: item.citations.map((citation) => citation.passage).join(" … "),

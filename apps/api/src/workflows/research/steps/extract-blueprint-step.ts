@@ -195,15 +195,18 @@ async function readBlueprintFormatsStep({
 async function prepareBlueprintChecksStep({
   documents,
   extraction,
+  shared,
 }: {
   documents: BlueprintTextDocument[];
   extraction: BlueprintExtraction;
+  shared: boolean;
 }) {
   "use step";
 
   const facts = listBlueprintFacts({
     documents: documents.map((document) => ({ sourceId: document.id, text: document.text })),
     extraction,
+    material: !shared,
   });
 
   return { batches: toCheckBatches(toCitedFacts(facts)), facts };
@@ -246,7 +249,7 @@ export async function extractBlueprint({
     () => withFormats,
   );
 
-  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction });
+  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction, shared });
 
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(

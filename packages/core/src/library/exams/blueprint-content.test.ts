@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DOCUMENTS, blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { isUsableBlueprint, toBlueprintContent, toReusePolicy } from "./blueprint-content";
-import { listBlueprintFacts } from "./blueprint-facts";
+import { listBlueprintFacts, toCitedFacts } from "./blueprint-facts";
 import { listWrittenTasks } from "./written-tasks";
 
 const DETAILS = /\.(?:day|description|minutes|questions|weight)$/u;
@@ -835,6 +835,72 @@ describe(toBlueprintContent, () => {
     expect(isUsableBlueprint({ content: newsOnly, shared: true })).toBe(false);
     expect(isUsableBlueprint({ content: newsOnly, shared: false })).toBe(true);
     expect(isUsableBlueprint({ content: withSubject, shared: true })).toBe(true);
+  });
+});
+
+describe("a learner's own material", () => {
+  const NOTES =
+    "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nProva com 10 questões";
+
+  const documents = [{ sourceId: "notes", text: NOTES }];
+
+  const subject = blueprintExtraction().subjects[0]!;
+
+  const extraction = blueprintExtraction({
+    dates: [],
+    formats: [],
+    mock: null,
+    reusePolicy: { document: null, passage: null, pastQuestions: "unknown" },
+    rules: [],
+    subjects: [
+      {
+        ...subject,
+        name: "Cinemática - MUV",
+        passages: [
+          { document: 1, passage: "# Cinemática - MUV" },
+          { document: 1, passage: "Prova com 10 questões" },
+        ],
+        questions: 10,
+        shortName: "Cinemática",
+        topics: ["Velocidade média"],
+        weight: null,
+      },
+      { ...subject, name: "Dinâmica", passages: [{ document: 1, passage: "# Dinâmica" }] },
+    ],
+  });
+
+  function read({ material, supportedIds }: { material: boolean; supportedIds: string[] }) {
+    const facts = listBlueprintFacts({ documents, extraction, material });
+
+    const content = toBlueprintContent({
+      documents,
+      extraction,
+      facts,
+      noticeUrl: null,
+      sourceHash: "hash",
+      supportedIds,
+    });
+
+    return { checked: toCitedFacts(facts).map((fact) => fact.id), content };
+  }
+
+  it("keeps a subject its passage names without asking the check, which still judges the exam's details", () => {
+    const { checked, content } = read({ material: true, supportedIds: [] });
+
+    expect(checked).toStrictEqual(["subjects.0.questions"]);
+
+    expect(content.structure.subjects.map((item) => [item.name, item.questions])).toStrictEqual([
+      ["Cinemática - MUV", null],
+    ]);
+
+    expect(isUsableBlueprint({ content, shared: false })).toBe(true);
+  });
+
+  it("leaves an exam notice's subjects to the check", () => {
+    const { checked, content } = read({ material: false, supportedIds: [] });
+
+    expect(checked).toStrictEqual(["subjects.0", "subjects.0.questions"]);
+    expect(content.structure.subjects).toStrictEqual([]);
   });
 });
 
