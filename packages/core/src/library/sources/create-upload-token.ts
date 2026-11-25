@@ -11,7 +11,14 @@ import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-c
 const TOKEN_LIFETIME_MINUTES = 15;
 const TOKEN_LIFETIME_MS = TOKEN_LIFETIME_MINUTES * 60 * 1000;
 
-const UPLOAD_URL_OPTIONS = { addRandomSuffix: false, allowOverwrite: false };
+/** Clients register a file right after uploading it, which keeps it; one never registered, or one we couldn't read, expires. */
+const UNREGISTERED_UPLOAD_DAYS = 1;
+
+const UPLOAD_URL_OPTIONS = {
+  addRandomSuffix: false,
+  allowOverwrite: false,
+  ttlDays: UNREGISTERED_UPLOAD_DAYS,
+};
 
 const HASH_AS_UUID = /^(?<p1>.{8})(?<p2>.{4}).(?<p3>.{3}).(?<p4>.{3})(?<p5>.{12}).*$/u;
 

@@ -41,7 +41,7 @@ describe(createSourceUploadToken, () => {
     ).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
-  it("signs one upload to the learner's folder in the private store, for the supported types and size", async () => {
+  it("signs one upload to the learner's folder in the private store, for the supported types and size, that expires unless it's registered", async () => {
     const user = await userFixture();
     mockSession(user.id);
     const pathname = `sources/${user.id}/edital.pdf`;
@@ -49,7 +49,7 @@ describe(createSourceUploadToken, () => {
     await expect(createSourceUploadToken({ pathname })).resolves.toStrictEqual({
       status: "ready",
       token: SIGNED_TOKEN,
-      urlOptions: { addRandomSuffix: false, allowOverwrite: false },
+      urlOptions: { addRandomSuffix: false, allowOverwrite: false, ttlDays: 1 },
     });
 
     expect(issueSignedToken).toHaveBeenCalledExactlyOnceWith({

@@ -13,6 +13,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -110,6 +111,22 @@ class ActivityKitFlowTest {
         rule.onNodeWithText("Round to the nearest whole number.").assertExists()
         rule.onNode(hasSetTextAction()).performTextReplacement("251.6")
         harness.tap("Check")
+
+        rule.onNodeWithText("251.6").assertExists()
+        rule
+            .onNode(hasText("252") and hasAnySibling(hasText("Right answer:")), useUnmergedTree = true)
+            .assertExists()
+    }
+
+    @Test
+    fun theKeyboardsDoneChecksANumericAnswerAsMainsEnterDoes() {
+        val calculator = "formulaModel.calculator"
+        harness.play(listOf(ActivityFixtures.step(calculator))) {
+            grade = { _, _ -> checkResult(false, expected = ActivityFixtures.expected(calculator)) }
+        }
+
+        rule.onNode(hasSetTextAction()).performTextReplacement("251.6")
+        rule.onNode(hasSetTextAction()).performImeAction()
 
         rule.onNodeWithText("251.6").assertExists()
         rule

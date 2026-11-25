@@ -1,8 +1,11 @@
 package com.zoonk.android.feature.account
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +15,10 @@ import com.zoonk.android.data.AppleCallback
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.data.Visit
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
@@ -27,18 +34,26 @@ class SignInViewModel(
     private val sessions: SessionStore,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    var email by handle.saveable { mutableStateOf("") }
-        private set
+    val emailField = handle.saveable(key = "emailField", saver = TextFieldState.Saver) { TextFieldState() }
+    val email get() = emailField.text.toString()
     var codeSentTo by handle.saveable { mutableStateOf<String?>(null) }
         private set
-    var code by handle.saveable { mutableStateOf("") }
-        private set
+    val codeField = handle.saveable(key = "codeField", saver = TextFieldState.Saver) { TextFieldState() }
+    val code get() = codeField.text.toString()
     private var rejectedCode by handle.saveable { mutableStateOf<String?>(null) }
     val isCodeRejected get() = code == rejectedCode
     var work by mutableStateOf<SignInWork?>(null)
         private set
-    var failure by mutableStateOf(if (isCodeRejected) AccountFailure.WrongCode else null)
-        private set
+    private var error by mutableStateOf<AccountFailure?>(null)
+    private var failedEmail by mutableStateOf("")
+    private var failedCode by mutableStateOf("")
+    var failure: AccountFailure?
+        get() = if (isCodeRejected) AccountFailure.WrongCode else error.takeIf { email == failedEmail && code == failedCode }
+        private set(value) {
+            failedEmail = email
+            failedCode = code
+            error = value
+        }
     var resend by mutableStateOf<ResendStatus?>(null)
         private set
 
@@ -49,10 +64,15 @@ class SignInViewModel(
     /** An expired or locked code can't be tried again; only a new one helps. */
     val needsNewCode get() = failure == AccountFailure.CodeExpired || failure == AccountFailure.CodeLocked
 
-    fun onEmailChange(value: String) {
-        email = value
-        failure = null
-    }
+    private var watchingCode: Job? = null
+    val codeVisit =
+        Visit {
+            watchingCode?.cancel()
+            watchingCode = null
+            codeField.clearText()
+            rejectedCode = null
+            failure = null
+        }
 
     fun sendCode() {
         val normalized = email.trim().lowercase()
@@ -65,7 +85,7 @@ class SignInViewModel(
             failure = account.sendEmailCode(normalized)
             if (failure == null) {
                 codeSentTo = normalized
-                code = ""
+                codeField.clearText()
                 resend = null
             }
         }
@@ -74,22 +94,22 @@ class SignInViewModel(
     fun changeEmail() {
         if (work != null) return
         codeSentTo = null
-        code = ""
+        codeField.clearText()
         rejectedCode = null
         failure = null
         resend = null
     }
 
     /** A full code is checked at once, as main's code boxes submit when filled. */
-    fun onCodeChange(value: String) {
-        if (needsNewCode) return
-        code = value.filter(Char::isDigit).take(CODE_LENGTH)
-        if (isCodeRejected) {
-            failure = AccountFailure.WrongCode
-            return
-        }
-        if (failure == AccountFailure.WrongCode) failure = null
-        if (code.length == CODE_LENGTH) checkCode()
+    fun observeCode() {
+        if (watchingCode != null) return
+        val started = codeVisit.number
+        watchingCode =
+            viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                snapshotFlow { code }.drop(1).collect { typed ->
+                    if (started == codeVisit.number && typed.length == CODE_LENGTH) checkCode()
+                }
+            }
     }
 
     fun checkCode() {
@@ -99,9 +119,11 @@ class SignInViewModel(
             failure = AccountFailure.WrongCode
             return
         }
+        val started = codeVisit.number
         val checked = code
         run(SignInWork.CheckCode) {
             val result = account.signInWithEmailCode(email, checked)
+            if (started != codeVisit.number) return@run
             show(result)
             if (result is SignInResult.Failed && failure == AccountFailure.WrongCode) rejectedCode = checked
         }
@@ -118,7 +140,7 @@ class SignInViewModel(
                     else -> ResendStatus.Failed
                 }
             if (resend == ResendStatus.Sent) {
-                code = ""
+                codeField.clearText()
                 rejectedCode = null
                 failure = null
             }

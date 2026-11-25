@@ -96,6 +96,8 @@ struct LearnerMemory: Equatable, Sendable {
 }
 
 struct MemoryFact: Equatable, Identifiable, Sendable {
+  static let statementLimit = 300
+
   /// Listed in this order: what learners aim for first, then who they are.
   enum Category: String, CaseIterable, Sendable {
     case goals

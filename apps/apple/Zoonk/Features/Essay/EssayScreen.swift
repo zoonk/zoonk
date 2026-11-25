@@ -467,16 +467,20 @@ private struct WritingEditorPage: View {
     let count = WritingLabels.lineCount(writer.text, writing: essay.writing)
 
     VStack(alignment: .leading, spacing: 8) {
-      TextEditor(text: Binding(get: { writer.text }, set: { writer.write($0) }))
-        .typeStyle(.writing)
-        .scrollContentBackground(.hidden)
-        .focused($isFocused)
-        // What's being graded is what was sent.
-        .disabled(writer.status == .grading)
-        .fieldBorder(isFocused: isFocused, holdsFocus: true)
-        .frame(maxHeight: .infinity)
-        .accessibilityLabel(label)
-        .accessibilityHint(Text(count.words))
+      FittedTextInput(
+        text: Binding(get: { writer.text }, set: writer.write), limit: EssayWriter.maxLength
+      ) { text, selection in
+        TextEditor(text: text, selection: selection)
+          .typeStyle(.writing)
+          .scrollContentBackground(.hidden)
+          .focused($isFocused)
+          // What's being graded is what was sent.
+          .disabled(writer.status == .grading)
+          .fieldBorder(isFocused: isFocused, holdsFocus: true)
+          .frame(maxHeight: .infinity)
+          .accessibilityLabel(label)
+          .accessibilityHint(Text(count.words))
+      }
 
       Text(count.words)
         .typeStyle(.data)
