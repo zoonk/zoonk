@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,6 +37,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -68,6 +71,7 @@ import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.Geist
+import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.balanced
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.layoutStart
@@ -129,6 +133,18 @@ private fun roadmapPosition(
     )
 }
 
+/** The compact line's end, "Ends ~Dec 2": the words TalkBack reads, in the line's face, so the date says what it is. */
+@Composable
+private fun PhaseEndLine(end: PlanDateWords) {
+    Text(
+        text = if (end.date) stringResource(R.string.plan_ends, end.text) else end.text,
+        modifier = Modifier.semantics { contentDescription = end.spoken },
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+    )
+}
+
 @Composable
 private fun RoadmapCompact(
     page: PlanPageState,
@@ -165,7 +181,7 @@ private fun RoadmapCompact(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                position.end?.let { TrailingText(it) }
+                position.end?.let { PhaseEndLine(it) }
             } else {
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
@@ -183,7 +199,6 @@ private fun RoadmapCompact(
 private fun RoadmapMeter(phases: List<PlanPhase>) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
-    val ink = MaterialTheme.colorScheme.onSurface
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Canvas(
@@ -211,12 +226,6 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
                     Size(done, size.height),
                     radius,
                 )
-            }
-            // Main's `CurrentPhaseMark` in the current phase's middle: an ink dot in a faint ring.
-            if (current) {
-                val middle = Offset(left + width / 2, size.height / 2)
-                drawCircle(ink.copy(alpha = CURRENT_RING_ALPHA), radius = 3.dp.toPx(), center = middle)
-                drawCircle(ink, radius = 2.dp.toPx(), center = middle)
             }
             start += width + gap
         }
@@ -318,7 +327,7 @@ private fun RoadmapLegend(
         if (hasChallenges) {
             LegendPair(
                 { PhaseCheckpointMark(page, Modifier.size(16.dp * glyphScale())) },
-            ) { Text(challengeName(page), style = style, color = color) }
+            ) { Text(legendChallengeName(page), style = style, color = color) }
         }
         if (page.finish != null) {
             LegendPair(
@@ -383,13 +392,25 @@ private fun bandName(
     return BandName(name, text, listOf(AnnotatedString.Range(placeholder, 0, 1)))
 }
 
-/** Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is shortest. */
+/**
+ * Main's `splitBandName`: a short name is one part; a longer one is cut between words, never leaving a short
+ * word ("e", "of") at the first line's end or one word alone on the second when another cut avoids it, then
+ * where its longer part is shortest.
+ */
 internal fun bandNameParts(name: String): List<String> {
     val words = name.split(" ")
     if (name.length <= ONE_LINE_NAME_LENGTH || words.size == 1) return listOf(name)
-    val cut = (1 until words.size).minBy { maxOf(words.take(it).joinToString(" ").length, words.drop(it).joinToString(" ").length) }
+    val cut =
+        (1 until words.size).minWith(
+            compareBy(
+                { cut -> listOf(words[cut - 1].count(Char::isLetter) <= SHORT_WORD_LETTERS, cut == words.lastIndex).count { it } },
+                { cut -> maxOf(words.take(cut).joinToString(" ").length, words.drop(cut).joinToString(" ").length) },
+            ),
+        )
     return listOf(words.take(cut).joinToString(" "), words.drop(cut).joinToString(" "))
 }
+
+private const val SHORT_WORD_LETTERS = 3
 
 private const val ONE_LINE_NAME_LENGTH = 16
 private const val NO_BREAK_SPACE = '\u00A0'
@@ -468,12 +489,42 @@ private fun PhaseColumn(
     Column(Modifier.width(width)) {
         PhaseBand(page, phase, name, bandHeight, todayShare, onOpen)
         PhaseLane(page, phase, isLast, overrun, hasOverrun)
-        PhaseAxis(page, phase, isLast, dated, todayShare, overrun, hasOverrun, width)
+        PhaseAxis(page, phase, isLast, dated, todayShare, overrun, hasOverrun)
     }
 }
 
+/** Where today's tick stands in a band, off its rounded corners. */
+private fun DrawScope.todayX(share: Float): Float {
+    val corner = BAND_RADIUS.toPx()
+    val point = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - share else share
+    return point.coerceIn(corner, max(corner, size.width - corner - TODAY_LINE.toPx()))
+}
+
+/** Today's line inside a band, top to bottom, with a gap where it would cross the name ([name], at the band's start). */
+private fun DrawScope.drawTodayThrough(
+    x: Float,
+    ink: Color,
+    name: IntSize,
+) {
+    val line = TODAY_LINE.toPx()
+    val gap = TODAY_NAME_GAP.toPx()
+    val padding = BAND_PADDING_X.toPx()
+    val left = if (layoutDirection == LayoutDirection.Rtl) size.width - padding - name.width else padding
+    val top = (size.height - name.height) / 2
+    if (x + line < left - gap || x > left + name.width + gap) {
+        drawRect(ink, Offset(x, 0f), Size(line, size.height))
+        return
+    }
+    drawRect(ink, Offset(x, 0f), Size(line, (top - gap).coerceAtLeast(0f)))
+    drawRect(ink, Offset(x, top + name.height + gap), Size(line, (size.height - top - name.height - gap).coerceAtLeast(0f)))
+}
+
+private val TODAY_NAME_GAP = 2.dp
+private val TODAY_TICK = 6.dp
+private val TODAY_LINE = 1.5.dp
 private const val COVERED_ALPHA = 0.3f
 private val BAND_HEIGHT = 32.dp
+private val BAND_RADIUS = ZoonkRadius.md
 private val BAND_GAP = 3.dp
 private val BAND_PADDING_X = 10.dp
 private val BAND_PADDING_Y = 4.dp
@@ -504,6 +555,7 @@ private fun PhaseBand(
     val current = phase.state == PlanPhase.State.CURRENT
     val share = phase.lessonShare()
     val ink = colors.onSurface
+    var nameSize by remember { mutableStateOf(IntSize.Zero) }
 
     Surface(
         onClick = onOpen,
@@ -513,18 +565,19 @@ private fun PhaseBand(
                 // Before the height, so the ticks meet the band rather than the 48dp touch target Surface centers on it.
                 .drawBehind {
                     todayShare ?: return@drawBehind
-                    val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
-                    val tick = 6.dp.toPx()
-                    val line = 1.5.dp.toPx()
+                    val x = todayX(todayShare)
+                    val tick = TODAY_TICK.toPx()
+                    val line = TODAY_LINE.toPx()
                     drawRect(ink, Offset(x, -tick), Size(line, tick))
                     drawRect(ink, Offset(x, size.height), Size(line, tick))
                 }.height(height)
                 .semantics { contentDescription = label },
-        shape = MaterialTheme.shapes.small,
+        shape = RoundedCornerShape(BAND_RADIUS),
         color = container,
         contentColor = content,
     ) {
         // The part already covered, tinted under the name: a line at the band's edge read as a thicker ring.
+        // Today's tick runs on through the band, over its fill, so "Today" under it points at one day; it breaks around the name.
         Box(
             Modifier.drawBehind {
                 if (current &&
@@ -534,12 +587,14 @@ private fun PhaseBand(
                     val left = if (layoutDirection == LayoutDirection.Rtl) size.width - width else 0f
                     drawRect(colors.tertiary.copy(alpha = COVERED_ALPHA), Offset(left, 0f), Size(width, size.height))
                 }
+                todayShare?.let { drawTodayThrough(todayX(it), ink, nameSize) }
             },
         ) {
             Text(
                 text = name.text,
                 modifier = Modifier.padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y).align(Alignment.CenterStart),
                 style = bandStyle(),
+                onTextLayout = { nameSize = it.size },
                 inlineContent =
                     mapOf(
                         // Main's `CurrentPhaseMark` before the current phase's name: an ink dot in a faint ring.
@@ -624,7 +679,6 @@ private fun PhaseAxis(
     todayShare: Float?,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
-    width: Dp,
 ) {
     val style = axisStyle()
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -632,26 +686,18 @@ private fun PhaseAxis(
     val axisFinish = page.plan.axisFinish(page.goal.kind, page.today)
     val goalShare = overrun?.share?.takeIf { axisFinish != null }
     val goalAtEnd = goalShare != null && goalShare >= MIDDLE_SHARE
-    val finishWords = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-    val goalDate =
-        finishWords?.let {
-            if (page.isExam &&
-                width >= 128.dp
-            ) {
-                withData(stringResource(R.string.plan_exam_date_label, it.text), it.text)
-            } else {
-                withData(it.text, it.text)
-            }
-        }
-    val end = phaseEnd(page, phase)?.let { if (it.date) withData(it.text, it.text) else AnnotatedString(it.text) }
+    // The legend names the flag's date ("Exam date"), so the axis shows the date alone, in the data face.
+    val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
+    val end = phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
+    // A phase's end gives way when it meets an earlier label: its row on the path says it, and under "Today" it would read as today's date.
     val labels =
         listOfNotNull(
             todayShare?.takeIf { goalShare == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
             goalShare?.let { at -> goalDate?.let { AxisLabel(it, ink, at) } },
-            end?.takeIf { labelled && !goalAtEnd }?.let { AxisLabel(it, faint, 1f) },
+            end?.takeIf { labelled && !goalAtEnd }?.let { AxisLabel(it, faint, 1f, givesWay = true) },
             when {
                 !isLast || goalAtEnd -> null
-                hasOverrun -> end?.let { AxisLabel(it, faint, 1f) }
+                hasOverrun -> end?.let { AxisLabel(it, faint, 1f, givesWay = true) }
                 axisFinish != null -> goalDate?.let { AxisLabel(it, ink, 1f) }
                 else -> null
             },
@@ -672,11 +718,18 @@ private fun PhaseAxis(
     ) { measurables, constraints ->
         val width = constraints.maxWidth
         val placeables = measurables.map { it.measure(Constraints(maxWidth = width)) }
-        val places = axisLabelPlaces(labels.map { it.share }, placeables.map { IntSize(it.width, it.height) }, width, AXIS_GAP.roundToPx())
-        val height = placeables.indices.maxOfOrNull { places[it].y + placeables[it].height } ?: 0
+        val places =
+            axisLabelPlaces(
+                labels.map { it.share },
+                placeables.map { IntSize(it.width, it.height) },
+                width,
+                AXIS_GAP.roundToPx(),
+                labels.map { it.givesWay },
+            )
+        val height = placeables.indices.maxOfOrNull { index -> places[index]?.let { it.y + placeables[index].height } ?: 0 } ?: 0
 
         layout(width, max(AXIS_LINE.roundToPx(), height)) {
-            placeables.forEachIndexed { index, placeable -> placeable.placeRelative(places[index]) }
+            placeables.forEachIndexed { index, placeable -> places[index]?.let { placeable.placeRelative(it) } }
         }
     }
 }
@@ -685,24 +738,32 @@ private class AxisLabel(
     val text: AnnotatedString,
     val color: Color,
     val share: Float,
+    val givesWay: Boolean = false,
 )
 
-/** Main's `AxisLabel`, for labels in point order, each measured no wider than the phase. */
+/**
+ * Main's `AxisLabel`, for labels in point order, each measured no wider than the phase: a label that meets the
+ * one before takes the next line, unless it [givesWay], when it isn't shown (null).
+ */
 internal fun axisLabelPlaces(
     shares: List<Float>,
     sizes: List<IntSize>,
     width: Int,
     gap: Int,
-): List<IntOffset> {
+    givesWay: List<Boolean> = shares.map { false },
+): List<IntOffset?> {
     var top = 0
     var lineHeight = 0
     var lineEnd: Int? = null
 
-    return shares.zip(sizes) { share, size ->
-        val point = (width * share).roundToInt()
-        val x = (if (share < MIDDLE_SHARE) point else point - size.width).coerceIn(0, max(0, width - size.width))
+    return shares.indices.map { index ->
+        val size = sizes[index]
+        val point = (width * shares[index]).roundToInt()
+        val x = (if (shares[index] < MIDDLE_SHARE) point else point - size.width).coerceIn(0, max(0, width - size.width))
         val end = lineEnd
-        if (end != null && x < end + gap) {
+        val meets = end != null && x < end + gap
+        if (meets && givesWay[index]) return@map null
+        if (meets) {
             top += lineHeight
             lineHeight = 0
         }

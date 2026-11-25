@@ -484,6 +484,11 @@ internal fun PhaseCheckpointMark(
 internal fun challengeName(page: PlanPageState): String =
     stringResource(if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) R.string.session_block_call else R.string.checkpoint_trickster)
 
+/** The legend names the mark by what it is: the Trickster's name waits for his intro, while a language plan's call is already its name. */
+@Composable
+internal fun legendChallengeName(page: PlanPageState): String =
+    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) challengeName(page) else stringResource(R.string.plan_legend_phase_questions)
+
 @Composable
 private fun challengeNotInPlan(page: PlanPageState): String =
     stringResource(

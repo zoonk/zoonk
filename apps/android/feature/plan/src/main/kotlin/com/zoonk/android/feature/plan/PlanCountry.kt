@@ -69,7 +69,7 @@ internal fun ContentCountryRow(
     LaunchedEffect(failed) { if (failed && drafts.countryAsked?.sent == true) drafts.countryAsked = null }
 
     ListRow(
-        headline = { Text(stringResource(R.string.country_content_label)) },
+        headline = { Text(stringResource(R.string.country_label)) },
         supporting = {
             Text(country.name)
             lessonLanguage?.let { Text(it) }
@@ -121,12 +121,13 @@ internal fun CountryFacts(
     goal: LearnerSummaryGoal,
     modifier: Modifier = Modifier,
 ) {
-    goal.contentCountry?.takeIf { goal.editableCountry == null }?.let { exam ->
-        ListRow(headline = { Text(stringResource(R.string.country_exam_label)) }, supporting = { Text(exam.name) }, modifier = modifier)
+    goal.contentCountry?.takeIf { goal.editableCountry == null }?.let { country ->
+        val label = if (country.kind == GoalContentCountry.Kind.EXAM) R.string.country_exam_label else R.string.country_label
+        ListRow(headline = { Text(stringResource(label)) }, supporting = { Text(country.name) }, modifier = modifier)
     }
     goal.examplesCountry?.let { examples ->
         ListRow(
-            headline = { Text(stringResource(R.string.country_lesson_examples_label)) },
+            headline = { Text(stringResource(R.string.country_label)) },
             supporting = { Text(examples.name) },
             modifier = modifier,
         )

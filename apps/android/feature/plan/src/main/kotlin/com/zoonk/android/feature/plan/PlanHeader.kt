@@ -79,10 +79,12 @@ internal fun PlanHeader(
 
 /**
  * The days left to the goal's date, the one line under the Plan's title. The top bar's goal switcher
- * names the goal, so the line doesn't; a goal without a date still to come has none.
+ * names the goal, so the line doesn't; a goal without a date still to come has none, and neither does
+ * a paused goal whose date is its own, since pausing moves it. An exam's date doesn't move, so it keeps counting.
  */
 @Composable
 private fun PlanSubtitle(page: PlanPageState) {
+    if (page.isPaused && !page.isExam) return
     val target = page.plan.schedule.targetDate
     val days = target?.let { ChronoUnit.DAYS.between(page.today, it.toJavaLocalDate()).toInt() }
     val left = goalCountdown(days, page.plan.schedule.targetDateEstimated) ?: return

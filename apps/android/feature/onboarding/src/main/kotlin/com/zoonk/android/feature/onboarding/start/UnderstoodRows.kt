@@ -150,7 +150,7 @@ class UnderstoodRows(
         val exam = country.kind == GoalContentCountry.Kind.EXAM
         return UnderstoodRow(
             "contentCountry",
-            text(if (exam) R.string.country_exam_label else R.string.country_content_label),
+            text(if (exam) R.string.country_exam_label else R.string.country_label),
             country.name,
             badge =
                 when (country.source) {
