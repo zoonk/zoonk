@@ -1,5 +1,5 @@
 import { type getExamBlueprint } from "@zoonk/core/library/exams/get";
-import { reusePolicySchema } from "@zoonk/core/library/sources/contract";
+import { type SourceReadStatus, reusePolicySchema } from "@zoonk/core/library/sources/contract";
 import { type Source, type SourceChangeNotice } from "@zoonk/db";
 
 type SourceRow = Pick<
@@ -15,7 +15,7 @@ type SourceRow = Pick<
   | "url"
   | "validUntil"
   | "visibility"
->;
+> & { readStatus: SourceReadStatus };
 
 type ExamBlueprintView = NonNullable<Awaited<ReturnType<typeof getExamBlueprint>>>;
 
@@ -33,6 +33,7 @@ export function toSourceResource(source: SourceRow) {
     language: source.language,
     mimeType: source.mimeType,
     publisher: source.publisher,
+    readStatus: source.readStatus,
     reusePolicy: toReusePolicy(source.reusePolicy),
     title: source.title,
     url: source.url,

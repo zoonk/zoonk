@@ -4,7 +4,11 @@ import {
   examStructureSchema,
   topicFrequencySchema,
 } from "@zoonk/core/library/exams/blueprint-contract";
-import { MAX_PASTED_TEXT_LENGTH, reusePolicySchema } from "@zoonk/core/library/sources/contract";
+import {
+  MAX_PASTED_TEXT_LENGTH,
+  reusePolicySchema,
+  sourceReadStatusSchema,
+} from "@zoonk/core/library/sources/contract";
 import { LearnerSourceOrigin, LibraryVisibility, SourceKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -51,6 +55,7 @@ export const sourceResourceSchema = z
     language: z.string(),
     mimeType: z.string().nullable(),
     publisher: z.string().nullable(),
+    readStatus: sourceReadStatusSchema,
     reusePolicy: reusePolicyResourceSchema.nullable(),
     title: z.string(),
     url: z

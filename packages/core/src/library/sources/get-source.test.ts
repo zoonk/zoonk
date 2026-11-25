@@ -30,7 +30,7 @@ describe(getSource, () => {
 
     const result = await getSource({ sourceId: source.id });
 
-    expect(result?.id).toBe(source.id);
+    expect(result).toMatchObject({ id: source.id, readStatus: "readable" });
     expect(result).not.toHaveProperty("extractedText");
   });
 

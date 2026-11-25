@@ -14,9 +14,10 @@ import { toSourceUrl } from "./fetch-document";
 import { linkGoalSources } from "./link-goal-sources";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { SOURCE_READ_VERSION } from "./source-contract";
+import { withSourceReadStatus } from "./source-read-status";
 import { deleteUploadedBlob, keepUploadedBlob } from "./upload-blob";
 
-type UploadedSource = Omit<Source, "extractedText">;
+type UploadedSource = ReturnType<typeof withSourceReadStatus<Source>>;
 
 export type SourceUploadInput = {
   goalId?: string | null;
@@ -72,7 +73,6 @@ async function linkUpload({
 
 function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
   return prisma.source.findFirst({
-    omit: { extractedText: true },
     orderBy: { createdAt: "asc" },
     where: { ...libraryRowsVisibleTo(userId), contentHash: hash },
   });
@@ -119,7 +119,6 @@ async function createPrivateSource({
 
   return writeLearnerChange({ userId }, async (tx) => {
     const stored = await tx.source.findUnique({
-      omit: { extractedText: true },
       where: { languageIdentity: { identityKey, language: input.language } },
     });
 
@@ -148,7 +147,6 @@ async function createPrivateSource({
         url: content.url ?? null,
         visibility: "private",
       },
-      omit: { extractedText: true },
     });
 
     await oweFollowUps({
@@ -225,7 +223,7 @@ async function storeUpload({
   await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
   await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
 
-  return { checkVisibility: created, source, status: "ready" };
+  return { checkVisibility: created, source: withSourceReadStatus(source), status: "ready" };
 }
 
 /**
@@ -242,7 +240,7 @@ async function answerSentUpload({
   userId: string;
 }): Promise<SourceUploadResult | null> {
   const upload = await prisma.sourceUpload.findFirst({
-    include: { source: { omit: { extractedText: true } } },
+    include: { source: true },
     where: { id: uploadId, userId },
   });
 
@@ -253,7 +251,7 @@ async function answerSentUpload({
   const goalId = await getOwnGoalId({ goalId: input.goalId, userId });
   await linkUpload({ goalId, sourceId: upload.sourceId, uploadId, userId });
 
-  return { checkVisibility: false, source: upload.source, status: "ready" };
+  return { checkVisibility: false, source: withSourceReadStatus(upload.source), status: "ready" };
 }
 
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {

@@ -20,6 +20,7 @@ import {
   type LanguageAimView,
   type OnboardingLanguageAim,
 } from "../../language/aims/language-aims";
+import { type SourceReadStatus } from "../../library/sources/source-contract";
 import { type GoalWarmUp } from "../../library/warm-ups/warm-up-contract";
 import { type NoSitting } from "../../plans/plan-view-contract";
 import { type PlanReadiness } from "../../plans/time-advice-contract";
@@ -133,7 +134,7 @@ export type GoalUnderstandingView =
 
 export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed"] as const;
 
-export type DraftSource = { id: string; title: string };
+export type DraftSource = { id: string; readStatus: SourceReadStatus; title: string };
 
 /** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {

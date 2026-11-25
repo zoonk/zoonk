@@ -2,6 +2,7 @@ import "server-only";
 import { type OnboardingDraft, prisma } from "@zoonk/db";
 import { type MaterialSource } from "../../../library/sources/material-pages";
 import { findOwnSources } from "../../../library/sources/own-sources";
+import { getSourceReadStatus } from "../../../library/sources/source-read-status";
 import { type DraftSource } from "../onboarding-contract";
 
 type DraftMaterialKey = Pick<OnboardingDraft, "sourceIds" | "userId">;
@@ -31,13 +32,17 @@ export async function readDraftSources(
   const uploads = await findDraftUploads(draft);
 
   const found = await prisma.source.findMany({
-    select: { id: true, title: true },
+    select: { extractedText: true, id: true, readState: true, title: true },
     where: { id: { in: uploads.resolved } },
   });
 
   return {
     materialMissing: uploads.unresolved.length > 0,
-    sources: inOrder({ ids: uploads.resolved, sources: found }),
+    sources: inOrder({ ids: uploads.resolved, sources: found }).map((source) => ({
+      id: source.id,
+      readStatus: getSourceReadStatus(source),
+      title: source.title,
+    })),
   };
 }
 
