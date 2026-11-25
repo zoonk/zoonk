@@ -651,6 +651,32 @@ describe(outlineMock, () => {
       ),
     ).toStrictEqual([120, 120]);
   });
+
+  it("leaves a listening section's questions out of what the uncounted sittings share", () => {
+    const withListening = structure({
+      sections: [
+        {
+          day: 1,
+          kind: "listening",
+          minutes: 45,
+          name: "Listening",
+          questions: null,
+          tasks: [
+            { count: 30, description: "Conversations" },
+            { count: 70, description: "Talks" },
+          ],
+        },
+        { day: 1, kind: "objective", minutes: 75, name: "Reading", questions: null },
+      ],
+      totalQuestions: 200,
+    });
+
+    expect(
+      outlineMock({ day: 1, fullLength: true, structure: withListening }).sections.find(
+        (section) => section.name === "Reading",
+      )?.questions,
+    ).toBe(100);
+  });
 });
 
 describe("a mock of an exam with a written test", () => {

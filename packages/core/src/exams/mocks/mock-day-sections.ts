@@ -25,6 +25,15 @@ export function toSectionRules(section: BlueprintSection) {
   };
 }
 
+/** The exam's total counts listening questions too, given for the section or for its parts. */
+function statedQuestions(section: StructureSection): number {
+  if (section.kind === "listening") {
+    return section.questions ?? (section.tasks ?? []).reduce((sum, task) => sum + task.count, 0);
+  }
+
+  return isObjectiveSection(section) ? (section.questions ?? 0) : 0;
+}
+
 /**
  * A notice can state only the exam's total ("240 itens" over two sittings): the objective
  * sections without their own count share what the stated counts leave, by their minutes.
@@ -37,9 +46,7 @@ function listCountedSections(structure: ExamStructure | null): StructureSection[
     (section) => isObjectiveSection(section) && section.questions === null,
   );
 
-  const stated = sections
-    .filter((section) => isObjectiveSection(section))
-    .reduce((sum, section) => sum + (section.questions ?? 0), 0);
+  const stated = sections.reduce((sum, section) => sum + statedQuestions(section), 0);
 
   if (total === null || uncounted.length === 0 || total <= stated) {
     return sections;
