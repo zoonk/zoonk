@@ -200,7 +200,9 @@ class FakeOnboardingApi : OnboardingApi {
     var draftGate: CompletableDeferred<Unit>? = null
     var draftFailure: ApiException? = null
 
-    override suspend fun resume(session: AuthenticatedSession) = OnboardingResume(resume = null)
+    var resume = OnboardingResume(resume = null)
+
+    override suspend fun resume(session: AuthenticatedSession) = resume
 
     var readsAgain = 0
     var readAgainGate: CompletableDeferred<Unit>? = null

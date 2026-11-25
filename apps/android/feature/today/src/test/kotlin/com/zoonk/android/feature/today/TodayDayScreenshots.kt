@@ -12,7 +12,12 @@ import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.exam.FakeMockApi
 import com.zoonk.android.feature.focustest.unusedFocusTests
+import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.FakeStudyApi
@@ -25,6 +30,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +76,38 @@ class TodayDayScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
     fun underwayTablet() = render("today-underway-tablet", underway())
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun unfinishedGoalPhone() = render("today-unfinished-goal-phone", underway(), unfinished = UNFINISHED_GOAL)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun unfinishedGoalPhoneDark() = render("today-unfinished-goal-phone-dark", underway(), unfinished = UNFINISHED_GOAL)
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xxhdpi")
+    fun unfinishedGoalPhoneLargeText() {
+        RuntimeEnvironment.setFontScale(2f)
+        render("today-unfinished-goal-phone-font200", underway(), unfinished = UNFINISHED_GOAL)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1700dp-xxhdpi")
+    fun unfinishedGoalUnderANoticePhone() {
+        val focusTest = buildJsonObject { put("minutes", 15) }
+        val day = Day(underway().session, listOf("notice" to "focusTest", "focusTest" to focusTest))
+        render("today-unfinished-goal-under-notice-phone", day, unfinished = UNFINISHED_GOAL)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun unfinishedGoalOverAPausedGoalPhone() =
+        render("today-unfinished-goal-paused-phone", underway(), unfinished = UNFINISHED_GOAL, paused = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1000dp-land-xhdpi")
+    fun unfinishedGoalTablet() = render("today-unfinished-goal-tablet", underway(), unfinished = UNFINISHED_GOAL)
 
     @Test
     @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
@@ -148,6 +186,8 @@ class TodayDayScreenshots {
     private fun render(
         name: String,
         day: Day,
+        unfinished: String? = null,
+        paused: Boolean = false,
     ) {
         val session = JsonObject(day.session + ("sessionBar" to sessionBar(day.session)))
         val today = decodeFixture<Today>("today", "session" to session, *day.today.toTypedArray())
@@ -167,10 +207,32 @@ class TodayDayScreenshots {
                 unusedFocusTests(cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
+        val onboarding =
+            unfinished?.let { prompt ->
+                val api = FakeOnboardingApi()
+                api.resume =
+                    ApiJson.decodeFromString(
+                        """{"resume":{"kind":"draft","draftId":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d99","prompt":"$prompt"}}""",
+                    )
+                OnboardingStore(api, cache, FakeSession(ana)) { SignInResult.SignedIn }
+            }
 
         rule.setContent {
             ZoonkTheme {
                 Surface {
+                    if (paused && onboarding != null) {
+                        GoalAtRestPage(
+                            goal = null,
+                            completedLessons = false,
+                            viewModel = viewModel,
+                            today = store,
+                            mocks = MockStore(FakeMockApi(null), cache),
+                            padding = PaddingValues(),
+                            navigate = {},
+                            banner = { UnfinishedGoal(onboarding) {} },
+                        )
+                        return@Surface
+                    }
                     TodayDay(
                         read,
                         store.today,
@@ -182,6 +244,7 @@ class TodayDayScreenshots {
                         buddyName = "Zu",
                         snackbars = AppSnackbars(),
                         refreshIfChanged = { false },
+                        onboarding = onboarding,
                     )
                 }
             }
@@ -499,5 +562,6 @@ class TodayDayScreenshots {
     private companion object {
         val ana = AuthenticatedSession("ana", "token-a", "local-a")
         const val SESSION = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d02"
+        const val UNFINISHED_GOAL = "Learn enough Japanese to order food and ask for directions on my trip to Osaka in April"
     }
 }
