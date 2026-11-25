@@ -4,7 +4,7 @@ description: Verify and address a zoonk/zoonk GitHub issue together with the iss
 license: MIT
 metadata:
   author: zoonk
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Addressing an issue
@@ -136,7 +136,7 @@ If an issue has no type, priority or label, or what you found changes them, set 
 A valid issue doesn't always need a PR:
 
 - A question, or a problem with someone's own account or payment: answer it or point them to the [Help page](https://www.zoonk.com/support), then close it.
-- A security hole, such as one learner seeing another's data: tell the user at once and add nothing about it on GitHub.
+- A security hole, such as one learner seeing another's data: track it in a [private advisory](../zoonk-github-issues/SKILL.md#a-security-hole), give the user its link at once, and add nothing more about it in public.
 - A new feature: build it as [address them](#7-address-them) says, with your calls listed in the PR.
 
 ## 7. Address them
