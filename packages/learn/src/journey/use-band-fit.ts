@@ -1,17 +1,32 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { chooseBandFit } from "./roadmap-styles";
+import { type BandFit, fitBandSizes, getBandMinProperty } from "./roadmap-styles";
 
-/** Half a pixel, so a band that rounds onto the row's edge still fits. */
-const EDGE = 0.5;
+function getBands(list: HTMLElement): HTMLElement[] {
+  return [...list.children].filter((child) => child instanceof HTMLElement);
+}
 
-function overflows(list: HTMLElement): boolean {
-  const last = list.lastElementChild;
+function setFit(bands: HTMLElement[], fit: (index: number) => BandFit) {
+  for (const [index, band] of bands.entries()) {
+    band.dataset.fit = fit(index);
+  }
+}
 
-  return (
-    last !== null && last.getBoundingClientRect().right > list.getBoundingClientRect().right + EDGE
-  );
+/**
+ * Each band's least width with its names broken this way (with no room, a column takes its least),
+ * and the room the gaps between them take.
+ */
+function measureLeast(list: HTMLElement, bands: HTMLElement[], fit: BandFit) {
+  setFit(bands, () => fit);
+  list.style.width = "0px";
+  const boxes = bands.map((band) => band.getBoundingClientRect());
+  list.style.width = "";
+
+  const widths = boxes.map((box) => box.width);
+  const span = (boxes.at(-1)?.right ?? 0) - (boxes[0]?.left ?? 0);
+
+  return { gaps: span - widths.reduce((total, width) => total + width, 0), widths };
 }
 
 /** `BandTodayTick` breaks around the current band's name, whose lines only the layout knows. */
@@ -30,18 +45,36 @@ function fitBands(list: HTMLElement | null) {
     return;
   }
 
-  list.dataset.fit = chooseBandFit((fit) => {
-    list.dataset.fit = fit;
-    return overflows(list);
+  const bands = getBands(list);
+
+  for (const index of bands.keys()) {
+    list.style.removeProperty(getBandMinProperty(index));
+  }
+
+  const parts = measureLeast(list, bands, "parts");
+  const words = measureLeast(list, bands, "words");
+
+  const sizes = fitBandSizes({
+    available: list.clientWidth - parts.gaps,
+    parts: parts.widths,
+    words: words.widths,
   });
+
+  setFit(bands, (index) => sizes[index]?.fit ?? "parts");
+
+  for (const [index, { width }] of sizes.entries()) {
+    if (width !== null) {
+      list.style.setProperty(getBandMinProperty(index), `${width}px`);
+    }
+  }
 
   measureTodayName(list);
 }
 
 /**
- * Picks how the band names break (`BandFit`) before the row paints: after every render, since the
- * names may have changed, and whenever the row's width or its font does. It watches `width`, a
- * line the names never resize, so the row growing a line doesn't report a resize of its own.
+ * Sizes the bands (`fitBandSizes`) before the row paints: after every render, since the names may
+ * have changed, and whenever the row's width or its font does. It watches `width`, a line the
+ * names never resize, so the row growing a line doesn't report a resize of its own.
  */
 export function useBandFit() {
   const listRef = useRef<HTMLOListElement>(null);

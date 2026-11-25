@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chooseBandFit, splitBandName } from "./roadmap-styles";
+import { fitBandSizes, splitBandName } from "./roadmap-styles";
 
 describe(splitBandName, () => {
   it("keeps a short name or a single word on one line", () => {
@@ -40,26 +40,36 @@ describe(splitBandName, () => {
   });
 });
 
-describe(chooseBandFit, () => {
-  it("keeps each name's parts whole when every band fits them", () => {
-    expect(chooseBandFit(() => false)).toBe("parts");
+describe(fitBandSizes, () => {
+  it("keeps every name's parts when the bands fit them", () => {
+    expect(fitBandSizes({ available: 300, parts: [100, 120], words: [80, 90] })).toStrictEqual([
+      { fit: "parts", width: null },
+      { fit: "parts", width: null },
+    ]);
   });
 
-  it("breaks the names between words when the parts don't fit", () => {
-    expect(chooseBandFit((fit) => fit === "parts")).toBe("words");
+  it("breaks only the widest names between words, at the widest width that fits the row", () => {
+    expect(
+      fitBandSizes({ available: 400, parts: [80, 110, 150, 140], words: [72, 90, 80, 136] }),
+    ).toStrictEqual([
+      { fit: "parts", width: 80 },
+      { fit: "words", width: 92 },
+      { fit: "words", width: 92 },
+      { fit: "words", width: 136 },
+    ]);
   });
 
-  it("breaks inside words when no way fits, and tries no further than the first that does", () => {
-    const tried: string[] = [];
+  it("never holds a band under its longest word", () => {
+    expect(fitBandSizes({ available: 250, parts: [150, 150], words: [130, 72] })).toStrictEqual([
+      { fit: "words", width: 130 },
+      { fit: "words", width: 120 },
+    ]);
+  });
 
-    expect(chooseBandFit((fit) => fit !== "letters")).toBe("letters");
-    expect(chooseBandFit(() => true)).toBe("letters");
-
-    chooseBandFit((fit) => {
-      tried.push(fit);
-      return false;
-    });
-
-    expect(tried).toStrictEqual(["parts"]);
+  it("breaks inside words when not even the longest words fit", () => {
+    expect(fitBandSizes({ available: 100, parts: [90, 90], words: [72, 72] })).toStrictEqual([
+      { fit: "letters", width: null },
+      { fit: "letters", width: null },
+    ]);
   });
 });
