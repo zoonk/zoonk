@@ -562,10 +562,13 @@ private fun TypedReply(
     LaunchedEffect(Unit) { if (focusOnStart) field.requestFocus() }
     val input = rememberTextFieldState()
     val text = input.text.toString()
-    input.ObserveEdits { if (it.isNotEmpty()) onTyping() }
+    // Clearing a sent reply isn't the learner typing.
+    var sent by remember { mutableStateOf(false) }
+    input.ObserveEdits { if (sent) sent = false else onTyping() }
     val send = {
         if (text.isNotBlank()) {
             onSend(text)
+            sent = true
             input.clearText()
         }
     }
