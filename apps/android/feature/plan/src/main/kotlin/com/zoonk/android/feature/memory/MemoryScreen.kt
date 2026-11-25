@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.input.InputTransformation
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,6 +67,7 @@ import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -323,7 +323,7 @@ private fun EditFactDialog(
                 Text(stringResource(R.string.memory_edit_description))
                 OutlinedTextField(
                     state = statementField,
-                    inputTransformation = InputTransformation.maxLengthTrim(MAX_STATEMENT_LENGTH),
+                    inputTransformation = InputTransformation.fitTo(MAX_STATEMENT_LENGTH),
                     label = stringResource(R.string.memory_edit_label),
                     supportingText = if (edit.failed) ({ Text(stringResource(R.string.memory_save_failed)) }) else null,
                     isError = edit.failed,

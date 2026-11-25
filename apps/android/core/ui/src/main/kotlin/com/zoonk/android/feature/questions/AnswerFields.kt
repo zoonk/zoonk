@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
@@ -140,7 +140,7 @@ fun TypedAnswerField(
     field.ObserveEdits { onAnswer(it.trim().takeIf(String::isNotEmpty)?.let(Answer::Text)) }
     OutlinedTextField(
         state = field,
-        inputTransformation = InputTransformation.maxLengthTrim(MAX_TYPED_ANSWER),
+        inputTransformation = InputTransformation.fitTo(MAX_TYPED_ANSWER),
         modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge,

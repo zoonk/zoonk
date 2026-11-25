@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +23,7 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.plan.reasonTitleResource
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingLanguageAim
@@ -97,7 +97,7 @@ internal fun ColumnScope.ReasonStep(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
                             state = words.fields[1],
-                            inputTransformation = InputTransformation.maxLengthTrim(MAX_ANSWER_LENGTH),
+                            inputTransformation = InputTransformation.fitTo(MAX_ANSWER_LENGTH),
                             lineLimits = TextFieldLineLimits.SingleLine,
                             keyboardOptions =
                                 KeyboardOptions(

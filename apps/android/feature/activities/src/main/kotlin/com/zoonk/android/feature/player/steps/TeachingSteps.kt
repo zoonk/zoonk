@@ -20,7 +20,6 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -110,6 +109,7 @@ import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.format.currentLocale
@@ -832,7 +832,7 @@ private fun AnswerField(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             state = field,
-            inputTransformation = InputTransformation.maxLengthTrim(MAX_TYPED_ANSWER_LENGTH),
+            inputTransformation = InputTransformation.fitTo(MAX_TYPED_ANSWER_LENGTH),
             modifier =
                 if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth().submitOnEnter(field, actions::runPrimary),
             readOnly = state.phase != LessonPhase.Playing,

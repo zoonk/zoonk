@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,6 +63,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.readOnlyFieldState
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -862,7 +862,7 @@ private fun AnswerField(
     val focus = remember { FocusRequester() }
     OutlinedTextField(
         state = state,
-        inputTransformation = InputTransformation.maxLengthTrim(MAX_ANSWER_LENGTH),
+        inputTransformation = InputTransformation.fitTo(MAX_ANSWER_LENGTH),
         modifier = Modifier.fillMaxWidth().focusRequester(focus),
         label = label,
         placeholder = placeholder?.let { { Text(it) } },

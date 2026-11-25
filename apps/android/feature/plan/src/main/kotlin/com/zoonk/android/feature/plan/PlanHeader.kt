@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -46,6 +45,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -184,7 +184,7 @@ private fun RenameGoalDialog(
                 Text(stringResource(R.string.plan_rename_description))
                 OutlinedTextField(
                     state = nameField,
-                    inputTransformation = InputTransformation.maxLengthTrim(MAX_GOAL_NAME_LENGTH),
+                    inputTransformation = InputTransformation.fitTo(MAX_GOAL_NAME_LENGTH),
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.plan_rename_label),
                     supportingText = if (dialog.failed) ({ Text(stringResource(R.string.plan_save_failed)) }) else null,

@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.delete
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -76,6 +75,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -454,4 +454,4 @@ internal val VerificationCodeInput =
         for (index in length - 1 downTo 0) {
             if (!charAt(index).isDigit()) delete(index, index + 1)
         }
-    }.then(InputTransformation.maxLengthTrim(SignInViewModel.CODE_LENGTH))
+    }.then(InputTransformation.fitTo(SignInViewModel.CODE_LENGTH))

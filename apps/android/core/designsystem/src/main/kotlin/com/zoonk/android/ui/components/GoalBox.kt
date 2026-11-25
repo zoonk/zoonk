@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -68,7 +67,7 @@ private val GoalInput =
         for (index in 0 until length) {
             if (charAt(index) == '\n') replace(index, index + 1, " ")
         }
-    }.then(InputTransformation.maxLengthTrim(MAX_GOAL_LENGTH))
+    }.then(InputTransformation.fitTo(MAX_GOAL_LENGTH))
 
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.

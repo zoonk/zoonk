@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.byValue
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.submitOnEnter
 
 /**
@@ -139,7 +139,7 @@ private fun UsernameField(
                     proposed,
                     ->
                     proposed.toString().trim().lowercase()
-                }.then(InputTransformation.maxLengthTrim(USERNAME_MAX_LENGTH)),
+                }.then(InputTransformation.fitTo(USERNAME_MAX_LENGTH)),
         modifier =
             Modifier
                 .fillMaxWidth()

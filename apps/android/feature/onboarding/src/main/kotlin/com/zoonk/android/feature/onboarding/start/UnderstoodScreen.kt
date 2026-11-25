@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -70,6 +69,7 @@ import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeOfDayDialog
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.format.DateStyle
@@ -271,7 +271,7 @@ private fun RewriteWords(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             state = valueField,
-            inputTransformation = InputTransformation.maxLengthTrim(MAX_GOAL_LENGTH),
+            inputTransformation = InputTransformation.fitTo(MAX_GOAL_LENGTH),
             modifier = Modifier.fillMaxWidth().focusRequester(focus).submitOnEnter(valueField) { submit() },
             label = stringResource(R.string.onboarding_what_you_wrote),
             supportingText = { Text(stringResource(R.string.onboarding_rewrite_hint)) },

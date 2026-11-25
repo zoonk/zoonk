@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,6 +56,7 @@ import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.api.models.FeedbackSubmissionContext
@@ -88,7 +88,7 @@ fun FeedbackForm(
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
             state = form.messageField,
-            inputTransformation = InputTransformation.maxLengthTrim(MAX_FEEDBACK_MESSAGE_LENGTH),
+            inputTransformation = InputTransformation.fitTo(MAX_FEEDBACK_MESSAGE_LENGTH),
             modifier =
                 Modifier
                     .fillMaxWidth()

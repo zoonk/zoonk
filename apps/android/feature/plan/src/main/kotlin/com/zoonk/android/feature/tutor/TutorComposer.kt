@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,6 +37,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.composerColors
 import com.zoonk.android.ui.components.composerFocusThickness
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.sendButtonColors
 import com.zoonk.android.ui.components.submitOnEnter
@@ -84,7 +84,7 @@ internal fun TutorComposer(
                     .focusRequester(focus)
                     .submitOnEnter(vm.draft) { if (canSend) vm.send() },
             placeholder = { Text(placeholder) },
-            inputTransformation = InputTransformation.maxLengthTrim(MAX_QUESTION_LENGTH),
+            inputTransformation = InputTransformation.fitTo(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
             colors = composerColors(),
             focusedBorderThickness = composerFocusThickness(),

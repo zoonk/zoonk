@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -74,6 +73,7 @@ import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.writingAreaColors
 import com.zoonk.android.ui.components.writingAreaFocusRing
 import com.zoonk.android.ui.format.currentLocale
@@ -273,7 +273,7 @@ private fun EssayAnswer(
 
     OutlinedTextField(
         state = field,
-        inputTransformation = InputTransformation.maxLengthTrim(MAX_WRITING_CHARACTERS),
+        inputTransformation = InputTransformation.fitTo(MAX_WRITING_CHARACTERS),
         modifier = Modifier.fillMaxWidth().heightIn(min = ESSAY_HEIGHT),
         readOnly = run.pending,
         colors = writingAreaColors(),

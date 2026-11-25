@@ -14,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.FilterChipDefaults
@@ -55,6 +54,7 @@ import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SelectionChip
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 
@@ -462,7 +462,7 @@ private fun ProfileField(
     field.ObserveEdits(onChange)
     OutlinedTextField(
         state = field,
-        inputTransformation = InputTransformation.maxLengthTrim(limit),
+        inputTransformation = InputTransformation.fitTo(limit),
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         label = label,

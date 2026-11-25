@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -86,6 +85,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.components.sendButtonColors
@@ -611,7 +611,7 @@ private fun QuestionPanel(
         ) {
             BasicTextField(
                 state = field,
-                inputTransformation = InputTransformation.maxLengthTrim(MAX_QUESTION_LENGTH),
+                inputTransformation = InputTransformation.fitTo(MAX_QUESTION_LENGTH),
                 modifier =
                     Modifier
                         .weight(1f)

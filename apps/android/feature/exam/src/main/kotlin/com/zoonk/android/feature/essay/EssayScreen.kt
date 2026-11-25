@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
-import androidx.compose.foundation.text.input.maxLengthTrim
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -94,6 +93,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
@@ -617,7 +617,7 @@ internal fun WriteScreen(
             Column(Modifier.taskColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     state = ui.field,
-                    inputTransformation = InputTransformation.maxLengthTrim(MAX_WRITING_CHARACTERS),
+                    inputTransformation = InputTransformation.fitTo(MAX_WRITING_CHARACTERS),
                     modifier =
                         Modifier
                             .fillMaxWidth()
