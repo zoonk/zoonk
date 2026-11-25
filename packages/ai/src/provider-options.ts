@@ -27,20 +27,27 @@ export type FallbackModel =
 /**
  * The gateway sends the call's `reasoning` to every model in a chain. A provider's own reasoning
  * option overrides it, but a provider without one takes another's (an `openai` effort reaches
- * Claude too), so a chain whose models reason differently names every provider's level.
+ * Claude too), so a chain whose models reason differently names every provider's level. Only the
+ * main model may lack an option of its own and reason at the call's level: Muse Ember's reasoning
+ * didn't follow the others' options in real calls (25 Nov 2026).
  */
 const reasoningOptionByProvider = {
   anthropic: (effort: Reasoning) => ({ effort }),
+  google: (thinkingLevel: Reasoning) => ({ thinkingConfig: { thinkingLevel } }),
   openai: (reasoningEffort: Reasoning) => ({ reasoningEffort }),
 };
 
 type ReasoningProvider = keyof typeof reasoningOptionByProvider;
 
+type ReasoningOptions = Partial<{
+  [Provider in ReasoningProvider]: ReturnType<(typeof reasoningOptionByProvider)[Provider]>;
+}>;
+
 type ProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models" | "order" | "serviceTier"> & {
     speed?: ServedSpeed;
   };
-} & Partial<Record<ReasoningProvider, Record<string, Reasoning>>>;
+} & ReasoningOptions;
 
 type ImageProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models">;
@@ -73,9 +80,7 @@ function isReasoningProvider(value: string): value is ReasoningProvider {
   return value in reasoningOptionByProvider;
 }
 
-function buildReasoningOptions(
-  chain: readonly [ChainModel, ...ChainModel[]],
-): Partial<Record<ReasoningProvider, Record<string, Reasoning>>> {
+function buildReasoningOptions(chain: readonly [ChainModel, ...ChainModel[]]): ReasoningOptions {
   const [main] = chain;
 
   if (chain.every((entry) => entry.reasoning === main.reasoning)) {
@@ -84,18 +89,21 @@ function buildReasoningOptions(
 
   const levels = new Map<ReasoningProvider, Reasoning>();
 
-  for (const { model, reasoning } of chain) {
+  for (const [index, { model, reasoning }] of chain.entries()) {
     const provider = getModelFamily(model);
+    const hasOption = isReasoningProvider(provider);
 
-    if (!isReasoningProvider(provider) || !reasoning || reasoning === "provider-default") {
+    if (!reasoning || reasoning === "provider-default" || (index > 0 && !hasOption)) {
       throw new Error(`The gateway can't set ${model}'s reasoning apart from its chain`);
     }
 
-    if ((levels.get(provider) ?? reasoning) !== reasoning) {
-      throw new Error(`The gateway gives every ${provider} model in a chain one reasoning level`);
-    }
+    if (hasOption) {
+      if ((levels.get(provider) ?? reasoning) !== reasoning) {
+        throw new Error(`The gateway gives every ${provider} model in a chain one reasoning level`);
+      }
 
-    levels.set(provider, reasoning);
+      levels.set(provider, reasoning);
+    }
   }
 
   return Object.fromEntries(

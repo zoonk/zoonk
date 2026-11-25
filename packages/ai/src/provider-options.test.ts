@@ -122,6 +122,24 @@ describe(buildProviderOptions, () => {
     });
   });
 
+  it("leaves a main model without a reasoning option of its own at the call's level", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: [
+          { model: "google/gemini-3.8-flash", reasoning: "low" },
+          "anthropic/claude-haiku-5.5",
+        ],
+        model: "meta/muse-ember",
+        reasoning: "high",
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      anthropic: { effort: "high" },
+      gateway: { models: ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] },
+      google: { thinkingConfig: { thinkingLevel: "low" } },
+    });
+  });
+
   it("leaves reasoning to the call when the models that can answer share it", () => {
     const fallbackModels = [{ model: "anthropic/claude-sonnet-5.5", reasoning: "high" }] as const;
 
@@ -173,12 +191,12 @@ describe(buildProviderOptions, () => {
 
     expect(() =>
       buildProviderOptions({
-        fallbackModels: [sonnetAtHigh],
-        model: "google/gemini-3.8-flash",
+        fallbackModels: [{ model: "meta/muse-ember", reasoning: "high" }],
+        model: "openai/gpt-6.1-terra",
         reasoning: "low",
         useFallback: true,
       }),
-    ).toThrow("google/gemini-3.8-flash");
+    ).toThrow("meta/muse-ember");
   });
 
   it("keeps provider order when fallback routing has no fallback models", () => {

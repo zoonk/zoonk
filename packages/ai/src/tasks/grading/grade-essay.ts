@@ -13,16 +13,20 @@ import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * The learner waits on the grade, so a fallback must be quick too. On the 108-case eval at high
- * reasoning (25 Nov 2026), Muse Ember made all 62 pass/fail calls right at 9 s p50 for $2.88/1k.
- * Gemini 3.5 Flash-Lite did too in two runs, at 17 s p50 (35 s slowest) for $18/1k. Haiku 5.5
- * missed one at 39 s p50 (80 s p95) for $5.94/1k, and a blind GPT-6.1 Sol read preferred Ember's
- * grading to Haiku's (11 Nov 2026). Gemini 3.8 Flash took 108 s p50 (767 s slowest) for $60/1k;
- * GPT-6 Luna missed three at 46 s p50; Gemini 3.1 Flash-Lite missed one and may shut down in 2027.
+ * The learner waits on the grade, so a fallback must be quick too. On the 108-case eval (25 Nov
+ * 2026), Muse Ember at high made all 62 pass/fail calls right at 10 s p50 for $2.98/1k. Gemini
+ * 3.8 Flash at low did too, at 10 s p50 (23 s p95) for $9.16/1k; at high it took 108 s p50 (767 s
+ * slowest) for $60/1k. Haiku 5.5 at high made them all at 37 s p50 (82 s p95) for $6.10/1k, and a
+ * blind GPT-6.1 Sol read preferred Ember's grading to Haiku's (11 Nov 2026). Gemini 3.5 Flash-Lite
+ * and GPT-6 Luna at high scored an off-topic essay instead of giving it the zero it gets.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
+
+const fallbackModels = [
+  { model: "google/gemini-3.8-flash", reasoning: "low" },
+  "anthropic/claude-haiku-5.5",
+] as const;
 
 const interventionElementsSchema = z.object({
   action: z.boolean(),
@@ -153,7 +157,7 @@ export async function gradeWritingEvidence(params: WritingEvidenceParams) {
     }),
   ].join("\n\n");
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, reasoning, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
