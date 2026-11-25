@@ -5,7 +5,7 @@ import {
   isCountedByNotice,
 } from "../../library/exams/subject-questions";
 import { getFormatMixSource } from "./mock-format-mix";
-import { findExamQuestions } from "./mock-structure";
+import { findExamQuestions, findPlausibleSizing } from "./mock-structure";
 import { type MockSizeSource } from "./mock-view-contract";
 import { isQuestionSubject } from "./written-subject";
 
@@ -48,14 +48,17 @@ export function getMockSizeSource({
   structure: ExamStructure;
 }): MockSizeSource {
   const material = ownerId !== null;
-  const found = findExamQuestions({ noticeQuestions, structure });
-  const subjects = getSubjectsSource(structure);
+  const sizing = findPlausibleSizing({ noticeQuestions, ownerId, structure });
+  const found = findExamQuestions(sizing);
+  const subjects = getSubjectsSource(sizing.structure);
   const fromPast = found?.source === "pastEdition" || subjects === "pastEdition";
 
   return {
     formats: getFormatMixSource(structure),
     material,
-    pastEdition: fromPast ? getPastQuestionsSource({ examName, structure }) : null,
+    pastEdition: fromPast
+      ? getPastQuestionsSource({ examName, structure: sizing.structure })
+      : null,
     questions: found?.source ?? "unstated",
     subjects,
     time: isTimeStated(structure) ? "notice" : "unstated",
