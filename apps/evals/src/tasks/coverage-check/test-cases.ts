@@ -524,8 +524,12 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     expected: {
       gaps: [],
       placements: [
-        { area: "Prova discursiva", key: "resposta-curta", topics: [] },
-        { area: "Prova discursiva", key: "situacao-problema", topics: [] },
+        { area: "Prova discursiva", key: "resposta-curta", topics: [CGU_WRITTEN_TASKS[0] ?? ""] },
+        {
+          area: "Prova discursiva",
+          key: "situacao-problema",
+          topics: [CGU_WRITTEN_TASKS[1] ?? ""],
+        },
       ],
     },
     id: "pt-written-task-practice-in-its-subject",

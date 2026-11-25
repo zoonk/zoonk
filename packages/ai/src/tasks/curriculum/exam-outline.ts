@@ -287,17 +287,8 @@ export function getTopicId({
 const WRITTEN_TEST = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
 /**
- * Every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole. A
- * subject whose syllabus is only its written tasks is the test itself, whatever the notice calls it.
+ * Every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole.
  */
-export function isWrittenTestSubject(
-  subject: Pick<ExamSubject, "group" | "name"> &
-    Partial<Pick<ExamSubject, "topics" | "writtenTasks">>,
-): boolean {
-  const tasks = subject.writtenTasks ?? [];
-
-  return (
-    WRITTEN_TEST.test(`${subject.name} ${subject.group ?? ""}`) ||
-    (tasks.length > 0 && (subject.topics ?? []).every((topic) => tasks.includes(topic)))
-  );
+export function isWrittenTestSubject(subject: Pick<ExamSubject, "group" | "name">): boolean {
+  return WRITTEN_TEST.test(`${subject.name} ${subject.group ?? ""}`);
 }

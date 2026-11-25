@@ -4,7 +4,6 @@ import {
   findUncoveredTopics,
   formatExamOutline,
   isTopicId,
-  isWrittenTestSubject,
   placeInExam,
 } from "./exam-outline";
 
@@ -269,20 +268,5 @@ describe(placeInExam, () => {
       area: "Estratégia de prova",
       topics: [],
     });
-  });
-});
-
-describe(isWrittenTestSubject, () => {
-  it("knows a subject whose syllabus is only its written tasks, whatever the notice calls it", () => {
-    const tasks = ["Redactar una respuesta a partir de una carta; entre 100 y 150 palabras."];
-    const writing = { group: null, name: "Expresión e interacción escritas" };
-
-    expect(isWrittenTestSubject({ ...writing, topics: [], writtenTasks: tasks })).toBe(true);
-    expect(isWrittenTestSubject({ ...writing, topics: tasks, writtenTasks: tasks })).toBe(true);
-    expect(isWrittenTestSubject(writing)).toBe(false);
-
-    expect(
-      isWrittenTestSubject({ ...writing, topics: ["1 Cartas formales"], writtenTasks: tasks }),
-    ).toBe(false);
   });
 });
