@@ -18,7 +18,23 @@ export const BAND_CLASS =
 
 const BAND_CELL_CLASS = "col-start-1 row-start-1";
 
-const BAND_NAME_CLASS = cn(BAND_CELL_CLASS, "leading-4 text-balance");
+const BAND_NAME_CLASS = cn(
+  BAND_CELL_CLASS,
+  "leading-4 text-balance in-data-[fit=letters]:wrap-anywhere in-data-[fit=letters]:hyphens-auto",
+);
+
+/**
+ * How the band names break, tried in this order until every band fits the row: each name's parts
+ * kept whole (`splitBandName`), then between any words, then inside words.
+ */
+const BAND_FITS = ["parts", "words", "letters"] as const;
+
+export type BandFit = (typeof BAND_FITS)[number];
+
+/** The first way the names fit (`overflows` lays the row out with it), or the last when none does. */
+export function chooseBandFit(overflows: (fit: BandFit) => boolean): BandFit {
+  return BAND_FITS.find((fit) => !overflows(fit)) ?? "letters";
+}
 
 const ONE_LINE_NAME_LENGTH = 16;
 
@@ -64,18 +80,20 @@ export function splitBandName(name: string): [string, string | null] {
   return [best.first, best.second];
 }
 
-const BAND_NAME_PART_CLASS = "inline-block whitespace-nowrap";
+const BAND_NAME_PART_CLASS =
+  "inline-block whitespace-nowrap in-data-[fit=letters]:inline in-data-[fit=letters]:whitespace-normal in-data-[fit=words]:inline in-data-[fit=words]:whitespace-normal";
 
 /**
  * A phase's name in parts that never break inside, so a short phase's band grows to its name: a
- * short name keeps one line and a longer one takes two at most. `leading` stays with the first
- * word.
+ * short name keeps one line and a longer one takes two at most. When the row can't fit every
+ * band's widest part, the row's `data-fit` lets the names break elsewhere (`BandFit`). `leading`
+ * stays with the first word.
  */
 export function BandName({ leading, name }: { leading?: React.ReactNode; name: string }) {
   const [first, second] = splitBandName(name);
 
   return (
-    <span className={BAND_NAME_CLASS}>
+    <span className={BAND_NAME_CLASS} data-slot="band-name">
       <span className={BAND_NAME_PART_CLASS}>
         {leading}
         {first}
@@ -90,8 +108,11 @@ export function BandName({ leading, name }: { leading?: React.ReactNode; name: s
   );
 }
 
-/** Invisible text in the band's cell: the band is never narrower than it. */
-export const BAND_SIZER_CLASS = cn(BAND_CELL_CLASS, "invisible h-0 whitespace-nowrap");
+/** Invisible text in the band's cell: the band is never narrower than it until the names break inside words. */
+export const BAND_SIZER_CLASS = cn(
+  BAND_CELL_CLASS,
+  "invisible h-0 whitespace-nowrap in-data-[fit=letters]:hidden",
+);
 
 /** Inline in the name, so a narrow band's lines get its whole width. */
 export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";

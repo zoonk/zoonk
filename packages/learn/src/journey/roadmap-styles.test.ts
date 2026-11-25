@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { splitBandName } from "./roadmap-styles";
+import { chooseBandFit, splitBandName } from "./roadmap-styles";
 
 describe(splitBandName, () => {
   it("keeps a short name or a single word on one line", () => {
@@ -37,5 +37,29 @@ describe(splitBandName, () => {
       "Investimentos",
       "internacionais",
     ]);
+  });
+});
+
+describe(chooseBandFit, () => {
+  it("keeps each name's parts whole when every band fits them", () => {
+    expect(chooseBandFit(() => false)).toBe("parts");
+  });
+
+  it("breaks the names between words when the parts don't fit", () => {
+    expect(chooseBandFit((fit) => fit === "parts")).toBe("words");
+  });
+
+  it("breaks inside words when no way fits, and tries no further than the first that does", () => {
+    const tried: string[] = [];
+
+    expect(chooseBandFit((fit) => fit !== "letters")).toBe("letters");
+    expect(chooseBandFit(() => true)).toBe("letters");
+
+    chooseBandFit((fit) => {
+      tried.push(fit);
+      return false;
+    });
+
+    expect(tried).toStrictEqual(["parts"]);
   });
 });
