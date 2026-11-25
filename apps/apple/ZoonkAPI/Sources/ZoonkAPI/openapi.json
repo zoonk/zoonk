@@ -23817,6 +23817,16 @@
               }
             }
           },
+          "409": {
+            "description": "An attached source is still being read (`materialReading`); no assist is claimed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Too many requests",
             "content": {

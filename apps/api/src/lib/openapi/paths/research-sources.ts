@@ -133,6 +133,11 @@ export const researchSourcePaths = {
         "402": paymentRequiredResponse,
         "403": forbiddenResponse,
         "404": notFoundResponse,
+        "409": {
+          ...conflictResponse,
+          description:
+            "An attached source is still being read (`materialReading`); no assist is claimed",
+        },
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,
