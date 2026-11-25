@@ -23,6 +23,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevronSpace
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
@@ -64,11 +65,15 @@ fun PlanSyllabusSection(
             if (exam) {
                 // Main's legend for the bars (`bars-meaning`): quiet words, not a mono fact.
                 SectionHeader(stringResource(R.string.goalcontent_subjects), Modifier.padding(horizontal = PAGE_PADDING)) {
-                    Text(
-                        stringResource(R.string.goalcontent_preparation),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                    // Ends where the rows' values end: before the chevron's slot.
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.goalcontent_preparation),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        ListRowChevronSpace()
+                    }
                 }
                 SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
             } else {

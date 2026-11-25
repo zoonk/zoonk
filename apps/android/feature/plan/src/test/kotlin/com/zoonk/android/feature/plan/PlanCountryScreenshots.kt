@@ -13,7 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -211,7 +213,7 @@ class PlanCountryScreenshots {
         write("plan-country-editor-$suffix", compose.onRoot().captureRender().asAndroidBitmap())
         if (!interactive) return
 
-        compose.onNodeWithText("Content country").performClick()
+        compose.onNode(hasText("Country") and hasClickAction()).performClick()
         compose.waitForIdle()
         write("plan-country-picker-$suffix", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
         compose.onNode(hasSetTextAction()).performTextInput("uni")

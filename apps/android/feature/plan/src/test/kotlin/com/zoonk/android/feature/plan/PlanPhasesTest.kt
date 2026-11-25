@@ -23,6 +23,13 @@ class PlanPhasesTest {
     }
 
     @Test
+    fun aBandNameIsNeverCutAfterAShortWordOrBeforeALoneWordWhenAnotherCutAvoidsIt() {
+        assertEquals(listOf("Médico", "e farmácia"), bandNameParts("Médico e farmácia"))
+        assertEquals(listOf("Funções", "do primeiro grau"), bandNameParts("Funções do primeiro grau"))
+        assertEquals(listOf("Supercalifragilistic", "expialidocious"), bandNameParts("Supercalifragilistic expialidocious"))
+    }
+
+    @Test
     fun aPhaseIsWeighedByItsDaysCountingBothEnds() {
         assertEquals(14f, plan.phases[0].weight())
         assertEquals(27f, plan.phases[1].weight())
@@ -93,6 +100,19 @@ class PlanPhasesTest {
         )
         assertEquals(listOf(IntOffset(0, 0)), axisLabelPlaces(listOf(0.3f), listOf(IntSize(72, 32)), width = 72, gap = 8))
         assertEquals(listOf(IntOffset(46, 0)), axisLabelPlaces(listOf(0.9f), listOf(line), width = 80, gap = 8))
+    }
+
+    @Test
+    fun aPhaseEndThatMeetsTodayGivesWayInsteadOfTakingTheLineUnderIt() {
+        val sizes = listOf(IntSize(36, 16), IntSize(50, 16))
+        assertEquals(
+            listOf(IntOffset(36, 0), null),
+            axisLabelPlaces(listOf(0.6f, 1f), sizes, width = 120, gap = 8, givesWay = listOf(false, true)),
+        )
+        assertEquals(
+            listOf(IntOffset(24, 0), IntOffset(150, 0)),
+            axisLabelPlaces(listOf(0.12f, 1f), sizes, width = 200, gap = 8, givesWay = listOf(false, true)),
+        )
     }
 
     @Test

@@ -21,10 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.country.lessonVarietyName
@@ -202,12 +199,12 @@ private fun CountryRows(
         val editable = goal.editableCountry != null
         PropertyRow(
             stringResource(
-                if (country.kind ==
-                    GoalContentCountry.Kind.EXAM
+                if (!editable &&
+                    country.kind == GoalContentCountry.Kind.EXAM
                 ) {
                     R.string.country_exam_label
                 } else {
-                    R.string.country_content_label
+                    R.string.country_label
                 },
             ),
             AnnotatedString(country.name),
@@ -218,7 +215,7 @@ private fun CountryRows(
             PropertyRow(stringResource(R.string.country_lesson_language_label), AnnotatedString(lessonVarietyName(it)), null)
         }
     }
-    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), AnnotatedString(it.name), null) }
+    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_label), AnnotatedString(it.name), null) }
 }
 
 /** A label and its value on one line, the value at the end; when both don't fit (large text, a long country name), the value goes under the label. */
@@ -267,31 +264,31 @@ private fun PropertyRow(
 @Composable
 private fun goalDateValue(page: PlanPageState): AnnotatedString {
     val finish = page.finish
-    if (finish == null) {
-        val unset = if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set
+    // Without a date of its own the row says so; the timeline's flag and the path's last row show the estimate.
+    if (finish == null || (finish.estimate && page.plan.schedule.targetDate == null)) {
+        val unset = if (page.isExam && finish == null) R.string.plan_to_be_confirmed else R.string.plan_end_none_set
         return AnnotatedString(stringResource(unset))
     }
-    val date = planDate(finish.date, page.today, finish.estimate, finish.month).text
-    if (finish.estimate && page.plan.schedule.targetDate == null) {
-        // No date set, so the estimate goes under it as its own line, never read as the date.
-        val estimate = withData(stringResource(R.string.plan_estimated_finish, date), date)
-        val muted = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = MaterialTheme.typography.bodySmall.fontSize)
-        return buildAnnotatedString {
-            append(stringResource(R.string.plan_end_none_set))
-            append("\n")
-            withStyle(muted) { append(estimate) }
-        }
-    }
-    return withData(date, date)
+    return dateValue(planDate(finish.date, page.today, finish.estimate, finish.month).text)
 }
 
+/** Main's `DailyTimeValue`: "20 min · 30 min weekends", the times in the data face. */
 @Composable
 private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
     val locale = currentLocale()
     val shape = page.plan.schedule.shape
+    val times = listOfNotNull(shape.weekdays, shape.weekend).map { formatMinutes(it.toInt(), locale) }
+    return withData(dailyTimeWords(page), *times.toTypedArray())
+}
+
+/** The daily time in the "Daily study time" setting's words, for a line that isn't a value (main's `DailyTimeValue readout`). */
+@Composable
+internal fun dailyTimeWords(page: PlanPageState): String {
+    val locale = currentLocale()
+    val shape = page.plan.schedule.shape
     val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
-    val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return withData(weekdays, weekdays)
-    return withData(stringResource(R.string.plan_time_weekends, weekdays, weekend), weekdays, weekend)
+    val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return weekdays
+    return stringResource(R.string.plan_time_weekends, weekdays, weekend)
 }
 
 internal fun studyDaysText(
@@ -346,7 +343,7 @@ private fun mockScheduleValue(
         )
     }
     val date = formatPlanDate(mocks.nextDate.toJavaLocalDate(), page.today, currentLocale())
-    return withData(if (mocks.count > 1) stringResource(R.string.plan_mocks_next, date) else date, date)
+    return if (mocks.count > 1) AnnotatedString(stringResource(R.string.plan_mocks_next, date)) else dateValue(date)
 }
 
 /** "Sundays" … "Saturdays", Sunday counted 0 as the API counts it. */

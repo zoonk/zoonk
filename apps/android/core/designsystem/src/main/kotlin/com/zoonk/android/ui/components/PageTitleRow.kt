@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
@@ -23,7 +24,8 @@ import com.zoonk.android.ui.scaffold.pageTitle
 /**
  * Main's `PageHeader`: a page's title with what sits at its end (actions, a readout). It is the page's
  * title for TalkBack and the keyboard ([pageTitle]), and on a `PageScaffold` the bar names the page
- * only once it scrolls away.
+ * only once it scrolls away. A readout's words share the title's baseline; actions
+ * ([verticalAlignment] `CenterVertically`) sit centered on the title's line, not on its baseline.
  */
 @Composable
 fun PageTitleRow(
@@ -32,9 +34,26 @@ fun PageTitleRow(
     verticalAlignment: Alignment.Vertical = Alignment.Bottom,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
-    HeadingRow(title, MaterialTheme.typography.headlineMedium, modifier, verticalAlignment, Modifier.pageTitle(), byBaseline = true) {
+    val style = MaterialTheme.typography.headlineMedium
+    val readout = verticalAlignment == Alignment.Bottom
+    val line = lineHeight(style)
+    // Actions are laid out as tall as the title's line and centered on it, so the title stays where every page's is.
+    val actions =
+        Modifier.layout { measurable, constraints ->
+            val placeable = measurable.measure(constraints)
+            val height = line.roundToPx()
+            layout(placeable.width, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+        }
+    HeadingRow(
+        title,
+        style,
+        modifier,
+        if (readout) verticalAlignment else Alignment.Top,
+        Modifier.pageTitle(),
+        byBaseline = readout,
+    ) {
         Row(
-            Modifier.alignByBaseline(),
+            if (readout) Modifier.alignByBaseline() else actions,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             content = trailing,

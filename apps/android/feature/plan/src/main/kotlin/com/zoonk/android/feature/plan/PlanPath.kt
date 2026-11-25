@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +46,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
@@ -483,6 +483,11 @@ internal fun PhaseCheckpointMark(
 @Composable
 internal fun challengeName(page: PlanPageState): String =
     stringResource(if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) R.string.session_block_call else R.string.checkpoint_trickster)
+
+/** The legend names the mark by what it is: the Trickster's name waits for his intro, while a language plan's call is already its name. */
+@Composable
+internal fun legendChallengeName(page: PlanPageState): String =
+    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) challengeName(page) else stringResource(R.string.plan_legend_phase_questions)
 
 @Composable
 private fun challengeNotInPlan(page: PlanPageState): String =

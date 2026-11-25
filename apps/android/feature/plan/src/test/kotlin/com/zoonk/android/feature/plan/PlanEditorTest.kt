@@ -54,7 +54,7 @@ class PlanEditorTest {
         compose.onNodeWithText("I have it").performClick()
         compose.onNodeWithText("Save").performClick()
         compose.onNodeWithText("Cancel").performClick()
-        compose.onNodeWithText("More later: Spreadsheet").performScrollTo().performClick()
+        compose.onNodeWithText("1 more tool later: Spreadsheet").performScrollTo().performClick()
         compose.onNodeWithContentDescription("Choose how you'll use Spreadsheet (Google Sheets or Excel)").performScrollTo().performClick()
 
         compose.runOnIdle {

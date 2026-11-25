@@ -157,7 +157,7 @@ class GoalContentScreenshots {
         /** What each screen's opened shot taps first. */
         val OPENED =
             mapOf(
-                "subject-exam" to listOf("1 chapter done, 1 skipped because you already know it", "1. Mechanics"),
+                "subject-exam" to listOf("1 chapter done, 1 you already know", "1. Mechanics"),
                 "chapter" to listOf("Chapter summary"),
             )
 

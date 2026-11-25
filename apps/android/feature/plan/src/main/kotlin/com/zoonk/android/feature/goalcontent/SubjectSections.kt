@@ -56,9 +56,11 @@ import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.statusLink
@@ -278,7 +280,7 @@ internal fun ColumnScope.SubjectAside(
         WrittenStanding(written)
     } else if (subject.notPlannedReason == null || subject.preparation != null) {
         AsideSection(
-            stringResource(if (subject.preparation == null) R.string.goalcontent_coverage else R.string.goalcontent_preparation),
+            stringResource(if (subject.preparation == null) R.string.goalcontent_progress else R.string.goalcontent_preparation),
         ) { SubjectCoverage(subject) }
     }
 
@@ -398,7 +400,7 @@ private fun doneLine(chapters: List<SyllabusChapter>): String {
         }
 
         done == 0 -> {
-            pluralStringResource(R.plurals.goalcontent_chapters_known, known, known)
+            pluralStringResource(R.plurals.plan_skills_you_know, known, known)
         }
 
         else -> {
@@ -469,7 +471,7 @@ internal fun SyllabusChapterRow(
 private fun chapterLine(chapter: SyllabusChapter): String? =
     when {
         chapter.known -> {
-            stringResource(R.string.goalcontent_skipped_known)
+            stringResource(R.string.plan_skipped_known)
         }
 
         chapter.writing -> {
@@ -549,7 +551,7 @@ internal fun LazyListScope.subjectTopics(
     }
 
     item(key = "topics-note", contentType = "note") {
-        TopicFrequencyNote(syllabus.fromMaterial, subject, Modifier.padding(top = 12.dp))
+        TopicFrequencySource(subject, Modifier.padding(top = 12.dp))
     }
 }
 
@@ -736,68 +738,25 @@ private fun topicNote(topic: SyllabusTopic): String? {
     return topic.notPlannedReason?.let { planOutsideReason(it) }
 }
 
+/** Main's `TopicFrequencySource`: where the "Asked a lot" marks come from, behind a quiet "Sources" for the learner who wants to check. */
 @Composable
-private fun TopicFrequencyNote(
-    fromMaterial: Boolean,
+private fun TopicFrequencySource(
     subject: SyllabusSubject,
     modifier: Modifier = Modifier,
 ) {
-    val source = subject.topicFrequencySource
-    val tagged = setsApart(subject.topics.map { it.frequency })
-    val mark = stringResource(R.string.goalcontent_asked_a_lot)
-    val markStyle = frequencyMarkStyle()
+    val source = subject.topicFrequencySource ?: return
+    val publisher = sourceHost(source.url)
 
-    val text =
-        when {
-            fromMaterial && tagged -> {
-                annotate(stringResource(R.string.goalcontent_frequency_material, mark), mark to markStyle)
-            }
-
-            fromMaterial -> {
-                null
-            }
-
-            source == null && tagged -> {
-                annotate(stringResource(R.string.goalcontent_frequency_past_exams, mark), mark to markStyle)
-            }
-
-            source == null -> {
-                null
-            }
-
-            else -> {
-                val publisher = sourceHost(source.url)
-                val link = publisher to LinkTarget(source.url)
-                val waits = subject.topics.any { it.notPlannedReason == "time" }
-                when {
-                    tagged && waits -> {
-                        annotate(
-                            stringResource(R.string.goalcontent_frequency_tagged_waits, mark, source.basis, publisher),
-                            mark to markStyle,
-                            link,
-                        )
-                    }
-
-                    tagged -> {
-                        annotate(
-                            stringResource(R.string.goalcontent_frequency_tagged, mark, source.basis, publisher),
-                            mark to markStyle,
-                            link,
-                        )
-                    }
-
-                    waits -> {
-                        annotate(stringResource(R.string.goalcontent_frequency_waits, source.basis, publisher), link)
-                    }
-
-                    else -> {
-                        annotate(stringResource(R.string.goalcontent_frequency_most, source.basis, publisher), link)
-                    }
-                }
-            }
+    QuietDisclosure(stringResource(R.string.plan_sources), modifier.padding(horizontal = PAGE_PADDING)) {
+        Column(Modifier.bleed(PAGE_PADDING).padding(top = 8.dp)) {
+            SectionNote(
+                annotate(
+                    stringResource(R.string.goalcontent_frequency_source, source.basis, publisher),
+                    publisher to LinkTarget(source.url),
+                ),
+            )
         }
-
-    if (text != null) SectionNote(text, modifier)
+    }
 }
 
 internal fun LazyListScope.subjectMatrix(matrix: List<String>) {

@@ -173,6 +173,9 @@ fun lessonsDoneSpoken(
     total: Long,
 ): String = pluralStringResource(R.plurals.plan_lessons_done_of, total.toInt(), done.toInt(), total.toInt())
 
+/** A date standing alone as a value takes the data face; inside words ("Next Dec 13") it takes theirs, so a phrase keeps one face. */
+internal fun dateValue(date: String): AnnotatedString = withData(date, date)
+
 /** Main's values: the dates and times in [text] ([data]) in mono, the words around them in the text face. */
 internal fun withData(
     text: String,
