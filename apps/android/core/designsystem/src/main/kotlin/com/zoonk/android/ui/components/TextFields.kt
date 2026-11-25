@@ -36,7 +36,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -55,7 +58,13 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.requireDensity
+import androidx.compose.ui.node.requireLayoutCoordinates
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.relocation.BringIntoViewModifierNode
+import androidx.compose.ui.relocation.bringIntoView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
@@ -64,6 +73,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
@@ -153,7 +163,7 @@ fun OutlinedTextField(
     CompositionLocalProvider(LocalTextSelectionColors provides colors.textSelectionColors) {
         BasicTextField(
             state = state,
-            modifier = modifier.fieldSemantics(label, isError),
+            modifier = modifier.fieldSemantics(label, isError).ringInView(),
             enabled = enabled,
             readOnly = readOnly,
             textStyle = textStyle.merge(TextStyle(color = textColor)),
@@ -521,3 +531,43 @@ private val MARK_INSET = 12.dp
 /** Material's gap over a field's supporting text. */
 private val SUPPORTING_GAP = 4.dp
 private const val DISABLED_ALPHA = 0.38f
+
+/**
+ * Scrolls a field into view with the ring drawn [FOCUS_RING_WIDTH] outside it, which a scroll to the field's own
+ * bounds leaves under a bottom bar. A request from inside (focus, the caret) grows by the ring; with [whole], it
+ * brings the whole element and its ring, for a panel whose ring sits outside padding the field doesn't own.
+ */
+internal fun Modifier.ringInView(whole: Boolean = false): Modifier = this then RingInViewElement(whole)
+
+private data class RingInViewElement(
+    val whole: Boolean,
+) : ModifierNodeElement<RingInViewNode>() {
+    override fun create() = RingInViewNode(whole)
+
+    override fun update(node: RingInViewNode) {
+        node.whole = whole
+    }
+}
+
+private class RingInViewNode(
+    var whole: Boolean,
+) : Modifier.Node(),
+    BringIntoViewModifierNode {
+    override suspend fun bringIntoView(
+        childCoordinates: LayoutCoordinates,
+        boundsProvider: () -> Rect?,
+    ) {
+        val ring = with(requireDensity()) { FOCUS_RING_WIDTH.toPx() }
+        bringIntoView {
+            val own = requireLayoutCoordinates()
+            val asked =
+                if (whole) {
+                    own.size.toSize().toRect()
+                } else {
+                    val child = boundsProvider() ?: return@bringIntoView null
+                    child.translate(own.localPositionOf(childCoordinates, Offset.Zero))
+                }
+            asked.inflate(ring)
+        }
+    }
+}

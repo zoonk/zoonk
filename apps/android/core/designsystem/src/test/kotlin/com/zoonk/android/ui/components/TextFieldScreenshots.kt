@@ -3,18 +3,26 @@ package com.zoonk.android.ui.components
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -47,6 +55,29 @@ class TextFieldScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h400dp-night-xxhdpi")
     fun invalidDark() = capture("text-field-invalid-dark", dark = true)
+
+    /** A field focused below the fold scrolls up with its focus ring, which the bar under it mustn't cut. */
+    @Test
+    @Config(qualifiers = "w411dp-h500dp-xxhdpi")
+    fun focusedAboveABar() {
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    Column(Modifier.fillMaxSize()) {
+                        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(16.dp)) {
+                            Spacer(Modifier.height(600.dp))
+                            OutlinedTextField(state = rememberTextFieldState("R$1234"), label = "Your answer")
+                        }
+                        BottomBar { Button(onClick = {}, modifier = Modifier.fillMaxWidth()) { Text("Check") } }
+                    }
+                }
+            }
+        }
+        compose.onNode(hasSetTextAction()).requestFocus()
+        compose.waitForIdle()
+        val file = File(folder, "text-field-focused-above-bar.png").apply { parentFile?.mkdirs() }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     private fun capture(
         name: String,

@@ -228,6 +228,7 @@ fun GoalPanel(
     val shape = RoundedCornerShape(ZoonkRadius.xl)
     Box(
         modifier
+            .ringInView(whole = true)
             .then(if (focused) Modifier.focusRing(shape, colors.primary) else Modifier)
             .background(colors.surfaceContainerLow, shape)
             .border(1.dp, if (focused) colors.primary else colors.outline, shape),
