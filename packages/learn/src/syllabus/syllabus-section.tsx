@@ -13,12 +13,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionFooter,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
@@ -39,40 +34,6 @@ export function hasSyllabusSection<Syllabus extends SyllabusSectionView>(
 function useSectionTitle(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
   return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
-}
-
-function useSectionCount(syllabus: SyllabusSectionView): string {
-  const t = useExtracted();
-  const subjects = syllabus.subjects.filter((subject) => subject.source === "notice").length;
-
-  // The learner's material is never a notice: its topics (or headings) count as the reveal's do.
-  if (syllabus.fromMaterial) {
-    return t(
-      "{count, plural, one {# topic from your material} other {# topics from your material}}",
-      { count: syllabus.topicCount > 0 ? syllabus.topicCount : subjects },
-    );
-  }
-
-  if (syllabus.kind === "notice" && syllabus.topicCount > 0) {
-    return t(
-      "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}",
-      { subjects, topics: syllabus.topicCount },
-    );
-  }
-
-  // The notice's own subjects, as the reveal counts them: the plan's extras aren't the exam's.
-  if (syllabus.goal.kind === "exam") {
-    return t("{count, plural, one {# subject} other {# subjects}}", {
-      count:
-        syllabus.kind === "notice"
-          ? subjects
-          : syllabus.subjects.filter((subject) => !subject.extra).length,
-    });
-  }
-
-  return t("{count, plural, one {# module} other {# modules}}", {
-    count: syllabus.subjects.length,
-  });
 }
 
 /** From this width a row shows its exam's question count in a column of its own. */
@@ -184,7 +145,6 @@ export function SyllabusSection({
 }) {
   const t = useExtracted();
   const title = useSectionTitle(syllabus);
-  const count = useSectionCount(syllabus);
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
@@ -224,8 +184,6 @@ export function SyllabusSection({
           </div>
         ))}
       </div>
-
-      <PageSectionFooter>{count}</PageSectionFooter>
 
       {(syllabus.questionsSource || syllabus.courseWeights?.source) && (
         <QuietDisclosure label={t("Sources")}>

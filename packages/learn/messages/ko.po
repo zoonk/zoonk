@@ -10640,11 +10640,6 @@ msgid "Next <date></date>"
 msgstr "다음 <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "-0-sO9"
-msgid "Estimated finish"
-msgstr "예상 완료일"
-
-#: src/plan/plan-properties.tsx
 msgctxt "1KfRoB"
 msgid "All activities"
 msgstr "모든 활동"
@@ -13206,26 +13201,6 @@ msgstr "{course}의 경우 {institution}에서 {parts}에 더 큰 비중을 두�
 msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "{course}의 경우 {institution}에서 시험의 모든 파트를 같은 비중으로 반영해요. 가중치는 <link>{publisher}</link> 자료를 바탕으로 해요."
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "Cw_XA_"
-msgid "{count, plural, one {# topic from your material} other {# topics from your material}}"
-msgstr "{count, plural, other {내 자료에서 가져온 주제 #개}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "1rxfgw"
-msgid "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}"
-msgstr "{subjects, plural, other {#과목}} · {topics, plural, other {주제 #개}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {#개 과목}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "IYzjIp"
-msgid "{count, plural, one {# module} other {# modules}}"
-msgstr "{count, plural, other {모듈 #개}}"
 
 #. Heads the column of how many questions each subject has on the exam, like "45 questions".
 #: src/syllabus/syllabus-section.tsx

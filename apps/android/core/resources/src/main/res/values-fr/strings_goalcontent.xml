@@ -27,9 +27,7 @@
   "goalcontent_lessons_done": "215aaa18345f038752c907b63883286670b08469928d39fe90c21b30166b2b13",
   "goalcontent_lessons_known_skipped": "7b18ddc7fcbe101ed5233bcfb1af1d2a0eeff5e9d43b05300f1b1293178f0da2",
   "goalcontent_lessons_skipped": "53c222769e1d1237053b9f494158be023d8a9d6deefa683c8b5ddde23cb9a0f1",
-  "goalcontent_material_topic_count": "b9eb557a43f24ee45041947df1737be1a590e9552f95970501b59ad40522b78d",
   "goalcontent_matrix_title": "4559c2dfde4991d835fb252acec75a37903cb2ed9e22e2f0fcae3f4a2dd5c94a",
-  "goalcontent_module_count": "b9cf48c969d9adf6c91de1456e8d26cdfc6ef63b5dc67d107f0584641af27123",
   "goalcontent_modules": "2e572634fda3c9d8d4ffae63172a20f574ecf32e25207e92cd24416ceb57f100",
   "goalcontent_more_chapters": "be0f07e4fe6809e7e6417d847e7d132b242160f18107030bc8441857105eeaaf",
   "goalcontent_new": "714772bd836c498ac08e65e5bf2aea7525aa62bbaac35091127c1e77d88f77b8",
@@ -63,7 +61,6 @@
   "goalcontent_skills": "bcdebe0301104100c00924290afbc151b70737d90d7e8ced3c541487fefb41af",
   "goalcontent_start": "da74b1d50d8751f9a5a5fed95a80ca4922f32194fb191b465094c04588475fbb",
   "goalcontent_studied": "be5601ef2a4098ecc355fe4679d71aa189469376eb797cc7a461d8cb0a1c3bea",
-  "goalcontent_subject_count": "b7068b733119eb7baef29e60be0c6798f2553c701890abcba6f15779071bdabd",
   "goalcontent_subject_missing": "c754733055be579e21727d3318ae8009e93fb91bf3f94f907f0aab623b239896",
   "goalcontent_subject_skipped": "3c7f82504b7a6fe2ffc2b4fa1d2285da7e716d39cf7c0a6b7d47cb5f1f2def9d",
   "goalcontent_subject_time": "5b863a0778aa8f88d26408b581c99d4a75a59b9f3698ee918c1487be7ab211e1",
@@ -100,25 +97,10 @@
     <string name="goalcontent_subjects">Matières</string>
     <!-- The Plan's section listing the plan's modules. -->
     <string name="goalcontent_modules">Modules</string>
-    <plurals name="goalcontent_subject_count">
-        <item quantity="one">%d matière</item>
-        <item quantity="many">%d matières</item>
-        <item quantity="other">%d matières</item>
-    </plurals>
-    <plurals name="goalcontent_module_count">
-        <item quantity="one">%d module</item>
-        <item quantity="many">%d modules</item>
-        <item quantity="other">%d modules</item>
-    </plurals>
     <plurals name="goalcontent_topic_count">
         <item quantity="one">%d sujet</item>
         <item quantity="many">%d sujets</item>
         <item quantity="other">%d sujets</item>
-    </plurals>
-    <plurals name="goalcontent_material_topic_count">
-        <item quantity="one">%d sujet de tes documents</item>
-        <item quantity="many">%d sujets de tes documents</item>
-        <item quantity="other">%d sujets de tes documents</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d leçon</item>

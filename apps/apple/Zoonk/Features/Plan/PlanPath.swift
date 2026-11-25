@@ -628,10 +628,7 @@ struct PlanSyllabusSection: View {
       }
     } footer: {
       SectionFooter {
-        VStack(alignment: .leading, spacing: 0) {
-          count
-          SyllabusSources(syllabus: syllabus)
-        }
+        SyllabusSources(syllabus: syllabus)
       }
     }
   }
@@ -665,40 +662,6 @@ struct PlanSyllabusSection: View {
     } else {
       preparation
     }
-  }
-
-  /// Main's `useSectionCount`: the notice's own subjects, as the reveal counts them, with its topics;
-  /// the learner's material counts its topics.
-  @ViewBuilder private var count: some View {
-    let subjects = syllabus.subjects.filter { $0.source == "notice" }.count
-
-    if syllabus.fromMaterial {
-      Text(
-        "\(syllabus.topicCount > 0 ? syllabus.topicCount : subjects) topics from your material",
-        tableName: "Plan",
-        comment: "How many topics a plan built from the learner's own material holds")
-    } else if syllabus.kind == "notice" && syllabus.topicCount > 0 {
-      FactSegments([
-        subjectsText(subjects),
-        String(
-          localized: "\(syllabus.topicCount) topics", table: "Plan",
-          locale: .appLanguage, comment: "How many topics a subject has"),
-      ])
-    } else if goalKind == .exam {
-      Text(
-        verbatim: subjectsText(
-          syllabus.kind == "notice" ? subjects : syllabus.subjects.count(where: { !$0.isExtra })))
-    } else {
-      Text(
-        "\(syllabus.subjects.count) modules", tableName: "Plan",
-        comment: "How many modules the plan has")
-    }
-  }
-
-  private func subjectsText(_ count: Int) -> String {
-    String(
-      localized: "\(count) subjects", table: "Plan", locale: .appLanguage,
-      comment: "How many subjects the exam has")
   }
 }
 

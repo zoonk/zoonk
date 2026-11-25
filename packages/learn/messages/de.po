@@ -10640,11 +10640,6 @@ msgid "Next <date></date>"
 msgstr "Als Nächstes <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "-0-sO9"
-msgid "Estimated finish"
-msgstr "Voraussichtlicher Abschluss"
-
-#: src/plan/plan-properties.tsx
 msgctxt "1KfRoB"
 msgid "All activities"
 msgstr "Alle Aktivitäten"
@@ -13206,26 +13201,6 @@ msgstr "Bei {course} an {institution} werden {parts} stärker gewichtet. Dein Pl
 msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "Bei {course} an {institution} werden alle Teile der Prüfung gleich gewichtet. Gewichtung laut <link>{publisher}</link>."
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "Cw_XA_"
-msgid "{count, plural, one {# topic from your material} other {# topics from your material}}"
-msgstr "{count, plural, one {# Thema aus deinem Material} other {# Themen aus deinem Material}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "1rxfgw"
-msgid "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}"
-msgstr "{subjects, plural, one {# Fach} other {# Fächer}} · {topics, plural, one {# Thema} other {# Themen}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, one {# Fach} other {# Fächer}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "IYzjIp"
-msgid "{count, plural, one {# module} other {# modules}}"
-msgstr "{count, plural, one {# Modul} other {# Module}}"
 
 #. Heads the column of how many questions each subject has on the exam, like "45 questions".
 #: src/syllabus/syllabus-section.tsx

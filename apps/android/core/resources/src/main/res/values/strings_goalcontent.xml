@@ -4,21 +4,9 @@
     <string name="goalcontent_subjects">Subjects</string>
     <!-- The Plan's section listing the plan's modules. -->
     <string name="goalcontent_modules">Modules</string>
-    <plurals name="goalcontent_subject_count">
-        <item quantity="one">%d subject</item>
-        <item quantity="other">%d subjects</item>
-    </plurals>
-    <plurals name="goalcontent_module_count">
-        <item quantity="one">%d module</item>
-        <item quantity="other">%d modules</item>
-    </plurals>
     <plurals name="goalcontent_topic_count">
         <item quantity="one">%d topic</item>
         <item quantity="other">%d topics</item>
-    </plurals>
-    <plurals name="goalcontent_material_topic_count">
-        <item quantity="one">%d topic from your material</item>
-        <item quantity="other">%d topics from your material</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d lesson</item>

@@ -27,9 +27,7 @@
   "goalcontent_lessons_done": "c4328df30c173ebf89560dca1350b53a74c4e2cba29e45aade515d928337dbb8",
   "goalcontent_lessons_known_skipped": "6c697764c918a0b386c79e055e3b3a13e7f486520c9fb789a9e89fd0c7035d2f",
   "goalcontent_lessons_skipped": "ae0c80232a723983083b00e0df9129a82c420741076831dae59003432881394b",
-  "goalcontent_material_topic_count": "e839f6dc6ef7f24eb77780973d1f7c900149426f01b4547e2b97c2f5ba0cdff1",
   "goalcontent_matrix_title": "70a62fcd8fa9b6f8a93c4fd81b8c2c8a5bbfcbdac2913caaba0424de09570e88",
-  "goalcontent_module_count": "58109cb58a65e0bfab9ff266cb5aa9ef27fb25d0a23860f890e75600622e17d0",
   "goalcontent_modules": "fd5ee7a77628ff793c52a7856d78007b0c660186b8c6b8085c05f0001ae5b9c3",
   "goalcontent_more_chapters": "0fba75557ce1fb2a6344b53c3726fe490235a05e05d9fa41605e5a1d02a5c510",
   "goalcontent_new": "9c48b296cfa5ebbdb66fcee7ab400e08f79c0e72778bf4a5b4db343c617cd389",
@@ -63,7 +61,6 @@
   "goalcontent_skills": "ca2c978915db9401470958e0f8105afd286e64247a293fd2be5cb65d67d56380",
   "goalcontent_start": "f7ad2965f13dfc17a2aed81b6d6b8ced8eaee68137dd71c1be689ab332628eaa",
   "goalcontent_studied": "a343b22f5e86829b4b3d93f9c2a2a496302d3015a7b7923743b6ae5650212739",
-  "goalcontent_subject_count": "240c585c5f049fcb075f02dfe2355fe75d8983215fdd7a8a4c6789c431047103",
   "goalcontent_subject_missing": "d6e9e46409cc37e5c8edb8b49336d3be41be7056b34e4c58268eb449cac77f21",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
   "goalcontent_subject_time": "3e3f99757b2bf2ee618c17b6a59291cdaf0d5a1b3d2a92b4d46fc32db2fa8fe1",
@@ -100,21 +97,9 @@
     <string name="goalcontent_subjects">Branşlar</string>
     <!-- The Plan's section listing the plan's modules. -->
     <string name="goalcontent_modules">Modüller</string>
-    <plurals name="goalcontent_subject_count">
-        <item quantity="one">%d branş</item>
-        <item quantity="other">%d branş</item>
-    </plurals>
-    <plurals name="goalcontent_module_count">
-        <item quantity="one">%d modül</item>
-        <item quantity="other">%d modül</item>
-    </plurals>
     <plurals name="goalcontent_topic_count">
         <item quantity="one">%d konu</item>
         <item quantity="other">%d konu</item>
-    </plurals>
-    <plurals name="goalcontent_material_topic_count">
-        <item quantity="one">Materyalinden %d konu</item>
-        <item quantity="other">Materyalinden %d konu</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d ders</item>
