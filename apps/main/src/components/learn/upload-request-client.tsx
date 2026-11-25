@@ -113,7 +113,6 @@ export function UploadRequestClient({
                 return dismissed;
               },
             }}
-            className="rounded-none bg-transparent p-0"
             language={request.language}
             request={request}
           />

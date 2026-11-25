@@ -1,15 +1,22 @@
 "use client";
 
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
-import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
-import { FileSearchIcon, UploadIcon, XIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import {
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionDescription,
+  SuggestionHeader,
+  SuggestionResult,
+  SuggestionSaveError,
+  useMainActionVariant,
+} from "../_components/suggestion";
 import { AttachControls } from "../onboarding/entry/attach-panel";
-import { UnreadableNote, useNoWordsHint } from "../onboarding/entry/attached-chips";
+import { useNoWordsHint } from "../onboarding/entry/attached-chips";
 import { useFollowReading } from "../onboarding/entry/use-follow-reading";
 import { type AttachedSource, type GoalAttachActions } from "../onboarding/onboarding-actions";
 
@@ -131,33 +138,35 @@ function useAskCopy({
   };
 }
 
+/** The ask's words, what went wrong with the last upload, then the ways to answer it, all on one edge. */
 export function UploadRequestCard({
   actions,
-  className,
   language,
   request,
 }: {
   actions: UploadRequestActions;
-  className?: string;
   language: string;
   request: UploadRequestView;
 }) {
   const t = useExtracted();
-  const titleId = useId();
   const copy = useRequestCopy(request);
+  const noWordsHint = useNoWordsHint();
+  const mainVariant = useMainActionVariant();
   const [state, setState] = useState<CardState>("asking");
   const [failure, setFailure] = useState<Failure | null>(null);
   const [unreadable, setUnreadable] = useState<Unreadable | null>(request.unreadableUpload ?? null);
   const [isPending, startTransition] = useTransition();
+  const hint = unreadable && state !== "answered" ? noWordsHint([unreadable]) : null;
 
-  const run = (action: () => Promise<Failure | null>, done: CardState) =>
+  const dismiss = () =>
     startTransition(async () => {
       setFailure(null);
-      const failed = await action().catch((): Failure => "failed");
-      setFailure(failed);
+      const dismissed = await actions.dismiss().catch(() => false);
 
-      if (!failed) {
-        setState(done);
+      if (dismissed) {
+        setState("dismissed");
+      } else {
+        setFailure("failed");
       }
     });
 
@@ -193,57 +202,39 @@ export function UploadRequestCard({
   }
 
   return (
-    <section
-      aria-labelledby={titleId}
-      className={cn("bg-muted/60 flex flex-col gap-3 rounded-xl p-4", className)}
-    >
-      <div className="flex items-start gap-3">
-        <FileSearchIcon
-          aria-hidden="true"
-          className="text-muted-foreground mt-0.5 size-5 shrink-0"
-        />
+    <>
+      <SuggestionHeader>{copy.title}</SuggestionHeader>
+      <SuggestionDescription>{copy.body}</SuggestionDescription>
 
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="text-sm font-semibold" id={titleId}>
-            {copy.title}
-          </h2>
-
-          <p className="text-muted-foreground text-sm leading-relaxed">{copy.body}</p>
-        </div>
-      </div>
+      {hint && (
+        <SuggestionDescription className="text-destructive-text" role="alert">
+          {hint}
+        </SuggestionDescription>
+      )}
 
       {state === "answered" && (
-        <p className="text-sm" role="status">
+        <SuggestionResult>
           {t("Thanks. We're reading it now, and your plan will update in a few minutes.")}
-        </p>
+        </SuggestionResult>
       )}
 
       {state === "asking" && (
-        <form className="flex flex-wrap gap-2">
-          <Button
-            disabled={isPending}
-            focusableWhenDisabled
-            onClick={() => setState("uploading")}
-            size="sm"
-            variant="outline"
-          >
-            <UploadIcon aria-hidden="true" />
-            {copy.action}
-          </Button>
-
-          <Button
-            busy={isPending}
-            formAction={() =>
-              run(async () => ((await actions.dismiss()) ? null : "failed"), "dismissed")
-            }
-            icon={<XIcon aria-hidden="true" />}
-            size="sm"
-            type="submit"
-            variant="ghost"
-          >
+        <SuggestionActions
+          main={
+            <SuggestionAction
+              disabled={isPending}
+              icon={<UploadIcon aria-hidden="true" />}
+              onClick={() => setState("uploading")}
+              variant={mainVariant}
+            >
+              {copy.action}
+            </SuggestionAction>
+          }
+        >
+          <SuggestionAction action={dismiss} busy={isPending} variant="outline">
             {t("Not now")}
-          </Button>
-        </form>
+          </SuggestionAction>
+        </SuggestionActions>
       )}
 
       {state === "uploading" && (
@@ -262,17 +253,13 @@ export function UploadRequestCard({
         </p>
       )}
 
-      {unreadable && state !== "answered" && (
-        <UnreadableNote items={[{ ...unreadable, id: "", readStatus: "unreadable" }]} />
-      )}
-
       {failure === "alreadyRead" && (
         <ChangeSaveError>
           {t("We already read this document. Upload a different one.")}
         </ChangeSaveError>
       )}
 
-      {failure === "failed" && <ChangeSaveError />}
-    </section>
+      {failure === "failed" && <SuggestionSaveError />}
+    </>
   );
 }
