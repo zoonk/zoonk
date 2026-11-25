@@ -1,9 +1,5 @@
-import { normalizeString } from "@zoonk/utils/string";
-import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
+import { type BlueprintContent, type Citation } from "./blueprint-contract";
 
-type Mock = NonNullable<ExamStructure["mock"]>;
-type Section = Mock["sections"][number];
-type Scoring = Mock["scoring"];
 type KindedItem = { citation: Citation; kind?: string };
 
 const NON_FACT_KEYS = new Set(["citation", "citations", "key", "translations"]);
@@ -22,11 +18,18 @@ function countFacts(value: unknown): number {
   return value === null || value === undefined || value === "" || value === false ? 0 : 1;
 }
 
+/**
+ * Two readings of one notice word their items differently, so items can't be paired across them:
+ * a section comes whole from the reading that confirmed more of it.
+ */
+function saysMore<T>({ read, stored }: { read: T; stored: T }): T {
+  return countFacts(stored) > countFacts(read) ? stored : read;
+}
+
 function kindOf(item: KindedItem): string {
   return item.kind ?? "other";
 }
 
-/** In the stored order, so a kept item isn't reported as a change. */
 function keepLeftOutKinds<T extends KindedItem>({
   isCited,
   read,
@@ -36,110 +39,18 @@ function keepLeftOutKinds<T extends KindedItem>({
   read: T[];
   stored: T[];
 }): T[] {
-  if (read.length === 0) {
+  const readKinds = Map.groupBy(read, (item) => kindOf(item));
+  const kept = stored.filter((item) => !readKinds.has(kindOf(item)) && isCited(item.citation));
+
+  if (read.length === 0 || kept.length === 0) {
     return read;
   }
 
-  const readKinds = Map.groupBy(read, (item) => kindOf(item));
+  const keptKinds = Map.groupBy(kept, (item) => kindOf(item));
   const kinds = new Set([...stored, ...read].map((item) => kindOf(item)));
 
-  return [...kinds].flatMap(
-    (kind) =>
-      readKinds.get(kind) ??
-      stored.filter((item) => kindOf(item) === kind && isCited(item.citation)),
-  );
-}
-
-/** A scoring the check didn't confirm comes back as "other" with no description. */
-function isUnknownScoring(scoring: Scoring): boolean {
-  return scoring.method === "other" && !scoring.description;
-}
-
-function orStored<T>({ read, stored }: { read: T[] | undefined; stored: T[] | undefined }) {
-  return read && read.length > 0 ? read : stored;
-}
-
-function fillScoring({ read, stored }: { read: Scoring; stored: Scoring }): Scoring {
-  if (isUnknownScoring(read)) {
-    return stored;
-  }
-
-  if (read.method !== stored.method) {
-    return read;
-  }
-
-  const finalShares = orStored({ read: read.finalShares, stored: stored.finalShares });
-  const marking = orStored({ read: read.marking, stored: stored.marking });
-  const parts = orStored({ read: read.parts, stored: stored.parts });
-  const relative = read.relative ?? stored.relative;
-  const scale = read.scale ?? stored.scale;
-  const totalMinimum = read.totalMinimum ?? stored.totalMinimum;
-  const wrongPenalty = read.wrongPenalty ?? stored.wrongPenalty;
-
-  return {
-    ...read,
-    description: read.description || stored.description,
-    ...(finalShares && { finalShares }),
-    ...(marking && { marking }),
-    ...(parts && { parts }),
-    ...(relative !== undefined && { relative }),
-    ...(scale !== undefined && { scale }),
-    ...(totalMinimum !== undefined && { totalMinimum }),
-    ...(wrongPenalty !== undefined && { wrongPenalty }),
-  };
-}
-
-function fillSection({ read, stored }: { read: Section; stored: Section }): Section {
-  const breakAfterMinutes = read.breakAfterMinutes ?? stored.breakAfterMinutes;
-  const navigation = read.navigation ?? stored.navigation;
-  const session = read.session ?? stored.session;
-  const tasks = countFacts(read.tasks) >= countFacts(stored.tasks) ? read.tasks : stored.tasks;
-  const tools = read.tools ?? stored.tools;
-
-  return {
-    ...read,
-    ...(breakAfterMinutes !== undefined && { breakAfterMinutes }),
-    day: read.day ?? stored.day,
-    minutes: read.minutes ?? stored.minutes,
-    ...(navigation !== undefined && { navigation }),
-    questions: read.questions ?? stored.questions,
-    ...(session !== undefined && { session }),
-    ...(tasks !== undefined && { tasks }),
-    ...(tools !== undefined && { tools }),
-  };
-}
-
-/**
- * Sections pair by name. A stored section the reading didn't name is kept only when the reading
- * named none: one it renamed would otherwise sit twice in every mock.
- */
-function fillSections({ read, stored }: { read: Section[]; stored: Section[] }): Section[] {
-  if (read.length === 0) {
-    return stored;
-  }
-
-  const byName = new Map(stored.map((section) => [normalizeString(section.name), section]));
-
-  return read.map((section) => {
-    const match = byName.get(normalizeString(section.name));
-    return match ? fillSection({ read: section, stored: match }) : section;
-  });
-}
-
-function fillMock({ read, stored }: { read: Mock | null; stored: Mock | null }): Mock | null {
-  if (!read || !stored) {
-    return read;
-  }
-
-  return {
-    ...read,
-    adaptive: read.adaptive || stored.adaptive,
-    order: read.order ?? stored.order,
-    scoring: fillScoring({ read: read.scoring, stored: stored.scoring }),
-    sections: fillSections({ read: read.sections, stored: stored.sections }),
-    timeLimitMinutes: read.timeLimitMinutes ?? stored.timeLimitMinutes,
-    totalQuestions: read.totalQuestions ?? stored.totalQuestions,
-  };
+  // In the stored order, so a kept item isn't reported as a change.
+  return [...kinds].flatMap((kind) => readKinds.get(kind) ?? keptKinds.get(kind) ?? []);
 }
 
 export function isSameNotice({
@@ -153,12 +64,33 @@ export function isSameNotice({
   return sourceHash !== null && sourceHash === stored.edition.sourceHash;
 }
 
+function keepFromSameNotice({
+  read,
+  stored,
+}: {
+  read: BlueprintContent;
+  stored: BlueprintContent;
+}): BlueprintContent {
+  return {
+    ...read,
+    edition: {
+      ...read.edition,
+      dates: saysMore({ read: read.edition.dates, stored: stored.edition.dates }),
+    },
+    structure: {
+      ...read.structure,
+      formats: saysMore({ read: read.structure.formats, stored: stored.structure.formats }),
+      mock: saysMore({ read: read.structure.mock, stored: stored.structure.mock }),
+      rules: saysMore({ read: read.structure.rules, stored: stored.structure.rules }),
+    },
+  };
+}
+
 /**
- * A reading holds only what one extraction stated and one check confirmed, so a fact it leaves out
- * may still be in the documents. The mock's parts carry no passage of their own, so only a re-read
- * of the same notice fills them from the stored mock.
+ * A changed notice may have removed what its reading left out, and only formats, rules and dates
+ * carry a passage to check that against; the mock's parts don't, so it's taken as read.
  */
-export function keepStoredFacts({
+function keepFromChangedNotice({
   isCited,
   read,
   stored,
@@ -167,8 +99,6 @@ export function keepStoredFacts({
   read: BlueprintContent;
   stored: BlueprintContent;
 }): BlueprintContent {
-  const sameNotice = isSameNotice({ read, stored });
-
   const keep = <T extends KindedItem>(items: { read: T[]; stored: T[] }) =>
     keepLeftOutKinds({ isCited, ...items });
 
@@ -181,10 +111,22 @@ export function keepStoredFacts({
     structure: {
       ...read.structure,
       formats: keep({ read: read.structure.formats, stored: stored.structure.formats }),
-      mock: sameNotice
-        ? fillMock({ read: read.structure.mock, stored: stored.structure.mock })
-        : read.structure.mock,
       rules: keep({ read: read.structure.rules, stored: stored.structure.rules }),
     },
   };
+}
+
+/** A reading holds only what one extraction stated and one check confirmed that run. */
+export function keepStoredFacts({
+  isCited,
+  read,
+  stored,
+}: {
+  isCited: (citation: Citation) => boolean;
+  read: BlueprintContent;
+  stored: BlueprintContent;
+}): BlueprintContent {
+  return isSameNotice({ read, stored })
+    ? keepFromSameNotice({ read, stored })
+    : keepFromChangedNotice({ isCited, read, stored });
 }

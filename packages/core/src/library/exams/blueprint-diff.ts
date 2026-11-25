@@ -247,10 +247,13 @@ export function mergeBlueprintContent({
   current: BlueprintContent;
   next: BlueprintContent;
 }): BlueprintMerge {
-  const next = {
-    ...read,
-    structure: withWrittenTaskKeys({ current: current.structure, next: read.structure }),
-  };
+  // A mock kept as stored keeps its task keys, which learners' written answers point to.
+  const next = isSame(read.structure.mock, current.structure.mock)
+    ? read
+    : {
+        ...read,
+        structure: withWrittenTaskKeys({ current: current.structure, next: read.structure }),
+      };
 
   const changes = getSections({ current, next })
     .filter((section) => isChanged(section))

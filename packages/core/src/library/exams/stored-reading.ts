@@ -2,10 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type BlueprintContent, type Citation } from "./blueprint-contract";
 import { carryConfirmedGaps } from "./confirmed-gaps";
-import { isPassageInDocument } from "./passage-check";
+import { isPassageExactlyInDocument } from "./passage-check";
 import { isSameNotice, keepStoredFacts } from "./stored-facts";
 
-/** A changed notice may live in a new source, so a passage counts in any document the reading read. */
+/**
+ * A changed notice may live in a new source, so a passage counts in any document the reading read,
+ * and only word for word: the near match a reading's own check allows reads "may use" in "may not use".
+ */
 async function loadCitedCheck({
   read,
   stored,
@@ -25,7 +28,7 @@ async function loadCitedCheck({
   const texts = sources.flatMap((source) => (source.extractedText ? [source.extractedText] : []));
 
   return (citation) =>
-    texts.some((text) => isPassageInDocument({ passage: citation.passage, text }));
+    texts.some((text) => isPassageExactlyInDocument({ passage: citation.passage, text }));
 }
 
 export async function readOverStored({

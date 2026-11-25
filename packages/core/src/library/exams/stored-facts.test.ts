@@ -1,16 +1,24 @@
 import { describe, expect, it } from "vitest";
 import { type BlueprintContent, type ExamStructure } from "./blueprint-contract";
+import { mergeBlueprintContent } from "./blueprint-diff";
 import { keepStoredFacts } from "./stored-facts";
 
 type Mock = NonNullable<ExamStructure["mock"]>;
+type Format = ExamStructure["formats"][number];
 
 const CITATION = { passage: "Część pisemna trwa 60 minut.", sourceId: "source-1" };
 
+function format(kind: Format["kind"], description: string): Format {
+  return { citation: CITATION, description, kind, options: null };
+}
+
 function content({
-  conditions,
+  conditions = null,
+  formats = [],
   sourceHash = "hash-1",
 }: {
-  conditions: Mock | null;
+  conditions?: Mock | null;
+  formats?: Format[];
   sourceHash?: string;
 }) {
   return {
@@ -24,109 +32,129 @@ function content({
       timeZone: null,
       year: 2027,
     },
-    structure: { formats: [], mock: conditions, rules: [], subjects: [] },
+    structure: { formats, mock: conditions, rules: [], subjects: [] },
     topicFrequency: [],
   } satisfies BlueprintContent;
 }
 
-function mock(overrides: Partial<Mock> = {}): Mock {
+function mock(sections: Mock["sections"]): Mock {
   return {
     adaptive: false,
     citations: [CITATION],
     order: null,
-    scoring: { description: "Punkty", method: "raw", wrongPenalty: 0.25 },
-    sections: [
-      {
-        day: 1,
-        kind: "listening",
-        minutes: 55,
-        name: "Comprensión auditiva",
-        questions: 38,
-        tasks: [
-          { count: 5, description: "Conversación", plays: 2 },
-          { count: 8, description: "Entrevista", plays: 2 },
-        ],
-      },
-    ],
+    scoring: { description: "Punkty", method: "raw" },
+    sections,
     timeLimitMinutes: 180,
     totalQuestions: 38,
-    ...overrides,
   };
 }
 
-function keep({ read, stored }: { read: Mock | null; stored: Mock | null }) {
-  return keepStoredFacts({
-    isCited: () => true,
-    read: content({ conditions: read }),
-    stored: content({ conditions: stored }),
-  }).structure.mock;
-}
+const LISTENING: Mock["sections"][number] = {
+  day: 1,
+  kind: "listening",
+  minutes: 55,
+  name: "Comprensión auditiva",
+  questions: 38,
+  tasks: [
+    { count: 5, description: "Conversación", plays: 2 },
+    { count: 8, description: "Entrevista", plays: 2 },
+  ],
+};
+
+const WRITING: Mock["sections"][number] = {
+  day: 1,
+  kind: "written",
+  minutes: 50,
+  name: "Expresión escrita",
+  questions: null,
+  tasks: [
+    { count: 1, description: "Essay", key: "written-a", points: 10 },
+    { count: 1, description: "Essay", key: "written-b", points: 10 },
+  ],
+};
 
 describe(keepStoredFacts, () => {
-  it("takes the stored scoring when the re-read couldn't confirm one", () => {
-    const stored = mock();
-    const read = mock({ scoring: { description: "", method: "other" } });
+  it("keeps the stored mock whole when a re-read of the same notice confirmed less of it", () => {
+    const stored = content({ conditions: mock([LISTENING, WRITING]) });
 
-    expect(keep({ read, stored })?.scoring).toStrictEqual(stored.scoring);
+    const read = content({
+      conditions: mock([{ ...LISTENING, minutes: null, tasks: LISTENING.tasks?.slice(0, 1) }]),
+    });
+
+    expect(keepStoredFacts({ isCited: () => false, read, stored }).structure.mock).toBe(
+      stored.structure.mock,
+    );
   });
 
-  it("fills a scoring of the same method and takes another method as read", () => {
-    const stored = mock();
+  it("takes a re-read of the same notice that confirmed as much or more, corrections included", () => {
+    const stored = content({ conditions: mock([LISTENING]) });
+    const corrected = content({ conditions: mock([{ ...LISTENING, minutes: 60 }]) });
 
     expect(
-      keep({ read: mock({ scoring: { description: "", method: "raw" } }), stored })?.scoring,
-    ).toStrictEqual({ description: "Punkty", method: "raw", wrongPenalty: 0.25 });
-
-    const scaled = { description: "Escala", method: "scaled" as const };
-    expect(keep({ read: mock({ scoring: scaled }), stored })?.scoring).toStrictEqual(scaled);
+      keepStoredFacts({ isCited: () => false, read: corrected, stored }).structure.mock,
+    ).toStrictEqual(corrected.structure.mock);
   });
 
-  it("keeps the stored sections when the re-read confirmed none", () => {
-    const stored = mock();
-    expect(keep({ read: mock({ sections: [] }), stored })?.sections).toStrictEqual(stored.sections);
+  it("keeps both essays when a re-read of the same notice found only one", () => {
+    const formats = [format("essay", "Letter"), format("essay", "Report")];
+    const stored = content({ formats });
+    const read = content({ formats: [format("essay", "Letter")] });
+
+    expect(keepStoredFacts({ isCited: () => false, read, stored }).structure.formats).toBe(formats);
   });
 
-  it("takes the task list that says more, so a richer re-read wins and a thinner one doesn't", () => {
-    const stored = mock();
-    const [section] = stored.sections;
+  it("keeps the keys of written tasks taken from the stored mock, so saved answers still match", () => {
+    const stored = content({ conditions: mock([LISTENING, WRITING]) });
+    const read = content({ conditions: mock([LISTENING]) });
 
-    if (!section?.tasks) {
-      throw new Error("fixture");
-    }
-
-    const thinner = mock({ sections: [{ ...section, tasks: section.tasks.slice(0, 1) }] });
-
-    const richer = mock({
-      sections: [{ ...section, tasks: section.tasks.map((task) => ({ ...task, points: 1 })) }],
+    const merged = mergeBlueprintContent({
+      current: stored,
+      next: keepStoredFacts({ isCited: () => true, read, stored }),
     });
 
-    expect(keep({ read: thinner, stored })?.sections[0]?.tasks).toStrictEqual(section.tasks);
-    expect(keep({ read: richer, stored })?.sections).toStrictEqual(richer.sections);
+    expect(merged.changes).toStrictEqual([]);
+
+    expect(
+      merged.content.structure.mock?.sections[1]?.tasks?.map((task) => task.key),
+    ).toStrictEqual(["written-a", "written-b"]);
   });
 
-  it("never adds a stored section the re-read named differently", () => {
-    const stored = mock();
-    const [section] = stored.sections;
-
-    if (!section) {
-      throw new Error("fixture");
-    }
-
-    const renamed = { ...section, minutes: null, name: "Prueba de comprensión auditiva" };
-    const read = mock({ sections: [renamed] });
-
-    expect(keep({ read, stored })?.sections).toStrictEqual([renamed]);
-  });
-
-  it("takes a changed notice's mock as read, since its parts carry no passage to check", () => {
-    const read = mock({ sections: [], timeLimitMinutes: null });
-
-    const merged = keepStoredFacts({
-      isCited: () => true,
-      read: content({ conditions: read, sourceHash: "hash-2" }),
-      stored: content({ conditions: mock() }),
+  it("keeps a changed notice's left-out kind only while its passage is still there, and its mock as read", () => {
+    const stored = content({
+      conditions: mock([LISTENING]),
+      formats: [format("multipleChoice", "Test"), format("essay", "Letter")],
     });
 
-    expect(merged.structure.mock).toStrictEqual(read);
+    const read = content({
+      conditions: mock([{ ...LISTENING, minutes: null }]),
+      formats: [format("multipleChoice", "Zamknięte")],
+      sourceHash: "hash-2",
+    });
+
+    const quoted = keepStoredFacts({ isCited: () => true, read, stored });
+    const silent = keepStoredFacts({ isCited: () => false, read, stored });
+
+    expect(quoted.structure.formats.map((item) => item.description)).toStrictEqual([
+      "Zamknięte",
+      "Letter",
+    ]);
+
+    expect(silent.structure.formats).toBe(read.structure.formats);
+    expect(quoted.structure.mock).toBe(read.structure.mock);
+  });
+
+  it("leaves a changed notice's reading in its own order when it keeps nothing", () => {
+    const formats = [
+      format("essay", "Letter"),
+      format("oral", "Interview"),
+      format("essay", "Report"),
+    ];
+
+    const read = content({ formats, sourceHash: "hash-2" });
+
+    expect(
+      keepStoredFacts({ isCited: () => true, read, stored: content({ formats }) }).structure
+        .formats,
+    ).toBe(formats);
   });
 });
