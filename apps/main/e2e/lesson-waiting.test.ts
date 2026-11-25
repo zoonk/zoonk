@@ -140,11 +140,9 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
 
   await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
   await page.reload();
-  const start = page.getByRole("button", { name: "Prepare" });
-  await expectHydrated(start);
-  await start.click();
 
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Prepare" })).toHaveCount(0);
   await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
 
   await prisma.step.deleteMany({ where: { lessonId: lesson.id } });
