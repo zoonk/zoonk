@@ -42,8 +42,20 @@ function contrastRatio({ background, foreground }: { background: Rgba; foregroun
 
 const { palette, subjects, tokens } = readPalette();
 const modes: Mode[] = ["light", "dark", "lightMoreContrast", "darkMoreContrast"];
-const textRoles = ["foreground", "muted-foreground", "faint"];
 const surfaces = ["background", "card", "muted"];
+
+/**
+ * Where each step's words sit: every row, menu and band, and for the two stronger steps the
+ * learner's pick (a picked row's second line) and the third step (a highlighted search result).
+ */
+const PAGE_SURFACES = [...surfaces, "popover", "ground", "secondary"];
+const PICK_SURFACES = [...PAGE_SURFACES, "selected-tint", "surface-3"];
+
+const TEXT_SURFACES = {
+  faint: PAGE_SURFACES,
+  foreground: PICK_SURFACES,
+  "muted-foreground": PICK_SURFACES,
+};
 
 /** Words are AA in the regular theme and AAA when more contrast is asked for. */
 function textMinimum(mode: Mode): number {
@@ -75,8 +87,8 @@ function pick(colors: Map<string, Rgba>, name: string): Rgba {
 }
 
 const pairs = modes.flatMap((mode) =>
-  textRoles.flatMap((text) =>
-    surfaces.map((surface) => ({
+  Object.entries(TEXT_SURFACES).flatMap(([text, textSurfaces]) =>
+    textSurfaces.map((surface) => ({
       minimum: textMinimum(mode),
       mode,
       ratio: contrastRatio({
