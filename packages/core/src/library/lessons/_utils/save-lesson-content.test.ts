@@ -208,6 +208,30 @@ describe(saveLessonContent, () => {
     ).resolves.toMatchObject({ itemId: null, skillId: skill.id });
   });
 
+  it("keeps a private lesson's numeric check out of its public skill's bank", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+    const user = await userFixture();
+
+    await prisma.lesson.update({
+      data: { ownerId: user.id, visibility: "private" },
+      where: { id: lesson.id },
+    });
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [numericScreen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    await expect(
+      prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({ itemId: null, skillId: skill.id });
+
+    await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(0);
+  });
+
   it("keeps the bank item's option indexes when re-saving and replaces it when the key changes", async () => {
     const { lesson, skill, workflowRunId } = await claimedLesson();
     const selected = { ...screen(skill.id), standsAlone: true };

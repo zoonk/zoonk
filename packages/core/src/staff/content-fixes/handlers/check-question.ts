@@ -52,13 +52,13 @@ export async function syncStepCheckQuestion(tx: TransactionClient, step: Step) {
   });
 
   const question =
-    !step.mediaAssetId && lesson.ownerId === previous.skill.ownerId
+    !previous.retiredAt && !step.mediaAssetId && lesson.ownerId === previous.skill.ownerId
       ? toCheckQuestion(step.content)
       : null;
 
   const itemId = await saveQuestionItem(tx, {
+    available: new Map([[previous.id, previous]]),
     language: lesson.language,
-    previous,
     screen: { provenance: step, question, skillId: step.skillId },
   });
 

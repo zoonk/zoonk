@@ -1,9 +1,9 @@
 import { isDeepStrictEqual } from "node:util";
 import { DbNull, type TransactionClient, sql } from "@zoonk/db";
-import { toStoredItem } from "../../../../library/items/item-content";
 import {
-  matchCheckQuestion,
-  updateCheckQuestion,
+  findQuestionMatch,
+  questionItemData,
+  reuseQuestionItem,
 } from "../../../../library/lessons/_utils/screen-question-item";
 import {
   retireUnaskedQuestions,
@@ -60,11 +60,18 @@ async function updateKeptCheckQuestions(tx: TransactionClient, after: ScreenSnap
   await Promise.all(
     items.map(async (item) => {
       const screen = checks.find(({ itemId }) => itemId === item.id);
-      const question = screen && toCheckQuestion(screen.content);
-      const content = question && matchCheckQuestion(item.content, question);
 
-      if (content) {
-        await updateCheckQuestion(tx, item, content);
+      if (!screen?.skillId) {
+        return;
+      }
+
+      const question = toCheckQuestion(screen.content);
+
+      const match =
+        question && findQuestionMatch({ items: [item], question, skillId: screen.skillId });
+
+      if (match) {
+        await reuseQuestionItem(tx, match);
       }
     }),
   );
@@ -88,11 +95,9 @@ export async function applyLessonScreens(
 
     await tx.item.createMany({
       data: change.newItems.map(({ id, question, skillId }) => ({
-        ...toStoredItem(question),
+        ...questionItemData({ language, question, skillId }),
         ...provenance,
         id,
-        language,
-        skillId,
       })),
     });
   }

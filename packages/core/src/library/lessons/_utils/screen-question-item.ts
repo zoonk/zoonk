@@ -4,7 +4,7 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "@zoonk/ai/tasks/item
 import { type Item, type TransactionClient } from "@zoonk/db";
 import { z } from "zod";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
-import { parseItemContent, toStoredItem } from "../../items/item-content";
+import { normalizeItem, parseItemContent, toStoredItem } from "../../items/item-content";
 import { type ScreenMathItem } from "../../steps/written-screens";
 import { CURRENT_STEPS } from "../lesson-versions";
 
@@ -72,114 +72,101 @@ function matchChoice(previous: unknown, next: unknown): ChoiceItem | null {
   return ordered.length === options.length ? { ...after.content, options: ordered } : null;
 }
 
-export function matchCheckQuestion(
-  previous: unknown,
-  next: Extract<ScreenQuestion, { format: "multipleChoice" }>,
-) {
-  return matchChoice(previous, toStoredItem(next).content);
-}
+type QuestionMatch = { item: AskedItem; updatedChoice: ChoiceItem | null };
 
-export async function updateCheckQuestion(
-  tx: TransactionClient,
+function matchQuestionContent(
   item: AskedItem,
-  content: ChoiceItem,
-): Promise<void> {
-  if (!isDeepStrictEqual(item.content, content)) {
-    await tx.item.update({ data: { content }, where: { id: item.id } });
-    await tx.answerExplanation.deleteMany({ where: { itemId: item.id } });
-  }
-}
-
-function matchingContent(
-  item: AskedItem,
-  stored: ReturnType<typeof toStoredItem>,
-): ChoiceItem | true | null {
-  if (item.format !== stored.format) {
+  normalized: ReturnType<typeof normalizeItem>,
+): QuestionMatch | null {
+  if (item.format !== normalized.format) {
     return null;
   }
 
-  if (stored.format === "multipleChoice") {
-    return matchChoice(item.content, stored.content);
+  if (normalized.format === "multipleChoice") {
+    const updatedChoice = matchChoice(item.content, normalized.content);
+    return updatedChoice ? { item, updatedChoice } : null;
   }
 
   // oxlint-disable-next-line unicorn/prefer-structured-clone -- JSON drops undefined fields, as the column does.
-  const content: unknown = JSON.parse(JSON.stringify(stored.content));
-  return isDeepStrictEqual(item.content, content) ? true : null;
+  const content: unknown = JSON.parse(JSON.stringify(normalized.content));
+  return isDeepStrictEqual(item.content, content) ? { item, updatedChoice: null } : null;
 }
 
-function findMatch(
-  asked: readonly AskedItem[],
-  skillId: string,
-  stored: ReturnType<typeof toStoredItem>,
-) {
-  for (const item of asked) {
-    const content = item.skillId === skillId ? matchingContent(item, stored) : null;
+export function findQuestionMatch({
+  items,
+  question,
+  skillId,
+}: {
+  items: Iterable<AskedItem>;
+  question: ScreenQuestion;
+  skillId: string;
+}): QuestionMatch | null {
+  const normalized = normalizeItem(question);
 
-    if (content) {
-      return { content, item };
+  for (const item of items) {
+    const match = item.skillId === skillId ? matchQuestionContent(item, normalized) : null;
+
+    if (match) {
+      return match;
     }
   }
 
   return null;
 }
 
-async function reuseQuestionItem(
+export async function reuseQuestionItem(
   tx: TransactionClient,
-  match: NonNullable<ReturnType<typeof findMatch>>,
-) {
-  if (match.content !== true) {
-    await updateCheckQuestion(tx, match.item, match.content);
+  { item, updatedChoice }: QuestionMatch,
+): Promise<string> {
+  if (updatedChoice && !isDeepStrictEqual(item.content, updatedChoice)) {
+    await tx.item.update({ data: { content: updatedChoice }, where: { id: item.id } });
+    await tx.answerExplanation.deleteMany({ where: { itemId: item.id } });
   }
 
-  return match.item.id;
+  return item.id;
+}
+
+export function questionItemData({
+  language,
+  question,
+  skillId,
+}: {
+  language: string;
+  question: ScreenQuestion;
+  skillId: string;
+}) {
+  return { ...toStoredItem(question), language, skillId };
 }
 
 export async function saveQuestionItem(
   tx: TransactionClient,
   {
+    available,
     language,
-    previous,
     screen,
-  }: { language: string; previous: AskedItem | null; screen: QuestionScreen },
+  }: { available: Map<string, AskedItem>; language: string; screen: QuestionScreen },
 ): Promise<string | null> {
-  if (!screen.question || !screen.skillId) {
+  const { provenance, question, skillId } = screen;
+
+  if (!question || !skillId) {
     return null;
   }
 
-  const stored = toStoredItem(screen.question);
-  const match = findMatch(previous ? [previous] : [], screen.skillId, stored);
+  const match = findQuestionMatch({ items: available.values(), question, skillId });
 
-  return match
-    ? reuseQuestionItem(tx, match)
-    : createQuestionItem(tx, {
-        language,
-        provenance: screen.provenance,
-        skillId: screen.skillId,
-        stored,
-      });
-}
+  if (match) {
+    available.delete(match.item.id);
+    return reuseQuestionItem(tx, match);
+  }
 
-async function createQuestionItem(
-  tx: TransactionClient,
-  {
-    language,
-    provenance,
-    skillId,
-    stored,
-  }: {
-    language: string;
-    provenance: LibraryProvenance;
-    skillId: string;
-    stored: ReturnType<typeof toStoredItem>;
-  },
-): Promise<string> {
   const item = await tx.item.create({
-    data: { ...stored, language, skillId, ...toProvenanceData(provenance) },
+    data: { ...questionItemData({ language, question, skillId }), ...toProvenanceData(provenance) },
   });
 
   return item.id;
 }
 
+/** Run before retiring the current version so its questions can keep their IDs. */
 export async function saveQuestionItems(
   tx: TransactionClient,
   {
@@ -188,45 +175,31 @@ export async function saveQuestionItems(
     screens,
   }: { language: string; lessonId: string; screens: readonly QuestionScreen[] },
 ): Promise<(string | null)[]> {
-  if (!screens.some(({ question, skillId }) => question && skillId)) {
+  const skillIds = screens.flatMap(({ question, skillId }) =>
+    question && skillId ? [skillId] : [],
+  );
+
+  if (skillIds.length === 0) {
     return screens.map(() => null);
   }
-
-  const choiceSkillIds = screens.flatMap(({ question, skillId }) =>
-    question?.format === "multipleChoice" && skillId ? [skillId] : [],
-  );
 
   const [asked, matchingSkills] = await Promise.all([
     tx.item.findMany({
       select: { content: true, format: true, id: true, skillId: true },
       where: { steps: { some: { lessonId, ...CURRENT_STEPS } } },
     }),
-    choiceSkillIds.length > 0 ? findMatchingSkills(tx, { lessonId, skillIds: choiceSkillIds }) : [],
+    findMatchingSkills(tx, { lessonId, skillIds }),
   ]);
 
   const available = new Map(asked.map((item) => [item.id, item]));
   const allowed = new Set(matchingSkills.map(({ id }) => id));
 
   return Promise.all(
-    screens.map(async ({ provenance, question, skillId }) => {
-      if (
-        !question ||
-        !skillId ||
-        (question.format === "multipleChoice" && !allowed.has(skillId))
-      ) {
-        return null;
-      }
-
-      const stored = toStoredItem(question);
-      const match = findMatch([...available.values()], skillId, stored);
-
-      if (match) {
-        available.delete(match.item.id);
-        return reuseQuestionItem(tx, match);
-      }
-
-      return createQuestionItem(tx, { language, provenance, skillId, stored });
-    }),
+    screens.map((screen) =>
+      screen.skillId && allowed.has(screen.skillId)
+        ? saveQuestionItem(tx, { available, language, screen })
+        : Promise.resolve(null),
+    ),
   );
 }
 

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { getLessonScreenSkillId } from "../../../../library/lessons/_utils/lesson-screen-skill";
-import { matchCheckQuestion } from "../../../../library/lessons/_utils/screen-question-item";
+import { findQuestionMatch } from "../../../../library/lessons/_utils/screen-question-item";
 import { toCheckQuestion } from "../../../../library/steps/_utils/check-question";
 import { STEP_CONTRACT_VERSION } from "../../../../library/steps/contract/step-contract";
 import { type ContentFixEffect } from "../../contract";
@@ -129,7 +129,7 @@ function updateCheckLink({
 
   if (!question || !screen.skillId) {
     screen.itemId = null;
-  } else if (!matchCheckQuestion(item.content, question)) {
+  } else if (!findQuestionMatch({ items: [item], question, skillId: screen.skillId })) {
     const id = allocatedItemId ?? randomUUID();
     screen.itemId = id;
     newItems.push({ id, question, skillId: screen.skillId });
