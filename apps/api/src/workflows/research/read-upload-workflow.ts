@@ -1,4 +1,3 @@
-import { startFollowUps } from "@zoonk/core/follow-ups/starter";
 import {
   type UploadPage,
   type UploadReading,
@@ -35,13 +34,7 @@ async function readUploadPageStep(input: {
 async function saveUploadReadingStep(input: Parameters<typeof saveUploadReading>[0]) {
   "use step";
 
-  return saveUploadReading(input);
-}
-
-async function startVisibilityFollowUpStep(userId: string) {
-  "use step";
-
-  await startFollowUps(userId);
+  await saveUploadReading(input);
 }
 
 async function readPages(upload: UploadReading) {
@@ -68,16 +61,12 @@ async function readUploadWorkflow(sourceId: string): Promise<void> {
 
   const results = upload ? await readPages(upload) : [];
 
-  const userId = await saveUploadReadingStep({
+  await saveUploadReadingStep({
     failed: results.length === 0 || results.some((result) => result.status === "rejected"),
     pages: results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : [])),
     sourceId,
     updatedAt: upload?.updatedAt,
   });
-
-  if (userId) {
-    await startVisibilityFollowUpStep(userId);
-  }
 }
 
 export function startUploadReading(sourceId: string) {

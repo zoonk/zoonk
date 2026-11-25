@@ -14,7 +14,7 @@ import { toSourceUrl } from "./fetch-document";
 import { type AdoptedUpload, linkUpload } from "./link-upload";
 import { type UploadContent, type UploadRead, getDefaultTitle, readUpload } from "./read-upload";
 import { SOURCE_READ_VERSION, type SourceStructure } from "./source-contract";
-import { withSourceReadStatus } from "./source-read-status";
+import { hasWords, withSourceReadStatus } from "./source-read-status";
 import { deleteUploadedBlob, keepUploadedBlob } from "./upload-blob";
 
 type UploadedSource = ReturnType<typeof withSourceReadStatus<Omit<Source, "extractedText">>>;
@@ -46,7 +46,9 @@ function findStoredCopy({
     omit: { extractedText: true },
     orderBy: { createdAt: "asc" },
     where: {
-      ...(content.visualOnly ? { kind: "upload", ownerId: userId } : libraryRowsVisibleTo(userId)),
+      ...(content.parsed.visualPages
+        ? { kind: "upload", ownerId: userId, visibility: "private" }
+        : libraryRowsVisibleTo(userId)),
       contentHash: content.hash,
     },
   });
@@ -70,13 +72,13 @@ async function getOwnGoalId({ goalId, userId }: { goalId?: string | null; userId
   return goal?.id ?? null;
 }
 
-function getUploadStructure({ parsed, visualOnly }: UploadContent): SourceStructure {
+function getUploadStructure({ parsed }: UploadContent): SourceStructure {
   return {
     images: parsed.images.length,
     pages: parsed.pages,
     topic: null,
     ...(parsed.visualPages && {
-      ...(!visualOnly && { mixedPdf: true }),
+      ...(hasWords(parsed.text) && { mixedPdf: true }),
       visualPages: parsed.visualPages,
     }),
   };
@@ -104,7 +106,7 @@ async function createPrivateSource({
   }
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const stored = content.visualOnly
+    const stored = content.parsed.visualPages
       ? await findStoredCopy({ content, db: tx, userId })
       : await tx.source.findUnique({
           omit: { extractedText: true },

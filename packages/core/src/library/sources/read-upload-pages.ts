@@ -3,8 +3,6 @@ import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../cache/tags";
-import { recordFollowUps } from "../../follow-ups/owe-follow-ups";
-import { isMixedPdf } from "./load-source-documents";
 import { renderPdfPage } from "./render-pdf-page";
 import { renderPhotoPage } from "./render-photo-page";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, sourceStructureSchema } from "./source-contract";
@@ -75,47 +73,30 @@ export async function saveUploadReading({
   pages: UploadPage[];
   sourceId: string;
   updatedAt?: Date;
-}): Promise<string | null> {
+}): Promise<void> {
   const where = { id: sourceId, readState: "owed" as const, updatedAt };
 
   const source = await prisma.source.findFirst({
-    select: { extractedText: true, ownerId: true, structure: true },
+    select: { extractedText: true, ownerId: true },
     where,
   });
 
   if (!source?.ownerId) {
-    return null;
+    return;
   }
 
   const byIndex = new Map(pages.map(({ index, text }) => [index, text]));
   const text = (source.extractedText ?? "").split(PAGE_BREAK);
 
-  const ownerId = source.ownerId;
-  const mixedPdf = isMixedPdf(source);
-
-  const saved = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.source.updateMany({
-      data: {
-        extractedText: text.map((page, index) => byIndex.get(index) ?? page).join(PAGE_BREAK),
-        readState: failed ? "failed" : "read",
-      },
-      where,
-    });
-
-    if (count > 0 && mixedPdf) {
-      await recordFollowUps({
-        db: tx,
-        followUps: [{ input: { sourceId }, kind: "checkUploadVisibility" }],
-        userId: ownerId,
-      });
-    }
-
-    return count > 0;
+  const { count } = await prisma.source.updateMany({
+    data: {
+      extractedText: text.map((page, index) => byIndex.get(index) ?? page).join(PAGE_BREAK),
+      readState: failed ? "failed" : "read",
+    },
+    where,
   });
 
-  if (saved) {
-    revalidateCacheTags([getOnboardingDraftsCacheTag(ownerId)]);
+  if (count > 0) {
+    revalidateCacheTags([getOnboardingDraftsCacheTag(source.ownerId)]);
   }
-
-  return saved && mixedPdf ? ownerId : null;
 }

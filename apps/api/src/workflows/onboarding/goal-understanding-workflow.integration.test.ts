@@ -6,7 +6,6 @@ import { findExamDate } from "@zoonk/ai/tasks/goals/find-exam-date";
 import { understandGoal } from "@zoonk/ai/tasks/goals/understand-goal";
 import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { decideExamIdentity } from "@zoonk/ai/tasks/research/exam-identity-decision";
-import { classifyUploadVisibility } from "@zoonk/ai/tasks/research/upload-visibility";
 import { understandGoalWords } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
@@ -20,7 +19,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun, start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
-import { registerFollowUpRuns } from "../follow-ups/register-follow-up-runs";
 import { startUploadReading } from "../research/read-upload-workflow";
 import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
 
@@ -54,15 +52,9 @@ vi.mock("@zoonk/ai/tasks/research/exam-identity-decision", async (importOriginal
   decideExamIdentity: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/research/upload-visibility", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  classifyUploadVisibility: vi.fn(),
-}));
-
 describe(startUploadReading, () => {
-  it("starts mixed PDF visibility checking after saving its picture pages", async () => {
+  it("saves a mixed PDF's scanned pages without owing a visibility check", async () => {
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_test");
-    registerFollowUpRuns();
     const user = await userFixture();
     const pathname = `sources/${user.id}/${randomUUID()}-notes.pdf`;
     const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
@@ -105,36 +97,23 @@ describe(startUploadReading, () => {
 
     vi.mocked(transcribeMaterial).mockResolvedValue(taskResult({ text: "Scanned drawing" }));
 
-    vi.mocked(classifyUploadVisibility).mockResolvedValue(
-      taskResult({
-        documentKind: "classMaterial",
-        language: "en",
-        publisher: null,
-        title: "Notes",
-        visibility: "private",
-      }),
-    );
-
     try {
       const runId = await startUploadReading(source.id);
       await getRun(runId).returnValue;
 
-      await vi.waitFor(
-        () => {
-          expect(classifyUploadVisibility).toHaveBeenCalledWith(
-            expect.objectContaining({
-              document: expect.objectContaining({
-                file: { data: new Uint8Array(bytes), mediaType: "application/pdf" },
-                text: "Biology notes\fScanned drawing\fCell division",
-              }),
-            }),
-          );
-        },
-        { timeout: 10_000 },
-      );
+      await expect(
+        prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+      ).resolves.toMatchObject({
+        extractedText: "Biology notes\fScanned drawing\fCell division",
+        readState: "read",
+        visibility: "private",
+      });
+
+      await expect(
+        prisma.followUp.count({ where: { kind: "checkUploadVisibility", userId: user.id } }),
+      ).resolves.toBe(0);
     } finally {
       vi.unstubAllEnvs();
-      globalThis.zoonkFollowUpStarter = undefined;
     }
   });
 });

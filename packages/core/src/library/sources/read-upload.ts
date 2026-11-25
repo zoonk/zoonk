@@ -4,7 +4,6 @@ import { fetchDocument, toSourceUrl } from "./fetch-document";
 import { type ParsedDocument, hashDocument, parseDocument } from "./parse-document";
 import { MAX_PASTED_TEXT_LENGTH, isSourceUploadContentType } from "./source-contract";
 import { matchesSourceImageSignature } from "./source-image-signature";
-import { hasWords } from "./source-read-status";
 import { readUploadedBlob } from "./upload-blob";
 
 export type UploadRead =
@@ -17,7 +16,6 @@ export type UploadContent = {
   contentType: string;
   parsed: ParsedDocument;
   hash: string;
-  visualOnly?: boolean;
   url?: string;
 };
 
@@ -138,15 +136,12 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
     return { status: "unsupported" };
   }
 
-  const visualOnly = Boolean(parsed.visualPages) && !hasWords(parsed.text);
-
   return {
     content: {
       blobUrl: blob.url,
       contentType: blob.contentType,
-      hash: hashDocument({ bytes: blob.bytes, text: visualOnly ? null : parsed.text }),
+      hash: hashDocument({ bytes: blob.bytes, text: parsed.visualPages ? null : parsed.text }),
       parsed,
-      visualOnly,
     },
     status: "ready",
   };

@@ -51,18 +51,14 @@ async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8
   return fetched?.contentType === mimeType ? fetched.bytes : null;
 }
 
-export function isMixedPdf(source: Pick<Source, "structure">): boolean {
+function isMixedPdf(source: Pick<Source, "structure">): boolean {
   return sourceStructureSchema.safeParse(source.structure).data?.mixedPdf === true;
 }
 
 export function canCheckUploadVisibility(
-  source: Pick<Source, "kind" | "readState" | "structure" | "visibility">,
+  source: Pick<Source, "kind" | "readState" | "visibility">,
 ): boolean {
-  return (
-    source.kind === "upload" &&
-    source.visibility === "private" &&
-    (source.readState === null || (source.readState !== "owed" && isMixedPdf(source)))
-  );
+  return source.kind === "upload" && source.visibility === "private" && source.readState === null;
 }
 
 export async function loadUploadForVisibility({
