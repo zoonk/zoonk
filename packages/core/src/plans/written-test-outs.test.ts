@@ -141,6 +141,11 @@ describe("a skill that joins an exam's written part", () => {
     const { blueprint, goal, languageId, plan } = await setup();
 
     await prisma.planItem.updateMany({
+      data: { scheduledFor: new Date("2020-09-28T00:00:00Z") },
+      where: { planId: plan.id, skillId: languageId },
+    });
+
+    await prisma.planItem.updateMany({
       data: { completedAt: PLACED_AT, status: "done" },
       where: { kind: "lesson", planId: plan.id, status: "todo" },
     });
@@ -156,6 +161,15 @@ describe("a skill that joins an exam's written part", () => {
     const after = await lessonsOf({ planId: plan.id, skillId: languageId });
 
     expect(after.length).toBeGreaterThan(0);
-    expect(after.every((item) => item.status === "todo" && item.completedAt === null)).toBe(true);
+
+    expect(after).toStrictEqual(
+      after.map(() => ({
+        completedAt: null,
+        scheduledFor: expect.toSatisfy(
+          (day: Date | null) => day !== null && day >= new Date("2020-09-30T00:00:00Z"),
+        ),
+        status: "todo",
+      })),
+    );
   });
 });

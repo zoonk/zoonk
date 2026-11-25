@@ -173,7 +173,8 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     graph: { ...weighted, skills: [...weighted.skills, ...extras] },
     items,
     knownAreas: new Set([...getKnownSubjects(context.goal), ...state.settings.pastBasicsAreas]),
-    mode,
+    // Like a test-out ahead (`withTestOutsAhead`), reopened lessons lay the plan out again from today.
+    mode: reopenedItemIds.length > 0 ? "forced" : mode,
     movesPhaseEnds: !keepPhaseDates || movedEnds !== undefined || releasedPhases !== undefined,
     noticeAreas: areaShares ? new Set(areaShares.keys()) : null,
     openedKeys: options.openedKeys,
