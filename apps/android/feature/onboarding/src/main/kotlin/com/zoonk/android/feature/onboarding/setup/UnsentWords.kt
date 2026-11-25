@@ -1,14 +1,15 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -20,8 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /** The setup's unsent words: the screen shows [session]'s, and an answer removes those of the learner it saves for. */
 class SetupDrafts(
@@ -51,36 +50,21 @@ internal val LocalSetupDrafts = staticCompositionLocalOf<SetupDrafts?> { null }
 
 @Stable
 internal class UnsentWords(
-    initial: List<String>,
+    val fields: List<TextFieldState>,
     private val draft: DraftHandle<List<String>>?,
 ) {
-    var values by mutableStateOf(initial)
-        private set
+    val values get() = fields.map { it.text.toString() }
 
-    fun field(index: Int) =
-        object : ReadWriteProperty<Any?, String> {
-            override fun getValue(
-                thisRef: Any?,
-                property: KProperty<*>,
-            ) = values[index]
+    private var kept = values
 
-            override fun setValue(
-                thisRef: Any?,
-                property: KProperty<*>,
-                value: String,
-            ) = set(index, value)
-        }
-
-    fun set(
-        index: Int,
-        text: String,
-    ) {
-        values = values.toMutableList().also { it[index] = text }
+    fun keep(values: List<String>) {
+        if (values == kept) return
         draft?.saveDebounced(values)
+        kept = values
     }
 
     internal fun restore(saved: List<String>) {
-        if (values.all(String::isEmpty)) values = saved
+        if (values.all(String::isEmpty)) fields.zip(saved).forEach { (field, value) -> field.setTextAndPlaceCursorAtEnd(value) }
     }
 }
 
@@ -96,18 +80,23 @@ internal fun rememberUnsentWords(
 ): UnsentWords {
     val drafts = LocalSetupDrafts.current
     val draft = remember(drafts, goalId, step) { drafts?.words(goalId, step) }
-    var shown by rememberSaveable(goalId, step) { mutableStateOf(List(count) { "" }) }
-    val words = remember(draft) { UnsentWords(shown, draft) }
+    val fields = key(goalId, step, count) { List(count) { rememberTextFieldState() } }
+    val words = remember(draft, fields) { UnsentWords(fields, draft) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(draft) {
+    LaunchedEffect(words, draft) {
         draft
             ?.value
             ?.first()
             ?.takeIf { it.size == count }
             ?.let(words::restore)
     }
-    LaunchedEffect(words.values) { shown = words.values }
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { draft?.let { scope.launch { it.flush() } } }
+    LaunchedEffect(words) {
+        snapshotFlow { words.values }.collect(words::keep)
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        words.keep(words.values)
+        draft?.let { scope.launch { it.flush() } }
+    }
     return words
 }

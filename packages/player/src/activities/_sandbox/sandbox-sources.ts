@@ -1,4 +1,5 @@
 import { CONSOLE_VALUE_SOURCE } from "@zoonk/core/library/activities/console-values";
+import { SQL_JS_CONFIG, SQL_LAST_TABLE_SOURCE } from "@zoonk/core/library/activities/sql-setup";
 
 const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/";
 const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.17.0/dist/";
@@ -201,14 +202,12 @@ self.postMessage({ type: "ready" });
 export const SQL_WORKER_SOURCE = `"use strict";
 ${LOCK_DOWN}
 const BASE_URL = ${JSON.stringify(SQL_JS_BASE_URL)};
+const SQL_JS_CONFIG = ${JSON.stringify(SQL_JS_CONFIG)};
 importScripts(BASE_URL + "sql-wasm.js");
 const post = self.postMessage.bind(self);
+${SQL_LAST_TABLE_SOURCE}
 
-function cell(value) {
-  return value instanceof Uint8Array ? "[blob]" : value;
-}
-
-const ready = initSqlJs({ locateFile: (file) => BASE_URL + file }).then(
+const ready = initSqlJs({ ...SQL_JS_CONFIG, locateFile: (file) => BASE_URL + file }).then(
   (SQL) => {
     lockDown();
     post({ type: "ready" });
@@ -227,12 +226,7 @@ self.onmessage = async (event) => {
   const db = new SQL.Database();
   try {
     for (const statement of setup) db.run(statement.sql, statement.params);
-    const results = db.exec(query);
-    const last = results[results.length - 1];
-    const table = last
-      ? { columns: last.columns, rows: last.values.map((row) => row.map(cell)) }
-      : { columns: [], rows: [] };
-    post({ id, table, type: "done" });
+    post({ id, table: lastTable(db, query), type: "done" });
   } catch (error) {
     post({ id, message: String((error && error.message) || error), type: "error" });
   } finally {

@@ -366,6 +366,17 @@ function runOutlinesInline() {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+/** Noon (UTC) on the next `weekday`, near the database's own clock. */
+function comingWeekday(weekday: number): Date {
+  const now = new Date();
+  const days = (weekday - now.getUTCDay() + WEEKDAYS.length) % WEEKDAYS.length;
+
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + days, 12));
+}
+
 const citation = { passage: "", sourceId: "notice" };
 
 function examStructure(topics: string[]) {
@@ -1422,52 +1433,60 @@ describe(goalContentWorkflow, () => {
     }
   });
 
-  it.each([
-    { anonymous: false, learner: "a learner" },
-    { anonymous: true, learner: "a guest" },
-  ])(
-    "writes the plan's new first lesson when placement moves $learner's start",
-    async ({ anonymous }) => {
-      const { goal, user } = await newGoal();
-      await prisma.user.update({ data: { isAnonymous: anonymous }, where: { id: user.id } });
-      runOutlinesInline();
-      let testedOut = false;
+  describe.each(WEEKDAYS.map((weekday, day) => ({ day, weekday })))("on a $weekday", ({ day }) => {
+    it.each([
+      { anonymous: false, learner: "a learner" },
+      { anonymous: true, learner: "a guest" },
+    ])(
+      "writes the plan's new first lesson when placement moves $learner's start",
+      async ({ anonymous }) => {
+        vi.useFakeTimers({ now: comingWeekday(day), shouldAdvanceTime: true, toFake: ["Date"] });
 
-      vi.mocked(sleep).mockImplementation(async () => {
-        if (testedOut || !isGoalReady(goal.id)) {
-          return;
-        }
+        onTestFinished(() => {
+          vi.useRealTimers();
+        });
 
-        testedOut = true;
-        await testOutPlanStart({ goalId: goal.id, lessons: 4, userId: user.id });
-      });
+        const { goal, user } = await newGoal();
+        await prisma.user.update({ data: { isAnonymous: anonymous }, where: { id: user.id } });
+        runOutlinesInline();
+        let testedOut = false;
 
-      const result = await goalContentWorkflow({ goalId: goal.id });
+        vi.mocked(sleep).mockImplementation(async () => {
+          if (testedOut || !isGoalReady(goal.id)) {
+            return;
+          }
 
-      expect(testedOut).toBe(true);
+          testedOut = true;
+          await testOutPlanStart({ goalId: goal.id, lessons: 4, userId: user.id });
+        });
 
-      const [moved] = await loadPlanLessons(goal.id);
+        const result = await goalContentWorkflow({ goalId: goal.id });
 
-      expect(moved?.lessonId).toStrictEqual(expect.any(String));
-      expect(result.speculativeLessonIds).not.toContain(moved?.lessonId);
+        expect(testedOut).toBe(true);
 
-      expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-        {
-          analytics: { distinctId: user.id, goalId: goal.id },
-          forExam: false,
-          lessonId: moved?.lessonId,
-          planGoalId: goal.id,
-          planManifest: expect.objectContaining({
-            goalId: goal.id,
-            targets: expect.arrayContaining([
-              expect.objectContaining({ lessonId: moved?.lessonId }),
-            ]),
-          }),
-          wait: "learner",
-        },
-      ]);
-    },
-  );
+        const [moved] = await loadPlanLessons(goal.id);
+
+        expect(moved?.lessonId).toStrictEqual(expect.any(String));
+        expect(result.speculativeLessonIds).not.toContain(moved?.lessonId);
+
+        expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
+          {
+            analytics: { distinctId: user.id, goalId: goal.id },
+            forExam: false,
+            lessonId: moved?.lessonId,
+            planGoalId: goal.id,
+            planManifest: expect.objectContaining({
+              goalId: goal.id,
+              targets: expect.arrayContaining([
+                expect.objectContaining({ lessonId: moved?.lessonId }),
+              ]),
+            }),
+            wait: "learner",
+          },
+        ]);
+      },
+    );
+  });
 
   it("follows a guest's start only once, so lessons done after it write nothing more ahead", async () => {
     const { goal, user } = await newGoal();

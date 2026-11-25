@@ -1,7 +1,7 @@
 package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -41,7 +41,7 @@ class ConversationFlowTest {
 
     /** The call's column is a lazy list: what's out of view isn't there until scrolled to. */
     private fun seen(text: String) {
-        compose.onNode(hasScrollAction()).performScrollToNode(hasText(text))
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(text))
     }
 
     @Test

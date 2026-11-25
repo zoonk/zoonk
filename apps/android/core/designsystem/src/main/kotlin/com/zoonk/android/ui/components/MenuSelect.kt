@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenu
@@ -31,14 +32,13 @@ fun <T> MenuSelect(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it && enabled }, modifier = modifier) {
         OutlinedTextField(
-            value = value?.let { optionLabel(it) }.orEmpty(),
-            onValueChange = {},
+            state = readOnlyFieldState(value?.let { optionLabel(it) }.orEmpty()),
             modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
             enabled = enabled,
             readOnly = true,
             label = label,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->

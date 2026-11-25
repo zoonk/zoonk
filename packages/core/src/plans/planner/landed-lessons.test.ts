@@ -460,6 +460,81 @@ describe.each([false, true])(
   },
 );
 
+const CHAIN = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+
+const CHAIN_PLANS = [
+  { lessons: 2, plan: "every topic still being written", written: 0 },
+  { lessons: 1, plan: "its first three topics written", written: 3 },
+];
+
+describe.each(
+  CHAIN_PLANS.flatMap((shape) => [0, 1, 2, 3, 4, 5, 6].map((offset) => ({ ...shape, offset }))),
+)(
+  "a chain of topics landing as the learner moves past today's two ($plan, $offset days into the week)",
+  ({ lessons, offset, written }) => {
+    const today = addDays(TODAY, offset);
+    const writtenSkills = CHAIN.slice(0, written);
+    const write = (skillId: string) => writeLessons({ count: lessons, minutes: 5, skillId });
+
+    const outlining = {
+      ...learn,
+      goal: { ...learn.goal, dailyMinutes: 10 },
+      graph: {
+        phases: [{ milestone: null, name: "Only" }],
+        skills: CHAIN.map((skillId) => ({ ...skill(skillId, "Chain"), lessons })),
+      },
+      lessons: writtenSkills.flatMap((skillId) => write(skillId)),
+      prerequisites: new Map(
+        CHAIN.slice(1).map((skillId, index) => [skillId, [CHAIN[index] ?? ""]]),
+      ),
+      today,
+    } satisfies BuildPlanInput;
+
+    function landAfter(status: "done" | "testedOut") {
+      const moved = saveWithDays(outlining).map((entry) =>
+        entry.skillId === "a" || entry.skillId === "b"
+          ? { ...entry, completedAt: today, status }
+          : entry,
+      );
+
+      return buildPlan({
+        ...outlining,
+        items: moved,
+        lessons: CHAIN.flatMap((skillId) => write(skillId)),
+        mode: "automatic",
+      });
+    }
+
+    function listStarts(plan: BuiltPlan) {
+      const ahead = plan.items.filter(
+        (entry) => entry.kind === "lesson" && entry.status === "todo",
+      );
+
+      return {
+        order: [...new Set(ahead.map((entry) => entry.skillId))],
+        starts: CHAIN.slice(2).map((skillId) => ahead.find((entry) => entry.skillId === skillId)),
+      };
+    }
+
+    it.each(["done", "testedOut"] as const)(
+      "keeps each topic before the ones built on it once those lessons are %s",
+      (status) => {
+        const plan = landAfter(status);
+        const { order, starts } = listStarts(plan);
+        const startDays = starts.map((entry) => entry?.scheduledFor?.getTime() ?? 0);
+
+        expect(order).toStrictEqual(CHAIN.slice(2));
+        expect(startDays).toStrictEqual(startDays.toSorted((a, b) => a - b));
+        expect(busiestDay(plan)).toBeLessThanOrEqual(outlining.goal.dailyMinutes);
+      },
+    );
+
+    it("starts the next topic today once the learner tests out of the ones before it", () => {
+      expect(listStarts(landAfter("testedOut")).starts[0]?.scheduledFor).toStrictEqual(today);
+    });
+  },
+);
+
 function saveLater(plan: { items: readonly PlannedItem[] }): ExistingPlanItem[] {
   const nextWeek = addDays(TODAY, 7);
 

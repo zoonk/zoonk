@@ -34,7 +34,9 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -65,7 +67,9 @@ import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.start.AttachPanel
 import com.zoonk.android.feature.onboarding.start.MaterialAnswer
+import com.zoonk.android.feature.onboarding.start.MaterialIntent
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
+import com.zoonk.android.feature.onboarding.start.StartGoalViewModel
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
@@ -302,6 +306,44 @@ class OnboardingScreenshots {
         compose.runOnUiThread { focus.clearFocus() }
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** A question about attached material: main's goal panel with its send inside, empty and with a question typed. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialQuestions() = captureMaterialQuestions("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialQuestionsDarkMoreContrast() = captureMaterialQuestions("phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xhdpi")
+    fun materialQuestionsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialQuestions("phone-font200")
+    }
+
+    private fun captureMaterialQuestions(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { Start(FakeOnboardingApi(), AppRoute.StartGoal()) } }
+        }
+        compose.waitForIdle()
+        val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
+        compose.runOnUiThread {
+            vm.setAttached(listOf(AttachedSource(UUID.randomUUID().toString(), "Cell cycle.pdf")))
+            vm.setIntent(MaterialIntent.Questions)
+            vm.submit("", "", "en")
+        }
+        compose.waitForIdle()
+        write("start-material-questions-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        compose.onNode(hasSetTextAction()).performTextInput("Why does glycolysis net only 2 ATP?")
+        compose.waitForIdle()
+        write("start-material-questions-typed-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test

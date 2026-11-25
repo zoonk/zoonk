@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -253,8 +255,10 @@ internal fun ExamResultSection(
     val scale = exam.resultScale
     val field = scoreField(scale)
     val saved by viewModel.saved.collectAsStateWithLifecycle()
-    var score by rememberSaveable { mutableStateOf("") }
-    var maxScore by rememberSaveable { mutableStateOf("") }
+    val scoreField = rememberTextFieldState()
+    val score = scoreField.text.toString()
+    val maxScoreField = rememberTextFieldState()
+    val maxScore = maxScoreField.text.toString()
     var passed by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val parsedScore = parseLocalizedNumber(score, locale)
     val parsedMax = parseLocalizedNumber(maxScore, locale)
@@ -282,24 +286,22 @@ internal fun ExamResultSection(
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
             OutlinedTextField(
-                value = score,
-                onValueChange = { score = it },
+                state = scoreField,
                 modifier = Modifier.weight(1f),
                 label = field,
                 supportingText = scoreError?.let { { Text(it) } },
                 isError = scoreError != null,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
-                singleLine = true,
+                lineLimits = TextFieldLineLimits.SingleLine,
             )
             if (scale == ExamResult.Scale.POINTS) {
                 OutlinedTextField(
-                    value = maxScore,
-                    onValueChange = { maxScore = it },
+                    state = maxScoreField,
                     modifier = Modifier.weight(1f),
                     label = stringResource(R.string.exam_out_of),
                     isError = maxError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                 )
             }
         }

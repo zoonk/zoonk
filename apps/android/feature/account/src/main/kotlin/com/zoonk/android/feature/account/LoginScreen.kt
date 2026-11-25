@@ -21,8 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.delete
+import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -66,11 +69,13 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -181,8 +186,7 @@ fun Methods(
     }
 
     OutlinedTextField(
-        value = signIn.email,
-        onValueChange = signIn::onEmailChange,
+        state = signIn.emailField,
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -190,10 +194,10 @@ fun Methods(
         label = stringResource(R.string.account_email),
         placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
         isError = signIn.failure == AccountFailure.InvalidEmail || signIn.failure == AccountFailure.DisposableEmail,
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         readOnly = work == SignInWork.SendCode,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, autoCorrectEnabled = false, imeAction = ImeAction.Go),
-        keyboardActions = KeyboardActions(onGo = { signIn.sendCode() }),
+        onKeyboardAction = { signIn.sendCode() },
     )
 
     signIn.failure?.let { FailureText(failureMessage(it)) }
@@ -211,6 +215,8 @@ fun CodeEntry(
     val focus = remember { FocusRequester() }
     val work = signIn.work
     val needsNewCode = signIn.needsNewCode
+    VisitOf(signIn.codeVisit)
+    LaunchedEffect(signIn) { signIn.observeCode() }
 
     LaunchedEffect(Unit) { focus.requestFocus() }
 
@@ -218,8 +224,8 @@ fun CodeEntry(
     Description(stringResource(R.string.account_check_email_description, email))
 
     OutlinedTextField(
-        value = signIn.code,
-        onValueChange = signIn::onCodeChange,
+        state = signIn.codeField,
+        inputTransformation = VerificationCodeInput,
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -229,9 +235,9 @@ fun CodeEntry(
         isError = signIn.failure != null,
         enabled = !needsNewCode,
         readOnly = work == SignInWork.CheckCode,
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword, imeAction = ImeAction.Go),
-        keyboardActions = KeyboardActions(onGo = { signIn.checkCode() }),
+        onKeyboardAction = { signIn.checkCode() },
     )
 
     signIn.failure?.let { FailureText(failureMessage(it)) }
@@ -442,3 +448,10 @@ private fun failureMessage(failure: AccountFailure): String =
             else -> R.string.account_failure_sign_in
         },
     )
+
+internal val VerificationCodeInput =
+    InputTransformation {
+        for (index in length - 1 downTo 0) {
+            if (charAt(index) !in '0'..'9') delete(index, index + 1)
+        }
+    }.then(InputTransformation.fitTo(SignInViewModel.CODE_LENGTH))

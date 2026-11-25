@@ -1,10 +1,15 @@
 package com.zoonk.android.feature.feedback
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.BuildConfig
@@ -73,28 +78,31 @@ class FeedbackSender(
         }
 }
 
+const val MAX_FEEDBACK_MESSAGE_LENGTH = 5_000
+
 enum class FeedbackStatus { Idle, Sending, Sent, Failed }
 
+@OptIn(SavedStateHandleSaveableApi::class)
 class FeedbackViewModel(
     private val sender: FeedbackSender,
     val target: FeedbackTarget,
     initialMessage: String = "",
+    handle: SavedStateHandle,
 ) : ViewModel() {
-    var message by mutableStateOf(initialMessage)
-        private set
-    var typedEmail by mutableStateOf("")
-        private set
+    val messageField = handle.saveable(key = "message", saver = TextFieldState.Saver) { TextFieldState(initialMessage) }
+    val emailField = handle.saveable(key = "email", saver = TextFieldState.Saver) { TextFieldState() }
+    val message get() = messageField.text.toString()
+    private val typedEmail get() = emailField.text.toString()
     var status by mutableStateOf(FeedbackStatus.Idle)
         private set
+    private var sentFrom: Pair<String, String>? = null
 
-    fun onMessageChange(value: String) {
-        message = value
-        if (status != FeedbackStatus.Sending) status = FeedbackStatus.Idle
-    }
-
-    fun onEmailChange(value: String) {
-        typedEmail = value
-        if (status != FeedbackStatus.Sending) status = FeedbackStatus.Idle
+    /** Main's change handlers: an edit clears Sent or Failed, except the clear of a message that was just sent. */
+    fun edited() {
+        if (status != FeedbackStatus.Sending && (message to typedEmail) != sentFrom) {
+            status = FeedbackStatus.Idle
+            sentFrom = null
+        }
     }
 
     /** [accountEmail] is the signed-in account's; without one the learner types it. */
@@ -122,11 +130,13 @@ class FeedbackViewModel(
     fun send(accountEmail: String?) {
         if (!canSend(accountEmail)) return
         val email = (accountEmail ?: typedEmail).trim()
+        val submitted = message
         status = FeedbackStatus.Sending
         viewModelScope.launch {
-            val sent = sender.send(target, email, message.trim())
+            val sent = sender.send(target, email, submitted.trim())
+            if (sent) messageField.clearText()
+            sentFrom = message to typedEmail
             status = if (sent) FeedbackStatus.Sent else FeedbackStatus.Failed
-            if (sent) message = ""
         }
     }
 }

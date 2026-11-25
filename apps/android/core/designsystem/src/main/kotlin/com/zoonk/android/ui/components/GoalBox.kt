@@ -10,14 +10,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -25,17 +32,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -52,13 +66,20 @@ import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
+import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
 
 /** The same limit core applies to a typed goal. */
 const val MAX_GOAL_LENGTH = 2000
+
+private val GoalInput =
+    InputTransformation {
+        for (index in 0 until length) {
+            if (charAt(index) == '\n') replace(index, index + 1, " ")
+        }
+    }.then(InputTransformation.fitTo(MAX_GOAL_LENGTH))
 
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan in one panel.
@@ -67,11 +88,9 @@ const val MAX_GOAL_LENGTH = 2000
  * example, as the catalog's is. [hiddenLabel] makes it main's buddy box: no visible "I want to" (TalkBack reads
  * the hidden label), and Build my plan beside the words while it fits. Enter sends, as main's box does.
  */
-@Suppress("DEPRECATION")
 @Composable
 fun GoalBox(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     onSubmit: (String) -> Unit,
     modifier: Modifier = Modifier,
     note: String? = null,
@@ -82,10 +101,12 @@ fun GoalBox(
     placeholder: String? = null,
     hiddenLabel: String? = null,
 ) {
-    var isAskingForWords by rememberSaveable { mutableStateOf(false) }
+    var askedForWords by rememberSaveable { mutableStateOf(false) }
 
+    val value = state.text.toString()
+    val isAskingForWords = askedForWords && value.isBlank()
     val submit: () -> Unit = {
-        val goal = value.trim()
+        val goal = state.text.trim().toString()
 
         when {
             isSubmitting -> {}
@@ -95,115 +116,103 @@ fun GoalBox(
             }
 
             else -> {
-                isAskingForWords = true
+                askedForWords = true
                 focusRequester.requestFocus()
             }
         }
     }
 
+    state.ObserveEdits { askedForWords = false }
     val line = if (isAskingForWords) stringResource(R.string.goal_box_write_first) else note
     val label = hiddenLabel ?: stringResource(R.string.goal_box_label)
     val colors = MaterialTheme.colorScheme
     val words = MaterialTheme.zoonkType.lead.copy(color = colors.onSurface, lineHeight = GOAL_LINE_HEIGHT)
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
-    val ring = if (LocalMoreContrast.current) 3.dp else 2.dp
-    val shape = RoundedCornerShape(ZoonkRadius.xl)
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .background(colors.surfaceContainerLow, shape)
-                .border(if (focused) ring else 1.dp, if (focused) colors.primary else colors.outline, shape)
-                .padding(16.dp),
-        ) {
-            val textField: @Composable () -> Unit = {
-                BasicTextField(
-                    value = value,
-                    onValueChange = { typed ->
-                        isAskingForWords = false
-                        // A typed Enter sends; pasted lines join into one goal.
-                        if (typed.length == value.length + 1 && typed.endsWith('\n')) {
-                            submit()
-                        } else {
-                            onValueChange(typed.replace('\n', ' ').take(MAX_GOAL_LENGTH))
-                        }
-                    },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .semantics {
-                                contentDescription = label
-                                if (isAskingForWords) line?.let { error(it) }
-                            },
-                    readOnly = isSubmitting,
-                    textStyle = words,
-                    cursorBrush = SolidColor(colors.primary),
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),
-                    keyboardActions = KeyboardActions(onGo = { submit() }),
-                    maxLines = 8,
-                    interactionSource = interaction,
-                    decorationBox = { field ->
-                        Box(Modifier.heightIn(min = 44.dp).padding(vertical = WORDS_PADDING)) {
-                            if (value.isEmpty()) {
-                                Text(
-                                    placeholder ?: stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale())),
-                                    color = colors.onSurfaceVariant,
-                                    style = words,
-                                )
-                            }
-                            field()
-                        }
-                    },
-                )
-            }
-
-            val submitButton: @Composable () -> Unit = {
-                // As main's, it waits for words: a button that would send nothing doesn't look ready.
-                Button(
-                    onClick = submit,
-                    enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
-                    busy = isSubmitting,
-                    size = ButtonSize.Large,
-                ) {
-                    Text(stringResource(R.string.goal_box_submit))
-                }
-            }
-
-            if (hiddenLabel == null) {
-                LabelBeside(
-                    label = {
-                        Text(
-                            label,
+        GoalPanel(focused, Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                val textField: @Composable () -> Unit = {
+                    BasicTextField(
+                        state = state,
+                        inputTransformation = GoalInput,
+                        modifier =
                             Modifier
-                                .clearAndSetSemantics {}
-                                .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
-                                .padding(vertical = WORDS_PADDING),
-                            style = words.copy(fontWeight = FontWeight.Medium),
-                        )
-                    },
-                    modifier = Modifier,
-                    field = textField,
-                )
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
-                    Spacer(Modifier.weight(1f))
-                    submitButton()
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester)
+                                .submitOnEnter(state, submit)
+                                .semantics {
+                                    contentDescription = label
+                                    if (isAskingForWords) line?.let { error(it) }
+                                },
+                        readOnly = isSubmitting,
+                        textStyle = words,
+                        cursorBrush = SolidColor(colors.primary),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),
+                        onKeyboardAction = { submit() },
+                        lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 8),
+                        interactionSource = interaction,
+                        decorator = { field ->
+                            Box(Modifier.heightIn(min = 44.dp).padding(vertical = WORDS_PADDING)) {
+                                if (value.isEmpty()) {
+                                    Text(
+                                        placeholder ?: stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale())),
+                                        color = colors.onSurfaceVariant,
+                                        style = words,
+                                    )
+                                }
+                                field()
+                            }
+                        },
+                    )
                 }
-            } else {
-                ActionBeside(
-                    field = textField,
-                    action = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
-                            submitButton()
-                        }
-                    },
-                    modifier = Modifier.padding(start = 10.dp),
-                )
+
+                val submitButton: @Composable () -> Unit = {
+                    // As main's, it waits for words: a button that would send nothing doesn't look ready.
+                    Button(
+                        onClick = submit,
+                        enabled = isSubmitting || canSubmitEmpty || value.isNotBlank(),
+                        busy = isSubmitting,
+                        size = ButtonSize.Large,
+                    ) {
+                        Text(stringResource(R.string.goal_box_submit))
+                    }
+                }
+
+                if (hiddenLabel == null) {
+                    LabelBeside(
+                        label = {
+                            Text(
+                                label,
+                                Modifier
+                                    .clearAndSetSemantics {}
+                                    .clickable(interactionSource = null, indication = null) { focusRequester.requestFocus() }
+                                    .padding(vertical = WORDS_PADDING),
+                                style = words.copy(fontWeight = FontWeight.Medium),
+                            )
+                        },
+                        modifier = Modifier,
+                        field = textField,
+                    )
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                        Spacer(Modifier.weight(1f))
+                        submitButton()
+                    }
+                } else {
+                    ActionBeside(
+                        field = textField,
+                        action = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) { leading?.invoke() }
+                                submitButton()
+                            }
+                        },
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                }
             }
         }
 
@@ -213,6 +222,111 @@ fun GoalBox(
                 color = if (isAskingForWords) colors.error else colors.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
+        }
+    }
+}
+
+/**
+ * Main's goal panel (`GOAL_PANEL_CLASS`): `card` inside an `input` line with `rounded-xl` corners; while [focused],
+ * the line in ink with main's focus ring outside it. The goal box draws it, and so does a question about material.
+ */
+@Composable
+fun GoalPanel(
+    focused: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
+    Box(
+        modifier
+            .ringInView(whole = true)
+            .then(if (focused) Modifier.focusRing(shape, colors.primary) else Modifier)
+            .background(colors.surfaceContainerLow, shape)
+            .border(1.dp, if (focused) colors.primary else colors.outline, shape),
+    ) { content() }
+}
+
+/**
+ * Main's question box (`material-questions.tsx`): the goal panel with the words, named [label] for TalkBack only, and
+ * the send, an icon button, at the end of their last line. One line of words is as tall as the send, so the send sits [PANEL_ROOM]
+ * from the panel's top, end and bottom; with more lines, or larger text, it stays centered on the last one. While the
+ * words have focus, the whole panel comes back into view whenever something moves it without moving their caret, as a
+ * browser's scroll anchoring keeps main's: what lands above it in the page (a question going out, its answer), or the
+ * keyboard coming back after a fold. Scrolling the page moves nothing in it, so the learner can still read back.
+ */
+@Composable
+fun QuestionPanel(
+    state: TextFieldState,
+    onAsk: () -> Unit,
+    isAsking: Boolean,
+    label: String,
+    placeholder: String,
+    askLabel: String,
+    maxLength: Int,
+    modifier: Modifier = Modifier,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
+    val inView = remember { BringIntoViewRequester() }
+    var placedAt by remember { mutableFloatStateOf(0f) }
+    val keyboard = WindowInsets.ime
+    val density = LocalDensity.current
+    LaunchedEffect(focused, placedAt) {
+        if (focused) {
+            snapshotFlow { keyboard.getBottom(density) }.collectLatest {
+                withFrameNanos {}
+                inView.bringIntoView()
+            }
+        }
+    }
+    val colors = MaterialTheme.colorScheme
+    val words = MaterialTheme.typography.bodyLarge.copy(color = colors.onSurface)
+    val lineHeight = with(density) { words.lineHeight.toDp() }
+    val sendLift = (WORDS_PADDING + lineHeight / 2 - SEND_SIZE / 2).coerceAtLeast(0.dp)
+
+    GoalPanel(focused, modifier.fillMaxWidth().onPlaced { placedAt = it.positionInParent().y }) {
+        // Main's `p-1.5 pl-4`.
+        Row(
+            Modifier
+                .bringIntoViewRequester(inView)
+                .padding(start = 16.dp, top = PANEL_ROOM, end = PANEL_ROOM, bottom = PANEL_ROOM),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            BasicTextField(
+                state = state,
+                inputTransformation = InputTransformation.fitTo(maxLength),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(focus)
+                        .submitOnEnter(state, onAsk)
+                        .semantics { contentDescription = label },
+                textStyle = words,
+                cursorBrush = SolidColor(colors.primary),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
+                onKeyboardAction = { onAsk() },
+                lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = QUESTION_LINES),
+                interactionSource = interaction,
+                decorator = { field ->
+                    Box(Modifier.heightIn(min = SEND_SIZE).padding(vertical = WORDS_PADDING)) {
+                        if (state.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = words)
+                        field()
+                    }
+                },
+            )
+            FilledIconButton(
+                busy = isAsking,
+                onClick = onAsk,
+                enabled = state.text.isNotBlank(),
+                modifier = Modifier.padding(bottom = sendLift).size(SEND_SIZE),
+                colors = sendButtonColors(),
+            ) {
+                Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = askLabel, Modifier.size(20.dp))
+            }
         }
     }
 }
@@ -331,6 +445,11 @@ const val QUICK_EXPLANATION_MINUTES = 5
 /** Main's `text-[17px] leading-6 py-2.5`: one line of words is 44dp. */
 private val GOAL_LINE_HEIGHT = 24.sp
 private val WORDS_PADDING = 10.dp
+
+/** Main's `icon-lg` send: the control height, as tall as one line of words. */
+private val SEND_SIZE = 44.dp
+private val PANEL_ROOM = 6.dp
+private const val QUESTION_LINES = 6
 private val LABEL_GAP = 8.dp
 private val WORDS_END = 10.dp
 private const val INLINE_LABEL_SHARE = 0.4f

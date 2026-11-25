@@ -49,9 +49,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         TextField(text: $name) {
           Text("Name", tableName: "Plan", comment: "Field holding the goal's name")
         }
-        .onChange(of: name) { _, value in
-          name = String(value.prefix(goalNameLimit))
-        }
+        .fitsAlertText($name, limit: goalNameLimit)
 
         Button(role: .cancel) {}
 

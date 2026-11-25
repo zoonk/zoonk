@@ -1,8 +1,9 @@
 package com.zoonk.android.feature.tutor
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -41,18 +42,19 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.util.UUID
 import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TutorViewModelTest {
-    private val dispatcher = StandardTestDispatcher()
-    private val ana = AuthenticatedSession("ana", "token-a", "local-a")
-    private val bia = AuthenticatedSession("bia", "token-b", "local-b")
-    private val session = FakeSession(ana)
-    private val api = FakeTutorApi()
-    private val scope = TutorScope.Plan(GOAL)
-    private var decision: (PlanChangeDecisionInput.Status) -> MutationResult<PlanChange> = {
+internal abstract class TutorFixture {
+    protected val dispatcher = StandardTestDispatcher()
+    protected val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    protected val bia = AuthenticatedSession("bia", "token-b", "local-b")
+    protected val session = FakeSession(ana)
+    protected val api = FakeTutorApi()
+    protected val scope = TutorScope.Plan(GOAL)
+    protected var decision: (PlanChangeDecisionInput.Status) -> MutationResult<PlanChange> = {
         MutationResult.Done(planChange(status = it.value).copy(id = UUID.fromString(OTHER_CHANGE)))
     }
 
@@ -62,7 +64,7 @@ class TutorViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun conversation(
+    protected suspend fun conversation(
         scope: TutorScope = this.scope,
         cache: AppCache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
         saved: SavedStateHandle = SavedStateHandle(),
@@ -84,10 +86,13 @@ class TutorViewModelTest {
             openMission = openMission,
         ).also { it.thread.load() }
 
-    private val TutorViewModel.turns get() =
+    protected val TutorViewModel.turns get() =
         thread.state.value.value!!
             .turns
+}
 
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class TutorViewModelTest : TutorFixture() {
     @Test
     fun aStepLinkOpensOneAtATimeAndSaysWhyWhenItDidnt() =
         runTest(dispatcher) {
@@ -184,37 +189,6 @@ class TutorViewModelTest {
             assertTrue(vm.state.value.canAsk(vm.turns))
         }
 
-    /** A sent question shows at once with an empty composer, and Android closing the app before the reply keeps what was typed. */
-    @Test
-    fun aQuestionShowsWhileItsSentAndSurvivesAndroidClosingTheApp() =
-        runTest(dispatcher) {
-            val saved = SavedStateHandle()
-            val vm = conversation(saved = saved)
-            api.askGate = CompletableDeferred()
-            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
-            // Compose applies a text field's edits as the app draws; this test has no frames.
-            Snapshot.sendApplyNotifications()
-            advanceUntilIdle()
-
-            vm.send()
-            Snapshot.sendApplyNotifications()
-            advanceUntilIdle()
-
-            assertEquals(SendingQuestion("Why?", TutorTurn.About.Plan), vm.state.value.sending)
-            assertEquals("", vm.draft.text.toString())
-            assertTrue(vm.turns.isEmpty())
-            assertFalse(vm.state.value.isEmpty(vm.thread.state.value.value!!))
-            val restored = SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) })
-            assertEquals("Why?", conversation(saved = restored).draft.text.toString())
-
-            api.askGate?.complete(Unit)
-            advanceUntilIdle()
-
-            assertNull(vm.state.value.sending)
-            assertEquals(listOf("Why?"), vm.turns.map { it.question })
-            assertEquals("", vm.draft.text.toString())
-        }
-
     /** A question that couldn't be asked goes back to the composer unless something new was typed; a tapped suggestion leaves what's typed alone. */
     @Test
     fun aFailedQuestionGoesBackToTheComposerUnlessAnotherWasStarted() =
@@ -264,23 +238,6 @@ class TutorViewModelTest {
         }
 
     /** Android closing the app in the background keeps the question being written and the suggestion it started from. */
-    @Test
-    fun aQuestionBeingWrittenComesBackWithItsSuggestionAfterAndroidClosesTheApp() =
-        runTest(dispatcher) {
-            val saved = SavedStateHandle()
-            conversation(saved = saved).offer(TutorSuggestion("Explain it more simply", "simpler"))
-            // Compose applies a text field's edits as the app draws; this test has no frames.
-            Snapshot.sendApplyNotifications()
-            advanceUntilIdle()
-
-            val reopened = conversation(saved = saved)
-            assertEquals("Explain it more simply", reopened.draft.text.toString())
-            reopened.send()
-            advanceUntilIdle()
-
-            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
-        }
-
     @Test
     fun anAnswerMarksTheAllowanceItSpentStaleOnceItEnds() =
         runTest(dispatcher) {
@@ -900,10 +857,58 @@ class TutorViewModelTest {
     ) = turn(id, TutorTurn.Status.Completed, "Try this.").copy(planChange = change)
 
     private fun <T> flowOf(vararg values: T): Flow<T> = flow { values.forEach { emit(it) } }
+}
 
-    private companion object {
-        const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
-        const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
-        val BLOCK: UUID = UUID.fromString("5d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f")
-    }
+private const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+private const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+private val BLOCK: UUID = UUID.fromString("5d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f")
+
+@RunWith(AndroidJUnit4::class)
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class TutorDraftRestoreTest : TutorFixture() {
+    @Test
+    fun aQuestionShowsWhileItsSentAndSurvivesAndroidClosingTheApp() =
+        runTest(dispatcher) {
+            val saved = SavedStateHandle()
+            val vm = conversation(saved = saved)
+            api.askGate = CompletableDeferred()
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            advanceUntilIdle()
+
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(SendingQuestion("Why?", TutorTurn.About.Plan), vm.state.value.sending)
+            assertEquals("", vm.draft.text.toString())
+            assertTrue(vm.turns.isEmpty())
+            assertFalse(vm.state.value.isEmpty(vm.thread.state.value.value!!))
+            val restored = SavedStateHandle.createHandle(saved.savedStateProvider().saveState(), null)
+            assertEquals("Why?", conversation(saved = restored).draft.text.toString())
+
+            api.askGate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertNull(vm.state.value.sending)
+            assertEquals(listOf("Why?"), vm.turns.map { it.question })
+            assertEquals("", vm.draft.text.toString())
+        }
+
+    @Test
+    fun aQuestionBeingWrittenComesBackWithItsSuggestionAfterAndroidClosesTheApp() =
+        runTest(dispatcher) {
+            val saved = SavedStateHandle()
+            val writing = conversation(saved = saved)
+            writing.offer(TutorSuggestion("Explain it more simply", "simpler"))
+            writing.draft.edit { selection = TextRange(8) }
+            advanceUntilIdle()
+
+            val restored = SavedStateHandle.createHandle(saved.savedStateProvider().saveState(), null)
+            val reopened = conversation(saved = restored)
+            assertEquals(TextRange(8), reopened.draft.selection)
+            assertEquals("Explain it more simply", reopened.draft.text.toString())
+            reopened.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("simpler"), api.asked.map { it.suggestion })
+        }
 }
