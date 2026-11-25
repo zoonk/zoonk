@@ -55,9 +55,7 @@ async function writeScreens(
     provenance: screen.provenance,
     question:
       toScreenQuestion(screen.mathItem) ??
-      (screen.kind === "check" && screen.standsAlone && !screen.mediaAssetId
-        ? toCheckQuestion(screen.content)
-        : null),
+      (screen.kind === "check" && screen.standsAlone ? toCheckQuestion(screen.content) : null),
     skillId: screen.skillId,
   }));
 

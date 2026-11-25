@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readFinishedChapter } from "../mind-maps/finished-chapters";
@@ -87,7 +88,12 @@ async function toCheckpointResult({
     prisma.item.findMany({ where: { id: { in: itemIds } } }),
     prisma.attempt.findMany({
       select: { answer: true, isCorrect: true, itemId: true },
-      where: { itemId: { in: itemIds }, studySessionId: sessionId, userId },
+      where: {
+        ...NOT_LESSON_ANSWER_FILTER,
+        itemId: { in: itemIds },
+        studySessionId: sessionId,
+        userId,
+      },
     }),
   ]);
 

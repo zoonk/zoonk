@@ -1,5 +1,5 @@
 import "server-only";
-import { type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
+import { type Attempt, type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
 import { isLessonAnswer } from "@zoonk/db/lesson-answer";
 import { isJsonObject } from "@zoonk/utils/json";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
@@ -39,7 +39,7 @@ type AttemptRow = {
   answeredAt: Date;
   durationMs: number;
   focusTestId: string | null;
-  fromLesson: boolean;
+  fromLesson: Attempt["fromLesson"];
   isCorrect: boolean;
   isPlacement: boolean;
   item: { content: unknown; format: ItemFormat } | null;

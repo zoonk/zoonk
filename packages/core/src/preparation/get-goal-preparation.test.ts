@@ -242,6 +242,45 @@ describe(getGoalPreparation, () => {
     expect(withMonday.status === "ready" && withMonday.preparation.weekGain).toBeGreaterThan(0);
   });
 
+  it("counts a bank item's first answer for mastery only when it was cold", async () => {
+    const { goal, items, user } = await setup();
+    const [seenInLesson, ...practiceItems] = items;
+    const coldItems = practiceItems.slice(0, 6);
+
+    if (!seenInLesson || coldItems.length !== 6) {
+      throw new Error("Expected a lesson check and six practice items");
+    }
+
+    await Promise.all([
+      attemptFixture({
+        answeredAt: daysAgo(3),
+        fromLesson: true,
+        itemId: seenInLesson.id,
+        skillId: seenInLesson.skillId,
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: daysAgo(2),
+        itemId: seenInLesson.id,
+        skillId: seenInLesson.skillId,
+        userId: user.id,
+      }),
+      ...coldItems.map((item) =>
+        attemptFixture({
+          answeredAt: daysAgo(1),
+          itemId: item.id,
+          skillId: item.skillId,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    await expect(getGoalPreparation(goal.id)).resolves.toMatchObject({
+      preparation: { components: { mastery: { answered: 6, correct: 6 } } },
+      status: "ready",
+    });
+  });
+
   it("measures studied skills, unseen questions and an exam's mocks by area", async () => {
     const { chapters, goal, items, skills, user } = await setup();
     const session = await studySessionFixture({ goalId: goal.id, userId: user.id });

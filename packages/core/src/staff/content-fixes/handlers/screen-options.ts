@@ -141,16 +141,22 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
 
       const updated =
         model === "Step"
-          ? await tx.step.update({ data: { content }, where: { id: stored.id } })
-          : await tx.stepVariant.update({ data: { content }, where: { id: stored.id } });
+          ? {
+              model: "Step" as const,
+              row: await tx.step.update({ data: { content }, where: { id: stored.id } }),
+            }
+          : {
+              model: "StepVariant" as const,
+              row: await tx.stepVariant.update({ data: { content }, where: { id: stored.id } }),
+            };
 
-      const stepId = "stepId" in updated ? updated.stepId : updated.id;
+      const stepId = updated.model === "Step" ? updated.row.id : updated.row.stepId;
 
       await tx.answerExplanation.deleteMany({ where: { stepId } });
       await tx.tutorSharedAnswer.deleteMany({ where: { stepId } });
 
-      if (!("stepId" in updated)) {
-        await syncStepCheckQuestion(tx, updated);
+      if (updated.model === "Step") {
+        await syncStepCheckQuestion(tx, updated.row);
 
         await tx.stepOptionPicture.deleteMany({
           where: { optionId: { in: stored.pictures.map((picture) => picture.optionId) }, stepId },

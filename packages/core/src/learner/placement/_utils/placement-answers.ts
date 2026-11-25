@@ -1,4 +1,4 @@
-import { DbNull, sql } from "@zoonk/db";
+import { type Attempt, DbNull, sql } from "@zoonk/db";
 import {
   NOT_LESSON_ANSWER_FILTER,
   NOT_LESSON_ANSWER_SQL,
@@ -32,7 +32,7 @@ export const SITTING_ANSWER_SQL = sql`mock_exam_id IS NULL AND is_placement AND 
 type PlacementAnswerRow = {
   answer: unknown;
   answeredAt: Date;
-  fromLesson: boolean;
+  fromLesson: Attempt["fromLesson"];
   isPlacement: boolean;
   itemId: string | null;
   localDate: Date;

@@ -2,12 +2,12 @@
 DROP INDEX "attempts_test_answers_user_id_skill_id_idx";
 
 -- AlterTable
-ALTER TABLE "attempts" ADD COLUMN     "from_lesson" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "attempts" ADD COLUMN     "from_lesson" BOOLEAN;
 
 -- CreateIndex
-CREATE INDEX "attempts_test_answers_user_id_skill_id_idx" ON "attempts"("user_id", "skill_id") WHERE ((mock_exam_id IS NULL) AND (is_placement OR ((item_id IS NOT NULL) AND (NOT from_lesson) AND (step_id IS NULL) AND (study_session_id IS NULL))));
+CREATE INDEX "attempts_test_answers_user_id_skill_id_idx" ON "attempts"("user_id", "skill_id") WHERE ((mock_exam_id IS NULL) AND (is_placement OR ((item_id IS NOT NULL) AND (from_lesson IS NOT TRUE) AND (step_id IS NULL) AND (study_session_id IS NULL))));
 
-UPDATE attempts SET from_lesson = true WHERE step_id IS NOT NULL;
+UPDATE attempts SET from_lesson = (step_id IS NOT NULL);
 
 -- Backfill standalone lesson checks
 WITH checks AS (
