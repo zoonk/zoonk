@@ -19,6 +19,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
@@ -188,6 +189,7 @@ internal fun ActivityView(
                 rounded,
                 content.minTolerance,
                 result?.isCorrect,
+                actions::runPrimary,
                 numericQuestion != null,
             )
         }
@@ -251,6 +253,7 @@ private fun ActivityCheckArea(
     rounded: ActivityRoundedAnswer?,
     minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
+    onSubmit: () -> Unit,
     questionAlreadyShown: Boolean = false,
 ) {
     if (check is ChoiceCheckValue) {
@@ -275,6 +278,7 @@ private fun ActivityCheckArea(
             rounded,
             minTolerance,
             isCorrect,
+            onSubmit,
             showQuestion = !questionAlreadyShown,
         )
     }
@@ -287,7 +291,8 @@ private fun CheckQuestion(text: String) {
 
 /**
  * Main's `NumericAnswerField`: the learner's own typing stays as typed until Check, which writes it with the fewest
- * digits that keep its grade, as core decides; money keeps its sign where the language writes it.
+ * digits that keep its grade, as core decides; money keeps its sign where the language writes it. The keyboard's
+ * Done checks, as main's Enter does.
  */
 @Composable
 private fun NumericCheckField(
@@ -298,6 +303,7 @@ private fun NumericCheckField(
     rounded: ActivityRoundedAnswer?,
     minTolerance: ActivityTolerance?,
     isCorrect: Boolean?,
+    onSubmit: () -> Unit,
     showQuestion: Boolean = true,
 ) {
     val locale = currentLocale()
@@ -336,7 +342,15 @@ private fun NumericCheckField(
                     )
                 },
             lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+            // An edit's observer runs a dispatch later, so the answer goes to the player again as the key is pressed.
+            onKeyboardAction = { performDefault ->
+                if (!locked) {
+                    onAnswerChange(parseLocalizedNumber(field.text.toString(), locale)?.let(::numericAnswer))
+                    onSubmit()
+                }
+                performDefault()
+            },
             textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
         )
     }
