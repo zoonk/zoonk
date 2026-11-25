@@ -289,4 +289,53 @@ describe(toMockStructure, () => {
       toMockStructure({ noticeQuestions: null, ownerId: "learner", structure }).mock,
     ).toMatchObject({ sections: [], totalQuestions: 10 });
   });
+
+  it("sizes one subject's days as stated, since it gets no paper of its own", () => {
+    const structure: ExamStructure = {
+      ...STATED,
+      mock: {
+        ...MOCK,
+        sections: [1, 2, 3].map((day) => ({ ...sitting(day, `Day ${day}`), questions: 210 })),
+        timeLimitMinutes: null,
+        totalQuestions: 630,
+      },
+      subjects: [subject("Medicine", 630)],
+    };
+
+    expect(listSizes({ structure }).filter((option) => option.kind === "full")).toStrictEqual(
+      [1, 2, 3].map((day) => ({ area: null, day, kind: "full", questions: 210 })),
+    );
+  });
+
+  it("sets aside subject counts that add up to more than any exam", () => {
+    const structure: ExamStructure = {
+      ...STATED,
+      subjects: ["A", "B", "C"].map((name) => subject(`Subject ${name}`, 500)),
+    };
+
+    expect(listSizes({ structure }).map((option) => option.questions)).toStrictEqual([
+      45, 23, 20, 20, 20,
+    ]);
+  });
+
+  it("counts written answers toward the exam, so a notice can't list endless written days", () => {
+    const structure: ExamStructure = {
+      ...STATED,
+      mock: {
+        ...MOCK,
+        sections: Array.from({ length: 60 }, (_, day) => ({
+          day: day + 1,
+          kind: "written" as const,
+          minutes: 240,
+          name: `Essays ${day + 1}`,
+          questions: null,
+          tasks: [{ count: 24, description: "An essay of up to 30 lines" }],
+        })),
+        timeLimitMinutes: null,
+        totalQuestions: null,
+      },
+    };
+
+    expect(toMockStructure({ noticeQuestions: null, ownerId: null, structure }).mock).toBeNull();
+  });
 });

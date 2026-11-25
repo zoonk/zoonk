@@ -7,6 +7,7 @@ import { withClassTestMock } from "./class-test-mock";
 import { getDaySections, sectionQuotas } from "./mock-day-sections";
 import { getMockDays } from "./mock-plan";
 import { countSubjectPaperQuestions, isPartOfAnother } from "./subject-paper-size";
+import { listWrittenRequests } from "./written-parts";
 import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 /** The largest real exams ask about 320 questions in a sitting and about 600 over all their days. */
@@ -102,34 +103,46 @@ function addUp(counts: readonly number[]): number {
   return counts.reduce((total, count) => total + count, 0);
 }
 
-function isRealExamSize(structure: ExamStructure): boolean {
+function countDay({ day, structure }: { day: number | null; structure: ExamStructure }): number {
   const listening = new Set(
     (structure.mock?.sections ?? [])
       .filter((section) => section.kind === "listening")
       .map((section) => section.name),
   );
 
-  const days = getMockDays(structure).map((day) =>
-    addUp(sectionQuotas(getDaySections({ day, listening, structure }), 1)),
-  );
+  const asked = sectionQuotas(getDaySections({ day, listening, structure }), 1);
+  const written = listWrittenRequests({ day, structure }).map((request) => request.count);
 
+  return addUp([...asked, ...written]);
+}
+
+/** Each subject's own mock, offered when the exam has more than one subject. */
+function countSubjectPapers(structure: ExamStructure): number[] {
   const objective = structure.subjects.filter((subject) =>
     isQuestionSubject({ structure, subject }),
   );
 
-  const subjects = objective
-    .filter((subject) => !isPartOfAnother({ subject, subjects: objective }))
-    .map((subject) =>
-      countSubjectPaperQuestions({
-        parts: objective.filter((part) => part.partOf === subject.name),
-        structure,
-        subject,
-      }),
-    );
+  const wholes = objective.filter((subject) => !isPartOfAnother({ subject, subjects: objective }));
+
+  return wholes.length > 1
+    ? wholes.map((subject) =>
+        countSubjectPaperQuestions({
+          parts: objective.filter((part) => part.partOf === subject.name),
+          structure,
+          subject,
+        }),
+      )
+    : [];
+}
+
+function isRealExamSize(structure: ExamStructure): boolean {
+  const days = getMockDays(structure).map((day) => countDay({ day, structure }));
+  const subjects = countSubjectPapers(structure);
 
   return (
     [...days, ...subjects].every((questions) => questions <= MAX_SITTING_QUESTIONS) &&
-    addUp(days) <= MAX_EXAM_QUESTIONS
+    addUp(days) <= MAX_EXAM_QUESTIONS &&
+    addUp(subjects) <= MAX_EXAM_QUESTIONS
   );
 }
 
