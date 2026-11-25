@@ -20,7 +20,6 @@ export function SubjectWrittenPractice({
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
-  // When to practice is a choice about what the plan teaches, so it waits until the subject is in it.
   if (
     subject.extra ||
     subject.notPlannedReason ||

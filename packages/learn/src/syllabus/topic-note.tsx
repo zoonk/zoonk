@@ -6,7 +6,6 @@ import {
 } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 
-/** `isModule`: the plan isn't for an exam, so it calls what the learner took out a module. */
 export function useNotPlannedReason({ isModule }: { isModule: boolean }) {
   const t = useExtracted();
 

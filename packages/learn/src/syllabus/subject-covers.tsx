@@ -1,5 +1,3 @@
-"use client";
-
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS, ListRow, ListRowContent, ListRowTitle } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";

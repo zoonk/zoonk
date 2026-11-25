@@ -106,7 +106,6 @@ function useReasonLine(isModule: boolean) {
   };
 }
 
-/** `isModule`: the plan isn't for an exam, so the page is a module's. */
 export function NotPlannedCallout({
   actions,
   adjustHref,

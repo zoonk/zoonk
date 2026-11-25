@@ -107,7 +107,6 @@ function measureSubject({
   };
 }
 
-/** Its topics and chapters say what a subject covers; one out of the plan without either still has its skills. */
 function listCovers({
   chapters,
   notPlannedReason,
