@@ -257,7 +257,7 @@ internal fun SubjectWrittenPractice(
     actions: SubjectActions,
 ) {
     val practice = syllabus.writtenPractice ?: return
-    if (subject.notPlannedReason != null || subject.areas.none { it in practice.parts }) return
+    if (subject.isExtra || subject.notPlannedReason != null || subject.areas.none { it in practice.parts }) return
 
     WrittenCadenceChoice(
         practice = practice,
