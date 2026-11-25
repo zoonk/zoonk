@@ -508,7 +508,8 @@ final class OnboardingStore {
       throw OnboardingError.signUpRequired
     }
 
-    let name = file.lastPathComponent.replacing(/[\/\\%?#\p{Cc}]/, with: "-")
+    let name = file.lastPathComponent
+      .replacing(/[\/\\%?#\p{Cc}]/.matchingSemantics(.unicodeScalar), with: "-")
       .replacing(/\s+$/, with: "")
     let pathname = "sources/\(userID)/\(UUID().uuidString.lowercased())-\(name)"
 

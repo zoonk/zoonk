@@ -34519,7 +34519,7 @@
               "pathname": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Must be directly inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID). The name can't contain `/`, `\\`, `%`, `?`, `#` or control characters, or end with a space."
+                "description": "Must be directly inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID). The name can't contain `/`, `\\`, `%`, `?`, `#`, tabs or line breaks, or end with a space."
               }
             },
             "required": [
