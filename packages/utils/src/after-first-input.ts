@@ -1,10 +1,18 @@
-const INPUT_EVENTS = ["keydown", "pointerdown", "pointermove", "touchstart", "wheel"] as const;
+// `click` too: VoiceOver on older Safari activates a control with only a click.
+const INPUT_EVENTS = [
+  "click",
+  "keydown",
+  "pointerdown",
+  "pointermove",
+  "touchstart",
+  "wheel",
+] as const;
 
 let firstInput: Promise<void> | null = null;
 let hadInput = false;
 
 /**
- * Resolves on the first key, tap, pointer move or wheel turn the browser reports as the person's
+ * Resolves on the first key, tap, click, pointer move or wheel turn the browser reports as the person's
  * own (`isTrusted`), so automated visits that load a page and leave are never counted.
  */
 export function afterFirstInput(): Promise<void> {

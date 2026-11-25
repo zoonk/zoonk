@@ -9,13 +9,21 @@ let sharing = false;
 const decided = Promise.withResolvers<null>();
 
 /**
- * Loaded once, after the page has, so its size never delays the first paint, and after the visitor's
- * first input, so a bot that loads a page and leaves is never counted. A "no" before then cancels it.
+ * Downloaded once, after the page has, so its size never delays the first paint, and started on
+ * the visitor's first input, so a bot that loads a page and leaves is never counted. It starts in
+ * that input's turn, before a tapped link navigates, so the landing page is the first one counted.
+ * A "no" before then cancels it.
  */
 function loadClient(config: NonNullable<ReturnType<typeof getPostHogConfig>>) {
-  postHog ??= Promise.all([afterPageLoad(), afterFirstInput()])
+  const firstInput = afterFirstInput();
+
+  postHog ??= afterPageLoad()
     .then(() => (sharing ? import("posthog-js") : null))
-    .then((module) => {
+    .then(async (module) => {
+      if (module && sharing) {
+        await firstInput;
+      }
+
       if (!module || !sharing) {
         postHog = null;
         return null;
