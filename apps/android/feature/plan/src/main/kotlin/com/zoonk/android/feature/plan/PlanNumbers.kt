@@ -316,7 +316,7 @@ private fun paceNumber(
             }
 
             pace is Pace.OnTrack || pace is Pace.Ahead || pace is Pace.Behind -> {
-                dailyTimeWords(page)
+                dailyTimeWords(page, perDay = true)
             }
 
             else -> {

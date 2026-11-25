@@ -95,6 +95,7 @@ private fun LinkRow(
 internal fun PlanProperties(
     page: PlanPageState,
     links: PlanLinks,
+    pathShown: Boolean,
     modifier: Modifier = Modifier,
     onOpen: ((PlanSection) -> Unit)? = null,
 ) {
@@ -111,6 +112,9 @@ internal fun PlanProperties(
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,
             )
+            estimatedFinish(page, pathShown)?.let { finish ->
+                PropertyRow(stringResource(R.string.plan_estimated_finish_label), finish, onClick = null)
+            }
             PropertyRow(
                 stringResource(R.string.plan_daily_study_time),
                 dailyTimeValue(page),
@@ -272,22 +276,43 @@ private fun goalDateValue(page: PlanPageState): AnnotatedString {
     return dateValue(planDate(finish.date, page.today, finish.estimate, finish.month).text)
 }
 
-/** Main's `DailyTimeValue`: "20 min · 30 min weekends", the times in the data face. */
+/**
+ * Main's `EstimatedFinishRow`: the path's last row and the timeline date the estimated finish; a plan of
+ * subjects with one phase shows neither, so its own row says it.
+ */
 @Composable
-private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
-    val locale = currentLocale()
-    val shape = page.plan.schedule.shape
-    val times = listOfNotNull(shape.weekdays, shape.weekend).map { formatMinutes(it.toInt(), locale) }
-    return withData(dailyTimeWords(page), *times.toTypedArray())
+private fun estimatedFinish(
+    page: PlanPageState,
+    pathShown: Boolean,
+): AnnotatedString? {
+    val finish = page.finish
+    val shown = pathShown || page.plan.roadmapPhases.size > 1
+    if (shown || page.isExam || finish == null || !finish.estimate || page.plan.schedule.targetDate != null) return null
+    return dateValue(planDate(finish.date, page.today, estimate = true, month = finish.month).text)
 }
 
-/** The daily time in the "Daily study time" setting's words, for a line that isn't a value (main's `DailyTimeValue readout`). */
+/** Main's `DailyTimeValue`: a time alone is a value, in the data face; "20 min · 30 min weekends" is a phrase, in the words' face. */
 @Composable
-internal fun dailyTimeWords(page: PlanPageState): String {
+private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
+    val words = dailyTimeWords(page)
+    return if (page.plan.schedule.shape.weekend == null) withData(words, words) else AnnotatedString(words)
+}
+
+/**
+ * The daily time in the "Daily study time" setting's words. Alone in that row the time is a value;
+ * anywhere else ([perDay]) it says "a day".
+ */
+@Composable
+internal fun dailyTimeWords(
+    page: PlanPageState,
+    perDay: Boolean = false,
+): String {
     val locale = currentLocale()
     val shape = page.plan.schedule.shape
     val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
-    val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return weekdays
+    val weekend =
+        shape.weekend?.let { formatMinutes(it.toInt(), locale) }
+            ?: return if (perDay) stringResource(R.string.plan_time_per_day, weekdays) else weekdays
     return stringResource(R.string.plan_time_weekends, weekdays, weekend)
 }
 

@@ -25,24 +25,25 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-export function DailyTimeValue({ readout = false }: { readout?: boolean }) {
+/**
+ * The time a day in the "Daily study time" setting's words. Alone in that row the time is a value,
+ * in the data face; anywhere else it says "a day". A phrase is in the words' face throughout.
+ */
+export function DailyTimeValue({ perDay = false }: { perDay?: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const { shape } = plan.schedule;
+  const weekdays = formatDuration(shape.weekdays);
 
-  const time = (value: React.ReactNode) =>
-    readout ? <span className="tabular-nums">{value}</span> : mono(value);
-
-  if (shape.weekend === null) {
-    return time(formatDuration(shape.weekdays));
+  if (shape.weekend !== null) {
+    return t("{weekdays} · {weekend} weekends", {
+      weekdays,
+      weekend: formatDuration(shape.weekend),
+    });
   }
 
-  return t.rich("<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends", {
-    mono: time,
-    weekdays: formatDuration(shape.weekdays),
-    weekend: formatDuration(shape.weekend),
-  });
+  return perDay ? t("{time} a day", { time: weekdays }) : mono(weekdays);
 }
 
 const PROPERTY_ROW_CLASS =
@@ -213,15 +214,15 @@ function GoalDateValue() {
 }
 
 /**
- * The timeline's flag dates the estimated finish; a plan of one phase draws no timeline, so its
- * own row says it.
+ * The path's last row and the timeline's flag date the estimated finish. A plan of subjects with
+ * one phase shows neither (no path list, no timeline), so its own row says it.
  */
-function EstimatedFinishRow() {
+function EstimatedFinishRow({ pathShown }: { pathShown: boolean }) {
   const t = useExtracted();
   const finish = useEstimatedFinish();
   const { phases } = useRoadmapPhases();
 
-  if (!finish || phases.length > 1) {
+  if (!finish || pathShown || phases.length > 1) {
     return null;
   }
 
@@ -236,10 +237,13 @@ export function PlanProperties({
   className,
   examHref = null,
   onOpen,
+  pathShown,
 }: {
   className?: string;
   examHref?: string | null;
   onOpen: (section: PlanEditorSection) => void;
+  /** The page lists the path, whose last row dates the finish. */
+  pathShown: boolean;
 }) {
   const t = useExtracted();
   const activityName = useActivityName();
@@ -263,7 +267,7 @@ export function PlanProperties({
           <GoalDateValue />
         </PropertyRow>
 
-        <EstimatedFinishRow />
+        <EstimatedFinishRow pathShown={pathShown} />
 
         <PropertyRow label={t("Daily study time")} onOpen={() => onOpen("time")}>
           <DailyTimeValue />
