@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.settings
 
 import android.net.Uri
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
@@ -47,7 +49,7 @@ class AccountDeletionTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun TestScope.signedIn(): Pair<SessionStore, YourDataViewModel> {
+    private suspend fun TestScope.signedIn(handle: SavedStateHandle = SavedStateHandle()): Pair<SessionStore, YourDataViewModel> {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         val main = CoroutineScope(SupervisorJob() + dispatcher)
@@ -61,8 +63,26 @@ class AccountDeletionTest {
             )
         sessions.restore()
         advanceUntilIdle()
-        return sessions to YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test") { null }
+        return sessions to
+            YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test", handle) { null }
     }
+
+    @Test
+    fun theCodeDialogComesBackWithItsCodeAfterAndroidReclaimsTheApp() =
+        runTest {
+            val handle = SavedStateHandle()
+            val (_, profile) = signedIn(handle)
+            api.deletionFailures += ApiException(ApiError.Unavailable, "FORBIDDEN", 403)
+            profile.askToDelete()
+            profile.delete()
+            advanceUntilIdle()
+            profile.codeField.setTextAndPlaceCursorAtEnd("123")
+
+            val (_, restored) = signedIn(SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+            assertEquals(DeletionStep.Code, restored.deletionStep)
+            assertEquals("123", restored.codeField.text.toString())
+        }
 
     @Test
     fun deletingTheAccountEndsTheFlow() =
@@ -90,19 +110,19 @@ class AccountDeletionTest {
             assertEquals(listOf("ana@zoonk.test"), api.deletionCodesSent)
 
             api.deletionFailures += ApiException(ApiError.Unavailable, "ACCOUNT_DELETION_INVALID_OTP", 400)
-            profile.onCodeChange("111111")
+            profile.codeField.setTextAndPlaceCursorAtEnd("111111")
             profile.delete()
             advanceUntilIdle()
             assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
             assertTrue(sessions.state.value is SessionState.SignedIn)
 
-            profile.onCodeChange("111 111")
+            profile.codeField.setTextAndPlaceCursorAtEnd("111111")
             profile.delete()
             advanceUntilIdle()
             assertTrue(api.deletions.isEmpty())
             assertEquals(AccountFailure.WrongCode, profile.deletionFailure)
 
-            profile.onCodeChange("123456")
+            profile.codeField.setTextAndPlaceCursorAtEnd("123456")
             profile.delete()
             advanceUntilIdle()
             assertEquals(listOf<String?>("123456"), api.deletions)

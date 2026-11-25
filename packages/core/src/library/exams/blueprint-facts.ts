@@ -213,7 +213,7 @@ function editionFacts({ documents, extraction }: FactSource): FactEntry[] {
       year !== null && { id: "edition.year", statement: `This is the exam's ${year} edition` },
       questionCount !== null && {
         id: "edition.questionCount",
-        statement: `The exam has ${questionCount} questions in total`,
+        statement: `The exam has ${questionCount} questions or items in total`,
       },
     ],
     documents,

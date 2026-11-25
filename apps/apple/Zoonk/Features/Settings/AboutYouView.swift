@@ -125,16 +125,24 @@ struct AboutYouQuestionView: View {
           self.draft = $0
         }
         let canEdit = profile.memoryEnabled || !question.isBiography
+        let canSave =
+          canEdit
+          && draft.wrappedValue.savesAChange(view, memoryEnabled: profile.memoryEnabled)
 
         QuestionForm {
           ProfileQuestionSections(
             view: view,
             context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled, inSettings: true),
-            draft: draft)
+            draft: draft
+          )
+          .onSubmit {
+            if canSave, !isSaving {
+              save(draft.wrappedValue)
+            }
+          }
         } buttons: {
           StepButtons(
-            canContinue: canEdit
-              && draft.wrappedValue.savesAChange(view, memoryEnabled: profile.memoryEnabled),
+            canContinue: canSave,
             continueLabel: Text(
               "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {

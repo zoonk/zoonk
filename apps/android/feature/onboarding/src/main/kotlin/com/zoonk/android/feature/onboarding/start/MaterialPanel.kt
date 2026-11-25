@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -122,19 +125,19 @@ class AttachDraft(
     link: String = "",
 ) {
     var pasting by mutableStateOf(pasting)
-    var text by mutableStateOf(text)
-    var link by mutableStateOf(link)
+    val text = TextFieldState(text)
+    val link = TextFieldState(link)
 
     fun clear() {
         pasting = null
-        text = ""
-        link = ""
+        text.clearText()
+        link.clearText()
     }
 
     companion object {
         val Saver =
             listSaver<AttachDraft, String>(
-                save = { listOf(it.pasting?.name.orEmpty(), it.text, it.link) },
+                save = { listOf(it.pasting?.name.orEmpty(), it.text.text.toString(), it.link.text.toString()) },
                 restore = { (pasting, text, link) -> AttachDraft(Pasting.entries.find { it.name == pasting }, text, link) },
             )
     }
@@ -195,8 +198,7 @@ fun AttachControls(
         when (pasting) {
             Pasting.Text -> {
                 PasteField(
-                    value = draft.text,
-                    onValueChange = { draft.text = it },
+                    state = draft.text,
                     label = stringResource(R.string.onboarding_your_text),
                     placeholder = stringResource(R.string.onboarding_paste_text_placeholder),
                     action = stringResource(R.string.onboarding_add_text),
@@ -209,8 +211,7 @@ fun AttachControls(
 
             Pasting.Link -> {
                 PasteField(
-                    value = draft.link,
-                    onValueChange = { draft.link = it },
+                    state = draft.link,
                     label = stringResource(R.string.onboarding_link),
                     placeholder = stringResource(R.string.onboarding_paste_link_placeholder),
                     action = stringResource(R.string.onboarding_add_link),
@@ -243,8 +244,7 @@ fun AttachControls(
 
 @Composable
 private fun PasteField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     label: String,
     placeholder: String,
     action: String,
@@ -255,16 +255,14 @@ private fun PasteField(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
+            state = state,
             modifier = Modifier.fillMaxWidth(),
             label = label,
             placeholder = { Text(placeholder) },
-            minLines = minLines,
-            maxLines = 10,
+            lineLimits = TextFieldLineLimits.MultiLine(minHeightInLines = minLines, maxHeightInLines = 10),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         )
-        OutlinedButton(onClick = { onAdd(value.trim()) }, enabled = enabled && value.isNotBlank()) { Text(action) }
+        OutlinedButton(onClick = { onAdd(state.text.toString().trim()) }, enabled = enabled && state.text.isNotBlank()) { Text(action) }
     }
 }
 

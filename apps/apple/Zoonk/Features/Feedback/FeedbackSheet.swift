@@ -186,7 +186,7 @@ private struct FeedbackForm: View {
           isFocused: focusedField == .message
         ) {
           MultilineTextField(
-            text: $store.message,
+            text: $store.message, limit: 5000,
             prompt: Text(
               "How can we help you?",
               tableName: "Feedback",

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,10 +38,12 @@ import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -51,7 +55,9 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
+import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedTextField
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
@@ -78,11 +84,13 @@ fun FeedbackForm(
 ) {
     val accountEmail = accountEmail(app)
     val isSending = form.status == FeedbackStatus.Sending
+    form.messageField.ObserveEdits { form.edited() }
+    form.emailField.ObserveEdits { form.edited() }
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
-            value = form.message,
-            onValueChange = form::onMessageChange,
+            state = form.messageField,
+            inputTransformation = InputTransformation.fitTo(MAX_FEEDBACK_MESSAGE_LENGTH),
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -95,13 +103,10 @@ fun FeedbackForm(
         )
 
         if (accountEmail == null) {
+            val send = { form.send(accountEmail) }
             OutlinedTextField(
-                value = form.typedEmail,
-                onValueChange = form::onEmailChange,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .semantics { contentType = ContentType.EmailAddress },
+                state = form.emailField,
+                modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.EmailAddress },
                 label =
                     stringResource(
                         if (form.target.reportType ==
@@ -113,9 +118,15 @@ fun FeedbackForm(
                         },
                     ),
                 placeholder = { Text(stringResource(R.string.account_email_placeholder)) },
-                singleLine = true,
+                lineLimits = TextFieldLineLimits.SingleLine,
                 readOnly = isSending,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, autoCorrectEnabled = false),
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        autoCorrectEnabled = false,
+                        imeAction = ImeAction.Send,
+                    ),
+                onKeyboardAction = { send() },
             )
         }
 
@@ -212,7 +223,7 @@ private fun rememberFeedbackSheet(
             } else {
                 ""
             }
-        val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target, initialMessage) }
+        val form = viewModel(key = "feedback:$id") { FeedbackViewModel(sender, target, initialMessage, createSavedStateHandle()) }
 
         LaunchedEffect(form) {
             snapshotFlow { form.status }.first { it == FeedbackStatus.Sent }

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_FEEDBACK_MESSAGE_LENGTH } from "@zoonk/core/feedback/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   Field,
@@ -203,6 +204,7 @@ export function FeedbackForm({
               // The box runs to the bar's end; its words still wrap at a width that reads well.
               className={cn("min-h-32", layout === "page" && "lg:pe-[max(0.75rem,100%-42rem)]")}
               id={messageId}
+              maxLength={MAX_FEEDBACK_MESSAGE_LENGTH}
               name="message"
               onChange={(event) => setDraft(event.target.value)}
               placeholder={t("How can we help you?")}

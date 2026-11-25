@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -47,7 +51,6 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -67,6 +70,7 @@ import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import kotlinx.coroutines.flow.drop
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf19Value as PatternTesterContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19Fields.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOf1Value as FormulaFieldsValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf19Fields.PlayableLibraryStepAnyOfContentOneOf19FieldsOneOfValue as RegexFieldsValue
@@ -121,16 +125,12 @@ private fun PatternTesterActivity(props: ActivityProps) {
     val formula = (fields as? FormulaFieldsValue)?.value
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val focus = remember { FocusRequester() }
-    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(
-            TextFieldValue(if (props.isExploring) regex?.solution ?: formula?.solution.orEmpty() else props.answer.pattern.orEmpty()),
-        )
-    }
-
-    fun change(next: TextFieldValue) {
-        val edited = next.text != value.text
-        value = next
-        if (edited) onAnswerChange(next.text.takeIf { it.jsTrim().isNotEmpty() }?.let(::patternAnswer))
+    val value =
+        rememberTextFieldState(if (props.isExploring) regex?.solution ?: formula?.solution.orEmpty() else props.answer.pattern.orEmpty())
+    LaunchedEffect(value) {
+        snapshotFlow { value.text.toString() }.drop(1).collect { text ->
+            onAnswerChange(text.takeIf { it.jsTrim().isNotEmpty() }?.let(::patternAnswer))
+        }
     }
 
     ActivityCanvas(gap = 16.dp) {
@@ -140,21 +140,21 @@ private fun PatternTesterActivity(props: ActivityProps) {
             literalNumbers = regex != null,
         )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            PatternField(value, ::change, isRegex = regex != null, props.isLocked, props.isChecked, focus)
+            PatternField(value, isRegex = regex != null, props.isLocked, props.isChecked, focus)
             if (!props.isChecked) {
                 SnippetBar(
                     snippets = if (formula != null) formulaSnippets(formula) else regexSnippets(),
                     label = stringResource(R.string.activities_code_symbols),
                     enabled = !props.isLocked,
                     onInsert = { snippet ->
-                        change(value.inserting(snippet))
+                        value.insertSnippet(snippet)
                         focus.requestFocus()
                     },
                 )
             }
         }
-        if (regex != null) RegexExamples(regex, value.text)
-        if (formula != null) FormulaExamples(formula, value.text)
+        if (regex != null) RegexExamples(regex, value.text.toString())
+        if (formula != null) FormulaExamples(formula, value.text.toString())
         if (!props.isExploring) {
             PatternHints(
                 regex?.hints ?: formula?.hints.orEmpty(),
@@ -188,11 +188,9 @@ private fun PatternTesterActivity(props: ActivityProps) {
     }
 }
 
-@Suppress("DEPRECATION")
 @Composable
 private fun PatternField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
+    value: TextFieldState,
     isRegex: Boolean,
     isLocked: Boolean,
     isChecked: Boolean,
@@ -219,8 +217,7 @@ private fun PatternField(
     ) {
         if (isRegex) delimiter()
         BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
+            state = value,
             modifier =
                 Modifier
                     .weight(1f)
@@ -230,9 +227,9 @@ private fun PatternField(
             readOnly = isLocked,
             textStyle = style,
             keyboardOptions = codeKeyboard,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(colors.primary),
-            decorationBox = { field ->
+            decorator = { field ->
                 Box {
                     if (!isRegex && value.text.isEmpty()) {
                         Text(stringResource(R.string.activities_code_formula_placeholder), color = colors.onSurfaceVariant, style = style)

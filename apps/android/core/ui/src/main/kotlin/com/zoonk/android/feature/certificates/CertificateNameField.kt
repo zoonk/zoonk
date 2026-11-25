@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -50,6 +54,7 @@ import kotlinx.coroutines.launch
  * name being typed and whether the learner is [changing] the one they have live in the saved state,
  * so they survive folding (which moves the field between pages) and a save that ends after it.
  */
+@OptIn(SavedStateHandleSaveableApi::class)
 class CertificateNameModel(
     private val account: AccountStore,
     private val saved: SavedStateHandle,
@@ -57,8 +62,8 @@ class CertificateNameModel(
     /** The field's visit: a name that didn't save says so only on it. */
     val visit = Visit()
 
-    var name by mutableStateOf(saved.get<String>(NAME).orEmpty())
-        private set
+    val field = saved.saveable(key = "nameField", saver = TextFieldState.Saver) { TextFieldState() }
+    val name get() = field.text.toString()
 
     var changing by mutableStateOf(saved.get<Boolean>(CHANGING) == true)
         private set
@@ -71,13 +76,8 @@ class CertificateNameModel(
     /** The name didn't save, on this visit to the field. */
     val failed get() = failure.value != null
 
-    fun type(text: String) {
-        name = text
-        saved[NAME] = text
-    }
-
     fun change(current: String) {
-        type(current)
+        field.setTextAndPlaceCursorAtEnd(current)
         changing = true
         saved[CHANGING] = true
     }
@@ -106,7 +106,6 @@ class CertificateNameModel(
     }
 
     private companion object {
-        const val NAME = "name"
         const val CHANGING = "changing"
     }
 }
@@ -139,8 +138,7 @@ fun CertificateNameField(
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(
-            value = name,
-            onValueChange = model::type,
+            state = model.field,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -161,10 +159,10 @@ fun CertificateNameField(
                 )
             },
             isError = isTooLong,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             readOnly = model.isSaving,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { save() }),
+            onKeyboardAction = { save() },
         )
 
         if (model.failed) {

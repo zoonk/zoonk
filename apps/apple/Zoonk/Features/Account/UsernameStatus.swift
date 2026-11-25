@@ -14,10 +14,13 @@ enum UsernameStatus: Equatable {
   case invalid
   case taken
 
+  static let maxLength = 30
+
   private static let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_")
 
   static func isWellFormed(_ username: String) -> Bool {
-    3...30 ~= username.count && username.unicodeScalars.allSatisfy { allowed.contains($0) }
+    (3...maxLength).contains(username.utf16.count)
+      && username.unicodeScalars.allSatisfy { allowed.contains($0) }
   }
 
   static func of(_ username: String, current: String, check: UsernameCheck?) -> UsernameStatus {
