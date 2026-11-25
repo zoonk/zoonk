@@ -25,6 +25,21 @@ function listMovedWeeklyItemIds({
   );
 }
 
+/**
+ * A test-out moves where the learner stands, so a run that finds lessons tested out on days still
+ * ahead lays the plan out again from today, as the learner's own changes do, instead of keeping
+ * this week's days around the time it freed. That run dates them today, so the next run keeps
+ * the week again.
+ */
+export function withTestOutsAhead(input: BuildPlanInput): BuildPlanInput {
+  const testedOutAhead = input.items.some(
+    (item) =>
+      item.status === "testedOut" && item.scheduledFor !== null && item.scheduledFor > input.today,
+  );
+
+  return input.mode === "automatic" && testedOutAhead ? { ...input, mode: "forced" } : input;
+}
+
 /** The last day an automatic run keeps saved work on; one that keeps the rest keeps all of it. */
 export function getLastKeptDay({
   input,

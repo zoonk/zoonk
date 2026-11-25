@@ -189,6 +189,34 @@ function fillRoom({
   return { ...scheduleUnits({ days, units: begun }), dropped: [] };
 }
 
+/** The stand-ins whose landed lessons this run places: their topic landed and they hold saved time by `end`. */
+export function listHeldStandIns({
+  end,
+  input,
+  landed,
+  unitsByKey,
+}: {
+  end: Date | null;
+  input: BuildPlanInput;
+  landed: LandedUnits | null;
+  unitsByKey: ReadonlyMap<string, QueueUnit>;
+}): ExistingPlanItem[] {
+  // A stand-in saved without its days holds whatever its day and the ones before it have free.
+  const isHeld = (item: ExistingPlanItem) =>
+    readSelectedItemFacts(item.facts)?.days
+      ? listSavedTime({ end, item, today: input.today, unit: unitsByKey.get(getItemKey(item)) })
+          .length > 0
+      : !end || (item.scheduledFor !== null && item.scheduledFor <= end);
+
+  return input.items.filter(
+    (item) =>
+      item.status === "todo" &&
+      isStandIn(item) &&
+      landed?.has(item.skillId ?? "") === true &&
+      isHeld(item),
+  );
+}
+
 /**
  * Newly written lessons take the place of their stand-in: the topic's lessons, then the lessons
  * it still has to write, fill the room every item the run keeps leaves free, from the day the
@@ -221,19 +249,7 @@ export function placeLandedLessons({
   const savedTime = (item: ExistingPlanItem) =>
     listSavedTime({ end, item, today: input.today, unit: unitsByKey.get(getItemKey(item)) });
 
-  // A stand-in saved without its days holds whatever its day and the ones before it have free.
-  const isHeld = (item: ExistingPlanItem) =>
-    readSelectedItemFacts(item.facts)?.days
-      ? savedTime(item).length > 0
-      : !end || (item.scheduledFor !== null && item.scheduledFor <= end);
-
-  const items = input.items.filter(
-    (item) =>
-      item.status === "todo" &&
-      isStandIn(item) &&
-      landed?.has(item.skillId ?? "") === true &&
-      isHeld(item),
-  );
+  const items = listHeldStandIns({ end, input, landed, unitsByKey });
 
   if (!landed || items.length === 0) {
     return { dropped: [], kept: [], lessons: new Map(), placed: [] };

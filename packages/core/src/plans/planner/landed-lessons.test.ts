@@ -460,6 +460,65 @@ describe.each([false, true])(
   },
 );
 
+const CHAIN = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+
+describe.each([0, 1, 2, 3, 4, 5, 6])(
+  "a plan's next topics landing as the learner moves past its first ones, %s days into the week",
+  (offset) => {
+    const today = addDays(TODAY, offset);
+
+    const outlining = {
+      ...learn,
+      goal: { ...learn.goal, dailyMinutes: 10 },
+      graph: {
+        phases: [{ milestone: null, name: "Only" }],
+        skills: CHAIN.map((skillId) => ({ ...skill(skillId, "Chain"), lessons: 2 })),
+      },
+      lessons: [],
+      prerequisites: new Map(
+        CHAIN.slice(1).map((skillId, index) => [skillId, [CHAIN[index] ?? ""]]),
+      ),
+      today,
+    } satisfies BuildPlanInput;
+
+    function landAfter(status: "done" | "testedOut") {
+      const moved = saveWithDays(outlining).map((entry) =>
+        entry.skillId === "a" || entry.skillId === "b"
+          ? { ...entry, completedAt: today, status }
+          : entry,
+      );
+
+      const next = buildPlan({
+        ...outlining,
+        items: moved,
+        lessons: CHAIN.flatMap((skillId) => writeLessons({ count: 2, minutes: 5, skillId })),
+        mode: "automatic",
+      });
+
+      return next.items.filter((entry) => entry.kind === "lesson" && entry.status === "todo");
+    }
+
+    function listStarts(ahead: ReturnType<typeof landAfter>) {
+      return CHAIN.slice(2).map((skillId) => ahead.find((entry) => entry.skillId === skillId));
+    }
+
+    it.each(["done", "testedOut"] as const)(
+      "keeps each topic before the ones built on it after lessons %s ahead",
+      (status) => {
+        const ahead = landAfter(status);
+        const startDays = listStarts(ahead).map((entry) => entry?.scheduledFor?.getTime() ?? 0);
+
+        expect([...new Set(ahead.map((entry) => entry.skillId))]).toStrictEqual(CHAIN.slice(2));
+        expect(startDays).toStrictEqual(startDays.toSorted((a, b) => a - b));
+      },
+    );
+
+    it("starts the next topic today once the learner tests out of the ones before it", () => {
+      expect(listStarts(landAfter("testedOut"))[0]?.scheduledFor).toStrictEqual(today);
+    });
+  },
+);
+
 function saveLater(plan: { items: readonly PlannedItem[] }): ExistingPlanItem[] {
   const nextWeek = addDays(TODAY, 7);
 

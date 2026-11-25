@@ -1,12 +1,12 @@
 import { type BuildPlanInput } from "./build-plan";
 import { splitExistingItems } from "./kept-items";
 import { type Landing } from "./landed-lessons";
-import { findLandedUnits } from "./landed-placement";
+import { findLandedUnits, listHeldStandIns } from "./landed-placement";
 import { type MockResolution } from "./mock-identity";
 import { addDays, getEndOfWeek } from "./plan-calendar";
 import { buildPlanQueue } from "./plan-queue";
 import { createDays, getOpenStart, listFundedPlanDays } from "./plan-run-days";
-import { getPendingOrder } from "./this-week-items";
+import { getLastKeptDay, getPendingOrder } from "./this-week-items";
 import { limitWrittenTeaching } from "./writing-allocation";
 
 export function preparePlanWork({
@@ -34,7 +34,14 @@ export function preparePlanWork({
   const { finished, frozen } = split;
   const days = createDays({ input, planStart });
   const { finishedKeys, ordered, unitsByKey } = getPendingOrder({ finished, frozen, queue });
-  const start = frozen.length > 0 ? addDays(getEndOfWeek(input.today), 1) : getOpenStart(input);
+
+  const end = getLastKeptDay({ input, keepsRest });
+
+  const keepsThisWeek =
+    frozen.length > 0 ||
+    listHeldStandIns({ end, input, landed: landedUnits, unitsByKey }).length > 0;
+
+  const start = keepsThisWeek ? addDays(getEndOfWeek(input.today), 1) : getOpenStart(input);
 
   const funded = listFundedPlanDays({
     days,
