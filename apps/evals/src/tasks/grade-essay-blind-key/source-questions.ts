@@ -12,7 +12,6 @@ export type SourceQuestion = {
   cutoffSource: string;
   question: string;
   context: string | null;
-  /** The notice's grading the writer and the grader both read. */
   grading: Grading;
   writerInput: WritingPromptInput;
   cases: WritingCase[];
@@ -35,10 +34,8 @@ const OAB_EXAMS: Record<string, string> = {
   xvi: "XVI Exame de Ordem Unificado (OAB), 2ª fase",
 };
 
-/** OAB's notice: the practical test passes at 6.00 of 10.00 points; each question is worth 1.25. */
 const OAB_CUTOFF = { share: 0.6, source: "FGV OAB notice: 6.00 of 10.00 in the practical test" };
 
-/** CACD's notice (6.8.10) passes the written phase at 480 of its eight 100-point tests. */
 const CACD_CUTOFF = { share: 0.6, source: "CACD notice 6.8.10: 480.00 of 800.00 in the phase" };
 
 /** The grading the writer and the grader see cite the notice, never the board's standard. */
@@ -163,20 +160,14 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
   };
 }
 
-function groupBy(cases: WritingCase[], key: (testCase: WritingCase) => string) {
-  const groups = new Map<string, WritingCase[]>();
-
-  for (const testCase of cases) {
-    groups.set(key(testCase), [...(groups.get(key(testCase)) ?? []), testCase]);
-  }
-
-  return [...groups.values()];
-}
-
 export const SOURCE_QUESTIONS: SourceQuestion[] = [
-  ...groupBy(FGV_PUBLISHED_CASES, ({ id }) => id).map((cases) => oabQuestion(cases)),
-  ...groupBy(
+  ...Map.groupBy(FGV_PUBLISHED_CASES, ({ id }) => id)
+    .values()
+    .map((cases) => oabQuestion(cases)),
+  ...Map.groupBy(
     CEBRASPE_PUBLISHED_CASES.filter(({ id }) => id.includes("-history-")),
     ({ id }) => id.replace(/-\d+-pt$/u, ""),
-  ).map((cases) => cacdQuestion(cases)),
+  )
+    .values()
+    .map((cases) => cacdQuestion(cases)),
 ];

@@ -1,8 +1,4 @@
-/**
- * Split-conformal calibration of written grades against board marks, as shares of a question's
- * points. An answer's residuals are the worst of its runs; answers from one source question
- * (repeats, ablations) are held out together.
- */
+/** Split-conformal calibration of written grades against board marks, as shares of a question's points. */
 
 export type Range = { low: number; high: number };
 
@@ -23,10 +19,6 @@ type Margins = { over: number; under: number } | null;
 
 const round = (value: number) => Math.round(value * 10_000) / 10_000;
 
-/**
- * `over` is how far the estimate's low end sits above the board, `under` how far the board sits
- * above the estimate's high end. A grader zero on an answer the board credited is a full miss.
- */
 function getRunResidual({ board, max }: GradedAnswer, run: Range): Residual {
   if (run.high === 0 && board.low > 0) {
     return { over: 0, under: 1 };
@@ -47,7 +39,6 @@ export function getAnswerResidual(answer: GradedAnswer): Residual {
   };
 }
 
-/** The ⌈(n+1)·level⌉-th smallest residual, or null when there are too few to rank. */
 function rankResidual(values: number[], level: number): number | null {
   const rank = Math.ceil((values.length + 1) * level - 1e-9);
 
@@ -62,20 +53,7 @@ export function isRankable(count: number, level: number): boolean {
   return Math.ceil((count + 1) * level - 1e-9) <= count;
 }
 
-function groupBy<T>(items: T[], key: (item: T) => string): Map<string, T[]> {
-  const groups = new Map<string, T[]>();
-
-  for (const item of items) {
-    groups.set(key(item), [...(groups.get(key(item)) ?? []), item]);
-  }
-
-  return groups;
-}
-
-/**
- * Margins rank the pooled real answers, then widen to the largest residual of every stratum too
- * small to rank at the level, ablations included. No shift.
- */
+/** Strata too small to rank widen the margins to their largest residual, ablations included; nothing shifts them. */
 export function getMargins(answers: GradedAnswer[], level: number): Margins {
   const real = answers
     .filter(({ kind }) => kind === "real")
@@ -95,7 +73,7 @@ export function getMargins(answers: GradedAnswer[], level: number): Margins {
     return null;
   }
 
-  const floors = [...groupBy(answers, ({ stratum }) => stratum).values()]
+  const floors = [...getStrata(answers).values()]
     .filter((stratum) => !isRankable(stratum.length, level))
     .map((stratum) => stratum.map((answer) => getAnswerResidual(answer)));
 
@@ -107,7 +85,6 @@ export function getMargins(answers: GradedAnswer[], level: number): Margins {
 
 type Call = "above" | "below" | "close" | "none";
 
-/** The call a part's estimate gets once the margins widen it on both sides. */
 function getCall(answer: GradedAnswer, run: Range, margins: Margins): Call {
   if (!margins || answer.cutoffShare === null) {
     return "none";
@@ -130,7 +107,6 @@ export function isBelowCutoff({ board, cutoffShare, max }: GradedAnswer): boolea
   return cutoffShare !== null && board.high < cutoffShare * max - 1e-9;
 }
 
-/** Distance from the estimate's midpoint to the board's mark, as a share of the question. */
 function getPointsError({ board, max }: GradedAnswer, run: Range): number {
   const midpoint = (run.low + run.high) / 2;
   return Math.max(0, board.low - midpoint, midpoint - board.high) / max;
@@ -177,7 +153,6 @@ export function getPointsGate(answers: GradedAnswer[]) {
   };
 }
 
-/** Each source question's answers get margins calibrated without that question. */
 export function getHeldOutCalls(answers: GradedAnswer[], level: number) {
   return answers
     .filter((answer) => isBelowCutoff(answer))
@@ -191,9 +166,8 @@ export function getHeldOutCalls(answers: GradedAnswer[], level: number) {
     });
 }
 
-/** Each stratum's answers against margins calibrated on the other strata, per side. */
 export function getStratumCoverage(answers: GradedAnswer[], level: number) {
-  return [...groupBy(answers, ({ stratum }) => stratum).entries()].map(([stratum, members]) => {
+  return [...getStrata(answers).entries()].map(([stratum, members]) => {
     const margins = getMargins(
       answers.filter((answer) => answer.stratum !== stratum),
       level,
@@ -219,5 +193,5 @@ export function getStratumCoverage(answers: GradedAnswer[], level: number) {
 }
 
 export function getStrata(answers: GradedAnswer[]) {
-  return groupBy(answers, ({ stratum }) => stratum);
+  return Map.groupBy(answers, ({ stratum }) => stratum);
 }
