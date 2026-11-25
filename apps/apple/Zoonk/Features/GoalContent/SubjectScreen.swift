@@ -803,7 +803,6 @@ private struct SubjectNotPlannedNotice: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
 
-  /// The reasons the notice has a sentence for; any other draws no notice, as on the web.
   enum Reason: String {
     case skipped, time, missing
   }
