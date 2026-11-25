@@ -46,6 +46,12 @@ final class TextEditTests: XCTestCase {
     XCTAssertEqual(TextEdit(from: "", to: "😀👍🏽").fitted(to: 5).text, "😀")
   }
 
+  func testAnAccentPastedBeforeAComposedLetterStaysOffIt() {
+    let old = "e\u{301}" + String(repeating: "a", count: 297)
+
+    XCTAssertEqual(TextEdit(from: old, to: "e\u{300}" + old).fitted(to: 300).text, old)
+  }
+
   func testGrowingAFamilyEmojiNeedsRoomForTheJoinerAndNextMember() {
     let edit = TextEdit(from: "👨‍👩", to: "👨‍👩‍👧")
 

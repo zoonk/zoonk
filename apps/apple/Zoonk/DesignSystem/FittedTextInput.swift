@@ -7,34 +7,31 @@ nonisolated struct TextEdit {
   let after: Substring
 
   init(from old: String, to new: String, insertionEnd: String.Index? = nil) {
-    let oldScalars = old.unicodeScalars
-    let newScalars = new.unicodeScalars
-
     // Use the caret to disambiguate identical text on both sides of the edit.
     var oldEnd = old.endIndex
     var newEnd = new.endIndex
 
-    if let insertionEnd, let end = insertionEnd.samePosition(in: newScalars) {
-      let tail = newScalars[end...]
-      let start = oldScalars.index(oldEnd, offsetBy: -tail.count, limitedBy: old.startIndex)
-      if let start, oldScalars[start...].elementsEqual(tail) {
+    if let insertionEnd, insertionEnd <= new.endIndex {
+      let tail = new[insertionEnd...]
+      let start = old.index(oldEnd, offsetBy: -tail.count, limitedBy: old.startIndex)
+      if let start, old[start...] == tail {
         oldEnd = start
-        newEnd = end
+        newEnd = tail.startIndex
       }
     }
 
     var oldStart = old.startIndex
     var newStart = new.startIndex
 
-    while oldStart < oldEnd, newStart < newEnd, oldScalars[oldStart] == newScalars[newStart] {
-      oldScalars.formIndex(after: &oldStart)
-      newScalars.formIndex(after: &newStart)
+    while oldStart < oldEnd, newStart < newEnd, old[oldStart] == new[newStart] {
+      old.formIndex(after: &oldStart)
+      new.formIndex(after: &newStart)
     }
 
     while oldEnd > oldStart, newEnd > newStart {
-      let oldPrevious = oldScalars.index(before: oldEnd)
-      let newPrevious = newScalars.index(before: newEnd)
-      guard oldScalars[oldPrevious] == newScalars[newPrevious] else { break }
+      let oldPrevious = old.index(before: oldEnd)
+      let newPrevious = new.index(before: newEnd)
+      guard old[oldPrevious] == new[newPrevious] else { break }
       oldEnd = oldPrevious
       newEnd = newPrevious
     }
@@ -52,8 +49,7 @@ nonisolated struct TextEdit {
     var start = inserted.startIndex
 
     while start < inserted.endIndex {
-      // Swift resegments a slice inside a grapheme, which can strand a joiner.
-      let end = min(proposed.index(after: start), inserted.endIndex)
+      let end = proposed.index(after: start)
       let piece = proposed[start..<end]
       start = end
 
@@ -67,7 +63,7 @@ nonisolated struct TextEdit {
     }
 
     if kept.isEmpty, !inserted.isEmpty {
-      return (String(before) + removed + after, before.utf16.count)
+      return (String(before) + removed + after, before.utf16.count + removed.utf16.count)
     }
 
     return (String(before) + kept + after, before.utf16.count + kept.utf16.count)
