@@ -101,7 +101,7 @@ const nextConfig: NextConfig = {
   // The PDF renderer and lesson code checks load native and WebAssembly assets from disk.
   outputFileTracingIncludes: {
     "/.well-known/workflow/**": [
-      "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
+      "../../packages/core/node_modules/{pdfjs-dist,pyodide,quickjs-wasi,sql.js}/package.json",
       "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
       "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/pdfjs-dist/{cmaps,standard_fonts,wasm}/**",
       "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/@napi-rs/canvas",

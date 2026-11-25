@@ -1,5 +1,4 @@
 import "server-only";
-import { createRequire } from "node:module";
 import { dirname, join, sep } from "node:path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { type DocumentImage } from "./parse-document";
@@ -7,6 +6,8 @@ import { type DocumentImage } from "./parse-document";
 export const MAX_PAGE_EDGE = 1800;
 const MAX_EMBEDDED_IMAGE_PIXELS = 40_000_000;
 
+// The workflow bundle can turn an imported loader's resolve call into a numeric module ID.
+const { createRequire } = process.getBuiltinModule("node:module");
 const require = createRequire(import.meta.url);
 
 export async function renderPdfPage({
