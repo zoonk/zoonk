@@ -3756,11 +3756,11 @@ msgctxt "feedback.hBQCdX"
 msgid "Your email, if you'd like a reply"
 msgstr "Adres e-mail, jeśli chcesz dostać odpowiedź"
 
-#. An example email address in an empty field. Adapt it to the language.
+#. An example email address in an empty email field. Localize "you" and keep example.com.
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.OiSL94"
-msgid "myemail@gmail.com"
-msgstr "mojemail@gmail.com"
+msgctxt "feedback.PwhG9W"
+msgid "you@example.com"
+msgstr "ty@example.com"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.Xx0WZV"

@@ -78,8 +78,9 @@ function EmailField({
           name="email"
           onChange={(event) => onChange(event.target.value)}
           placeholder={t({
-            description: "An example email address in an empty field. Adapt it to the language.",
-            message: "myemail@gmail.com",
+            description:
+              'An example email address in an empty email field. Localize "you" and keep example.com.',
+            message: "you@example.com",
           })}
           required={required}
           type="email"

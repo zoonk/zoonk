@@ -35,7 +35,7 @@ const PERIODS = ["monthly", "yearly"] as const;
 const BILLING_SWITCH_CLASS = "flex";
 
 const BILLING_OPTION_CLASS =
-  "text-compact border-input bg-background text-muted-foreground hover:text-foreground has-checked:bg-selected-tint has-checked:text-foreground has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
+  "text-compact border-input bg-background text-muted-foreground has-checked:bg-selected-tint has-checked:text-foreground has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
 
 const DEFAULT_PERIOD = "monthly";
 const PLUS_PLAN_ID = "plus-plan";
@@ -235,7 +235,7 @@ export async function PlusPlan({
             >
               {t("Yearly")}
               {comparison && (
-                <span className="font-normal opacity-70">
+                <span className="font-normal opacity-70 contrast-more:opacity-100">
                   {t("save {amount}", {
                     amount: formatPrice(
                       comparison.savings.amount,

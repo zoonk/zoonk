@@ -372,11 +372,11 @@ fun sendButtonColors(): IconButtonColors =
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-/** Main's disabled main action: `muted` with its words in `muted-foreground`, not Material's translucent ink. */
+/** Main's disabled main action: `secondary` with its words in `muted-foreground`, not Material's translucent ink. */
 @Composable
 private fun mainButtonColors(): ButtonColors =
     ButtonDefaults.buttonColors(
-        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        disabledContainerColor = MaterialTheme.zoonk.secondary,
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 

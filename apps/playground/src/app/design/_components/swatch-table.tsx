@@ -6,11 +6,20 @@ import { useEffect, useRef, useState } from "react";
 import { contrastRatio } from "./contrast";
 import { renderCode } from "./doc";
 import { useModeCss } from "./mode-styles";
-import { MODES, modeClass } from "./modes";
+import { MODES, type ModeId, modeClass } from "./modes";
 
-/** WCAG's bars: 4.5:1 for words, 3:1 for a mark that carries meaning. */
+/** WCAG's bars: 4.5:1 for words, 7:1 when more contrast is asked for, 3:1 for a mark that carries meaning. */
 const TEXT_MINIMUM = 4.5;
+const MORE_CONTRAST_TEXT_MINIMUM = 7;
 const MARK_MINIMUM = 3;
+
+function minimumFor({ mode, text }: { mode: ModeId; text?: boolean }): number {
+  if (!text) {
+    return MARK_MINIMUM;
+  }
+
+  return mode.endsWith("-more") ? MORE_CONTRAST_TEXT_MINIMUM : TEXT_MINIMUM;
+}
 
 function measure(table: HTMLElement | null): Record<string, number> {
   const ratios: Record<string, number> = {};
@@ -75,12 +84,12 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
   );
 }
 
-function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
+function Ratio({ mode, ratio, text }: { mode: ModeId; ratio?: number; text?: boolean }) {
   if (ratio === undefined) {
     return <span className="text-faint text-2xs font-mono">…</span>;
   }
 
-  const minimum = text ? TEXT_MINIMUM : MARK_MINIMUM;
+  const minimum = minimumFor({ mode, text });
 
   return (
     <span
@@ -159,7 +168,11 @@ export function SwatchTable({
             >
               <Sample mode={mode.label} token={token} />
               {contrast && !token.tint && (
-                <Ratio ratio={ratios[`${token.name}/${mode.id}`]} text={token.text} />
+                <Ratio
+                  mode={mode.id}
+                  ratio={ratios[`${token.name}/${mode.id}`]}
+                  text={token.text}
+                />
               )}
             </div>
           ))}

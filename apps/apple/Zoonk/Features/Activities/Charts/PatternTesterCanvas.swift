@@ -115,11 +115,14 @@ struct PatternTesterCanvas: View {
           Text(verbatim: "/").foregroundStyle(.mutedForeground)
         }
 
-        TextField(text: Binding(get: { pattern }, set: change), selection: $selection) {
+        let example =
           isRegex
-            ? Text("Your pattern", tableName: "ActivitiesCharts", comment: "Label of a regex field")
-            : Text(verbatim: "=A1*B1")
-        }
+          ? Text("Your pattern", tableName: "ActivitiesCharts", comment: "Label of a regex field")
+          : Text(verbatim: "=A1*B1")
+        TextField(
+          text: Binding(get: { pattern }, set: change), selection: $selection,
+          prompt: example.fieldPrompt()
+        ) { example }
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .keyboardType(.asciiCapable)
