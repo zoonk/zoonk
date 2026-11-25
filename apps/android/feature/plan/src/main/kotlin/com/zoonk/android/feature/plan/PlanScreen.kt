@@ -286,7 +286,7 @@ private fun PlanSetupLeft(
         Text(
             text =
                 if (paused) {
-                    stringResource(R.string.plan_goal_paused, goal.displayName)
+                    stringResource(R.string.plan_this_goal_paused)
                 } else {
                     stringResource(R.string.plan_setup_left_title)
                 },

@@ -1210,9 +1210,16 @@ export function readAlignment({
 
         const line = ownBox ? null : shows(ruleOf(element));
 
-        const current = element.matches(
-          "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
-        );
+        // A row under the pointer draws its hover fill, the same highlight (craft E7), so a capture
+        // taken while a row is hovered judges that fill as one: even, and by the kit's 10 at most.
+        // A kit button's fill is its own at rest, so hovering one never makes it a row.
+        const current =
+          element.matches(
+            "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
+          ) ||
+          (element.matches(":hover") &&
+            element.matches("a[href], button, [role=button]") &&
+            !getComputedStyle(element).getPropertyValue("--button-variant").trim());
 
         // The current tab's own fill: a selected tab, or the current page's link, as an item of
         // the tab list. A hovered menu item or anything else a tab list holds is a highlight.

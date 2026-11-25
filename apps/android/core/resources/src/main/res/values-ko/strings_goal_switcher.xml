@@ -7,6 +7,7 @@
   "goal_switcher_failed": "35b8b7b5eb0403df6631f4557848ebeb3f8eebbe5c88356702076d9fb89ed610",
   "goal_switcher_finished": "a4975bfd831f6ec0cfff927cf2daf13b807e013ecf61ac8ce1e2d3cceed1511c",
   "goal_switcher_make_room_description": "fc3671c9fa23d9b6812855947d5a904a24eb9f0f2890c66c4e4e125f41366040",
+  "goal_switcher_make_room_subscribe": "7d3c8338f8e62e721cd879500887890c16dc1f7955f12dce45f2ebf3594d6650",
   "goal_switcher_make_room_title": "010df4274e5d3e40e64d0edae0ae08190fae2b565fd931f48df0e8e03a627dc6",
   "goal_switcher_pause": "f51acec5fdea104301c50bc3927f6b3653a1eb586daf5b3b80f6855b76067b41",
   "goal_switcher_pause_goal": "6b0e10aa05f1f2ac978e9d508be5abfc5bd67310ed119ce6b1a17cb577335939",
@@ -42,6 +43,8 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s 목표를 위한 자리 만들기</string>
     <string name="goal_switcher_make_room_description">한 번에 학습할 수 있는 목표 수를 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요.</string>
+    <!-- Over the Subscribe button in the sheet that asks the learner to pause a goal to start another. -->
+    <string name="goal_switcher_make_room_subscribe">또는 구독하면 목표를 더 많이 동시에 공부할 수 있어요.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">일시 정지</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

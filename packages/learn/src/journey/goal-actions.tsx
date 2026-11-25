@@ -17,14 +17,6 @@ import { ArchiveIcon, PauseIcon, PencilIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
-import {
-  Suggestion,
-  SuggestionDescription,
-  SuggestionHeader,
-  SuggestionLine,
-  SuggestionSummary,
-} from "../_components/suggestion";
-import { SlotContent } from "../plan/plan-suggestion-context";
 import { RenameGoalDialog } from "./rename-goal-dialog";
 import { useResumeEffectText } from "./resume-effect";
 import { useGoalLimitText } from "./resume-goal-bar";
@@ -244,35 +236,5 @@ export function ArchiveGoalDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
-}
-
-/** Says what pausing means; the page's bar holds Resume (`ResumeGoalBar`). */
-export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }) {
-  const t = useExtracted();
-  const effectText = useResumeEffectText();
-  const title = t("This goal is paused");
-  const description = control.resume ? effectText : t("Nothing is planned until you resume it.");
-
-  return (
-    <Suggestion label={title} mark={<PauseIcon />}>
-      <SuggestionLine className="px-3 **:data-[slot=suggestion-mark]:mt-0.5 **:data-[slot=suggestion-mark]:self-start">
-        <div>
-          <SuggestionSummary>{title}</SuggestionSummary>
-          <SuggestionDescription>{description}</SuggestionDescription>
-        </div>
-      </SuggestionLine>
-
-      <SlotContent statement>
-        <SuggestionHeader>
-          <PauseIcon
-            aria-hidden="true"
-            className="text-muted-foreground mr-2 inline size-4 align-text-bottom"
-          />
-          {title}
-        </SuggestionHeader>
-        <SuggestionDescription>{description}</SuggestionDescription>
-      </SlotContent>
-    </Suggestion>
   );
 }

@@ -21,7 +21,6 @@
   "focustest_not_today_failed": "2e7c713188e0a0b18237857d07ba0aeb74008a09e0b107f082838ecbe81273d5",
   "focustest_offer_line": "ca491ceb27c46c5a9baab9c8dfbe023a89bb6e6bc6c11b7224c167db59830afe",
   "focustest_offer_line_focus": "4dd354cf7dc9a30a84c96d5ed28c39454dd0dcdc65f799449677405a01bca83b",
-  "focustest_paused_in_sessions": "ac089beac2069d7426d9e0b24da032ab2fcdde4c6cb72ca51f3838f2b512dd89",
   "focustest_practical_not_checked": "58ec21c9f0a1025d6b94554ebcdc563cec00f3612ba30ad88455838bd5e1af82",
   "focustest_proposal_applied": "3b1bccff0c77b154ba74062b003e9006d4f4214d2b934175d455a600b18bcfc4",
   "focustest_proposal_declined": "b5f1cfe0a99b24d145626388727d4f198be53de5e5b9d0adffd5ef21922e81e5",
@@ -131,8 +130,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">진행 중</string>
     <string name="focustest_see_your_result">결과 보기</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">학습 중 추가 문제 일시 중지됨</string>
     <string name="focustest_take_test">집중 진단 받기</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요.</string>

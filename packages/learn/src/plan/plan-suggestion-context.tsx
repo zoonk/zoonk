@@ -26,7 +26,7 @@ import { useUndoChange } from "./use-undo-change";
 
 export type SlotItem =
   | { choice: ExamChoiceView; key: string; kind: "choice" }
-  | { key: string; kind: "courseComplete" | "coverage" | "doesNotFit" | "finished" | "paused" }
+  | { key: string; kind: "courseComplete" | "coverage" | "doesNotFit" | "finished" }
   /** The offer as shown, so its answer still shows once the plan no longer offers it. */
   | { key: string; kind: "fitLessons"; offer: NonNullable<PlanView["fitOffer"]> }
   | { key: string; kind: "extraLessons"; offer: NonNullable<PlanView["extraOffer"]> }

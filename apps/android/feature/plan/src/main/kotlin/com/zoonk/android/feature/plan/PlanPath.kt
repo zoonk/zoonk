@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +46,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
@@ -132,6 +132,7 @@ private fun PhaseItem(
                 page.plan,
                 phase,
                 phaseMeta(page, phase, open),
+                paused = page.isPaused,
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
@@ -146,7 +147,7 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
     if (!hasContent) {
-        PhaseRow(page.plan, phase, phaseMeta(page, phase, open))
+        PhaseRow(page.plan, phase, phaseMeta(page, phase, open), paused = page.isPaused)
         return
     }
 
@@ -159,6 +160,7 @@ private fun PhaseItem(
             page.plan,
             phase,
             phaseMeta(page, phase, open),
+            paused = page.isPaused,
             onClick = { expanded = !expanded },
             expanded = expanded,
             // The current phase keeps its name open, as main's does.
@@ -182,8 +184,10 @@ internal fun PhaseRow(
     expanded: Boolean? = null,
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
+    paused: Boolean = false,
 ) {
-    val date = phaseEnd(plan, phase, plan.today)
+    // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
+    val date = if (paused) null else phaseEnd(plan, phase, plan.today)
     val name = phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
@@ -275,7 +279,8 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
-    if (phase.state != PlanPhase.State.CURRENT || open) return null
+    // Main's `PhaseResume`: nothing continues while the goal is paused.
+    if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
     if (phase.lessonsDone < phase.lessonsTotal) {
         val resumes =
@@ -484,6 +489,11 @@ internal fun PhaseCheckpointMark(
 internal fun challengeName(page: PlanPageState): String =
     stringResource(if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) R.string.session_block_call else R.string.checkpoint_trickster)
 
+/** The legend names the mark by what it is: the Trickster's name waits for his intro, while a language plan's call is already its name. */
+@Composable
+internal fun legendChallengeName(page: PlanPageState): String =
+    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) challengeName(page) else stringResource(R.string.plan_legend_phase_questions)
+
 @Composable
 private fun challengeNotInPlan(page: PlanPageState): String =
     stringResource(
@@ -512,6 +522,9 @@ internal fun CheckpointRow(
     val trailing =
         when {
             done -> sameWords(stringResource(R.string.plan_challenge_won))
+
+            // A paused plan has nothing planned until the learner resumes, as [PhaseRow]'s end.
+            page.isPaused -> null
 
             // Dated today, the next session is today's, which may already be under way.
             whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
@@ -672,10 +685,11 @@ internal fun ColumnScope.PhaseDetails(
 ) {
     val learn = phase.kind == PlanPhase.Kind.LEARN
     val name = phaseName(phase, page.mocksRequirePlus)
-    val byPlace = learn && phase.isNamedLikeAChapter(name)
+    // Main's `PhaseDetails`: a phase named like one of the chapters listed under it goes by its place; the current one keeps its name, as the band and the phase line give it.
+    val byPlace = learn && phase.state != PlanPhase.State.CURRENT && phase.isNamedLikeAChapter(name)
     // From the phase's start to the end it's named by everywhere, or a short plan's days.
     val range =
-        when (val end = page.plan.phaseEnd(phase)) {
+        when (val end = page.plan.phaseEnd(phase).takeUnless { page.isPaused }) {
             null -> {
                 null
             }

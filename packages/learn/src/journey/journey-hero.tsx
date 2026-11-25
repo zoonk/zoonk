@@ -111,7 +111,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const result = placementTest?.kind === "language" ? placementTest.result : null;
   const ranges = result ? formatRanges(result.ranges) : [];
 
-  const notYet = t("Not yet");
+  const notYet = t("Not tested yet");
 
   const rangeReadout =
     ranges.length > 0 ? (
@@ -241,9 +241,12 @@ export function PlanNumbers({
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
 
+  // A paused goal says so even before its plan has anything to pace.
+  const scheduleStatus = status ?? (paused ? { kind: "onTrack" as const } : null);
+
   const scheduleNumber = useScheduleNumber({
     paused,
-    status: status ?? { kind: "onTrack" },
+    status: scheduleStatus ?? { kind: "onTrack" },
     // The side column's numbers sit above the plan's details, whose "Daily study time" row says it.
     timeShownBeside: variant === "stats",
   });
@@ -265,14 +268,20 @@ export function PlanNumbers({
           )}
           data-slot="journey-standing"
         >
-          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "@2xl/standing:col-span-2")}>
+          <li
+            className={cn(
+              NUMBER_ITEM_CLASS,
+              "min-w-0",
+              !scheduleStatus && "@2xl/standing:col-span-2",
+            )}
+          >
             <NumberButton
               number={standingNumber}
               onOpen={() => setOpen("standing")}
               variant={variant}
             />
           </li>
-          {status && (
+          {scheduleStatus && (
             <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
               <NumberButton
                 number={scheduleNumber}
@@ -288,7 +297,7 @@ export function PlanNumbers({
         <StandingBody examHref={examHref} number={standingNumber} standing={standing} />
       </NumberSheet>
 
-      {status && (
+      {scheduleStatus && (
         <NumberSheet
           onOpenChange={sheetChange("schedule")}
           open={open === "schedule"}
@@ -301,7 +310,7 @@ export function PlanNumbers({
               onAdjust();
             }}
             paused={paused}
-            status={status}
+            status={scheduleStatus}
           />
         </NumberSheet>
       )}

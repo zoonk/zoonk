@@ -76,8 +76,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In progress</string>
     <string name="focustest_see_your_result">See your result</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">Paused in your sessions</string>
     <string name="focustest_take_test">Take the Focus test</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">The Focus test shows what to study most.</string>

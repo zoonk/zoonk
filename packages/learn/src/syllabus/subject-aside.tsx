@@ -205,7 +205,7 @@ export function SubjectAside({
       {!written && (!subject.notPlannedReason || subject.preparation !== null) && (
         <DetailAsideSection
           className="hidden min-[72rem]:flex"
-          title={subject.preparation === null ? t("Coverage") : t("Preparation")}
+          title={subject.preparation === null ? t("Progress") : t("Preparation")}
           titleId="subject-coverage-title"
         >
           <SubjectCoverage subject={subject} />

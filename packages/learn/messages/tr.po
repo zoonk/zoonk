@@ -1525,7 +1525,6 @@ msgstr "Bugün {buddy} ile"
 
 #: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
-#: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Henüz değil"
@@ -2601,7 +2600,6 @@ msgstr "Henüz hiçbir soruyu cevaplamadığın için bu meydan okuma puanlanmad
 
 #: src/checkpoints/checkpoint-labels.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
 #: src/session/use-block-copy.ts
 msgctxt "2yz8Wb"
 msgid "The Trickster"
@@ -4644,18 +4642,6 @@ msgctxt "hrgo-E"
 msgid "Archive"
 msgstr "Arşivle"
 
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "98OHZH"
-msgid "This goal is paused"
-msgstr "Bu hedef duraklatıldı"
-
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "Devam edene kadar hiçbir şey planlanmaz."
-
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
@@ -4738,10 +4724,16 @@ msgstr "{studied, plural, =0 {Henüz ders çalışılmadı} other {# ders çalı
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/session/summary/summary-parts.tsx
+#: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 msgctxt "sIMS7i"
 msgid "Progress"
 msgstr "İlerleme"
+
+#: src/journey/journey-hero.tsx
+msgctxt "yaK5-i"
+msgid "Not tested yet"
+msgstr "Henüz test edilmedi"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -4840,9 +4832,9 @@ msgid "Won"
 msgstr "Kazandın"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "f0UFlY"
-msgid "In your next session"
-msgstr "Bir sonraki çalışmanda"
+msgctxt "gfKKsY"
+msgid "Next time"
+msgstr "Bir sonraki çalışma"
 
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
@@ -4888,9 +4880,20 @@ msgid "Mock exam"
 msgstr "Deneme sınavı"
 
 #: src/journey/journey-planless.tsx
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "Bu hedef duraklatıldı"
+
+#: src/journey/journey-planless.tsx
 msgctxt "NIpBgv"
 msgid "Your plan comes after a few questions"
 msgstr "Planından önce birkaç soru"
+
+#: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Devam edene kadar hiçbir şey planlanmaz."
 
 #: src/journey/journey-planless.tsx
 msgctxt "mMlLhC"
@@ -4949,17 +4952,17 @@ msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} / # ders} other {{done, number} / # ders}}"
 
+#. When a phase of the plan ends. {date} is a day, like "Dec 12", shown as "~Dec 12" or "~Jan" when it's an estimate.
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date} tarihinde biter"
+
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
 msgctxt "fC-Q4J"
 msgid "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
 msgstr "{dateKind, select, month {{date} civarında biter} other {{date} civarında biter}}"
-
-#. When a phase of the plan ends. {date} is a day, like "Dec 12".
-#: src/journey/phase-when.tsx
-msgctxt "JQlKi_"
-msgid "Ends {date}"
-msgstr "{date} tarihinde biter"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
@@ -5095,9 +5098,9 @@ msgid "Review what you're starting to forget"
 msgstr "Unutmaya başladıklarını tekrar et"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "HRQ_zL"
-msgid "Needed to go past 75%"
-msgstr "%75’i aşmak için gerekli"
+msgctxt "vn_iV0"
+msgid "Needed to go past 75% preparation"
+msgstr "Hazırlıkta %75'i aşmak için gerekli"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "v5t0w3"
@@ -5231,11 +5234,11 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "Bitiş"
 
-#. After a date on the plan's timeline, naming what happens that day.
-#: src/journey/roadmap-lane.tsx
-msgctxt "pwcc1H"
-msgid "exam"
-msgstr "sınav"
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.
+#: src/journey/roadmap-full.tsx
+msgctxt "q5LbXf"
+msgid "Phase questions"
+msgstr "Aşama soruları"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -5254,6 +5257,12 @@ msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
 
+#. The plan's schedule while the learner has paused the goal.
+#: src/journey/schedule-details.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr "Duraklatıldı"
+
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
 msgid "Schedule"
@@ -5264,11 +5273,6 @@ msgstr "Takvim"
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {# ders kaldı}}"
-
-#: src/journey/schedule-details.tsx
-msgctxt "dVA-0b"
-msgid "About {time} a day"
-msgstr "Günde yaklaşık {time}"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -10038,6 +10042,7 @@ msgid "Exam country"
 msgstr "Sınav ülkesi"
 
 #: src/onboarding/understood/use-schedule-row.ts
+#: src/plan/plan-properties.tsx
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "Günde {time}"
@@ -10610,9 +10615,9 @@ msgid "Test what you know"
 msgstr "Bildiklerini test et"
 
 #: src/plan/plan-properties.tsx
-msgctxt "oOY_q2"
-msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
-msgstr "<mono>{weekdays}</mono> · hafta sonları <mono>{weekend}</mono>"
+msgctxt "xqyYxG"
+msgid "{weekdays} · {weekend} weekends"
+msgstr "{weekdays} · hafta sonları {weekend}"
 
 #: src/plan/plan-properties.tsx
 msgctxt "7X2m8_"
@@ -10635,14 +10640,9 @@ msgid "Next <date></date>"
 msgstr "Sıradaki: <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "G6h29P"
-msgid "Estimated finish <date></date>"
-msgstr "Tahmini bitiş: <date></date>"
-
-#: src/plan/plan-properties.tsx
-msgctxt "mWKPwa"
-msgid "Everything"
-msgstr "Hepsi"
+msgctxt "1KfRoB"
+msgid "All activities"
+msgstr "Tüm etkinlikler"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
@@ -12848,6 +12848,12 @@ msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
 msgstr "Aynı anda çalışabileceğin hedef sayısına ulaştın. Bu hedefe başlamak için birini duraklat."
 
+#. Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.1LEHvj"
+msgid "Or subscribe to study more goals at once."
+msgstr "Ya da aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
+
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
 msgid "Subscribe"
@@ -12956,11 +12962,6 @@ msgstr "Sonraki tarih"
 msgctxt "z50pCl"
 msgid "Grading"
 msgstr "Puanlama"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "jSqwdW"
-msgid "Coverage"
-msgstr "Kapsam"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "JeoRv8"
@@ -13201,25 +13202,11 @@ msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "{course} için {institution} sınavın her alanına eşit ağırlık verir. Ağırlıkların kaynağı: <link>{publisher}</link>."
 
+#. Heads the column of how many questions each subject has on the exam, like "45 questions".
 #: src/syllabus/syllabus-section.tsx
-msgctxt "Cw_XA_"
-msgid "{count, plural, one {# topic from your material} other {# topics from your material}}"
-msgstr "{count, plural, other {Materyalinden # konu}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "1rxfgw"
-msgid "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}"
-msgstr "{subjects, plural, other {# branş}} · {topics, plural, other {# konu}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {# branş}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "IYzjIp"
-msgid "{count, plural, one {# module} other {# modules}}"
-msgstr "{count, plural, other {# modül}}"
+msgctxt "uZd7hU"
+msgid "On the exam"
+msgstr "Sınavda"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

@@ -17,8 +17,8 @@
     <string name="country_load_failed">Couldn\'t load the list.</string>
     <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
     <string name="country_home_label">%1$s, where you live</string>
-    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
-    <string name="country_content_label">Content country</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes, or whose examples it uses. The country's name follows it as a value. -->
+    <string name="country_label">Country</string>
     <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_content_value">Content country: %1$s</string>
     <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
@@ -27,8 +27,6 @@
     <string name="country_lesson_language_label">Lesson language</string>
     <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_lesson_language_value">Lesson language: %1$s</string>
-    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
-    <string name="country_lesson_examples_label">Lesson examples</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
     <string name="country_change_title">Change country?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->

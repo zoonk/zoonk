@@ -220,7 +220,7 @@ private struct PlanPhaseRow: View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
         checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
-        today: context.plan.today)
+        isPaused: context.isPaused, today: context.plan.today)
     }
   }
 
@@ -351,7 +351,10 @@ struct PlanChapterRow: View {
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
-        context.show(.farTopic(skillId: skillId, title: chapter.title))
+        context.show(
+          .farTopic(
+            skillId: skillId, title: chapter.title, lessons: chapter.lessonsTotal,
+            start: chapter.nextDate))
       } label: {
         content(isMuted: false)
           .disclosureChevron()
@@ -459,6 +462,7 @@ struct PlanChapterRow: View {
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
   let isLanguage: Bool
+  let isPaused: Bool
   let today: String
 
   var body: some View {
@@ -473,7 +477,8 @@ private struct PlanCheckpointRow: View {
       return .words(Text("Won", tableName: "Plan", comment: "A phase challenge the learner won"))
     }
 
-    return checkpoint.when(today: today)
+    // A paused plan has nothing planned until the learner resumes, as its phases' ends.
+    return isPaused ? nil : checkpoint.when(today: today)
   }
 }
 
@@ -485,7 +490,9 @@ extension PlanPhase.Checkpoint {
       .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
       .words(
-        Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+        Text(
+          "Next time", tableName: "Plan",
+          comment: "When the phase's challenge comes: the next time the learner studies")
       )
     case .date, .queued:
       date.map { .date(PlanDate.estimateText($0, today: today)) }
@@ -543,6 +550,11 @@ extension PlanDate {
 }
 
 struct PlanSyllabusSection: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+  /// The rows' width, which decides their columns, so each heading sits over its own.
+  @State private var rowWidth: CGFloat = 0
+
   let goalKind: LearnerGoal.Kind
   let syllabus: GoalSyllabus
   /// The exam's choices the plan follows, each named in a line with Change, as main's
@@ -593,7 +605,8 @@ struct PlanSyllabusSection: View {
         ForEach(group.subjects) { subject in
           PageLink(route: .subject(subjectKey: subject.key)) {
             SyllabusSubjectRow(
-              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject))
+              subject: subject, isExam: isExam, sharedExams: syllabus.sharedExams(of: subject),
+              width: $rowWidth)
           }
         }
       }
@@ -603,60 +616,52 @@ struct PlanSyllabusSection: View {
           ? Text("Subjects", tableName: "Plan", comment: "Section of an exam's subjects")
           : Text("Modules", tableName: "Plan", comment: "Section of a plan's modules")
       ) {
-        Group {
-          if isExam {
-            Text("Preparation", tableName: "Plan", comment: "What the subjects' bars measure")
-          } else {
-            Text("Lessons studied", tableName: "Plan", comment: "What the modules' bars measure")
-          }
+        if isExam {
+          barsMeaning
+            // Main's legend for the bars is quiet words, not a mono fact.
+            .typeStyle(.small)
+            // Over the values' column: the rows keep the chevron's room after their values.
+            .chevronSlot()
+        } else {
+          CoverageLegend()
         }
-        // Main's legend for the bars is quiet words, not a mono fact.
-        .typeStyle(.small)
-        // Over the values' column: the rows keep the chevron's room after their values.
-        .chevronSlot()
       }
     } footer: {
       SectionFooter {
-        VStack(alignment: .leading, spacing: 0) {
-          count
-          SyllabusSources(syllabus: syllabus)
-        }
+        SyllabusSources(syllabus: syllabus)
       }
     }
   }
 
-  /// Main's `useSectionCount`: the notice's own subjects, as the reveal counts them, with its topics;
-  /// the learner's material counts its topics.
-  @ViewBuilder private var count: some View {
-    let subjects = syllabus.subjects.filter { $0.source == "notice" }.count
+  /// Main's `BarsMeaning`: "On the exam" over the question counts where rows show them, and
+  /// "Preparation" ending where the shares end, overhanging toward the bars.
+  @ViewBuilder private var barsMeaning: some View {
+    let preparation = Text(
+      "Preparation", tableName: "Plan", comment: "What the subjects' bars measure")
 
-    if syllabus.fromMaterial {
-      Text(
-        "\(syllabus.topicCount > 0 ? syllabus.topicCount : subjects) topics from your material",
-        tableName: "Plan",
-        comment: "How many topics a plan built from the learner's own material holds")
-    } else if syllabus.kind == "notice" && syllabus.topicCount > 0 {
-      FactSegments([
-        subjectsText(subjects),
-        String(
-          localized: "\(syllabus.topicCount) topics", table: "Plan",
-          locale: .appLanguage, comment: "How many topics a subject has"),
-      ])
-    } else if goalKind == .exam {
-      Text(
-        verbatim: subjectsText(
-          syllabus.kind == "notice" ? subjects : syllabus.subjects.count(where: { !$0.isExtra })))
+    if SyllabusSubjectRow.showsQuestions(rowWidth),
+      syllabus.subjects.contains(where: { ($0.questions ?? 0) > 0 })
+    {
+      HStack(spacing: SyllabusSubjectRow.columnGap) {
+        Text(
+          "On the exam", tableName: "Plan",
+          comment:
+            "Heads the column of how many questions each subject has on the exam, like \"45 questions\"."
+        )
+        .frame(width: SyllabusSubjectRow.questionsWidth, alignment: .trailing)
+
+        preparation
+          .fixedSize()
+          .frame(
+            width: SyllabusSubjectRow.barWidth(rowWidth) + 12
+              + SyllabusSubjectRow.shareWidth(
+                dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+            alignment: .trailing)
+      }
+      .lineLimit(1)
     } else {
-      Text(
-        "\(syllabus.subjects.count) modules", tableName: "Plan",
-        comment: "How many modules the plan has")
+      preparation
     }
-  }
-
-  private func subjectsText(_ count: Int) -> String {
-    String(
-      localized: "\(count) subjects", table: "Plan", locale: .appLanguage,
-      comment: "How many subjects the exam has")
   }
 }
 
@@ -818,11 +823,31 @@ struct SyllabusSubjectRow: View {
   let subject: SyllabusSubject
   let isExam: Bool
   var sharedExams: [GoalSyllabus.SharedExam] = []
+  /// The row's own width, which its section's headings follow.
+  @Binding var width: CGFloat
 
   /// Main's container widths: the bar beside the name from 32rem, the question count too from 42rem.
-  @State private var width: CGFloat = 0
   private static let barBesideFrom: CGFloat = 512
   private static let questionsFrom: CGFloat = 672
+  static let questionsWidth: CGFloat = 104
+  static let columnGap: CGFloat = 14
+
+  static func showsQuestions(_ width: CGFloat) -> Bool {
+    width >= questionsFrom
+  }
+
+  static func barWidth(_ width: CGFloat) -> CGFloat {
+    min(max(width * 0.3, 112), 224)
+  }
+
+  /// As wide as the widest share, so every subject's bar ends on one edge.
+  static func shareWidth(dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?)
+    -> CGFloat
+  {
+    TypeStyle.data.width(
+      of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
+      dynamicTypeSize: dynamicTypeSize, legibility: legibility)
+  }
 
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
@@ -835,19 +860,18 @@ struct SyllabusSubjectRow: View {
     RowLayout {
     } words: {
       if isWide {
-        HStack(spacing: 14) {
+        HStack(spacing: Self.columnGap) {
           name
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          if width >= Self.questionsFrom {
+          if Self.showsQuestions(width) {
             questions
-              .frame(width: 104, alignment: .trailing)
+              .frame(width: Self.questionsWidth, alignment: .trailing)
           }
 
           if measured {
-            Meter(value: share, fill: .success)
-              .frame(width: min(max(width * 0.3, 112), 224))
-              .accessibilityHidden(true)
+            bar
+              .frame(width: Self.barWidth(width))
           }
         }
       } else {
@@ -855,20 +879,17 @@ struct SyllabusSubjectRow: View {
           name
 
           if measured {
-            Meter(value: share, fill: .success)
-              .accessibilityHidden(true)
+            bar
           }
         }
       }
     } value: {
       if !subject.isExtra {
-        // As wide as the widest share, so every subject's bar ends on one edge.
         Text(share, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
           .frame(
-            minWidth: TypeStyle.data.width(
-              of: 1.0.formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)),
+            minWidth: Self.shareWidth(
               dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
             alignment: .trailing)
       }
@@ -879,6 +900,16 @@ struct SyllabusSubjectRow: View {
       width = $0
     }
     .accessibilityElement(children: .combine)
+  }
+
+  /// Main's subject bar: an exam's preparation, else the lessons studied and those already known.
+  @ViewBuilder private var bar: some View {
+    if isExam {
+      Meter(value: subject.preparation ?? 0, fill: .success)
+        .accessibilityHidden(true)
+    } else {
+      CoverageBar(studied: subject.coverage.studied, known: subject.coverage.known)
+    }
   }
 
   /// Its name, the other exams that share it, and why it isn't in the plan.

@@ -13,12 +13,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionFooter,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useExamQuestionCount } from "../exam/use-exam-question-count";
@@ -41,47 +36,18 @@ function useSectionTitle(syllabus: SyllabusSectionView): string {
   return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
 }
 
-function useSectionCount(syllabus: SyllabusSectionView): string {
-  const t = useExtracted();
-  const subjects = syllabus.subjects.filter((subject) => subject.source === "notice").length;
-
-  // The learner's material is never a notice: its topics (or headings) count as the reveal's do.
-  if (syllabus.fromMaterial) {
-    return t(
-      "{count, plural, one {# topic from your material} other {# topics from your material}}",
-      { count: syllabus.topicCount > 0 ? syllabus.topicCount : subjects },
-    );
-  }
-
-  if (syllabus.kind === "notice" && syllabus.topicCount > 0) {
-    return t(
-      "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}",
-      { subjects, topics: syllabus.topicCount },
-    );
-  }
-
-  // The notice's own subjects, as the reveal counts them: the plan's extras aren't the exam's.
-  if (syllabus.goal.kind === "exam") {
-    return t("{count, plural, one {# subject} other {# subjects}}", {
-      count:
-        syllabus.kind === "notice"
-          ? subjects
-          : syllabus.subjects.filter((subject) => !subject.extra).length,
-    });
-  }
-
-  return t("{count, plural, one {# module} other {# modules}}", {
-    count: syllabus.subjects.length,
-  });
-}
+/** From this width a row shows its exam's question count in a column of its own. */
+const QUESTIONS_COLUMNS_CLASS = "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]";
 
 const ROW_GRID_CLASS = cn(
   // A bar has no leading under it, so a phone's stacked row ending in one keeps the room the name
   // has over its capitals.
   "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3 @max-lg/subjects:has-data-[slot=coverage-bar]:pb-4",
   "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-2",
-  "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
+  QUESTIONS_COLUMNS_CLASS,
 );
+
+const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   const t = useExtracted();
@@ -90,16 +56,36 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
     return <CoverageLegend />;
   }
 
+  const counted = syllabus.subjects.some((subject) => (subject.questions ?? 0) > 0);
+
+  // Laid out as the rows are, so each heading sits over its column: the questions' column where
+  // rows show it, and the shares' column, which the word may overhang toward the bars.
   return (
-    // Ends where the rows' values end: before the chevron's slot.
-    <span className="flex items-center gap-3" data-slot="bars-meaning">
-      <span className="text-muted-foreground text-2xs">{t("Preparation")}</span>
+    <span
+      className="text-muted-foreground text-2xs flex min-w-0 flex-1 items-center justify-end gap-3"
+      data-slot="bars-meaning"
+    >
+      {counted && (
+        <span
+          className={cn(
+            "hidden min-w-0 flex-1 gap-x-3.5 @2xl/subjects:grid",
+            QUESTIONS_COLUMNS_CLASS,
+          )}
+        >
+          <span className="col-start-2 text-right">
+            {t({
+              description:
+                'Heads the column of how many questions each subject has on the exam, like "45 questions".',
+              message: "On the exam",
+            })}
+          </span>
+        </span>
+      )}
+      <span className={cn(SHARE_CLASS, "flex whitespace-nowrap")}>{t("Preparation")}</span>
       <ListRowChevronSpace />
     </span>
   );
 }
-
-const SHARE_CLASS = "w-10 shrink-0 justify-end";
 
 function SubjectRow({
   href,
@@ -159,7 +145,6 @@ export function SyllabusSection({
 }) {
   const t = useExtracted();
   const title = useSectionTitle(syllabus);
-  const count = useSectionCount(syllabus);
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
@@ -199,8 +184,6 @@ export function SyllabusSection({
           </div>
         ))}
       </div>
-
-      <PageSectionFooter>{count}</PageSectionFooter>
 
       {(syllabus.questionsSource || syllabus.courseWeights?.source) && (
         <QuietDisclosure label={t("Sources")}>

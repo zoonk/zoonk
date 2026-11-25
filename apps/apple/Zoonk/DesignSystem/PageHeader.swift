@@ -19,6 +19,13 @@ struct PageHeader<Trailing: View>: View {
   var supportingIsFacts = false
   @ViewBuilder let trailing: Trailing
 
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  private var titleCapHeight: Double {
+    TypeStyle.pageTitle.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+  }
+
   init(
     _ title: Text, chip: Chip? = nil, position: Text? = nil, keepsChipRoom: Bool = false,
     supporting: Text? = nil, supportingIsFacts: Bool = false, facts: [String] = [],
@@ -35,7 +42,8 @@ struct PageHeader<Trailing: View>: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
+    let titleCapHeight = titleCapHeight
+    return VStack(alignment: .leading, spacing: 4) {
       if let chip {
         ChipRow(chip: chip, position: position)
           .padding(.bottom, 8)
@@ -46,7 +54,7 @@ struct PageHeader<Trailing: View>: View {
           .padding(.bottom, 8)
       }
 
-      AccessibilityStack(alignment: .lastTextBaseline, spacing: 12) {
+      AccessibilityStack(alignment: .firstTextBaseline, spacing: 12) {
         title
           .typeStyle(.pageTitle)
           .foregroundStyle(Color(.foreground))
@@ -54,7 +62,9 @@ struct PageHeader<Trailing: View>: View {
           .heroTitle()
           .frame(maxWidth: .infinity, alignment: .leading)
 
+        // Centered on the middle of the title's capitals, not on its baseline (craft E6).
         trailing
+          .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + titleCapHeight / 2 }
       }
 
       if !facts.isEmpty {

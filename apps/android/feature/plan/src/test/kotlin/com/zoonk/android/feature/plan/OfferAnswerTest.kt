@@ -100,7 +100,6 @@ class OfferAnswerTest {
                     page = page,
                     edits = PlanEdits(pending = pending, change = viewModel::change, outcomes = viewModel.outcomes),
                     links = PlanLinks(navigator, page),
-                    resume = Resume.Plain,
                     onAdjust = {},
                     layout = SuggestionLayout.Panel,
                     host =

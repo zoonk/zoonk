@@ -4,21 +4,9 @@
     <string name="goalcontent_subjects">Subjects</string>
     <!-- The Plan's section listing the plan's modules. -->
     <string name="goalcontent_modules">Modules</string>
-    <plurals name="goalcontent_subject_count">
-        <item quantity="one">%d subject</item>
-        <item quantity="other">%d subjects</item>
-    </plurals>
-    <plurals name="goalcontent_module_count">
-        <item quantity="one">%d module</item>
-        <item quantity="other">%d modules</item>
-    </plurals>
     <plurals name="goalcontent_topic_count">
         <item quantity="one">%d topic</item>
         <item quantity="other">%d topics</item>
-    </plurals>
-    <plurals name="goalcontent_material_topic_count">
-        <item quantity="one">%d topic from your material</item>
-        <item quantity="other">%d topics from your material</item>
     </plurals>
     <plurals name="goalcontent_lesson_count">
         <item quantity="one">%d lesson</item>
@@ -53,7 +41,8 @@
     <string name="goalcontent_new">New</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparation</string>
-    <string name="goalcontent_coverage">Coverage</string>
+    <!-- Heads the column of how many questions each subject has on the exam, like "45 questions". -->
+    <string name="goalcontent_on_the_exam">On the exam</string>
     <string name="goalcontent_not_in_plan">Not in your plan</string>
     <!-- Marks study the exam doesn't test, such as how to manage its time. The document is the exam's public notice (Brazil's "edital"). -->
     <string name="goalcontent_not_in_notice">Not in the official guide</string>
@@ -90,12 +79,12 @@
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s of the exam</string>
     <plurals name="goalcontent_topics_known_skipped">
-        <item quantity="one">%d topic skipped because you already know it</item>
-        <item quantity="other">%d topics skipped because you already know them</item>
+        <item quantity="one">%d topic you already know</item>
+        <item quantity="other">%d topics you already know</item>
     </plurals>
     <plurals name="goalcontent_lessons_known_skipped">
-        <item quantity="one">%d lesson skipped because you already know it</item>
-        <item quantity="other">%d lessons skipped because you already know them</item>
+        <item quantity="one">%d lesson you already know</item>
+        <item quantity="other">%d lessons you already know</item>
     </plurals>
     <!-- Opens the next chapter or lesson once some are done. -->
     <string name="goalcontent_continue">Continue</string>
@@ -111,10 +100,10 @@
     <!-- The next day the plan studies a subject. -->
     <string name="goalcontent_next_date">Next date</string>
     <!-- Lessons the learner skipped because they already knew them. -->
-    <string name="goalcontent_known_before">Known before</string>
+    <string name="goalcontent_known_before">Skipped</string>
     <plurals name="goalcontent_lessons_skipped">
-        <item quantity="one">%d lesson skipped</item>
-        <item quantity="other">%d lessons skipped</item>
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
     </plurals>
     <string name="goalcontent_subject_skipped">You took this subject out of your plan.</string>
     <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
@@ -127,14 +116,10 @@
         <item quantity="one">%d chapter done</item>
         <item quantity="other">%d chapters done</item>
     </plurals>
-    <plurals name="goalcontent_chapters_known">
-        <item quantity="one">%d chapter skipped because you already know it</item>
-        <item quantity="other">%d chapters skipped because you already know them</item>
-    </plurals>
     <!-- Follows "3 chapters done, " in one sentence. -->
     <plurals name="goalcontent_chapters_known_after_done">
-        <item quantity="one">%d skipped because you already know it</item>
-        <item quantity="other">%d skipped because you already know them</item>
+        <item quantity="one">%d you already know</item>
+        <item quantity="other">%d you already know</item>
     </plurals>
     <!-- Joins "3 chapters done" and "2 skipped because you already know them". -->
     <string name="goalcontent_done_and_known">%1$s, %2$s</string>
@@ -142,7 +127,6 @@
         <item quantity="one">%d more chapter</item>
         <item quantity="other">%d more chapters</item>
     </plurals>
-    <string name="goalcontent_skipped_known">Skipped because you already know it</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
     <!-- A topic's state for screen readers. -->
@@ -151,15 +135,8 @@
     <string name="goalcontent_topic_to_study">To study</string>
     <!-- Marks a topic that comes up often in the exam. -->
     <string name="goalcontent_asked_a_lot">Asked a lot</string>
-    <!-- %1$s is the "Asked a lot" mark. -->
-    <string name="goalcontent_frequency_material">Topics marked %1$s are the ones your material says come up a lot. They get more of your time.</string>
-    <string name="goalcontent_frequency_past_exams">Topics marked %1$s are the ones past exams asked most.</string>
-    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
-    <string name="goalcontent_frequency_tagged_waits">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). The ones asked least are the ones that wait.</string>
-    <string name="goalcontent_frequency_tagged">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). They get more of your time.</string>
-    <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
-    <string name="goalcontent_frequency_waits">The topics past exams asked least are the ones that wait (%1$s, according to %2$s).</string>
-    <string name="goalcontent_frequency_most">The topics past exams asked most get more of your time (%1$s, according to %2$s).</string>
+    <!-- Under a subject's topics, behind "Sources". %1$s is what was counted, such as "ENEM 2009–2024"; %2$s is the publisher's site, shown as a link. -->
+    <string name="goalcontent_frequency_source">How often past exams asked each topic: %1$s, according to %2$s.</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">What the questions ask</string>
     <string name="goalcontent_see_all">See all %1$s</string>

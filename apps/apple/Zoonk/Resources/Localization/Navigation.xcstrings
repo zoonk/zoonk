@@ -1602,6 +1602,65 @@
         }
       }
     },
+    "Or subscribe to study more goals at once." : {
+      "comment" : "In the sheet that makes room for a goal waiting to start, above Subscribe",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oder abonniere, um gleichzeitig mehr Ziele zu verfolgen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O suscríbete para estudiar más objetivos a la vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ou abonne-toi pour étudier plus d’objectifs à la fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oppure abbonati per studiare più obiettivi contemporaneamente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "または、登録して一度にもっと多くの目標を学べます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "또는 구독하면 목표를 더 많이 동시에 공부할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Albo zasubskrybuj, aby uczyć się więcej celów naraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ou assine para estudar mais objetivos ao mesmo tempo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya da aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
+          }
+        }
+      }
+    },
     "Pause" : {
       "comment" : "Pauses the goal in its row to start the waiting goal",
       "localizations" : {

@@ -2,12 +2,10 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
-import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { PhaseCheckpointMark } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
@@ -92,36 +90,15 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
   );
 }
 
+/** The legend names it ("Exam date", "End date"), so the date stands alone on the axis. */
 function GoalDate() {
-  const t = useExtracted();
-  const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
 
   if (!finish) {
     return null;
   }
 
-  const date = (
-    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-  );
-
-  if (goal.kind !== "exam") {
-    return date;
-  }
-
-  const exam = t({
-    description: "After a date on the plan's timeline, naming what happens that day.",
-    message: "exam",
-  });
-
-  // The word takes no height, so a row it wraps to has none and is cut with its dot: it shows only
-  // beside the date, and a second line never starts on the dot. The date keeps every line it needs.
-  return (
-    <span className="flex flex-wrap items-start justify-end overflow-hidden">
-      {date}
-      <span className="h-0 whitespace-pre">{`${FACT_SEPARATOR}${exam}`}</span>
-    </span>
-  );
+  return <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />;
 }
 
 /** In the last phase's band, so that phase is never narrower than the date under it. */
@@ -169,6 +146,19 @@ function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
   );
 }
 
+/** The band's corner radius (`rounded-md`), so the tick never lands on its curve. */
+const BAND_CORNER = "0.375rem";
+
+const TICK_CLASS = "bg-foreground pointer-events-none absolute w-[1.5px] -translate-x-1/2";
+
+function getTickLeft(share: number): string {
+  return `clamp(${BAND_CORNER}, ${share * PERCENT}%, 100% - ${BAND_CORNER})`;
+}
+
+/**
+ * "Today" over the current band, and the top of its tick, which `BandTodayTick` carries on through
+ * the band: the word points at a day on the bar.
+ */
 export function TodayTick({ share }: { share: number | null }) {
   const t = useExtracted();
 
@@ -179,13 +169,35 @@ export function TodayTick({ share }: { share: number | null }) {
           <AxisLabel share={share}>
             <span className="text-foreground text-2xs pb-1 leading-4">{t("Today")}</span>
           </AxisLabel>
-          <span
-            className="bg-foreground absolute bottom-0 h-1 w-px"
-            style={{ left: `${share * PERCENT}%` }}
-          />
+          <span className={cn(TICK_CLASS, "bottom-0 h-1")} style={{ left: getTickLeft(share) }} />
         </>
       )}
     </span>
+  );
+}
+
+/** The band name's line height (`leading-4`). */
+const NAME_LINE = "1rem";
+
+/** The least of the tick shown over and under the name, so it always reaches into the band. */
+const TICK_MIN_SEGMENT = "0.25rem";
+
+/**
+ * The tick through the current band's full height, over its fill, broken where the name's lines
+ * are (centered in the band: `--band-name-height` once laid out, `nameLines` until then), so it never reads as a stroke of a letter. The current
+ * band is isolated, so `-z-10` keeps it inside.
+ */
+export function BandTodayTick({ nameLines, share }: { nameLines: number; share: number }) {
+  const half = `min(var(--band-name-height, ${nameLines} * ${NAME_LINE}) / 2 + 2px, 50% - ${TICK_MIN_SEGMENT})`;
+  const mask = `linear-gradient(to bottom, #000 calc(50% - ${half}), transparent calc(50% - ${half}), transparent calc(50% + ${half}), #000 calc(50% + ${half}))`;
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(TICK_CLASS, "inset-y-0 -z-10")}
+      data-slot="today-tick"
+      style={{ left: getTickLeft(share), mask }}
+    />
   );
 }
 

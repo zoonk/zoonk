@@ -5,11 +5,10 @@
   "country_change_body": "78c202c2221e6ef95a2cf13c28fbb067d380a599e86e36f31b28ba4f559344c0",
   "country_change_confirm": "a3e8358c08e0df7cc4b3378631b0e466003f31b4a6e8453f76cfede933fc3340",
   "country_change_title": "7e7728229395fdbccb0a2c93dcd22fc6a323fd9b1d1999b241ea07a225e6d9a0",
-  "country_content_label": "7038459c517fa268df3eabcb55ca3a70ee035adfc294543fa2d7eb528a9fb6bc",
   "country_content_value": "1ca6d71baba4e9cf93f4d77e7b449e48a7a27ea40c3e296ec64a6519d72a6316",
   "country_exam_label": "1f72955a576bf277305d284791d7c72abd42191f502002210904080cca40d6fd",
   "country_home_label": "9407eca3bb21231fb8bee8fbee9d1d8fddc5bdb6de271c59fb185862f629069d",
-  "country_lesson_examples_label": "0c9435244b3341d302bcc8f307bad8b55dca93afa81354d141f331e73a2d449b",
+  "country_label": "1d7f6744aba59cd5eacecd4d69260eabb92871d2be128c00c3024c17110f667d",
   "country_lesson_language_label": "38135c3fd840e4e63676e54474222cd32faa2f90903ddafdf7ca5961e0e3315f",
   "country_lesson_language_value": "c75a7667179dae2121b939e0738f3270b4a08c55cdb34cdba2e8105303151d1b",
   "country_load_failed": "ddc522370142e28c617a53a9e681ddb79f76910718e7593ede79fdf71517357c",
@@ -41,8 +40,8 @@
     <string name="country_load_failed">一覧を読み込めませんでした。</string>
     <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
     <string name="country_home_label">%1$s、住んでいる国</string>
-    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
-    <string name="country_content_label">学習内容の対象国</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes, or whose examples it uses. The country's name follows it as a value. -->
+    <string name="country_label">国</string>
     <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_content_value">学習内容の基準となる国：%1$s</string>
     <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
@@ -51,8 +50,6 @@
     <string name="country_lesson_language_label">レッスンの言語</string>
     <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_lesson_language_value">レッスンの言語：%1$s</string>
-    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
-    <string name="country_lesson_examples_label">レッスン内の例</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
     <string name="country_change_title">国を変更しますか？</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->

@@ -116,7 +116,8 @@ internal fun PlanNumbers(
     onAdjust: (() -> Unit)? = null,
 ) {
     var open by rememberSaveable { mutableStateOf<NumberSheet?>(null) }
-    val pace = page.plan.status?.pace
+    // A paused goal says so even before its plan has anything to pace.
+    val pace = page.plan.status?.pace ?: Pace.OnTrack.takeIf { page.isPaused }
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
     if (standing == null && pace == null) return
 
@@ -294,7 +295,7 @@ private fun lessonsStudied(
 ): Long = (done - known).coerceAtLeast(0)
 
 /**
- * The tile: the plan's state as its value, and its time a day or the lessons left as its one line. The
+ * The tile: the plan's state as its value, and its time a day, the lessons left or what a pause means as its one line. The
  * side column's numbers sit above the plan's details, whose "Daily study time" row already says the time.
  */
 @Composable
@@ -311,19 +312,16 @@ private fun paceNumber(
                 pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
             }
 
-            resting || timeShownBeside -> {
+            resting -> {
+                stringResource(R.string.plan_nothing_planned_until_resume)
+            }
+
+            timeShownBeside -> {
                 null
             }
 
             pace is Pace.OnTrack || pace is Pace.Ahead || pace is Pace.Behind -> {
-                stringResource(
-                    R.string.plan_time_a_day,
-                    formatMinutes(
-                        page.plan.schedule.dailyMinutes
-                            .toInt(),
-                        currentLocale(),
-                    ),
-                )
+                dailyTimeWords(page, perDay = true)
             }
 
             else -> {
@@ -427,6 +425,7 @@ internal fun PaceDetails(
             style = MaterialTheme.typography.titleMedium,
         )
         if (resting) MetaLine(stringResource(R.string.plan_nothing_planned_until_resume))
+        if (!resting && pace is Pace.OnTrack) MetaLine(dailyTimeWords(page, perDay = true))
         fix?.let { MetaLine(it.text) }
         if (fix?.adjust == true && onAdjust != null) {
             OutlinedButton(

@@ -15,7 +15,6 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.api.models.FocusTestOffer
-import com.zoonk.api.models.FocusTestSessionQuestions
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.LanguageLevelTestOneOfResultRangesValue
 import com.zoonk.api.models.Plan
@@ -46,13 +45,7 @@ internal fun focusTestLine(summary: FocusTestSummary): String {
         }
 
         FocusTestSummary.State.CHECKED -> {
-            stringResource(
-                if (summary.sessionQuestions == FocusTestSessionQuestions.PAUSED) {
-                    R.string.focustest_paused_in_sessions
-                } else {
-                    R.string.focustest_see_your_result
-                },
-            )
+            stringResource(R.string.focustest_see_your_result)
         }
     }
 }

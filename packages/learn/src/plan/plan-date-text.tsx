@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 /** Kept whole on its line, unless it's wider than the whole line. */
-const PLAN_DATE_CLASS = "inline-block font-mono whitespace-nowrap tabular-nums";
+const PLAN_DATE_CLASS = "inline-block whitespace-nowrap tabular-nums";
 
 /** A date on the plan: a row's day, or its month when the plan only knows the month. */
 export function useFormatPlanDate() {
@@ -17,31 +17,39 @@ export function useFormatPlanDate() {
   ): string => formatDate(isoDate, month ? "rowMonth" : "row", { weekday });
 }
 
+/**
+ * A date standing alone as a value (an axis date, a row's trailing date) takes the data face;
+ * `inWords`, inside a phrase such as "Next Dec 13", it takes the words' face, so the phrase reads in
+ * one.
+ */
 export function PlanDateText({
   className,
   estimate = false,
+  inWords = false,
   isoDate,
   month = false,
 }: {
   className?: string;
   estimate?: boolean;
+  inWords?: boolean;
   isoDate: string;
   month?: boolean;
 }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
   const date = formatPlanDate(isoDate, { month });
+  const dateClass = cn(PLAN_DATE_CLASS, !inWords && "font-mono", className);
 
   if (!estimate) {
     return (
-      <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
+      <span className={dateClass} data-slot="plan-date">
         {date}
       </span>
     );
   }
 
   return (
-    <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
+    <span className={dateClass} data-slot="plan-date">
       <span aria-hidden="true">{t("~{date}", { date })}</span>
       <span className="sr-only">
         {t({
