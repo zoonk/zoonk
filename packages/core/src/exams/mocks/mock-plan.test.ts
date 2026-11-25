@@ -619,6 +619,10 @@ describe(getWeeklyMockMinutes, () => {
   });
 });
 
+function sitting(name: string) {
+  return { day: 1, kind: "objective" as const, minutes: 210, name, questions: null };
+}
+
 describe(outlineMock, () => {
   it("outlines the exam day the planned mock copies", () => {
     expect(outlineMock({ day: 2, fullLength: true, structure: ENEM })).toMatchObject({
@@ -629,6 +633,49 @@ describe(outlineMock, () => {
 
   it("outlines the first exam day by default", () => {
     expect(outlineMock({ fullLength: true, structure: ENEM }).day).toBe(1);
+  });
+
+  it("splits the exam's total among sittings the notice gives no count of their own", () => {
+    const twoSittings = structure({
+      sections: [
+        sitting("Primeira Fase — primeiro período"),
+        sitting("Primeira Fase — segundo período"),
+        { day: 2, kind: "written", minutes: 240, name: "Língua Portuguesa", questions: null },
+      ],
+      totalQuestions: 240,
+    });
+
+    expect(
+      outlineMock({ day: 1, fullLength: true, structure: twoSittings }).sections.map(
+        (section) => section.questions,
+      ),
+    ).toStrictEqual([120, 120]);
+  });
+
+  it("leaves a listening section's questions out of what the uncounted sittings share", () => {
+    const withListening = structure({
+      sections: [
+        {
+          day: 1,
+          kind: "listening",
+          minutes: 45,
+          name: "Listening",
+          questions: null,
+          tasks: [
+            { count: 30, description: "Conversations" },
+            { count: 70, description: "Talks" },
+          ],
+        },
+        { day: 1, kind: "objective", minutes: 75, name: "Reading", questions: null },
+      ],
+      totalQuestions: 200,
+    });
+
+    expect(
+      outlineMock({ day: 1, fullLength: true, structure: withListening }).sections.find(
+        (section) => section.name === "Reading",
+      )?.questions,
+    ).toBe(100);
   });
 });
 

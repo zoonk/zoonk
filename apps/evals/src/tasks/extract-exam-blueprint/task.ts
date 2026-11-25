@@ -16,13 +16,14 @@ import { TEST_CASES } from "./test-cases";
 
 type ExpectedFact =
   | { kind: "date"; date: string; dateKind?: ExtractionEvalOutput["dates"][number]["kind"] }
-  | { kind: "questionCount"; value: number }
+  /** `mock` checks the mock's own total, which sizes objective sittings without a count. */
+  | { kind: "questionCount"; value: number; in?: "mock" }
   | { kind: "subject"; name: string; questions?: number }
   | { kind: "topic"; subject: string; topic: string }
   | { kind: "group"; subject: string; group: string }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
-  | { kind: "section"; minutes?: number; questions?: number }
+  | { kind: "section"; day?: number; minutes?: number; name?: string; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
   | {
       kind: "format";
@@ -156,13 +157,21 @@ function hasSection({
 }) {
   const sections = [
     ...(reading.mock?.sections ?? []),
-    ...reading.subjects.map((subject) => ({ minutes: null, questions: subject.questions })),
+    ...reading.subjects.map((subject) => ({
+      day: null,
+      minutes: null,
+      name: subject.name,
+      questions: subject.questions,
+    })),
   ];
 
   return sections.some(
     (section) =>
       (fact.questions === undefined || section.questions === fact.questions) &&
-      (fact.minutes === undefined || section.minutes === fact.minutes),
+      (fact.minutes === undefined || section.minutes === fact.minutes) &&
+      (fact.day === undefined || section.day === fact.day) &&
+      (fact.name === undefined ||
+        normalizeString(section.name).includes(normalizeString(fact.name))),
   );
 }
 
@@ -593,7 +602,9 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
         (date) => date.date === fact.date && (!fact.dateKind || date.kind === fact.dateKind),
       );
     case "questionCount":
-      return getQuestionTotals(reading).includes(fact.value);
+      return fact.in === "mock"
+        ? reading.mock?.totalQuestions === fact.value
+        : getQuestionTotals(reading).includes(fact.value);
     case "subject":
       return reading.subjects.some(
         (subject) =>
