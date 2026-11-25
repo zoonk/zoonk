@@ -368,8 +368,8 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/lessons/_utils/screen-question-item.ts": [
     {
       verdict: "covered",
-      why: "its callers in `save-lesson-content.ts` lock the question's skill first",
-      writes: ["item.create"],
+      why: "lesson saves and content fixes lock the question's skill first",
+      writes: ["item.create", "item.update"],
     },
   ],
   "library/lessons/create-library-lesson.ts": [

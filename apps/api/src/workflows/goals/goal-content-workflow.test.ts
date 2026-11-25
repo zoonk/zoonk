@@ -160,6 +160,12 @@ const placementItem = {
       reason: "Fever is a response, not a weapon that targets one germ.",
       text: "Fever",
     },
+    {
+      isCorrect: false,
+      misconception: "Confuses a general response with recognition",
+      reason: "Inflammation responds to many kinds of injury and infection.",
+      text: "Inflammation",
+    },
   ],
   question: "What part of the immune response recognizes one specific germ?",
   visual: null,
