@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.byValue
 import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -132,19 +131,8 @@ private fun UsernameField(
 
     OutlinedTextField(
         state = form.usernameField,
-        inputTransformation =
-            InputTransformation
-                .byValue {
-                    _,
-                    proposed,
-                    ->
-                    proposed.toString().trim().lowercase()
-                }.then(InputTransformation.fitTo(USERNAME_MAX_LENGTH)),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .submitOnEnter(form.usernameField, submit)
-                .semantics { contentType = ContentType.Username },
+        inputTransformation = InputTransformation.fitTo(USERNAME_MAX_LENGTH),
+        modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Username },
         label = stringResource(R.string.account_username),
         prefix = { Text("@") },
         supportingText = {

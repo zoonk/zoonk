@@ -38,7 +38,13 @@ class ProfileFormViewModel(
     val nameField = handle.saveable(key = "nameField", saver = TextFieldState.Saver) { TextFieldState(user.name, TextRange.Zero) }
     val name get() = nameField.text.toString()
     val usernameField = handle.saveable(key = "usernameField", saver = TextFieldState.Saver) { TextFieldState(savedUsername) }
-    val username get() = usernameField.text.toString()
+
+    /** What the field holds as core keeps it (`normalizeUsername`), so the field never rewrites the learner's typing. */
+    val username get() =
+        usernameField.text
+            .trim()
+            .toString()
+            .lowercase()
     var usernameStatus by mutableStateOf(UsernameStatus.Idle)
         private set
     var isSaving by mutableStateOf(false)

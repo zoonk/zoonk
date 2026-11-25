@@ -58,7 +58,6 @@ import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
-import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
 import java.util.UUID
@@ -104,11 +103,7 @@ fun FeedbackForm(
             val send = { form.send(accountEmail) }
             OutlinedTextField(
                 state = form.emailField,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .submitOnEnter(form.emailField, send)
-                        .semantics { contentType = ContentType.EmailAddress },
+                modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.EmailAddress },
                 label =
                     stringResource(
                         if (form.target.reportType ==
