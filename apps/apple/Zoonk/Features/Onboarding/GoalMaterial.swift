@@ -90,6 +90,7 @@ struct GoalMaterialChips: View {
       }
       .announcesStatus(fullLine)
       .listRowSeparator(.hidden)
+      .listRowInsets(.bottom, 0)
       // Read only: a file still being read is followed until it's read, while its chip shows, and
       // checked again as soon as the learner comes back to it.
       .task(id: scenePhase == .active ? reading : []) {
@@ -298,6 +299,8 @@ struct GoalMaterialSections: View {
             "What do you want to do?", tableName: "Onboarding",
             comment: "Header over what to do with attached material"))
       }
+      // Main's question sits 24 under the chips: this gap and the header's own room above its text.
+      .listSectionSpacing(12)
 
       MaterialUnreadSection(material: material)
     }
