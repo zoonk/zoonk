@@ -1,8 +1,8 @@
 import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
-import { listBegunSkillIds } from "./carried-bases";
+import { getFirstDay } from "./landed-first-day";
 import { type LandedUnits, type Landing, listLandedUnits } from "./landed-lessons";
-import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { toIsoDate } from "./plan-calendar";
 import { isStandIn } from "./plan-item-rules";
 import { type ExistingPlanItem, fromUnit, getItemKey } from "./plan-items";
 import { PLAN_EPSILON } from "./plan-precision";
@@ -116,53 +116,6 @@ export function findLandedUnits({
   };
 }
 
-/**
- * A topic's lessons start where its stand-in's time did, after the lessons of it the run keeps
- * and the first lesson of a base the learner hasn't begun.
- */
-function getFirstDay({
-  frozen,
-  input,
-  landed,
-  own,
-  skillId,
-}: {
-  frozen: readonly ExistingPlanItem[];
-  input: BuildPlanInput;
-  landed: Pick<ReadonlySet<string>, "has">;
-  own: readonly [string, number][];
-  skillId: string;
-}): Date {
-  const begun = listBegunSkillIds({ carried: [], items: input.items });
-
-  const firstOf = (base: string) =>
-    input.items.flatMap((entry) =>
-      entry.status === "todo" &&
-      entry.kind === "lesson" &&
-      entry.skillId === base &&
-      entry.scheduledFor
-        ? [entry.scheduledFor.getTime()]
-        : [],
-    );
-
-  const bases = (input.prerequisites.get(skillId) ?? []).flatMap((base) => {
-    const days = landed.has(base) || begun.has(base) ? [] : firstOf(base);
-    return days.length > 0 ? [Math.min(...days)] : [];
-  });
-
-  const kept = frozen.flatMap((entry) =>
-    entry.lessonId && entry.skillId === skillId && entry.scheduledFor
-      ? [entry.scheduledFor.getTime()]
-      : [],
-  );
-
-  const first = own.map(([date]) => date).toSorted()[0];
-
-  return new Date(
-    Math.max(input.today.getTime(), first ? fromIsoDate(first).getTime() : 0, ...bases, ...kept),
-  );
-}
-
 function withRoom({ day, room }: { day: PlanDay; room: number }): PlanDay {
   const open = getLessonCapacity({ ...day, shape: { ...day.shape, reserved: 0 } });
   return { ...day, shape: { ...day.shape, reserved: open - room } };
@@ -267,9 +220,22 @@ export function placeLandedLessons({
       const saved = savedTime(item);
       const own = new Map(saved);
       const skillId = item.skillId ?? "";
-      const from = getFirstDay({ frozen, input, landed, own: saved, skillId });
+
+      const from = getFirstDay({
+        end,
+        frozen,
+        input,
+        landed,
+        own: saved,
+        placed: state.placed,
+        skillId,
+      });
 
       addTime(held, saved, -1);
+
+      if (!from) {
+        return state;
+      }
 
       const roomy = days
         .filter((day) => day.date >= from)

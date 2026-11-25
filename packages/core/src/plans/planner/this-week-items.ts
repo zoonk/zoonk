@@ -26,15 +26,15 @@ function listMovedWeeklyItemIds({
 }
 
 /**
- * A test-out moves where the learner stands, so a run that finds lessons tested out on days still
- * ahead lays the plan out again from today, as the learner's own changes do, instead of keeping
- * this week's days around the time it freed. That run dates them today, so the next run keeps
- * the week again.
+ * A test-out moves where the learner stands, so a run that finds lessons tested out on today or a
+ * day still ahead lays the plan out again from today, as the learner's own changes do, instead of
+ * keeping this week's days around the time it freed. That run dates them today, so from the next
+ * day on, runs keep the week again.
  */
 export function withTestOutsAhead(input: BuildPlanInput): BuildPlanInput {
   const testedOutAhead = input.items.some(
     (item) =>
-      item.status === "testedOut" && item.scheduledFor !== null && item.scheduledFor > input.today,
+      item.status === "testedOut" && item.scheduledFor !== null && item.scheduledFor >= input.today,
   );
 
   return input.mode === "automatic" && testedOutAhead ? { ...input, mode: "forced" } : input;

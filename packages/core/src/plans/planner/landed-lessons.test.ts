@@ -462,19 +462,28 @@ describe.each([false, true])(
 
 const CHAIN = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
 
-describe.each([0, 1, 2, 3, 4, 5, 6])(
-  "a plan's next topics landing as the learner moves past its first ones, %s days into the week",
-  (offset) => {
+const CHAIN_PLANS = [
+  { lessons: 2, plan: "every topic still being written", written: 0 },
+  { lessons: 1, plan: "its first three topics written", written: 3 },
+];
+
+describe.each(
+  CHAIN_PLANS.flatMap((shape) => [0, 1, 2, 3, 4, 5, 6].map((offset) => ({ ...shape, offset }))),
+)(
+  "a chain of topics landing as the learner moves past today's two ($plan, $offset days into the week)",
+  ({ lessons, offset, written }) => {
     const today = addDays(TODAY, offset);
+    const writtenSkills = CHAIN.slice(0, written);
+    const write = (skillId: string) => writeLessons({ count: lessons, minutes: 5, skillId });
 
     const outlining = {
       ...learn,
       goal: { ...learn.goal, dailyMinutes: 10 },
       graph: {
         phases: [{ milestone: null, name: "Only" }],
-        skills: CHAIN.map((skillId) => ({ ...skill(skillId, "Chain"), lessons: 2 })),
+        skills: CHAIN.map((skillId) => ({ ...skill(skillId, "Chain"), lessons })),
       },
-      lessons: [],
+      lessons: writtenSkills.flatMap((skillId) => write(skillId)),
       prerequisites: new Map(
         CHAIN.slice(1).map((skillId, index) => [skillId, [CHAIN[index] ?? ""]]),
       ),
@@ -491,7 +500,7 @@ describe.each([0, 1, 2, 3, 4, 5, 6])(
       return buildPlan({
         ...outlining,
         items: moved,
-        lessons: CHAIN.flatMap((skillId) => writeLessons({ count: 2, minutes: 5, skillId })),
+        lessons: CHAIN.flatMap((skillId) => write(skillId)),
         mode: "automatic",
       });
     }
@@ -508,7 +517,7 @@ describe.each([0, 1, 2, 3, 4, 5, 6])(
     }
 
     it.each(["done", "testedOut"] as const)(
-      "keeps each topic before the ones built on it after lessons %s ahead",
+      "keeps each topic before the ones built on it once those lessons are %s",
       (status) => {
         const plan = landAfter(status);
         const { order, starts } = listStarts(plan);
