@@ -146,10 +146,6 @@ export async function answerGoalUploadRequest({
       where: { answeredAt: null, goalId, sourceId: { in: access.sourceIds } },
     });
 
-    if (claimed.length === 0) {
-      return unchanged({ status: "alreadyAnswered" } as const);
-    }
-
     const sources = await transaction.source.findMany({
       select: { extractedText: true, id: true, readState: true },
       where: { id: { in: access.sourceIds } },
@@ -157,13 +153,16 @@ export async function answerGoalUploadRequest({
 
     const statuses = new Map(sources.map((source) => [source.id, getSourceReadStatus(source)]));
     const claimedSourceIds = claimed.map(({ sourceId }) => sourceId);
+    const idsToCheck = claimedSourceIds.length > 0 ? claimedSourceIds : access.sourceIds;
 
     if (
-      !claimedSourceIds.some(
-        (id) => statuses.get(id) === "readable" || statuses.get(id) === "reading",
-      )
+      !idsToCheck.some((id) => statuses.get(id) === "readable" || statuses.get(id) === "reading")
     ) {
       return unchanged({ status: "unreadable" } as const);
+    }
+
+    if (claimedSourceIds.length === 0) {
+      return unchanged({ status: "alreadyAnswered" } as const);
     }
 
     await transaction.goal.update({ data: { researchUploadReason: null }, where: { id: goalId } });

@@ -16,6 +16,7 @@ import {
 import {
   getOwedResearchUploadAnswer,
   getReadableResearchUploadIds,
+  reopenResearchUploadAnswer,
 } from "./research-upload-answer";
 
 async function privateUploadFixture(ownerId: string, goalId: string | null = null) {
@@ -270,6 +271,12 @@ describe(answerGoalUploadRequest, () => {
 
     await prisma.source.update({ data: { readState: "read" }, where: { id: photo.id } });
     await expect(getReadableResearchUploadIds(pending)).resolves.toStrictEqual([]);
+
+    await reopenResearchUploadAnswer(pending);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
 
     await prisma.source.update({
       data: { extractedText: "New material" },

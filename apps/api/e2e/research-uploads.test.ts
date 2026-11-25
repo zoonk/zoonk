@@ -153,6 +153,12 @@ test.describe("Research upload requests API", () => {
       researchUploadReason: "noOfficialSource",
     });
 
+    const replay = await learner.api.post("/v1/research", {
+      data: { goalId: goal.id, sourceIds: [photo.id] },
+    });
+
+    expect(replay.status()).toBe(422);
+
     await learner.api.dispose();
   });
 
