@@ -62,6 +62,7 @@ fun TimeAnswer(
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
     aim: String? = null,
+    subjectsTakenOut: Boolean = false,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed
     val offered = offer?.takeUnless { failed }
@@ -69,7 +70,7 @@ fun TimeAnswer(
     val busyWords = stringResource(R.string.plan_time_working)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
-    val lineWords = lineWords(date, exam, line, minutes, today, aim)
+    val lineWords = lineWords(date, exam, line, minutes, today, aim, subjectsTakenOut)
     val shared = split?.let { splitWords(it) }
 
     Column(
@@ -119,13 +120,17 @@ internal fun goalDateText(
     return if (date.estimated) stringResource(R.string.plan_date_estimate, formatted) else formatted
 }
 
-/** The time we suggest: by the date when it covers everything, or that the plan starts with what matters most. */
+/**
+ * The time we suggest: by the date when it covers everything (with a subject taken out, everything in the plan), or that
+ * the plan starts with what matters most.
+ */
 @Composable
 private fun suggestWords(
     date: GoalDate?,
     exam: Boolean,
     line: TimeLine.Suggest,
     today: LocalDate,
+    subjectsTakenOut: Boolean,
 ): String {
     val time = formatMinutes(line.minutes, currentLocale())
     if (line.focus || date == null) {
@@ -134,6 +139,8 @@ private fun suggestWords(
     val month = date.namedMonth
     val words =
         when {
+            subjectsTakenOut && month -> R.string.plan_time_suggest_in_plan_month
+            subjectsTakenOut -> R.string.plan_time_suggest_in_plan
             exam && month -> R.string.plan_time_suggest_exam_month
             exam -> R.string.plan_time_suggest_exam
             month -> R.string.plan_time_suggest_goal_month
@@ -150,11 +157,12 @@ private fun lineWords(
     minutes: Int?,
     today: LocalDate,
     aim: String?,
+    subjectsTakenOut: Boolean,
 ): String {
     val locale = currentLocale()
     return when (line) {
         is TimeLine.Suggest -> {
-            suggestWords(date, exam, line, today)
+            suggestWords(date, exam, line, today, subjectsTakenOut)
         }
 
         TimeLine.PastDate -> {

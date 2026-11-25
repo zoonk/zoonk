@@ -430,7 +430,6 @@
   "plan_thursdays": "40fa8d2e25c9b31fa6fb22721a4a676d6815eae0395597d3bdcfe89891d70928",
   "plan_time_a_day": "3d001ed56c8d3524ab4ff21e34224e271339e064f65951d503c821ce636dd778",
   "plan_time_covers_everything_by": "794c88837180a61dd92c24fe0c219108d3ca7581f6b433ad0699eecd87ad7b5c",
-  "plan_time_covers_everything_by_month": "d0a14710121c2d89968c5a855e7dc1137df4a62c6d2f88d639aaed856244869d",
   "plan_time_enough_exam": "411974e4526fd19f281ac4927a82885df5c94e0b7395f1393dba0a51ffd5c622",
   "plan_time_enough_exam_month": "b362af6d1d81194c8e2bd638122d8967af9f361603758fa4789d7d015612e174",
   "plan_time_enough_goal": "b4ea68b193024e9116bc3e986d25d4db1956e3d1e03f0068861febe1a91e1b75",
@@ -1047,8 +1046,6 @@
     <string name="plan_finish_working">いつ終わるか計算しています…</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">今の学習時間なら、%1$sまでにすべて学べます</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_everything_by_month">今の学習時間なら、%1$sまでにすべて学べます</string>
     <string name="plan_try_again">もう一度試す</string>
     <string name="plan_find_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>
     <string name="plan_find_no_date">すべてを学び終える日を見つけられませんでした。</string>

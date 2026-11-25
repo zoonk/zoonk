@@ -58,7 +58,7 @@ private fun suggestedTimeOffer(
     )
 }
 
-/** The suggested time is enough to cover everything by the goal's date. */
+/** The suggested time is enough to cover everything by the goal's date: with a subject taken out, everything in the plan. */
 @Composable
 private fun enoughBy(
     page: PlanPageState,
@@ -67,6 +67,8 @@ private fun enoughBy(
     val shown = goalDateText(date, page.today)
     val words =
         when {
+            page.subjectsTakenOut && date.namedMonth -> R.string.plan_time_enough_in_plan_month
+            page.subjectsTakenOut -> R.string.plan_time_enough_in_plan
             page.isExam && date.namedMonth -> R.string.plan_time_enough_exam_month
             page.isExam -> R.string.plan_time_enough_exam
             date.namedMonth -> R.string.plan_time_enough_goal_month
@@ -82,9 +84,10 @@ private fun dateOffer(
     time: PlanTimeToCover,
 ): CoverageOffer? {
     val fitting = time.fittingDate?.toJavaLocalDate()?.takeIf { !page.isExam } ?: return null
+    val words = if (page.subjectsTakenOut) R.string.plan_time_covers_everything_in_plan_by else R.string.plan_time_covers_everything_by
     return CoverageOffer(
         operations = listOf(PlanOp.TargetDate(fitting)),
-        title = stringResource(R.string.plan_time_covers_everything_by, formatDate(fitting, currentLocale(), DateStyle.Long, page.today)),
+        title = stringResource(words, formatDate(fitting, currentLocale(), DateStyle.Long, page.today)),
     )
 }
 
@@ -233,18 +236,8 @@ internal fun FitLessonsSuggestion(
     val offer = item.offer
     val preview = slot.host.preview.of(offer.operations.map { it.op }, page.plan)
     val today = (preview as? PlanPreviewState.Ready)?.preview?.effect
-    val target = page.plan.schedule.targetDate
     val lessons = (today ?: offer.effect).lessonsAdded.toInt()
-    val title =
-        if (offer.fits && today == null && target != null) {
-            val month = page.plan.schedule.targetDateNamedMonth
-            stringResource(
-                if (month) R.string.plan_time_covers_everything_by_month else R.string.plan_time_covers_everything_by,
-                goalDate(target.toJavaLocalDate(), month, page.today),
-            )
-        } else {
-            pluralStringResource(R.plurals.plan_more_lessons_fit, lessons, lessons)
-        }
+    val title = pluralStringResource(R.plurals.plan_more_lessons_fit, lessons, lessons)
 
     val pending = slot.edits.isPending(PlanPart.Suggestion)
     val checking = preview is PlanPreviewState.Loading

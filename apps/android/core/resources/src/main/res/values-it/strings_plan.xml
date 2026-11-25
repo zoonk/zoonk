@@ -430,7 +430,6 @@
   "plan_thursdays": "2dcacb9b247d8cf3d9fc31aad0d40b35ab17360c48f9979b029180c9ddc57b0f",
   "plan_time_a_day": "d72182e58e977d3103e60d3730523eb6189e27acde7108a08181200c108f40bc",
   "plan_time_covers_everything_by": "525c464b1b64172349b1bf4c6495b1b715348afee6c03a819968744aa219347a",
-  "plan_time_covers_everything_by_month": "000b0af02c2f89f6efb70047ce733e9e3f79d3dfb45882ad42a1ca97e5c7249f",
   "plan_time_enough_exam": "d68384772a22a6d0610ae61739fc6a68df421fc64574becf8fe8d36396632bd4",
   "plan_time_enough_exam_month": "87ce8fbf49355b22872b085a4bb4130922916b9f0cd598926aeecc4cd392ab88",
   "plan_time_enough_goal": "22be3b9667928115114fd59c121ffd8c6268f35c1be7be43b7a8aca39a3eb399",
@@ -1149,8 +1148,6 @@
     <string name="plan_finish_working">Stiamo calcolando quando finiresti…</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">Il tuo tempo di studio basta per completare tutto entro il giorno %1$s</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_everything_by_month">Il tuo tempo di studio basta per completare tutto entro %1$s</string>
     <string name="plan_try_again">Riprova</string>
     <string name="plan_find_building">Stiamo ancora preparando il tuo piano. Riprova tra poco.</string>
     <string name="plan_find_no_date">Non siamo riusciti a trovare una data entro cui studiare tutto.</string>

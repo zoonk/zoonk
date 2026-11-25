@@ -108,6 +108,7 @@ internal fun DailyCoverage(
                     focus.pickedTime.requestFocus()
                 },
                 today = page.today,
+                subjectsTakenOut = page.subjectsTakenOut,
             )
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
