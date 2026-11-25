@@ -47,7 +47,7 @@ export const stockMarketItems: SeedItem[] = [
     },
     difficulty: 0,
     format: "multipleChoice",
-    key: "shareholder-vote",
+    key: "paid-last",
     skill: "shareholder-rights",
   },
   {
