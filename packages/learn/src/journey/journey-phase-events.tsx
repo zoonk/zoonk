@@ -105,7 +105,7 @@ export function CheckpointRow({
             {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
             {!isDone &&
               when === "nextSession" &&
-              (checkpoint.date === today ? t("Today") : t("In your next session"))}
+              (checkpoint.date === today ? t("Today") : t("Next time"))}
             {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
           </span>
         }

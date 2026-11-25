@@ -111,7 +111,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const result = placementTest?.kind === "language" ? placementTest.result : null;
   const ranges = result ? formatRanges(result.ranges) : [];
 
-  const notYet = t("Not yet");
+  const notYet = t("Not tested yet");
 
   const rangeReadout =
     ranges.length > 0 ? (

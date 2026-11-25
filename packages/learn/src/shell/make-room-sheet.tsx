@@ -177,17 +177,22 @@ export function MakeRoomSheet({
             </p>
           )}
 
-          <LearnLink
-            className={buttonVariants({
-              className: "sm:self-start",
-              size: "lg",
-              variant: "outline",
-            })}
-            href={routes.upgrade}
-            onClick={() => room.setOpen(false)}
-          >
-            {t("Subscribe")}
-          </LearnLink>
+          <div className="flex flex-col gap-2">
+            <p className="text-muted-foreground text-sm">
+              {t("Or subscribe to study more goals at once.")}
+            </p>
+            <LearnLink
+              className={buttonVariants({
+                className: "sm:self-start",
+                size: "lg",
+                variant: "outline",
+              })}
+              href={routes.upgrade}
+              onClick={() => room.setOpen(false)}
+            >
+              {t("Subscribe")}
+            </LearnLink>
+          </div>
         </DrawerContent>
       </DrawerPopup>
     </Drawer>
