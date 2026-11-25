@@ -199,6 +199,8 @@
     <string name="plan_pace">Schedule</string>
     <string name="plan_your_pace">Your schedule</string>
     <string name="plan_pace_value_paused">Paused</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">This goal is paused</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Nothing is planned until you resume it.</string>
     <plurals name="plan_lessons_left">
@@ -637,7 +639,6 @@
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
-    <string name="plan_goal_paused">Your %1$s goal is paused</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">Let\'s fit your plan to the time left</string>
     <string name="plan_adjust">Adjust</string>

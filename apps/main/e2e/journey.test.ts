@@ -61,7 +61,7 @@ test.describe("Journey", () => {
       await options.click();
       await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
 
-      await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
       await expect(estimate).toHaveCount(0);
       await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
     });

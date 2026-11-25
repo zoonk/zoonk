@@ -471,8 +471,8 @@ struct PlanNumbersSection: View {
   }
 
   /// Main's `useScheduleNumber`: the plan's state, then the time a day in the "Daily study time"
-  /// setting's words while it's under way, or the lessons left once its date passed. Beside the
-  /// plan's settings, whose row says it, the time isn't said again.
+  /// setting's words while it's under way, the lessons left once its date passed, or what a pause
+  /// means. Beside the plan's settings, whose row says it, the time isn't said again.
   private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
@@ -496,7 +496,11 @@ struct PlanNumbersSection: View {
         localized: "Schedule", table: "Plan",
         comment: "Label of the tile with the plan's state, such as \"Up to date\""),
       value: Text(verbatim: planStatusText(status, isPaused: context.isPaused)),
-      detail: paused ? nil : detail)
+      detail: paused
+        ? String(
+          localized: "Nothing is planned until you resume it.", table: "Plan",
+          comment: "Explains a paused goal")
+        : detail)
   }
 }
 

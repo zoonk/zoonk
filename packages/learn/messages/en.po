@@ -4642,19 +4642,6 @@ msgctxt "hrgo-E"
 msgid "Archive"
 msgstr "Archive"
 
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "98OHZH"
-msgid "This goal is paused"
-msgstr "This goal is paused"
-
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "Nothing is planned until you resume it."
-
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
@@ -4893,9 +4880,20 @@ msgid "Mock exam"
 msgstr "Mock exam"
 
 #: src/journey/journey-planless.tsx
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "This goal is paused"
+
+#: src/journey/journey-planless.tsx
 msgctxt "NIpBgv"
 msgid "Your plan comes after a few questions"
 msgstr "Your plan comes after a few questions"
+
+#: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Nothing is planned until you resume it."
 
 #: src/journey/journey-planless.tsx
 msgctxt "mMlLhC"

@@ -18,7 +18,69 @@ export const BAND_CLASS =
 
 const BAND_CELL_CLASS = "col-start-1 row-start-1";
 
-const BAND_NAME_CLASS = cn(BAND_CELL_CLASS, "leading-4 text-balance");
+const BAND_NAME_CLASS = cn(
+  BAND_CELL_CLASS,
+  "leading-4 text-balance in-data-[fit=letters]:wrap-anywhere in-data-[fit=letters]:hyphens-auto",
+);
+
+/**
+ * How a band's name breaks: its parts kept whole (`splitBandName`), between any words, or inside
+ * words when not even each band's longest word fits the row.
+ */
+export type BandFit = "parts" | "words" | "letters";
+
+/** A band's fit, and its least width when the row sets one (`getBandColumnsStyle`). */
+export type BandSize = { fit: BandFit; width: number | null };
+
+function sumWidths(widths: readonly number[]): number {
+  return widths.reduce((total, width) => total + width, 0);
+}
+
+/**
+ * How the bands share a row `available` wide (gaps left out), from each band's least width with
+ * its name's parts kept whole (`parts`) and with it broken between words (`words`). When every
+ * band fits its parts, they keep them. Otherwise the widest bands give up their parts first: each
+ * band is held to one shared width, never under its longest word nor over its parts, the widest
+ * that fits the row, so a short name keeps its two lines and only the longest names take more.
+ */
+export function fitBandSizes({
+  available,
+  parts,
+  words,
+}: {
+  available: number;
+  parts: readonly number[];
+  words: readonly number[];
+}): BandSize[] {
+  if (sumWidths(parts) <= available) {
+    return parts.map(() => ({ fit: "parts", width: null }));
+  }
+
+  if (sumWidths(words) > available) {
+    return parts.map(() => ({ fit: "letters", width: null }));
+  }
+
+  const widthsAt = (cap: number) =>
+    parts.map((part, index) => Math.min(part, Math.max(words[index] ?? 0, cap)));
+
+  let low = 0;
+  let high = Math.ceil(Math.max(...parts));
+
+  while (low < high) {
+    const cap = Math.ceil((low + high) / 2);
+
+    if (sumWidths(widthsAt(cap)) <= available) {
+      low = cap;
+    } else {
+      high = cap - 1;
+    }
+  }
+
+  return widthsAt(low).map((width, index) => ({
+    fit: width >= (parts[index] ?? 0) ? "parts" : "words",
+    width,
+  }));
+}
 
 const ONE_LINE_NAME_LENGTH = 16;
 
@@ -64,18 +126,20 @@ export function splitBandName(name: string): [string, string | null] {
   return [best.first, best.second];
 }
 
-const BAND_NAME_PART_CLASS = "inline-block whitespace-nowrap";
+const BAND_NAME_PART_CLASS =
+  "inline-block whitespace-nowrap in-data-[fit=letters]:inline in-data-[fit=letters]:whitespace-normal in-data-[fit=words]:inline in-data-[fit=words]:whitespace-normal";
 
 /**
  * A phase's name in parts that never break inside, so a short phase's band grows to its name: a
- * short name keeps one line and a longer one takes two at most. `leading` stays with the first
- * word.
+ * short name keeps one line and a longer one takes two at most. When the row can't fit every
+ * band's widest part, the row's `data-fit` lets the names break elsewhere (`BandFit`). `leading`
+ * stays with the first word.
  */
 export function BandName({ leading, name }: { leading?: React.ReactNode; name: string }) {
   const [first, second] = splitBandName(name);
 
   return (
-    <span className={BAND_NAME_CLASS}>
+    <span className={BAND_NAME_CLASS} data-slot="band-name">
       <span className={BAND_NAME_PART_CLASS}>
         {leading}
         {first}
@@ -109,13 +173,20 @@ export const BAND_ROWS_CLASS = "grid gap-x-2";
 export const BAND_COLUMN_CLASS = "relative row-span-full grid min-w-18 grid-rows-subgrid";
 
 /**
- * A band is drawn to its time but never narrower than its name's longest word, so the column
- * can't be a size container (that would give it no width of its own): the axis under it is.
+ * A band is drawn to its time but never narrower than its name (`fitBandSizes` may hold it to a
+ * width of its own), so the column can't be a size container (that would give it no width of its own): the axis under it is.
  */
 export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
   return {
-    gridTemplateColumns: weights.map((weight) => `minmax(min-content, ${weight}fr)`).join(" "),
+    gridTemplateColumns: weights
+      .map((weight, index) => `minmax(var(${getBandMinProperty(index)}, min-content), ${weight}fr)`)
+      .join(" "),
   };
+}
+
+/** A band's least width when its name can't keep its parts (`fitBandSizes`). */
+export function getBandMinProperty(index: number): string {
+  return `--band-min-${index}`;
 }
 
 export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap content-start gap-x-2";

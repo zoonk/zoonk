@@ -294,7 +294,7 @@ private fun lessonsStudied(
 ): Long = (done - known).coerceAtLeast(0)
 
 /**
- * The tile: the plan's state as its value, and its time a day or the lessons left as its one line. The
+ * The tile: the plan's state as its value, and its time a day, the lessons left or what a pause means as its one line. The
  * side column's numbers sit above the plan's details, whose "Daily study time" row already says the time.
  */
 @Composable
@@ -311,7 +311,11 @@ private fun paceNumber(
                 pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
             }
 
-            resting || timeShownBeside -> {
+            resting -> {
+                stringResource(R.string.plan_nothing_planned_until_resume)
+            }
+
+            timeShownBeside -> {
                 null
             }
 

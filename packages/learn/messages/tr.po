@@ -4642,19 +4642,6 @@ msgctxt "hrgo-E"
 msgid "Archive"
 msgstr "Arşivle"
 
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "98OHZH"
-msgid "This goal is paused"
-msgstr "Bu hedef duraklatıldı"
-
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "Devam edene kadar hiçbir şey planlanmaz."
-
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
@@ -4893,9 +4880,20 @@ msgid "Mock exam"
 msgstr "Deneme sınavı"
 
 #: src/journey/journey-planless.tsx
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "Bu hedef duraklatıldı"
+
+#: src/journey/journey-planless.tsx
 msgctxt "NIpBgv"
 msgid "Your plan comes after a few questions"
 msgstr "Planından önce birkaç soru"
+
+#: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "Devam edene kadar hiçbir şey planlanmaz."
 
 #: src/journey/journey-planless.tsx
 msgctxt "mMlLhC"

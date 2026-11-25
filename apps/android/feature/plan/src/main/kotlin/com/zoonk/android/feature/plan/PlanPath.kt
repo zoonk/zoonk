@@ -279,7 +279,8 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
-    if (phase.state != PlanPhase.State.CURRENT || open) return null
+    // Main's `PhaseResume`: nothing continues while the goal is paused.
+    if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
     if (phase.lessonsDone < phase.lessonsTotal) {
         val resumes =
@@ -681,7 +682,8 @@ internal fun ColumnScope.PhaseDetails(
 ) {
     val learn = phase.kind == PlanPhase.Kind.LEARN
     val name = phaseName(phase, page.mocksRequirePlus)
-    val byPlace = learn && phase.isNamedLikeAChapter(name)
+    // Main's `PhaseDetails`: a phase named like one of the chapters listed under it goes by its place; the current one keeps its name, as the band and the phase line give it.
+    val byPlace = learn && phase.state != PlanPhase.State.CURRENT && phase.isNamedLikeAChapter(name)
     // From the phase's start to the end it's named by everywhere, or a short plan's days.
     val range =
         when (val end = page.plan.phaseEnd(phase).takeUnless { page.isPaused }) {

@@ -279,7 +279,6 @@
   "plan_full_course_switch": "f66ca292fb18836cb4c37f032bf32b15bb0495fdd3d6900992c1fba093af9f24",
   "plan_go_to_today": "86e6e02da066c61c6504170dddb2dfe5769f14f60a786ca35699508caea83e95",
   "plan_goal_limit_reached": "08c97e681784186843afb9c32ce3251e4e3e2dc1abe8612beec9c08c217cbcc2",
-  "plan_goal_paused": "1389f20023c9a5b589e0ae266e8175cd6195149651fb3e3ede3079882bc37e97",
   "plan_going_deeper": "70856b48bd3ccc7446f2f1905cef61a3525a2e5e94f3f12c893a48622a46f2b6",
   "plan_how_calculated": "0880c12af5fdcc42e274e375bf2b3876e5359a485cc6624140e26777c1acb024",
   "plan_keep_studying": "a59b335a5ec5be65d9685ae49ecbaafbddd6053a4d7caa5aae9f2d8d9e046a97",
@@ -1197,7 +1196,6 @@
     <string name="plan_suggestion_previous">Précédent</string>
     <string name="plan_suggestion_next">Suivant</string>
     <string name="plan_suggestion_position">%1$s sur %2$s</string>
-    <string name="plan_goal_paused">Ton objectif %1$s est en pause</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">Adaptons ton plan au temps qu’il te reste</string>
     <string name="plan_adjust">Ajuster</string>

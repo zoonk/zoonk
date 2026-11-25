@@ -176,19 +176,19 @@ export function TodayTick({ share }: { share: number | null }) {
   );
 }
 
-/** Half the band name's line height (`leading-4`). */
-const NAME_LINE_HALF = "0.5rem";
+/** The band name's line height (`leading-4`). */
+const NAME_LINE = "1rem";
 
 /** The least of the tick shown over and under the name, so it always reaches into the band. */
 const TICK_MIN_SEGMENT = "0.25rem";
 
 /**
  * The tick through the current band's full height, over its fill, broken where the name's lines
- * are (`nameLines`, centered in the band), so it never reads as a stroke of a letter. The current
+ * are (centered in the band: `--band-name-height` once laid out, `nameLines` until then), so it never reads as a stroke of a letter. The current
  * band is isolated, so `-z-10` keeps it inside.
  */
 export function BandTodayTick({ nameLines, share }: { nameLines: number; share: number }) {
-  const half = `min(${nameLines} * ${NAME_LINE_HALF} + 2px, 50% - ${TICK_MIN_SEGMENT})`;
+  const half = `min(var(--band-name-height, ${nameLines} * ${NAME_LINE}) / 2 + 2px, 50% - ${TICK_MIN_SEGMENT})`;
   const mask = `linear-gradient(to bottom, #000 calc(50% - ${half}), transparent calc(50% - ${half}), transparent calc(50% + ${half}), #000 calc(50% + ${half}))`;
 
   return (

@@ -279,7 +279,6 @@
   "plan_full_course_switch": "8b66f991102d00d0a31ff2a9cfcb4f63182f4c52b7d298e4edc2c3c66449410e",
   "plan_go_to_today": "2612f5e30907a9678bb34138b59c2158388e6e81696e24072fc38d106f968219",
   "plan_goal_limit_reached": "246ae51803ae2ea2f38bf11e49230526b1ce90069a47920ca611cc88cb59e089",
-  "plan_goal_paused": "170f451390b2f0159f25e06340dbbfd710768540178bfd4a34b308d96e7e0704",
   "plan_going_deeper": "03f217a5f80dd0d811378afa697746bbdf73728d151ab6bcc543df99f1ac903a",
   "plan_how_calculated": "7ce829a1b2d889ac1956707e436377b146de370982785cede27a5adbbbb3e66f",
   "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
@@ -1093,7 +1092,6 @@
     <string name="plan_suggestion_previous">이전</string>
     <string name="plan_suggestion_next">다음</string>
     <string name="plan_suggestion_position">%1$s / %2$s</string>
-    <string name="plan_goal_paused">%1$s 목표가 일시 중지됐어요</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">남은 시간에 맞게 계획 조정하기</string>
     <string name="plan_adjust">조정하기</string>
