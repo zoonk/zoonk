@@ -1,9 +1,6 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,15 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,23 +21,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
@@ -74,22 +56,18 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
-import com.zoonk.android.ui.components.GoalPanel
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.QuestionPanel
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.components.rememberGoalExamples
-import com.zoonk.android.ui.components.sendButtonColors
-import com.zoonk.android.ui.components.submitOnEnter
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -581,78 +559,16 @@ private fun ColumnScope.MaterialQuestions(
 
     // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
     Spacer(Modifier.weight(1f))
-    QuestionPanel(questionField, ask, vm.isAsking)
+    QuestionPanel(
+        state = questionField,
+        onAsk = ask,
+        isAsking = vm.isAsking,
+        label = stringResource(R.string.onboarding_your_question),
+        placeholder = stringResource(R.string.onboarding_question_placeholder),
+        askLabel = stringResource(R.string.onboarding_ask),
+        maxLength = MAX_QUESTION_LENGTH,
+    )
 }
-
-/**
- * Main's question about material: the goal panel with its field, named "Your question" for TalkBack only, and the
- * round send inside it at the end of the last line.
- */
-@Composable
-private fun QuestionPanel(
-    field: TextFieldState,
-    ask: () -> Unit,
-    isAsking: Boolean,
-) {
-    val interaction = remember { MutableInteractionSource() }
-    val focused by interaction.collectIsFocusedAsState()
-    val focus = remember { FocusRequester() }
-    LaunchedEffect(Unit) { focus.requestFocus() }
-    val label = stringResource(R.string.onboarding_your_question)
-    val colors = MaterialTheme.colorScheme
-    val words = MaterialTheme.typography.bodyLarge.copy(color = colors.onSurface)
-
-    GoalPanel(focused, Modifier.fillMaxWidth()) {
-        // Main's `p-1.5 pl-4`, less the 2dp Material's 48dp touch target adds around the 44dp send.
-        Row(
-            Modifier.padding(start = 16.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            BasicTextField(
-                state = field,
-                inputTransformation = InputTransformation.fitTo(MAX_QUESTION_LENGTH),
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .focusRequester(focus)
-                        .submitOnEnter(field, ask)
-                        .semantics { contentDescription = label },
-                textStyle = words,
-                cursorBrush = SolidColor(colors.primary),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
-                onKeyboardAction = { ask() },
-                lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = 6),
-                interactionSource = interaction,
-                decorator = { inner ->
-                    Box(Modifier.padding(vertical = 14.dp)) {
-                        if (field.text.isEmpty()) {
-                            Text(stringResource(R.string.onboarding_question_placeholder), color = colors.onSurfaceVariant, style = words)
-                        }
-                        inner()
-                    }
-                },
-            )
-            FilledIconButton(
-                busy = isAsking,
-                onClick = ask,
-                enabled = field.text.isNotBlank(),
-                modifier = Modifier.size(SEND_SIZE),
-                shape = CircleShape,
-                colors = sendButtonColors(),
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_arrow_upward),
-                    contentDescription = stringResource(R.string.onboarding_ask),
-                    Modifier.size(20.dp),
-                )
-            }
-        }
-    }
-}
-
-/** Main's `icon-lg` send: the control height. */
-private val SEND_SIZE = 44.dp
 
 @Composable
 private fun HowItWorks(hasAccount: Boolean) {

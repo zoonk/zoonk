@@ -10,10 +10,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,17 +33,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -57,6 +69,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
+import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
 
 /** The same limit core applies to a typed goal. */
@@ -236,6 +249,91 @@ fun GoalPanel(
 }
 
 /**
+ * Main's question box (`material-questions.tsx`): the goal panel with the words, named [label] for TalkBack only, and
+ * the round send at the end of their last line. One line of words is as tall as the send, so the send sits [PANEL_ROOM]
+ * from the panel's top, end and bottom; with more lines, or larger text, it stays centered on the last one. While the
+ * words have focus, the whole panel comes back into view whenever something moves it without moving their caret, as a
+ * browser's scroll anchoring keeps main's: what lands above it in the page (a question going out, its answer), or the
+ * keyboard coming back after a fold. Scrolling the page moves nothing in it, so the learner can still read back.
+ */
+@Composable
+fun QuestionPanel(
+    state: TextFieldState,
+    onAsk: () -> Unit,
+    isAsking: Boolean,
+    label: String,
+    placeholder: String,
+    askLabel: String,
+    maxLength: Int,
+    modifier: Modifier = Modifier,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
+    val inView = remember { BringIntoViewRequester() }
+    var placedAt by remember { mutableFloatStateOf(0f) }
+    val keyboard = WindowInsets.ime
+    val density = LocalDensity.current
+    LaunchedEffect(focused, placedAt) {
+        if (focused) {
+            snapshotFlow { keyboard.getBottom(density) }.collectLatest {
+                withFrameNanos {}
+                inView.bringIntoView()
+            }
+        }
+    }
+    val colors = MaterialTheme.colorScheme
+    val words = MaterialTheme.typography.bodyLarge.copy(color = colors.onSurface)
+    val lineHeight = with(density) { words.lineHeight.toDp() }
+    val sendLift = (WORDS_PADDING + lineHeight / 2 - SEND_SIZE / 2).coerceAtLeast(0.dp)
+
+    GoalPanel(focused, modifier.fillMaxWidth().onPlaced { placedAt = it.positionInParent().y }) {
+        // Main's `p-1.5 pl-4`.
+        Row(
+            Modifier
+                .bringIntoViewRequester(inView)
+                .padding(start = 16.dp, top = PANEL_ROOM, end = PANEL_ROOM, bottom = PANEL_ROOM),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            BasicTextField(
+                state = state,
+                inputTransformation = InputTransformation.fitTo(maxLength),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(focus)
+                        .submitOnEnter(state, onAsk)
+                        .semantics { contentDescription = label },
+                textStyle = words,
+                cursorBrush = SolidColor(colors.primary),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
+                onKeyboardAction = { onAsk() },
+                lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = QUESTION_LINES),
+                interactionSource = interaction,
+                decorator = { field ->
+                    Box(Modifier.heightIn(min = SEND_SIZE).padding(vertical = WORDS_PADDING)) {
+                        if (state.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = words)
+                        field()
+                    }
+                },
+            )
+            FilledIconButton(
+                busy = isAsking,
+                onClick = onAsk,
+                enabled = state.text.isNotBlank(),
+                modifier = Modifier.padding(bottom = sendLift).size(SEND_SIZE),
+                shape = CircleShape,
+                colors = sendButtonColors(),
+            ) {
+                Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = askLabel, Modifier.size(20.dp))
+            }
+        }
+    }
+}
+
+/**
  * "I want to" before the words, as main's box reads; over them once it would take more than
  * [INLINE_LABEL_SHARE] of the line (a large font, a long label), so the words keep room to wrap.
  */
@@ -349,6 +447,11 @@ const val QUICK_EXPLANATION_MINUTES = 5
 /** Main's `text-[17px] leading-6 py-2.5`: one line of words is 44dp. */
 private val GOAL_LINE_HEIGHT = 24.sp
 private val WORDS_PADDING = 10.dp
+
+/** Main's `icon-lg` send: the control height, as tall as one line of words. */
+private val SEND_SIZE = 44.dp
+private val PANEL_ROOM = 6.dp
+private const val QUESTION_LINES = 6
 private val LABEL_GAP = 8.dp
 private val WORDS_END = 10.dp
 private const val INLINE_LABEL_SHARE = 0.4f
