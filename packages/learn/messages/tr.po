@@ -886,6 +886,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "Günde {time} çalışmanı öneriyoruz. Planın, hedefin için en önemli konularla başlıyor."
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {Planındaki her şeyi {date} tarihine kadar yetiştirebilmen için günde {time} çalışmanı öneriyoruz.} other {Planındaki her şeyi {date} tarihine kadar yetiştirebilmen için günde {time} çalışmanı öneriyoruz.}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -935,6 +941,12 @@ msgstr "Ne zaman bitireceğini hesaplıyoruz…"
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "Ne zaman bitireceğini hesaplayamadık."
+
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {Bu süre, planındaki her şeyi {date} tarihine kadar tamamlamaya yeter.} other {Bu süre, planındaki her şeyi {date} tarihine kadar tamamlamaya yeter.}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
@@ -10561,6 +10573,12 @@ msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, other {Günde {minutes, number} dk. daha çalışarak # günde arayı kapat.}}"
 
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {Planındaki her şeyi {date} tarihine kadar tamamlayacak kadar zamanın var} other {Planındaki her şeyi {date} tarihine kadar tamamlayacak kadar zamanın var}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
 msgctxt "VNHyd8"
@@ -10871,9 +10889,19 @@ msgid "You'll use"
 msgstr "Kullanacağın araçlar"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "Planındaki tüm konuları çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır."
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "Tüm konulara çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır."
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "Bitiş tarihi olmadan planındaki her şeyi çalış."
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"
