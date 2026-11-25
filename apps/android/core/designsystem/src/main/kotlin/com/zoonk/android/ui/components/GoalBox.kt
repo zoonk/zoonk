@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -250,7 +249,7 @@ fun GoalPanel(
 
 /**
  * Main's question box (`material-questions.tsx`): the goal panel with the words, named [label] for TalkBack only, and
- * the round send at the end of their last line. One line of words is as tall as the send, so the send sits [PANEL_ROOM]
+ * the send, an icon button, at the end of their last line. One line of words is as tall as the send, so the send sits [PANEL_ROOM]
  * from the panel's top, end and bottom; with more lines, or larger text, it stays centered on the last one. While the
  * words have focus, the whole panel comes back into view whenever something moves it without moving their caret, as a
  * browser's scroll anchoring keeps main's: what lands above it in the page (a question going out, its answer), or the
@@ -324,7 +323,6 @@ fun QuestionPanel(
                 onClick = onAsk,
                 enabled = state.text.isNotBlank(),
                 modifier = Modifier.padding(bottom = sendLift).size(SEND_SIZE),
-                shape = CircleShape,
                 colors = sendButtonColors(),
             ) {
                 Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = askLabel, Modifier.size(20.dp))
