@@ -46,16 +46,23 @@ nonisolated struct TextEdit {
   }
 
   func fitted(to limit: Int, digitsOnly: Bool = false) -> (text: String, caret: Int) {
+    let proposed = inserted.base
     var room = limit - before.utf16.count - after.utf16.count
     var kept = ""
+    var start = inserted.startIndex
 
-    for character in inserted {
-      if digitsOnly, !Self.isDigit(character) { continue }
+    while start < inserted.endIndex {
+      // Swift resegments a slice inside a grapheme, which can strand a joiner.
+      let end = min(proposed.index(after: start), inserted.endIndex)
+      let piece = proposed[start..<end]
+      start = end
 
-      let length = character.utf16.count
-      guard length <= room else { break }
+      if digitsOnly, piece.first.map(Self.isDigit) != true { continue }
 
-      kept.append(character)
+      let length = piece.utf16.count
+      guard length <= room, piece.unicodeScalars.last != "\u{200D}" else { break }
+
+      kept.append(contentsOf: piece)
       room -= length
     }
 

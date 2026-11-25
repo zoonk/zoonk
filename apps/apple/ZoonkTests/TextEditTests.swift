@@ -46,6 +46,34 @@ final class TextEditTests: XCTestCase {
     XCTAssertEqual(TextEdit(from: "", to: "😀👍🏽").fitted(to: 5).text, "😀")
   }
 
+  func testGrowingAFamilyEmojiNeedsRoomForTheJoinerAndNextMember() {
+    let edit = TextEdit(from: "👨‍👩", to: "👨‍👩‍👧")
+
+    let refused = edit.fitted(to: 6)
+    XCTAssertEqual(refused.text, "👨‍👩")
+    XCTAssertEqual(refused.caret, 5)
+    XCTAssertEqual(edit.fitted(to: 8).text, "👨‍👩‍👧")
+  }
+
+  func testGrowingAnEmojiKeepsTheWholeSkinToneModifier() {
+    let edit = TextEdit(from: "a👍", to: "a👍🏽x")
+
+    XCTAssertEqual(edit.fitted(to: 4).text, "a👍")
+    XCTAssertEqual(edit.fitted(to: 5).text, "a👍🏽")
+  }
+
+  func testFittingUsesTheFlagBoundaryInTheProposedText() {
+    let edit = TextEdit(from: "🇦", to: "🇦🇧🇨")
+
+    XCTAssertEqual(edit.fitted(to: 4).text, "🇦🇧")
+  }
+
+  func testInsertionDoesNotKeepAClusterWithADanglingJoiner() {
+    let edit = TextEdit(from: "a", to: "a👩‍x")
+
+    XCTAssertEqual(edit.fitted(to: 4).text, "a")
+  }
+
   func testOnlyNewDigitsFillTheRemainingRoom() {
     let fitted = TextEdit(from: "1234", to: "12a5 6²7834").fitted(to: 6, digitsOnly: true)
 
