@@ -130,6 +130,15 @@ describe("a reading of the learner's own material", () => {
     });
   });
 
+  it("drops the Markdown a photo's transcript marks its headings and terms with", () => {
+    expect(
+      readHeadings(["# Óptica - Lentes", "## 3) Ligações químicas (VAI CAIR!)", "**Densidade**"]),
+    ).toStrictEqual({
+      stressed: [["Ligações químicas", "VAI CAIR!"]],
+      topics: ["Óptica - Lentes", "Ligações químicas", "Densidade"],
+    });
+  });
+
   it("keeps what a heading says about its content, and a name that is only a number", () => {
     const headings = [
       "Organelas (mitocôndria e cloroplasto)",

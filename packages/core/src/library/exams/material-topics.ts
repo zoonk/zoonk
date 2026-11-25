@@ -1,3 +1,4 @@
+import { markdownToPlainText } from "@zoonk/utils/markdown-text";
 import {
   type BlueprintContent,
   type ExamStructure,
@@ -25,7 +26,7 @@ function isEmphasis(remark: string): boolean {
 }
 
 function cleanMaterialTopic(heading: string): MaterialTopic {
-  const words = heading.replace(NUMBERING, "").trim();
+  const words = markdownToPlainText(heading).replace(NUMBERING, "").trim();
   const remark = TRAILING_REMARK.exec(words);
   const parts = remark?.groups;
   const stress = (parts?.aside ?? parts?.dash ?? parts?.bang ?? "").trim();
