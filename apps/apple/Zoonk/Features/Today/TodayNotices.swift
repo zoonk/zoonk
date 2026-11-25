@@ -305,6 +305,10 @@ struct TodayUploadRequestSection: View {
         if answered {
           Text(thanks)
         } else {
+          if let unreadable = request.unreadableUpload, draft.error == nil {
+            FailureLine(message: .unreadableMaterial(title: unreadable.title))
+          }
+
           MaterialAttachControls(goal: (request.goalId, request.language), draft: $draft) {
             Label {
               Text(action)
@@ -315,6 +319,8 @@ struct TodayUploadRequestSection: View {
             switch await store.answer(request, sourceID: source.id) {
             case .done(.alreadyRead):
               throw OnboardingError.alreadyRead
+            case .done(.unreadable):
+              throw OnboardingError.unreadable(title: source.title ?? "")
             case .failed(let error):
               throw error
             case .done(.answered), .obsolete:

@@ -225,6 +225,19 @@ final class OnboardingStoreTests: XCTestCase {
     }
   }
 
+  /// A question about material still being read is refused as that, so the question stays in the
+  /// box to ask again instead of showing as a failed answer.
+  func testAQuestionBeforeTheMaterialIsReadIsRefusedAsStillReading() async {
+    let store = makeStore(transport: DraftServer(Self.draft(prompt: "notes", goalsLeft: 2)))
+
+    do {
+      _ = try await store.askMaterial(question: "What is mitosis?", sourceIDs: [Self.sourceID])
+      XCTFail("The question is refused")
+    } catch {
+      XCTAssertEqual(error as? OnboardingError, .materialReading)
+    }
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -362,6 +375,13 @@ actor DraftServer: ClientTransport {
         HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
         HTTPBody(
           #"{"generations":[],"goals":[\#(createdGoal)],"refused":[],"research":[]}"#)
+      )
+    }
+
+    if operationID == "askMaterialQuestion" {
+      return (
+        HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
+        HTTPBody(#"{"error":{"code":"materialReading","message":"Still reading"}}"#)
       )
     }
 

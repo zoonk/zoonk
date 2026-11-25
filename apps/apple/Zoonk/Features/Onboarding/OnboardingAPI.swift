@@ -42,8 +42,11 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// Material sent with a goal is gone from the learner's uploads (`MATERIAL_UNAVAILABLE`): its
   /// ids, in the order sent. Nothing was saved or charged.
   case materialUnavailable(sourceIDs: [String])
-  /// Material asked about is still being read, so nothing was charged (`MATERIAL_READING`).
+  /// Material asked about is still being read, so nothing was charged (`materialReading`).
   case materialReading
+  /// Nothing could be read on the material sent, so nothing was recorded (`UPLOAD_UNREADABLE`):
+  /// its title, empty for pasted text.
+  case unreadable(title: String)
   case failed(APIError)
 
   /// The server's own answer, as opposed to a request that may or may not have reached it.
@@ -847,6 +850,8 @@ struct OnboardingAPI: Sendable {
       throw Self.error(try response.body.json)
     case .forbidden(let response):
       throw Self.error(try response.body.json)
+    case .conflict(let response):
+      throw Self.error(try response.body.json)
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
@@ -1016,7 +1021,7 @@ struct OnboardingAPI: Sendable {
     case "MATERIAL_UNAVAILABLE":
       return sourceIDs(from: payload.error.details).map(OnboardingError.materialUnavailable)
         ?? .failed(.unavailable)
-    case "MATERIAL_READING":
+    case "materialReading":
       return .materialReading
     default:
       return .failed(.unavailable)

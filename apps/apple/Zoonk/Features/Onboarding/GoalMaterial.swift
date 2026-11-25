@@ -193,12 +193,7 @@ struct GoalMaterialChips: View {
     }
 
     return unreadable.count == 1
-      ? LocalizedStringResource(
-        "We couldn't read “\(title(of: first))”. Try a sharper photo or paste the text.",
-        table: "Onboarding",
-        comment:
-          "Under the learner's attached material when nothing could be read on one item, like a blurry photo. {title} is its name, like \"Biology notes.jpg\"."
-      )
+      ? .unreadableMaterial(title: title(of: first))
       : LocalizedStringResource(
         "We couldn't read some of your files. Try sharper photos or paste the text.",
         table: "Onboarding",
@@ -336,7 +331,8 @@ private struct MaterialChip: View {
     .padding(.leading, 12)
     .padding([.vertical, .trailing], 4)
     .background(
-      look == .unreadable ? Color.destructiveSoft : Color(.muted), in: .rect(cornerRadius: Radius.md))
+      look == .unreadable ? Color.destructiveSoft : Color(.muted),
+      in: .rect(cornerRadius: Radius.md))
   }
 
   private var status: Text? {
@@ -346,13 +342,26 @@ private struct MaterialChip: View {
     case .reading:
       Text(
         "Being read", tableName: "Onboarding",
-        comment: "Read by screen readers after the name of an attached file that is still being read.")
+        comment:
+          "Read by screen readers after the name of an attached file that is still being read.")
     case .unreadable:
       Text(
         "Can't be read", tableName: "Onboarding",
         comment:
           "Read by screen readers after the name of an attached file that can't be read anymore.")
     }
+  }
+}
+
+extension LocalizedStringResource {
+  /// Under material with nothing to read on it, wherever it was added.
+  nonisolated static func unreadableMaterial(title: String) -> LocalizedStringResource {
+    LocalizedStringResource(
+      "We couldn't read “\(title)”. Try a sharper photo or paste the text.",
+      table: "Onboarding",
+      comment:
+        "Under the learner's attached material when nothing could be read on one item, like a blurry photo. {title} is its name, like \"Biology notes.jpg\"."
+    )
   }
 }
 
@@ -627,6 +636,13 @@ extension MaterialDraft {
       LocalizedStringResource(
         "Create an account to add your own material.", table: "Onboarding",
         comment: "Only accounts add material")
+    case .unreadable(let title):
+      .unreadableMaterial(
+        title: title.isEmpty
+          ? String(
+            localized: "Your text", table: "Onboarding",
+            comment: "Pasted material without a title")
+          : title)
     case .alreadyRead:
       LocalizedStringResource(
         "We already read this document. Upload a different one.", table: "Onboarding",
@@ -782,7 +798,8 @@ struct MaterialQuestionsView: View {
     }
     .announcesStatus(
       isAsking
-        ? Self.reading : isStillReading ? Self.stillReading : turns.last.flatMap(Self.spoken))
+        ? Self.reading : isStillReading ? Self.stillReading : turns.last.flatMap(Self.spoken)
+    )
     .safeAreaInset(edge: .bottom) {
       HStack(alignment: .bottom, spacing: 8) {
         MultilineTextField(
