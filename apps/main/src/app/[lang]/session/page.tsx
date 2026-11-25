@@ -241,7 +241,7 @@ async function SavedDayView({
 
   return (
     <NextStepView
-      alternative={findAlternativeStudyBlock({ day: session, position: step.position })}
+      alternative={findAlternativeStudyBlock(session)}
       day={session}
       facts={facts}
       next={next}
@@ -298,9 +298,7 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
 
   return (
     <NextStepView
-      alternative={
-        result.day.blocks.find((block) => block.position === result.day.alternativePosition) ?? null
-      }
+      alternative={findAlternativeStudyBlock(result.day)}
       day={result.day}
       facts={result}
       next={result.next}

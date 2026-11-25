@@ -149,7 +149,7 @@ export async function readSavedDayView({
   return withDayState<Omit<UnstartedDayView, "state">>(
     {
       ...fields,
-      alternativePosition: getAlternativeStudyBlockPosition({ blocks, nextPosition }),
+      alternativePosition: getAlternativeStudyBlockPosition(blocks),
       blocks,
       catchUp: catchUp
         ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }

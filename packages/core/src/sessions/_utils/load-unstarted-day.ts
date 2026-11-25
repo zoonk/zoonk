@@ -137,10 +137,7 @@ export async function loadUnstartedDayView({
 
   return withDayState<Omit<UnstartedDayView, "state">>({
     ...fields,
-    alternativePosition: getAlternativeStudyBlockPosition({
-      blocks: views,
-      nextPosition: fields.nextPosition,
-    }),
+    alternativePosition: getAlternativeStudyBlockPosition(views),
     blocks: views,
     catchUp: previewCatchUp,
     extraTime,

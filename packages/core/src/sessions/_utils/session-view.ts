@@ -146,7 +146,7 @@ export function toStudySessionView({
   return withDayState(
     {
       ...toDayViewFields({ ...input, preparing, sessionBar: getSessionBar(session.blocks) }),
-      alternativePosition: getAlternativeStudyBlockPosition({ blocks, nextPosition }),
+      alternativePosition: getAlternativeStudyBlockPosition(blocks),
       blocks,
       id: session.id,
       missions: input.missions,
