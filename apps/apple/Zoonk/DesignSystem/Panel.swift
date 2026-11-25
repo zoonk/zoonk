@@ -22,10 +22,11 @@ extension View {
     background(Color.muted.opacity(0.5), in: .rect(cornerRadius: Radius.xl, style: .continuous))
   }
 
-  /// Main's goal box and composer: a panel with the field's `input` line, in ink while its words
-  /// have focus, thicker with more contrast.
-  func inputPanel(isFocused: Bool) -> some View {
-    modifier(InputPanel(isFocused: isFocused))
+  /// Main's goal box: a panel with the field's `input` line, in ink while its words have focus,
+  /// thicker with more contrast. `softFocus` is main's composer instead: a 1pt ink ring at 35% while
+  /// focused, 3pt solid ink with more contrast.
+  func inputPanel(isFocused: Bool, softFocus: Bool = false) -> some View {
+    modifier(InputPanel(isFocused: isFocused, softFocus: softFocus))
   }
 }
 
@@ -33,16 +34,35 @@ private struct InputPanel: ViewModifier {
   @Environment(\.colorSchemeContrast) private var contrast
 
   let isFocused: Bool
+  let softFocus: Bool
 
   func body(content: Content) -> some View {
     let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
-    let focusWidth: CGFloat = contrast == .increased ? 3 : 2
 
     content
       .background(.card, in: shape)
-      .overlay(
-        shape.strokeBorder(
-          isFocused ? Color(.foreground) : .input, lineWidth: isFocused ? focusWidth : 1))
+      .overlay(shape.strokeBorder(line, lineWidth: lineWidth))
+  }
+
+  private var line: Color {
+    guard isFocused else {
+      return .input
+    }
+
+    return softFocus && contrast != .increased
+      ? Color(.foreground).opacity(0.35) : Color(.foreground)
+  }
+
+  private var lineWidth: CGFloat {
+    guard isFocused else {
+      return 1
+    }
+
+    if contrast == .increased {
+      return 3
+    }
+
+    return softFocus ? 1 : 2
   }
 }
 
