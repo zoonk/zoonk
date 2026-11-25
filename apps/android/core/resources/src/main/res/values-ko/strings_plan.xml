@@ -309,6 +309,7 @@
   "plan_more_lessons_fit": "b5f220df1b6477fb0c3af5f88a2694c2688f803ae0564ea886d4f46c931087cf",
   "plan_more_units": "fbb76bcf36b2bfe6627b1a787216af87686e9aa32e032d9805a838ee41945568",
   "plan_move_date": "86f154933a78c5149afd996c4214109e4b46354219fa60033d224c805c669136",
+  "plan_move_date_in_plan": "878063bf561b6f2590e1038eb568517ca10de422bd50f19ba593f80c7988ca14",
   "plan_move_date_to": "0fbc8328724c22ab752ddaa41921dd916352bd4b6e74eb767ad8f6322ac5c902",
   "plan_named_month_note": "5626a830559ce1d00c95d4ea7b1e5a61c40118f1eb70dc5639c2fc2988876fa2",
   "plan_next": "21329501b8a88e581b81bcb872e8bd336b29a6a9d5439671e783eabc668925a5",
@@ -1063,6 +1064,7 @@
     <string name="plan_find_building">아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="plan_find_no_date">모든 내용을 마칠 수 있는 날짜를 찾지 못했어요.</string>
     <string name="plan_move_date">전체 내용을 공부할 수 있게 날짜 변경하기</string>
+    <string name="plan_move_date_in_plan">계획을 모두 마치도록 날짜 변경</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">날짜를 %1$s로 변경하기</string>
     <string name="plan_full_course_switch">시험 후에도 계속 공부하기</string>

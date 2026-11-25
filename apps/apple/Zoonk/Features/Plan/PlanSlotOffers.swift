@@ -420,7 +420,9 @@ struct PlanCoverageSlot: View {
         Button {
           check.run { await moveDate() }
         } label: {
-          Text("Move your date to cover everything", tableName: "Plan")
+          context.plan.subjectsTakenOut
+            ? Text("Move your date to cover everything in your plan", tableName: "Plan")
+            : Text("Move your date to cover everything", tableName: "Plan")
         }
       }
 

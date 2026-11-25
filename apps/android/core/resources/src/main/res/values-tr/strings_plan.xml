@@ -309,6 +309,7 @@
   "plan_more_lessons_fit": "cceb5f2acd9b34ec9bbd859214fd9dd5babb99fe8cd7db58f9631d05fe793c89",
   "plan_more_units": "13e9b973e7bd8a2223011ff8be22771192a8c531bac81be130dd4be4f934ab39",
   "plan_move_date": "8fd9718b0428f1ba687e60986286cca3e92dea79fc30b98e563786c1e6ae2b51",
+  "plan_move_date_in_plan": "a1aa22317c431465684dc1971f2cce0f551d46f8a69a2b56a5f9be3921ee6a59",
   "plan_move_date_to": "8d7598fa2aa52e54d744f53dcc8e6af08d4c8cd34b971b0e80db0c89a30a230c",
   "plan_named_month_note": "ef7e844baf3faf515140bb98bcd3d0b48fccf3224e943e89b24b9ca6d0f3adb7",
   "plan_next": "5ea0ab87458236eee52cd823b7b50667e28ced66505100f12e9337744ae361a1",
@@ -1114,6 +1115,7 @@
     <string name="plan_find_building">Planını hâlâ hazırlıyoruz. Birazdan tekrar dene.</string>
     <string name="plan_find_no_date">Tüm konuları bitirebileceğin bir tarih bulamadık.</string>
     <string name="plan_move_date">Her şeye yetişmek için tarihini değiştir</string>
+    <string name="plan_move_date_in_plan">Planındaki her şeyi kapsayacak şekilde tarihini değiştir</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Tarihini %1$s olarak değiştir</string>
     <string name="plan_full_course_switch">Sınavdan sonra çalışmaya devam et</string>

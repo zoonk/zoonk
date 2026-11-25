@@ -309,6 +309,7 @@
   "plan_more_lessons_fit": "b96daba869d4ec1a49ab520d48ea6eacddeec9b6d783bf3e718f3067843f3a1f",
   "plan_more_units": "7d207a7a84fe8fb99b674d2c490618eab554d5605e6b26755ad2ec6d1ce13abd",
   "plan_move_date": "ede55f9d2a8c1318b5d494808dc51fa13d4a073d87d1a148b7bd646983f68a22",
+  "plan_move_date_in_plan": "13fee34b8a89e92b0ee69f469fab51bf2df6297a810ee9aed640c446231ee689",
   "plan_move_date_to": "76d3e64da82de376a392b3d08addc7097e04c59a3d7289b530240081f0286c91",
   "plan_named_month_note": "26658abd47b3cf985b26d594bfe71f057f5113272c6716e0238345a4621f4cec",
   "plan_next": "7e1346b76c5aacb3165f160666885eecab44b6b76aa27e4a51899e1cc254c408",
@@ -1165,6 +1166,7 @@
     <string name="plan_find_building">Ton plan est encore en cours de préparation. Réessaie dans un instant.</string>
     <string name="plan_find_no_date">Nous n’avons pas pu trouver de date pour tout couvrir.</string>
     <string name="plan_move_date">Repousser ta date pour tout couvrir</string>
+    <string name="plan_move_date_in_plan">Décale ta date pour couvrir tout ton plan</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Repousser ta date au %1$s</string>
     <string name="plan_full_course_switch">Continuer à étudier après l’examen</string>

@@ -12,6 +12,7 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { type GoalDateMove } from "../plan-diff/change-names";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen, useSubjectsTakenOut } from "./plan-context";
+import { useMoveDateToCoverLabel } from "./plan-coverage";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
@@ -273,14 +274,11 @@ export function OtherOptions({ onMoveDate }: { onMoveDate: (() => void) | null }
   const course = useFullCourse();
   const keepStudying = useKeepStudyingLabel();
   const { dismiss } = usePlanSuggestionSlot();
+  const moveDateLabel = useMoveDateToCoverLabel();
 
   return (
     <SuggestionMenu>
-      {onMoveDate && (
-        <DropdownMenuItem onClick={onMoveDate}>
-          {t("Move your date to cover everything")}
-        </DropdownMenuItem>
-      )}
+      {onMoveDate && <DropdownMenuItem onClick={onMoveDate}>{moveDateLabel}</DropdownMenuItem>}
       {canChooseFocus && (
         <DropdownMenuItem aria-haspopup="dialog" onClick={chooseFocus}>
           {t("Choose where to focus")}

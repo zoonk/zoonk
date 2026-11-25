@@ -309,6 +309,7 @@
   "plan_more_lessons_fit": "ea52d2c18cfef31fb8ffe137cc07f2f7cea146837cdb9c7a9140ca35d7ad5ee5",
   "plan_more_units": "b9b02534920367556e9a84d8cd15afe1cc3ba65fa87ae47bed334aaf5d3c7c44",
   "plan_move_date": "e42592ace7c0f56872b2d48d37d398176426a4e2521c727ae8254715d6cc816f",
+  "plan_move_date_in_plan": "70ccd7b6ba78da58018f5e3f8dc58aa882f2d66d32822d0002b13b7d780d4459",
   "plan_move_date_to": "0e8a94d543c124582ace869c690d850fb3eadb922113995d78a116af580d8dfd",
   "plan_named_month_note": "e959a085e6c0ae252a094cecc262d69e5cc6a15f695bfa3485c27f7dd496d883",
   "plan_next": "112662a7e6170fc510b86a399e6390db798b3f22b6003d0d524434f4566b2da5",
@@ -1063,6 +1064,7 @@
     <string name="plan_find_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>
     <string name="plan_find_no_date">すべてを学び終える日を見つけられませんでした。</string>
     <string name="plan_move_date">すべて学べるように期日を変更する</string>
+    <string name="plan_move_date_in_plan">計画をすべて終えられるよう日付を変更</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">期日を%1$sに変更する</string>
     <string name="plan_full_course_switch">試験後も学習を続ける</string>

@@ -309,6 +309,7 @@
   "plan_more_lessons_fit": "622165ab8d5a068cb0ee117260ac14324688ee2ea3becab782a7d79a3cf0d49c",
   "plan_more_units": "02ee0ef5c5d3386eea1f4e7c24c923e33df03ad850ad92d722b28c58d58257bc",
   "plan_move_date": "f273083342ebff92d334e1827585a4ca9fbe1d1ef46d3948bf5a2c230ef93cd6",
+  "plan_move_date_in_plan": "cb23272e6fb91704748b753aef7a4306eaec3b2ef11cb38ba2ca7832f554cd5a",
   "plan_move_date_to": "a1fe51516bb0595907bf9619c0e77737384b90ab7dcd51fc636e41bf5b388af6",
   "plan_named_month_note": "2bc11699a96f1d082a729e7a0bcd4628b030dacab9d0fbacb975b1c0ea63ec83",
   "plan_next": "27f094353bf05411a58968d3d6f5c7fb5c847a08c17d29405856c643cb5b1266",
@@ -1114,6 +1115,7 @@
     <string name="plan_find_building">Dein Plan wird noch erstellt. Versuch es gleich noch einmal.</string>
     <string name="plan_find_no_date">Wir konnten kein Datum finden, bis zu dem du alles durchgehen kannst.</string>
     <string name="plan_move_date">Zieldatum verschieben, um alles zu lernen</string>
+    <string name="plan_move_date_in_plan">Datum verschieben, damit alles in deinen Plan passt</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">Zieldatum auf %1$s verschieben</string>
     <string name="plan_full_course_switch">Nach der Prüfung weiterlernen</string>

@@ -26289,6 +26289,64 @@
         }
       }
     },
+    "Move your date to cover everything in your plan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum verschieben, damit alles in deinen Plan passt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover tu fecha para cubrir todo lo de tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décale ta date pour couvrir tout ton plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la data per includere tutto nel tuo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計画をすべて終えられるよう日付を変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 모두 마치도록 날짜 변경"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przesuń termin, aby plan obejmował wszystko"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mude a data para conseguir estudar tudo do seu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planındaki her şeyi kapsayacak şekilde tarihini değiştir"
+          }
+        }
+      }
+    },
     "Move your end date to %@?" : {
       "comment" : "Asks to move the goal's end date; the argument is a day like \"May 5\"",
       "localizations" : {

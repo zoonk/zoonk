@@ -10446,15 +10446,19 @@ msgid "The Focus test shows what to study most."
 msgstr "집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "날짜를 {date}로 변경하기"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "계획을 모두 마치도록 날짜 변경"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "전체 내용을 공부할 수 있게 날짜 변경하기"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "날짜를 {date}로 변경하기"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx

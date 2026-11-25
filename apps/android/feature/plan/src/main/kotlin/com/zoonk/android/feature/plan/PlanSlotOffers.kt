@@ -203,7 +203,7 @@ private fun SuggestedTimeCard(
                     }
                     SuggestionMenu { done ->
                         if (!page.isExam && !dateless && !asked) {
-                            SuggestionMenuItem(stringResource(R.string.plan_move_date), done, ::askDate)
+                            SuggestionMenuItem(stringResource(moveDateLabel(page)), done, ::askDate)
                         }
                         if (canChooseFocus(plan)) {
                             SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {

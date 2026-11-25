@@ -10446,15 +10446,19 @@ msgid "The Focus test shows what to study most."
 msgstr "Il Test delle priorità ti mostra cosa studiare di più."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "Sposta la data al {date}"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "Sposta la data per includere tutto nel tuo piano"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "Sposta la data per studiare tutto"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "Sposta la data al {date}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
