@@ -1,4 +1,5 @@
 import { type WritingResiduals } from "../essays/_utils/writing-calibration";
+import { isTextVerifiedWritingZero } from "../essays/_utils/writing-zero";
 import { type WritingResult } from "../essays/writing-contract";
 import { getWritingCalibration } from "../essays/writing-rubric-policy";
 import { sumRanges, writtenStanding } from "./written-points";
@@ -20,7 +21,7 @@ export function getCalibratedWritingGrade({
 }: Parameters<typeof getWritingCalibration>[0] & {
   grade: PointGrade | { kind: "levels" };
 }): CalibratedWritingGrade | null {
-  if (grade.kind !== "points" || (!observed && !grade.zeroKind)) {
+  if (grade.kind !== "points" || (!observed && !isTextVerifiedWritingZero(grade.zeroKind))) {
     return null;
   }
 
@@ -39,7 +40,11 @@ function widen({ grade, level }: { grade: CalibratedWritingGrade | null; level: 
     return null;
   }
 
-  if (grade.zeroKind && grade.total.low === 0 && grade.total.high === 0) {
+  if (
+    isTextVerifiedWritingZero(grade.zeroKind) &&
+    grade.total.low === 0 &&
+    grade.total.high === 0
+  ) {
     return grade.total;
   }
 

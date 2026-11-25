@@ -53,14 +53,34 @@ describe(calibratedWrittenStanding, () => {
     expect(calibratedWrittenStanding({ grades: [answer, null], part: PART })).toBe("unmeasured");
   });
 
-  it("keeps a verified zero at zero even without measured residuals", () => {
-    const zero = {
-      ...grade(0, 0),
-      residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
-      zeroKind: "blank" as const,
-    };
+  it.each(["blank", "tooFewLines", "copiedSupport", "identification"] as const)(
+    "keeps a %s zero, which code verified, at zero even without measured residuals",
+    (zeroKind) => {
+      const zero = {
+        ...grade(0, 0),
+        residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
+        zeroKind,
+      };
 
-    expect(calibratedWrittenStanding({ grades: [zero], part: PART })).toBe("below");
-    expect(calibratedWrittenStanding({ grades: [grade(54, 54), zero], part: PART })).toBe("met");
-  });
+      expect(calibratedWrittenStanding({ grades: [zero], part: PART })).toBe("below");
+      expect(calibratedWrittenStanding({ grades: [grade(54, 54), zero], part: PART })).toBe("met");
+    },
+  );
+
+  it.each(["offTopic", "wrongForm"] as const)(
+    "widens a %s zero, which a model judged, like any other grade",
+    (zeroKind) => {
+      const zero = { ...grade(0, 0), zeroKind };
+      const unmeasured = {
+        ...zero,
+        residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
+      };
+      const strict = { max: 100, minimum: { unit: "points", value: 60 } } as const;
+      const low = { max: 100, minimum: { unit: "points", value: 2 } } as const;
+
+      expect(calibratedWrittenStanding({ grades: [unmeasured], part: strict })).toBe("unmeasured");
+      expect(calibratedWrittenStanding({ grades: [zero], part: strict })).toBe("below");
+      expect(calibratedWrittenStanding({ grades: [zero], part: low })).toBe("overlaps");
+    },
+  );
 });
