@@ -49,13 +49,36 @@ enum LearnKind {
 struct KindMark: View {
   let kind: LearnKind
 
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+  @ScaledMetric(relativeTo: .body) private var column = MarkColumnMetrics.width
+
   var body: some View {
-    Image(systemName: kind.systemImage)
-      .typeStyle(.rowTitle)
-      .imageScale(.medium)
-      .foregroundStyle(kind.color)
-      .fitsMarkColumn()
-      .accessibilityHidden(true)
+    let size = symbolSize
+
+    // A symbol wider than the rows' mark column (practice's dumbbell, a call's bubbles) shrinks
+    // to it, so its row's title starts where the others' do.
+    if size.width > column {
+      Image(systemName: kind.systemImage)
+        .resizable()
+        .scaledToFit()
+        .typeStyle(.rowTitle)
+        .frame(width: column, height: size.height * column / size.width)
+        .foregroundStyle(kind.color)
+        .accessibilityHidden(true)
+    } else {
+      Image(systemName: kind.systemImage)
+        .typeStyle(.rowTitle)
+        .imageScale(.medium)
+        .foregroundStyle(kind.color)
+        .accessibilityHidden(true)
+    }
+  }
+
+  private var symbolSize: CGSize {
+    let font = TypeStyle.rowTitle.uiFont(dynamicTypeSize, legibility: legibility)
+    let configuration = UIImage.SymbolConfiguration(font: font, scale: .medium)
+    return UIImage(systemName: kind.systemImage, withConfiguration: configuration)?.size ?? .zero
   }
 }
 

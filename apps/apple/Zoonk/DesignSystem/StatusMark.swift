@@ -59,38 +59,19 @@ struct StatusMark: View {
 
 extension View {
   /// One width for every mark in a column of rows, so their titles start on one edge at every
-  /// text size, whichever glyph each row has: a glyph wider than the column shrinks to fit it.
+  /// text size. A mark never grows past it (`KindMark` shrinks a wide symbol): a glyph wider than
+  /// its slot kept a list's rows re-measuring each other without end.
   func markColumn() -> some View {
-    modifier(MarkColumn(fills: true))
-  }
-
-  /// A mark that may sit in the column of a row it doesn't draw, such as a `Label`'s icon: a glyph
-  /// wider than the column shrinks to fit it, and a narrower one keeps its own width.
-  func fitsMarkColumn() -> some View {
-    modifier(MarkColumn(fills: false))
+    modifier(MarkColumn())
   }
 }
 
 private struct MarkColumn: ViewModifier {
-  let fills: Bool
-
   @Environment(\.stacksContent) private var isStacked
   @ScaledMetric(relativeTo: .body) private var width = MarkColumnMetrics.width
-  @State private var naturalWidth = 0.0
 
   func body(content: Content) -> some View {
-    let isWide = naturalWidth > width
-    let alignment: Alignment = isStacked ? .leading : .center
-
-    content
-      .fixedSize()
-      .onGeometryChange(for: Double.self) {
-        $0.size.width
-      } action: {
-        naturalWidth = $0
-      }
-      .scaleEffect(isWide ? width / naturalWidth : 1, anchor: isStacked ? .leading : .center)
-      .frame(width: fills || isWide ? width : nil, alignment: alignment)
+    content.frame(minWidth: width, alignment: isStacked ? .leading : .center)
   }
 }
 
