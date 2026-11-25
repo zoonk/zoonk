@@ -788,12 +788,13 @@ struct PlanSettingsSection: View {
     }
   }
 
-  /// Main's `EstimatedFinishRow`: the path's last row and the timeline date the estimated finish;
-  /// a plan of subjects with one phase shows neither, so its own row says it.
+  /// Main's `EstimatedFinishRow`: the path's last row dates the estimated finish. Without main's
+  /// timeline (#2873), a plan of subjects shows no path, so its own row says it; a paused goal has
+  /// no pace to estimate from.
   private var estimatedFinish: (text: String, spoken: String)? {
     let plan = context.plan
 
-    guard !pathShown, plan.roadPhases.count < 2, context.goal.kind != .exam, plan.end == nil,
+    guard !pathShown, !context.isPaused, context.goal.kind != .exam, plan.end == nil,
       plan.schedule.targetDate == nil, let finish = plan.roadmapFinish(isExam: false)
     else {
       return nil
@@ -815,17 +816,12 @@ struct PlanSettingsSection: View {
   }
 
   private var dateValue: some View {
+    let schedule = context.plan.schedule
     let value = PlanEndDateValue(
-      targetDate: context.plan.schedule.targetDate, isExam: context.goal.kind == .exam,
-      finish: context.isPaused
-        ? context.plan.schedule.targetDate.map {
-          (
-            isoDate: $0, estimate: context.plan.schedule.targetDateEstimated,
-            month: context.plan.schedule.targetDateNamedMonth
-          )
-        }
-        : context.plan.roadmapFinish(isExam: context.goal.kind == .exam),
-      today: context.plan.today)
+      target: schedule.targetDate.map {
+        (isoDate: $0, estimate: schedule.targetDateEstimated, month: schedule.targetDateNamedMonth)
+      },
+      isExam: context.goal.kind == .exam, today: context.plan.today)
     return Text(verbatim: value.shown)
       .typeStyle(value.isDate ? .data : .body)
       .accessibilityLabel(Text(verbatim: value.spoken))
