@@ -420,6 +420,7 @@ internal fun PaceDetails(
             style = MaterialTheme.typography.titleMedium,
         )
         if (resting) MetaLine(stringResource(R.string.plan_nothing_planned_until_resume))
+        if (!resting && pace is Pace.OnTrack) MetaLine(dailyTimeWords(page, perDay = true))
         fix?.let { MetaLine(it.text) }
         if (fix?.adjust == true && onAdjust != null) {
             OutlinedButton(
