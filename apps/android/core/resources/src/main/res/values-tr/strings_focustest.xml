@@ -21,7 +21,6 @@
   "focustest_not_today_failed": "d03e1a326741384284a1a18734c75008a596ef7584481fea82663e809bee7a72",
   "focustest_offer_line": "8282b28293a0ee92eecb3594ec9ebd76e8c876ca919168a92ff8d79c3130cfc7",
   "focustest_offer_line_focus": "210e9be03892851b4affa234ec6e549e4cbc9080174d852974c5b634a2d74628",
-  "focustest_paused_in_sessions": "52e3d22b301df5c821f3a1778ab9001e992588ba1e3eba165f5508e82a878c26",
   "focustest_practical_not_checked": "cc4cf6ba3e0a917d27a270aec4a559d23ee3ac14a0579cd1e6902a4aa9d1cb4c",
   "focustest_proposal_applied": "be855d0681da6cec1ffa0a27b040ae2f27a616d47ddddcf2b940684118883bd5",
   "focustest_proposal_declined": "a8d107680aa407e046d2071571f61e2978a03b0db74613fe4306ab8455768240",
@@ -135,8 +134,6 @@
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">Devam ediliyor</string>
     <string name="focustest_see_your_result">Sonucunu gör</string>
-    <!-- The test's state on the plan: the learner paused its questions in their study sessions. -->
-    <string name="focustest_paused_in_sessions">Çalışmalarındaki sorulara ara verildi</string>
     <string name="focustest_take_test">Odak testini çöz</string>
     <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Odak testi en çok neye çalışman gerektiğini gösterir.</string>

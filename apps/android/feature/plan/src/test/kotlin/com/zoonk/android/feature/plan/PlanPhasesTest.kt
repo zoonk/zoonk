@@ -23,6 +23,36 @@ class PlanPhasesTest {
     }
 
     @Test
+    fun aBandNameIsNeverCutAfterAShortWordOrBeforeALoneWordWhenAnotherCutAvoidsIt() {
+        assertEquals(listOf("Médico", "e farmácia"), bandNameParts("Médico e farmácia"))
+        assertEquals(listOf("Funções", "do primeiro grau"), bandNameParts("Funções do primeiro grau"))
+        assertEquals(listOf("Supercalifragilistic", "expialidocious"), bandNameParts("Supercalifragilistic expialidocious"))
+        assertEquals(listOf("Art", "and architecture"), bandNameParts("Art and architecture"))
+    }
+
+    @Test
+    fun bandsKeepTheirNamesPartsWhenTheyAllFitThem() {
+        assertEquals(List(2) { BandSize(BandFit.PARTS, null) }, fitBandSizes(300, listOf(100, 120), listOf(80, 90)))
+    }
+
+    @Test
+    fun onlyTheWidestNamesBreakBetweenWordsAtTheWidestWidthThatFitsTheRow() {
+        assertEquals(
+            listOf(BandSize(BandFit.PARTS, 80), BandSize(BandFit.WORDS, 92), BandSize(BandFit.WORDS, 92), BandSize(BandFit.WORDS, 136)),
+            fitBandSizes(400, listOf(80, 110, 150, 140), listOf(72, 90, 80, 136)),
+        )
+        assertEquals(
+            listOf(BandSize(BandFit.WORDS, 130), BandSize(BandFit.WORDS, 120)),
+            fitBandSizes(250, listOf(150, 150), listOf(130, 72)),
+        )
+    }
+
+    @Test
+    fun namesBreakInsideWordsOnlyWhenNotEvenTheLongestWordsFit() {
+        assertEquals(List(2) { BandSize(BandFit.LETTERS, null) }, fitBandSizes(100, listOf(90, 90), listOf(72, 72)))
+    }
+
+    @Test
     fun aPhaseIsWeighedByItsDaysCountingBothEnds() {
         assertEquals(14f, plan.phases[0].weight())
         assertEquals(27f, plan.phases[1].weight())
@@ -93,6 +123,19 @@ class PlanPhasesTest {
         )
         assertEquals(listOf(IntOffset(0, 0)), axisLabelPlaces(listOf(0.3f), listOf(IntSize(72, 32)), width = 72, gap = 8))
         assertEquals(listOf(IntOffset(46, 0)), axisLabelPlaces(listOf(0.9f), listOf(line), width = 80, gap = 8))
+    }
+
+    @Test
+    fun aPhaseEndThatMeetsTodayGivesWayInsteadOfTakingTheLineUnderIt() {
+        val sizes = listOf(IntSize(36, 16), IntSize(50, 16))
+        assertEquals(
+            listOf(IntOffset(36, 0), null),
+            axisLabelPlaces(listOf(0.6f, 1f), sizes, width = 120, gap = 8, givesWay = listOf(false, true)),
+        )
+        assertEquals(
+            listOf(IntOffset(24, 0), IntOffset(150, 0)),
+            axisLabelPlaces(listOf(0.12f, 1f), sizes, width = 200, gap = 8, givesWay = listOf(false, true)),
+        )
     }
 
     @Test

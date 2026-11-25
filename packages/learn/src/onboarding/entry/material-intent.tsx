@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../../_components/page";
 import { type Choice, ChoiceList } from "../choice-list";
@@ -7,9 +8,11 @@ import { type Choice, ChoiceList } from "../choice-list";
 export type MaterialIntent = "exam" | "questions" | "understand";
 
 export function MaterialIntentChoice({
+  className,
   onChange,
   value,
 }: {
+  className?: string;
   onChange: (intent: MaterialIntent) => void;
   value: MaterialIntent | null;
 }) {
@@ -37,7 +40,7 @@ export function MaterialIntentChoice({
   ];
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className={cn("flex flex-col gap-3", className)}>
       <PageSectionTitle>{t("What do you want to do?")}</PageSectionTitle>
       <ChoiceList
         choices={choices}

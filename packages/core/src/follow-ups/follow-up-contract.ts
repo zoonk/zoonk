@@ -1,3 +1,4 @@
+import { ResearchUploadReason } from "@zoonk/db/enums";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -22,6 +23,14 @@ const mindMapLaunchSchema = z.object({
   }),
   forExam: z.boolean(),
   lessonIds: z.array(uuidSchema()),
+});
+
+export const researchUploadAnswerSchema = z.object({
+  answerId: uuidSchema(),
+  claimedSourceIds: z.array(uuidSchema()).min(1),
+  goalId: uuidSchema(),
+  reason: z.enum(ResearchUploadReason),
+  sourceIds: z.array(uuidSchema()).min(1),
 });
 
 export const followUpSchema = z.discriminatedUnion("kind", [
@@ -161,6 +170,8 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({ sourceId: uuidSchema() }),
     kind: z.literal("checkUploadVisibility"),
   }),
+  z.object({ input: z.object({ sourceId: uuidSchema() }), kind: z.literal("readUpload") }),
+  z.object({ input: researchUploadAnswerSchema, kind: z.literal("answerResearchUpload") }),
   z.object({ input: z.object({}), kind: z.literal("endWebPlusBesideStore") }),
   z.object({
     input: z.object({

@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
+import { withSourceReadStatus } from "./source-read-status";
 
 const MAX_LEARNER_SOURCES = 50;
 
@@ -37,6 +38,6 @@ export async function listLearnerSources({ goalId }: { goalId?: string | null } 
   return links.map(({ source: { goalSources, ...source }, ...link }) => ({
     ...link,
     goalIds: goalSources.map((goalSource) => goalSource.goalId),
-    source,
+    source: withSourceReadStatus(source),
   }));
 }

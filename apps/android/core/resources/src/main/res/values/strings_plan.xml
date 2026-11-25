@@ -65,7 +65,8 @@
     <string name="plan_mock_exam">Mock exam</string>
     <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
     <string name="plan_roadmap_you_finish">You finish</string>
-    <string name="plan_exam_date_label">%1$s · exam</string>
+    <!-- In the roadmap's legend, beside the mark of each phase's end-of-phase questions (the Trickster, before the learner has met him). -->
+    <string name="plan_legend_phase_questions">Phase questions</string>
     <string name="plan_you_are_here_suffix">, you are here</string>
     <string name="plan_done_suffix">, done</string>
     <string name="plan_up_next_suffix">, up next</string>
@@ -140,7 +141,7 @@
     <string name="plan_show_fewer_units">Show fewer units</string>
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Won</string>
-    <string name="plan_challenge_next_session">In your next session</string>
+    <string name="plan_challenge_next_session">Next time</string>
     <string name="plan_challenge_questions">Questions on this phase, with no hints</string>
     <string name="plan_challenge_live_call">A live call where you get your point across</string>
     <plurals name="plan_mock_exams_count">
@@ -169,9 +170,12 @@
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Change</string>
     <string name="plan_practice">Practice</string>
-    <string name="plan_everything">Everything</string>
+    <string name="plan_everything">All activities</string>
     <string name="plan_to_be_confirmed">To be confirmed</string>
     <string name="plan_time_weekends">%1$s · %2$s weekends</string>
+    <!-- A plan's time a day when every day has the same, like "15 min a day". -->
+    <string name="plan_time_per_day">%1$s a day</string>
+    <!-- Label of the row with the day a plan with no end date should finish. -->
     <string name="plan_every_day">Every day</string>
     <string name="plan_day_range">%1$s – %2$s</string>
     <string name="plan_mocks_next">Next %1$s</string>
@@ -194,7 +198,8 @@
     <string name="plan_pace">Schedule</string>
     <string name="plan_your_pace">Your schedule</string>
     <string name="plan_pace_value_paused">Paused</string>
-    <string name="plan_time_a_day">About %1$s a day</string>
+    <!-- Title of the Plan for a paused goal whose plan the learner hasn't seen yet. -->
+    <string name="plan_this_goal_paused">This goal is paused</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Nothing is planned until you resume it.</string>
     <plurals name="plan_lessons_left">
@@ -278,7 +283,7 @@
     <string name="plan_score_range">%1$s to %2$s</string>
     <string name="plan_lessons">Lessons</string>
     <string name="plan_topics_studied">Topics studied</string>
-    <string name="plan_not_yet">Not yet</string>
+    <string name="plan_not_yet">Not tested yet</string>
     <!-- A count against a total in the preparation sheet's rows, such as "24 of 142". -->
     <string name="plan_done_of_total">%1$s of %2$s</string>
     <string name="plan_right_answers">Right answers</string>
@@ -310,7 +315,7 @@
         <item quantity="other">%d topics, in your next reviews</item>
     </plurals>
     <!-- Under a next step toward an exam, such as "Take your first mock exam". %1$s is a share, such as "75%". -->
-    <string name="plan_next_past_share">Needed to go past %1$s</string>
+    <string name="plan_next_past_share">Needed to go past %1$s preparation</string>
     <string name="plan_next_review_every_topic">Review every topic once</string>
     <string name="plan_still_first_mock">Take your first mock exam</string>
     <string name="plan_still_first_challenge">Take your first weekly challenge</string>
@@ -534,7 +539,11 @@
     <string name="plan_tool_choose_how">Choose how you\'ll use %1$s</string>
     <string name="plan_tools_none">No tools? You can do it all with examples.</string>
     <string name="plan_tools_without">You won\'t practice on your own device. Lessons use examples and simulations instead.</string>
-    <string name="plan_tools_later">More later: %1$s</string>
+    <!-- Opens the tools a plan uses later: %1$d is how many, %2$s lists their names, such as "Python, Docker". -->
+    <plurals name="plan_more_tools_later">
+        <item quantity="one">%1$d more tool later: %2$s</item>
+        <item quantity="other">%1$d more tools later: %2$s</item>
+    </plurals>
     <string name="plan_tool_have_question">Do you have it?</string>
     <string name="plan_tool_have">I have it</string>
     <string name="plan_tool_have_description">You\'ll practice on your own device.</string>
@@ -636,7 +645,6 @@
     <string name="plan_suggestion_previous">Previous</string>
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
-    <string name="plan_goal_paused">Your %1$s goal is paused</string>
     <!-- The title of a plan suggestion when the plan has more lessons than days left before its date; its button adjusts the plan. -->
     <string name="plan_fit_time_left">Let\'s fit your plan to the time left</string>
     <string name="plan_adjust">Adjust</string>
@@ -829,7 +837,6 @@
     <string name="plan_ask_phase_end_off_rest">Move the end of %1$s off %2$s?</string>
     <string name="plan_why_phase_end_off_rest">%1$s is a day you don\'t study.</string>
     <string name="plan_end_none_set">None set</string>
-    <string name="plan_estimated_finish">Estimated finish %1$s</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time doesn't reach it. -->
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: their study time goes to other topics first. Starts with the same words as "Not in your plan · you took this subject out". -->
     <string name="plan_outside_others_first">Not in your plan · other topics come first</string>

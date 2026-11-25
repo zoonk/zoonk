@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -186,7 +184,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
+                        Entry(vm, store, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
                     }
 
                     screen == StartScreen.Questions -> {
@@ -224,6 +222,7 @@ private class StartActions(
 @Composable
 private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
+    store: OnboardingStore,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
     language: String,
@@ -243,6 +242,7 @@ private fun ColumnScope.Entry(
         state = vm.words,
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
+        isSubmitting = vm.heldGoal != null,
         leading = {
             IconButton(onClick = vm::toggleAttach, enabled = vm.materialLimitReached == null) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
@@ -256,8 +256,16 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) AttachedChips(flow.attached, vm.unreadable, vm.materialLimitReached, vm::removeAttached)
+    vm.heldGoal?.let { held ->
+        // Sent once the material on its way is added, so the goal carries it and its name.
+        if (!vm.isAttaching) LaunchedEffect(held) { vm.submit(held, materialGoal, language) }
+    }
+
+    val shown = followedReads(store.sources, flow.attached)
+    if (shown.isNotEmpty()) AttachedChips(shown, vm.gone, vm.materialLimitReached, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
+    // Under the choices: a read that settles while the learner picks one moves nothing above it.
+    UnreadableNote(shown, vm.gone)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {
         AttachPanel(
@@ -459,7 +467,7 @@ private fun ColumnScope.DraftContent(
                 understanding = understanding.value,
                 activeGoalsLeft = draft.activeGoalsLeft,
                 timeZone = draft.timeZone,
-                material = draft.sources.map { it.title },
+                material = draft.sources,
                 materialMissing = draft.materialMissing,
                 hasAccount = hasAccount,
                 isCreating = vm.isCreating || rereading,
@@ -526,14 +534,7 @@ private fun ColumnScope.MaterialQuestions(
     language: String,
     actions: StartActions,
 ) {
-    val questionField = rememberTextFieldState()
-    val ask = {
-        val question = questionField.text.trim().toString()
-        if (question.isNotEmpty() && !vm.isAsking) {
-            vm.ask(question, language)
-            questionField.clearText()
-        }
-    }
+    val ask = { vm.ask(language) }
 
     OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
 
@@ -544,23 +545,26 @@ private fun ColumnScope.MaterialQuestions(
                 MaterialAnswer(turn.outcome, actions.createAccount, actions.subscribe)
             }
         }
-    }
-
-    if (vm.isAsking) {
-        Row(
-            modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-            Text(stringResource(R.string.onboarding_questions_reading), style = MaterialTheme.typography.bodyMedium)
+        // Asked at once, its answer pending while the material is still being read or the answer is on its way.
+        vm.asking?.let { asked ->
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                TypedGoal(asked)
+                Row(
+                    modifier = Modifier.semantics(mergeDescendants = true) {},
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text(stringResource(R.string.onboarding_questions_reading), style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         }
     }
 
     // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
     Spacer(Modifier.weight(1f))
     QuestionPanel(
-        state = questionField,
+        state = vm.question,
         onAsk = ask,
         isAsking = vm.isAsking,
         label = stringResource(R.string.onboarding_your_question),

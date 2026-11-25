@@ -183,6 +183,7 @@ test.describe("Sources API", () => {
       language: "en",
       mimeType: null,
       publisher: "Planalto",
+      readStatus: "unreadable",
       reusePolicy: null,
       title: "Civil Code",
       url: shared.url,
@@ -195,7 +196,23 @@ test.describe("Sources API", () => {
       schema: sourceResourceSchema,
     });
 
-    expect(own).toMatchObject({ id: upload.id, url: null, visibility: "private" });
+    expect(own).toMatchObject({
+      id: upload.id,
+      readStatus: "readable",
+      url: null,
+      visibility: "private",
+    });
+
+    await prisma.source.update({ data: { readState: "owed" }, where: { id: upload.id } });
+    await learnerSourceFixture({ sourceId: upload.id, userId: owner.userId });
+
+    const reading = await owner.api.post("/v1/material-questions", {
+      data: { language: "en", question: "What is this about?", sourceIds: [upload.id] },
+    });
+
+    expect(reading.status()).toBe(409);
+    await expect(reading.json()).resolves.toMatchObject({ error: { code: "materialReading" } });
+    await expect(prisma.usageRecord.count({ where: { userId: owner.userId } })).resolves.toBe(0);
 
     const [hidden, hiddenFromVisitor, unknown, invalid] = await Promise.all([
       other.api.get(`/v1/sources/${upload.id}`),
@@ -232,6 +249,7 @@ test.describe("Sources API", () => {
         kind: "upload",
         language: "en",
         mimeType: "text/plain",
+        readStatus: "readable",
         title: "Biology notes",
         url: null,
         visibility: "private",

@@ -724,7 +724,7 @@
     private static let challengeDays: [PlanWhen] = [
       .date(PlanDate.estimateText("2027-02-16", today: "2026-11-14")),
       .words(Text(verbatim: "Today")),
-      .words(Text(verbatim: "In your next session")),
+      .words(Text(verbatim: "Next time")),
       .words(Text(verbatim: "Won")),
     ]
 

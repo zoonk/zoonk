@@ -857,6 +857,17 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   var lessonShare: Double {
     lessonsTotal > 0 ? Double(lessonsDone + lessonsKnown) / Double(lessonsTotal) : 0
   }
+
+  /// Main's `getCoverage`: its lessons studied, those the learner already knew and the new ones.
+  var coverage: CoverageLegend.Shares {
+    guard lessonsTotal > 0 else {
+      return .init(studied: 0, known: 0, new: 1)
+    }
+
+    let studied = min(1, Double(lessonsDone) / Double(lessonsTotal))
+    let known = min(1 - studied, Double(lessonsKnown) / Double(lessonsTotal))
+    return .init(studied: studied, known: known, new: max(0, 1 - studied - known))
+  }
 }
 
 extension Array where Element == SyllabusSubject.Chapter {

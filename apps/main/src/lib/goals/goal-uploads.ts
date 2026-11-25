@@ -1,13 +1,17 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
+import {
+  type SourceReadStatus,
+  sourceReadStatusSchema,
+} from "@zoonk/core/library/sources/contract";
 import { received } from "@zoonk/learn/help-limit";
 import { type AttachOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { getSourceUploadFolder } from "@zoonk/utils/user-blobs";
-import { postFromBrowser } from "../api/browser-api";
+import { getFromBrowser, postFromBrowser } from "../api/browser-api";
 import { getWorkflowAuthHeaders, readBrowserSession } from "../workflow/auth-headers";
 
 const HTTP_UNAUTHORIZED = 401;
@@ -15,13 +19,23 @@ const HTTP_UNPROCESSABLE = 422;
 
 const UPLOAD_ACCESS = "private";
 
+function toReadStatus(source: unknown): SourceReadStatus | null {
+  return (
+    sourceReadStatusSchema.safeParse(isJsonObject(source) ? source.readStatus : null).data ?? null
+  );
+}
+
 async function toOutcome(response: Response): Promise<AttachOutcome> {
   const body: unknown = await response.json().catch(() => null);
   const source = isJsonObject(body) ? body.source : null;
   const id = getString(source, "id");
+  const readStatus = toReadStatus(source);
 
-  if (response.ok && id) {
-    return { source: { id, title: getString(source, "title") ?? "" }, status: "attached" };
+  if (response.ok && id && readStatus) {
+    return {
+      source: { id, readStatus, title: getString(source, "title") ?? "" },
+      status: "attached",
+    };
   }
 
   const refusal = getUsageRefusal(body);
@@ -91,9 +105,9 @@ export async function attachGoalFile({
   }
 
   const headers = await getWorkflowAuthHeaders();
-  // The file must sit right in the folder: a name can't nest folders or climb out with "..". Its
-  // own id keeps two files with the same name apart, since an upload never replaces a stored file.
-  const fileName = file.name.replaceAll("/", "-").replaceAll(/\.{2,}/gu, ".");
+  // The file must sit right in the folder, under a name a URL reads as written. Its own id keeps two
+  // files with the same name apart, since an upload never replaces a stored file.
+  const fileName = file.name.replaceAll(/[/\\%?#\p{Cc}]/gu, "-").trimEnd();
   const pathname = `${getSourceUploadFolder(session.user.id)}${crypto.randomUUID()}-${fileName}`;
 
   const { data: blob, error } = await safeAsync(() =>
@@ -109,4 +123,15 @@ export async function attachGoalFile({
   }
 
   return registerUpload({ goalId, kind: "file", language, pathname: blob.pathname });
+}
+
+/** Null when it couldn't be checked, the source is gone included. */
+export async function readUploadStatus(sourceId: string): Promise<SourceReadStatus | null> {
+  const response = await getFromBrowser(`/v1/sources/${encodeURIComponent(sourceId)}`);
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  return toReadStatus(await response.json().catch(() => null));
 }

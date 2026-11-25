@@ -65,6 +65,7 @@ struct ListRowTrailing: ViewModifier {
   @Environment(\.navigationLinkIndicatorVisibility) private var nativeChevron
   @Environment(\.layoutDirection) private var direction
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.displayScale) private var displayScale
   @Namespace private var row
 
   /// A row, whose kept column holds the chevron unseen, as main's `ListRowChevronSpace` holds its
@@ -86,11 +87,14 @@ struct ListRowTrailing: ViewModifier {
         if let group, !isStacked {
           GeometryReader { proxy in
             let frame = proxy.frame(in: .global)
+            let edge = direction == .rightToLeft ? frame.minX : frame.maxX
             Color.clear.preference(
               key: RowTrailingPreference.self,
               value: [
                 row: RowTrailingSample(
-                  group: group, edge: direction == .rightToLeft ? frame.minX : frame.maxX,
+                  // On the pixel grid: an edge a hair off its sibling's took a hair of inset,
+                  // which moved it half a hair, and the rows re-measured each other forever.
+                  group: group, edge: (edge * displayScale).rounded() / displayScale,
                   hasChevron: customChevron || nativeChevron == .visible,
                   isRTL: direction == .rightToLeft)
               ])

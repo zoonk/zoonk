@@ -73,13 +73,13 @@ export function WorkedExampleContent({
   return (
     <div className={cn(highlighter, "flex w-full flex-col gap-5")} data-slot="worked-example">
       {/* The title heads the problem as an explanation's heads its text. */}
-      <div className="lg:max-w-xl">
+      <div>
         {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
         <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
       </div>
       {figure}
 
-      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3 lg:max-w-xl">
+      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">
         {content.steps.slice(0, revealed).map((step, index) => {
           const key = `step-${index}`;
 

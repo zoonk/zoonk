@@ -42,7 +42,12 @@ const refusedSoon = () => ({
 function RefusedUpload() {
   return (
     <AttachControls
-      attach={{ file: vi.fn(), link: vi.fn(), text: async () => refusedSoon() }}
+      attach={{
+        file: vi.fn(),
+        link: vi.fn(),
+        readStatus: vi.fn(),
+        text: async () => refusedSoon(),
+      }}
       language="en"
       onAttached={vi.fn()}
     />
@@ -54,7 +59,7 @@ function RefusedQuestion() {
     <MaterialQuestions
       ask={async () => refusedSoon()}
       buddy={null}
-      sources={[{ id: "s1", title: "Notes" }]}
+      sources={[{ id: "s1", readStatus: "readable", title: "Notes" }]}
     />
   );
 }

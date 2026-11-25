@@ -24,5 +24,9 @@ export async function answerUploadRequest({
   const body: unknown = await response.json().catch(() => null);
   const code = getString(isJsonObject(body) ? body.error : null, "code");
 
+  if (code === "UPLOAD_UNREADABLE") {
+    return "unreadable";
+  }
+
   return code === "UPLOAD_ALREADY_READ" ? "alreadyRead" : "failed";
 }

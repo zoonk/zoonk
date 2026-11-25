@@ -1,14 +1,17 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { type Goal, type GoalKind, type ResearchUploadReason, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
+import { recordFollowUps } from "../../follow-ups/owe-follow-ups";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
 import { linkGoalSources } from "./link-goal-sources";
+import { getSourceReadStatus, sourceReadStatusFields } from "./source-read-status";
 
 export type GoalUploadRequest = {
   examDocument: ExamDocument;
@@ -16,23 +19,48 @@ export type GoalUploadRequest = {
   goalKind: GoalKind;
   language: string;
   reason: ResearchUploadReason;
+  unreadableUpload: { title: string } | null;
 };
 
 export type GoalUploadRequestResult =
   | { status: "notFound" | "unauthorized" }
   | { request: GoalUploadRequest | null; status: "ready" };
 
-export function toGoalUploadRequest(goal: Goal): GoalUploadRequest | null {
-  return goal.researchUploadReason
-    ? {
-        examDocument: getExamDocument(goal),
-        goalId: goal.id,
-        goalKind: goal.kind,
-        language: goal.language,
-        reason: goal.researchUploadReason,
-      }
+async function findLatestUnreadableUpload(goalId: string) {
+  const latest = await prisma.goalSource.findFirst({
+    orderBy: [{ answeredAt: "desc" }, { source: { hasReadableText: "desc" } }, { sourceId: "asc" }],
+    select: { source: { select: { ...sourceReadStatusFields, title: true } } },
+    where: { answeredAt: { not: null }, goalId, origin: "upload" },
+  });
+
+  return latest && getSourceReadStatus(latest.source) === "unreadable"
+    ? { title: latest.source.title }
     : null;
 }
+
+export async function toGoalUploadRequest(goal: Goal): Promise<GoalUploadRequest | null> {
+  if (!goal.researchUploadReason) {
+    return null;
+  }
+
+  return {
+    examDocument: getExamDocument(goal),
+    goalId: goal.id,
+    goalKind: goal.kind,
+    language: goal.language,
+    reason: goal.researchUploadReason,
+    unreadableUpload: await findLatestUnreadableUpload(goal.id),
+  };
+}
+
+export type ResearchUploadAnswerKey = { answerId: string; userId: string };
+
+type ResearchUploadAccess = ResearchAccess & { pendingUploadAnswer?: ResearchUploadAnswerKey };
+
+type ResearchUploadRefusal =
+  | { status: "alreadyAnswered" }
+  | { status: "noUploadRequest" }
+  | { status: "unreadable" };
 
 export async function getGoalUploadRequest({
   goalId,
@@ -47,7 +75,7 @@ export async function getGoalUploadRequest({
     return owned;
   }
 
-  return { request: toGoalUploadRequest(owned.goal), status: "ready" };
+  return { request: await toGoalUploadRequest(owned.goal), status: "ready" };
 }
 
 export async function dismissGoalUploadRequest({
@@ -81,7 +109,7 @@ export async function answerGoalUploadRequest({
 }: {
   goalId: string;
   sourceIds?: string[];
-}): Promise<ResearchAccess | { status: "alreadyAnswered" } | { status: "noUploadRequest" }> {
+}): Promise<ResearchUploadAccess | ResearchUploadRefusal> {
   const [access, session] = await Promise.all([
     getResearchAccess({ goalId, sourceIds }),
     getSession(),
@@ -93,14 +121,17 @@ export async function answerGoalUploadRequest({
 
   const userId = session.user.id;
 
-  const answered = await writeLearnerChange({ userId }, async (transaction) => {
-    const { count } = await transaction.goal.updateMany({
-      data: { researchUploadReason: null },
-      where: { id: goalId, researchUploadReason: { not: null }, userId },
+  const answered = await writeLearnerChange<
+    Extract<ResearchUploadAccess, { status: "ready" }>,
+    ResearchUploadRefusal
+  >({ userId }, async (transaction) => {
+    const goal = await transaction.goal.findFirst({
+      select: { researchUploadReason: true },
+      where: { id: goalId, userId },
     });
 
-    if (count === 0) {
-      return unchanged("noUploadRequest" as const);
+    if (!goal?.researchUploadReason) {
+      return unchanged({ status: "noUploadRequest" } as const);
     }
 
     await linkGoalSources(transaction, {
@@ -110,21 +141,67 @@ export async function answerGoalUploadRequest({
       userId,
     });
 
-    const fresh = await transaction.goalSource.updateMany({
+    const claimed = await transaction.goalSource.updateManyAndReturn({
       data: { answeredAt: new Date() },
+      select: { sourceId: true },
       where: { answeredAt: null, goalId, sourceId: { in: access.sourceIds } },
     });
 
-    return fresh.count === 0 ? unchanged("alreadyAnswered" as const) : ("answered" as const);
+    const sources = await transaction.source.findMany({
+      select: { ...sourceReadStatusFields, id: true },
+      where: { id: { in: access.sourceIds } },
+    });
+
+    const statuses = new Map(sources.map((source) => [source.id, getSourceReadStatus(source)]));
+    const claimedSourceIds = claimed.map(({ sourceId }) => sourceId);
+    const idsToCheck = claimedSourceIds.length > 0 ? claimedSourceIds : access.sourceIds;
+
+    if (
+      !idsToCheck.some((id) => statuses.get(id) === "readable" || statuses.get(id) === "reading")
+    ) {
+      return unchanged({ status: "unreadable" } as const);
+    }
+
+    if (claimedSourceIds.length === 0) {
+      return unchanged({ status: "alreadyAnswered" } as const);
+    }
+
+    await transaction.goal.update({ data: { researchUploadReason: null }, where: { id: goalId } });
+
+    if (![...statuses.values()].includes("reading")) {
+      return {
+        ...access,
+        sourceIds: access.sourceIds.filter((id) => statuses.get(id) === "readable"),
+      };
+    }
+
+    const answerId = randomUUID();
+
+    await recordFollowUps({
+      db: transaction,
+      followUps: [
+        {
+          input: {
+            answerId,
+            claimedSourceIds,
+            goalId,
+            reason: goal.researchUploadReason,
+            sourceIds: access.sourceIds,
+          },
+          kind: "answerResearchUpload",
+        },
+      ],
+      userId,
+    });
+
+    return { ...access, pendingUploadAnswer: { answerId, userId } };
   });
 
-  if (answered !== "answered") {
-    return { status: answered };
+  if (answered.status === "ready") {
+    revalidateCacheTags([getGoalsCacheTag(userId)]);
   }
 
-  revalidateCacheTags([getGoalsCacheTag(userId)]);
-
-  return access;
+  return answered;
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */

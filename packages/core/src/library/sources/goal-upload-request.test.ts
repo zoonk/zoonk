@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  goalSourceFixture,
+  learnerSourceFixture,
+  sourceFixture,
+} from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mergeIntoSharedCopy, uploadWithSharedCopyFixture } from "../../_test-utils/merged-upload";
@@ -13,12 +17,18 @@ import {
   recordGoalResearchOutcome,
   recordGoalResearchRun,
 } from "./goal-upload-request";
+import {
+  getOwedResearchUploadAnswer,
+  getReadableResearchUploadIds,
+  reopenResearchUploadAnswer,
+} from "./research-upload-answer";
 
 async function privateUploadFixture(ownerId: string, goalId: string | null = null) {
   const contentHash = `hash-${randomUUID()}`;
 
   const source = await sourceFixture({
     contentHash,
+    extractedText: "Biology class notes",
     identityKey: `private:${ownerId}:upload:${contentHash}`,
     kind: "upload",
     ownerId,
@@ -41,6 +51,29 @@ async function examGoalWaitingForNotice() {
   });
 
   return { goal, user };
+}
+
+async function reopenWithPriorUpload() {
+  const { goal, user } = await examGoalWaitingForNotice();
+  const first = await privateUploadFixture(user.id, goal.id);
+  mockSession(user.id);
+
+  await answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id] });
+  await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "unverified" });
+
+  return { first, goal, user };
+}
+
+async function uploadPhoto(userId: string, readState: "read" | "owed") {
+  const photo = await sourceFixture({
+    kind: "upload",
+    ownerId: userId,
+    readState,
+    visibility: "private",
+  });
+
+  await learnerSourceFixture({ sourceId: photo.id, userId });
+  return photo;
 }
 
 function readAnsweredIds(goalId: string) {
@@ -71,6 +104,7 @@ describe(getGoalUploadRequest, () => {
         goalKind: "exam",
         language: "en",
         reason: "noOfficialSource",
+        unreadableUpload: null,
       },
       status: "ready",
     });
@@ -79,6 +113,35 @@ describe(getGoalUploadRequest, () => {
 
     await expect(getGoalUploadRequest({ goalId: goal.id })).resolves.toStrictEqual({
       request: null,
+      status: "ready",
+    });
+  });
+
+  it("uses the latest answer when deciding whether to mention an unreadable upload", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+
+    const [oldPhoto, recentText] = await Promise.all([
+      uploadPhoto(user.id, "read"),
+      privateUploadFixture(user.id),
+    ]);
+
+    await Promise.all([
+      goalSourceFixture({
+        answeredAt: new Date("2026-11-24T12:00:00Z"),
+        goalId: goal.id,
+        sourceId: oldPhoto.id,
+      }),
+      goalSourceFixture({
+        answeredAt: new Date("2026-11-24T12:00:01Z"),
+        goalId: goal.id,
+        sourceId: recentText.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getGoalUploadRequest({ goalId: goal.id })).resolves.toMatchObject({
+      request: { unreadableUpload: null },
       status: "ready",
     });
   });
@@ -161,6 +224,27 @@ describe(answerGoalUploadRequest, () => {
     await expect(prisma.learnerSource.count({ where: { sourceId: shared.id } })).resolves.toBe(0);
   });
 
+  it("leaves the request open and records no answer for a settled unreadable source", async () => {
+    const { goal, user } = await examGoalWaitingForNotice();
+
+    const photo = await sourceFixture({
+      kind: "upload",
+      ownerId: user.id,
+      readState: "read",
+      visibility: "private",
+    });
+
+    await learnerSourceFixture({ sourceId: photo.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
+
+    await expect(readReason(goal.id)).resolves.toBe("noOfficialSource");
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual([]);
+  });
+
   it("takes each upload once, so research asking again needs a new upload", async () => {
     const { goal, user } = await examGoalWaitingForNotice();
     const first = await privateUploadFixture(user.id, goal.id);
@@ -183,6 +267,59 @@ describe(answerGoalUploadRequest, () => {
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, second.id] }),
     ).resolves.toMatchObject({ sourceIds: [first.id, second.id], status: "ready" });
+  });
+
+  it("keeps a reopened request when only the previously answered upload has text", async () => {
+    const { first, goal, user } = await reopenWithPriorUpload();
+    const photo = await uploadPhoto(user.id, "read");
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [first.id, photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
+
+    await expect(readAnsweredIds(goal.id)).resolves.toStrictEqual([first.id]);
+    await expect(readReason(goal.id)).resolves.toBe("unverified");
+  });
+
+  it("requires newly claimed text after a deferred answer finishes reading", async () => {
+    const { first, goal, user } = await reopenWithPriorUpload();
+    const photo = await uploadPhoto(user.id, "owed");
+
+    const answer = await answerGoalUploadRequest({
+      goalId: goal.id,
+      sourceIds: [first.id, photo.id],
+    });
+
+    if (answer.status !== "ready" || !answer.pendingUploadAnswer) {
+      throw new Error("The answer did not wait for the new photo");
+    }
+
+    const pending = await getOwedResearchUploadAnswer(answer.pendingUploadAnswer);
+
+    if (!pending) {
+      throw new Error("The pending answer was not recorded");
+    }
+
+    expect(pending.claimedSourceIds).toStrictEqual([photo.id]);
+
+    await prisma.source.update({ data: { readState: "read" }, where: { id: photo.id } });
+    await expect(getReadableResearchUploadIds(pending)).resolves.toStrictEqual([]);
+
+    await reopenResearchUploadAnswer(pending);
+
+    await expect(
+      answerGoalUploadRequest({ goalId: goal.id, sourceIds: [photo.id] }),
+    ).resolves.toStrictEqual({ status: "unreadable" });
+
+    await prisma.source.update({
+      data: { extractedText: "New material" },
+      where: { id: photo.id },
+    });
+
+    await expect(getReadableResearchUploadIds(pending)).resolves.toStrictEqual([
+      first.id,
+      photo.id,
+    ]);
   });
 
   it("lets one upload answer each goal's ask once", async () => {

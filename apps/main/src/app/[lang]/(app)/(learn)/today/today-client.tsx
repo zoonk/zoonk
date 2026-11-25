@@ -26,7 +26,6 @@ import { useMissionLinks } from "@/lib/session/use-mission-links";
 import { getSessionHref } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
-import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type DayBlockRef, findNextCall } from "@zoonk/core/sessions/day-block";
 import { SpeakingPracticeRow } from "@zoonk/learn/language/speaking";
 import { LanguagePracticeRow } from "@zoonk/learn/language/today";
@@ -35,11 +34,11 @@ import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
-import { useTodayVisit } from "@zoonk/learn/today/visit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
+import { toHostUpload, useUploadAnswer } from "./use-upload-answer";
 
 /** Again each time the router drops the prefetch; it fetches nothing for a copy it still holds fresh. */
 function usePrefetchSessionFrame(href: string) {
@@ -62,44 +61,28 @@ function usePrefetchSessionFrame(href: string) {
   }, [href, router]);
 }
 
-/** `answered` is null when the learner dismissed the request. */
-type UploadAnswer = { answered: GoalUploadRequest | null; visit: number };
-
-function useUploadAnswer() {
-  const visit = useTodayVisit();
-  const [upload, setUpload] = useState<UploadAnswer | null>(null);
-  const uploadThisVisit = upload?.visit === visit ? upload : null;
-
-  return {
-    answeredUpload: uploadThisVisit?.answered ?? null,
-    onUploadAnswered: (request: GoalUploadRequest) => setUpload({ answered: request, visit }),
-    onUploadDismissed: () => setUpload({ answered: null, visit }),
-    uploadDismissed: uploadThisVisit !== null,
-  };
-}
-
 /**
  * An upload ask answered here shows its thanks while the learner stays, whatever Today read since,
  * and one dismissed here stays away.
  */
 function toHostNotices({
-  answeredUpload,
   data,
   goalId,
   onUploadAnswered,
   onUploadDismissed,
-  uploadDismissed,
-}: {
-  answeredUpload: GoalUploadRequest | null;
+  onUploadUnreadable,
+  uploadState,
+}: ReturnType<typeof useUploadAnswer> & {
   data: TodayScreenData;
   goalId: string;
-  onUploadAnswered: (request: GoalUploadRequest) => void;
-  onUploadDismissed: () => void;
-  uploadDismissed: boolean;
 }): TodayHostNotices {
   const { language, today } = data;
   const hasPractice = Boolean(today.pattern ?? language?.pronunciation);
-  const upload = answeredUpload ?? (uploadDismissed ? null : today.uploadRequest);
+
+  const { answered, request: upload } = toHostUpload({
+    state: uploadState,
+    today: today.uploadRequest,
+  });
 
   return {
     practice:
@@ -115,9 +98,10 @@ function toHostNotices({
     sourceChange: today.sourceChange ? <TodayChangeNotice message={today.sourceChange} /> : null,
     uploadRequest: upload ? (
       <UploadRequestClient
-        answered={answeredUpload !== null}
-        onAnswered={() => onUploadAnswered(upload)}
+        answered={answered}
+        onAnswered={(source) => onUploadAnswered(upload, source)}
         onDismissed={onUploadDismissed}
+        onUnreadable={(source) => onUploadUnreadable(upload, source)}
         request={upload}
       />
     ) : null,

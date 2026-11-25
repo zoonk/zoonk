@@ -3,7 +3,7 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import {
   goalUploadRequestResponseSchema,
   researchResourceSchema,
@@ -66,6 +66,7 @@ test.describe("Research upload requests API", () => {
         goalKind: "exam",
         language: "en",
         reason: "noOfficialSource",
+        unreadableUpload: null,
       },
     });
 
@@ -81,6 +82,84 @@ test.describe("Research upload requests API", () => {
     });
 
     await Promise.all([learner.api.dispose(), other.api.dispose()]);
+  });
+
+  test("requires newly readable material to answer a reopened upload request", async () => {
+    const learner = await createBearerLearner({ baseURL, prefix: "upload-unreadable" });
+
+    const [goal, photo, priorUpload] = await Promise.all([
+      examGoalWaitingForNotice(learner.userId),
+      sourceFixture({
+        kind: "upload",
+        mimeType: "image/png",
+        ownerId: learner.userId,
+        readState: "read",
+        title: "Blurry notes",
+        visibility: "private",
+      }),
+      privateUploadFixture({ ownerId: learner.userId }),
+    ]);
+
+    await Promise.all([
+      learnerSourceFixture({ sourceId: photo.id, userId: learner.userId }),
+      learnerSourceFixture({ sourceId: priorUpload.id, userId: learner.userId }),
+    ]);
+
+    await prisma.goalSource.create({
+      data: { answeredAt: new Date(), goalId: goal.id, origin: "upload", sourceId: priorUpload.id },
+    });
+
+    const data = { goalId: goal.id, sourceIds: [priorUpload.id, photo.id] };
+    const refused = await learner.api.post("/v1/research", { data });
+    expect(refused.status()).toBe(422);
+    await expect(refused.json()).resolves.toMatchObject({ error: { code: "UPLOAD_UNREADABLE" } });
+
+    await expect(
+      prisma.goalSource.count({ where: { goalId: goal.id, sourceId: photo.id } }),
+    ).resolves.toBe(0);
+
+    await prisma.source.update({ data: { readState: "owed" }, where: { id: photo.id } });
+
+    const accepted = await readBody({
+      response: await learner.api.post("/v1/research", { data }),
+      schema: researchResourceSchema,
+      status: 202,
+    });
+
+    await prisma.source.update({ data: { readState: "read" }, where: { id: photo.id } });
+
+    await expect
+      .poll(async () => {
+        const run = await readBody({
+          response: await learner.api.get(`/v1/research/${accepted.id}`),
+          schema: researchResourceSchema,
+        });
+
+        return run.result;
+      })
+      .toEqual({ reason: "noOfficialSource", status: "needsUpload" });
+
+    const reopened = await readBody({
+      response: await learner.api.get(`/v1/goals/${goal.id}/upload-request`),
+      schema: goalUploadRequestResponseSchema,
+    });
+
+    expect(reopened).toMatchObject({
+      request: { reason: "noOfficialSource", unreadableUpload: { title: "Blurry notes" } },
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      researchRunId: null,
+      researchUploadReason: "noOfficialSource",
+    });
+
+    const replay = await learner.api.post("/v1/research", {
+      data: { goalId: goal.id, sourceIds: [photo.id] },
+    });
+
+    expect(replay.status()).toBe(422);
+
+    await learner.api.dispose();
   });
 
   test("answers the ask with the learner's upload and starts research with it", async () => {

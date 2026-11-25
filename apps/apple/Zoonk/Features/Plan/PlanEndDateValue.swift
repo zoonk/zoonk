@@ -8,14 +8,15 @@ struct PlanEndDateValue: Equatable {
 
   let shown: String
   let spoken: String
-  var detail: Line?
   var isDate = false
 
+  /// The date the learner set, or with none the finish the plan works out, as the timeline says
+  /// it. Never the day a finished plan was done.
   init(
-    targetDate: String?, isExam: Bool,
-    finish: (isoDate: String, estimate: Bool, month: Bool)?, today: String
+    target: (isoDate: String, estimate: Bool, month: Bool)?,
+    finish: (isoDate: String, month: Bool)? = nil, isExam: Bool, today: String
   ) {
-    guard let finish, !isExam || targetDate != nil else {
+    guard let target = target ?? finish.map({ ($0.isoDate, true, $0.month) }) else {
       shown =
         isExam
         ? String(localized: "To be confirmed", table: "Plan")
@@ -24,22 +25,15 @@ struct PlanEndDateValue: Equatable {
       return
     }
 
-    if finish.estimate {
-      if targetDate == nil {
-        shown = String(localized: "None set", table: "Plan")
-        spoken = shown
-        detail = Self.estimatedFinish(finish.isoDate, today: today, month: finish.month)
-      } else {
-        let value = PlanDate.estimate(finish.isoDate, today: today, month: finish.month)
-        shown = value.text
-        spoken = value.spoken
-        isDate = true
-      }
+    if target.estimate {
+      let value = PlanDate.estimate(target.isoDate, today: today, month: target.month)
+      shown = value.text
+      spoken = value.spoken
     } else {
-      shown = PlanDate.text(finish.isoDate, today: today, month: finish.month)
+      shown = PlanDate.text(target.isoDate, today: today, month: target.month)
       spoken = shown
-      isDate = true
     }
+    isDate = true
   }
 
   static func estimatedFinish(_ isoDate: String, today: String, month: Bool) -> Line {

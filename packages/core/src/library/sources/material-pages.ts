@@ -1,5 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "./source-contract";
+import { hasWords } from "./source-read-status";
 
 export type MaterialSource = {
   contentHash: string;
@@ -36,7 +37,7 @@ function toSections(text: string): string[] {
   const paragraphs = text
     .split(/\n\s*\n/u)
     .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+    .filter((paragraph) => hasWords(paragraph));
 
   const starts = paragraphs.map((_, index) => {
     const before = paragraphs.slice(0, index).join("\n\n");
@@ -81,7 +82,7 @@ export function toSourcePages({
       title: source.title,
       unit,
     }))
-    .filter((page) => page.text.length > 0);
+    .filter((page) => hasWords(page.text));
 }
 
 export function toMaterialPages(sources: readonly MaterialSource[]): MaterialPage[] {

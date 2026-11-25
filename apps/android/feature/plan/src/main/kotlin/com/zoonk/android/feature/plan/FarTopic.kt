@@ -281,8 +281,11 @@ internal fun FarTopicContent(
                 modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.titleLarge,
             )
-            farTopicLine(topic.lessons?.toInt(), topic.nextDate?.toJavaLocalDate())?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            // A start with nothing left to start would be a line with no action.
+            if (open.shown != FarTopicShown.Unavailable) {
+                farTopicLine(topic.lessons?.toInt(), topic.nextDate?.toJavaLocalDate())?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
 

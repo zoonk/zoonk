@@ -113,6 +113,9 @@ const NERVOUS_SYSTEM_HANDOUT = [
   .map((page) => `${page} ${"Ejemplo y definición para repasar antes del control. ".repeat(14)}`)
   .join(PAGE_BREAK);
 
+/** A photo whose reading found no words: attached, with nothing to read. */
+const UNREAD_PHOTO: CaseSource = { mimeType: "image/jpeg", text: "", title: "IMG_2041.jpg" };
+
 export const MATERIAL_TEST_CASES: MaterialCase[] = [
   materialCase("test-on-friday-names-the-notes-topic", {
     expected: {
@@ -465,5 +468,46 @@ export const MATERIAL_TEST_CASES: MaterialCase[] = [
     intent: "exam",
     language: "en",
     sources: [{ text: IMMUNE_NOTES, title: "" }],
+  }),
+  materialCase("an-unread-photo-keeps-the-exam-choice", {
+    expected: {
+      goals: [{ examName: null, kind: "exam", targetDate: FRIDAY, title: /chemi/iu }],
+      route: "goals",
+    },
+    goal: "chemistry test on Friday",
+    intent: "exam",
+    language: "en",
+    sources: [UNREAD_PHOTO],
+  }),
+  materialCase("uma-foto-ilegivel-mantem-a-prova", {
+    expected: {
+      goals: [{ examName: null, kind: "exam", targetDate: FRIDAY, title: /hist[oó]ria/iu }],
+      route: "goals",
+    },
+    goal: "prova de história na sexta",
+    intent: "exam",
+    language: "pt",
+    sources: [UNREAD_PHOTO],
+  }),
+  materialCase("an-unread-photo-keeps-the-understand-choice", {
+    expected: { goals: [{ kind: "learn", reason: null, title: /photosynth/iu }], route: "goals" },
+    goal: "photosynthesis",
+    intent: "understand",
+    language: "en",
+    sources: [UNREAD_PHOTO],
+  }),
+  materialCase("an-unread-photo-and-test-tomorrow-say-no-subject", {
+    expected: { route: "unclear" },
+    goal: "I have a test tomorrow",
+    intent: "exam",
+    language: "en",
+    sources: [UNREAD_PHOTO],
+  }),
+  materialCase("an-unread-photo-file-name-is-no-subject", {
+    expected: { route: "unclear" },
+    goal: "Understand my material: IMG_2041.jpg",
+    intent: "understand",
+    language: "en",
+    sources: [UNREAD_PHOTO],
   }),
 ];

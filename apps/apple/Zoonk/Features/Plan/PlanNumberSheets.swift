@@ -150,6 +150,11 @@ struct PlanScheduleSheet: View {
           Text(planStatusText(status, isPaused: context.isPaused))
             .typeStyle(.body.weight(.semibold))
 
+          if !resting, status.kind == .onTrack {
+            Text(verbatim: dailyTimeText(plan.schedule.shape, perDay: true).text)
+              .foregroundStyle(.mutedForeground)
+          }
+
           if let sentence = sentence(status, resting: resting) {
             Text(sentence)
               .foregroundStyle(.mutedForeground)

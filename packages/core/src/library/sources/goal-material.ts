@@ -7,6 +7,7 @@ import {
   selectMaterialPages,
   toMaterialPages,
 } from "./material-pages";
+import { materialSourceFields, toReadableMaterial } from "./readable-material";
 
 const MAX_MATERIAL_SOURCES = 5;
 
@@ -17,17 +18,16 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
 
   const sources = await prisma.source.findMany({
     orderBy: { createdAt: "asc" },
-    select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
+    select: materialSourceFields,
     take: MAX_MATERIAL_SOURCES,
     where: {
-      extractedText: { not: null },
+      OR: [{ readState: null }, { readState: { not: "owed" } }],
       goalSources: { some: { goalId: { in: [...goalIds] }, origin: "upload" } },
+      hasReadableText: true,
     },
   });
 
-  return sources.flatMap(({ extractedText, ...source }) =>
-    extractedText ? [{ ...source, text: extractedText }] : [],
-  );
+  return toReadableMaterial(sources);
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
@@ -38,11 +38,11 @@ export function loadGoalMaterial(goalId: string): Promise<MaterialSource[]> {
 const MAX_COURSE_MATERIAL = 12_000;
 
 /** Internal: the course must come from the outline workflow holding its claim. */
-export async function loadCourseMaterial(
+export async function findCourseMaterialGoalIds(
   course: Pick<Course, "id" | "userId" | "visibility">,
-): Promise<string | null> {
+): Promise<string[]> {
   if (!course.userId || course.visibility !== "private") {
-    return null;
+    return [];
   }
 
   const goals = await prisma.goal.findMany({
@@ -50,7 +50,13 @@ export async function loadCourseMaterial(
     where: { primaryCourseId: course.id, userId: course.userId },
   });
 
-  const pages = toMaterialPages(await findMaterial(goals.map((goal) => goal.id)));
+  return goals.map((goal) => goal.id);
+}
+
+export async function loadCourseMaterial(
+  course: Pick<Course, "id" | "userId" | "visibility">,
+): Promise<string | null> {
+  const pages = toMaterialPages(await findMaterial(await findCourseMaterialGoalIds(course)));
 
   return pages.length > 0
     ? formatMaterialOverview({ maxCharacters: MAX_COURSE_MATERIAL, pages })
@@ -93,7 +99,7 @@ export function lessonGoalsFilter({
 }
 
 /** Internal: the lesson must come from the workflow holding its claim. */
-async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
+export async function findLessonMaterialGoalIds(lessonId: string): Promise<string[]> {
   const lesson = await prisma.lesson.findUnique({
     select: { homeChapter: { select: { homeCourseId: true } }, homeChapterId: true, ownerId: true },
     where: { id: lessonId },
@@ -115,7 +121,11 @@ async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
     },
   });
 
-  return findMaterial(goals.map((goal) => goal.id));
+  return goals.map((goal) => goal.id);
+}
+
+async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
+  return findMaterial(await findLessonMaterialGoalIds(lessonId));
 }
 
 /** Internal: the lesson must come from the workflow holding its claim. */

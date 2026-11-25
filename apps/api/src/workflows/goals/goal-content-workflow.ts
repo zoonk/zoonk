@@ -7,6 +7,7 @@ import { getWorkflowMetadata } from "workflow";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { closeStepStream } from "../_shared/stream-status";
 import { updateCoursesBehind } from "../products/product-releases";
+import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch, waitForContentCountry } from "./goal-content-inputs";
 import { followPlanStart } from "./goal-lookahead";
@@ -223,6 +224,7 @@ async function loadInitialCurriculum({
   input: GoalContentInput;
   workflowRunId: string;
 }) {
+  await waitForMaterialReading({ goalId: input.goalId, kind: "goal" });
   const read = await loadGoalCurriculumStep(input.goalId);
   const initial = read ? await waitForContentCountry(read) : null;
 

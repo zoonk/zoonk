@@ -65,10 +65,6 @@ import kotlinx.coroutines.delay
 internal sealed interface SlotItem {
     val key: String
 
-    data object Paused : SlotItem {
-        override val key = "paused"
-    }
-
     data class Choice(
         val choice: ExamChoice,
     ) : SlotItem {
@@ -130,7 +126,6 @@ internal fun slotItems(
 
     return buildList {
         if (!finished && courseComplete) add(SlotItem.CourseComplete)
-        if (page.isPaused) add(SlotItem.Paused)
         pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         plan.examChoices
             .filter { it.subjects.isEmpty() }
@@ -312,7 +307,6 @@ internal fun PlanSuggestionSlot(
     page: PlanPageState,
     edits: PlanEdits,
     links: PlanLinks,
-    resume: Resume,
     onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
@@ -355,7 +349,7 @@ internal fun PlanSuggestionSlot(
         }
     val suggestion: @Composable () -> Unit = {
         Box(Modifier.focusRequester(focus.suggestion)) {
-            key(item.key) { SlotSuggestion(item, slot, resume, onAdjust) }
+            key(item.key) { SlotSuggestion(item, slot, onAdjust) }
         }
     }
 
@@ -374,16 +368,11 @@ internal fun PlanSuggestionSlot(
 private fun SlotSuggestion(
     item: SlotItem,
     slot: Slot,
-    resume: Resume,
     onAdjust: (PlanSection?) -> Unit,
 ) {
     val layout = slot.layout
     val links = slot.links
     when (item) {
-        SlotItem.Paused -> {
-            PausedSuggestion(slot.page, layout, resume)
-        }
-
         is SlotItem.Choice -> {
             val edits = slot.edits
             ExamChoiceSuggestion(
@@ -536,38 +525,6 @@ internal fun PlanChangeSuggestion(
         SuggestionHeader(title)
         content()
         if (slot.state.failed == item.key) SuggestionSaveError()
-    }
-}
-
-/** Main's `GoalPausedSuggestion`: what pausing means; the page's bottom bar holds Resume. */
-@Composable
-private fun PausedSuggestion(
-    page: PlanPageState,
-    layout: SuggestionLayout,
-    resume: Resume,
-) {
-    val title = stringResource(R.string.plan_goal_paused, page.goal.displayName)
-    val description =
-        stringResource(
-            if (resume ==
-                Resume.Confirm
-            ) {
-                R.string.plan_resume_effect
-            } else {
-                R.string.plan_nothing_planned_until_resume
-            },
-        )
-
-    Suggestion(
-        label = title,
-        summary = title,
-        layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_pause),
-        lineAction = null,
-        lineDescription = description,
-    ) {
-        SuggestionHeader(title)
-        SuggestionDescription(description)
     }
 }
 

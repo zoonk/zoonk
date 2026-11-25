@@ -146,11 +146,15 @@
   "onboarding_material_description": "8629fd508fb6a15df27da950db6773822d391ce27dff79626dfb576b6c65ba52",
   "onboarding_material_goal_exam": "9c58321f44fb9140c98aa1663a3b3e5f50ec1862adace34efd83dead0c6e0e84",
   "onboarding_material_goal_understand": "7d51644357f858fd423a8cfcadb3c082edae0b006fe61477b9a20e4fa88626d7",
+  "onboarding_material_gone_state": "f5d37aea2c53c9e0670e460823e1f542d90c3e36aa949273626ef6619fd881d5",
   "onboarding_material_limit": "a824e05bbdc3465313b798d52eaf138c9bd266292d08c85b64ddef12db0158cf",
+  "onboarding_material_reading_state": "37e5ea1990a8adede71d59be26e0c1fda257156024c3e27ed024fb63bba005e0",
   "onboarding_material_sign_up": "424cef4594e325bf3a401f4de56c3fe72ebc06c4676c89cfec827e3fbeeb8823",
+  "onboarding_material_unread_one": "a1db888e175f774b4bff431e91da4650ae2a7852b47e137e3c3982e27da93589",
+  "onboarding_material_unread_some": "afe299042d8df093790e670eea78c1bd9005291ea3858d338b4ba412f443eb4d",
   "onboarding_material_unreadable_one": "f6a5517fd476ea6a2bae0ce51dca8503bcfb846d28f5b56e015a473e6a564c1a",
   "onboarding_material_unreadable_some": "c3e72582a19c6475f3ff3ebf1ef6fd828f56d62b17cec2cbe3f976837f2dc052",
-  "onboarding_material_unreadable_state": "5f973922c7f08714012547dd38aef3b230fa3a8e8b0e1c737c8229a9b8c67288",
+  "onboarding_material_unreadable_state": "dfca12d3780f7a8901768ea7ec3eebe3d9f40407aaed0cc5da77d07f1892600e",
   "onboarding_more": "c0e7ca3ca815c19f7715cbfee7f09e4818a8ecfa6baefb9070b9d148a1e38bcc",
   "onboarding_musicianship_card": "9c553b08e152e22563099866bd188f24b159efd530c6c59266deefa2368468f1",
   "onboarding_musicianship_subject": "d7f825f4a3a6415cf91d132ddc096d0885eba003012028dc6cc8c2e634e24ff6",
@@ -276,9 +280,12 @@
   "onboarding_row_last_cutoff": "236c9ce71d2e14a9a01b17ed2a6a994517387d5f1a5d89d4f51936fe76e4b644",
   "onboarding_row_level": "4e9dfe12385a8026960d647f89fcc275d9d0bf334aeef0a06a3df7296de3890c",
   "onboarding_row_material": "48661f6d7db2428168981919916489e70e02fa581b88de513d645f7ae5b7e97d",
-  "onboarding_row_material_all_missing_note": "9357ba6367f643d58ef097f0d262e97628ee9e84cf318011cefdd1f036e112cb",
-  "onboarding_row_material_missing_note": "26ed41f4bd516392f5e441bf0ea5abb798e3cd15644f69214afe440ddee7e9e5",
+  "onboarding_row_material_all_missing_note": "cecdadab54b15a49a7f728d4b86790119d95290e57bf3081120704dcd1c99106",
+  "onboarding_row_material_all_unread_note": "f2b8f9a9dd6c8db8bee94689e8c57dc01b43fb064b84fd1357f91689488c9556",
+  "onboarding_row_material_missing_note": "f80b5e3bc790a69fbfec19ef5fb96f3303317e64ae50a0ca29c91bddf6d07c26",
   "onboarding_row_material_note": "87cc1d5fd05caf17de60c87328258fd3a3fae49350dbd27b08e2f8ca7de6aa51",
+  "onboarding_row_material_unread_one_note": "3802e4f40196511055204292d28e3602151c8fd1a8ebfe2e98a102229470c05b",
+  "onboarding_row_material_unread_some_note": "070254ca9a9c9656bed9d6a389a1d55aa37b346a942592f724b4495646a949f4",
   "onboarding_row_minutes_a_day": "68e274bd787730fcbd6674cc3cb1088b5a0e28be292310484f82767f1326533e",
   "onboarding_row_notice_says": "bba5c3f06965991519b880478fa3053ffae5dc91666005245e70cac597755545",
   "onboarding_row_pick_date": "da1f50d5810fd8fd525accfc09cec66512155010d9ff76e93715e9fc8b649d92",
@@ -451,10 +458,16 @@
     <string name="onboarding_row_minutes_a_day">1日%1$s</string>
     <string name="onboarding_row_material">資料</string>
     <string name="onboarding_row_material_note">この資料に沿って学習計画とレッスンを作成します</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
-    <string name="onboarding_row_material_missing_note">学習計画とレッスンはこの資料だけに基づいています。残りは読み取れなくなりました。</string>
-    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
-    <string name="onboarding_row_material_all_missing_note">読み取れなくなったため、学習計画に反映されません。</string>
+    <!-- Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">学習計画とレッスンには、この資料だけが使われます。残りの資料を読み取れませんでした。</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg". -->
+    <string name="onboarding_row_material_unread_one_note">学習計画とレッスンには、この資料だけが使われます。「%1$s」を読み取れませんでした。</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_unread_some_note">学習計画とレッスンには、この資料だけが使われます。他のファイルを読み取れませんでした。</string>
+    <!-- Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">読み取れなかったため、学習計画には反映されません。</string>
+    <!-- Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone. -->
+    <string name="onboarding_row_material_all_unread_note">これらのファイルを読み取れなかったため、学習計画には反映されません。</string>
     <string name="onboarding_row_exam_date">試験日</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">試験日程</string>
@@ -523,8 +536,16 @@
     <string name="onboarding_material_unreadable_one">「%1$s」を読み取れなくなりました。削除して、もう一度追加してください。</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">ファイルの一部を読み取れなくなりました。削除して、もう一度追加してください。</string>
-    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
-    <string name="onboarding_material_unreadable_state">読み取れません</string>
+    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg". -->
+    <string name="onboarding_material_unread_one">「%1$s」を読み取れませんでした。もっと鮮明な写真を使うか、テキストを貼り付けてください。</string>
+    <!-- Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above. -->
+    <string name="onboarding_material_unread_some">これらのファイルを読み取れませんでした。鮮明な写真を使うか、テキストを貼り付けてください。</string>
+    <!-- Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read. -->
+    <string name="onboarding_material_unreadable_state">内容を読み取れませんでした</string>
+    <!-- Read by screen readers after the name of an attached file that's gone, so it must be added again. -->
+    <string name="onboarding_material_gone_state">もう読み取れません</string>
+    <!-- Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read. -->
+    <string name="onboarding_material_reading_state">読み取り中</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
     <string name="onboarding_material_limit">1つの目標に添付できる資料は最大%1$s件です。1件削除すると、別の資料を追加できます。</string>
     <string name="onboarding_intent_title">何をしたいですか？</string>

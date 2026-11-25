@@ -33,11 +33,13 @@ final class PhaseEndTests: XCTestCase {
       PhaseEnd("2027-01-22", estimate: true, month: false, today: "2027-01-04"),
       "the challenge's day, after the last lesson's, ends the phase")
     XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.shown, "~Jan 22")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.line, "Ends ~Jan 22")
     XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.spoken, "Ends around Jan 22")
     XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "~Feb 5")
     XCTAssertEqual(
       plan.phaseEnd(plan.phases[2])?.shown, "~Apr",
       "past six weeks from this week's start, only the month")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[2])?.line, "Ends ~Apr")
     XCTAssertEqual(
       plan.phaseEnd(plan.phases[3])?.shown, "~Jun",
       "the last phase shows its end too, though the finish row shows the plan's")
@@ -53,6 +55,7 @@ final class PhaseEndTests: XCTestCase {
     XCTAssertNil(plan.phaseEnd(plan.phases[0]), "nothing for a phase behind")
     XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "Feb 16")
     XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.spoken, "Ends Feb 16")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.line, "Ends Feb 16")
     XCTAssertEqual(
       plan.phaseEnd(plan.phases[2])?.shown, "Nov 10", "the last phase ends on its own day")
   }

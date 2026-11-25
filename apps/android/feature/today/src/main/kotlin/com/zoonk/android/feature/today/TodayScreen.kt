@@ -28,7 +28,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -64,7 +63,12 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.Suggestion
+import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionCard
+import com.zoonk.android.ui.components.SuggestionDescription
+import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
@@ -320,7 +324,7 @@ private fun ExplanationContinue(
     }
 }
 
-/** A goal typed after the learner's newest goal and not confirmed yet, offered back where it was left. */
+/** Main's `UnfinishedGoalNotice`: a goal typed after the learner's newest goal and not confirmed yet, offered back where it was left. */
 @Composable
 internal fun UnfinishedGoal(
     onboarding: OnboardingStore,
@@ -329,18 +333,20 @@ internal fun UnfinishedGoal(
     val state by onboarding.unfinishedGoal.collectShown()
     val draft = state.value ?: return
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        ListRow(
-            headline = { Text(draft.prompt, maxLines = 3, overflow = TextOverflow.Ellipsis) },
-            modifier = Modifier.bleed(LIST_ITEM_INSET),
-            highlighted = true,
-            leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
-            supporting = { Text(stringResource(R.string.today_unfinished_setup)) },
-        )
-        OutlinedButton(onClick = { navigate(AppRoute.StartGoal(draftId = draft.draftId.toString())) }) {
-            Text(stringResource(R.string.today_continue_draft))
-        }
-    }
+    SuggestionCard(
+        label = draft.prompt,
+        mark = SuggestionMark.Symbol(R.drawable.ic_edit),
+        card = {
+            SuggestionHeader(draft.prompt, maxLines = 2)
+            SuggestionDescription(stringResource(R.string.today_unfinished_setup))
+            SuggestionActions {
+                SuggestionMainAction(
+                    stringResource(R.string.today_continue_draft),
+                    { navigate(AppRoute.StartGoal(draftId = draft.draftId.toString())) },
+                )
+            }
+        },
+    )
 }
 
 /** Pausing or finishing a goal never swaps the page for another. */

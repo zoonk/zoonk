@@ -4,17 +4,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -29,6 +29,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -48,17 +51,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -73,6 +76,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -92,19 +98,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 17/17. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 17/17. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 17/17. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 17/17. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 17/17. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 17/17. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.933333333333334
         }
       ],
       "testCase": {
@@ -117,6 +123,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -136,17 +145,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -161,6 +170,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },

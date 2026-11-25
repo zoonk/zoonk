@@ -9,6 +9,7 @@ import {
   parseOffice,
 } from "officeparser";
 import { decodePage } from "./decode-page";
+import { findPdfImagePages } from "./pdf-image-pages";
 import {
   DOCX_CONTENT_TYPE,
   IMAGE_CONTENT_TYPES,
@@ -18,6 +19,7 @@ import {
   type SourceTopic,
   TEXT_CONTENT_TYPES,
 } from "./source-contract";
+import { hasWords } from "./source-read-status";
 
 const MAX_EXTRACTED_TEXT_LENGTH = 500_000;
 
@@ -39,7 +41,14 @@ const MAX_PAGE_CHUNK = 100_000;
 
 export type DocumentImage = { data: string; mediaType: string };
 
-export type ParsedDocument = { text: string | null; images: DocumentImage[]; pages: number | null };
+export type ParsedDocument = {
+  text: string | null;
+  images: DocumentImage[];
+  pages: number | null;
+  visualPages?: number[];
+};
+
+const MAX_VISUAL_PAGES = 40;
 
 function hashContent(content: Uint8Array | string): string {
   return createHash("sha256").update(content).digest("hex");
@@ -55,11 +64,12 @@ export function getMaxTextLength(topic?: SourceTopic | null): number {
 }
 
 /** PostgreSQL text cannot store NUL; preserve page breaks so citations retain their page numbers. */
+function cleanText(text: string): string {
+  return text.replaceAll("\u0000", "").replaceAll(/^[^\S\f]+|[^\S\f]+$/gu, "");
+}
+
 function limitText({ maxLength, text }: { maxLength: number; text: string }): string {
-  return text
-    .replaceAll("\u0000", "")
-    .replaceAll(/^[^\S\f]+|[^\S\f]+$/gu, "")
-    .slice(0, maxLength);
+  return cleanText(text).slice(0, maxLength);
 }
 
 export function isCutText(
@@ -77,7 +87,12 @@ function getPageNumber(node: OfficeParserAST["content"][number], position: numbe
 }
 
 /** How bytes become text. A change to it moves `SOURCE_READ_VERSION`. */
-type Reading = { decodesCharset: boolean; dropsStruckText: boolean; maxLength: number };
+type Reading = {
+  decodesCharset: boolean;
+  dropsStruckText: boolean;
+  forUpload?: boolean;
+  maxLength: number;
+};
 
 /** Official law sites strike through wording a later law revoked and keep it on the page. */
 function toReading(topic?: SourceTopic | null): Reading {
@@ -168,12 +183,26 @@ async function parseOfficeDocument({
     ? await readPagedText({ ast, fileType })
     : await readText({ ast, reading });
 
+  const clean = cleanText(text);
+
+  const visualPages =
+    reading.forUpload && fileType === "pdf" && !isCutText(clean, reading.maxLength)
+      ? await findPdfImagePages({
+          bytes,
+          candidates: clean
+            .split(PAGE_BREAK)
+            .flatMap((page, index) => (hasWords(page) ? [] : [index])),
+          limit: MAX_VISUAL_PAGES,
+        })
+      : [];
+
   return {
     images: ast.attachments
       .filter((attachment) => MODEL_IMAGE_TYPES.has(attachment.mimeType))
       .map((attachment) => ({ data: attachment.data, mediaType: attachment.mimeType })),
     pages: countPages(ast),
-    text: limitText({ maxLength: reading.maxLength, text }),
+    text: clean.slice(0, reading.maxLength),
+    ...(visualPages.length > 0 && { visualPages }),
   };
 }
 
@@ -214,17 +243,18 @@ async function readDocument({
   }
 
   if (MODEL_IMAGE_TYPES.has(type)) {
-    return { images: [], pages: null, text: null };
+    return { images: [], pages: null, text: null, ...(reading.forUpload && { visualPages: [0] }) };
   }
 
   throw new Error(`Unsupported document type: ${type}`);
 }
 
 export function parseDocument({
+  forUpload,
   topic,
   ...document
-}: DocumentBytes & { topic?: SourceTopic }): Promise<ParsedDocument> {
-  return readDocument({ ...document, reading: toReading(topic) });
+}: DocumentBytes & { forUpload?: boolean; topic?: SourceTopic }): Promise<ParsedDocument> {
+  return readDocument({ ...document, reading: { ...toReading(topic), forUpload } });
 }
 
 /**

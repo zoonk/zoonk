@@ -24,7 +24,9 @@ export type MarksLessonId = keyof typeof lessons;
  * one each in Spanish, German and Japanese, lesson-writer eval outputs, two lessons a persona
  * walk played ("Fases do ciclo celular" and "Juros sobre juros"), copied from its screenshots, and
  * two whose tagged ideas went back in the map ("Por que o elétron não cai no núcleo?" and
- * "Comprimento de onda a partir da energia do fóton").
+ * "Comprimento de onda a partir da energia do fóton"), and three published programming lessons
+ * whose code blocks the frame left out ("Classes, construtores e membros estáticos", "Herança,
+ * interfaces e composição" and "Fluxo assíncrono com async/await").
  */
 const MARKS_LESSONS = z.record(z.string(), marksLessonSchema).parse(lessons);
 

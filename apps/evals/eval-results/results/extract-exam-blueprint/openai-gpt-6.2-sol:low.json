@@ -4,19 +4,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.933333333333334
         }
       ],
       "testCase": {
@@ -29,6 +29,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -48,19 +51,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.933333333333334
         }
       ],
       "testCase": {
@@ -73,6 +76,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -92,19 +98,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 16/16. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 16/16. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 16/16. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.933333333333334
         }
       ],
       "testCase": {
@@ -117,6 +123,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },
@@ -136,19 +145,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 15/15. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 15/15. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.933333333333334
         },
         {
-          "conclusion": "Facts kept 2/2 (read 2). passages found 15/15. problems left 0",
+          "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.933333333333334
         }
       ],
       "testCase": {
@@ -161,6 +170,9 @@
             {
               "format": "essay",
               "kind": "format"
+            },
+            {
+              "kind": "shortTopics"
             }
           ]
         },

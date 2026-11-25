@@ -146,11 +146,15 @@
   "onboarding_material_description": "44484a42df4f517698995ba5593f5085360596a354af9752865fadbbef6c4dd5",
   "onboarding_material_goal_exam": "296ed7f736de51cb75b8e2867f180ffbac19f5b3fc5357969d650211521d0d26",
   "onboarding_material_goal_understand": "ac13e9b51effa9cd8d2e0ddb8c799414a7536d5d2e02e2bcb001e6e4a3593248",
+  "onboarding_material_gone_state": "15292942c3062ed01924c56b6f1405a3134753cc11d4d6fc12c97e98a86e9e17",
   "onboarding_material_limit": "0844943f864f245f62c13f5a9cac5e6f8cfcfdbd99bca607b1ba572696590643",
+  "onboarding_material_reading_state": "d47ee85faefedde36a79e8f27a90f0c0e470fa3b911f8bbaae722cb2009cff30",
   "onboarding_material_sign_up": "9c06170e80a61ecf04cc53fc6fc1988ba69115b4ddd3c1c5ff76da63cd7b5e35",
+  "onboarding_material_unread_one": "d25b9f161684a3bf59c9e339c5a57acfa787e7d3ca314d9ae07cb30d9a111d7c",
+  "onboarding_material_unread_some": "dfc087ecd69a40f7b9ac8f6e632e79fb01f695775863a567765fc51867f8e33c",
   "onboarding_material_unreadable_one": "a517387f230e7642e69552a32ec75d38a11e72b259eba95ebceddc09a886710a",
   "onboarding_material_unreadable_some": "d14682c9ff440468d2c2d588a431a71e853baf8065ac5de822b8fc9b6ba660c6",
-  "onboarding_material_unreadable_state": "fbc4063ac5f2adaff0bf12e06ec894ebb78255bf7a7b3772d6e9b010e96bf73a",
+  "onboarding_material_unreadable_state": "86b3de672e4e7417672734b20a7815e1822ffb71803b6cfa604a1c90be5341a4",
   "onboarding_more": "30a21b5381a26aa3356be8e8d3d53a92c2a4b89755d9785c6fe84d6aba663908",
   "onboarding_musicianship_card": "a108cbc56c8b1c6b4aa3236eed9aeb27ad2cfbd05841369a30283d2eb8576358",
   "onboarding_musicianship_subject": "178964df2d04795b2d81227f43cdb21b267085c92f0b414f28720c834242a33f",
@@ -276,9 +280,12 @@
   "onboarding_row_last_cutoff": "8cc927b7ccb6a52d426eb6e8ab2fbc257863b7ef7163109d073d34c8736457e3",
   "onboarding_row_level": "e39e1663c59ab9ddfe48e503e1fa8b58642feebcae753682eea3a7b0a1af3601",
   "onboarding_row_material": "2d4bc7c0d839a031714f3a7cf9e1ff93e220287b029b67d2fbf666e1bd9e3041",
-  "onboarding_row_material_all_missing_note": "6ae64e2aaa5310d7a1bbc9b1d53dab66b244509c3e4ecc695649d87a8a063932",
-  "onboarding_row_material_missing_note": "d740014d3041138b15e1c215d88c4763bc6159834ece94a0653ac28dc57a02dd",
+  "onboarding_row_material_all_missing_note": "18aca718bad70e3cfa590fe23cda21bcefdc48ccb8b967d8f24d286f2e32130f",
+  "onboarding_row_material_all_unread_note": "1b1b624b848355db8d2fa12b1346d10b5eff50adc7034eaab64f2c59123a37da",
+  "onboarding_row_material_missing_note": "3d9662ad907ad6d3ecfae6a37fd9445cad73af26f839c2e423bb0d0438097619",
   "onboarding_row_material_note": "68af367aa433b4354e8be40e3bf9d23ded27d04195bf1e0ab7b31580fb94b4e1",
+  "onboarding_row_material_unread_one_note": "767f09e7327f1734d435546b1a8349d3f6501ef2d2b42a154b6aa9e990f90d21",
+  "onboarding_row_material_unread_some_note": "851987dc9de162ebd5696de37c5bea38e35073a3b06cd514ab6e19cedf63ab24",
   "onboarding_row_minutes_a_day": "2bac9e995f7bb4c7cd136533b976c448be4cefc8b81c40215b2683b178c99306",
   "onboarding_row_notice_says": "34109a21a6a2b4590ee4c9ae9ccb0fb177269b8fa70c6a3c1e28f865742f635a",
   "onboarding_row_pick_date": "cc5240a0425d2a434445823f57012c8d005ca8d5e6db57c3b593ed398dec6e86",
@@ -453,10 +460,16 @@
     <string name="onboarding_row_minutes_a_day">%1$s por dia</string>
     <string name="onboarding_row_material">Seu material</string>
     <string name="onboarding_row_material_note">Seu plano e suas aulas seguem este material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
-    <string name="onboarding_row_material_missing_note">Seu plano e suas aulas seguem apenas este material. O restante não pode mais ser lido.</string>
-    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
-    <string name="onboarding_row_material_all_missing_note">Não dá mais para ler esse material, então seu plano não vai levá-lo em conta.</string>
+    <!-- Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler o restante.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg". -->
+    <string name="onboarding_row_material_unread_one_note">Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler “%1$s”.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_unread_some_note">Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler os outros arquivos.</string>
+    <!-- Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Não conseguimos ler esse material, então seu plano não vai se basear nele.</string>
+    <!-- Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone. -->
+    <string name="onboarding_row_material_all_unread_note">Não conseguimos ler esses arquivos, então seu plano não vai se basear neles.</string>
     <string name="onboarding_row_exam_date">Data da prova</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Datas da prova</string>
@@ -527,8 +540,16 @@
     <string name="onboarding_material_unreadable_one">Não dá mais para ler “%1$s”. Remova esse arquivo e adicione-o de novo.</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">Não dá mais para ler alguns dos seus arquivos. Remova-os e adicione-os de novo.</string>
-    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
-    <string name="onboarding_material_unreadable_state">Não pode mais ser lido</string>
+    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg". -->
+    <string name="onboarding_material_unread_one">Não conseguimos ler “%1$s”. Tente enviar uma foto mais nítida ou colar o texto.</string>
+    <!-- Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above. -->
+    <string name="onboarding_material_unread_some">Não conseguimos ler esses arquivos. Tente enviar fotos mais nítidas ou colar o texto.</string>
+    <!-- Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read. -->
+    <string name="onboarding_material_unreadable_state">Não foi possível ler nada do arquivo</string>
+    <!-- Read by screen readers after the name of an attached file that's gone, so it must be added again. -->
+    <string name="onboarding_material_gone_state">Não dá mais para ler</string>
+    <!-- Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read. -->
+    <string name="onboarding_material_reading_state">Sendo lido</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
     <string name="onboarding_material_limit">Você pode anexar no máximo %1$s arquivos a um objetivo. Remova um para adicionar outro.</string>
     <string name="onboarding_intent_title">O que você quer fazer?</string>

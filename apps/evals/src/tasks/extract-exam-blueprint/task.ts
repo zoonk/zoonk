@@ -19,7 +19,10 @@ type ExpectedFact =
   /** `mock` checks the mock's own total, which sizes objective sittings without a count. */
   | { kind: "questionCount"; value: number; in?: "mock" }
   | { kind: "subject"; name: string; questions?: number }
-  | { kind: "topic"; subject: string; topic: string }
+  /** Without `subject`, any subject may hold the topic. */
+  | { kind: "topic"; subject?: string; topic: string }
+  /** Learner material: every topic names an idea, never a copied line of notes. */
+  | { kind: "shortTopics" }
   | { kind: "group"; subject: string; group: string }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
@@ -591,6 +594,11 @@ function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }
   }
 }
 
+/** Math, a worked example or a "term: explanation" line is a line of notes, not an idea's name. */
+const COPIED_LINE = /[$\\=]|^ex(?:emplo)?\b|:\s*\S/iu;
+
+const isCopiedLine = (topic: string) => COPIED_LINE.test(topic);
+
 function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }): boolean {
   if (isMockFact(fact)) {
     return isMockFactFound({ fact, reading });
@@ -612,11 +620,11 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
           (fact.questions === undefined || subject.questions === fact.questions),
       );
     case "topic":
-      return (
-        findSubject({ name: fact.subject, reading })?.topics.some(
-          (topic) => normalizeString(topic) === normalizeString(fact.topic),
-        ) ?? false
-      );
+      return (fact.subject ? [findSubject({ name: fact.subject, reading })] : reading.subjects)
+        .flatMap((subject) => subject?.topics ?? [])
+        .some((topic) => normalizeString(topic) === normalizeString(fact.topic));
+    case "shortTopics":
+      return reading.subjects.every((subject) => !subject.topics.some(isCopiedLine));
     case "group":
       return normalizeString(findSubject({ name: fact.subject, reading })?.group ?? "").includes(
         normalizeString(fact.group),

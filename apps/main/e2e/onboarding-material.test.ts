@@ -62,7 +62,7 @@ test.describe("A goal sent with the learner's material", () => {
       page.getByText("We can't read “Your text” anymore. Remove it and add it again."),
     ).toBeVisible();
 
-    await expect(attached).toContainText("Can't be read");
+    await expect(attached).toContainText("Can't be read anymore");
     await expect(goalBox).toHaveValue(words);
     await removeNotes.click();
     await addNotes();

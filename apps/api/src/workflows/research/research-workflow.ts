@@ -28,6 +28,7 @@ import { recordResearchRunStep } from "./steps/record-research-run-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
+import { waitForMaterialReading } from "./wait-for-material-reading";
 
 export type ResearchInput = {
   goalId: string;
@@ -244,6 +245,12 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
 
   if (!goal) {
     return { status: "missing" };
+  }
+
+  const sourceIds = input.sourceIds?.length ? input.sourceIds : goal.uploadIds;
+
+  if (sourceIds.length > 0) {
+    await waitForMaterialReading({ kind: "sources", sourceIds });
   }
 
   const result = await research({ goal, input, runId: workflowRunId });

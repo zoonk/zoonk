@@ -88,11 +88,13 @@ export function CheckpointRow({
   links: JourneyPathLinks;
 }) {
   const t = useExtracted();
-  const { goal, today } = usePlanScreen();
+  const { goal, paused, today } = usePlanScreen();
   const isDone = checkpoint.state === "done";
   // A locked one is never in a session, so it keeps its planned day.
   const when = checkpoint.locked ? "date" : checkpoint.when;
-  const onDate = !isDone && when === "date";
+  // A paused plan has nothing planned until the learner resumes, as `usePhaseEnd` says of phases.
+  const planned = !isDone && !paused;
+  const onDate = planned && when === "date";
 
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
@@ -103,9 +105,9 @@ export function CheckpointRow({
         value={
           <span className={EVENT_DATE_CLASS}>
             {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
-            {!isDone &&
+            {planned &&
               when === "nextSession" &&
-              (checkpoint.date === today ? t("Today") : t("In your next session"))}
+              (checkpoint.date === today ? t("Today") : t("Next time"))}
             {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
           </span>
         }

@@ -185,12 +185,15 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
-  /// A draft opened again later still has the material it was sent with, so new words on it start
-  /// with that material.
+  /// A draft opened again later still has the material it was sent with, a photo with nothing to
+  /// read on it included, so new words on it start with that material and what it's for.
   func testNewWordsOnAReopenedDraftStartWithItsMaterial() async throws {
     var reopened = Self.draft(prompt: "test on Friday", goalsLeft: 2)
     reopened.materialIntent = .exam
-    reopened.sources = [.init(id: Self.sourceID, title: "Cell cycle notes")]
+    reopened.sources = [
+      .init(id: Self.sourceID, readStatus: .readable, title: "Cell cycle notes"),
+      .init(id: Self.otherSourceID, readStatus: .unreadable, title: "Whiteboard.jpg"),
+    ]
     let server = DraftServer(reopened)
     let store = makeStore(transport: server)
     let card = store.draft(id: Self.draftID)
@@ -203,7 +206,7 @@ final class OnboardingStoreTests: XCTestCase {
     let start = try XCTUnwrap(starts.first)
 
     XCTAssertEqual(start.goal, "biology test on Friday")
-    XCTAssertEqual(start.sourceIds, [Self.sourceID])
+    XCTAssertEqual(start.sourceIds, [Self.sourceID, Self.otherSourceID])
     XCTAssertEqual(start.materialIntent, .exam)
   }
 
@@ -219,6 +222,19 @@ final class OnboardingStoreTests: XCTestCase {
       XCTFail("The start is refused")
     } catch {
       XCTAssertEqual(error as? OnboardingError, .materialUnavailable(sourceIDs: [Self.sourceID]))
+    }
+  }
+
+  /// A question about material still being read is refused as that, so the question stays in the
+  /// box to ask again instead of showing as a failed answer.
+  func testAQuestionBeforeTheMaterialIsReadIsRefusedAsStillReading() async {
+    let store = makeStore(transport: DraftServer(Self.draft(prompt: "notes", goalsLeft: 2)))
+
+    do {
+      _ = try await store.askMaterial(question: "What is mitosis?", sourceIDs: [Self.sourceID])
+      XCTFail("The question is refused")
+    } catch {
+      XCTAssertEqual(error as? OnboardingError, .materialReading)
     }
   }
 
@@ -359,6 +375,13 @@ actor DraftServer: ClientTransport {
         HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
         HTTPBody(
           #"{"generations":[],"goals":[\#(createdGoal)],"refused":[],"research":[]}"#)
+      )
+    }
+
+    if operationID == "askMaterialQuestion" {
+      return (
+        HTTPResponse(status: .conflict, headerFields: [.contentType: "application/json"]),
+        HTTPBody(#"{"error":{"code":"materialReading","message":"Still reading"}}"#)
       )
     }
 

@@ -4,6 +4,12 @@ enum SourceKind {
   upload
 }
 
+enum SourceReadState {
+  owed
+  read
+  failed
+}
+
 /// When `validUntil` passes, the source is fetched again and a model runs only if `contentHash`
 /// changed. Private uploads are deleted with their owner.
 model Source {
@@ -24,6 +30,9 @@ model Source {
   validUntil         DateTime?            @map("valid_until")
   nextCheckAt        DateTime?            @map("next_check_at")
   extractedText      String?              @map("extracted_text")
+  /// Stored from extractedText so status and material filters can skip the full transcript.
+  hasReadableText    Boolean              @default(dbgenerated()) @map("has_readable_text")
+  readState          SourceReadState?     @map("read_state")
   structure          Json?
   /// Whether past questions may be quoted, with the terms that say so.
   reusePolicy        Json?                @map("reuse_policy")

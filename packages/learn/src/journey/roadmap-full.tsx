@@ -23,6 +23,7 @@ import {
   BAND_STATE_CLASS,
   getBandColumnsStyle,
 } from "./roadmap-styles";
+import { useBandFit } from "./use-band-fit";
 import {
   useAxisDatedPhases,
   useRoadmapFinish,
@@ -39,11 +40,13 @@ function PhaseBand({
   isLast,
   links,
   phase,
+  todayShare,
 }: {
   focusable: boolean;
   isLast: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
+  todayShare: number | null;
 }) {
   const label = usePhaseLabel();
   const endSpoken = usePhaseEndSpoken();
@@ -66,7 +69,7 @@ function PhaseBand({
           />
         }
       >
-        <BandFace isLast={isLast} phase={phase} />
+        <BandFace isLast={isLast} phase={phase} todayShare={todayShare} />
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -94,7 +97,13 @@ function PhaseColumn({
   return (
     <li className={BAND_COLUMN_CLASS}>
       <TodayTick share={todayShare} />
-      <PhaseBand focusable={focusable} isLast={isLast} links={links} phase={phase} />
+      <PhaseBand
+        focusable={focusable}
+        isLast={isLast}
+        links={links}
+        phase={phase}
+        todayShare={todayShare}
+      />
 
       <PhaseLane isLast={isLast} phase={phase} />
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} />
@@ -142,7 +151,13 @@ function RoadmapLegend() {
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
           <PhaseCheckpointMark />
-          {goal.kind === "language" ? t("Call") : t("The Trickster")}
+          {goal.kind === "language"
+            ? t("Call")
+            : t({
+                description:
+                  "In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.",
+                message: "Phase questions",
+              })}
         </span>
       )}
       {finish && (
@@ -171,13 +186,16 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
   const { currentIndex, phases, today } = useRoadmapPhases();
   const axisDated = useAxisDatedPhases();
   const focusIndex = Math.max(0, currentIndex);
+  const { listRef, widthRef } = useBandFit();
 
   return (
     <section
       aria-labelledby={ROADMAP_TITLE_ID}
-      className={cn("@container/roadmap flex flex-col gap-2.5", className)}
+      className={cn("@container/roadmap relative flex flex-col gap-2.5", className)}
       data-slot="plan-roadmap"
     >
+      <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0" ref={widthRef} />
+
       <div className="flex items-center justify-between gap-4">
         <h2 className="sr-only" id={ROADMAP_TITLE_ID}>
           {t("Phases")}
@@ -193,6 +211,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
           "grid-rows-[repeat(4,auto)] transition-[grid-template-columns] duration-150 ease-out motion-reduce:transition-none",
         )}
         onKeyDown={moveBetweenBands}
+        ref={listRef}
         style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
       >
         {phases.map((phase, position) => {

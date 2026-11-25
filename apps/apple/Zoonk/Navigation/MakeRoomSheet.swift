@@ -41,6 +41,13 @@ struct MakeRoomSheet: View {
         }
 
         Section {
+          Text(
+            "Or subscribe to study more goals at once.", tableName: "Navigation",
+            comment: "In the sheet that makes room for a goal waiting to start, above Subscribe"
+          )
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+
           Button {
             router.present(.subscription)
           } label: {

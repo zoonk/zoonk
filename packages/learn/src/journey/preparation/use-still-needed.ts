@@ -67,7 +67,7 @@ function useTestItem({
   } as const;
 
   return {
-    detail: forExam && !weekly ? t("Needed to go past 75%") : null,
+    detail: forExam && !weekly ? t("Needed to go past 75% preparation") : null,
     done: mocks.taken > 0,
     key: "test",
     kind: kinds[mocks.kind],

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,8 +34,11 @@ import com.zoonk.android.feature.onboarding.startError
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalUnderstanding
 import com.zoonk.api.models.GoalUnderstandingInput
+import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -94,7 +98,7 @@ class StartGoalViewModel(
     private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
     /** This visit to the start screen: the goal it made opens, or its failure shows, only on it. */
-    val visit = Visit()
+    val visit = Visit(::stopWaiting)
 
     /** The goal the card made, for the screen to open. */
     val created = visit.outcome<CreatedGoal>()
@@ -118,8 +122,8 @@ class StartGoalViewModel(
     var entryError by mutableStateOf<GoalError?>(null)
         private set
 
-    /** Ids of attached material the last send couldn't read, marked until it's removed or added again. */
-    var unreadable by mutableStateOf(emptySet<String>())
+    /** Ids of attached material the last send found gone, marked until it's removed or added again. */
+    var gone by mutableStateOf(emptySet<String>())
         private set
 
     /** A draft whose read hit a limit when started again. */
@@ -155,8 +159,20 @@ class StartGoalViewModel(
     var turns by mutableStateOf(emptyList<MaterialTurn>())
         private set
 
-    var isAsking by mutableStateOf(false)
+    /** The question on its way: asked, waiting for its answer or for the material to be read. */
+    var asking by mutableStateOf<String?>(null)
         private set
+
+    val isAsking get() = asking != null
+
+    private var askJob: Job? = null
+
+    /** Words sent while material was still being added: they go once it's added, with it. */
+    var heldGoal by mutableStateOf<String?>(null)
+        private set
+
+    /** The question being typed, kept here so one that comes back unasked returns to the box. */
+    val question = handle.saveable(key = "materialQuestion", saver = TextFieldState.Saver) { TextFieldState() }
 
     var isRetrying by mutableStateOf(false)
         private set
@@ -210,7 +226,7 @@ class StartGoalViewModel(
     }
 
     fun removeAttached(id: String) {
-        unreadable -= id
+        gone -= id
         update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
     }
 
@@ -229,16 +245,28 @@ class StartGoalViewModel(
         language: String,
     ) = attach { store.attachLink(url, language) }
 
-    fun ask(
-        question: String,
+    /** Sending is the request: a question about material still being read is asked again every few seconds until it's read. */
+    fun ask(language: String) {
+        val asked = question.text.trim().toString()
+        if (isAsking || asked.isEmpty()) return
+        asking = asked
+        question.clearText()
+        askJob =
+            viewModelScope.launch {
+                val outcome = askOnceRead(asked, language)
+                if (outcome != WriteOutcome.Obsolete) turns = turns + MaterialTurn(asked, outcome)
+                asking = null
+            }
+    }
+
+    private suspend fun askOnceRead(
+        asked: String,
         language: String,
-    ) {
-        if (isAsking || question.isBlank()) return
-        isAsking = true
-        viewModelScope.launch {
-            val outcome = store.askMaterial(question, flow.attached.map { it.id }, language)
-            if (outcome != WriteOutcome.Obsolete) turns = turns + MaterialTurn(question, outcome)
-            isAsking = false
+    ): WriteOutcome<MaterialQuestionAnswer> {
+        while (true) {
+            val outcome = store.askMaterial(asked, flow.attached.map { it.id }, language)
+            if (outcome != WriteOutcome.Refused(Refusal.MaterialReading)) return outcome
+            delay(READ_CHECK)
         }
     }
 
@@ -256,13 +284,17 @@ class StartGoalViewModel(
             when (val outcome = add()) {
                 is WriteOutcome.Done -> {
                     isAttachOpen = false
-                    unreadable -= outcome.value.id
+                    gone -= outcome.value.id
                     update { it.copy(attached = it.attached.filterNot { source -> source.id == outcome.value.id } + outcome.value) }
                 }
 
-                WriteOutcome.Obsolete -> {}
+                WriteOutcome.Obsolete -> {
+                    heldGoal = null
+                }
 
                 else -> {
+                    // Nothing is sent without the material: the learner stays to see why.
+                    heldGoal = null
                     attachFailed.send(started, outcome)
                 }
             }
@@ -270,12 +302,17 @@ class StartGoalViewModel(
         }
     }
 
-    /** Questions about material stay here; anything else is read. */
+    /** Questions about material stay here; anything else is read. Words sent while material is being added wait for it. */
     fun submit(
         typed: String,
         materialGoal: String,
         language: String,
     ) {
+        if (isAttaching) {
+            heldGoal = typed
+            return
+        }
+        heldGoal = null
         val withMaterial = if (flow.attached.isNotEmpty()) flow.intent else null
         if (withMaterial == MaterialIntent.Questions) {
             update { it.copy(screen = StartScreen.Questions) }
@@ -326,7 +363,7 @@ class StartGoalViewModel(
                 else -> {
                     val missing = ((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.MaterialUnavailable)?.sourceIds
                     showEntry(words, outcome.startError().takeIf { missing == null })
-                    unreadable = missing.orEmpty().toSet()
+                    gone = missing.orEmpty().toSet()
                 }
             }
         }
@@ -458,7 +495,15 @@ class StartGoalViewModel(
                 OnboardingDraft.MaterialIntent.UNDERSTAND -> MaterialIntent.Understand
                 null -> null
             }
-        update { it.copy(attached = draft.sources.map { source -> AttachedSource(source.id.toString(), source.title) }, intent = intent) }
+        update {
+            it.copy(
+                attached =
+                    draft.sources.map { source ->
+                        AttachedSource(source.id.toString(), source.title, source.readStatus)
+                    },
+                intent = intent,
+            )
+        }
     }
 
     fun confirm(input: GoalCreateInput) = create(input, GoalOpens.Setup)
@@ -604,9 +649,18 @@ class StartGoalViewModel(
         editing = null
         creationFailure.clear()
         entryError = error
-        unreadable = emptySet()
+        stopWaiting()
+        gone = emptySet()
         this.words.setTextAndPlaceCursorAtEnd(words)
         update { it.copy(screen = StartScreen.Entry) }
+    }
+
+    /** Leaving the questions or the screen stops what still waits: nothing is answered or sent for no one, and a question goes back to the box. */
+    private fun stopWaiting() {
+        heldGoal = null
+        askJob?.cancel()
+        asking?.let { if (question.text.isEmpty()) question.setTextAndPlaceCursorAtEnd(it) }
+        asking = null
     }
 
     /** Leaving the draft takes back what the tap that sent it allowed, so a later visit only reads it. */

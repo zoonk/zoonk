@@ -390,6 +390,14 @@ struct StudyAPI: StudyAPIClient {
         }
 
         return .alreadyRead
+      case .unprocessableContent(let response):
+        let problem: APIProblem = try StudyJSON.recode(try response.body.json)
+
+        guard problem.error.code == "UPLOAD_UNREADABLE" else {
+          throw APIError.unavailable
+        }
+
+        return .unreadable
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:

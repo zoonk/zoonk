@@ -9,6 +9,7 @@ import {
   IMAGE_CONTENT_TYPES,
   PDF_CONTENT_TYPE,
   PPTX_CONTENT_TYPE,
+  sourceStructureSchema,
 } from "./source-contract";
 import { readUploadedBlob } from "./upload-blob";
 
@@ -50,14 +51,40 @@ async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8
   return fetched?.contentType === mimeType ? fetched.bytes : null;
 }
 
+function isMixedPdf(source: Pick<Source, "structure">): boolean {
+  return sourceStructureSchema.safeParse(source.structure).data?.mixedPdf === true;
+}
+
+export function canCheckUploadVisibility(
+  source: Pick<Source, "kind" | "readState" | "visibility">,
+): boolean {
+  return source.kind === "upload" && source.visibility === "private" && source.readState === null;
+}
+
+export async function loadUploadForVisibility({
+  ownerId,
+  sourceId,
+}: {
+  ownerId: string;
+  sourceId: string;
+}) {
+  const source = await prisma.source.findFirst({ where: { id: sourceId, ownerId } });
+
+  return source && canCheckUploadVisibility(source)
+    ? toSourceDocument({ preferText: false, source })
+    : null;
+}
+
 async function loadSourceFiles({ preferText, source }: { preferText: boolean; source: Source }) {
   const mediaType = source.mimeType ?? "";
 
-  if (preferText && source.extractedText) {
+  const mixedPdf = isMixedPdf(source);
+
+  if (!mixedPdf && (source.readState !== null || (preferText && source.hasReadableText))) {
     return { file: null, images: [] };
   }
 
-  if (mediaType === PDF_CONTENT_TYPE && isCutText(source.extractedText)) {
+  if (!mixedPdf && mediaType === PDF_CONTENT_TYPE && isCutText(source.extractedText)) {
     return { file: null, images: [] };
   }
 
@@ -102,7 +129,7 @@ async function toSourceDocument({
 
 /**
  * Internal: callers must authorize access to the source ids before reading private files.
- * `preferText` downloads only the files of sources with no stored text, for a reading done from text.
+ * `preferText` keeps mixed PDFs as files because their text layer omits part of the document.
  */
 export async function loadSourceDocuments(
   sentIds: string[],

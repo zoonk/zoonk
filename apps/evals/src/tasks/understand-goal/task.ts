@@ -15,7 +15,10 @@ import { TEST_CASES } from "./test-cases";
 type CaseParams = Omit<UnderstandGoalParams, "dailyMinutesLimits" | "material"> &
   UnderstandGoalCaseInput;
 
-/** The material as the run reads it: from the learner's files, within the same budget. */
+/**
+ * The material as the run reads it: from the learner's files, within the same budget. Files with
+ * nothing readable still carry the learner's choice.
+ */
 function readCaseMaterial({
   material,
   ...params
@@ -33,7 +36,7 @@ function readCaseMaterial({
   }));
 
   const overview = formatReadingMaterial({ sources });
-  return { ...params, material: overview ? { intent: material.intent, overview } : null };
+  return { ...params, material: { intent: material.intent, overview } };
 }
 
 const evaluateRoute = createChoiceEvaluation({

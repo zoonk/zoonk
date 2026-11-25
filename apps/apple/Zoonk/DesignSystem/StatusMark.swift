@@ -59,7 +59,8 @@ struct StatusMark: View {
 
 extension View {
   /// One width for every mark in a column of rows, so their titles start on one edge at every
-  /// text size, whichever glyph each row has.
+  /// text size. A mark never grows past it (`KindMark` shrinks a wide symbol): a glyph wider than
+  /// its slot kept a list's rows re-measuring each other without end.
   func markColumn() -> some View {
     modifier(MarkColumn())
   }

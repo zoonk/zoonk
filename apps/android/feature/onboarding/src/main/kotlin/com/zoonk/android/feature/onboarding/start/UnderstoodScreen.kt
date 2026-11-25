@@ -84,6 +84,7 @@ import com.zoonk.api.models.OnboardingDraftEditOneOf2
 import com.zoonk.api.models.OnboardingDraftEditOneOf3
 import com.zoonk.api.models.OnboardingDraftEditOneOf4
 import com.zoonk.api.models.OnboardingDraftEditOneOf5
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
@@ -95,7 +96,7 @@ internal fun ColumnScope.UnderstoodScreen(
     understanding: GoalUnderstandingOneOf,
     activeGoalsLeft: Long?,
     timeZone: String,
-    material: List<String>,
+    material: List<OnboardingDraftSource>,
     materialMissing: Boolean,
     hasAccount: Boolean,
     isCreating: Boolean,

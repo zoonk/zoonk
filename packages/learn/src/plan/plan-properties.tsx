@@ -25,24 +25,25 @@ function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-export function DailyTimeValue({ readout = false }: { readout?: boolean }) {
+/**
+ * The time a day in the "Daily study time" setting's words. Alone in that row the time is a value,
+ * in the data face; anywhere else it says "a day". A phrase is in the words' face throughout.
+ */
+export function DailyTimeValue({ perDay = false }: { perDay?: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const { shape } = plan.schedule;
+  const weekdays = formatDuration(shape.weekdays);
 
-  const time = (value: React.ReactNode) =>
-    readout ? <span className="tabular-nums">{value}</span> : mono(value);
-
-  if (shape.weekend === null) {
-    return time(formatDuration(shape.weekdays));
+  if (shape.weekend !== null) {
+    return t("{weekdays} · {weekend} weekends", {
+      weekdays,
+      weekend: formatDuration(shape.weekend),
+    });
   }
 
-  return t.rich("<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends", {
-    mono: time,
-    weekdays: formatDuration(shape.weekdays),
-    weekend: formatDuration(shape.weekend),
-  });
+  return perDay ? t("{time} a day", { time: weekdays }) : mono(weekdays);
 }
 
 const PROPERTY_ROW_CLASS =
@@ -160,9 +161,12 @@ function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
       : days;
   }
 
-  const date = <PlanDateText isoDate={mocks.nextDate} />;
+  if (mocks.count <= 1) {
+    return <PlanDateText isoDate={mocks.nextDate} />;
+  }
 
-  return mocks.count > 1 ? t.rich("Next <date></date>", { date: () => date }) : date;
+  const date = <PlanDateText inWords isoDate={mocks.nextDate} />;
+  return t.rich("Next <date></date>", { date: () => date });
 }
 
 /** Mock exams aren't a setting, so the row opens the exam's page, where they are. */
@@ -188,31 +192,33 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
   );
 }
 
+/**
+ * The date the learner set, or with none the finish the plan works out, as the timeline says it.
+ * Never the day a finished plan was done.
+ */
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const finish = useRoadmapFinish();
+  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
-  if (!finish) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("None set");
-  }
-
-  const date = (
-    <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
-  );
-
-  if (goal.kind !== "exam" && !plan.end && !plan.schedule.targetDate) {
+  if (targetDate) {
     return (
-      <>
-        {t("None set")}
-        <span className="text-muted-foreground block text-xs">
-          {t.rich("Estimated finish <date></date>", { date: () => date })}
-        </span>
-      </>
+      <PlanDateText
+        estimate={targetDateEstimated}
+        isoDate={targetDate}
+        month={targetDateNamedMonth}
+      />
     );
   }
 
-  return date;
+  if (!plan.end && finish) {
+    return (
+      <PlanDateText estimate={finish.estimate} isoDate={finish.isoDate} month={finish.month} />
+    );
+  }
+
+  return goal.kind === "exam" ? t("To be confirmed") : t("None set");
 }
 
 export function PlanProperties({
@@ -273,7 +279,7 @@ export function PlanProperties({
         {goal.kind === "language" && practiced.length > 0 && (
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>
             {practiced.length === LANGUAGE_ACTIVITY_TYPES.length
-              ? t("Everything")
+              ? t("All activities")
               : practiced.map((activity) => activityName(activity)).join(FACT_SEPARATOR)}
           </PropertyRow>
         )}

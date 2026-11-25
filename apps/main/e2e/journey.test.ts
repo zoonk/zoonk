@@ -27,7 +27,9 @@ async function openJourney(page: Page) {
 }
 
 test.describe("Journey", () => {
-  test("shows the estimated end date when the learner set no date", async ({ browser }) => {
+  test("the End date row says the timeline's estimated finish when the learner set no date", async ({
+    browser,
+  }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
       expect(goal.targetDate).toBeNull();
@@ -35,10 +37,14 @@ test.describe("Journey", () => {
       await page.setViewportSize({ height: 900, width: 1440 });
       await openJourney(page);
 
+      const finish = page.locator('[data-state="finish"] [data-slot="plan-date"]');
+      await expect(finish).toContainText(/^~/u);
+      const finishText = (await finish.textContent()) ?? "";
+
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const endDate = properties.getByRole("button", { name: /^End date/u });
-      await expect(endDate).toContainText("None set");
-      await expect(endDate.locator('[data-slot="plan-date"]')).toContainText(/^~/u);
+      await expect(endDate.locator('[data-slot="plan-date"]')).toHaveText(finishText);
+      await expect(endDate).not.toContainText("None set");
     });
   });
 
@@ -47,8 +53,7 @@ test.describe("Journey", () => {
       await page.setViewportSize({ height: 900, width: 1440 });
       await openJourney(page);
 
-      const endDate = page.getByRole("button", { name: /^End date/u });
-      const estimate = endDate.locator('[data-slot="plan-date"]');
+      const estimate = page.locator('[data-state="finish"] [data-slot="plan-date"]');
       await expect(estimate).toBeVisible();
 
       const options = page.getByRole("button", { name: "Plan options" });
@@ -56,13 +61,17 @@ test.describe("Journey", () => {
       await options.click();
       await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
 
-      await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
       await expect(estimate).toHaveCount(0);
       await expect(page.locator('[data-slot="phase-when"]')).toHaveCount(0);
+
+      const properties = page.getByRole("region", { exact: true, name: "Your plan" });
+      const endDate = properties.getByRole("button", { name: /^End date/u });
+      await expect(endDate).toContainText("None set");
     });
   });
 
-  test("shows a paused goal's schedule on a phone", async ({ browser }) => {
+  test("a paused goal's schedule reads Paused on a phone", async ({ browser }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page }) => {
       await page.setViewportSize({ height: 844, width: 390 });
       await openJourney(page);
@@ -73,7 +82,7 @@ test.describe("Journey", () => {
       await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
 
       await expect(page.getByRole("button", { exact: true, name: "Resume" })).toBeVisible();
-      await expect(page.getByRole("button", { name: /^Schedule/u })).toBeVisible();
+      await expect(page.getByRole("button", { name: /^Schedule/u })).toContainText("Paused");
     });
   });
 

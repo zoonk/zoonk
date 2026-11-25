@@ -6,13 +6,21 @@ import { useExtracted } from "next-intl";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
-import { EndDateSizer } from "./roadmap-lane";
-import { BAND_CHECK_CLASS, BandName } from "./roadmap-styles";
+import { BandTodayTick, EndDateSizer } from "./roadmap-lane";
+import { BAND_CHECK_CLASS, BandName, splitBandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
 
-export function BandFace({ isLast, phase }: { isLast: boolean; phase: PlanPhaseView }) {
+export function BandFace({
+  isLast,
+  phase,
+  todayShare = null,
+}: {
+  isLast: boolean;
+  phase: PlanPhaseView;
+  todayShare?: number | null;
+}) {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
@@ -45,6 +53,9 @@ export function BandFace({ isLast, phase }: { isLast: boolean; phase: PlanPhaseV
             style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
           />
         </span>
+      )}
+      {todayShare !== null && (
+        <BandTodayTick nameLines={splitBandName(name)[1] ? 2 : 1} share={todayShare} />
       )}
     </>
   );

@@ -39,7 +39,7 @@ class PlanEditorResizeTest {
     fun aCountryAwaitingConfirmationStaysAsTheEditorMovesToTheSidePanel() {
         showEditor { PlanEdits() }
 
-        compose.onNodeWithText("Content country").performClick()
+        compose.onNodeWithText("Country").performClick()
         compose.onNodeWithText("Portugal").performClick()
         compose.onNodeWithText("Change country?").assertIsDisplayed()
 
@@ -56,7 +56,7 @@ class PlanEditorResizeTest {
             )
         }
 
-        compose.onNodeWithText("Content country").performClick()
+        compose.onNodeWithText("Country").performClick()
         compose.onNodeWithText("Portugal").performClick()
         compose.onNodeWithText("Change country").performClick()
         compose.waitForIdle()

@@ -18,8 +18,10 @@ import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
 import com.zoonk.api.models.LanguageAim
+import com.zoonk.api.models.OnboardingDraftSource
 import com.zoonk.api.models.OnboardingExamDate
 import com.zoonk.api.models.RegionChoice
+import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TargetCutoff
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toJavaLocalDate
@@ -150,7 +152,7 @@ class UnderstoodRows(
         val exam = country.kind == GoalContentCountry.Kind.EXAM
         return UnderstoodRow(
             "contentCountry",
-            text(if (exam) R.string.country_exam_label else R.string.country_content_label),
+            text(if (exam) R.string.country_exam_label else R.string.country_label),
             country.name,
             badge =
                 when (country.source) {
@@ -196,28 +198,41 @@ class UnderstoodRows(
         )
     }
 
-    /** A goal whose material can't all be read anymore ([missing]) keeps the row, even with none left, to say its plan won't follow it. */
+    /**
+     * Lists the material the plan follows (a file still being read counts: the plan waits for it). When some couldn't be
+     * read, the note names what (nothing readable in it, or gone: [missing]), and the row stays, even with none left, to
+     * say the plan won't follow it.
+     */
     fun materialRow(
-        material: List<String>,
+        material: List<OnboardingDraftSource>,
         missing: Boolean,
-    ): UnderstoodRow? =
-        if (material.isEmpty() && !missing) {
-            null
-        } else {
-            UnderstoodRow(
-                id = "material",
-                label = text(R.string.onboarding_row_material),
-                value = material.joinToString(", ") { it.ifBlank { text(R.string.onboarding_your_text) } },
-                note =
-                    text(
-                        when {
-                            !missing -> R.string.onboarding_row_material_note
-                            material.isEmpty() -> R.string.onboarding_row_material_all_missing_note
-                            else -> R.string.onboarding_row_material_missing_note
-                        },
-                    ),
-            )
-        }
+    ): UnderstoodRow? {
+        val (read, unread) = material.partition { it.readStatus != SourceReadStatus.UNREADABLE }
+        if (read.isEmpty() && unread.isEmpty() && !missing) return null
+        val title = { source: OnboardingDraftSource -> source.title.ifBlank { text(R.string.onboarding_your_text) } }
+        val note =
+            when {
+                !missing && unread.isEmpty() -> text(R.string.onboarding_row_material_note)
+
+                read.isEmpty() && material.size > 1 -> text(R.string.onboarding_row_material_all_unread_note)
+
+                read.isEmpty() -> text(R.string.onboarding_row_material_all_missing_note)
+
+                !missing && unread.size == 1 -> text(R.string.onboarding_row_material_unread_one_note, title(unread.single()))
+
+                // Past the one-file note, a file it couldn't read means two or more weren't read.
+                unread.isNotEmpty() -> text(R.string.onboarding_row_material_unread_some_note)
+
+                else -> text(R.string.onboarding_row_material_missing_note)
+            }
+        // With nothing readable, the files it couldn't read stay named, so the note's "it" or "them" has something to point at.
+        return UnderstoodRow(
+            id = "material",
+            label = text(R.string.onboarding_row_material),
+            value = read.ifEmpty { material }.joinToString(", ") { title(it) },
+            note = note,
+        )
+    }
 
     /** A country the learner asked for shows, with how far it reaches, even when the title names the language. */
     fun languageRows(

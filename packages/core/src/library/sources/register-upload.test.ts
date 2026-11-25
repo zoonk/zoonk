@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { del, get, issueSignedToken, setTtl } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -10,7 +11,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken } from "./create-upload-token";
 import { answerGoalUploadRequest, recordGoalResearchOutcome } from "./goal-upload-request";
+import { loadSourceDocuments } from "./load-source-documents";
 import { hashDocument } from "./parse-document";
+import { saveUploadReading } from "./read-upload-pages";
 import { registerSourceUpload } from "./register-upload";
 import { shareSourceUpload } from "./share-upload";
 import { refreshWebSource } from "./web-sources";
@@ -143,6 +146,321 @@ describe(registerSourceUpload, () => {
     expect(setTtl).toHaveBeenCalledExactlyOnceWith(url, { ttlDays: null, ...PRIVATE_STORE });
     expect(del).not.toHaveBeenCalled();
   });
+
+  it("checks visibility without reading an otherwise typed PDF's blank page", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/typed-with-blank.pdf", import.meta.url));
+    const pathname = `sources/${user.id}/${randomUUID()}-typed.pdf`;
+    mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: true,
+      source: {
+        contentHash: hashDocument({ bytes, text: "Biology notes\f\fCell division" }),
+        readStatus: "readable",
+      },
+      status: "ready",
+    });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { kind: "checkUploadVisibility" },
+    ]);
+  });
+
+  it("keeps a mixed PDF private with its scanned transcript even when its text layer matches a publisher copy", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/typed-with-scan.pdf", import.meta.url));
+    const pathname = `sources/${user.id}/${randomUUID()}-mixed.pdf`;
+    mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+    const result = await registerSourceUpload({ kind: "file", language: "en", pathname });
+
+    expect
+      .soft(result)
+      .toMatchObject({
+        checkVisibility: false,
+        source: { contentHash: hashDocument({ bytes, text: null }), readStatus: "reading" },
+        status: "ready",
+      });
+
+    if (result.status !== "ready") {
+      throw new Error("The mixed PDF should be accepted");
+    }
+
+    const sourceId = result.source.id;
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { input: { sourceId }, kind: "readUpload" },
+    ]);
+
+    await saveUploadReading({
+      failed: false,
+      pages: [{ index: 1, text: "Scanned drawing" }],
+      sourceId,
+    });
+
+    await expect
+      .soft(prisma.followUp.findMany({ where: { kind: "checkUploadVisibility", userId: user.id } }))
+      .resolves.toStrictEqual([]);
+
+    const publisherText = "Biology notes\f\fCell division";
+    servePublisherCopy(publisherText);
+
+    await expect.soft(shareNotice(sourceId)).resolves.toBeNull();
+
+    const transcript = "Biology notes\fScanned drawing\fCell division";
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: sourceId } }),
+    ).resolves.toMatchObject({
+      extractedText: transcript,
+      readState: "read",
+      visibility: "private",
+    });
+
+    await expect(loadSourceDocuments([sourceId], { preferText: true })).resolves.toMatchObject([
+      { file: { data: new Uint8Array(bytes), mediaType: "application/pdf" }, text: transcript },
+    ]);
+  });
+
+  it("adopts the learner's pre-reading photo when they upload it again", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const bytes = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4//8/AAX+Av5Y8msOAAAAAElFTkSuQmCC",
+      "base64",
+    );
+
+    const pathname = `sources/${user.id}/${randomUUID()}-notes.png`;
+    const contentHash = hashDocument({ bytes, text: null });
+
+    const source = await sourceFixture({
+      blobUrl: mockUploadedFile({ bytes, contentType: "image/png", pathname }),
+      contentHash,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      mimeType: "image/png",
+      ownerId: user.id,
+      url: null,
+      visibility: "private",
+    });
+
+    await expect(
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+    ).resolves.toMatchObject({
+      checkVisibility: false,
+      source: { id: source.id, readStatus: "reading" },
+      status: "ready",
+    });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ readState: "owed", structure: { visualPages: [0] } });
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { input: { sourceId: source.id }, kind: "readUpload" },
+    ]);
+  });
+
+  it("keeps the adopted file when the same new photo of a pre-reading copy is registered twice at once", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const bytes = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAADElEQVQImWP4//8/AAX+Av5Y8msOAAAAAElFTkSuQmCC",
+      "base64",
+    );
+
+    const contentHash = hashDocument({ bytes, text: null });
+
+    const source = await sourceFixture({
+      blobUrl: `https://store.private.blob.vercel-storage.com/sources/${user.id}/old-notes.png`,
+      contentHash,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      mimeType: "image/png",
+      ownerId: user.id,
+      url: null,
+      visibility: "private",
+    });
+
+    const pathname = `sources/${user.id}/${randomUUID()}-notes.png`;
+    const newUrl = mockUploadedFile({ bytes, contentType: "image/png", pathname });
+    const bothReading = Promise.withResolvers<null>();
+    const readBlob = vi.mocked(get).getMockImplementation();
+
+    vi.mocked(get).mockImplementation(async (...args) => {
+      if (vi.mocked(get).mock.calls.length === 2) {
+        bothReading.resolve(null);
+      }
+
+      await bothReading.promise;
+      return readBlob?.(...args) ?? null;
+    });
+
+    await Promise.all([
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+      registerSourceUpload({ kind: "file", language: "en", pathname }),
+    ]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ blobUrl: newUrl, readState: "owed" });
+
+    expect(del).not.toHaveBeenCalledWith(newUrl, expect.anything());
+  });
+
+  it("creates a private reading source when the learner's legacy mixed PDF has a text hash", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/typed-with-scan.pdf", import.meta.url));
+    const text = "Biology notes\f\fCell division";
+    const contentHash = hashDocument({ bytes, text });
+
+    const source = await sourceFixture({
+      blobUrl: `https://store.private.blob.vercel-storage.com/sources/${user.id}/old-mixed.pdf`,
+      contentHash,
+      createdAt: new Date("2026-01-05T12:00:00Z"),
+      extractedText: text,
+      identityKey: `private:${user.id}:upload:${contentHash}`,
+      kind: "upload",
+      mimeType: "application/pdf",
+      ownerId: user.id,
+      readState: null,
+      structure: { images: 0, pages: 3, topic: null },
+      url: null,
+      visibility: "private",
+    });
+
+    const pathname = `sources/${user.id}/${randomUUID()}-mixed.pdf`;
+    const url = mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+    const result = await registerSourceUpload({ kind: "file", language: "en", pathname });
+
+    expect(result).toMatchObject({
+      checkVisibility: false,
+      source: {
+        blobUrl: url,
+        contentHash: hashDocument({ bytes, text: null }),
+        readState: "owed",
+        readStatus: "reading",
+        structure: { mixedPdf: true, visualPages: [1] },
+        visibility: "private",
+      },
+      status: "ready",
+    });
+
+    if (result.status !== "ready") {
+      throw new Error("The mixed PDF should be accepted");
+    }
+
+    expect(result.source.id).not.toBe(source.id);
+
+    await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { input: { sourceId: result.source.id }, kind: "readUpload" },
+    ]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ where: { id: source.id } }),
+    ).resolves.toMatchObject({ blobUrl: source.blobUrl, contentHash, readState: null });
+
+    expect(del).not.toHaveBeenCalled();
+  });
+
+  it("keeps two different scans with the same text layer as separate private sources", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    async function registerScan(name: string) {
+      const bytes = await readFile(new URL(`_test-fixtures/${name}`, import.meta.url));
+      const pathname = `sources/${user.id}/${randomUUID()}-${name}`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+      await expect(
+        registerSourceUpload({ kind: "file", language: "en", pathname }),
+      ).resolves.toMatchObject({
+        checkVisibility: false,
+        source: { readStatus: "reading" },
+        status: "ready",
+      });
+    }
+
+    await registerScan("tiled-scan.pdf");
+    await registerScan("other-scan.pdf");
+
+    const sources = await prisma.source.findMany({ where: { ownerId: user.id } });
+    expect(sources.map((source) => source.extractedText)).toStrictEqual(["\f", "\f"]);
+    expect(new Set(sources.map((source) => source.contentHash)).size).toBe(2);
+  });
+
+  it("owes one read when the same scan arrives at once in two languages", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const bytes = await readFile(new URL("_test-fixtures/tiled-scan.pdf", import.meta.url));
+    const firstPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    const secondPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+    mockUploadedFile({ bytes, contentType: "application/pdf", pathname: firstPath });
+
+    const uploads = await Promise.all([
+      registerSourceUpload({ kind: "file", language: "en", pathname: firstPath }),
+      registerSourceUpload({ kind: "file", language: "pt", pathname: secondPath }),
+    ]);
+
+    expect(uploads).toMatchObject([
+      { source: { readStatus: "reading" }, status: "ready" },
+      { source: { readStatus: "reading" }, status: "ready" },
+    ]);
+
+    await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(1);
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "readUpload", userId: user.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it.each(["failed", "read"] as const)(
+    "re-adding an empty scan after a %s read",
+    async (readState) => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const bytes = await readFile(new URL("_test-fixtures/tiled-scan.pdf", import.meta.url));
+      const initialPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname: initialPath });
+
+      const first = await registerSourceUpload({
+        kind: "file",
+        language: "en",
+        pathname: initialPath,
+      });
+
+      if (first.status !== "ready") {
+        throw new Error("The scan should be accepted");
+      }
+
+      const sourceId = first.source.id;
+      await prisma.source.update({ data: { readState }, where: { id: sourceId } });
+      await prisma.followUp.deleteMany({ where: { userId: user.id } });
+      const nextPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname: nextPath });
+
+      await expect(
+        registerSourceUpload({ kind: "file", language: "en", pathname: nextPath }),
+      ).resolves.toMatchObject({
+        checkVisibility: false,
+        source: { id: sourceId, readStatus: readState === "failed" ? "reading" : "unreadable" },
+        status: "ready",
+      });
+
+      await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject(
+        readState === "failed" ? [{ input: { sourceId }, kind: "readUpload" }] : [],
+      );
+    },
+  );
 
   it("stores no source while its file would still expire, so trying again stores it", async () => {
     const user = await userFixture();

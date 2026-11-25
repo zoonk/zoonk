@@ -1206,6 +1206,9 @@ importers:
       parse5:
         specifier: 8.1.1
         version: 8.1.1
+      pdfjs-dist:
+        specifier: 6.5.438
+        version: 6.5.438
       pinyin-pro:
         specifier: 3.29.5
         version: 3.29.5
@@ -1439,9 +1442,6 @@ importers:
       fast-check:
         specifier: 'catalog:'
         version: 4.10.3
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.1.0-beta

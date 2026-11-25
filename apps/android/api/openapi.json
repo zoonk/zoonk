@@ -23817,6 +23817,16 @@
               }
             }
           },
+          "409": {
+            "description": "An attached source is still being read (`materialReading`); no assist is claimed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Too many requests",
             "content": {
@@ -23842,7 +23852,7 @@
     },
     "/research": {
       "post": {
-        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once, so when research asks that goal again, the answer needs a new upload; the same upload can still answer another goal's request.",
+        "description": "Starts research for one of the learner's goals: an exam's blueprint, the current law or documentation a goal depends on, or a big learn goal's reference syllabi. Research runs once per goal: asking again returns the run that researched it, running or done, and only a failed run starts over. With `sourceIds`, the learner's own uploads, it answers the goal's open upload request, once: the ask is cleared at once, research reads the uploads instead of searching, and the goal's curriculum is rebuilt from them once research has read them. Each upload answers a goal's request once. A pending read settles before research starts, and when none of the uploads yield text the request reopens.",
         "operationId": "createResearch",
         "security": [
           {
@@ -23909,6 +23919,16 @@
           },
           "409": {
             "description": "The goal has no upload request to answer (`CONFLICT`), or research already read every upload in an earlier answer to this goal (`UPLOAD_ALREADY_READ`): sending the same document again reads nothing new, so the learner needs a different one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "No readable text in the submitted uploads (`UPLOAD_UNREADABLE`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -34499,7 +34519,7 @@
               "pathname": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Must be inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID)"
+                "description": "Must be directly inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID). The name can't contain `/`, `\\`, `%`, `?`, `#`, tabs or line breaks, or end with a space."
               }
             },
             "required": [
@@ -98362,7 +98382,7 @@
             "items": {
               "$ref": "#/components/schemas/OnboardingDraftSource"
             },
-            "description": "The learner's material read together with the words, in the order they attached it: the uploads `sourceIds` named that hold text, each as it is now (a merged upload is its shared copy). The draft's main goal is created with every upload `sourceIds` still names. Empty when none was sent"
+            "description": "The learner's uploads in the order they attached them, including uploads with no readable text. A merged upload is its shared copy. The draft's main goal is created with every upload `sourceIds` still names"
           },
           "status": {
             "type": "string",
@@ -98410,6 +98430,9 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "readStatus": {
+            "$ref": "#/components/schemas/SourceReadStatus"
+          },
           "title": {
             "type": "string",
             "description": "The file's name or the link's title; empty for pasted text"
@@ -98417,9 +98440,19 @@
         },
         "required": [
           "id",
+          "readStatus",
           "title"
         ],
         "additionalProperties": false
+      },
+      "SourceReadStatus": {
+        "type": "string",
+        "enum": [
+          "reading",
+          "readable",
+          "unreadable"
+        ],
+        "description": "Whether the source is still being read, has readable text, or has no readable text"
       },
       "GoalUnderstanding": {
         "oneOf": [
@@ -102739,6 +102772,20 @@
                   "classMaterial"
                 ],
                 "description": "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes"
+              },
+              "unreadableUpload": {
+                "nullable": true,
+                "description": "The latest upload that answered this request and yielded no readable text. Null when there is none",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -102746,7 +102793,8 @@
               "goalId",
               "goalKind",
               "language",
-              "reason"
+              "reason",
+              "unreadableUpload"
             ],
             "additionalProperties": false
           }
@@ -103061,6 +103109,9 @@
             "nullable": true,
             "type": "string"
           },
+          "readStatus": {
+            "$ref": "#/components/schemas/SourceReadStatus"
+          },
           "reusePolicy": {
             "nullable": true,
             "allOf": [
@@ -103100,6 +103151,7 @@
           "language",
           "mimeType",
           "publisher",
+          "readStatus",
           "reusePolicy",
           "title",
           "url",
@@ -104884,6 +104936,20 @@
                   "classMaterial"
                 ],
                 "description": "`noOfficialSource`: research found no official notice or source. `unverified`: what it found didn't match what it read. `classMaterial`: a teacher's test that only the class's material describes"
+              },
+              "unreadableUpload": {
+                "nullable": true,
+                "description": "The latest upload that answered this request and yielded no readable text. Null when there is none",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -104891,7 +104957,8 @@
               "goalId",
               "goalKind",
               "language",
-              "reason"
+              "reason",
+              "unreadableUpload"
             ],
             "additionalProperties": false
           },

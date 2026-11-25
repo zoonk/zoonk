@@ -4,6 +4,7 @@ import { createResearchRequestSchema } from "@/lib/openapi/schemas/research-sour
 import { readBody } from "@/lib/request-input";
 import { startResearch } from "@/lib/research";
 import { readClientRunStatus } from "@/workflows/_shared/run-activity";
+import { startResearchUploadAnswer } from "@/workflows/research/answer-research-upload-workflow";
 import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type NextRequest, NextResponse } from "next/server";
 import { getRun } from "workflow/api";
@@ -51,6 +52,14 @@ async function createResearch(request: NextRequest) {
     });
   }
 
+  if (access.status === "unreadable") {
+    return createErrorResponse({
+      code: "UPLOAD_UNREADABLE",
+      message: "None of the uploads have readable text",
+      status: httpStatus.unprocessableEntity,
+    });
+  }
+
   const followed =
     access.sourceIds.length === 0 ? await findFollowableRun(access.researchRunId) : null;
 
@@ -58,7 +67,9 @@ async function createResearch(request: NextRequest) {
     return researchResponse(followed);
   }
 
-  const runId = await startResearch({ goalId: access.goalId, sourceIds: access.sourceIds });
+  const runId = access.pendingUploadAnswer
+    ? await startResearchUploadAnswer(access.pendingUploadAnswer)
+    : await startResearch({ goalId: access.goalId, sourceIds: access.sourceIds });
 
   return researchResponse({ runId, status: await getRun(runId).status });
 }

@@ -1,12 +1,8 @@
 "use client";
 
 import { MAX_GOAL_SOURCES } from "@zoonk/core/goals/goal-input-limits";
-import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CircleAlertIcon, FileTextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { ChangeSaveError } from "../../_components/save-error";
 import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { useAppLocale } from "../../_utils/locale";
 import { type GoalError, useGoalLimitWords } from "../goal-errors";
@@ -22,116 +18,13 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
+import { AttachedChips, UnreadableNote } from "./attached-chips";
 import { GoalEntry } from "./goal-entry";
 import { GoalLimitBar } from "./goal-limit-notice";
 import { type StartAttachment, type StartMaterial } from "./material-goal";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
-
-function AttachedChip({
-  item,
-  onRemove,
-}: {
-  item: StartAttachment;
-  onRemove: (id: string) => void;
-}) {
-  const t = useExtracted();
-  const title = item.title || t("Your text");
-  const { unreadable } = item;
-  const Icon = unreadable ? CircleAlertIcon : FileTextIcon;
-
-  return (
-    <li
-      className={cn(
-        "flex max-w-full items-center gap-1.5 rounded-md py-1 pr-1 pl-3 text-sm",
-        unreadable ? "bg-destructive/10 text-destructive-text dark:bg-destructive/20" : "bg-muted",
-      )}
-    >
-      <Icon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="truncate">{title}</span>
-      {unreadable && (
-        <span className="sr-only">
-          {`, ${t({
-            description:
-              "Read by screen readers after the name of an attached file that can't be read anymore.",
-            message: "Can't be read",
-          })}`}
-        </span>
-      )}
-      <Button
-        aria-label={t("Remove {title}", { title })}
-        className={cn(
-          "size-7",
-          unreadable && "hover:bg-destructive/20 hover:text-destructive-text",
-        )}
-        onClick={() => onRemove(item.id)}
-        size="icon"
-        variant="ghost"
-      >
-        <XIcon aria-hidden="true" />
-      </Button>
-    </li>
-  );
-}
-
-function UnreadableNote({ items }: { items: StartAttachment[] }) {
-  const t = useExtracted();
-  const [only, ...others] = items;
-
-  if (!only) {
-    return null;
-  }
-
-  return (
-    <ChangeSaveError>
-      {others.length > 0
-        ? t({
-            description:
-              "Under the learner's attached material when several items sent with their goal can't be read anymore.",
-            message: "We can't read some of your files anymore. Remove them and add them again.",
-          })
-        : t({
-            description:
-              "Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like \"Cell cycle.pdf\".",
-            message: "We can't read “{title}” anymore. Remove it and add it again.",
-            values: { title: only.title || t("Your text") },
-          })}
-    </ChangeSaveError>
-  );
-}
-
-function AttachedChips({
-  items,
-  onRemove,
-}: {
-  items: StartAttachment[];
-  onRemove: (id: string) => void;
-}) {
-  const t = useExtracted();
-  const unreadable = items.filter((item) => item.unreadable);
-
-  return (
-    <>
-      <ul aria-label={t("Your material")} className="flex flex-wrap gap-2">
-        {items.map((item) => (
-          <AttachedChip item={item} key={item.id} onRemove={onRemove} />
-        ))}
-      </ul>
-
-      <UnreadableNote items={unreadable} />
-
-      {items.length >= MAX_GOAL_SOURCES && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {t({
-            description:
-              "Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.",
-            message: "{count, number} files is the most for one goal. Remove one to add another.",
-            values: { count: MAX_GOAL_SOURCES },
-          })}
-        </p>
-      )}
-    </>
-  );
-}
+import { useFollowReading } from "./use-follow-reading";
+import { useSendAfterAdding } from "./use-send-after-adding";
 
 function GoalAttachments({
   attach,
@@ -139,8 +32,9 @@ function GoalAttachments({
   intent,
   items,
   language,
-  onChange,
+  onAdded,
   onIntentChange,
+  onRemove,
   open,
   ref,
   signUpHref,
@@ -150,8 +44,9 @@ function GoalAttachments({
   intent: MaterialIntent | null;
   items: StartAttachment[];
   language: string;
-  onChange: (items: StartAttachment[]) => void;
+  onAdded: () => void;
   onIntentChange: (intent: MaterialIntent) => void;
+  onRemove: (id: string) => void;
   open: boolean;
   ref: React.Ref<HTMLDivElement>;
   signUpHref: string;
@@ -176,16 +71,14 @@ function GoalAttachments({
         )}
       </p>
 
-      {items.length > 0 && (
-        <AttachedChips
-          items={items}
-          onRemove={(id) => onChange(items.filter((item) => item.id !== id))}
-        />
-      )}
+      {items.length > 0 && <AttachedChips items={items} onRemove={onRemove} />}
 
       {items.length > 0 && !open && (
-        <MaterialIntentChoice onChange={onIntentChange} value={intent} />
+        <MaterialIntentChoice className="mt-3" onChange={onIntentChange} value={intent} />
       )}
+
+      {/* Under the choices: a read that settles while the learner picks one moves nothing above it. */}
+      <UnreadableNote items={items} />
 
       {open && !canAttach && <SignUpPrompt signUpHref={signUpHref} />}
 
@@ -195,7 +88,7 @@ function GoalAttachments({
           language={language}
           onAttached={(source) => {
             setAdded(source);
-            onChange([...items.filter((item) => item.id !== source.id), source]);
+            onAdded();
           }}
         />
       )}
@@ -209,7 +102,7 @@ function AttachableGoalEntry({
   defaultGoal,
   error,
   fromSharedPlan,
-  material: { attached, intent, setAttached, setIntent },
+  material: { attached, intent, setAttached, setIntent, settle },
   onSubmit,
   routes,
 }: {
@@ -218,7 +111,7 @@ function AttachableGoalEntry({
   defaultGoal: string;
   error: GoalError | null;
   fromSharedPlan: boolean;
-  material: Pick<StartMaterial, "attached" | "intent" | "setAttached" | "setIntent">;
+  material: Pick<StartMaterial, "attached" | "intent" | "setAttached" | "setIntent" | "settle">;
   onSubmit: (goal: string) => void;
   routes: OnboardingRoutes;
 }) {
@@ -226,6 +119,15 @@ function AttachableGoalEntry({
   const [open, setOpen] = useState(false);
   const material = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+
+  useFollowReading({ onSettled: settle, read: attach.readStatus, sources: attached });
+
+  const sending = useSendAfterAdding({
+    attach,
+    onAdded: (source) =>
+      setAttached((current) => [...current.filter((item) => item.id !== source.id), source]),
+    onSend: onSubmit,
+  });
 
   // Not the new material's Remove: a learner still pressing Enter would remove what they added.
   useFocusOnRemovedControl(material, () => toggle.current);
@@ -237,28 +139,30 @@ function AttachableGoalEntry({
       attachRef={toggle}
       attachment={
         <GoalAttachments
-          attach={attach}
+          attach={sending.attach}
           canAttach={canAttach}
           intent={intent}
           items={attached}
           language={locale}
-          onChange={(items) => {
-            setAttached(items);
+          onAdded={() => setOpen(false)}
+          onIntentChange={setIntent}
+          onRemove={(id) => {
+            setAttached((current) => current.filter((item) => item.id !== id));
             setOpen(false);
           }}
-          onIntentChange={setIntent}
           open={open}
           ref={material}
           signUpHref={routes.signUp}
         />
       }
       canSubmitEmpty={attached.length > 0 && intent !== null}
-      defaultGoal={defaultGoal}
+      defaultGoal={sending.heldWords ?? defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
       hasAccount={canAttach}
       onAttach={() => setOpen((previous) => !previous)}
-      onSubmit={onSubmit}
+      onSubmit={sending.send}
+      sending={sending.waiting}
       signUpHref={routes.signUp}
     />
   );

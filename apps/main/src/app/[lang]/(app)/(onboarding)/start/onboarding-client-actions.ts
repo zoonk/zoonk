@@ -5,7 +5,12 @@ import { switchLanguage } from "@/i18n/switch-language";
 import { getGoalFocusTestHref } from "@/lib/focus-test/focus-test-href";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
-import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
+import {
+  attachGoalFile,
+  attachGoalLink,
+  attachGoalText,
+  readUploadStatus,
+} from "@/lib/goals/goal-uploads";
 import { readWarmUp } from "@/lib/goals/read-warm-up";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import {
@@ -56,7 +61,12 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answer: ({ goalId, input }) => answerOnboardingAction(goalId, input, getPageLanguage()),
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
-  attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
+  attach: {
+    file: attachGoalFile,
+    link: attachGoalLink,
+    readStatus: readUploadStatus,
+    text: attachGoalText,
+  },
   changeAim: ({ aim, goalId }) => changeOnboardingAimAction(goalId, aim, getPageLanguage()),
   createGoals: (input) => createAsGuest(() => createOnboardingGoalsAction(input)),
   findTimeToCover: findGoalTimeToCover,

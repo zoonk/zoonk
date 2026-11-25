@@ -356,8 +356,7 @@ private struct UnderstoodCard: View {
 
     return rows
       + [
-        UnderstoodRows.materialRow(
-          titles: draft.sources.map(\.title), missing: draft.materialMissing),
+        UnderstoodRows.materialRow(sources: draft.sources, missing: draft.materialMissing),
         UnderstoodRows.scheduleRow(understood),
       ].compactMap(\.self)
   }
@@ -627,7 +626,10 @@ private struct UnderstoodRowView: View {
           // Material that's all gone leaves only its note.
           if !row.value.isEmpty || !row.valueFacts.isEmpty {
             HStack(alignment: .firstTextBaseline) {
-              if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
+              Group {
+                if row.valueFacts.isEmpty { Text(row.value) } else { FactSegments(row.valueFacts) }
+              }
+              .typeWeight(.medium)
               if let badge = row.badge {
                 Text(badge)
                   .typeStyle(.meta)

@@ -98,12 +98,15 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   headers: async () => [...(await getPublicAppSecurityHeaders()), ...authLocaleCookies],
-  // Lesson code checks run model-written programs in a separate process that loads these
-  // WebAssembly runtimes from @zoonk/core's packages on disk, which tracing can't see.
+  // The PDF renderer and lesson code checks load native and WebAssembly assets from disk.
   outputFileTracingIncludes: {
     "/.well-known/workflow/**": [
-      "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
+      "../../packages/core/node_modules/{pdfjs-dist,pyodide,quickjs-wasi,sql.js}/package.json",
       "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
+      "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/pdfjs-dist/{cmaps,standard_fonts,wasm}/**",
+      "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/@napi-rs/canvas",
+      "../../node_modules/.pnpm/@napi-rs+canvas@*/node_modules/@napi-rs/**",
+      "../../node_modules/.pnpm/@napi-rs+canvas-*@*/node_modules/@napi-rs/**",
       "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
       "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
     ],
@@ -122,6 +125,7 @@ const nextConfig: NextConfig = {
     ],
     fallback: [],
   }),
+  serverExternalPackages: ["pdfjs-dist"],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },
@@ -130,14 +134,20 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: true },
 };
 
+/**
+ * `extract` compiles `useExtracted` calls, which a production build can't run without.
+ * `eloqnt extract` (`pnpm i18n:extract`) writes the catalogs, so with no `locales` the app only
+ * reads them. Development skips precompiling, so a string the catalogs don't have yet still fills
+ * in its placeholders.
+ */
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     extract: { path: "./messages" },
     messages: {
       format: "po",
-      locales: "infer",
+      locales: [],
       path: ["./messages", "../../packages/player/messages"],
-      precompile: true,
+      precompile: process.env.NODE_ENV !== "development",
       sourceLocale: "en",
     },
     srcPath: "./src",

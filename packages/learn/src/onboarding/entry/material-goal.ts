@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { type AttachedSource, type SentMaterial } from "../onboarding-actions";
 import { type MaterialIntent } from "./material-intent";
+import { type SettledRead, settleReads } from "./use-follow-reading";
 
 type DraftMaterial = Pick<OnboardingDraftView, "materialIntent" | "sources">;
 
@@ -28,8 +29,8 @@ function toDraftMaterial(draft: DraftMaterial): SentMaterial {
   return toSentMaterial({ attached: draft.sources, intent: draft.materialIntent });
 }
 
-/** Marked once a send was refused for it; adding it again brings an unmarked one. */
-export type StartAttachment = AttachedSource & { unreadable?: boolean };
+/** `missing` once a send was refused because it's gone; adding it again brings an unmarked one. */
+export type StartAttachment = AttachedSource & { missing?: boolean };
 
 /** What the learner attached on Start and chose to do with it; editing a draft brings back its own. */
 export function useStartMaterial() {
@@ -41,12 +42,15 @@ export function useStartMaterial() {
     setIntent(draft.materialIntent);
   };
 
-  const markUnreadable = (sourceIds: readonly string[]) =>
+  const markMissing = (sourceIds: readonly string[]) =>
     setAttached((current) =>
-      current.map((source) => ({ ...source, unreadable: sourceIds.includes(source.id) })),
+      current.map((source) => ({ ...source, missing: sourceIds.includes(source.id) })),
     );
 
-  return { attached, intent, markUnreadable, restore, setAttached, setIntent };
+  const settle = (settled: SettledRead[]) =>
+    setAttached((current) => settleReads({ settled, sources: current }));
+
+  return { attached, intent, markMissing, restore, setAttached, setIntent, settle };
 }
 
 export type StartMaterial = ReturnType<typeof useStartMaterial>;

@@ -3077,6 +3077,65 @@
         }
       }
     },
+    "Being read" : {
+      "comment" : "Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gelesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En proceso de lectura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture en cours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In lettura"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取り中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽는 중"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W trakcie odczytu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendo lido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okunuyor"
+          }
+        }
+      }
+    },
     "Build my plan" : {
       "comment" : "Ends the level test to build the plan\nSends the typed goal to start building a plan\nStarts a course as the learner's goal",
       "localizations" : {
@@ -3255,7 +3314,7 @@
       }
     },
     "Can't be read" : {
-      "comment" : "Read by screen readers after the name of an attached file that can't be read anymore.",
+      "comment" : "Read by screen readers after the name of an attached file that can't be read: it's gone, or nothing on it could be read.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3309,6 +3368,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artık okunamıyor"
+          }
+        }
+      }
+    },
+    "Can't be read anymore" : {
+      "comment" : "Read by screen readers after the name of an attached file that's gone, so it must be added again.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht mehr verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya no está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N’est plus disponible"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è più presente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう読み取れません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 이상 읽을 수 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można już odczytać"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá mais para ler"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artık mevcut değil"
           }
         }
       }
@@ -12146,6 +12264,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Emin değilim, kısa bir test çözeyim"
+          }
+        }
+      }
+    },
+    "Nothing on it could be read" : {
+      "comment" : "Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es ließ sich nichts darauf lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo leer nada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible à lire"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile leggere nulla"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容を読み取れませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽을 수 있는 내용 없음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się niczego odczytać"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível ler nada do arquivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçeriği okunamadı"
           }
         }
       }
@@ -21985,6 +22162,242 @@
         }
       }
     },
+    "We couldn't read “%@”. Try a sharper photo or paste the text." : {
+      "comment" : "Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like \"Notes.jpg\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten „%@“ nicht lesen. Versuch es mit einem schärferen Foto oder füge den Text ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos leer “%@”. Prueba con una foto más nítida o pega el texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lire « %@ ». Essaie avec une photo plus nette ou colle le texte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a leggere “%@”. Prova con una foto più nitida o incolla il testo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」を読み取れませんでした。もっと鮮明な写真を使うか、テキストを貼り付けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” 파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się odczytać pliku „%@”. Spróbuj zrobić wyraźniejsze zdjęcie albo wklej tekst."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ler “%@”. Tente enviar uma foto mais nítida ou colar o texto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” dosyasını okuyamadık. Daha net bir fotoğraf çekmeyi veya metni yapıştırmayı dene."
+          }
+        }
+      }
+    },
+    "We couldn't read it, so your plan won't follow it." : {
+      "comment" : "Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. \"It\" is that material.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten das Material nicht lesen, deshalb richtet sich dein Plan nicht danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos leerlo, así que tu plan no se basará en él."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de le lire, ton plan n’en tiendra donc pas compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a leggere questo materiale, quindi il tuo piano non si baserà su di esso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み取れなかったため、学習計画には反映されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료를 읽을 수 없어 계획에 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się odczytać tych materiałów, dlatego plan nie będzie się na nich opierać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ler esse material, então seu plano não vai se basear nele."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu okuyamadık, bu yüzden planın bunu temel almayacak."
+          }
+        }
+      }
+    },
+    "We couldn't read these files, so your plan won't follow them." : {
+      "comment" : "Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Dateien nicht lesen, deshalb richtet sich dein Plan nicht danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos leer estos archivos, así que tu plan no se basará en ellos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lire ces fichiers, ton plan n’en tiendra donc pas compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a leggere questi file, quindi il tuo piano non si baserà su di essi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらのファイルを読み取れなかったため、学習計画には反映されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일을 읽을 수 없어 계획에 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się odczytać tych plików, dlatego plan nie będzie się na nich opierać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ler esses arquivos, então seu plano não vai se basear neles."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosyaları okuyamadık, bu yüzden planın bunları temel almayacak."
+          }
+        }
+      }
+    },
+    "We couldn't read these files. Try sharper photos or paste the text." : {
+      "comment" : "Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Dateien nicht lesen. Versuch es mit schärferen Fotos oder füge den Text ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos leer estos archivos. Prueba con fotos más nítidas o pega el texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de lire ces fichiers. Essaie avec des photos plus nettes ou colle le texte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a leggere questi file. Prova con foto più nitide o incolla il testo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらのファイルを読み取れませんでした。鮮明な写真を使うか、テキストを貼り付けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się odczytać tych plików. Spróbuj zrobić wyraźniejsze zdjęcia albo wklej tekst."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ler esses arquivos. Tente enviar fotos mais nítidas ou colar o texto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dosyaları okuyamadık. Daha net fotoğraflar çekmeyi veya metni yapıştırmayı dene."
+          }
+        }
+      }
+    },
     "We couldn't read your goal. Try again in a moment." : {
       "comment" : "Sending a typed goal failed",
       "localizations" : {
@@ -27380,6 +27793,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın ve derslerin yalnızca bu materyale göre ilerliyor. Geri kalanı artık okunamıyor."
+          }
+        }
+      }
+    },
+    "Your plan and lessons follow only this material. We couldn't read “%@”." : {
+      "comment" : "Under the learner's material on the goal card, when nothing could be read on one of their files. \"This material\" is what the row lists; {title} is the file it couldn't read, like \"Notes.jpg\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich nur nach diesem Material. „%@“ konnten wir nicht lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones se basan solo en este material. No pudimos leer “%@”."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons s’appuient uniquement sur ce contenu. Impossible de lire « %@ »."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano e le lezioni si basano solo su questo materiale. Non siamo riusciti a leggere “%@”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画とレッスンには、この資料だけが使われます。「%@」を読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획과 레슨은 이 자료만 바탕으로 만들어요. “%@” 파일은 읽을 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan i lekcje opierają się tylko na tych materiałach. Nie udało nam się odczytać pliku „%@”."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler “%@”."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın ve derslerin yalnızca bu materyali temel alacak. “%@” dosyasını okuyamadık."
+          }
+        }
+      }
+    },
+    "Your plan and lessons follow only this material. We couldn't read the other files." : {
+      "comment" : "Under the learner's material on the goal card, when nothing could be read on several of their files. \"This material\" is what the row lists.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Die anderen Dateien konnten wir nicht lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones se basan solo en este material. No pudimos leer los demás archivos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons s’appuient uniquement sur ce contenu. Impossible de lire les autres fichiers."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano e le lezioni si basano solo su questo materiale. Non siamo riusciti a leggere gli altri file."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画とレッスンには、この資料だけが使われます。他のファイルを読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 파일은 읽을 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan i lekcje opierają się tylko na tych materiałach. Nie udało nam się odczytać pozostałych plików."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler os outros arquivos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın ve derslerin yalnızca bu materyali temel alacak. Diğer dosyaları okuyamadık."
+          }
+        }
+      }
+    },
+    "Your plan and lessons follow only this material. We couldn't read the rest." : {
+      "comment" : "Under the learner's material on the goal card, when some of it is gone. \"This material\" is what the row lists.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich nur nach diesem Material. Den Rest konnten wir nicht lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones se basan solo en este material. No pudimos leer el resto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons s’appuient uniquement sur ce contenu. Impossible de lire le reste."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano e le lezioni si basano solo su questo materiale. Non siamo riusciti a leggere il resto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画とレッスンには、この資料だけが使われます。残りの資料を読み取れませんでした。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 자료는 읽을 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan i lekcje opierają się tylko na tych materiałach. Pozostałych plików już nie ma."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas vão se basear apenas neste material. Não conseguimos ler o restante."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın ve derslerin yalnızca bu materyali temel alacak. Kalan dosyalara erişemedik."
           }
         }
       }

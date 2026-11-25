@@ -2,6 +2,7 @@ import "server-only";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { buildSourceIdentityKey } from "@zoonk/utils/identity-key";
+import { canCheckUploadVisibility } from "./load-source-documents";
 import { getKnownReusePolicy } from "./reuse-policy";
 import { SOURCE_READ_VERSION } from "./source-contract";
 import { deleteUploadedBlob } from "./upload-blob";
@@ -56,7 +57,7 @@ async function mergeIntoPublicSource({
       WHERE source_id = ${privateSourceId}::uuid
       ON CONFLICT (goal_id, source_id) DO UPDATE
       SET origin = CASE WHEN EXCLUDED.origin = 'upload' THEN EXCLUDED.origin ELSE goal_sources.origin END,
-        answered_at = COALESCE(goal_sources.answered_at, EXCLUDED.answered_at)
+        answered_at = GREATEST(goal_sources.answered_at, EXCLUDED.answered_at)
     `,
     prisma.stepSource.deleteMany({
       where: {
@@ -128,6 +129,7 @@ async function publishCopy({
         mimeType: copy.contentType,
         ownerId: null,
         publisher: input.publisher,
+        readState: null,
         readVersion: SOURCE_READ_VERSION,
         reusePolicy:
           getKnownReusePolicy({ publisher: input.publisher, url: copy.url }) ?? undefined,
@@ -159,11 +161,11 @@ async function publishCopy({
  */
 export async function shareSourceUpload(input: ShareUploadInput): Promise<SharedUpload | null> {
   const upload = await prisma.source.findUnique({
-    select: { blobUrl: true, contentHash: true, kind: true, visibility: true },
+    select: { blobUrl: true, contentHash: true, kind: true, readState: true, visibility: true },
     where: { id: input.sourceId },
   });
 
-  if (upload?.kind !== "upload" || upload.visibility !== "private") {
+  if (!upload || !canCheckUploadVisibility(upload)) {
     return null;
   }
 

@@ -51,6 +51,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -199,8 +200,12 @@ fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
     OutlinedButton(onClick = LocalFrame.current.open, size = ButtonSize.Small) { Text(text) }
 }
 
+/** [maxLines] cuts words the learner wrote, say a goal they typed, that could run long. */
 @Composable
-fun SuggestionHeader(text: String) {
+fun SuggestionHeader(
+    text: String,
+    maxLines: Int = Int.MAX_VALUE,
+) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
     val style = if (sheet) MaterialTheme.zoonkType.sheetTitle else MaterialTheme.zoonkType.compact.copy(fontWeight = FontWeight.SemiBold)
@@ -208,15 +213,18 @@ fun SuggestionHeader(text: String) {
         text = text,
         modifier = Modifier.focusRequester(if (sheet) frame.sheetFocus else frame.focus).focusable().semantics { heading() },
         style = style.balanced(),
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
 fun SuggestionDescription(
     text: String,
+    modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Text(text = text, style = descriptionStyle(), color = color)
+    Text(text = text, modifier = modifier, style = descriptionStyle(), color = color)
 }
 
 @Composable
@@ -270,7 +278,15 @@ fun SuggestionMainAction(
     onClick: () -> Unit,
     enabled: Boolean = true,
     busy: Boolean = false,
-) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current != Presentation.Sheet)
+    leadingIcon: (@Composable () -> Unit)? = null,
+) = SuggestionAction(
+    text,
+    onClick,
+    enabled = enabled,
+    busy = busy,
+    secondary = LocalPresentation.current != Presentation.Sheet,
+    leadingIcon = leadingIcon,
+)
 
 /** On a line it's always [secondary], beside the summary. */
 @Composable

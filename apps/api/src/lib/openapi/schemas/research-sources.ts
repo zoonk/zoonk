@@ -4,7 +4,11 @@ import {
   examStructureSchema,
   topicFrequencySchema,
 } from "@zoonk/core/library/exams/blueprint-contract";
-import { MAX_PASTED_TEXT_LENGTH, reusePolicySchema } from "@zoonk/core/library/sources/contract";
+import {
+  MAX_PASTED_TEXT_LENGTH,
+  reusePolicySchema,
+  sourceReadStatusSchema,
+} from "@zoonk/core/library/sources/contract";
 import { LearnerSourceOrigin, LibraryVisibility, SourceKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -51,6 +55,7 @@ export const sourceResourceSchema = z
     language: z.string(),
     mimeType: z.string().nullable(),
     publisher: z.string().nullable(),
+    readStatus: sourceReadStatusSchema,
     reusePolicy: reusePolicyResourceSchema.nullable(),
     title: z.string(),
     url: z
@@ -74,7 +79,7 @@ export const uploadTokenRequestSchema = z
         .min(1)
         .meta({
           description:
-            "Must be inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID)",
+            "Must be directly inside `sources/{userId}/`, the learner's own folder, and new for each file (Zoonk's apps start the name with a random UUID). The name can't contain `/`, `\\`, `%`, `?`, `#`, tabs or line breaks, or end with a space.",
         }),
     }),
     type: z.literal("blob.generate-presigned-url"),

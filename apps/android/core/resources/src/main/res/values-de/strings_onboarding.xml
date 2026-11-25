@@ -146,11 +146,15 @@
   "onboarding_material_description": "b94bd182c59a903cd4ba09f9b2d53591dc0a1686c412ba69d4c393f6b15e7588",
   "onboarding_material_goal_exam": "501d3019f8b61ef1604af510e94a772bd37bd6d30e470c4b9cd3d4906e736923",
   "onboarding_material_goal_understand": "484d8aefa13e0d8a4c7d3932bd5996f1de4dbdc83f2f6c6a0183e3c9da8cb8dd",
+  "onboarding_material_gone_state": "19eb517c4011ac262d220ca9fea11151f977d0c742fe731915d9f0e496c5bb78",
   "onboarding_material_limit": "5a8876dc5f108a6442750386d9d3576cf764fd3e7934668908316c0bb03901c3",
+  "onboarding_material_reading_state": "ea3160eef930fb22edf0fe21df0571d2689e15cea12aa26a49c17569cc1b4746",
   "onboarding_material_sign_up": "8bb9a86cbe25b60b4f01d95bc666dc7e289a614b30ecc947cabfa42ec4b5c1c3",
+  "onboarding_material_unread_one": "cd14412cc6928b5f4ad1e2b1927395f8ddd79ea6f234cbf6a59ea69441b732e7",
+  "onboarding_material_unread_some": "17042d4b69d76f26940290daf6ec0a69aa96361b4e137fdeca3478504b0b903d",
   "onboarding_material_unreadable_one": "9dcb87dd867c4a825b3e81b5f932e39348bb53f6deaa011b1675f39c5e122b07",
   "onboarding_material_unreadable_some": "1c7ed351f67139a8b4f886f23a88ec9d270d90d8cdaad51957bd865577b5666b",
-  "onboarding_material_unreadable_state": "04fe863940767c2909e816f99493611591f529fb0c19e8b303122a066d77e0a1",
+  "onboarding_material_unreadable_state": "6015b94d03bc56a1584dd5f5983d250e9ea3f2930a48a73418717bfb050e2b5f",
   "onboarding_more": "c8068cab50b6dd3a5613fd95889ddea268cfe59e426c563dc7c0033a471548c6",
   "onboarding_musicianship_card": "e949ac86931736ea76b3eedb4aae7ee67083fc925f23fd96b7ce80b09f6831a2",
   "onboarding_musicianship_subject": "26b469bd3eb87c5255e9d2d86faabe364179939c6dbe694d317c0373f264a4d8",
@@ -276,9 +280,12 @@
   "onboarding_row_last_cutoff": "d3716a7354d6d1c1d74af996e53d4d682fd6e4654a8d694684f5eea111f1e0cb",
   "onboarding_row_level": "073f12fbb10541d214aacb3f9fbe901b53293ed2407358616477fcd5a2f43e75",
   "onboarding_row_material": "ff51052151f49962abebee7c9083bc20dcd9ceb6224cf88fc86ae05cd16ca2b2",
-  "onboarding_row_material_all_missing_note": "ade57de84e6cd36b61da12d69ace334422bde136580dd8784b5578023754e030",
-  "onboarding_row_material_missing_note": "de1d011a885bf07d3319bc65d435bc92eb801475c20f086a72edb9a832040647",
+  "onboarding_row_material_all_missing_note": "71aa5476176cc9c712cb2187cce13293f37dc3f610fbe9ddd47b7ca936f5ac9f",
+  "onboarding_row_material_all_unread_note": "bdc8ac2fe77bb78830e1d56b3d8df0a54f3093efedd3343925414ed0b62fcb8d",
+  "onboarding_row_material_missing_note": "98cb112ec69a78cc9ef5c84427eba6aad412e8b42a7db9011ca2bef77ceedc19",
   "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
+  "onboarding_row_material_unread_one_note": "d7be4c04419b1356f459e4c6015fb14d9cfff09aeecac1eb5c8f73d8520ca46c",
+  "onboarding_row_material_unread_some_note": "4de02c925ca457cdf651c380df8ef8a0b5be8498fe1eb17752efe80e7619de2d",
   "onboarding_row_minutes_a_day": "2355fcb7b285f271debd6edce0c0496b376f823b116d5d428851f69f7f1a3cd6",
   "onboarding_row_notice_says": "9efe86f70681ddddd189e621d097dc1735021da9cdc57fa6d6b9245f2d49948a",
   "onboarding_row_pick_date": "707eb339b9cd4edfa7d816ea03105100a1ba7e173a2e6f8027ccc001dc8d0beb",
@@ -452,10 +459,16 @@
     <string name="onboarding_row_minutes_a_day">%1$s pro Tag</string>
     <string name="onboarding_row_material">Dein Material</string>
     <string name="onboarding_row_material_note">Dein Plan und deine Lektionen richten sich nach diesem Material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
-    <string name="onboarding_row_material_missing_note">Dein Plan und deine Lektionen richten sich nur nach diesem Material. Der Rest lässt sich nicht mehr lesen.</string>
-    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
-    <string name="onboarding_row_material_all_missing_note">Dein Material kann nicht mehr gelesen werden, deshalb kann dein Plan es nicht berücksichtigen.</string>
+    <!-- Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Dein Plan und deine Lektionen richten sich nur nach diesem Material. Den Rest konnten wir nicht lesen.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg". -->
+    <string name="onboarding_row_material_unread_one_note">Dein Plan und deine Lektionen richten sich nur nach diesem Material. „%1$s“ konnten wir nicht lesen.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_unread_some_note">Dein Plan und deine Lektionen richten sich nur nach diesem Material. Die anderen Dateien konnten wir nicht lesen.</string>
+    <!-- Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">Wir konnten das Material nicht lesen, deshalb richtet sich dein Plan nicht danach.</string>
+    <!-- Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone. -->
+    <string name="onboarding_row_material_all_unread_note">Wir konnten diese Dateien nicht lesen, deshalb richtet sich dein Plan nicht danach.</string>
     <string name="onboarding_row_exam_date">Prüfungstermin</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Prüfungstermine</string>
@@ -525,8 +538,16 @@
     <string name="onboarding_material_unreadable_one">„%1$s“ kann nicht mehr gelesen werden. Entferne die Datei und füge sie noch einmal hinzu.</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">Einige deiner Dateien können nicht mehr gelesen werden. Entferne sie und füge sie noch einmal hinzu.</string>
-    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
-    <string name="onboarding_material_unreadable_state">Nicht mehr lesbar</string>
+    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg". -->
+    <string name="onboarding_material_unread_one">Wir konnten „%1$s“ nicht lesen. Versuch es mit einem schärferen Foto oder füge den Text ein.</string>
+    <!-- Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above. -->
+    <string name="onboarding_material_unread_some">Wir konnten diese Dateien nicht lesen. Versuch es mit schärferen Fotos oder füge den Text ein.</string>
+    <!-- Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read. -->
+    <string name="onboarding_material_unreadable_state">Es ließ sich nichts darauf lesen</string>
+    <!-- Read by screen readers after the name of an attached file that's gone, so it must be added again. -->
+    <string name="onboarding_material_gone_state">Nicht mehr verfügbar</string>
+    <!-- Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read. -->
+    <string name="onboarding_material_reading_state">Wird gelesen</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
     <string name="onboarding_material_limit">Für ein Ziel sind höchstens %1$s Dateien möglich. Entferne eine, um eine weitere hinzuzufügen.</string>
     <string name="onboarding_intent_title">Was möchtest du tun?</string>

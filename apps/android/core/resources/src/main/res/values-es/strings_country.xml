@@ -5,11 +5,10 @@
   "country_change_body": "11da6489df5f2d5ddb404e4db748d07eed32d7c551c6bc7448b1a5b5bc01242c",
   "country_change_confirm": "9da7d43c9c5834c6bfcb0f316737ca5f58f806d77e05c1dc3b5f7cb0f487dc19",
   "country_change_title": "042048168b2f9f02f884ad7311f7290afafbd06d78dc787df7bd67070c4b6c3f",
-  "country_content_label": "a26d525bca9f81ead51679db230f38aa29385264658a0ed834e3877eaf3b3bb8",
   "country_content_value": "78b043f51d28e891d78ea6d687ec5dc649c356212954becea429d6024db0f8f0",
   "country_exam_label": "190428363d1c28aa257ff12924627b80c90994578ab946f20b64df53cc35677a",
   "country_home_label": "40e5187c1fae7c6c8baeb363db3dba81587f763aefeaf05e3784b789fe291956",
-  "country_lesson_examples_label": "934aa7aa81a3afff26efa18e03524ad2c9b0857d7c4e8b22e1c51ff928e9da84",
+  "country_label": "f6dbd10d8bb3ebde0599212c8d27535569ce43f567ade69e66e6025673cf7467",
   "country_lesson_language_label": "3d4a4af0c131097ce8369f9b3bfbc7c1b875d199b89bfbef07c8f108be8c1848",
   "country_lesson_language_value": "c14031c70591d57827b65b1fc073a157d504a294c0ef98e8d3d04c0989ebd07e",
   "country_load_failed": "16fc3d97c9da27a92623449b61f53c82315eeb84a1b92cadc2388b942eebae81",
@@ -43,8 +42,8 @@
     <string name="country_load_failed">No pudimos cargar la lista.</string>
     <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
     <string name="country_home_label">%1$s, donde vives</string>
-    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
-    <string name="country_content_label">País del contenido</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes, or whose examples it uses. The country's name follows it as a value. -->
+    <string name="country_label">País</string>
     <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_content_value">País del contenido: %1$s</string>
     <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
@@ -53,8 +52,6 @@
     <string name="country_lesson_language_label">Idioma de las lecciones</string>
     <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
     <string name="country_lesson_language_value">Idioma de las lecciones: %1$s</string>
-    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
-    <string name="country_lesson_examples_label">Ejemplos de las lecciones</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
     <string name="country_change_title">¿Cambiar de país?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->

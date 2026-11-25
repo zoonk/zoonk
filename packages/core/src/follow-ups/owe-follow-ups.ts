@@ -62,7 +62,10 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.mockId;
     case "reviewAlphabetLesson":
       return `${followUp.input.lessonId}:${followUp.input.version}`;
+    case "answerResearchUpload":
+      return followUp.input.answerId;
     case "checkUploadVisibility":
+    case "readUpload":
       return followUp.input.sourceId;
     case "endWebPlusBesideStore":
       return "webPlus";

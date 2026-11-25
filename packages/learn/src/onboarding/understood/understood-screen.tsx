@@ -24,15 +24,11 @@ import {
 import { type UnderstandingDraft } from "./understanding-draft";
 import { readEditValue, toDraftEdit } from "./understood-edits";
 import { useCardLimit } from "./understood-limit";
+import { useMaterialRow } from "./understood-material-row";
 import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
 import { useScheduleRow } from "./use-schedule-row";
-import {
-  type EditableField,
-  type UnderstoodRow,
-  useMaterialRow,
-  useUnderstoodRows,
-} from "./use-understood-rows";
+import { type EditableField, type UnderstoodRow, useUnderstoodRows } from "./use-understood-rows";
 
 type Field = EditableField["key"];
 

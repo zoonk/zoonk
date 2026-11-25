@@ -273,6 +273,26 @@ class PlanScreenshots {
     }
 
     /** Ana's ENEM: four phases to the exam, then After the exam; without a date, the plan's estimate ends it. */
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedWithoutAnEndDate() = capture("plan-no-end-date-expanded", exam = undatedPage())
+
+    @Test
+    @Config(qualifiers = "w700dp-h1600dp-xhdpi")
+    fun mediumWithoutAnEndDate() = capture("plan-no-end-date-medium", exam = undatedPage())
+
+    /** A goal with no date of its own: the plan only estimates when it finishes. */
+    private fun undatedPage(): PlanPageState {
+        val plan =
+            learnPlan().let {
+                it.copy(
+                    schedule = it.schedule.copy(targetDate = null),
+                    estimate = it.estimate.copy(endDate = kotlinx.datetime.LocalDate(2027, 1, 20)),
+                )
+            }
+        return PlanPageState(learnerSummary().goals.first(), plan, learnerSummary())
+    }
+
     private fun examPage(dated: Boolean): PlanPageState {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val base = learnPlan().let { plan -> plan.copy(phases = plan.phases.map { it.asEnem() }) }
@@ -733,7 +753,6 @@ class PlanScreenshots {
                                     page,
                                     shot.edits,
                                     PlanLinks(navigator, page),
-                                    Resume.Plain,
                                     onAdjust = {},
                                     layout = layout,
                                     host = shot.host,

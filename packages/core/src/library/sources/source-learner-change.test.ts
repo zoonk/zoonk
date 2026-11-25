@@ -39,7 +39,12 @@ async function setup() {
 describe("source writes", () => {
   it("marks an upload answer once and keeps retries, no-source checks and private-source refusals unchanged", async () => {
     const { goal, plan, user } = await setup();
-    const [source, other] = await Promise.all([sourceFixture(), userFixture()]);
+
+    const [source, other] = await Promise.all([
+      sourceFixture({ extractedText: "Biology notes" }),
+      userFixture(),
+    ]);
+
     const privateSource = await sourceFixture({ ownerId: other.id, visibility: "private" });
     await learnerSourceFixture({ sourceId: source.id, userId: user.id });
 
@@ -128,7 +133,11 @@ describe("source writes", () => {
 
   it("takes the marker before answering an upload request and rolls back a concurrent loser", async () => {
     const { goal, user } = await setup();
-    const sources = await Promise.all([sourceFixture(), sourceFixture()]);
+
+    const sources = await Promise.all([
+      sourceFixture({ extractedText: "Biology notes" }),
+      sourceFixture({ extractedText: "Physics notes" }),
+    ]);
 
     await Promise.all(
       sources.map((source) => learnerSourceFixture({ sourceId: source.id, userId: user.id })),

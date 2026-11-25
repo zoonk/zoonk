@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.onboarding
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
@@ -102,7 +103,10 @@ class MaterialQuestionsScreenshots {
         compose.waitForIdle()
         write("material-questions-empty-$name")
         repeat(FILLING_TURNS) {
-            compose.runOnUiThread { vm.ask("Why does glycolysis net only 2 ATP when it makes 4?", "en") }
+            compose.runOnUiThread {
+                vm.question.setTextAndPlaceCursorAtEnd("Why does glycolysis net only 2 ATP when it makes 4?")
+                vm.ask("en")
+            }
             compose.waitForIdle()
         }
         write("material-questions-filled-$name")

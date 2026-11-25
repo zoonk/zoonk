@@ -35,6 +35,7 @@ struct GoalStartEntry: View {
         words: $goal.words, isSection: part != .box, showsExamples: part == .whole,
         showsFreeNote: showsFreeNote,
         canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
+        materialDraft: part != .box ? materialDraft : nil,
         onSubmit: send,
         attach: {
           if part != .box, let materialDraft {
@@ -126,7 +127,9 @@ extension SentGoal {
 
     self.init(
       words: draft.prompt,
-      material: draft.sources.map { AttachedSource(id: $0.id, title: $0.title) },
+      material: draft.sources.map {
+        AttachedSource(id: $0.id, title: $0.title, readStatus: $0.readStatus)
+      },
       intent: intent)
   }
 }
@@ -158,6 +161,9 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
   var error: GoalError?
   /// With material and what to do with it, the box may stay empty.
   var canSubmitEmpty = false
+  /// The screen's material being added: sending while a file is still being added waits for it,
+  /// so the goal goes with it.
+  var materialDraft: Binding<MaterialDraft>?
   let onSubmit: (String) -> Void
   /// Main's paperclip, at the box's leading edge across from "Build my plan".
   @ViewBuilder var attach: () -> Attach
@@ -203,7 +209,7 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
 
           Spacer(minLength: 0)
 
-          Button(action: submit) {
+          BusyButton(isBusy: isHolding, action: submit) {
             Text(
               "Build my plan", tableName: "Onboarding",
               comment: "Sends the typed goal to start building a plan")
@@ -216,6 +222,11 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
       .padding(12)
       .inputPanel(isFocused: isFocused)
       .keepsOffFold()
+      .onChange(of: materialDraft?.wrappedValue.isAdding ?? false) { _, isAdding in
+        if !isAdding {
+          sendHeld()
+        }
+      }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
 
@@ -257,7 +268,30 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
     guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: canSubmitEmpty) else { return }
 
     isFocused = false
-    onSubmit(goal)
+
+    if let materialDraft, materialDraft.wrappedValue.isAdding {
+      materialDraft.wrappedValue.heldWords = goal
+    } else {
+      onSubmit(goal)
+    }
+  }
+
+  private var isHolding: Bool {
+    materialDraft?.wrappedValue.heldWords != nil
+  }
+
+  /// Once the file is added, the held words go with it; if adding it failed, its failure shows and
+  /// nothing is sent.
+  private func sendHeld() {
+    guard let materialDraft, let held = materialDraft.wrappedValue.heldWords else {
+      return
+    }
+
+    materialDraft.wrappedValue.heldWords = nil
+
+    if materialDraft.wrappedValue.error == nil {
+      onSubmit(held)
+    }
   }
 
   private var placeholder: LocalizedStringResource {

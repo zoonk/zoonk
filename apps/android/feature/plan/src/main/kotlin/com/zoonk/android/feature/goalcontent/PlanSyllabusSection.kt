@@ -23,12 +23,12 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevronSpace
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.api.models.GoalContentGoal
@@ -39,7 +39,8 @@ import com.zoonk.api.models.SyllabusSubject
 /**
  * The Plan's structure (main's `SyllabusSection`): an exam's subjects or the plan's modules, grouped
  * as the notice groups them, each with its progress and opening its page through [onOpenSubject]
- * with the subject's key. Show it only when [hasSubjectPages].
+ * with the subject's key. Show it only when [hasSubjectPages]. Its words start a row's inset in, so a column
+ * bleeds it by `LIST_ITEM_INSET`: only a highlighted row's fill reaches past the column's edge.
  */
 @Composable
 fun PlanSyllabusSection(
@@ -64,10 +65,13 @@ fun PlanSyllabusSection(
             if (exam) {
                 // Main's legend for the bars (`bars-meaning`): quiet words, not a mono fact.
                 SectionHeader(stringResource(R.string.goalcontent_subjects), Modifier.padding(horizontal = PAGE_PADDING)) {
-                    Text(
-                        stringResource(R.string.goalcontent_preparation),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
+                    BarsMeaning(
+                        questionsWidth =
+                            QUESTIONS_WIDTH.takeIf {
+                                layout == RowLayout.WithQuestions &&
+                                    syllabus.subjects.any { (it.questions ?: 0) > 0 }
+                            },
+                        shareColumn = barWidth + COLUMN_GAP + SHARE_WIDTH,
                     )
                 }
                 SharedExamsNote(syllabus.sharedExams, Modifier.padding(top = 8.dp))
@@ -92,7 +96,6 @@ fun PlanSyllabusSection(
                 }
             }
 
-            SectionNote(annotate(sectionCount(syllabus)), Modifier.padding(top = 12.dp))
             // Main's quiet "Sources": where the question counts and the course's weights come from, for who wants to check.
             if (syllabus.questionsSource != null || syllabus.courseWeights?.source != null) {
                 QuietDisclosure(stringResource(R.string.plan_sources), Modifier.padding(horizontal = PAGE_PADDING)) {
@@ -107,6 +110,40 @@ fun PlanSyllabusSection(
 }
 
 private enum class RowLayout { Stacked, BarBeside, WithQuestions }
+
+/**
+ * Main's `BarsMeaning`: each heading over its column, laid out as the rows are. "On the exam" ends where the
+ * question counts end, when rows show them ([questionsWidth]); "Preparation" ends where the shares end, before
+ * the chevron's slot, and may overhang toward the bars.
+ */
+@Composable
+private fun BarsMeaning(
+    questionsWidth: Dp?,
+    shareColumn: Dp,
+) {
+    val words = @Composable { text: String, modifier: Modifier ->
+        Text(
+            text,
+            modifier,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = layoutEnd(),
+            maxLines = 1,
+        )
+    }
+
+    Row(horizontalArrangement = Arrangement.spacedBy(COLUMN_GAP), verticalAlignment = Alignment.CenterVertically) {
+        if (questionsWidth != null) {
+            words(stringResource(R.string.goalcontent_on_the_exam), Modifier.width(questionsWidth))
+            Box(Modifier.width(shareColumn), contentAlignment = Alignment.CenterEnd) {
+                words(stringResource(R.string.goalcontent_preparation), Modifier)
+            }
+        } else {
+            words(stringResource(R.string.goalcontent_preparation), Modifier)
+        }
+        ListRowChevronSpace()
+    }
+}
 
 @Composable
 private fun SubjectRow(
@@ -183,36 +220,6 @@ private fun SubjectRow(
     )
 }
 
-/** How much the section holds, as the plan's reveal counted it: the notice's own subjects, not the plan's extras. */
-@Composable
-private fun sectionCount(syllabus: Syllabus): String {
-    val subjects = syllabus.subjects.count { it.source == SyllabusSubject.Source.NOTICE }
-    val topics = syllabus.topicCount.toInt()
-
-    return when {
-        syllabus.fromMaterial -> {
-            val count = if (topics > 0) topics else subjects
-            pluralStringResource(R.plurals.goalcontent_material_topic_count, count, count)
-        }
-
-        syllabus.kind == Syllabus.Kind.NOTICE && topics > 0 -> {
-            listOf(
-                pluralStringResource(R.plurals.goalcontent_subject_count, subjects, subjects),
-                pluralStringResource(R.plurals.goalcontent_topic_count, topics, topics),
-            ).factsLine()
-        }
-
-        syllabus.goal.kind == GoalContentGoal.Kind.EXAM -> {
-            val count = if (syllabus.kind == Syllabus.Kind.NOTICE) subjects else syllabus.subjects.count { !it.isExtra }
-            pluralStringResource(R.plurals.goalcontent_subject_count, count, count)
-        }
-
-        else -> {
-            pluralStringResource(R.plurals.goalcontent_module_count, syllabus.subjects.size, syllabus.subjects.size)
-        }
-    }
-}
-
 /** Optional study isn't on the exam, so its row counts the lessons done instead of a readiness share. */
 @Composable
 private fun lessonsDoneText(subject: SyllabusSubject): String {
@@ -272,6 +279,9 @@ private val BAR_MIN = 112.dp
 private val BAR_MAX = 224.dp
 private val QUESTIONS_WIDTH = 104.dp
 private val SHARE_WIDTH = 40.dp
+
+/** The gap between a row's columns: the headline's own, and the list row's before its value and its chevron. */
+private val COLUMN_GAP = 12.dp
 
 @Composable
 internal fun planOutsideReason(reason: String?): String =

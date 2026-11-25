@@ -248,7 +248,7 @@ function GoalStartFlow({
     onError: showEntry,
     onExplanation: startExplanation,
     onMaterialUnavailable: ({ sourceIds, words }) => {
-      material.markUnreadable(sourceIds);
+      material.markMissing(sourceIds);
       showEntry({ words });
     },
     onSending: ({ attemptId, goal, sentAt }) => {

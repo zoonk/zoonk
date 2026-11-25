@@ -102,10 +102,16 @@
     <string name="onboarding_row_minutes_a_day">%1$s a day</string>
     <string name="onboarding_row_material">Your material</string>
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
-    <!-- Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists. -->
-    <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. The rest can\'t be read anymore.</string>
-    <!-- Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material. -->
-    <string name="onboarding_row_material_all_missing_note">It can\'t be read anymore, so your plan won\'t follow it.</string>
+    <!-- Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_missing_note">Your plan and lessons follow only this material. We couldn\'t read the rest.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg". -->
+    <string name="onboarding_row_material_unread_one_note">Your plan and lessons follow only this material. We couldn\'t read “%1$s”.</string>
+    <!-- Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists. -->
+    <string name="onboarding_row_material_unread_some_note">Your plan and lessons follow only this material. We couldn\'t read the other files.</string>
+    <!-- Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material. -->
+    <string name="onboarding_row_material_all_missing_note">We couldn\'t read it, so your plan won\'t follow it.</string>
+    <!-- Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone. -->
+    <string name="onboarding_row_material_all_unread_note">We couldn\'t read these files, so your plan won\'t follow them.</string>
     <string name="onboarding_row_exam_date">Exam date</string>
     <!-- An exam's dates when it takes several days. -->
     <string name="onboarding_row_exam_dates">Exam dates</string>
@@ -177,8 +183,16 @@
     <string name="onboarding_material_unreadable_one">We can\'t read “%1$s” anymore. Remove it and add it again.</string>
     <!-- Under the learner's attached material when several items sent with their goal can't be read anymore. -->
     <string name="onboarding_material_unreadable_some">We can\'t read some of your files anymore. Remove them and add them again.</string>
-    <!-- Read by screen readers after the name of an attached file that can't be read anymore. -->
-    <string name="onboarding_material_unreadable_state">Can\'t be read</string>
+    <!-- Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg". -->
+    <string name="onboarding_material_unread_one">We couldn\'t read “%1$s”. Try a sharper photo or paste the text.</string>
+    <!-- Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above. -->
+    <string name="onboarding_material_unread_some">We couldn\'t read these files. Try sharper photos or paste the text.</string>
+    <!-- Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read. -->
+    <string name="onboarding_material_unreadable_state">Nothing on it could be read</string>
+    <!-- Read by screen readers after the name of an attached file that's gone, so it must be added again. -->
+    <string name="onboarding_material_gone_state">Can\'t be read anymore</string>
+    <!-- Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read. -->
+    <string name="onboarding_material_reading_state">Being read</string>
     <!-- Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5. -->
     <string name="onboarding_material_limit">%1$s files is the most for one goal. Remove one to add another.</string>
     <string name="onboarding_intent_title">What do you want to do?</string>

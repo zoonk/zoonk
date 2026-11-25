@@ -65,7 +65,7 @@ class UnreadableMaterialTest {
                 assertEquals("", vm.words.text.toString())
                 assertEquals(listOf(notes, slides), vm.flow.attached)
                 assertEquals(MaterialIntent.Exam, vm.flow.intent)
-                assertEquals(setOf(notes.id), vm.unreadable)
+                assertEquals(setOf(notes.id), vm.gone)
                 assertNull(vm.entryError)
 
                 vm.removeAttached(notes.id)
@@ -73,7 +73,7 @@ class UnreadableMaterialTest {
                 vm.submit("", "Prepare for an exam with Mitosis slides.pptx", "en")
                 advanceUntilIdle()
 
-                assertEquals(emptySet<String>(), vm.unreadable)
+                assertEquals(emptySet<String>(), vm.gone)
                 assertEquals(listOf(UUID.fromString(slides.id)), api.understandCalls.last().sourceIds)
                 assertTrue(vm.flow.screen is StartScreen.Draft)
             } finally {

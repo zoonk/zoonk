@@ -11,6 +11,7 @@ import {
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
+import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import {
   classifyGoalIntentStep,
   completeUnderstandingStep,
@@ -43,6 +44,10 @@ async function readGoal(draft: UnderstandingRunDraft): Promise<GoalReading> {
 
   if (kept) {
     return kept;
+  }
+
+  if (draft.sourceIds.length > 0) {
+    await waitForMaterialReading({ kind: "sources", sourceIds: draft.sourceIds });
   }
 
   const [words, unsafe] = await Promise.all([

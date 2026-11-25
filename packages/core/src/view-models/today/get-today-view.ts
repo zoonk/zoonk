@@ -262,6 +262,7 @@ async function readAdmittedToday({
     sourceChange,
     pronunciationDue,
     focusTest,
+    uploadRequest,
   ] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
     loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
@@ -273,6 +274,7 @@ async function readAdmittedToday({
     loadSourceChange(id),
     hasPronunciationDue(owned.goal),
     loadFocusTestSuggestion({ goal: owned.goal, localDate: day.session.localDate, timeZone }),
+    toGoalUploadRequest(owned.goal),
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
@@ -283,7 +285,6 @@ async function readAdmittedToday({
     : 0;
 
   const pattern = selectDayPattern({ day: studySession, pattern: noticedPattern });
-  const uploadRequest = toGoalUploadRequest(owned.goal);
   const studiedToday = studied || studySession.minutes.done > 0;
 
   const notice = pickTodayNotice({

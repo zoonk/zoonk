@@ -28,7 +28,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
-      <div className="flow-root w-full lg:max-w-xl" data-slot="lesson-text">
+      <div className="flow-root w-full" data-slot="lesson-text">
         {cornerIcon && <CornerIcon className="-me-2 -mt-1 mb-2" icon={cornerIcon} />}
         {badge && (
           <div className="mb-3 empty:hidden">

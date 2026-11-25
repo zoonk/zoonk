@@ -1537,7 +1537,6 @@ msgstr "오늘의 {buddy}"
 
 #: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
-#: src/journey/journey-hero.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
@@ -2613,7 +2612,6 @@ msgstr "아직 답한 문제가 없어서 이번 챌린지는 채점하지 않�
 
 #: src/checkpoints/checkpoint-labels.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
 #: src/session/use-block-copy.ts
 msgctxt "2yz8Wb"
 msgid "The Trickster"
@@ -4656,18 +4654,6 @@ msgctxt "hrgo-E"
 msgid "Archive"
 msgstr "보관하기"
 
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "98OHZH"
-msgid "This goal is paused"
-msgstr "이 목표는 일시 중지됐어요"
-
-#: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
-msgctxt "MsEnHi"
-msgid "Nothing is planned until you resume it."
-msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
-
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
@@ -4750,10 +4736,16 @@ msgstr "{studied, plural, =0 {아직 학습한 레슨 없음} other {레슨 #개
 #: src/journey/journey-hero.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/session/summary/summary-parts.tsx
+#: src/syllabus/subject-aside.tsx
 #: src/today/today-lessons-card.tsx
 msgctxt "sIMS7i"
 msgid "Progress"
 msgstr "진도"
+
+#: src/journey/journey-hero.tsx
+msgctxt "yaK5-i"
+msgid "Not tested yet"
+msgstr "아직 테스트 전"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -4852,8 +4844,8 @@ msgid "Won"
 msgstr "승리"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "f0UFlY"
-msgid "In your next session"
+msgctxt "gfKKsY"
+msgid "Next time"
 msgstr "다음 학습 때"
 
 #. The name of a study step: a live voice call in the language being learned.
@@ -4900,9 +4892,20 @@ msgid "Mock exam"
 msgstr "모의고사"
 
 #: src/journey/journey-planless.tsx
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "이 목표는 일시 중지됐어요"
+
+#: src/journey/journey-planless.tsx
 msgctxt "NIpBgv"
 msgid "Your plan comes after a few questions"
 msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
+
+#: src/journey/journey-planless.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "MsEnHi"
+msgid "Nothing is planned until you resume it."
+msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
 
 #: src/journey/journey-planless.tsx
 msgctxt "mMlLhC"
@@ -4961,17 +4964,17 @@ msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {레슨 {done, number}개 완료 / 총 #개} other {레슨 {done, number}개 완료 / 전체 #개}}"
 
+#. When a phase of the plan ends. {date} is a day, like "Dec 12", shown as "~Dec 12" or "~Jan" when it's an estimate.
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date}에 끝나요"
+
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
 msgctxt "fC-Q4J"
 msgid "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
 msgstr "{dateKind, select, month {{date}쯤 종료} other {{date}쯤 종료}}"
-
-#. When a phase of the plan ends. {date} is a day, like "Dec 12".
-#: src/journey/phase-when.tsx
-msgctxt "JQlKi_"
-msgid "Ends {date}"
-msgstr "{date}에 끝나요"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
@@ -5107,9 +5110,9 @@ msgid "Review what you're starting to forget"
 msgstr "잊혀 가는 내용 복습하기"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "HRQ_zL"
-msgid "Needed to go past 75%"
-msgstr "75%를 넘기려면 필요해요"
+msgctxt "vn_iV0"
+msgid "Needed to go past 75% preparation"
+msgstr "준비도를 75% 넘기려면 필요"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "v5t0w3"
@@ -5243,11 +5246,11 @@ msgctxt "VnP0TP"
 msgid "You finish"
 msgstr "계획 완료"
 
-#. After a date on the plan's timeline, naming what happens that day.
-#: src/journey/roadmap-lane.tsx
-msgctxt "pwcc1H"
-msgid "exam"
-msgstr "시험"
+#. In the plan timeline's legend, beside the mark of a phase's challenge: questions on that phase, with no hints. Use the same word for questions as the path row 'Questions on this phase, with no hints'.
+#: src/journey/roadmap-full.tsx
+msgctxt "q5LbXf"
+msgid "Phase questions"
+msgstr "단계 문제"
 
 #: src/journey/schedule-details.tsx
 msgctxt "v4LcAP"
@@ -5266,6 +5269,12 @@ msgctxt "PEfhwo"
 msgid "{day}: {status}"
 msgstr "{day}: {status}"
 
+#. The plan's schedule while the learner has paused the goal.
+#: src/journey/schedule-details.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr "일시 중지됨"
+
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
 msgid "Schedule"
@@ -5276,11 +5285,6 @@ msgstr "일정"
 msgctxt "FvhRwo"
 msgid "{count, plural, one {# lesson left} other {# lessons left}}"
 msgstr "{count, plural, other {레슨 #개 남음}}"
-
-#: src/journey/schedule-details.tsx
-msgctxt "dVA-0b"
-msgid "About {time} a day"
-msgstr "하루 약 {time}"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -8762,8 +8766,9 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "무료로 가입해 목표에 PDF, 필기 사진, 원하는 텍스트를 추가해 보세요."
 
 #: src/onboarding/entry/attach-panel.tsx
+#: src/onboarding/entry/attached-chips.tsx
 #: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
+#: src/onboarding/understood/understood-material-row.ts
 #: src/writing/writing-text.tsx
 msgctxt "Uby0eW"
 msgid "Your text"
@@ -8804,6 +8809,65 @@ msgctxt "4vgz15"
 msgid "Your plan and lessons will use it."
 msgstr "계획과 레슨에 이 자료를 사용할 거예요."
 
+#. Read by screen readers after the name of an attached file that's gone, so it must be added again.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "S2mc8R"
+msgid "Can't be read anymore"
+msgstr "더 이상 읽을 수 없음"
+
+#. Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "vx1YAK"
+msgid "Nothing on it could be read"
+msgstr "읽을 수 있는 내용 없음"
+
+#. Read by screen readers after the name of an attached file, like a photo of notes, while it's still being read.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "3oioAz"
+msgid "Being read"
+msgstr "읽는 중"
+
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "{title} 삭제하기"
+
+#. Under the learner's attached material when several items sent with their goal can't be read anymore.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "2FABsh"
+msgid "We can't read some of your files anymore. Remove them and add them again."
+msgstr "일부 파일을 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
+
+#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "-9IdF4"
+msgid "We can't read “{title}” anymore. Remove it and add it again."
+msgstr "“{title}”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
+
+#. Under the learner's attached material when nothing could be read on several of their files, like blurry photos of notes. The files are marked in red above.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "XtqQ1X"
+msgid "We couldn't read these files. Try sharper photos or paste the text."
+msgstr "파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
+
+#. Under the learner's attached material when nothing could be read on one file, like a blurry photo of notes. {title} is its name, like "Notes.jpg".
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "v6A3gc"
+msgid "We couldn't read “{title}”. Try a sharper photo or paste the text."
+msgstr "“{title}” 파일을 읽을 수 없어요. 더 선명한 사진을 첨부하거나 텍스트를 붙여 넣어 보세요."
+
+#: src/onboarding/entry/attached-chips.tsx
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2d2ZJ4"
+msgid "Your material"
+msgstr "내 자료"
+
+#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
+#: src/onboarding/entry/attached-chips.tsx
+msgctxt "EAbhzH"
+msgid "{count, number} files is the most for one goal. Remove one to add another."
+msgstr "목표 하나에는 파일을 최대 {count, number}개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요."
+
 #: src/onboarding/entry/draft-goals.ts
 msgctxt "FMaXag"
 msgid "musicianship"
@@ -8813,41 +8877,6 @@ msgstr "음악 기초"
 msgctxt "G3iV_U"
 msgid "Musicianship for {instrument}"
 msgstr "{instrument} 연주를 위한 음악 기초"
-
-#. Read by screen readers after the name of an attached file that can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "yJQoIT"
-msgid "Can't be read"
-msgstr "읽을 수 없음"
-
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "G5e8UX"
-msgid "Remove {title}"
-msgstr "{title} 삭제하기"
-
-#. Under the learner's attached material when several items sent with their goal can't be read anymore.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "2FABsh"
-msgid "We can't read some of your files anymore. Remove them and add them again."
-msgstr "일부 파일을 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
-
-#. Under the learner's attached material when one item sent with their goal can't be read anymore. {title} is its name, like "Cell cycle.pdf".
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "-9IdF4"
-msgid "We can't read “{title}” anymore. Remove it and add it again."
-msgstr "“{title}”을(를) 더 이상 읽을 수 없어요. 삭제한 뒤 다시 추가해 주세요."
-
-#: src/onboarding/entry/goal-attachments.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "2d2ZJ4"
-msgid "Your material"
-msgstr "내 자료"
-
-#. Under the learner's attached files on Start when they've added as many as a goal can use, so the paperclip is off. {count} is that limit, like 5.
-#: src/onboarding/entry/goal-attachments.tsx
-msgctxt "EAbhzH"
-msgid "{count, number} files is the most for one goal. Remove one to add another."
-msgstr "목표 하나에는 파일을 최대 {count, number}개까지 첨부할 수 있어요. 파일 하나를 삭제하면 다른 파일을 추가할 수 있어요."
 
 #. Read by screen readers once material is added. {title} is a file's name, a link or “Your text”.
 #: src/onboarding/entry/goal-attachments.tsx
@@ -9971,6 +10000,41 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요."
 
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "d68iA8"
+msgid "Your plan and lessons follow this material"
+msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
+
+#. Under the learner's files on the goal card, when none of them could be read: nothing on them could be read, or they're gone.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "UiJtWT"
+msgid "We couldn't read these files, so your plan won't follow them."
+msgstr "파일을 읽을 수 없어 계획에 반영되지 않아요."
+
+#. Under the learner's material on the goal card, when none of it could be read: nothing on it could be read, or it's gone. "It" is that material.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "tbSSWy"
+msgid "We couldn't read it, so your plan won't follow it."
+msgstr "자료를 읽을 수 없어 계획에 반영되지 않아요."
+
+#. Under the learner's material on the goal card, when nothing could be read on one of their files. "This material" is what the row lists; {title} is the file it couldn't read, like "Notes.jpg".
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "2cV0mq"
+msgid "Your plan and lessons follow only this material. We couldn't read “{title}”."
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. “{title}” 파일은 읽을 수 없어요."
+
+#. Under the learner's material on the goal card, when nothing could be read on several of their files. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "c_KACv"
+msgid "Your plan and lessons follow only this material. We couldn't read the other files."
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 파일은 읽을 수 없어요."
+
+#. Under the learner's material on the goal card, when some of it is gone. "This material" is what the row lists.
+#: src/onboarding/understood/understood-material-row.ts
+msgctxt "nT35Ny"
+msgid "Your plan and lessons follow only this material. We couldn't read the rest."
+msgstr "계획과 레슨은 이 자료만 바탕으로 만들어요. 나머지 자료는 읽을 수 없어요."
+
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
@@ -10050,6 +10114,7 @@ msgid "Exam country"
 msgstr "시험 국가"
 
 #: src/onboarding/understood/use-schedule-row.ts
+#: src/plan/plan-properties.tsx
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "하루 {time}"
@@ -10088,23 +10153,6 @@ msgstr "기관"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "이유"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "d68iA8"
-msgid "Your plan and lessons follow this material"
-msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
-
-#. Under the learner's material on the goal card, when some of it can't be read anymore. "This material" is what the row lists.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "83Uigi"
-msgid "Your plan and lessons follow only this material. The rest can't be read anymore."
-msgstr "계획과 레슨은 이 자료만 바탕으로 진행돼요. 나머지는 더 이상 읽을 수 없어요."
-
-#. Under the learner's material on the goal card, when none of it can be read anymore. "It" is that material.
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "YOP-LJ"
-msgid "It can't be read anymore, so your plan won't follow it."
-msgstr "더 이상 읽을 수 없어 계획에 반영되지 않아요."
 
 #: src/placement-test/placement-test-flow.tsx
 msgctxt "gnlQcT"
@@ -10632,9 +10680,9 @@ msgid "Test what you know"
 msgstr "아는 내용 확인하기"
 
 #: src/plan/plan-properties.tsx
-msgctxt "oOY_q2"
-msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
-msgstr "<mono>{weekdays}</mono> · 주말 <mono>{weekend}</mono>"
+msgctxt "xqyYxG"
+msgid "{weekdays} · {weekend} weekends"
+msgstr "{weekdays} · 주말 {weekend}"
 
 #: src/plan/plan-properties.tsx
 msgctxt "7X2m8_"
@@ -10657,14 +10705,9 @@ msgid "Next <date></date>"
 msgstr "다음 <date></date>"
 
 #: src/plan/plan-properties.tsx
-msgctxt "G6h29P"
-msgid "Estimated finish <date></date>"
-msgstr "예상 완료일 <date></date>"
-
-#: src/plan/plan-properties.tsx
-msgctxt "mWKPwa"
-msgid "Everything"
-msgstr "모두"
+msgctxt "1KfRoB"
+msgid "All activities"
+msgstr "모든 활동"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
@@ -12880,6 +12923,12 @@ msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
 msgstr "한 번에 학습할 수 있는 목표 수를 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요."
 
+#. Above the Subscribe button, when the learner can't start another goal. Never name the subscription plan: only the verb subscribe.
+#: src/shell/make-room-sheet.tsx
+msgctxt "goalSwitcher.1LEHvj"
+msgid "Or subscribe to study more goals at once."
+msgstr "또는 구독하면 목표를 더 많이 동시에 공부할 수 있어요."
+
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
 msgid "Subscribe"
@@ -12988,11 +13037,6 @@ msgstr "다음 학습일"
 msgctxt "z50pCl"
 msgid "Grading"
 msgstr "채점"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "jSqwdW"
-msgid "Coverage"
-msgstr "학습 진도"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "JeoRv8"
@@ -13233,25 +13277,11 @@ msgctxt "qCmEbu"
 msgid "{course} at {institution} counts every part of the exam the same. Weights from <link>{publisher}</link>."
 msgstr "{course}의 경우 {institution}에서 시험의 모든 파트를 같은 비중으로 반영해요. 가중치는 <link>{publisher}</link> 자료를 바탕으로 해요."
 
+#. Heads the column of how many questions each subject has on the exam, like "45 questions".
 #: src/syllabus/syllabus-section.tsx
-msgctxt "Cw_XA_"
-msgid "{count, plural, one {# topic from your material} other {# topics from your material}}"
-msgstr "{count, plural, other {내 자료에서 가져온 주제 #개}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "1rxfgw"
-msgid "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural, one {# topic} other {# topics}}"
-msgstr "{subjects, plural, other {#과목}} · {topics, plural, other {주제 #개}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {#개 과목}}"
-
-#: src/syllabus/syllabus-section.tsx
-msgctxt "IYzjIp"
-msgid "{count, plural, one {# module} other {# modules}}"
-msgstr "{count, plural, other {모듈 #개}}"
+msgctxt "uZd7hU"
+msgid "On the exam"
+msgstr "시험 문제 수"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

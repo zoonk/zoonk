@@ -1,4 +1,5 @@
 import { StateMark } from "@/components/state-mark";
+import { applyMarkedQuotes } from "@zoonk/core/staff/content-fixes/media-schema";
 import { type MediaItem } from "./content-fix-media-item";
 import { type ScreenContext } from "./content-fix-screen-row";
 import { type SnapshotScreen, ideaIndexOf, quotesOf } from "./screen-list";
@@ -11,18 +12,17 @@ function QuoteLine({ label, lang, quote }: { label: string; lang?: string; quote
   );
 }
 
-/**
- * The example box and underline a screen shows once the fix applies: the quotes that still fit,
- * with the ones it lacked marked at proposal.
- */
+/** The example box and underline a screen shows once the fix applies. */
 export function FixMarks({
   index,
   item,
   lang,
+  remarked,
 }: {
   index: number;
   item?: MediaItem;
   lang?: string;
+  remarked: boolean;
 }) {
   if (item?.need.kind !== "marks") {
     return null;
@@ -32,12 +32,14 @@ export function FixMarks({
     return <StateMark state="running">Marking its example box and underline</StateMark>;
   }
 
-  const kept = item.need.kept[index];
+  const kept = item.need.kept[index] ?? { example: null, underline: null };
 
   const marked =
     item.result !== "failed" && item.result.kind === "marks"
       ? item.result.screens[index]
       : undefined;
+
+  const quotes = applyMarkedQuotes({ kept, marked, remarked });
 
   return (
     <div className="flex flex-col gap-1">
@@ -46,12 +48,8 @@ export function FixMarks({
           Couldn&apos;t mark it again, so it keeps what still fits
         </StateMark>
       )}
-      <QuoteLine label="Example box" lang={lang} quote={kept?.example ?? marked?.example ?? null} />
-      <QuoteLine
-        label="Underlined"
-        lang={lang}
-        quote={kept?.underline ?? marked?.underline ?? null}
-      />
+      <QuoteLine label="Example box" lang={lang} quote={quotes.example} />
+      <QuoteLine label="Underlined" lang={lang} quote={quotes.underline} />
     </div>
   );
 }
@@ -102,6 +100,7 @@ export function ScreenQuoteLines({
         index={link.positions.indexOf(screen.position)}
         item={context.media.get(link.key)}
         lang={context.lang}
+        remarked={link.remarked?.includes(screen.position) ?? false}
       />
     );
   }

@@ -14,7 +14,6 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { CourseCompleteSuggestion } from "../journey/course-certificate";
-import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
 import { RequestScope } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
@@ -68,8 +67,8 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
 
   const items: (SlotItem | false)[] = [
     !finished && claimable && { key: "courseComplete", kind: "courseComplete" },
-    // A paused goal and a passed date are what the page asks about first (the bar answers both on an exam).
-    host.goalStatus?.status === "paused" && { key: "paused", kind: "paused" },
+    // A passed date is what the page asks about first (the bar answers it on an exam). A paused
+    // goal's Schedule says so, and its bar resumes it.
     plan.status?.kind === "pastDate" && {
       key: "pastDate",
       kind: "pastDate",
@@ -214,8 +213,6 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       return <FitLessonsSuggestion item={item} />;
     case "extraLessons":
       return <ExtraLessonsSuggestion item={item} />;
-    case "paused":
-      return host.goalStatus && <GoalPausedSuggestion control={host.goalStatus} />;
     case "pastDate":
       return <PastDateSuggestion item={item} />;
     default:
