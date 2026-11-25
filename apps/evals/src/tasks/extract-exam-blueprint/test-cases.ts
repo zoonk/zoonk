@@ -642,7 +642,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        { kind: "questionCount", value: 240 },
+        { in: "mock", kind: "questionCount", value: 240 },
         { format: "trueFalse", kind: "format" },
         { kind: "wrongPenalty", value: 0.25 },
         { kind: "totalMinimum", minimum: { unit: "points", value: 120 } },

@@ -16,7 +16,8 @@ import { TEST_CASES } from "./test-cases";
 
 type ExpectedFact =
   | { kind: "date"; date: string; dateKind?: ExtractionEvalOutput["dates"][number]["kind"] }
-  | { kind: "questionCount"; value: number }
+  /** `mock` checks the mock's own total, which sizes objective sittings without a count. */
+  | { kind: "questionCount"; value: number; in?: "mock" }
   | { kind: "subject"; name: string; questions?: number }
   | { kind: "topic"; subject: string; topic: string }
   | { kind: "group"; subject: string; group: string }
@@ -601,7 +602,9 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
         (date) => date.date === fact.date && (!fact.dateKind || date.kind === fact.dateKind),
       );
     case "questionCount":
-      return getQuestionTotals(reading).includes(fact.value);
+      return fact.in === "mock"
+        ? reading.mock?.totalQuestions === fact.value
+        : getQuestionTotals(reading).includes(fact.value);
     case "subject":
       return reading.subjects.some(
         (subject) =>
