@@ -1640,17 +1640,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1669,7 +1669,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-1",
         "language": "pt",
@@ -1688,17 +1689,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1717,7 +1718,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-2",
         "language": "pt",
@@ -1736,17 +1738,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1765,7 +1767,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-1",
         "language": "en",
@@ -1784,17 +1787,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1813,7 +1816,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-2",
         "language": "en",
@@ -1832,19 +1836,19 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "majorErrors",
-          "score": 7.6
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "minorErrors",
-          "score": 7.6
+          "score": 10
         },
         {
-          "conclusion": "Facts kept 1/4 (read 1). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "potentialImprovements",
-          "score": 7.6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1865,7 +1869,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-photo-notes-transcript-with-latex-1",
         "language": "pt",
@@ -1917,7 +1922,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-photo-notes-transcript-with-latex-2",
         "language": "pt",
@@ -1969,7 +1975,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
         "language": "en",
@@ -1988,17 +1995,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -2021,7 +2028,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
         "language": "en",

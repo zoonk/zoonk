@@ -152,30 +152,35 @@ async function readChecked({
   });
 
   const checked = result.data;
+  const material = input.material ?? false;
 
   // The app runs these checks in a later step, so they're spent here but aren't the reading's cost.
   const [kept, findings] = await meterAsExtra(() =>
     Promise.all([
-      keepCheckedFacts({ documents, extraction: checked, material: input.material ?? false }),
-      checkExamReading({
-        documents,
-        exam: input.exam,
-        subjects: checked.subjects.map((subject) => ({
-          name: subject.name,
-          questions: subject.questions,
-        })),
-        total: checked.mock?.totalQuestions ?? checked.edition.questionCount,
-      }),
+      keepCheckedFacts({ documents, extraction: checked, material }),
+      material
+        ? null
+        : checkExamReading({
+            documents,
+            exam: input.exam,
+            subjects: checked.subjects.map((subject) => ({
+              name: subject.name,
+              questions: subject.questions,
+            })),
+            total: checked.mock?.totalQuestions ?? checked.edition.questionCount,
+          }),
     ]),
   );
 
-  const problems = findReadingProblems({
-    checked: checked.subjects,
-    content: kept.kept,
-    documents: toSources(documents),
-    findings: findings.data,
-    read: checked,
-  });
+  const problems = findings
+    ? findReadingProblems({
+        checked: checked.subjects,
+        content: kept.kept,
+        documents: toSources(documents),
+        findings: findings.data,
+        read: checked,
+      })
+    : [];
 
   return { ...kept, problems, result };
 }
