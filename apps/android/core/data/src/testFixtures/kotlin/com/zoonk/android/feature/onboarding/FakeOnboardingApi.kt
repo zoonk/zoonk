@@ -106,7 +106,7 @@ internal fun goalCreated(): GoalCreateResponse =
         """.trimIndent(),
     )
 
-private const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
+const val UPLOAD_ID = "8c1d2e3f-4a5b-4c6d-9e7f-8a9b0c1d2e3f"
 
 /** With [unreadable], the ask came back because nothing could be read in the upload of that title. */
 fun uploadAskOf(unreadable: String? = null): TodayUploadRequest =
@@ -367,10 +367,18 @@ class FakeOnboardingApi : OnboardingApi {
     var readStatuses = listOf("readable")
     val sourceReads = mutableListOf<String>()
 
+    /** Holds each upload being added until it completes; [attachFailure] fails them. */
+    var attachGate: CompletableDeferred<Unit>? = null
+    var attachFailure: ApiException? = null
+
     override suspend fun attach(
         session: AuthenticatedSession,
         request: CreateUploadRequest,
-    ): Source = uploadSource(UPLOAD_ID, readStatuses.first())
+    ): Source {
+        attachGate?.await()
+        attachFailure?.let { throw it }
+        return uploadSource(UPLOAD_ID, readStatuses.first())
+    }
 
     override suspend fun source(
         session: AuthenticatedSession,
@@ -411,11 +419,15 @@ class FakeOnboardingApi : OnboardingApi {
     }
 
     var askFailure = ApiException(ApiError.Unavailable)
+    val asked = mutableListOf<String>()
 
     override suspend fun askMaterial(
         session: AuthenticatedSession,
         input: MaterialQuestionInput,
-    ): MaterialQuestionAnswer = throw askFailure
+    ): MaterialQuestionAnswer {
+        asked += input.question
+        throw askFailure
+    }
 
     override fun generations(session: AuthenticatedSession?): GenerationSource {
         generationSessions += session

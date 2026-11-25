@@ -270,7 +270,15 @@ fun SuggestionMainAction(
     onClick: () -> Unit,
     enabled: Boolean = true,
     busy: Boolean = false,
-) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current != Presentation.Sheet)
+    leadingIcon: (@Composable () -> Unit)? = null,
+) = SuggestionAction(
+    text,
+    onClick,
+    enabled = enabled,
+    busy = busy,
+    secondary = LocalPresentation.current != Presentation.Sheet,
+    leadingIcon = leadingIcon,
+)
 
 /** On a line it's always [secondary], beside the summary. */
 @Composable

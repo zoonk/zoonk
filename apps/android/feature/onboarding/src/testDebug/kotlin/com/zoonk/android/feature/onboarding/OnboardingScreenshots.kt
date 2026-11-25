@@ -408,6 +408,79 @@ class OnboardingScreenshots {
         captureMaterialNote("none-read", "phone-font200")
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialSomeReadSeveral() = captureMaterialNote("some-read-several", "phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialNoneReadSeveral() = captureMaterialNote("none-read-several", "phone-screen")
+
+    /** Short names share a row, as main's chips wrap: read, being read and with nothing readable, under the choices' line. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialChips() = captureMaterialChips("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun materialChipsDark() = captureMaterialChips("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun materialChipsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMaterialChips("phone-font200")
+    }
+
+    private fun captureMaterialChips(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val api = FakeOnboardingApi().apply { readStatuses = listOf("reading") }
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal()) } } }
+        compose.waitForIdle()
+        val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
+        compose.runOnUiThread {
+            vm.setAttached(
+                listOf(
+                    AttachedSource(UUID.randomUUID().toString(), "Notes.pdf", SourceReadStatus.READABLE),
+                    AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", SourceReadStatus.READING),
+                    AttachedSource(UUID.randomUUID().toString(), "IMG_2042.jpg", SourceReadStatus.UNREADABLE),
+                    AttachedSource(UUID.randomUUID().toString(), "IMG_2043.jpg", SourceReadStatus.UNREADABLE),
+                ),
+            )
+            vm.setIntent(MaterialIntent.Exam)
+        }
+        compose.waitForIdle()
+        write("start-material-chips-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    /** Sent while material is still being added: Build my plan waits, busy, and the goal goes with the material. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun materialSentWhileAdding() {
+        val api = FakeOnboardingApi().apply { attachGate = kotlinx.coroutines.CompletableDeferred() }
+        lateinit var focus: FocusManager
+        compose.setContent {
+            focus = LocalFocusManager.current
+            ZoonkTheme { Surface { Start(api, AppRoute.StartGoal()) } }
+        }
+        compose.waitForIdle()
+        val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
+        compose.runOnUiThread {
+            vm.words.setTextAndPlaceCursorAtEnd("test on Friday")
+            vm.toggleAttach()
+            vm.attachText("Mitosis has four phases.", "en")
+        }
+        compose.waitForIdle()
+        compose.runOnUiThread {
+            vm.submit("test on Friday", "", "en")
+            focus.clearFocus()
+        }
+        compose.waitForIdle()
+        write("start-material-sent-while-adding-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun captureMaterialNote(
         card: String,
         name: String,
@@ -415,10 +488,13 @@ class OnboardingScreenshots {
     ) {
         val notes = draftSource("Cell cycle notes.pdf")
         val photo = draftSource("IMG_2041.jpg", SourceReadStatus.UNREADABLE)
+        val other = draftSource("IMG_2042.jpg", SourceReadStatus.UNREADABLE)
         val sources =
             when (card) {
                 "all-read" -> listOf(notes)
                 "some-read" -> listOf(notes, photo)
+                "some-read-several" -> listOf(notes, photo, other)
+                "none-read-several" -> listOf(photo, other)
                 else -> listOf(photo)
             }
         val api =
@@ -450,27 +526,27 @@ class OnboardingScreenshots {
         captureMaterialQuestions("phone-font200")
     }
 
-    /** A question about a photo still being read stays in the box, with a line saying so. */
+    /** A question about a photo still being read is asked at once: it waits as the learner's, its answer pending. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun materialQuestionStillReading() = captureQuestionStillReading("phone-screen")
+    fun materialQuestionWhileReading() = captureQuestionWhileReading("phone-screen")
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
-    fun materialQuestionStillReadingDark() = captureQuestionStillReading("phone-dark", dark = true)
+    fun materialQuestionWhileReadingDark() = captureQuestionWhileReading("phone-dark", dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xhdpi")
-    fun materialQuestionStillReadingAtTwiceTheFontSize() {
+    fun materialQuestionWhileReadingAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
-        captureQuestionStillReading("phone-font200")
+        captureQuestionWhileReading("phone-font200")
     }
 
-    private fun captureQuestionStillReading(
+    private fun captureQuestionWhileReading(
         name: String,
         dark: Boolean = false,
     ) {
-        val api = FakeOnboardingApi().apply { askFailure = ApiException(ApiError.Unavailable, "materialReading", status = 409) }
+        val api = FakeOnboardingApi().apply { readStatuses = listOf("reading") }
         compose.setContent { ZoonkTheme(darkTheme = dark) { Surface { Start(api, AppRoute.StartGoal()) } } }
         compose.waitForIdle()
         val vm = ViewModelProvider(compose.activity)[StartGoalViewModel::class.java]
@@ -485,7 +561,7 @@ class OnboardingScreenshots {
             vm.ask("en")
         }
         compose.waitForIdle()
-        write("start-material-question-still-reading-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        write("start-material-question-while-reading-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun captureMaterialQuestions(

@@ -199,29 +199,33 @@ class UnderstoodRows(
     }
 
     /**
-     * Lists the material the plan follows (a file still being read counts: the plan waits for it). When some couldn't be read (nothing readable in it, or gone: [missing]), the row
-     * stays, even with none left, to say the plan won't follow it.
+     * Lists the material the plan follows (a file still being read counts: the plan waits for it). When some couldn't be
+     * read, the note names what (nothing readable in it, or gone: [missing]), and the row stays, even with none left, to
+     * say the plan won't follow it.
      */
     fun materialRow(
         material: List<OnboardingDraftSource>,
         missing: Boolean,
     ): UnderstoodRow? {
-        val read = material.filter { it.readStatus != SourceReadStatus.UNREADABLE }
-        val unread = missing || read.size < material.size
-        if (read.isEmpty() && !unread) return null
-        // With nothing readable, the files it couldn't read stay named, so the note's "it" has something to point at.
+        val (read, unread) = material.partition { it.readStatus != SourceReadStatus.UNREADABLE }
+        if (read.isEmpty() && unread.isEmpty() && !missing) return null
+        val title = { source: OnboardingDraftSource -> source.title.ifBlank { text(R.string.onboarding_your_text) } }
+        val note =
+            when {
+                !missing && unread.isEmpty() -> text(R.string.onboarding_row_material_note)
+                missing && read.isEmpty() -> text(R.string.onboarding_row_material_all_missing_note)
+                missing -> text(R.string.onboarding_row_material_missing_note)
+                read.isEmpty() && unread.size > 1 -> text(R.string.onboarding_row_material_all_unread_note)
+                read.isEmpty() -> text(R.string.onboarding_row_material_all_missing_note)
+                unread.size > 1 -> text(R.string.onboarding_row_material_unread_some_note)
+                else -> text(R.string.onboarding_row_material_unread_one_note, title(unread.single()))
+            }
+        // With nothing readable, the files it couldn't read stay named, so the note's "it" or "them" has something to point at.
         return UnderstoodRow(
             id = "material",
             label = text(R.string.onboarding_row_material),
-            value = read.ifEmpty { material }.joinToString(", ") { it.title.ifBlank { text(R.string.onboarding_your_text) } },
-            note =
-                text(
-                    when {
-                        !unread -> R.string.onboarding_row_material_note
-                        read.isEmpty() -> R.string.onboarding_row_material_all_missing_note
-                        else -> R.string.onboarding_row_material_missing_note
-                    },
-                ),
+            value = read.ifEmpty { material }.joinToString(", ") { title(it) },
+            note = note,
         )
     }
 

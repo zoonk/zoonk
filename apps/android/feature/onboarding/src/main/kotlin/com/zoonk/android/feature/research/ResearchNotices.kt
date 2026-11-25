@@ -1,15 +1,10 @@
 package com.zoonk.android.feature.research
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,12 +14,14 @@ import com.zoonk.android.feature.onboarding.start.AttachControls
 import com.zoonk.android.feature.onboarding.start.UnreadLine
 import com.zoonk.android.feature.onboarding.start.shownReadStatus
 import com.zoonk.android.feature.onboarding.start.unreadHint
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
@@ -80,7 +77,6 @@ fun UploadRequestNotice(
             SuggestionResult(thanks)
         } else {
             SuggestionDescription(copy.body)
-            hint?.let { UnreadLine(it) }
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
@@ -95,24 +91,24 @@ fun UploadRequestNotice(
                 )
             } else {
                 SuggestionActions {
-                    SuggestionAction(
+                    SuggestionMainAction(
+                        copy.action,
                         onClick = {
                             onAnswering()
                             vm.upload(visit)
                             focus()
                         },
                         enabled = idle,
-                    ) {
-                        Icon(painterResource(R.drawable.ic_upload), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(copy.action)
-                    }
+                        leadingIcon = { ButtonIcon(R.drawable.ic_upload) },
+                    )
                     SuggestionAction(stringResource(R.string.research_not_now), {
                         onAnswering()
                         vm.dismiss(visit)
                     }, enabled = idle, secondary = true)
                 }
             }
+            // Main's line sits with the actions it's about, after them.
+            hint?.let { UnreadLine(it) }
         }
         if (answer.saveFailed) SuggestionSaveError()
     }

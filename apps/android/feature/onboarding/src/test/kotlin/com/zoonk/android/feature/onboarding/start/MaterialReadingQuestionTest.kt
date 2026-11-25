@@ -17,24 +17,24 @@ import com.zoonk.api.models.SourceReadStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** A question about a photo still being read isn't asked: it goes back in the box to ask again in a moment. */
+/** The server still reading the material is the guard: the question stays asked, waits a moment and goes again. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class MaterialReadingQuestionTest {
-    private val photo = AttachedSource("3f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f", "IMG_2041.jpg", SourceReadStatus.READING)
+    private val photo = AttachedSource("3f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f", "IMG_2041.jpg", SourceReadStatus.READABLE)
 
     @Test
-    fun aQuestionAboutMaterialStillBeingReadStaysInTheBox() =
+    fun aQuestionTheServerStillReadsForGoesAgainOnceItsRead() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             val models = ViewModelStore()
@@ -47,18 +47,18 @@ class MaterialReadingQuestionTest {
 
                 vm.question.setTextAndPlaceCursorAtEnd("What is the mitotic spindle?")
                 vm.ask("en")
-                advanceUntilIdle()
+                runCurrent()
 
-                assertEquals("What is the mitotic spindle?", vm.question.text.toString())
-                assertTrue(vm.stillReading)
+                assertEquals(listOf("What is the mitotic spindle?"), api.asked)
+                assertEquals("What is the mitotic spindle?", vm.asking)
+                assertEquals("", vm.question.text.toString())
                 assertEquals(emptyList<MaterialTurn>(), vm.turns)
 
                 api.askFailure = ApiException(ApiError.Unavailable)
-                vm.ask("en")
-                advanceUntilIdle()
+                advanceTimeBy(READ_CHECK.inWholeMilliseconds + 1)
 
-                assertEquals("", vm.question.text.toString())
-                assertFalse(vm.stillReading)
+                assertEquals(listOf("What is the mitotic spindle?", "What is the mitotic spindle?"), api.asked)
+                assertNull(vm.asking)
                 assertEquals(listOf("What is the mitotic spindle?"), vm.turns.map { it.question })
             } finally {
                 models.clear()

@@ -40,6 +40,7 @@ import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.UPLOAD_ID
 import com.zoonk.android.feature.onboarding.draftSource
 import com.zoonk.android.feature.onboarding.failedDraft
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
@@ -188,7 +189,7 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText(notes.title).assertExists()
         rule.onNodeWithText(photo.title).assertDoesNotExist()
-        rule.onNodeWithText("Your plan and lessons follow only this material. We couldn't read the rest.").assertExists()
+        rule.onNodeWithText("Your plan and lessons follow only this material. We couldn't read “IMG_2041.jpg”.").assertExists()
         rule.runOnUiThread { backDispatcher.onBackPressed() }
         rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertExists()
         rule.onNodeWithText("Build my plan").performClick()
@@ -217,11 +218,81 @@ class StartGoalFlowTest {
         rule.waitForIdle()
 
         rule.onNode(hasStateDescription("Being read")).assertDoesNotExist()
-        rule.onNode(hasStateDescription("Can't be read")).assertExists()
+        rule.onNode(hasStateDescription("Couldn't be read")).assertExists()
         rule.onNodeWithText("We couldn't read “IMG_2041.jpg”. Try a sharper photo or paste the text.").assertExists()
         rule.mainClock.advanceTimeBy(READ_CHECK_MS * 2)
         rule.waitForIdle()
         assertEquals(listOf(photo.id, photo.id), api.sourceReads)
+    }
+
+    @Test
+    fun aGoalSentWhileMaterialIsBeingAddedWaitsAndGoesWithIt() {
+        api.attachGate = CompletableDeferred()
+        show()
+        rule.onNode(hasSetTextAction()).performTextInput("test on Friday")
+        addText()
+
+        rule.onNodeWithText("Build my plan").performClick()
+        rule.waitForIdle()
+        assertTrue(api.understandCalls.isEmpty())
+
+        api.attachGate?.complete(Unit)
+        rule.waitForIdle()
+
+        val sent = api.understandCalls.single()
+        assertEquals("test on Friday", sent.goal)
+        assertEquals(listOf(UUID.fromString(UPLOAD_ID)), sent.sourceIds)
+    }
+
+    @Test
+    fun aGoalSentWhileMaterialFailsToBeAddedStaysToShowWhy() {
+        api.attachGate = CompletableDeferred()
+        api.attachFailure = ApiException(ApiError.Unavailable)
+        show()
+        rule.onNode(hasSetTextAction()).performTextInput("test on Friday")
+        addText()
+
+        rule.onNodeWithText("Build my plan").performClick()
+        api.attachGate?.complete(Unit)
+        rule.waitForIdle()
+
+        assertTrue(api.understandCalls.isEmpty())
+        rule.onNodeWithText("We couldn't add that. Try again in a moment.").assertExists()
+        rule.onNodeWithText("test on Friday").assertExists()
+    }
+
+    @Test
+    fun aQuestionAboutAPhotoBeingReadIsAskedAtOnceAndGoesOnceItsRead() {
+        api.readStatuses = listOf("reading", "reading", "readable")
+        val photo = AttachedSource(UUID.randomUUID().toString(), "IMG_2041.jpg", SourceReadStatus.READING)
+        show()
+        rule.runOnUiThread {
+            val vm = ViewModelProvider(requireNotNull(owner))[StartGoalViewModel::class.java]
+            vm.setAttached(listOf(photo))
+            vm.setIntent(MaterialIntent.Questions)
+        }
+        rule.onNodeWithText("Build my plan").performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("What is the mitotic spindle?")
+        rule.onNodeWithContentDescription("Ask").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithText("What is the mitotic spindle?").assertExists()
+        rule.onNodeWithText("Reading your material…").assertExists()
+        assertTrue(api.asked.isEmpty())
+
+        rule.mainClock.advanceTimeBy(READ_CHECK_MS)
+        rule.waitForIdle()
+
+        assertEquals(listOf("What is the mitotic spindle?"), api.asked)
+        rule.onNodeWithText("We couldn't answer that. Try again in a moment.").assertExists()
+    }
+
+    private fun addText() {
+        rule.onNodeWithContentDescription("Study your own material").performClick()
+        rule.onNodeWithText("Paste text").performClick()
+        rule.onAllNodes(hasSetTextAction())[1].performTextInput("Mitosis has four phases.")
+        rule.onNodeWithText("Add text").performClick()
+        rule.waitForIdle()
     }
 
     private fun hasStateDescription(state: String) = SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state)

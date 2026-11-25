@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -45,6 +44,7 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
@@ -74,6 +74,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalUnderstanding
 import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.SourceReadStatus
 
 @Composable
 fun StartGoalScreen(
@@ -189,7 +190,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Questions -> {
-                        MaterialQuestions(vm, language, actions)
+                        MaterialQuestions(vm, store, language, actions)
                     }
 
                     screen is StartScreen.Sending -> {
@@ -243,6 +244,7 @@ private fun ColumnScope.Entry(
         state = vm.words,
         onSubmit = submit,
         canSubmitEmpty = flow.attached.isNotEmpty() && flow.intent != null,
+        isSubmitting = vm.heldGoal != null,
         leading = {
             IconButton(onClick = vm::toggleAttach, enabled = vm.materialLimitReached == null) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
@@ -256,11 +258,17 @@ private fun ColumnScope.Entry(
         },
     )
 
-    if (flow.attached.isNotEmpty()) {
-        val shown = flow.attached.map { key(it.id) { it.copy(readStatus = shownReadStatus(store.sources, it)) } }
-        AttachedChips(shown, vm.gone, vm.materialLimitReached, vm::removeAttached)
+    vm.heldGoal?.let { held ->
+        // Sent once the material on its way is added, so the goal carries it and its name.
+        if (!vm.isAttaching) LaunchedEffect(held) { vm.submit(held, materialGoal, language) }
     }
+
+    val shown = followedReads(store.sources, flow.attached)
+    FollowReading(vm, shown)
+    if (shown.isNotEmpty()) AttachedChips(shown, vm.gone, vm.materialLimitReached, vm::removeAttached)
     if (flow.attached.isNotEmpty() && !vm.isAttachOpen) MaterialIntentChoice(flow.intent, vm::setIntent)
+    // Under the choices: a read that settles while the learner picks one moves nothing above it.
+    UnreadableNote(shown, vm.gone)
     if (vm.isAttachOpen && !canAttach) SignUpPrompt(actions.createAccount)
     if (vm.isAttachOpen && canAttach) {
         AttachPanel(
@@ -526,10 +534,12 @@ private fun failedRun(failure: GenerationFailure) = GenerationRun(status = Gener
 @Composable
 private fun ColumnScope.MaterialQuestions(
     vm: StartGoalViewModel,
+    store: OnboardingStore,
     language: String,
     actions: StartActions,
 ) {
     val ask = { vm.ask(language) }
+    FollowReading(vm, followedReads(store.sources, vm.flow.attached))
 
     OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
 
@@ -540,26 +550,20 @@ private fun ColumnScope.MaterialQuestions(
                 MaterialAnswer(turn.outcome, actions.createAccount, actions.subscribe)
             }
         }
-    }
-
-    if (vm.isAsking) {
-        Row(
-            modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-            Text(stringResource(R.string.onboarding_questions_reading), style = MaterialTheme.typography.bodyMedium)
+        // Asked at once, its answer pending, whether the material is still being read or the answer is on its way.
+        vm.asking?.let { asked ->
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                TypedGoal(asked)
+                Row(
+                    modifier = Modifier.semantics(mergeDescendants = true) {},
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+                    Text(stringResource(R.string.onboarding_questions_reading), style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         }
-    }
-
-    if (vm.stillReading) {
-        Text(
-            stringResource(R.string.onboarding_question_material_reading),
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 
     // Main's `mt-auto`: on a short transcript the panel waits at the page's bottom, by the thumb and the keyboard.
@@ -573,6 +577,16 @@ private fun ColumnScope.MaterialQuestions(
         askLabel = stringResource(R.string.onboarding_ask),
         maxLength = MAX_QUESTION_LENGTH,
     )
+}
+
+/** Tells the screen's view model whether any of [shown] is still being read, so a question held for it can go. */
+@Composable
+private fun FollowReading(
+    vm: StartGoalViewModel,
+    shown: List<AttachedSource>,
+) {
+    val reading = shown.any { it.readStatus == SourceReadStatus.READING }
+    LaunchedEffect(reading) { vm.followReading(reading) }
 }
 
 @Composable
