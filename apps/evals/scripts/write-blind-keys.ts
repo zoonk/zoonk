@@ -1,5 +1,6 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { parseArgs } from "node:util";
 import { settleWithConcurrency } from "@/lib/concurrency";
 import { getCallsCost } from "@/lib/cost";
 import { getMeteredCalls, meterModelCalls } from "@/lib/spend-meter";
@@ -30,7 +31,7 @@ function print(line = "") {
  * from the notice's task and grading alone: never a candidate's answer, the board's standard,
  * its aspects or marks. The one eval-only change is the appended rule to keep the given question.
  */
-async function writeKey(source: SourceQuestion): Promise<BlindKey> {
+async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey> {
   const input: WritingPromptInput & { givenContext: string | null; givenQuestion: string } = {
     ...source.writerInput,
     givenContext: source.context,
@@ -48,6 +49,7 @@ async function writeKey(source: SourceQuestion): Promise<BlindKey> {
     copiedQuestion: data.question.trim() === source.question.trim(),
     costUsd: provenance.costUsd ?? null,
     data,
+    draw,
     latencyMs: provenance.latencyMs,
     model: provenance.model,
     productionPromptVersion: getPromptVersion({
@@ -58,13 +60,44 @@ async function writeKey(source: SourceQuestion): Promise<BlindKey> {
   };
 }
 
+async function readSaved(target: string): Promise<BlindKeyFile | null> {
+  try {
+    return JSON.parse(await readFile(target, "utf8")) as BlindKeyFile;
+  } catch {
+    return null;
+  }
+}
+
+const questionOrder = (id: string) => SOURCE_QUESTIONS.findIndex((source) => source.id === id);
+
+/**
+ * `--draw <n>` writes that draw of each question's key (1 by default) and keeps every other key in
+ * the file, so grades can be measured across the keys learners could get. Arguments pick questions.
+ */
 async function main() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
   meterModelCalls();
 
-  const only = process.argv.slice(2);
-  const sources = SOURCE_QUESTIONS.filter(({ id }) => only.length === 0 || only.includes(id));
-  const settled = await settleWithConcurrency({ concurrency: 6, items: sources, run: writeKey });
+  const { positionals, values } = parseArgs({
+    allowPositionals: true,
+    options: { draw: { default: "1", type: "string" } },
+  });
+
+  const draw = Number(values.draw);
+
+  if (!Number.isInteger(draw) || draw < 1) {
+    throw new Error(`--draw takes a whole number from 1: ${values.draw}`);
+  }
+
+  const sources = SOURCE_QUESTIONS.filter(
+    ({ id }) => positionals.length === 0 || positionals.includes(id),
+  );
+
+  const settled = await settleWithConcurrency({
+    concurrency: 6,
+    items: sources,
+    run: (source) => writeKey(source, draw),
+  });
 
   const keys = settled.flatMap((result, index) => {
     if (result.status === "fulfilled") {
@@ -76,19 +109,29 @@ async function main() {
   });
 
   const spent = getCallsCost({ calls: getMeteredCalls(), prices: GATEWAY_PRICES });
+  const target = path.join(process.cwd(), BLIND_KEYS_FILE);
+  const saved = await readSaved(target);
+  const written = new Set(keys.map(({ questionId }) => questionId));
+
+  const kept = (saved?.keys ?? []).filter(
+    (key) => key.draw !== draw || !written.has(key.questionId),
+  );
 
   const file: BlindKeyFile = {
     appendedInstructions: BLIND_KEY_INSTRUCTIONS,
     generatedAt: new Date().toISOString(),
-    keys,
-    spentUsd: spent,
+    keys: [...kept, ...keys].toSorted(
+      (a, b) => a.draw - b.draw || questionOrder(a.questionId) - questionOrder(b.questionId),
+    ),
+    spentUsd: (saved?.spentUsd ?? 0) + spent,
   };
 
-  const target = path.join(process.cwd(), BLIND_KEYS_FILE);
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(file, null, 2)}\n`);
 
-  print(`Wrote ${keys.length}/${sources.length} keys to ${target}; spent $${spent.toFixed(4)}`);
+  print(
+    `Wrote draw ${draw} for ${keys.length}/${sources.length} questions to ${target}; spent $${spent.toFixed(4)}`,
+  );
 
   for (const key of keys) {
     print(`${key.questionId}: ${key.model}, copied question ${key.copiedQuestion}`);

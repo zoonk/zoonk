@@ -4,13 +4,16 @@ import keyFile from "../../../eval-results/blind-keys/keys.json";
 import { type GradeWritingInput } from "../grade-essay/cases/shared";
 import { type MarkRange, getAblationMark } from "./ablation-marks";
 import { ABLATIONS, getAblationSource } from "./ablations";
-import { type BlindKeyFile, blindKeyInput } from "./blind-keys";
+import { type BlindKey, type BlindKeyFile, blindKeyInput } from "./blind-keys";
 import { SOURCE_QUESTIONS, type SourceQuestion } from "./source-questions";
 
 type BlindKeyStratum = SourceQuestion["stratum"] | "fgv-oab-ablation";
 
+/** `answer` names the graded answer apart from the key draw, so its draws calibrate as one. */
 export type BlindKeyExpected = {
+  answer: string;
   board: MarkRange;
+  draw: number;
   max: number;
   cutoffShare: number;
   stratum: BlindKeyStratum;
@@ -22,14 +25,14 @@ type BlindKeyCase = TestCase<BlindKeyExpected, GradeWritingInput>;
 
 const KEYS = (keyFile as BlindKeyFile).keys;
 
-function findKey(source: SourceQuestion) {
-  const key = KEYS.find(({ questionId }) => questionId === source.id);
+function findKeys(source: SourceQuestion): BlindKey[] {
+  const keys = KEYS.filter(({ questionId }) => questionId === source.id);
 
-  if (!key) {
+  if (keys.length === 0) {
     throw new Error(`No blind key for ${source.id}: run scripts/write-blind-keys.ts.`);
   }
 
-  return key;
+  return keys;
 }
 
 function findSource(caseId: string) {
@@ -42,48 +45,59 @@ function findSource(caseId: string) {
   return source;
 }
 
-const REAL_CASES: BlindKeyCase[] = SOURCE_QUESTIONS.flatMap((source) =>
-  source.cases.map((testCase) => {
-    const official = testCase.expected?.officialTotal ?? 0;
+/** Draw 1 keeps the ids its saved runs were written under. */
+const caseId = (answer: string, draw: number) =>
+  draw === 1 ? `blind-key-${answer}` : `blind-key-draw-${draw}-${answer}`;
 
-    return {
-      expected: {
-        board: { high: official, low: official },
-        cutoffShare: source.cutoffShare,
-        kind: "real" as const,
-        max: testCase.userInput.basis.points ?? 0,
-        sourceQuestion: source.id,
-        stratum: source.stratum,
-      },
-      id: `blind-key-${testCase.id}`,
-      language: "pt",
-      userInput: blindKeyInput({
-        key: findKey(source),
-        source,
-        text: testCase.userInput.text,
-        userInput: testCase.userInput,
-      }),
-    };
-  }),
+const REAL_CASES: BlindKeyCase[] = SOURCE_QUESTIONS.flatMap((source) =>
+  findKeys(source).flatMap((key) =>
+    source.cases.map((testCase) => {
+      const official = testCase.expected?.officialTotal ?? 0;
+
+      return {
+        expected: {
+          answer: testCase.id,
+          board: { high: official, low: official },
+          cutoffShare: source.cutoffShare,
+          draw: key.draw,
+          kind: "real" as const,
+          max: testCase.userInput.basis.points ?? 0,
+          sourceQuestion: source.id,
+          stratum: source.stratum,
+        },
+        id: caseId(testCase.id, key.draw),
+        language: "pt",
+        userInput: blindKeyInput({
+          key,
+          source,
+          text: testCase.userInput.text,
+          userInput: testCase.userInput,
+        }),
+      };
+    }),
+  ),
 );
 
-const ABLATION_CASES: BlindKeyCase[] = ABLATIONS.map((ablation) => {
+const ABLATION_CASES: BlindKeyCase[] = ABLATIONS.flatMap((ablation) => {
   const { testCase, text } = getAblationSource(ablation);
   const source = findSource(testCase.id);
+  const answer = `ablation-${ablation.id}-pt`;
 
-  return {
+  return findKeys(source).map((key) => ({
     expected: {
+      answer,
       board: getAblationMark(ablation, readerFile.marks),
       cutoffShare: source.cutoffShare,
+      draw: key.draw,
       kind: "ablation" as const,
       max: testCase.userInput.basis.points ?? 0,
       sourceQuestion: source.id,
       stratum: "fgv-oab-ablation" as const,
     },
-    id: `blind-key-ablation-${ablation.id}-pt`,
+    id: caseId(answer, key.draw),
     language: "pt",
-    userInput: blindKeyInput({ key: findKey(source), source, text, userInput: testCase.userInput }),
-  };
+    userInput: blindKeyInput({ key, source, text, userInput: testCase.userInput }),
+  }));
 });
 
 export const TEST_CASES: BlindKeyCase[] = [...REAL_CASES, ...ABLATION_CASES];

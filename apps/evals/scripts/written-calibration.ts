@@ -329,12 +329,12 @@ async function printProvenance({
 }
 
 function printKeyed(keyed: GradedAnswer[]) {
-  print("## Keyed mechanism, blind keys\n");
+  print("## Keyed mechanism, blind keys (every key draw pooled per answer)\n");
   strataTable(keyed);
   marginsTable(keyed);
   print(`### Call gate (level ${CALL_LEVEL}, k = 2)\n`);
   const checks = callGate(keyed);
-  print("### Residuals per answer (worst of 3 runs, share of the question)\n");
+  print("### Residuals per answer (worst run across every key draw, share of the question)\n");
   residualRows(keyed);
   return checks;
 }
@@ -411,21 +411,52 @@ function buildCalibration({
   };
 }
 
+/**
+ * One graded answer per board-marked answer or ablation, its runs pooled across the key draws:
+ * production writes one key per question per learner pool, so a draw's variance is a learner's.
+ */
+function keyedAnswers(runs: Map<string, Range[]>, draw?: number): GradedAnswer[] {
+  const answers = new Map<string, GradedAnswer>();
+
+  for (const { expected, id: caseId } of BLIND_CASES) {
+    const caseRuns = runs.get(caseId);
+
+    if (caseRuns && expected && (draw === undefined || expected.draw === draw)) {
+      const id = expected.answer.replace(/-pt$/u, "");
+      const known = answers.get(id);
+      answers.set(id, { ...expected, id, runs: [...(known?.runs ?? []), ...caseRuns] });
+    }
+  }
+
+  return [...answers.values()];
+}
+
+function printDraws(runs: Map<string, Range[]>) {
+  const draws = [...new Set(BLIND_CASES.flatMap(({ expected }) => expected?.draw ?? []))];
+
+  if (draws.length < 2) {
+    return;
+  }
+
+  print("## Each key draw on its own\n");
+
+  for (const draw of draws.toSorted((a, b) => a - b)) {
+    print(`Draw ${draw}:\n`);
+    strataTable(keyedAnswers(runs, draw));
+  }
+}
+
 async function main() {
   const keys = await readJson<BlindKeyFile>(BLIND_KEYS_FILE);
   const blindOutputs = await readOutputs("grade-essay-blind-key");
   const blind = runsByCase(blindOutputs);
   const board = runsByCase(await readOutputs("grade-essay"));
 
-  const keyed: GradedAnswer[] = BLIND_CASES.flatMap((testCase) => {
-    const runs = blind.runs.get(testCase.id);
-    const id = testCase.id.replace(/^blind-key-/u, "").replace(/-pt$/u, "");
-
-    return runs && testCase.expected ? [{ ...testCase.expected, id, runs }] : [];
-  });
+  const keyed = keyedAnswers(blind.runs);
 
   await printProvenance({ keys, outputs: blindOutputs, prompts: blind.prompts });
   const checks = printKeyed(keyed);
+  printDraws(blind.runs);
   printComparison(keyed, boardAnswers(keyedStratum, board.runs));
   printEnem(boardAnswers(enemStratum, board.runs));
 

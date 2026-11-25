@@ -12,8 +12,10 @@ export const BLIND_KEY_INSTRUCTIONS = `## A question the board already set
 
 This input also has \`givenQuestion\` and \`givenContext\`: a question the exam's board itself set for this task. Don't write a new question: copy \`givenQuestion\` into \`question\` and \`givenContext\` into \`context\` word for word, give it a \`title\`, and write the private key (\`criteria\`, \`aspects\`, \`keyPoints\`, \`sampleOutline\`, \`assessedSkillIds\`) for that question, under the rules that really govern it.`;
 
+/** Production writes one key per question per learner pool, so each draw is a key a learner could get. */
 export type BlindKey = {
   questionId: string;
+  draw: number;
   model: string;
   promptVersion: string;
   productionPromptVersion: string;
