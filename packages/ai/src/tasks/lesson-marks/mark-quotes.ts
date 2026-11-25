@@ -109,7 +109,8 @@ type Span = { end: number; start: number };
 
 /**
  * The text as a model copies it: prose without its inline code and bold marks and with single
- * spaces, code as written but for its line endings. `offsets` holds each kept character's place.
+ * line breaks, since models drop a blank line; everything else as written. `offsets` holds each
+ * kept character's place.
  */
 function readCopy(text: string): { offsets: number[]; value: string } {
   const code = findCodeSpans(text);
@@ -117,18 +118,17 @@ function readCopy(text: string): { offsets: number[]; value: string } {
   return text.split("").reduce<{ offsets: number[]; value: string }>(
     (read, char, at) => {
       const inCode = code.some((span) => at >= span.start && at < span.end);
-      const space = !inCode && char.trim() === "";
 
       if (
         char === "\r" ||
         (!inCode && INLINE_MARK.test(char)) ||
-        (space && read.value.endsWith(" "))
+        (!inCode && char === "\n" && read.value.endsWith("\n"))
       ) {
         return read;
       }
 
       read.offsets.push(at);
-      return { offsets: read.offsets, value: read.value + (space ? " " : char) };
+      return { offsets: read.offsets, value: read.value + char };
     },
     { offsets: [], value: "" },
   );

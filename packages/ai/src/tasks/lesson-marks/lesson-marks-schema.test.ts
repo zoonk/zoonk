@@ -317,6 +317,15 @@ describe(normalizeLessonMarks, () => {
   });
 
   describe("an example copied without its bold marks", () => {
+    it("tells inline programs apart by their own spaces", () => {
+      const text =
+        'A rule. Run `console.log("a b")`. Then compare. Run `console.log("a  b")`. End.';
+
+      expect(exampleOf({ example: 'Run console.log("a  b").', text })).toBe(
+        'Run `console.log("a  b")`.',
+      );
+    });
+
     it("frames the whole bold sentence, after an emoji too", () => {
       expect(exampleOf({ example: "Try it.", text: "A rule. **Try it.**" })).toBe("**Try it.**");
 
