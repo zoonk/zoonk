@@ -103,7 +103,6 @@ function keepsCodeWhole({
 }
 
 const INLINE_MARK = /[`*]/u;
-const WHITESPACE = /\s/u;
 const INTRODUCES = /[:：]$/u;
 
 type Span = { end: number; start: number };
@@ -118,7 +117,7 @@ function readCopy(text: string): { offsets: number[]; value: string } {
   return text.split("").reduce<{ offsets: number[]; value: string }>(
     (read, char, at) => {
       const inCode = code.some((span) => at >= span.start && at < span.end);
-      const space = WHITESPACE.test(char);
+      const space = char.trim() === "";
 
       if ((!inCode && INLINE_MARK.test(char)) || (space && read.value.endsWith(" "))) {
         return read;
