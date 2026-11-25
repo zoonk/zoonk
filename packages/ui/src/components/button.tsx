@@ -33,7 +33,7 @@ const buttonVariants = cva(
       },
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground aria-disabled:not-aria-busy:bg-muted aria-disabled:not-aria-busy:text-muted-foreground border-transparent [--button-variant:default] disabled:opacity-100 aria-disabled:not-aria-busy:opacity-100",
+          "bg-primary text-primary-foreground hover:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground aria-disabled:not-aria-busy:bg-muted aria-disabled:not-aria-busy:text-muted-foreground contrast-more:disabled:border-input contrast-more:aria-disabled:not-aria-busy:border-input border-transparent [--button-variant:default] disabled:opacity-100 aria-disabled:not-aria-busy:opacity-100",
         destructive:
           "bg-destructive/10 text-destructive-text hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 dark:hover:bg-destructive/30 border-transparent [--button-variant:destructive]",
         ghost:
