@@ -19,6 +19,14 @@ extension View {
   }
 }
 
+extension Text {
+  /// Main's `placeholder:text-muted-foreground`: a field's example is the muted step, never the
+  /// system's prompt color, so it reads as a hint in every appearance.
+  func fieldPrompt() -> Text {
+    foregroundStyle(.mutedForeground)
+  }
+}
+
 private struct FieldBorder: ViewModifier {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.colorSchemeContrast) private var contrast

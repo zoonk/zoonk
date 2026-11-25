@@ -186,7 +186,7 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
           .onTapGesture { isFocused = true }
 
           MultilineTextField(
-            text: $words, prompt: Text(placeholder).foregroundStyle(.mutedForeground),
+            text: $words, prompt: Text(placeholder),
             label: Text(
               "I want to", tableName: "Onboarding",
               comment: "The goal box's label, before the learner's words"),

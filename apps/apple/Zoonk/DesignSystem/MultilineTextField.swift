@@ -18,9 +18,11 @@ struct MultilineTextField: View {
   @ViewBuilder
   private var field: some View {
     if let selection {
-      TextField(text: typed, selection: selection, prompt: prompt, axis: .vertical) { label }
+      TextField(text: typed, selection: selection, prompt: prompt?.fieldPrompt(), axis: .vertical) {
+        label
+      }
     } else {
-      TextField(text: typed, prompt: prompt, axis: .vertical) { label }
+      TextField(text: typed, prompt: prompt?.fieldPrompt(), axis: .vertical) { label }
     }
   }
 

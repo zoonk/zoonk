@@ -217,13 +217,16 @@ private struct CallReply: View {
   @Binding var reply: String
   @Binding var focusesReply: Bool
 
+  private var replyPlaceholder: String {
+    String(
+      localized: "Or type your reply", table: "Voice", comment: "Placeholder for a typed reply")
+  }
+
   var body: some View {
     HStack(spacing: 8) {
-      TextField(
-        String(
-          localized: "Or type your reply", table: "Voice", comment: "Placeholder for a typed reply"),
-        text: $reply
-      )
+      TextField(text: $reply, prompt: Text(replyPlaceholder).fieldPrompt()) {
+        Text(replyPlaceholder)
+      }
       .textFieldStyle(.plain)
       .fieldBorder(isFocused: isFocused)
       .focused($isFocused)

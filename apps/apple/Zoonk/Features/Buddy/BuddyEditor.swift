@@ -90,7 +90,7 @@ struct BuddyPickerSections: View {
         title: Text("Name", tableName: "Buddy", comment: "The buddy's custom name"),
         isFocused: isNameFocused
       ) {
-        TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
+        TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil)).fieldPrompt()) {
           Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
         }
         .textInputAutocapitalization(.words)

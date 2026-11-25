@@ -27,7 +27,8 @@ struct EmailLoginView: View {
                 prompt: Text(
                   "6-digit code",
                   tableName: "Account",
-                  comment: "Placeholder for the email sign-in code")
+                  comment: "Placeholder for the email sign-in code"
+                ).fieldPrompt()
               ) {
                 Text("Code from the email", tableName: "Account")
               }
@@ -52,8 +53,8 @@ struct EmailLoginView: View {
                   "you@example.com",
                   tableName: "Account",
                   comment:
-                    "Example email address in the sign-in field: localize \"you\" and keep example.com"
-                )
+                    "An example email address in an empty email field. Localize \"you\" and keep example.com."
+                ).fieldPrompt()
               ) {
                 Text("Email", tableName: "Account", comment: "Email sign-in field label")
               }
