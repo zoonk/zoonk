@@ -12,10 +12,6 @@ import { LESSON_LIMIT_PARAM, readLessonLimitParam } from "@/lib/session/lesson-l
 import { SESSION_BLOCK_PARAM, readSessionBlockParam } from "@/lib/session/session-block-param";
 import { SESSION_GOAL_PARAM, readSessionGoalParam } from "@/lib/session/session-goal-param";
 import {
-  SESSION_PREPARING_PARAM,
-  readSessionPreparingParam,
-} from "@/lib/session/session-preparing-param";
-import {
   SESSION_STOPPED_PARAM,
   readSessionStoppedParam,
 } from "@/lib/session/session-stopped-param";
@@ -39,12 +35,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
-import {
-  getNextStopLesson,
-  getNotWritten,
-  getWritingRunId,
-  loadLessonState,
-} from "./next-step-lesson";
+import { getAskedRunId, getNextStopLesson, getNotWritten } from "./next-step-lesson";
 import { SessionBlockClient, SessionNextStopClient, SessionSummaryClient } from "./session-client";
 import { SessionEntryFallback } from "./session-entry-fallback";
 
@@ -135,12 +126,9 @@ type ScreenRequest = { limit: LessonLimit | null; request: LessonRequest };
 const UNASKED: ScreenRequest = { limit: null, request: { status: "idle" } };
 
 function readScreenRequest(search: Awaited<Props["searchParams"]>): ScreenRequest {
-  const request = readLessonWritingRequest(search);
-  const preparing = readSessionPreparingParam(search[SESSION_PREPARING_PARAM]);
-
   return {
     limit: readLessonLimitParam(search[LESSON_LIMIT_PARAM]),
-    request: request.status === "idle" && preparing ? { status: "requesting" } : request,
+    request: readLessonWritingRequest(search),
   };
 }
 
@@ -152,16 +140,15 @@ async function NextStepView({
   screen,
   step,
 }: {
-  alternative: StudyBlock | null;
+  alternative: DayStep | null;
   day: Parameters<typeof SessionNextStopClient>[0]["day"];
   facts: SessionFacts;
   next: NextStopFacts | null;
   screen: ScreenRequest;
   step: DayStep;
 }) {
-  const state = await loadLessonState({ next, step });
-  const lesson = getNextStopLesson({ ...screen, state, step });
-  const notWritten = getNotWritten({ lesson, state, ...screen });
+  const lesson = getNextStopLesson({ ...screen, step });
+  const notWritten = getNotWritten({ lesson, step, ...screen });
 
   const waitedId =
     lesson !== "ready" && !notWritten && step.kind === "learn" ? step.lessonId : null;
@@ -177,7 +164,7 @@ async function NextStepView({
       <SessionNextStopClient
         alternative={lesson === "ready" ? null : alternative}
         day={day}
-        generationId={getWritingRunId({ request: screen.request, state })}
+        generationId={getAskedRunId({ request: screen.request, step })}
         goalId={facts.goal.id}
         key={`${facts.goal.id}:${facts.localDate.toISOString()}:${step.position}`}
         lesson={lesson}
@@ -311,7 +298,9 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
 
   return (
     <NextStepView
-      alternative={null}
+      alternative={
+        result.day.blocks.find((block) => block.position === result.day.alternativePosition) ?? null
+      }
       day={result.day}
       facts={result}
       next={result.next}

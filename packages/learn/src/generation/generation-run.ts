@@ -46,3 +46,14 @@ export function isFollowing(run: GenerationRun): boolean {
 export function toHeldRun(run: GenerationRun): GenerationRun {
   return { ...run, failure: null, status: "ready" };
 }
+
+/**
+ * A lesson's wait leaves a run that went away to the lesson's readiness to judge, so until that
+ * answers, the run shows as still working.
+ */
+export function toAwaitedRun(run: GenerationRun): GenerationRun {
+  return hasStopped(run) ? { ...run, failure: null, retry: undefined, status: "following" } : run;
+}
+
+/** Nothing to follow until a readiness read names the run writing the lesson. */
+export const UNNAMED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };

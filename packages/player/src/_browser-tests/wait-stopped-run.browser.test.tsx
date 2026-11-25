@@ -6,12 +6,11 @@ import {
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { NextStop, type NextStopActions } from "@zoonk/learn/session/next-stop";
-import { type DayStep } from "@zoonk/learn/session/types";
+import { type DayStep, type LessonReadiness } from "@zoonk/learn/session/types";
 import { createContext, use } from "react";
-import { describe, expect, it, onTestFinished, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { PlacementWaiting } from "../../../learn/src/onboarding/steps/placement-waiting";
-import { focusOn, press } from "../_test-utils/activity-player";
 import { render } from "../_test-utils/render";
 
 const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
@@ -71,6 +70,12 @@ function FakeFollower({ children }: FollowedRunProps) {
   return children(use(RunContext));
 }
 
+const WRITING: LessonReadiness = { generationId: "run-1", setAside: false, status: "generating" };
+const FAILED: LessonReadiness = { generationId: null, setAside: false, status: "failed" };
+
+/** What the API's readiness says each time the wait asks. */
+const readiness = { current: WRITING };
+
 function UpNext({
   deck,
   generationId = "run-1",
@@ -83,6 +88,7 @@ function UpNext({
   run: GenerationRun;
 }) {
   const actions: NextStopActions = {
+    readLesson: async () => readiness.current,
     refresh: vi.fn(),
     start: vi.fn(async () => true),
     stop: vi.fn(async () => true),
@@ -129,8 +135,8 @@ function Placement({ deck, run }: { deck: WarmUpDeck; run: GenerationRun }) {
   );
 }
 
-/** Just past the ten minutes a lesson's writing may take without the wait calling it stuck. */
-const WENT_QUIET_MS = 600_001;
+/** Longer than any lesson's writing has taken: the wait never calls it stuck on its own. */
+const LONG_QUIET_MS = 20 * 60_000;
 
 const question = () => page.getByText(QUESTION);
 const helium = () => page.getByRole("radio", { name: /Helium/u });
@@ -147,8 +153,12 @@ async function reach(state: "answered" | "midQuestion") {
 }
 
 describe("a wait whose run stops takes the quiz away whole", () => {
+  beforeEach(() => {
+    readiness.current = WRITING;
+  });
+
   it.each(["midQuestion", "answered"] as const)(
-    "Up next, as soon as the followed run stops, before the session's snapshot does: %s",
+    "Up next, once readiness says the stopped run's lesson failed, before the session's snapshot does: %s",
     async (state) => {
       const deck = newDeck();
       const view = render(<UpNext deck={deck} run={RUNNING} />);
@@ -158,12 +168,14 @@ describe("a wait whose run stops takes the quiz away whole", () => {
       view.rerender(<UpNext deck={deck} run={PAUSED} />);
       await expect.element(question()).toBeVisible();
 
+      readiness.current = FAILED;
       view.rerender(<UpNext deck={deck} run={STOPPED} />);
       await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();
       await expect.element(question()).not.toBeInTheDocument();
       await expect.element(helium()).not.toBeInTheDocument();
 
       await page.getByRole("button", { name: "Try again" }).click();
+      readiness.current = { ...WRITING, generationId: "run-2" };
       view.rerender(<UpNext deck={deck} generationId="run-2" run={RUNNING} />);
 
       // A fresh quiz: a card with nothing picked, wherever the deck had got to.
@@ -172,31 +184,31 @@ describe("a wait whose run stops takes the quiz away whole", () => {
     },
   );
 
-  it("Up next gives a run that went quiet a clean start: after Try again, and for a new run", async () => {
+  it("Up next keeps the wait when readiness says another run is writing the lesson", async () => {
+    const deck = newDeck();
+    const view = render(<UpNext deck={deck} run={RUNNING} />);
+    await expect.element(question()).toBeVisible();
+
+    readiness.current = { ...WRITING, generationId: "run-2" };
+    view.rerender(<UpNext deck={deck} run={STOPPED} />);
+
+    await expect.element(page.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+    await expect.element(question()).toBeVisible();
+  });
+
+  it("Up next never calls a slow run stuck on its own, however long it's quiet", async () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
 
     onTestFinished(() => {
       vi.useRealTimers();
     });
 
-    const deck = newDeck();
-    const view = render(<UpNext deck={deck} run={RUNNING} />);
+    render(<UpNext deck={newDeck()} run={RUNNING} />);
     await expect.element(question()).toBeVisible();
 
-    // Ten minutes of writing with nothing new from the run: the wait says it didn't work.
-    await vi.advanceTimersByTimeAsync(WENT_QUIET_MS);
-    await expect.element(question()).not.toBeInTheDocument();
-
-    // A press, not a click: a click lets the fake clock run on.
-    await focusOn(page.getByRole("button", { name: "Try again" }));
-    await press("Enter");
+    await vi.advanceTimersByTimeAsync(LONG_QUIET_MS);
     await expect.element(question()).toBeVisible();
-
-    await vi.advanceTimersByTimeAsync(WENT_QUIET_MS);
-    await expect.element(question()).not.toBeInTheDocument();
-
-    view.rerender(<UpNext deck={deck} generationId="run-2" run={RUNNING} />);
-    await expect.element(question()).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
   });
 
   it.each(["midQuestion", "answered"] as const)(

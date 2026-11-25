@@ -1,20 +1,22 @@
 "use client";
 
 import { getFromBrowser } from "@/lib/api/browser-api";
-import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
+import { type LessonReadiness, type LessonStatus } from "@zoonk/learn/session/types";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
-const WAITED_LESSON = new Map<string, NextStopLesson>([
-  ["failed", "failed"],
-  ["generating", "writing"],
-  ["notStarted", "notStarted"],
-  ["ready", "ready"],
-]);
+const STATUSES = new Set<string>([
+  "failed",
+  "generating",
+  "notStarted",
+  "ready",
+] satisfies LessonStatus[]);
 
-/** The wait reads the whole session again only when this changed. Null when it couldn't be read. */
-export async function readWaitedLesson(
-  lessonId: string,
-): Promise<{ generationId: string | null; lesson: NextStopLesson; setAside: boolean } | null> {
+function isLessonStatus(value: string | null): value is LessonStatus {
+  return value !== null && STATUSES.has(value);
+}
+
+/** The API's live verdict on a lesson's writing. Null when it couldn't tell, as a 503 says. */
+export async function readLessonReadiness(lessonId: string): Promise<LessonReadiness | null> {
   const response = await getFromBrowser(
     `/v1/library/lessons/${encodeURIComponent(lessonId)}/readiness`,
   );
@@ -24,13 +26,13 @@ export async function readWaitedLesson(
   }
 
   const body: unknown = await response.json().catch(() => null);
-  const lesson = WAITED_LESSON.get(getString(body, "status") ?? "");
+  const status = getString(body, "status");
 
-  return lesson
+  return isLessonStatus(status)
     ? {
         generationId: getString(body, "generationId"),
-        lesson,
         setAside: isJsonObject(body) && body.setAside === true,
+        status,
       }
     : null;
 }

@@ -37,3 +37,13 @@ export type StudyAnswerOutcome =
 export type StudyFinishOutcome =
   | { moment: StudyMomentView; status: "finished" }
   | { status: "failed" };
+
+/** A lesson's writing state as the server saved it; `generating` holds a claim the API can confirm. */
+export type LessonStatus = NonNullable<StudyBlock["lesson"]>["status"];
+
+/** The API's live verdict on a lesson's writing: a non-null `generationId` is a run confirmed alive. */
+export type LessonReadiness = {
+  generationId: string | null;
+  setAside: boolean;
+  status: LessonStatus;
+};
