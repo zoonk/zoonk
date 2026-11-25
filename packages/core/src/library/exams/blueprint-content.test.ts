@@ -842,8 +842,6 @@ describe("a learner's own material", () => {
   const NOTES =
     "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nProva com 10 questões";
 
-  const documents = [{ sourceId: "notes", text: NOTES }];
-
   const subject = blueprintExtraction().subjects[0]!;
 
   const extraction = blueprintExtraction({
@@ -866,10 +864,26 @@ describe("a learner's own material", () => {
         weight: null,
       },
       { ...subject, name: "Dinâmica", passages: [{ document: 1, passage: "# Dinâmica" }] },
+      {
+        ...subject,
+        name: "Medieval History",
+        passages: [{ document: 1, passage: "# Cinemática - MUV" }],
+        questions: null,
+        weight: null,
+      },
     ],
   });
 
-  function read({ material, supportedIds }: { material: boolean; supportedIds: string[] }) {
+  function read({
+    material,
+    supportedIds,
+    text = NOTES,
+  }: {
+    material: boolean;
+    supportedIds: string[];
+    text?: string | null;
+  }) {
+    const documents = [{ sourceId: "notes", text }];
     const facts = listBlueprintFacts({ documents, extraction, material });
 
     const content = toBlueprintContent({
@@ -887,7 +901,7 @@ describe("a learner's own material", () => {
   it("keeps a subject its passage names without asking the check, which still judges the exam's details", () => {
     const { checked, content } = read({ material: true, supportedIds: [] });
 
-    expect(checked).toStrictEqual(["subjects.0.questions"]);
+    expect(checked).toStrictEqual(["subjects.0.questions", "subjects.2"]);
 
     expect(content.structure.subjects.map((item) => [item.name, item.questions])).toStrictEqual([
       ["Cinemática - MUV", null],
@@ -896,10 +910,23 @@ describe("a learner's own material", () => {
     expect(isUsableBlueprint({ content, shared: false })).toBe(true);
   });
 
+  it("leaves to the check a subject its quoted passage doesn't name, or notes without text", () => {
+    const unnamed = read({ material: true, supportedIds: ["subjects.2"] });
+    const unread = read({ material: true, supportedIds: [], text: null });
+
+    expect(unnamed.content.structure.subjects.map((item) => item.name)).toStrictEqual([
+      "Cinemática - MUV",
+      "Medieval History",
+    ]);
+
+    expect(unread.checked).toContain("subjects.0");
+    expect(unread.content.structure.subjects).toStrictEqual([]);
+  });
+
   it("leaves an exam notice's subjects to the check", () => {
     const { checked, content } = read({ material: false, supportedIds: [] });
 
-    expect(checked).toStrictEqual(["subjects.0", "subjects.0.questions"]);
+    expect(checked).toStrictEqual(["subjects.0", "subjects.0.questions", "subjects.2"]);
     expect(content.structure.subjects).toStrictEqual([]);
   });
 });

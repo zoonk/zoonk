@@ -28,6 +28,33 @@ function resolvePassage({
   return { citation: { passage: passage.passage, sourceId: document.sourceId }, found };
 }
 
+/** The name is in the document's own text, inside a passage quoted from it. */
+export function isNameQuoted({
+  documents,
+  name,
+  passages,
+}: {
+  documents: ExtractionDocument[];
+  name: string;
+  passages: Passage[];
+}): boolean {
+  const names = [name];
+
+  return passages.some(({ document, passage }) => {
+    const text = documents[document - 1]?.text;
+
+    if (!text) {
+      return false;
+    }
+
+    return (
+      isPassageInDocument({ passage, text }) &&
+      findNamesInDocument({ names, text: passage }).size > 0 &&
+      findNamesInDocument({ names, text }).size > 0
+    );
+  });
+}
+
 export function toClaimSource({
   documents,
   passages,

@@ -11,6 +11,7 @@ import { mockFacts } from "./blueprint-mock-facts";
 import {
   type ExtractionDocument,
   type Passage,
+  isNameQuoted,
   listCountPassages,
   listFoundPassages,
   listMarkingPassages,
@@ -67,7 +68,7 @@ function subjectFacts({ documents, extraction, found, material }: FactSource): F
 
     const claims = toFacts({
       claims: [
-        { id, settled: material, statement: name },
+        { id, settled: material && isNameQuoted({ documents, ...subject }), statement: name },
         subject.questions !== null && {
           id: `${id}.questions`,
           statement: `${name} has ${subject.questions} questions`,

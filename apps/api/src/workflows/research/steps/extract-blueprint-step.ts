@@ -39,7 +39,6 @@ import { readWrittenTaskSubjectsStep } from "./written-task-subjects-step";
 
 export type BlueprintReading = {
   content: BlueprintContent;
-  facts: { extracted: number; kept: number };
   problems: ReadingProblem[] | null;
   provenance: { generatedAt: string; model: string; promptVersion: string; runId: string };
   reusePolicy: { policy: ReusePolicy; sourceId: string } | null;
@@ -325,7 +324,6 @@ async function assembleBlueprintStep({
 
   return {
     content,
-    facts: { extracted: facts.length, kept: supportedIds.length },
     problems: findings
       ? findReadingProblems({
           checked: toReadSubjects(extraction),

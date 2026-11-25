@@ -16,8 +16,8 @@ export const FORMAT_WORDS: Record<BlueprintExtraction["formats"][number]["kind"]
 };
 
 /**
- * A settled claim is kept once its passage is found, without the cited-fact check: what a learner's
- * own material covers is what it names, and a rare refusal would leave their notes without a plan.
+ * A settled claim is kept once its passage is found, without the cited-fact check: a learner's own
+ * notes cover the subjects they name, and a rare refusal would leave them without a plan.
  */
 type Claim = { id: string; settled?: boolean; statement: string };
 
