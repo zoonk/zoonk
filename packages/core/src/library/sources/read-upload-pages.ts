@@ -3,13 +3,10 @@ import { transcribeMaterial } from "@zoonk/ai/tasks/material/transcribe";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getOnboardingDraftsCacheTag } from "../../cache/tags";
-import { optimizeImage } from "../../images/optimize-image";
-import { MAX_PAGE_EDGE, renderPdfPage } from "./render-pdf-page";
+import { renderPdfPage } from "./render-pdf-page";
+import { renderPhotoPage } from "./render-photo-page";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, sourceStructureSchema } from "./source-contract";
-import { matchesSourceImageSignature } from "./source-image-signature";
 import { readUploadedBlob } from "./upload-blob";
-
-const MAX_PHOTO_PIXELS = 64_000_000;
 
 export async function findOwedUpload(sourceId: string) {
   const source = await prisma.source.findFirst({
@@ -33,25 +30,6 @@ export async function findOwedUpload(sourceId: string) {
 }
 
 export type UploadReading = NonNullable<Awaited<ReturnType<typeof findOwedUpload>>>;
-
-async function renderPhotoPage(photo: Parameters<typeof matchesSourceImageSignature>[0]) {
-  if (!matchesSourceImageSignature(photo)) {
-    throw new Error("The uploaded photo does not match its file type");
-  }
-
-  const { data, error } = await optimizeImage({
-    format: "jpeg",
-    image: photo.bytes,
-    limitInputPixels: MAX_PHOTO_PIXELS,
-    maxEdge: MAX_PAGE_EDGE,
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  return { data, mediaType: "image/jpeg" };
-}
 
 export async function readUploadPage({
   index,

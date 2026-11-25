@@ -19,9 +19,10 @@ const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const
 
 const USER_PROMPT = "Write down this page.";
 
-const schema = z.object({ text: z.string() });
+// oxlint-disable-next-line eslint/sort-keys -- The model writes the page before it judges whether anything on it can be studied.
+const schema = z.object({ text: z.string(), readable: z.boolean() });
 
-export type MaterialTranscription = z.infer<typeof schema>;
+export type MaterialTranscription = { text: string };
 
 export type TranscribeMaterialParams = {
   /**
@@ -74,7 +75,7 @@ export async function transcribeMaterial({
   });
 
   return {
-    data: { text: toMaterialTranscript(result.output.text) },
+    data: { text: toMaterialTranscript(result.output) } satisfies MaterialTranscription,
     provenance,
     systemPrompt,
     usage: result.usage,

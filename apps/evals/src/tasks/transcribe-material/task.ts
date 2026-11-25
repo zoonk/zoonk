@@ -6,6 +6,7 @@ import {
   type MaterialTranscription,
   transcribeMaterial,
 } from "@zoonk/ai/tasks/material/transcribe";
+import { renderPhotoPage } from "@zoonk/core/library/sources/render-photo-page";
 import { TEST_CASES, type TranscribeMaterialCaseInput } from "./test-cases";
 import { type TranscribeMaterialExpected, checkTranscription } from "./transcription-checks";
 
@@ -17,12 +18,9 @@ const scoreTranscription: TaskScorer<TranscribeMaterialExpected> = ({ output, te
   const { text } = JSON.parse(output) as MaterialTranscription;
   const check = checkTranscription({ expected: testCase.expected ?? {}, text });
 
-  const parts = [
-    check.recall,
-    Number(check.signsAndRelations),
-    Number(check.noInvention),
-    Number(check.emptyWhenNothing),
-  ];
+  const parts = testCase.expected?.empty
+    ? [Number(check.emptyWhenNothing)]
+    : [check.recall, Number(check.signsAndRelations), Number(check.noInvention)];
 
   const share = parts.reduce((sum, part) => sum + part, 0) / parts.length;
 
@@ -38,14 +36,9 @@ async function generate({
   reasoning,
   useFallback,
 }: TranscribeMaterialCaseInput & { model: string; reasoning?: Reasoning; useFallback?: boolean }) {
-  const data = await readDatasetImage({ fileName: imageFile, taskId: TASK_ID });
+  const photo = await readDatasetImage({ fileName: imageFile, taskId: TASK_ID });
 
-  return transcribeMaterial({
-    image: { data, mediaType: "image/jpeg" },
-    model,
-    reasoning,
-    useFallback,
-  });
+  return transcribeMaterial({ image: await renderPhotoPage({ bytes: photo, contentType: "image/jpeg" }), model, reasoning, useFallback });
 }
 
 export const transcribeMaterialTask: Task<

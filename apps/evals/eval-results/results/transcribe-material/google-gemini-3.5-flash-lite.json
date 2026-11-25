@@ -6,17 +6,17 @@
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -65,17 +65,17 @@
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -124,17 +124,17 @@
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Not on the page: retilíneo.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -183,17 +183,17 @@
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -241,17 +241,17 @@
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -299,17 +299,17 @@
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "majorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8.666666666666666
         },
         {
           "conclusion": "Missing or changed: +6.01.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8.666666666666666
         }
       ],
       "testCase": {
@@ -1686,17 +1686,17 @@
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "majorErrors",
-          "score": 9.9375
+          "score": 9.916666666666666
         },
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "minorErrors",
-          "score": 9.9375
+          "score": 9.916666666666666
         },
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "potentialImprovements",
-          "score": 9.9375
+          "score": 9.916666666666666
         }
       ],
       "testCase": {
@@ -1794,17 +1794,17 @@
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "majorErrors",
-          "score": 9.9375
+          "score": 9.916666666666666
         },
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "minorErrors",
-          "score": 9.9375
+          "score": 9.916666666666666
         },
         {
           "conclusion": "Missing words: Causes of WW1.",
           "kind": "potentialImprovements",
-          "score": 9.9375
+          "score": 9.916666666666666
         }
       ],
       "testCase": {
