@@ -82,6 +82,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -294,6 +295,7 @@ private fun RoadmapFull(
                     dated = phase.index in axisDated,
                     overrun = overrun?.takeIf { it.phaseIndex == phase.index },
                     hasOverrun = overrun != null,
+                    todayRow = currentIndex >= 0,
                     onOpen = { opened = phase.index },
                 )
             }
@@ -482,14 +484,38 @@ private fun PhaseColumn(
     dated: Boolean,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
+    todayRow: Boolean,
     onOpen: () -> Unit,
 ) {
     val todayShare = if (phase.state == PlanPhase.State.CURRENT) phase.shareAt(page.today, DayPart.Start) else null
 
     Column(Modifier.width(width)) {
+        // Every column keeps the row, so the bands stay on one line.
+        if (todayRow) TodayLabel(todayShare)
         PhaseBand(page, phase, name, bandHeight, todayShare, onOpen)
         PhaseLane(page, phase, isLast, overrun, hasOverrun)
-        PhaseAxis(page, phase, isLast, dated, todayShare, overrun, hasOverrun)
+        PhaseAxis(page, phase, isLast, dated, overrun, hasOverrun)
+    }
+}
+
+/** Main's `TodayTick`: "Today" over the current band, at its day; the band draws the tick's top under it. */
+@Composable
+private fun TodayLabel(share: Float?) {
+    val style = axisStyle()
+    val line = with(LocalDensity.current) { style.lineHeight.toDp() }
+
+    FractionRow(
+        Modifier
+            .fillMaxWidth()
+            .padding(bottom = TODAY_STUB)
+            .height(line)
+            .clearAndSetSemantics {},
+    ) {
+        share?.let {
+            At(it, if (it < MIDDLE_SHARE) Anchor.Start else Anchor.End) {
+                Text(stringResource(R.string.plan_today), style = style, color = MaterialTheme.colorScheme.onSurface, maxLines = 1)
+            }
+        }
     }
 }
 
@@ -500,7 +526,11 @@ private fun DrawScope.todayX(share: Float): Float {
     return point.coerceIn(corner, max(corner, size.width - corner - TODAY_LINE.toPx()))
 }
 
-/** Today's line inside a band, top to bottom, with a gap where it would cross the name ([name], at the band's start). */
+/**
+ * Today's line inside a band, top to bottom, with a gap where it would cross the name ([name], centered at the
+ * band's start), so it never reads as a stroke of a letter. At least [TODAY_MIN_SEGMENT] of it shows over and
+ * under the name, so it always reaches into the band.
+ */
 private fun DrawScope.drawTodayThrough(
     x: Float,
     ink: Color,
@@ -510,17 +540,21 @@ private fun DrawScope.drawTodayThrough(
     val gap = TODAY_NAME_GAP.toPx()
     val padding = BAND_PADDING_X.toPx()
     val left = if (layoutDirection == LayoutDirection.Rtl) size.width - padding - name.width else padding
-    val top = (size.height - name.height) / 2
     if (x + line < left - gap || x > left + name.width + gap) {
         drawRect(ink, Offset(x, 0f), Size(line, size.height))
         return
     }
-    drawRect(ink, Offset(x, 0f), Size(line, (top - gap).coerceAtLeast(0f)))
-    drawRect(ink, Offset(x, top + name.height + gap), Size(line, (size.height - top - name.height - gap).coerceAtLeast(0f)))
+    val middle = size.height / 2
+    val half = min(name.height / 2f + gap, middle - TODAY_MIN_SEGMENT.toPx())
+    drawRect(ink, Offset(x, 0f), Size(line, middle - half))
+    drawRect(ink, Offset(x, middle + half), Size(line, middle - half))
 }
 
 private val TODAY_NAME_GAP = 2.dp
-private val TODAY_TICK = 6.dp
+private val TODAY_MIN_SEGMENT = 4.dp
+
+/** The tick's top, from "Today" down to the band. */
+private val TODAY_STUB = 4.dp
 private val TODAY_LINE = 1.5.dp
 private const val COVERED_ALPHA = 0.3f
 private val BAND_HEIGHT = 32.dp
@@ -562,14 +596,11 @@ private fun PhaseBand(
         modifier =
             Modifier
                 .fillMaxWidth()
-                // Before the height, so the ticks meet the band rather than the 48dp touch target Surface centers on it.
+                // Before the height, so the tick meets the band rather than the 48dp touch target Surface centers on it.
                 .drawBehind {
                     todayShare ?: return@drawBehind
-                    val x = todayX(todayShare)
-                    val tick = TODAY_TICK.toPx()
-                    val line = TODAY_LINE.toPx()
-                    drawRect(ink, Offset(x, -tick), Size(line, tick))
-                    drawRect(ink, Offset(x, size.height), Size(line, tick))
+                    val stub = TODAY_STUB.toPx()
+                    drawRect(ink, Offset(todayX(todayShare), -stub), Size(TODAY_LINE.toPx(), stub))
                 }.height(height)
                 .semantics { contentDescription = label },
         shape = RoundedCornerShape(BAND_RADIUS),
@@ -577,7 +608,7 @@ private fun PhaseBand(
         contentColor = content,
     ) {
         // The part already covered, tinted under the name: a line at the band's edge read as a thicker ring.
-        // Today's tick runs on through the band, over its fill, so "Today" under it points at one day; it breaks around the name.
+        // Today's tick runs on through the band, over its fill, so "Today" over it points at one day; it breaks around the name.
         Box(
             Modifier.drawBehind {
                 if (current &&
@@ -676,7 +707,6 @@ private fun PhaseAxis(
     phase: PlanPhase,
     isLast: Boolean,
     labelled: Boolean,
-    todayShare: Float?,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
 ) {
@@ -689,10 +719,9 @@ private fun PhaseAxis(
     // The legend names the flag's date ("Exam date"), so the axis shows the date alone, in the data face.
     val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
     val end = phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
-    // A phase's end gives way when it meets an earlier label: its row on the path says it, and under "Today" it would read as today's date.
+    // A phase's end gives way when it meets an earlier label: its row on the path says it.
     val labels =
         listOfNotNull(
-            todayShare?.takeIf { goalShare == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
             goalShare?.let { at -> goalDate?.let { AxisLabel(it, ink, at) } },
             end?.takeIf { labelled && !goalAtEnd }?.let { AxisLabel(it, faint, 1f, givesWay = true) },
             when {
