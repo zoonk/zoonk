@@ -42,7 +42,8 @@ struct PageHeader<Trailing: View>: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
+    let titleCapHeight = titleCapHeight
+    return VStack(alignment: .leading, spacing: 4) {
       if let chip {
         ChipRow(chip: chip, position: position)
           .padding(.bottom, 8)
