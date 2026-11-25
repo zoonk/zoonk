@@ -260,6 +260,13 @@ describe(loadLessonLawsInput, () => {
     );
 
     expect(inputs).toStrictEqual([null, null, null, null, null]);
+
+    await prisma.source.update({
+      data: { extractedText: "\f[illegible]\f", mimeType: "application/pdf", readState: "read" },
+      where: { id: upload.id },
+    });
+
+    await expect(loadLessonLawsInput(materialLesson.id)).resolves.not.toBeNull();
   });
 });
 

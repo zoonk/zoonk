@@ -44,7 +44,7 @@ async function linkUpload({
   uploadId: string;
   userId: string;
 }) {
-  await writeLearnerChange({ userId }, async (tx) => {
+  return writeLearnerChange({ userId }, async (tx) => {
     const uploads = await tx.sourceUpload.createMany({
       data: { id: uploadId, sourceId, userId },
       skipDuplicates: true,
@@ -67,14 +67,36 @@ async function linkUpload({
       ? await linkGoalSources(tx, { goalId, origin: "upload", sourceIds: [sourceId], userId })
       : 0;
 
-    return uploads.count + uploaded.count + attached === 0 ? unchanged(null) : null;
+    const retried =
+      uploads.count > 0
+        ? await tx.source.updateMany({
+            data: { readState: "owed" },
+            where: { id: sourceId, ownerId: userId, readState: "failed" },
+          })
+        : { count: 0 };
+
+    if (retried.count > 0) {
+      await oweFollowUps({
+        db: tx,
+        followUps: [{ input: { sourceId }, kind: "readUpload" }],
+        userId,
+      });
+    }
+
+    const pending = retried.count > 0;
+    return uploads.count + uploaded.count + attached === 0 ? unchanged(pending) : pending;
   });
 }
 
-function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
+function findStoredCopy({ content, userId }: { content: UploadContent; userId: string }) {
   return prisma.source.findFirst({
     orderBy: { createdAt: "asc" },
-    where: { ...libraryRowsVisibleTo(userId), contentHash: hash },
+    where: {
+      ...(content.parsed.visualPages
+        ? { ownerId: userId, readState: { not: null } }
+        : libraryRowsVisibleTo(userId)),
+      contentHash: content.hash,
+    },
   });
 }
 
@@ -137,11 +159,13 @@ async function createPrivateSource({
         language: input.language,
         mimeType: content.contentType,
         ownerId: userId,
+        readState: content.parsed.visualPages ? "owed" : null,
         readVersion: SOURCE_READ_VERSION,
         structure: {
           images: content.parsed.images.length,
           pages: content.parsed.pages,
           topic: null,
+          ...(content.parsed.visualPages && { visualPages: content.parsed.visualPages }),
         },
         title,
         url: content.url ?? null,
@@ -151,7 +175,12 @@ async function createPrivateSource({
 
     await oweFollowUps({
       db: tx,
-      followUps: [{ input: { sourceId: source.id }, kind: "checkUploadVisibility" }],
+      followUps: [
+        {
+          input: { sourceId: source.id },
+          kind: content.parsed.visualPages ? "readUpload" : "checkUploadVisibility",
+        },
+      ],
       userId,
     });
 
@@ -205,7 +234,7 @@ async function storeUpload({
 }): Promise<SourceUploadResult> {
   const [goalId, storedCopy, uploadedBefore] = await Promise.all([
     getOwnGoalId({ goalId: input.goalId, userId }),
-    findStoredCopy({ hash: content.hash, userId }),
+    findStoredCopy({ content, userId }),
     hasUploaded({ hash: content.hash, userId }),
   ]);
 
@@ -220,10 +249,14 @@ async function storeUpload({
     ? { created: false, source: storedCopy }
     : await createPrivateSource({ content, input, userId });
 
-  await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
+  const retried = await linkUpload({ goalId, sourceId: source.id, uploadId, userId });
   await removeUnusedBlob({ content, storedBlobUrl: source.blobUrl });
 
-  return { checkVisibility: created, source: withSourceReadStatus(source), status: "ready" };
+  return {
+    checkVisibility: created && source.readState === null,
+    source: withSourceReadStatus({ ...source, readState: retried ? "owed" : source.readState }),
+    status: "ready",
+  };
 }
 
 /**

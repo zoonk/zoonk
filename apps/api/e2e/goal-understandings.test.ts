@@ -203,13 +203,22 @@ test.describe("Goal understandings API", () => {
       createBearerLearner({ baseURL, prefix: "understanding-material-other" }),
     ]);
 
-    const [notes, theirs] = await Promise.all([
+    const [notes, photo, theirs] = await Promise.all([
       sourceFixture({ extractedText: "Mitosis has four phases.", kind: "upload", title: "" }),
+      sourceFixture({
+        kind: "upload",
+        mimeType: "image/png",
+        ownerId: userId,
+        readState: "read",
+        title: "Blurry notes",
+        visibility: "private",
+      }),
       sourceFixture({ extractedText: "Their notes", kind: "upload", title: "Their notes" }),
     ]);
 
     await Promise.all([
       learnerSourceFixture({ sourceId: notes.id, userId }),
+      learnerSourceFixture({ sourceId: photo.id, userId }),
       learnerSourceFixture({ sourceId: theirs.id, userId: other.userId }),
     ]);
 
@@ -236,7 +245,7 @@ test.describe("Goal understandings API", () => {
     expect(draft).toMatchObject({
       materialIntent: "exam",
       materialMissing: false,
-      sources: [{ id: notes.id, title: "" }],
+      sources: [{ id: notes.id, readStatus: "readable", title: "" }],
       status: "understanding",
     });
 
@@ -246,6 +255,48 @@ test.describe("Goal understandings API", () => {
         schema: onboardingDraftViewSchema,
       }),
     ).resolves.toMatchObject({ materialIntent: "exam", sources: [{ id: notes.id }] });
+
+    const edited = await api.post("/v1/goal-understandings", {
+      data: {
+        goal: `Biology test tomorrow ${randomUUID()}`,
+        language: "en",
+        materialIntent: "exam",
+        sourceIds: [photo.id],
+      },
+    });
+
+    const editedDraft = await readBody({
+      response: edited,
+      schema: onboardingDraftViewSchema,
+      status: 202,
+    });
+
+    const reopened = await readBody({
+      response: await api.get(`/v1/goal-understandings/${editedDraft.id}`),
+      schema: onboardingDraftViewSchema,
+    });
+
+    expect(reopened).toMatchObject({
+      materialIntent: "exam",
+      materialMissing: false,
+      sources: [{ id: photo.id, readStatus: "unreadable", title: "Blurry notes" }],
+    });
+
+    const resubmitted = await api.post("/v1/goal-understandings", {
+      data: {
+        goal: `Mitosis test tomorrow ${randomUUID()}`,
+        language: "en",
+        materialIntent: reopened.materialIntent,
+        sourceIds: reopened.sources.map(({ id }) => id),
+      },
+    });
+
+    await expect(
+      readBody({ response: resubmitted, schema: onboardingDraftViewSchema, status: 202 }),
+    ).resolves.toMatchObject({
+      materialIntent: "exam",
+      sources: [{ id: photo.id, readStatus: "unreadable" }],
+    });
 
     const intentAlone = await api.post("/v1/goal-understandings", {
       data: { goal, language: "en", materialIntent: "exam" },

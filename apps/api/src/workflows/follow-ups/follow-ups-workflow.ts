@@ -23,6 +23,7 @@ import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chap
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
+import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
 import {
@@ -192,6 +193,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       await start(alphabetReviewWorkflow, [{ ...followUp.input, analytics }]);
       return;
     }
+    case "readUpload":
+      await waitForMaterialReading({ kind: "sources", sourceIds: [followUp.input.sourceId] });
+      return;
     case "checkUploadVisibility": {
       const { sourceId } = followUp.input;
       await start(sourceVisibilityWorkflow, [{ ownerId: userId, sourceId }]);

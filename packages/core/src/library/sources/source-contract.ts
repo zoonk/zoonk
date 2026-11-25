@@ -72,6 +72,7 @@ export const sourceStructureSchema = z.object({
   images: z.number().int().nonnegative(),
   pages: z.number().int().nonnegative().nullable(),
   topic: z.enum(SOURCE_TOPICS).nullable(),
+  visualPages: z.array(z.int().nonnegative()).optional(),
 });
 
 export type SourceStructure = z.infer<typeof sourceStructureSchema>;

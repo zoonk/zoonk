@@ -159,11 +159,11 @@ async function publishCopy({
  */
 export async function shareSourceUpload(input: ShareUploadInput): Promise<SharedUpload | null> {
   const upload = await prisma.source.findUnique({
-    select: { blobUrl: true, contentHash: true, kind: true, visibility: true },
+    select: { blobUrl: true, contentHash: true, kind: true, readState: true, visibility: true },
     where: { id: input.sourceId },
   });
 
-  if (upload?.kind !== "upload" || upload.visibility !== "private") {
+  if (upload?.kind !== "upload" || upload.visibility !== "private" || upload.readState !== null) {
     return null;
   }
 

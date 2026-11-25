@@ -161,6 +161,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
     input: z.object({ sourceId: uuidSchema() }),
     kind: z.literal("checkUploadVisibility"),
   }),
+  z.object({ input: z.object({ sourceId: uuidSchema() }), kind: z.literal("readUpload") }),
   z.object({ input: z.object({}), kind: z.literal("endWebPlusBesideStore") }),
   z.object({
     input: z.object({

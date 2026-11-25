@@ -124,7 +124,7 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
   }
 
   const { data: parsed } = await safeAsync(() =>
-    parseDocument({ bytes: blob.bytes, contentType: blob.contentType }),
+    parseDocument({ bytes: blob.bytes, contentType: blob.contentType, forUpload: true }),
   );
 
   if (!parsed) {
@@ -135,7 +135,7 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
     content: {
       blobUrl: blob.url,
       contentType: blob.contentType,
-      hash: hashDocument({ bytes: blob.bytes, text: parsed.text }),
+      hash: hashDocument({ bytes: blob.bytes, text: parsed.visualPages ? null : parsed.text }),
       parsed,
     },
     status: "ready",

@@ -20,6 +20,7 @@ enum FollowUpKind {
   writeSpeakingPaper         @map("write_speaking_paper")
   reviewAlphabetLesson       @map("review_alphabet_lesson")
   checkUploadVisibility      @map("check_upload_visibility")
+  readUpload                 @map("read_upload")
   endWebPlusBesideStore      @map("end_web_plus_beside_store")
   askToCancelSecondStorePlus @map("ask_to_cancel_second_store_plus")
   settleSessionDay           @map("settle_session_day")

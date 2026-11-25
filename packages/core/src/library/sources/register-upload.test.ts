@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { del, get, issueSignedToken, setTtl } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -143,6 +144,71 @@ describe(registerSourceUpload, () => {
     expect(setTtl).toHaveBeenCalledExactlyOnceWith(url, { ttlDays: null, ...PRIVATE_STORE });
     expect(del).not.toHaveBeenCalled();
   });
+
+  it("keeps two different scans with the same text layer as separate private sources", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    async function registerScan(name: string) {
+      const bytes = await readFile(new URL(`_test-fixtures/${name}`, import.meta.url));
+      const pathname = `sources/${user.id}/${randomUUID()}-${name}`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname });
+
+      await expect(
+        registerSourceUpload({ kind: "file", language: "en", pathname }),
+      ).resolves.toMatchObject({
+        checkVisibility: false,
+        source: { readStatus: "reading" },
+        status: "ready",
+      });
+    }
+
+    await registerScan("tiled-scan.pdf");
+    await registerScan("other-scan.pdf");
+
+    const sources = await prisma.source.findMany({ where: { ownerId: user.id } });
+    expect(sources.map((source) => source.extractedText)).toStrictEqual(["\f", "\f"]);
+    expect(new Set(sources.map((source) => source.contentHash)).size).toBe(2);
+  });
+
+  it.each(["failed", "read"] as const)(
+    "re-adding an empty scan after a %s read",
+    async (readState) => {
+      const user = await userFixture();
+      mockSession(user.id);
+      const bytes = await readFile(new URL("_test-fixtures/tiled-scan.pdf", import.meta.url));
+      const initialPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname: initialPath });
+
+      const first = await registerSourceUpload({
+        kind: "file",
+        language: "en",
+        pathname: initialPath,
+      });
+
+      if (first.status !== "ready") {
+        throw new Error("The scan should be accepted");
+      }
+
+      const sourceId = first.source.id;
+      await prisma.source.update({ data: { readState }, where: { id: sourceId } });
+      await prisma.followUp.deleteMany({ where: { userId: user.id } });
+      const nextPath = `sources/${user.id}/${randomUUID()}-notes.pdf`;
+      mockUploadedFile({ bytes, contentType: "application/pdf", pathname: nextPath });
+
+      await expect(
+        registerSourceUpload({ kind: "file", language: "en", pathname: nextPath }),
+      ).resolves.toMatchObject({
+        checkVisibility: false,
+        source: { id: sourceId, readStatus: readState === "failed" ? "reading" : "unreadable" },
+        status: "ready",
+      });
+
+      await expect(prisma.followUp.findMany({ where: { userId: user.id } })).resolves.toMatchObject(
+        readState === "failed" ? [{ input: { sourceId }, kind: "readUpload" }] : [],
+      );
+    },
+  );
 
   it("stores no source while its file would still expire, so trying again stores it", async () => {
     const user = await userFixture();

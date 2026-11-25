@@ -10,6 +10,7 @@ import {
   PDF_CONTENT_TYPE,
   PPTX_CONTENT_TYPE,
 } from "./source-contract";
+import { hasWords } from "./source-read-status";
 import { readUploadedBlob } from "./upload-blob";
 
 const NATIVE_FILE_TYPES = new Set<string>([PDF_CONTENT_TYPE, ...IMAGE_CONTENT_TYPES]);
@@ -53,7 +54,7 @@ async function readSourceFile({ blobUrl, mimeType, url }: Source): Promise<Uint8
 async function loadSourceFiles({ preferText, source }: { preferText: boolean; source: Source }) {
   const mediaType = source.mimeType ?? "";
 
-  if (preferText && source.extractedText) {
+  if (source.readState !== null || (preferText && hasWords(source.extractedText))) {
     return { file: null, images: [] };
   }
 

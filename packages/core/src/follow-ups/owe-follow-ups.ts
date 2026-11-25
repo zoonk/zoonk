@@ -63,6 +63,7 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "reviewAlphabetLesson":
       return `${followUp.input.lessonId}:${followUp.input.version}`;
     case "checkUploadVisibility":
+    case "readUpload":
       return followUp.input.sourceId;
     case "endWebPlusBesideStore":
       return "webPlus";

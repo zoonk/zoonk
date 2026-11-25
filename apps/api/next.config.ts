@@ -104,6 +104,7 @@ const nextConfig: NextConfig = {
     "/.well-known/workflow/**": [
       "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
       "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
+      "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/pdfjs-dist/{cmaps,standard_fonts,wasm}/**",
       "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
       "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
     ],
@@ -122,6 +123,7 @@ const nextConfig: NextConfig = {
     ],
     fallback: [],
   }),
+  serverExternalPackages: ["pdfjs-dist"],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: { ...tailwindRules, "*.md": { as: "*.js", loaders: ["raw-loader"] } },

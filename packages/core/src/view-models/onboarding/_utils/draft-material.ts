@@ -2,6 +2,10 @@ import "server-only";
 import { type OnboardingDraft, prisma } from "@zoonk/db";
 import { type MaterialSource } from "../../../library/sources/material-pages";
 import { findOwnSources } from "../../../library/sources/own-sources";
+import {
+  materialSourceFields,
+  toReadableMaterial,
+} from "../../../library/sources/readable-material";
 import { getSourceReadStatus } from "../../../library/sources/source-read-status";
 import { type DraftSource } from "../onboarding-contract";
 
@@ -37,7 +41,7 @@ export async function readDraftSources(
   });
 
   return {
-    materialMissing: uploads.unresolved.length > 0,
+    materialMissing: uploads.unresolved.length > 0 || found.length !== uploads.resolved.length,
     sources: inOrder({ ids: uploads.resolved, sources: found }).map((source) => ({
       id: source.id,
       readStatus: getSourceReadStatus(source),
@@ -55,11 +59,9 @@ export async function loadDraftMaterial(draft: DraftMaterialKey): Promise<Materi
   const { resolved } = await findDraftUploads(draft);
 
   const sources = await prisma.source.findMany({
-    select: { contentHash: true, extractedText: true, id: true, mimeType: true, title: true },
+    select: materialSourceFields,
     where: { extractedText: { not: null }, id: { in: resolved } },
   });
 
-  return inOrder({ ids: resolved, sources }).flatMap(({ extractedText, ...source }) =>
-    extractedText ? [{ ...source, text: extractedText }] : [],
-  );
+  return toReadableMaterial(inOrder({ ids: resolved, sources }));
 }
