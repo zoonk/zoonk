@@ -106,6 +106,7 @@ describe("a reading of the learner's own material", () => {
         "b) Vírus",
         "IV - Núcleo",
         "• Membrana plasmática",
+        "2. 12 Angry Men",
       ]).topics,
     ).toStrictEqual([
       "Teoria celular",
@@ -114,6 +115,7 @@ describe("a reading of the learner's own material", () => {
       "Vírus",
       "Núcleo",
       "Membrana plasmática",
+      "12 Angry Men",
     ]);
   });
 
@@ -141,6 +143,8 @@ describe("a reading of the learner's own material", () => {
 
   it("keeps what a heading says about its content, and a name that is only a number", () => {
     const headings = [
+      "The <div> element",
+      "__init__ and __repr__",
       "Organelas (mitocôndria e cloroplasto)",
       "DNA e RNA",
       "Retículo endoplasmático (RE)",
