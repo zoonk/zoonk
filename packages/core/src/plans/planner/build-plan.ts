@@ -36,7 +36,7 @@ import { getSkillMinutes } from "./skill-minutes";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { listDroppedSkills, summarizePlan } from "./summarize-plan";
-import { getLastKeptDay, listStillSetAside } from "./this-week-items";
+import { getLastKeptDay, listStillSetAside, withTestOutsAhead } from "./this-week-items";
 import { listThisWeekWork } from "./this-week-work";
 import { markKeptLessons } from "./whole-boss";
 import { type PlanWriting } from "./writing-allocation";
@@ -99,7 +99,7 @@ export type { BuiltPlan } from "./built-plan";
 
 /** Pure: the same inputs always give the same plan. */
 export function buildPlan(given: BuildPlanInput) {
-  const input = withoutExamExtras(given);
+  const input = withoutExamExtras(withTestOutsAhead(given));
 
   const built = settlePlannedBosses({ build: buildWithBosses, input });
 
