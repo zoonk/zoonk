@@ -84,7 +84,9 @@ export async function lockPreparedScreens(
 function listItemSkillIds(screens: readonly LessonScreenToSave[]): string[] {
   return [
     ...new Set(
-      screens.flatMap((screen) => (screen.mathItem && screen.skillId ? [screen.skillId] : [])),
+      screens.flatMap((screen) =>
+        (screen.mathItem || screen.standsAlone) && screen.skillId ? [screen.skillId] : [],
+      ),
     ),
   ];
 }

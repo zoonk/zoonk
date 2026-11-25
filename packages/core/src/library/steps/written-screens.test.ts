@@ -105,6 +105,7 @@ describe(toStepContent, () => {
         },
       ],
       question: "Which doorway is Gothic?",
+      standsAlone: false,
       visual: null,
     };
 

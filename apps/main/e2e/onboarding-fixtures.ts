@@ -111,6 +111,12 @@ export async function mapGoalSkills({ goalId }: { goalId: string }) {
                 reason: `Subtract ${copy} from both sides rather than adding it.`,
                 text: String(index + copy * 2 + 1),
               },
+              {
+                isCorrect: false,
+                misconception: "Uses the total as the value of x",
+                reason: `The total includes the ${copy} added to x.`,
+                text: String(index + copy + 1),
+              },
             ],
           },
           skillId: skill.id,

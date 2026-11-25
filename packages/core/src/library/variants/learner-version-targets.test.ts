@@ -39,14 +39,20 @@ describe(listLearnerVersionTargets, () => {
   it("lists each hands-on screen of the next written lessons in the learner's tool", async () => {
     const { chapter, goal, plan } = await planWith({ choice: "have" });
     const skill = await skillFixture();
-    const item = await itemFixture({ skillId: skill.id });
+
+    const [choice, numeric] = await Promise.all([
+      itemFixture({ format: "multipleChoice", skillId: skill.id }),
+      itemFixture({ format: "numeric", skillId: skill.id }),
+    ]);
 
     const [{ lesson, steps }, unwritten] = await Promise.all([
-      playableLessonFixture({ steps: ["hook", "explanation", "workedExample", "check", "check"] }),
+      playableLessonFixture({
+        steps: ["hook", "explanation", "workedExample", "check", "check", "check"],
+      }),
       libraryLessonFixture(),
     ]);
 
-    const [, explanation, workedExample, itemCheck, plainCheck] = steps;
+    const [, explanation, workedExample, numericCheck, choiceCheck, plainCheck] = steps;
 
     await Promise.all([
       planItemFixture({ chapterId: chapter.id, lessonId: lesson.id, planId: plan.id, position: 0 }),
@@ -62,7 +68,8 @@ describe(listLearnerVersionTargets, () => {
         kind: "tool",
         stepId: workedExample?.id ?? "",
       }),
-      prisma.step.update({ data: { itemId: item.id }, where: { id: itemCheck?.id } }),
+      prisma.step.update({ data: { itemId: numeric.id }, where: { id: numericCheck?.id } }),
+      prisma.step.update({ data: { itemId: choice.id }, where: { id: choiceCheck?.id } }),
     ]);
 
     const targets = await listLearnerVersionTargets({
@@ -73,7 +80,7 @@ describe(listLearnerVersionTargets, () => {
     expect(targets.challenges).toStrictEqual([]);
 
     expect(targets.tools).toStrictEqual(
-      [explanation, plainCheck].map((step) => ({
+      [explanation, choiceCheck, plainCheck].map((step) => ({
         key: "python",
         label: PYTHON,
         ownerId: null,

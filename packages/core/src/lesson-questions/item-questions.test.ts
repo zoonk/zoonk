@@ -114,7 +114,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       language: item.language,
       question: {
         format: "multipleChoice",
-        options: ["Right answer", "Wrong answer"],
+        options: ["Right answer", "Wrong answer", "Incomplete answer", "Unrelated answer"],
         text: "Which number is even?",
       },
       scope: { kind: "item" },

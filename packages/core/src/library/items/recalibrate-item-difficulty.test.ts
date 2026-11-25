@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { anonymizeLearnerRecords } from "@zoonk/db/anonymous-records";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { recalibrateItemDifficulties } from "./recalibrate-item-difficulty";
@@ -74,6 +78,57 @@ const FOUR_OPTIONS = {
 };
 
 describe(recalibrateItemDifficulties, () => {
+  it.each(["legacy step", "deleted step", "anonymous"])(
+    "drops a learner who first met the item in a lesson (%s)",
+    async (history) => {
+      const now = isolatedNow();
+
+      const [skill, learner, { steps }] = await Promise.all([
+        skillFixture(),
+        userFixture(),
+        playableLessonFixture({ steps: ["check"] }),
+      ]);
+
+      const [step] = steps;
+
+      if (!step) {
+        throw new Error("Expected the lesson's check");
+      }
+
+      const item = await itemFixture({ content: FOUR_OPTIONS, difficulty: 0, skillId: skill.id });
+      const answeredAt = new Date(now.getTime() - HOUR_MS);
+
+      await attemptFixture({
+        answeredAt,
+        fromLesson: history !== "legacy step",
+        itemId: item.id,
+        stepId: step.id,
+        userId: learner.id,
+      });
+
+      await Promise.all([
+        attemptFixture({ answeredAt, itemId: item.id, userId: learner.id }),
+        answerByLearners({ itemId: item.id, now, results: repeat({ correct: 19, wrong: 0 }) }),
+      ]);
+
+      if (history === "deleted step") {
+        await prisma.step.delete({ where: { id: step.id } });
+      }
+
+      if (history === "anonymous") {
+        await prisma.$transaction((transaction) =>
+          anonymizeLearnerRecords({ emails: [], transaction, userIds: [learner.id] }),
+        );
+      }
+
+      await recalibrateItemDifficulties({ now });
+
+      await expect(
+        prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+      ).resolves.toMatchObject({ difficulty: 0 });
+    },
+  );
+
   it("moves each item to the difficulty its learners' answers show, taking lucky guesses out", async () => {
     const now = isolatedNow();
     const skill = await skillFixture();

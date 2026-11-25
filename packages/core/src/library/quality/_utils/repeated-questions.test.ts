@@ -13,6 +13,7 @@ function check(question: string): WrittenScreen {
       { isCorrect: false, picture: null, reason: "Not quite.", text: "B" },
     ],
     question,
+    standsAlone: false,
     visual: null,
   };
 }

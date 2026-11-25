@@ -112,7 +112,7 @@ const activityScreen = z.object({
  */
 const basis = z.object({ screen: z.number().int(), quote: z.string() }).nullable();
 
-const checkScreenWithBasis = checkScreen.extend({ basis });
+const checkScreenWithBasis = checkScreen.extend({ basis, standsAlone: z.boolean().nullable() });
 const mathCheckScreenWithBasis = mathCheckScreen.extend({ basis });
 const typedAnswerScreenWithBasis = typedAnswerScreen.extend({ basis });
 

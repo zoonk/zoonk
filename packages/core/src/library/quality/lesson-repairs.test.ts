@@ -11,6 +11,7 @@ function check(options: { isCorrect: boolean; text: string }[]): WrittenScreen {
     kind: "check",
     options: options.map((option) => ({ ...option, picture: null, reason: "Porque **sim." })),
     question: "Qual sensor mede melhor?",
+    standsAlone: false,
     visual: null,
   };
 }
@@ -40,6 +41,7 @@ function quoteAfterRepair({ quote, text, title }: { quote: string; text: string;
       text: option,
     })),
     question: "How many cells?",
+    standsAlone: false,
     visual: null,
   };
 
@@ -80,6 +82,7 @@ describe(repairWrittenLesson, () => {
         text,
       })),
       question: "Which decimal measurement does that notation represent?",
+      standsAlone: false,
       visual: null,
     };
 
@@ -143,6 +146,7 @@ describe(repairWrittenLesson, () => {
         text,
       })),
       question: "How many cells?",
+      standsAlone: false,
       visual: null,
     };
 
@@ -207,6 +211,7 @@ describe(repairWrittenLesson, () => {
         text,
       })),
       question: "What's the balance?",
+      standsAlone: false,
       visual: null,
     };
 
