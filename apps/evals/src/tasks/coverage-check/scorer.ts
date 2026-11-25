@@ -333,7 +333,7 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
 
   const gaps = scoreGaps({ expected, flagged: parsed.flagged });
 
-  if (expected.gaps.length === 0 && !expected.examWeights) {
+  if (expected.gaps.length === 0 && !expected.examWeights && !expected.placements) {
     return createFixedScore({
       conclusion: gaps.details.length === 0 ? "None" : gaps.details.join(" "),
       score: Math.max(MIN_SCORE, MAX_SCORE - gaps.falseAlarms.length),

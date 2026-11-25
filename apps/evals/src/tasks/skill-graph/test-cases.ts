@@ -639,6 +639,52 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
+      - Língua Portuguesa and História do Brasil are subjects with a syllabus, and each also lists written tasks (an essay and a summary; discursive questions). Their syllabus topics are skills in the subject's own area
+      - The practice for each written task is outcome skills, and no area or skill name copies a task's line with its lines and points. The essay and the summary each get an area of their own with a short name a learner knows, in the notice's words (such as "Redação" or "Resumo"); history's discursive questions may be practiced in that area or in "História do Brasil"
+      - Every topic id of every subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cacd-written-tasks-in-content-subjects",
+    userInput: {
+      examBlueprint: {
+        name: "Concurso de Admissão à Carreira de Diplomata (CACD)",
+        notes: [],
+        subjects: [
+          {
+            group: null,
+            name: "Língua Portuguesa",
+            questions: null,
+            topics: [
+              "1 Compreensão e interpretação de textos",
+              "2 Coesão e coerência textuais",
+              "3 Sintaxe da oração e do período",
+            ],
+            weight: null,
+            writtenTasks: [
+              "redação de 65 a 70 linhas, valendo 60 pontos",
+              "resumo de um texto em até 25 linhas, valendo 20 pontos",
+            ],
+          },
+          {
+            group: null,
+            name: "História do Brasil",
+            questions: null,
+            topics: ["1 O processo de independência", "2 A política externa do Império"],
+            weight: null,
+            writtenTasks: ["quatro questões discursivas de até 60 linhas, valendo 25 pontos cada"],
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Passar no CACD",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
       - The notice lists five law disciplines and the court's internal rules under one subject, "Conhecimentos em Direito": that stays the area of every skill, word for word, but the skills are taught in one course per catalog discipline (Direito Penal, Direito Processual Penal, Direito Processual Civil, Direito Constitucional, Direito Administrativo), each skill in its own discipline's course, never in one course named "Direito" or after the notice's subject
       - The São Paulo civil-servant statute (Lei 10.261/68) goes in Direito Administrativo, and its skills name the São Paulo statute, never a federal one
       - Every topic of the subject is taught by some skill
