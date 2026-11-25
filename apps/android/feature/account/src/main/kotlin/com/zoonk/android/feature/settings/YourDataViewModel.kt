@@ -1,11 +1,16 @@
 package com.zoonk.android.feature.settings
 
 import android.net.Uri
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.account.AccountDeletion
@@ -22,10 +27,12 @@ enum class DeletionStep { None, Confirm, Code, AppleNote, Deleted }
  * Privacy's "Your data": the download and deleting the account, for the account [session] shows. [open] gives the
  * stream of a file the learner picked, from the application's content resolver, or null when it can't be opened.
  */
+@OptIn(SavedStateHandleSaveableApi::class)
 class YourDataViewModel(
     private val account: AccountStore,
     private val session: AuthenticatedSession,
     private val email: String,
+    private val handle: SavedStateHandle,
     private val open: (Uri) -> OutputStream?,
 ) : ViewModel() {
     /** This visit to Privacy: a download that fails says so only on it. */
@@ -39,14 +46,27 @@ class YourDataViewModel(
     /** The download didn't save, on this visit. */
     val exportFailed get() = exportFailure.value != null
 
-    var deletionStep by mutableStateOf(DeletionStep.None)
-        private set
+    private var step by mutableStateOf(handle.get<DeletionStep>(DELETION_STEP) ?: DeletionStep.None)
+
+    /** The dialog the learner is in, with its code, survives a reclaimed process; what a deletion answered doesn't. */
+    var deletionStep: DeletionStep
+        get() = step
+        private set(value) {
+            step = value
+            handle[DELETION_STEP] = value.takeIf { it == DeletionStep.Confirm || it == DeletionStep.Code }
+        }
     var isDeleting by mutableStateOf(false)
         private set
-    var deletionFailure by mutableStateOf<AccountFailure?>(null)
-        private set
-    var code by mutableStateOf("")
-        private set
+    private var error by mutableStateOf<AccountFailure?>(null)
+    private var failedCode by mutableStateOf("")
+    var deletionFailure: AccountFailure?
+        get() = if (isCodeRejected) AccountFailure.WrongCode else error.takeUnless { it == AccountFailure.WrongCode && failedCode != code }
+        private set(value) {
+            failedCode = code
+            error = value
+        }
+    val codeField = handle.saveable(key = "deletionCode", saver = TextFieldState.Saver) { TextFieldState() }
+    private val code get() = codeField.text.toString()
     private var rejectedCode by mutableStateOf<String?>(null)
     val isCodeRejected get() = code == rejectedCode
 
@@ -67,6 +87,8 @@ class YourDataViewModel(
     }
 
     fun askToDelete() {
+        codeField.clearText()
+        rejectedCode = null
         deletionFailure = null
         deletionStep = DeletionStep.Confirm
     }
@@ -75,17 +97,8 @@ class YourDataViewModel(
         if (isDeleting) return
         deletionStep = DeletionStep.None
         deletionFailure = null
-        code = ""
+        codeField.clearText()
         rejectedCode = null
-    }
-
-    fun onCodeChange(value: String) {
-        code = value.filter(Char::isDigit).take(CODE_LENGTH)
-        if (isCodeRejected) {
-            deletionFailure = AccountFailure.WrongCode
-            return
-        }
-        if (deletionFailure == AccountFailure.WrongCode) deletionFailure = null
     }
 
     fun delete() {
@@ -136,7 +149,7 @@ class YourDataViewModel(
         isDeleting = true
         viewModelScope.launch {
             try {
-                code = ""
+                codeField.clearText()
                 deletionFailure = account.sendDeletionCode(session, email)
                 if (deletionFailure == null) rejectedCode = null
             } finally {
@@ -164,5 +177,6 @@ class YourDataViewModel(
 
     private companion object {
         const val CODE_LENGTH = 6
+        const val DELETION_STEP = "deletionStep"
     }
 }

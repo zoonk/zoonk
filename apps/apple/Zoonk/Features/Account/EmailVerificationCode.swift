@@ -1,13 +1,15 @@
 struct EmailVerificationCode {
+  static let length = 6
+
   var text = ""
   private var rejectedCode: String?
 
   var normalized: String {
-    text.filter(\.isNumber)
+    text.filter(TextEdit.isDigit)
   }
 
   var canSubmit: Bool {
-    normalized.count == 6 && !isRejected
+    normalized.count == Self.length && !isRejected
   }
 
   private var isRejected: Bool {

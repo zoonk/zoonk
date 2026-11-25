@@ -14,17 +14,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -59,6 +64,7 @@ import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf16Fields
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf16Value as CodeRunnerContent
 
@@ -103,9 +109,14 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     val scope = rememberCoroutineScope()
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
     val isLocked by rememberUpdatedState(props.isLocked)
-    var edits by rememberSaveable(stateSaver = draftsSaver(String::toInt)) { mutableStateOf(emptyMap<Int, String>()) }
+    val original = if (props.isExploring) fields.solution else fields.starterCode
+    val lines = original.lines()
+    val editors =
+        fields.editableLines.map(Long::toInt).filter { it in 1..lines.size }.associateWith { number ->
+            rememberTextFieldState(lines[number - 1])
+        }
     var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
-    val program = programWithEdits(if (props.isExploring) fields.solution else fields.starterCode, edits)
+    val program = programWithEdits(original, editors.mapValues { it.value.text.toString() })
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
     val mistake = run?.takeUnless { matches || props.isExploring }?.let { mistakeFor(it.output, fields.mistakes)?.feedback }
 
@@ -121,19 +132,25 @@ private fun CodeRunnerActivity(props: ActivityProps) {
         }
     }
 
-    fun change(next: Map<Int, String>) {
-        edits = next
-        editorRun.edit()
-        onAnswerChange(null)
+    LaunchedEffect(original, editors) {
+        snapshotFlow { editors.values.map { it.text.toString() } }.drop(1).collect {
+            editorRun.edit()
+            onAnswerChange(null)
+        }
     }
 
     ActivityCanvas {
-        CodePanel(fields, language, program, run, editorRun.isStale, props.isLocked, marksYourLines = !props.isExploring, onEdit = {
-            line,
-            text,
-            ->
-            change(edits + (line to text))
-        }, onRun = ::runProgram)
+        CodePanel(
+            fields,
+            language,
+            program,
+            run,
+            editorRun.isStale,
+            props.isLocked,
+            marksYourLines = !props.isExploring,
+            editors = editors,
+            onRun = ::runProgram,
+        )
         CodeRunnerOutput(fields.expectedOutput.takeUnless { props.isExploring }, language, run, matches, mistake, editorRun.isStale)
         if (!props.isChecked) {
             SandboxRunBar(
@@ -143,7 +160,14 @@ private fun CodeRunnerActivity(props: ActivityProps) {
                 isExploring = props.isExploring,
                 isRunning = editorRun.isRunning,
                 onRun = ::runProgram,
-                onReset = if (edits.isEmpty() || props.isLocked) null else ({ change(emptyMap()) }),
+                onReset =
+                    if (program == original ||
+                        props.isLocked
+                    ) {
+                        null
+                    } else {
+                        ({ editors.forEach { (number, state) -> state.setTextAndPlaceCursorAtEnd(lines[number - 1]) } })
+                    },
             )
         }
     }
@@ -158,7 +182,7 @@ private fun CodePanel(
     isStale: Boolean,
     isLocked: Boolean,
     marksYourLines: Boolean,
-    onEdit: (Int, String) -> Unit,
+    editors: Map<Int, TextFieldState>,
     onRun: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -220,8 +244,7 @@ private fun CodePanel(
                         }
                     CodeLine(number, digits, tone = tone, style = style) {
                         CodeLineField(
-                            value = line,
-                            onValueChange = { onEdit(number, it) },
+                            state = editors.getValue(number),
                             language = language,
                             label = stringResource(R.string.activities_code_line_yours, number),
                             readOnly = isLocked,

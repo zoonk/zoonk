@@ -5,13 +5,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
+import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -22,42 +24,66 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.requireDensity
+import androidx.compose.ui.node.requireLayoutCoordinates
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.relocation.BringIntoViewModifierNode
+import androidx.compose.ui.relocation.bringIntoView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
+import kotlinx.coroutines.flow.drop
 
 /*
  * Main's field (`Input`, `Textarea` under a `Label`): the label above the field, never floating inside
- * it, a 1dp `input` line with `rounded-lg` corners, 44dp tall on one line, and an ink ring while
- * focused (thicker with more contrast): Material's outlined colors already draw the line in `outline`
- * (`input`) and the ring in `primary` (ink). An invalid field draws main's `destructive` mark with its
+ * it, a 1dp `input` line with `rounded-lg` corners, 44dp tall on one line; focused, the line in ink
+ * with main's soft ink ring outside it: Material's outlined colors already draw the line in `outline`
+ * (`input`) and in `primary` (ink) while focused. An invalid field draws main's `destructive` mark with its
  * soft 3dp ring, while its message keeps Material's `error` (`destructive-text`) words. Built as Material builds its own outlined field, from
  * `BasicTextField` and Material's decoration and container, so IME, autofill, selection, supporting
  * text and TalkBack behave as Material's; the label is part of the field, so TalkBack reads it as the
@@ -65,12 +91,9 @@ import com.zoonk.android.ui.theme.zoonk
  * `MaterialTextField` lint check outside this file.
  */
 
-// These overloads edit caller-owned values and selection. The state overload below owns its edits in TextFieldState.
-@Suppress("DEPRECATION")
 @Composable
 fun OutlinedTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    state: TextFieldState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
@@ -83,229 +106,113 @@ fun OutlinedTextField(
     suffix: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
+    inputTransformation: InputTransformation? = null,
+    outputTransformation: OutputTransformation? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
-    interactionSource: MutableInteractionSource? = null,
+    onKeyboardAction: KeyboardActionHandler? = null,
+    lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-) = ZoonkField(
-    value,
-    modifier.fieldSemantics(label, isError),
-    FieldLook(enabled, isError, singleLine, label, placeholder, leadingIcon, trailingIcon, prefix, suffix, supportingText),
-    textStyle,
-    visualTransformation,
-    interactionSource,
-    colors,
-) { fieldModifier, style, cursor, interaction, decoration ->
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = fieldModifier,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = style,
-        cursorBrush = cursor,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        interactionSource = interaction,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        decorationBox = decoration,
-    )
-}
-
-/** The field over a [TextFieldValue], for a screen that keeps the learner's cursor where the field moves, as across a fold. */
-@Suppress("DEPRECATION")
-@Composable
-fun OutlinedTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: String? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
+    focusedBorderThickness: Dp = 1.dp,
+    focusRing: Boolean = true,
+    shape: Shape = FIELD_SHAPE,
+    contentPadding: PaddingValues = FIELD_PADDING,
+    minHeight: Dp = FIELD_MIN_HEIGHT,
+    endAction: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-) = ZoonkField(
-    value.text,
-    modifier.fieldSemantics(label, isError),
-    FieldLook(enabled, isError, singleLine, label, placeholder, supportingText = supportingText),
-    textStyle,
-    VisualTransformation.None,
-    interactionSource,
-    colors,
-) { fieldModifier, style, cursor, interaction, decoration ->
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = fieldModifier,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = style,
-        cursorBrush = cursor,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        interactionSource = interaction,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        decorationBox = decoration,
-    )
-}
-
-/** What the field draws around its words, the same whichever value it edits. */
-private class FieldLook(
-    val enabled: Boolean,
-    val isError: Boolean,
-    val singleLine: Boolean,
-    val label: String?,
-    val placeholder: @Composable (() -> Unit)?,
-    val leadingIcon: @Composable (() -> Unit)? = null,
-    val trailingIcon: @Composable (() -> Unit)? = null,
-    val prefix: @Composable (() -> Unit)? = null,
-    val suffix: @Composable (() -> Unit)? = null,
-    val supportingText: @Composable (() -> Unit)? = null,
-)
-
-/** Main's field around a [BasicTextField] showing [text], which [field] draws with the style, cursor and frame given to it. */
-@Suppress("DEPRECATION")
-@Composable
-private fun ZoonkField(
-    text: String,
-    modifier: Modifier,
-    look: FieldLook,
-    textStyle: TextStyle,
-    visualTransformation: VisualTransformation,
-    interactionSource: MutableInteractionSource?,
-    colors: TextFieldColors,
-    field: @Composable (
-        modifier: Modifier,
-        style: TextStyle,
-        cursor: SolidColor,
-        interaction: MutableInteractionSource,
-        decoration: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
-    ) -> Unit,
 ) {
     val interaction = interactionSource ?: remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val textColor =
         textStyle.color.takeOrElse {
             when {
-                !look.enabled -> colors.disabledTextColor
-                look.isError -> colors.errorTextColor
+                !enabled -> colors.disabledTextColor
+                isError -> colors.errorTextColor
                 focused -> colors.focusedTextColor
                 else -> colors.unfocusedTextColor
             }
         }
-
+    val materialDecorator =
+        OutlinedTextFieldDefaults.decorator(
+            state = state,
+            enabled = enabled,
+            lineLimits = lineLimits,
+            outputTransformation = outputTransformation,
+            interactionSource = interaction,
+            placeholder = placeholder,
+            prefix = prefix,
+            suffix = suffix,
+            isError = isError,
+            colors = colors,
+            contentPadding = contentPadding.besideMarks(leadingIcon != null, trailingIcon != null, LocalLayoutDirection.current),
+            container = {},
+        )
+    val iconColor =
+        when {
+            !enabled -> colors.disabledLeadingIconColor
+            isError -> colors.errorLeadingIconColor
+            focused -> colors.focusedLeadingIconColor
+            else -> colors.unfocusedLeadingIconColor
+        }
+    val trailingIconColor =
+        when {
+            !enabled -> colors.disabledTrailingIconColor
+            isError -> colors.errorTrailingIconColor
+            focused -> colors.focusedTrailingIconColor
+            else -> colors.unfocusedTrailingIconColor
+        }
     CompositionLocalProvider(LocalTextSelectionColors provides colors.textSelectionColors) {
-        field(
-            modifier,
-            textStyle.merge(TextStyle(color = textColor)),
-            SolidColor(if (look.isError) colors.errorCursorColor else colors.cursorColor),
-            interaction,
-        ) { innerTextField ->
-            val supporting =
-                look.supportingText?.let { text ->
-                    @Composable {
-                        val color =
-                            when {
-                                !look.enabled -> colors.disabledSupportingTextColor
-                                look.isError -> colors.errorSupportingTextColor
-                                focused -> colors.focusedSupportingTextColor
-                                else -> colors.unfocusedSupportingTextColor
+        BasicTextField(
+            state = state,
+            modifier = modifier.fieldSemantics(label, isError).ringInView(),
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = textStyle.merge(TextStyle(color = textColor)),
+            cursorBrush = SolidColor(if (isError) colors.errorCursorColor else colors.cursorColor),
+            interactionSource = interaction,
+            lineLimits = lineLimits,
+            inputTransformation = inputTransformation,
+            outputTransformation = outputTransformation,
+            keyboardOptions = keyboardOptions,
+            onKeyboardAction = onKeyboardAction,
+            decorator = { inner ->
+                val supporting =
+                    supportingText?.let { text ->
+                        @Composable {
+                            val color =
+                                when {
+                                    !enabled -> colors.disabledSupportingTextColor
+                                    isError -> colors.errorSupportingTextColor
+                                    focused -> colors.focusedSupportingTextColor
+                                    else -> colors.unfocusedSupportingTextColor
+                                }
+                            CompositionLocalProvider(LocalContentColor provides color) {
+                                ProvideTextStyle(MaterialTheme.typography.bodySmall, text)
                             }
-                        CompositionLocalProvider(LocalContentColor provides color) {
-                            ProvideTextStyle(MaterialTheme.typography.bodySmall, text)
                         }
                     }
+                LabeledField(label, enabled, supporting) {
+                    FieldBox(
+                        minHeight = minHeight,
+                        container = {
+                            FieldContainer(
+                                enabled,
+                                isError,
+                                focused && focusRing,
+                                interaction,
+                                colors,
+                                focusedBorderThickness,
+                                shape,
+                            )
+                        },
+                        leading = leadingIcon?.let { { CompositionLocalProvider(LocalContentColor provides iconColor, it) } },
+                        trailing = trailingIcon?.let { { CompositionLocalProvider(LocalContentColor provides trailingIconColor, it) } },
+                        endAction = endAction,
+                    ) { with(materialDecorator) { Decoration(inner) } }
                 }
-            LabeledField(look.label, look.enabled, supporting) {
-                // As tall as Material's icon slot, so a mark coming into the field (a wrong answer's ✕) moves nothing.
-                Box(Modifier.heightIn(min = FIELD_MIN_HEIGHT), propagateMinConstraints = true) {
-                    OutlinedTextFieldDefaults.DecorationBox(
-                        value = text,
-                        innerTextField = innerTextField,
-                        enabled = look.enabled,
-                        singleLine = look.singleLine,
-                        visualTransformation = visualTransformation,
-                        interactionSource = interaction,
-                        isError = look.isError,
-                        placeholder = look.placeholder,
-                        leadingIcon = look.leadingIcon,
-                        trailingIcon = look.trailingIcon,
-                        prefix = look.prefix,
-                        suffix = look.suffix,
-                        colors = colors,
-                        contentPadding = FIELD_PADDING,
-                        container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
-                    )
-                }
-            }
-        }
+            },
+        )
     }
 }
-
-/**
- * A field over a [TextFieldState], such as a composer that limits its length; Material's label sits
- * above it. A composer passes main's composer panel: its [shape] and [contentPadding].
- */
-@Composable
-fun OutlinedTextField(
-    state: TextFieldState,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: String? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    inputTransformation: InputTransformation? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onKeyboardAction: KeyboardActionHandler? = null,
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.Default,
-    shape: Shape = FIELD_SHAPE,
-    contentPadding: PaddingValues = FIELD_PADDING,
-    interactionSource: MutableInteractionSource? = null,
-) = androidx.compose.material3.OutlinedTextField(
-    state = state,
-    modifier = modifier.minimumInteractiveComponentSize(),
-    enabled = enabled,
-    readOnly = readOnly,
-    textStyle = textStyle,
-    labelPosition = TextFieldLabelPosition.Above(),
-    label = label?.let { { Text(it) } },
-    placeholder = placeholder,
-    leadingIcon = leadingIcon,
-    trailingIcon = trailingIcon,
-    supportingText = supportingText,
-    isError = isError,
-    inputTransformation = inputTransformation,
-    keyboardOptions = keyboardOptions,
-    onKeyboardAction = onKeyboardAction,
-    lineLimits = lineLimits,
-    shape = shape,
-    colors = OutlinedTextFieldDefaults.colors(),
-    contentPadding = contentPadding,
-    interactionSource = interactionSource,
-)
 
 /**
  * Material's field semantics: its words merged into one node with the label, and an error TalkBack
@@ -386,75 +293,281 @@ private fun LabeledField(
 }
 
 /**
- * A 1dp `input` line; focused, an ink ring of 2dp, 3dp with more contrast (main's `contrast-more:`
- * focus). Invalid, main's `aria-invalid:` look: the line in `destructive` (half strength in dark) with
- * a 3dp ring of it outside (20%, 40% in dark), both solid with more contrast.
+ * The field's line behind its [words], with its [leading] and [trailing] marks beside them in slots as wide as
+ * Material's icon slot but only as tall as the mark: a field is main's [minHeight] on one line, and a mark coming in,
+ * such as a checked answer's ✕, moves nothing. [endAction] sits at the bottom end, level with the last line.
+ */
+@Composable
+private fun FieldBox(
+    minHeight: Dp,
+    container: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)?,
+    trailing: (@Composable () -> Unit)?,
+    endAction: (@Composable () -> Unit)?,
+    words: @Composable () -> Unit,
+) {
+    Layout(
+        contents =
+            listOf(
+                container,
+                { if (leading != null) MarkSlot(leading) },
+                words,
+                { if (trailing != null) MarkSlot(trailing) },
+                { if (endAction != null) endAction() },
+            ),
+    ) { (lines, leadings, fields, trailings, actions), constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val start = leadings.firstOrNull()?.measure(loose)
+        val end = trailings.firstOrNull()?.measure(loose)
+        val sides = (start?.width ?: 0) + (end?.width ?: 0)
+        val field =
+            fields.first().measure(
+                Constraints(
+                    minWidth = (constraints.minWidth - sides).coerceAtLeast(0),
+                    maxWidth = if (constraints.hasBoundedWidth) (constraints.maxWidth - sides).coerceAtLeast(0) else Constraints.Infinity,
+                    minHeight = maxOf(constraints.minHeight, minHeight.roundToPx()).coerceAtMost(constraints.maxHeight),
+                    maxHeight = constraints.maxHeight,
+                ),
+            )
+        val width = sides + field.width
+        val height = field.height
+        val line = lines.first().measure(Constraints.fixed(width, height))
+        val action = actions.firstOrNull()?.measure(loose)
+        layout(width, height) {
+            line.placeRelative(0, 0)
+            start?.placeRelative(0, (height - start.height) / 2)
+            field.placeRelative(start?.width ?: 0, 0)
+            end?.placeRelative(width - end.width, (height - end.height) / 2)
+            action?.placeRelative(width - action.width, height - action.height)
+        }
+    }
+}
+
+@Composable
+private fun MarkSlot(mark: @Composable () -> Unit) {
+    Box(Modifier.widthIn(min = MARK_SLOT), contentAlignment = Alignment.Center) { mark() }
+}
+
+/** Material's padding beside an icon: the words start [MARK_INSET] closer, since the icon's slot already holds that room. */
+private fun PaddingValues.besideMarks(
+    leading: Boolean,
+    trailing: Boolean,
+    direction: LayoutDirection,
+): PaddingValues {
+    val start = calculateStartPadding(direction)
+    val end = calculateEndPadding(direction)
+    return PaddingValues(
+        start = if (leading) (start - MARK_INSET).coerceAtLeast(0.dp) else start,
+        top = calculateTopPadding(),
+        end = if (trailing) (end - MARK_INSET).coerceAtLeast(0.dp) else end,
+        bottom = calculateBottomPadding(),
+    )
+}
+
+/**
+ * A 1dp `input` line; focused, [focusedBorderThickness] of the colors' focused line, with main's focus
+ * ring outside it while [ringed]. Invalid, main's `aria-invalid:` look instead: the line in `destructive`
+ * (half strength in dark) with a 3dp ring of it outside (20%, 40% in dark); with more contrast, the line at full strength and no ring.
  */
 @Composable
 private fun FieldContainer(
     enabled: Boolean,
     isError: Boolean,
+    ringed: Boolean,
     interactionSource: MutableInteractionSource,
     colors: TextFieldColors,
+    focusedBorderThickness: Dp,
+    shape: Shape,
 ) {
     val moreContrast = LocalMoreContrast.current
     val dark = MaterialTheme.colorScheme.background.luminance() < HALF
     val mark = MaterialTheme.zoonk.destructive
     val line = if (dark && !moreContrast) mark.copy(alpha = 0.5f) else mark
     val ring = if (moreContrast) Color.Transparent else mark.copy(alpha = if (dark) 0.4f else 0.2f)
-    val radius = with(LocalDensity.current) { ZoonkRadius.lg.toPx() }
 
     OutlinedTextFieldDefaults.Container(
         enabled = enabled,
         isError = isError,
         interactionSource = interactionSource,
         modifier =
-            if (isError && enabled) {
-                Modifier.drawBehind {
-                    val width = INVALID_RING.toPx()
-                    drawRoundRect(
-                        color = ring,
-                        topLeft = Offset(-width / 2, -width / 2),
-                        size = Size(size.width + width, size.height + width),
-                        cornerRadius = CornerRadius(radius + width / 2),
-                        style = Stroke(width),
-                    )
-                }
-            } else {
-                Modifier
+            when {
+                !enabled -> Modifier
+                isError -> Modifier.ringOutside(shape, ring, INVALID_RING)
+                ringed -> Modifier.focusRing(shape, MaterialTheme.colorScheme.primary)
+                else -> Modifier
             },
         colors = colors.copy(errorIndicatorColor = line),
-        shape = FIELD_SHAPE,
-        focusedBorderThickness = if (moreContrast) 3.dp else 2.dp,
+        shape = shape,
+        focusedBorderThickness = focusedBorderThickness,
         unfocusedBorderThickness = 1.dp,
     )
 }
 
+/** Main's `ring-[3px] ring-ring/50` outside a focused field's [ink] line, more contrast included. */
+internal fun Modifier.focusRing(
+    shape: Shape,
+    ink: Color,
+): Modifier = ringOutside(shape, ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH)
+
+/** A ring [width] wide just outside [shape], its corners following the shape's own. */
+private fun Modifier.ringOutside(
+    shape: Shape,
+    color: Color,
+    width: Dp,
+): Modifier = drawBehind { drawRingOutside(shape.createOutline(size, layoutDirection, this), color, width.toPx()) }
+
+private fun DrawScope.drawRingOutside(
+    outline: Outline,
+    color: Color,
+    width: Float,
+) {
+    val box =
+        when (outline) {
+            is Outline.Rectangle -> {
+                RoundRect(outline.rect)
+            }
+
+            is Outline.Rounded -> {
+                outline.roundRect
+            }
+
+            is Outline.Generic -> {
+                clipPath(outline.path, ClipOp.Difference) { drawPath(outline.path, color, style = Stroke(width * 2)) }
+                return
+            }
+        }
+    drawOutline(Outline.Rounded(box.outset(width / 2)), color, style = Stroke(width))
+}
+
+private fun RoundRect.outset(by: Float): RoundRect {
+    val grow = CornerRadius(by)
+    return RoundRect(
+        left - by,
+        top - by,
+        right + by,
+        bottom + by,
+        topLeftCornerRadius + grow,
+        topRightCornerRadius + grow,
+        bottomRightCornerRadius + grow,
+        bottomLeftCornerRadius + grow,
+    )
+}
+
+fun Modifier.submitOnEnter(
+    state: TextFieldState,
+    submit: () -> Unit,
+): Modifier =
+    onPreviewKeyEvent { event ->
+        val sends = (event.key == Key.Enter || event.key == Key.NumPadEnter) && !event.isShiftPressed && state.composition == null
+        if (sends && event.type == KeyEventType.KeyDown) submit()
+        sends
+    }
+
+@Composable
+fun TextFieldState.ObserveEdits(onEdit: (String) -> Unit) {
+    val current by rememberUpdatedState(onEdit)
+    LaunchedEffect(this) {
+        snapshotFlow { text.toString() }.drop(1).collect { current(it) }
+    }
+}
+
+@Composable
+fun readOnlyFieldState(value: String): TextFieldState = remember(value) { TextFieldState(value) }
+
 private val FIELD_SHAPE = RoundedCornerShape(ZoonkRadius.lg)
 
 /**
- * Main's writing editor: a long answer's field keeps its soft `input` line while focused, since its
- * caret already shows where the learner is; more contrast still draws the ink ring.
+ * Main's writing editor: a long answer's field only darkens its line to ink at 35% while focused, with no ring,
+ * since its caret already shows where the learner is; more contrast still draws the ink line and its ring
+ * ([writingAreaFocusRing]).
  */
 @Composable
 fun writingAreaColors(): TextFieldColors =
     if (LocalMoreContrast.current) {
         OutlinedTextFieldDefaults.colors()
     } else {
-        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.outline)
+        OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f))
     }
 
-/** Main's `h-11 px-3`: 44dp on one line of 24sp text. */
+@Composable
+fun writingAreaFocusRing(): Boolean = LocalMoreContrast.current
+
+/**
+ * Main's composer (`TUTOR_COMPOSER_FRAME_CLASS`): on `card`; focused, its `input` line gives way to a
+ * soft ink ring at 35%, solid with more contrast, [composerFocusThickness] wide and with no `focusRing` outside it.
+ */
+@Composable
+fun composerColors(): TextFieldColors {
+    val card = MaterialTheme.colorScheme.surfaceContainerLow
+    val ink = MaterialTheme.colorScheme.onSurface
+    return OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = card,
+        unfocusedContainerColor = card,
+        focusedBorderColor = if (LocalMoreContrast.current) ink else ink.copy(alpha = 0.35f),
+    )
+}
+
+/** Main's composer's focus ring: 1dp, 3dp with more contrast. */
+@Composable
+fun composerFocusThickness(): Dp = if (LocalMoreContrast.current) 3.dp else 1.dp
+
+/** Main's `px-3`, and its `h-11` on one line of 24sp text. */
 private val FIELD_PADDING = PaddingValues(horizontal = 12.dp, vertical = 10.dp)
 
 /** Main's `aria-invalid:ring-[3px]`, outside the field's line. */
 private val INVALID_RING = 3.dp
+private val FOCUS_RING_WIDTH = 3.dp
 private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
 
-private val FIELD_MIN_HEIGHT = 48.dp
+/** Main's `h-11`: what a one-line field draws, while its touch target stays 48dp. */
+private val FIELD_MIN_HEIGHT = 44.dp
+
+/** Material's icon slot: as wide, so a mark keeps the room and inset Material gives it. */
+private val MARK_SLOT = 48.dp
+private val MARK_INSET = 12.dp
 
 /** Material's gap over a field's supporting text. */
 private val SUPPORTING_GAP = 4.dp
 private const val DISABLED_ALPHA = 0.38f
+
+/**
+ * Scrolls a field into view with the ring drawn [FOCUS_RING_WIDTH] outside it, which a scroll to the field's own
+ * bounds leaves under a bottom bar. A request from inside (focus, the caret) grows by the ring; with [whole], it
+ * brings the whole element and its ring, for a panel whose ring sits outside padding the field doesn't own.
+ */
+internal fun Modifier.ringInView(whole: Boolean = false): Modifier = this then RingInViewElement(whole)
+
+private data class RingInViewElement(
+    val whole: Boolean,
+) : ModifierNodeElement<RingInViewNode>() {
+    override fun create() = RingInViewNode(whole)
+
+    override fun update(node: RingInViewNode) {
+        node.whole = whole
+    }
+}
+
+private class RingInViewNode(
+    var whole: Boolean,
+) : Modifier.Node(),
+    BringIntoViewModifierNode {
+    override suspend fun bringIntoView(
+        childCoordinates: LayoutCoordinates,
+        boundsProvider: () -> Rect?,
+    ) {
+        val ring = with(requireDensity()) { FOCUS_RING_WIDTH.toPx() }
+        bringIntoView {
+            val own = requireLayoutCoordinates()
+            val asked =
+                if (whole) {
+                    own.size.toSize().toRect()
+                } else {
+                    val child = boundsProvider() ?: return@bringIntoView null
+                    child.translate(own.localPositionOf(childCoordinates, Offset.Zero))
+                }
+            asked.inflate(ring)
+        }
+    }
+}

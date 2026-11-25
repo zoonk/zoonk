@@ -76,7 +76,7 @@ struct ProfileQuestionSections: View {
               prompt: Text(
                 "E.g., software engineer, nurse", tableName: "AboutYou",
                 comment: "Example jobs"),
-              text: limited($draft.text, to: 80))
+              text: $draft.text, limit: 80, multiline: false)
 
             if context.jobFromEarlierAnswer {
               Text(
@@ -117,7 +117,7 @@ struct ProfileQuestionSections: View {
     Section {
       LabeledField(
         label: ProfileCopy.favoritesLabel(view.id), prompt: ProfileCopy.favoritesPrompt(view.id),
-        text: limited($draft.text, to: ProfileDraft.favoritesLimit))
+        text: $draft.text, limit: ProfileDraft.favoritesLimit, multiline: false)
     }
   }
 
@@ -199,7 +199,7 @@ struct ProfileQuestionSections: View {
               ? nil
               : Text(
                 "E.g., journalism", tableName: "AboutYou", comment: "Example subject studied"),
-            text: limited(subject(option.id), to: 80))
+            text: subject(option.id), limit: 80, multiline: false)
         }
       }
     }
@@ -223,7 +223,7 @@ struct ProfileQuestionSections: View {
             label: Text(
               "What should we know?", tableName: "AboutYou",
               comment: "Box for a condition the list doesn't name, in the learner's words"),
-            prompt: nil, text: limited($draft.text, to: 120), focus: $otherFocused
+            prompt: nil, text: $draft.text, limit: 120, multiline: false, focus: $otherFocused
           )
           .onAppear {
             if asksOther {
@@ -268,7 +268,7 @@ struct ProfileQuestionSections: View {
             prompt: Text(
               "E.g., I understand diagrams better than text", tableName: "AboutYou",
               comment: "Example of what helps someone learn"),
-            text: limited($draft.text, to: 300), focus: $noteFocused
+            text: $draft.text, limit: MemoryFact.statementLimit, focus: $noteFocused
           )
           .onAppear {
             if asksNote {
@@ -334,15 +334,6 @@ struct ProfileQuestionSections: View {
     } set: {
       draft.subjects[field] = $0
     }
-  }
-}
-
-/// Fields show their limits by taking no more.
-private func limited(_ text: Binding<String>, to limit: Int) -> Binding<String> {
-  Binding {
-    text.wrappedValue
-  } set: {
-    text.wrappedValue = String($0.prefix(limit))
   }
 }
 
@@ -607,9 +598,18 @@ struct ProfileStep: View {
 
   var body: some View {
     let hasAnswer = !draft.isEmpty && draft.isComplete
+    let continueWithAnswer = {
+      keepConditions()
+      onAnswer(draft.input)
+    }
 
     QuestionForm {
       ProfileQuestionSections(view: question, context: context, draft: $draft)
+        .onSubmit {
+          if hasAnswer, !isSaving {
+            continueWithAnswer()
+          }
+        }
 
       if view.firstLesson?.status == .ready {
         FlowLayout(spacing: 8, alignment: .firstTextBaseline) {
@@ -648,11 +648,9 @@ struct ProfileStep: View {
       StepButtons(
         canContinue: hasAnswer,
         skipLabel: question.id == .addressForm
-          ? ProfileCopy.decline(question.id, .ratherNotSay) : nil
+          ? ProfileCopy.decline(question.id, .ratherNotSay) : nil,
+        onContinue: continueWithAnswer
       ) {
-        keepConditions()
-        onAnswer(draft.input)
-      } onSkip: {
         if question.id == .conditions {
           onPickConditions([])
         }

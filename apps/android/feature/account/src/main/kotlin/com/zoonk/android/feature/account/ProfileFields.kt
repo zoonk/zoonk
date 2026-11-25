@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.fitTo
+import com.zoonk.android.ui.components.submitOnEnter
 
 /**
  * Main's name and username fields. In [isSetup], as main's setup, the name takes focus and the
@@ -48,6 +53,13 @@ fun ProfileFields(
     val showsUsernameField =
         isEditingUsername || form.username.isEmpty() || form.failure == AccountFailure.UsernameTaken ||
             form.usernameStatus == UsernameStatus.Taken
+    val submit = {
+        if (isSetup) {
+            form.continueSetup()
+        } else if (form.isChanged) {
+            form.save()
+        }
+    }
     val nameHint =
         when {
             form.showNameRequired -> R.string.account_name_required
@@ -60,12 +72,12 @@ fun ProfileFields(
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OutlinedTextField(
-            value = form.name,
-            onValueChange = form::onNameChange,
+            state = form.nameField,
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(nameFocus)
+                    .submitOnEnter(form.nameField, submit)
                     .semantics { contentType = ContentType.PersonFullName },
             label = stringResource(R.string.account_name),
             supportingText =
@@ -73,13 +85,23 @@ fun ProfileFields(
                     { Text(stringResource(hint), Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
                 },
             isError = form.isNameTooLong || form.showNameRequired,
-            singleLine = true,
+            lineLimits = TextFieldLineLimits.SingleLine,
             readOnly = form.isSaving,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
+            keyboardOptions =
+                KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = if (showsUsernameField) ImeAction.Next else ImeAction.Done,
+                ),
+            onKeyboardAction =
+                if (showsUsernameField) {
+                    null
+                } else {
+                    { submit() }
+                },
         )
 
         if (showsUsernameField) {
-            UsernameField(form)
+            UsernameField(form, submit)
         } else {
             val change = stringResource(R.string.account_change_username)
 
@@ -100,17 +122,17 @@ fun ProfileFields(
 }
 
 @Composable
-private fun UsernameField(form: ProfileFormViewModel) {
+private fun UsernameField(
+    form: ProfileFormViewModel,
+    submit: () -> Unit,
+) {
     val status = form.usernameStatus
     val isWrong = form.showUsernameRequired || status == UsernameStatus.Invalid || status == UsernameStatus.Taken
 
     OutlinedTextField(
-        value = form.username,
-        onValueChange = form::onUsernameChange,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .semantics { contentType = ContentType.Username },
+        state = form.usernameField,
+        inputTransformation = InputTransformation.fitTo(USERNAME_MAX_LENGTH),
+        modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Username },
         label = stringResource(R.string.account_username),
         prefix = { Text("@") },
         supportingText = {
@@ -132,7 +154,7 @@ private fun UsernameField(form: ProfileFormViewModel) {
             )
         },
         isError = isWrong,
-        singleLine = true,
+        lineLimits = TextFieldLineLimits.SingleLine,
         readOnly = form.isSaving,
         keyboardOptions =
             KeyboardOptions(
@@ -141,6 +163,7 @@ private fun UsernameField(form: ProfileFormViewModel) {
                 keyboardType = KeyboardType.Ascii,
                 imeAction = ImeAction.Done,
             ),
+        onKeyboardAction = { submit() },
     )
 }
 

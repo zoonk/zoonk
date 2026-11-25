@@ -50,7 +50,7 @@ struct TutorComposerBar: View {
   private var composer: some View {
     HStack(alignment: .bottom, spacing: 8) {
       MultilineTextField(
-        text: $conversation.draft, prompt: placeholder,
+        text: $conversation.draft, limit: 2000, prompt: placeholder,
         label: Text(
           "Message \(buddyName)", tableName: "Tutor",
           comment: "The buddy's composer for VoiceOver; the argument is the buddy's name")
@@ -83,9 +83,11 @@ struct TutorComposerBar: View {
       .keyboardShortcut(.return, modifiers: .command)
       .disabled(!conversation.canSendDraft)
     }
+    // Main's `min-h-11`: 44pt on one line, the send button 8pt in from the end.
     .padding(.leading, 14)
-    .padding([.vertical, .trailing], 9)
-    .inputPanel(isFocused: isFocused)
+    .padding(.trailing, 8)
+    .padding(.vertical, 7)
+    .inputPanel(isFocused: isFocused, softFocus: true)
   }
 
   private var suggestionChips: some View {

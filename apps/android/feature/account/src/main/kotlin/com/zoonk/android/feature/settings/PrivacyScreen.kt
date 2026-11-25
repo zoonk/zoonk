@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -45,6 +47,7 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
+import com.zoonk.android.feature.account.VerificationCodeInput
 import com.zoonk.android.feature.subscription.deletionPlusNotices
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
@@ -152,7 +155,7 @@ private fun YourData(
     val files = LocalContext.current.applicationContext.contentResolver
     val data =
         viewModel(key = "your-data:${signedIn.session.localId}") {
-            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email, files::openOutputStream)
+            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email, createSavedStateHandle(), files::openOutputStream)
         }
     VisitOf(data.visit)
     val export =
@@ -247,13 +250,13 @@ private fun DeletionDialogs(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(stringResource(R.string.settings_delete_code_description, email))
                         OutlinedTextField(
-                            value = data.code,
-                            onValueChange = data::onCodeChange,
+                            state = data.codeField,
+                            inputTransformation = VerificationCodeInput,
                             modifier = Modifier.semantics { contentType = ContentType.SmsOtpCode },
                             label = stringResource(R.string.account_code_label),
                             enabled = !needsNewCode,
                             isError = failure != null,
-                            singleLine = true,
+                            lineLimits = TextFieldLineLimits.SingleLine,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                         )
                         failure?.let { Failure(it) }

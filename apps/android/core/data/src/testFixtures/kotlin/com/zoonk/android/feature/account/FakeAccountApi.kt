@@ -11,6 +11,7 @@ import kotlinx.coroutines.CompletableDeferred
 class FakeAccountApi : AccountApi {
     val codesSent = mutableListOf<String>()
     val signInBearers = mutableListOf<String?>()
+    var codeGate: CompletableDeferred<Unit>? = null
     var codeFailure: ApiException? = null
     var takenUsernames = setOf<String>()
     var saveFailure: ApiException? = null
@@ -30,6 +31,7 @@ class FakeAccountApi : AccountApi {
         code: String,
         current: AuthenticatedSession?,
     ): String {
+        codeGate?.await()
         codeFailure?.let { throw it }
         signInBearers += current?.bearerToken
         return "token-b"

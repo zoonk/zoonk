@@ -385,15 +385,17 @@ private struct MockEssayBox: View {
       let count = question.writing.map { WritingLabels.lineCount(text.wrappedValue, writing: $0) }
       let words = WordCount.count(text.wrappedValue)
 
-      TextEditor(text: text)
-        .typeStyle(.writing)
-        .frame(minHeight: 280)
-        .scrollContentBackground(.hidden)
-        .focused($isFocused)
-        .fieldBorder(isFocused: isFocused, holdsFocus: true)
-        .disabled(isLocked)
-        .accessibilityLabel(label)
-        .accessibilityHint(Text(count?.words ?? ""))
+      FittedTextInput(text: text, limit: EssayWriter.maxLength) { text, selection in
+        TextEditor(text: text, selection: selection)
+          .typeStyle(.writing)
+          .frame(minHeight: 280)
+          .scrollContentBackground(.hidden)
+          .focused($isFocused)
+          .fieldBorder(isFocused: isFocused, holdsFocus: true)
+          .disabled(isLocked)
+          .accessibilityLabel(label)
+          .accessibilityHint(Text(count?.words ?? ""))
+      }
 
       if let count {
         Text(count.words)
@@ -416,8 +418,7 @@ private struct MockEssayBox: View {
         if case .text(let text) = answer.wrappedValue { return text }
         return ""
       },
-      // The server takes no longer answer, so the field stops there.
-      set: { answer.wrappedValue = .text(EssayWriter.fitted($0)) })
+      set: { answer.wrappedValue = .text($0) })
   }
 }
 

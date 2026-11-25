@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -36,7 +37,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -93,12 +93,14 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.writingAreaColors
+import com.zoonk.android.ui.components.writingAreaFocusRing
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskAside
@@ -547,8 +549,6 @@ internal fun WriteScreen(
     val moveFocus = rememberMoveFocus()
     val rewrite = ui.results.orEmpty().isNotEmpty()
     val fieldLabel = stringResource(if (rewrite) R.string.essay_rewrite_label else R.string.essay_your_answer)
-    // The learner's cursor outlives the layouts that move the field.
-    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(ui.text)) }
 
     LaunchedEffect(Unit) { if (ui.switched) moveFocus(field) }
 
@@ -616,12 +616,8 @@ internal fun WriteScreen(
         ) {
             Column(Modifier.taskColumn().weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
-                    value = value.copy(text = ui.text),
-                    onValueChange = {
-                        // The field stops at the longest answer the API saves and grades, as a paste past it is cut there.
-                        value = it.copy(text = it.text.take(MAX_WRITING_CHARACTERS))
-                        if (value.text != ui.text) viewModel.write(value.text)
-                    },
+                    state = ui.field,
+                    inputTransformation = InputTransformation.fitTo(MAX_WRITING_CHARACTERS),
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -633,6 +629,7 @@ internal fun WriteScreen(
                     textStyle = MaterialTheme.typography.bodyLarge,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                     colors = writingAreaColors(),
+                    focusRing = writingAreaFocusRing(),
                 )
                 WritingLineCount(ui.text, essay.writing)
             }
