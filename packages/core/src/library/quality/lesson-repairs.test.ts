@@ -270,7 +270,7 @@ describe(repairWrittenLesson, () => {
       explore: null,
       image: null,
       kind: "explanation",
-      text: ["The balance is $-5 and `<div>` holds it. <b>Run</b> this:", ...code].join("\n"),
+      text: ["The balance is $-5 and `<div>` holds it. **Run this:", ...code].join("\n"),
       title: "What does `<div>` hold?",
       visual: null,
     };

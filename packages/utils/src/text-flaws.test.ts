@@ -54,6 +54,38 @@ describe(findUnrenderedMarkdown, () => {
     expect(findUnrenderedMarkdown({ layout: "blocks", text })).toHaveLength(4);
   });
 
+  it("finds a tag outside code and says how to show it", () => {
+    expect(
+      findUnrenderedMarkdown({ layout: "inline", text: "Wrap it in <p> and </p>." }),
+    ).toStrictEqual([expect.stringContaining("in backticks, as in `<h1>`")]);
+  });
+
+  it("finds tags written as HTML escapes outside code, and keeps them in code", () => {
+    for (const text of [
+      "In &lt;h1&gt;Our Services&lt;/h1&gt;, visitors see only _Our Services_.",
+      "&nbsp;&nbsp;<li>Home</li>",
+      "Use &#60;p&#62; or &#x3C;p&#x3E;.",
+    ]) {
+      expect(findUnrenderedMarkdown({ layout: "blocks", text })).toContainEqual(
+        expect.stringContaining("an HTML escape"),
+      );
+    }
+
+    for (const text of [
+      "To show a `<` on a page, write `&lt;`.",
+      "```html\n<p>Use &lt;h1&gt; for the title.</p>\n```",
+      "AT&T and R&D; pay 5 & 6.",
+    ]) {
+      expect(findUnrenderedMarkdown({ layout: "blocks", text })).toStrictEqual([]);
+    }
+  });
+
+  it("finds inline code between two backticks, which no player reads as code", () => {
+    expect(
+      findUnrenderedMarkdown({ layout: "inline", text: "Write ``const s = `hi`;`` here." }),
+    ).toStrictEqual([expect.stringContaining("two backticks")]);
+  });
+
   it("reads a code block as code, whatever marks its lines hold", () => {
     const text = [
       "O que esta função mostra?",

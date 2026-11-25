@@ -18,9 +18,6 @@ const QUOTE_MARK = /^(?<indent>\s*)>\s+(?=[^\d\s])/u;
 
 const LINK = new RegExp(MARKDOWN_LINK.source, "gu");
 const ANGLE_LINK = new RegExp(AUTOLINK.source, "giu");
-const LINE_BREAK_TAG = /<br\s*\/?>/giu;
-
-const STYLE_TAG = /<\/?(?:a|b|div|em|i|p|small|span|strong|u)\b[^>]*>/giu;
 
 const LINE_BREAK = /\s*\n\s*/gu;
 
@@ -62,14 +59,10 @@ function editOutsideMath(line: string, edit: (text: string) => string): string {
 }
 
 /** Emphasis pairs with its inline code in view, since players never pair it across code. */
-function removeInlineMarks({ breakAs, line }: { breakAs: string; line: string }): string {
+function removeInlineMarks(line: string): string {
   return editProse(line, (prose) =>
     editOutsideMath(prose, (text) =>
-      text
-        .replaceAll(LINK, "$<text>")
-        .replaceAll(ANGLE_LINK, "$<address>")
-        .replaceAll(LINE_BREAK_TAG, breakAs)
-        .replaceAll(STYLE_TAG, ""),
+      text.replaceAll(LINK, "$<text>").replaceAll(ANGLE_LINK, "$<address>"),
     ),
   )
     .split("\n")
@@ -94,9 +87,9 @@ function repairLine({
 
   return tableLines.has(index)
     ? splitTableCells(line)
-        .map((cell) => removeInlineMarks({ breakAs: " ", line: cell }))
+        .map((cell) => removeInlineMarks(cell))
         .join("|")
-    : removeInlineMarks({ breakAs: "\n", line: removeLineMarks(line) });
+    : removeInlineMarks(removeLineMarks(line));
 }
 
 function repairBlocks(text: string): string {
@@ -114,7 +107,7 @@ function repairInline(text: string): string {
     .join("\n")
     .replaceAll(LINE_BREAK, " ");
 
-  return removeInlineMarks({ breakAs: " ", line });
+  return removeInlineMarks(line);
 }
 
 function hasCodeBlock(text: string): boolean {
@@ -124,7 +117,7 @@ function hasCodeBlock(text: string): boolean {
 /**
  * Code keeps every character: a `#` comment, `**kwargs` and `<div>` are code, never marks. What
  * code can't repair safely stays for a writer: a table or a code block where one line shows, rows
- * with no header, a code fence that never closed, and other HTML.
+ * with no header, a code fence that never closed, and HTML, since a tag can be what a lesson teaches.
  */
 export function repairMarkdown({ layout, text }: { layout: TextLayout; text: string }): string {
   if (findUnrenderedMarkdown({ layout, text }).length === 0) {
