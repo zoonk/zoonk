@@ -74,7 +74,7 @@ fun BuddyPicker(
             label = stringResource(R.string.buddy_picker_name),
             placeholder = { Text(buddyName(kind, null), color = MaterialTheme.colorScheme.onSurface) },
             lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         )
     }
 }
