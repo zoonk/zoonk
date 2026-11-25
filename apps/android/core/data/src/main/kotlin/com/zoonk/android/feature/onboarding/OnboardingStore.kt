@@ -433,22 +433,21 @@ class OnboardingStore(
         language: String,
         goalId: UUID? = null,
     ): WriteOutcome<AttachedSource> =
-        write(setOf(DataDomain.Allowance)) { session ->
+        attach { session ->
             val name = file.name.replace('/', '-').replace(Regex("\\.{2,}"), ".")
             val pathname = "sources/${session.accountId}/${UUID.randomUUID()}-$name"
             api.uploadFile(session, pathname, file)
-            api
-                .attach(
-                    session,
-                    CreateUploadRequest.CreateUploadRequestOneOfValue(
-                        CreateUploadRequestOneOf(
-                            language = language,
-                            kind = CreateUploadRequestOneOf.Kind.FILE,
-                            pathname = pathname,
-                            goalId = goalId,
-                        ),
+            api.attach(
+                session,
+                CreateUploadRequest.CreateUploadRequestOneOfValue(
+                    CreateUploadRequestOneOf(
+                        language = language,
+                        kind = CreateUploadRequestOneOf.Kind.FILE,
+                        pathname = pathname,
+                        goalId = goalId,
                     ),
-                ).attached()
+                ),
+            )
         }
 
     suspend fun askMaterial(
@@ -469,12 +468,20 @@ class OnboardingStore(
         sourceIds: List<String>,
     ) = write(setOf(DataDomain.Goals)) { api.answerUploadRequest(it, goalId, sourceIds.map(UUID::fromString)) }
 
-    private suspend fun attach(request: CreateUploadRequest) =
-        write(setOf(DataDomain.Allowance)) { session ->
-            api.attach(session, request).attached()
+    private suspend fun attach(request: CreateUploadRequest) = attach { session -> api.attach(session, request) }
+
+    /** Adding material a read failed on reads it again, so the answer replaces how that earlier read ended. */
+    private suspend fun attach(upload: suspend (AuthenticatedSession) -> Source): WriteOutcome<AttachedSource> =
+        when (val outcome = write(setOf(DataDomain.Allowance), replacing = ::replacingSource, upload)) {
+            is WriteOutcome.Done -> WriteOutcome.Done(outcome.value.attached())
+            is WriteOutcome.Refused -> outcome
+            WriteOutcome.Failed -> WriteOutcome.Failed
+            WriteOutcome.Obsolete -> WriteOutcome.Obsolete
         }
 
     private fun replacingDraft(draft: OnboardingDraft) = listOf(drafts[draft.id.toString()].replacing(draft))
+
+    private fun replacingSource(source: Source) = listOf(sources[source.id.toString()].replacing(source))
 
     private suspend fun <T> write(
         invalidating: Set<DataDomain> = emptySet(),

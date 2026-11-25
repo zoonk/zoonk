@@ -139,7 +139,7 @@ class UploadRequestFlowTest {
 
     @Test
     fun anUploadStillBeingReadBringsTheAskBackWhenNothingInItCanBeRead() {
-        api.readStatuses = listOf("reading", "reading", "unreadable")
+        api.readStatuses = listOf("reading", "unreadable")
         show()
 
         pasteText("Edital 2027")
