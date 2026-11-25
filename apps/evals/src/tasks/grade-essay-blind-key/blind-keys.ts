@@ -12,8 +12,8 @@ export type BlindKey = {
   questionId: string;
   draw: number;
   model: string;
-  promptVersion: string;
-  productionPromptVersion: string;
+  /** The writer's template revision, as core pins it in `getWritingKeyWriter()`. */
+  promptRevision: string;
   copiedQuestion: boolean;
   costUsd: number | null;
   latencyMs: number;

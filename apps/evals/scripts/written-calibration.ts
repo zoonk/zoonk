@@ -21,6 +21,7 @@ import { type GradeWritingOutput } from "@/tasks/grade-essay/task";
 import { TEST_CASES as BOARD_CASES } from "@/tasks/grade-essay/test-cases";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
+import { getWritingKeyWriter } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 
 function print(line = "") {
@@ -325,7 +326,7 @@ async function printProvenance({
   );
 
   print(
-    `Writer ${unique(keys.keys.map(({ model }) => model))}, prompt ${unique(keys.keys.map(({ productionPromptVersion }) => productionPromptVersion))} (production) + eval rule → ${unique(keys.keys.map(({ promptVersion }) => promptVersion))}.\n`,
+    `Writer ${unique(keys.keys.map(({ model }) => model))}, template revision ${unique(keys.keys.map(({ promptRevision }) => promptRevision))} (current ${getWritingKeyWriter().promptVersion}).\n`,
   );
 }
 
@@ -393,21 +394,20 @@ function buildCalibration({
     generatedAt: new Date().toISOString(),
     grader: {
       model: getWritingGrader("oab").model,
-      promptVersions: {
+      promptRevision: {
         oab: getWritingGrader("oab").promptVersion,
         points: getWritingGrader("points").promptVersion,
       },
       reasoning: "high",
     },
+    keyWriter: {
+      model: unique(keys.keys.map(({ model }) => model)),
+      promptRevision: unique(keys.keys.map(({ promptRevision }) => promptRevision)),
+    },
     margins: Object.fromEntries(LEVELS.map((level) => [level, getMargins(keyed, level)])),
     mechanism: "keyed",
     over: sortedShares(keyed, "over"),
     under: sortedShares(keyed, "under"),
-    writer: {
-      model: unique(keys.keys.map(({ model }) => model)),
-      productionPromptVersion: keys.keys[0]?.productionPromptVersion,
-      promptVersion: keys.keys[0]?.promptVersion,
-    },
   };
 }
 
