@@ -266,7 +266,7 @@ private fun phaseMeta(
     open: Boolean,
 ): PlanDateWords? {
     if (phase.state == PlanPhase.State.LEFT_OUT) {
-        return sameWords(planOutsideReason(phase.notPlannedReason))
+        return sameWords(planOutsideReason(phase.notPlannedReason, module = !page.isExam))
     }
     if (phase.state == PlanPhase.State.UNFINISHED) {
         val leftOut = (phase.lessonsTotal - phase.lessonsDone).toInt()

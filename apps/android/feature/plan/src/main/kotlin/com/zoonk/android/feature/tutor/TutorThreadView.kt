@@ -225,7 +225,7 @@ private fun Turns(
                 val day = newDay(today, days.lastOrNull())
                 TurnLayout(
                     sending.question,
-                    sending.about.takeIf { page == null && sending.topic != thread.turns.lastOrNull()?.topic },
+                    sending.about.takeIf { page == null && sending.topic != thread.turns.lastOrNull()?.topic }?.let { aboutLabel(it, vm.scope) },
                     identity.takeIf { page == null },
                     day?.let { { DayLabel(it, today) } },
                 ) { Thinking(answerWords(inPanel = page == null)) }
@@ -317,7 +317,7 @@ private fun TurnView(
     newAbout: Boolean = true,
 ) {
     // What a question is about shows on the first one and where it changes: another part of the lesson, or its answer once checked.
-    TurnLayout(turn.question, turn.about.takeIf { inPanel && newAbout }, identity.takeIf { inPanel }, day) {
+    TurnLayout(turn.question, turn.about.takeIf { inPanel && newAbout }?.let { aboutLabel(it, vm.scope) }, identity.takeIf { inPanel }, day) {
         // A finished or failed answer is read out once; while it streams nothing is, word by word.
         val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
         Column(
@@ -357,7 +357,7 @@ private fun TurnView(
 @Composable
 private fun TurnLayout(
     question: String,
-    about: TutorTurn.About?,
+    about: String?,
     identity: TutorIdentity?,
     day: (@Composable () -> Unit)?,
     answer: @Composable ColumnScope.() -> Unit,
@@ -371,7 +371,7 @@ private fun TurnLayout(
         ) {
             about?.let {
                 Text(
-                    aboutLabel(it),
+                    it,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelMedium,
                 )

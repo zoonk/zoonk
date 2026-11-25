@@ -184,17 +184,19 @@ private fun LegendMark(dot: LegendDot) {
     }
 }
 
+/** Why the subject isn't in the plan, naming it as the Plan's list does: a [module] or a subject. */
 @Composable
 internal fun NotPlannedNotice(
     subject: SyllabusSubject,
+    module: Boolean,
     writes: SubjectWrites,
     actions: SubjectActions,
 ) {
     val words =
         when (subject.notPlannedReason) {
-            "skipped" -> R.string.goalcontent_subject_skipped
-            "time" -> R.string.goalcontent_subject_time
-            "missing" -> R.string.goalcontent_subject_missing
+            "skipped" -> if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
+            "time" -> if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
+            "missing" -> if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
             else -> return
         }
 
@@ -734,8 +736,9 @@ private fun numberedTopic(
 
 @Composable
 private fun topicNote(topic: SyllabusTopic): String? {
-    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known")
-    return topic.notPlannedReason?.let { planOutsideReason(it) }
+    // Only an exam's subjects have topics.
+    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known", module = false)
+    return topic.notPlannedReason?.let { planOutsideReason(it, module = false) }
 }
 
 /** Main's `TopicFrequencySource`: where the "Asked a lot" marks come from, behind a quiet "Sources" for the learner who wants to check. */

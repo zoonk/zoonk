@@ -198,7 +198,7 @@ class GoalContentScreenshots {
         @Composable
         fun Subject(key: String) {
             val syllabus = if (key == "basics") modulesSyllabus() else examSyllabus()
-            val (menu, ask) = tools(TutorScope.Subject(GOAL, key))
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, key, module = !syllabus.isExam))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
@@ -216,7 +216,7 @@ class GoalContentScreenshots {
         @Composable
         fun ModuleOut(reason: String) {
             val syllabus = modulesWithDataOut(reason)
-            val (menu, ask) = tools(TutorScope.Subject(GOAL, "data"))
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
@@ -226,7 +226,7 @@ class GoalContentScreenshots {
             val exam = examSyllabus()
             val practice = checkNotNull(exam.writtenPractice)
             val syllabus = exam.copy(writtenPractice = practice.copy(subjects = practice.subjects?.map(edit)))
-            val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay"))
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay", module = false))
             SubjectPage(syllabus, syllabus.subjects.first { it.key == "essay" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
@@ -324,7 +324,7 @@ class GoalContentScreenshots {
                 "subject-written-left-out-for-time" to {
                     val syllabus = examSyllabus()
                     val essay = syllabus.subjects.first { it.key == "essay" }.copy(notPlannedReason = "time")
-                    val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay"))
+                    val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay", module = false))
                     SubjectPage(syllabus, essay, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
                 },
                 "subject-module-taken-out" to { ModuleOut("skipped") },

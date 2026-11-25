@@ -9,6 +9,8 @@
     <string name="tutor_ask_mock">Ask %1$s about this mock exam</string>
     <string name="tutor_ask_plan">Ask %1$s about your plan</string>
     <string name="tutor_ask_subject">Ask %1$s about this subject</string>
+    <!-- On a module's page, on a plan that isn't an exam. %1$s is the buddy's name. -->
+    <string name="tutor_ask_module">Ask %1$s about this module</string>
     <string name="tutor_ask_answer">Ask %1$s about your answer</string>
     <string name="tutor_ask_question">Ask %1$s about this question</string>
     <string name="tutor_ask_screen">Ask %1$s about this screen</string>
@@ -20,6 +22,8 @@
     <string name="tutor_description_mock">Ask questions about this mock exam</string>
     <string name="tutor_description_plan">Ask questions about your plan</string>
     <string name="tutor_description_subject">Ask questions about this subject</string>
+    <!-- Under the buddy's name, opened from a module's page on a plan that isn't an exam. -->
+    <string name="tutor_description_module">Ask questions about this module</string>
     <string name="tutor_description_item">Ask about this question</string>
     <string name="tutor_close">Close questions</string>
 
@@ -31,6 +35,8 @@
     <string name="tutor_about_plan">About your plan</string>
     <string name="tutor_about_step">About this part</string>
     <string name="tutor_about_subject">About this subject</string>
+    <!-- Over the learner's first question, asked from a module's page on a plan that isn't an exam. -->
+    <string name="tutor_about_module">About this module</string>
     <string name="tutor_about_question">About this question</string>
 
     <string name="tutor_empty_title">What would you like help with?</string>
