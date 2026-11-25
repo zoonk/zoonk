@@ -128,7 +128,11 @@ export const TEST_CASES: TestCase<AnswerFromMaterialExpected, AnswerFromMaterial
     },
   },
   {
-    expected: { found: true, mentions: [["Δs", "delta s", "deslocamento", "espaco"]], refs: ["S1:1"] },
+    expected: {
+      found: true,
+      mentions: [["Δs", "delta s", "deslocamento", "espaco"]],
+      refs: ["S1:1"],
+    },
     id: "pt-latex-notes-average-speed",
     userInput: {
       language: "pt",

@@ -38,7 +38,12 @@ async function generate({
 }: TranscribeMaterialCaseInput & { model: string; reasoning?: Reasoning; useFallback?: boolean }) {
   const photo = await readDatasetImage({ fileName: imageFile, taskId: TASK_ID });
 
-  return transcribeMaterial({ image: await renderPhotoPage({ bytes: photo, contentType: "image/jpeg" }), model, reasoning, useFallback });
+  return transcribeMaterial({
+    image: await renderPhotoPage({ bytes: photo, contentType: "image/jpeg" }),
+    model,
+    reasoning,
+    useFallback,
+  });
 }
 
 export const transcribeMaterialTask: Task<
