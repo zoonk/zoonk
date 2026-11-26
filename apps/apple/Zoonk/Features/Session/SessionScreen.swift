@@ -297,8 +297,8 @@ private struct NextStopView: View {
       kind: lessonKind, deckID: deckID, goalID: day.goalId, held: held,
       isWritten: lessonStatus == .ready,
       isWaiting: isLessonWorkRunning || held != nil, note: failureNote
-    ) {
-      daySoFar
+    ) { isPane in
+      daySoFar(isPane: isPane)
     } upNext: {
       upNext
     } actions: {
@@ -316,8 +316,10 @@ private struct NextStopView: View {
     return warmUp.deckID
   }
 
+  /// On a pane of its own the bar says its count; over the next step it's the header's bar, which
+  /// only VoiceOver reads as a count, as main's session header does.
   @ViewBuilder
-  private var daySoFar: some View {
+  private func daySoFar(isPane: Bool) -> some View {
     if let moment {
       Section {
         MomentSummary(moment: moment)
@@ -332,9 +334,18 @@ private struct NextStopView: View {
     } else {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          DayProgressLead(bar: day.sessionBar, isOpen: false)
+          if isPane {
+            DayProgressLead(bar: day.sessionBar, isOpen: false)
+          }
 
           DaySegments(segments: day.daySegments.map(\.mark))
+            .accessibilityElement()
+            .accessibilityLabel(
+              Text(
+                "\(day.sessionBar.completed) of \(day.sessionBar.total) done",
+                tableName: "Today", comment: "How far the day's session is")
+            )
+            .accessibilityHidden(isPane)
         }
       }
     }
@@ -344,10 +355,11 @@ private struct NextStopView: View {
   private var upNext: some View {
     if let next {
       Section {
-        BlockRow(
-          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true,
-          lineOverride: next.kind == .review && !next.capsules.isEmpty
-            && ReviewIntro.isEarly(goalID: goalID) ? ReviewIntro.earlyLine : nil)
+        UpNextTitle(
+          block: next,
+          line: next.kind == .review && !next.capsules.isEmpty
+            && ReviewIntro.isEarly(goalID: goalID)
+            ? ReviewIntro.earlyLine : next.detail)
 
         if let lessonLine {
           lessonLine
@@ -405,7 +417,7 @@ private struct NextStopView: View {
     } else {
       // Main's `canStop`: a day with nothing done has nothing to stop.
       if let sessionID, day.blocks.contains(where: \.isFinished) {
-        BusyButton(isBusy: isStopping) {
+        BusyButton(isBusy: isStopping, icon: .stop) {
           stop(sessionID: sessionID)
         } label: {
           Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
@@ -673,7 +685,8 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   /// The lesson is written, or written and held for a learner who played.
   let isWaiting: Bool
   let note: BarNote?
-  @ViewBuilder let daySoFar: () -> DaySoFar
+  /// Says whether the day so far stands on a pane of its own.
+  @ViewBuilder let daySoFar: (_ isPane: Bool) -> DaySoFar
   @ViewBuilder let upNext: () -> UpNext
   @ViewBuilder let actions: () -> Actions
 
@@ -689,7 +702,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
 
     PaneSplit {
       ZoonkList {
-        daySoFar()
+        daySoFar(true)
       }
     } secondary: {
       ZoonkList {
@@ -700,7 +713,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
       .bottomBar(note: note) { actions() }
     } single: {
       ZoonkList {
-        daySoFar()
+        daySoFar(false)
         upNext()
         wait(deal)
       }
@@ -809,5 +822,37 @@ extension GenerationWait.Kind {
         "Your lesson is usually ready in a few minutes.", table: "Session",
         comment: "A lesson being written")
     }
+  }
+}
+
+/// Main's next stop heading: the step's name as the screen's title, its one line and its facts.
+private struct UpNextTitle: View {
+  let block: StudyBlock
+  let line: String?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(block.displayTitle)
+        .typeStyle(.pageTitle)
+        .accessibilityAddTraits(.isHeader)
+
+      if let line {
+        Text(line)
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+      }
+
+      FactSegments(facts)
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  private var facts: [String] {
+    [
+      studyDuration(minutes: block.estimatedMinutes),
+      block.oftenTested
+        ? String(localized: "Often tested", table: "Session", locale: .appLanguage) : nil,
+    ].compactMap(\.self)
   }
 }
