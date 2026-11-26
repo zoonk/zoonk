@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
 import com.zoonk.android.feature.player.steps.LocalBoardMisses
@@ -25,9 +26,9 @@ import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.richtext.SpokenText
 
 /**
- * Main's `MatchColumnsStep`: the shared match board, each pair checked as it's made. A right pair stays matched; a
- * wrong one shows briefly and counts as a mistake. The last pair sends the answer and checks it through [onDone], and
- * the board then shows each word with its partner.
+ * Main's `MatchColumnsStep`: the shared match board on the activity's panel, each pair checked as it's made. A right
+ * pair stays matched; a wrong one shows briefly and counts as a mistake. The last pair sends the answer and checks it
+ * through [onDone], and the board then shows each word with its partner.
  */
 @Composable
 internal fun MatchColumnsView(
@@ -93,10 +94,12 @@ internal fun MatchColumnsView(
                 cue = work.cue,
             ) { Text(words(spot)) }
         }
-        if (ended) {
-            SolvedMatchBoard(lefts.indices.map { it to work.pairs.getValue(it) }, card = card)
-        } else {
-            MatchBoard(lefts.indices.toList(), rightItems.indices.toList(), card = card)
+        ActivityCanvas {
+            if (ended) {
+                SolvedMatchBoard(lefts.indices.map { it to work.pairs.getValue(it) }, card = card)
+            } else {
+                MatchBoard(lefts.indices.toList(), rightItems.indices.toList(), card = card)
+            }
         }
         board.Announcement()
     }

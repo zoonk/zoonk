@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +28,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
@@ -39,6 +41,7 @@ import com.zoonk.android.feature.questions.MatchEntry
 import com.zoonk.android.feature.questions.MatchMisses
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
+import com.zoonk.android.feature.questions.MatchTry
 import com.zoonk.android.feature.questions.SolvedMatchBoard
 import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.rememberMatchBoardState
@@ -48,14 +51,15 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 val matchPairsRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_sorting_badge_match_pairs, R.drawable.ic_link) },
+        badge = { null },
         canvas = { MatchPairsActivity(it) },
         feedback = { content, answer -> MatchPairsMisses(content as MatchPairsContent, answer) },
     )
 
 /**
- * Main's `MatchPairsActivity`: the shared match board, each pair checked as it's made. A miss says why under the board
- * until the next tap, and the last pair sends the answer by itself ([ActivityProps.onComplete]).
+ * Main's `MatchPairsActivity`: the shared match board, each pair checked as it's made. A miss whose card says why shows
+ * it under the board until the next tap (TalkBack hears every miss), and the last pair sends the answer by itself
+ * ([ActivityProps.onComplete]).
  */
 @Composable
 private fun MatchPairsActivity(props: ActivityProps) {
@@ -108,7 +112,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
                 MatchBoard(left.indices.toList(), right.indices.toList(), group, card)
             }
 
-            board.lastMiss.takeUnless { ended }?.let { MissNote(right[it.right].why ?: left[it.left].why) }
+            board.lastMiss.takeUnless { ended }?.let { miss -> (right[miss.right].why ?: left[miss.left].why)?.let { MissNote(it, miss) } }
         }
         board.Announcement()
     }
@@ -117,12 +121,19 @@ private fun MatchPairsActivity(props: ActivityProps) {
 @Composable
 private fun cardsLabel(): String = stringResource(R.string.activities_sorting_cards_to_match)
 
+/** Why a [miss] doesn't go together, brought into view above the bar for each new miss. */
 @Composable
-private fun MissNote(explanation: String?) {
+private fun MissNote(
+    explanation: String,
+    miss: MatchTry,
+) {
     val shape = RoundedCornerShape(ZoonkRadius.option)
+    val inView = remember { BringIntoViewRequester() }
+    LaunchedEffect(miss) { inView.bringIntoView() }
     Row(
         Modifier
             .fillMaxWidth()
+            .bringIntoViewRequester(inView)
             .background(MaterialTheme.colorScheme.errorContainer, shape)
             .semantics(mergeDescendants = true) {}
             .padding(horizontal = 14.dp, vertical = 12.dp),
@@ -142,11 +153,7 @@ private fun MissNote(explanation: String?) {
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             )
-            if (explanation != null) {
-                RichText(explanation, style = MaterialTheme.typography.bodyMedium)
-            } else {
-                Text(stringResource(R.string.activities_sorting_dont_go_together_short), style = MaterialTheme.typography.bodyMedium)
-            }
+            RichText(explanation, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
