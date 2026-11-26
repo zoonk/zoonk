@@ -2,7 +2,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { matchAreasToSubjects } from "../../exams/_utils/match-areas";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { findNamingSections } from "../_utils/name-match";
-import { isObjectiveSection } from "./written-subject";
+import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 
@@ -88,10 +88,17 @@ export function getObjectiveSectionNames(structure: ExamStructure | null): strin
     .map((section) => section.name);
 }
 
-/** When no subject is in any section, every section asks every subject, as `mapAreasToSections` places areas. */
+/**
+ * Only subjects asked as questions sit in objective sections, so a written paper named like one
+ * ("Prova discursiva", "Provas objetivas") can't claim it. When none of them is in any section,
+ * every section asks all of them, as `mapAreasToSections` places areas.
+ */
 function mapSubjectsToSections(structure: ExamStructure | null): Map<string, string[]> {
   const sections = getObjectiveSectionNames(structure);
-  const subjects = structure?.subjects ?? [];
+
+  const subjects = (structure?.subjects ?? []).filter(
+    (subject) => structure && isQuestionSubject({ structure, subject }),
+  );
 
   const own = new Map(
     subjects.map((subject) => [

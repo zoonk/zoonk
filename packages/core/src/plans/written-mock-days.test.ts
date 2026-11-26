@@ -24,8 +24,8 @@ type Section = {
   questions: number;
 };
 
-async function planExam(sections: Section[]) {
-  const structure = examStructureSchema.parse({
+function toStructure(sections: Section[]) {
+  return examStructureSchema.parse({
     formats: [],
     mock: {
       adaptive: false,
@@ -39,10 +39,12 @@ async function planExam(sections: Section[]) {
     rules: [],
     subjects: [],
   });
+}
 
+async function planExam(sections: Section[]) {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ structure }),
+    examBlueprintFixture({ structure: toStructure(sections) }),
     planLibraryFixture({ skills: [{ area: "Math", lessons: 40 }] }),
   ]);
 
@@ -64,7 +66,7 @@ async function planExam(sections: Section[]) {
 
   mockSession(user.id);
 
-  return { goal, plan };
+  return { blueprint, goal, plan };
 }
 
 function listDays(start: string | null, end: string | null): string[] {
@@ -85,6 +87,11 @@ async function readPlan(planId: string) {
   });
 
   return { mocks: plan.items.filter((item) => item.kind === "mock"), plan };
+}
+
+async function readMockDays(planId: string) {
+  const { plan } = await readPlan(planId);
+  return parsePlanSettings(plan.settings).mockFunding.map((entry) => entry.day);
 }
 
 describe("exam days whose weekly mock would ask nothing", () => {
@@ -142,6 +149,27 @@ describe("exam days whose weekly mock would ask nothing", () => {
         steering: { practiceBias: "moreExplanation" },
       },
     });
+  });
+
+  it("moves saved weekly mocks to the day a new notice puts the exam on", async () => {
+    const math = { kind: "objective", minutes: 120, name: "Math", questions: 40 };
+    const { blueprint, goal, plan } = await planExam([{ ...math, day: null }]);
+    const before = await readMockDays(plan.id);
+
+    expect(before.length).toBeGreaterThan(0);
+    expect(before).toStrictEqual(before.map(() => null));
+
+    await prisma.examBlueprint.update({
+      data: { structure: toStructure([{ ...math, day: 1 }]) },
+      where: { id: blueprint.id },
+    });
+
+    await expect(refreshGoalPlan({ goalId: goal.id, mode: "forced" })).resolves.toBeDefined();
+
+    const after = await readMockDays(plan.id);
+
+    expect(after.length).toBeGreaterThan(0);
+    expect(after).toStrictEqual(after.map(() => 1));
   });
 
   it.each(["written", "speaking"])(
