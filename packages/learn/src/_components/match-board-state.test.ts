@@ -5,6 +5,7 @@ import {
   type MatchTry,
   cardState,
   createMatchBoard,
+  dropPick,
   firstMisses,
   tapCard,
 } from "./match-board-state";
@@ -178,6 +179,34 @@ describe(tapCard, () => {
 
     expect(undone.move).toStrictEqual({ attempt: { left: 0, right: 2 }, kind: "unpair" });
     expect(undone.board.pairs).toStrictEqual([-1, -1, -1]);
+  });
+
+  it("without a key, a tap on a paired card picks it too, so the next tap gives it a new partner", () => {
+    const paired = tapAll(
+      [
+        ["left", 0],
+        ["right", 2],
+      ],
+      { checked: false },
+    );
+
+    const undone = tapCard(paired.board, { index: 2, side: "right", total: 3 });
+    expect(undone.board.selected).toStrictEqual({ index: 2, side: "right" });
+
+    const moved = tapCard(undone.board, { index: 1, side: "left", total: 3 });
+    expect(moved.board.pairs).toStrictEqual([-1, 2, -1]);
+  });
+});
+
+describe(dropPick, () => {
+  it("lets go of the picked card and keeps the pairs", () => {
+    const picked = tapAll([
+      ["left", 1],
+      ["right", 0],
+      ["left", 2],
+    ]).board;
+
+    expect(dropPick(picked)).toStrictEqual({ ...picked, selected: null });
   });
 });
 

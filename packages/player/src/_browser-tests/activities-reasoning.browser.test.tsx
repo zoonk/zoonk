@@ -269,6 +269,21 @@ describe("reasoning activities", () => {
       .toBeDisabled();
   });
 
+  it("match pairs: Escape lets go of a picked card and stays, and leaves once nothing is picked", async () => {
+    const { onExit } = openActivity({ template: "matchPairs" });
+    const libreria = page.getByRole("button", { exact: true, name: "librería" });
+    await expect.element(libreria).toHaveAttribute("aria-keyshortcuts", "1");
+
+    await pressOnPage("1");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
+    await press("Escape");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "false");
+    expect(onExit).not.toHaveBeenCalled();
+
+    await press("Escape");
+    await expect.poll(() => onExit).toHaveBeenCalledOnce();
+  });
+
   it("match pairs: puts each card beside its match once every pair is matched", async () => {
     openActivity({ template: "matchPairs" });
     const pairs = activityContentFixtures.matchPairs.fields.pairs;

@@ -34,6 +34,7 @@ import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
 import com.zoonk.android.feature.questions.Announcement
+import com.zoonk.android.feature.questions.LetGoOnBack
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
 import com.zoonk.android.feature.questions.MatchMisses
@@ -93,6 +94,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
     fun canTap(spot: MatchSpot) = !ended && !props.isLocked && work.partnerOf(spot) == null
 
     MatchNumberKeys(props.takeNumberKeys, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } }
+    board.LetGoOnBack(enabled = !ended && !props.isLocked)
 
     val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, modifier ->
         val spot = MatchSpot(side, index)

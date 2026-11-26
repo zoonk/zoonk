@@ -320,7 +320,9 @@ struct MatchPairsItemView: View {
       }
       .practiceFocus(card == .left(0) ? .answer : nil)
     }
-    .matchBoardFeedback($picking, locked: question.checksEachPair ? pairs.count { $0 != nil } : 0)
+    .matchBoardFeedback(
+      $picking, locked: question.checksEachPair ? pairs.count { $0 != nil } : 0,
+      isPlaying: !isLocked)
   }
 
   private func text(of card: MatchCardRef) -> String {
@@ -453,21 +455,8 @@ struct MatchPairsItemView: View {
     }
   }
 
-  /// Tapping a card in a pair undoes the pair, from either side.
   private func tapHeld(_ card: MatchCardRef, pairs: [Int?]) {
-    let owner = card.side == .left ? card.index : pairs.firstIndex(of: card.index)
-
-    if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
-      var next = pairs
-      next[owner] = nil
-      picking.clear()
-      update(next)
-      return
-    }
-
-    if let (attempt, _) = picking.tap(card, goesTogether: { _ in true }) {
-      var next = pairs
-      next[attempt.left] = attempt.right
+    if let next = picking.tapHeld(card, pairs: pairs) {
       update(next)
     }
   }

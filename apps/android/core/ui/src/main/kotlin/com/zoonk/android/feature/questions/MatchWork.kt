@@ -85,7 +85,7 @@ data class MatchWork(
  * A tap on [spot]. A card picks first, on either side; another card on the same side takes its place, and the picked
  * card again lets go. A card on the other side makes a try: with [goesWith] the board checks it, keeping a right pair
  * and counting a wrong one while the first card stays picked for the next try; without it the board holds any pair
- * until Check, and a paired card tapped again undoes its pair.
+ * until Check, and a paired card tapped again undoes its pair and picks that card, so the next tap gives it a new partner.
  */
 fun MatchWork.tap(
     spot: MatchSpot,
@@ -95,7 +95,7 @@ fun MatchWork.tap(
     if (partner != null) {
         if (goesWith != null) return this
         val left = if (spot.side == MatchSide.Left) spot.index else partner
-        return copy(pairs = pairs - left, picked = null, wrong = null, missed = null)
+        return copy(pairs = pairs - left, picked = spot, wrong = null, missed = null)
     }
 
     val first = picked
@@ -115,6 +115,9 @@ fun MatchWork.tap(
     }
     return copy(misses = misses + attempt, wrong = attempt, cue = cue + 1, missed = attempt)
 }
+
+/** Lets go of the picked card (Back, or Esc on a hardware keyboard). */
+fun MatchWork.drop(): MatchWork = copy(picked = null, wrong = null)
 
 /** The board as it was, for a process Android reclaimed: its pairs, misses and pick, without a cue or a note that already ended. */
 val MatchWorkSaver: Saver<MatchWork, Any> =

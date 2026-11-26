@@ -72,6 +72,34 @@ struct MatchPicking: Equatable, Sendable {
     return (attempt, isRight)
   }
 
+  /// A test's board, which holds its pairs until Check: a tap on a paired card undoes the pair and
+  /// picks that card, so the next tap gives it a new partner, and two cards on either side pair.
+  /// The pairs after the tap, or nil when it changed none.
+  mutating func tapHeld(_ card: MatchCardRef, pairs: [Int?]) -> [Int?]? {
+    let owner = card.side == .left ? card.index : pairs.firstIndex(of: card.index)
+    var next = pairs
+
+    if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
+      next[owner] = nil
+      clear()
+      selected = card
+      return next
+    }
+
+    guard let (attempt, _) = tap(card, goesTogether: { _ in true }) else {
+      return nil
+    }
+
+    next[attempt.left] = attempt.right
+    return next
+  }
+
+  /// Lets go of the picked card (Esc).
+  mutating func drop() {
+    selected = nil
+    miss = nil
+  }
+
   mutating func clear() {
     selected = nil
     miss = nil
@@ -395,9 +423,13 @@ struct MatchBoard<Card: View>: View {
 
 extension View {
   /// What every match board does around its taps: a light tap in the hand as a pair locks, a
-  /// warning one on a miss, and each cue ending after its moment.
-  func matchBoardFeedback(_ picking: Binding<MatchPicking>, locked: Int) -> some View {
-    sensoryFeedback(.impact(weight: .light), trigger: locked) { old, new in new > old }
+  /// warning one on a miss, each cue ending after its moment, and Esc letting go of a picked card
+  /// before it leaves the task, while the board still takes taps (`isPlaying`).
+  func matchBoardFeedback(_ picking: Binding<MatchPicking>, locked: Int, isPlaying: Bool)
+    -> some View
+  {
+    holdsEscape(isPlaying && picking.wrappedValue.selected != nil) { picking.wrappedValue.drop() }
+      .sensoryFeedback(.impact(weight: .light), trigger: locked) { old, new in new > old }
       .sensoryFeedback(.warning, trigger: picking.wrappedValue.missCount)
       .task(id: picking.wrappedValue.missCount) {
         let count = picking.wrappedValue.missCount
@@ -420,17 +452,48 @@ private enum MatchCue {
   }
 }
 
-/// What VoiceOver says after each try on a board that checks its pairs.
+/// What VoiceOver says after each try on a board that checks its pairs. A card that ends a sentence
+/// itself takes the place of the line's own stop right after it, as main's lines do, so
+/// "…di fronte." never reads "…di fronte..".
 enum MatchAnnouncement {
   static func matched(_ left: String, _ right: String, matched: Int, total: Int) -> String {
-    String(
-      localized:
-        "Matched \(left) with \(right). Pairs matched: \(matched) of \(total).",
-      table: "Activities", locale: .appLanguage)
+    fill(
+      String(
+        localized:
+          "Matched \(slot.left) with \(slot.right). Pairs matched: \(matched) of \(total).",
+        table: "Activities", locale: .appLanguage),
+      left: left, right: right)
   }
 
   static func missed(_ left: String, _ right: String) -> String {
-    String(
-      localized: "\(left) and \(right) don't go together.", table: "Activities")
+    fill(
+      String(
+        localized: "\(slot.left) and \(slot.right) don't go together.", table: "Activities"),
+      left: left, right: right)
+  }
+
+  /// Where each card's text goes in a line.
+  private static let slot = (left: "\u{E000}", right: "\u{E001}")
+
+  static func fill(_ line: String, left: String, right: String) -> String {
+    fillSlot(fillSlot(line, slot: slot.left, text: left), slot: slot.right, text: right)
+  }
+
+  private static func fillSlot(_ line: String, slot: String, text: String) -> String {
+    guard let range = line.range(of: slot) else {
+      return line
+    }
+
+    var rest = line[range.upperBound...]
+
+    if let end = text.last, endsSentence(end), let stop = rest.first, endsSentence(stop) {
+      rest = rest.dropFirst()
+    }
+
+    return line[..<range.lowerBound] + text + rest
+  }
+
+  private static func endsSentence(_ character: Character) -> Bool {
+    ".!?…。！？".contains(character)
   }
 }

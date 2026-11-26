@@ -462,6 +462,43 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertNil(picking.selected)
   }
 
+  func testOnAHeldBoardATapOnAPairedCardUndoesThePairAndPicksIt() {
+    var picking = MatchPicking()
+
+    XCTAssertNil(picking.tapHeld(.left(0), pairs: [nil, nil]))
+    let paired = picking.tapHeld(.right(1), pairs: [nil, nil])
+    XCTAssertEqual(paired, [1, nil])
+
+    let undone = picking.tapHeld(.right(1), pairs: [1, nil])
+    XCTAssertEqual(undone, [nil, nil])
+    XCTAssertEqual(picking.selected, .right(1))
+
+    XCTAssertEqual(picking.tapHeld(.left(1), pairs: [nil, nil]), [nil, 1])
+    XCTAssertNil(picking.selected)
+  }
+
+  func testEscapeLetsGoOfThePickedCard() {
+    var picking = MatchPicking()
+    _ = picking.tap(.left(0), goesTogether: { _ in false })
+    _ = picking.tap(.right(0), goesTogether: { _ in false })
+
+    picking.drop()
+
+    XCTAssertNil(picking.selected)
+    XCTAssertNil(picking.miss)
+  }
+
+  func testACardsOwnStopStandsInForTheLinesStop() {
+    XCTAssertEqual(
+      MatchAnnouncement.matched("lunch", "qui di fronte.", matched: 1, total: 5),
+      "Matched lunch with qui di fronte. Pairs matched: 1 of 5.")
+    XCTAssertEqual(
+      MatchAnnouncement.missed("Va bene!", "lunch"), "Va bene! and lunch don't go together.")
+    XCTAssertEqual(
+      MatchAnnouncement.fill("Unmatched \u{E000} and \u{E001}.", left: "lunch", right: "Va bene?"),
+      "Unmatched lunch and Va bene?")
+  }
+
   @MainActor
   func testTheVerdictNamesEachCardsFirstWrongTryForTheFirstFewCards() {
     let cards = (left: ["a", "b", "c", "d", "e"], right: ["1", "2", "3", "4", "5"])

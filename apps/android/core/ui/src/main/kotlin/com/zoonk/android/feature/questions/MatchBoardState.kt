@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.questions
 
 import android.content.res.Resources
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityAnnouncement
+import com.zoonk.android.ui.format.fillSlot
 import com.zoonk.android.ui.format.joinSentences
 import kotlinx.coroutines.delay
 
@@ -74,27 +76,35 @@ class MatchBoardState internal constructor(
             resources.getString(R.string.questions_matched_with, name.value(spot), name.value(MatchSpot(spot.side.other, it)))
         }
 
-    private fun words(pair: MatchTry) =
-        name.value(MatchSpot(MatchSide.Left, pair.left)) to name.value(MatchSpot(MatchSide.Right, pair.right))
+    /** [line] made with each card's slot, then each card's words in it, its own stop standing in for the line's. */
+    private fun say(
+        pair: MatchTry,
+        line: (left: String, right: String) -> String,
+    ): String =
+        line(LEFT_SLOT, RIGHT_SLOT)
+            .fillSlot(LEFT_SLOT, name.value(MatchSpot(MatchSide.Left, pair.left)))
+            .fillSlot(RIGHT_SLOT, name.value(MatchSpot(MatchSide.Right, pair.right)))
 
     private fun paired(
         pair: MatchTry,
         made: Int,
     ) {
         if (checksPairs) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-        val (left, right) = words(pair)
-        announcement = resources.getString(R.string.questions_match_paired, left, right, made, count)
+        announcement = say(pair) { left, right -> resources.getString(R.string.questions_match_paired, left, right, made, count) }
     }
 
     private fun unpaired(pair: MatchTry) {
-        val (left, right) = words(pair)
-        announcement = resources.getString(R.string.questions_match_unpaired, left, right)
+        announcement = say(pair) { left, right -> resources.getString(R.string.questions_match_unpaired, left, right) }
     }
 
     private fun missed(miss: MatchTry) {
         haptics.performHapticFeedback(HapticFeedbackType.Reject)
-        val (left, right) = words(miss)
-        announcement = listOfNotNull(resources.getString(R.string.questions_match_not_a_pair, left, right), why.value(miss)).joinSentences()
+        val line = say(miss) { left, right -> resources.getString(R.string.questions_match_not_a_pair, left, right) }
+        announcement = listOfNotNull(line, why.value(miss)).joinSentences()
+    }
+
+    fun drop() {
+        state.value = state.value.drop()
     }
 
     internal fun endWrongCue() {
@@ -146,9 +156,20 @@ fun rememberMatchBoardState(
     return board
 }
 
+/**
+ * Back, and Esc on a hardware keyboard (Android sends it as Back), lets go of a picked card before it leaves the screen,
+ * as Esc does on main, while the board takes taps ([enabled]).
+ */
+@Composable
+fun MatchBoardState.LetGoOnBack(enabled: Boolean) = BackHandler(enabled && work.picked != null, ::drop)
+
 /** What TalkBack hears after each try; nothing is drawn. */
 @Composable
 fun MatchBoardState.Announcement() = ActivityAnnouncement(announcement)
+
+/** Where each card's words go in a line, so a card's own stop can stand in for the line's. */
+private const val LEFT_SLOT = "\uE000"
+private const val RIGHT_SLOT = "\uE001"
 
 /** How long a try's tone shows: a wrong one's shake, then a beat to see which two it was; a right one as long. */
 internal const val WRONG_CUE_MILLIS = 600L

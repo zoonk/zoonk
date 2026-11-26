@@ -929,7 +929,7 @@ private struct MatchColumnsView: View {
         Text(text(of: ref))
       }
     }
-    .matchBoardFeedback($picking, locked: matched.count)
+    .matchBoardFeedback($picking, locked: matched.count, isPlaying: !context.isLocked)
   }
 
   /// Solved, each row shows its own pair.

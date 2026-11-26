@@ -65,12 +65,21 @@ export function pairedCount(pairs: readonly number[]): number {
   return pairs.filter((right) => right !== UNPAIRED).length;
 }
 
+/** Undoes a pair and picks the card tapped, so the next tap gives it a new partner. */
 function unpair(board: MatchBoardState, { index, side }: Tap): ReturnType<typeof tapCard> {
   const left = side === "left" ? index : partnerIn(board.pairs, side, index);
   const attempt = { left, right: board.pairs[left] ?? UNPAIRED };
   const pairs = board.pairs.map((match, position) => (position === left ? UNPAIRED : match));
 
-  return { board: { ...board, cue: null, missed: null, pairs }, move: { attempt, kind: "unpair" } };
+  return {
+    board: { ...board, cue: null, missed: null, pairs, selected: { index, side } },
+    move: { attempt, kind: "unpair" },
+  };
+}
+
+/** Lets go of the picked card (Esc). */
+export function dropPick(board: MatchBoardState): MatchBoardState {
+  return { ...board, cue: null, selected: null };
 }
 
 function select(board: MatchBoardState, { index, side }: Tap): ReturnType<typeof tapCard> {
@@ -86,7 +95,7 @@ function select(board: MatchBoardState, { index, side }: Tap): ReturnType<typeof
  * What a tap on a card does: a card on either side, then one on the other, tries a pair; another
  * card on the same side changes the pick, and the picked card again clears it. A checked board
  * locks a right pair and keeps the first card picked after a wrong one; an unchecked board pairs
- * any two and undoes a pair from either of its cards.
+ * any two, and a tap on either card of a pair undoes it and picks that card.
  */
 export function tapCard(
   board: MatchBoardState,

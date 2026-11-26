@@ -1,6 +1,7 @@
 "use client";
 
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useEscapeCancel, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { fillSlot } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
@@ -14,6 +15,7 @@ import {
   UNPAIRED,
   cardState,
   createMatchBoard,
+  dropPick,
   pairedCount,
   partnerIn,
   tapCard,
@@ -49,6 +51,9 @@ function otherSide(side: MatchSide): MatchSide {
   return side === "left" ? "right" : "left";
 }
 
+/** Where each card's text goes in a line, so a card's own stop can stand in for the line's. */
+const SLOT = { left: "\u{E000}", right: "\u{E001}" } as const;
+
 /** What a screen reader hears after a move: one polite line per try. */
 function useMoveLine({
   explainMiss,
@@ -67,25 +72,33 @@ function useMoveLine({
       return null;
     }
 
-    const left = say("left", move.attempt.left);
-    const right = say("right", move.attempt.right);
+    const fill = (line: string) =>
+      fillSlot(
+        fillSlot(line, SLOT.left, say("left", move.attempt.left)),
+        SLOT.right,
+        say("right", move.attempt.right),
+      );
+
+    const { left, right } = SLOT;
 
     if (move.kind === "unpair") {
-      return t("Unmatched {left} and {right}.", { left, right });
+      return fill(t("Unmatched {left} and {right}.", { left, right }));
     }
 
     if (move.kind === "miss") {
       const why = explainMiss?.(move.attempt);
-      const line = t("{left} and {right} don't go together.", { left, right });
+      const line = fill(t("{left} and {right} don't go together.", { left, right }));
       return [line, why].filter(Boolean).join(space);
     }
 
-    return t("Matched {left} with {right}. Pairs matched: {matched} of {total}.", {
-      left,
-      matched: String(pairedCount(pairs)),
-      right,
-      total: String(total),
-    });
+    return fill(
+      t("Matched {left} with {right}. Pairs matched: {matched} of {total}.", {
+        left,
+        matched: String(pairedCount(pairs)),
+        right,
+        total: String(total),
+      }),
+    );
   };
 }
 
@@ -119,7 +132,7 @@ export function useMatchBoard({
   explainMiss?: (attempt: MatchTry) => string | null;
   finished?: FinishedBoard;
   isPair?: (attempt: MatchTry) => boolean;
-  /** Whether number keys pick cards; off while something over the screen has them. */
+  /** Whether number keys pick cards and Esc lets go of one; off while something over the screen has them. */
   keys?: boolean;
   leftCount: number;
   onChange?: (matches: number[] | null) => void;
@@ -200,6 +213,10 @@ export function useMatchBoard({
 
       pick(side, index);
     },
+  });
+
+  useEscapeCancel(() => setBoard(dropPick), {
+    enabled: keys && !disabled && board.selected !== null,
   });
 
   return {

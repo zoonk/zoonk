@@ -538,12 +538,11 @@ private struct CloseTaskButton: ViewModifier {
   @Environment(AppRouter.self) private var router
 
   func body(content: Content) -> some View {
-    content.toolbar {
-      ToolbarItem(placement: .cancellationAction) {
-        Button(role: .close) {
-          router.dismissTask()
-        }
+    content.taskClose {
+      Button(role: .close) {
+        router.dismissTask()
       }
+      .leavesOnEscape()
     }
   }
 }

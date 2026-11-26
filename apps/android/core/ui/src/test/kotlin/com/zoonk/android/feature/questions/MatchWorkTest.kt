@@ -72,6 +72,23 @@ class MatchWorkTest {
     }
 
     @Test
+    fun onAHeldBoardATapOnAPairedCardUndoesThePairAndPicksIt() {
+        val undone = MatchWork().taps(left(0), right(1), right(1), check = null)
+
+        assertTrue(undone.pairs.isEmpty())
+        assertEquals(right(1), undone.picked)
+        assertEquals(mapOf(1 to 1), undone.taps(left(1), check = null).pairs)
+    }
+
+    @Test
+    fun droppingLetsGoOfThePickAndKeepsThePairs() {
+        val picked = MatchWork().taps(right(0), left(1), left(0), right(0))
+
+        assertEquals(picked.copy(picked = null, wrong = null), picked.drop())
+        assertEquals(mapOf(1 to 0), picked.drop().pairs)
+    }
+
+    @Test
     fun anAnswerSendsOnlyTheEarliestMissesTheApiTakes() {
         val misses = (0 until MAX_MATCH_MISSES + 5).fold(MatchWork().taps(left(0))) { work, _ -> work.taps(right(0)) }
         val done = misses.taps(right(1), left(1), right(0))

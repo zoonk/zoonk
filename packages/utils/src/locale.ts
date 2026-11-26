@@ -64,6 +64,23 @@ export function toSentence(text: string, locale: string): string {
   return `${text}${writesFullWidthStops(locale) ? "。" : "."}`;
 }
 
+const STOP = /^[.!?…。！？]/u;
+
+/**
+ * Puts `text` where `slot` stands in a translated line. A text that ends a sentence itself takes
+ * the place of the line's own stop right after it, so "…di fronte." never reads "…di fronte..".
+ */
+export function fillSlot(line: string, slot: string, text: string): string {
+  const at = line.indexOf(slot);
+
+  if (at === -1) {
+    return line;
+  }
+
+  const rest = line.slice(at + slot.length);
+  return `${line.slice(0, at)}${text}${SENTENCE_END.test(text) ? rest.replace(STOP, "") : rest}`;
+}
+
 export function getSupportedLocaleFromLanguage(language: string): SupportedLocale {
   return getContentLocale(language) ?? DEFAULT_LOCALE;
 }
