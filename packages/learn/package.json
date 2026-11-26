@@ -74,7 +74,9 @@
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",
     "./generation/wait-clock": "./src/generation/use-visible-wait.ts",
+    "./match-board": "./src/_components/match-board.tsx",
     "./match-entry": "./src/_components/match-entry.tsx",
+    "./use-match-board": "./src/_components/use-match-board.ts",
     "./onboarding/attempt-clock": "./src/onboarding/entry/attempt-clock.ts",
     "./generation/run": "./src/generation/generation-run.ts",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
@@ -269,7 +271,8 @@
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
     "katex": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "web-haptics": "0.0.6"
   },
   "devDependencies": {
     "@types/react": "catalog:",

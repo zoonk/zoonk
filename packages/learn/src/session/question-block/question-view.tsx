@@ -64,6 +64,15 @@ function getOrderResult(result: QuestionResult | null): OrderResult | null {
   };
 }
 
+/** The answer a learner who said "I don't know yet" sees on the board. */
+function getRevealedMatches(result: QuestionResult | null): number[] | null {
+  const correct = result?.correctAnswer;
+
+  return result && "dontKnow" in result.answer && correct && "matches" in correct
+    ? correct.matches
+    : null;
+}
+
 function getAnswerMark(result: QuestionResult | null): "correct" | "wrong" | null {
   if (!result || "dontKnow" in result.answer) {
     return null;
@@ -186,8 +195,11 @@ export function QuestionInputs({
     return (
       <MatchPairsQuestion
         disabled={disabled}
+        graded={result !== null}
         left={question.left ?? []}
         onChange={onChange}
+        onSubmit={onSubmit}
+        revealed={getRevealedMatches(result)}
         right={question.right ?? []}
       />
     );

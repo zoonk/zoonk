@@ -5,29 +5,27 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { pickKey, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
+import { XIcon } from "lucide-react";
 import { ANSWER_BOX_CLASS, ANSWER_TONE } from "./answer-tone";
+import { DoneMark } from "./status-mark";
 
 /**
  * `matched` is a pair the learner made that nothing has checked yet; `right` is a pair checked and
- * kept; `wrong` is a try that didn't go together.
+ * kept; `wrong` is a try that didn't go together, shown for a moment; `missed` is a pair the
+ * learner got only after a wrong try, shown in the result.
  */
-export type MatchEntryState = "idle" | "matched" | "right" | "selected" | "wrong";
+export type MatchEntryState = "idle" | "matched" | "missed" | "right" | "selected" | "wrong";
 
 const ENTRY_TONE: Record<MatchEntryState, string> = {
   idle: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
   matched: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
+  missed: ANSWER_TONE.wrong,
   right: ANSWER_TONE.right,
   selected: cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
   wrong: cn(ANSWER_TONE.wrong, "motion-safe:animate-shake"),
 };
 
-const PAIRED = new Set<MatchEntryState>(["matched", "right"]);
-
-/**
- * The box at an entry's start shows the key that picks it. Once the entry is in a pair, the pair's
- * number fills the same box, so matching moves no text.
- */
-function EntryMarker({
+function EntryMark({
   index,
   pair,
   state,
@@ -36,29 +34,49 @@ function EntryMarker({
   pair?: number;
   state: MatchEntryState;
 }) {
-  const paired = PAIRED.has(state) && pair !== undefined;
-  const cap = paired ? pair + 1 : pickKey(index);
+  if (state === "right") {
+    return <DoneMark />;
+  }
+
+  if (state === "wrong" || state === "missed") {
+    return <XIcon aria-hidden="true" className="text-destructive size-4" />;
+  }
+
+  if (state === "matched" && pair !== undefined) {
+    return (
+      <span className="bg-foreground text-background text-2xs flex size-5 items-center justify-center rounded-full font-mono font-medium tabular-nums">
+        {pair + 1}
+      </span>
+    );
+  }
+
+  const key = pickKey(index);
+
+  if (!key) {
+    return null;
+  }
 
   return (
-    <LineMarker aria-hidden="true" className="w-5">
-      {cap && (
-        <Kbd
-          className={paired ? "bg-foreground text-background ring-0" : "hidden pointer-fine:flex"}
-        >
-          {cap}
-        </Kbd>
+    <Kbd
+      className={cn(
+        "hidden pointer-fine:inline-flex",
+        state === "selected" && "bg-selected text-selected-foreground ring-0",
       )}
-    </LineMarker>
+    >
+      {key}
+    </Kbd>
   );
 }
 
 /**
- * One side of a pair on every screen that asks to match these with those. `index` is its place on
- * the board, the left column first and then the right, so no two entries show the same number key;
- * `pair` is the place of its pair's left entry, whose key both of them then show. An entry answers
- * its key only while it shows it. `label` is what a screen reader hears when that isn't the text
- * drawn, such as "pregnant, matched". Its text takes the size of the board it sits in, which also
- * decides when the board's columns stack.
+ * One side of a pair on every screen that asks to match these with those. Its text starts at the
+ * card's edge; its mark (the key that picks it where there's a keyboard, then a check, a ✕ or the
+ * pair's number) sits level with its first line at the end, in room every state keeps, so pairing
+ * moves no text. `index` is its place on the board, the left column first and then the right, so no two
+ * entries show the same number key; `pair` is the place of its pair's left entry, the number both
+ * of them show while the pair is unchecked. An entry answers its key only while it shows it.
+ * `label` is what a screen reader hears when that isn't the text drawn, such as "pregnant, matched
+ * with grávida".
  */
 export function MatchEntry({
   children,
@@ -76,9 +94,9 @@ export function MatchEntry({
   pair?: number;
   state?: MatchEntryState;
 }) {
-  const settled = state === "right";
+  const settled = state === "right" || state === "missed";
   const locked = disabled || settled;
-  const keyed = !locked && !PAIRED.has(state);
+  const keyed = !locked && state !== "matched";
 
   return (
     <button
@@ -86,7 +104,7 @@ export function MatchEntry({
       aria-pressed={settled ? undefined : state === "selected"}
       className={cn(
         ANSWER_BOX_CLASS,
-        "items-center gap-2 px-3",
+        "h-full items-center px-3",
         "focus-visible:outline-ring/50 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ENTRY_TONE[state],
         className,
@@ -101,9 +119,16 @@ export function MatchEntry({
       type="button"
       {...props}
     >
-      <EntryMarker index={index} pair={pair} state={state} />
-      <span aria-hidden={label !== undefined || undefined} className="min-w-0 flex-1">
-        {children}
+      <span
+        aria-hidden={label !== undefined || undefined}
+        className="flex min-w-0 flex-1 items-start gap-2"
+      >
+        <span className="min-w-0 flex-1" data-slot="match-entry-text">
+          {children}
+        </span>
+        <LineMarker aria-hidden="true" className="w-5 justify-center">
+          <EntryMark index={index} pair={pair} state={state} />
+        </LineMarker>
       </span>
 
       {label !== undefined && <span className="sr-only">{label}</span>}
