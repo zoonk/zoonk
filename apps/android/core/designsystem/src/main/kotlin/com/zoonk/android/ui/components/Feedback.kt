@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -75,7 +74,8 @@ fun FeedbackVerdict(
         verticalAlignment = Alignment.Top,
     ) {
         Row(Modifier.weight(1f).alignByBaseline(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Box(Modifier.height(line).width(glyph), contentAlignment = Alignment.CenterStart) {
+            // The box ends where the glyph does, so its ink sits as close to the words as main's.
+            Box(Modifier.height(line), contentAlignment = Alignment.CenterStart) {
                 Icon(
                     painter = painterResource(icon ?: tone.glyph()),
                     contentDescription = null,
