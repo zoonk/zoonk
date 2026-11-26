@@ -104,11 +104,13 @@ internal fun MistakeLessonQuestion(
             override fun takeNumberKeys(keys: ((Int) -> Boolean)?) = stepKeys.takeNumbers(keys)
 
             override fun runPrimary() {
+                val current = viewModel.state.value ?: return
+                val primary = current.lesson?.screen()?.primary
                 when {
-                    state.run.stage == DrillStage.Ideas -> viewModel.startDrill()
-                    state.run.phase is RunPhase.Checked -> viewModel.next(state.read.questions)
-                    screen.primary?.enabled != true -> Unit
-                    screen.primary?.isCheck == true -> viewModel.checkLesson()
+                    current.run.stage == DrillStage.Ideas -> viewModel.startDrill()
+                    current.run.phase is RunPhase.Checked -> viewModel.next(current.read.questions)
+                    primary?.enabled != true -> Unit
+                    primary.isCheck -> viewModel.checkLesson()
                     else -> viewModel.continueLesson()
                 }
             }
