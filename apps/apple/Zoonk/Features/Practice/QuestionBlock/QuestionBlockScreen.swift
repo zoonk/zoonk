@@ -421,29 +421,29 @@ struct QuestionBlockView: View {
 
     PracticeActionRow {
       if run.drill?.kind == .noGuessing {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
       } else if let question, run.detail.isNetScored(question), question.format != .trueFalse {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "Leave blank", table: "Practice", comment: "Leaves an exam question unanswered."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
       } else if question?.placement == true || question?.format == .typed
         || question?.checksEachPair == true
       {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)

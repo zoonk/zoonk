@@ -30,6 +30,7 @@ struct ZoonkButtonStyle: ButtonStyle {
   let variant: Variant
   var isIcon = false
   var isAtRowEnd = false
+  var isTight = false
 
   /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
   var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
@@ -40,9 +41,14 @@ struct ZoonkButtonStyle: ButtonStyle {
     ZoonkButtonStyle(variant: variant, isIcon: isIcon, isAtRowEnd: true)
   }
 
+  /// Main's `px-3` on a large button, for the quieter of two answers on a phone's bar, so the main
+  /// action beside it keeps the larger part.
+  var tight: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isTight: true) }
+
   func makeBody(configuration: Configuration) -> some View {
     ZoonkButton(
-      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd
+      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd,
+      isTight: isTight
     )
     .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
   }
@@ -96,6 +102,7 @@ private struct ZoonkButton: View {
   let variant: ZoonkButtonStyle.Variant
   let isIcon: Bool
   let isAtRowEnd: Bool
+  let isTight: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
@@ -108,7 +115,7 @@ private struct ZoonkButton: View {
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
+      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
       .padding(.vertical, isIcon ? 0 : 6)
       .frame(
         minWidth: isIcon ? (isAtRowEnd ? nil : height) : variant == .main ? mainMinWidth : nil,
@@ -136,6 +143,11 @@ private struct ZoonkButton: View {
   }
 
   private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
+
+  private var horizontalPadding: CGFloat {
+    let padding = ZoonkButtonStyle.horizontalPadding(controlSize)
+    return isTight ? min(padding, 12) : padding
+  }
 
   /// A busy button keeps its look even where its container is disabled, such as a form that locks
   /// while its answer saves: only its spinner says it's working.

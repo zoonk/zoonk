@@ -159,7 +159,7 @@ struct MistakeLessonQuestionView: View {
           }
         } else {
           if grade == nil {
-            PracticeSecondaryButton(
+            QuestionDontKnowButton(
               title: entry.drill.kind == .noGuessing
                 ? LocalizedStringResource(
                   "I'm not sure", table: "Practice",
@@ -167,7 +167,7 @@ struct MistakeLessonQuestionView: View {
                 : LocalizedStringResource(
                   "I don't know yet", table: "Practice",
                   comment: "Answers a question as not known yet."),
-              icon: .notSure, isDisabled: speechChecking || state.phase != .playing
+              isDisabled: speechChecking || state.phase != .playing
             ) {
               press(.notSure)
               Task { await send(dontKnow: true) }

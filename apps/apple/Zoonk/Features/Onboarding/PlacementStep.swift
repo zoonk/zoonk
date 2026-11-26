@@ -505,8 +505,8 @@ struct PlacementQuestionScreen<Media: View>: View {
     } actions: {
       let answer = question.answerToSubmit(draft)
       PracticeActionRow {
-        PracticeSecondaryButton(
-          title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+        QuestionDontKnowButton(
+          title: dontKnowLabel, isBusy: isSaving && submission == .dontKnow,
           isDisabled: isSaving
         ) {
           submission = .dontKnow

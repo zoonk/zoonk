@@ -266,7 +266,7 @@ struct MistakePracticeScreen: View {
       }
 
       PracticeActionRow {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: step.entry.drill.kind == .noGuessing
             ? LocalizedStringResource(
               "I'm not sure", table: "Practice",
@@ -274,7 +274,7 @@ struct MistakePracticeScreen: View {
             : LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-          icon: .notSure, isBusy: checking == .notSure,
+          isBusy: checking == .notSure,
           isDisabled: !state.acceptsAnswer
         ) {
           press(.notSure)

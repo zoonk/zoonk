@@ -395,7 +395,8 @@ struct PracticeSecondaryButton: View {
   @Environment(\.practiceBarIsWide) private var isWide
 
   let title: LocalizedStringResource
-  let icon: ActionIcon
+  let icon: ActionIcon?
+  var isTight = false
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
@@ -407,11 +408,26 @@ struct PracticeSecondaryButton: View {
     // Beside the main action it keeps its own width, so its label stays on one line; the row
     // stacks instead when that doesn't fit.
     .fixedSize(horizontal: sideBySide, vertical: false)
-    .buttonStyle(.outline)
+    .buttonStyle(isTight && !isWide ? .outline.tight : .outline)
     .controlSize(.large)
     .buttonSizing(sideBySide || isWide ? .fitted : .flexible)
     .disabled(isDisabled && !isBusy)
     .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+  }
+}
+
+/// Main's `QuestionDontKnow`: the quieter of a question's two answers, its words alone and, on a
+/// phone's bar, with tighter padding, so the main action beside it keeps the larger part of the row.
+struct QuestionDontKnowButton: View {
+  let title: LocalizedStringResource
+  var isBusy = false
+  var isDisabled = false
+  let action: () -> Void
+
+  var body: some View {
+    PracticeSecondaryButton(
+      title: title, icon: nil, isTight: true, isBusy: isBusy, isDisabled: isDisabled,
+      action: action)
   }
 }
 

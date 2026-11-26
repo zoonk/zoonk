@@ -101,11 +101,11 @@ struct GradedAtEndRun: View {
       if let question {
         let picked = question.answerToSubmit(draft)
         PracticeActionRow {
-          PracticeSecondaryButton(
+          QuestionDontKnowButton(
             title: LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-            icon: .notSure, isBusy: isPending && sentBy == .notSure,
+            isBusy: isPending && sentBy == .notSure,
             isDisabled: locked
           ) { answer(.dontKnow, by: .notSure, total: total) }
 

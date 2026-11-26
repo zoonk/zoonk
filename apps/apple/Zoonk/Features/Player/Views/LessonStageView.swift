@@ -454,6 +454,7 @@ struct LessonActionBar: View {
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
 
   var body: some View {
@@ -482,7 +483,8 @@ struct LessonActionBar: View {
               "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
           )
         }
-        .buttonStyle(.outline)
+        // Main's `QuestionDontKnow`: tighter on a phone, so Check keeps the larger part of the row.
+        .buttonStyle(sizeClass == .compact ? .outline.tight : .outline)
       }
 
       if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
