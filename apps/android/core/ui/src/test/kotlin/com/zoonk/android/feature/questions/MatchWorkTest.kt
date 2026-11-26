@@ -109,6 +109,16 @@ class MatchWorkTest {
     }
 
     @Test
+    fun bothCardsOfAPairShowItsLeftCardsNumberAndAnUnpairedCardNone() {
+        val locked = MatchWork().taps(left(1), right(0))
+
+        assertEquals(2, locked.pairNumber(left(1)))
+        assertEquals(2, locked.pairNumber(right(0)))
+        assertNull(locked.pairNumber(left(0)))
+        assertNull(locked.pairNumber(right(1)))
+    }
+
+    @Test
     fun aFinishedBoardMarksBothCardsOfEachPairItsLeftCardFirstMissed() {
         val done = MatchWork().taps(left(0), right(0), right(1), left(1), right(0))
 

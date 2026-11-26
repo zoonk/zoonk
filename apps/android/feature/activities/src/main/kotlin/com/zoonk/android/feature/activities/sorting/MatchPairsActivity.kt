@@ -42,7 +42,6 @@ import com.zoonk.android.feature.questions.MatchNumberKeys
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.MatchTry
-import com.zoonk.android.feature.questions.SolvedMatchBoard
 import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.components.revealWhenShown
@@ -106,6 +105,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = modifier,
             place = spot.place(left.size),
+            pair = work.pairNumber(spot),
             label = board.label(spot, partner),
             cue = work.cue,
         ) { RichText(cards[index].text) }
@@ -115,11 +115,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
         ActivityCanvas(gap = 16.dp) {
             val label = cardsLabel()
             val group = Modifier.semantics { contentDescription = label }
-            if (ended) {
-                SolvedMatchBoard(solvedRows(left, right), group, card)
-            } else {
-                MatchBoard(left.indices.toList(), right.indices.toList(), group, card)
-            }
+            MatchBoard(left.indices.toList(), right.indices.toList(), group, if (ended) solvedRows(left, right) else null, card)
 
             board.lastMiss.takeUnless { ended }?.let { miss -> (right[miss.right].why ?: left[miss.left].why)?.let { MissNote(it, miss) } }
         }

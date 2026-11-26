@@ -62,7 +62,7 @@ fun MatchPairsQuestion(
             onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = cardModifier,
             place = spot.place(left.size),
-            pair = made?.let { if (side == MatchSide.Left) index else it }?.plus(1),
+            pair = work.pairNumber(spot),
             label = board.label(spot, partner),
             cue = work.cue,
         ) { ItemLine(spot.text(left, right)) }
@@ -71,11 +71,12 @@ fun MatchPairsQuestion(
     Box(modifier) {
         // Where the frame sends number keys, the cards show the ones that pick them.
         CompositionLocalProvider(LocalOptionKeys provides (keys != null)) {
-            if (key != null && ended) {
-                SolvedMatchBoard(left.indices.map { it to key[it] }, card = card)
-            } else {
-                MatchBoard(left.indices.toList(), right.indices.toList(), card = card)
-            }
+            MatchBoard(
+                left.indices.toList(),
+                right.indices.toList(),
+                solved = key?.takeIf { ended }?.let { left.indices.map { l -> l to it[l] } },
+                card = card,
+            )
         }
         board.Announcement()
     }

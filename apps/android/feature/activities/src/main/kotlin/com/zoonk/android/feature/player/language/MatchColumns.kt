@@ -23,7 +23,6 @@ import com.zoonk.android.feature.questions.MatchNumberKeys
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.MatchWork
-import com.zoonk.android.feature.questions.SolvedMatchBoard
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.richtext.SpokenText
 
@@ -99,16 +98,18 @@ internal fun MatchColumnsView(
                 onClick = { tap(spot) }.takeIf { canTap(spot) },
                 modifier = modifier,
                 place = spot.place(lefts.size),
+                pair = work.pairNumber(spot),
                 label = board.label(spot, partner),
                 cue = work.cue,
             ) { Text(words(spot)) }
         }
         ActivityCanvas {
-            if (ended) {
-                SolvedMatchBoard(lefts.indices.map { it to work.pairs.getValue(it) }, card = card)
-            } else {
-                MatchBoard(lefts.indices.toList(), rightItems.indices.toList(), card = card)
-            }
+            MatchBoard(
+                lefts.indices.toList(),
+                rightItems.indices.toList(),
+                solved = if (ended) lefts.indices.map { it to work.pairs.getValue(it) } else null,
+                card = card,
+            )
         }
         board.Announcement()
     }

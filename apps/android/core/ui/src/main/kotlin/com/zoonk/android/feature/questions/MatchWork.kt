@@ -39,6 +39,9 @@ data class MatchWork(
             MatchSide.Right -> pairs.entries.firstOrNull { it.value == spot.index }?.key
         }
 
+    /** The number both cards of [spot]'s pair show: its left card's place, counted from one. */
+    fun pairNumber(spot: MatchSpot): Int? = partnerOf(spot)?.let { if (spot.side == MatchSide.Left) spot.index else it }?.plus(1)
+
     /** Every left place in a pair. */
     fun isComplete(count: Int): Boolean = count > 0 && (0 until count).all { it in pairs }
 

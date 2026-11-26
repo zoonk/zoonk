@@ -55,7 +55,6 @@ import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.components.keptWhole
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.optionKeysShown
-import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -63,16 +62,16 @@ import com.zoonk.android.ui.theme.zoonk
 
 /**
  * Where a card is in its match. [Paired] is a pair held until Check; [Right] a pair checked and kept, as it locks and
- * on a finished board, where [Missed] is one whose left card first went with another; [Done] a locked pair once its cue
- * ends, quiet so the cards still to match stand out; [Wrong] a try that didn't go together while its cue shows; and
- * [Shown] a card shown with nothing to do, as a revealed board's.
+ * on a finished board, where [Missed] is one whose left card first went with another, quiet so it never reads as the
+ * mistake; [Done] a locked pair once its cue ends, quiet so the cards still to match stand out; [Wrong] a try that
+ * didn't go together while its cue shows; and [Shown] a card shown with nothing to do, as a revealed board's.
  */
 enum class MatchEntryState { Idle, Selected, Paired, Right, Done, Missed, Wrong, Shown }
 
 /**
  * One side of a pair on every screen that asks to match these with those (main's `MatchEntry`). Its words start at the
  * card's top edge; its mark (the number key that picks it where a keyboard does, a pick's dot or that key in ink, a kept
- * pair's check, a wrong try's ✕, or a held pair's number, [pair] counted from one) sits level with the first line at the
+ * pair's check, a wrong try's ✕, or the number of a held or done pair, [pair] counted from one) sits level with the first line at the
  * end, in room every state keeps, so pairing moves no words. [place] is the card's place on the board, the left column
  * first, which names its key. [onClick] is null where the card can't be tapped. [label] is what TalkBack reads in place
  * of the words once the card is in a pair, such as "pregnant, matched with grávida", and [cue] restarts a wrong card's
@@ -166,10 +165,10 @@ fun MatchEntry(
                     key != null -> OptionKey(key, picked = state == MatchEntryState.Selected)
                     state == MatchEntryState.Selected -> PickMark()
                     state == MatchEntryState.Right -> DoneMark()
-                    state == MatchEntryState.Done -> SettledMark(MaterialTheme.colorScheme.onSurfaceVariant)
-                    state == MatchEntryState.Missed -> SettledMark(MaterialTheme.zoonk.destructive)
+                    state == MatchEntryState.Missed -> SettledMark()
                     state == MatchEntryState.Wrong -> WrongMark()
-                    state == MatchEntryState.Paired && pair != null -> PairNumber(pair)
+                    state == MatchEntryState.Paired && pair != null -> PairNumber(pair, done = false)
+                    state == MatchEntryState.Done && pair != null -> PairNumber(pair, done = true)
                 }
             }
         }
@@ -187,16 +186,16 @@ private fun MarkSlot(
 }
 
 /**
- * A card's tone: a pick's soft fill, a try's tint and ring, the quiet fill and words of a pair already done, and a
- * finished pair that was first missed in the wrong tone, its check kept.
+ * A card's tone: a pick's soft fill, a try's tint and ring, and the quiet look of a pair already done, or finished
+ * after a miss: no fill, so it never reads as picked, the resting line and muted words.
  */
 @Composable
 private fun entryTone(state: MatchEntryState): AnswerTone =
     when (state) {
-        MatchEntryState.Done -> {
+        MatchEntryState.Done, MatchEntryState.Missed -> {
             AnswerTone(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                container = MaterialTheme.colorScheme.surfaceVariant,
+                container = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -207,7 +206,7 @@ private fun entryTone(state: MatchEntryState): AnswerTone =
                 result =
                     when (state) {
                         MatchEntryState.Right -> AnswerResult.Right
-                        MatchEntryState.Wrong, MatchEntryState.Missed -> AnswerResult.Wrong
+                        MatchEntryState.Wrong -> AnswerResult.Wrong
                         else -> null
                     },
             )
@@ -220,14 +219,14 @@ private fun PickMark() {
     Box(Modifier.size(PICK_DOT * glyphScale()).background(MaterialTheme.colorScheme.onSurface, CircleShape))
 }
 
-/** The check of a pair already done, quieter than the one its pair locked with. */
+/** The muted check of a finished pair its left card first missed: right now, without the success look. */
 @Composable
-private fun SettledMark(tint: Color) {
+private fun SettledMark() {
     Icon(
         painterResource(R.drawable.ic_check),
         contentDescription = null,
         modifier = Modifier.size(markSize() * MARK_SHARE),
-        tint = tint,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
 
@@ -241,20 +240,24 @@ private fun WrongMark() {
     )
 }
 
-/** A held pair's number, round so it never reads as a key. */
+/**
+ * A pair's number, round so it never reads as a key: in ink while the pair is held, muted once it's [done], so two
+ * finished cards read as a pair only when their numbers match. Its digits are a key's, whose zero has no slash.
+ */
 @Composable
-private fun PairNumber(number: Int) {
+private fun PairNumber(
+    number: Int,
+    done: Boolean,
+) {
+    val colors = MaterialTheme.colorScheme
     Box(
-        Modifier.size(MARK_WIDTH * glyphScale()).background(MaterialTheme.colorScheme.onSurface, CircleShape),
+        Modifier.size(MARK_WIDTH * glyphScale()).background(if (done) colors.surfaceVariant else colors.onSurface, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             number.toString(),
-            color = MaterialTheme.colorScheme.surface,
-            style =
-                MaterialTheme.typography.labelSmall
-                    .copy(fontFamily = GeistMono)
-                    .withTabularFigures(),
+            color = if (done) colors.onSurfaceVariant else colors.surface,
+            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
         )
     }
 }

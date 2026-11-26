@@ -17,6 +17,9 @@ object ZoonkMotion {
     /** Main's `--transition-duration-quick`: a control's colors changing with its state. */
     const val QUICK_MILLIS = 150
 
+    /** Main's `--transition-duration-base`: something the learner did moving into its place. */
+    const val BASE_MILLIS = 200
+
     /** Main's `--transition-duration-fill`: a number counting up and the meter beside it filling. */
     const val FILL_MILLIS = 700
 
