@@ -124,7 +124,7 @@ function SubjectRow({
         {progress.bar ? (
           <CoverageBar {...progress.bar} />
         ) : (
-          <span className="text-muted-foreground text-xs">{progress.label}</span>
+          <ListRowDescription>{progress.label}</ListRowDescription>
         )}
       </span>
 
@@ -173,6 +173,7 @@ export function SyllabusSection({
             <ul
               aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
               className="divided-rows"
+              data-slot="list-group"
             >
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
