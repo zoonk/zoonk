@@ -301,9 +301,7 @@ describe("reasoning activities", () => {
     await matchCards("librería", "bookstore");
     await expectVerdict("Not quite");
 
-    await expect
-      .element(page.getByText("You first matched “embarazada” with “success”.", { exact: true }))
-      .toBeVisible();
+    await expect.element(page.getByText("embarazada → success", { exact: true })).toBeVisible();
 
     await expect
       .element(page.getByRole("button", { name: "embarazada, matched with pregnant" }))

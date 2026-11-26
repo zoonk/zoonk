@@ -173,9 +173,7 @@ describe("exact lesson mistake practice", () => {
     const result = page.getByRole("region", { name: "Answer feedback" });
 
     await expect
-      .element(
-        result.getByText("You first matched “Electron” with “Positive charge”.", { exact: true }),
-      )
+      .element(result.getByText("Electron → Positive charge", { exact: true }))
       .toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(

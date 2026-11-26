@@ -246,9 +246,7 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(feedback.getByText("Right answer")).not.toBeInTheDocument();
 
     await expect
-      .element(
-        feedback.getByText("You first matched “Electron” with “Positive charge”.", { exact: true }),
-      )
+      .element(feedback.getByText("Electron → Positive charge", { exact: true }))
       .toBeVisible();
 
     await expect

@@ -328,11 +328,7 @@ describe("language lesson screens", () => {
     await matchCard("No charge").click();
 
     await expect
-      .element(
-        verdict("Not quite").getByText("You first matched “Electron” with “Positive charge”.", {
-          exact: true,
-        }),
-      )
+      .element(verdict("Not quite").getByText("Electron → Positive charge", { exact: true }))
       .toBeVisible();
 
     await expect
