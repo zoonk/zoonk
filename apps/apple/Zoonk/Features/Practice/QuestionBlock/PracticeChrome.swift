@@ -131,14 +131,12 @@ private struct PracticeBar: ViewModifier {
   let readableWidth: CGFloat
   let isWide: Bool
   let hasNote: Bool
-  let widthChanged: (CGFloat) -> Void
 
   func body(content: Content) -> some View {
     content
       // Main's `BottomBar`: wide, the main action sits at the bar's end at its own width.
       .environment(\.practiceBarIsWide, isWide)
       .frame(maxWidth: .infinity)
-      .onGeometryChange(for: CGFloat.self, of: \.size.width, action: widthChanged)
       .frame(maxWidth: readableWidth)
       // The bottom bar's inset, so a run's actions sit where every screen's do.
       .scenePadding()
@@ -220,7 +218,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
 
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   @Environment(\.stacksContent) private var isStacked
-  @State private var barWidth: CGFloat = 0
+  @Environment(\.windowWidth) private var windowWidth
 
   let readableWidth: CGFloat
   let spacing: CGFloat
@@ -231,7 +229,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
 
-  private var isWide: Bool { barWidth >= WideBar.width && !isStacked }
+  private var isWide: Bool { WideBar.isWide(windowWidth: windowWidth, isStacked: isStacked) }
 
   var body: some View {
     ScrollingPage(
@@ -248,9 +246,7 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
       if usesPracticeBar {
         actions()
           .modifier(
-            PracticeBar(readableWidth: readableWidth, isWide: isWide, hasNote: note != nil) {
-              barWidth = $0
-            })
+            PracticeBar(readableWidth: readableWidth, isWide: isWide, hasNote: note != nil))
       } else {
         actions()
       }
