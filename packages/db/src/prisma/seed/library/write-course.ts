@@ -8,6 +8,7 @@ import { SEED_TRANSACTION } from "../_utils/seed-transaction";
 import { buildLessonSpec } from "./lesson-spec";
 import { libraryIds } from "./library-ids";
 import { type SeedChapter, type SeedCourse, type SeedLesson } from "./types";
+import { writeLevelTest } from "./write-level-test";
 import { type SkillIds, skillIdOf, writeItems, writeSkills, writeVocabulary } from "./write-skills";
 
 const SEEDED_COURSES_CREATED_AT = new Date("2026-01-01T00:00:00.000Z");
@@ -422,7 +423,7 @@ export async function writeLibraryCourse({
 
       await writeOutline(context);
 
-      await writeItems({ ...base, skillIds });
+      await Promise.all([writeItems({ ...base, skillIds }), writeLevelTest(base)]);
     }),
   );
 }

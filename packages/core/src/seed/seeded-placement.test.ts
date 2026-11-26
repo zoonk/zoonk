@@ -1,5 +1,8 @@
+import { prisma } from "@zoonk/db";
 import { type SeedPersonaName } from "@zoonk/db/seed/personas";
 import { describe, expect, it } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { startLanguageLevelTest } from "../language/level-test/start-language-level-test";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { pickPlacementItemSkills } from "../lookahead/placement-item-skills";
 import { seedPersonaCopy } from "./seed";
@@ -39,5 +42,20 @@ describe("placement on a seeded plan", () => {
     const picks = await pickPlacementItemSkills({ forPlacement: true, goalId, skillIds });
 
     expect(listMissing(picks)).toStrictEqual([]);
+  });
+
+  it("opens a language learner's level test on a question the seed wrote", async () => {
+    const { goalId, userId } = await copyAtPlacement("language");
+    mockSession(userId);
+
+    const started = await startLanguageLevelTest({ goalId, length: "quick" });
+
+    const owed = await prisma.followUp.count({ where: { kind: "prepareLevelTestBank", userId } });
+
+    expect(
+      started.status === "ready" && started.test.status === "ready" && started.test.next.kind,
+    ).toBe("question");
+
+    expect(owed).toBe(0);
   });
 });
