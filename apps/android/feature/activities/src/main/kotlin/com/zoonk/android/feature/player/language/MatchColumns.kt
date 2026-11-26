@@ -69,14 +69,18 @@ internal fun MatchColumnsView(
     var sent by remember { mutableStateOf(false) }
     FocusPrimaryOnceChecked(sent, checked)
 
+    // The verdict names the first misses from the board's saved work, so a recreated screen still shows them.
     val showMisses = LocalBoardMisses.current
+    val misses = @Composable { MatchMisses(work.misses) { side, index -> SpokenText(AnnotatedString(words(MatchSpot(side, index)))) } }
+    LaunchedEffect(ended, showMisses) {
+        if (ended) showMisses?.value = misses
+    }
 
     fun tap(spot: MatchSpot) {
         if (locked) return
         val next = board.tap(spot)
         if (next.isComplete(lefts.size)) {
             sent = true
-            showMisses?.value = { MatchMisses(next.misses) { side, index -> SpokenText(AnnotatedString(words(MatchSpot(side, index)))) } }
             onDone(answerOf(next))
         }
     }
