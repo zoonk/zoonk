@@ -15,13 +15,19 @@ import {
   ListRowBody,
   ListRowContent,
   ListRowDescription,
-  ListRowLink,
+  ListRowLinkWithAction,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabsColumn, PageTabsGroup, PageTabsScroll } from "../_components/page-tabs";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { LessonSaveButton } from "../saved-lessons/lesson-save-button";
+import {
+  type LessonSaves,
+  type SaveLesson,
+  useLessonSaves,
+} from "../saved-lessons/use-lesson-saves";
 import { LearnPageBar } from "../shell/learn-bar";
 
 export type CompletedLessonsHrefs = {
@@ -49,11 +55,36 @@ function useGroupsTitle(kind: CompletedLessonFilter["kind"]): string {
   return kind === "modules" ? t("Modules") : t("Phases");
 }
 
-function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) {
+/** Its bookmark saves the lesson for later without opening it. */
+function LessonRow({
+  href,
+  lesson,
+  saves,
+}: {
+  href: string;
+  lesson: CompletedLesson;
+  saves: LessonSaves;
+}) {
   const formatDate = useFormatIsoDate();
+  const state = { saved: lesson.saved, target: lesson.lessonId };
 
   return (
-    <ListRowLink href={href} lessonWritten prefetch="intent">
+    <ListRowLinkWithAction
+      action={
+        <LessonSaveButton
+          edge="end"
+          labelled={false}
+          onToggle={() => saves.toggle(state)}
+          saved={saves.isSaved(state)}
+          size="icon-lg"
+          title={lesson.title}
+          variant="ghost"
+        />
+      }
+      href={href}
+      lessonWritten
+      prefetch="intent"
+    >
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{lesson.title}</ListRowTitle>
@@ -61,7 +92,7 @@ function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) 
         </ListRowContent>
         <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
       </ListRowBody>
-    </ListRowLink>
+    </ListRowLinkWithAction>
   );
 }
 
@@ -70,10 +101,12 @@ function MonthSection({
   hrefs,
   lessons,
   month,
+  saves,
 }: {
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
   month: string;
+  saves: LessonSaves;
 }) {
   const formatDate = useFormatIsoDate();
   const titleId = `completed-lessons-${month}`;
@@ -89,7 +122,7 @@ function MonthSection({
       <ul className={LIST_GROUP_CLASS}>
         {lessons.map((lesson) => (
           <li key={lesson.lessonId}>
-            <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} />
+            <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} saves={saves} />
           </li>
         ))}
       </ul>
@@ -147,9 +180,11 @@ function GroupTabs({
 function LessonMonths({
   hrefs,
   lessons,
+  saves,
 }: {
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
+  saves: LessonSaves;
 }) {
   const t = useExtracted();
   const [shown, setShown] = useState(COMPLETED_LESSON_PAGE_SIZE);
@@ -157,7 +192,13 @@ function LessonMonths({
   return (
     <>
       {groupByMonth(lessons.slice(0, shown)).map(([month, monthLessons]) => (
-        <MonthSection hrefs={hrefs} key={month} lessons={monthLessons} month={month} />
+        <MonthSection
+          hrefs={hrefs}
+          key={month}
+          lessons={monthLessons}
+          month={month}
+          saves={saves}
+        />
       ))}
 
       {lessons.length > shown && (
@@ -178,14 +219,17 @@ export function CompletedLessonsScreen({
   group,
   hrefs,
   lessons,
+  save,
 }: {
   filter: CompletedLessonFilter | null;
   /** The group in the page's address, which picking one changes in place. */
   group: string | null;
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
+  save: SaveLesson;
 }) {
   const t = useExtracted();
+  const saves = useLessonSaves(save);
   const groupsTitle = useGroupsTitle(filter?.kind ?? "subjects");
   const current = filter?.groups.find((candidate) => candidate.key === group)?.key ?? null;
   const listed = current ? lessons.filter((lesson) => lesson.group === current) : lessons;
@@ -198,7 +242,7 @@ export function CompletedLessonsScreen({
         </p>
       )}
 
-      <LessonMonths hrefs={hrefs} key={current} lessons={listed} />
+      <LessonMonths hrefs={hrefs} key={current} lessons={listed} saves={saves} />
     </DetailContent>
   );
 
