@@ -148,10 +148,12 @@ export function QuestionInputs({
   onChange: (answer: StudyQuestionAnswer | null) => void;
   onSubmit: (answer: StudyQuestionAnswer) => void;
   order?: readonly number[];
+  /** `key` only on a learning match, which checks each pair as it's made. */
   question: Pick<
     StudyQuestion,
     "format" | "entry" | "unit" | "options" | "left" | "right" | "question" | "select"
-  >;
+  > &
+    Partial<Pick<StudyQuestion, "key">>;
   result: QuestionResult | null;
   trueFalseLabels: TrueFalseLabels;
 }) {
@@ -194,6 +196,7 @@ export function QuestionInputs({
   if (question.format === "matchPairs") {
     return (
       <MatchPairsQuestion
+        answerKey={question.key}
         disabled={disabled}
         graded={result !== null}
         left={question.left ?? []}

@@ -116,6 +116,18 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
 
 const SHOWN_STREAK = 3;
 
+/**
+ * Whether a graded question shows its right answer itself: choices mark the right one, and a board
+ * checked pair by pair lays out its pairs. Feedback leaves out the "Right answer" line for those.
+ */
+export function showsItsAnswer(
+  question: Pick<StudyQuestion, "format"> & Partial<Pick<StudyQuestion, "key">>,
+): boolean {
+  return (
+    question.format === "multipleChoice" || question.format === "trueFalse" || Boolean(question.key)
+  );
+}
+
 function useCorrectAnswerLine({
   feedback,
   question,
@@ -127,11 +139,7 @@ function useCorrectAnswerLine({
 }): React.ReactNode {
   const answerLine = useAnswerLine(trueFalseLabels);
 
-  if (
-    feedback.isCorrect ||
-    question.format === "multipleChoice" ||
-    question.format === "trueFalse"
-  ) {
+  if (feedback.isCorrect || showsItsAnswer(question)) {
     return null;
   }
 

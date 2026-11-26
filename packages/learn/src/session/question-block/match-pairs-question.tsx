@@ -1,9 +1,13 @@
 "use client";
 
+import { MAX_MATCH_MISSES } from "@zoonk/core/sessions/answer-limits";
 import { useRef } from "react";
 import { MatchBoard } from "../../_components/match-board";
 import { MatchEntry } from "../../_components/match-entry";
-import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
+import {
+  focusQuestionMainAction,
+  useFocusMainActionWhenComplete,
+} from "../../_components/question-actions";
 import {
   type MatchBoardAnswer,
   type MatchSide,
@@ -47,9 +51,11 @@ export function MatchPairsQuestion({
     isPair: answerKey ? (attempt) => answerKey[attempt.left] === attempt.right : undefined,
     leftCount: left.length,
     onChange: (matches) => onChange(matches ? { matches } : null),
-    onComplete: (answer) => {
+    onComplete: ({ matches, misses }) => {
+      const answer = { matches, misses: misses.slice(0, MAX_MATCH_MISSES) };
       onChange(answer);
       onSubmit(answer);
+      focusQuestionMainAction();
     },
     reveal: answerKey ? revealed : null,
     rightCount: right.length,

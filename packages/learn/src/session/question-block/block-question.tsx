@@ -301,7 +301,12 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   const checking = phase.kind === "checking";
   const asking = phase.kind === "answering" || checking || phase.kind === "answerFailed";
   const noGuessing = drill?.kind === "noGuessing";
-  const notSureFits = noGuessing || props.question.placement || props.question.format === "typed";
+
+  const notSureFits =
+    noGuessing ||
+    props.question.placement ||
+    props.question.format === "typed" ||
+    Boolean(props.question.key);
 
   return (
     <>

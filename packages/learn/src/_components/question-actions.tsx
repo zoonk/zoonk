@@ -196,6 +196,11 @@ export function QuestionMainAction({
   );
 }
 
+/** Focus on the question's main action, which stays the same button from Check to Continue. */
+export function focusQuestionMainAction() {
+  document.querySelector<HTMLElement>(`#${QUESTION_MAIN_ACTION_ID}`)?.focus();
+}
+
 /**
  * On a control that keeps its own Enter (a checkbox, a step, a pair), completing the answer moves
  * focus to the main action, so Enter checks instead of undoing the last pick.
@@ -209,7 +214,7 @@ export function useFocusMainActionWhenComplete({
 }) {
   useEffect(() => {
     if (complete && containerRef.current?.contains(document.activeElement)) {
-      document.querySelector<HTMLElement>(`#${QUESTION_MAIN_ACTION_ID}`)?.focus();
+      focusQuestionMainAction();
     }
   }, [complete, containerRef]);
 }

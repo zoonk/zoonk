@@ -196,7 +196,7 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(page.getByText("Wrong place")).not.toBeInTheDocument();
   });
 
-  it("keeps the bank matching controls and sends the original pair indexes", async () => {
+  it("checks each pair as it's made and sends the board by itself on the last pair", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({ ...bankFeedback(), correctAnswer: { matches: [0, 1] } });
@@ -206,12 +206,73 @@ describe("exact standalone bank mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
     await page.getByRole("button", { exact: true, name: "Proton" }).click();
     await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({
+        answer: { matches: [0, 1], misses: [] },
+        itemId: "original-bank-item",
+      }),
     );
+  });
+
+  it("keeps the first card picked after a wrong pair, sends the miss and marks its pair in the result", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        explanation: "Electrons carry the negative charge.",
+        isCorrect: false,
+      });
+
+    openPractice(null, { answer }, question("matchPairs"));
+    const electron = page.getByRole("button", { exact: true, name: "Electron" });
+    await electron.click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+
+    await expect
+      .element(page.getByText("Electron and Positive charge don't go together.", { exact: true }))
+      .toBeInTheDocument();
+
+    await expect.element(electron).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
+    await page.getByRole("button", { exact: true, name: "Proton" }).click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("Electrons carry the negative charge.")).toBeVisible();
+    await expect.element(feedback.getByText("Right answer")).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
+      .toHaveAttribute("data-state", "right");
+
+    expect(answer).toHaveBeenCalledWith(
+      expect.objectContaining({ answer: { matches: [0, 1], misses: [{ left: 0, right: 1 }] } }),
+    );
+  });
+
+  it("shows the solved board after I don't know yet", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        isCorrect: false,
+      });
+
+    openPractice(null, { answer }, question("matchPairs"));
+    await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
+      .toBeDisabled();
   });
 
   it("matches with the number keys its entries show, one run across both columns, and a matched entry answers none", async () => {
@@ -239,10 +300,13 @@ describe("exact standalone bank mistake practice", () => {
 
     await userEvent.keyboard("2");
     await userEvent.keyboard("4");
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({
+        answer: { matches: [0, 1], misses: [] },
+        itemId: "original-bank-item",
+      }),
     );
   });
 });

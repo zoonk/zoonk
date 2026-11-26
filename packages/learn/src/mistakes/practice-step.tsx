@@ -14,6 +14,7 @@ import { ItemText } from "../questions/item-text";
 import { RightAnswerLine } from "../questions/right-answer-line";
 import {
   WorkedSteps,
+  showsItsAnswer,
   useAnswerLine,
   useVerdict,
 } from "../session/question-block/question-feedback";
@@ -150,7 +151,7 @@ function PracticeFeedback({
   const answerLine = useAnswerLine(trueFalseLabels);
 
   const correct =
-    !feedback.isCorrect && question.format !== "multipleChoice" && question.format !== "trueFalse"
+    !feedback.isCorrect && !showsItsAnswer(question)
       ? answerLine({ answer: feedback.correctAnswer, question })
       : null;
 
