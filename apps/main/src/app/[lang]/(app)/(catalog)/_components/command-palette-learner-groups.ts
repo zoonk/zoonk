@@ -44,6 +44,7 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
     exam: false,
     mindMaps: false,
     readyMistakes: 0,
+    savedLessons: false,
     speaking: false,
   },
   today: null,

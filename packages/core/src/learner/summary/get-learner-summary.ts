@@ -9,6 +9,7 @@ import {
   getGoalsCacheTag,
   getLearnerModelCacheTag,
   getLearningProfileCacheTag,
+  getSavedLessonsCacheTag,
   getUserProgressCacheTag,
   getUserSessionCacheTag,
   getUserSubscriptionCacheTag,
@@ -24,8 +25,6 @@ import {
   getCurrentPhaseFromFacts,
   loadPlanPhaseFacts,
 } from "../../goals/_utils/plan-phase-facts";
-import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
-import { hasMindMapsPage } from "../../mind-maps/mind-map-contract";
 import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { CONTINUING_ANSWER_SESSION_WHERE } from "../../sessions/_utils/current-session";
@@ -36,13 +35,13 @@ import { getAnswerTimeZone } from "../_utils/owned-goal";
 import { readLearningProfile } from "../facts/learning-profile";
 import { readRecentCountries } from "../facts/recent-countries";
 import { getRequestInstant } from "../facts/request-instant";
-import { type LearnerFacts, loadLearnerFacts } from "./_utils/load-learner-facts";
+import { loadLearnerFacts } from "./_utils/load-learner-facts";
 import { loadActiveGoalDay } from "./_utils/summary-day";
+import { getPlaces } from "./_utils/summary-places";
 import { getNextChangeAt, getSummaryProgress } from "./_utils/summary-progress";
 import {
   type LearnerSummary,
   type LearnerSummaryGoal,
-  type LearnerSummaryPlaces,
   type LearnerTier,
 } from "./learner-summary-contract";
 
@@ -153,46 +152,6 @@ function getTier({
   return subscription ? "plus" : "free";
 }
 
-function getPlaces({
-  activeGoal,
-  facts,
-  goal,
-  readyMistakes,
-}: {
-  activeGoal: Goal | null;
-  facts: LearnerFacts;
-  goal: LearnerSummaryGoal | null;
-  readyMistakes: number;
-}): LearnerSummaryPlaces {
-  if (!goal || !activeGoal) {
-    return {
-      certificates: facts.hasCertificates,
-      completedLessons: false,
-      exam: false,
-      mindMaps: false,
-      readyMistakes: 0,
-      speaking: false,
-    };
-  }
-
-  const speakingScore = activeGoal.targetLanguage
-    ? (facts.speakingScores[activeGoal.targetLanguage] ?? null)
-    : null;
-
-  return {
-    certificates: facts.hasCertificates,
-    completedLessons: facts.completedLessonGoalIds.includes(goal.id),
-    exam: goal.kind === "exam",
-    mindMaps: hasMindMapsPage(goal.kind),
-    readyMistakes,
-    speaking: hasSpeakingPaper({
-      blueprintName: facts.blueprintNames[activeGoal.id] ?? null,
-      goal: activeGoal,
-      speakingScore,
-    }),
-  };
-}
-
 function getAnalyticsGoal({
   goal,
   phaseChallengesRequired,
@@ -229,6 +188,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     COURSE_LIST_CACHE_TAG,
     getUserSessionCacheTag(userId),
     getGoalsCacheTag(userId),
+    getSavedLessonsCacheTag(userId),
     getLearningProfileCacheTag(userId),
     getUserSubscriptionCacheTag(userId),
     getUserProgressCacheTag(userId),
