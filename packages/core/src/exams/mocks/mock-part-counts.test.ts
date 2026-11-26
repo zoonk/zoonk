@@ -170,7 +170,10 @@ describe("paper counts", () => {
 });
 
 /** A weekly paper from an empty bank: the questions written in one pass, then what the paper seats. */
-function seatAfterOneWrite(structure: ExamStructure): number {
+function seatAfterOneWrite(
+  structure: ExamStructure,
+  areas = structure.subjects.map(({ name }) => name),
+): number {
   const candidates: MockCandidate[] = [];
 
   const assemble = () =>
@@ -188,7 +191,7 @@ function seatAfterOneWrite(structure: ExamStructure): number {
     mix: getMockFormatMix(structure),
     option: { questions: (structure.mock?.totalQuestions ?? 0) / 2 },
     plan: assemble(),
-    skills: structure.subjects.map(({ name }) => ({ area: name, id: name })),
+    skills: areas.map((area) => ({ area, id: area })),
     structure,
   });
 
@@ -238,5 +241,38 @@ describe("writing a weekly paper's questions", () => {
     structure.subjects = structure.subjects.slice(0, 2);
 
     expect(seatAfterOneWrite(structure)).toBe(10);
+  });
+
+  it("writes a whole paper when the notice counts no subject's questions", () => {
+    expect(seatAfterOneWrite(structureWith({ scoring: {} }))).toBe(85);
+  });
+
+  it("writes what each section seats when the notice lists its subjects in another order", () => {
+    const papers = ["Mathematics", "History"];
+
+    const structure: ExamStructure = {
+      formats: [],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: papers.map((name) => ({
+          day: null,
+          kind: "objective" as const,
+          minutes: 90,
+          name,
+          questions: 45,
+        })),
+        timeLimitMinutes: 180,
+        totalQuestions: 90,
+      },
+      rules: [],
+      subjects: papers
+        .toReversed()
+        .map((name) => ({ citation, name, questions: 45, topics: [], weight: null })),
+    };
+
+    expect(seatAfterOneWrite(structure, papers)).toBe(45);
   });
 });

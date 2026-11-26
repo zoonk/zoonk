@@ -66,11 +66,6 @@ function asksAnything(section: MockSectionPlan): boolean {
   return section.questions > 0 || section.essays.length > 0 || section.kind === "speaking";
 }
 
-/** A weekly mock asks half of what the exam asks; a full-length one asks all of it. */
-export function getPaperShare(fullLength: boolean): number {
-  return fullLength ? 1 : WEEKLY_MOCK_SHARE;
-}
-
 export function getMockDays(structure: ExamStructure | null): (number | null)[] {
   const days = [...new Set((structure?.mock?.sections ?? []).map((section) => section.day))];
   return days.length > 0 ? days : [null];
@@ -122,7 +117,7 @@ export function planMock({
   });
 
   const pace = getPace(structure);
-  const share = getPaperShare(fullLength);
+  const share = fullLength ? 1 : WEEKLY_MOCK_SHARE;
   const objective = getObjectiveSections(structure);
   const allSections = objective.length > 0 ? objective : sections;
   const shares = splitPartShares({ candidates, shares: subjectShares });
@@ -237,7 +232,7 @@ export function outlineMock({
 }): MockPlan {
   const day = requestedDay === undefined ? (getMockDays(structure)[0] ?? null) : requestedDay;
   const pace = getPace(structure);
-  const share = getPaperShare(fullLength);
+  const share = fullLength ? 1 : WEEKLY_MOCK_SHARE;
 
   const daySections = getDaySections({
     day,

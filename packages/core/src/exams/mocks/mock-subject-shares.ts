@@ -11,9 +11,7 @@ export type SubjectShare = {
 
 type CountedShare = Omit<SubjectShare, "questions"> & { questions: number };
 
-type AreaSkill = Pick<MockCandidate, "area" | "skillId">;
-
-export function isSubjectArea({ candidate, name }: { candidate: AreaSkill; name: string }) {
+export function isSubjectArea({ candidate, name }: { candidate: MockCandidate; name: string }) {
   return candidate.area !== null && namesMatch(candidate.area, name);
 }
 
@@ -21,7 +19,7 @@ function countSkills({
   candidates,
   name,
 }: {
-  candidates: readonly AreaSkill[];
+  candidates: readonly MockCandidate[];
   name: string;
 }): number {
   const own = candidates.filter((candidate) => isSubjectArea({ candidate, name }));
@@ -32,7 +30,7 @@ export function splitPartShares({
   candidates,
   shares,
 }: {
-  candidates: readonly AreaSkill[];
+  candidates: readonly MockCandidate[];
   shares: readonly SubjectShare[];
 }): CountedShare[] {
   const parts = shares.flatMap((share): CountedShare[] => {

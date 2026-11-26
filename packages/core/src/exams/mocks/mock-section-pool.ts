@@ -49,43 +49,6 @@ function findShare({
   );
 }
 
-/**
- * Each subject's questions in a paper of `wanted`: a counted notice's share of the paper (`portion`)
- * goes first to each group (the test it sits in), then to its subjects. The question writers fill
- * the same quotas, so what they write is what the paper seats.
- */
-export function apportionShares<Share extends SubjectShare>({
-  counted,
-  portion,
-  shares,
-  wanted,
-}: {
-  counted: boolean;
-  portion: number;
-  shares: readonly Share[];
-  wanted: number;
-}): Map<Share, number> {
-  const total = shares.reduce((sum, share) => sum + (share.questions ?? 0), 0);
-  const size = counted ? Math.min(wanted, Math.round(total * portion)) : wanted;
-  const groups = [...Map.groupBy(shares, (share) => share.group ?? share.name).values()];
-
-  const groupCounts = apportion({
-    total: size,
-    weights: groups.map((group) => group.reduce((sum, share) => sum + (share.questions ?? 0), 0)),
-  });
-
-  return new Map(
-    groups.flatMap((group, index) => {
-      const counts = apportion({
-        total: groupCounts[index] ?? 0,
-        weights: group.map((share) => share.questions ?? 0),
-      });
-
-      return group.map((share, position) => [share, counts[position] ?? 0] as const);
-    }),
-  );
-}
-
 export function orderBySubjectShares({
   pool,
   portion,
@@ -109,7 +72,26 @@ export function orderBySubjectShares({
     return [...pool];
   }
 
-  const quotas = apportionShares({ counted, portion, shares, wanted });
+  const weights = shares.map((share) => share.questions ?? 0);
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  const size = counted ? Math.min(wanted, Math.round(total * portion)) : wanted;
+  const groups = [...Map.groupBy(shares, (share) => share.group ?? share.name).values()];
+
+  const groupCounts = apportion({
+    total: size,
+    weights: groups.map((group) => group.reduce((sum, share) => sum + (share.questions ?? 0), 0)),
+  });
+
+  const quotas = new Map(
+    groups.flatMap((group, index) => {
+      const counts = apportion({
+        total: groupCounts[index] ?? 0,
+        weights: group.map((share) => share.questions ?? 0),
+      });
+
+      return group.map((share, position) => [share, counts[position] ?? 0] as const);
+    }),
+  );
 
   const first = shares.flatMap((share) =>
     (bySubject.get(share) ?? []).slice(0, quotas.get(share) ?? 0),

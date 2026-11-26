@@ -1,16 +1,16 @@
 import { apportion } from "@zoonk/utils/apportion";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type MockFormat, getAreaFormat } from "./mock-format-mix";
+import { toSubjectCandidates } from "./mock-option-plan";
 import { type MockOption, findAreaSubject, getSubjectShares } from "./mock-options";
 import {
   type MockCandidate,
   type MockPlan,
   countPlannedQuestions,
-  getPaperShare,
+  getMockDays,
   getPlannedItemIds,
+  planMock,
 } from "./mock-plan";
-import { apportionShares } from "./mock-section-pool";
-import { splitPartShares } from "./mock-subject-shares";
 
 /** `isQuantitative` is false for a skill whose numeric questions came back empty. */
 export type MockWritingSkill = { area: string | null; id: string; isQuantitative?: boolean | null };
@@ -117,69 +117,81 @@ function listShortFormats(input: {
 
 type SubjectSkills = { name: string; skillIds: readonly string[] };
 
+/** What the paper seats from each subject when every subject has more questions than it needs. */
+function seatEverySubject({
+  format,
+  plan,
+  size,
+  structure,
+  subjects,
+}: {
+  format: MockFormat;
+  plan: MockPlan;
+  size: number;
+  structure: ExamStructure | null;
+  subjects: readonly SubjectSkills[];
+}): Map<string, number> {
+  // Interleaved, so subjects the notice doesn't count share what's left, as a real bank would.
+  const bank = Array.from({ length: size }, (_, index) =>
+    subjects.map(({ name, skillIds }): MockCandidate => ({
+      answered: false,
+      area: name,
+      difficulty: null,
+      format: format.key,
+      itemFormat: "multipleChoice",
+      itemId: `${name}#${index}`,
+      skillId: skillIds[index % skillIds.length] ?? name,
+    })),
+  ).flat();
+
+  const seated = planMock({
+    adaptive: false,
+    candidates: toSubjectCandidates({ candidates: bank, structure }),
+    fullLength: plan.fullLength,
+    mockNumber: Math.max(0, getMockDays(structure).indexOf(plan.day)),
+    structure,
+    subjectShares: getSubjectShares(structure),
+  });
+
+  const subjectOf = new Map(bank.map((candidate) => [candidate.itemId, candidate.area]));
+  const counts = Map.groupBy(getPlannedItemIds(seated), (itemId) => subjectOf.get(itemId));
+
+  return new Map(subjects.map(({ name }) => [name, counts.get(name)?.length ?? 0]));
+}
+
 /**
- * How many of a format's questions each subject's skills write. A one-format paper (`seated`) takes
- * the notice's shares as `orderBySubjectShares` seats them, and subjects the notice doesn't count
- * fill the rest; otherwise each subject's share of the format.
+ * How many of a format's questions each subject's skills write. A one-format paper (`seated`) gets
+ * what it seats, so one pass fills it; otherwise each subject's share of the format.
  */
 function getSubjectQuotas({
-  portion,
+  format,
+  plan,
   seated,
   size,
   structure,
   subjects,
 }: {
-  portion: number;
+  format: MockFormat;
+  plan: MockPlan;
   seated: boolean;
   size: number;
   structure: ExamStructure | null;
   subjects: readonly SubjectSkills[];
 }): Map<string, number> {
-  const shares = getSubjectShares(structure);
-
-  if (!seated) {
-    const counts = apportion({
-      total: size,
-      weights: subjects.map(
-        ({ name, skillIds }) =>
-          shares.find((own) => own.name === name)?.questions ?? skillIds.length,
-      ),
-    });
-
-    return new Map(subjects.map(({ name }, index) => [name, counts[index] ?? 0]));
+  if (seated) {
+    return seatEverySubject({ format, plan, size, structure, subjects });
   }
 
-  const names = new Set(subjects.map(({ name }) => name));
-
-  const candidates = subjects.flatMap(({ name, skillIds }) =>
-    skillIds.map((skillId) => ({ area: name, skillId })),
-  );
-
-  const placed = splitPartShares({ candidates, shares }).filter(({ name }) => names.has(name));
-
-  const quotas = new Map(
-    [
-      ...apportionShares({
-        counted: placed.length > 0 && placed.every(({ even }) => !even),
-        portion,
-        shares: placed,
-        wanted: size,
-      }),
-    ].map(([own, count]) => [own.name, count]),
-  );
-
-  const rest = subjects.filter(({ name }) => !quotas.has(name));
-  const left = size - [...quotas.values()].reduce((sum, count) => sum + count, 0);
+  const shares = getSubjectShares(structure);
 
   const counts = apportion({
-    total: Math.max(0, left),
-    weights: rest.map(({ skillIds }) => skillIds.length),
+    total: size,
+    weights: subjects.map(
+      ({ name, skillIds }) => shares.find((own) => own.name === name)?.questions ?? skillIds.length,
+    ),
   });
 
-  return new Map([
-    ...quotas,
-    ...rest.map(({ name }, index) => [name, counts[index] ?? 0] as const),
-  ]);
+  return new Map(subjects.map(({ name }, index) => [name, counts[index] ?? 0]));
 }
 
 export function getMockQuestionsShortfall({
@@ -234,7 +246,8 @@ export function getMockQuestionsShortfall({
     const subjects = [...bySubject.entries()];
 
     const quotas = getSubjectQuotas({
-      portion: getPaperShare(plan.fullLength),
+      format,
+      plan,
       seated: mix.length === 1 && option.kind !== "area" && !structure?.mock?.adaptive,
       size,
       structure,
