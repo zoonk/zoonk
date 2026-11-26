@@ -3,8 +3,13 @@ package com.zoonk.android.feature.player.language
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.zoonk.android.feature.player.model.LessonAnswer
+import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
@@ -13,8 +18,6 @@ import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.MatchWork
 import com.zoonk.android.feature.questions.SolvedMatchBoard
-import com.zoonk.android.feature.questions.matchPartnerWords
-import com.zoonk.android.feature.questions.other
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 
 /**
@@ -34,12 +37,13 @@ internal fun MatchColumnsView(
     question: @Composable () -> Unit,
 ) {
     val lefts = content.pairs.map(MatchPair::left)
+    val words = { spot: MatchSpot -> stripWrappingQuotes((if (spot.side == MatchSide.Left) lefts else rightItems)[spot.index]) }
     val earlier = (answer as? LessonAnswer.MatchColumns)?.mistakes ?: 0
     val board =
         rememberMatchBoardState(
             count = lefts.size,
             goesWith = { l, r -> content.pairs.any { it.left == lefts[l] && it.right == rightItems[r] } },
-            name = { spot -> stripWrappingQuotes(if (spot.side == MatchSide.Left) lefts[spot.index] else rightItems[spot.index]) },
+            name = words,
             content,
             rightItems,
             initial = { MatchWork(pairs = initialMatches(answer, lefts, rightItems).toMap()) },
@@ -55,10 +59,16 @@ internal fun MatchColumnsView(
         if (answer == null && !checked && board.isComplete) onAnswer(answerOf(work))
     }
 
+    var sent by remember { mutableStateOf(false) }
+    FocusPrimaryOnceChecked(sent, checked)
+
     fun tap(spot: MatchSpot) {
         if (locked) return
         val next = board.tap(spot)
-        if (next.isComplete(lefts.size)) onDone(answerOf(next))
+        if (next.isComplete(lefts.size)) {
+            sent = true
+            onDone(answerOf(next))
+        }
     }
 
     QuestionScene {
@@ -68,29 +78,18 @@ internal fun MatchColumnsView(
             val spot = MatchSpot(side, index)
             val partner = work.partnerOf(spot)
             val state = work.stateOf(spot, held = false, ended = ended)
-            val words = { spotted: MatchSpot ->
-                stripWrappingQuotes(
-                    if (spotted.side ==
-                        MatchSide.Left
-                    ) {
-                        lefts[spotted.index]
-                    } else {
-                        rightItems[spotted.index]
-                    },
-                )
-            }
             MatchEntry(
                 state = state,
                 onClick = { tap(spot) }.takeIf { !ended && !checked && !locked && partner == null },
                 modifier = modifier,
-                partner = partner?.let { matchPartnerWords(state, words(MatchSpot(side.other, it))) },
+                label = board.label(spot, partner),
                 cue = work.cue,
             ) { Text(words(spot)) }
         }
         if (ended) {
             SolvedMatchBoard(lefts.indices.map { it to work.pairs.getValue(it) }, card = card)
         } else {
-            MatchBoard(lefts.indices.toList(), rightItems.indices.toList(), alignRows = true, card = card)
+            MatchBoard(lefts.indices.toList(), rightItems.indices.toList(), card = card)
         }
         board.Announcement()
     }

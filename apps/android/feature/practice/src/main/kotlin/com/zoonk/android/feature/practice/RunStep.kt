@@ -489,9 +489,10 @@ internal fun AnswerActions(
                 enabled = done || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
             ) {
+                // A learning match checks each pair and sends its last one by itself, so it has nothing to check by hand.
                 Text(
                     stringResource(
-                        if (done) R.string.practice_continue else R.string.practice_check,
+                        if (done || question.key != null) R.string.practice_continue else R.string.practice_check,
                     ),
                 )
             }

@@ -41,7 +41,6 @@ class MatchWorkTest {
         val done = work.taps(right(1), right(0), left(1))
         assertTrue(done.isComplete(2))
         assertEquals(Answer.Matches(listOf(1, 0), listOf(MatchTry(0, 0))), done.answer(2, checked = true))
-        assertEquals(setOf(0), done.missedLeft)
         assertEquals(mapOf(0 to 0, 1 to 0), done.firstTries)
     }
 

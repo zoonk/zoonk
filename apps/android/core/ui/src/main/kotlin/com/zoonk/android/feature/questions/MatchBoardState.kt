@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 /**
  * One match board's taps, for every screen that asks to match these with those (main's `useMatchBoard`): what each tap
  * does to the [work], a light tap on the hand for a right pair and a firm one for a miss, the brief wrong cue, and one
- * line for TalkBack per try ([Announcement]). [count] is how many cards each column holds.
+ * line for TalkBack per try or undone pair ([Announcement]). [count] is how many cards each column holds.
  */
 @Stable
 class MatchBoardState internal constructor(
@@ -46,7 +46,7 @@ class MatchBoardState internal constructor(
         private set
 
     /** Whether the board checks each pair as it's made. */
-    val checksPairs: Boolean get() = goesWith.value != null
+    private val checksPairs: Boolean get() = goesWith.value != null
 
     val isComplete: Boolean get() = work.isComplete(count)
 
@@ -57,39 +57,45 @@ class MatchBoardState internal constructor(
         state.value = next
 
         val made = next.pairs.keys - before.pairs.keys
+        val undone = before.pairs.keys - next.pairs.keys
         lastMiss = next.misses.lastOrNull()?.takeIf { next.misses.size > before.misses.size }
         when {
-            made.isNotEmpty() -> {
-                val left = made.first()
-                paired(MatchTry(left, next.pairs.getValue(left)), next.pairs.size)
-            }
-
-            next.misses.size > before.misses.size -> {
-                missed(next.misses.last())
-            }
+            made.isNotEmpty() -> paired(made.first().let { MatchTry(it, next.pairs.getValue(it)) }, next.pairs.size)
+            undone.isNotEmpty() -> unpaired(undone.first().let { MatchTry(it, before.pairs.getValue(it)) })
+            lastMiss != null -> missed(next.misses.last())
         }
         return next
     }
+
+    /** What TalkBack calls [spot]'s card once it's in a pair: its words and its [partner]'s, on the other side. */
+    fun label(
+        spot: MatchSpot,
+        partner: Int?,
+    ): String? =
+        partner?.let {
+            resources.getString(R.string.questions_matched_with, name.value(spot), name.value(MatchSpot(spot.side.other, it)))
+        }
+
+    private fun words(pair: MatchTry) =
+        name.value(MatchSpot(MatchSide.Left, pair.left)) to name.value(MatchSpot(MatchSide.Right, pair.right))
 
     private fun paired(
         pair: MatchTry,
         made: Int,
     ) {
-        val left = name.value(MatchSpot(MatchSide.Left, pair.left))
-        val right = name.value(MatchSpot(MatchSide.Right, pair.right))
-        announcement =
-            if (checksPairs) {
-                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                resources.getString(R.string.questions_match_paired, left, right, made, count)
-            } else {
-                resources.getString(R.string.questions_matched_with, right, left)
-            }
+        if (checksPairs) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+        val (left, right) = words(pair)
+        announcement = resources.getQuantityString(R.plurals.questions_match_paired, made, left, right, made, count)
+    }
+
+    private fun unpaired(pair: MatchTry) {
+        val (left, right) = words(pair)
+        announcement = resources.getString(R.string.questions_match_unpaired, left, right)
     }
 
     private fun missed(miss: MatchTry) {
         haptics.performHapticFeedback(HapticFeedbackType.Reject)
-        val left = name.value(MatchSpot(MatchSide.Left, miss.left))
-        val right = name.value(MatchSpot(MatchSide.Right, miss.right))
+        val (left, right) = words(miss)
         announcement = listOfNotNull(resources.getString(R.string.questions_match_not_a_pair, left, right), why.value(miss)).joinSentences()
     }
 
@@ -120,7 +126,7 @@ fun rememberMatchBoardState(
     val resources = LocalResources.current
     val board = remember(work, count, haptics, resources) { MatchBoardState(work, count, checks, names, whys, haptics, resources) }
 
-    // The wrong tone holds only as long as the shake; a tap during it is a tap like any other.
+    // The wrong tone holds through the shake and a beat after it; a tap during it is a tap like any other.
     val cue = work.value.cue
     LaunchedEffect(cue) {
         if (work.value.wrong != null) {
@@ -135,5 +141,5 @@ fun rememberMatchBoardState(
 @Composable
 fun MatchBoardState.Announcement() = ActivityAnnouncement(announcement)
 
-/** Main's `animate-shake` (0.4 s), after which the wrong tone gives way. */
-internal const val WRONG_CUE_MILLIS = 400L
+/** How long a wrong try shows: the shake, then a beat to see which two it was. */
+internal const val WRONG_CUE_MILLIS = 600L

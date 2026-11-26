@@ -13,7 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,13 +34,13 @@ import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
 import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.SolvedMatchBoard
-import com.zoonk.android.feature.questions.matchPartnerWords
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -70,10 +73,14 @@ private fun MatchPairsActivity(props: ActivityProps) {
     val ended = board.isComplete || props.isChecked
     val expected = props.expected.assignmentPairs.takeIf { props.isChecked }
 
+    var sent by remember { mutableStateOf(false) }
+    FocusPrimaryOnceChecked(sent, props.isChecked)
+
     fun tap(spot: MatchSpot) {
         if (props.isLocked) return
         val next = board.tap(spot)
         val answer = matchAnswer(left, right, next)
+        sent = answer != null
         if (answer == null) props.onAnswerChange(null) else props.onComplete(answer)
     }
 
@@ -86,7 +93,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             state = state,
             onClick = { tap(spot) }.takeIf { !ended && !props.isLocked && partner == null },
             modifier = modifier,
-            partner = partner?.let { matchPartnerWords(state, (if (side == MatchSide.Left) right else left)[it].text) },
+            label = board.label(spot, partner),
             cue = work.cue,
         ) { RichText(cards[index].text) }
     }
@@ -98,7 +105,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             if (ended) {
                 SolvedMatchBoard(solvedRows(left, right), group, card)
             } else {
-                MatchBoard(left.indices.toList(), right.indices.toList(), alignRows = false, group, card)
+                MatchBoard(left.indices.toList(), right.indices.toList(), group, card)
             }
 
             board.lastMiss.takeUnless { ended }?.let { MissNote(right[it.right].why ?: left[it.left].why) }

@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
  * pair sends the answer with its misses through [onSubmit], so there's nothing to press. Without a key (placement and
  * level tests) pairs are held until Check: [onAnswer] gets them once every entry has one, null before, and a paired
  * entry tapped again undoes its pair. A learning board that ended (every pair made, or [check]ed) shows each entry
- * beside its partner, the pairs missed first marked.
+ * beside its partner.
  */
 @Composable
 fun MatchPairsQuestion(
@@ -53,7 +53,7 @@ fun MatchPairsQuestion(
             onClick = { tap(spot) }.takeIf { enabled && !ended && (key == null || made == null) },
             modifier = cardModifier,
             pair = made?.let { if (side == MatchSide.Left) index else it }?.plus(1),
-            partner = partner?.let { matchPartnerWords(state, MatchSpot(side.other, it).text(spoken.first, spoken.second)) },
+            label = board.label(spot, partner),
             cue = work.cue,
         ) { ItemLine(spot.text(left, right)) }
     }
@@ -62,7 +62,7 @@ fun MatchPairsQuestion(
         if (key != null && ended) {
             SolvedMatchBoard(left.indices.map { it to key[it] }, card = card)
         } else {
-            MatchBoard(left.indices.toList(), right.indices.toList(), alignRows = false, card = card)
+            MatchBoard(left.indices.toList(), right.indices.toList(), card = card)
         }
         board.Announcement()
     }

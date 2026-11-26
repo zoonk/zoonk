@@ -33,9 +33,6 @@ data class MatchWork(
             MatchSide.Right -> pairs.entries.firstOrNull { it.value == spot.index }?.key
         }
 
-    /** The left places whose card was in a wrong try. */
-    val missedLeft: Set<Int> get() = misses.mapTo(mutableSetOf()) { it.left }
-
     /** Every left place in a pair. */
     fun isComplete(count: Int): Boolean = count > 0 && (0 until count).all { it in pairs }
 
@@ -44,8 +41,8 @@ data class MatchWork(
         get() = pairs + misses.reversed().associate { it.left to it.right }
 
     /**
-     * How [spot]'s card shows: a held pair, a pair kept (marked missed once the board [ended], when its left card was in
-     * a wrong try), a card the ended board only shows, a wrong try's cue, the card picked first, or none of these.
+     * How [spot]'s card shows: a held pair, a pair kept, a card the [ended] board only shows, a wrong try's cue over the
+     * pick it keeps, the card picked first, or none of these.
      */
     fun stateOf(
         spot: MatchSpot,
@@ -53,11 +50,9 @@ data class MatchWork(
         ended: Boolean,
     ): MatchEntryState {
         val partner = partnerOf(spot)
-        val left = if (spot.side == MatchSide.Left) spot.index else partner
         val cued = wrong?.let { if (spot.side == MatchSide.Left) it.left == spot.index else it.right == spot.index } == true
         return when {
             partner != null && held -> MatchEntryState.Paired
-            partner != null && ended && left in missedLeft -> MatchEntryState.Missed
             partner != null -> MatchEntryState.Right
             ended -> MatchEntryState.Shown
             cued -> MatchEntryState.Wrong
