@@ -904,13 +904,17 @@ struct SyllabusSubjectRow: View {
   }
 
   /// Main's subject bar: an exam's preparation, else the lessons studied and those already known.
+  /// Under the name it is the row's second line.
   @ViewBuilder private var bar: some View {
-    if isExam {
-      Meter(value: subject.preparation ?? 0, fill: .success)
-        .accessibilityHidden(true)
-    } else {
-      CoverageBar(studied: subject.coverage.studied, known: subject.coverage.known)
+    Group {
+      if isExam {
+        Meter(value: subject.preparation ?? 0, fill: .success)
+          .accessibilityHidden(true)
+      } else {
+        CoverageBar(studied: subject.coverage.studied, known: subject.coverage.known)
+      }
     }
+    .layoutPart(.note, words: false)
   }
 
   /// Its name, the other exams that share it, and why it isn't in the plan.
