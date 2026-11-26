@@ -45,6 +45,29 @@ describe(toSessionQuestion, () => {
       matchItem.content.pairs.map((pair) => first.right?.indexOf(pair.right)),
     );
   });
+
+  it("shows a board in a new order in another block", () => {
+    const item = parseSessionItem({
+      ...matchItem,
+      content: {
+        ...matchItem.content,
+        pairs: Array.from({ length: 6 }, (_, index) => ({
+          left: `Left ${index}`,
+          right: `Right ${index}`,
+        })),
+      },
+    });
+
+    if (!item) {
+      throw new Error("The match item should parse");
+    }
+
+    const otherBlockId = "0199a0b1-0000-7000-8000-00000000b10d";
+
+    expect(toSessionQuestion({ blockId: otherBlockId, item }).right).not.toStrictEqual(
+      toSessionQuestion({ blockId, item }).right,
+    );
+  });
 });
 
 describe(gradeSessionAnswer, () => {

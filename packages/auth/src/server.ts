@@ -15,6 +15,7 @@ import {
 import { type BetterAuthOptions } from "better-auth/types";
 import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
 import { authDatabase } from "./auth-database";
+import { getAuthSecret } from "./auth-secret";
 import {
   AUTH_ADVANCED_OPTIONS,
   AUTH_MEMBERSHIP_LIMIT,
@@ -49,12 +50,6 @@ import { googleProvider } from "./providers/google";
 import { stripePlugin } from "./stripe/plugin";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
-
-/**
- * `pnpm start` and E2E builds run with `NODE_ENV=production`, where Better Auth refuses its own default.
- * Deployments set `BETTER_AUTH_SECRET`; local runs without one share this, so sessions survive restarts.
- */
-const LOCAL_AUTH_SECRET = "zoonk-local-auth-secret-for-development-and-e2e-only";
 
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   advanced: AUTH_ADVANCED_OPTIONS,
@@ -126,8 +121,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     "/passkey/verify-authentication",
   ],
   hooks: { before: validateEmailBeforeOTP },
-  secret:
-    process.env.BETTER_AUTH_SECRET || (isLocalhostSupported() ? LOCAL_AUTH_SECRET : undefined),
+  secret: getAuthSecret(),
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,

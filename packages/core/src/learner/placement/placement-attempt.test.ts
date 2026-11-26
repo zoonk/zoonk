@@ -21,6 +21,7 @@ import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-on
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { lowGuessTapItems, placementItemBank } from "../_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
+import { getPlacementBlockId } from "./_utils/placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -424,7 +425,11 @@ describe("learn placement attempts", () => {
 
           return [
             tap.id,
-            gradeOrder({ answer: { dontKnow: true }, item: parsed }).correctAnswer,
+            gradeOrder({
+              answer: { dontKnow: true },
+              blockId: getPlacementBlockId(parsed),
+              item: parsed,
+            }).correctAnswer,
           ] as const;
         }),
       );

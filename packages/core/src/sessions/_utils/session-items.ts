@@ -141,11 +141,11 @@ export function toSessionQuestion({
     case "matchPairs":
       return {
         ...NO_EXTRAS,
-        ...toMatchQuestion(item),
-        key: revealMatchKey ? getMatchKey(item) : null,
+        ...toMatchQuestion({ blockId, item }),
+        key: revealMatchKey ? getMatchKey({ blockId, item }) : null,
       };
     case "order":
-      return { ...NO_EXTRAS, ...toOrderQuestion(item) };
+      return { ...NO_EXTRAS, ...toOrderQuestion({ blockId, item }) };
     case "typed":
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
@@ -221,7 +221,7 @@ export function gradeSessionAnswer({
 }): GradedSessionAnswer {
   switch (item.format) {
     case "matchPairs":
-      return gradeMatch({ answer, item });
+      return gradeMatch({ answer, blockId, item });
     case "numeric":
       return gradeMathAnswer({
         answer: "number" in answer ? answer.number : null,
@@ -229,7 +229,7 @@ export function gradeSessionAnswer({
         version: serveInBlock({ blockId, item }),
       });
     case "order":
-      return gradeOrder({ answer, item });
+      return gradeOrder({ answer, blockId, item });
     case "typed":
       return gradeTypedByCode({ answer, item });
     case "multipleChoice":
