@@ -44,6 +44,7 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
     exam: false,
     mindMaps: false,
     readyMistakes: 0,
+    savedLessons: false,
     speaking: false,
   },
   today: null,
@@ -84,6 +85,26 @@ function useStatsPaletteItems({ searching }: { searching: boolean }): PaletteIte
   );
 }
 
+/** The lessons the learner chose to keep, then the ones they finished, as the sidebar lists them. */
+function useLessonListItems(places: LearnerSummary["places"] | undefined): PaletteItem[] {
+  const t = useExtracted();
+
+  return [
+    places?.savedLessons &&
+      createNavigationPaletteItem({
+        id: "saved-lessons",
+        label: t("Saved lessons"),
+        menu: getMenu("savedLessons"),
+      }),
+    places?.completedLessons &&
+      createNavigationPaletteItem({
+        id: "completed-lessons",
+        label: t("Completed lessons"),
+        menu: getMenu("completedLessons"),
+      }),
+  ].filter((item) => isPaletteItem(item));
+}
+
 export function useLearnerPaletteGroups({
   learner,
   searching,
@@ -95,6 +116,7 @@ export function useLearnerPaletteGroups({
   const continueItem = useContinueItem(learner?.today ?? null);
   const buddy = useBuddyName(learner?.buddy ?? null);
   const statsPages = useStatsPaletteItems({ searching });
+  const lessonLists = useLessonListItems(learner?.places);
 
   if (!learner) {
     return null;
@@ -153,12 +175,7 @@ export function useLearnerPaletteGroups({
       label: t("Mistakes notebook"),
       menu: getMenu("mistakes"),
     }),
-    places.completedLessons &&
-      createNavigationPaletteItem({
-        id: "completed-lessons",
-        label: t("Completed lessons"),
-        menu: getMenu("completedLessons"),
-      }),
+    ...lessonLists,
     createNavigationPaletteItem({
       id: "certificates",
       label: t("Certificates"),
