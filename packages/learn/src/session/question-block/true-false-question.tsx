@@ -7,7 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
-import { QuestionTitle } from "../../_components/question-title";
+import { QuestionTitle, type QuestionTitleProps } from "../../_components/question-title";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { parseRichBlocks } from "../../rich-text/rich-text-parser";
 
@@ -97,6 +97,7 @@ export function TrueFalseQuestion({
   onChange,
   result,
   statement,
+  title,
   trueFalseLabels,
 }: {
   allowBlank: boolean;
@@ -104,6 +105,7 @@ export function TrueFalseQuestion({
   onChange: (answer: TrueFalseAnswer | null) => void;
   result: TrueFalseResult | null;
   statement: string;
+  title?: QuestionTitleProps;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
@@ -164,7 +166,12 @@ export function TrueFalseQuestion({
         }}
         {...swipe.handlers}
       >
-        <QuestionTitle className="min-w-0 flex-1" muted={result !== null} text={statement} />
+        <QuestionTitle
+          {...title}
+          className="min-w-0 flex-1"
+          muted={result !== null}
+          text={statement}
+        />
       </div>
 
       <AnswerOptionGroup>

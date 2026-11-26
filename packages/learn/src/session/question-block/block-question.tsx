@@ -27,7 +27,7 @@ import {
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
 import { type QuestionBlockPhase } from "./question-block-state";
-import { QuestionView } from "./question-view";
+import { QuestionView, drawsOwnTitle } from "./question-view";
 import { QuotedSource } from "./quoted-source";
 import { type useQuestionBlock } from "./use-question-block";
 
@@ -178,7 +178,7 @@ function QuestionText({
       <PlacementNote onSkipToday={graded ? undefined : onSkipTestQuestions} question={question} />
       <QuotedSource question={question} />
       <QuestionMaterial continued={continued} question={question} />
-      {question.format !== "trueFalse" && <QuestionTitle muted={graded} text={question.question} />}
+      {!drawsOwnTitle(question.format) && <QuestionTitle muted={graded} text={question.question} />}
     </>
   );
 }

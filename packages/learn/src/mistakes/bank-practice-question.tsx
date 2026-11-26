@@ -6,7 +6,7 @@ import { QuestionTitle } from "../_components/question-title";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { useSpokenText } from "../rich-text/use-spoken-text";
-import { QuestionInputs } from "../session/question-block/question-view";
+import { QuestionInputs, drawsOwnTitle } from "../session/question-block/question-view";
 import { type PracticeStep as Step, getPracticeAnswer } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
@@ -59,7 +59,7 @@ export function BankPracticeQuestion({
         <QuestionLead
           graded={graded !== null}
           question={question}
-          withTitle={question.format !== "trueFalse"}
+          withTitle={!drawsOwnTitle(question.format)}
         />
 
         <QuestionInputs

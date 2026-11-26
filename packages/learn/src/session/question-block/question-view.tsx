@@ -1,6 +1,7 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type QuestionTitleProps } from "../../_components/question-title";
 import {
   type StudyBlockDetail,
   type StudyQuestion,
@@ -133,6 +134,11 @@ export function QuestionView({
   );
 }
 
+/** A statement is answered on its own card, so the host leaves its title to the inputs. */
+export function drawsOwnTitle(format: StudyQuestion["format"]): boolean {
+  return format === "trueFalse";
+}
+
 export function QuestionInputs({
   allowBlank,
   disabled,
@@ -141,6 +147,7 @@ export function QuestionInputs({
   order,
   question,
   result,
+  title,
   trueFalseLabels,
 }: {
   allowBlank: boolean;
@@ -155,6 +162,8 @@ export function QuestionInputs({
   > &
     Partial<Pick<StudyQuestion, "key">>;
   result: QuestionResult | null;
+  /** The title the inputs draw themselves (`drawsOwnTitle`), as the host's heading. */
+  title?: QuestionTitleProps;
   trueFalseLabels: TrueFalseLabels;
 }) {
   if (question.format === "numeric") {
@@ -215,6 +224,7 @@ export function QuestionInputs({
         onChange={onChange}
         result={getTrueFalseResult(result)}
         statement={question.question}
+        title={title}
         trueFalseLabels={trueFalseLabels}
       />
     );

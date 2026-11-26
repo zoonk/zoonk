@@ -2,11 +2,8 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import {
   QuestionActions,
   QuestionDontKnow,
@@ -17,9 +14,7 @@ import { AnswersSaveError } from "../../_components/save-error";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
 import { initialOrderAnswer } from "../../questions/initial-order-answer";
 import { ItemSupport } from "../../questions/item-text";
-import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
-import { useSpokenText } from "../../rich-text/use-spoken-text";
-import { QuestionInputs } from "../../session/question-block/question-view";
+import { QuestionInputs, drawsOwnTitle } from "../../session/question-block/question-view";
 import { type StudyQuestionAnswer } from "../../session/session-types";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
@@ -30,56 +25,6 @@ import {
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
-
-function useTrueFalseChoices(trueFalseLabels: TrueFalseLabels) {
-  const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
-
-  return [
-    { label: answerLabel(true), value: true },
-    { label: answerLabel(false), value: false },
-  ];
-}
-
-/** A statement's title is the question itself, so it keeps the plain two options under it. */
-function TrueFalseOptions({
-  label,
-  onChange,
-  trueFalseLabels,
-}: {
-  label: string;
-  onChange: (answer: PlacementAnswer) => void;
-  trueFalseLabels: TrueFalseLabels;
-}) {
-  const choices = useTrueFalseChoices(trueFalseLabels);
-  const [picked, setPicked] = useState<boolean | null>(null);
-
-  const pick = (index: number) => {
-    const choice = choices[index];
-
-    if (choice) {
-      setPicked(choice.value);
-      onChange({ isTrue: choice.value });
-    }
-  };
-
-  useNumberKeys({ count: choices.length, onPick: pick });
-
-  return (
-    <AnswerOptionGroup aria-label={label}>
-      {choices.map((choice, index) => (
-        <AnswerOption
-          aria-keyshortcuts={shortcutKeys("pick", index)}
-          key={String(choice.value)}
-          marker={index + 1}
-          onClick={() => pick(index)}
-          picked={picked === choice.value}
-        >
-          {choice.label}
-        </AnswerOption>
-      ))}
-    </AnswerOptionGroup>
-  );
-}
 
 function toPlacementAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null {
   return "number" in answer || "text" in answer ? null : answer;
@@ -195,7 +140,6 @@ export function PlacementQuestionScreen({
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const t = useExtracted();
-  const spoken = useSpokenText();
   const [value, setValue] = useState<PlacementAnswer | null>(() => initialOrderAnswer(question));
   // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
   const [shownAt] = useState(() => Date.now());
@@ -207,6 +151,7 @@ export function PlacementQuestionScreen({
 
   const [pressed, setPressed] = useState<PlacementControl | null>(null);
   const title = useRef<HTMLDivElement>(null);
+  const titleProps = { heading: "h1", ref: title, tabIndex: -1 } as const;
 
   // The control that sent the last answer is gone, so focus would fall to the page.
   useEffect(() => {
@@ -274,36 +219,31 @@ export function PlacementQuestionScreen({
             />
           </div>
 
-          <QuestionTitle heading="h1" ref={title} tabIndex={-1} text={question.question} />
+          {!drawsOwnTitle(question.format) && (
+            <QuestionTitle {...titleProps} text={question.question} />
+          )}
         </OnboardingHeading>
 
-        {question.format === "trueFalse" ? (
-          <TrueFalseOptions
-            label={spoken.blocks(question.question)}
-            onChange={setValue}
-            trueFalseLabels={trueFalseLabels}
-          />
-        ) : (
-          <QuestionInputs
-            order={value && "order" in value ? value.order : undefined}
-            allowBlank={false}
-            disabled={pending}
-            onChange={(answer) => setValue(answer && toPlacementAnswer(answer))}
-            onSubmit={confirm}
-            question={{
-              entry: null,
-              format: question.format,
-              left: question.left ?? null,
-              options: question.options,
-              question: question.question,
-              right: question.right ?? null,
-              select: question.select ?? null,
-              unit: null,
-            }}
-            result={null}
-            trueFalseLabels={trueFalseLabels}
-          />
-        )}
+        <QuestionInputs
+          order={value && "order" in value ? value.order : undefined}
+          allowBlank={false}
+          disabled={pending}
+          onChange={(answer) => setValue(answer && toPlacementAnswer(answer))}
+          onSubmit={confirm}
+          question={{
+            entry: null,
+            format: question.format,
+            left: question.left ?? null,
+            options: question.options,
+            question: question.question,
+            right: question.right ?? null,
+            select: question.select ?? null,
+            unit: null,
+          }}
+          result={null}
+          title={titleProps}
+          trueFalseLabels={trueFalseLabels}
+        />
 
         {(number === undefined ? progress > 0 : number > 1) && (
           <PlacementStop
