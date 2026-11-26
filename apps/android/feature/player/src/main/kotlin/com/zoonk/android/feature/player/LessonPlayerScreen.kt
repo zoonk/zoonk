@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -138,11 +140,13 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalOptionKeys
 import com.zoonk.android.ui.components.LocalOwnFeedbackReveal
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.LocalRevealPage
 import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.RevealPage
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskBarKey
@@ -152,6 +156,7 @@ import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.pickIndex
+import com.zoonk.android.ui.components.revealPage
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -693,13 +698,17 @@ private fun Content(
                     val fold = spreadFold(maxWidth, span)
                     // The turn's page is the whole column without a fold, so the work in it keeps when the book opens or closes.
                     val part = if (fold == null) StepPart.Whole else StepPart.Turn
+                    val turnPageScroll = if (fold == null) scroll else turnScroll
+                    // What reveals itself on the turn's page (a card's why) leaves no sliver of the question at its top, as main's.
+                    val revealPage = remember(turnPageScroll) { RevealPage(turnPageScroll) }
 
                     StepColumn(
                         Modifier
                             .fillMaxSize()
                             .then(if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true })
                             .onGloballyPositioned { reveal.viewport = it }
-                            .verticalScroll(if (fold == null) scroll else turnScroll)
+                            .revealPage(revealPage)
+                            .verticalScroll(turnPageScroll)
                             .padding(vertical = STEP_PADDING),
                         align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
@@ -711,6 +720,7 @@ private fun Content(
                         val inBank = step.canSelfCorrect
                         val checked = state.results[step.id]?.takeIf { state.phase == LessonPhase.Feedback && notesInOwnCard(step) }
                         CompositionLocalProvider(
+                            LocalRevealPage provides revealPage,
                             LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null,
                             LocalWordBankCheck provides if (inBank) ({ CheckAdded(state, result) }) else null,
                             LocalResultNotes provides
@@ -727,6 +737,7 @@ private fun Content(
                         }
                         if (!inBank) result()
                         if (fold == null) recap()
+                        Spacer(Modifier.height(with(LocalDensity.current) { revealPage.extraRoom.toDp() }))
                     }
 
                     if (fold != null) {
