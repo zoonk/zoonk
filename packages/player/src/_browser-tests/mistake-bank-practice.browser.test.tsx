@@ -218,15 +218,22 @@ describe("exact standalone bank mistake practice", () => {
     );
   });
 
-  it("shows a locked pair right for a moment, then settles it quietly out of play", async () => {
+  it("shows a locked pair right for a moment, then settles it out of play with its left card's number on both cards", async () => {
     openPractice(null, { answer: vi.fn<Actions["answer"]>() }, question("matchPairs"));
-    await page.getByRole("button", { exact: true, name: "Electron" }).click();
-    await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
-    const locked = page.getByRole("button", { name: "Electron, matched with Negative charge" });
+    await page.getByRole("button", { exact: true, name: "Proton" }).click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+    const locked = page.getByRole("button", { name: "Proton, matched with Positive charge" });
+    const partner = page.getByRole("button", { name: "Positive charge, matched with Proton" });
 
     await expect.element(locked).toHaveAttribute("data-state", "right");
     await expect.element(locked).toHaveAttribute("data-state", "done");
     await expect.element(locked).toBeDisabled();
+
+    expect(
+      [locked, partner].map(
+        (card) => card.element().querySelector("[data-slot=match-pair-number]")?.textContent,
+      ),
+    ).toStrictEqual(["2", "2"]);
   });
 
   it("scrolls the result into sight above the bar when the last pair sends it on a short phone", async () => {
