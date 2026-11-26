@@ -88,7 +88,8 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null, keyed = LocalOptionKeys.current)
+    // Once checked or locked the key does nothing, so it hides in its room and the words stay put, as main's does.
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -109,6 +110,7 @@ fun AnswerOption(
     TagBesideOrUnder(
         modifier =
             modifier
+                .keptWhole()
                 .fillMaxWidth()
                 .clip(shape)
                 .background(tone.container)
@@ -129,7 +131,7 @@ fun AnswerOption(
             ) {
                 null
             } else {
-                { NumberKey(marker, glyph, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
+                { OptionKey(marker, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f), glyph) }
             },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(optionStyle, reading) } },
@@ -137,12 +139,13 @@ fun AnswerOption(
     )
 }
 
+/** The number key that picks an option or a card, in ink once [picked]; a [glyph] takes the digit's place. */
 @Composable
-private fun NumberKey(
+fun OptionKey(
     number: Int,
-    glyph: Painter?,
     picked: Boolean,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    glyph: Painter? = null,
 ) {
     // A picked option's key turns ink: the option's mark, as a radio's dot is.
     val ink = MaterialTheme.colorScheme.onSurface
@@ -308,6 +311,11 @@ fun TagBesideOrUnder(
 }
 
 internal enum class AnswerKey { None, Hidden, Visible }
+
+/** Whether what's here shows its number keys: a keyboard is attached and a key picks it ([LocalOptionKeys]). */
+@Composable
+fun optionKeysShown(): Boolean =
+    answerKey(LocalConfiguration.current.keyboard, checked = false, ordered = false, keyed = LocalOptionKeys.current) != AnswerKey.None
 
 /** An option's number key: only with a keyboard, where the key picks it ([keyed]) and the option isn't a place in an order. */
 internal fun answerKey(

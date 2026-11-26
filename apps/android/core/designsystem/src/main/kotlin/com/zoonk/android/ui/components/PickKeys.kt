@@ -1,12 +1,27 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 
 private val PICK_KEYS =
     listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine, Key.Zero)
@@ -29,6 +44,16 @@ private val NUMPAD_PICK_KEYS =
  * the tenth; null for any other key.
  */
 fun Key.pickIndex(): Int? = PICK_KEYS.indexOf(this).takeIf { it >= 0 } ?: NUMPAD_PICK_KEYS.indexOf(this).takeIf { it >= 0 }
+
+/**
+ * Whether this is a number key [press] took, as main's `useNumberKeys`: a held key picks once, and one pressed with
+ * Ctrl, Alt or Meta is another shortcut's.
+ */
+fun KeyEvent.pressesNumberKey(press: (Int) -> Boolean): Boolean {
+    if (type != KeyEventType.KeyDown || isCtrlPressed || isAltPressed || isMetaPressed) return false
+    val index = key.pickIndex() ?: return false
+    return nativeKeyEvent.repeatCount > 0 || press(index)
+}
 
 /**
  * Where a task's frame, which holds keyboard focus, sends its number keys (main's `useNumberKeys`): to what's on screen
@@ -75,4 +100,22 @@ fun PickKeyOptions(
         onDispose { keys?.release(picks) }
     }
     CompositionLocalProvider(LocalOptionKeys provides (keys != null), content = content)
+}
+
+/**
+ * Main's `useNumberKeys` on a screen with no frame that sends them, such as a quiz during a wait or a test's question:
+ * the number keys pressed anywhere in [content] go to what takes them there ([PickKeyOptions], a match board). It takes
+ * keyboard focus as it shows, as a task's frame does, without scrolling to it.
+ */
+@Composable
+fun NumberKeys(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val keys = remember { PickKeys() }
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(focus) { focus.requestFocus() }
+    Box(modifier.focusRequester(focus).focusTarget().onKeyEvent { it.pressesNumberKey(keys::press) }) {
+        CompositionLocalProvider(LocalPickKeys provides keys, content = content)
+    }
 }

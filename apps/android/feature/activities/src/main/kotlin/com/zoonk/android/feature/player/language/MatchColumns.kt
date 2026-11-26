@@ -96,6 +96,7 @@ internal fun MatchColumnsView(
                 state = state,
                 onClick = { tap(spot) }.takeIf { canTap(spot) },
                 modifier = modifier,
+                place = spot.place(lefts.size),
                 label = board.label(spot, partner),
                 cue = work.cue,
             ) { Text(words(spot)) }

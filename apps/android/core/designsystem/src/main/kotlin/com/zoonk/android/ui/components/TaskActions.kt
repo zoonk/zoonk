@@ -51,10 +51,9 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
 
 /**
  * Main's `TaskActions` (`BottomBarActions`, `bar-actions`): [back] at the start and the main action after the others, followed
- * only by the buddy's ask. On a phone or a book's page the buttons share a line while their one-line labels fit beside a main
- * action at least half the line wide, the main action taking what the others leave, and once they don't, each takes a line of
- * its own at the bar's full width, the main one last, so a label never wraps to stay beside another and the main action is
- * never the smaller one. A button drawn as a glyph alone (the way back, the buddy's ask) is
+ * only by the buddy's ask. On a phone or a book's page the buttons share a line while their one-line labels fit, the main
+ * action taking what the others leave, and once they don't, each takes a line of its own at the bar's full width, the main
+ * one last, so a label never wraps to stay beside another. A button drawn as a glyph alone (the way back, the buddy's ask) is
  * as wide as it is tall and keeps that size, as main's `icon` buttons do. Where the bar has room (a tablet, a tablet's page
  * in a spread, a wide window), each keeps its own width, [back] at the start and the rest at the end, the main action at
  * least [MAIN_ACTION_WIDTH]. The bar's measured width decides, never the window's.
@@ -162,8 +161,10 @@ internal data class BarSlot(
 /**
  * The lines of a [TaskActions] row [width] wide, each its buttons' indexes in [slots] and widths. A button joins the line
  * before it while all their one-line labels fit, [gap] apart. Where the bar has room ([roomy]), each keeps its own width.
- * On a phone, the main action takes what the others on its line leave, and at least half the line; on a line without it
- * the labeled buttons share what's left equally (main's `grow`), so one alone fills its line; a glyph keeps its size.
+ * On a phone, the main action takes what the others on its line leave, and joins their line only while that leaves it
+ * at least as wide as each labeled one beside it with the glyphs after it (the buddy's ask) still beside it, so it's
+ * never the smaller answer; otherwise it starts a line under them. On a line without it the labeled buttons share what's
+ * left equally (main's `grow`), so one alone fills its line; a glyph keeps its size.
  */
 internal fun barLines(
     slots: List<BarSlot>,
@@ -171,17 +172,18 @@ internal fun barLines(
     gap: Int,
     roomy: Boolean,
 ): List<List<Pair<Int, Int>>> {
-    val half = if (roomy) 0 else (width - gap + 1) / 2
-    val fit = { slot: BarSlot -> if (slot.main) maxOf(slot.oneLine, half) else slot.oneLine }
-    // The glyphs after the main action (the buddy's ask) stay on its line, so it keeps their room.
     val after = { index: Int -> slots.drop(index + 1).takeWhile { it.glyph }.sumOf { it.oneLine + gap } }
+    val needs = { line: List<Int>, index: Int ->
+        val slot = slots[index]
+        val beside = line.filter { !slots[it].glyph }.maxOfOrNull { slots[it].oneLine } ?: 0
+        if (slot.main && !roomy) maxOf(slot.oneLine, beside) + after(index) else slot.oneLine
+    }
     val lines = mutableListOf<MutableList<Int>>()
     slots.forEachIndexed { index, slot ->
         val line = lines.lastOrNull()
         val alone = !roomy && (slot.ownLine || line?.any { slots[it].ownLine } == true)
-        val needs = fit(slot) + if (slot.main) after(index) else 0
         if (line != null && !alone &&
-            line.sumOf { fit(slots[it]) + gap } + needs <= width
+            line.sumOf { slots[it].oneLine + gap } + needs(line, index) <= width
         ) {
             line.add(index)
         } else {
@@ -189,7 +191,7 @@ internal fun barLines(
         }
     }
     return lines.map { line ->
-        val left = width - line.sumOf { fit(slots[it]) } - gap * (line.size - 1)
+        val left = width - line.sumOf { slots[it].oneLine } - gap * (line.size - 1)
         val main = line.firstOrNull { slots[it].main }
         val growing = line.count { !slots[it].glyph }
         var rest = if (growing > 0) left % growing else 0
@@ -201,7 +203,7 @@ internal fun barLines(
                     main != null -> if (index == main) left else 0
                     else -> left / growing + if (rest-- > 0) 1 else 0
                 }
-            index to fit(slot) + extra
+            index to slot.oneLine + extra
         }
     }
 }

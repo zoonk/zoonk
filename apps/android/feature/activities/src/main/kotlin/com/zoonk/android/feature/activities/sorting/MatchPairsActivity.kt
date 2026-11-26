@@ -3,7 +3,6 @@ package com.zoonk.android.feature.activities.sorting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityCanvas
@@ -45,6 +46,8 @@ import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.components.revealWhenShown
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
 
@@ -100,6 +103,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             state = state,
             onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = modifier,
+            place = spot.place(left.size),
             label = board.label(spot, partner),
             cue = work.cue,
         ) { RichText(cards[index].text) }
@@ -148,14 +152,16 @@ private fun MissNote(
                 tint = MaterialTheme.colorScheme.error,
             )
         }
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                stringResource(R.string.activities_sorting_not_quite),
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            )
-            RichText(explanation, style = MaterialTheme.typography.bodyMedium)
-        }
+        // Main's `NotQuiteLead`: the lead starts the why's own line.
+        val lead = stringResource(R.string.activities_sorting_not_quite)
+        val why = itemLine(explanation)
+        val line =
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)) { append(lead) }
+                append(" ")
+                append(why.text)
+            }
+        RichTextLine(SpokenText(line, why.spoken?.let { "$lead $it" }), Modifier, MaterialTheme.typography.bodyMedium)
     }
 }
 

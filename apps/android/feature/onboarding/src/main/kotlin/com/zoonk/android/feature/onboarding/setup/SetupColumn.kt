@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.NumberKeys
 import com.zoonk.android.ui.scaffold.BarNoteInPage
 import com.zoonk.android.ui.scaffold.BarNoteRoom
 import com.zoonk.android.ui.scaffold.BottomBar
@@ -268,7 +269,7 @@ private fun SetupActionBar(
 }
 
 /**
- * A test's question: one column, or across an open book's fold a spread like practice's, with what to [read] on the
+ * A test's question, its number keys picking what it shows: one column, or across an open book's fold a spread like practice's, with what to [read] on the
  * page before the fold and the [answer] on the page after it, its [actions] pinned at that page's bottom. The page
  * before the fold scrolls with the one column, so a reading place keeps as the book opens or closes.
  */
@@ -293,7 +294,8 @@ internal fun ColumnScope.QuestionPages(
             }
         }
 
-        Box(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
+        // Number keys pick the question's options or cards, as main's do.
+        NumberKeys(if (fold == null) Modifier.fillMaxWidth() else Modifier.weight(1f).fillMaxWidth()) {
             // The answer's page is the one column's place, so what the learner picked, typed or recorded stays as the book opens or closes.
             Column(
                 if (fold == null) {

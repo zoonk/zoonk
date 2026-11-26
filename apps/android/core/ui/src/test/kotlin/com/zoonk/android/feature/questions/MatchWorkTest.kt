@@ -100,4 +100,24 @@ class MatchWorkTest {
         assertEquals(MatchEntryState.Right, done.stateOf(left(1), held = false, ended = true))
         assertEquals(MatchEntryState.Right, done.stateOf(right(0), held = false, ended = true))
     }
+
+    @Test
+    fun aMissOrAPickLeavesAJustLockedPairItsOwnCue() {
+        val board = listOf(0, 1, 2)
+        val check = { l: Int, r: Int -> board[l] == r }
+        val locked = MatchWork().taps(left(0), right(0), check = check)
+
+        assertEquals(0, locked.taps(left(1), check = check).locked)
+        assertEquals(0, locked.taps(left(1), right(2), check = check).locked)
+        assertEquals(1, locked.taps(left(1), right(1), check = check).locked)
+    }
+
+    @Test
+    fun aMissStaysSaidThroughTheNextPicksUntilAPairIsMade() {
+        val missed = MatchWork().taps(left(0), right(0))
+
+        assertEquals(MatchTry(0, 0), missed.missed)
+        assertEquals(MatchTry(0, 0), missed.taps(left(1)).missed)
+        assertNull(missed.taps(right(1)).missed)
+    }
 }

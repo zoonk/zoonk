@@ -66,17 +66,11 @@ val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 interface StepActions {
     fun select(answer: LessonAnswer?)
 
-    /** A number key's pick: through the view's own pick when it took the keys, so a key does what a tap does. */
-    fun pickByKey(answer: LessonAnswer?) = select(answer)
-
     /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
     fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
 
     /** A canvas whose number keys act on its own state (categorize's groups) takes them while it shows, saying whether a key did anything. */
     fun takeNumberKeys(keys: ((Int) -> Boolean)?) = Unit
-
-    /** The number key at [index] for the canvas that took the keys; false when none did or the key did nothing. */
-    fun pressNumberKey(index: Int): Boolean = false
 
     /** The action bar's main action, for a field's Enter key. */
     fun runPrimary()
@@ -149,6 +143,40 @@ fun isPlayable(step: LessonStep): Boolean =
         is StepContent.Activity -> content.isPlayable
         else -> true
     }
+
+/**
+ * The number keys a screen's views take while they show ([StepActions.takeKeyPicks], [StepActions.takeNumberKeys]), for a
+ * screen that sends its keys to them: the lesson player and a lesson screen replayed from mistakes.
+ */
+class StepKeys {
+    private var picks: ((LessonAnswer?) -> Unit)? = null
+    private var numbers: ((Int) -> Boolean)? = null
+
+    fun takePicks(pick: ((LessonAnswer?) -> Unit)?) {
+        picks = pick
+    }
+
+    fun takeNumbers(keys: ((Int) -> Boolean)?) {
+        numbers = keys
+    }
+
+    /**
+     * The number key at [index] on [step]: the canvas that took the keys acts on it first; otherwise it makes the pick a
+     * screen of options takes, through the view's own pick when it took them so a key does what a tap does, else
+     * [select]. False when it does nothing.
+     */
+    fun press(
+        step: LessonStep?,
+        index: Int,
+        state: LessonPlayerState,
+        select: (LessonAnswer?) -> Unit,
+    ): Boolean {
+        if (numbers?.invoke(index) == true) return true
+        val pick = step?.let { keyPick(it, index, state) } ?: return false
+        (picks ?: select)(pick.answer)
+        return true
+    }
+}
 
 /** What a number key leaves picked: [answer] is null once pressing the pick again cleared it. */
 @JvmInline

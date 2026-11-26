@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,12 +39,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isAltPressed
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -89,8 +88,10 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LocalPickKeys
+import com.zoonk.android.ui.components.LocalRevealPage
 import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.PickKeys
+import com.zoonk.android.ui.components.RevealPage
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -99,8 +100,9 @@ import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
-import com.zoonk.android.ui.components.pickIndex
+import com.zoonk.android.ui.components.pressesNumberKey
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.revealPage
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -145,7 +147,8 @@ interface RunControls {
 
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
- * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]). On a wide window
+ * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]), or else does what [onNumberKey]
+ * says. On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -165,6 +168,7 @@ internal fun RunFrame(
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
     note: (@Composable () -> Unit)? = null,
+    onNumberKey: ((Int) -> Boolean)? = null,
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
@@ -216,14 +220,8 @@ internal fun RunFrame(
                                 true.also { onClose() }
                             }
 
-                            event.isCtrlPressed || event.isAltPressed || event.isMetaPressed -> {
-                                false
-                            }
-
                             else -> {
-                                // A held number key picks once, as main's shortcuts do.
-                                val index = event.key.pickIndex()
-                                index != null && (event.nativeKeyEvent.repeatCount > 0 || pickKeys.press(index))
+                                event.pressesNumberKey { pickKeys.press(it) || onNumberKey?.invoke(it) == true }
                             }
                         }
                     },
@@ -295,7 +293,10 @@ private fun asideShown(
     fold: PageFold?,
 ) = hasAside && (fold != null || taskAsideBeside())
 
-/** A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still meet there. */
+/**
+ * A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still
+ * meet there. A verdict on it scrolls into sight by main's rule, leaving no sliver of the question at its top.
+ */
 @Composable
 private fun ScrollingPage(
     modifier: Modifier,
@@ -303,8 +304,12 @@ private fun ScrollingPage(
     align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
-        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+    val page = remember(scroll) { RevealPage(scroll) }
+    CompositionLocalProvider(LocalRevealPage provides page) {
+        Column(modifier.revealPage(page).verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
+            Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+            Spacer(Modifier.height(with(LocalDensity.current) { page.extraRoom.toDp() }))
+        }
     }
 }
 

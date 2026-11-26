@@ -51,6 +51,7 @@ import com.zoonk.android.feature.placementtest.LengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.NotSureButton
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -68,6 +69,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PickKeyOptions
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TaskActions
@@ -350,15 +352,13 @@ internal fun ColumnScope.PlacementQuestion(
             )
         }
         TaskActions { main ->
-            OutlinedButton(
+            NotSureButton(
                 onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
                 busy = pending && sender == PlacementSender.DontKnow,
                 enabled = !pending,
                 focusableWhenDisabled = pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_help) },
-            ) {
-                Text(dontKnowLabel)
-            }
+                label = dontKnowLabel,
+            )
             Button(
                 onClick = { confirm() },
                 busy = pending && sender == PlacementSender.Confirm,
@@ -380,22 +380,25 @@ private fun StatementAnswers(
     onPick: (Answer) -> Unit,
 ) {
     val rightWrong = labels == TrueFalseLabels.RIGHT_WRONG
-    AnswerOptionGroup {
-        listOf(true, false).forEachIndexed { index, isTrue ->
-            val label =
-                when {
-                    rightWrong && isTrue -> R.string.onboarding_placement_right
-                    rightWrong -> R.string.onboarding_placement_wrong
-                    isTrue -> R.string.onboarding_placement_true
-                    else -> R.string.onboarding_placement_false
+    val sides = listOf(true, false)
+    PickKeyOptions(sides.size, enabled = true, onPick = { onPick(Answer.TrueFalse(sides[it])) }) {
+        AnswerOptionGroup {
+            sides.forEachIndexed { index, isTrue ->
+                val label =
+                    when {
+                        rightWrong && isTrue -> R.string.onboarding_placement_right
+                        rightWrong -> R.string.onboarding_placement_wrong
+                        isTrue -> R.string.onboarding_placement_true
+                        else -> R.string.onboarding_placement_false
+                    }
+                AnswerOption(
+                    marker = index + 1,
+                    picked = picked == Answer.TrueFalse(isTrue),
+                    result = null,
+                    onClick = { onPick(Answer.TrueFalse(isTrue)) },
+                ) {
+                    Text(stringResource(label), style = MaterialTheme.typography.bodyLarge)
                 }
-            AnswerOption(
-                marker = index + 1,
-                picked = picked == Answer.TrueFalse(isTrue),
-                result = null,
-                onClick = { onPick(Answer.TrueFalse(isTrue)) },
-            ) {
-                Text(stringResource(label), style = MaterialTheme.typography.bodyLarge)
             }
         }
     }
