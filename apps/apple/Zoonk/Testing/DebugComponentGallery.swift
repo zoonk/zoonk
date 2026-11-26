@@ -68,6 +68,7 @@
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "match", title: "Match cards") { MatchCards() }
+          GallerySection(id: "questionBar", title: "Question bar") { QuestionBar() }
           GallerySection(id: "code", title: "Code") { Code() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
@@ -1130,6 +1131,34 @@
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  /// A phone's question bar (`PracticeBarLines`) in English and in German, whose "I don't know yet"
+  /// is longer than its Continue.
+  private struct QuestionBar: View {
+    private let rows: [(dontKnow: String, main: String)] = [
+      ("I don't know yet", "Check"), ("Ich weiß es noch nicht", "Weiter"),
+    ]
+
+    var body: some View {
+      ForEach(rows, id: \.dontKnow) { row in
+        PracticeActionRow {
+          QuestionDontKnowButton(
+            title: LocalizedStringResource(stringLiteral: row.dontKnow), action: {})
+          PracticeMainButton(title: LocalizedStringResource(stringLiteral: row.main), action: {})
+          Button {
+          } label: {
+            Label {
+              Text(verbatim: "Ask Pip")
+            } icon: {
+              Image(systemName: "bubble.left")
+            }
+          }
+          .tutorAskIcon()
+        }
+        .padding(.vertical, 8)
+      }
     }
   }
 
