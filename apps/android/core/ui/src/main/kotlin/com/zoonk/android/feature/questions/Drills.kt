@@ -39,6 +39,7 @@ import com.zoonk.android.ui.components.LessonSummaryIdeas
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.glyphInk
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -243,7 +244,10 @@ internal fun announcedSeconds(
         else -> announced
     }
 
-/** A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's. */
+/**
+ * A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's, and on a phone on
+ * the bar's line above it, so the main action keeps its row.
+ */
 @Composable
 fun NotSureButton(
     onClick: () -> Unit,
@@ -256,7 +260,7 @@ fun NotSureButton(
     OutlinedButton(
         busy = busy,
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.taskOption(),
         enabled = enabled,
         focusableWhenDisabled = focusableWhenDisabled,
         leadingIcon = { ButtonIcon(R.drawable.ic_help) },
