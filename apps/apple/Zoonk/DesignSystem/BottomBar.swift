@@ -5,9 +5,8 @@ extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
   /// `safeAreaBar` on the page's background under a hairline, so content scrolls out of sight under
   /// it and never shows through its see-through outline buttons. Its buttons are 44pt,
-  /// 8pt apart in one row, the main action last (or followed only by a task's Ask) and taking the
-  /// room the others leave; when they don't fit one row, or at an accessibility text size, they
-  /// stack, each as wide as the bar. On a wide bar the row sits at the bar's end, the main action at
+  /// 8pt apart, the main action last (or followed only by a task's Ask) and taking the room the
+  /// others leave on its line (`BarLines`). On a wide bar the row sits at the bar's end, the main action at
   /// its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
@@ -60,17 +59,10 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
       } else {
         // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht") sits on
         // its own line above the main action, and is read first, as drawn.
-        ViewThatFits(in: .horizontal) {
-          HStack(spacing: 8) {
-            actions
-          }
-          .buttonSizing(.automatic)
-
-          VStack(spacing: 8) {
-            actions
-          }
-          .buttonSizing(.flexible)
+        BarLines(spacing: 8) {
+          actions
         }
+        .buttonSizing(.flexible)
       }
     }
     .controlSize(.large)

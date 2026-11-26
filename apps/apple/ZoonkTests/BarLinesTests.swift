@@ -2,16 +2,16 @@ import XCTest
 
 @testable import Zoonk
 
-/// A phone's practice bar shares its lines as main's and Android's do.
-final class PracticeBarLinesTests: XCTestCase {
-  private typealias Slot = PracticeBarLines.Slot
+/// A phone's bar shares its lines as main's and Android's do.
+final class BarLinesTests: XCTestCase {
+  private typealias Slot = BarLines.Slot
 
   private func lines(_ slots: [Slot], width: CGFloat) -> [[Int]] {
-    PracticeBarLines.lines(slots, width: width, gap: 8).map { $0.map(\.0) }
+    BarLines.lines(slots, width: width, gap: 8).map { $0.map(\.0) }
   }
 
   private func widths(_ slots: [Slot], width: CGFloat) -> [[CGFloat]] {
-    PracticeBarLines.lines(slots, width: width, gap: 8).map { $0.map(\.1) }
+    BarLines.lines(slots, width: width, gap: 8).map { $0.map(\.1) }
   }
 
   func testTheMainActionTakesWhatTheAnswerBesideItLeavesWithTheAskAfterIt() {

@@ -1134,8 +1134,8 @@
     }
   }
 
-  /// A phone's question bar (`PracticeBarLines`) in English and in German, whose "I don't know yet"
-  /// is longer than its Continue.
+  /// A phone's question bars (`BarLines`) in English and in German, whose "I don't know yet" is
+  /// longer than its Continue: a practice question's, then a lesson's with its way back.
   private struct QuestionBar: View {
     private let rows: [(dontKnow: String, main: String)] = [
       ("I don't know yet", "Check"), ("Ich weiß es noch nicht", "Weiter"),
@@ -1147,18 +1147,38 @@
           QuestionDontKnowButton(
             title: LocalizedStringResource(stringLiteral: row.dontKnow), action: {})
           PracticeMainButton(title: LocalizedStringResource(stringLiteral: row.main), action: {})
-          Button {
-          } label: {
-            Label {
-              Text(verbatim: "Ask Pip")
-            } icon: {
-              Image(systemName: "bubble.left")
-            }
-          }
-          .tutorAskIcon()
+          ask
         }
         .padding(.vertical, 8)
       }
+
+      ForEach(rows, id: \.main) { row in
+        BarLines(spacing: 8) {
+          StepBackButton(label: Text(verbatim: "Previous screen")) {}
+          Button(row.dontKnow) {}
+            .buttonStyle(.outline.tight)
+          Button(row.main) {}
+            .buttonStyle(.mainAction)
+            .barMainAction()
+          ask
+        }
+        .buttonSizing(.flexible)
+        .controlSize(.large)
+        .environment(\.mainActionFillsRow, true)
+        .padding(.vertical, 8)
+      }
+    }
+
+    private var ask: some View {
+      Button {
+      } label: {
+        Label {
+          Text(verbatim: "Ask Pip")
+        } icon: {
+          Image(systemName: "bubble.left")
+        }
+      }
+      .tutorAskIcon()
     }
   }
 
