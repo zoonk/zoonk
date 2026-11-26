@@ -86,17 +86,18 @@ function useStatsPaletteItems({ searching }: { searching: boolean }): PaletteIte
 }
 
 /** The lessons the learner chose to keep, then the ones they finished, as the sidebar lists them. */
-function useLessonListItems(places: LearnerSummary["places"] | undefined): PaletteItem[] {
+function useLessonListItems(learner: LearnerPalette | undefined): PaletteItem[] {
   const t = useExtracted();
+  const { places } = learner ?? UNREAD_LEARNER_PALETTE;
 
   return [
-    places?.savedLessons &&
+    places.savedLessons &&
       createNavigationPaletteItem({
         id: "saved-lessons",
         label: t("Saved lessons"),
         menu: getMenu("savedLessons"),
       }),
-    places?.completedLessons &&
+    places.completedLessons &&
       createNavigationPaletteItem({
         id: "completed-lessons",
         label: t("Completed lessons"),
@@ -116,7 +117,7 @@ export function useLearnerPaletteGroups({
   const continueItem = useContinueItem(learner?.today ?? null);
   const buddy = useBuddyName(learner?.buddy ?? null);
   const statsPages = useStatsPaletteItems({ searching });
-  const lessonLists = useLessonListItems(learner?.places);
+  const lessonLists = useLessonListItems(learner);
 
   if (!learner) {
     return null;
