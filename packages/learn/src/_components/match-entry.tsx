@@ -10,18 +10,48 @@ import { ANSWER_BOX_CLASS, ANSWER_TONE } from "./answer-tone";
 import { DoneMark } from "./status-mark";
 
 /**
- * `matched` is a pair the learner made that nothing has checked yet; `right` is a pair checked and
- * kept; `wrong` is a try that didn't go together, shown for a moment.
+ * `matched` is a pair the learner made that nothing has checked yet. On a board that checks each
+ * try, `right` is a pair that just locked and `done` the same pair once it settles out of the way;
+ * `wrong` is a try that didn't go together, shown for a moment. In the solved rows a pair is `right`,
+ * or `missed` when its left card had a wrong try first.
  */
-export type MatchEntryState = "idle" | "matched" | "right" | "selected" | "wrong";
+export type MatchEntryState =
+  | "done"
+  | "idle"
+  | "matched"
+  | "missed"
+  | "right"
+  | "selected"
+  | "wrong";
 
 const ENTRY_TONE: Record<MatchEntryState, string> = {
+  done: cn(ANSWER_TONE.idle, "bg-muted text-muted-foreground"),
   idle: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
   matched: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
+  missed: ANSWER_TONE.wrong,
   right: ANSWER_TONE.right,
   selected: cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
   wrong: cn(ANSWER_TONE.wrong, "motion-safe:animate-shake"),
 };
+
+const SETTLED: ReadonlySet<MatchEntryState> = new Set(["done", "missed", "right"]);
+
+/** A pick's mark in ink, as a radio's dot; where a keyboard picks the card, its key turns ink instead. */
+function PickMark({ keyLabel }: { keyLabel: string | null }) {
+  return (
+    <>
+      {keyLabel && (
+        <Kbd className="bg-selected text-selected-foreground hidden ring-0 pointer-fine:inline-flex">
+          {keyLabel}
+        </Kbd>
+      )}
+      <span
+        className={cn("bg-selected size-2.5 rounded-full", keyLabel && "pointer-fine:hidden")}
+        data-slot="match-pick-mark"
+      />
+    </>
+  );
+}
 
 function EntryMark({
   index,
@@ -38,6 +68,14 @@ function EntryMark({
     return <DoneMark />;
   }
 
+  if (state === "done") {
+    return <DoneMark className="text-muted-foreground" />;
+  }
+
+  if (state === "missed") {
+    return <DoneMark className="text-destructive" />;
+  }
+
   if (state === "wrong") {
     return <XIcon aria-hidden="true" className="text-destructive size-4" />;
   }
@@ -50,33 +88,28 @@ function EntryMark({
     );
   }
 
-  const key = pickKey(index);
+  const key = keyed ? pickKey(index) : null;
 
-  if (!key || !keyed) {
+  if (state === "selected") {
+    return <PickMark keyLabel={key ?? null} />;
+  }
+
+  if (!key) {
     return null;
   }
 
-  return (
-    <Kbd
-      className={cn(
-        "hidden pointer-fine:inline-flex",
-        state === "selected" && "bg-selected text-selected-foreground ring-0",
-      )}
-    >
-      {key}
-    </Kbd>
-  );
+  return <Kbd className="hidden pointer-fine:inline-flex">{key}</Kbd>;
 }
 
 /**
  * One side of a pair on every screen that asks to match these with those. Its text starts at the
- * card's edge; its mark (the key that picks it where there's a keyboard, then a check, a ✕ or the
- * pair's number) sits level with its first line at the end, in room every state keeps, so pairing
- * moves no text. `index` is its place on the board, the left column first and then the right, so no two
- * entries show the same number key; `pair` is the place of its pair's left entry, the number both
- * of them show while the pair is unchecked. An entry answers its key only while it shows it.
- * `label` is what a screen reader hears when that isn't the text drawn, such as "pregnant, matched
- * with grávida".
+ * card's top edge; its mark (the key that picks it where there's a keyboard, the pick's dot, then a
+ * check, a ✕ or the pair's number) sits level with its first line at the end, in room every state
+ * keeps, so pairing moves no text. `index` is its place on the board, the left column first and
+ * then the right, so no two entries show the same number key; `pair` is the place of its pair's
+ * left entry, the number both of them show while the pair is unchecked. An entry answers its key
+ * only while it shows it. `label` is what a screen reader hears when that isn't the text drawn,
+ * such as "pregnant, matched with grávida".
  */
 export function MatchEntry({
   children,
@@ -94,7 +127,7 @@ export function MatchEntry({
   pair?: number;
   state?: MatchEntryState;
 }) {
-  const settled = state === "right";
+  const settled = SETTLED.has(state);
   const locked = disabled || settled;
   const keyed = !locked && state !== "matched";
 
@@ -104,7 +137,7 @@ export function MatchEntry({
       aria-pressed={settled ? undefined : state === "selected"}
       className={cn(
         ANSWER_BOX_CLASS,
-        "h-full items-center px-3",
+        "h-full px-3",
         "focus-visible:outline-ring/50 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ENTRY_TONE[state],
         className,

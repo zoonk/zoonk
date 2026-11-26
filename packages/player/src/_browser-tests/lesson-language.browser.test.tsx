@@ -333,6 +333,10 @@ describe("language lesson screens", () => {
 
     await expect
       .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
       .toHaveAttribute("data-state", "right");
 
     await expect.element(next).toBeEnabled();

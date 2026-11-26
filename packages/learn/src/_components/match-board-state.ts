@@ -13,6 +13,8 @@ type Selection = { index: number; side: MatchSide };
 export type MatchBoardState = {
   /** The wrong try showing right now. */
   cue: MatchTry | null;
+  /** The pair that just locked, shown right for a moment before it settles. */
+  locked: MatchTry | null;
   /** The last try, while it was a wrong one. */
   missed: MatchTry | null;
   misses: MatchTry[];
@@ -35,19 +37,22 @@ type Tap = {
   total: number;
 };
 
-/** `pairs` is a board the learner already finished. */
+/** A board the learner already finished: each left card's partner, and the wrong tries before. */
+export type FinishedBoard = { misses?: MatchTry[]; pairs: number[] };
+
 export function createMatchBoard({
+  finished,
   leftCount,
-  pairs,
 }: {
+  finished?: FinishedBoard;
   leftCount: number;
-  pairs?: number[];
 }): MatchBoardState {
   return {
     cue: null,
+    locked: null,
     missed: null,
-    misses: [],
-    pairs: pairs ?? Array.from({ length: leftCount }, () => UNPAIRED),
+    misses: finished?.misses ?? [],
+    pairs: finished?.pairs ?? Array.from({ length: leftCount }, () => UNPAIRED),
     selected: null,
   };
 }
@@ -115,23 +120,48 @@ export function tapCard(
   );
 
   return {
-    board: { ...board, cue: null, missed: null, pairs, selected: null },
+    board: {
+      ...board,
+      cue: null,
+      locked: isPair ? attempt : null,
+      missed: null,
+      pairs,
+      selected: null,
+    },
     move: { attempt, done: pairedCount(pairs) === total, kind: "pair" },
   };
 }
 
-/** How a card looks: picked, paired, locked right, or a wrong try. */
+/**
+ * How a card looks: picked, paired, a wrong try, or locked. A locked pair shows right for a moment,
+ * then settles out of the way of the cards still to match. Once the board shows its pairs as rows
+ * (`rows`), each locked pair is right, and a pair whose left card had a wrong try is marked missed.
+ */
 export function cardState(
   board: MatchBoardState,
-  { checks, index, side }: { checks: boolean; index: number; side: MatchSide },
+  { checks, index, rows, side }: { checks: boolean; index: number; rows: boolean; side: MatchSide },
 ): MatchEntryState {
-  const { cue, pairs, selected } = board;
+  const { cue, locked, misses, pairs, selected } = board;
+  const partner = partnerIn(pairs, side, index);
 
-  if (partnerIn(pairs, side, index) !== UNPAIRED) {
-    return checks ? "right" : "matched";
+  const isIn = (attempt: MatchTry | null) =>
+    attempt !== null && (side === "left" ? attempt.left : attempt.right) === index;
+
+  if (partner !== UNPAIRED) {
+    const left = side === "left" ? index : partner;
+
+    if (!checks) {
+      return "matched";
+    }
+
+    if (rows) {
+      return misses.some((miss) => miss.left === left) ? "missed" : "right";
+    }
+
+    return isIn(locked) ? "right" : "done";
   }
 
-  if (cue && (side === "left" ? cue.left : cue.right) === index) {
+  if (isIn(cue)) {
     return "wrong";
   }
 

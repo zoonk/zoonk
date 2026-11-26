@@ -28,8 +28,12 @@ function tapAll(
   return result;
 }
 
-const stateOf = (board: MatchBoardState, side: MatchSide, index: number) =>
-  cardState(board, { checks: true, index, side });
+const stateOf = (
+  board: MatchBoardState,
+  side: MatchSide,
+  index: number,
+  { rows = false }: { rows?: boolean } = {},
+) => cardState(board, { checks: true, index, rows, side });
 
 describe(tapCard, () => {
   it("locks a right pair, picked from either side first", () => {
@@ -42,6 +46,29 @@ describe(tapCard, () => {
     expect(board.pairs).toStrictEqual([1, -1, -1]);
     expect(board.selected).toBeNull();
     expect(stateOf(board, "right", 1)).toBe("right");
+  });
+
+  it("shows a locked pair right for its moment, then quiet, while another try's moment shows", () => {
+    const locked = tapAll([
+      ["left", 0],
+      ["right", 1],
+    ]).board;
+
+    const settled = { ...locked, locked: null };
+
+    expect(stateOf(settled, "left", 0)).toBe("done");
+    expect(stateOf(settled, "right", 1)).toBe("done");
+
+    const { board } = tapAll([
+      ["left", 0],
+      ["right", 1],
+      ["left", 1],
+      ["right", 2],
+    ]);
+
+    expect(board.locked).toStrictEqual({ left: 0, right: 1 });
+    expect(stateOf(board, "left", 0)).toBe("right");
+    expect(stateOf(board, "left", 1)).toBe("wrong");
   });
 
   it("keeps the first card picked after a wrong pair, so another partner is one tap away", () => {
@@ -101,6 +128,37 @@ describe(tapCard, () => {
     expect(tapCard(board, { index: 0, isPair, side: "left", total: 3 }).move.kind).toBe("none");
   });
 
+  it("lays out the finished rows with every pair right and a pair missed where its left card had a wrong try", () => {
+    const { board } = tapAll([
+      ["left", 0],
+      ["right", 0],
+      ["right", 1],
+      ["left", 1],
+      ["right", 0],
+      ["left", 2],
+      ["right", 2],
+    ]);
+
+    expect([0, 1, 2].map((left) => stateOf(board, "left", left, { rows: true }))).toStrictEqual([
+      "missed",
+      "right",
+      "right",
+    ]);
+
+    expect(stateOf(board, "right", KEY[0] ?? -1, { rows: true })).toBe("missed");
+    expect(stateOf(board, "right", 0, { rows: true })).toBe("right");
+  });
+
+  it("marks the missed pairs of a board the learner already finished", () => {
+    const board = createMatchBoard({
+      finished: { misses: [{ left: 2, right: 0 }], pairs: KEY },
+      leftCount: 3,
+    });
+
+    expect(stateOf(board, "left", 2, { rows: true })).toBe("missed");
+    expect(stateOf(board, "left", 0, { rows: true })).toBe("right");
+  });
+
   it("without a key, pairs any two cards and undoes a pair from either of its cards", () => {
     const paired = tapAll(
       [
@@ -112,7 +170,9 @@ describe(tapCard, () => {
 
     expect(paired.board.pairs).toStrictEqual([2, -1, -1]);
 
-    expect(cardState(paired.board, { checks: false, index: 2, side: "right" })).toBe("matched");
+    expect(cardState(paired.board, { checks: false, index: 2, rows: false, side: "right" })).toBe(
+      "matched",
+    );
 
     const undone = tapCard(paired.board, { index: 2, side: "right", total: 3 });
 

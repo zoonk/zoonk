@@ -2,10 +2,12 @@
 
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { useSentenceSpace } from "../_utils/locale";
 import {
+  type FinishedBoard,
+  type MatchBoardState,
   type MatchMove,
   type MatchSide,
   type MatchTry,
@@ -21,8 +23,27 @@ export { type MatchSide, type MatchTry } from "./match-board-state";
 
 export type MatchBoardAnswer = { matches: number[]; misses: MatchTry[] };
 
-/** How long a wrong try shows: the shake, then a beat to see which two it was. */
-const MISS_CUE_MS = 600;
+/** How long a try shows its verdict: the shake or the lock, then a beat to see which two it was. */
+const CUE_MS = 600;
+
+/** Ends a try's moment, unless a newer try took its place. */
+function useCueEnd(
+  cue: MatchTry | null,
+  kind: "cue" | "locked",
+  setBoard: Dispatch<SetStateAction<MatchBoardState>>,
+) {
+  useEffect(() => {
+    if (!cue) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setBoard((current) => (current[kind] === cue ? { ...current, [kind]: null } : current));
+    }, CUE_MS);
+
+    return () => clearTimeout(timeout);
+  }, [cue, kind, setBoard]);
+}
 
 function otherSide(side: MatchSide): MatchSide {
   return side === "left" ? "right" : "left";
@@ -70,10 +91,10 @@ function useMoveLine({
  * Picking, pairing and announcing on a "match these with those" board, the same on every screen
  * that draws one (`tapCard` says what a tap does).
  *
- * With `isPair` each try is checked as it's made: a right pair locks, a wrong one shows for a
- * moment, and the last pair lays the board out as rows and calls `onComplete` with the pairs and
- * every wrong try, in order. Without it (a test) the learner's pairs wait for a grade, and
- * `onChange` gets them once every card is paired, null before.
+ * With `isPair` each try is checked as it's made: a right pair locks (right for a moment, then
+ * quiet), a wrong one shows for a moment, and the last pair lays the board out as rows and calls
+ * `onComplete` with the pairs and every wrong try, in order. Without it (a test) the learner's
+ * pairs wait for a grade, and `onChange` gets them once every card is paired, null before.
  *
  * `say` is a card's text as a screen reader reads it; `explainMiss` adds why a wrong try was wrong.
  * `reveal` shows the answer as rows ("I don't know yet"), the pairs the learner didn't make
@@ -94,8 +115,7 @@ export function useMatchBoard({
 }: {
   disabled?: boolean;
   explainMiss?: (attempt: MatchTry) => string | null;
-  /** A board the learner already finished: for each left card, its partner's place. */
-  finished?: number[];
+  finished?: FinishedBoard;
   isPair?: (attempt: MatchTry) => boolean;
   /** Whether number keys pick cards; off while something over the screen has them. */
   keys?: boolean;
@@ -110,23 +130,15 @@ export function useMatchBoard({
   const { trigger } = useWebHaptics();
   const total = Math.min(leftCount, rightCount);
   const moveLine = useMoveLine({ explainMiss, say, total });
-  const [board, setBoard] = useState(() => createMatchBoard({ leftCount, pairs: finished }));
+  const [board, setBoard] = useState(() => createMatchBoard({ finished, leftCount }));
   const [said, setSaid] = useState("");
-  const { cue, pairs } = board;
+  const { pairs } = board;
   const checks = isPair !== undefined;
   const complete = pairedCount(pairs) === total;
+  const solved = reveal ?? (checks && complete ? pairs : null);
 
-  useEffect(() => {
-    if (!cue) {
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      setBoard((current) => (current.cue === cue ? { ...current, cue: null } : current));
-    }, MISS_CUE_MS);
-
-    return () => clearTimeout(timeout);
-  }, [cue]);
+  useCueEnd(board.cue, "cue", setBoard);
+  useCueEnd(board.locked, "locked", setBoard);
 
   function pick(side: MatchSide, index: number) {
     if (disabled) {
@@ -205,13 +217,13 @@ export function useMatchBoard({
         label: label(side, index),
         onClick: () => pick(side, index),
         pair: partner === UNPAIRED ? undefined : left,
-        state: cardState(board, { checks, index, side }),
+        state: cardState(board, { checks, index, rows: solved !== null, side }),
       };
     },
     /** The last try, while it was a wrong one. */
     missed: board.missed,
     paired: pairedCount(pairs),
     /** For each left card, its partner's place when the board shows rows: solved or revealed. */
-    solved: reveal ?? (checks && complete ? pairs : null),
+    solved,
   };
 }
