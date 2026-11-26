@@ -44,6 +44,7 @@ export const completedLessonSchema = z
           "The `key` of its group in `filter.groups`. Null when the list has no `filter`, or the lesson is in none of the plan's groups",
       }),
     lessonId: uuidSchema(),
+    saved: z.boolean().meta({ description: "The learner saved the lesson" }),
     title: z.string().meta({ description: "The lesson's current title" }),
   })
   .meta({ id: "CompletedLesson" });

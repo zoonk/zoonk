@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma, sql } from "@zoonk/db";
 import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getUserProgressCacheTag } from "../cache/tags";
+import { getGoalsCacheTag, getSavedLessonsCacheTag, getUserProgressCacheTag } from "../cache/tags";
+import { readSavedLessonIds } from "../learner/facts/saved-lessons";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { loadSkillGroups } from "../view-models/syllabus/_utils/load-syllabus";
 import { groupCompletedLessons } from "./_utils/completed-lesson-groups";
@@ -37,15 +38,19 @@ export async function listCurrentUserCompletedLessons(
     return owned;
   }
 
-  cacheTag(getUserProgressCacheTag(owned.userId), getGoalsCacheTag(owned.userId));
+  cacheTag(
+    getUserProgressCacheTag(owned.userId),
+    getGoalsCacheTag(owned.userId),
+    getSavedLessonsCacheTag(owned.userId),
+  );
 
   const runs = completedLessonRuns({
     goalId: sql`${owned.goal.id}::uuid`,
     userId: sql`${owned.userId}::uuid`,
   });
 
-  const [rows, groups] = await Promise.all([
-    prisma.$queryRaw<(Omit<CompletedLesson, "group"> & { skillIds: string[] })[]>`
+  const [rows, groups, savedLessonIds] = await Promise.all([
+    prisma.$queryRaw<(Omit<CompletedLesson, "group" | "saved"> & { skillIds: string[] })[]>`
       SELECT
         latest.lesson_id AS "lessonId",
         latest.title,
@@ -72,6 +77,7 @@ export async function listCurrentUserCompletedLessons(
       LEFT JOIN library_chapters chapter ON chapter.id = latest.home_chapter_id
       ORDER BY latest.ended_at DESC, latest.lesson_id`,
     loadSkillGroups(owned.goal),
+    readSavedLessonIds(owned.userId),
   ]);
 
   const { filter, keys } = groupCompletedLessons({
@@ -85,6 +91,7 @@ export async function listCurrentUserCompletedLessons(
     finishedOn,
     group: keys[index] ?? null,
     lessonId,
+    saved: savedLessonIds.has(lessonId),
     title,
   }));
 

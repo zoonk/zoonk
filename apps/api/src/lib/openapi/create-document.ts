@@ -64,6 +64,7 @@ import { progressPaths } from "./paths/progress";
 import { pronunciationPaths } from "./paths/pronunciation";
 import { researchSourcePaths } from "./paths/research-sources";
 import { reviewFlagPaths } from "./paths/review-flags";
+import { savedLessonPaths } from "./paths/saved-lessons";
 import { sessionPaths } from "./paths/sessions";
 import { skillOutlinePaths } from "./paths/skill-outlines";
 import { speechClipPaths } from "./paths/speech-clips";
@@ -163,6 +164,7 @@ const paths = withInternalErrorResponses({
   ...memoryPaths,
   ...milestonePaths,
   ...mindMapPaths,
+  ...savedLessonPaths,
   ...skillOutlinePaths,
   ...mistakePaths,
   ...mockPaths,

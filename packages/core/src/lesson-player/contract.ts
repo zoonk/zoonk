@@ -227,6 +227,7 @@ export const libraryLessonRunSchema = z
           "True when the learner already finished this lesson, so no next lesson follows it",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
+    saved: z.boolean().meta({ description: "The learner saved the lesson" }),
     sessionId: uuidSchema()
       .nullable()
       .meta({ description: "The run's canonical study session, or null for standalone work" }),
