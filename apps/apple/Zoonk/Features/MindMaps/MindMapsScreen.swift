@@ -11,6 +11,7 @@ struct MindMapsScreen: View {
   var subjectKey: String?
 
   @State private var tab: GoalMindMaps.Tab?
+  @State private var keptSaves = KeptRows<SavedMindMap>()
 
   var body: some View {
     if let goal = learner.summary.value?.shownGoal {
@@ -34,6 +35,9 @@ struct MindMapsScreen: View {
       )
       .loads(list)
       .mindMapSaveFailureAlert(goalId: goal.id)
+      .onDisappear {
+        keptSaves = KeptRows()
+      }
       // One follower for every map on its way, each at its own pace.
       .task(id: Following(goalId: goal.id, maps: list.value)) {
         await store.followList(goalId: goal.id)
@@ -83,7 +87,7 @@ struct MindMapsScreen: View {
             case .lessons:
               MindMapLessonsTab(goalId: goal.id, maps: maps, subjectKey: subjectKey)
             case .saved:
-              MindMapSavedTab(goalId: goal.id, maps: maps)
+              MindMapSavedTab(goalId: goal.id, maps: maps, kept: $keptSaves)
             }
           }
           .onAppear {
@@ -162,7 +166,7 @@ struct MindMapsScreen: View {
     case .lessons:
       maps.lessonGroups.reduce(0) { $0 + $1.lessonIds.count }
     case .saved:
-      maps.saved.count { $0.available && store.isSaved($0.key, server: true) }
+      maps.saved.count { $0.available && store.saves.isSaved($0.key, server: true) }
     }
   }
 }
@@ -477,13 +481,14 @@ private struct MindMapSavedTab: View {
 
   let goalId: String
   let maps: GoalMindMaps
+  @Binding var kept: KeptRows<SavedMindMap>
 
   var body: some View {
-    let shown = maps.saved.filter { store.isSaved($0.key, server: true) }
-    let open = shown.filter(\.available)
-    let gone = shown.filter { !$0.available }
+    let open = kept.rows(
+      maps.saved.filter { $0.available && store.saves.isSaved($0.key, server: true) })
+    let gone = maps.saved.filter { !$0.available && store.saves.isSaved($0.key, server: true) }
 
-    if shown.isEmpty {
+    if open.isEmpty, gone.isEmpty {
       EmptyTab {
         Text(
           "Nothing saved yet", tableName: "MindMaps",
@@ -495,33 +500,28 @@ private struct MindMapSavedTab: View {
       }
     }
 
-    let items = open.map { SavedItem(save: $0, chapter: $0.chapterId.flatMap(maps.chapter)) }
-
     Section {
-      ForEach(items) { SavedRow(goalId: goalId, item: $0) }
+      ForEach(open) { save in
+        SavedRow(
+          goalId: goalId, save: save, chapter: save.chapterId.flatMap(maps.chapter),
+          isListed: maps.saved.contains { $0.key == save.key }
+        ) {
+          kept.keep(save, shown: open)
+        }
+      }
     }
 
     if !gone.isEmpty {
       Section {
-        ForEach(gone, id: \.key) { save in
-          LabeledContent {
-            Button {
-              store.setSaved(
-                false, target: SaveTarget(key: save.key, title: save.title, chapterId: nil),
-                goalId: goalId)
-            } label: {
-              Text("Remove", tableName: "MindMaps", comment: "Removes a saved map")
-            }
-            .buttonStyle(.outline)
-            .controlSize(.small)
-          } label: {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(save.title)
-                .typeStyle(.rowTitle)
-                .foregroundStyle(.mutedForeground)
-
-              SavedKind(kind: save.kind)
-            }
+        ForEach(gone) { save in
+          UnavailableSaveRow(
+            title: save.title,
+            remove: Text("Remove", tableName: "MindMaps", comment: "Removes a saved map")
+          ) {
+            store.saves.set(
+              false, SaveTarget(key: save.key, title: save.title, chapterId: nil), goalId: goalId)
+          } detail: {
+            SavedKind(kind: save.kind)
           }
         }
       } header: {
@@ -534,54 +534,75 @@ private struct MindMapSavedTab: View {
   }
 }
 
-private struct SavedItem: Identifiable {
-  let save: SavedMindMap
-  let chapter: ChapterMindMap?
-
-  var id: MindMapKey { save.key }
+extension SavedMindMap: Identifiable {
+  var id: MindMapKey { key }
 }
 
-/// Opens the Saved deck at this map; a swipe or its menu takes it out.
+/// Opens the Saved deck at this map; its bookmark, a swipe or its menu takes it out, and the row
+/// stays with its bookmark empty until the learner leaves the page.
 private struct SavedRow: View {
   @Environment(AppRouter.self) private var router
+  @Environment(MindMapsStore.self) private var store
 
   let goalId: String
-  let item: SavedItem
+  let save: SavedMindMap
+  let chapter: ChapterMindMap?
+  /// The last read lists it: a row kept after its removal isn't.
+  let isListed: Bool
+  let keep: () -> Void
 
   var body: some View {
-    let save = item.save
-    let target = SaveTarget(key: save.key, title: save.title, chapterId: save.chapterId)
+    let isSaved = store.saves.isSaved(save.key, server: isListed)
 
-    Button {
-      router.open(
-        .mindMapStudy(
-          goalId: goalId, tab: .saved,
-          start: save.chapterId.map { MindMapPosition(chapterId: $0, key: save.key) }))
-    } label: {
-      MarkedRow(alignment: .center) {
-        MindMapSlot(MindMapSlotLook(kind: save.kind, picture: thumbnail)) {
-          Image(systemName: save.kind == .lesson ? LessonMapView.symbol : "map")
-            .foregroundStyle(.mutedForeground)
-        }
-      } content: {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(save.title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
+    HStack(spacing: 4) {
+      Button {
+        router.open(
+          .mindMapStudy(
+            goalId: goalId, tab: .saved,
+            start: save.chapterId.map { MindMapPosition(chapterId: $0, key: save.key) }))
+      } label: {
+        MarkedRow(alignment: .center) {
+          MindMapSlot(MindMapSlotLook(kind: save.kind, picture: thumbnail)) {
+            Image(systemName: save.kind == .lesson ? LessonMapView.symbol : "map")
+              .foregroundStyle(.mutedForeground)
+          }
+        } content: {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(save.title)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
 
-          SavedKind(kind: save.kind)
+            SavedKind(kind: save.kind)
+          }
+          .accessibilityElement(children: .combine)
+        } end: {
+          EmptyView()
         }
-        .accessibilityElement(children: .combine)
-      } end: {
-        EmptyView()
       }
-      .disclosureChevron()
+
+      RowSaveToggle(isSaved: isSaved, save: MindMapSaveWords.save, saved: MindMapSaveWords.saved) {
+        toggle(isSaved)
+      }
     }
-    .savesMindMap(target, goalId: goalId, server: true)
+    .savesFromRow(
+      isSaved: isSaved, save: MindMapSaveWords.save,
+      remove: Text(
+        "Remove from saved", tableName: "MindMaps",
+        comment: "Takes a map out of the learner's saved maps")
+    ) {
+      toggle(isSaved)
+    }
+  }
+
+  private func toggle(_ isSaved: Bool) {
+    keep()
+    store.saves.set(
+      !isSaved, SaveTarget(key: save.key, title: save.title, chapterId: save.chapterId),
+      goalId: goalId)
   }
 
   private var thumbnail: URL? {
-    item.chapter?.image.flatMap { URL(string: $0.thumbnailUrl ?? $0.url) }
+    chapter?.image.flatMap { URL(string: $0.thumbnailUrl ?? $0.url) }
   }
 }
 

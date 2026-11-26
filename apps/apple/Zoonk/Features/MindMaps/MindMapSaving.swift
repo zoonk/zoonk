@@ -20,23 +20,22 @@ struct MindMapSaveButton: View {
   let server: Bool
 
   var body: some View {
-    let isSaved = store.isSaved(target.key, server: server)
+    let isSaved = store.saves.isSaved(target.key, server: server)
 
-    Button {
-      store.setSaved(!isSaved, target: target, goalId: goalId)
-    } label: {
-      Label {
-        if isSaved {
-          Text("Saved", tableName: "MindMaps", comment: "A map the learner saved to study again")
-        } else {
-          Text("Save", tableName: "MindMaps", comment: "Saves a map to study again")
-        }
-      } icon: {
-        Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
-      }
+    SaveToggle(isSaved: isSaved, save: MindMapSaveWords.save, saved: MindMapSaveWords.saved) {
+      store.saves.set(!isSaved, target, goalId: goalId)
     }
-    .accessibilityAddTraits(isSaved ? .isSelected : [])
-    .sensoryFeedback(.selection, trigger: isSaved)
+  }
+}
+
+/// A saved map's words, the map's own: other saved things agree differently in some languages.
+enum MindMapSaveWords {
+  static var save: Text {
+    Text("Save", tableName: "MindMaps", comment: "Saves a map to study again")
+  }
+
+  static var saved: Text {
+    Text("Saved", tableName: "MindMaps", comment: "A map the learner saved to study again")
   }
 }
 
@@ -65,31 +64,18 @@ private struct SavesMindMap: ViewModifier {
 
   func body(content: Content) -> some View {
     if isAvailable {
-      content
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) { button }
-        .contextMenu { button }
+      let isSaved = store.saves.isSaved(target.key, server: server)
+
+      content.savesFromRow(
+        isSaved: isSaved, save: MindMapSaveWords.save,
+        remove: Text(
+          "Remove from saved", tableName: "MindMaps",
+          comment: "Takes a map out of the learner's saved maps")
+      ) {
+        store.saves.set(!isSaved, target, goalId: goalId)
+      }
     } else {
       content
-    }
-  }
-
-  private var button: some View {
-    let isSaved = store.isSaved(target.key, server: server)
-
-    return Button {
-      store.setSaved(!isSaved, target: target, goalId: goalId)
-    } label: {
-      Label {
-        if isSaved {
-          Text(
-            "Remove from saved", tableName: "MindMaps",
-            comment: "Takes a map out of the learner's saved maps")
-        } else {
-          Text("Save", tableName: "MindMaps", comment: "Saves a map to study again")
-        }
-      } icon: {
-        Image(systemName: isSaved ? "bookmark.slash" : "bookmark")
-      }
     }
   }
 }
@@ -100,22 +86,14 @@ private struct MindMapSaveFailureAlert: ViewModifier {
   let goalId: String
 
   func body(content: Content) -> some View {
-    content.alert(
-      Text(
-        "Couldn't save this map. Try again.", tableName: "MindMaps",
-        comment: "Saving or removing a saved map didn't work, so it's back as it was"),
-      isPresented: Binding(
-        get: { store.saveFailed(goalId: goalId) },
-        set: { isPresented in
-          if !isPresented {
-            store.dismissSaveFailure()
-          }
-        })
-    ) {
-      Button(role: .cancel) {
-      } label: {
-        Text("OK", tableName: "MindMaps", comment: "Closes the message that a save didn't work")
+    content.saveFailureAlert(
+      store.saves.failure(goalId: goalId).map { _ in
+        Text(
+          "Couldn't save this map. Try again.", tableName: "MindMaps",
+          comment: "Saving or removing a saved map didn't work, so it's back as it was")
       }
+    ) {
+      store.saves.dismissFailure()
     }
   }
 }
