@@ -239,7 +239,7 @@ private struct MatchMark: View {
         Circle().fill(fill)
         glyph
           .foregroundStyle(Color(.background))
-          .padding(size * 0.25)
+          .padding(state == .right ? size * 0.25 : 2)
       }
       .frame(width: size, height: size)
       .offset(x: size / 3, y: -size / 3)
