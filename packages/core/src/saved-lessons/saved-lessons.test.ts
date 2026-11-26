@@ -6,7 +6,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockAccountSession, mockSession } from "../_test-utils/mock-session";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
 import { listCurrentUserSavedLessons } from "./list-saved-lessons";
 import { saveLesson } from "./save-lesson";
@@ -14,7 +14,7 @@ import { saveLesson } from "./save-lesson";
 async function signedInLearner() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
-  mockSession(user.id);
+  mockAccountSession({ user });
   return { goal, user };
 }
 
