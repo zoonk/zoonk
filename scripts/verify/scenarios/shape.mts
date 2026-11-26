@@ -62,7 +62,6 @@ export type Scenario = {
   pair?: { change: string[]; placeholder?: boolean; with: string };
 };
 
-/** The screen's main action, pinned to its bottom edge. */
 export const PINNED_ACTION: Anchor = {
   id: "pinned-action",
   web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",

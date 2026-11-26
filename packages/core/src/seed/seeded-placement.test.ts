@@ -13,7 +13,6 @@ import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { pickPlacementItemSkills } from "../lookahead/placement-item-skills";
 import { seedPersonaCopy } from "./seed";
 
-/** Each skill's questions a model would still have to write, so a failure names what to add. */
 function listMissing(picks: Awaited<ReturnType<typeof pickPlacementItemSkills>>) {
   return picks.skills.map(
     (skill) =>
