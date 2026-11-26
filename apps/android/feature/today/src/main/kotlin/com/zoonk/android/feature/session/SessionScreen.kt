@@ -452,7 +452,7 @@ internal fun NextStop(
         TaskScaffold(
             onClose = { if (quiz.showingProgress && quiz.hasQuiz) quiz.back() else navigator.closeTask() },
             modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
-            title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
+            title = { Text(stringResource(R.string.navigation_today), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
             bottomBar =
                 if ((waiting && !failed && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null ||
                     instead != null ||
