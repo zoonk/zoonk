@@ -884,8 +884,9 @@ struct SyllabusSubjectRow: View {
         }
       }
     } value: {
-      if !subject.isExtra {
-        Text(share, format: .percent.precision(.fractionLength(0)))
+      // A row without a bar shows only an exam's preparation, as main's does.
+      if !subject.isExtra, let shown = measured ? share : subject.preparation {
+        Text(shown, format: .percent.precision(.fractionLength(0)))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
           .frame(
