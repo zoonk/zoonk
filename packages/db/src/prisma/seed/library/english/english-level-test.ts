@@ -387,7 +387,7 @@ const questions = [
     ],
     passage:
       "The ten-thousand-steps target started, as far as anyone can tell, as a marketing slogan for a pedometer. That doesn't make it useless. Studies do show real benefits from walking more, but most of the gain comes well before ten thousand, somewhere around seven. So if you're hitting six thousand and feeling like a failure, I'd say you're closer to the finish line than the number on your watch suggests. Just don't stop there because of me.",
-    question: "O que o médico pensa da meta de dez mil passos?",
+    question: "O que a pessoa que fala pensa da meta de dez mil passos?",
   }),
   question("C2", "reading", 1, {
     answerIndex: 1,

@@ -40,8 +40,8 @@ export const enemPlacementLanguageItems: SeedItem[] = [
   {
     content: {
       question: t(
-        '"When Lia got home, the cake was gone and the dog had frosting on its nose. The kitchen door, which she had locked that morning, was open." Put the events in the order they must have happened.',
-        '"Quando Lia chegou em casa, o bolo tinha sumido e o cachorro estava com cobertura no focinho. A porta da cozinha, que ela tinha trancado de manhã, estava aberta." Coloque os acontecimentos na ordem em que devem ter ocorrido.',
+        '"When Lia got home, the cake was gone and the dog had frosting on its nose. The dog had spent the day in the yard. The kitchen door, which she had locked that morning, was open." Put the events in the order they must have happened.',
+        '"Quando Lia chegou em casa, o bolo tinha sumido e o cachorro estava com cobertura no focinho. O cachorro tinha passado o dia no quintal. A porta da cozinha, que ela tinha trancado de manhã, estava aberta." Coloque os acontecimentos na ordem em que devem ter ocorrido.',
       ),
       reason: t(
         "The text only says the door was locked in the morning and open later, so someone opened it before the dog could get in, eat the cake and be found by Lia.",
@@ -128,7 +128,7 @@ export const enemPlacementLanguageItems: SeedItem[] = [
       ],
       question: t(
         "Which of these can be inferred from the notice? Select all that apply.",
-        "O que se pode inferir do aviso? Marque todas as que se aplicam.",
+        "Quais afirmações se podem inferir do aviso? Marque todas as que se aplicam.",
       ),
       select: "all",
     },
@@ -299,7 +299,7 @@ export const enemPlacementLanguageItems: SeedItem[] = [
         "Ligue cada escolha de palavra ao efeito que ela tem no texto.",
       ),
       reason: t(
-        'Words with close meanings carry different judgments: "invaded" accuses, "occupied" describes, the diminutive softens and "mansion" points to wealth.',
+        'Words with close meanings carry different judgments: "invaded" accuses, "occupied" describes, "chubby" softens and "mansion" points to wealth.',
         'Palavras de sentido próximo carregam julgamentos diferentes: "invadiram" acusa, "ocuparam" descreve, o diminutivo suaviza e "mansão" aponta riqueza.',
       ),
     },
@@ -316,13 +316,13 @@ export const enemPlacementLanguageItems: SeedItem[] = [
       ),
       reason: t(
         "Each verb raises the tone: a remark only mentions, criticizing judges, attacking goes after it and tearing it apart wipes it out.",
-        "Cada verbo sobe o tom: comentar só menciona, criticar julga, atacar parte para cima e arrasar destrói.",
+        "Cada verbo sobe o tom: comentar só menciona, criticar julga, atacar parte para cima e demolir destrói.",
       ),
       steps: [
         t("remarked on", "comentou"),
         t("criticized", "criticou"),
         t("attacked", "atacou"),
-        t("tore apart", "arrasou"),
+        t("tore apart", "demoliu"),
       ],
     },
     difficulty: -1,
@@ -437,7 +437,7 @@ export const enemPlacementLanguageItems: SeedItem[] = [
         "Os povos indígenas já viviam aqui antes da chegada dos portugueses em 1500; africanos escravizados foram trazidos a partir do século 16; a escravidão foi abolida em 1888 e os primeiros imigrantes japoneses chegaram em 1908.",
       ),
       steps: [
-        t("Indigenous peoples live in the land", "Povos indígenas vivem na terra"),
+        t("Indigenous peoples live here", "Povos indígenas vivem aqui"),
         t("The Portuguese arrive", "Os portugueses chegam"),
         t("Enslaved Africans are brought by force", "Africanos escravizados são trazidos à força"),
         t("Slavery is abolished", "A escravidão é abolida"),
@@ -1063,7 +1063,7 @@ export const enemPlacementLanguageItems: SeedItem[] = [
             '"May use" means they can use it; nothing says they pay.',
             '"May use" quer dizer que eles podem usar; nada fala em pagar.',
           ),
-          t("Misread \"may\" as an obligation", "Leu \"may\" como obrigação"),
+          t('Misread "may" as an obligation', 'Leu "may" como obrigação'),
         ),
         bankOption(
           t("The gym closes for maintenance.", "A academia fecha para manutenção."),
@@ -1090,11 +1090,11 @@ export const enemPlacementLanguageItems: SeedItem[] = [
       options: [
         bankOption(
           t(
-            "Mark it, move on and come back to it at the end",
-            "Marcar, seguir em frente e voltar a ela no fim",
+            "Skip it for now and come back to it at the end",
+            "Pular por enquanto e voltar a ela no fim",
           ),
           t(
-            "Every question is worth the same time budget; easier ones later may be quick points.",
+            "All questions share the same clock; easier ones later may be quick points.",
             "Todas as questões disputam o mesmo tempo; as mais fáceis adiante podem render pontos rápidos.",
           ),
         ),
@@ -1104,7 +1104,10 @@ export const enemPlacementLanguageItems: SeedItem[] = [
             "Ten minutes on one question takes the time of three or four others.",
             "Dez minutos em uma questão tiram o tempo de outras três ou quatro.",
           ),
-          t("Thinks each question must be finished in order", "Acha que precisa terminar cada questão na ordem"),
+          t(
+            "Thinks each question must be finished in order",
+            "Acha que precisa terminar cada questão na ordem",
+          ),
         ),
         bankOption(
           t("Leave it blank for good", "Deixar em branco de vez"),
@@ -1120,7 +1123,10 @@ export const enemPlacementLanguageItems: SeedItem[] = [
             "Proctors only run the room; they can't help with any question.",
             "Os fiscais só cuidam da sala; não podem ajudar em nenhuma questão.",
           ),
-          t("Thinks the proctor can explain a question", "Acha que o fiscal pode explicar uma questão"),
+          t(
+            "Thinks the proctor can explain a question",
+            "Acha que o fiscal pode explicar uma questão",
+          ),
         ),
       ],
       question: t(

@@ -60,7 +60,7 @@ export const stockMarketPlacementItems: SeedItem[] = [
       fixedOrder: false,
       options: [
         bankOption(
-          t("You own a small piece of the company", "Você é dono de um pedaço da empresa"),
+          t("You own a small piece of the company", "Você é dono de um pedaço pequeno da empresa"),
           t(
             "1% of the shares is 1% of the company.",
             "Ter 1% das ações é ser dono de 1% da empresa.",
@@ -68,8 +68,8 @@ export const stockMarketPlacementItems: SeedItem[] = [
         ),
         bankOption(
           t(
-            "Your piece is worth more if the company is",
-            "Seu pedaço vale mais se a empresa valer",
+            "Your piece is worth more if the company grows",
+            "Seu pedaço vale mais se a empresa crescer",
           ),
           t(
             "Your slice grows and shrinks with the whole company's value.",
@@ -188,10 +188,10 @@ export const stockMarketPlacementItems: SeedItem[] = [
           ),
         ),
         bankOption(
-          t("A vote on big decisions", "Voto nas grandes decisões"),
+          t("Usually a vote on big decisions", "Em geral, voto nas grandes decisões"),
           t(
-            "Shareholders vote on things like who sits on the board.",
-            "Acionistas votam em coisas como quem fica no conselho.",
+            "Common shares vote on things like who sits on the board.",
+            "Ações ordinárias votam em coisas como quem fica no conselho.",
           ),
         ),
         bankOption(
@@ -667,7 +667,7 @@ export const stockMarketPlacementItems: SeedItem[] = [
       pairs: [
         {
           left: t("Expectation", "Expectativa"),
-          right: t("What investors think comes", "O que se acha que vem"),
+          right: t("What investors think will happen", "O que se acha que vai acontecer"),
         },
         {
           left: t("Surprise", "Surpresa"),
@@ -678,14 +678,14 @@ export const stockMarketPlacementItems: SeedItem[] = [
           right: t("Already in today's price", "Já conta no valor de hoje"),
         },
         {
-          left: t("Forecast", "Projeção"),
-          right: t("A guess at future profit", "Palpite de lucro futuro"),
+          left: t("Reaction", "Reação"),
+          right: t("How the price moves on news", "Como o preço reage à notícia"),
         },
       ],
       question: t("Match each term to what it means.", "Ligue cada termo ao que ele quer dizer."),
       reason: t(
-        "Prices follow expectations: a forecast is the guess, news already expected is priced in, and only a surprise moves the price much.",
-        "Os preços seguem as expectativas: a projeção é o palpite, a notícia esperada já está no preço e só a surpresa mexe muito nele.",
+        "Prices follow expectations: news already expected is priced in, a surprise is a result off the forecast, and the reaction is how the price moves when news comes out.",
+        "Os preços seguem as expectativas: a notícia esperada já está no preço, a surpresa é um resultado fora do previsto e a reação é como o preço se mexe quando a notícia sai.",
       ),
     },
     difficulty: 1,
@@ -1006,13 +1006,13 @@ export const stockMarketPlacementItems: SeedItem[] = [
         "Coloque em ordem as etapas para espalhar seu dinheiro.",
       ),
       reason: t(
-        "You decide the amount, choose different kinds of business, split the money among them, then check the mix from time to time.",
-        "Você decide o valor, escolhe tipos diferentes de negócio, divide o dinheiro entre eles e depois confere a mistura de tempos em tempos.",
+        "You choose different kinds of business, decide how much goes into each, buy them, then check the mix from time to time.",
+        "Você escolhe tipos diferentes de negócio, decide quanto vai para cada um, compra e depois confere a mistura de tempos em tempos.",
       ),
       steps: [
-        t("Decide how much to invest", "Decidir quanto investir"),
         t("Pick different kinds of business", "Escolher tipos diferentes de negócio"),
-        t("Split the money among them", "Dividir o dinheiro entre eles"),
+        t("Decide how much goes into each", "Decidir quanto vai para cada um"),
+        t("Buy shares of each", "Comprar ações de cada um"),
         t("Check the mix now and then", "Conferir a mistura de vez em quando"),
       ],
     },
@@ -1034,7 +1034,10 @@ export const stockMarketPlacementItems: SeedItem[] = [
           ),
         ),
         bankOption(
-          t("It calms the swings of single stocks", "Suaviza o sobe e desce de cada ação"),
+          t(
+            "Your total swings less than one stock does",
+            "O total oscila menos que uma ação sozinha",
+          ),
           t(
             "One company's drop is offset by others that hold up.",
             "A queda de uma é compensada pelas que se seguram.",
@@ -1090,7 +1093,7 @@ export const stockMarketPlacementItems: SeedItem[] = [
         },
         {
           left: t("Need it in 2 years", "Usar em 2 anos"),
-          right: t("Mostly safe, a few stocks", "Quase tudo seguro"),
+          right: t("Mostly safe, a few stocks", "Quase tudo seguro, poucas ações"),
         },
         {
           left: t("Need it in 10 years", "Usar em 10 anos"),
@@ -1257,7 +1260,10 @@ export const stockMarketPlacementItems: SeedItem[] = [
           ),
         ),
         bankOption(
-          t("The old owners now share the profits", "Os donos antigos passam a dividir o lucro"),
+          t(
+            "The old owners now share profits with the new ones",
+            "Os donos antigos passam a dividir o lucro com os novos",
+          ),
           t(
             "The new shareholders own part of the company, so part of its profit.",
             "Os novos acionistas são donos de parte da empresa e, portanto, de parte do lucro.",

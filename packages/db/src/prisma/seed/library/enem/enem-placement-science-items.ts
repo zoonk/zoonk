@@ -568,7 +568,7 @@ export const enemPlacementScienceItems: SeedItem[] = [
         bankOption(
           t("200 × 1.5", "200 × 1,5"),
           t("1.5 is a 50% rise: 200 × 1.5 = 300.", "1,5 é um aumento de 50%: 200 × 1,5 = 300."),
-          t("Read 15% as 0.5", "Leu 15% como 0,5"),
+          t("Wrote 1.15 as 1.5", "Escreveu 1,15 como 1,5"),
         ),
         bankOption(
           t("A 30% rise", "Um aumento de 30%"),
@@ -938,19 +938,28 @@ export const enemPlacementScienceItems: SeedItem[] = [
       context: null,
       options: [
         bankOption(
-          t("Most of it is used and given off as heat", "A maior parte é gasta e liberada como calor"),
+          t(
+            "Most of it is used and given off as heat",
+            "A maior parte é gasta e liberada como calor",
+          ),
           t(
             "Each level spends most of its energy living, moving and keeping warm, so only about a tenth passes on.",
             "Cada nível gasta a maior parte da energia para viver, se mover e se aquecer, então só cerca de um décimo passa adiante.",
           ),
         ),
         bankOption(
-          t("It is stored and passed on to the next level", "Fica guardada e passa para o nível seguinte"),
+          t(
+            "It is stored and passed on to the next level",
+            "Fica guardada e passa para o nível seguinte",
+          ),
           t(
             "Only about 10% passes on; the rest doesn't reach the next level.",
             "Só cerca de 10% passa adiante; o resto não chega ao nível seguinte.",
           ),
-          t("Thinks most energy passes up the chain", "Acha que a maior parte da energia sobe na cadeia"),
+          t(
+            "Thinks most energy passes up the chain",
+            "Acha que a maior parte da energia sobe na cadeia",
+          ),
         ),
         bankOption(
           t("It goes back to the producers", "Volta para os produtores"),
@@ -992,25 +1001,19 @@ export const enemPlacementScienceItems: SeedItem[] = [
         ),
         bankOption(
           t("About 60", "Cerca de 60"),
-          t(
-            "30 × 20 is 600, ten times more.",
-            "30 × 20 dá 600, dez vezes mais.",
-          ),
+          t("30 × 20 is 600, ten times more.", "30 × 20 dá 600, dez vezes mais."),
           t("Lost a zero when rounding", "Perdeu um zero ao arredondar"),
         ),
         bankOption(
           t("About 6,000", "Cerca de 6.000"),
-          t(
-            "30 × 20 is 600, not 6,000.",
-            "30 × 20 dá 600, não 6.000.",
-          ),
+          t("30 × 20 is 600, not 6,000.", "30 × 20 dá 600, não 6.000."),
           t("Added a zero when rounding", "Acrescentou um zero ao arredondar"),
         ),
         bankOption(
           t("About 50", "Cerca de 50"),
           t(
-            "50 is about 29 + 21; the trip asks for 29 × 21.",
-            "50 é mais ou menos 29 + 21; a viagem pede 29 × 21.",
+            "50 is about 29 + 21; the question asks for 29 × 21.",
+            "50 é mais ou menos 29 + 21; a pergunta pede 29 × 21.",
           ),
           t("Added instead of multiplying", "Somou em vez de multiplicar"),
         ),
@@ -1056,12 +1059,12 @@ export const enemPlacementScienceItems: SeedItem[] = [
           t("Swapped the fixed part and the rate", "Trocou a parte fixa pela taxa"),
         ),
         bankOption(
-          t("C(g) = 30g + 5g", "C(g) = 30g + 5g"),
+          t("C(g) = 5g", "C(g) = 5g"),
           t(
-            "That multiplies the monthly fee by the gigabytes too.",
-            "Isso também multiplica a mensalidade pelos gigabytes.",
+            "That leaves out the R$ 30 paid every month.",
+            "Isso deixa de fora os R$ 30 pagos todo mês.",
           ),
-          t("Treated the fixed fee as per unit", "Tratou a mensalidade como valor por unidade"),
+          t("Forgot the monthly fee", "Esqueceu a mensalidade"),
         ),
       ],
       question: t(
