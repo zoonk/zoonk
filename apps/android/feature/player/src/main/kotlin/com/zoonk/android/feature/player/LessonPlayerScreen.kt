@@ -119,10 +119,10 @@ import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.StepKeys
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
-import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
@@ -253,28 +253,15 @@ fun LessonPlayer(
         viewModel.retryFailedFinish()
         onStopOrDispose { if (activity?.isChangingConfigurations != true) viewModel.leave() }
     }
+    val stepKeys = remember(viewModel) { StepKeys() }
     val actions =
         remember(viewModel) {
             object : StepActions {
-                private var keyPicks: ((LessonAnswer?) -> Unit)? = null
-                private var numberKeys: ((Int) -> Boolean)? = null
-
                 override fun select(answer: LessonAnswer?) = viewModel.select(answer)
 
-                override fun pickByKey(answer: LessonAnswer?) {
-                    val own = keyPicks
-                    if (own == null) select(answer) else own(answer)
-                }
+                override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = stepKeys.takePicks(pick)
 
-                override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) {
-                    keyPicks = pick
-                }
-
-                override fun takeNumberKeys(keys: ((Int) -> Boolean)?) {
-                    numberKeys = keys
-                }
-
-                override fun pressNumberKey(index: Int) = numberKeys?.invoke(index) == true
+                override fun takeNumberKeys(keys: ((Int) -> Boolean)?) = stepKeys.takeNumbers(keys)
 
                 override fun runPrimary() {
                     val screen = viewModel.state.value?.screen() ?: return
@@ -379,7 +366,7 @@ fun LessonPlayer(
                     }.onKeyEvent { event ->
                         // A shortcut acts once per press, as main's do: a held number key would otherwise sort every card.
                         event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0 && state != null && screen != null &&
-                            handleKey(event.key, state, screen, viewModel, actions, barKeys, leave) {
+                            handleKey(event.key, state, screen, viewModel, actions, stepKeys, barKeys, leave) {
                                 if (ownEnd == null) {
                                     completionMainAction(lesson, state, ending, viewModel, exits)
                                 } else {
@@ -512,6 +499,7 @@ private fun handleKey(
     screen: LessonScreen,
     viewModel: LessonPlayerViewModel,
     actions: StepActions,
+    stepKeys: StepKeys,
     barKeys: TaskBarKeys,
     leave: () -> Unit,
     completionAction: () -> (() -> Unit)?,
@@ -549,11 +537,7 @@ private fun handleKey(
         }
 
         digit != null && state.phase == LessonPhase.Playing -> {
-            if (actions.pressNumberKey(digit)) return true
-            val step = screen.step ?: return false
-            val pick = keyPick(step, digit, state) ?: return false
-            actions.pickByKey(pick.answer)
-            true
+            stepKeys.press(screen.step, digit, state, actions::select)
         }
 
         else -> {

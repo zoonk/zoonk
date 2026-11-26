@@ -67,7 +67,9 @@ import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.MediaPending
+import com.zoonk.android.ui.components.NumberKeys
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PickKeyOptions
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.rememberMoveFocus
@@ -399,11 +401,13 @@ private fun QuizCard(
         onPauseOrDispose {}
     }
     val firstAnswer = remember { FocusRequester() }
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Title(wait)
-        Guess(card, quiz.picked, firstAnswer) { option ->
-            quiz.pick(option, hold)
-            tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
+    NumberKeys {
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Title(wait)
+            Guess(card, quiz.picked, firstAnswer) { option ->
+                quiz.pick(option, hold)
+                tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
+            }
         }
     }
 }
@@ -429,7 +433,10 @@ private fun Title(wait: WaitPresentation) {
     Eyebrow(stringResource(wait.quizTitle), Modifier.semantics(mergeDescendants = true) { heading() })
 }
 
-/** The answers lock at the first tap, which shows the right one and why; a guess is never wrong, only shown its answer. */
+/**
+ * The answers lock at the first tap or number key, which shows the right one and why; a guess is never wrong, only shown
+ * its answer.
+ */
 @Composable
 private fun Guess(
     card: WarmUpDeckCardsInner,
@@ -438,24 +445,26 @@ private fun Guess(
     onPick: (WarmUpDeckCardsInnerOptionsInner) -> Unit,
 ) {
     Text(card.question, style = MaterialTheme.typography.titleMedium)
-    AnswerOptionGroup(Modifier.semantics { contentDescription = card.question }) {
-        card.options.forEachIndexed { index, option ->
-            val chosen = picked == option.id
-            AnswerOption(
-                marker = index + 1,
-                picked = chosen,
-                result =
-                    when {
-                        picked == null -> null
-                        option.correct -> AnswerResult.Right
-                        chosen -> AnswerResult.Guess
-                        else -> null
-                    },
-                onClick = { onPick(option) },
-                modifier = if (index == 0) Modifier.focusRequester(firstAnswer) else Modifier,
-                enabled = picked == null,
-                guessed = true,
-            ) { Text(option.text, style = MaterialTheme.typography.bodyLarge) }
+    PickKeyOptions(card.options.size, enabled = picked == null, onPick = { onPick(card.options[it]) }) {
+        AnswerOptionGroup(Modifier.semantics { contentDescription = card.question }) {
+            card.options.forEachIndexed { index, option ->
+                val chosen = picked == option.id
+                AnswerOption(
+                    marker = index + 1,
+                    picked = chosen,
+                    result =
+                        when {
+                            picked == null -> null
+                            option.correct -> AnswerResult.Right
+                            chosen -> AnswerResult.Guess
+                            else -> null
+                        },
+                    onClick = { onPick(option) },
+                    modifier = if (index == 0) Modifier.focusRequester(firstAnswer) else Modifier,
+                    enabled = picked == null,
+                    guessed = true,
+                ) { Text(option.text, style = MaterialTheme.typography.bodyLarge) }
+            }
         }
     }
 

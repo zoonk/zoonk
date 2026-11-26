@@ -8,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,6 +39,7 @@ import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.StepKeys
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.recordsInBar
@@ -61,6 +63,7 @@ import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LocalOptionKeys
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 
@@ -91,9 +94,14 @@ internal fun MistakeLessonQuestion(
 ) {
     val lesson = state.lesson ?: return
     val screen = lesson.screen()
+    val stepKeys = remember { StepKeys() }
     val actions =
         object : StepActions {
             override fun select(answer: LessonAnswer?) = viewModel.selectLesson(answer)
+
+            override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = stepKeys.takePicks(pick)
+
+            override fun takeNumberKeys(keys: ((Int) -> Boolean)?) = stepKeys.takeNumbers(keys)
 
             override fun runPrimary() {
                 when {
@@ -144,6 +152,10 @@ internal fun MistakeLessonQuestion(
         report = null,
         progress = { MistakeSegments(state) },
         note = if (ideas || checked) null else lessonBarNote(task.step, lesson, actions),
+        // As in the lesson, a number key picks what the screen shows while the learner answers.
+        onNumberKey = { index ->
+            !ideas && !checked && lesson.phase == LessonPhase.Playing && stepKeys.press(task.step, index, lesson, actions::select)
+        },
         actions = {
             if (ideas) {
                 DrillStartButton(viewModel::startDrill)
@@ -193,7 +205,11 @@ internal fun MistakeLessonQuestion(
             }
         },
     ) { part, _, _ ->
-        CompositionLocalProvider(LocalLessonSpeech provides app.speech, LocalBoardMisses provides boardMisses) {
+        CompositionLocalProvider(
+            LocalLessonSpeech provides app.speech,
+            LocalBoardMisses provides boardMisses,
+            LocalOptionKeys provides true,
+        ) {
             if (ideas) {
                 if (part.showsScreen) DrillIdeas(task.drill, onOpenLesson = null)
                 return@CompositionLocalProvider

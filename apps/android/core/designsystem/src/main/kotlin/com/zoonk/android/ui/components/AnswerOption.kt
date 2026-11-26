@@ -88,7 +88,8 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null, keyed = LocalOptionKeys.current)
+    // Once checked or locked the key does nothing, so it hides in its room and the words stay put, as main's does.
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =

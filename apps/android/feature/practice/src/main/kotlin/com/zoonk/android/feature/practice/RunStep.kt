@@ -38,9 +38,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isAltPressed
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
@@ -99,7 +96,7 @@ import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
-import com.zoonk.android.ui.components.pickIndex
+import com.zoonk.android.ui.components.pressesNumberKey
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
@@ -145,7 +142,8 @@ interface RunControls {
 
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
- * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]). On a wide window
+ * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]), or else does what [onNumberKey]
+ * says. On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -165,6 +163,7 @@ internal fun RunFrame(
     aside: (@Composable ColumnScope.() -> Unit)? = null,
     asideTitle: String? = null,
     note: (@Composable () -> Unit)? = null,
+    onNumberKey: ((Int) -> Boolean)? = null,
     content: @Composable ColumnScope.(part: StepPart, inlineSet: Boolean, asideShown: Boolean) -> Unit,
 ) {
     val focus = remember { FocusRequester() }
@@ -216,14 +215,8 @@ internal fun RunFrame(
                                 true.also { onClose() }
                             }
 
-                            event.isCtrlPressed || event.isAltPressed || event.isMetaPressed -> {
-                                false
-                            }
-
                             else -> {
-                                // A held number key picks once, as main's shortcuts do.
-                                val index = event.key.pickIndex()
-                                index != null && (event.nativeKeyEvent.repeatCount > 0 || pickKeys.press(index))
+                                event.pressesNumberKey { pickKeys.press(it) || onNumberKey?.invoke(it) == true }
                             }
                         }
                     },
