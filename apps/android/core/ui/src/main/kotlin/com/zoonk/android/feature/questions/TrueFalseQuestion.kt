@@ -31,6 +31,7 @@ import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
+import com.zoonk.android.ui.components.PickKeyOptions
 import com.zoonk.android.ui.richtext.RichBlock
 import com.zoonk.android.ui.richtext.parseRichBlocks
 import kotlinx.coroutines.launch
@@ -86,18 +87,21 @@ fun TrueFalseQuestion(
         }
 
         if (part.showsTurn) {
-            AnswerOptionGroup {
-                sides.forEachIndexed { index, side ->
-                    val result = sideResult(side, check)
-                    if (check != null && result == null && shown != side) return@forEachIndexed
+            val choose = { side: Side -> onAnswer(if (shown == side) null else side.answer) }
+            PickKeyOptions(count = sides.size, enabled = !locked, onPick = { choose(sides[it]) }) {
+                AnswerOptionGroup {
+                    sides.forEachIndexed { index, side ->
+                        val result = sideResult(side, check)
+                        if (check != null && result == null && shown != side) return@forEachIndexed
 
-                    AnswerOption(
-                        marker = index + 1,
-                        picked = shown == side,
-                        result = result,
-                        onClick = { onAnswer(if (shown == side) null else side.answer) },
-                        enabled = !locked,
-                    ) { Text(text = sideLabel(side, words)) }
+                        AnswerOption(
+                            marker = index + 1,
+                            picked = shown == side,
+                            result = result,
+                            onClick = { choose(side) },
+                            enabled = !locked,
+                        ) { Text(text = sideLabel(side, words)) }
+                    }
                 }
             }
         }

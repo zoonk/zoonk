@@ -3,9 +3,10 @@ package com.zoonk.android.feature.questions
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zoonk.android.ui.components.LocalPickKeys
 
 /**
- * Main's `MatchPairsQuestion`: tap an entry on either side, then its partner on the other. A learning match comes
+ * Main's `MatchPairsQuestion`: tap an entry on either side (or press its number key), then its partner on the other. A learning match comes
  * with its [key] and checks each pair as it's made: a right pair locks, a miss shows briefly and counts, and the last
  * pair sends the answer with its misses through [onSubmit], so there's nothing to press. Without a key (placement and
  * level tests) pairs are held until Check: [onAnswer] gets them once every entry has one, null before, and a paired
@@ -43,6 +44,10 @@ fun MatchPairsQuestion(
         if (key != null && answer != null) onSubmit(answer)
     }
 
+    fun canTap(spot: MatchSpot) = enabled && !ended && (key == null || work.partnerOf(spot) == null)
+
+    LocalPickKeys.current?.let { keys -> MatchNumberKeys(keys::take, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } } }
+
     val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, cardModifier ->
         val spot = MatchSpot(side, index)
         val made = work.partnerOf(spot)
@@ -50,7 +55,7 @@ fun MatchPairsQuestion(
         val state = work.stateOf(spot, held = key == null, ended = ended)
         MatchEntry(
             state = state,
-            onClick = { tap(spot) }.takeIf { enabled && !ended && (key == null || made == null) },
+            onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = cardModifier,
             pair = made?.let { if (side == MatchSide.Left) index else it }?.plus(1),
             label = board.label(spot, partner),

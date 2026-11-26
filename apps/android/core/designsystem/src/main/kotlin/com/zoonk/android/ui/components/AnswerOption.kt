@@ -59,8 +59,8 @@ fun AnswerOptionGroup(
 }
 
 /**
- * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
- * skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
+ * One option of a question (main's `AnswerOption`): its number key (for keyboards, where the key picks it
+ * ([LocalOptionKeys]), so TalkBack skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
  * once checked, the word its result shows. An option among several
  * picks is a [Role.Checkbox], one that acts at once is a [Role.Button], and one shown after the
  * fact has no role and nothing to press; [tag] replaces the
@@ -88,7 +88,7 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null, keyed = LocalOptionKeys.current)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -309,13 +309,15 @@ fun TagBesideOrUnder(
 
 internal enum class AnswerKey { None, Hidden, Visible }
 
+/** An option's number key: only with a keyboard, where the key picks it ([keyed]) and the option isn't a place in an order. */
 internal fun answerKey(
     keyboard: Int,
     checked: Boolean,
     ordered: Boolean,
+    keyed: Boolean,
 ): AnswerKey =
     when {
-        keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
+        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
         checked -> AnswerKey.Hidden
         else -> AnswerKey.Visible
     }

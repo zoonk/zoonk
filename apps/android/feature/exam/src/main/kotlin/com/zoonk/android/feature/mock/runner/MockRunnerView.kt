@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -69,6 +70,7 @@ import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalOptionKeys
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
@@ -178,7 +180,10 @@ internal fun MockRunnerView(
                 RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
                 Column(Modifier.padding(vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
-                    key(question.itemId) { MockQuestionCard(viewModel, run, question) }
+                    // The runner's number keys pick the options (`runnerKey`), so they show their keys.
+                    key(
+                        question.itemId,
+                    ) { CompositionLocalProvider(LocalOptionKeys provides true) { MockQuestionCard(viewModel, run, question) } }
                     if (!beside) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             QuestionMap(run, onPick = viewModel::go)
