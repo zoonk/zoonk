@@ -144,7 +144,8 @@ export function tapCard(
 /**
  * How a card looks: picked, paired, a wrong try, or locked. A locked pair shows right for a moment,
  * then settles out of the way of the cards still to match. Once the board shows its pairs as rows
- * (`rows`), each locked pair is right, and a pair whose left card had a wrong try is marked missed.
+ * (`rows`), a pair made on the first try is right, and one whose left card had a wrong try first
+ * is missed.
  */
 export function cardState(
   board: MatchBoardState,
