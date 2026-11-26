@@ -23,6 +23,14 @@ export function isOwnExplanation(lesson: { planItems: readonly unknown[] }): boo
   return lesson.planItems.length > 0;
 }
 
+export function startableLessonWhere(userId: string) {
+  return {
+    contentStatus: "completed" as const,
+    steps: { some: CURRENT_STEPS },
+    ...libraryRowsVisibleTo(userId),
+  };
+}
+
 export function findStartableLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
   return prisma.lesson.findFirst({
     select: {
@@ -32,12 +40,7 @@ export function findStartableLesson({ lessonId, userId }: { lessonId: string; us
       planItems: ownExplanationItems(userId),
       title: true,
     },
-    where: {
-      contentStatus: "completed",
-      id: lessonId,
-      steps: { some: CURRENT_STEPS },
-      ...libraryRowsVisibleTo(userId),
-    },
+    where: { ...startableLessonWhere(userId), id: lessonId },
   });
 }
 
