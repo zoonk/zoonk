@@ -29,17 +29,20 @@ export function parseMatchItem(item: BankItem): MatchItem | null {
   }
 }
 
-function getRightOrder(item: MatchItem): number[] {
-  return getShownOrder({ count: item.content.pairs.length, seed: item.id });
+type ShownMatch = { blockId: string; item: MatchItem };
+
+/** Each block shows its own order, so a returning board tests the pairs rather than their places. */
+function getRightOrder({ blockId, item }: ShownMatch): number[] {
+  return getShownOrder({ count: item.content.pairs.length, seed: `${blockId}:${item.id}` });
 }
 
-export function getMatchKey(item: MatchItem): number[] {
-  const order = getRightOrder(item);
+export function getMatchKey({ blockId, item }: ShownMatch): number[] {
+  const order = getRightOrder({ blockId, item });
   return item.content.pairs.map((_, index) => order.indexOf(index));
 }
 
 /** Shuffles the right column and omits the correct pairing. */
-export function toMatchQuestion(item: MatchItem) {
+export function toMatchQuestion({ blockId, item }: ShownMatch) {
   const pairs = item.content.pairs;
 
   return {
@@ -50,7 +53,7 @@ export function toMatchQuestion(item: MatchItem) {
     left: pairs.map((pair) => pair.left),
     options: null,
     question: item.content.question,
-    right: getRightOrder(item).map((index) => pairs[index]?.right ?? ""),
+    right: getRightOrder({ blockId, item }).map((index) => pairs[index]?.right ?? ""),
     skillId: item.skillId,
     visual: null,
   };
@@ -100,8 +103,8 @@ function describeMatchAnswer({
 }
 
 /** Grade indexes against the displayed column order; mismatched answer shapes count as wrong. */
-export function gradeMatch({ answer, item }: { answer: QuestionAnswer; item: MatchItem }) {
-  const order = getRightOrder(item);
+export function gradeMatch({ answer, blockId, item }: ShownMatch & { answer: QuestionAnswer }) {
+  const order = getRightOrder({ blockId, item });
   const picks = "matches" in answer ? answer.matches.map((shown) => order[shown] ?? -1) : [];
 
   const isCorrect =
@@ -111,7 +114,7 @@ export function gradeMatch({ answer, item }: { answer: QuestionAnswer; item: Mat
     picks.every((pick, index) => pick === index);
 
   return {
-    correctAnswer: { matches: getMatchKey(item) },
+    correctAnswer: { matches: getMatchKey({ blockId, item }) },
     explanation: item.content.reason,
     isCorrect,
     recorded: answer,
