@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, HelpCircleIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "./enter-button";
@@ -128,7 +128,11 @@ export function BackWithSecondAction({
   );
 }
 
-/** `children` replaces the words where the question has its own, such as a listening question's. */
+/**
+ * The quieter of the two answers: words alone, with a phone's tighter padding, so the main action
+ * beside it keeps the larger part of the row. `children` replaces the words where the question has
+ * its own, such as a listening question's.
+ */
 export function QuestionDontKnow({
   busy = false,
   children,
@@ -145,11 +149,10 @@ export function QuestionDontKnow({
   return (
     <Button
       busy={busy}
-      className="shrink-0"
+      className="shrink-0 max-lg:px-3"
       data-slot="question-dont-know"
       disabled={disabled}
       focusableWhenDisabled
-      icon={<HelpCircleIcon aria-hidden="true" />}
       onClick={onPress}
       size="xl"
       variant="outline"

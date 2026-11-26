@@ -1,14 +1,18 @@
 "use client";
 
+import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FeedbackExplanation } from "./feedback-panel";
 import { type MatchSide, type MatchTry, firstMisses } from "./match-board-state";
 
 const SHOWN_MISSES = 3;
 
+/** Read between the two cards; Geist's own arrow is drawn long, so the line shows a short icon. */
+const ARROW = "→";
+
 /**
  * Under a match board's verdict, the pairs the learner first put together wrong: the solved board
- * above them shows every pair right. One line per card that had a wrong try, its first one, for
+ * above them shows each pair as it is. One line per card that had a wrong try, its first one, for
  * the first few cards. Each card is shown as written, since one can be a sentence with its own
  * punctuation.
  */
@@ -39,8 +43,11 @@ export function MatchMisses({
       <ul className="flex flex-col gap-1">
         {shown.map((miss) => (
           <li key={miss.left}>
-            {renderCard("left", miss.left)}
-            <span className="text-muted-foreground">{" → "}</span>
+            {renderCard("left", miss.left)}{" "}
+            <span className="text-muted-foreground">
+              <ArrowRightIcon aria-hidden="true" className="inline size-3.5 align-middle" />
+              <span className="sr-only">{ARROW}</span>
+            </span>{" "}
             {renderCard("right", miss.right)}
           </li>
         ))}

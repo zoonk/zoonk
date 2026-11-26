@@ -33,14 +33,18 @@ import com.zoonk.android.ui.theme.zoonkType
 
 enum class FeedbackTone { Almost, Neutral, Right, Wrong }
 
-/** What a checked answer got (main's `FeedbackPanel`), under the question so it stays in view. */
+/**
+ * What a checked answer got (main's `FeedbackPanel`), under the question so it stays in view. It scrolls itself into
+ * sight as it appears, unless its screen does that itself ([LocalOwnFeedbackReveal]).
+ */
 @Composable
 fun FeedbackPanel(
     label: String,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    OutlinedCard(modifier.fillMaxWidth().semantics { paneTitle = label }) {
+    val reveal = if (LocalOwnFeedbackReveal.current) Modifier else Modifier.revealWhenShown()
+    OutlinedCard(modifier.fillMaxWidth().then(reveal).semantics { paneTitle = label }) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp), content = content)
     }
 }

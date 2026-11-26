@@ -2,6 +2,7 @@
 
 import { MatchBoard } from "@zoonk/learn/match-board";
 import { MatchEntry } from "@zoonk/learn/match-entry";
+import { RevealWhenShown } from "@zoonk/learn/reveal-when-shown";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { type MatchTry, useMatchBoard } from "@zoonk/learn/use-match-board";
@@ -17,15 +18,17 @@ import { boardFromAnswer, matchAnswer } from "./match-pairs-progress";
 
 type MatchPairsProps = ActivityRendererProps<"matchPairs">;
 
-function MissNote({ explanation }: { explanation: string | null }) {
-  const t = useExtracted();
-
+/**
+ * Why a wrong try was wrong, when its card says; the try's own cue already says it was wrong. It
+ * scrolls into sight when it appears under a tall board.
+ */
+function MissNote({ explanation }: { explanation: string }) {
   return (
     <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
+      <RevealWhenShown />
       <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
       <p>
-        <NotQuiteLead />{" "}
-        {explanation ? <LessonRichText text={explanation} /> : t("Those two don't go together.")}
+        <NotQuiteLead /> <LessonRichText text={explanation} />
       </p>
     </div>
   );
@@ -56,7 +59,7 @@ export function MatchPairsActivity({
       const why = whyOf(attempt);
       return why && spoken.inline(why);
     },
-    finished: boardFromAnswer(columns, answer)?.pairs,
+    finished: boardFromAnswer(columns, answer),
     isPair: (attempt) => left[attempt.left]?.id === right[attempt.right]?.id,
     keys: interactionState !== "paused",
     leftCount: left.length,
@@ -67,6 +70,8 @@ export function MatchPairsActivity({
     rightCount: right.length,
     say: (side, index) => spoken.inline(cardsOf(side)[index]?.text ?? ""),
   });
+
+  const missedWhy = board.missed && whyOf(board.missed);
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
@@ -82,7 +87,7 @@ export function MatchPairsActivity({
         solved={board.solved}
       />
 
-      {board.missed && <MissNote explanation={whyOf(board.missed)} />}
+      {missedWhy && <MissNote explanation={missedWhy} />}
 
       <p aria-live="polite" className="sr-only">
         {board.announcement}

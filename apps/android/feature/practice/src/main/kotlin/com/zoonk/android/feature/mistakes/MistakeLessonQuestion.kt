@@ -56,6 +56,7 @@ import com.zoonk.android.feature.questions.DrillIdeas
 import com.zoonk.android.feature.questions.DrillNote
 import com.zoonk.android.feature.questions.DrillStartButton
 import com.zoonk.android.feature.questions.MistakeNote
+import com.zoonk.android.feature.questions.NotSureButton
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
@@ -156,23 +157,11 @@ internal fun MistakeLessonQuestion(
                 }
                 TaskActions { width ->
                     if (!checked) {
-                        com.zoonk.android.ui.components.OutlinedButton(
+                        NotSureButton(
                             onClick = { viewModel.checkLesson(dontKnow = true) },
-                            enabled =
-                                lesson.phase != LessonPhase.Checking,
-                        ) {
-                            Text(
-                                stringResource(
-                                    if (task.drill.kind ==
-                                        Drill.Kind.NoGuessing
-                                    ) {
-                                        R.string.questions_drill_not_sure
-                                    } else {
-                                        R.string.questions_dont_know_yet
-                                    },
-                                ),
-                            )
-                        }
+                            enabled = lesson.phase != LessonPhase.Checking,
+                            dontKnowYet = task.drill.kind != Drill.Kind.NoGuessing,
+                        )
                     }
                     language.prompt?.let { PromptAudioBarButton(task.step, lesson, actions, it) }
                     if (records) {

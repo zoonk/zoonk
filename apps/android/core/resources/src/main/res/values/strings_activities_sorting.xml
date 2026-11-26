@@ -42,10 +42,8 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
 
-    <string name="activities_sorting_badge_match_pairs">Match pairs</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cards to match</string>
-    <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Not quite:</string>
 

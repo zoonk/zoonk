@@ -15,6 +15,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -126,6 +127,14 @@ class LanguageStepsFlowTest {
             .onFirst()
             .performClick()
 
+    /** A card on the board, scrolled to as a learner would, since the board can reach under the bar. */
+    private fun tapCard(text: String) =
+        rule
+            .onAllNodesWithText(text)
+            .onFirst()
+            .performScrollTo()
+            .performClick()
+
     /** What the player sent for [stepId], as the API reads it. */
     private fun sent(stepId: String): JsonElement {
         rule.waitForIdle()
@@ -138,12 +147,12 @@ class LanguageStepsFlowTest {
         play(listOf(matchColumns("pairs"), summaryStep("end")))
 
         rule.onNodeWithText("Match the pairs.").assertIsDisplayed()
-        tap("hola")
-        tap("cat")
+        tapCard("hola")
+        tapCard("cat")
         // The first word stays picked after a miss, so its partner is one tap away, even while the miss still shows.
-        tap("hello")
-        tap("gato")
-        tap("cat")
+        tapCard("hello")
+        tapCard("gato")
+        tapCard("cat")
 
         assertEquals(
             Json.parseToJsonElement(

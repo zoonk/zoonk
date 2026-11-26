@@ -18,6 +18,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -28,18 +29,27 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.activities.assignmentPairs
 import com.zoonk.android.feature.audio.previewSpeech
 import com.zoonk.android.feature.player.language.step
+import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepKind
+import com.zoonk.android.feature.player.model.toLessonAnswer
+import com.zoonk.android.feature.tutor.TutorAvatar
+import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LearnerSummaryBuddy
+import com.zoonk.api.models.LessonStepCheckResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -149,6 +159,7 @@ class MatchStepScreenshots {
     ) {
         val lesson = playable(listOf(step)).copy(targetLanguage = "pt")
         val api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
+        api.grade = { _, input -> graded(input.answer.toLessonAnswer()) }
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, scope)
@@ -182,7 +193,7 @@ class MatchStepScreenshots {
                 val state by viewModel.state.collectAsState()
                 val ending by viewModel.ending.collectAsState()
                 LaunchedEffect(Unit) { viewModel.open(lesson) }
-                LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
+                LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator(), tutor = tutor)
             }
         rule.waitForIdle()
         if (!settle) rule.mainClock.autoAdvance = false
@@ -201,6 +212,30 @@ class MatchStepScreenshots {
         writeRender(File(folder, "$name.png").apply { parentFile?.mkdirs() }, rule.onRoot().captureRender().asAndroidBitmap())
     }
 
+    /** As the server grades a board: right only when every first try was its pair, a miss saved to the learner's mistakes. */
+    private fun graded(answer: LessonAnswer): LessonStepCheckResult {
+        val isCorrect =
+            when (answer) {
+                is LessonAnswer.MatchColumns -> answer.mistakes == 0
+                is LessonAnswer.Activity -> answer.answer.assignmentPairs?.all { (left, right) -> left == right } == true
+                else -> true
+            }
+        return ApiJson.decodeFromString(
+            """{"checked":true,"correctAnswer":null,"corrections":[],"expected":null,"feedback":null,"isCorrect":$isCorrect,
+               "keyPoints":null,"savedMistake":${!isCorrect},"score":null,"spelling":null}""",
+        )
+    }
+
+    /** The lesson's buddy, as a learner's summary gives it, with its ask at the bar's end. */
+    private val tutor: LessonTutor by lazy {
+        val buddy =
+            ApiJson.decodeFromString<LearnerSummaryBuddy>(
+                """{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false}""",
+            )
+        val identity = TutorIdentity("Zu", buddy.look())
+        LessonTutor(identity) { _, _, _, _, _ -> OutlinedIconButton(onClick = {}) { TutorAvatar(identity, 24.dp) } }
+    }
+
     private fun left(id: String) = exchanges.first { it.first == id }.second.first
 
     private fun right(id: String) = exchanges.first { it.first == id }.second.second
@@ -214,6 +249,7 @@ class MatchStepScreenshots {
         show("activity-selected$suffix", activity, listOf(left("a")))
         show("activity-miss$suffix", activity, listOf(left("a"), right("b")), settle = false)
         show("activity-miss-settled$suffix", activity, listOf(left("a"), right("b")))
+        show("activity-locked-cue$suffix", activity, listOf(left("a"), right("a")), settle = false)
         show("activity-midway$suffix", activity, listOf(left("a"), right("a"), left("b"), right("b")))
         // The first card stays picked after its miss, so its partner is one tap away.
         val solved = listOf(left("a"), right("b"), right("a"), left("b"), right("b"), left("c"), right("c"), left("d"), right("d"))
@@ -221,6 +257,7 @@ class MatchStepScreenshots {
         show("columns-untouched$suffix", columns, emptyList())
         show("columns-selected$suffix", columns, listOf("landlord"))
         show("columns-miss$suffix", columns, listOf("landlord", "caução"), settle = false)
+        show("columns-miss-settled$suffix", columns, listOf("landlord", "caução"))
         show("columns-midway$suffix", columns, listOf("rent", "aluguel", "landlord", "caução", "proprietário"))
         val all = rent.flatMap { (left, right) -> listOf(left, right) }
         show("columns-solved$suffix", columns, all)

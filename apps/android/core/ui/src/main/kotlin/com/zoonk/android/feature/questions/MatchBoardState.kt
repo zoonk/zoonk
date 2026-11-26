@@ -100,7 +100,7 @@ class MatchBoardState internal constructor(
     }
 
     internal fun endCue() {
-        state.value = state.value.copy(wrong = null)
+        state.value = state.value.copy(wrong = null, locked = null)
     }
 }
 
@@ -126,10 +126,10 @@ fun rememberMatchBoardState(
     val resources = LocalResources.current
     val board = remember(work, count, haptics, resources) { MatchBoardState(work, count, checks, names, whys, haptics, resources) }
 
-    // The wrong tone holds through the shake and a beat after it; a tap during it is a tap like any other.
+    // A try's tone holds through the wrong one's shake and a beat after it; a tap during it is a tap like any other.
     val cue = work.value.cue
     LaunchedEffect(cue) {
-        if (work.value.wrong != null) {
+        if (work.value.wrong != null || work.value.locked != null) {
             delay(WRONG_CUE_MILLIS)
             board.endCue()
         }
@@ -141,5 +141,5 @@ fun rememberMatchBoardState(
 @Composable
 fun MatchBoardState.Announcement() = ActivityAnnouncement(announcement)
 
-/** How long a wrong try shows: the shake, then a beat to see which two it was. */
+/** How long a try's tone shows: a wrong one's shake, then a beat to see which two it was; a right one as long. */
 internal const val WRONG_CUE_MILLIS = 600L

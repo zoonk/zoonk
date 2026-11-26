@@ -135,6 +135,8 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LocalOptionKeys
+import com.zoonk.android.ui.components.LocalOwnFeedbackReveal
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -468,9 +470,13 @@ fun LessonPlayer(
                 } else {
                     if (screen.showProgress) Segments(screen.segments, state)
                     val spread = spreadShows()
+                    // The player's number keys pick a screen's options (`handleKey`), so its options show their keys, and it
+                    // brings a check's feedback into view itself (`FeedbackReveal`), keeping the question in sight.
                     CompositionLocalProvider(
                         LocalPrimaryFocus provides primaryFocus,
                         LocalAskSimpler provides askSimpler?.let { asks -> AskSimpler(tutor.identity.look) { asks(spread) } },
+                        LocalOptionKeys provides true,
+                        LocalOwnFeedbackReveal provides true,
                     ) {
                         Content(
                             state,

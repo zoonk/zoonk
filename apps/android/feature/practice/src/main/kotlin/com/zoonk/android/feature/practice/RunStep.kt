@@ -38,6 +38,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
@@ -85,7 +88,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalPickKeys
 import com.zoonk.android.ui.components.LocalTaskBarKeys
+import com.zoonk.android.ui.components.PickKeys
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -94,6 +99,7 @@ import com.zoonk.android.ui.components.TaskBarKeys
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.pickIndex
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
@@ -139,7 +145,7 @@ interface RunControls {
 
 /**
  * A keyboard's Enter runs [mainAction] and Escape closes, as in the lesson player; Enter presses a Record in [actions] instead,
- * and P its sound ([TaskBarKeys]). On a wide window
+ * P its sound ([TaskBarKeys]), and a number key picks what the question shows ([PickKeys]). On a wide window
  * a question's passage shows beside it, or else [aside]. Across an unfolded book's fold the run is a
  * spread: the question with its passage ([StepPart.Screen]), then [aside], on the page before the
  * fold, the learner's turn ([StepPart.Turn]) on the page after it. A new [place] starts at its top.
@@ -163,6 +169,7 @@ internal fun RunFrame(
 ) {
     val focus = remember { FocusRequester() }
     val barKeys = remember { TaskBarKeys() }
+    val pickKeys = remember { PickKeys() }
     val set = question?.set?.takeIf { it.listening == null }
     val hasAside = set == null && aside != null
     // The one column and the screen's page across a fold share their scroll, so a reading place keeps as the book opens
@@ -209,8 +216,14 @@ internal fun RunFrame(
                                 true.also { onClose() }
                             }
 
-                            else -> {
+                            event.isCtrlPressed || event.isAltPressed || event.isMetaPressed -> {
                                 false
+                            }
+
+                            else -> {
+                                // A held number key picks once, as main's shortcuts do.
+                                val index = event.key.pickIndex()
+                                index != null && (event.nativeKeyEvent.repeatCount > 0 || pickKeys.press(index))
                             }
                         }
                     },
@@ -237,31 +250,34 @@ internal fun RunFrame(
                 val inlineSet = set == null || fold != null || !taskAsideBeside()
                 val shown = asideShown(hasAside, fold)
 
-                Column(Modifier.padding(padding).fillMaxSize()) {
-                    Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
-                    BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-                        // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
-                        val turnPage =
-                            if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
-                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - PAGE_PADDING * 2 else null) {
-                            ScrollingPage(
-                                Modifier.fillMaxSize().then(turnPage),
-                                if (fold == null) scroll else turnScroll,
-                                if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
-                            ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
-                        }
+                CompositionLocalProvider(LocalPickKeys provides pickKeys) {
+                    Column(Modifier.padding(padding).fillMaxSize()) {
+                        Box(if (fold == null) Modifier else Modifier.width(fold.start)) { progress(shown) }
+                        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+                            // The turn's page is the one column's place, so its unsent work stays as the book opens or closes.
+                            val turnPage =
+                                if (fold == null) Modifier else Modifier.padding(start = fold.end).semantics { isTraversalGroup = true }
+                            val viewHeight = if (fold == null) maxHeight - PAGE_PADDING * 2 else null
+                            CompositionLocalProvider(LocalStepViewHeight provides viewHeight) {
+                                ScrollingPage(
+                                    Modifier.fillMaxSize().then(turnPage),
+                                    if (fold == null) scroll else turnScroll,
+                                    if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
+                                ) { content(if (fold == null) StepPart.Whole else StepPart.Turn, inlineSet, shown) }
+                            }
 
-                        if (fold != null) {
-                            ScrollingPage(
-                                Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
-                                scroll,
-                                Alignment.End,
-                            ) {
-                                content(StepPart.Screen, inlineSet, shown)
-                                if (shown) {
-                                    HorizontalDivider()
-                                    asideTitle?.let { SectionLabel(it) }
-                                    aside?.invoke(this)
+                            if (fold != null) {
+                                ScrollingPage(
+                                    Modifier.width(fold.start).fillMaxHeight().semantics { isTraversalGroup = true },
+                                    scroll,
+                                    Alignment.End,
+                                ) {
+                                    content(StepPart.Screen, inlineSet, shown)
+                                    if (shown) {
+                                        HorizontalDivider()
+                                        asideTitle?.let { SectionLabel(it) }
+                                        aside?.invoke(this)
+                                    }
                                 }
                             }
                         }

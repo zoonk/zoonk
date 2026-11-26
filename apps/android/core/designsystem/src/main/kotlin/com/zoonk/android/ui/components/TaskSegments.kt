@@ -17,6 +17,7 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.theme.zoonk
 
 /** Main's `TaskSegment`: one screen, question or block of a task. */
 enum class TaskSegment {
@@ -46,6 +47,7 @@ fun TaskSegments(
     done: Int? = null,
 ) {
     val colors = MaterialTheme.colorScheme
+    val wrong = MaterialTheme.zoonk.destructive
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val shares = segments.indices.map { weights?.getOrNull(it)?.coerceAtLeast(1f) ?: 1f }
     val semantics =
@@ -77,7 +79,7 @@ fun TaskSegments(
                     TaskSegment.Current -> colors.tertiary.copy(alpha = CURRENT_ALPHA)
                     TaskSegment.Done, TaskSegment.Right -> colors.tertiary
                     TaskSegment.Read -> colors.onSurface.copy(alpha = READ_ALPHA)
-                    TaskSegment.Wrong -> colors.error
+                    TaskSegment.Wrong -> wrong
                 }
 
             drawRoundRect(fill, Offset(left, 0f), Size(width, size.height), radius)
