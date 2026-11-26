@@ -62,8 +62,8 @@ function isNumberedLabel(context: Context, lead: CaptureElement, label: CaptureE
 
 /**
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
- * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
- * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
+ * Beside a title and one line under it (a description or a progress bar), or a title that wraps:
+ * a mark, a value and an end glyph on the row's center. Beside three lines or more (a title and two descriptions): a mark on the
  * label's first line, a value and an end glyph on the row's center. A row with a text lead (a date
  * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
  * A value stacked under its label has no line to share.
@@ -110,8 +110,15 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
     return null;
   }
 
-  // A title counts as one line however it wraps; each description under it is another (E5).
-  const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
+  // A title counts as one line however it wraps; each line under it is another (E5): a
+  // description, or a line with no words such as a progress bar. A wide row that puts one beside
+  // the title, across its first baseline, keeps one line.
+  const baseline = measured(label.capBottom);
+
+  const notes = own.filter((element) => {
+    const ink = element.part === "note" ? drawn(element) : null;
+    return ink && baseline !== null && ink.top >= baseline;
+  }).length;
 
   const lines = measured(label.lines, 1);
 

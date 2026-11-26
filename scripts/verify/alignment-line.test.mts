@@ -298,3 +298,38 @@ describe("line's tolerance", () => {
     assert.equal(line(atText(atTwoX("mark", 1.3), 2))[0]?.level, "fail");
   });
 });
+
+/** The row with a progress bar, a note with no words, at `barTop` and `barLeft`. */
+function barred(capture: Capture, barTop: number, barLeft = 28): Capture {
+  return {
+    ...capture,
+    elements: [
+      ...capture.elements,
+      element({ id: "bar", ink: [barLeft, barTop, 200, 6], part: "note", row: "r0" }),
+    ],
+  };
+}
+
+describe("a progress bar under a row's name", () => {
+  it("is the row's second line: its value and end glyph go on the row's center", () => {
+    assert.deepEqual(line(barred(lineRow("value", 30, 0), 28)), []);
+    assert.deepEqual(line(barred(lineRow("end", 30, 0), 28)), []);
+    assert.match(lineMiss(barred(lineRow("value", 15, 0), 28)), /the value 15 above the row's center/u);
+  });
+
+  it("has no words, so it has no size or type to compare with the name's", () => {
+    const capture = barred(lineRow("value", 30, 0), 28);
+    const typed = evaluateCapture(capture).filter((finding) => finding.rule === "helper");
+
+    assert.deepEqual(typed, []);
+    assert.deepEqual(
+      type(capture).filter((finding) => finding.message.includes("note")),
+      [],
+    );
+  });
+
+  it("beside the name (a wide row) leaves the row one line", () => {
+    assert.deepEqual(line(barred(lineRow("value", 15, 0), 12, 200)), []);
+    assert.match(lineMiss(barred(lineRow("value", 30, 0), 12, 200)), /the value 15 below the label's middle/u);
+  });
+});
