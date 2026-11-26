@@ -174,7 +174,7 @@ describe("exact lesson mistake practice", () => {
 
     await expect
       .element(
-        result.getByText("You first matched Electron with Positive charge.", { exact: true }),
+        result.getByText("You first matched “Electron” with “Positive charge”.", { exact: true }),
       )
       .toBeVisible();
 

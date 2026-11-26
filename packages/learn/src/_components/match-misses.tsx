@@ -6,17 +6,18 @@ import { type MatchSide, type MatchTry, firstMisses } from "./match-board-state"
 
 const SHOWN_MISSES = 3;
 
+/** Each card in quotes, since a card can be a sentence with its own punctuation. */
 function MissLine({ left, right }: { left: React.ReactNode; right: React.ReactNode }) {
   const t = useExtracted();
-  const leftCard = () => <span className="font-medium">{left}</span>;
-  const rightCard = () => <span className="font-medium">{right}</span>;
+  const leftCard = () => left;
+  const rightCard = () => right;
 
   return (
     <p>
       {t.rich({
         description:
           "Under a matching question's verdict: two cards the learner put together that don't go together. Each tag is a card's own text.",
-        message: "You first matched <left></left> with <right></right>.",
+        message: "You first matched “<left></left>” with “<right></right>”.",
         values: { left: leftCard, right: rightCard },
       })}
     </p>

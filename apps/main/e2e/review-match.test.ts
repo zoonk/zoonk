@@ -106,8 +106,9 @@ test.describe("Review match", () => {
     await card(page, "the evening").click();
 
     const feedback = page.getByRole("region", { name: "Answer feedback" });
+    const miss = feedback.getByText("You first matched “il martedì” with “Thursday”.");
     await expect(feedback.getByText("Not quite")).toBeVisible();
-    await expect(feedback.getByText("You first matched il martedì with Thursday.")).toBeVisible();
+    await expect(miss).toBeVisible();
     await expect(feedback.getByText(REASON)).toBeVisible();
     await expect(next).toBeEnabled();
     await expect(next).toBeFocused();

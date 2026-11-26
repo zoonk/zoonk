@@ -302,7 +302,7 @@ describe("reasoning activities", () => {
     await expectVerdict("Not quite");
 
     await expect
-      .element(page.getByText("You first matched embarazada with success.", { exact: true }))
+      .element(page.getByText("You first matched “embarazada” with “success”.", { exact: true }))
       .toBeVisible();
 
     await expect

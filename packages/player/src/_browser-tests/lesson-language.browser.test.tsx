@@ -329,7 +329,7 @@ describe("language lesson screens", () => {
 
     await expect
       .element(
-        verdict("Not quite").getByText("You first matched Electron with Positive charge.", {
+        verdict("Not quite").getByText("You first matched “Electron” with “Positive charge”.", {
           exact: true,
         }),
       )
