@@ -81,7 +81,7 @@ describe(hearSpokenSentence, () => {
       const result = await hearSpokenSentence({ ...recording, expected, language, romanization });
 
       expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ expectedText: expected }),
+        expect.objectContaining({ expectedText: expected, transcriberHeard: heard }),
       );
 
       expect(result.match.isCorrect).toBe(true);

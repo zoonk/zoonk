@@ -83,7 +83,9 @@ async function transcribeAndCompare({
   };
 }
 
-async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
+async function assessWordByWord(
+  input: HearInput & { transcriberHeard?: string },
+): Promise<HeardSentence> {
   const { data } = await assessPronunciation({
     analytics: { contentScope: "personal", distinctId: input.userId },
     audio: input.audio.bytes,
@@ -92,6 +94,7 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
     learnerLanguage: input.learnerLanguage,
     mediaType: input.audio.mediaType,
     romanization: input.romanization,
+    transcriberHeard: input.transcriberHeard,
   });
 
   const correct = data.words.filter((word) => word.status === "correct").length;
@@ -139,5 +142,6 @@ export async function hearSpokenSentence({
     return assessWordByWord(input);
   }
 
-  return data.listen ? assessWordByWord(input) : data.heard;
+  const { heard, listen } = data;
+  return listen ? assessWordByWord({ ...input, transcriberHeard: heard.transcript }) : heard;
 }

@@ -172,6 +172,36 @@ export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
   },
   {
     expected: { flaggedWords: [], stressWords: [] },
+    id: "it-ha-fratelli",
+    userInput: {
+      language: "it",
+      learnerLanguage: "pt",
+      spokenText: "Ha fratelli?",
+      targetText: "Ha fratelli?",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
+    id: "de-isst-ist",
+    userInput: {
+      language: "de",
+      learnerLanguage: "pt",
+      spokenText: "Er isst viel.",
+      targetText: "Er isst viel.",
+    },
+  },
+  {
+    expected: { flaggedWords: ["fame."], stressWords: [] },
+    id: "it-fame-fama",
+    userInput: {
+      language: "it",
+      learnerLanguage: "pt",
+      spokenText: "Ho fama.",
+      targetText: "Ho fame.",
+    },
+  },
+  {
+    expected: { flaggedWords: [], stressWords: [] },
     id: "es-telefono-alone",
     userInput: {
       language: "es",
