@@ -308,8 +308,13 @@ struct MatchPairsItemView: View {
   var body: some View {
     let pairs = self.pairs
 
-    MatchBoard(leftCount: left.count, rightCount: right.count, solvedRows: solvedRows(pairs)) {
-      card in
+    MatchBoard(
+      leftCount: left.count, rightCount: right.count, solvedRows: solvedRows(pairs),
+      columnLabels: (
+        Text("Match these", tableName: "Practice", comment: "VoiceOver name of the left column."),
+        Text("With these", tableName: "Practice", comment: "VoiceOver name of the right column.")
+      )
+    ) { card in
       MatchEntry(
         state: state(of: card, pairs: pairs),
         keyIndex: card.side == .left ? card.index : left.count + card.index,
@@ -320,10 +325,6 @@ struct MatchPairsItemView: View {
       }
       .practiceFocus(card == .left(0) ? .answer : nil)
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Match these", tableName: "Practice", comment: "VoiceOver name of the left column.")
-    )
     .matchBoardFeedback($picking, locked: question.checksEachPair ? pairs.count { $0 != nil } : 0)
   }
 

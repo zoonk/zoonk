@@ -147,7 +147,7 @@ struct MatchEntry<Label: View>: View {
 
     return Text(
       "Matched with \(partner)", tableName: "Practice",
-      comment: "VoiceOver value of a right-column entry already matched with a left entry.")
+      comment: "VoiceOver value of a match card already paired, naming the card it is paired with.")
   }
 }
 
@@ -228,14 +228,18 @@ private struct MatchEntryStyle: ButtonStyle {
 private struct MatchMark: View {
   let state: MatchEntryState
 
-  @ScaledMetric(relativeTo: .caption2) private var size = 18.0
+  /// It grows with the text only a little: larger, it would cover the words.
+  @ScaledMetric(relativeTo: .caption2) private var scaledSize = 18.0
 
   var body: some View {
-    if let mark {
+    let size = min(scaledSize, 22)
+
+    if let fill {
       ZStack {
-        Circle().fill(mark.fill)
-        mark.glyph
+        Circle().fill(fill)
+        glyph
           .foregroundStyle(Color(.background))
+          .padding(size * 0.25)
       }
       .frame(width: size, height: size)
       .offset(x: size / 3, y: -size / 3)
@@ -243,17 +247,25 @@ private struct MatchMark: View {
     }
   }
 
-  private var mark: (fill: Color, glyph: AnyView)? {
+  private var fill: Color? {
     switch state {
-    case .paired(let number):
-      (
-        Color(.foreground),
-        AnyView(Text(number, format: .number).typeStyle(.small.weight(.semibold).monospaced()))
-      )
-    case .right:
-      (.success, AnyView(Image(systemName: "checkmark").typeStyle(.small.bold())))
-    case .idle, .selected, .wrong, .missed:
-      nil
+    case .paired: Color(.foreground)
+    case .right: .success
+    case .idle, .selected, .wrong, .missed: nil
+    }
+  }
+
+  @ViewBuilder private var glyph: some View {
+    if case .paired(let number) = state {
+      Text(number, format: .number)
+        .typeStyle(.small.weight(.semibold).monospaced())
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
+    } else {
+      Image(systemName: "checkmark")
+        .resizable()
+        .scaledToFit()
+        .fontWeight(.bold)
     }
   }
 }
@@ -264,6 +276,8 @@ struct MatchBoard<Card: View>: View {
   let leftCount: Int
   let rightCount: Int
   var solvedRows: [MatchTry]?
+  /// What VoiceOver calls each column.
+  var columnLabels: (left: Text, right: Text)?
   @ViewBuilder let card: (MatchCardRef) -> Card
 
   @Environment(\.stacksContent) private var isStacked
@@ -287,14 +301,23 @@ struct MatchBoard<Card: View>: View {
     }
   }
 
+  @ViewBuilder
   private func column(_ side: MatchCardRef.Side, count: Int) -> some View {
-    VStack(spacing: 8) {
+    let cards = VStack(spacing: 8) {
       ForEach(0..<count, id: \.self) { index in
         card(MatchCardRef(side: side, index: index))
           .fixedSize(horizontal: false, vertical: true)
       }
     }
     .frame(maxWidth: .infinity)
+
+    if let columnLabels {
+      cards
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(side == .left ? columnLabels.left : columnLabels.right)
+    } else {
+      cards
+    }
   }
 }
 

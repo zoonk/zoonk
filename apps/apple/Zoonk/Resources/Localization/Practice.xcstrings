@@ -5902,7 +5902,7 @@
       }
     },
     "Matched with %@" : {
-      "comment" : "VoiceOver value of a right-column entry already matched with a left entry.",
+      "comment" : "VoiceOver value of a match card already paired, naming the card it is paired with.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
