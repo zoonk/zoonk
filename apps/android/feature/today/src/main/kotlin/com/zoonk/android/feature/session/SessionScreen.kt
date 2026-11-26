@@ -529,6 +529,7 @@ internal fun NextStop(
                         day,
                         step,
                         Modifier.width(fold.start).padding(horizontal = 16.dp, vertical = 24.dp).semantics { isTraversalGroup = true },
+                        counted = true,
                     )
                 }
                 // What's next keeps its place in the composition, only padded past a fold, so folding keeps a guess on its card.
@@ -551,7 +552,7 @@ internal fun NextStop(
                     ) {
                         Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Eyebrow(stringResource(R.string.session_next_eyebrow))
-                            Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                            Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
                             blockDetail(step)?.let {
                                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                             }
@@ -639,19 +640,30 @@ internal fun NextStop(
     }
 }
 
+/**
+ * Main's session header bar. [counted] says how many are done above it, for a pane of its own; over
+ * the next step only TalkBack reads the count, as main's header does.
+ */
 @Composable
 private fun SessionSegments(
     day: DayView,
     step: DayStep,
     modifier: Modifier,
+    counted: Boolean = false,
 ) {
     val parts = dayParts(day.steps, isNext = { it.position == step.position })
     val held = day.heldMinutes > 0
     if (parts.isEmpty() && !held) return
+    val progress = stepsDone(day.sessionBar)
+    val draws = drawsDayProgress(parts.size, held)
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stepsDone(day.sessionBar), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-        if (drawsDayProgress(parts.size, held)) DayProgress(parts, held)
+    if (counted) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(progress, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
+            if (draws) DayProgress(parts, held)
+        }
+    } else if (draws) {
+        DayProgress(parts, held, modifier, contentDescription = progress)
     }
 }
 
