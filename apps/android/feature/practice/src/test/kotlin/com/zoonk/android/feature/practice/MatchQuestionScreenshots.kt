@@ -123,6 +123,7 @@ class MatchQuestionScreenshots {
         check: Boolean = false,
         settle: Boolean = true,
         correct: Boolean = false,
+        dontKnow: Boolean = false,
     ) {
         val cache =
             AppCache(
@@ -150,7 +151,10 @@ class MatchQuestionScreenshots {
                 rule.onNode(hasText("Check") and isEnabled()).performClick()
             }
         }
-        if (settle) rule.waitForIdle() else rule.mainClock.advanceTimeBy(FRAME * 4)
+        if (dontKnow) rule.onNode(hasText("I don't know yet") and hasClickAction()).performClick()
+        // A wrong try's cue outlasts its shake, which is all idling waits for.
+        if (settle) rule.mainClock.advanceTimeBy(CUE) else rule.mainClock.advanceTimeBy(FRAME * 4)
+        if (settle) rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         writeRender(File(folder, "$name.png").apply { parentFile?.mkdirs() }, bitmap)
     }
@@ -178,6 +182,7 @@ class MatchQuestionScreenshots {
         show("review-two-wrong-pairs-checked$suffix", taps = twoWrongPairs, check = true)
         show("review-checked-after-a-miss$suffix", taps = oneMissThenSolved, check = true)
         show("review-checked-clean$suffix", taps = listOf(0 to 1, 1 to 0, 2 to 3, 3 to 2), check = true, correct = true)
+        show("review-dont-know-after-a-pair$suffix", taps = listOf(0 to 1), dontKnow = true)
         show("held-selected$suffix", learning = false, taps = listOf(0 to null))
         show("held-all-paired$suffix", learning = false, taps = twoWrongPairs)
     }
@@ -200,5 +205,6 @@ class MatchQuestionScreenshots {
 
     private companion object {
         const val FRAME = 16L
+        const val CUE = 700L
     }
 }
