@@ -117,6 +117,7 @@ export function SavedMapRow({
 }) {
   const kind = useSavedKindLabel(saved.kind);
   const isChapter = saved.kind === "chapter";
+  const kindView = isChapter ? "chapters" : "lessons";
 
   const place = saved.chapterId && {
     chapterId: saved.chapterId,
@@ -136,7 +137,8 @@ export function SavedMapRow({
           variant="ghost"
         />
       }
-      href={buildStudyHref({ place: place || null, study, view: "saved" })}
+      // Removed here, it's no longer in the Saved deck, so it opens in its own kind's.
+      href={buildStudyHref({ place: place || null, study, view: isSaved ? "saved" : kindView })}
       prefetch="intent"
     >
       <ListRowLeading className={LEADING_CLASS}>
