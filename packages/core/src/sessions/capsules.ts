@@ -73,7 +73,7 @@ function isShortMatchLabel(label: unknown): boolean {
   );
 }
 
-/** A quick review board has at most five pairs of labels that fit a phone's half column. */
+/** A quick review board has at most five pairs of labels that fit a phone's half column. @internal */
 export function isLightMatch(content: unknown): boolean {
   return (
     isJsonObject(content) &&
