@@ -256,6 +256,16 @@ describe("exact standalone bank mistake practice", () => {
             return box.top >= 0 && box.bottom <= (bar?.top ?? 0);
           })
           .toBe(true);
+
+        const top =
+          document.querySelector("[data-slot=task-header]")?.getBoundingClientRect().bottom ?? 0;
+
+        const sliced = [...document.querySelectorAll("[data-slot=match-entry]")].filter((card) => {
+          const box = card.getBoundingClientRect();
+          return box.top < top - 1 && box.bottom > top + 1;
+        });
+
+        expect(sliced).toStrictEqual([]);
       }),
     );
   });
