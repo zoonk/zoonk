@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type SeedPersonaName } from "@zoonk/db/seed/personas";
+import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
 import { t } from "../../../db/src/prisma/seed/_utils/localize";
@@ -57,21 +58,6 @@ describe("placement on a seeded plan", () => {
       new Set(["matchPairs", "multipleChoice", "order", "trueFalse"]),
     );
   });
-
-  it("opens a language learner's level test on a question the seed wrote", async () => {
-    const { goalId, userId } = await copyAtPlacement("language");
-    mockSession(userId);
-
-    const started = await startLanguageLevelTest({ goalId, length: "quick" });
-
-    const owed = await prisma.followUp.count({ where: { kind: "prepareLevelTestBank", userId } });
-
-    expect(
-      started.status === "ready" && started.test.status === "ready" && started.test.next.kind,
-    ).toBe("question");
-
-    expect(owed).toBe(0);
-  });
 });
 
 function languageCourse(): SeedCourse {
@@ -88,7 +74,7 @@ function languageCourse(): SeedCourse {
     levelTest: englishLevelTest,
     skills: [],
     slug: t(`${key}-en`, `${key}-pt`),
-    targetLanguage: `x-${randomUUID().slice(0, 6)}`,
+    targetLanguage: `en-x-${randomUUID().slice(0, 5)}`,
     title: t("A language", "Um idioma"),
   };
 }
@@ -105,6 +91,31 @@ async function reseed(course: SeedCourse) {
 }
 
 describe("a reseed of a language course's level test", () => {
+  it("opens a learner's level test on a question the seed wrote, with nothing left to write", async () => {
+    const course = languageCourse();
+    await reseed(course);
+
+    const { goal, user } = await languageGoalFixture();
+
+    await prisma.goal.update({
+      data: { targetLanguage: course.targetLanguage },
+      where: { id: goal.id },
+    });
+
+    mockSession(user.id);
+    const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+
+    const owed = await prisma.followUp.count({
+      where: { kind: "prepareLevelTestBank", userId: user.id },
+    });
+
+    expect(
+      started.status === "ready" && started.test.status === "ready" && started.test.next.kind,
+    ).toBe("question");
+
+    expect(owed).toBe(0);
+  });
+
   it("adds the seed's questions and level checks to a bank the app wrote, keeping the app's", async () => {
     const course = languageCourse();
     const appQuestion = { ...englishLevelTest.questions[0], id: "app-question" };
