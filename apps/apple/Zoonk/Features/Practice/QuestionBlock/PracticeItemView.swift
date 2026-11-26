@@ -342,10 +342,13 @@ struct MatchPairsItemView: View {
     if case .pairing(_, let misses) = draft { misses } else { [] }
   }
 
-  /// The left cards that had a wrong try on a board finished pair by pair.
+  /// The left cards that had a wrong try, on a board finished pair by pair or revealed by "I don't
+  /// know yet".
   private var missedLefts: Set<Int> {
-    guard case .matches(_, let misses?) = result?.answer ?? draft else { return [] }
-    return Set(misses.map(\.left))
+    switch draft ?? result?.answer {
+    case .pairing(_, let misses), .matches(_, let misses?): Set(misses.map(\.left))
+    default: []
+    }
   }
 
   private func isSolved(_ pairs: [Int?]) -> Bool {

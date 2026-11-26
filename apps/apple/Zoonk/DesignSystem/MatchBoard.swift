@@ -33,7 +33,8 @@ struct MatchPicking: Equatable, Sendable {
   private(set) var miss: MatchTry?
   /// Names each miss, so a second one on the same cards cues again.
   private(set) var missCount = 0
-  /// The last pair kept, for its moment on screen before it settles.
+  /// The last pair kept, for its moment on screen before it settles; other taps leave it, and only
+  /// the next pair kept takes its place.
   private(set) var lock: MatchTry?
   private(set) var lockCount = 0
 
@@ -42,7 +43,6 @@ struct MatchPicking: Equatable, Sendable {
     attempt: MatchTry, isRight: Bool
   )? {
     miss = nil
-    lock = nil
 
     guard let first = selected, first != card else {
       selected = selected == card ? nil : card
@@ -257,29 +257,33 @@ private struct MatchEntryStyle: ButtonStyle {
 }
 
 /// The mark at a card's end: a dot on the learner's pick, a check on a kept pair (quiet once it
-/// settles), an ✕ on a wrong try, a held pair's number in a circle, which tells it apart from a
-/// key. Its column is there in every state. The marks are main's thin 16-point ones.
+/// settles, on the miss's tone in a solved row a wrong try came first), an ✕ on a wrong try, a held
+/// pair's number in a circle, which tells it apart from a key. Its column is there in every state.
+/// The marks are main's thin ones.
 private struct MatchMark: View {
   let state: MatchEntryState
 
   @ScaledMetric(relativeTo: .subheadline) private var width = 20.0
+  @ScaledMetric(relativeTo: .subheadline) private var dot = 10.0
 
   var body: some View {
     Group {
       switch state {
       case .selected:
-        Image(systemName: "circle.fill")
-          .imageScale(.small)
-          .foregroundStyle(Color(.foreground))
-      case .right, .missed:
-        Image(systemName: "checkmark")
-          .fontWeight(.regular)
-          .foregroundStyle(.success)
+        // Centered on the first line, which the hidden text sets as the words beside it do.
+        Text(verbatim: " ")
+          .hidden()
+          .overlay {
+            Circle()
+              .fill(Color(.foreground))
+              .frame(width: dot, height: dot)
+          }
+      case .right:
+        check.foregroundStyle(.success)
       case .done:
-        Image(systemName: "checkmark")
-          .imageScale(.small)
-          .fontWeight(.regular)
-          .foregroundStyle(.mutedForeground)
+        check.foregroundStyle(.mutedForeground)
+      case .missed:
+        check.foregroundStyle(.destructive)
       case .wrong:
         Image(systemName: "xmark")
           .fontWeight(.regular)
@@ -296,6 +300,10 @@ private struct MatchMark: View {
     }
     .frame(width: width)
     .accessibilityHidden(true)
+  }
+
+  private var check: some View {
+    Image(systemName: "checkmark").fontWeight(.regular)
   }
 }
 

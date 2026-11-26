@@ -439,8 +439,10 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertEqual(picking.kept(.left(0)), .right)
     XCTAssertEqual(picking.kept(.right(0)), .right)
 
-    let firstLock = picking.lockCount
     _ = picking.tap(.left(1), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0)), .right, "another tap leaves the cue its moment")
+
+    let firstLock = picking.lockCount
     _ = picking.tap(.right(1), goesTogether: goesTogether)
     XCTAssertEqual(picking.kept(.left(0)), .done)
     picking.endLock(firstLock)

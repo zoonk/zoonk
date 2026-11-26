@@ -55,7 +55,12 @@ private struct ScrollsIntoSightWhenShown: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .id(id)
+      // What's brought into sight reaches main's 16 past each edge, so it never ends on one.
+      .background {
+        Color.clear
+          .padding(.vertical, -16)
+          .id(id)
+      }
       // After it's laid out, so the scroll view knows where it is.
       .task { scrollIntoView(id, reduceMotion: reduceMotion) }
   }

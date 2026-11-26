@@ -88,6 +88,9 @@ private struct MatchPairsCanvas: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: Radius.option))
+        // Each miss's own note, so it comes into sight under a tall board as the verdict does.
+        .id(picking.missCount)
+        .scrollsIntoSightWhenShown()
       }
     }
   }
