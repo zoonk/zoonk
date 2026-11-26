@@ -34,7 +34,7 @@ export function parsePlacementItem(item: BankItem): PlacementItem | null {
     : null;
 }
 
-/** A placement question has no block, so it's shown and graded in a context of its own. */
+/** A placement question has no block, so it's shown and graded in a context of its own. @internal */
 export function getPlacementBlockId(item: PlacementItem): string {
   return item.id;
 }
