@@ -430,26 +430,26 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertNil(picking.miss)
   }
 
-  func testAKeptPairCuesForItsMomentThenSettlesAndALaterPairKeepsItsOwn() {
+  func testAKeptPairCuesForItsMomentThenSettlesOnItsNumberAndALaterPairKeepsItsOwn() {
     var picking = MatchPicking()
     let goesTogether = { (attempt: MatchTry) in attempt.left == attempt.right }
 
     _ = picking.tap(.left(0), goesTogether: goesTogether)
     _ = picking.tap(.right(0), goesTogether: goesTogether)
-    XCTAssertEqual(picking.kept(.left(0)), .right)
-    XCTAssertEqual(picking.kept(.right(0)), .right)
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .right)
+    XCTAssertEqual(picking.kept(.right(0), pair: 1), .right)
 
     _ = picking.tap(.left(1), goesTogether: goesTogether)
-    XCTAssertEqual(picking.kept(.left(0)), .right, "another tap leaves the cue its moment")
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .right, "another tap leaves the cue its moment")
 
     let firstLock = picking.lockCount
     _ = picking.tap(.right(1), goesTogether: goesTogether)
-    XCTAssertEqual(picking.kept(.left(0)), .done)
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .done(1))
     picking.endLock(firstLock)
-    XCTAssertEqual(picking.kept(.right(1)), .right)
+    XCTAssertEqual(picking.kept(.right(1), pair: 2), .right)
 
     picking.endLock(picking.lockCount)
-    XCTAssertEqual(picking.kept(.right(1)), .done)
+    XCTAssertEqual(picking.kept(.right(1), pair: 2), .done(2))
   }
 
   func testTheSameSideMovesTheSelectionAndTheSameCardClearsIt() {

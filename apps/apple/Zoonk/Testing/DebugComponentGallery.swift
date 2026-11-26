@@ -1224,7 +1224,8 @@
   private struct MatchCards: View {
     private let cards: [(MatchEntryState, String)] = [
       (.idle, "At rest"), (.selected, "Picked first"), (.wrong(0), "Didn't go together"),
-      (.missed, "Solved, missed first"), (.right, "A pair kept"), (.done, "Kept earlier"),
+      (.missed, "Solved, missed first"), (.right, "A pair kept"),
+      (.done(3), "Kept earlier, pair 3"),
       (.paired(2), "In pair 2, unchecked"),
       (.idle, "A longer card whose words wrap onto a second line"),
     ]

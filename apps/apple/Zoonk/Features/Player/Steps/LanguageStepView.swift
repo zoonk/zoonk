@@ -916,40 +916,39 @@ private struct MatchColumnsView: View {
 
   var body: some View {
     let board = self.board
+    let places = board.places
 
     MatchBoard(
       leftCount: pairs.count, rightCount: rightItems.count,
-      solvedRows: isSolved ? pairs.indices.map { MatchTry(left: $0, right: $0) } : nil
+      solvedRows: isSolved
+        ? places.enumerated().compactMap { left, right in
+          right.map { MatchTry(left: left, right: $0) }
+        } : nil
     ) { ref in
       MatchEntry(
-        state: state(of: ref, board: board),
+        state: state(of: ref, places: places),
         keyIndex: ref.side == .left ? ref.index : pairs.count + ref.index,
         action: context.isLocked ? nil : { tap(ref, board: board) }
       ) {
-        Text(text(of: ref))
+        Text(ref.side == .left ? pairs[ref.index].left : rightItems[ref.index])
       }
     }
     .matchBoardFeedback($picking, locked: matched.count, isPlaying: !context.isLocked)
   }
 
-  /// Solved, each row shows its own pair.
-  private func text(of ref: MatchCardRef) -> String {
+  /// The left card of a matched card's pair.
+  private func owner(of ref: MatchCardRef, places: [Int?]) -> Int? {
     switch ref.side {
-    case .left: pairs[ref.index].left
-    case .right: isSolved ? pairs[ref.index].right : rightItems[ref.index]
+    case .left: places[ref.index] == nil ? nil : ref.index
+    case .right: places.firstIndex(of: ref.index)
     }
   }
 
-  private func isMatched(_ ref: MatchCardRef, board: MatchColumnsBoard) -> Bool {
-    isSolved
-      || (ref.side == .left ? board.matchedLeft : board.matchedRight).contains(ref.index)
-  }
-
-  private func state(of ref: MatchCardRef, board: MatchColumnsBoard) -> MatchEntryState {
-    if isMatched(ref, board: board) {
-      // Solved, each row is the left card's pair.
+  private func state(of ref: MatchCardRef, places: [Int?]) -> MatchEntryState {
+    if let owner = owner(of: ref, places: places) {
       return isSolved
-        ? .solved(missed: misses.contains { $0.left == ref.index }) : picking.kept(ref)
+        ? .solved(missed: misses.contains { $0.left == owner })
+        : picking.kept(ref, pair: owner + 1)
     }
 
     if picking.isMissed(ref) {
@@ -960,7 +959,7 @@ private struct MatchColumnsView: View {
   }
 
   private func tap(_ ref: MatchCardRef, board: MatchColumnsBoard) {
-    guard !isMatched(ref, board: board),
+    guard !(ref.side == .left ? board.matchedLeft : board.matchedRight).contains(ref.index),
       let (attempt, isRight) = picking.tap(
         ref,
         goesTogether: {

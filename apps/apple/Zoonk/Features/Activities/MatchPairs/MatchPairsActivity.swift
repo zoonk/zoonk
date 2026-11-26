@@ -119,7 +119,7 @@ private struct MatchPairsCanvas: View {
     let others = ref.side == .left ? columns.right : columns.left
 
     return MatchEntry(
-      state: state(of: ref, card: card),
+      state: state(of: ref, card: card, columns: columns),
       keyIndex: ref.side == .left ? ref.index : columns.left.count + ref.index,
       partner: isMatched
         ? others.first { $0.id == card.id }.map { LessonRichText.spoken($0.text) } : nil,
@@ -129,12 +129,17 @@ private struct MatchPairsCanvas: View {
     }
   }
 
-  private func state(of ref: MatchCardRef, card: MatchCard) -> MatchEntryState {
-    if progress.matched.contains(card.id) {
-      // A pair's two cards share its id.
+  private func state(
+    of ref: MatchCardRef, card: MatchCard, columns: (left: [MatchCard], right: [MatchCard])
+  ) -> MatchEntryState {
+    // A pair's two cards share its id.
+    if progress.matched.contains(card.id),
+      let owner = columns.left.firstIndex(where: { $0.id == card.id })
+    {
       let firstTry = progress.firstTries[card.id]
       return isComplete
-        ? .solved(missed: firstTry.map { $0 != card.id } ?? false) : picking.kept(ref)
+        ? .solved(missed: firstTry.map { $0 != card.id } ?? false)
+        : picking.kept(ref, pair: owner + 1)
     }
 
     if picking.isMissed(ref) {

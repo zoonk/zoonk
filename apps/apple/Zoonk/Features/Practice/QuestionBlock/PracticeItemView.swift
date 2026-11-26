@@ -380,7 +380,8 @@ struct MatchPairsItemView: View {
     // Solved, every pair the learner found keeps its check; "I don't know yet" shows the rest of
     // the answer without one.
     if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
-      return isSolved(pairs) ? .solved(missed: missedLefts.contains(owner)) : picking.kept(card)
+      return isSolved(pairs)
+        ? .solved(missed: missedLefts.contains(owner)) : picking.kept(card, pair: owner + 1)
     }
 
     if result != nil {
