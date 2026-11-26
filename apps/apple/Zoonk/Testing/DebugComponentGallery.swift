@@ -1137,7 +1137,7 @@
     private let cards: [(MatchEntryState, String)] = [
       (.idle, "At rest"), (.selected, "Picked first"), (.wrong(0), "Didn't go together"),
       (.right, "A pair kept"), (.paired(2), "In pair 2, unchecked"),
-      (.missed, "Found after a miss, checked"),
+      (.idle, "A longer card whose words wrap onto a second line"),
     ]
 
     var body: some View {

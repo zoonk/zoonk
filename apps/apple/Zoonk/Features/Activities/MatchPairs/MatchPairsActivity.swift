@@ -109,10 +109,9 @@ private struct MatchPairsCanvas: View {
     }
   }
 
-  /// Checked, a pair first tried with another card is marked, as the result below names it.
   private func state(of ref: MatchCardRef, card: MatchCard) -> MatchEntryState {
     if progress.matched.contains(card.id) {
-      return isChecked && progress.firstTries[card.id] != card.id ? .missed : .right
+      return .right
     }
 
     if picking.isMissed(ref) {

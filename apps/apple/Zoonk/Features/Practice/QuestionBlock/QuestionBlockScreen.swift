@@ -296,16 +296,20 @@ struct QuestionBlockView: View {
         return nil
       }
 
-      return [
+      let lead: [String?] = [
         run.timedOut ? DrillAnswerNotes.timesUp : nil,
         String(localized: verdict(feedback, answer: answer).label),
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
+      ]
+      let confusions: [String?] = PracticeAnswerText.confusions(for: answer, question: question)
+        .map { $0.said }
+      let tally: String? =
         run.detail.isNetScored(question)
-          ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts()
-          : nil,
-      ].compactMap(\.self).joined(separator: "\n")
+        ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts() : nil
+
+      return (lead + confusions + [tally]).compactMap(\.self).joined(separator: "\n")
     default:
       return nil
     }
@@ -332,6 +336,7 @@ struct QuestionBlockView: View {
         verdict: verdict(feedback, answer: answer),
         streak: feedback.isCorrect ? feedback.hyperdrive.streak : 0,
         correctAnswerText: correctLine(feedback, question: question),
+        confusions: PracticeAnswerText.confusions(for: answer, question: question),
         explanation: feedback.explanation,
         workedSteps: feedback.isCorrect ? [] : feedback.workedSteps,
         citation: question.citation
@@ -428,8 +433,11 @@ struct QuestionBlockView: View {
         .practiceFocus(.notSure)
       }
 
-      // A learning match sends itself with its last pair.
-      if question?.checksEachPair != true {
+      // A learning match sends itself with its last pair, so its main action waits as Continue.
+      if question?.checksEachPair == true {
+        PracticeMainButton(
+          title: continueTitle, isBusy: phase.checking != nil, isDisabled: true, action: {})
+      } else {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),

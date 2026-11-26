@@ -141,6 +141,9 @@ struct MistakePracticeScreen: View {
             isCorrect: graded.grade.isCorrect,
             notSure: graded.answer.isDontKnow && graded.sender != .timer
           ),
+          confusions: step.question.map {
+            PracticeAnswerText.confusions(for: graded.answer, question: $0)
+          } ?? [],
           explanation: graded.grade.explanation,
           workedSteps: graded.grade.isCorrect ? [] : graded.grade.workedSteps
         ) {
@@ -163,10 +166,15 @@ struct MistakePracticeScreen: View {
       isCorrect: graded.grade.isCorrect,
       notSure: graded.answer.isDontKnow && graded.sender != .timer)
 
-    return [
+    let lead: [String?] = [
       graded.sender == .timer ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
-      graded.grade.explanation,
-    ].compactMap(\.self).joinedSentences()
+    ]
+    let confusions: [String?] =
+      state.step?.question.map {
+        PracticeAnswerText.confusions(for: graded.answer, question: $0).map { $0.said }
+      } ?? []
+
+    return (lead + confusions + [graded.grade.explanation]).compactMap(\.self).joinedSentences()
   }
 
   private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)? {
@@ -251,8 +259,13 @@ struct MistakePracticeScreen: View {
         }
         .practiceFocus(.notSure)
 
-        // A learning match sends itself with its last pair.
-        if step.question?.checksEachPair != true {
+        // A learning match sends itself with its last pair, so its main action waits as Continue.
+        if step.question?.checksEachPair == true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Continue", table: "Practice", comment: "Moves on after a grade."),
+            isBusy: checking != nil, isDisabled: true, action: {})
+        } else {
           PracticeMainButton(
             title: LocalizedStringResource(
               "Check", table: "Practice", comment: "Sends the answer to be graded."),

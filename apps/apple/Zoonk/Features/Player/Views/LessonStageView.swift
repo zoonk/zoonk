@@ -650,7 +650,7 @@ struct LessonActionBar: View {
 
 extension LessonStep {
   var showsOwnResult: Bool {
-    kind == .challenge || kind == .matchColumns
+    kind == .challenge
   }
 
   func canCheck(_ answer: LessonAnswer?, openedAt: Date) -> Bool {

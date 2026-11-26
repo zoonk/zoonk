@@ -308,13 +308,8 @@ struct MatchPairsItemView: View {
   var body: some View {
     let pairs = self.pairs
 
-    MatchBoard(
-      leftCount: left.count, rightCount: right.count, solvedRows: solvedRows(pairs),
-      columnLabels: (
-        Text("Match these", tableName: "Practice", comment: "VoiceOver name of the left column."),
-        Text("With these", tableName: "Practice", comment: "VoiceOver name of the right column.")
-      )
-    ) { card in
+    MatchBoard(leftCount: left.count, rightCount: right.count, solvedRows: solvedRows(pairs)) {
+      card in
       MatchEntry(
         state: state(of: card, pairs: pairs),
         keyIndex: card.side == .left ? card.index : left.count + card.index,
@@ -367,12 +362,14 @@ struct MatchPairsItemView: View {
       return picking.selected == card ? .selected : .idle
     }
 
-    if let result {
-      return verdict(of: card, result: result)
-    }
-
+    // Checked, every pair the learner found keeps its check; "I don't know yet" shows the rest of
+    // the answer without one.
     if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
       return .right
+    }
+
+    if result != nil {
+      return .idle
     }
 
     if picking.isMissed(card) {
@@ -380,17 +377,6 @@ struct MatchPairsItemView: View {
     }
 
     return picking.selected == card ? .selected : .idle
-  }
-
-  /// A checked board marks each pair whose left entry was first tried with another, as the lesson's
-  /// match does; "I don't know yet" only shows the answer.
-  private func verdict(of card: MatchCardRef, result: PracticeItemResult) -> MatchEntryState {
-    guard case .matches(_, let misses) = result.answer, let key = question.key else {
-      return .idle
-    }
-
-    let row = card.side == .left ? card.index : key.firstIndex(of: card.index)
-    return (misses ?? []).contains { $0.left == row } ? .missed : .right
   }
 
   private func partner(of card: MatchCardRef, pairs: [Int?]) -> String? {

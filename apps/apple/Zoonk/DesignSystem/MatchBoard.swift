@@ -88,21 +88,19 @@ struct MatchPicking: Equatable, Sendable {
 enum MatchEntryState: Equatable {
   case idle
   case selected
-  /// In a pair nothing has checked yet, with the pair's number.
+  /// In a pair a test's board holds until Check, with the pair's number.
   case paired(Int)
   /// A pair checked and kept.
   case right
   /// Part of a try that didn't go together, for a moment; the miss's count, so a second miss on the
   /// card cues again.
   case wrong(Int)
-  /// On a checked board, a pair the learner found only after a miss: its tone and no check, since
-  /// the pair shown is still the right one.
-  case missed
 }
 
 /// Main's `MatchEntry`: one side of a pair, on every board that asks to match these with those. Its
-/// words start at the card's edge, and a mark (a pair's number, a check) sits on its corner, so
-/// pairing moves no text. `partner` is what VoiceOver says it's matched with.
+/// words start at the card's edge, and its mark (a check, an ✕ or the pair's number) sits level with
+/// the first line at the end, in room every state keeps, so pairing moves no text. `partner` is what
+/// VoiceOver says it's matched with.
 struct MatchEntry<Label: View>: View {
   let state: MatchEntryState
   /// Its place on the board, the left column first, for the number key that picks it.
@@ -116,20 +114,20 @@ struct MatchEntry<Label: View>: View {
     Button {
       action?()
     } label: {
-      label
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        label
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .multilineTextAlignment(.leading)
+
+        MatchMark(state: state)
+      }
     }
     .buttonStyle(MatchEntryStyle(state: state))
-    .disabled(action == nil || isSettled)
+    .disabled(action == nil || state == .right)
     .modifier(MatchShake(missNumber: missNumber))
-    .modifier(MatchKey(index: action == nil || isSettled ? nil : keyIndex))
+    .modifier(MatchKey(index: action == nil || state == .right ? nil : keyIndex))
     .accessibilityValue(value)
     .accessibilityAddTraits(state == .selected ? .isSelected : [])
-  }
-
-  private var isSettled: Bool {
-    state == .right || state == .missed
   }
 
   private var missNumber: Int? {
@@ -137,12 +135,6 @@ struct MatchEntry<Label: View>: View {
   }
 
   private var value: Text {
-    if state == .missed {
-      return Text(
-        "Missed on the first try", tableName: "Activities",
-        comment: "Above the pairs a learner missed at first")
-    }
-
     guard let partner else { return Text(verbatim: "") }
 
     return Text(
@@ -195,141 +187,167 @@ private struct MatchKey: ViewModifier {
 private struct MatchEntryStyle: ButtonStyle {
   let state: MatchEntryState
 
+  @Environment(\.horizontalSizeClass) private var sizeClass
+
   func makeBody(configuration: Configuration) -> some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
+
     configuration.label
-      .typeStyle(.body.weight(.medium))
+      // Main's board text: 14 on a phone and 16 wider, on 24-point lines.
+      .typeStyle(sizeClass == .regular ? Self.wideText : Self.text)
       .foregroundStyle(Color(.foreground))
-      .padding(12)
+      .padding(.horizontal, 12)
+      .padding(.vertical, 13)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-      .frame(minHeight: 48)
-      .answerSurface(tone, isPressed: configuration.isPressed)
+      .answerSurface(tone, cornerRadius: Radius.xl, isPressed: configuration.isPressed)
       // As on the page, on a lesson's tinted canvas too.
-      .background(
-        Color(.background), in: .rect(cornerRadius: Radius.option, style: .continuous)
-      )
-      .overlay(alignment: .topTrailing) {
-        MatchMark(state: state)
-      }
+      .background(Color(.background), in: shape)
+      .scaleEffect(configuration.isPressed ? 0.99 : 1)
       .animation(.easeOut(duration: 0.15), value: tone)
   }
+
+  private static let text = TypeStyle(
+    size: 14, relativeTo: .subheadline, weight: .medium, lineHeight: 24.0 / 14)
+  private static let wideText = TypeStyle(
+    size: 16, relativeTo: .callout, weight: .medium, lineHeight: 24.0 / 16)
 
   private var tone: AnswerTone {
     switch state {
     case .idle, .paired: .idle
     case .selected: .picked
     case .right: .right
-    case .wrong, .missed: .wrong
+    case .wrong: .wrong
     }
   }
 }
 
-/// The mark on a card's corner, over its border: inside, it stays within the card's padding, so it
-/// never covers a word.
+/// The mark at a card's end: a check on a kept pair, an ✕ on a wrong try, a held pair's number in a
+/// circle, which tells it apart from a key. Its column is there in every state.
 private struct MatchMark: View {
   let state: MatchEntryState
 
-  /// It grows with the text only a little: larger, it would cover the words.
-  @ScaledMetric(relativeTo: .caption2) private var scaledSize = 18.0
+  @ScaledMetric(relativeTo: .subheadline) private var width = 20.0
 
   var body: some View {
-    let size = min(scaledSize, 22)
-
-    if let fill {
-      ZStack {
-        Circle().fill(fill)
-        glyph
+    Group {
+      switch state {
+      case .right:
+        StatusMark(status: .done)
+      case .wrong:
+        Image(systemName: "xmark")
+          .fontWeight(.semibold)
+          .foregroundStyle(.destructive)
+      case .paired(let number):
+        Text(number, format: .number)
+          .typeStyle(.tag.monospaced())
           .foregroundStyle(Color(.background))
-          .padding(state == .right ? size * 0.25 : 2)
+          .frame(minWidth: width, minHeight: width)
+          .background(Color(.foreground), in: Circle())
+      case .idle, .selected:
+        Color.clear.frame(height: 1)
       }
-      .frame(width: size, height: size)
-      .offset(x: size / 3, y: -size / 3)
-      .accessibilityHidden(true)
     }
-  }
-
-  private var fill: Color? {
-    switch state {
-    case .paired: Color(.foreground)
-    case .right: .success
-    case .idle, .selected, .wrong, .missed: nil
-    }
-  }
-
-  @ViewBuilder private var glyph: some View {
-    if case .paired(let number) = state {
-      Text(number, format: .number)
-        .typeStyle(.small.weight(.semibold).monospaced())
-        .lineLimit(1)
-        .minimumScaleFactor(0.5)
-    } else {
-      Image(systemName: "checkmark")
-        .resizable()
-        .scaledToFit()
-        .fontWeight(.bold)
-    }
+    .frame(width: width)
+    .accessibilityHidden(true)
   }
 }
 
-/// Main's `MatchBoard`: two columns side by side, the right one under the left once text is at an
-/// accessibility size. Solved, it lays out as rows, each pair side by side.
+/// Main's `MatchBoard`: two columns 8 apart whose rows line up, the right column under the left
+/// once text is at an accessibility size. Solved, each row holds a pair. VoiceOver reads the left
+/// column, then the right.
 struct MatchBoard<Card: View>: View {
   let leftCount: Int
   let rightCount: Int
   var solvedRows: [MatchTry]?
-  /// What VoiceOver calls each column.
-  var columnLabels: (left: Text, right: Text)?
   @ViewBuilder let card: (MatchCardRef) -> Card
 
   @Environment(\.stacksContent) private var isStacked
 
   var body: some View {
-    if let solvedRows {
-      VStack(spacing: isStacked ? 16 : 8) {
-        ForEach(solvedRows, id: \.self) { row in
-          AccessibilityStack(spacing: 8) {
-            card(.left(row.left))
-            card(.right(row.right))
+    Group {
+      if isStacked {
+        stacked
+      } else {
+        Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+          ForEach(rows, id: \.self) { row in
+            GridRow {
+              cell(row.left.map(MatchCardRef.left))
+              cell(row.right.map(MatchCardRef.right))
+            }
           }
-          .fixedSize(horizontal: false, vertical: true)
+        }
+      }
+    }
+    .fixedSize(horizontal: false, vertical: true)
+    .accessibilityElement(children: .contain)
+  }
+
+  private var rows: [Row] {
+    if let solvedRows {
+      return solvedRows.map { Row(left: $0.left, right: $0.right) }
+    }
+
+    return (0..<max(leftCount, rightCount)).map {
+      Row(left: $0 < leftCount ? $0 : nil, right: $0 < rightCount ? $0 : nil)
+    }
+  }
+
+  @ViewBuilder
+  private var stacked: some View {
+    if let solvedRows {
+      VStack(spacing: 16) {
+        ForEach(solvedRows, id: \.self) { row in
+          VStack(spacing: 8) {
+            cell(.left(row.left))
+            cell(.right(row.right))
+          }
         }
       }
     } else {
-      AccessibilityStack(alignment: .top, spacing: 8, stackedSpacing: 16) {
-        column(.left, count: leftCount)
-        column(.right, count: rightCount)
+      VStack(spacing: 16) {
+        VStack(spacing: 8) {
+          ForEach(0..<leftCount, id: \.self) { cell(.left($0)) }
+        }
+
+        VStack(spacing: 8) {
+          ForEach(0..<rightCount, id: \.self) { cell(.right($0)) }
+        }
       }
     }
   }
 
   @ViewBuilder
-  private func column(_ side: MatchCardRef.Side, count: Int) -> some View {
-    let cards = VStack(spacing: 8) {
-      ForEach(0..<count, id: \.self) { index in
-        card(MatchCardRef(side: side, index: index))
-          .fixedSize(horizontal: false, vertical: true)
-      }
-    }
-    .frame(maxWidth: .infinity)
-
-    if let columnLabels {
-      cards
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(side == .left ? columnLabels.left : columnLabels.right)
+  private func cell(_ ref: MatchCardRef?) -> some View {
+    if let ref {
+      card(ref)
+        .accessibilitySortPriority(Double(sortPriority(ref)))
     } else {
-      cards
+      Color.clear
     }
+  }
+
+  /// The left column first, top to bottom, then the right: a grid would read it row by row.
+  private func sortPriority(_ ref: MatchCardRef) -> Int {
+    let place = ref.side == .left ? ref.index : leftCount + ref.index
+    return leftCount + rightCount - place
+  }
+
+  private struct Row: Hashable {
+    let left: Int?
+    let right: Int?
   }
 }
 
 extension View {
-  /// What every match board does around its taps: a light tap in the hand as a pair locks, and a
-  /// miss's cue ending after its moment.
+  /// What every match board does around its taps: a light tap in the hand as a pair locks, a
+  /// warning one on a miss, and the miss's cue ending after its moment.
   func matchBoardFeedback(_ picking: Binding<MatchPicking>, locked: Int) -> some View {
     sensoryFeedback(.impact(weight: .light), trigger: locked) { old, new in new > old }
+      .sensoryFeedback(.warning, trigger: picking.wrappedValue.missCount)
       .task(id: picking.wrappedValue.missCount) {
         let count = picking.wrappedValue.missCount
         guard picking.wrappedValue.miss != nil else { return }
-        try? await Task.sleep(for: .milliseconds(700))
+        try? await Task.sleep(for: .milliseconds(600))
         guard !Task.isCancelled else { return }
         picking.wrappedValue.endMiss(count)
       }
