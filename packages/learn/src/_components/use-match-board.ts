@@ -196,8 +196,11 @@ export function useMatchBoard({
     entry: (side: MatchSide, index: number) => {
       const partner = partnerIn(pairs, side, index);
       const left = side === "left" ? index : partner;
+      const picked = board.selected?.side === side && board.selected.index === index;
 
       return {
+        // A wrong try's moment shows over the pick, which still holds.
+        ...(partner === UNPAIRED && { "aria-pressed": picked }),
         disabled,
         index: side === "left" ? index : leftCount + index,
         label: label(side, index),
