@@ -1,6 +1,12 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type SeedPersonaName } from "@zoonk/db/seed/personas";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
+import { t } from "../../../db/src/prisma/seed/_utils/localize";
+import { englishLevelTest } from "../../../db/src/prisma/seed/library/english/english-level-test";
+import { type SeedCourse } from "../../../db/src/prisma/seed/library/types";
+import { writeLibraryCourse } from "../../../db/src/prisma/seed/library/write-course";
 import { mockSession } from "../_test-utils/mock-session";
 import { startLanguageLevelTest } from "../language/level-test/start-language-level-test";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
@@ -57,5 +63,52 @@ describe("placement on a seeded plan", () => {
     ).toBe("question");
 
     expect(owed).toBe(0);
+  });
+});
+
+describe("a reseed of a language course's level test", () => {
+  it("keeps the questions the app wrote and adds only the level checks it lacks", async () => {
+    const key = `level-test-${randomUUID()}`;
+    const targetLanguage = `x-${randomUUID().slice(0, 6)}`;
+    const appQuestions = englishLevelTest.questions.slice(0, 2);
+
+    const course: SeedCourse = {
+      category: "languages",
+      chapters: [],
+      description: t("A language", "Um idioma"),
+      format: "language",
+      items: [],
+      key,
+      languages: ["pt"],
+      levelTest: englishLevelTest,
+      skills: [],
+      slug: t(`${key}-en`, `${key}-pt`),
+      targetLanguage,
+      title: t("A language", "Um idioma"),
+    };
+
+    await prisma.languageLevelTest.create({
+      data: {
+        content: { questions: appQuestions },
+        language: "pt",
+        model: "app-model",
+        promptVersion: "app",
+        runId: "app-run",
+        targetLanguage,
+      },
+    });
+
+    const organization = await organizationFixture();
+    await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+
+    const stored = await prisma.languageLevelTest.findUniqueOrThrow({
+      select: { content: true, runId: true },
+      where: { languagePair: { language: "pt", targetLanguage } },
+    });
+
+    expect(stored).toStrictEqual({
+      content: { confirmations: englishLevelTest.confirmations, questions: appQuestions },
+      runId: "app-run",
+    });
   });
 });
