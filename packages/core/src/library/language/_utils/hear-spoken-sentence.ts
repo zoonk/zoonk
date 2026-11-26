@@ -9,11 +9,7 @@ import {
   MAX_SPOKEN_AUDIO_BYTES,
   isSpokenAudioMediaType,
 } from "../spoken-answer-contract";
-import {
-  type SpokenAnswerMatch,
-  matchSpokenAnswer,
-  needsWordByWordCheck,
-} from "../spoken-answer-match";
+import { type SpokenAnswerMatch, matchSpokenAnswer } from "../spoken-answer-match";
 import { readPlayedMs } from "./played-length";
 import { needsSurnameCheck, transcriptReading } from "./transcript-reading";
 
@@ -143,19 +139,5 @@ export async function hearSpokenSentence({
     return assessWordByWord(input);
   }
 
-  const { heard, listen } = data;
-
-  if (
-    listen ||
-    needsWordByWordCheck({
-      expected: input.expected,
-      heard: heard.transcript,
-      language: input.language,
-      words: heard.match.words,
-    })
-  ) {
-    return assessWordByWord(input);
-  }
-
-  return heard;
+  return data.listen ? assessWordByWord(input) : data.heard;
 }

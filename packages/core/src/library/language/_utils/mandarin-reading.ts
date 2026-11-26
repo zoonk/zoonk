@@ -53,15 +53,16 @@ export function mandarinReading({
   const target = hanText(expected);
   const transcript = hanText(heard);
 
-  if (!romanization || !HAN.test(target) || !HAN.test(transcript)) {
-    return "different";
-  }
-
   const characters = transcript.match(/\p{Script=Han}/gu) ?? [];
   const targetCharacters = target.match(/\p{Script=Han}/gu) ?? [];
 
-  if (characters.length !== targetCharacters.length) {
-    return "different";
+  if (
+    !romanization ||
+    !HAN.test(target) ||
+    !HAN.test(transcript) ||
+    characters.length !== targetCharacters.length
+  ) {
+    return "listen";
   }
 
   if (!matchesLessonReading(pinyin(transcript, { type: "array" }), romanization)) {
