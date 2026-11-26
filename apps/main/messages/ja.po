@@ -179,6 +179,20 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "今日の学習を続ける"
 
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr ""
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "完了したレッスン"
+
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -241,13 +255,6 @@ msgstr "相棒"
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "間違いノート"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
-msgctxt "odE1Ih"
-msgid "Completed lessons"
-msgstr "完了したレッスン"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -909,6 +916,11 @@ msgstr "学習計画を作成する"
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "学習計画の概要"
+
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "FH8mtx"
+msgid "The lessons you save, ready to do again anytime."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"
