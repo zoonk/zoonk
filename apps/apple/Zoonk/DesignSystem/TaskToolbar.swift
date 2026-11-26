@@ -24,10 +24,14 @@ extension View {
   /// Esc lets go of something the screen holds (a picked match card) while `isHeld`, instead of
   /// leaving: main's board takes Esc ahead of the ✕. The task's close gives up its Esc meanwhile.
   func holdsEscape(_ isHeld: Bool, cancel: @escaping () -> Void) -> some View {
-    background {
+    // iOS gives a button in a `background` no keyboard shortcut, so this one sits beside the content.
+    ZStack {
+      self
+
       if isHeld {
         Button(action: cancel) { EmptyView() }
           .keyboardShortcut(.cancelAction)
+          .frame(width: 0, height: 0)
           .opacity(0)
           .accessibilityHidden(true)
       }
