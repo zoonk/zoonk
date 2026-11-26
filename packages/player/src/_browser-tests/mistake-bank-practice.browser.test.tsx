@@ -216,7 +216,7 @@ describe("exact standalone bank mistake practice", () => {
     );
   });
 
-  it("keeps the first card picked after a wrong pair, sends the miss and marks its pair in the result", async () => {
+  it("keeps the first card picked after a wrong pair, sends the miss and names it in the result", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({
@@ -230,6 +230,7 @@ describe("exact standalone bank mistake practice", () => {
     const electron = page.getByRole("button", { exact: true, name: "Electron" });
     await electron.click();
     await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
 
     await expect
       .element(page.getByText("Electron and Positive charge don't go together.", { exact: true }))
@@ -245,8 +246,12 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(feedback.getByText("Right answer")).not.toBeInTheDocument();
 
     await expect
+      .element(feedback.getByText("Electron → Positive charge", { exact: true }))
+      .toBeVisible();
+
+    await expect
       .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
-      .toHaveAttribute("data-state", "missed");
+      .toHaveAttribute("data-state", "right");
 
     await expect
       .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))

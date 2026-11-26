@@ -19,14 +19,12 @@ import { useSpokenText } from "../../rich-text/use-spoken-text";
 /**
  * With `answerKey` (a learning question) each pair is checked as it's made and the last one sends
  * the answer through `onSubmit`, wrong tries included; without it (a test) the host gets the pairs
- * once all are made, null before, and grades them on Check. In a result the pairs the learner
- * missed first are marked; `revealed` is the answer to a board the learner didn't finish ("I don't
- * know yet").
+ * once all are made, null before, and grades them on Check. `revealed` is the answer to a board
+ * the learner didn't finish ("I don't know yet").
  */
 export function MatchPairsQuestion({
   answerKey,
   disabled,
-  graded,
   left,
   onChange,
   onSubmit,
@@ -35,7 +33,6 @@ export function MatchPairsQuestion({
 }: {
   answerKey?: readonly number[] | null;
   disabled: boolean;
-  graded: boolean;
   left: readonly string[];
   onChange: (answer: MatchBoardAnswer | { matches: number[] } | null) => void;
   onSubmit: (answer: MatchBoardAnswer) => void;
@@ -60,7 +57,6 @@ export function MatchPairsQuestion({
     reveal: answerKey ? revealed : null,
     rightCount: right.length,
     say: (side, index) => spoken.inline(text(side, index)),
-    showMisses: graded,
   });
 
   useFocusMainActionWhenComplete({ complete: board.complete, containerRef: listRef });

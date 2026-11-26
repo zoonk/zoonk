@@ -20,7 +20,10 @@ export function matchAnswer(
   };
 }
 
-/** The finished board an answer stands for, each first wrong try kept as a miss. */
+/**
+ * The finished board an answer stands for, and each left card's first wrong try. A first try at a
+ * card the activity no longer has, from before its unpaired cards were removed, can't be named.
+ */
 export function boardFromAnswer(
   { left, right }: Columns,
   answer: ActivityAnswer | null,
@@ -33,11 +36,8 @@ export function boardFromAnswer(
 
   return {
     misses: left.flatMap((card, index) => {
-      const tried = answer.pairs[card.id];
-
-      return tried !== undefined && tried !== card.id
-        ? [{ left: index, right: placeOf(tried) }]
-        : [];
+      const tried = placeOf(answer.pairs[card.id]);
+      return tried >= 0 && right[tried]?.id !== card.id ? [{ left: index, right: tried }] : [];
     }),
     pairs: left.map((card) => placeOf(card.id)),
   };

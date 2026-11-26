@@ -5,6 +5,7 @@ import {
   type MatchTry,
   cardState,
   createMatchBoard,
+  firstMisses,
   tapCard,
 } from "./match-board-state";
 
@@ -27,8 +28,8 @@ function tapAll(
   return result;
 }
 
-const stateOf = (board: MatchBoardState, side: MatchSide, index: number, showMisses = false) =>
-  cardState(board, { checks: true, index, showMisses, side });
+const stateOf = (board: MatchBoardState, side: MatchSide, index: number) =>
+  cardState(board, { checks: true, index, side });
 
 describe(tapCard, () => {
   it("locks a right pair, picked from either side first", () => {
@@ -100,18 +101,6 @@ describe(tapCard, () => {
     expect(tapCard(board, { index: 0, isPair, side: "left", total: 3 }).move.kind).toBe("none");
   });
 
-  it("marks, in a result, each pair whose left card had a wrong try", () => {
-    const { board } = tapAll([
-      ["left", 0],
-      ["right", 2],
-      ["right", 1],
-    ]);
-
-    expect(stateOf(board, "left", 0, true)).toBe("missed");
-    expect(stateOf(board, "right", 1, true)).toBe("missed");
-    expect(stateOf(board, "right", 1)).toBe("right");
-  });
-
   it("without a key, pairs any two cards and undoes a pair from either of its cards", () => {
     const paired = tapAll(
       [
@@ -123,13 +112,26 @@ describe(tapCard, () => {
 
     expect(paired.board.pairs).toStrictEqual([2, -1, -1]);
 
-    expect(
-      cardState(paired.board, { checks: false, index: 2, showMisses: false, side: "right" }),
-    ).toBe("matched");
+    expect(cardState(paired.board, { checks: false, index: 2, side: "right" })).toBe("matched");
 
     const undone = tapCard(paired.board, { index: 2, side: "right", total: 3 });
 
     expect(undone.move).toStrictEqual({ attempt: { left: 0, right: 2 }, kind: "unpair" });
     expect(undone.board.pairs).toStrictEqual([-1, -1, -1]);
+  });
+});
+
+describe(firstMisses, () => {
+  it("keeps each left card's first wrong try, in the order they happened", () => {
+    expect(
+      firstMisses([
+        { left: 2, right: 0 },
+        { left: 0, right: 2 },
+        { left: 2, right: 1 },
+      ]),
+    ).toStrictEqual([
+      { left: 2, right: 0 },
+      { left: 0, right: 2 },
+    ]);
   });
 });

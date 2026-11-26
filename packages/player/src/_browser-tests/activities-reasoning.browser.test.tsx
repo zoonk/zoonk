@@ -286,10 +286,11 @@ describe("reasoning activities", () => {
     }
   });
 
-  it("match pairs: after a wrong pair the first card stays picked, and the miss counts as a wrong first try", async () => {
+  it("match pairs: after a wrong pair the first card stays picked, and the result names the miss under a board drawn all right", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "success");
-    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
 
     await expect
       .element(page.getByRole("button", { exact: true, name: "embarazada" }))
@@ -300,9 +301,13 @@ describe("reasoning activities", () => {
     await matchCards("librería", "bookstore");
     await expectVerdict("Not quite");
 
+    await expect.element(page.getByText("embarazada → success", { exact: true })).toBeVisible();
+
     await expect
-      .element(page.getByText("embarazada goes with pregnant, not success."))
-      .toBeVisible();
+      .element(page.getByRole("button", { name: "embarazada, matched with pregnant" }))
+      .toHaveAttribute("data-state", "right");
+
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeEnabled();
   });
 
   it("match pairs: a screen reader hears math cards in words, not LaTeX", async () => {

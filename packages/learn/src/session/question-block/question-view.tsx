@@ -198,7 +198,6 @@ export function QuestionInputs({
       <MatchPairsQuestion
         answerKey={question.key}
         disabled={disabled}
-        graded={result !== null}
         left={question.left ?? []}
         onChange={onChange}
         onSubmit={onSubmit}

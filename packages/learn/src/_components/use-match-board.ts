@@ -77,12 +77,12 @@ function useMoveLine({
  *
  * `say` is a card's text as a screen reader reads it; `explainMiss` adds why a wrong try was wrong.
  * `reveal` shows the answer as rows ("I don't know yet"), the pairs the learner didn't make
- * unmarked; `showMisses` marks, in a result, the pairs the learner got only after a wrong try.
+ * unmarked.
  */
 export function useMatchBoard({
   disabled = false,
   explainMiss,
-  initial,
+  finished,
   isPair,
   keys = true,
   leftCount,
@@ -91,11 +91,11 @@ export function useMatchBoard({
   reveal,
   rightCount,
   say,
-  showMisses = false,
 }: {
   disabled?: boolean;
   explainMiss?: (attempt: MatchTry) => string | null;
-  initial?: { misses: MatchTry[]; pairs: number[] };
+  /** A board the learner already finished: for each left card, its partner's place. */
+  finished?: number[];
   isPair?: (attempt: MatchTry) => boolean;
   /** Whether number keys pick cards; off while something over the screen has them. */
   keys?: boolean;
@@ -105,13 +105,12 @@ export function useMatchBoard({
   reveal?: readonly number[] | null;
   rightCount: number;
   say: (side: MatchSide, index: number) => string;
-  showMisses?: boolean;
 }) {
   const t = useExtracted();
   const { trigger } = useWebHaptics();
   const total = Math.min(leftCount, rightCount);
   const moveLine = useMoveLine({ explainMiss, say, total });
-  const [board, setBoard] = useState(() => createMatchBoard({ initial, leftCount }));
+  const [board, setBoard] = useState(() => createMatchBoard({ leftCount, pairs: finished }));
   const [said, setSaid] = useState("");
   const { cue, pairs } = board;
   const checks = isPair !== undefined;
@@ -206,7 +205,7 @@ export function useMatchBoard({
         label: label(side, index),
         onClick: () => pick(side, index),
         pair: partner === UNPAIRED ? undefined : left,
-        state: cardState(board, { checks, index, showMisses, side }),
+        state: cardState(board, { checks, index, side }),
       };
     },
     /** The last try, while it was a wrong one. */

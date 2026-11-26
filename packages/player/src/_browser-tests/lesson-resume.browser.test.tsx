@@ -229,7 +229,7 @@ describe("coming back to a lesson", () => {
     expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 
-  it("shows the correct pair when an old first try picked a removed card", async () => {
+  it("draws the pairs right and names no card when an old first try picked a removed one", async () => {
     const matching = activityStep({ content: activityContentFixtures.matchPairs });
     const lesson = buildLesson([matching, teachingStep("explanation"), teachingStep("check")]);
 
@@ -254,7 +254,12 @@ describe("coming back to a lesson", () => {
 
     renderLessonPlayer({ adapters, lesson, resume });
     await page.getByRole("button", { name: "Previous screen" }).click();
-    await expect.element(page.getByText("embarazada → pregnant")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "embarazada, matched with pregnant" }))
+      .toHaveAttribute("data-state", "right");
+
+    await expect.element(page.getByText(/You first matched/u)).not.toBeInTheDocument();
     expect(adapters.checkStep).not.toHaveBeenCalled();
   });
 

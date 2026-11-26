@@ -272,8 +272,10 @@ type BlockActionsProps = {
   run: Run;
 };
 
+/** A board checked pair by pair sends itself with its last pair, so its action waits as Continue. */
 function getMainAction({
   draft,
+  question,
   run,
 }: BlockActionsProps): React.ComponentProps<typeof QuestionMainAction> {
   const { phase } = run.state;
@@ -287,7 +289,7 @@ function getMainAction({
   }
 
   return {
-    action: "check",
+    action: question.key ? "continue" : "check",
     busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: phase.kind === "checking" || draft.answer === null,
     onPress: () => (draft.answer ? void run.submit(draft.answer) : undefined),
