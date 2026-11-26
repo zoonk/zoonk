@@ -267,6 +267,7 @@ export function TutorAskButton() {
         render={
           <Button
             className="with-aside:hidden h-11 shrink-0 max-lg:w-11 max-lg:px-0"
+            data-slot="question-ask"
             size="lg"
             type="button"
             variant="outline"

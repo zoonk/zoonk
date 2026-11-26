@@ -6,7 +6,7 @@ import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { EnterButton } from "./enter-button";
 import { useHasPlacedMainAction } from "./main-action-slot";
 import { useFocusOnRemovedControl } from "./suggestion-focus";
@@ -47,6 +47,10 @@ function useActionLabel(action: QuestionAction): string {
  * The row a question is answered from, for a frame's pinned bar (`TaskFrame`'s `footer`,
  * `TaskActionBar`, onboarding's `bar`): the way back with "I don't know yet"
  * (`BackWithSecondAction`), the main action, then the screen's own extras. Focus lost with a control that left moves to the main action.
+ *
+ * On a phone the main action is never the smaller answer: it joins "I don't know yet"'s line only
+ * while it's at least as wide (`--question-dont-know`) with the buddy's ask (`question-ask`) still
+ * beside it, which its end margin keeps room for; otherwise "I don't know yet" takes the line above.
  */
 export function QuestionActions({ className, ...props }: React.ComponentProps<typeof TaskActions>) {
   const row = useRef<HTMLDivElement>(null);
@@ -65,6 +69,8 @@ export function QuestionActions({ className, ...props }: React.ComponentProps<ty
       // On a phone a row that also holds the way back has no room for it, so it takes the line above.
       className={cn(
         "has-data-[slot=question-back]:*:data-[slot=question-dont-know]:max-lg:basis-full",
+        "max-lg:*:data-enter:min-w-[min(var(--question-dont-know),100%-3.25rem)]",
+        "max-lg:*:data-enter:has-[+[data-slot=question-ask]]:me-13 max-lg:*:data-enter:has-[+[data-slot=question-ask]]:max-w-[calc(100%-3.25rem)] max-lg:*:data-[slot=question-ask]:-ms-13",
         className,
       )}
       data-slot="question-actions"
@@ -128,6 +134,43 @@ export function BackWithSecondAction({
   );
 }
 
+/** "I don't know yet"'s one-line width, whatever line it's on, on its row while it's shown (`QuestionActions`). */
+function useDontKnowWidthOnRow(button: React.RefObject<HTMLElement | null>) {
+  useLayoutEffect(() => {
+    const element = button.current;
+    const row = element?.closest<HTMLElement>("[data-slot=question-actions]");
+    const label = element?.querySelector("[data-slot=busy-content]");
+
+    if (!element || !row || !label) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      const style = getComputedStyle(element);
+
+      const sides = [
+        style.paddingInlineStart,
+        style.paddingInlineEnd,
+        style.borderInlineStartWidth,
+        style.borderInlineEndWidth,
+      ].reduce((sum, side) => sum + Number(side.replace("px", "")), 0);
+
+      row.style.setProperty(
+        "--question-dont-know",
+        `${label.getBoundingClientRect().width + sides}px`,
+      );
+    });
+
+    observer.observe(element);
+    observer.observe(label);
+
+    return () => {
+      observer.disconnect();
+      row.style.removeProperty("--question-dont-know");
+    };
+  }, [button]);
+}
+
 /**
  * The quieter of the two answers: words alone, with a phone's tighter padding, so the main action
  * beside it keeps the larger part of the row. `children` replaces the words where the question has
@@ -145,6 +188,9 @@ export function QuestionDontKnow({
   onPress: () => void;
 }) {
   const t = useExtracted();
+  const button = useRef<HTMLButtonElement>(null);
+
+  useDontKnowWidthOnRow(button);
 
   return (
     <Button
@@ -154,6 +200,7 @@ export function QuestionDontKnow({
       disabled={disabled}
       focusableWhenDisabled
       onClick={onPress}
+      ref={button}
       size="xl"
       variant="outline"
     >
