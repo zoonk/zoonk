@@ -27,10 +27,12 @@ const ENTRY_TONE: Record<MatchEntryState, string> = {
 
 function EntryMark({
   index,
+  keyed,
   pair,
   state,
 }: {
   index: number;
+  keyed: boolean;
   pair?: number;
   state: MatchEntryState;
 }) {
@@ -52,7 +54,7 @@ function EntryMark({
 
   const key = pickKey(index);
 
-  if (!key) {
+  if (!key || !keyed) {
     return null;
   }
 
@@ -127,7 +129,7 @@ export function MatchEntry({
           {children}
         </span>
         <LineMarker aria-hidden="true" className="w-5 justify-center">
-          <EntryMark index={index} pair={pair} state={state} />
+          <EntryMark index={index} keyed={keyed} pair={pair} state={state} />
         </LineMarker>
       </span>
 
