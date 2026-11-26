@@ -16,8 +16,8 @@ data class MatchSpot(
 
 /**
  * What the learner did on a match board (main's `useMatchBoard`): the [pairs] made, left place to right place; every
- * wrong try in the order it happened; the card picked first, waiting for its partner; and the try whose wrong cue
- * shows ([cue] counts the tries, so the same miss twice cues twice).
+ * wrong try in the order it happened; the card picked first, waiting for its partner; and the try whose cue shows, a
+ * [wrong] one or the left place of a pair just [locked] ([cue] counts the tries, so the same miss twice cues twice).
  */
 @Immutable
 data class MatchWork(
@@ -25,6 +25,7 @@ data class MatchWork(
     val misses: List<MatchTry> = emptyList(),
     val picked: MatchSpot? = null,
     val wrong: MatchTry? = null,
+    val locked: Int? = null,
     val cue: Int = 0,
 ) {
     fun partnerOf(spot: MatchSpot): Int? =
@@ -41,8 +42,9 @@ data class MatchWork(
         get() = pairs + misses.reversed().associate { it.left to it.right }
 
     /**
-     * How [spot]'s card shows: a held pair, a pair kept, a card the [ended] board only shows, a wrong try's cue over the
-     * pick it keeps, the card picked first, or none of these.
+     * How [spot]'s card shows: a held pair; on the [ended] board a pair kept, marked missed when its left card had a wrong
+     * try, or a card it only shows; while playing a pair just locked, then done; a wrong try's cue over the pick it
+     * keeps, the card picked first, or none of these.
      */
     fun stateOf(
         spot: MatchSpot,
@@ -50,10 +52,12 @@ data class MatchWork(
         ended: Boolean,
     ): MatchEntryState {
         val partner = partnerOf(spot)
+        val left = if (spot.side == MatchSide.Left) spot.index else partner
         val cued = wrong?.let { if (spot.side == MatchSide.Left) it.left == spot.index else it.right == spot.index } == true
         return when {
             partner != null && held -> MatchEntryState.Paired
-            partner != null -> MatchEntryState.Right
+            partner != null && ended -> if (misses.any { it.left == left }) MatchEntryState.Missed else MatchEntryState.Right
+            partner != null -> if (locked == left) MatchEntryState.Right else MatchEntryState.Done
             ended -> MatchEntryState.Shown
             cued -> MatchEntryState.Wrong
             picked == spot -> MatchEntryState.Selected
@@ -93,10 +97,11 @@ fun MatchWork.tap(
     if (first == null || first.side == spot.side) return copy(picked = spot.takeUnless { it == first }, wrong = null)
 
     val attempt = if (spot.side == MatchSide.Left) MatchTry(spot.index, first.index) else MatchTry(first.index, spot.index)
-    if (goesWith == null || goesWith(attempt.left, attempt.right)) {
-        return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null)
+    if (goesWith == null) return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null)
+    if (goesWith(attempt.left, attempt.right)) {
+        return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null, locked = attempt.left, cue = cue + 1)
     }
-    return copy(misses = misses + attempt, wrong = attempt, cue = cue + 1)
+    return copy(misses = misses + attempt, wrong = attempt, locked = null, cue = cue + 1)
 }
 
 /** The board as it was, for a process Android reclaimed: its pairs, misses and pick, without a cue that already ended. */

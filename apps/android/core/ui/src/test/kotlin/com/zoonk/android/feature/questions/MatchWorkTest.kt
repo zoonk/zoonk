@@ -80,11 +80,24 @@ class MatchWorkTest {
     }
 
     @Test
-    fun aKeptPairIgnoresTaps() {
+    fun aKeptPairIgnoresTapsAndSettlesOnceItsCueEnds() {
         val locked = MatchWork().taps(left(0), right(1))
+        val settled = locked.copy(locked = null)
 
         assertEquals(locked, locked.taps(left(0)))
-        assertEquals(MatchEntryState.Right, locked.stateOf(left(0), held = false, ended = false))
+        assertEquals(MatchEntryState.Right, locked.stateOf(right(1), held = false, ended = false))
+        assertEquals(MatchEntryState.Done, settled.stateOf(left(0), held = false, ended = false))
+        assertEquals(MatchEntryState.Done, locked.taps(left(1), right(0)).stateOf(left(0), held = false, ended = false))
         assertEquals(MatchEntryState.Shown, locked.stateOf(left(1), held = false, ended = true))
+    }
+
+    @Test
+    fun aFinishedBoardMarksBothCardsOfEachPairItsLeftCardFirstMissed() {
+        val done = MatchWork().taps(left(0), right(0), right(1), left(1), right(0))
+
+        assertEquals(MatchEntryState.Missed, done.stateOf(left(0), held = false, ended = true))
+        assertEquals(MatchEntryState.Missed, done.stateOf(right(1), held = false, ended = true))
+        assertEquals(MatchEntryState.Right, done.stateOf(left(1), held = false, ended = true))
+        assertEquals(MatchEntryState.Right, done.stateOf(right(0), held = false, ended = true))
     }
 }

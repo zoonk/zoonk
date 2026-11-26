@@ -403,8 +403,8 @@ private fun FieldContainer(
     )
 }
 
-/** Main's `ring-[3px] ring-ring/50` outside a focused field's [ink] line, more contrast included. */
-internal fun Modifier.focusRing(
+/** Main's `ring-[3px] ring-ring/50` outside a focused piece's [ink] line, more contrast included. */
+fun Modifier.focusRing(
     shape: Shape,
     ink: Color,
 ): Modifier = ringOutside(shape, ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH)
