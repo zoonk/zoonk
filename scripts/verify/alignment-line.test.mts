@@ -314,22 +314,28 @@ describe("a progress bar under a row's name", () => {
   it("is the row's second line: its value and end glyph go on the row's center", () => {
     assert.deepEqual(line(barred(lineRow("value", 30, 0), 28)), []);
     assert.deepEqual(line(barred(lineRow("end", 30, 0), 28)), []);
-    assert.match(lineMiss(barred(lineRow("value", 15, 0), 28)), /the value 15 above the row's center/u);
+
+    assert.match(
+      lineMiss(barred(lineRow("value", 15, 0), 28)),
+      /the value 15 above the row's center/u,
+    );
   });
 
   it("has no words, so it has no size or type to compare with the name's", () => {
     const capture = barred(lineRow("value", 30, 0), 28);
-    const typed = evaluateCapture(capture).filter((finding) => finding.rule === "helper");
+    const helpers = evaluateCapture(capture).filter((finding) => finding.rule === "helper");
+    const notes = type(capture).filter((finding) => finding.message.includes("note"));
 
-    assert.deepEqual(typed, []);
-    assert.deepEqual(
-      type(capture).filter((finding) => finding.message.includes("note")),
-      [],
-    );
+    assert.deepEqual(helpers, []);
+    assert.deepEqual(notes, []);
   });
 
   it("beside the name (a wide row) leaves the row one line", () => {
     assert.deepEqual(line(barred(lineRow("value", 15, 0), 12, 200)), []);
-    assert.match(lineMiss(barred(lineRow("value", 30, 0), 12, 200)), /the value 15 below the label's middle/u);
+
+    assert.match(
+      lineMiss(barred(lineRow("value", 30, 0), 12, 200)),
+      /the value 15 below the label's middle/u,
+    );
   });
 });
