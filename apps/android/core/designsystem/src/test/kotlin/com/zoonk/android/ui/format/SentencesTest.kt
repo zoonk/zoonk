@@ -37,4 +37,17 @@ class SentencesTest {
         assertEquals("", spaceAfterSentence("まだ迷っていますか？"))
         assertEquals(" ", spaceAfterSentence("Still unsure?"))
     }
+
+    @Test
+    fun aTextThatEndsASentenceTakesTheLinesStopAfterIt() {
+        assertEquals("Matched lunch with il pranzo.", "Matched lunch with #.".fillSlot("#", "il pranzo"))
+        assertEquals(
+            "Matched lunch with qui di fronte. Pairs matched: 1 of 5.",
+            "Matched lunch with #. Pairs matched: 1 of 5.".fillSlot("#", "qui di fronte."),
+        )
+        assertEquals("Va bene! and lunch don't go together.", "# and lunch don't go together.".fillSlot("#", "Va bene!"))
+        assertEquals("Unmatched lunch and Va bene?", "Unmatched lunch and #.".fillSlot("#", "Va bene?"))
+        assertEquals("明日。と昼食を組み合わせました。", "#と昼食を組み合わせました。".fillSlot("#", "明日。"))
+        assertEquals("No slot here.", "No slot here.".fillSlot("#", "lunch."))
+    }
 }

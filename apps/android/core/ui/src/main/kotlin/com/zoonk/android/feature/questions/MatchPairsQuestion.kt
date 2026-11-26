@@ -50,6 +50,7 @@ fun MatchPairsQuestion(
 
     val keys = LocalPickKeys.current
     keys?.let { MatchNumberKeys(it::take, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } } }
+    board.LetGoOnBack(enabled = enabled && !ended)
 
     val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, cardModifier ->
         val spot = MatchSpot(side, index)
