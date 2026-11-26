@@ -10,6 +10,7 @@ import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option
 import { QuestionTitle, type QuestionTitleProps } from "../../_components/question-title";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { parseRichBlocks } from "../../rich-text/rich-text-parser";
+import { useSpokenText } from "../../rich-text/use-spoken-text";
 
 const SWIPE_THRESHOLD_PX = 90;
 const TILT_DEGREES_PER_PX = 0.06;
@@ -82,7 +83,7 @@ function useSwipe({ enabled, onSwipe }: { enabled: boolean; onSwipe: (isTrue: bo
       onPointerUp: () => {
         setDrag(null);
 
-        if (Math.abs(offset) >= SWIPE_THRESHOLD_PX) {
+        if (enabled && Math.abs(offset) >= SWIPE_THRESHOLD_PX) {
           onSwipe(offset > 0);
         }
       },
@@ -109,6 +110,7 @@ export function TrueFalseQuestion({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
   const [picked, setPicked] = useState<TrueFalseAnswer | null>(null);
   const locked = disabled || result !== null;
@@ -174,7 +176,7 @@ export function TrueFalseQuestion({
         />
       </div>
 
-      <AnswerOptionGroup>
+      <AnswerOptionGroup aria-label={spoken.blocks(statement)}>
         {options.map((option, index) =>
           isShown({ option, result }) ? (
             <AnswerOption

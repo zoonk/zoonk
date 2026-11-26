@@ -136,6 +136,10 @@ export function SortableList({
   );
 
   function handleDragEnd({ active, over }: DragEndEvent) {
+    if (disabled) {
+      return;
+    }
+
     const ids = items.map((item) => item.id);
     const [from, to] = [ids.indexOf(String(active.id)), ids.indexOf(String(over?.id))];
 
