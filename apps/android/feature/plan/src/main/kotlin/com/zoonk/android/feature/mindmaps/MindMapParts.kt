@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -47,8 +46,11 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.SaveFailure
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.saves.BookmarkToggle
+import com.zoonk.android.feature.saves.SaveWords
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
@@ -277,19 +279,18 @@ internal fun KeyFocus() {
     LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
-/** A map's bookmark in its top bar, wherever the map shows: outlined, then filled once saved. */
+/** A map's bookmark in its top bar, wherever the map shows: "Save" until it's "Saved". */
 @Composable
 internal fun MapBookmark(
     saved: Boolean,
     onToggle: () -> Unit,
 ) {
-    IconToggleButton(checked = saved, onCheckedChange = { onToggle() }) {
-        Icon(
-            painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
-            contentDescription = stringResource(R.string.mindmaps_save),
-        )
-    }
+    BookmarkToggle(saved, stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save), onToggle)
 }
+
+/** A map's own words for saving it, apart from a lesson's. */
+@Composable
+internal fun mapSaveWords() = SaveWords(stringResource(R.string.mindmaps_save), stringResource(R.string.mindmaps_unsave))
 
 /** A map that can't be made now: why, worded by what ran out, with Create a free account or See Plus where they help. */
 @Composable
@@ -349,7 +350,9 @@ internal class MindMapsHost(
     @Composable
     fun SavesSaid(maps: MindMapViewModel) {
         VisitOf(maps.visit)
-        ActOn(maps.saveFailed) { snackbars.show(R.string.mindmaps_save_map_failed) }
+        ActOn(maps.saveFailed) {
+            snackbars.show(if (it == SaveFailure.Save) R.string.mindmaps_save_map_failed else R.string.mindmaps_remove_map_failed)
+        }
         ActOn(maps.pictureSaved) { snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) }
     }
 }
