@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.OptionKey
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.focusRing
 import com.zoonk.android.ui.components.glyphScale
+import com.zoonk.android.ui.components.keptWhole
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.optionKeysShown
 import com.zoonk.android.ui.theme.GeistMono
@@ -130,6 +131,7 @@ fun MatchEntry(
 
     Box(
         modifier
+            .keptWhole()
             .graphicsLayer {
                 translationX = shake.value * density
                 scaleX = press

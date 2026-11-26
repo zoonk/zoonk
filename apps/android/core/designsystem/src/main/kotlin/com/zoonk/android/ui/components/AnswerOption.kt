@@ -110,6 +110,7 @@ fun AnswerOption(
     TagBesideOrUnder(
         modifier =
             modifier
+                .keptWhole()
                 .fillMaxWidth()
                 .clip(shape)
                 .background(tone.container)

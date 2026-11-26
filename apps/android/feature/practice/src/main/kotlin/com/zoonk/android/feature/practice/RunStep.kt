@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,6 +42,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -86,8 +88,10 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LocalPickKeys
+import com.zoonk.android.ui.components.LocalRevealPage
 import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.PickKeys
+import com.zoonk.android.ui.components.RevealPage
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -98,6 +102,7 @@ import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.focusMoveTarget
 import com.zoonk.android.ui.components.pressesNumberKey
 import com.zoonk.android.ui.components.rememberMoveFocus
+import com.zoonk.android.ui.components.revealPage
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -288,7 +293,10 @@ private fun asideShown(
     fold: PageFold?,
 ) = hasAside && (fold != null || taskAsideBeside())
 
-/** A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still meet there. */
+/**
+ * A page of the run; a page of a spread [align]s its column toward the split, so on a very wide window the pages still
+ * meet there. A verdict on it scrolls into sight by main's rule, leaving no sliver of the question at its top.
+ */
 @Composable
 private fun ScrollingPage(
     modifier: Modifier,
@@ -296,8 +304,12 @@ private fun ScrollingPage(
     align: Alignment.Horizontal,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(modifier.verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
-        Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+    val page = remember(scroll) { RevealPage(scroll) }
+    CompositionLocalProvider(LocalRevealPage provides page) {
+        Column(modifier.revealPage(page).verticalScroll(scroll).padding(vertical = PAGE_PADDING), horizontalAlignment = align) {
+            Column(Modifier.taskColumn(), verticalArrangement = Arrangement.spacedBy(PAGE_SPACING), content = content)
+            Spacer(Modifier.height(with(LocalDensity.current) { page.extraRoom.toDp() }))
+        }
     }
 }
 
