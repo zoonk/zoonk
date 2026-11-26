@@ -125,7 +125,7 @@ struct MatchEntry<Label: View>: View {
     .buttonStyle(MatchEntryStyle(state: state))
     .disabled(action == nil || state == .right)
     .modifier(MatchShake(missNumber: missNumber))
-    .modifier(MatchKey(index: action == nil || state == .right ? nil : keyIndex))
+    .modifier(PickKey(index: action == nil || state == .right ? nil : keyIndex))
     .accessibilityValue(value)
     .accessibilityAddTraits(state == .selected ? .isSelected : [])
   }
@@ -168,18 +168,6 @@ private struct MatchShake: ViewModifier {
           shakes += 1
         }
       }
-  }
-}
-
-private struct MatchKey: ViewModifier {
-  let index: Int?
-
-  func body(content: Content) -> some View {
-    if let index, index < 9, let key = "\(index + 1)".first {
-      content.keyboardShortcut(KeyEquivalent(key), modifiers: [])
-    } else {
-      content
-    }
   }
 }
 

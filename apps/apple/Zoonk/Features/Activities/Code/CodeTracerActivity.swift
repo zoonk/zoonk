@@ -321,7 +321,7 @@ private struct CodeTracerCanvas: View {
           .buttonStyle(
             ActivityTileStyle(mark: isSelected ? .selected : .plain, isCompact: columns > 1)
           )
-          .modifier(ActivityNumberKey(index: position))
+          .modifier(PickKey(index: position))
           .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
       }

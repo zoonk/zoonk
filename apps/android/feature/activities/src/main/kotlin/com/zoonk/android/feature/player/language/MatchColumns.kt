@@ -18,6 +18,7 @@ import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
 import com.zoonk.android.feature.questions.MatchMisses
+import com.zoonk.android.feature.questions.MatchNumberKeys
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.MatchWork
@@ -39,6 +40,7 @@ internal fun MatchColumnsView(
     locked: Boolean,
     onAnswer: (LessonAnswer?) -> Unit,
     onDone: (LessonAnswer) -> Unit,
+    takeNumberKeys: (((Int) -> Boolean)?) -> Unit,
     question: @Composable () -> Unit,
 ) {
     val lefts = content.pairs.map(MatchPair::left)
@@ -79,6 +81,10 @@ internal fun MatchColumnsView(
         }
     }
 
+    fun canTap(spot: MatchSpot) = !ended && !checked && !locked && work.partnerOf(spot) == null
+
+    MatchNumberKeys(takeNumberKeys, lefts.size) { spot -> canTap(spot).also { if (it) tap(spot) } }
+
     QuestionScene {
         question()
 
@@ -88,7 +94,7 @@ internal fun MatchColumnsView(
             val state = work.stateOf(spot, held = false, ended = ended)
             MatchEntry(
                 state = state,
-                onClick = { tap(spot) }.takeIf { !ended && !checked && !locked && partner == null },
+                onClick = { tap(spot) }.takeIf { canTap(spot) },
                 modifier = modifier,
                 label = board.label(spot, partner),
                 cue = work.cue,

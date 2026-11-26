@@ -250,7 +250,7 @@ fun LanguageStepView(
                     MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, { done ->
                         select(done)
                         if (!locked) actions.runPrimary()
-                    }, question)
+                    }, actions::takeNumberKeys, question)
                 }
             }
         }

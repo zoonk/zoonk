@@ -930,11 +930,6 @@ private struct MatchColumnsView: View {
       }
     }
     .matchBoardFeedback($picking, locked: matched.count)
-    .onChange(of: isSolved && context.result == nil && context.check != nil) { _, isReady in
-      if isReady {
-        context.check?()
-      }
-    }
   }
 
   /// Solved, each row shows its own pair.
@@ -977,7 +972,12 @@ private struct MatchColumnsView: View {
     let pair = LessonAnswer.Pair(left: pairs[attempt.left].left, right: rightItems[attempt.right])
 
     if isRight {
-      context.select(.matchColumns(userPairs: matched + [pair], mistakes: misses.count))
+      let answer = LessonAnswer.matchColumns(userPairs: matched + [pair], mistakes: misses.count)
+      if matched.count + 1 == pairs.count {
+        context.complete(answer)
+      } else {
+        context.select(answer)
+      }
       announcePolitely(
         MatchAnnouncement.matched(
           pair.left, pair.right, matched: matched.count + 1, total: pairs.count))

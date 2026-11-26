@@ -214,7 +214,7 @@ private struct MapExplorerCanvas: View {
         .contentShape(.circle)
     }
     .buttonStyle(.plain)
-    .modifier(ActivityNumberKey(index: number - 1))
+    .modifier(PickKey(index: number - 1))
     .accessibilityLabel(
       Text(
         "\(number). \(place.label)", tableName: "Activities",

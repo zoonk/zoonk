@@ -545,11 +545,7 @@ struct LessonActionBar: View {
   }
 
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
-    guard case .activity(let content) = step?.content else {
-      return nil
-    }
-
-    return activityRenderers.renderer(for: content.template)?.grade
+    step.flatMap(activityRenderers.grade(for:))
   }
 
   private enum PrimaryKind {
