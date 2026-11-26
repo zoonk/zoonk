@@ -17,6 +17,7 @@ import {
   LessonResultNote,
   OwnResultNotesContext,
 } from "../../lesson/feedback/lesson-result-notes";
+import { MatchPairsMisses } from "../match-pairs/match-pairs-misses";
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 type NumericCheck = Extract<ActivityStepContent["check"], { kind: "numeric" }>;
@@ -125,6 +126,10 @@ export function ActivityFeedback({
         end={streak === null ? undefined : <HyperdriveStreak count={streak} />}
         verdict={isCorrect ? "correct" : "incorrect"}
       />
+
+      {content.template === "matchPairs" && (
+        <MatchPairsMisses answer={answer} fields={content.fields} />
+      )}
 
       {check.kind === "choice" && <ChoiceFeedback answer={answer} check={check} />}
 

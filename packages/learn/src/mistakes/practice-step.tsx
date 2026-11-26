@@ -9,10 +9,12 @@ import {
   FeedbackVerdict,
 } from "../_components/feedback-panel";
 import { MainActionSlot, usePlacedSound } from "../_components/main-action-slot";
+import { checksEachPair } from "../_components/match-board-state";
 import { QuestionDontKnow, QuestionMainAction } from "../_components/question-actions";
 import { ItemText } from "../questions/item-text";
 import { RightAnswerLine } from "../questions/right-answer-line";
 import {
+  AnswerMatchMisses,
   WorkedSteps,
   showsItsAnswer,
   useAnswerLine,
@@ -33,7 +35,12 @@ import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainAction> {
+/** A board checked pair by pair sends itself with its last pair, so its action waits as Continue. */
+function sendsItself({ lesson, question }: Step): boolean {
+  return lesson ? checksEachPair(lesson.step) : Boolean(question?.key);
+}
+
+function getMainAction(run: Run, step: Step): React.ComponentProps<typeof QuestionMainAction> {
   const { phase } = run.state;
 
   if (phase.kind === "feedback") {
@@ -44,7 +51,7 @@ function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainAction
   const answer = selected ?? (phase.kind === "answerFailed" ? phase.answer : null);
 
   return {
-    action: "check",
+    action: sendsItself(step) ? "continue" : "check",
     busy: phase.kind === "checking" && pressesCheck(phase.sender),
     disabled: !answer,
     onPress: () => {
@@ -104,7 +111,7 @@ export function PracticeStepActions({
 
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
         <MainActionSlot>
-          <QuestionMainAction {...getMainAction(run)} />
+          <QuestionMainAction {...getMainAction(run, step)} />
         </MainActionSlot>
       )}
 
@@ -133,12 +140,14 @@ function FixedMistakesNote({ count }: { count: number }) {
 }
 
 function PracticeFeedback({
+  answer,
   feedback,
   notSure,
   notes,
   question,
   trueFalseLabels,
 }: {
+  answer: PracticeAnswer;
   question: NonNullable<Step["question"]>;
   trueFalseLabels: TrueFalseLabels;
   feedback: NonNullable<MistakePracticeFeedback>;
@@ -159,6 +168,7 @@ function PracticeFeedback({
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
       <FeedbackVerdict tone={verdict.tone}>{verdict.label}</FeedbackVerdict>
 
+      <AnswerMatchMisses answer={answer} question={question} />
       {correct && <RightAnswerLine answer={correct} />}
       <WorkedSteps steps={feedback.workedSteps} />
 
@@ -272,6 +282,7 @@ export function PracticeStepView({
 
       {graded && question && (
         <PracticeFeedback
+          answer={graded.answer}
           question={question}
           trueFalseLabels={trueFalseLabels}
           feedback={graded.feedback}

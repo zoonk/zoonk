@@ -5,11 +5,13 @@ import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer"
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { MatchBoard } from "@zoonk/learn/match-board";
 import { MatchEntry } from "@zoonk/learn/match-entry";
+import { MatchMisses } from "@zoonk/learn/match-misses";
 import { useMatchBoard } from "@zoonk/learn/use-match-board";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { useId, useMemo } from "react";
+import { use, useId, useMemo } from "react";
 import { ActivityCanvas } from "../activities/_components/activity-canvas";
+import { BoardMissesContext } from "../lesson/feedback/board-misses";
 import { useCheckWhenAnswered } from "../lesson/use-check-when-answered";
 import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer } from "../step-answer";
@@ -46,17 +48,19 @@ export function MatchColumnsStep({
   const interactionState = usePlayerInteractionState();
   const answered = selectedAnswer?.kind === "matchColumns" ? selectedAnswer : null;
   const checkWhenAnswered = useCheckWhenAnswered(answered !== null);
+  const showMisses = use(BoardMissesContext);
   const left = content.pairs.map((pair) => pair.left);
   const right = step.matchColumnsRightItems;
 
   const text = (side: "left" | "right", index: number) =>
     (side === "left" ? left : right)[index] ?? "";
 
+  const cardText = (side: "left" | "right", index: number) =>
+    stripWrappingQuotes(text(side, index));
+
   const board = useMatchBoard({
     disabled: answered !== null,
-    initial: answered
-      ? { misses: [], pairs: placesOf({ left, pairs: answered.userPairs, right }) }
-      : undefined,
+    finished: answered ? placesOf({ left, pairs: answered.userPairs, right }) : undefined,
     isPair: (attempt) =>
       checkSingleMatchPair(content, {
         left: text("left", attempt.left),
@@ -65,6 +69,7 @@ export function MatchColumnsStep({
     keys: interactionState !== "paused",
     leftCount: left.length,
     onComplete: ({ matches, misses }) => {
+      showMisses?.(<MatchMisses misses={misses} renderCard={cardText} />);
       checkWhenAnswered();
 
       onSelectAnswer({
@@ -77,8 +82,7 @@ export function MatchColumnsStep({
       });
     },
     rightCount: right.length,
-    say: (side, index) => stripWrappingQuotes(text(side, index)),
-    showMisses: answered !== null,
+    say: cardText,
   });
 
   return (
@@ -91,9 +95,7 @@ export function MatchColumnsStep({
         <MatchBoard
           leftCount={left.length}
           renderCard={(side, index) => (
-            <MatchEntry {...board.entry(side, index)}>
-              {stripWrappingQuotes(text(side, index))}
-            </MatchEntry>
+            <MatchEntry {...board.entry(side, index)}>{cardText(side, index)}</MatchEntry>
           )}
           rightCount={right.length}
           solved={board.solved}

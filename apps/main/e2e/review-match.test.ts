@@ -91,6 +91,10 @@ test.describe("Review match", () => {
     await page.goto("/session");
 
     await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
+    const next = page.getByRole("button", { name: /^Continue/u });
+    await expect(next).toBeDisabled();
+    await expect(page.getByRole("button", { name: /^Check/u })).toHaveCount(0);
+
     await card(page, "il martedì").click();
     await card(page, "Thursday").click();
     await expect(card(page, "il martedì")).toHaveAttribute("aria-pressed", "true");
@@ -103,8 +107,10 @@ test.describe("Review match", () => {
 
     const feedback = page.getByRole("region", { name: "Answer feedback" });
     await expect(feedback.getByText("Not quite")).toBeVisible();
+    await expect(feedback.getByText("You first matched il martedì with Thursday.")).toBeVisible();
     await expect(feedback.getByText(REASON)).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Continue/u })).toBeFocused();
+    await expect(next).toBeEnabled();
+    await expect(next).toBeFocused();
 
     const attempt = await prisma.attempt.findFirstOrThrow({
       where: { itemId: item.id, userId: user.id },

@@ -26,6 +26,12 @@ describe(boardFromAnswer, () => {
     ).toStrictEqual({ misses: [{ left: 1, right: 1 }], pairs: [1, 0] });
   });
 
+  it("leaves out a first try at a card the activity no longer has", () => {
+    expect(
+      boardFromAnswer(columns, { kind: "assignment", pairs: { a: "a", b: "removed" } }),
+    ).toStrictEqual({ misses: [], pairs: [1, 0] });
+  });
+
   it("has no board before an answer", () => {
     expect(boardFromAnswer(columns, null)).toBeUndefined();
   });

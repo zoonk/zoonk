@@ -1,7 +1,7 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 
-type MatchFields = Pick<ActivityContentFor<"matchPairs">["fields"], "pairs">;
+export type MatchFields = Pick<ActivityContentFor<"matchPairs">["fields"], "pairs">;
 
 export type MatchCard = { id: string; text: string; why: string | null };
 

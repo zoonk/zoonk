@@ -11,15 +11,13 @@ import { DoneMark } from "./status-mark";
 
 /**
  * `matched` is a pair the learner made that nothing has checked yet; `right` is a pair checked and
- * kept; `wrong` is a try that didn't go together, shown for a moment; `missed` is a pair the
- * learner got only after a wrong try, shown in the result.
+ * kept; `wrong` is a try that didn't go together, shown for a moment.
  */
-export type MatchEntryState = "idle" | "matched" | "missed" | "right" | "selected" | "wrong";
+export type MatchEntryState = "idle" | "matched" | "right" | "selected" | "wrong";
 
 const ENTRY_TONE: Record<MatchEntryState, string> = {
   idle: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
   matched: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
-  missed: ANSWER_TONE.wrong,
   right: ANSWER_TONE.right,
   selected: cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
   wrong: cn(ANSWER_TONE.wrong, "motion-safe:animate-shake"),
@@ -40,7 +38,7 @@ function EntryMark({
     return <DoneMark />;
   }
 
-  if (state === "wrong" || state === "missed") {
+  if (state === "wrong") {
     return <XIcon aria-hidden="true" className="text-destructive size-4" />;
   }
 
@@ -96,7 +94,7 @@ export function MatchEntry({
   pair?: number;
   state?: MatchEntryState;
 }) {
-  const settled = state === "right" || state === "missed";
+  const settled = state === "right";
   const locked = disabled || settled;
   const keyed = !locked && state !== "matched";
 

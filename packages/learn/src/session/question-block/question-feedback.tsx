@@ -1,5 +1,6 @@
 "use client";
 
+import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { ChevronsUpIcon } from "lucide-react";
@@ -12,6 +13,7 @@ import {
   FeedbackVerdict,
 } from "../../_components/feedback-panel";
 import { ItemCitationNote } from "../../_components/item-citation";
+import { MatchMisses } from "../../_components/match-misses";
 import { useAppLocale } from "../../_utils/locale";
 import { ItemLine, ItemText } from "../../questions/item-text";
 import { RightAnswerLine } from "../../questions/right-answer-line";
@@ -128,6 +130,28 @@ export function showsItsAnswer(
   );
 }
 
+/** What a board checked pair by pair says under its verdict: the pairs the learner first confused. */
+export function AnswerMatchMisses({
+  answer,
+  question,
+}: {
+  answer: StudyQuestionAnswer | LessonStepAnswer;
+  question: Pick<StudyQuestion, "left" | "right">;
+}) {
+  if (!("misses" in answer) || !answer.misses) {
+    return null;
+  }
+
+  const cards = (side: "left" | "right") => (side === "left" ? question.left : question.right);
+
+  return (
+    <MatchMisses
+      misses={answer.misses}
+      renderCard={(side, index) => <ItemLine text={cards(side)?.[index] ?? ""} />}
+    />
+  );
+}
+
 function useCorrectAnswerLine({
   feedback,
   question,
@@ -241,6 +265,7 @@ export function QuestionFeedback({
         {verdict.label}
       </FeedbackVerdict>
 
+      <AnswerMatchMisses answer={answer} question={question} />
       {correct && <RightAnswerLine answer={correct} />}
 
       {feedback.explanation && (

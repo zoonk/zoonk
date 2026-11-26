@@ -11,11 +11,9 @@ import { NotQuiteLead } from "../../components/not-quite-lead";
 import { useCheckWhenAnswered } from "../../lesson/use-check-when-answered";
 import { usePlayerInteractionState } from "../../player-context";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
-import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { arrangeMatchColumns } from "./match-pairs-columns";
 import { boardFromAnswer, matchAnswer } from "./match-pairs-progress";
-import { MatchPairsResults } from "./match-pairs-results";
 
 type MatchPairsProps = ActivityRendererProps<"matchPairs">;
 
@@ -36,7 +34,6 @@ function MissNote({ explanation }: { explanation: string | null }) {
 export function MatchPairsActivity({
   answer,
   content,
-  expected,
   labelId,
   onAnswerChange,
   phase,
@@ -47,7 +44,6 @@ export function MatchPairsActivity({
   const isChecked = phase === "checked";
   const spoken = useSpokenText();
   const interactionState = usePlayerInteractionState();
-  const pairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const checkWhenAnswered = useCheckWhenAnswered(answer !== null);
   const cardsOf = (side: "left" | "right") => (side === "left" ? left : right);
 
@@ -60,7 +56,7 @@ export function MatchPairsActivity({
       const why = whyOf(attempt);
       return why && spoken.inline(why);
     },
-    initial: boardFromAnswer(columns, answer),
+    finished: boardFromAnswer(columns, answer)?.pairs,
     isPair: (attempt) => left[attempt.left]?.id === right[attempt.right]?.id,
     keys: interactionState !== "paused",
     leftCount: left.length,
@@ -70,7 +66,6 @@ export function MatchPairsActivity({
     },
     rightCount: right.length,
     say: (side, index) => spoken.inline(cardsOf(side)[index]?.text ?? ""),
-    showMisses: isChecked,
   });
 
   return (
@@ -88,10 +83,6 @@ export function MatchPairsActivity({
       />
 
       {board.missed && <MissNote explanation={whyOf(board.missed)} />}
-
-      {isChecked && pairs && answer?.kind === "assignment" && (
-        <MatchPairsResults cards={columns} expected={pairs} firstTries={answer.pairs} />
-      )}
 
       <p aria-live="polite" className="sr-only">
         {board.announcement}

@@ -23,6 +23,10 @@ function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
 
+function matchCard(name: string) {
+  return page.getByRole("button", { exact: true, name });
+}
+
 async function pickWords(words: string[]) {
   const bank = page.getByRole("group", { name: "Word bank" });
 
@@ -307,6 +311,35 @@ describe("language lesson screens", () => {
         page.getByRole("button", { exact: true, name: `${right}, matched with ${left}` }),
       );
     }
+  });
+
+  it("waits on Continue while the board is played, then names a first wrong try under the verdict", async () => {
+    renderLessonPlayer({ lesson: buildLesson([languageStep("matchColumns")]) });
+    const next = page.getByRole("button", { name: /^Continue/u });
+    await expect.element(next).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
+
+    await matchCard("Electron").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Negative charge").click();
+    await matchCard("Proton").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Neutron").click();
+    await matchCard("No charge").click();
+
+    await expect
+      .element(
+        verdict("Not quite").getByText("You first matched Electron with Positive charge.", {
+          exact: true,
+        }),
+      )
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
+      .toHaveAttribute("data-state", "right");
+
+    await expect.element(next).toBeEnabled();
   });
 
   it("says a letter as it shows, with the same state on its own control and the bar's", async () => {

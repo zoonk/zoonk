@@ -1,3 +1,4 @@
+import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { type MatchEntryState } from "./match-entry";
 
 export type MatchSide = "left" | "right";
@@ -34,18 +35,19 @@ type Tap = {
   total: number;
 };
 
+/** `pairs` is a board the learner already finished. */
 export function createMatchBoard({
-  initial,
   leftCount,
+  pairs,
 }: {
-  initial?: { misses: MatchTry[]; pairs: number[] };
   leftCount: number;
+  pairs?: number[];
 }): MatchBoardState {
   return {
     cue: null,
     missed: null,
-    misses: initial?.misses ?? [],
-    pairs: initial?.pairs ?? Array.from({ length: leftCount }, () => UNPAIRED),
+    misses: [],
+    pairs: pairs ?? Array.from({ length: leftCount }, () => UNPAIRED),
     selected: null,
   };
 }
@@ -118,28 +120,15 @@ export function tapCard(
   };
 }
 
-/** How a card looks: picked, paired, locked right, its pair missed first (`showMisses`), or a wrong try. */
+/** How a card looks: picked, paired, locked right, or a wrong try. */
 export function cardState(
   board: MatchBoardState,
-  {
-    checks,
-    index,
-    showMisses,
-    side,
-  }: { checks: boolean; index: number; showMisses: boolean; side: MatchSide },
+  { checks, index, side }: { checks: boolean; index: number; side: MatchSide },
 ): MatchEntryState {
-  const { cue, misses, pairs, selected } = board;
-  const partner = partnerIn(pairs, side, index);
+  const { cue, pairs, selected } = board;
 
-  if (partner !== UNPAIRED) {
-    const left = side === "left" ? index : partner;
-    const missedFirst = showMisses && misses.some((attempt) => attempt.left === left);
-
-    if (!checks) {
-      return "matched";
-    }
-
-    return missedFirst ? "missed" : "right";
+  if (partnerIn(pairs, side, index) !== UNPAIRED) {
+    return checks ? "right" : "matched";
   }
 
   if (cue && (side === "left" ? cue.left : cue.right) === index) {
@@ -147,4 +136,19 @@ export function cardState(
   }
 
   return selected?.side === side && selected.index === index ? "selected" : "idle";
+}
+
+/** Each left card's first wrong try, in the order they happened. */
+export function firstMisses(misses: readonly MatchTry[]): MatchTry[] {
+  return misses.filter(
+    (miss, index) => misses.findIndex((other) => other.left === miss.left) === index,
+  );
+}
+
+/** A lesson screen whose board checks each pair as it's made and sends itself with the last one. */
+export function checksEachPair(step: PlayableLibraryStep): boolean {
+  return (
+    step.kind === "matchColumns" ||
+    (step.kind === "activity" && step.content.template === "matchPairs")
+  );
 }
