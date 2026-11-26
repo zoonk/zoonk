@@ -27456,6 +27456,180 @@
           }
         }
       }
+    },
+    "/goals/{goalId}/saved-lessons": {
+      "get": {
+        "operationId": "listSavedLessons",
+        "summary": "List the goal's saved lessons",
+        "tags": [
+          "Learner"
+        ],
+        "responses": {
+          "200": {
+            "description": "The saved lessons, newest save first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "saveLesson",
+        "summary": "Save a lesson or remove it",
+        "tags": [
+          "Learner"
+        ],
+        "responses": {
+          "200": {
+            "description": "The lesson's saved state now",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLesson"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -42008,6 +42182,10 @@
           "title": {
             "type": "string",
             "description": "The lesson's current title"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved this lesson"
           }
         },
         "required": [
@@ -42015,6 +42193,7 @@
           "finishedOn",
           "group",
           "lessonId",
+          "saved",
           "title"
         ],
         "additionalProperties": false
@@ -51364,6 +51543,10 @@
               },
               "speaking": {
                 "type": "boolean"
+              },
+              "savedLessons": {
+                "type": "boolean",
+                "description": "The active goal lists a saved lesson (`GET /goals/{goalId}/saved-lessons`)"
               }
             },
             "required": [
@@ -51372,6 +51555,7 @@
               "exam",
               "mindMaps",
               "readyMistakes",
+              "savedLessons",
               "speaking"
             ],
             "additionalProperties": false,
@@ -83715,6 +83899,10 @@
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved this lesson"
           }
         },
         "required": [
@@ -83722,6 +83910,7 @@
           "hyperdrive",
           "replay",
           "runId",
+          "saved",
           "sessionId",
           "startedAt"
         ],
@@ -106976,6 +107165,84 @@
           "writeWritingPrompt"
         ],
         "description": "Step names in the writing prompt generation event stream"
+      },
+      "SaveLesson": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "True saves it, false removes it"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ]
+      },
+      "SavedLessonState": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLesson": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "chapterTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "available",
+          "chapterTitle",
+          "lessonId",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLessonList": {
+        "type": "object",
+        "properties": {
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedLesson"
+            }
+          }
+        },
+        "required": [
+          "lessons"
+        ],
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

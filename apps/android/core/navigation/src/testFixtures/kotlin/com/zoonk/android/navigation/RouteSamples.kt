@@ -13,6 +13,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.MindMaps(),
         AppRoute.MindMaps(subject = "natural-sciences"),
         AppRoute.Mistakes,
+        AppRoute.SavedLessons,
         AppRoute.CompletedLessons,
         AppRoute.Certificates,
         AppRoute.Certificate("K7QF2M9XHD4P"),

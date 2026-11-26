@@ -200,7 +200,7 @@ fun learnerSummary(
           "targetDate":"2027-01-31","targetDateEstimated":false,"targetLanguage":null,"targetRegion":null,"regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"title":"$title","displayName":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
          "level":null,"missions":null,"nextChangeAt":1793186000000,
-         "places":{"certificates":false,"completedLessons":false,"exam":false,"mindMaps":true,"readyMistakes":0,"speaking":false},
+         "places":{"certificates":false,"completedLessons":false,"exam":false,"mindMaps":true,"readyMistakes":0,"savedLessons":false,"speaking":false},
          "readAt":1761650000000,"tier":"free","timeZone":null,"today":null,"waitingGoals":[]}
         """.trimIndent(),
     )

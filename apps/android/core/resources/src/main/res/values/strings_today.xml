@@ -122,6 +122,8 @@
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <!-- The line under Saved lessons in Practice anytime: the lessons the learner saved to do again. -->
+    <string name="today_saved_lessons_line">Lessons you kept for later</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Do a lesson again</string>
     <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
