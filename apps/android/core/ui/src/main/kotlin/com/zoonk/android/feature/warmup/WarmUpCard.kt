@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -400,11 +398,10 @@ private fun QuizCard(
         }
         onPauseOrDispose {}
     }
-    val reveal = remember { BringIntoViewRequester() }
     val firstAnswer = remember { FocusRequester() }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Title(wait)
-        Guess(card, quiz.picked, reveal, firstAnswer) { option ->
+        Guess(card, quiz.picked, firstAnswer) { option ->
             quiz.pick(option, hold)
             tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
         }
@@ -437,7 +434,6 @@ private fun Title(wait: WaitPresentation) {
 private fun Guess(
     card: WarmUpDeckCardsInner,
     picked: String?,
-    reveal: BringIntoViewRequester,
     firstAnswer: FocusRequester,
     onPick: (WarmUpDeckCardsInnerOptionsInner) -> Unit,
 ) {
@@ -475,7 +471,7 @@ private fun Guess(
     val right = card.options.any { it.id == picked && it.correct }
     com.zoonk.android.ui.components.FeedbackPanel(
         label = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),
-        modifier = Modifier.bringIntoViewRequester(reveal).semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+        modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
     ) {
         FeedbackVerdict(
             text = stringResource(if (right) R.string.player_verdict_guess_right else R.string.player_verdict_guess),

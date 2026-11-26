@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +43,7 @@ import com.zoonk.android.feature.questions.MatchTry
 import com.zoonk.android.feature.questions.SolvedMatchBoard
 import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.rememberMatchBoardState
+import com.zoonk.android.ui.components.revealWhenShown
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
@@ -133,12 +131,10 @@ private fun MissNote(
     miss: MatchTry,
 ) {
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val inView = remember { BringIntoViewRequester() }
-    LaunchedEffect(miss) { inView.bringIntoView() }
     Row(
         Modifier
             .fillMaxWidth()
-            .bringIntoViewRequester(inView)
+            .revealWhenShown(miss)
             .background(MaterialTheme.colorScheme.errorContainer, shape)
             .semantics(mergeDescendants = true) {}
             .padding(horizontal = 14.dp, vertical = 12.dp),

@@ -2,14 +2,9 @@ package com.zoonk.android.feature.questions
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -37,8 +32,7 @@ import com.zoonk.android.ui.theme.ProvideLayoutDirection
 /**
  * What a checked question got (main's `QuestionFeedback`): the verdict and any streak, the right
  * answer where the controls don't mark it, the explanation, the worked steps of a miss, the source,
- * a drill's [notes], and whether the mistake was saved or fixed. It scrolls into view as it appears, so a verdict
- * under a tall board or the bar is seen.
+ * a drill's [notes], and whether the mistake was saved or fixed.
  */
 @Composable
 fun QuestionFeedback(
@@ -53,14 +47,8 @@ fun QuestionFeedback(
     val verdict = verdict(feedback.isCorrect, blank = feedback.blank, notSure = answer == Answer.DontKnow && !timedOut)
     val streak = if (feedback.isCorrect) feedback.hyperdrive?.streak ?: 0 else 0
     val explanation = MaterialTheme.typography.bodyMedium
-    val inView = remember { BringIntoViewRequester() }
 
-    LaunchedEffect(Unit) {
-        withFrameNanos {}
-        inView.bringIntoView()
-    }
-
-    FeedbackPanel(label = stringResource(R.string.questions_feedback_label), modifier = modifier.bringIntoViewRequester(inView)) {
+    FeedbackPanel(label = stringResource(R.string.questions_feedback_label), modifier = modifier) {
         FeedbackVerdict(
             text = verdict.label,
             tone = verdict.tone,
