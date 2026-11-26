@@ -51,6 +51,7 @@ import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.StudyBlockWritingAvailabilityOneOf
 import com.zoonk.api.models.Syllabus
+import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.WritingTask
 import com.zoonk.api.models.WrittenPracticeSubjectsInner
 import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInnerCriteria
@@ -202,6 +203,10 @@ class GoalContentScreenshots {
             SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
         }
 
+        /** A subject left out for time, as core sends one: no lessons in the plan, so no chapters and no next date. */
+        fun leftOutForTime(subject: SyllabusSubject): SyllabusSubject =
+            subject.copy(notPlannedReason = "time", chapters = emptyList(), lessonsDone = 0, lessonsTotal = 0, nextDate = null)
+
         /** The Python plan with its Data module out for [reason], as core sends a module the plan doesn't teach: its skills, no lessons. */
         fun modulesWithDataOut(reason: String): Syllabus {
             val syllabus = modulesSyllabus()
@@ -322,13 +327,13 @@ class GoalContentScreenshots {
                 "subject-skipped" to { Subject("spanish") },
                 "subject-left-out-for-time" to {
                     val syllabus = examSyllabus()
-                    val subject = syllabus.subjects.first().copy(notPlannedReason = "time")
+                    val subject = leftOutForTime(syllabus.subjects.first())
                     SubjectPage(syllabus, subject, SubjectWrites(), NO_ACTIONS, TODAY, {}, {})
                 },
                 "subject-written" to { Subject("essay") },
                 "subject-written-left-out-for-time" to {
                     val syllabus = examSyllabus()
-                    val essay = syllabus.subjects.first { it.key == "essay" }.copy(notPlannedReason = "time")
+                    val essay = leftOutForTime(syllabus.subjects.first { it.key == "essay" })
                     val (menu, ask) = tools(TutorScope.Subject(GOAL, "essay", module = false))
                     SubjectPage(syllabus, essay, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
                 },
