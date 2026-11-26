@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { focusOn, press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import {
   type Actions,
   openPractice,
@@ -225,6 +227,37 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(locked).toHaveAttribute("data-state", "right");
     await expect.element(locked).toHaveAttribute("data-state", "done");
     await expect.element(locked).toBeDisabled();
+  });
+
+  it("scrolls the result into sight above the bar when the last pair sends it on a short phone", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        explanation:
+          "Electrons carry the negative charge and orbit the nucleus. Protons carry the positive charge and sit in the nucleus with the neutrons.",
+      });
+
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport({ height: 480, width: 390 }, async () => {
+        openPractice(null, { answer }, question("matchPairs"));
+        await page.getByRole("button", { exact: true, name: "Electron" }).click();
+        await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
+        await page.getByRole("button", { exact: true, name: "Proton" }).click();
+        await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+        const feedback = page.getByRole("region", { name: "Answer feedback" });
+        await expect.element(feedback).toBeVisible();
+
+        await expect
+          .poll(() => {
+            const box = feedback.element().getBoundingClientRect();
+            const bar = document.querySelector("[data-slot=bottom-bar]")?.getBoundingClientRect();
+            return box.top >= 0 && box.bottom <= (bar?.top ?? 0);
+          })
+          .toBe(true);
+      }),
+    );
   });
 
   it("keeps the first card picked after a wrong pair, sends the miss and names it in the result", async () => {

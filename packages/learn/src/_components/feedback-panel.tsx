@@ -1,6 +1,7 @@
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
+import { RevealWhenShown } from "./reveal-when-shown";
 
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
@@ -17,7 +18,11 @@ const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
   wrong: "text-destructive-text",
 };
 
-export function FeedbackPanel({ className, ...props }: React.ComponentProps<"section">) {
+/**
+ * A verdict and what comes with it. It scrolls itself into sight when it appears, so a verdict
+ * under the fold or the pinned bar is still seen, unless its screen reveals it (`OwnFeedbackReveal`).
+ */
+export function FeedbackPanel({ children, className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
       className={cn(
@@ -26,7 +31,10 @@ export function FeedbackPanel({ className, ...props }: React.ComponentProps<"sec
       )}
       data-slot="feedback-panel"
       {...props}
-    />
+    >
+      <RevealWhenShown />
+      {children}
+    </section>
   );
 }
 

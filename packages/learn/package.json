@@ -60,6 +60,7 @@
     "./explain/waiting": "./src/explain/explain-waiting.tsx",
     "./feedback": "./src/feedback/content-feedback-provider.tsx",
     "./feedback-panel": "./src/_components/feedback-panel.tsx",
+    "./reveal-when-shown": "./src/_components/reveal-when-shown.tsx",
     "./feedback/form": "./src/feedback/feedback-form.tsx",
     "./feedback/menu-items": "./src/feedback/report-problem-item.tsx",
     "./feedback/content-menu": "./src/feedback/content-feedback-menu.tsx",
