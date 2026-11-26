@@ -8,8 +8,10 @@ import { englishLevelTest } from "../../../db/src/prisma/seed/library/english/en
 import { type SeedCourse } from "../../../db/src/prisma/seed/library/types";
 import { writeLibraryCourse } from "../../../db/src/prisma/seed/library/write-course";
 import { mockSession } from "../_test-utils/mock-session";
+import { levelTestBankSchema } from "../language/level-test/level-test-contract";
 import { startLanguageLevelTest } from "../language/level-test/start-language-level-test";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
+import { loadPlacementItems } from "../learner/placement/_utils/placement-bank-items";
 import { pickPlacementItemSkills } from "../lookahead/placement-item-skills";
 import { seedPersonaCopy } from "./seed";
 
@@ -44,9 +46,16 @@ describe("placement on a seeded plan", () => {
     const { goalId } = await copyAtPlacement("stocks");
     const skillIds = await loadGoalSkillIds(goalId);
 
-    const picks = await pickPlacementItemSkills({ forPlacement: true, goalId, skillIds });
+    const [picks, items] = await Promise.all([
+      pickPlacementItemSkills({ forPlacement: true, goalId, skillIds }),
+      loadPlacementItems({ examBlueprintId: null, skillIds }),
+    ]);
 
     expect(listMissing(picks)).toStrictEqual([]);
+
+    expect(new Set(items.map((item) => item.format))).toStrictEqual(
+      new Set(["matchPairs", "multipleChoice", "order", "trueFalse"]),
+    );
   });
 
   it("opens a language learner's level test on a question the seed wrote", async () => {
@@ -65,49 +74,74 @@ describe("placement on a seeded plan", () => {
   });
 });
 
-describe("a reseed of a language course's level test", () => {
-  it("keeps the questions the app wrote and adds only the level checks it lacks", async () => {
-    const key = `level-test-${randomUUID()}`;
-    const targetLanguage = `x-${randomUUID().slice(0, 6)}`;
-    const appQuestions = englishLevelTest.questions.slice(0, 2);
+function languageCourse(): SeedCourse {
+  const key = `level-test-${randomUUID()}`;
 
-    const course: SeedCourse = {
-      category: "languages",
-      chapters: [],
-      description: t("A language", "Um idioma"),
-      format: "language",
-      items: [],
-      key,
-      languages: ["pt"],
-      levelTest: englishLevelTest,
-      skills: [],
-      slug: t(`${key}-en`, `${key}-pt`),
-      targetLanguage,
-      title: t("A language", "Um idioma"),
-    };
+  return {
+    category: "languages",
+    chapters: [],
+    description: t("A language", "Um idioma"),
+    format: "language",
+    items: [],
+    key,
+    languages: ["pt"],
+    levelTest: englishLevelTest,
+    skills: [],
+    slug: t(`${key}-en`, `${key}-pt`),
+    targetLanguage: `x-${randomUUID().slice(0, 6)}`,
+    title: t("A language", "Um idioma"),
+  };
+}
+
+async function reseed(course: SeedCourse) {
+  const organization = await organizationFixture();
+  await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+
+  const stored = await prisma.languageLevelTest.findUniqueOrThrow({
+    where: { languagePair: { language: "pt", targetLanguage: course.targetLanguage ?? "" } },
+  });
+
+  return levelTestBankSchema.parse(stored.content);
+}
+
+describe("a reseed of a language course's level test", () => {
+  it("adds the seed's questions and level checks to a bank the app wrote, keeping the app's", async () => {
+    const course = languageCourse();
+    const appQuestion = { ...englishLevelTest.questions[0], id: "app-question" };
 
     await prisma.languageLevelTest.create({
       data: {
-        content: { questions: appQuestions },
+        content: { questions: [appQuestion] },
         language: "pt",
         model: "app-model",
         promptVersion: "app",
         runId: "app-run",
-        targetLanguage,
+        targetLanguage: course.targetLanguage ?? "",
       },
     });
 
-    const organization = await organizationFixture();
-    await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+    const bank = await reseed(course);
 
-    const stored = await prisma.languageLevelTest.findUniqueOrThrow({
-      select: { content: true, runId: true },
-      where: { languagePair: { language: "pt", targetLanguage } },
+    expect(bank.questions.map(({ id }) => id)).toStrictEqual([
+      "app-question",
+      ...englishLevelTest.questions.map(({ id }) => id),
+    ]);
+
+    expect(bank.confirmations).toHaveLength(englishLevelTest.confirmations.length);
+  });
+
+  it("keeps a level check the app appended to the seed's bank", async () => {
+    const course = languageCourse();
+    const seeded = await reseed(course);
+    const appended = { ...englishLevelTest.confirmations[0], id: "confirmation-refill-1-0" };
+
+    await prisma.languageLevelTest.update({
+      data: { content: { ...seeded, confirmations: [...(seeded.confirmations ?? []), appended] } },
+      where: { languagePair: { language: "pt", targetLanguage: course.targetLanguage ?? "" } },
     });
 
-    expect(stored).toStrictEqual({
-      content: { confirmations: englishLevelTest.confirmations, questions: appQuestions },
-      runId: "app-run",
-    });
+    const bank = await reseed(course);
+
+    expect(bank.confirmations?.map(({ id }) => id)).toContain("confirmation-refill-1-0");
   });
 });

@@ -2,28 +2,27 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type Prisma, type PrismaClient } from "../../../generated/prisma/client";
 import { type SeedLanguage } from "../_utils/localize";
 import { SEED_PROVENANCE } from "../_utils/provenance";
-import { type SeedCourse, type SeedLevelTest } from "./types";
+import { type SeedCourse } from "./types";
 
 /** Past, so listening questions never read as waiting for their recording. */
 const WRITTEN_AT = new Date("2026-01-01T00:00:00.000Z");
 
-/** Hand-written parts fill what a stored bank lacks, so a reseed never replaces what the app wrote. */
-function fillBank(stored: unknown, seed: SeedLevelTest): Prisma.InputJsonObject | null {
-  const bank = isJsonObject(stored) ? stored : {};
-  const hasQuestions = Array.isArray(bank.questions) && bank.questions.length > 0;
-  const hasConfirmations = Array.isArray(bank.confirmations);
+/** The seed's entries replace their own ids; every entry the app wrote stays. */
+function mergeById(stored: unknown, seeded: readonly { id: string }[]): Prisma.InputJsonValue[] {
+  const ids = new Set(seeded.map(({ id }) => id));
 
-  if (hasQuestions && hasConfirmations) {
-    return null;
-  }
+  const kept = (Array.isArray(stored) ? stored : []).filter(
+    (entry): entry is Prisma.InputJsonValue =>
+      entry !== null && !(isJsonObject(entry) && typeof entry.id === "string" && ids.has(entry.id)),
+  );
 
-  return {
-    ...bank,
-    ...(!hasQuestions && { questions: seed.questions }),
-    ...(!hasConfirmations && { confirmations: seed.confirmations }),
-  };
+  return [...kept, ...seeded];
 }
 
+/**
+ * Every bank for the pair holds the seed's questions and level checks, so a level check opens with
+ * no model call, and a reseed never removes what the app wrote or appended.
+ */
 export async function writeLevelTest({
   course,
   language,
@@ -40,33 +39,39 @@ export async function writeLevelTest({
   }
 
   const languagePair = { language, targetLanguage };
-  const stored = await prisma.languageLevelTest.findUnique({ where: { languagePair } });
 
   // Checked, so the daily sweep doesn't send hand-written questions to a model.
-  const seeded = {
-    checkedAt: WRITTEN_AT,
-    content: levelTest,
-    generatedAt: WRITTEN_AT,
-    ...SEED_PROVENANCE,
-  };
+  await prisma.languageLevelTest.createMany({
+    data: [
+      {
+        ...languagePair,
+        checkedAt: WRITTEN_AT,
+        content: levelTest,
+        generatedAt: WRITTEN_AT,
+        ...SEED_PROVENANCE,
+      },
+    ],
+    skipDuplicates: true,
+  });
 
-  if (!stored) {
-    await prisma.languageLevelTest.createMany({
-      data: [{ ...languagePair, ...seeded }],
-      skipDuplicates: true,
+  // The same row lock the app takes to append level checks, so neither write loses the other's.
+  await prisma.$transaction(async (tx) => {
+    const [row] = await tx.$queryRaw<{ content: unknown }[]>`
+      SELECT content FROM language_level_tests
+      WHERE language = ${language} AND target_language = ${targetLanguage}
+      FOR UPDATE`;
+
+    const bank = isJsonObject(row?.content) ? row.content : {};
+
+    await tx.languageLevelTest.update({
+      data: {
+        content: {
+          ...bank,
+          confirmations: mergeById(bank.confirmations, levelTest.confirmations),
+          questions: mergeById(bank.questions, levelTest.questions),
+        },
+      },
+      where: { languagePair },
     });
-
-    return;
-  }
-
-  if (stored.runId === SEED_PROVENANCE.runId) {
-    await prisma.languageLevelTest.update({ data: seeded, where: { languagePair } });
-    return;
-  }
-
-  const filled = fillBank(stored.content, levelTest);
-
-  if (filled) {
-    await prisma.languageLevelTest.update({ data: { content: filled }, where: { languagePair } });
-  }
+  });
 }
