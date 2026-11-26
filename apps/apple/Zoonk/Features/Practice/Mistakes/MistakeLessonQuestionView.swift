@@ -63,7 +63,11 @@ struct MistakeLessonQuestionView: View {
       lessonId: replay.lessonId, answer: state.currentAnswer, result: state.currentResult,
       isLocked: state.phase != .playing, waitsForPicture: false,
       select: { state.select($0, for: replay.step.id) }, resolveSpoken: resolveSpoken,
-      check: canCheck ? check : nil)
+      check: canCheck ? check : nil,
+      complete: { answer in
+        state.select(answer, for: replay.step.id)
+        check()
+      })
   }
 
   private var announcement: String? {

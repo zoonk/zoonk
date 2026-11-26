@@ -18,6 +18,9 @@ struct ActivityCanvasContext {
   let phase: ActivityPhase
   let answer: ActivityAnswer?
   let setAnswer: @MainActor (ActivityAnswer?) -> Void
+  /// Sets a finished answer and checks it once, for a canvas whose last move ends it (a match
+  /// board's last pair), so there's no Check to press.
+  let complete: @MainActor (ActivityAnswer) -> Void
   var baseMap: ActivityBaseMap?
   /// A numeric check's answer as the verdict writes it.
   var roundedAnswer: ActivityRoundedAnswer? = nil
@@ -78,6 +81,15 @@ struct ActivityRendererRegistry: Sendable {
 
   func renderer(for template: String) -> ActivityRenderer? {
     renderers[template]
+  }
+
+  /// An activity step's instant grade, so its check doesn't wait for the server.
+  func grade(for step: LessonStep) -> ((ActivityStepContent, ActivityAnswer) -> Bool)? {
+    guard case .activity(let content) = step.content else {
+      return nil
+    }
+
+    return renderer(for: content.template)?.grade
   }
 
   static let empty = ActivityRendererRegistry([])

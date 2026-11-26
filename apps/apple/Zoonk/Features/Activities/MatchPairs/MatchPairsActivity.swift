@@ -159,7 +159,12 @@ private struct MatchPairsCanvas: View {
     let (left, right) = (columns.left[attempt.left], columns.right[attempt.right])
     let next = MatchPairs.recordTry(progress, left: left, right: right)
     progress = next
-    context.setAnswer(MatchPairs.answer(pairIds: pairIds, progress: next))
+
+    if let answer = MatchPairs.answer(pairIds: pairIds, progress: next) {
+      context.complete(answer)
+    } else {
+      context.setAnswer(nil)
+    }
 
     let leftText = LessonRichText.spoken(left.text)
     let rightText = LessonRichText.spoken(right.text)
