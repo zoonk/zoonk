@@ -14,6 +14,7 @@ import {
   TaskBody,
   getTaskAsideRootProps,
 } from "../_components/task-layout";
+import { useScreenAtTop } from "../_utils/use-screen-at-top";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { type QuestionTutor } from "../questions/question-tutor";
@@ -112,6 +113,11 @@ function PracticeBar({
   );
 }
 
+/** A question's own phases (answering, checking, feedback) are one screen. */
+function getScreen(kind: Run["state"]["phase"]["kind"]) {
+  return kind === "idea" || kind === "ending" || kind === "ended" ? kind : "question";
+}
+
 function PracticeBody({
   askButton,
   backHref,
@@ -132,6 +138,7 @@ function PracticeBody({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const { phase } = run.state;
+  useScreenAtTop(`${run.state.index}:${getScreen(phase.kind)}`);
 
   if (run.steps.length === 0) {
     return <NothingToPractice backHref={backHref} />;
