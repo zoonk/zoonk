@@ -164,6 +164,23 @@ describe("preparing a scheduled mock's questions", () => {
     });
   });
 
+  it("doesn't seat questions written for the written paper's skills on the objective paper", async () => {
+    const { blueprint, goal, written } = await scheduledPaperSetup({ day: 1 });
+
+    await Promise.all(
+      [...written].flatMap((skillId) =>
+        Array.from({ length: 10 }, () =>
+          itemFixture({ examBlueprintId: blueprint.id, mockOnly: true, skillId }),
+        ),
+      ),
+    );
+
+    const { urgentShort, writes } = await listScheduledWrites(goal.id);
+
+    expect(urgentShort).toBe(true);
+    expect((writes ?? []).flatMap((write) => write.skillIds).length).toBeGreaterThan(0);
+  });
+
   it("fills a paper the plan dated before the notice put the exam's sections on a day", async () => {
     const { blueprint, goal } = await scheduledPaperSetup({ day: null });
 
