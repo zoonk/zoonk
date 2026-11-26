@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +40,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.focustest.Pressed
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -51,31 +51,24 @@ import com.zoonk.android.feature.placementtest.LengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.NotSureButton
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
-import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.initialAnswer
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.AnswerOption
-import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PickKeyOptions
-import com.zoonk.android.ui.components.PictureFrame
-import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.richtext.RichText
-import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
@@ -259,8 +252,8 @@ internal fun ColumnScope.PlacementWaiting(
 private enum class PlacementSender { Confirm, DontKnow, Stop }
 
 /**
- * Shared with the Focus test, the plan's tests and the language level test. A
- * statement keeps its plain two options under its title, and every other format takes the runners' controls.
+ * Shared with the Focus test, the plan's tests and the language level test. Every format takes
+ * practice's question and controls, so a test looks and answers like the lessons it places.
  */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
@@ -293,33 +286,26 @@ internal fun ColumnScope.PlacementQuestion(
         }
     }
     val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
-    val visual = item.visual
 
     QuestionPages(
         questionId = item.itemId,
         read = {
             subject?.let { OnboardingSubject(it, position) }
             media()
-            item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
-            item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
-            visual?.let { LessonVisual(it) }
-            RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.zoonkType.question)
+            ItemSupport(item)
+            if (item.format != QuestionFormat.TrueFalse) QuestionTitle(item.question)
         },
         answer = {
-            if (item.format == QuestionFormat.TrueFalse) {
-                StatementAnswers(labels, answer, onPick = setAnswer)
-            } else {
-                QuestionAnswer(
-                    question = item,
-                    words = TrueFalseWords.TrueFalse,
-                    allowBlank = false,
-                    check = null,
-                    draft = answer,
-                    enabled = !pending,
-                    onAnswer = setAnswer,
-                    onSubmit = { send(it, PlacementSender.Confirm) },
-                )
-            }
+            QuestionAnswer(
+                question = item,
+                words = labels.recode(),
+                allowBlank = false,
+                check = null,
+                draft = answer,
+                enabled = !pending,
+                onAnswer = setAnswer,
+                onSubmit = { send(it, PlacementSender.Confirm) },
+            )
             if (canStop) {
                 stopHint?.let {
                     Text(
@@ -367,38 +353,6 @@ internal fun ColumnScope.PlacementQuestion(
                 focusableWhenDisabled = pending,
             ) {
                 Text(stringResource(R.string.onboarding_placement_confirm))
-            }
-        }
-    }
-}
-
-/** A statement's title is the question itself, so its two options are plain words under it. */
-@Composable
-private fun StatementAnswers(
-    labels: TrueFalseLabels,
-    picked: Answer?,
-    onPick: (Answer) -> Unit,
-) {
-    val rightWrong = labels == TrueFalseLabels.RIGHT_WRONG
-    val sides = listOf(true, false)
-    PickKeyOptions(sides.size, enabled = true, onPick = { onPick(Answer.TrueFalse(sides[it])) }) {
-        AnswerOptionGroup {
-            sides.forEachIndexed { index, isTrue ->
-                val label =
-                    when {
-                        rightWrong && isTrue -> R.string.onboarding_placement_right
-                        rightWrong -> R.string.onboarding_placement_wrong
-                        isTrue -> R.string.onboarding_placement_true
-                        else -> R.string.onboarding_placement_false
-                    }
-                AnswerOption(
-                    marker = index + 1,
-                    picked = picked == Answer.TrueFalse(isTrue),
-                    result = null,
-                    onClick = { onPick(Answer.TrueFalse(isTrue)) },
-                ) {
-                    Text(stringResource(label), style = MaterialTheme.typography.bodyLarge)
-                }
             }
         }
     }
