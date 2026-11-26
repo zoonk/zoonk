@@ -73,6 +73,9 @@ describe(hearSpokenSentence, () => {
     ["zh", "我有三个哥哥", "我有3个哥哥", "Wǒ yǒu sān gè gēge"],
     ["zh", "李安", "里安", "Lǐ’ān"],
     ["zh", "她叫李娜", "她叫里娜", "Tā jiào Lǐ Nà"],
+    ["zh", "航", "行", "háng"],
+    ["zh", "李安", "里安", "Lǐān"],
+    ["zh", "我叫善平", "我叫单平", "Wǒ jiào Shàn Píng"],
   ])(
     "lets the recording decide a %s transcript that differs from the sentence",
     async (language, expected, heard, romanization) => {
@@ -89,7 +92,6 @@ describe(hearSpokenSentence, () => {
   );
 
   it.each([
-    ["zh", "李安", "里安", "Lǐān"],
     ["zh", "王明", "汪明", "Wáng Míng"],
     ["zh", "王明", "王民", "Wáng Míng"],
     ["en", "Take the bus", "", undefined],

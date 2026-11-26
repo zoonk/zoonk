@@ -65,15 +65,17 @@ export function mandarinReading({
     return "listen";
   }
 
-  if (!matchesLessonReading(pinyin(transcript, { type: "array" }), romanization)) {
-    return "different";
-  }
-
   const ambiguous = characters.some(
     (character, index) =>
       character !== targetCharacters[index] &&
       (polyphonic(character, { type: "array" })[0]?.length ?? 0) > 1,
   );
 
-  return ambiguous ? "listen" : "equivalent";
+  if (ambiguous) {
+    return "listen";
+  }
+
+  return matchesLessonReading(pinyin(transcript, { type: "array" }), romanization)
+    ? "equivalent"
+    : "different";
 }

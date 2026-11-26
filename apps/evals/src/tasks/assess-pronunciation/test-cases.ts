@@ -7,6 +7,8 @@ export type PronunciationClipInput = {
   romanization?: string;
   spokenText: string;
   targetText: string;
+  /** What a transcriber wrote for the clip, given to the judge as the app does. */
+  transcriberHeard?: string;
 };
 
 export type PronunciationClipExpected = { flaggedWords: string[]; stressWords: string[] };
@@ -178,6 +180,7 @@ export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
       learnerLanguage: "pt",
       spokenText: "Ha fratelli?",
       targetText: "Ha fratelli?",
+      transcriberHeard: "Ah, fratelli.",
     },
   },
   {
@@ -188,6 +191,7 @@ export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
       learnerLanguage: "pt",
       spokenText: "Er isst viel.",
       targetText: "Er isst viel.",
+      transcriberHeard: "Er ist viel.",
     },
   },
   {
@@ -198,6 +202,7 @@ export const PRONUNCIATION_CLIP_CASES: PronunciationTestCase[] = [
       learnerLanguage: "pt",
       spokenText: "Ho fama.",
       targetText: "Ho fame.",
+      transcriberHeard: "O fama.",
     },
   },
   {
