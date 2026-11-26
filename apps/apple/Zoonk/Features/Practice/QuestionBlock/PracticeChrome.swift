@@ -538,7 +538,7 @@ struct PracticeCloseButton: View {
         Image(systemName: "xmark")
       }
     }
-    .keyboardShortcut(.cancelAction)
+    .leavesOnEscape()
   }
 }
 

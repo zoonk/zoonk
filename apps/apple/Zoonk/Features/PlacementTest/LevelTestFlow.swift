@@ -570,6 +570,7 @@ struct LevelTestScreen: View {
       .testBar()
       .taskClose {
         Button(role: .close) { dismiss() }
+          .leavesOnEscape()
       }
     }
     .loads(plan, standing, refreshable: false)

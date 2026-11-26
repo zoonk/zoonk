@@ -74,7 +74,7 @@ private struct MatchPairsCanvas: View {
       ) { ref in
         cardButton(ref, columns: columns)
       }
-      .matchBoardFeedback($picking, locked: progress.matched.count)
+      .matchBoardFeedback($picking, locked: progress.matched.count, isPlaying: !isChecked)
 
       if let missNote {
         Label {
