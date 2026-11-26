@@ -27798,7 +27798,7 @@
       }
     },
     "Not in your plan" : {
-      "comment" : "A phase the plan holds nothing of\nA subject the plan leaves out",
+      "comment" : "A phase the plan holds nothing of",
       "localizations" : {
         "de" : {
           "stringUnit" : {
