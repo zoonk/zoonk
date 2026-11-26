@@ -52,6 +52,7 @@ struct MistakePracticeScreen: View {
       )
       .navigationBarTitleDisplayMode(.inline)
       .taskClose { closeButton }
+      .questionOptions(reportTarget)
     }
     .task(
       id:
@@ -63,6 +64,29 @@ struct MistakePracticeScreen: View {
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "mistake-practice", reportType: .saveFailure), isReport: true
     )
+  }
+
+  /// Main's `QuestionMenu`: the question or lesson screen in view, once answered on a timed drill.
+  private var reportTarget: FeedbackContext? {
+    guard case .loaded = load, let step = state.step else { return nil }
+
+    switch state.phase {
+    case .feedback, .lessonFeedback:
+      break
+    case .answering, .checking, .answerFailed, .lessonChecking:
+      if step.entry.drill.timeLimitSeconds != nil { return nil }
+    case .idea, .ending, .ended:
+      return nil
+    }
+
+    if let lesson = step.entry.lesson {
+      return FeedbackContext(
+        contentID: lesson.step.id, contentKind: .step, screen: "mistake-practice")
+    }
+
+    return step.question.map {
+      FeedbackContext(contentID: $0.itemId, contentKind: .item, screen: "mistake-practice")
+    }
   }
 
   @ViewBuilder

@@ -188,6 +188,7 @@ struct QuestionBlockView: View {
       followPress(to: phase)
     }
     .announcesStatus(announcement(phase))
+    .questionOptions(reportTarget(phase))
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "question-block", reportType: .saveFailure), isReport: true
@@ -198,6 +199,22 @@ struct QuestionBlockView: View {
     .onDisappear {
       stopping.leave()
     }
+  }
+
+  /// Main's `getVoteTarget`: the question in view, once answered on a timed drill.
+  private func reportTarget(_ phase: QuestionBlockPhase) -> FeedbackContext? {
+    guard let question = run.question else { return nil }
+
+    switch phase {
+    case .feedback:
+      break
+    case .answering, .checking, .answerFailed, .alreadyAnswered:
+      if run.drill?.timeLimitSeconds != nil { return nil }
+    case .finishFailed, .finished, .finishReady, .finishing:
+      return nil
+    }
+
+    return FeedbackContext(contentID: question.itemId, contentKind: .item, screen: "question-block")
   }
 
   @ViewBuilder
@@ -583,23 +600,24 @@ private struct NetScoreLine: View {
   }
 }
 
+/// Main's `MistakeNote`: a quiet line under the verdict, as the lesson's own.
 private struct MistakeMovedNote: View {
   let feedback: PracticeFeedback
 
   var body: some View {
-    if feedback.mistakeFixed {
-      QuestionNote(systemImage: "checkmark.circle") {
+    Group {
+      if feedback.mistakeFixed {
         Text(
           "Mistake fixed. It leaves your notebook.", tableName: "Practice",
           comment: "After answering a saved mistake right.")
-      }
-    } else if feedback.savedToNotebook {
-      QuestionNote(systemImage: "square.and.pencil") {
+      } else if feedback.savedToNotebook {
         Text(
           "Saved to your mistakes", tableName: "Practice",
           comment: "After a wrong answer saved to the mistakes notebook.")
       }
     }
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
