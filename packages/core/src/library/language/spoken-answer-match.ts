@@ -21,7 +21,6 @@ export type SpokenAnswerMatch = {
 
 const MAX_WORDS_TO_EXPLAIN = 2;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
-const DIGIT_RUN = /\p{Nd}+/gu;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
 
 const CHINESE_SCRIPT_LANGUAGES: ReadonlySet<string> = new Set(["yue", "zh"]);
@@ -197,88 +196,6 @@ export function matchSpokenAnswer({
     score: words.length === 0 ? 0 : correctCount / words.length,
     words,
   };
-}
-
-function isWrittenAsLetters({ language, text }: { language: string; text: string }): boolean {
-  return toTokens({ language, text }).every((token) => isLoneLetter(token));
-}
-
-/** A letter's name can take two words ("double u", "i griega"), so a mistake beside it may be the rest. */
-function isLetterNameHeardAsLetters({
-  index,
-  language,
-  words,
-}: {
-  index: number;
-  language: string;
-  words: readonly SpokenWordResult[];
-}): boolean {
-  const word = words[index];
-
-  if (
-    word?.status !== "different" ||
-    word.heard === null ||
-    !word.heard.split(" ").every((token) => isLoneLetter(token))
-  ) {
-    return false;
-  }
-
-  const name = [words[index - 1], word, words[index + 1]].filter(
-    (part): part is SpokenWordResult => part !== undefined && part.status !== "correct",
-  );
-
-  return name.some((part) => !isWrittenAsLetters({ language, text: part.text }));
-}
-
-function hasTranscribedLetterNames({
-  language,
-  words,
-}: {
-  language: string;
-  words: readonly SpokenWordResult[];
-}): boolean {
-  // A Chinese or Japanese character heard alone is usually a whole word, not a letter.
-  if (getUnspacedSegmenter(language)) {
-    return false;
-  }
-
-  return words.some((_, index) => isLetterNameHeardAsLetters({ index, language, words }));
-}
-
-function toDigitRuns(text: string): string {
-  return [...text.matchAll(DIGIT_RUN)].join(" ");
-}
-
-/**
- * A transcriber writes a letter said by its name as the bare letter ("M" for "emme"), and a number
- * as digits or words whichever way it likes ("3" for "three", "two three four" for "234"), so when
- * its letters or digits differ from the sentence's, its transcript can't tell whether they were
- * said right. The word-by-word check, which hears the recording against the sentence, can.
- */
-export function needsWordByWordCheck({
-  expected,
-  heard,
-  language,
-  words,
-}: {
-  expected: string;
-  heard: string;
-  language: string;
-  words: readonly SpokenWordResult[];
-}): boolean {
-  const target = toTokens({ language, text: expected });
-  const transcript = toTokens({ language, text: heard });
-
-  const openingWordMissing =
-    transcript.length > 0 &&
-    target.length === transcript.length + 1 &&
-    transcript.every((token, index) => token === target[index + 1]);
-
-  return (
-    openingWordMissing ||
-    toDigitRuns(expected) !== toDigitRuns(heard) ||
-    hasTranscribedLetterNames({ language, words })
-  );
 }
 
 export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWordResult[] {

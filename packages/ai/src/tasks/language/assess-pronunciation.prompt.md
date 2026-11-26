@@ -10,6 +10,7 @@ The goal is to be understood, not to sound native. Flag only what a native liste
 - `LEARNER_LANGUAGE`: the learner's own language, when known. Sounds carried over from it are an accent, not a mistake, unless they change the word. Only judge what you actually hear.
 - `EXPECTED_SENTENCE`: what the learner was asked to say.
 - `WORDS`: the words of `EXPECTED_SENTENCE`, numbered.
+- `TRANSCRIBER_HEARD`: when present, what a speech-to-text model wrote for the recording. It picks spellings from context, so it can write a word that sounds the same as the sentence's in another spelling ("Ah" for "Ha" in Italian), and it can mishear an accent. Treat it as a second listener's guess, never as proof: judge by what you hear.
 - The recording.
 
 # How to judge
