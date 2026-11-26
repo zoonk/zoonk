@@ -41,9 +41,8 @@ class MatchBoardState internal constructor(
     var announcement by mutableStateOf("")
         private set
 
-    /** The wrong try the last tap made, until the next tap; a screen that says why shows it this long. */
-    var lastMiss by mutableStateOf<MatchTry?>(null)
-        private set
+    /** The last try while it was a wrong one, until a pair is made; a screen that says why shows it this long. */
+    val lastMiss: MatchTry? get() = work.missed
 
     /** Whether the board checks each pair as it's made. */
     private val checksPairs: Boolean get() = goesWith.value != null
@@ -58,11 +57,10 @@ class MatchBoardState internal constructor(
 
         val made = next.pairs.keys - before.pairs.keys
         val undone = before.pairs.keys - next.pairs.keys
-        lastMiss = next.misses.lastOrNull()?.takeIf { next.misses.size > before.misses.size }
         when {
             made.isNotEmpty() -> paired(made.first().let { MatchTry(it, next.pairs.getValue(it)) }, next.pairs.size)
             undone.isNotEmpty() -> unpaired(undone.first().let { MatchTry(it, before.pairs.getValue(it)) })
-            lastMiss != null -> missed(next.misses.last())
+            next.misses.size > before.misses.size -> missed(next.misses.last())
         }
         return next
     }
@@ -99,8 +97,12 @@ class MatchBoardState internal constructor(
         announcement = listOfNotNull(resources.getString(R.string.questions_match_not_a_pair, left, right), why.value(miss)).joinSentences()
     }
 
-    internal fun endCue() {
-        state.value = state.value.copy(wrong = null, locked = null)
+    internal fun endWrongCue() {
+        state.value = state.value.copy(wrong = null)
+    }
+
+    internal fun endLockedCue() {
+        state.value = state.value.copy(locked = null)
     }
 }
 
@@ -126,12 +128,19 @@ fun rememberMatchBoardState(
     val resources = LocalResources.current
     val board = remember(work, count, haptics, resources) { MatchBoardState(work, count, checks, names, whys, haptics, resources) }
 
-    // A try's tone holds through the wrong one's shake and a beat after it; a tap during it is a tap like any other.
-    val cue = work.value.cue
-    LaunchedEffect(cue) {
-        if (work.value.wrong != null || work.value.locked != null) {
+    // A try's tone holds through the wrong one's shake and a beat after it; a tap during it is a tap like any other. A
+    // locked pair keeps its own clock, so a miss or a pick doesn't cut it short; only a newer pair settles it at once.
+    val shown = work.value
+    LaunchedEffect(shown.wrong, shown.cue) {
+        if (shown.wrong != null) {
             delay(WRONG_CUE_MILLIS)
-            board.endCue()
+            board.endWrongCue()
+        }
+    }
+    LaunchedEffect(shown.locked) {
+        if (shown.locked != null) {
+            delay(WRONG_CUE_MILLIS)
+            board.endLockedCue()
         }
     }
     return board

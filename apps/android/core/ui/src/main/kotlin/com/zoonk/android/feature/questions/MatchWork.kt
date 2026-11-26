@@ -12,12 +12,16 @@ val MatchSide.other: MatchSide get() = if (this == MatchSide.Left) MatchSide.Rig
 data class MatchSpot(
     val side: MatchSide,
     val index: Int,
-)
+) {
+    /** Its place on a board of [count] cards a side, the left column first, as its number key counts ([MatchNumberKeys]). */
+    fun place(count: Int): Int = if (side == MatchSide.Left) index else count + index
+}
 
 /**
  * What the learner did on a match board (main's `useMatchBoard`): the [pairs] made, left place to right place; every
- * wrong try in the order it happened; the card picked first, waiting for its partner; and the try whose cue shows, a
- * [wrong] one or the left place of a pair just [locked] ([cue] counts the tries, so the same miss twice cues twice).
+ * wrong try in the order it happened; the card picked first, waiting for its partner; the cues showing, a [wrong] try's
+ * and, on their own clock, the left place of a pair just [locked] ([cue] counts the tries, so the same miss twice cues
+ * twice); and the last try while it was a [missed] one, until a pair is made or undone.
  */
 @Immutable
 data class MatchWork(
@@ -27,6 +31,7 @@ data class MatchWork(
     val wrong: MatchTry? = null,
     val locked: Int? = null,
     val cue: Int = 0,
+    val missed: MatchTry? = null,
 ) {
     fun partnerOf(spot: MatchSpot): Int? =
         when (spot.side) {
@@ -90,21 +95,28 @@ fun MatchWork.tap(
     if (partner != null) {
         if (goesWith != null) return this
         val left = if (spot.side == MatchSide.Left) spot.index else partner
-        return copy(pairs = pairs - left, picked = null, wrong = null)
+        return copy(pairs = pairs - left, picked = null, wrong = null, missed = null)
     }
 
     val first = picked
     if (first == null || first.side == spot.side) return copy(picked = spot.takeUnless { it == first }, wrong = null)
 
     val attempt = if (spot.side == MatchSide.Left) MatchTry(spot.index, first.index) else MatchTry(first.index, spot.index)
-    if (goesWith == null) return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null)
+    if (goesWith == null) return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null, missed = null)
     if (goesWith(attempt.left, attempt.right)) {
-        return copy(pairs = pairs + (attempt.left to attempt.right), picked = null, wrong = null, locked = attempt.left, cue = cue + 1)
+        return copy(
+            pairs = pairs + (attempt.left to attempt.right),
+            picked = null,
+            wrong = null,
+            locked = attempt.left,
+            cue = cue + 1,
+            missed = null,
+        )
     }
-    return copy(misses = misses + attempt, wrong = attempt, locked = null, cue = cue + 1)
+    return copy(misses = misses + attempt, wrong = attempt, cue = cue + 1, missed = attempt)
 }
 
-/** The board as it was, for a process Android reclaimed: its pairs, misses and pick, without a cue that already ended. */
+/** The board as it was, for a process Android reclaimed: its pairs, misses and pick, without a cue or a note that already ended. */
 val MatchWorkSaver: Saver<MatchWork, Any> =
     Saver(
         save = { work ->
