@@ -49,16 +49,20 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
   }
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
-    Group {
-      if isWide || isStacked || buttons.count < 2 {
+    // At accessibility sizes a bar stacks its buttons, except beside a way back, which keeps its row
+    // with the main action under "I don't know yet", as main's does.
+    let stacks = isStacked && !buttons.contains { $0.containerValues.isBarWayBack }
+
+    return Group {
+      if isWide || stacks || buttons.count < 2 {
         AccessibilityStack(spacing: 8) {
           buttons
         }
         // A lone button on a phone takes the whole row, as the main action does beside others.
         .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
       } else {
-        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht") sits on
-        // its own line above the main action, and is read first, as drawn.
+        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht"), or
+        // any beside a way back, sits on its own line above the main action.
         BarLines(spacing: 8) {
           actions
         }

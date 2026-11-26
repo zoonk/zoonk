@@ -44,4 +44,22 @@ final class BarLinesTests: XCTestCase {
 
     XCTAssertEqual(widths(slots, width: 328), [[170, 150], [328]])
   }
+
+  func testBesideAWayBackTheAnswerTakesTheLineAboveEvenWhereItWouldFit() {
+    let slots = [
+      Slot(oneLine: 44, isGlyph: true, isWayBack: true), Slot(oneLine: 135),
+      Slot(oneLine: 90, isMain: true), Slot(oneLine: 44, isGlyph: true),
+    ]
+
+    XCTAssertEqual(lines(slots, width: 358), [[1], [0, 2, 3]])
+    XCTAssertEqual(widths(slots, width: 358), [[358], [44, 254, 44]])
+  }
+
+  func testAWayBackWithOnlyTheMainActionSharesItsLine() {
+    let slots = [
+      Slot(oneLine: 44, isGlyph: true, isWayBack: true), Slot(oneLine: 90, isMain: true),
+    ]
+
+    XCTAssertEqual(widths(slots, width: 358), [[44, 306]])
+  }
 }

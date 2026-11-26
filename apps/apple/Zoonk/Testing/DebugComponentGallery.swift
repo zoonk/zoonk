@@ -26,6 +26,8 @@
               DebugChallenge()
             } else if section == "composer" {
               DebugComposer()
+            } else if section == "lessonBar" {
+              DebugLessonBar()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -743,6 +745,43 @@
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
         """
       return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=lessonBar` opens a screen with a lesson's bar (`bottomBar`): its way back,
+  /// "I don't know yet", Check and the buddy's ask, as the bar draws them at every text size.
+  private struct DebugLessonBar: View {
+    var body: some View {
+      ScrollView {
+        Text(verbatim: "Why a cloud?")
+          .typeStyle(.question)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .taskColumn()
+      }
+      .bottomBar {
+        StepBackButton(label: Text(verbatim: "Previous screen")) {}
+        Button {
+        } label: {
+          Text(verbatim: "I don't know yet")
+        }
+        .buttonStyle(.outline.tight)
+        Button {
+        } label: {
+          Text(verbatim: "Check")
+        }
+        .buttonStyle(.mainAction)
+        .barMainAction()
+        Button {
+        } label: {
+          Label {
+            Text(verbatim: "Ask Pip")
+          } icon: {
+            Image(systemName: "bubble.left")
+          }
+        }
+        .tutorAskIcon()
+      }
+      .environment(\.isTaskScreen, true)
     }
   }
 

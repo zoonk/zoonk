@@ -17,5 +17,6 @@ struct StepBackButton: View {
     .buttonStyle(.outline.icon)
     .controlSize(.large)
     .keyboardShortcut(.leftArrow, modifiers: [])
+    .containerValue(\.isBarWayBack, true)
   }
 }

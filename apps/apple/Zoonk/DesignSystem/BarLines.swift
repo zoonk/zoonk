@@ -7,12 +7,15 @@ import SwiftUI
 /// their line only while that leaves it at least as wide as each labeled button beside it with the
 /// glyphs after it still beside it, so it's never the smaller answer; otherwise it starts a line
 /// under them. On a line without it the labeled buttons share what's left equally, so one alone
-/// fills its line; a glyph keeps its size.
+/// fills its line; a glyph keeps its size. As main's `QuestionActions`, a bar with a way back
+/// (`StepBackButton`) has no room for a labeled button before the main action, such as "I don't
+/// know yet": each takes a line of its own above, and the way back starts the row under them.
 struct BarLines: Layout {
   struct Slot: Equatable {
     var oneLine: CGFloat
     var isMain = false
     var isGlyph = false
+    var isWayBack = false
   }
 
   var spacing: CGFloat
@@ -54,7 +57,9 @@ struct BarLines: Layout {
       let isMain = index == main
       // Only glyphs follow the main action; the ask's box grows wider than tall at large text.
       let isGlyph = !isMain && (index > (main ?? index) || ideal.width <= ideal.height)
-      return Slot(oneLine: min(ideal.width, width), isMain: isMain, isGlyph: isGlyph)
+      return Slot(
+        oneLine: min(ideal.width, width), isMain: isMain, isGlyph: isGlyph,
+        isWayBack: subviews[index].containerValues.isBarWayBack)
     }
   }
 
@@ -77,17 +82,24 @@ struct BarLines: Layout {
       return slot.isMain ? max(slot.oneLine, beside) + after(index) : slot.oneLine
     }
 
-    var lines: [[Int]] = []
+    let mainAt = slots.firstIndex(where: \.isMain) ?? slots.endIndex
+    let above =
+      slots.contains(where: \.isWayBack)
+      ? slots.indices.filter { $0 < mainAt && !slots[$0].isGlyph } : []
+    var lines = above.map { [$0] }
+    var row: [[Int]] = []
 
-    for index in slots.indices {
-      if let line = lines.last,
+    for index in slots.indices where !above.contains(index) {
+      if let line = row.last,
         line.reduce(0, { $0 + slots[$1].oneLine + gap }) + needs(line, index) <= width
       {
-        lines[lines.count - 1].append(index)
+        row[row.count - 1].append(index)
       } else {
-        lines.append([index])
+        row.append([index])
       }
     }
+
+    lines += row
 
     return lines.map { line in
       let left = width - line.reduce(0) { $0 + slots[$1].oneLine } - gap * CGFloat(line.count - 1)
@@ -115,4 +127,10 @@ extension View {
   func barMainAction() -> some View {
     layoutValue(key: BarMainActionKey.self, value: true)
   }
+}
+
+extension ContainerValues {
+  /// A bar's way back one screen (`StepBackButton`), which sends the bar's labeled answers to the line
+  /// above (`BarLines`).
+  @Entry var isBarWayBack = false
 }
