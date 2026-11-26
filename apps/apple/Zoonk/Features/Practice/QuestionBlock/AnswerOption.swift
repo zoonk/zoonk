@@ -9,7 +9,7 @@ enum AnswerOptionResult: Equatable {
 }
 
 /// Main's `AnswerOption`: its number key, its words and, once checked, the word its result shows.
-/// The first nine answer to their number key on a hardware keyboard, as on the web.
+/// The first ten answer to their number key on a hardware keyboard (the tenth to 0), as on the web.
 struct AnswerOption: View {
   var marker: Int?
   var shortcut: Int?
@@ -51,7 +51,7 @@ struct AnswerOption: View {
     }
     .buttonStyle(AnswerOptionStyle(isPicked: isPicked, result: result))
     .disabled(isLocked)
-    .modifier(NumberKeyShortcut(number: shortcut ?? marker, isEnabled: !isLocked))
+    .modifier(PickKey(index: isLocked ? nil : (shortcut ?? marker).map { $0 - 1 }))
     .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
@@ -358,18 +358,5 @@ extension View {
       .padding(.vertical, 13)
       .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
       .answerSurface(tone, isPressed: isPressed)
-  }
-}
-
-private struct NumberKeyShortcut: ViewModifier {
-  let number: Int?
-  let isEnabled: Bool
-
-  func body(content: Content) -> some View {
-    if let number, isEnabled, (1...9).contains(number), let key = String(number).first {
-      content.keyboardShortcut(KeyEquivalent(key), modifiers: [])
-    } else {
-      content
-    }
   }
 }

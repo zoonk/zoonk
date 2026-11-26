@@ -126,15 +126,3 @@ struct ActivityCaption: View {
       .foregroundStyle(.mutedForeground)
   }
 }
-
-struct ActivityNumberKey: ViewModifier {
-  let index: Int
-
-  func body(content: Content) -> some View {
-    if index < 9, let key = "\(index + 1)".first {
-      content.keyboardShortcut(KeyEquivalent(key), modifiers: [])
-    } else {
-      content
-    }
-  }
-}

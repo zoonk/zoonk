@@ -36,7 +36,7 @@ export const CHOICE_ROW_CLASS = cn(
 );
 
 /**
- * A row's number key, only where there is a keyboard (a fine pointer). There, rows past the ninth
+ * A row's number key, only where there is a keyboard (a fine pointer). There, rows past the tenth
  * keep its room empty, so every label starts on one edge.
  */
 function ChoiceKey({ index }: { index: number }) {

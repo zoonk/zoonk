@@ -64,7 +64,7 @@ struct LessonOptionList: View {
       }
       .buttonStyle(LessonOptionStyle(mark: mark(option)))
       .disabled(isLocked || isChecked)
-      .modifier(NumberShortcut(index: marker - 1))
+      .modifier(PickKey(index: marker - 1))
       .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
       .modifier(PictureOptionLabel(option: option, isPicture: true, isChecked: isChecked))
       .accessibilityValue(verdictValue(option))
@@ -157,18 +157,6 @@ private struct PictureOptionLabel: ViewModifier {
       let spoken = LessonRichText.spoken(option.text)
       content.accessibilityLabel(
         Text(verbatim: isChecked ? spoken : option.pictureAlt ?? spoken))
-    } else {
-      content
-    }
-  }
-}
-
-struct NumberShortcut: ViewModifier {
-  let index: Int
-
-  func body(content: Content) -> some View {
-    if index < 9, let key = "\(index + 1)".first {
-      content.keyboardShortcut(KeyEquivalent(key), modifiers: [])
     } else {
       content
     }
