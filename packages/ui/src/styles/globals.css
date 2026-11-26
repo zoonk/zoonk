@@ -692,9 +692,11 @@
 
   /*
    * What focus, a link's anchor or a form's missing field scrolls to stops above the pinned bottom
-   * bar (its 44px action and the room over and under it), never behind it.
+   * bar (its 44px action and the room over and under it), never behind it. Focus inside the bar
+   * needs no room: the bar is always in sight, and with it the page would scroll down by the bar's
+   * height each time focus moves to its main action.
    */
-  :root:has([data-slot="bottom-bar"]) {
+  :root:has([data-slot="bottom-bar"]):not(:has([data-slot="bottom-bar"]:focus-within)) {
     scroll-padding-bottom: calc(2.75rem + 3 * var(--spacing-frame) + var(--page-safe-bottom));
   }
 

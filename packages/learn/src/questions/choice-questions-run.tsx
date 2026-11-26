@@ -12,6 +12,7 @@ import {
 } from "../_components/question-actions";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
+import { useScreenAtTop } from "../_utils/use-screen-at-top";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
@@ -153,6 +154,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   }, [itemId]);
 
   useFocusNewQuestion({ container: questionRef, itemId });
+  useScreenAtTop(itemId);
 
   const answer = (choice: ChoiceAnswer, by: AnswerSender) => {
     if (!question) {

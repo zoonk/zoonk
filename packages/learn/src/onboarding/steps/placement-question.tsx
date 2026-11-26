@@ -11,6 +11,7 @@ import {
 } from "../../_components/question-actions";
 import { QuestionTitle } from "../../_components/question-title";
 import { AnswersSaveError } from "../../_components/save-error";
+import { useScreenAtTop } from "../../_utils/use-screen-at-top";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
 import { initialOrderAnswer } from "../../questions/initial-order-answer";
 import { ItemSupport } from "../../questions/item-text";
@@ -152,6 +153,7 @@ export function PlacementQuestionScreen({
   const [pressed, setPressed] = useState<PlacementControl | null>(null);
   const title = useRef<HTMLDivElement>(null);
   const titleProps = { heading: "h1", ref: title, tabIndex: -1 } as const;
+  useScreenAtTop(question.itemId);
 
   // The control that sent the last answer is gone, so focus would fall to the page.
   useEffect(() => {
