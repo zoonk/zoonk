@@ -43,19 +43,8 @@
     <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
 
     <string name="activities_sorting_badge_match_pairs">Match pairs</string>
-    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
-    <plurals name="activities_sorting_pairs_matched">
-        <item quantity="one">%1$d of %2$d pairs matched</item>
-        <item quantity="other">%1$d of %2$d pairs matched</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cards to match</string>
-    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
-    <string name="activities_sorting_card_matched">%1$s, matched</string>
-    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
-    <string name="activities_sorting_matched">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
-    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
-    <string name="activities_sorting_dont_go_together">%1$s and %2$s don\'t go together.</string>
     <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Not quite:</string>

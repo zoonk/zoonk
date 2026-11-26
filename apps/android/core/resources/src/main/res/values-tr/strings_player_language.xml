@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "player_language_all_matched": "fa5c772019993607f8881b2a0b7346ff6707b38f65a538e114d85e28dd3bf1da",
   "player_language_alphabet": "e5db821d1d67767e4aac0ac5a238af6fc700a40e77403205b0e9ed1c593bcb79",
   "player_language_blank": "7d44bc33584e8747c1fe7059c6556003b3cfa0adaf4654ba2a88a7e2ad9af7cc",
   "player_language_blank_checked": "0bf79affc2eb1b12fa289b1b83c7e08a95a570004b20bb5e9fa314f4dc1d8c23",
@@ -10,16 +9,13 @@
   "player_language_correct": "dbb0ca2d7812d010a28a936d655b2cfb20f0328d54e9e0dc94939ff15195c760",
   "player_language_incorrect": "db1976846618d0997fa8948f3a426211f0cbde043b162ea4b0a8dc888c932dc6",
   "player_language_match_the_pairs": "fdaa460cddc9d6e87f00f0f747a8bf9e1bef879dcc99aad20e0c8d2dc6bebdbb",
-  "player_language_matched": "fb1d540eaad6835df81cc5467540d784e5aed340b3e56abc87086d13a3669946",
   "player_language_move_earlier": "439ead68a8016d7dc3bba497cbc8c1467fd18fa89dbe14a2663a5dfa420bc696",
   "player_language_move_later": "62cd2d7c6a8e5c4fb2aac89e1e065113b8c8b63e975df714cbaa4411d0ee1143",
-  "player_language_not_a_pair": "303a0dbc655c57d29bb69cd773c575b3fa34b30ee00fc4787217cae355440431",
   "player_language_pick_words": "497224a3a92f0c1f46e09e9513475a2161cfa0b8ba759b73536d720364b4a65a",
   "player_language_play_pronunciation": "c61cd1b3edde5233f772395a143ec3a1d9f0d9b707098456e08164c6c5b4b990",
   "player_language_position": "df8511a228f42025999c8b860614a88a107a29f37b17c7f1c8ed02b75eac1d11",
   "player_language_pronunciation_tip": "53280989b781adb3fafc1e68fc17f49f2046a61da460e142c8b2c7065ee75c30",
   "player_language_remove": "563d07f384f7196e2a52ddb65c27a4d45f8b494faf40113697dcb2eeb398e869",
-  "player_language_selected": "a35cf151ecfe1af73b8cfac5609ed18a2803b49c2ae631cf58c305c3ea8eb8bc",
   "player_language_show_translation": "126f7a65b85296605989b561cbfc5df35683286e9f09ad0ebe7b1bdf45396ef1",
   "player_language_translate": "d59947f470ae772914d5a47fbba1d80aa8a91ab02c701f1fe043cb2712d4d592",
   "player_language_usage": "840cb72a7d812ab89566a03dff81121838700fecd17cc91af5030df6605d3e81",
@@ -67,11 +63,4 @@
     <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
     <string name="player_language_blank_checked">%1$d. boşluk: %2$s. %3$s.</string>
     <string name="player_language_match_the_pairs">Çiftleri eşleştir.</string>
-    <string name="player_language_all_matched">Tüm çiftler eşleştirildi. Devam etmek için Kontrol et düğmesine bas.</string>
-    <!-- Screen reader state of a word already paired with its match. -->
-    <string name="player_language_matched">Eşleştirildi</string>
-    <!-- Screen reader state of the word picked to pair next. -->
-    <string name="player_language_selected">Seçili</string>
-    <!-- Said by the screen reader when two picked words don't go together. -->
-    <string name="player_language_not_a_pair">Eşleşmiyor</string>
 </resources>

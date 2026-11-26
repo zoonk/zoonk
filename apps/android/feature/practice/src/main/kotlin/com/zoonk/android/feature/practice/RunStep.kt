@@ -454,7 +454,8 @@ internal fun AnswerActions(
         val main = remember { FocusRequester() }
         val moveFocus = rememberMoveFocus()
         var notSureSent by rememberSaveable { mutableStateOf(false) }
-        LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
+        // A learning match sends itself with its last pair, so its verdict, like "I don't know yet"'s, takes focus to Continue.
+        LaunchedEffect(done) { if (done && (notSureSent || question.key != null)) moveFocus(main) }
 
         if (phase ==
             RunPhase.AnswerFailed
@@ -488,9 +489,10 @@ internal fun AnswerActions(
                 enabled = done || (run.canAnswer && draft != null),
                 focusableWhenDisabled = sender != null,
             ) {
+                // A learning match checks each pair and sends its last one by itself, so it has nothing to check by hand.
                 Text(
                     stringResource(
-                        if (done) R.string.practice_continue else R.string.practice_check,
+                        if (done || question.key != null) R.string.practice_continue else R.string.practice_check,
                     ),
                 )
             }

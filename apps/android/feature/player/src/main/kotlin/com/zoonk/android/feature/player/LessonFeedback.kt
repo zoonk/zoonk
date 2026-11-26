@@ -330,4 +330,4 @@ fun showsOwnResult(step: LessonStep): Boolean = step.kind in OWN_RESULT_KINDS
 /** An activity draws its result notes inside its own feedback card, as every other step's card holds them. */
 fun notesInOwnCard(step: LessonStep): Boolean = step.kind == StepKind.Activity
 
-private val OWN_RESULT_KINDS = setOf(StepKind.Activity, StepKind.Challenge, StepKind.MatchColumns)
+private val OWN_RESULT_KINDS = setOf(StepKind.Activity, StepKind.Challenge)

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -27,10 +28,22 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** The action bar's main button, for a screen that hands it keyboard focus once its answer is complete. */
 val LocalPrimaryFocus = staticCompositionLocalOf<FocusRequester?> { null }
+
+/** A screen that [sent] its own answer (a match board's last pair) hands focus to Continue once it's [checked]. */
+@Composable
+internal fun FocusPrimaryOnceChecked(
+    sent: Boolean,
+    checked: Boolean,
+) {
+    val primary = LocalPrimaryFocus.current ?: return
+    val moveFocus = rememberMoveFocus()
+    LaunchedEffect(checked) { if (checked && sent) moveFocus(primary) }
+}
 
 /** How tall a screen's one column shows at once; null where the screen isn't in one column. */
 val LocalStepViewHeight = compositionLocalOf<Dp?> { null }

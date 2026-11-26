@@ -208,6 +208,10 @@ internal fun ActivityView(
             content.baseMap,
             actions::takeNumberKeys,
             rounded,
+            onComplete = { done ->
+                onAnswerChange(done)
+                if (!locked) actions.runPrimary()
+            },
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays

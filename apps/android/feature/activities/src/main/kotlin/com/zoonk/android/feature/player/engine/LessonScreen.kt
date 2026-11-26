@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.ui.components.TaskSegment
 
@@ -39,6 +40,11 @@ data class LessonScreen(
     val showProgress: Boolean,
 )
 
+private val LessonStep.isMatchBoard: Boolean
+    get() = kind == StepKind.MatchColumns || (content as? StepContent.Activity)?.frame?.template == MATCH_PAIRS
+
+private const val MATCH_PAIRS = "matchPairs"
+
 private fun LessonAnswer?.isReady(): Boolean = this != null && (writtenText?.isNotBlank() ?: true)
 
 private fun LessonPlayerState.readLabel(step: LessonStep): PrimaryLabel {
@@ -73,6 +79,11 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
                 )
             }
         }
+    }
+
+    // A match board checks each pair as it's made and sends its last one by itself: there's nothing to check by hand.
+    if (step.isMatchBoard) {
+        return PrimaryAction(isCheck = true, label = PrimaryLabel.Continue, enabled = answers[step.id].isReady())
     }
 
     val isGuess = step.content is StepContent.Guess
