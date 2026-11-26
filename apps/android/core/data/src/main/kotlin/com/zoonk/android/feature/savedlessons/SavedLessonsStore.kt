@@ -11,7 +11,7 @@ import com.zoonk.android.data.Saves
 import com.zoonk.android.data.Visit
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
-import com.zoonk.api.models.SaveLesson
+import com.zoonk.api.models.SaveLessonRequest
 import com.zoonk.api.models.SavedLessonList
 import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
@@ -44,7 +44,7 @@ class LiveSavedLessonsApi(
         goalId: UUID,
         lessonId: UUID,
         saved: Boolean,
-    ) = perform { api.clients(session).learner.saveLesson(goalId, SaveLesson(lessonId, saved)) }.saved
+    ) = perform { api.clients(session).learner.saveLesson(goalId, SaveLessonRequest(lessonId, saved)) }.saved
 }
 
 /** The lessons a learner saved to do again, newest save first, and saving one or removing it. */
