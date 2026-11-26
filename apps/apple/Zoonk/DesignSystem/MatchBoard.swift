@@ -311,35 +311,36 @@ private struct MatchMark: View {
   @ScaledMetric(relativeTo: .caption2) private var numberSize = 11.5
 
   var body: some View {
-    Group {
-      switch state {
-      case .selected:
-        // Centered on the first line, which the hidden text sets as the words beside it do.
-        Text(verbatim: " ")
-          .hidden()
-          .overlay {
-            Circle()
-              .fill(Color(.foreground))
-              .frame(width: dot, height: dot)
-          }
-      case .right:
-        check.foregroundStyle(.success)
-      case .missed:
-        check.foregroundStyle(.mutedForeground)
-      case .wrong:
-        Image(systemName: "xmark")
-          .fontWeight(.regular)
-          .foregroundStyle(.destructive)
-      case .paired(let number):
-        pairNumber(number, ink: Color(.foreground))
-      case .done(let number):
-        pairNumber(number, ink: Color(.mutedForeground))
-      case .idle:
-        Color.clear.frame(height: 1)
-      }
+    // Main's slot is one line of the card's text: the hidden line sets it as the words beside it
+    // do, and the mark is drawn over its middle, so no mark makes a card taller than its words.
+    Text(verbatim: " ")
+      .hidden()
+      .frame(width: width)
+      .overlay { mark }
+      .accessibilityHidden(true)
+  }
+
+  @ViewBuilder private var mark: some View {
+    switch state {
+    case .selected:
+      Circle()
+        .fill(Color(.foreground))
+        .frame(width: dot, height: dot)
+    case .right:
+      check.foregroundStyle(.success)
+    case .missed:
+      check.foregroundStyle(.mutedForeground)
+    case .wrong:
+      Image(systemName: "xmark")
+        .fontWeight(.regular)
+        .foregroundStyle(.destructive)
+    case .paired(let number):
+      pairNumber(number, ink: Color(.foreground))
+    case .done(let number):
+      pairNumber(number, ink: Color(.mutedForeground))
+    case .idle:
+      EmptyView()
     }
-    .frame(width: width)
-    .accessibilityHidden(true)
   }
 
   private var check: some View {
@@ -365,7 +366,7 @@ private struct MatchMark: View {
     Text(number, format: .number)
       .font(Self.plainZeroMono(size: numberSize))
       .foregroundStyle(Color(.background))
-      .frame(minWidth: width, minHeight: width)
+      .frame(width: width, height: width)
       .background(ink, in: Circle())
   }
 }
