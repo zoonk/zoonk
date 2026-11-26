@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "17d9a9d54a7c4dd601dcdb6433010bbb11be7bc649acadfada4eb249bfa78020",
   "activities_sorting_badge_label_it": "82be7295021118062deca65595c75372a1e68ff14fdc6065945a490b6ff9ada8",
   "activities_sorting_badge_link_causes": "5b6ce477acba62b689f7cf1be8509ad9ed6e98f7bf9a2f1fc02e6243e44b40ba",
-  "activities_sorting_badge_match_pairs": "83175b7c1f9f234a2cad5a3b3a2b84af486478f2dfc28e6eb79ec62dbff1337e",
   "activities_sorting_badge_place_in_time": "0805011c56bb4edf4a6f465c4eefc4dccc9dd88a02844ce4af92c101011c0c74",
   "activities_sorting_badge_put_in_order": "0e08c948f36a98aa59918fab227b47ac0a8c6b4d9f41cf3ae737c1b52ca2b230",
   "activities_sorting_badge_sort_groups": "a243e0f5a359abf874830fd2ec6edc80170fcfda2fdb6fcc0af63b6028649182",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "3d5d7dcb6a39ada97ffd140810ec25e9c2bc9c94bf21e38dd64a5f9aadd5464d",
   "activities_sorting_causes_and_effects": "9dde80298b887909f2c271871da99bfe1bef810b5b67d3fe335646a8b097a9aa",
   "activities_sorting_correct_answer": "7b753fc7919efcb14e64862247e8664ade3288bfc3f377df453914df04308073",
-  "activities_sorting_dont_go_together_short": "35b1a580fa402980b3819d2d973ade7b52fa663e671715d1c18445d222c22cae",
   "activities_sorting_drag_onto_timeline": "7835b020a50e61ff20776e6c6f9b5f79ddf7b279a4d725a5ee70dc62ebd0ce6e",
   "activities_sorting_drag_steps": "24b2e58216b4073da19c8e91b0328aeef0f12febbef08f1f0ebac78a99d3ac15",
   "activities_sorting_events_placed": "b05cbfe03c0778920623f71ec869553c98552882adcd2b146df081510e28b04f",
@@ -110,10 +108,8 @@
     <string name="activities_sorting_right_order">L’ordine giusto</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Lo avevi messo in posizione %1$d</string>
-    <string name="activities_sorting_badge_match_pairs">Abbina le coppie</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Carte da abbinare</string>
-    <string name="activities_sorting_dont_go_together_short">Queste due carte non vanno insieme.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Non è la coppia giusta:</string>
     <string name="activities_sorting_badge_link_causes">Collega cause ed effetti</string>

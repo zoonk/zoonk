@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "300f255bb9998acdfd9703478e2cd5858712ac6ada48224e87e7fefbf98f0e7f",
   "activities_sorting_badge_label_it": "1fecd8ccf340a6800c2b070809e2c24158b286e8f9e6c4bd2c5b9b88e059dcb3",
   "activities_sorting_badge_link_causes": "716268999454564838a8d2a3ed04732640e3b349bb6c27a6c166b67e3c1fd45a",
-  "activities_sorting_badge_match_pairs": "3dac5b70b57692587ff6876d466848b59c06749482465650caf4edbb2c241c52",
   "activities_sorting_badge_place_in_time": "66cee2c0c82608a49092f89e0b24186a5b4694e665de7e200af92a00b2bc5a44",
   "activities_sorting_badge_put_in_order": "ad3c37e55b710119b23ab5fb2e2eb4f873e1835369cd72c5c2227a5c1bd3b95a",
   "activities_sorting_badge_sort_groups": "d9a3e9dc8c8c8125a41078a5b6b9efaa02f0b226ec30104519d48a9d4277e02f",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "18037ca0a79e584e5cb13cc8f093405300d1be806ea719ff2af19e340db03139",
   "activities_sorting_causes_and_effects": "81dbe59ddef274930befdb75413d4a53107824d38eb4ca893e1ecc39699f214b",
   "activities_sorting_correct_answer": "3f83e3a96c440ae4e4fc4e26f27b290ac11cfac3e4b0737729a188f1fff753e4",
-  "activities_sorting_dont_go_together_short": "388c42add11e6fd8d8c438988cc619715a50927ab4f345149362c10e63322472",
   "activities_sorting_drag_onto_timeline": "f7055706598e1b682f07986032e027f740f482d44b2f7e5c619160e22961bba8",
   "activities_sorting_drag_steps": "8dde466326d4e7b2c8c48e1eb34bd89895d1f23adeb5802633577d4c63b0b9e3",
   "activities_sorting_events_placed": "cf5244c0490e6d625565d457a046f92faf37dc24fd9d75e3800f276ae3857aba",
@@ -111,10 +109,8 @@
     <string name="activities_sorting_right_order">Właściwa kolejność</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">U ciebie na miejscu %1$d</string>
-    <string name="activities_sorting_badge_match_pairs">Połącz w pary</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Karty do dopasowania</string>
-    <string name="activities_sorting_dont_go_together_short">Te dwie karty nie pasują do siebie.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">To nie ta para:</string>
     <string name="activities_sorting_badge_link_causes">Połącz przyczyny ze skutkami</string>

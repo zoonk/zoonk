@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "d64adee7aff6829fe31af3351c7019c2a3df5eb886267899886b4ef12402929d",
   "activities_sorting_badge_label_it": "4613b2c3d44baaeb4d3dbb7cb4df26dc4ed8e60dc47c53fa498b64f349151d98",
   "activities_sorting_badge_link_causes": "9262fb5083c02ccd6f1a7a5794364633c6000437e7616548e4e82cd8c224169f",
-  "activities_sorting_badge_match_pairs": "c04ac1e1bf99ad19374f06fd79f9ab438d60d440a47f6de8487099c421f4015f",
   "activities_sorting_badge_place_in_time": "16232b68c0cd52b7ff3c5a253dfb895cff166e7eca57d5d4e3e54038adc3ce96",
   "activities_sorting_badge_put_in_order": "e1a60d9a81506c6d081b75dea8fab2bcc2f051e3bb0c28555753fe6fa911b85a",
   "activities_sorting_badge_sort_groups": "3b885d08412fad47b006fd17e53a08d07a183b01e769726265885f0dc3c5b11e",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "f38665d80183a9af9087f597cfd3adeafc621f5306d42cb218deae29cb4a5725",
   "activities_sorting_causes_and_effects": "d63e5376a11b3d8653ce3579af7c885fdb17a79b49f152401633971c2e038599",
   "activities_sorting_correct_answer": "977996b3a2814b34d1a683e3ee802345b319e7307b370008b23d17335f740e60",
-  "activities_sorting_dont_go_together_short": "d4012c07cc0b10f1e5fc7546f21cc68b479080f47010d29ae0024157dca2c280",
   "activities_sorting_drag_onto_timeline": "293aca67ef0c26aaca7e6d15c6e5027cdfade19a030bb6e675b83c916cd1830b",
   "activities_sorting_drag_steps": "452a66cb49d2e3e5a7c7266382fde489212f697b706917be0c514754d4fd078a",
   "activities_sorting_events_placed": "7a5f44e42ddb5e8ea9a1e0924f4bcec09274b79bba5be6be3231549b75e0ff22",
@@ -110,10 +108,8 @@
     <string name="activities_sorting_right_order">A ordem certa</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Você colocou em %1$d</string>
-    <string name="activities_sorting_badge_match_pairs">Combine os pares</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cartões para combinar</string>
-    <string name="activities_sorting_dont_go_together_short">Esses dois não formam um par.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Não foi bem assim:</string>
     <string name="activities_sorting_badge_link_causes">Ligue causas e efeitos</string>

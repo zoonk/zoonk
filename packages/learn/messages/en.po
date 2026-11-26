@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Summaries"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Match these"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "With these"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "You first matched:"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "This goal gets {main} a day and your other goals {other} together."
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "Use {time}"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "Unmatched {left} and {right}."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} and {right} don't go together."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, matched with {other}"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -12446,21 +12482,6 @@ msgstr "Text"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "What the question is about"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Match these"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "With these"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, matched with {other}"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"

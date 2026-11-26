@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "7f6a851936d16410435292ff23a8d6d25a8f4203183887ce8276c1a75c437d4c",
   "activities_sorting_badge_label_it": "8200a857cbaa43425d79fee6d1bbe28d0ffa301991d6e1620a14a9e7a43f51f6",
   "activities_sorting_badge_link_causes": "4d707e65014ddc439e00e76f9438adb65ed94181d9dffbfb44fe7941abe9b861",
-  "activities_sorting_badge_match_pairs": "c685fb2b9201328b561ce85c304760a3c14d2240e102998cc97fca155e15d1d3",
   "activities_sorting_badge_place_in_time": "4f0251e6b267f924f5872d1d5503ec828342f50a030d1f09f7ec14d3f25cbeab",
   "activities_sorting_badge_put_in_order": "1c706ffbfbdf0f4391416c22b7293ad0a284ce06365a1129c016a1053d7ba1af",
   "activities_sorting_badge_sort_groups": "de1fc9014580df7f1dddb9a2f1085df2eeaa60f4bdbaa00387a442dc755bd845",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "03543341fa699b3fc0902279aac95d9cd8280e96f7cff295d5111a6d5a149379",
   "activities_sorting_causes_and_effects": "ecf6825f480538f2c72d9a7e976468bb40f6beed760f8503e52b9125f7c00291",
   "activities_sorting_correct_answer": "0b5a5d1d5d0729347ed929c239c892e68843b91406b8c9bab69fdad3b6c05c63",
-  "activities_sorting_dont_go_together_short": "b3d25fce48f1cf6c674c0232fe0e6628d7a676d809b8bb872a24113e08f2f5dd",
   "activities_sorting_drag_onto_timeline": "cd7a4478d8b9b117d7662a6f16193c21b90e4c495e3c221c0971d6abbf68bef3",
   "activities_sorting_drag_steps": "d6f45bda97f9de1b5abcbc8fc46b06ac8628e5180612771b7c10838169e37be0",
   "activities_sorting_events_placed": "6191669cf68004cff0b3f301986f143294d399aaf752e7ddf53c36a7b674f7ca",
@@ -110,10 +108,8 @@
     <string name="activities_sorting_right_order">Le bon ordre</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Tu l’avais placé en %1$d</string>
-    <string name="activities_sorting_badge_match_pairs">Associe les paires</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cartes à associer</string>
-    <string name="activities_sorting_dont_go_together_short">Ces deux éléments ne vont pas ensemble.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Pas tout à fait :</string>
     <string name="activities_sorting_badge_link_causes">Relie les causes</string>

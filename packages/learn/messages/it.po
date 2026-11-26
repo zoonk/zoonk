@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Riassunti"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Abbina questi elementi"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "A questi elementi"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "Avevi abbinato:"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "A questo obiettivo dedichi {main} al giorno e agli altri obiettivi {othe
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "Usa {time}"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "Hai tolto l’abbinamento tra {left} e {right}."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} e {right} non vanno insieme."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "Abbinamento riuscito tra {left} e {right}. Coppie abbinate: {matched} su {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, in coppia con {other}"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -12446,21 +12482,6 @@ msgstr "Testo"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "Di cosa tratta la domanda"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Abbina questi elementi"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "A questi elementi"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, in coppia con {other}"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"

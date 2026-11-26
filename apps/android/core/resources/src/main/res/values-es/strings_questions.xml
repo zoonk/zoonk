@@ -29,6 +29,10 @@
   "questions_left_blank": "4514577168503460d06482efffc481da7058881ff515aac39368bc78cd6d8389",
   "questions_mark_correct": "45a73447264b8877fc597305791ee4bf6dd0b6db2ff06ea77d885b5796318a39",
   "questions_mark_wrong": "618619a27630eb9466ba50a32f12d7fb07b8a86ceaa312d299f8e690d1fcb9d9",
+  "questions_match_first_tries": "2c3695958046db77ebf79d98b964e436b7e6fa3f8b62190fc472f837a5079863",
+  "questions_match_not_a_pair": "cc1021c05fb142fd71434e8a883d8924cdfa9d1710de432aa6238e2c56e064a6",
+  "questions_match_paired": "305e04a4ec1b4e6464489345e077af6466dfad8f24b3a37e105edbcd54513b3e",
+  "questions_match_unpaired": "fb4ffd38a1bb71df8a07bd7c48fb909e1254eb56df10794b010c35ecac64291d",
   "questions_matched_with": "11598db986b902cdbf09c02a943b7af1ae7f07267070cfa80fc5781e32c35416",
   "questions_mistake_fixed": "5ce4d03976d7237dc364a17cb9f165c2721b431a01daba2d01242a40b237b287",
   "questions_mistakes_fixed": "89ea0a599ed8208f9a698f7cf549138e05ffc1ee183ffc90e7c6ab119353686d",
@@ -75,6 +79,11 @@
     <string name="questions_place_wrong">Posición %1$d, incorrecta</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, en pareja con %2$s</string>
+    <string name="questions_match_paired">Se emparejó %1$s con %2$s. Parejas encontradas: %3$d de %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s y %2$s no forman pareja.</string>
+    <string name="questions_match_unpaired">Desemparejaste %1$s y %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">Las primeras parejas que formaste:</string>
     <string name="questions_your_answer">Tu respuesta</string>
     <string name="questions_mark_correct">Correcta</string>
     <string name="questions_mark_wrong">Incorrectas</string>

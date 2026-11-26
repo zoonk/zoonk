@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "まとめ"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "組み合わせる項目"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "組み合わせ先の項目"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "最初に組み合わせたカード："
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "1日の学習時間は、この目標が{main}、ほかの目標が合�
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "{time}に設定"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "{left}と{right}のペアを解除しました。"
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left}と{right}は組み合わせが違います。"
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "「{left}」と「{right}」を組み合わせました。組み合わせたペア：{total}組中{matched}組。"
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}、{other}と組み合わせ済み"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -12446,21 +12482,6 @@ msgstr "文章"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "問題の内容"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "組み合わせる項目"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "組み合わせ先の項目"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}、{other}と組み合わせ済み"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"

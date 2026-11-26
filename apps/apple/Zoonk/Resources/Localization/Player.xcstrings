@@ -1576,65 +1576,6 @@
         }
       }
     },
-    "All pairs matched. Press Check to continue." : {
-      "comment" : "Every pair of a match exercise is matched",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Paare sind zugeordnet. Tippe auf „Prüfen“, um fortzufahren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Formaste todos los pares. Presiona Comprobar para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toutes les paires sont associées. Appuie sur Vérifier pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai abbinato tutte le coppie. Premi Controlla per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべてのペアがそろいました。「答え合わせ」を押して進んでください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모든 짝을 맞췄어요. 계속하려면 확인을 누르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Połączono wszystkie pary. Naciśnij „Sprawdź”, aby kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos os pares foram formados. Toque em Conferir para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tüm çiftler eşleşti. Devam etmek için Kontrol et düğmesine bas."
-          }
-        }
-      }
-    },
     "Almost there" : {
       "comment" : "A typed or spoken answer that was partly right",
       "localizations" : {

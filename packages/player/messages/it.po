@@ -1642,26 +1642,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Pianta stradale semplificata, basata sulla mappa di John Snow del 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Queste due carte non vanno insieme."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "HfJhT9"
-msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Hai abbinato {left} a {right}. {matched, plural, one {# coppia abbinata su {total}.} other {# coppie abbinate su {total}.}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "5sU5Ih"
-msgid "{left} and {right} don't go together."
-msgstr "{left} e {right} non vanno insieme."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "LbHKlv"
-msgid "{text}, matched"
-msgstr "{text}, abbinata"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Carte da abbinare"
@@ -1670,16 +1650,6 @@ msgstr "Carte da abbinare"
 msgctxt "jih4mf"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Due colonne di carte. Scegli una carta a sinistra e una a destra per abbinarle. {matched, plural, one {Hai trovato # coppia su {total}.} other {Hai trovato # coppie su {total}.}}"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "rnH_6_"
-msgid "<left></left> goes with <right></right>, not <guess></guess>."
-msgstr "<left></left> si abbina a <right></right>, non a <guess></guess>."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "Abbinamenti errati al primo tentativo"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2835,20 +2805,10 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Traduci"
 
-#: src/components/match-board.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, one {# coppia abbinata su {total}} other {# coppie abbinate su {total}}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
 msgstr "Abbina le coppie."
-
-#: src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "Hai abbinato tutte le coppie. Premi Controlla per continuare."
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/not-quite-lead.tsx

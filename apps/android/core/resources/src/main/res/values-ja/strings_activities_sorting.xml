@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "9167d8528425f2a56d7277b9949ce18dc27f6cbfffda49812f39c222daee809a",
   "activities_sorting_badge_label_it": "7284e418707ee1131c5e3948ce55b64ab90aec5c0d1634518821a98cf406bf5a",
   "activities_sorting_badge_link_causes": "4ac1cc75603f71e90d4f4396d65f0c3789f4c95f8e0e1707d64349267a85ecab",
-  "activities_sorting_badge_match_pairs": "7ece404ad928beba3ccf02e5c96d220e7ebaa91a0f9ed3e245c5a571a85ff9e2",
   "activities_sorting_badge_place_in_time": "76da7c02e82aa5e8c784078f18c48517c55285ae434ae8ea444be97c6e64ad67",
   "activities_sorting_badge_put_in_order": "d778df71a8bd601baf8c2d175e71e5417cf6d537ac87706923326974c0ada97c",
   "activities_sorting_badge_sort_groups": "9609fa8f3749a3358d880434f4177c6f66767ee0f9d8fda72094285d4122aa7e",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "4519f895d6a94e18ea04e88b756b7469d76e7fb13d6ace24591ca63a3e36ab7b",
   "activities_sorting_causes_and_effects": "08559f8efee0eee61365530cd6299880433026446cfa52c72b6cf8923db096cc",
   "activities_sorting_correct_answer": "8e05ca0f82db4611358d1dbc47eee5bc866ddf7e19cddac9434fbe28428c84f3",
-  "activities_sorting_dont_go_together_short": "56498441cd747a0f2cbeffbd9bfaa6fc7f4c66ee9149b874eed9801ff01986ce",
   "activities_sorting_drag_onto_timeline": "df283dd09a6f7c0dd3a0d0896151ccc210bcbe656d9f6a91d1fa0349d599439b",
   "activities_sorting_drag_steps": "24f45b9e75c4ce83c5b940ab3d77ccd6db5c5409118b37c4160bdd64100fe8d1",
   "activities_sorting_events_placed": "6522577394b3dcc53d2007b2d2504bc5953bce41ad41a07a92ff1d134912dabb",
@@ -108,10 +106,8 @@
     <string name="activities_sorting_right_order">正しい順番</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">並べた位置：%1$d番目</string>
-    <string name="activities_sorting_badge_match_pairs">ペアを作る</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">ペアにするカード</string>
-    <string name="activities_sorting_dont_go_together_short">この2枚はペアではありません。</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">組み合わせが違います：</string>
     <string name="activities_sorting_badge_link_causes">原因を結びつける</string>

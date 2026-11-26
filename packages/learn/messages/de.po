@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Zusammenfassungen"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Diese zuordnen"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "Diesen zuordnen"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "Zuerst hast du zugeordnet:"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "Für dieses Ziel sind täglich {main} und für deine anderen Ziele zusam
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "{time} übernehmen"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "Zuordnung von {left} und {right} aufgehoben."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} und {right} gehören nicht zusammen."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "{left} mit {right} verbunden. Zugeordnete Paare: {matched} von {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, zugeordnet zu {other}"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -12446,21 +12482,6 @@ msgstr "Text"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "Worum es in der Frage geht"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Diese zuordnen"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "Diesen zuordnen"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, zugeordnet zu {other}"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"

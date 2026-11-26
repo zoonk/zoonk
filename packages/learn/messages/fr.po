@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Résumés"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Associe ces éléments"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "À ces éléments"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "Tu as d’abord associé :"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "Tu consacres {main} par jour à cet objectif et {other} au total à tes 
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "Utiliser {time}"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "Tu as dissocié {left} et {right}."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} et {right} ne vont pas ensemble."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "Tu as associé {left} à {right}. Paires associées : {matched} sur {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, associé à {other}"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -12446,21 +12482,6 @@ msgstr "Texte"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "Sujet de la question"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Associe ces éléments"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "À ces éléments"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, associé à {other}"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"

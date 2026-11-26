@@ -5,7 +5,6 @@
   "activities_sorting_all_sorted": "96eb35aaf835eb92880a3f50985215b8d75cc8aadeab9d4b0ec0cdd6f1681017",
   "activities_sorting_badge_label_it": "1bd1b4013bcb2ca586046004812923fb3e69e7c3716bad2e540cb68a845b0d76",
   "activities_sorting_badge_link_causes": "99168c16d353ca121996c887b678a4f2291ea8a9d66b7f97c57c31e707ccc4a8",
-  "activities_sorting_badge_match_pairs": "034cada819e3f4f39cfb7cc958ca3049cfa6246c5c0e220a7a2b2ecda68c8e06",
   "activities_sorting_badge_place_in_time": "5ceaf0f95ae703097d952dcedb6c6442dcd9f92a9374780a1456cb838579e166",
   "activities_sorting_badge_put_in_order": "e44fda963bb7d7cf16f0d6dbdf4d1d10c33739f941f50b6bb9d63ac532790481",
   "activities_sorting_badge_sort_groups": "ca92ad29e36bfe9b154eac044511e6d794a5a6893df5987bfba433864eb3ae4e",
@@ -15,7 +14,6 @@
   "activities_sorting_cause_picked": "6400b6f47df9ee307a8d6f4bfa5e507747e7a0bcec8aaa2fe90dda7321b52674",
   "activities_sorting_causes_and_effects": "3d87bdee568f257fd015c4ed6d0a2fd656d9bcbe6fe2f36da8a4cc00a9444324",
   "activities_sorting_correct_answer": "1ded5f140673a2b8ecdc789e5efa37a26e619616731b7ad0facf5f2ea8ac2c28",
-  "activities_sorting_dont_go_together_short": "8a2d44ac3ca3ca8ee228c846156bf3ea654f24a69eb71a6cd21c19cbd944cb5b",
   "activities_sorting_drag_onto_timeline": "53597caa82f7007d2aa747cee182c48a79afe0ea123881fb76c45ddcb382355f",
   "activities_sorting_drag_steps": "40517eebe0abc5dfcc9b5d14dd04b4ff4f40c9155be49d09893ea56b07fdecfa",
   "activities_sorting_events_placed": "18f67b19a0b00fbff179e2bceee3a39a8df4c540aa179397bb4b81c8ba74c961",
@@ -108,10 +106,8 @@
     <string name="activities_sorting_right_order">올바른 순서</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">내가 놓은 위치: %1$d번째</string>
-    <string name="activities_sorting_badge_match_pairs">짝 맞추기</string>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">짝을 맞출 카드</string>
-    <string name="activities_sorting_dont_go_together_short">두 카드는 짝이 아니에요.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">맞지 않아요:</string>
     <string name="activities_sorting_badge_link_causes">원인 연결하기</string>
