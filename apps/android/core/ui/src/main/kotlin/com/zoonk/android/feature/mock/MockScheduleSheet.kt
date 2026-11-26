@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -102,13 +103,13 @@ private class MockScheduleModel(
     }
 }
 
-/** Main's `MockSchedule` trigger: a small bare button that opens [MockScheduleSheet], its words on the start edge. */
+/** Main's `MockSchedule` trigger, a small `link` button: underlined words on the start edge that open [MockScheduleSheet]. */
 @Composable
 fun ChangeMockSchedule(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) = TextButton(onClick = onClick, enabled = enabled, edge = ButtonEdge.Start, size = ButtonSize.Small) {
-    Text(stringResource(R.string.mock_schedule_change))
+    Text(stringResource(R.string.mock_schedule_change), textDecoration = TextDecoration.Underline)
 }
 
 @Suppress("DEPRECATION")
