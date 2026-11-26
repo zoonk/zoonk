@@ -158,6 +158,11 @@ export function toSessionQuestion({
 
 export type SessionQuestion = ReturnType<typeof toSessionQuestion>;
 
+/** A match or order answer is indexes into the order its block showed, so it reads back only there. */
+export function readsAnswerInBlockOrder(item: SessionItem): boolean {
+  return item.format === "matchPairs" || item.format === "order";
+}
+
 export type GradedSessionAnswer = {
   correctAnswer: QuestionAnswer;
   explanation: string | null;

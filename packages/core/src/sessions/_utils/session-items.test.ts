@@ -62,11 +62,16 @@ describe(toSessionQuestion, () => {
       throw new Error("The match item should parse");
     }
 
-    const otherBlockId = "0199a0b1-0000-7000-8000-00000000b10d";
-
-    expect(toSessionQuestion({ blockId: otherBlockId, item }).right).not.toStrictEqual(
-      toSessionQuestion({ blockId, item }).right,
+    const boards = new Set(
+      Array.from({ length: 10 }, (_, index) =>
+        toSessionQuestion({
+          blockId: `0199a0b1-0000-7000-8000-${String(index).padStart(12, "0")}`,
+          item,
+        }).right?.join(","),
+      ),
     );
+
+    expect(boards.size).toBeGreaterThan(1);
   });
 });
 
