@@ -49,6 +49,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.feature.placementtest.LengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
+import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.ItemSupport
@@ -286,6 +287,19 @@ internal fun ColumnScope.PlacementQuestion(
         }
     }
     val confirm = { answer?.let { send(it, PlacementSender.Confirm) } }
+    val ask: @Composable (StepPart) -> Unit = { part ->
+        QuestionAnswer(
+            question = item,
+            words = labels.recode(),
+            allowBlank = false,
+            check = null,
+            draft = answer,
+            enabled = !pending,
+            onAnswer = setAnswer,
+            onSubmit = { send(it, PlacementSender.Confirm) },
+            part = part,
+        )
+    }
 
     QuestionPages(
         questionId = item.itemId,
@@ -294,18 +308,11 @@ internal fun ColumnScope.PlacementQuestion(
             media()
             ItemSupport(item)
             if (item.format != QuestionFormat.TrueFalse) QuestionTitle(item.question)
+            // Across an open book's fold a statement's card stays on the page before it, as in practice.
+            if (LocalSetupPage.current?.fold != null) ask(StepPart.Screen)
         },
         answer = {
-            QuestionAnswer(
-                question = item,
-                words = labels.recode(),
-                allowBlank = false,
-                check = null,
-                draft = answer,
-                enabled = !pending,
-                onAnswer = setAnswer,
-                onSubmit = { send(it, PlacementSender.Confirm) },
-            )
+            ask(if (LocalSetupPage.current?.fold != null) StepPart.Turn else StepPart.Whole)
             if (canStop) {
                 stopHint?.let {
                     Text(
