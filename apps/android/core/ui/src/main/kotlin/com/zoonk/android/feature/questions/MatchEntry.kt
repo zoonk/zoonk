@@ -114,7 +114,7 @@ fun MatchEntry(
                 translationX = shake.value * density
                 scaleX = press
                 scaleY = press
-            }.then(if (focused) Modifier.focusRing(shape, MaterialTheme.colorScheme.primary) else Modifier)
+            }.focusRing(shape, MaterialTheme.colorScheme.primary) { focused }
             .heightIn(min = 48.dp)
             .clip(shape)
             .background(container)
@@ -248,7 +248,7 @@ internal val LocalMatchTextStyle = staticCompositionLocalOf<TextStyle?> { null }
 
 private val MARK_WIDTH = 20.dp
 private const val MARK_SHARE = 0.75f
-private val PICK_DOT = 8.dp
+private val PICK_DOT = 10.dp
 
 /** Main's `press` with `--press-scale: 0.99`. */
 private const val PRESS_SCALE = 0.99f

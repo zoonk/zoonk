@@ -403,11 +403,24 @@ private fun FieldContainer(
     )
 }
 
-/** Main's `ring-[3px] ring-ring/50` outside a focused piece's [ink] line, more contrast included. */
-fun Modifier.focusRing(
+/** Main's `ring-[3px] ring-ring/50` outside a focused field's [ink] line, more contrast included. */
+internal fun Modifier.focusRing(
     shape: Shape,
     ink: Color,
 ): Modifier = ringOutside(shape, ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH)
+
+/**
+ * [focusRing] while [focused] says so. The modifier stays in place either way, so a press that focuses the piece
+ * doesn't rebuild the press handling after it in the chain.
+ */
+fun Modifier.focusRing(
+    shape: Shape,
+    ink: Color,
+    focused: () -> Boolean,
+): Modifier =
+    drawBehind {
+        if (focused()) drawRingOutside(shape.createOutline(size, layoutDirection, this), ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH.toPx())
+    }
 
 /** A ring [width] wide just outside [shape], its corners following the shape's own. */
 private fun Modifier.ringOutside(
