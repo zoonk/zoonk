@@ -450,6 +450,7 @@ enum PracticeAnswerText {
 
   /// The pairs the learner first mixed up on a match checked pair by pair, so the reason that
   /// follows has something to explain.
+  @MainActor
   static func misses(for answer: PracticeAnswer, question: PracticeQuestion) -> MatchMisses? {
     guard question.checksEachPair, case .matches(_, let misses?) = answer else { return nil }
 
