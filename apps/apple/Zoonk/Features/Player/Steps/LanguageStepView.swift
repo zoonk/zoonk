@@ -867,10 +867,30 @@ private struct CheckedWord: View {
   }
 }
 
+/// Main's `BoardMissesContext`: a match step's answer carries only how many wrong tries its board
+/// had, so the board keeps the tries in the screen's work, where the verdict under it reads them.
+enum MatchColumnsMisses {
+  fileprivate static let key = "misses"
+
+  @MainActor
+  static func view(_ exercise: LanguageExercise, work: ActivityWork?) -> MatchMisses? {
+    guard let misses: [MatchTry] = work?.value(key) else { return nil }
+
+    let left = (exercise.content.pairs ?? []).map(\.left)
+    let right = exercise.matchColumnsRightItems
+
+    return MatchMisses(misses) { card in
+      let cards = card.side == .left ? left : right
+      return cards.indices.contains(card.index)
+        ? RichInline(text: AttributedString(cards[card.index])) : nil
+    }
+  }
+}
+
 /// A right pair locks, a wrong one counts as a mistake; the last pair checks the step.
 private struct MatchColumnsView: View {
   @ActivityState("picking") private var picking = MatchPicking()
-  @ActivityState("mistakes") private var mistakes = 0
+  @ActivityState(MatchColumnsMisses.key) private var misses: [MatchTry] = []
 
   let exercise: LanguageExercise
   let context: LessonStepContext
@@ -957,14 +977,14 @@ private struct MatchColumnsView: View {
     let pair = LessonAnswer.Pair(left: pairs[attempt.left].left, right: rightItems[attempt.right])
 
     if isRight {
-      context.select(.matchColumns(userPairs: matched + [pair], mistakes: mistakes))
+      context.select(.matchColumns(userPairs: matched + [pair], mistakes: misses.count))
       announcePolitely(
         MatchAnnouncement.matched(
           pair.left, pair.right, matched: matched.count + 1, total: pairs.count))
     } else {
-      mistakes += 1
+      misses.append(attempt)
       if !matched.isEmpty {
-        context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
+        context.select(.matchColumns(userPairs: matched, mistakes: misses.count))
       }
       announcePolitely(MatchAnnouncement.missed(pair.left, pair.right))
     }
