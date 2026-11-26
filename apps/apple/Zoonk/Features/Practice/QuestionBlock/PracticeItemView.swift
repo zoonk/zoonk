@@ -495,7 +495,7 @@ struct OrderItemView: View {
 
   var body: some View {
     let steps = question.options
-    if result != nil || isLocked {
+    if result != nil {
       let answer = result?.answer ?? question.answerToSubmit(draft)
       let placed: [Int] = if case .order(let order) = answer { order } else { [] }
 
@@ -518,6 +518,7 @@ struct OrderItemView: View {
         text: { steps.indices.contains($0) ? steps[$0] : nil },
         onReorder: { draft = .order($0) }
       )
+      .disabled(isLocked)
     }
   }
 

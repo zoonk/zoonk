@@ -38,7 +38,7 @@ export function OrderQuestion({
 
   const displayed = result?.order ?? order ?? steps.map((_, index) => index);
 
-  if (disabled || result) {
+  if (result) {
     return (
       <ol className="flex flex-col gap-2">
         {displayed.map((index, place) => {
@@ -68,6 +68,7 @@ export function OrderQuestion({
     <div className="flex flex-col gap-3">
       <p className="text-muted-foreground text-sm font-medium">{t("Drag the steps into order.")}</p>
       <SortableList
+        disabled={disabled}
         items={displayed.map((index) => ({ id: String(index), label: steps[index] ?? "" }))}
         label={t("Steps, in your order")}
         onReorder={(ids) => onChange({ order: ids.map(Number) })}
