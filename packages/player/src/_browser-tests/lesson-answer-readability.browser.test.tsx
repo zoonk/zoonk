@@ -329,7 +329,7 @@ describe("checked answer readability", () => {
       const drawing = document.querySelector("[data-slot='match-entry'] math");
       const card = drawing?.closest("[data-slot='match-entry']");
       const formula = drawing?.closest("[data-slot='inline-math']");
-      const column = formula?.closest("[data-slot='match-entry'] > span");
+      const column = formula?.closest("[data-slot='match-entry-text']");
 
       if (!drawing || !card || !formula || !column) {
         throw new Error("The formula must draw inside its card's text column.");

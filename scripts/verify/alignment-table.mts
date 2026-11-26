@@ -347,4 +347,22 @@ export const EXCEPTIONS: AlignmentException[] = [
     relation: "lone-word",
     scenario: "/pt/plan",
   },
+  {
+    configuration: "phone touch en-US",
+    issue: 3006,
+    piece: "page",
+    reason:
+      "A long dialogue match card wraps greedily and leaves one word alone on Android, on main too",
+    relation: "lone-word",
+    scenario: "review-midway",
+  },
+  {
+    configuration: "phone touch en-US",
+    issue: 3006,
+    piece: "page",
+    reason:
+      "A long dialogue match card wraps greedily and leaves one word alone on Android, on main too",
+    relation: "lone-word",
+    scenario: "review-checked-after-a-miss",
+  },
 ];

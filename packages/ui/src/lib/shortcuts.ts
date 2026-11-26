@@ -11,7 +11,8 @@ type Shortcut = {
   typed?: true;
 };
 
-const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
+/** In the order of a keyboard's number row, so 0 picks the tenth option. */
+const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] as const;
 
 /**
  * Every key the product answers beyond the control in focus. The handlers in
@@ -27,7 +28,7 @@ export const SHORTCUTS = {
   },
   main: { cap: "⏎", does: "Press the screen's main action", keys: ["Enter"] },
   next: { cap: "→", does: "Go to the next screen, question or map", keys: ["ArrowRight"] },
-  pick: { cap: "1–9", does: "Pick the option with that number", keys: NUMBER_KEYS },
+  pick: { cap: "1–9, 0", does: "Pick the option with that number", keys: NUMBER_KEYS },
   previous: { cap: "←", does: "Go to the previous screen, question or map", keys: ["ArrowLeft"] },
   save: { cap: "S", does: "Save this mind map", keys: ["s", "S"] },
   search: { cap: "K", does: "Search or ask, on every page", keys: ["k", "K"], mod: true },
@@ -69,14 +70,14 @@ function keyName(key: string): string {
 /** How many options number keys reach. */
 export const MAX_PICK_KEYS = NUMBER_KEYS.length;
 
-/** The number key that picks the option at `index`, or null past the ninth. */
+/** The number key that picks the option at `index`, or null past the tenth. */
 export function pickKey(index: number): string | null {
   return NUMBER_KEYS[index] ?? null;
 }
 
 /**
  * The value for `aria-keyshortcuts`. With `index`, the one number key that picks that option
- * (undefined past the ninth).
+ * (undefined past the tenth).
  */
 export function shortcutKeys(name: ShortcutName, index?: number): string | undefined {
   if (index !== undefined) {

@@ -7,7 +7,6 @@ import { findAnnouncedSkillIds } from "../../plans/planner/announced-lessons";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { findFrequentSkillIds } from "../../plans/planner/topic-weights";
 import { readBlockPayload } from "../block-payload";
-import { loadReviewCapsules } from "./load-review-capsules";
 
 /** first must receive questions even on short days; last is optional. Rotate claims by lastAsked rather than studying order. */
 export type PracticeClaims = {
@@ -108,21 +107,4 @@ export async function loadPracticeClaims({
     last: new Set(toConfirmIds.filter((skillId) => !priority.has(skillId))),
     lastAsked,
   };
-}
-
-export async function loadReviewsAndClaims({
-  claims: claimsInput,
-  readClaims,
-  review,
-}: {
-  claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
-  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
-  review: Parameters<typeof loadReviewCapsules>[0];
-}) {
-  const [capsules, claims] = await Promise.all([
-    loadReviewCapsules(review),
-    loadPracticeClaims({ ...claimsInput, readClaims }),
-  ]);
-
-  return { capsules, claims };
 }

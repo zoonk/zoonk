@@ -1642,26 +1642,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Uproszczony plan ulic na podstawie mapy Johna Snowa z 1854 roku."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Te dwie karty nie pasują do siebie."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "HfJhT9"
-msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "Dopasowano: {left} i {right}. {matched, plural, other {Dopasowano # z {total} par.}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "5sU5Ih"
-msgid "{left} and {right} don't go together."
-msgstr "{left} i {right} nie pasują do siebie."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "LbHKlv"
-msgid "{text}, matched"
-msgstr "{text}, dopasowano"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Karty do dopasowania"
@@ -1670,16 +1650,6 @@ msgstr "Karty do dopasowania"
 msgctxt "jih4mf"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Dwie kolumny kart. Wybierz kartę po lewej i jedną po prawej, aby połączyć je w parę. {matched, plural, other {Dopasowano # z {total} par.}}"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "rnH_6_"
-msgid "<left></left> goes with <right></right>, not <guess></guess>."
-msgstr "<left></left> i <right></right> to para. <guess></guess> tu nie pasuje."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "Błędy przy pierwszej próbie"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2835,20 +2805,10 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Przetłumacz"
 
-#: src/components/match-board.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {Dopasowano # z {total} par}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
 msgstr "Połącz w pary."
-
-#: src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "Połączono wszystkie pary. Naciśnij „Sprawdź”, aby kontynuować."
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/not-quite-lead.tsx

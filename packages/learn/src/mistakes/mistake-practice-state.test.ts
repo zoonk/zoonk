@@ -25,6 +25,7 @@ function entry(
       format: "multipleChoice" as const,
       image: null,
       itemId: `${mistakeId}-${index}`,
+      key: null,
       left: null,
       options: ["Right", "Wrong"],
       question: `Question ${index}?`,

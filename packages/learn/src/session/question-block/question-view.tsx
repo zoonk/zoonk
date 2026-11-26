@@ -64,6 +64,15 @@ function getOrderResult(result: QuestionResult | null): OrderResult | null {
   };
 }
 
+/** The answer a learner who said "I don't know yet" sees on the board. */
+function getRevealedMatches(result: QuestionResult | null): number[] | null {
+  const correct = result?.correctAnswer;
+
+  return result && "dontKnow" in result.answer && correct && "matches" in correct
+    ? correct.matches
+    : null;
+}
+
 function getAnswerMark(result: QuestionResult | null): "correct" | "wrong" | null {
   if (!result || "dontKnow" in result.answer) {
     return null;
@@ -139,10 +148,12 @@ export function QuestionInputs({
   onChange: (answer: StudyQuestionAnswer | null) => void;
   onSubmit: (answer: StudyQuestionAnswer) => void;
   order?: readonly number[];
+  /** `key` only on a learning match, which checks each pair as it's made. */
   question: Pick<
     StudyQuestion,
     "format" | "entry" | "unit" | "options" | "left" | "right" | "question" | "select"
-  >;
+  > &
+    Partial<Pick<StudyQuestion, "key">>;
   result: QuestionResult | null;
   trueFalseLabels: TrueFalseLabels;
 }) {
@@ -185,9 +196,12 @@ export function QuestionInputs({
   if (question.format === "matchPairs") {
     return (
       <MatchPairsQuestion
+        answerKey={question.key}
         disabled={disabled}
         left={question.left ?? []}
         onChange={onChange}
+        onSubmit={onSubmit}
+        revealed={getRevealedMatches(result)}
         right={question.right ?? []}
       />
     );

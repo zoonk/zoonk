@@ -30,6 +30,7 @@ struct ZoonkButtonStyle: ButtonStyle {
   let variant: Variant
   var isIcon = false
   var isAtRowEnd = false
+  var isTight = false
 
   /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
   var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
@@ -40,9 +41,14 @@ struct ZoonkButtonStyle: ButtonStyle {
     ZoonkButtonStyle(variant: variant, isIcon: isIcon, isAtRowEnd: true)
   }
 
+  /// Main's `px-3` on a large button, for the quieter of two answers on a phone's bar, so the main
+  /// action beside it keeps the larger part.
+  var tight: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isTight: true) }
+
   func makeBody(configuration: Configuration) -> some View {
     ZoonkButton(
-      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd
+      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd,
+      isTight: isTight
     )
     .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
   }
@@ -85,6 +91,7 @@ private struct ZoonkButton: View {
   @Environment(\.isEnabled) private var isEnabledHere
   @Environment(\.isBusy) private var isBusy
   @Environment(\.controlSize) private var controlSize
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.buttonSizing) private var sizing
   @Environment(\.mainActionFillsRow) private var fillsRow
   @Environment(\.mainActionMinWidth) private var mainMinWidth
@@ -96,6 +103,7 @@ private struct ZoonkButton: View {
   let variant: ZoonkButtonStyle.Variant
   let isIcon: Bool
   let isAtRowEnd: Bool
+  let isTight: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
@@ -105,21 +113,21 @@ private struct ZoonkButton: View {
       // A list would set the icon in a column of its own, far from its words.
       .labelReservedIconWidth(16)
       .labelIconToTitleSpacing(ZoonkButtonStyle.iconGap(controlSize))
-      .typeStyle(isSmall ? .smallButton : .button)
+      .typeStyle(typeStyle)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
-      .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
-      .padding(.vertical, isIcon ? 0 : 6)
+      .padding(.horizontal, isIcon ? 0 : horizontalPadding)
+      .padding(.vertical, isIcon ? 0 : verticalPadding)
       .frame(
-        minWidth: isIcon ? (isAtRowEnd ? nil : height) : variant == .main ? mainMinWidth : nil,
-        minHeight: height, maxHeight: sharesHeight ? .infinity : nil
+        minWidth: isIcon ? (isAtRowEnd ? nil : side) : variant == .main ? mainMinWidth : nil,
+        minHeight: side, maxHeight: sharesHeight ? .infinity : nil
       )
       .frame(maxWidth: fills && !isIcon ? .infinity : nil)
       .background {
         // At a row's end the box is centered on the glyph and as wide as any icon button's, so
         // it's the glyph, not the box, that ends on the edge.
         shape.fill(fill)
-          .frame(width: isIcon && isAtRowEnd ? height : nil)
+          .frame(width: isIcon && isAtRowEnd ? side : nil)
       }
       .overlay {
         if variant == .outline && !isDestructive {
@@ -137,6 +145,11 @@ private struct ZoonkButton: View {
 
   private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
 
+  private var horizontalPadding: CGFloat {
+    let padding = ZoonkButtonStyle.horizontalPadding(controlSize)
+    return isTight ? min(padding, 12) : padding
+  }
+
   /// A busy button keeps its look even where its container is disabled, such as a form that locks
   /// while its answer saves: only its spinner says it's working.
   private var isEnabled: Bool { isEnabledHere || isBusy }
@@ -147,7 +160,18 @@ private struct ZoonkButton: View {
 
   private var isDestructive: Bool { configuration.role == .destructive }
 
-  private var height: CGFloat { ZoonkButtonStyle.height(controlSize) }
+  private var typeStyle: TypeStyle { isSmall ? .smallButton : .button }
+
+  private let verticalPadding: CGFloat = 6
+
+  /// The button's least height, and an icon button's side: as tall as a labeled button beside it,
+  /// whose one line grows with the text size, so a bar's buttons stay one height and read in
+  /// order.
+  private var side: CGFloat {
+    max(
+      ZoonkButtonStyle.height(controlSize),
+      typeStyle.rowHeight(dynamicTypeSize) + 2 * verticalPadding)
+  }
 
   private var label: Color {
     if isDestructive {

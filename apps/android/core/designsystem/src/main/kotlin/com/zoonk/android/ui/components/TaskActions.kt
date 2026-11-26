@@ -161,8 +161,10 @@ internal data class BarSlot(
 /**
  * The lines of a [TaskActions] row [width] wide, each its buttons' indexes in [slots] and widths. A button joins the line
  * before it while all their one-line labels fit, [gap] apart. Where the bar has room ([roomy]), each keeps its own width.
- * On a phone, the main action takes what the others on its line leave; on a line without it the labeled buttons share
- * what's left equally (main's `grow`), so one alone fills its line; a glyph keeps its size.
+ * On a phone, the main action takes what the others on its line leave, and joins their line only while that leaves it
+ * at least as wide as each labeled one beside it with the glyphs after it (the buddy's ask) still beside it, so it's
+ * never the smaller answer; otherwise it starts a line under them. On a line without it the labeled buttons share what's
+ * left equally (main's `grow`), so one alone fills its line; a glyph keeps its size.
  */
 internal fun barLines(
     slots: List<BarSlot>,
@@ -170,12 +172,18 @@ internal fun barLines(
     gap: Int,
     roomy: Boolean,
 ): List<List<Pair<Int, Int>>> {
+    val after = { index: Int -> slots.drop(index + 1).takeWhile { it.glyph }.sumOf { it.oneLine + gap } }
+    val needs = { line: List<Int>, index: Int ->
+        val slot = slots[index]
+        val beside = line.filter { !slots[it].glyph }.maxOfOrNull { slots[it].oneLine } ?: 0
+        if (slot.main && !roomy) maxOf(slot.oneLine, beside) + after(index) else slot.oneLine
+    }
     val lines = mutableListOf<MutableList<Int>>()
     slots.forEachIndexed { index, slot ->
         val line = lines.lastOrNull()
         val alone = !roomy && (slot.ownLine || line?.any { slots[it].ownLine } == true)
         if (line != null && !alone &&
-            line.sumOf { slots[it].oneLine + gap } + slot.oneLine <= width
+            line.sumOf { slots[it].oneLine + gap } + needs(line, index) <= width
         ) {
             line.add(index)
         } else {

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -22,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,17 +34,15 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkRadius
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import kotlin.math.max
 
 /** A question's options, read by TalkBack as one group of choices. */
@@ -59,8 +55,8 @@ fun AnswerOptionGroup(
 }
 
 /**
- * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
- * skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
+ * One option of a question (main's `AnswerOption`): its number key (for keyboards, where the key picks it
+ * ([LocalOptionKeys]), so TalkBack skips it), its words (in `labelLarge`, main's 15/500, unless the content sets its own) and,
  * once checked, the word its result shows. An option among several
  * picks is a [Role.Checkbox], one that acts at once is a [Role.Button], and one shown after the
  * fact has no role and nothing to press; [tag] replaces the
@@ -88,7 +84,8 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    val key = answerKey(LocalConfiguration.current.keyboard, result != null, tag != null)
+    // Once checked or locked the key does nothing, so it hides in its room and the words stay put, as main's does.
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -109,6 +106,7 @@ fun AnswerOption(
     TagBesideOrUnder(
         modifier =
             modifier
+                .keptWhole()
                 .fillMaxWidth()
                 .clip(shape)
                 .background(tone.container)
@@ -129,7 +127,7 @@ fun AnswerOption(
             ) {
                 null
             } else {
-                { NumberKey(marker, glyph, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f)) }
+                { OptionKey(marker, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f), glyph) }
             },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(optionStyle, reading) } },
@@ -137,12 +135,13 @@ fun AnswerOption(
     )
 }
 
+/** The number key that picks an option or a card, in ink once [picked]; a [glyph] takes the digit's place. */
 @Composable
-private fun NumberKey(
+fun OptionKey(
     number: Int,
-    glyph: Painter?,
     picked: Boolean,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    glyph: Painter? = null,
 ) {
     // A picked option's key turns ink: the option's mark, as a radio's dot is.
     val ink = MaterialTheme.colorScheme.onSurface
@@ -155,20 +154,11 @@ private fun NumberKey(
                 .border(1.dp, if (picked) Color.Transparent else ink.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
         contentAlignment = Alignment.Center,
     ) {
-        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. Every key is as
-        // wide as its widest digit, so a "1" doesn't start its option's words before a "2" does.
-        val style = MaterialTheme.typography.labelSmall.withTabularFigures()
-        val text = number.toString()
-        val measurer = rememberTextMeasurer()
-        val widest =
-            remember(
-                style,
-                text.length,
-                measurer,
-            ) { ('0'..'9').maxOf { measurer.measure(it.toString().repeat(text.length), style).size.width } }
+        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. The digits are
+        // mono, so a "1" doesn't start its option's words before a "2" does.
         Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 4.dp).widthIn(min = with(LocalDensity.current) { widest.toDp() }),
+            text = number.toString(),
+            modifier = Modifier.padding(horizontal = 4.dp),
             color =
                 if (glyph !=
                     null
@@ -180,7 +170,7 @@ private fun NumberKey(
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
             textAlign = TextAlign.Center,
-            style = style,
+            style = MaterialTheme.zoonkType.key,
         )
         glyph?.let {
             Icon(
@@ -309,13 +299,20 @@ fun TagBesideOrUnder(
 
 internal enum class AnswerKey { None, Hidden, Visible }
 
+/** Whether what's here shows its number keys: a keyboard is attached and a key picks it ([LocalOptionKeys]). */
+@Composable
+fun optionKeysShown(): Boolean =
+    answerKey(LocalConfiguration.current.keyboard, checked = false, ordered = false, keyed = LocalOptionKeys.current) != AnswerKey.None
+
+/** An option's number key: only with a keyboard, where the key picks it ([keyed]) and the option isn't a place in an order. */
 internal fun answerKey(
     keyboard: Int,
     checked: Boolean,
     ordered: Boolean,
+    keyed: Boolean,
 ): AnswerKey =
     when {
-        keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
+        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
         checked -> AnswerKey.Hidden
         else -> AnswerKey.Visible
     }

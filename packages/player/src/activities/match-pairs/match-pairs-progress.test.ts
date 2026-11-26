@@ -1,33 +1,38 @@
 import { describe, expect, it } from "vitest";
-import { matchAnswer, progressFromAnswer, recordTry } from "./match-pairs-progress";
-
-const EMPTY = progressFromAnswer(null);
+import { boardFromAnswer, matchAnswer } from "./match-pairs-progress";
 
 const card = (id: string) => ({ id, text: id, why: null });
 
-describe(recordTry, () => {
-  it("keeps each pair's first try and locks in matches", () => {
-    const missed = recordTry(EMPTY, { left: card("a"), right: card("b") });
-
-    const matched = recordTry(missed, { left: card("a"), right: card("a") });
-
-    expect(missed).toStrictEqual({ firstTries: { a: "b" }, matched: [] });
-
-    expect(matched).toStrictEqual({ firstTries: { a: "b" }, matched: ["a"] });
-  });
-});
+const columns = { left: [card("a"), card("b")], right: [card("b"), card("a")] };
 
 describe(matchAnswer, () => {
-  it("answers once every pair is matched, with the first tries", () => {
-    const partial = recordTry(EMPTY, { left: card("a"), right: card("a") });
-    const missed = recordTry(partial, { left: card("b"), right: card("a") });
-    const done = recordTry(missed, { left: card("b"), right: card("b") });
+  it("keeps each left card's first try: its partner, or the first wrong one", () => {
+    const misses = [
+      { left: 1, right: 1 },
+      { left: 1, right: 1 },
+    ];
 
-    expect(matchAnswer(["a", "b"], partial)).toBeNull();
-
-    expect(matchAnswer(["a", "b"], done)).toStrictEqual({
+    expect(matchAnswer(columns, misses)).toStrictEqual({
       kind: "assignment",
       pairs: { a: "a", b: "a" },
     });
+  });
+});
+
+describe(boardFromAnswer, () => {
+  it("rebuilds the finished board, with each first wrong try as a miss", () => {
+    expect(
+      boardFromAnswer(columns, { kind: "assignment", pairs: { a: "a", b: "a" } }),
+    ).toStrictEqual({ misses: [{ left: 1, right: 1 }], pairs: [1, 0] });
+  });
+
+  it("leaves out a first try at a card the activity no longer has", () => {
+    expect(
+      boardFromAnswer(columns, { kind: "assignment", pairs: { a: "a", b: "removed" } }),
+    ).toStrictEqual({ misses: [], pairs: [1, 0] });
+  });
+
+  it("has no board before an answer", () => {
+    expect(boardFromAnswer(columns, null)).toBeUndefined();
   });
 });

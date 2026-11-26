@@ -1,8 +1,8 @@
 "use client";
 
+import { type Reveal, getReveal } from "@zoonk/learn/reveal-feedback";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
-import { type Reveal, getReveal } from "./_utils/reveal-feedback";
 import { useLessonPlayer } from "./lesson-player-context";
 import { getScreenRef } from "./use-kept-screens";
 

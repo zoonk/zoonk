@@ -28880,6 +28880,31 @@
               "maximum": 9007199254740991
             },
             "description": "For each left entry, the index of the right entry it was matched to"
+          },
+          "misses": {
+            "description": "Wrong pairs tried in order, using the indexes of the shown columns",
+            "maxItems": 32,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "left": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "right": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "left",
+                "right"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -40201,6 +40226,16 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "key": {
+                  "nullable": true,
+                  "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
                 "left": {
                   "nullable": true,
                   "description": "Match pairs: the left column",
@@ -40307,6 +40342,7 @@
                 "format",
                 "image",
                 "itemId",
+                "key",
                 "left",
                 "mistakeId",
                 "options",
@@ -48016,6 +48052,16 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
+              "key": {
+                "nullable": true,
+                "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
               "left": {
                 "nullable": true,
                 "description": "Match pairs: the left column",
@@ -48087,6 +48133,7 @@
               "format",
               "image",
               "itemId",
+              "key",
               "left",
               "options",
               "question",
@@ -87548,6 +87595,13 @@
                   "matchPairs"
                 ]
               },
+              "key": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              },
               "left": {
                 "type": "array",
                 "items": {
@@ -87578,6 +87632,7 @@
               "skillId",
               "visual",
               "format",
+              "key",
               "left",
               "options",
               "question",
@@ -95098,6 +95153,16 @@
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
+                      "key": {
+                        "nullable": true,
+                        "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
                       "left": {
                         "nullable": true,
                         "description": "Match pairs: the left column",
@@ -95186,6 +95251,7 @@
                       "format",
                       "image",
                       "itemId",
+                      "key",
                       "left",
                       "options",
                       "question",
@@ -103746,6 +103812,16 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "key": {
+                  "nullable": true,
+                  "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
                 "left": {
                   "nullable": true,
                   "description": "Match pairs: the left column",
@@ -103852,6 +103928,7 @@
                 "format",
                 "image",
                 "itemId",
+                "key",
                 "left",
                 "mistakeId",
                 "options",

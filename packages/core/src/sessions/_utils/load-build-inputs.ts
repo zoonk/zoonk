@@ -31,7 +31,7 @@ import { loadLivingPlanSignals } from "./living-plan-session";
 import { loadDayPlanLessons } from "./load-plan-lessons";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
 import { getPlanTopics } from "./practice-blocks";
-import { loadReviewsAndClaims } from "./practice-claims";
+import { loadPracticeClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
 import { getPracticeWeights } from "./review-skills";
 import { type SelectedDayPlan } from "./selected-day-plan";
@@ -206,11 +206,6 @@ export async function loadSessionBuildInput(
     timeZone: context.timeZone,
   });
 
-  const review = {
-    ...toReviewInput({ context, field, netScored, plan }),
-    confirmSkillIds: signals.earlyReviewSkillIds,
-  };
-
   const dayLessons = loadDayPlanLessons({
     dayMinutes,
     fillItems,
@@ -219,49 +214,47 @@ export async function loadSessionBuildInput(
     paceFactor: parsePlanSettings(plan.settings).pace?.factor,
   });
 
-  const [
-    { lessons: planLessons, fillLessons },
-    alphabet,
-    { capsules: dueCapsules, claims },
-    boss,
-    weekly,
-    writing,
-  ] = await Promise.all([
-    dayLessons,
-    loadAlphabetIntro({ goal, userId }),
-    loadReviewsAndClaims({
-      claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
-      readClaims: context.readClaims,
-      review,
-    }),
-    dayLessons.then((loaded) =>
-      loadDayBosses({
-        ahead: listFittingLessons({
-          items: plan.items,
-          lessons: [...loaded.lessons, ...loaded.fillLessons],
-          minutes: dayMinutes,
-        }),
-        context,
-        plan,
-      }),
-    ),
-    loadSessionWeeklyChallenge({
-      goal,
-      includesMockExams: access.includesMockExams,
-      items: plan.items,
-      mockFunding: context.selection?.state.settings.mockFunding,
-      mockSkillIds: getMockPaperSkillIds({
+  const [{ lessons: planLessons, fillLessons }, alphabet, claims, boss, weekly, writing] =
+    await Promise.all([
+      dayLessons,
+      loadAlphabetIntro({ goal, userId }),
+      loadPracticeClaims({
+        goal,
         graph: plan.graph,
-        skillIds: plan.goalPlan.skills.map((skill) => skill.id),
+        now,
+        readClaims: context.readClaims,
+        skillIds: testSkillIds,
+        today: localDate,
+        userId,
       }),
-      now,
-      skillIds: textSkillIds,
-      structure: plan.structure,
-      today: localDate,
-      userId,
-    }),
-    loadDayWriting({ context, includesMockExams: access.includesMockExams, plan }),
-  ]);
+      dayLessons.then((loaded) =>
+        loadDayBosses({
+          ahead: listFittingLessons({
+            items: plan.items,
+            lessons: [...loaded.lessons, ...loaded.fillLessons],
+            minutes: dayMinutes,
+          }),
+          context,
+          plan,
+        }),
+      ),
+      loadSessionWeeklyChallenge({
+        goal,
+        includesMockExams: access.includesMockExams,
+        items: plan.items,
+        mockFunding: context.selection?.state.settings.mockFunding,
+        mockSkillIds: getMockPaperSkillIds({
+          graph: plan.graph,
+          skillIds: plan.goalPlan.skills.map((skill) => skill.id),
+        }),
+        now,
+        skillIds: textSkillIds,
+        structure: plan.structure,
+        today: localDate,
+        userId,
+      }),
+      loadDayWriting({ context, includesMockExams: access.includesMockExams, plan }),
+    ]);
 
   const lessons = [
     ...toAlphabetLessons(alphabet),
@@ -275,6 +268,12 @@ export async function loadSessionBuildInput(
   // A Plus-only mock day gives free learners a full review of every test topic instead.
   const fullReview = weekly.plusRequired;
   const isReviewDay = fullReview || reviewDay !== null;
+
+  const review = {
+    ...toReviewInput({ context, field, netScored, plan }),
+    confirmSkillIds: signals.earlyReviewSkillIds,
+    repeatOnlyMissed: isReviewDay,
+  };
 
   const practiceQuery = toDayPracticeQuery({
     claims,
@@ -316,7 +315,7 @@ export async function loadSessionBuildInput(
     unwritten: getDayUnwrittenTime({ reservedItems, today: localDate }),
   };
 
-  const work = { context, dueCapsules, isReviewDay, plan, practiceQuery, signals };
+  const work = { context, isReviewDay, plan, practiceQuery, review, signals };
 
   return loadHeldDayInput({
     checkpoints,
@@ -325,7 +324,7 @@ export async function loadSessionBuildInput(
         input: { ...base, ...(await loadDayWork({ ...work, checkpointItems })) },
         keepsBlocks,
         plan,
-        review,
+        review: { ...review, reserved: isReviewDay ? checkpointItems : undefined },
         today: localDate,
       }),
   });

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { itemAnswerInputSchema } from "../learner/contract";
+import { MAX_MATCH_MISSES } from "./answer-limits";
 
 /** The answers a test takes: tapped choices, matches and orders, never typed text. */
 export const matchAnswerSchema = z
@@ -7,6 +8,11 @@ export const matchAnswerSchema = z
     matches: z
       .array(z.number().int().min(0))
       .meta({ description: "For each left entry, the index of the right entry it was matched to" }),
+    misses: z
+      .array(z.object({ left: z.int().nonnegative(), right: z.int().nonnegative() }).strict())
+      .max(MAX_MATCH_MISSES)
+      .optional()
+      .meta({ description: "Wrong pairs tried in order, using the indexes of the shown columns" }),
   })
   .strict()
   .meta({ id: "MatchAnswer" });

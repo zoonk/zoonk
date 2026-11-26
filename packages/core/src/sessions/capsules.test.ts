@@ -4,7 +4,7 @@ import {
   capReviewDay,
   getCapsuleOpening,
   groupIntoCapsules,
-  pickCapsuleFormat,
+  isLightMatch,
   pickCapsuleItems,
 } from "./capsules";
 
@@ -14,7 +14,21 @@ function item(
   format: CapsuleItemCandidate["format"] = "multipleChoice",
   lastAnsweredAt: string | null = null,
 ): CapsuleItemCandidate {
-  return { format, id, lastAnsweredAt: lastAnsweredAt ? new Date(lastAnsweredAt) : null, skillId };
+  return {
+    content:
+      format === "matchPairs"
+        ? {
+            pairs: [
+              { left: "a", right: "b" },
+              { left: "c", right: "d" },
+            ],
+          }
+        : null,
+    format,
+    id,
+    lastAnsweredAt: lastAnsweredAt ? new Date(lastAnsweredAt) : null,
+    skillId,
+  };
 }
 
 describe(groupIntoCapsules, () => {
@@ -32,15 +46,21 @@ describe(groupIntoCapsules, () => {
   });
 });
 
-describe(pickCapsuleFormat, () => {
-  it("swipes true or false for net-scored exams, matches pairs when it can, else rapid-fire", () => {
-    expect(pickCapsuleFormat({ formats: ["trueFalse", "matchPairs"], netScoring: true })).toBe(
-      "swipe",
-    );
+describe(isLightMatch, () => {
+  const pair = { left: "Lunar eclipse", right: "Earth's shadow" };
 
-    expect(pickCapsuleFormat({ formats: ["multipleChoice"], netScoring: true })).toBe("rapidFire");
-    expect(pickCapsuleFormat({ formats: ["matchPairs"], netScoring: false })).toBe("matchPairs");
-    expect(pickCapsuleFormat({ formats: ["trueFalse"], netScoring: false })).toBe("rapidFire");
+  it("accepts five short pairs and sets aside larger boards or sentence-length cards", () => {
+    expect(isLightMatch({ pairs: Array.from({ length: 5 }, () => pair) })).toBe(true);
+
+    expect(
+      isLightMatch({ pairs: [pair, { ...pair, right: "Earth's largest natural moon" }] }),
+    ).toBe(true);
+
+    expect(isLightMatch({ pairs: Array.from({ length: 6 }, () => pair) })).toBe(false);
+
+    expect(
+      isLightMatch({ pairs: [pair, { ...pair, right: "The Moon moves through Earth's shadow" }] }),
+    ).toBe(false);
   });
 });
 
@@ -55,21 +75,43 @@ describe(pickCapsuleItems, () => {
       item("b-2", "b"),
     ];
 
-    expect(
-      pickCapsuleItems({ candidates, format: "rapidFire", skillIds: ["a", "b"] }),
-    ).toStrictEqual(["a-new", "b-1", "a-old"]);
+    expect(pickCapsuleItems({ candidates, netScoring: false, skillIds: ["a", "b"] })).toStrictEqual(
+      { format: "rapidFire", itemIds: ["a-new", "b-1", "a-old"] },
+    );
   });
 
-  it("asks one matching question for match pairs and statements for swipe", () => {
-    const candidates = [item("pairs", "a", "matchPairs"), item("tf", "a", "trueFalse")];
+  it("selects across due skills and asks just one question for a matching capsule", () => {
+    const pairs = item("pairs", "b", "matchPairs", "2026-09-01T10:00:00Z");
+    const choice = item("choice", "a");
 
-    expect(pickCapsuleItems({ candidates, format: "matchPairs", skillIds: ["a"] })).toStrictEqual([
-      "pairs",
-    ]);
+    expect(
+      pickCapsuleItems({ candidates: [pairs, choice], netScoring: false, skillIds: ["a", "b"] }),
+    ).toStrictEqual({ format: "rapidFire", itemIds: ["choice"] });
 
-    expect(pickCapsuleItems({ candidates, format: "swipe", skillIds: ["a"] })).toStrictEqual([
-      "tf",
-    ]);
+    expect(
+      pickCapsuleItems({
+        candidates: [{ ...pairs, inField: true }, choice],
+        netScoring: false,
+        skillIds: ["a", "b"],
+      }),
+    ).toStrictEqual({ format: "matchPairs", itemIds: ["pairs"] });
+  });
+
+  it("selects statements for net-scored exams and defaults to rapid-fire for recordings", () => {
+    const candidates = [
+      item("pairs", "a", "matchPairs"),
+      item("tf", "a", "trueFalse", "2026-09-01T10:00:00Z"),
+    ];
+
+    expect(pickCapsuleItems({ candidates, netScoring: true, skillIds: ["a"] })).toStrictEqual({
+      format: "swipe",
+      itemIds: ["tf"],
+    });
+
+    expect(pickCapsuleItems({ candidates: [], netScoring: false, skillIds: ["a"] })).toStrictEqual({
+      format: "rapidFire",
+      itemIds: [],
+    });
   });
 });
 

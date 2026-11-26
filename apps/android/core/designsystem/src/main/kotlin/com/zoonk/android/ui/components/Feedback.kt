@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -33,14 +32,18 @@ import com.zoonk.android.ui.theme.zoonkType
 
 enum class FeedbackTone { Almost, Neutral, Right, Wrong }
 
-/** What a checked answer got (main's `FeedbackPanel`), under the question so it stays in view. */
+/**
+ * What a checked answer got (main's `FeedbackPanel`), under the question so it stays in view. It scrolls itself into
+ * sight as it appears, unless its screen does that itself ([LocalOwnFeedbackReveal]).
+ */
 @Composable
 fun FeedbackPanel(
     label: String,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    OutlinedCard(modifier.fillMaxWidth().semantics { paneTitle = label }) {
+    val reveal = if (LocalOwnFeedbackReveal.current) Modifier else Modifier.revealWhenShown()
+    OutlinedCard(modifier.fillMaxWidth().then(reveal).semantics { paneTitle = label }) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp), content = content)
     }
 }
@@ -56,7 +59,7 @@ fun FeedbackVerdict(
 ) {
     val color = tone.color()
     val style = MaterialTheme.zoonkType.verdict
-    val glyph = with(LocalDensity.current) { style.lineHeight.toDp() }
+    val glyph = VERDICT_GLYPH * glyphScale()
     val line =
         with(LocalDensity.current) {
             rememberTextMeasurer()
@@ -71,7 +74,8 @@ fun FeedbackVerdict(
         verticalAlignment = Alignment.Top,
     ) {
         Row(Modifier.weight(1f).alignByBaseline(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Box(Modifier.height(line).width(glyph), contentAlignment = Alignment.CenterStart) {
+            // The box ends where the glyph does, so its ink sits as close to the words as main's.
+            Box(Modifier.height(line), contentAlignment = Alignment.CenterStart) {
                 Icon(
                     painter = painterResource(icon ?: tone.glyph()),
                     contentDescription = null,
@@ -117,3 +121,6 @@ private fun FeedbackTone.glyph(): Int =
         FeedbackTone.Neutral -> R.drawable.ic_remove
         FeedbackTone.Almost, FeedbackTone.Wrong -> R.drawable.ic_close
     }
+
+/** Main's `size-4` glyph: a light mark beside the verdict's words, never heavier than them. */
+private val VERDICT_GLYPH = 16.dp

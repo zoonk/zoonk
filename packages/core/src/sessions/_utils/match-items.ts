@@ -1,7 +1,7 @@
 import { type Item } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { parseItemContent } from "../../library/items/item-content";
-import { type QuestionAnswer } from "../contract";
+import { type MatchAnswer, type QuestionAnswer } from "../contract";
 import { getShownOrder } from "./shown-order";
 
 type MatchPairsContent = Extract<
@@ -33,6 +33,11 @@ function getRightOrder(item: MatchItem): number[] {
   return getShownOrder({ count: item.content.pairs.length, seed: item.id });
 }
 
+export function getMatchKey(item: MatchItem): number[] {
+  const order = getRightOrder(item);
+  return item.content.pairs.map((_, index) => order.indexOf(index));
+}
+
 /** Shuffles the right column and omits the correct pairing. */
 export function toMatchQuestion(item: MatchItem) {
   const pairs = item.content.pairs;
@@ -57,21 +62,61 @@ function describePairs({ item, rights }: { item: MatchItem; rights: readonly num
     .join("; ");
 }
 
+function describeMisses({
+  item,
+  misses,
+  order,
+}: {
+  item: MatchItem;
+  misses: NonNullable<MatchAnswer["misses"]>;
+  order: readonly number[];
+}) {
+  return misses
+    .flatMap((miss) => {
+      const left = item.content.pairs[miss.left];
+      const rightIndex = order[miss.right];
+      const right = item.content.pairs[rightIndex ?? -1];
+      return left && right && miss.left !== rightIndex ? [`${left.left} → ${right.right}`] : [];
+    })
+    .join("; ");
+}
+
+function describeMatchAnswer({
+  answer,
+  item,
+  order,
+  picks,
+}: {
+  answer: QuestionAnswer;
+  item: MatchItem;
+  order: readonly number[];
+  picks: readonly number[];
+}) {
+  if ("matches" in answer && answer.misses !== undefined) {
+    return describeMisses({ item, misses: answer.misses, order }) || null;
+  }
+
+  return picks.length > 0 ? describePairs({ item, rights: picks }) : null;
+}
+
 /** Grade indexes against the displayed column order; mismatched answer shapes count as wrong. */
 export function gradeMatch({ answer, item }: { answer: QuestionAnswer; item: MatchItem }) {
   const order = getRightOrder(item);
   const picks = "matches" in answer ? answer.matches.map((shown) => order[shown] ?? -1) : [];
 
   const isCorrect =
-    picks.length === item.content.pairs.length && picks.every((pick, index) => pick === index);
+    "matches" in answer &&
+    (answer.misses?.length ?? 0) === 0 &&
+    picks.length === item.content.pairs.length &&
+    picks.every((pick, index) => pick === index);
 
   return {
-    correctAnswer: { matches: item.content.pairs.map((_, index) => order.indexOf(index)) },
+    correctAnswer: { matches: getMatchKey(item) },
     explanation: item.content.reason,
     isCorrect,
     recorded: answer,
     snapshot: {
-      answer: picks.length > 0 ? describePairs({ item, rights: picks }) : null,
+      answer: describeMatchAnswer({ answer, item, order, picks }),
       correctAnswer: describePairs({ item, rights: order.map((_, index) => index) }),
       explanation: item.content.reason,
       format: item.format,

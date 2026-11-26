@@ -1,6 +1,11 @@
 package com.zoonk.android.feature.activities.sorting
 
 import com.zoonk.android.feature.activities.assignmentAnswer
+import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.feature.questions.MatchSide
+import com.zoonk.android.feature.questions.MatchSpot
+import com.zoonk.android.feature.questions.MatchWork
+import com.zoonk.android.feature.questions.tap
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27Fields
 import org.junit.Assert.assertEquals
@@ -27,8 +32,6 @@ class MatchPairsModelTest {
         )
     private val columns = arrangeMatchColumns(fields)
 
-    private fun card(id: String) = MatchCard(id, id, null)
-
     @Test
     fun laysOutOnlyRealPairsFromAnOlderLessonWithNoPairSideBySide() {
         assertEquals(listOf("c", "a", "b"), columns.first.map { it.id })
@@ -38,17 +41,36 @@ class MatchPairsModelTest {
 
     @Test
     fun solvedRowsPutEachPairSideBySideInTheLeftOrder() {
-        val rows = solvedRows(columns.first, columns.second).map { (left, right) -> left.id to right.id }
+        val (left, right) = columns
+        val rows = solvedRows(left, right).map { (l, r) -> left[l].id to right[r].id }
 
         assertEquals(listOf("c" to "c", "a" to "a", "b" to "b"), rows)
     }
 
     @Test
     fun answersOnceEveryPairIsMatchedWithTheFirstTries() {
-        val partial = MatchProgress().recordTry(card("a"), card("a"))
-        val done = partial.recordTry(card("b"), card("a")).recordTry(card("b"), card("b"))
+        val (left, right) = columns
+        val goesWith = { l: Int, r: Int -> left[l].id == right[r].id }
 
-        assertNull(matchAnswer(listOf("a", "b"), partial))
-        assertEquals(assignmentAnswer(mapOf("a" to "a", "b" to "a")), matchAnswer(listOf("a", "b"), done))
+        fun MatchWork.pick(
+            side: MatchSide,
+            id: String,
+        ) = tap(MatchSpot(side, (if (side == MatchSide.Left) left else right).indexOfFirst { it.id == id }), goesWith)
+
+        val partial = MatchWork().pick(MatchSide.Left, "a").pick(MatchSide.Right, "a")
+        val done =
+            partial
+                .pick(MatchSide.Right, "a")
+                .pick(MatchSide.Left, "b")
+                .pick(MatchSide.Right, "c")
+                .pick(MatchSide.Right, "b")
+                .pick(MatchSide.Left, "c")
+                .pick(MatchSide.Right, "c")
+
+        assertNull(matchAnswer(left, right, partial))
+        val answer = assignmentAnswer(mapOf("a" to "a", "b" to "c", "c" to "c"))
+        assertEquals(answer, matchAnswer(left, right, done))
+        assertEquals(done.pairs, workFromAnswer(left, right, answer.assignmentPairs).pairs)
+        assertEquals(done.firstTries, workFromAnswer(left, right, answer.assignmentPairs).firstTries)
     }
 }

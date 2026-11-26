@@ -5,6 +5,30 @@ import XCTest
 @testable import Zoonk
 
 final class StudyAPITests: XCTestCase {
+  func testReviewMatchDecodesItsKeyAndKeepsTheOrderOfMisses() throws {
+    let question = #"""
+      {"answered":null,"capsuleKey":"review","citation":null,"context":null,"drill":null,
+       "entry":null,"format":"matchPairs","image":null,"itemId":"item","key":[1,0],
+       "left":["Mars","Moon"],"mistakeId":null,"options":null,"placement":false,
+       "question":"Match the names.","quoted":false,"right":["Satellite","Planet"],
+       "select":null,"set":null,"skillId":"skill","unit":null,"visual":null}
+      """#
+    let match = try JSONDecoder().decode(
+      Components.Schemas.StudyBlockDetail.QuestionsPayloadPayload.self, from: Data(question.utf8))
+    XCTAssertEqual(match.key, [1, 0])
+
+    let answer = Components.Schemas.MatchAnswer(
+      matches: [1, 0], misses: [.init(left: 1, right: 1), .init(left: 0, right: 0)])
+    let sent = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: JSONEncoder().encode(answer)) as? NSDictionary)
+    XCTAssertEqual(sent["matches"] as? [Int], [1, 0])
+    XCTAssertEqual(
+      sent["misses"] as? [[String: Int]],
+      [
+        ["left": 1, "right": 1], ["left": 0, "right": 0],
+      ])
+  }
+
   func testWritingRowUsesSavedDraftField() throws {
     let base = try XCTUnwrap(
       JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])

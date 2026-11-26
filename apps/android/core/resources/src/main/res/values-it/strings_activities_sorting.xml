@@ -5,33 +5,26 @@
   "activities_sorting_all_sorted": "17d9a9d54a7c4dd601dcdb6433010bbb11be7bc649acadfada4eb249bfa78020",
   "activities_sorting_badge_label_it": "82be7295021118062deca65595c75372a1e68ff14fdc6065945a490b6ff9ada8",
   "activities_sorting_badge_link_causes": "5b6ce477acba62b689f7cf1be8509ad9ed6e98f7bf9a2f1fc02e6243e44b40ba",
-  "activities_sorting_badge_match_pairs": "83175b7c1f9f234a2cad5a3b3a2b84af486478f2dfc28e6eb79ec62dbff1337e",
   "activities_sorting_badge_place_in_time": "0805011c56bb4edf4a6f465c4eefc4dccc9dd88a02844ce4af92c101011c0c74",
   "activities_sorting_badge_put_in_order": "0e08c948f36a98aa59918fab227b47ac0a8c6b4d9f41cf3ae737c1b52ca2b230",
   "activities_sorting_badge_sort_groups": "a243e0f5a359abf874830fd2ec6edc80170fcfda2fdb6fcc0af63b6028649182",
   "activities_sorting_belongs_in": "991077750b4aba26c2953c95c4a712de9c4caf78389af68c6a4db3aea91db4b6",
-  "activities_sorting_card_matched": "03831e4cc128ff07d7c670beaea67758c69a421771db870770baa4365fa0dc23",
   "activities_sorting_cards_to_match": "726df11b7253521d20204557a0ff372c2210a533a35a5d5cbd123b439ae5522e",
   "activities_sorting_cause": "9f0037391563f4d01308b5ed0775857e9b3a9e6eafbfb26aa3616fd0821fe4a6",
   "activities_sorting_cause_picked": "3d5d7dcb6a39ada97ffd140810ec25e9c2bc9c94bf21e38dd64a5f9aadd5464d",
   "activities_sorting_causes_and_effects": "9dde80298b887909f2c271871da99bfe1bef810b5b67d3fe335646a8b097a9aa",
   "activities_sorting_correct_answer": "7b753fc7919efcb14e64862247e8664ade3288bfc3f377df453914df04308073",
-  "activities_sorting_dont_go_together": "bca64590c18fc8a915e85cfdacb2dcbf9ed1782e0cc12002c896586768d62859",
-  "activities_sorting_dont_go_together_short": "35b1a580fa402980b3819d2d973ade7b52fa663e671715d1c18445d222c22cae",
   "activities_sorting_drag_onto_timeline": "7835b020a50e61ff20776e6c6f9b5f79ddf7b279a4d725a5ee70dc62ebd0ce6e",
   "activities_sorting_drag_steps": "24b2e58216b4073da19c8e91b0328aeef0f12febbef08f1f0ebac78a99d3ac15",
   "activities_sorting_events_placed": "b05cbfe03c0778920623f71ec869553c98552882adcd2b146df081510e28b04f",
   "activities_sorting_every_spot_named": "7c01ade0cc982cca43040b96dc5fbc4ded6708af769a6f4f56ac34f3950a7693",
   "activities_sorting_gap_between": "e9e9c913bf08d8d30e31645ebfc7e08786ce53f3b951e078c2dd7026a672746f",
-  "activities_sorting_goes_with": "3f8c221192d031dc67fb92441b1a0b7bfe8ce70c97d2ef99c0e3ec5db9794766",
   "activities_sorting_how_they_connect": "a8e2fb5facc4d92d0e9637910deb86fcb4325cb437c6d28d4c5fbe43281fb0be",
   "activities_sorting_is_in": "b1bccd0edb8c511e7cc9186957f7c166038636ec5d0d77b218bf14fa88a0831b",
   "activities_sorting_is_in_next": "6083737a92d82f05b18cce08773656bdac2c47ad2aec72115b91e173e8aeafa3",
   "activities_sorting_led_to": "ffb0523fb63dc03ec6b750b52ab7641832f59d43ed3bbc095980fc5b1d142568",
   "activities_sorting_linked": "f6a13120ebbbb55f8a83ef74cbfbaa3f2eb293c931c76675dcb3813b7f5d542a",
   "activities_sorting_links_count": "ab27d2e8612e4f2b601e10e443ae5525fb32f4d6e44a581f3f4d5e5e2f6d3acc",
-  "activities_sorting_matched": "016954e78ba9364c1efef7f9384abbb7546851208622e5668357b69094625c2c",
-  "activities_sorting_missed_first_try": "7e9402134b0f469636afba1a49afb6f85caccbb0b979288ca677cc69b0093fd4",
   "activities_sorting_missed_link": "62e05b7b22b9b72e2d83a7159b043cb8bd7dd5e72c9dd2da767485decd2e1478",
   "activities_sorting_more_count": "fa678324a1a5ae31b29690a1092476d2d13a5bea0ab26bd2bf1c90f63c92d198",
   "activities_sorting_move_to": "fc3f63a947add199cef818d2a8ab96851ef53ee6ab8f725331c5b364413ce6ab",
@@ -43,7 +36,6 @@
   "activities_sorting_not_quite": "0429dd4a0fdfca43069b010b63cfc697d48a56ea7d27424ad1b1a7b2687eeb90",
   "activities_sorting_not_straight": "75fd2820d3d616832c8c21489f2bf7e9c072accba2eabfd10de3db89438a0966",
   "activities_sorting_now_pick": "94e2863384096f65340844f0cee4a0fcc51d58d36273753a7a94d7457c16eddc",
-  "activities_sorting_pairs_matched": "ae81767f204280bd64aae16c407b6b902f1829cbb14857821cd055481772746c",
   "activities_sorting_pick_a_name": "07a4dae1649db3134de4f534a45cf6a72bb346b77f65c1882d2234bfc855bae9",
   "activities_sorting_pick_cause": "9f37b7651859212c583b07ee1e89e2b5d38ead54188921def03263d5f35a00bc",
   "activities_sorting_place_on_timeline": "de860efddcd5353198524e5378c6f1aeb602b02d1fe3fdeb86df3be20334394e",
@@ -116,28 +108,10 @@
     <string name="activities_sorting_right_order">L’ordine giusto</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Lo avevi messo in posizione %1$d</string>
-    <string name="activities_sorting_badge_match_pairs">Abbina le coppie</string>
-    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
-    <plurals name="activities_sorting_pairs_matched">
-        <item quantity="one">%1$d coppia abbinata su %2$d</item>
-        <item quantity="many">%1$d coppie abbinate su %2$d</item>
-        <item quantity="other">%1$d coppie abbinate su %2$d</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Carte da abbinare</string>
-    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
-    <string name="activities_sorting_card_matched">%1$s, abbinata</string>
-    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
-    <string name="activities_sorting_matched">Hai abbinato %1$s a %2$s. Coppie abbinate: %3$d su %4$d.</string>
-    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
-    <string name="activities_sorting_dont_go_together">%1$s e %2$s non si abbinano.</string>
-    <string name="activities_sorting_dont_go_together_short">Queste due carte non vanno insieme.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Non è la coppia giusta:</string>
-    <!-- Above the pairs the learner got wrong on the first try. -->
-    <string name="activities_sorting_missed_first_try">Coppie sbagliate al primo tentativo</string>
-    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
-    <string name="activities_sorting_goes_with">%1$s si abbina a %2$s, non a %3$s.</string>
     <string name="activities_sorting_badge_link_causes">Collega cause ed effetti</string>
     <string name="activities_sorting_pick_cause">Scegli una causa, poi il suo effetto.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

@@ -23,6 +23,10 @@ function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
 
+function matchCard(name: string) {
+  return page.getByRole("button", { exact: true, name });
+}
+
 async function pickWords(words: string[]) {
   const bank = page.getByRole("group", { name: "Word bank" });
 
@@ -272,7 +276,8 @@ describe("language lesson screens", () => {
       await page.getByRole("button", { exact: true, name: label }).click();
     }
 
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await next.click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
   });
 
@@ -302,10 +307,39 @@ describe("language lesson screens", () => {
     for (const { left, right } of pairs) {
       // oxlint-disable-next-line no-await-in-loop -- Each pair is checked once the board settles.
       await expectSideBySide(
-        page.getByRole("button", { exact: true, name: left }),
-        page.getByRole("button", { exact: true, name: right }),
+        page.getByRole("button", { exact: true, name: `${left}, matched with ${right}` }),
+        page.getByRole("button", { exact: true, name: `${right}, matched with ${left}` }),
       );
     }
+  });
+
+  it("waits on Continue while the board is played, then names a first wrong try under the verdict", async () => {
+    renderLessonPlayer({ lesson: buildLesson([languageStep("matchColumns")]) });
+    const next = page.getByRole("button", { name: /^Continue/u });
+    await expect.element(next).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
+
+    await matchCard("Electron").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Negative charge").click();
+    await matchCard("Proton").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Neutron").click();
+    await matchCard("No charge").click();
+
+    await expect
+      .element(verdict("Not quite").getByText("Electron → Positive charge", { exact: true }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
+      .toHaveAttribute("data-state", "right");
+
+    await expect.element(next).toBeEnabled();
   });
 
   it("says a letter as it shows, with the same state on its own control and the bar's", async () => {

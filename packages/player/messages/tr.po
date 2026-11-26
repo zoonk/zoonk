@@ -1642,26 +1642,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "John Snow’un 1854 tarihli haritasına dayanan sadeleştirilmiş sokak planı."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Bu ikisi eşleşmiyor."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "HfJhT9"
-msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "{left} ile {right} eşleştirildi. {matched, plural, other {# / {total} çift eşleştirildi.}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "5sU5Ih"
-msgid "{left} and {right} don't go together."
-msgstr "{left} ile {right} eşleşmiyor."
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "LbHKlv"
-msgid "{text}, matched"
-msgstr "{text}, eşleştirildi"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Eşleştirilecek kartlar"
@@ -1670,16 +1650,6 @@ msgstr "Eşleştirilecek kartlar"
 msgctxt "jih4mf"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Kartlar iki sütun halinde. Eşleştirmek için soldan ve sağdan birer kart seç. {matched, plural, other {# / {total} çift eşleştirildi.}}"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "rnH_6_"
-msgid "<left></left> goes with <right></right>, not <guess></guess>."
-msgstr "<left></left> için doğru eşleşme <right></right>, <guess></guess> değil."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "İlk denemede eşleşmeyenler"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2835,20 +2805,10 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "Çevir"
 
-#: src/components/match-board.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
 msgstr "Çiftleri eşleştir."
-
-#: src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "Tüm çiftler eşleştirildi. Devam etmek için Kontrol et düğmesine bas."
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/not-quite-lead.tsx

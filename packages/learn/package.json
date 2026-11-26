@@ -60,6 +60,8 @@
     "./explain/waiting": "./src/explain/explain-waiting.tsx",
     "./feedback": "./src/feedback/content-feedback-provider.tsx",
     "./feedback-panel": "./src/_components/feedback-panel.tsx",
+    "./reveal-feedback": "./src/_utils/reveal-feedback.ts",
+    "./reveal-when-shown": "./src/_components/reveal-when-shown.tsx",
     "./feedback/form": "./src/feedback/feedback-form.tsx",
     "./feedback/menu-items": "./src/feedback/report-problem-item.tsx",
     "./feedback/content-menu": "./src/feedback/content-feedback-menu.tsx",
@@ -74,7 +76,11 @@
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",
     "./generation/wait-clock": "./src/generation/use-visible-wait.ts",
+    "./match-board": "./src/_components/match-board.tsx",
+    "./match-board-state": "./src/_components/match-board-state.ts",
     "./match-entry": "./src/_components/match-entry.tsx",
+    "./match-misses": "./src/_components/match-misses.tsx",
+    "./use-match-board": "./src/_components/use-match-board.ts",
     "./onboarding/attempt-clock": "./src/onboarding/entry/attempt-clock.ts",
     "./generation/run": "./src/generation/generation-run.ts",
     "./guest-ending": "./src/onboarding/guest-lesson-ending.tsx",
@@ -269,7 +275,8 @@
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
     "katex": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "web-haptics": "0.0.6"
   },
   "devDependencies": {
     "@types/react": "catalog:",

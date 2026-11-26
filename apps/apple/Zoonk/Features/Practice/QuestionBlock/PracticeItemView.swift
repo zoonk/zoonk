@@ -52,7 +52,7 @@ struct PracticeItemView: View {
         showsStatement: showsStatement, result: result, isLocked: locked, draft: $draft)
     case .matchPairs:
       MatchPairsItemView(
-        left: question.left, right: question.right, isLocked: locked, draft: $draft)
+        question: question, result: result, isLocked: locked, draft: $draft, onSubmit: onSubmit)
     case .order:
       OrderItemView(question: question, result: result, isLocked: locked, draft: $draft)
     case .numeric:
@@ -292,66 +292,187 @@ enum TrueFalseWords {
   }
 }
 
+/// A learning match (`key`) checks each pair as it's made and sends itself with its last pair; a
+/// test's match waits for Check, its pairs free to undo until then.
 struct MatchPairsItemView: View {
-  let left: [String]
-  let right: [String]
+  let question: PracticeQuestion
+  let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var selected: Int?
+  let onSubmit: (PracticeAnswer) -> Void
+  @State private var picking = MatchPicking()
+
+  private var left: [String] { question.left }
+  private var right: [String] { question.right }
 
   var body: some View {
-    let current = matches
+    let pairs = self.pairs
 
-    HStack(alignment: .top, spacing: 12) {
-      VStack(spacing: 8) {
-        ForEach(Array(left.enumerated()), id: \.offset) { index, entry in
-          AnswerOption(
-            isPicked: selected == index,
-            isLocked: isLocked,
-            tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
-            text: LessonRichText.typeset(entry),
-            action: { pickLeft(index, current: current) }
-          )
-          .practiceFocus(index == 0 ? .answer : nil)
-        }
+    MatchBoard(leftCount: left.count, rightCount: right.count, solvedRows: solvedRows(pairs)) {
+      card in
+      MatchEntry(
+        state: state(of: card, pairs: pairs),
+        keyIndex: card.side == .left ? card.index : left.count + card.index,
+        partner: partner(of: card, pairs: pairs),
+        action: isLocked ? nil : { tap(card, pairs: pairs) }
+      ) {
+        LessonRichText(text(of: card))
       }
-      .accessibilityElement(children: .contain)
-      .accessibilityLabel(
-        Text("Match these", tableName: "Practice", comment: "VoiceOver name of the left column."))
-
-      VStack(spacing: 8) {
-        ForEach(Array(right.enumerated()), id: \.offset) { index, entry in
-          let owner = current.firstIndex(of: index)
-
-          AnswerOption(
-            isLocked: isLocked || (selected == nil && owner == nil),
-            tag: owner.map { AnyView(PairBadge(number: $0 + 1)) },
-            text: LessonRichText.typeset(entry),
-            action: { pickRight(index, current: current) }
-          )
-          .accessibilityValue(matchedValue(owner))
-        }
-      }
-      .accessibilityElement(children: .contain)
-      .accessibilityLabel(
-        Text("With these", tableName: "Practice", comment: "VoiceOver name of the right column."))
+      .practiceFocus(card == .left(0) ? .answer : nil)
     }
+    .matchBoardFeedback(
+      $picking, locked: question.checksEachPair ? pairs.count { $0 != nil } : 0,
+      isPlaying: !isLocked)
   }
 
-  private func matchedValue(_ owner: Int?) -> Text {
-    guard let owner, left.indices.contains(owner) else { return Text(verbatim: "") }
-
-    return Text(
-      "Matched with \(LessonRichText.spoken(left[owner]))", tableName: "Practice",
-      comment: "VoiceOver value of a right-column entry already matched with a left entry.")
+  private func text(of card: MatchCardRef) -> String {
+    let column = card.side == .left ? left : right
+    return column.indices.contains(card.index) ? column[card.index] : ""
   }
 
-  private var matches: [Int?] {
+  /// For each left entry, the right one it's paired with so far.
+  private var pairs: [Int?] {
     switch draft {
     case .partial(let made) where made.count == left.count: made
-    case .matches(let matched) where matched.count == left.count: matched
+    case .pairing(let made, _) where made.count == left.count: made
+    case .matches(let matched, _) where matched.count == left.count: matched
     default: Array(repeating: nil, count: left.count)
     }
+  }
+
+  private var misses: [MatchTry] {
+    if case .pairing(_, let misses) = draft { misses } else { [] }
+  }
+
+  /// The left cards that had a wrong try, on a board finished pair by pair or revealed by "I don't
+  /// know yet".
+  private var missedLefts: Set<Int> {
+    switch draft ?? result?.answer {
+    case .pairing(_, let misses), .matches(_, let misses?): Set(misses.map(\.left))
+    default: []
+    }
+  }
+
+  private func isSolved(_ pairs: [Int?]) -> Bool {
+    question.key != nil && (result != nil || pairs.allSatisfy { $0 != nil })
+  }
+
+  /// A learning match lays out as its answer once every pair is found, or once it's checked.
+  private func solvedRows(_ pairs: [Int?]) -> [MatchTry]? {
+    guard let key = question.key, isSolved(pairs) else {
+      return nil
+    }
+
+    return key.enumerated().map { MatchTry(left: $0.offset, right: $0.element) }
+  }
+
+  private func state(of card: MatchCardRef, pairs: [Int?]) -> MatchEntryState {
+    let owner = card.side == .left ? card.index : pairs.firstIndex(of: card.index)
+
+    guard question.checksEachPair else {
+      if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
+        return .paired(owner + 1)
+      }
+
+      return picking.selected == card ? .selected : .idle
+    }
+
+    // Solved, every pair the learner found keeps its check; "I don't know yet" shows the rest of
+    // the answer without one.
+    if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
+      return isSolved(pairs)
+        ? .solved(missed: missedLefts.contains(owner)) : picking.kept(card, pair: owner + 1)
+    }
+
+    if result != nil {
+      return .idle
+    }
+
+    if picking.isMissed(card) {
+      return .wrong(picking.missCount)
+    }
+
+    return picking.selected == card ? .selected : .idle
+  }
+
+  private func partner(of card: MatchCardRef, pairs: [Int?]) -> String? {
+    let partner: Int?
+
+    switch card.side {
+    case .left:
+      partner = pairs.indices.contains(card.index) ? pairs[card.index] : nil
+    case .right:
+      partner = pairs.firstIndex(of: card.index)
+    }
+
+    guard let partner else { return nil }
+
+    return LessonRichText.spoken(
+      text(of: card.side == .left ? .right(partner) : .left(partner)))
+  }
+
+  private func tap(_ card: MatchCardRef, pairs: [Int?]) {
+    if question.checksEachPair {
+      tapChecking(card, pairs: pairs)
+    } else {
+      tapHeld(card, pairs: pairs)
+    }
+  }
+
+  private func tapChecking(_ card: MatchCardRef, pairs: [Int?]) {
+    guard let key = question.key, !state(of: card, pairs: pairs).isKept,
+      let (attempt, isRight) = picking.tap(
+        card, goesTogether: { key.indices.contains($0.left) && key[$0.left] == $0.right })
+    else {
+      return
+    }
+
+    let (leftText, rightText) = spoken(attempt)
+
+    guard isRight else {
+      let misses = self.misses
+      draft = .pairing(
+        pairs, misses: misses.count < MatchTry.maxMisses ? misses + [attempt] : misses)
+      announcePolitely(MatchAnnouncement.missed(leftText, rightText))
+      return
+    }
+
+    var next = pairs
+    next[attempt.left] = attempt.right
+    let matched = next.count { $0 != nil }
+
+    announcePolitely(
+      MatchAnnouncement.matched(leftText, rightText, matched: matched, total: left.count))
+
+    if matched == left.count {
+      let answer = PracticeAnswer.matches(next.compactMap(\.self), misses: misses)
+      draft = answer
+      onSubmit(answer)
+    } else {
+      draft = .pairing(next, misses: misses)
+    }
+  }
+
+  private func tapHeld(_ card: MatchCardRef, pairs: [Int?]) {
+    guard let move = picking.tapHeld(card, pairs: pairs) else {
+      return
+    }
+
+    update(move.pairs)
+    let (leftText, rightText) = spoken(move.attempt)
+
+    announcePolitely(
+      move.isUndone
+        ? MatchAnnouncement.unmatched(leftText, rightText)
+        : MatchAnnouncement.matched(
+          leftText, rightText, matched: move.pairs.count { $0 != nil }, total: left.count))
+  }
+
+  private func spoken(_ attempt: MatchTry) -> (String, String) {
+    (
+      LessonRichText.spoken(text(of: .left(attempt.left))),
+      LessonRichText.spoken(text(of: .right(attempt.right)))
+    )
   }
 
   private func update(_ next: [Int?]) {
@@ -361,46 +482,6 @@ struct MatchPairsItemView: View {
       } else {
         next.allSatisfy { $0 == nil } ? nil : .partial(next)
       }
-  }
-
-  private func pickLeft(_ index: Int, current: [Int?]) {
-    if current[index] != nil {
-      var next = current
-      next[index] = nil
-      update(next)
-      return
-    }
-
-    selected = selected == index ? nil : index
-  }
-
-  private func pickRight(_ index: Int, current: [Int?]) {
-    if let owner = current.firstIndex(of: index) {
-      var next = current
-      next[owner] = nil
-      update(next)
-      return
-    }
-
-    guard let selected else { return }
-
-    var next = current
-    next[selected] = index
-    update(next)
-    self.selected = nil
-  }
-}
-
-private struct PairBadge: View {
-  let number: Int
-
-  var body: some View {
-    Text(number, format: .number)
-      .typeStyle(.meta.weight(.semibold).monospaced())
-      .foregroundStyle(Color(.background))
-      .frame(minWidth: 24, minHeight: 24)
-      .background(Color.primary, in: Circle())
-      .accessibilityHidden(true)
   }
 }
 

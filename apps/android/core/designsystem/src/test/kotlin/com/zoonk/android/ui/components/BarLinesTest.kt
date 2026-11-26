@@ -19,6 +19,17 @@ class BarLinesTest {
     }
 
     @Test
+    fun theMainActionIsNeverTheSmallerAnswerAndKeepsTheAskBesideIt() {
+        val beside =
+            barLines(listOf(BarSlot(135), BarSlot(90, main = true), BarSlot(44, glyph = true)), width = 358, gap = 8, roomy = false)
+        val above =
+            barLines(listOf(BarSlot(230), BarSlot(150, main = true), BarSlot(44, glyph = true)), width = 379, gap = 8, roomy = false)
+
+        assertEquals(listOf(listOf(0 to 135, 1 to 163, 2 to 44)), beside)
+        assertEquals(listOf(listOf(0 to 379), listOf(1 to 327, 2 to 44)), above)
+    }
+
+    @Test
     fun theWayBackKeepsItsSizeBesideTheMainAction() {
         val lines = barLines(listOf(BarSlot(44, glyph = true, start = true), BarSlot(90, main = true)), width = 328, gap = 8, roomy = false)
 

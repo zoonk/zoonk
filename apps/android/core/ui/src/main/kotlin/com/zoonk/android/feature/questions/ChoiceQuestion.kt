@@ -19,6 +19,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
+import com.zoonk.android.ui.components.PickKeyOptions
 
 /** A checked choice: the right options (none in a duel until it ends) and the learner's picks. */
 data class ChoiceCheck(
@@ -27,7 +28,7 @@ data class ChoiceCheck(
 )
 
 /**
- * One pick or several (main's block `ChoiceQuestion`). The host gets the answer once it's
+ * One pick or several (main's block `ChoiceQuestion`), by tap or by number key. The host gets the answer once it's
  * complete, null before; key it by the question so its picks start empty. Once checked, only the
  * right options and the learner's stay.
  */
@@ -60,18 +61,20 @@ fun ChoiceQuestion(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (select != null && multi) PickRule(select)
 
-        AnswerOptionGroup {
-            options.forEachIndexed { index, option ->
-                if (!isShown(index, check)) return@forEachIndexed
+        PickKeyOptions(count = options.size, enabled = !locked, onPick = ::pick) {
+            AnswerOptionGroup {
+                options.forEachIndexed { index, option ->
+                    if (!isShown(index, check)) return@forEachIndexed
 
-                AnswerOption(
-                    marker = index + 1,
-                    picked = index in shown,
-                    result = optionResult(index, check),
-                    onClick = { pick(index) },
-                    enabled = !locked,
-                    role = if (multi) Role.Checkbox else Role.RadioButton,
-                ) { ItemLine(option) }
+                    AnswerOption(
+                        marker = index + 1,
+                        picked = index in shown,
+                        result = optionResult(index, check),
+                        onClick = { pick(index) },
+                        enabled = !locked,
+                        role = if (multi) Role.Checkbox else Role.RadioButton,
+                    ) { ItemLine(option) }
+                }
             }
         }
     }

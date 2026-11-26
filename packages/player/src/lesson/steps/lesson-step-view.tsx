@@ -14,11 +14,7 @@ import { SummaryStepView } from "./summary-step";
 import { TypedAnswerStepView } from "./typed-answer-step";
 import { WorkedExampleStepView } from "./worked-example-step";
 
-const OWN_RESULT_KINDS = new Set<PlayableLibraryStep["kind"]>([
-  "activity",
-  "challenge",
-  "matchColumns",
-]);
+const OWN_RESULT_KINDS = new Set<PlayableLibraryStep["kind"]>(["activity", "challenge"]);
 
 export function showsOwnResult(step: PlayableLibraryStep): boolean {
   return OWN_RESULT_KINDS.has(step.kind);

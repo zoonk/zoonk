@@ -154,7 +154,7 @@ fun reduce(
             ) {
                 state
             } else {
-                state.resolveCheck(action.stepId, action.result, action.counts, now)
+                state.resolveCheck(action.stepId, action.result, action.counts)
             }
         }
 
