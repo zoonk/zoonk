@@ -415,23 +415,43 @@ struct PracticeSecondaryButton: View {
   }
 }
 
+/// Main's `AnswersSaveError`: what didn't go through, with its Try again closing the sentence as a
+/// link, so the bar keeps one button, its main action.
 struct PracticeSaveError: View {
   let failures: Int
   let onReport: () -> Void
   let retry: () -> Void
 
   var body: some View {
-    HStack {
-      SaveFailureNotice(failures: failures, onReport: onReport)
-        .typeStyle(.body)
-
-      Spacer()
-
-      Button(action: retry) {
-        Text("Try again", tableName: "Practice", comment: "Sends an answer that didn't save again.")
-      }
-      .buttonStyle(.outline)
+    SaveFailureNotice(
+      failures: failures, firstMessage: SaveFailureNotice<Text>.answersKept, onReport: onReport
+    ) { message in
+      sentence(AttributedString(localized: message))
     }
+    .typeStyle(.body)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func sentence(_ message: AttributedString) -> some View {
+    let action = String(
+      localized: "Try again", table: "Practice", comment: "Sends an answer that didn't save again.")
+    var link = AttributedString(action)
+    link.link = URL(string: "zoonk-practice:try-again")
+    link.foregroundColor = Color(.foreground)
+    link.underlineStyle = .single
+
+    return Text(message + AttributedString(" ") + link)
+      .foregroundStyle(.destructiveText)
+      .tint(Color(.foreground))
+      .environment(
+        \.openURL,
+        OpenURLAction { _ in
+          retry()
+          return .handled
+        }
+      )
+      .accessibilityAction(named: Text(action), retry)
+      .announcesAlert(String(message.characters))
   }
 }
 
@@ -458,13 +478,18 @@ struct SaveFailureNotice<Line: View>: View {
   }
 }
 
-extension SaveFailureNotice where Line == FailureLine {
-  init(
-    failures: Int,
-    firstMessage: LocalizedStringResource = LocalizedStringResource(
+extension SaveFailureNotice {
+  static var answersKept: LocalizedStringResource {
+    LocalizedStringResource(
       "That didn't go through. Your answers are kept.", table: "Practice",
       comment: "An answer or finish didn't reach the server; the learner's answers stay on screen"
-    ),
+    )
+  }
+}
+
+extension SaveFailureNotice where Line == FailureLine {
+  init(
+    failures: Int, firstMessage: LocalizedStringResource = Self.answersKept,
     onReport: @escaping () -> Void
   ) {
     self.init(failures: failures, firstMessage: firstMessage, onReport: onReport) {

@@ -635,9 +635,15 @@ struct LessonActionBar: View {
   }
 
   private func checkTitle(_ step: LessonStep) -> LocalizedStringResource {
-    step.kind == .hook
-      ? LocalizedStringResource(
+    if step.kind == .hook {
+      return LocalizedStringResource(
         "See answer", table: "Player", comment: "Reveals a hook's answer after a guess")
+    }
+
+    // A board checked pair by pair checks itself with its last pair, so its action waits as
+    // Continue.
+    return step.checksEachPair
+      ? Self.continueTitle
       : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer")
   }
 
@@ -648,6 +654,17 @@ struct LessonActionBar: View {
 extension LessonStep {
   var showsOwnResult: Bool {
     kind == .challenge
+  }
+
+  /// Main's `checksEachPair`: a board that checks each pair as it's made and sends itself with the
+  /// last one.
+  @MainActor
+  var checksEachPair: Bool {
+    switch content {
+    case .language(let exercise, _): exercise.kind == .matchColumns
+    case .activity(let content): content.template == ActivityRenderer.matchPairs.template
+    default: false
+    }
   }
 
   func canCheck(_ answer: LessonAnswer?, openedAt: Date) -> Bool {
