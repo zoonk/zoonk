@@ -177,6 +177,7 @@ class MatchQuestionScreenshots {
         show("review-selected$suffix", taps = listOf(0 to null))
         show("review-miss$suffix", taps = listOf(0 to 0), settle = false)
         show("review-miss-settled$suffix", taps = listOf(0 to 0))
+        show("review-pair-locking$suffix", taps = listOf(0 to 1), settle = false)
         show("review-midway$suffix", taps = listOf(0 to 1, 1 to 0))
         show("review-two-wrong-pairs$suffix", taps = twoWrongPairs)
         show("review-two-wrong-pairs-checked$suffix", taps = twoWrongPairs, check = true)
@@ -201,6 +202,15 @@ class MatchQuestionScreenshots {
         RuntimeEnvironment.setFontScale(2f)
         start(dark = false)
         show("review-midway-font200", taps = listOf(0 to 1, 1 to 0))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi-qwerty")
+    fun phoneWithAKeyboard() {
+        start(dark = false)
+        show("review-untouched-keys")
+        show("review-selected-keys", taps = listOf(0 to null))
+        show("review-midway-keys", taps = listOf(0 to 1, 1 to 0))
     }
 
     private companion object {
