@@ -213,6 +213,14 @@ class MatchQuestionScreenshots {
         show("review-midway-keys", taps = listOf(0 to 1, 1 to 0))
     }
 
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tablet() {
+        start(dark = false)
+        show("review-midway-tablet", taps = listOf(0 to 1, 1 to 0))
+        show("review-checked-after-a-miss-tablet", taps = oneMissThenSolved, check = true)
+    }
+
     private companion object {
         const val FRAME = 16L
         const val CUE = 700L

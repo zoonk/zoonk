@@ -156,6 +156,7 @@ class MatchStepScreenshots {
         taps: List<String>,
         settle: Boolean = true,
         check: Boolean = false,
+        unsettled: Long = FRAME * 4,
     ) {
         val lesson = playable(listOf(step)).copy(targetLanguage = "pt")
         val api = FakeLessonPlayerApi(LessonLoad.Ready(lesson))
@@ -207,7 +208,7 @@ class MatchStepScreenshots {
             }
         }
         // A wrong try's cue outlasts its shake, which is all idling waits for.
-        if (settle) rule.mainClock.advanceTimeBy(CUE) else rule.mainClock.advanceTimeBy(FRAME * 4)
+        if (settle) rule.mainClock.advanceTimeBy(CUE) else rule.mainClock.advanceTimeBy(unsettled)
         if (settle) rule.waitForIdle()
         writeRender(File(folder, "$name.png").apply { parentFile?.mkdirs() }, rule.onRoot().captureRender().asAndroidBitmap())
     }
@@ -261,6 +262,8 @@ class MatchStepScreenshots {
         show("columns-midway$suffix", columns, listOf("rent", "aluguel", "landlord", "caução", "proprietário"))
         val all = rent.flatMap { (left, right) -> listOf(left, right) }
         show("columns-solved$suffix", columns, all)
+        // Mid-slide: the last pair just made, the cards on their way to their rows.
+        show("columns-sliding$suffix", columns, all, settle = false, unsettled = FRAME)
         // The first card stays picked after its miss, so its partner is one tap away.
         show("columns-solved-miss$suffix", columns, listOf("landlord", "caução", "proprietário", "rent", "aluguel") + all.drop(4))
     }
@@ -280,6 +283,27 @@ class MatchStepScreenshots {
         start(dark = false)
         show("activity-midway-font200", activity, listOf(left("a"), right("a")))
         show("columns-midway-font200", columns, listOf("rent", "aluguel"))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi-qwerty")
+    fun phoneWithAKeyboard() {
+        start(dark = false)
+        show("columns-untouched-keys", columns, emptyList())
+        show("columns-midway-keys", columns, listOf("rent", "aluguel"))
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tablet() {
+        start(dark = false)
+        show("activity-midway-tablet", activity, listOf(left("a"), right("a"), left("b"), right("b")))
+        show(
+            "activity-solved-tablet",
+            activity,
+            listOf(left("a"), right("b"), right("a"), left("b"), right("b"), left("c"), right("c"), left("d"), right("d")),
+            check = true,
+        )
     }
 
     private companion object {
