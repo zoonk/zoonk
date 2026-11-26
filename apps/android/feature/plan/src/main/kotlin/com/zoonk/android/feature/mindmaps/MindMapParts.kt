@@ -284,8 +284,9 @@ internal fun KeyFocus() {
 internal fun MapBookmark(
     saved: Boolean,
     onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    BookmarkToggle(saved, stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save), onToggle)
+    BookmarkToggle(saved, stringResource(if (saved) R.string.mindmaps_saved_state else R.string.mindmaps_save), onToggle, modifier)
 }
 
 /** A map's own words for saving it, apart from a lesson's. */

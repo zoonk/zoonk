@@ -38,6 +38,7 @@ import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.saves.SaveMenu
 import com.zoonk.android.feature.saves.SaveSwipe
 import com.zoonk.android.feature.saves.UnavailableSaveRow
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
@@ -50,6 +51,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -538,7 +540,7 @@ private fun SavedRow(
                 onLongClick = { menu = true },
                 leading = { MapMark(chapter?.image?.thumbnailUrl?.takeUnless { lesson }, MindMapShown.Ready) },
                 supporting = { Text(entry.kindLabel()) },
-                trailing = { MapBookmark(saved, toggle) },
+                trailing = { MapBookmark(saved, toggle, Modifier.iconButtonEdge(ButtonEdge.End)) },
             )
             SaveMenu(menu, saved, words, onDismiss = { menu = false }, onToggle = toggle)
         }

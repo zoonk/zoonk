@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,8 @@ import com.zoonk.android.feature.saves.SaveSwipe
 import com.zoonk.android.feature.saves.SaveWords
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.api.models.SavedLesson
 import kotlinx.coroutines.flow.StateFlow
 import java.util.UUID
@@ -38,7 +41,7 @@ fun LessonBookmark(
     BookmarkToggle(saved, stringResource(if (saved) R.string.savedlessons_saved else R.string.savedlessons_save), onToggle)
 }
 
-/** A lesson row's bookmark at its end, named with the lesson's [title] so TalkBack tells the rows apart. */
+/** A lesson row's bookmark, its glyph on the row's end edge, named with the lesson's [title] so TalkBack tells the rows apart. */
 @Composable
 fun LessonRowBookmark(
     title: String,
@@ -49,6 +52,7 @@ fun LessonRowBookmark(
         saved,
         stringResource(if (saved) R.string.savedlessons_saved_named else R.string.savedlessons_save_named, title),
         onToggle,
+        Modifier.iconButtonEdge(ButtonEdge.End),
     )
 }
 
