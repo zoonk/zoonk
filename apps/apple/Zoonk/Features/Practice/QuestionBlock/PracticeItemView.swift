@@ -426,10 +426,7 @@ struct MatchPairsItemView: View {
       return
     }
 
-    let (leftText, rightText) = (
-      LessonRichText.spoken(text(of: .left(attempt.left))),
-      LessonRichText.spoken(text(of: .right(attempt.right)))
-    )
+    let (leftText, rightText) = spoken(attempt)
 
     guard isRight else {
       let misses = self.misses
@@ -456,9 +453,25 @@ struct MatchPairsItemView: View {
   }
 
   private func tapHeld(_ card: MatchCardRef, pairs: [Int?]) {
-    if let next = picking.tapHeld(card, pairs: pairs) {
-      update(next)
+    guard let move = picking.tapHeld(card, pairs: pairs) else {
+      return
     }
+
+    update(move.pairs)
+    let (leftText, rightText) = spoken(move.attempt)
+
+    announcePolitely(
+      move.isUndone
+        ? MatchAnnouncement.unmatched(leftText, rightText)
+        : MatchAnnouncement.matched(
+          leftText, rightText, matched: move.pairs.count { $0 != nil }, total: left.count))
+  }
+
+  private func spoken(_ attempt: MatchTry) -> (String, String) {
+    (
+      LessonRichText.spoken(text(of: .left(attempt.left))),
+      LessonRichText.spoken(text(of: .right(attempt.right)))
+    )
   }
 
   private func update(_ next: [Int?]) {

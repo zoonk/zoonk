@@ -9296,6 +9296,70 @@
         }
       }
     },
+    "Unmatched %@ and %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuordnung von %1$@ und %2$@ aufgehoben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unmatched %1$@ and %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desemparejaste %1$@ y %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as dissocié %1$@ et %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai tolto l’abbinamento tra %1$@ e %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@と%2$@のペアを解除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@와(과) %2$@의 짝을 풀었어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozłączono %1$@ i %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfez o par entre %1$@ e %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ ile %2$@ eşleşmesi kaldırıldı."
+          }
+        }
+      }
+    },
     "Use as evidence: %@" : {
       "comment" : "VoiceOver: puts a quote in an argument's evidence part",
       "localizations" : {
