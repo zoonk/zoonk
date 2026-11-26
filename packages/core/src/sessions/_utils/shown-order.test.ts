@@ -36,6 +36,21 @@ describe(getShownOrder, () => {
     expect(shownOrders(5).has(stored)).toBe(false);
   });
 
+  it("shows two entries in either order, since hiding one would give the answer away", () => {
+    expect(shownOrders(2)).toStrictEqual(new Set(["0,1", "1,0"]));
+  });
+
+  it("shows each order but the stored one about as often", () => {
+    const counts = Map.groupBy(
+      Array.from({ length: 23 * 200 }, (_, index) =>
+        getShownOrder({ count: 4, seed: itemId(index) }).join(","),
+      ),
+      (order) => order,
+    );
+
+    expect(Math.max(...[...counts.values()].map((orders) => orders.length))).toBeLessThan(300);
+  });
+
   it("shows an item the same way each time it's read", () => {
     const seed = "3f2b8c1e-0000-4000-8000-000000000001";
     expect(getShownOrder({ count: 6, seed })).toStrictEqual(getShownOrder({ count: 6, seed }));
