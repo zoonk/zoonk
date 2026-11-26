@@ -12,6 +12,7 @@ import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
+import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
@@ -63,7 +64,7 @@ const DATE_CLASS = "text-muted-foreground text-right text-xs";
 
 function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseView }) {
   const t = useExtracted();
-  const { plan } = usePlanScreen();
+  const { goal, plan } = usePlanScreen();
   const phaseName = usePhaseName();
   const lessonsLeft = phase.lessonsTotal - phase.lessonsDone;
 
@@ -76,7 +77,9 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
         {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
         {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       </span>
-      {phase.state === "leftOut" && <ReasonText reason={phase.notPlannedReason} />}
+      {phase.state === "leftOut" && (
+        <ReasonText isModule={namesModules(goal.kind)} reason={phase.notPlannedReason} />
+      )}
       {phase.state === "unfinished" && lessonsLeft > 0 && (
         <span className="text-muted-foreground text-xs">
           {t("{count, plural, one {# lesson not studied} other {# lessons not studied}}", {

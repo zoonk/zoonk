@@ -26,9 +26,10 @@ import {
   LearnShellContent,
   LearnShellMain,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
+import { namesModules } from "@repo/packages/learn/src/syllabus/names-modules.ts";
 import { SubjectScreen } from "@repo/packages/learn/src/syllabus/subject-screen.tsx";
 import { toSyllabusSection } from "@repo/packages/learn/src/syllabus/syllabus-section-view.ts";
-import { AskTutor } from "@repo/packages/player/src/questions/ask-tutor.tsx";
+import { AskTutorEntry, AskTutorScope } from "@repo/packages/player/src/questions/ask-tutor.tsx";
 import { useEffect, useMemo, type ReactNode } from "react";
 import { ADAPTERS, CAREER_GOAL_ID, LEARN_GOAL_ID, S, TabShell, ZU, type ViewProps } from "./common";
 
@@ -285,6 +286,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     return {
       areas: [module.name],
       chapters: [],
+      covers: "covers" in module ? [...module.covers] : [],
       displayWeight: null,
       group: null,
       imageUrl: null,
@@ -542,13 +544,15 @@ function CareerModulePage({ lang }: { lang: "en" | "pt" }) {
 
   return (
     <PushedShell>
-      <SubjectScreen
-        actions={{ restore: async () => true, setWrittenCadence: async () => true }}
-        ask={<AskTutor size="bar" target={target} tutor={tutor} />}
-        hrefs={{ adjust: "/plan", back: "/plan", chapter: (id) => `/content/chapters/${id}` }}
-        subject={subject}
-        syllabus={syllabus}
-      />
+      <AskTutorScope isModule={namesModules(syllabus.goal.kind)} target={target} tutor={tutor}>
+        <SubjectScreen
+          actions={{ restore: async () => true, setWrittenCadence: async () => true }}
+          ask={<AskTutorEntry size="bar" />}
+          hrefs={{ adjust: "/plan", back: "/plan", chapter: (id) => `/content/chapters/${id}` }}
+          subject={subject}
+          syllabus={syllabus}
+        />
+      </AskTutorScope>
     </PushedShell>
   );
 }
