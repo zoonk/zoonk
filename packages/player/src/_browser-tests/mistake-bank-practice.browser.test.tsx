@@ -216,6 +216,17 @@ describe("exact standalone bank mistake practice", () => {
     );
   });
 
+  it("shows a locked pair right for a moment, then settles it quietly out of play", async () => {
+    openPractice(null, { answer: vi.fn<Actions["answer"]>() }, question("matchPairs"));
+    await page.getByRole("button", { exact: true, name: "Electron" }).click();
+    await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
+    const locked = page.getByRole("button", { name: "Electron, matched with Negative charge" });
+
+    await expect.element(locked).toHaveAttribute("data-state", "right");
+    await expect.element(locked).toHaveAttribute("data-state", "done");
+    await expect.element(locked).toBeDisabled();
+  });
+
   it("keeps the first card picked after a wrong pair, sends the miss and names it in the result", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
@@ -251,7 +262,7 @@ describe("exact standalone bank mistake practice", () => {
 
     await expect
       .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
-      .toHaveAttribute("data-state", "right");
+      .toHaveAttribute("data-state", "missed");
 
     await expect
       .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))

@@ -286,7 +286,7 @@ describe("reasoning activities", () => {
     }
   });
 
-  it("match pairs: after a wrong pair the first card stays picked, and the result names the miss under a board drawn all right", async () => {
+  it("match pairs: after a wrong pair the first card stays picked, and the result names the miss under a board that marks its pair", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "success");
     await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
@@ -305,6 +305,10 @@ describe("reasoning activities", () => {
 
     await expect
       .element(page.getByRole("button", { name: "embarazada, matched with pregnant" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "éxito, matched with success" }))
       .toHaveAttribute("data-state", "right");
 
     await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeEnabled();

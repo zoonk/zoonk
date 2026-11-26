@@ -60,7 +60,9 @@ export function MatchColumnsStep({
 
   const board = useMatchBoard({
     disabled: answered !== null,
-    finished: answered ? placesOf({ left, pairs: answered.userPairs, right }) : undefined,
+    finished: answered
+      ? { pairs: placesOf({ left, pairs: answered.userPairs, right }) }
+      : undefined,
     isPair: (attempt) =>
       checkSingleMatchPair(content, {
         left: text("left", attempt.left),

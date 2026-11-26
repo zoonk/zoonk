@@ -56,7 +56,7 @@ export function MatchPairsActivity({
       const why = whyOf(attempt);
       return why && spoken.inline(why);
     },
-    finished: boardFromAnswer(columns, answer)?.pairs,
+    finished: boardFromAnswer(columns, answer),
     isPair: (attempt) => left[attempt.left]?.id === right[attempt.right]?.id,
     keys: interactionState !== "paused",
     leftCount: left.length,
