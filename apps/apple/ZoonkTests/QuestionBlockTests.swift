@@ -439,4 +439,22 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertNil(picking.tap(.left(1), goesTogether: { _ in true }))
     XCTAssertNil(picking.selected)
   }
+
+  @MainActor
+  func testTheVerdictNamesEachCardsFirstWrongTryForTheFirstFewCards() {
+    let cards = (left: ["a", "b", "c", "d", "e"], right: ["1", "2", "3", "4", "5"])
+    let misses = MatchMisses(
+      [
+        MatchTry(left: 1, right: 0), MatchTry(left: 1, right: 2), MatchTry(left: 4, right: 9),
+        MatchTry(left: 0, right: 3), MatchTry(left: 2, right: 4), MatchTry(left: 3, right: 1),
+      ]
+    ) { card in
+      let side = card.side == .left ? cards.left : cards.right
+      return side.indices.contains(card.index)
+        ? RichInline(text: AttributedString(side[card.index])) : nil
+    }
+
+    XCTAssertEqual(misses.said, "You first matched:\nb → 1\na → 4\nc → 5")
+    XCTAssertNil(MatchMisses([]) { _ in nil }.said)
+  }
 }

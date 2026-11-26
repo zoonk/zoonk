@@ -347,7 +347,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
   var streak = 0
   var correctAnswerText: RichInline?
   /// A match checked pair by pair names the pairs the learner mixed up first.
-  var confusions: [RichInline] = []
+  var misses: MatchMisses?
   var explanation: String?
   var workedSteps: [String] = []
   var citation: PracticeCitation?
@@ -370,12 +370,10 @@ struct PracticeFeedbackPanel<Notes: View>: View {
         }
       }
 
+      misses
+
       if let correctAnswerText {
         Text(PracticeAnswerText.rightAnswerLine(correctAnswerText), legibility: legibilityWeight)
-      }
-
-      ForEach(Array(confusions.enumerated()), id: \.offset) { _, line in
-        Text(line, legibility: legibilityWeight)
       }
 
       if let explanation {
@@ -404,12 +402,12 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 extension PracticeFeedbackPanel where Notes == EmptyView {
   init(
     verdict: PracticeVerdict, streak: Int = 0, correctAnswerText: RichInline? = nil,
-    confusions: [RichInline] = [], explanation: String? = nil, workedSteps: [String] = [],
+    misses: MatchMisses? = nil, explanation: String? = nil, workedSteps: [String] = [],
     citation: PracticeCitation? = nil
   ) {
     self.init(
       verdict: verdict, streak: streak, correctAnswerText: correctAnswerText,
-      confusions: confusions, explanation: explanation, workedSteps: workedSteps,
+      misses: misses, explanation: explanation, workedSteps: workedSteps,
       citation: citation, notes: { EmptyView() })
   }
 }
@@ -450,32 +448,16 @@ enum PracticeAnswerText {
       })
   }
 
-  /// The first wrong partner of each left entry the learner mixed up on a match checked pair by
-  /// pair, the earliest few, so the reason that follows has something to explain.
-  static func confusions(for answer: PracticeAnswer, question: PracticeQuestion) -> [RichInline] {
-    guard question.checksEachPair, case .matches(_, let misses?) = answer else { return [] }
+  /// The pairs the learner first mixed up on a match checked pair by pair, so the reason that
+  /// follows has something to explain.
+  @MainActor
+  static func misses(for answer: PracticeAnswer, question: PracticeQuestion) -> MatchMisses? {
+    guard question.checksEachPair, case .matches(_, let misses?) = answer else { return nil }
 
-    var tried = Set<Int>()
-
-    return
-      misses
-      .filter {
-        tried.insert($0.left).inserted && question.left.indices.contains($0.left)
-          && question.right.indices.contains($0.right)
-      }
-      .prefix(3)
-      .map { miss in
-        let left = LessonRichText.typeset(question.left[miss.left])
-        let right = LessonRichText.typeset(question.right[miss.right])
-
-        return RichInline(
-          text: AttributedString(
-            localized: "You first matched \(left.text) with \(right.text).", table: "Practice",
-            comment: "Under a match's verdict: a pair the learner tried that didn't go together."),
-          spoken: String(
-            localized: "You first matched \(left.said) with \(right.said).", table: "Practice",
-            comment: "Under a match's verdict: a pair the learner tried that didn't go together."))
-      }
+    return MatchMisses(misses) { card in
+      let cards = card.side == .left ? question.left : question.right
+      return cards.indices.contains(card.index) ? LessonRichText.typeset(cards[card.index]) : nil
+    }
   }
 
   static func correctLine(

@@ -141,9 +141,9 @@ struct MistakePracticeScreen: View {
             isCorrect: graded.grade.isCorrect,
             notSure: graded.answer.isDontKnow && graded.sender != .timer
           ),
-          confusions: step.question.map {
-            PracticeAnswerText.confusions(for: graded.answer, question: $0)
-          } ?? [],
+          misses: step.question.flatMap {
+            PracticeAnswerText.misses(for: graded.answer, question: $0)
+          },
           explanation: graded.grade.explanation,
           workedSteps: graded.grade.isCorrect ? [] : graded.grade.workedSteps
         ) {
@@ -169,12 +169,11 @@ struct MistakePracticeScreen: View {
     let lead: [String?] = [
       graded.sender == .timer ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
     ]
-    let confusions: [String?] =
-      state.step?.question.map {
-        PracticeAnswerText.confusions(for: graded.answer, question: $0).map { $0.said }
-      } ?? []
+    let misses = state.step?.question.flatMap {
+      PracticeAnswerText.misses(for: graded.answer, question: $0)?.said
+    }
 
-    return (lead + confusions + [graded.grade.explanation]).compactMap(\.self).joinedSentences()
+    return (lead + [misses, graded.grade.explanation]).compactMap(\.self).joinedSentences()
   }
 
   private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)? {

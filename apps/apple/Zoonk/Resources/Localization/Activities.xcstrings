@@ -444,71 +444,6 @@
         }
       }
     },
-    "%@ goes with %@, not %@." : {
-      "comment" : "After the check: a pair the learner first matched wrong",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ gehört zu %2$@, nicht zu %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ goes with %2$@, not %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ va con %2$@, no con %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ va avec %2$@, pas avec %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ si abbina a %2$@, non a %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@とペアになるのは%2$@で、%3$@ではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@의 짝은 %2$@이고, %3$@은(는) 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ i %2$@ tworzą parę. %3$@ tu nie pasuje."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ forma par com %2$@, não com %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$@ ile eşleşir, %3$@ ile değil."
-          }
-        }
-      }
-    },
     "%@ is in %@." : {
       "comment" : "VoiceOver, after the last card is sorted or a card is moved",
       "localizations" : {
@@ -5525,65 +5460,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gözden kaçan ilişki"
-          }
-        }
-      }
-    },
-    "Missed on the first try" : {
-      "comment" : "Above the pairs a learner missed at first",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beim ersten Versuch verpasst"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin acertar al primer intento"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Manquées au premier essai"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non abbinate al primo tentativo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1回目に間違えたペア"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 시도에 놓친 짝"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niedopasowane za pierwszym razem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não encontrados na primeira tentativa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İlk denemede eşleşmeyenler"
           }
         }
       }

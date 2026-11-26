@@ -389,6 +389,7 @@ private struct LessonCheckAdded: View {
           willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
           hyperdriveStreak: state.hyperdriveStreak(for: step.id)
         )
+        .environment(store.work(for: step.id, round: state.rounds[step.id] ?? 0))
 
         if state.struggleOffer != nil {
           LessonAskBuddyOffer(reason: .misses, store: store)

@@ -11,6 +11,32 @@ extension ActivityRenderer {
   }
 }
 
+extension MatchPairs {
+  /// Main's `MatchPairsMisses`: each left card's first wrong try, from the answer's first tries.
+  @MainActor
+  static func misses(_ content: ActivityStepContent, answer: LessonAnswer?) -> MatchMisses? {
+    guard let fields = try? content.fields(as: MatchPairsFields.self),
+      case .activity(let answer)? = answer
+    else { return nil }
+
+    let columns = columns(fields)
+    let firstTries = progress(from: answer).firstTries
+    let misses = columns.left.enumerated().compactMap { index, card in
+      firstTries[card.id].flatMap { tried in
+        tried == card.id
+          ? nil
+          : columns.right.firstIndex { $0.id == tried }.map { MatchTry(left: index, right: $0) }
+      }
+    }
+
+    return MatchMisses(misses) { card in
+      let cards = card.side == .left ? columns.left : columns.right
+      return cards.indices.contains(card.index)
+        ? LessonRichText.typeset(cards[card.index].text) : nil
+    }
+  }
+}
+
 private struct MatchPairsCanvas: View {
   /// Why the last try didn't go together, until the next tap.
   private struct MissNote: Equatable, Sendable {
@@ -62,10 +88,6 @@ private struct MatchPairsCanvas: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(Color.destructive.opacity(0.1), in: .rect(cornerRadius: Radius.option))
-      }
-
-      if isChecked {
-        results(columns)
       }
     }
   }
@@ -157,37 +179,5 @@ private struct MatchPairsCanvas: View {
         MatchAnnouncement.missed(leftText, rightText),
         explanation.map { LessonRichText.spoken($0) },
       ].compactMap(\.self).joinedSentences())
-  }
-
-  @ViewBuilder
-  private func results(_ columns: (left: [MatchCard], right: [MatchCard])) -> some View {
-    let expected = Dictionary(pairIds.map { ($0, $0) }, uniquingKeysWith: { first, _ in first })
-    let missed = columns.left.filter { progress.firstTries[$0.id] != expected[$0.id] }
-    let textOf = { (id: String?) in columns.right.first { $0.id == id }?.text }
-
-    if !missed.isEmpty {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "Missed on the first try", tableName: "Activities",
-          comment: "Above the pairs a learner missed at first"
-        )
-        .typeStyle(.body.weight(.semibold))
-        ActivityReasonList(
-          reasons: missed.map { card in
-            let partner = textOf(expected[card.id]) ?? card.text
-            let text =
-              textOf(progress.firstTries[card.id]).map { picked in
-                String(
-                  localized: "\(card.text) goes with \(partner), not \(picked).",
-                  table: "Activities",
-                  comment: "After the check: a pair the learner first matched wrong")
-              } ?? "\(card.text) → \(partner)"
-            return ActivityReasonList.Reason(
-              id: card.id, text: text,
-              why: card.why)
-          })
-      }
-    }
-
   }
 }
