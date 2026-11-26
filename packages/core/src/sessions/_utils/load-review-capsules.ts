@@ -244,6 +244,8 @@ export async function loadReviewCapsules({
   listeningSkillIds = new Set(),
   netScoring,
   planLessons,
+  repeatOnlyMissed = false,
+  reserved = new Set(),
   skillIds,
   userId,
   weakest = false,
@@ -261,6 +263,8 @@ export async function loadReviewCapsules({
   netScoring: boolean;
   /** Prefer completed lessons when naming a capsule. */
   planLessons: readonly PlanLesson[];
+  repeatOnlyMissed?: boolean;
+  reserved?: ReadonlySet<string>;
   skillIds: readonly string[];
   userId: string;
   /** If nothing is due, select weakest studied skills instead. */
@@ -294,23 +298,38 @@ export async function loadReviewCapsules({
       : [],
   ]);
 
-  const lastAnswers = await loadLastAnswers({ itemIds: items.map((item) => item.id), userId });
+  const audio = sets.filter((set) => set.kind === "audio");
+  const candidateIds = items.map((item) => item.id);
 
-  const candidates: CapsuleItemCandidate[] = items.map((item) => ({
-    content: item.content,
-    format: item.format,
-    id: item.id,
-    inField: field !== null && item.field === field,
-    lastAnsweredAt: lastAnswers.get(item.id) ?? null,
-    skillId: item.skillId,
-  }));
+  const [lastAnswers, answeredRight] = await Promise.all([
+    loadLastAnswers({ itemIds: candidateIds, userId }),
+    repeatOnlyMissed
+      ? loadRightAnswers({
+          itemIds: [...candidateIds, ...audio.flatMap((set) => set.items.map((item) => item.id))],
+          userId,
+        })
+      : new Set<string>(),
+  ]);
+
+  const isEligible = (id: string) => !reserved.has(id) && !answeredRight.has(id);
+
+  const candidates: CapsuleItemCandidate[] = items
+    .filter((item) => isEligible(item.id))
+    .map((item) => ({
+      content: item.content,
+      format: item.format,
+      id: item.id,
+      inField: field !== null && item.field === field,
+      lastAnsweredAt: lastAnswers.get(item.id) ?? null,
+      skillId: item.skillId,
+    }));
 
   const groups = groupIntoCapsules(sources);
 
   const recordings = pickCapsuleRecordings({
     groups,
     listeningSkillIds,
-    recordings: sets.filter((set) => set.kind === "audio"),
+    recordings: audio.filter((set) => set.items.every((item) => isEligible(item.id))),
   });
 
   return groups

@@ -1,13 +1,13 @@
 import "server-only";
-import { type BlockCapsule } from "../block-payload";
 import {
   type PlannedCheckpoint,
   type SessionBuildInput,
   buildSessionBlocks,
 } from "../session-builder";
-import { loadDayCapsules } from "./day-capsules";
+import { loadUnreservedCapsules } from "./day-capsules";
 import { type loadDayPlan } from "./day-plan";
 import { loadPracticeItems } from "./load-practice";
+import { loadReviewCapsules } from "./load-review-capsules";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
 
 export type DayPracticeQuery = Omit<Parameters<typeof loadPracticeItems>[0], "excludeItemIds">;
@@ -20,30 +20,28 @@ export type DayWork = Pick<
 export async function loadDayWork({
   checkpointItems,
   context,
-  dueCapsules,
   isReviewDay,
   plan,
   practiceQuery,
+  review,
   signals,
 }: {
   checkpointItems: ReadonlySet<string>;
   context: SessionDayContext;
-  dueCapsules: readonly BlockCapsule[];
   isReviewDay: boolean;
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   practiceQuery: DayPracticeQuery;
+  review: Parameters<typeof loadReviewCapsules>[0];
   signals: Parameters<typeof loadSessionPlacement>[0]["signals"];
 }): Promise<DayWork> {
-  const reserved = new Set(checkpointItems);
+  const capsules = isReviewDay
+    ? await loadReviewCapsules({ ...review, reserved: checkpointItems })
+    : await loadUnreservedCapsules({
+        capsules: await loadReviewCapsules(review),
+        reserved: checkpointItems,
+      });
 
-  const capsules = await loadDayCapsules({
-    capsules: dueCapsules,
-    isReviewDay,
-    reserved,
-    userId: context.userId,
-  });
-
-  const used = new Set([...reserved, ...capsules.flatMap((capsule) => capsule.itemIds)]);
+  const used = new Set([...checkpointItems, ...capsules.flatMap((capsule) => capsule.itemIds)]);
   const placement = await loadSessionPlacement({ context, isReviewDay, plan, signals, used });
 
   const practice = await loadPracticeItems({

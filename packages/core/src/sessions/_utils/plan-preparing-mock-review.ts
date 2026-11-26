@@ -6,7 +6,7 @@ import { type BlockCapsule, getBlockItemIds, readBlockPayload } from "../block-p
 import { EXTRA_BLOCK_MINUTES } from "../extra-time";
 import { buildReviewBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
-import { loadDayCapsules } from "./day-capsules";
+import { loadUnreservedCapsules } from "./day-capsules";
 import { loadDayPlan } from "./day-plan";
 import { buildExtraPractice } from "./extra-blocks";
 import { toReviewInput } from "./load-build-inputs";
@@ -54,7 +54,7 @@ export async function planPreparingMockReview({
   const reserved = new Set(blocks.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
 
   const available = (capsules: readonly BlockCapsule[]) =>
-    loadDayCapsules({ capsules, isReviewDay: false, reserved, userId: goal.userId });
+    loadUnreservedCapsules({ capsules, reserved });
 
   const dueCapsules = await available(due ?? (await loadReviewCapsules(query)));
   const weakestReview = dueCapsules.length === 0;
