@@ -340,7 +340,14 @@ test.describe("Study sessions API", () => {
     });
 
     expect(notebook.practice).toMatchObject([
-      { mistakeId: mistake.id, questions: [{ itemId: item.id, key: question.key }] },
+      { mistakeId: mistake.id, questions: [{ itemId: item.id }] },
+    ]);
+
+    const replay = notebook.practice[0]?.questions[0];
+
+    expect(replay?.key?.map((index) => replay.right?.[index])).toStrictEqual([
+      "Planet",
+      "Satellite",
     ]);
 
     await api.dispose();
