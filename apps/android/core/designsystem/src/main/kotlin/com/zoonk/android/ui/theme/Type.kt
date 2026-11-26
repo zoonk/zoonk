@@ -141,6 +141,8 @@ data class ZoonkTypography(
     val verdict: TextStyle,
     /** The word on a checked answer option (`ANSWER_TAG_CLASS`). */
     val tag: TextStyle,
+    /** A key's digits (`Kbd`) and a match pair's number: mono, with Geist Mono's plain zero (`ss09`) so a 0 never reads as Ø. */
+    val key: TextStyle,
     /** The buddy's words on its page, its hello included, and the learner's bubble; a panel's answers stay `bodyMedium`, as main's. */
     val message: TextStyle,
     /** Code, at a table's size (`CodeListing`, `CodeSnippet`). */
@@ -165,6 +167,7 @@ internal val ZoonkTypeRoles =
             compact = bodyMedium.role(13f, 400, 18f),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
+            key = labelSmall.role(11.5f, 500, 16f, 0f, family = GeistMono).copy(fontFeatureSettings = "ss09"),
             message = bodyLarge.role(15f, 400, 23.25f),
             // Code wraps as an editor does: each row as full as it gets, never balanced.
             code = bodyMedium.role(14f, 400, 24f, 0f, family = GeistMono).copy(lineBreak = LineBreak.Simple),

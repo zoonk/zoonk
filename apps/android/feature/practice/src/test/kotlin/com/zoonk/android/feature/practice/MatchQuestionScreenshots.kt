@@ -21,6 +21,7 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
@@ -132,13 +133,15 @@ class MatchQuestionScreenshots {
             )
         val viewModel = practiceViewModel(cache, blockDetail(listOf(match(learning), next))) { feedback(correct) }
         val read = viewModel.started()
+        // A learner with a buddy, whose face asks at the bar's end.
+        val app = AppContainer.preview(rule.activity).apply { learnerSummary.summary.replace(learnerSummary()) }
 
         rule.mainClock.autoAdvance = true
         scene =
             name to {
                 val navigator = rememberAppNavigator()
                 val run by viewModel.state.collectAsStateWithLifecycle()
-                run?.let { Runner(read, it, viewModel, AppContainer.preview(rule.activity), navigator, onClose = {}) }
+                run?.let { Runner(read, it, viewModel, app, navigator, onClose = {}) }
             }
         rule.waitForIdle()
         if (!settle) rule.mainClock.autoAdvance = false
