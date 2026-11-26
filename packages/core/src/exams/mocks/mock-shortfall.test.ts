@@ -219,6 +219,45 @@ describe(getMockQuestionsShortfall, () => {
     expect(writes.flatMap((write) => write.skillIds)).toStrictEqual(["Verbal", "Quantitative"]);
   });
 
+  it("writes a whole weekly paper when the notice doesn't count each subject's questions", () => {
+    const citation = { passage: "", sourceId: "notice" };
+    const subjects = ["History", "Geography"];
+
+    const structure: ExamStructure = {
+      formats: [],
+      mock: null,
+      rules: [],
+      subjects: subjects.map((name) => ({
+        citation,
+        name,
+        questions: null,
+        topics: [],
+        weight: null,
+      })),
+    };
+
+    const writes = getMockQuestionsShortfall({
+      candidates: [],
+      mix: getMockFormatMix(structure),
+      option: { questions: 10 },
+      plan: {
+        day: null,
+        formatsWanted: { choice: 10 },
+        fullLength: false,
+        minutes: 15,
+        reused: 0,
+        sections: [],
+        written: [],
+      },
+      skills: subjects.map((area) => ({ area, id: area })),
+      structure,
+    });
+
+    expect(
+      writes.map(({ questionsPerSkill, skillIds }) => [skillIds, questionsPerSkill]),
+    ).toStrictEqual([[["History", "Geography"], 5]]);
+  });
+
   it("requests enough fresh items for both routes", () => {
     const candidates: MockCandidate[] = Array.from({ length: 4 }, (_, index) => ({
       answered: false,

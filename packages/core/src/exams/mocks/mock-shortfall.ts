@@ -173,7 +173,8 @@ export function getMockQuestionsShortfall({
     });
 
     const writes = subjects.flatMap(([name, group], index) => {
-      const notice = shares.find((share) => share.name === name)?.questions;
+      const share = shares.find((own) => own.name === name);
+      const notice = share?.even ? null : share?.questions;
 
       const quota =
         notice && mix.length === 1 && option.kind !== "area" && !structure?.mock?.adaptive
