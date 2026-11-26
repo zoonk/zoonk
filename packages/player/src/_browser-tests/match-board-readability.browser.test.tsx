@@ -79,11 +79,8 @@ function unreadableWords(cards: readonly Element[]) {
 
     return wordsOf(card)
       .filter(({ lines, node, word }) => {
-        const textRoom =
-          ([...card.children].find((child) => child.contains(node))?.getBoundingClientRect()
-            .width ?? 0) +
-          board -
-          box.width;
+        const column = node.parentElement?.closest("[data-slot='match-entry-text']");
+        const textRoom = (column?.getBoundingClientRect().width ?? 0) + board - box.width;
 
         const isSplit = new Set(lines.map((line) => Math.round(line.top))).size > 1;
         const fitsWhole = wholeWidth(node, word) < textRoom - 0.5;

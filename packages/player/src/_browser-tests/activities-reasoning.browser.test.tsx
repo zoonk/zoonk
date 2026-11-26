@@ -235,15 +235,12 @@ describe("reasoning activities", () => {
     await expect.element(reason).not.toMatchTextContent("$");
   });
 
-  it("match pairs: matching each pair on the first try is right", async () => {
+  it("match pairs: matching each pair on the first try is right, checked by the last pair", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
     await matchCards("librería", "bookstore");
 
-    await expect.element(page.getByText("3 of 3 pairs matched", { exact: true })).toBeVisible();
-
-    await checkActivity();
     await expectVerdict("Correct!");
   });
 
@@ -266,7 +263,9 @@ describe("reasoning activities", () => {
     await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
     await press("5");
 
-    await expect.element(page.getByText("2 of 3 pairs matched", { exact: true })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "bookstore, matched with librería" }))
+      .toBeDisabled();
   });
 
   it("match pairs: puts each card beside its match once every pair is matched", async () => {
@@ -287,14 +286,18 @@ describe("reasoning activities", () => {
     }
   });
 
-  it("match pairs: mixing up two pairs counts as a wrong first try", async () => {
+  it("match pairs: after a wrong pair the first card stays picked, and the miss counts as a wrong first try", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "success");
     await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
-    await matchCards("embarazada", "pregnant");
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "embarazada" }))
+      .toHaveAttribute("aria-pressed", "true");
+
+    await page.getByRole("button", { exact: true, name: "pregnant" }).click();
     await matchCards("éxito", "success");
     await matchCards("librería", "bookstore");
-    await checkActivity();
     await expectVerdict("Not quite");
 
     await expect
@@ -332,7 +335,7 @@ describe("reasoning activities", () => {
       )
       .toBeInTheDocument();
 
-    await matchCards("1 over 2", "0.5");
+    await page.getByRole("button", { exact: true, name: "0.5" }).click();
 
     await expect
       .element(page.getByText("Matched 1 over 2 with 0.5. 1 of 2 pairs matched.", { exact: true }))

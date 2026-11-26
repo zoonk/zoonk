@@ -217,9 +217,12 @@ describe("coming back to a lesson", () => {
 
     await page.getByRole("button", { name: "Previous screen" }).click();
 
-    for (const item of ["Electron", "Proton", "Neutron", "No charge"]) {
+    for (const name of [
+      "Electron, matched with Negative charge",
+      "No charge, matched with Neutron",
+    ]) {
       // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
-      await expect.element(page.getByRole("button", { exact: true, name: item })).toBeDisabled();
+      await expect.element(page.getByRole("button", { exact: true, name })).toBeDisabled();
     }
 
     await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();

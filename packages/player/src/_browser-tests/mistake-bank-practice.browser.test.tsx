@@ -223,11 +223,10 @@ describe("exact standalone bank mistake practice", () => {
     const electron = page.getByRole("button", { exact: true, name: "Electron" });
     const negative = page.getByRole("button", { exact: true, name: "Negative charge" });
     await expect.element(electron).toHaveAttribute("aria-keyshortcuts", "1");
-    await expect.element(negative).not.toHaveAttribute("aria-keyshortcuts");
+    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "3");
 
     await userEvent.keyboard("1");
     await expect.element(electron).toHaveAttribute("aria-pressed", "true");
-    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "3");
 
     await userEvent.keyboard("3");
     const matched = page.getByRole("button", { name: "Negative charge, matched with Electron" });

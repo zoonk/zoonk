@@ -110,16 +110,15 @@ function PracticeStepScreen({
   const answered = getAnsweredStep({ answer: selected, step });
   const inBank = canSelfCorrect(answered);
 
-  const resultView = graded &&
-    (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
-      <LessonStepResultView
-        hyperdriveStreak={null}
-        next={{ savePending: false, savedMistake: false, willReturn: false }}
-        notes={notes}
-        result={graded}
-        step={answered}
-      />
-    );
+  const resultView = graded && (!showsOwnResult(step) || !selected) && (
+    <LessonStepResultView
+      hyperdriveStreak={null}
+      next={{ savePending: false, savedMistake: false, willReturn: false }}
+      notes={notes}
+      result={graded}
+      step={answered}
+    />
+  );
 
   return (
     <>

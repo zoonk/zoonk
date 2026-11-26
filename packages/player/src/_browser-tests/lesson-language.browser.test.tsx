@@ -272,7 +272,8 @@ describe("language lesson screens", () => {
       await page.getByRole("button", { exact: true, name: label }).click();
     }
 
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await next.click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
   });
 
@@ -302,8 +303,8 @@ describe("language lesson screens", () => {
     for (const { left, right } of pairs) {
       // oxlint-disable-next-line no-await-in-loop -- Each pair is checked once the board settles.
       await expectSideBySide(
-        page.getByRole("button", { exact: true, name: left }),
-        page.getByRole("button", { exact: true, name: right }),
+        page.getByRole("button", { exact: true, name: `${left}, matched with ${right}` }),
+        page.getByRole("button", { exact: true, name: `${right}, matched with ${left}` }),
       );
     }
   });
