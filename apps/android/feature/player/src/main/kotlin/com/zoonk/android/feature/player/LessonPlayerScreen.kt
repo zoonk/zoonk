@@ -128,11 +128,11 @@ import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberBoardMisses
 import com.zoonk.android.feature.player.steps.rememberScreenWork
+import com.zoonk.android.feature.questions.NotSureButton
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalOptionKeys
@@ -141,7 +141,6 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.LocalTaskBarKeys
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MoreButton
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
@@ -943,11 +942,7 @@ private fun ActionBar(
 
     val dontKnowAbove = dontKnow && !isWideLayout()
     val giveUp: @Composable (Modifier) -> Unit = { modifier ->
-        OutlinedButton(
-            onClick = { step?.let { actions.dontKnow(it.id) } },
-            modifier = modifier,
-            leadingIcon = { ButtonIcon(R.drawable.ic_help) },
-        ) { Text(stringResource(R.string.player_dont_know_yet)) }
+        NotSureButton(onClick = { step?.let { actions.dontKnow(it.id) } }, modifier = modifier, dontKnowYet = true)
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {

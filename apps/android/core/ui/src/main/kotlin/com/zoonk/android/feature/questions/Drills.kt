@@ -4,6 +4,7 @@ import android.os.SystemClock
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,12 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LessonSummaryIdeas
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.glyphInk
-import com.zoonk.android.ui.components.taskOption
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -245,8 +245,9 @@ internal fun announcedSeconds(
     }
 
 /**
- * A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's, and on a phone on
- * the bar's line above it, so the main action keeps its row.
+ * A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere (main's `QuestionDontKnow`): words alone, with a
+ * phone's tighter sides, so it's the quieter of a question's two answers and the main action beside it keeps the larger
+ * part of the bar's row. [label] replaces the words where the question has its own.
  */
 @Composable
 fun NotSureButton(
@@ -256,16 +257,17 @@ fun NotSureButton(
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
     dontKnowYet: Boolean = false,
+    label: String = stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure),
 ) {
     OutlinedButton(
         busy = busy,
         onClick = onClick,
-        modifier = modifier.taskOption(),
+        modifier = modifier,
         enabled = enabled,
         focusableWhenDisabled = focusableWhenDisabled,
-        leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+        contentPadding = PaddingValues(horizontal = if (isWideLayout()) 16.dp else 12.dp, vertical = 8.dp),
     ) {
-        Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
+        Text(label)
     }
 }
 

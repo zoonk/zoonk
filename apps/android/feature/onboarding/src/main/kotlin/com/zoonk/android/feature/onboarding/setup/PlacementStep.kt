@@ -51,6 +51,7 @@ import com.zoonk.android.feature.placementtest.LengthChoice
 import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.NotSureButton
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -350,15 +351,13 @@ internal fun ColumnScope.PlacementQuestion(
             )
         }
         TaskActions { main ->
-            OutlinedButton(
+            NotSureButton(
                 onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
                 busy = pending && sender == PlacementSender.DontKnow,
                 enabled = !pending,
                 focusableWhenDisabled = pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_help) },
-            ) {
-                Text(dontKnowLabel)
-            }
+                label = dontKnowLabel,
+            )
             Button(
                 onClick = { confirm() },
                 busy = pending && sender == PlacementSender.Confirm,
