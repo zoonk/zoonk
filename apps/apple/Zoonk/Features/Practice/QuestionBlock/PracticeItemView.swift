@@ -342,9 +342,19 @@ struct MatchPairsItemView: View {
     if case .pairing(_, let misses) = draft { misses } else { [] }
   }
 
+  /// The left cards that had a wrong try on a board finished pair by pair.
+  private var missedLefts: Set<Int> {
+    guard case .matches(_, let misses?) = result?.answer ?? draft else { return [] }
+    return Set(misses.map(\.left))
+  }
+
+  private func isSolved(_ pairs: [Int?]) -> Bool {
+    question.key != nil && (result != nil || pairs.allSatisfy { $0 != nil })
+  }
+
   /// A learning match lays out as its answer once every pair is found, or once it's checked.
   private func solvedRows(_ pairs: [Int?]) -> [MatchTry]? {
-    guard let key = question.key, result != nil || pairs.allSatisfy({ $0 != nil }) else {
+    guard let key = question.key, isSolved(pairs) else {
       return nil
     }
 
@@ -362,10 +372,10 @@ struct MatchPairsItemView: View {
       return picking.selected == card ? .selected : .idle
     }
 
-    // Checked, every pair the learner found keeps its check; "I don't know yet" shows the rest of
+    // Solved, every pair the learner found keeps its check; "I don't know yet" shows the rest of
     // the answer without one.
     if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
-      return .right
+      return isSolved(pairs) ? .solved(missed: missedLefts.contains(owner)) : picking.kept(card)
     }
 
     if result != nil {
@@ -404,7 +414,7 @@ struct MatchPairsItemView: View {
   }
 
   private func tapChecking(_ card: MatchCardRef, pairs: [Int?]) {
-    guard let key = question.key, state(of: card, pairs: pairs) != .right,
+    guard let key = question.key, !state(of: card, pairs: pairs).isKept,
       let (attempt, isRight) = picking.tap(
         card, goesTogether: { key.indices.contains($0.left) && key[$0.left] == $0.right })
     else {

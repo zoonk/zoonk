@@ -1136,13 +1136,14 @@
   private struct MatchCards: View {
     private let cards: [(MatchEntryState, String)] = [
       (.idle, "At rest"), (.selected, "Picked first"), (.wrong(0), "Didn't go together"),
-      (.right, "A pair kept"), (.paired(2), "In pair 2, unchecked"),
+      (.missed, "Solved, missed first"), (.right, "A pair kept"), (.done, "Kept earlier"),
+      (.paired(2), "In pair 2, unchecked"),
       (.idle, "A longer card whose words wrap onto a second line"),
     ]
 
     var body: some View {
-      MatchBoard(leftCount: 3, rightCount: 3) { card in
-        let (state, text) = cards[card.side == .left ? card.index : 3 + card.index]
+      MatchBoard(leftCount: 4, rightCount: 4) { card in
+        let (state, text) = cards[card.side == .left ? card.index : 4 + card.index]
         MatchEntry(state: state, action: {}) {
           Text(verbatim: text)
         }

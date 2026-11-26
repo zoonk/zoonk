@@ -430,6 +430,26 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertNil(picking.miss)
   }
 
+  func testAKeptPairCuesForItsMomentThenSettlesAndALaterPairKeepsItsOwn() {
+    var picking = MatchPicking()
+    let goesTogether = { (attempt: MatchTry) in attempt.left == attempt.right }
+
+    _ = picking.tap(.left(0), goesTogether: goesTogether)
+    _ = picking.tap(.right(0), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0)), .right)
+    XCTAssertEqual(picking.kept(.right(0)), .right)
+
+    let firstLock = picking.lockCount
+    _ = picking.tap(.left(1), goesTogether: goesTogether)
+    _ = picking.tap(.right(1), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0)), .done)
+    picking.endLock(firstLock)
+    XCTAssertEqual(picking.kept(.right(1)), .right)
+
+    picking.endLock(picking.lockCount)
+    XCTAssertEqual(picking.kept(.right(1)), .done)
+  }
+
   func testTheSameSideMovesTheSelectionAndTheSameCardClearsIt() {
     var picking = MatchPicking()
 

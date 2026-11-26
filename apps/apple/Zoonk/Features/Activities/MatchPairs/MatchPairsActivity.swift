@@ -38,9 +38,9 @@ extension MatchPairs {
 }
 
 private struct MatchPairsCanvas: View {
-  /// Why the last try didn't go together, until the next tap.
+  /// Why the last try didn't go together, in the card's own words, until the next tap.
   private struct MissNote: Equatable, Sendable {
-    let explanation: String?
+    let explanation: String
   }
 
   let fields: MatchPairsFields
@@ -99,13 +99,8 @@ private struct MatchPairsCanvas: View {
   }
 
   private func missLine(_ miss: MissNote, spoken: Bool) -> Text {
-    let explanation =
-      miss.explanation.map {
-        LessonRichText.typeset($0).quoted(spoken: spoken, legibility: legibilityWeight)
-      }
-      ?? Text(
-        "Those two don't go together.", tableName: "Activities",
-        comment: "Two picked cards don't match and there's no note on why")
+    let explanation = LessonRichText.typeset(miss.explanation)
+      .quoted(spoken: spoken, legibility: legibilityWeight)
 
     return Text(
       "\(Text("Not quite:", tableName: "Activities", comment: "Before why two picked cards don't match").typeWeight(.semibold, legibility: legibilityWeight)) \(explanation)",
@@ -133,7 +128,10 @@ private struct MatchPairsCanvas: View {
 
   private func state(of ref: MatchCardRef, card: MatchCard) -> MatchEntryState {
     if progress.matched.contains(card.id) {
-      return .right
+      // A pair's two cards share its id.
+      let firstTry = progress.firstTries[card.id]
+      return isComplete
+        ? .solved(missed: firstTry.map { $0 != card.id } ?? false) : picking.kept(ref)
     }
 
     if picking.isMissed(ref) {
@@ -177,7 +175,7 @@ private struct MatchPairsCanvas: View {
     }
 
     let explanation = right.why ?? left.why
-    missNote = MissNote(explanation: explanation)
+    missNote = explanation.map(MissNote.init)
 
     announcePolitely(
       [

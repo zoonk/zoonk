@@ -947,7 +947,9 @@ private struct MatchColumnsView: View {
 
   private func state(of ref: MatchCardRef, board: MatchColumnsBoard) -> MatchEntryState {
     if isMatched(ref, board: board) {
-      return .right
+      // Solved, each row is the left card's pair.
+      return isSolved
+        ? .solved(missed: misses.contains { $0.left == ref.index }) : picking.kept(ref)
     }
 
     if picking.isMissed(ref) {

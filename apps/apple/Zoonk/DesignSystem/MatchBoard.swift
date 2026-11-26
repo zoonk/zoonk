@@ -33,12 +33,16 @@ struct MatchPicking: Equatable, Sendable {
   private(set) var miss: MatchTry?
   /// Names each miss, so a second one on the same cards cues again.
   private(set) var missCount = 0
+  /// The last pair kept, for its moment on screen before it settles.
+  private(set) var lock: MatchTry?
+  private(set) var lockCount = 0
 
   /// The try a tap makes, if any, with `goesTogether`'s verdict on it.
   mutating func tap(_ card: MatchCardRef, goesTogether: (MatchTry) -> Bool) -> (
     attempt: MatchTry, isRight: Bool
   )? {
     miss = nil
+    lock = nil
 
     guard let first = selected, first != card else {
       selected = selected == card ? nil : card
@@ -58,6 +62,8 @@ struct MatchPicking: Equatable, Sendable {
 
     if isRight {
       selected = nil
+      lock = attempt
+      lockCount += 1
     } else {
       miss = attempt
       missCount += 1
@@ -69,6 +75,7 @@ struct MatchPicking: Equatable, Sendable {
   mutating func clear() {
     selected = nil
     miss = nil
+    lock = nil
   }
 
   /// The miss's cue ends; a later one keeps its own.
@@ -78,9 +85,27 @@ struct MatchPicking: Equatable, Sendable {
     }
   }
 
+  /// The kept pair's cue ends; a later one keeps its own.
+  mutating func endLock(_ count: Int) {
+    if count == lockCount {
+      lock = nil
+    }
+  }
+
   func isMissed(_ card: MatchCardRef) -> Bool {
-    guard let miss else { return false }
-    return card.side == .left ? miss.left == card.index : miss.right == card.index
+    miss?.holds(card) == true
+  }
+
+  /// A kept pair's card: its right cue for a moment after the tap that kept it, then quiet, so the
+  /// eye goes to the cards still to match.
+  func kept(_ card: MatchCardRef) -> MatchEntryState {
+    lock?.holds(card) == true ? .right : .done
+  }
+}
+
+extension MatchTry {
+  func holds(_ card: MatchCardRef) -> Bool {
+    card.side == .left ? left == card.index : right == card.index
   }
 }
 
@@ -90,17 +115,33 @@ enum MatchEntryState: Equatable {
   case selected
   /// In a pair a test's board holds until Check, with the pair's number.
   case paired(Int)
-  /// A pair checked and kept.
+  /// A pair checked and kept: for a moment as it's kept, and on a solved board.
   case right
+  /// A pair kept earlier on a board still being played, receded so it doesn't pull the eye.
+  case done
   /// Part of a try that didn't go together, for a moment; the miss's count, so a second miss on the
   /// card cues again.
   case wrong(Int)
+  /// On a solved board, a pair whose left card had a wrong try first: still right, so still
+  /// checked, on the miss's tone, so the board agrees with the verdict.
+  case missed
+
+  /// Settled: nothing to press.
+  var isKept: Bool {
+    switch self {
+    case .right, .done, .missed: true
+    case .idle, .selected, .paired, .wrong: false
+    }
+  }
+
+  /// A solved board's pair, by whether its left card had a wrong try on the way.
+  static func solved(missed: Bool) -> Self { missed ? .missed : .right }
 }
 
 /// Main's `MatchEntry`: one side of a pair, on every board that asks to match these with those. Its
-/// words start at the card's edge, and its mark (a check, an ✕ or the pair's number) sits level with
-/// the first line at the end, in room every state keeps, so pairing moves no text. `partner` is what
-/// VoiceOver says it's matched with.
+/// words start at the card's edge, and its mark (a pick's dot, a check, an ✕ or the pair's number)
+/// sits level with the first line at the end, in room every state keeps, so pairing moves no text.
+/// `partner` is what VoiceOver says it's matched with.
 struct MatchEntry<Label: View>: View {
   let state: MatchEntryState
   /// Its place on the board, the left column first, for the number key that picks it.
@@ -123,9 +164,9 @@ struct MatchEntry<Label: View>: View {
       }
     }
     .buttonStyle(MatchEntryStyle(state: state))
-    .disabled(action == nil || state == .right)
+    .disabled(action == nil || state.isKept)
     .modifier(MatchShake(missNumber: missNumber))
-    .modifier(PickKey(index: action == nil || state == .right ? nil : keyIndex))
+    .modifier(PickKey(index: action == nil || state.isKept ? nil : keyIndex))
     .accessibilityValue(value)
     .accessibilityAddTraits(state == .selected ? .isSelected : [])
   }
@@ -176,24 +217,30 @@ private struct MatchEntryStyle: ButtonStyle {
   let state: MatchEntryState
 
   @Environment(\.horizontalSizeClass) private var sizeClass
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   func makeBody(configuration: Configuration) -> some View {
     let shape = RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
+    let text = sizeClass == .regular ? Self.wideText : Self.text
 
     configuration.label
-      // Main's board text: 14 on a phone and 16 wider, on 24-point lines.
-      .typeStyle(sizeClass == .regular ? Self.wideText : Self.text)
-      .foregroundStyle(Color(.foreground))
+      .typeStyle(text)
+      .foregroundStyle(state == .done ? Color(.mutedForeground) : Color(.foreground))
       .padding(.horizontal, 12)
-      .padding(.vertical, 13)
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+      // Main's lines are 24 tall with their words in the middle, so half the space between lines
+      // sits over the first and under the last too, one line included.
+      .padding(.vertical, 13 + text.rowGap(dynamicTypeSize) / 2)
+      // Top, so the two cards of a row start level, however many lines each has.
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
       .answerSurface(tone, cornerRadius: Radius.xl, isPressed: configuration.isPressed)
+      .background(state == .done ? Color.muted : .clear, in: shape)
       // As on the page, on a lesson's tinted canvas too.
       .background(Color(.background), in: shape)
       .scaleEffect(configuration.isPressed ? 0.99 : 1)
-      .animation(.easeOut(duration: 0.15), value: tone)
+      .animation(.easeOut(duration: 0.15), value: state)
   }
 
+  // Main's board text: 14 on a phone and 16 wider, on 24-point lines.
   private static let text = TypeStyle(
     size: 14, relativeTo: .subheadline, weight: .medium, lineHeight: 24.0 / 14)
   private static let wideText = TypeStyle(
@@ -201,16 +248,17 @@ private struct MatchEntryStyle: ButtonStyle {
 
   private var tone: AnswerTone {
     switch state {
-    case .idle, .paired: .idle
+    case .idle, .paired, .done: .idle
     case .selected: .picked
     case .right: .right
-    case .wrong: .wrong
+    case .wrong, .missed: .wrong
     }
   }
 }
 
-/// The mark at a card's end: a check on a kept pair, an ✕ on a wrong try, a held pair's number in a
-/// circle, which tells it apart from a key. Its column is there in every state.
+/// The mark at a card's end: a dot on the learner's pick, a check on a kept pair (quiet once it
+/// settles), an ✕ on a wrong try, a held pair's number in a circle, which tells it apart from a
+/// key. Its column is there in every state. The marks are main's thin 16-point ones.
 private struct MatchMark: View {
   let state: MatchEntryState
 
@@ -219,11 +267,22 @@ private struct MatchMark: View {
   var body: some View {
     Group {
       switch state {
-      case .right:
-        StatusMark(status: .done)
+      case .selected:
+        Image(systemName: "circle.fill")
+          .imageScale(.small)
+          .foregroundStyle(Color(.foreground))
+      case .right, .missed:
+        Image(systemName: "checkmark")
+          .fontWeight(.regular)
+          .foregroundStyle(.success)
+      case .done:
+        Image(systemName: "checkmark")
+          .imageScale(.small)
+          .fontWeight(.regular)
+          .foregroundStyle(.mutedForeground)
       case .wrong:
         Image(systemName: "xmark")
-          .fontWeight(.semibold)
+          .fontWeight(.regular)
           .foregroundStyle(.destructive)
       case .paired(let number):
         Text(number, format: .number)
@@ -231,7 +290,7 @@ private struct MatchMark: View {
           .foregroundStyle(Color(.background))
           .frame(minWidth: width, minHeight: width)
           .background(Color(.foreground), in: Circle())
-      case .idle, .selected:
+      case .idle:
         Color.clear.frame(height: 1)
       }
     }
@@ -328,17 +387,28 @@ struct MatchBoard<Card: View>: View {
 
 extension View {
   /// What every match board does around its taps: a light tap in the hand as a pair locks, a
-  /// warning one on a miss, and the miss's cue ending after its moment.
+  /// warning one on a miss, and each cue ending after its moment.
   func matchBoardFeedback(_ picking: Binding<MatchPicking>, locked: Int) -> some View {
     sensoryFeedback(.impact(weight: .light), trigger: locked) { old, new in new > old }
       .sensoryFeedback(.warning, trigger: picking.wrappedValue.missCount)
       .task(id: picking.wrappedValue.missCount) {
         let count = picking.wrappedValue.missCount
-        guard picking.wrappedValue.miss != nil else { return }
-        try? await Task.sleep(for: .milliseconds(600))
-        guard !Task.isCancelled else { return }
+        guard picking.wrappedValue.miss != nil, await MatchCue.lasts() else { return }
         picking.wrappedValue.endMiss(count)
       }
+      .task(id: picking.wrappedValue.lockCount) {
+        let count = picking.wrappedValue.lockCount
+        guard picking.wrappedValue.lock != nil, await MatchCue.lasts() else { return }
+        picking.wrappedValue.endLock(count)
+      }
+  }
+}
+
+private enum MatchCue {
+  /// Waits out a cue's moment on screen; false once the cue's task is cancelled.
+  static func lasts() async -> Bool {
+    try? await Task.sleep(for: .milliseconds(600))
+    return !Task.isCancelled
   }
 }
 
