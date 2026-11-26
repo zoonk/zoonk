@@ -1022,7 +1022,7 @@
           .init(weight: 4, fill: .color(LearnKind.conversation.color)),
         ])
         DaySegments(segments: [
-          .done, .done, .current, .ahead, .kind(LearnKind.review.color), .ahead,
+          .done, .done, .current, .ahead, .ahead, .ahead,
         ])
         TaskSegments(
           segments: [.right, .wrong, .read, .current, .ahead, .ahead],

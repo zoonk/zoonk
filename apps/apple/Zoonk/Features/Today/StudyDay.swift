@@ -211,14 +211,12 @@ enum DaySegment {
   case block(StudyBlock, State)
   case held(minutes: Double, ComingLessons, title: String)
 
-  /// How the part is drawn: done, next up, or waiting in its kind's color.
+  /// How the part is drawn: done, next up, or still to do on the track whatever its kind.
   var mark: DaySegments.Segment {
     switch self {
     case .block(_, .done): .done
     case .block(_, .current): .current
-    case .block(let block, .ahead):
-      block.learnKind == .lesson ? .ahead : .kind(block.learnKind.color)
-    case .held: .ahead
+    case .block(_, .ahead), .held: .ahead
     }
   }
 }
