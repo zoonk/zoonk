@@ -74,16 +74,18 @@ struct MatchPicking: Equatable, Sendable {
 
   /// A test's board, which holds its pairs until Check: a tap on a paired card undoes the pair and
   /// picks that card, so the next tap gives it a new partner, and two cards on either side pair.
-  /// The pairs after the tap, or nil when it changed none.
-  mutating func tapHeld(_ card: MatchCardRef, pairs: [Int?]) -> [Int?]? {
+  /// The pairs after the tap and the pair it made or undid, or nil when it changed none.
+  mutating func tapHeld(_ card: MatchCardRef, pairs: [Int?]) -> (
+    pairs: [Int?], attempt: MatchTry, isUndone: Bool
+  )? {
     let owner = card.side == .left ? card.index : pairs.firstIndex(of: card.index)
     var next = pairs
 
-    if let owner, pairs.indices.contains(owner), pairs[owner] != nil {
+    if let owner, pairs.indices.contains(owner), let partner = pairs[owner] {
       next[owner] = nil
       clear()
       selected = card
-      return next
+      return (next, MatchTry(left: owner, right: partner), true)
     }
 
     guard let (attempt, _) = tap(card, goesTogether: { _ in true }) else {
@@ -91,7 +93,7 @@ struct MatchPicking: Equatable, Sendable {
     }
 
     next[attempt.left] = attempt.right
-    return next
+    return (next, attempt, false)
   }
 
   /// Lets go of the picked card (Esc).
@@ -452,7 +454,7 @@ private enum MatchCue {
   }
 }
 
-/// What VoiceOver says after each try on a board that checks its pairs. A card that ends a sentence
+/// What VoiceOver says after each try on a board, or each pair a held board makes or undoes. A card that ends a sentence
 /// itself takes the place of the line's own stop right after it, as main's lines do, so
 /// "…di fronte." never reads "…di fronte..".
 enum MatchAnnouncement {
@@ -462,6 +464,12 @@ enum MatchAnnouncement {
         localized:
           "Matched \(slot.left) with \(slot.right). Pairs matched: \(matched) of \(total).",
         table: "Activities", locale: .appLanguage),
+      left: left, right: right)
+  }
+
+  static func unmatched(_ left: String, _ right: String) -> String {
+    fill(
+      String(localized: "Unmatched \(slot.left) and \(slot.right).", table: "Activities"),
       left: left, right: right)
   }
 

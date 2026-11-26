@@ -467,13 +467,17 @@ final class MatchPickingTests: XCTestCase {
 
     XCTAssertNil(picking.tapHeld(.left(0), pairs: [nil, nil]))
     let paired = picking.tapHeld(.right(1), pairs: [nil, nil])
-    XCTAssertEqual(paired, [1, nil])
+    XCTAssertEqual(paired?.pairs, [1, nil])
+    XCTAssertEqual(paired?.attempt, MatchTry(left: 0, right: 1))
+    XCTAssertEqual(paired?.isUndone, false)
 
     let undone = picking.tapHeld(.right(1), pairs: [1, nil])
-    XCTAssertEqual(undone, [nil, nil])
+    XCTAssertEqual(undone?.pairs, [nil, nil])
+    XCTAssertEqual(undone?.attempt, MatchTry(left: 0, right: 1))
+    XCTAssertEqual(undone?.isUndone, true)
     XCTAssertEqual(picking.selected, .right(1))
 
-    XCTAssertEqual(picking.tapHeld(.left(1), pairs: [nil, nil]), [nil, 1])
+    XCTAssertEqual(picking.tapHeld(.left(1), pairs: [nil, nil])?.pairs, [nil, 1])
     XCTAssertNil(picking.selected)
   }
 
@@ -495,7 +499,7 @@ final class MatchPickingTests: XCTestCase {
     XCTAssertEqual(
       MatchAnnouncement.missed("Va bene!", "lunch"), "Va bene! and lunch don't go together.")
     XCTAssertEqual(
-      MatchAnnouncement.fill("Unmatched \u{E000} and \u{E001}.", left: "lunch", right: "Va bene?"),
+      MatchAnnouncement.unmatched("lunch", "Va bene?"),
       "Unmatched lunch and Va bene?")
   }
 
