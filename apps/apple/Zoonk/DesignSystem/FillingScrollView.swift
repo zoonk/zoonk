@@ -10,12 +10,53 @@ struct FillingScrollView<Content: View>: View {
   @State private var visibleHeight: CGFloat?
 
   var body: some View {
-    ScrollView {
-      content
-        .frame(minHeight: fillsHeight ? visibleHeight : nil, alignment: .top)
+    ScrollViewReader { proxy in
+      ScrollView {
+        content
+          .frame(minHeight: fillsHeight ? visibleHeight : nil, alignment: .top)
+      }
+      .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
+        visibleHeight = height
+      }
+      .environment(\.scrollIntoView, ScrollIntoView(proxy: proxy))
     }
-    .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
-      visibleHeight = height
+  }
+}
+
+/// Brings a view of the scroll view around it into sight, as little as it can, gliding unless
+/// motion is reduced.
+struct ScrollIntoView {
+  fileprivate let proxy: ScrollViewProxy?
+
+  @MainActor
+  func callAsFunction(_ id: some Hashable, reduceMotion: Bool) {
+    withAnimation(reduceMotion ? nil : .default) {
+      proxy?.scrollTo(id)
     }
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var scrollIntoView = ScrollIntoView(proxy: nil)
+}
+
+extension View {
+  /// Scrolls into sight as it shows, such as a verdict that arrives below the fold or under the
+  /// bottom bar.
+  func scrollsIntoSightWhenShown() -> some View {
+    modifier(ScrollsIntoSightWhenShown())
+  }
+}
+
+private struct ScrollsIntoSightWhenShown: ViewModifier {
+  @Environment(\.scrollIntoView) private var scrollIntoView
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var id = UUID()
+
+  func body(content: Content) -> some View {
+    content
+      .id(id)
+      // After it's laid out, so the scroll view knows where it is.
+      .task { scrollIntoView(id, reduceMotion: reduceMotion) }
   }
 }
