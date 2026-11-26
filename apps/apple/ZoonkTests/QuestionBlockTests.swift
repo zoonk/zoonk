@@ -266,6 +266,16 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertEqual(
       String(decoding: try encoder.encode(PracticeAnswer.order([1, 0])), as: UTF8.self),
       #"{"order":[1,0]}"#)
+    XCTAssertEqual(
+      String(decoding: try encoder.encode(PracticeAnswer.matches([1, 0])), as: UTF8.self),
+      #"{"matches":[1,0]}"#, "a test's match sends no misses, so core grades it as before")
+    XCTAssertEqual(
+      String(
+        decoding: try encoder.encode(
+          PracticeAnswer.matches(
+            [1, 0], misses: [MatchTry(left: 0, right: 0), MatchTry(left: 1, right: 0)])),
+        as: UTF8.self),
+      #"{"matches":[1,0],"misses":[{"left":0,"right":0},{"left":1,"right":0}]}"#)
   }
 
   func testPartialPicksAreNeverAnAnswer() {
@@ -274,6 +284,10 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertNil(partial.complete)
     XCTAssertEqual(PracticeAnswer.matches([2, 0]).complete, .matches([2, 0]))
     XCTAssertThrowsError(try JSONEncoder().encode(partial), "a partial answer is never sent")
+
+    let pairing = PracticeAnswer.pairing([1, nil], misses: [MatchTry(left: 1, right: 1)])
+    XCTAssertNil(pairing.complete)
+    XCTAssertThrowsError(try JSONEncoder().encode(pairing), "a board short of a pair is never sent")
   }
 
   func testAnswersReachTheGeneratedInputs() throws {
@@ -395,3 +409,34 @@ private let completionJSON = #"""
    "netScore":null,"nextBlockId":null,"reached":{"energy":null,"level":null},"sessionBar":{"completed":1,"total":3},
    "reminderOffer":null,"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":1,"total":1}
   """#
+
+final class MatchPickingTests: XCTestCase {
+  func testAMissKeepsTheCardPickedFirstSoItsNextPartnerIsOneTapAway() {
+    var picking = MatchPicking()
+    let key = [1, 0]
+    let goesTogether = { (attempt: MatchTry) in key[attempt.left] == attempt.right }
+
+    XCTAssertNil(picking.tap(.right(0), goesTogether: goesTogether))
+    let miss = picking.tap(.left(0), goesTogether: goesTogether)
+    XCTAssertEqual(miss?.attempt, MatchTry(left: 0, right: 0))
+    XCTAssertEqual(miss?.isRight, false)
+    XCTAssertEqual(picking.selected, .right(0))
+    XCTAssertTrue(picking.isMissed(.left(0)))
+
+    let pair = picking.tap(.left(1), goesTogether: goesTogether)
+    XCTAssertEqual(pair?.attempt, MatchTry(left: 1, right: 0))
+    XCTAssertEqual(pair?.isRight, true)
+    XCTAssertNil(picking.selected)
+    XCTAssertNil(picking.miss)
+  }
+
+  func testTheSameSideMovesTheSelectionAndTheSameCardClearsIt() {
+    var picking = MatchPicking()
+
+    XCTAssertNil(picking.tap(.left(0), goesTogether: { _ in true }))
+    XCTAssertNil(picking.tap(.left(1), goesTogether: { _ in true }))
+    XCTAssertEqual(picking.selected, .left(1))
+    XCTAssertNil(picking.tap(.left(1), goesTogether: { _ in true }))
+    XCTAssertNil(picking.selected)
+  }
+}

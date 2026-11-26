@@ -428,7 +428,8 @@ struct WorkedStepsView: View {
   }
 }
 
-/// Choice and true-or-false questions mark the right option instead, so they need no line.
+/// Choice and true-or-false questions mark the right option instead, and a learning match lays its
+/// answer out on the board, so they need no line.
 enum PracticeAnswerText {
   static func rightAnswerLine(_ answer: RichInline) -> RichInline {
     RichInline(
@@ -447,7 +448,7 @@ enum PracticeAnswerText {
     labels: PracticeTrueFalseLabels
   ) -> RichInline? {
     guard !feedbackIsCorrect, question.format != .multipleChoice, question.format != .trueFalse,
-      let correctAnswer
+      !question.checksEachPair, let correctAnswer
     else { return nil }
 
     return text(for: correctAnswer, question: question, labels: labels)
@@ -474,7 +475,7 @@ enum PracticeAnswerText {
       return plain(text)
     case .trueFalse(let isTrue):
       return plain(String(localized: TrueFalseWords.label(isTrue: isTrue, labels: labels)))
-    case .matches(let matches):
+    case .matches(let matches, _):
       let pairs = question.left.enumerated().map { index, entry in
         let match =
           matches.indices.contains(index) && question.right.indices.contains(matches[index])
@@ -488,7 +489,7 @@ enum PracticeAnswerText {
       guard let unit = question.unit else { return plain(value) }
       return plain(
         unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)")
-    case .dontKnow, .partial, .typing:
+    case .dontKnow, .partial, .pairing, .typing:
       return nil
     }
   }

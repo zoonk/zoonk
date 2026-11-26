@@ -193,7 +193,14 @@ struct MistakePracticeScreen: View {
       },
       isLocked: !state.acceptsAnswer,
       askedIn: "mistake:\(step.entry.mistakeId)",
-      draft: $draft)
+      draft: $draft,
+      onSubmit: { answer in
+        // The board's last pair sent it, so focus goes on to Continue as after Check.
+        if question.checksEachPair {
+          pressedWithFocus = .answer
+        }
+        Task { await check(answer, by: .check) }
+      })
   }
 
   @ViewBuilder
@@ -244,18 +251,21 @@ struct MistakePracticeScreen: View {
         }
         .practiceFocus(.notSure)
 
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: checking?.pressesCheck == true,
-          isDisabled: !state.acceptsAnswer || answer == nil
-        ) {
-          if let answer {
-            press(.check)
-            Task { await check(answer, by: .check) }
+        // A learning match sends itself with its last pair.
+        if step.question?.checksEachPair != true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Check", table: "Practice", comment: "Sends the answer to be graded."),
+            isBusy: checking?.pressesCheck == true,
+            isDisabled: !state.acceptsAnswer || answer == nil
+          ) {
+            if let answer {
+              press(.check)
+              Task { await check(answer, by: .check) }
+            }
           }
+          .practiceFocus(.check)
         }
-        .practiceFocus(.check)
 
         ask(step, answered: false)
       }

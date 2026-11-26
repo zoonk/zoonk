@@ -67,6 +67,7 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "match", title: "Match cards") { MatchCards() }
           GallerySection(id: "code", title: "Code") { Code() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
@@ -1127,6 +1128,24 @@
         AnswerOption(
           marker: 5, isPicked: true, result: .guess, isLocked: true,
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
+      }
+      .padding(.vertical, 8)
+    }
+  }
+
+  private struct MatchCards: View {
+    private let cards: [(MatchEntryState, String)] = [
+      (.idle, "At rest"), (.selected, "Picked first"), (.wrong(0), "Didn't go together"),
+      (.right, "A pair kept"), (.paired(2), "In pair 2, unchecked"),
+      (.missed, "Found after a miss, checked"),
+    ]
+
+    var body: some View {
+      MatchBoard(leftCount: 3, rightCount: 3) { card in
+        let (state, text) = cards[card.side == .left ? card.index : 3 + card.index]
+        MatchEntry(state: state, action: {}) {
+          Text(verbatim: text)
+        }
       }
       .padding(.vertical, 8)
     }

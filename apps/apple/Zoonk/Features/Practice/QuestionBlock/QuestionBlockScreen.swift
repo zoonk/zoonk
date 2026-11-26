@@ -278,7 +278,13 @@ struct QuestionBlockView: View {
       recordingQuestions: run.detail.recordingQuestions(for: question),
       transcript: graded(phase)?.feedback.transcript,
       draft: $run.draft,
-      onSubmit: { answer in Task { await run.submit(answer) } })
+      onSubmit: { answer in
+        // The board's last pair sent it, so focus goes on to Continue as after Check.
+        if question.checksEachPair {
+          pressedWithFocus = .answer
+        }
+        Task { await run.submit(answer) }
+      })
   }
 
   private func announcement(_ phase: QuestionBlockPhase) -> String? {
@@ -410,7 +416,9 @@ struct QuestionBlockView: View {
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
-      } else if question?.placement == true || question?.format == .typed {
+      } else if question?.placement == true || question?.format == .typed
+        || question?.checksEachPair == true
+      {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
@@ -420,18 +428,21 @@ struct QuestionBlockView: View {
         .practiceFocus(.notSure)
       }
 
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking?.pressesCheck == true,
-        isDisabled: !accepts || answer == nil
-      ) {
-        if let answer {
-          press(.check)
-          Task { await run.submit(answer) }
+      // A learning match sends itself with its last pair.
+      if question?.checksEachPair != true {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Check", table: "Practice", comment: "Sends the answer to be graded."),
+          isBusy: phase.checking?.pressesCheck == true,
+          isDisabled: !accepts || answer == nil
+        ) {
+          if let answer {
+            press(.check)
+            Task { await run.submit(answer) }
+          }
         }
+        .practiceFocus(.check)
       }
-      .practiceFocus(.check)
 
       ask(answered: false)
     }
