@@ -148,6 +148,7 @@ export const placementQuestionSchema = z
     z.object({
       ...questionBaseShape,
       format: z.literal("matchPairs"),
+      key: z.null(),
       left: z.array(z.string()),
       options: z.null(),
       question: z.string(),

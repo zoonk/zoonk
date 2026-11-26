@@ -21,6 +21,7 @@ describe("placement tap questions", () => {
         reason: "The letters follow the alphabet",
       },
       expected: {
+        key: null,
         left: ["A", "B", "C", "D"],
         options: null,
         right: expect.arrayContaining(["1", "2", "3", "4"]),

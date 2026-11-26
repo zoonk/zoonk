@@ -1,1 +1,2 @@
 export const MAX_SESSION_TYPED_ANSWER_LENGTH = 500;
+export const MAX_MATCH_MISSES = 32;

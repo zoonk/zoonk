@@ -13,7 +13,6 @@ import {
   type CapsuleItemCandidate,
   type DueSkill,
   groupIntoCapsules,
-  pickCapsuleFormat,
   pickCapsuleItems,
 } from "../capsules";
 import { SESSION_ITEM_FORMATS } from "./session-items";
@@ -283,7 +282,7 @@ export async function loadReviewCapsules({
     loadCapsuleSources({ planLessons, skillIds: dueSkillIds }),
     prisma.item.findMany({
       orderBy: { id: "asc" },
-      select: { field: true, format: true, id: true, skillId: true },
+      select: { content: true, field: true, format: true, id: true, skillId: true },
       where: {
         format: { in: [...SESSION_ITEM_FORMATS] },
         skillId: { in: dueSkillIds.filter((skillId) => !listeningSkillIds.has(skillId)) },
@@ -298,6 +297,7 @@ export async function loadReviewCapsules({
   const lastAnswers = await loadLastAnswers({ itemIds: items.map((item) => item.id), userId });
 
   const candidates: CapsuleItemCandidate[] = items.map((item) => ({
+    content: item.content,
     format: item.format,
     id: item.id,
     inField: field !== null && item.field === field,
@@ -315,16 +315,16 @@ export async function loadReviewCapsules({
 
   return groups
     .map((group, index) => {
-      const own = candidates.filter((item) => group.skillIds.includes(item.skillId));
-      const format = pickCapsuleFormat({ formats: own.map((item) => item.format), netScoring });
+      const { format, itemIds } = pickCapsuleItems({
+        candidates,
+        netScoring,
+        skillIds: group.skillIds,
+      });
 
       return {
         ...group,
         format,
-        itemIds: [
-          ...(recordings[index]?.items.map((item) => item.id) ?? []),
-          ...pickCapsuleItems({ candidates: own, format, skillIds: group.skillIds }),
-        ],
+        itemIds: [...(recordings[index]?.items.map((item) => item.id) ?? []), ...itemIds],
       };
     })
     .filter((capsule) => capsule.itemIds.length > 0);

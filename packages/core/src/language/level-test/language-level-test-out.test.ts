@@ -24,6 +24,7 @@ const PUBLISHED_QUESTION_FIELDS = [
   "format",
   "image",
   "itemId",
+  "key",
   "left",
   "options",
   "question",
@@ -74,6 +75,7 @@ async function takeTest({
   seenSkills.add(next.skill);
 
   expect(Object.keys(next).toSorted()).toStrictEqual(PUBLISHED_QUESTION_FIELDS);
+  expect(next.key).toBeNull();
   expect(Boolean(next.set?.listening?.audio?.url)).toBe(next.skill === "listening");
 
   const answer = next.select === "all" ? { selectedIndexes: [0, 1] } : { selectedIndex: 0 };

@@ -22,7 +22,7 @@ const MIN_OPTIONS = 2;
 export const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 export const MAX_OPTIONS = OPTION_LETTERS.length;
 /** A match card's text is taken in at a glance in half a phone's width. */
-const MATCH_SIDE_TARGET = 24;
+export const MATCH_SIDE_TARGET = 24;
 /** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
 const MAX_DECIMAL_PLACES = 4;
 
