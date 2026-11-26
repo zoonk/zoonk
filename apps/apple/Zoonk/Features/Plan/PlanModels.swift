@@ -225,8 +225,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
     func subject(for subject: SyllabusSubject) -> Subject? {
       subjects?.first { $0.points.name == subject.writtenPart }
-        ?? subjects?.first { written in subject.areas.contains(written.points.name) }
-        ?? subjects?.first { $0.points.name == subject.group }
     }
   }
 

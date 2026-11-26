@@ -193,6 +193,29 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(practice.subject(for: subject)?.points.name, "Written test")
   }
 
+  func testOptionalStudyInAWrittenPartsAreaIsNotThatPart() throws {
+    let practice = try decode(
+      GoalPlan.WrittenPractice.self,
+      """
+      {
+        "cadence":"weekly","parts":["Essay"],"subjects":[{
+          "answers":[],"trend":[],"points":{"name":"Essay","max":100,"tasks":[]}
+        }]
+      }
+      """)
+    let optional = try decode(
+      SyllabusSubject.self,
+      """
+      {
+        "areas":["Essay"],"chapters":[],"covers":[],"extra":true,"key":"essay-2",
+        "lessonsDone":0,"lessonsKnown":0,"lessonsTotal":1,"name":"Essay","sharedWith":[],
+        "shortName":"Essay","source":"plan","topics":[]
+      }
+      """)
+
+    XCTAssertNil(practice.subject(for: optional))
+  }
+
   func testALevelsResultHasNoTotal() throws {
     let grade = try decode(
       WritingResult.self, WritingLinesTests.levels(ignoredFrom: nil, errors: "[]"))
