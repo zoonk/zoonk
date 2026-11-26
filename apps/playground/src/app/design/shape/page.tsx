@@ -91,7 +91,7 @@ export default function ShapePage() {
             <MeterPart className="ring-success bg-transparent ring-[1.5px] ring-inset" weight={5} />
             <MeterPart weight={5} />
             <MeterPart weight={3} />
-            <MeterPart className={kindFillClass("practice")} weight={6} />
+            <MeterPart weight={6} />
           </MeterParts>
           <MeterParts className="h-2">
             <MeterPart className="bg-foreground/40" weight={18} />
