@@ -13,7 +13,7 @@ import { DoneMark } from "./status-mark";
  * `matched` is a pair the learner made that nothing has checked yet. On a board that checks each
  * try, `right` is a pair that just locked and `done` the same pair once it settles out of the way;
  * `wrong` is a try that didn't go together, shown for a moment. In the solved rows a pair is `right`,
- * or `missed` when its left card had a wrong try first.
+ * or `missed` when its left card had a wrong try first: quiet, since the pair it shows is right.
  */
 export type MatchEntryState =
   | "done"
@@ -24,11 +24,14 @@ export type MatchEntryState =
   | "selected"
   | "wrong";
 
+/** Out of the way: the rest border on the page's ground, so it never looks like the pick's fill. */
+const QUIET_TONE = cn(ANSWER_TONE.idle, "text-muted-foreground");
+
 const ENTRY_TONE: Record<MatchEntryState, string> = {
-  done: cn(ANSWER_TONE.idle, "bg-muted text-muted-foreground"),
+  done: QUIET_TONE,
   idle: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
   matched: cn(ANSWER_TONE.idle, "enabled:hover:bg-muted/60"),
-  missed: ANSWER_TONE.wrong,
+  missed: QUIET_TONE,
   right: ANSWER_TONE.right,
   selected: cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
   wrong: cn(ANSWER_TONE.wrong, "motion-safe:animate-shake"),
@@ -53,6 +56,21 @@ function PickMark({ keyLabel }: { keyLabel: string | null }) {
   );
 }
 
+/** The number both cards of a pair show, the left card's place: round, so it's never read as a key. */
+function PairNumber({ muted, pair }: { muted: boolean; pair: number }) {
+  return (
+    <span
+      className={cn(
+        "text-background text-2xs flex size-5 items-center justify-center rounded-full font-mono font-medium tabular-nums",
+        muted ? "bg-muted-foreground" : "bg-foreground",
+      )}
+      data-slot="match-pair-number"
+    >
+      {pair + 1}
+    </span>
+  );
+}
+
 function EntryMark({
   index,
   keyed,
@@ -68,24 +86,16 @@ function EntryMark({
     return <DoneMark />;
   }
 
-  if (state === "done") {
-    return <DoneMark className="text-muted-foreground" />;
-  }
-
   if (state === "missed") {
-    return <DoneMark className="text-destructive" />;
+    return <DoneMark className="text-muted-foreground" />;
   }
 
   if (state === "wrong") {
     return <XIcon aria-hidden="true" className="text-destructive size-4" />;
   }
 
-  if (state === "matched" && pair !== undefined) {
-    return (
-      <span className="bg-foreground text-background text-2xs flex size-5 items-center justify-center rounded-full font-mono font-medium tabular-nums">
-        {pair + 1}
-      </span>
-    );
+  if ((state === "matched" || state === "done") && pair !== undefined) {
+    return <PairNumber muted={state === "done"} pair={pair} />;
   }
 
   const key = keyed ? pickKey(index) : null;
@@ -107,9 +117,9 @@ function EntryMark({
  * check, a ✕ or the pair's number) sits level with its first line at the end, in room every state
  * keeps, so pairing moves no text. `index` is its place on the board, the left column first and
  * then the right, so no two entries show the same number key; `pair` is the place of its pair's
- * left entry, the number both of them show while the pair is unchecked. An entry answers its key
- * only while it shows it. `label` is what a screen reader hears when that isn't the text drawn,
- * such as "pregnant, matched with grávida".
+ * left entry, the number both of them show while the pair is unchecked or once it settles. An entry
+ * answers its key only while it shows it. `label` is what a screen reader hears when that isn't the
+ * text drawn, such as "pregnant, matched with grávida".
  */
 export function MatchEntry({
   children,
