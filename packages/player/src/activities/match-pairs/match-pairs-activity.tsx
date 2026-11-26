@@ -17,15 +17,13 @@ import { boardFromAnswer, matchAnswer } from "./match-pairs-progress";
 
 type MatchPairsProps = ActivityRendererProps<"matchPairs">;
 
-function MissNote({ explanation }: { explanation: string | null }) {
-  const t = useExtracted();
-
+/** Why a wrong try was wrong, when its card says; the try's own cue already says it was wrong. */
+function MissNote({ explanation }: { explanation: string }) {
   return (
     <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
       <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
       <p>
-        <NotQuiteLead />{" "}
-        {explanation ? <LessonRichText text={explanation} /> : t("Those two don't go together.")}
+        <NotQuiteLead /> <LessonRichText text={explanation} />
       </p>
     </div>
   );
@@ -68,6 +66,8 @@ export function MatchPairsActivity({
     say: (side, index) => spoken.inline(cardsOf(side)[index]?.text ?? ""),
   });
 
+  const missedWhy = board.missed && whyOf(board.missed);
+
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <MatchBoard
@@ -82,7 +82,7 @@ export function MatchPairsActivity({
         solved={board.solved}
       />
 
-      {board.missed && <MissNote explanation={whyOf(board.missed)} />}
+      {missedWhy && <MissNote explanation={missedWhy} />}
 
       <p aria-live="polite" className="sr-only">
         {board.announcement}
