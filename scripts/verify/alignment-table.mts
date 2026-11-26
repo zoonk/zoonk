@@ -56,7 +56,8 @@ const LIST_PARTS = {
   label: "[data-slot=list-row-title], [data-slot=week-day-item]",
   lead: "[data-slot=week-day-date]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
-  note: "[data-slot=list-row-description]",
+  // A line under the label: a description, or a progress bar, which has no words.
+  note: "[data-slot=list-row-description], [data-slot=coverage-bar]",
   value: "[data-slot=list-row-trailing]",
 } satisfies WebPiece["parts"];
 
@@ -313,24 +314,6 @@ export const EXCEPTIONS: AlignmentException[] = [
     reason: "The expanded language phase's child rows count as a gap on iOS, on main too",
     relation: "gap",
     scenario: "plan-language-after-test-dark",
-  },
-  {
-    configuration: "phone touch",
-    issue: 3268,
-    piece: "list-group",
-    reason:
-      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
-    relation: "line",
-    scenario: "plan-module-taken-out-en",
-  },
-  {
-    configuration: "phone touch pt",
-    issue: 3268,
-    piece: "list-group",
-    reason:
-      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
-    relation: "line",
-    scenario: "plan-module-taken-out-pt",
   },
   {
     configuration: "laptop keys",
