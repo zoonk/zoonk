@@ -35,6 +35,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.FeedbackAnswer
+import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.RightAnswerLine
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.ui.components.ButtonIcon
@@ -110,7 +111,10 @@ private fun canExplain(
     result: StepResult,
 ): Boolean = step.kind == StepKind.TypedAnswer && result.checked && !result.isCorrect && !result.answerText.isNullOrBlank()
 
-/** What a checked answer got, under the question (main's `LessonStepResultView`), with a host's own [notes] in its card. */
+/**
+ * What a checked answer got, under the question (main's `LessonStepResultView`): with a match board's first misses
+ * ([LocalBoardMisses]), and a host's own [notes] in its card.
+ */
 @Composable
 fun LessonStepResultView(
     step: LessonStep,
@@ -131,6 +135,7 @@ fun LessonStepResultView(
             icon = if (verdict == Verdict.Guess) R.drawable.ic_auto_awesome else null,
             end = hyperdriveStreak?.let { stringResource(R.string.player_hyperdrive_streak, count(it)) },
         )
+        LocalBoardMisses.current?.value?.invoke()
 
         // A screen a staff fix changed after the learner started: why it doesn't count, and nothing else.
         if (verdict == Verdict.Unchecked && result.correctAnswer == null) {
@@ -330,4 +335,4 @@ fun showsOwnResult(step: LessonStep): Boolean = step.kind in OWN_RESULT_KINDS
 /** An activity draws its result notes inside its own feedback card, as every other step's card holds them. */
 fun notesInOwnCard(step: LessonStep): Boolean = step.kind == StepKind.Activity
 
-private val OWN_RESULT_KINDS = setOf(StepKind.Activity, StepKind.Challenge, StepKind.MatchColumns)
+private val OWN_RESULT_KINDS = setOf(StepKind.Activity, StepKind.Challenge)

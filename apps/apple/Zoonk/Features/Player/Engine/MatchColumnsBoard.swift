@@ -8,27 +8,35 @@ struct MatchColumnsBoard {
   let rightItems: [String]
   let matched: [LessonAnswer.Pair]
 
+  /// For each left tile, the place of the right tile it's matched with.
+  var places: [Int?] {
+    var places = [Int?](repeating: nil, count: pairs.count)
+    var usedRight = Set<Int>()
+
+    for pair in matched {
+      guard
+        let left = pairs.indices.first(where: { pairs[$0].left == pair.left && places[$0] == nil }),
+        let right = rightItems.indices.first(where: {
+          rightItems[$0] == pair.right && !usedRight.contains($0)
+        })
+      else { continue }
+
+      places[left] = right
+      usedRight.insert(right)
+    }
+
+    return places
+  }
+
   var matchedLeft: Set<Int> {
-    Self.taken(pairs.map(\.left), by: matched.map(\.left))
+    Set(places.indices.filter { places[$0] != nil })
   }
 
   var matchedRight: Set<Int> {
-    Self.taken(rightItems, by: matched.map(\.right))
+    Set(places.compactMap(\.self))
   }
 
   func isRight(_ pair: LessonAnswer.Pair) -> Bool {
     pairs.count { $0 == pair } > matched.count { $0 == pair }
-  }
-
-  private static func taken(_ labels: [String], by matched: [String]) -> Set<Int> {
-    var open = Dictionary(matched.map { ($0, 1) }, uniquingKeysWith: +)
-    var taken: Set<Int> = []
-
-    for (index, label) in labels.enumerated() where open[label, default: 0] > 0 {
-      open[label, default: 0] -= 1
-      taken.insert(index)
-    }
-
-    return taken
   }
 }

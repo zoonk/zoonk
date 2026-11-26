@@ -166,6 +166,10 @@ export async function loadPlannerInputs({
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
 
+  const unprovenWrittenSkillIds = (writtenSkillIds ?? []).filter(
+    (id) => claims.get(id) !== "confirmed" && claims.get(id) !== "toConfirm",
+  );
+
   const strongAreas =
     difficultyBias === "harder"
       ? await loadStrongAreas({ graph, lessons, userId })
@@ -187,6 +191,7 @@ export async function loadPlannerInputs({
     readiness,
     startLessonId,
     strongAreas: new Set([...strongAreas].toSorted()),
+    unprovenWrittenSkillIds,
     writtenSkillIds,
     ...examFacts,
     ...(writing && { writing }),

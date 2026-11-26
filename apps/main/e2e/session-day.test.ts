@@ -262,6 +262,7 @@ test.describe("Today's session", () => {
     await page.goto("/session");
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await page.getByRole("button", { name: "Keep learning" }).click();
+    await expect(page).toHaveURL(new RegExp(`/learn/${bonus.id}\\?session=`, "u"));
     await page.goto("/today");
     await page.getByRole("link", { name: "See summary" }).click();
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();

@@ -69,7 +69,7 @@ export type PlacementSkillItems = { quick: GeneratedItem[]; taps: GeneratedItem[
 const tapSchema = z.discriminatedUnion("format", [
   GENERATED_ITEM_SCHEMAS.order.extend({ steps: z.array(z.string()).min(MIN_TAP_STEPS) }),
   GENERATED_ITEM_SCHEMAS.matchPairs.extend({
-    pairs: z.array(z.object({ left: z.string(), right: z.string() })).min(MIN_TAP_PAIRS),
+    pairs: GENERATED_ITEM_SCHEMAS.matchPairs.shape.pairs.element.array().min(MIN_TAP_PAIRS),
   }),
   z.object({
     format: z.literal("selectAll"),

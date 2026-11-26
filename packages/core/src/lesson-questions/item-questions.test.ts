@@ -13,6 +13,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
+import { parseSessionItem, toSessionQuestion } from "../sessions/_utils/session-items";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { type LessonQuestionContextInput } from "./contract";
@@ -114,7 +115,7 @@ describe("asking the buddy about a session's or practice's question", () => {
       language: item.language,
       question: {
         format: "multipleChoice",
-        options: ["Right answer", "Wrong answer"],
+        options: ["Right answer", "Wrong answer", "Incomplete answer", "Unrelated answer"],
         text: "Which number is even?",
       },
       scope: { kind: "item" },
@@ -268,6 +269,65 @@ describe("asking the buddy about a session's or practice's question", () => {
       { answered: true, kind: "item" },
       { answered: true, kind: "item" },
     ]);
+  });
+
+  it("quotes a match answer only in the block that showed it", async () => {
+    const { item: practice, user } = await practiceQuestion();
+    const pairs = ["A", "B", "C", "D"].map((left) => ({ left, right: `${left} side` }));
+
+    const item = await itemFixture({
+      content: { pairs, question: "Match each letter to its side.", reason: "Letters." },
+      format: "matchPairs",
+      skillId: practice.skillId,
+    });
+
+    const session = await studySessionFixture({ userId: user.id });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { itemIds: [item.id] },
+      sessionId: session.id,
+    });
+
+    const parsed = parseSessionItem(item);
+
+    if (!parsed) {
+      throw new Error("The match item should parse");
+    }
+
+    const shown = toSessionQuestion({ blockId: block.id, item: parsed }).right ?? [];
+    const matches = pairs.map((pair) => shown.indexOf(pair.right));
+
+    await attemptFixture({
+      answer: { matches },
+      itemId: item.id,
+      studySessionId: session.id,
+      userId: user.id,
+    });
+
+    const solved = "A → A side; B → B side; C → C side; D → D side";
+
+    await expect(
+      askedScreen(
+        await ask({
+          context: { answered: true, blockId: block.id, kind: "item" },
+          itemId: item.id,
+        }),
+      ),
+    ).resolves.toMatchObject({
+      answer: { correctAnswer: solved, isCorrect: true, learnerAnswer: solved },
+    });
+
+    await prisma.lessonQuestion.updateMany({
+      data: { answer: "Each letter goes with its own side.", status: "completed" },
+      where: { thread: { userId: user.id } },
+    });
+
+    await expect(
+      askedScreen(await ask({ context: { answered: true, kind: "item" }, itemId: item.id })),
+    ).resolves.toMatchObject({
+      answer: { correctAnswer: solved, isCorrect: true, learnerAnswer: null },
+    });
   });
 
   it("keeps a checkpoint's questions out until the learner finishes it, even from practice", async () => {

@@ -148,7 +148,7 @@ async function loadRunProgress({
   userId,
 }: {
   lessonId: string;
-  run: { startedAt: Date };
+  run: LearningEvent;
   userId: string;
 }) {
   const since = await loadProgressSince({ lessonId, until: run.startedAt, userId });
@@ -170,8 +170,16 @@ async function loadRunProgress({
     rows: lesson.steps.filter((row) => answeredIds.has(row.id)),
   });
 
+  const studySessionId = getRunStudySessionId(run);
+
+  const [answers, hyperdrive] = await Promise.all([
+    restoreRunAnswers({ attempts, lesson: { ...lesson, steps }, userId }),
+    getRunHyperdrive({ run, steps: lesson.steps, studySessionId, userId }),
+  ]);
+
   return {
-    answers: await restoreRunAnswers({ attempts, lesson: { ...lesson, steps }, userId }),
+    answers,
+    hyperdrive,
     optionalStepIds: [
       ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt: run.startedAt }),
     ],
@@ -189,9 +197,8 @@ async function readRun({
   userId: string;
   clockId: string | null;
 }): Promise<LibraryLessonRun | null> {
-  const [progress, hyperdrive, replay] = await Promise.all([
+  const [progress, replay] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
-    getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
     hasFinishedLessonBefore(prisma, { lessonId, runId: run.id, userId }),
   ]);
 
@@ -199,7 +206,6 @@ async function readRun({
     ? {
         ...progress,
         clockId,
-        hyperdrive,
         replay,
         runId: run.id,
         sessionId: getRunStudySessionId(run),

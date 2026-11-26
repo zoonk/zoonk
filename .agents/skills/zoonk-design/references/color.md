@@ -33,13 +33,13 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 ## Hierarchy without color
 
 - **The main action is the strongest thing on a screen**: inverted, one per area. Secondary actions are outline, tertiary ghost; a link inside a sentence stands out by its weight, in the text color.
-- **Three text steps**: `foreground` for titles and body, `muted-foreground` for supporting lines, meta, trailing numbers and a readout's unit, `faint` for eyebrows, list numbers and axis labels. All three are AA on every surface they sit on, in every mode.
+- **Three text steps**: `foreground` for titles and body, `muted-foreground` for supporting lines, meta, trailing numbers and a readout's unit, `faint` for eyebrows, list numbers and axis labels. All three are AA on every surface they sit on, in every mode. With more contrast asked for, the quiet two stay grays a step from `foreground`, so a field's example never looks typed.
 - **Weight and size before color**: titles, not labels (`PageSectionTitle`, `text-section`), a readout's big number, then the quiet steps. Three levels of type in a block at most.
 - **Group with spacing and hairlines** before adding a container; a panel holds one self-contained thing. In light the page and panels are both white and a panel reads by its hairline; in dark a panel is a step lighter than the page.
 
 ## Contrast
 
-- Neutral text is AA (4.5:1) on every surface it sits on, in every mode.
+- Neutral text is AA (4.5:1) on every surface it sits on, in every mode, and AAA (7:1) with more contrast asked for. That's why the more-contrast fills under quiet words (`muted`, `surface-3`, `selected-tint`) stay close to the page: a lighter fill in dark, or a darker one in light, leaves no gray between 7:1 and the text color. A disabled control is the exception: its words are the muted step on `secondary`, AA but under 7:1 in dark, so its box still shows on an iPhone sheet's own gray.
 - Colored words are AA (4.5:1) on every surface they sit on, bare or under any color's tint, in every mode, so a tint can take any hue and sit on `muted` without a new check. That holds because a tint under words is at most a fifth of a color (dark's destructive button hover takes 30%, checked on its own) and is made of the plain role (`success`, `destructive`), never a `-text` role. Words on a solid color are checked one by one: the earned reward's chip is `brain-text` under the page's color, since the page's color on `brain` is under AA. Marks may sit under 3:1, which is why color is never the only cue. With more contrast asked for, colored words are 7:1 on the plain surfaces.
 - The design system's color page measures every token in every mode; check new pairs there instead of copying ratios into documents.
 - With more contrast asked for, a field's line is already the text color at rest, so focus shows by thickness: a band at least 2px wide whose pixels change by 3:1 or more (WCAG 2.4.13), such as the app's 3px field ring.

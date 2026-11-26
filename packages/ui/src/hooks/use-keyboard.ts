@@ -267,6 +267,38 @@ export function useEscapeClick<Target extends HTMLElement>({
   return ref;
 }
 
+/**
+ * Esc undoes something the screen holds, such as a picked card, instead of leaving the screen: it
+ * runs ahead of every other Esc on the page (`capture`) and keeps the key from them.
+ */
+export function useEscapeCancel(cancel: () => void, { enabled }: { enabled: boolean }) {
+  const onCancel = useEffectEvent(cancel);
+  const inPopup = use(PopupShortcutLayer);
+
+  useLayoutEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (
+        !(SHORTCUTS.leave.keys as readonly string[]).includes(event.key) ||
+        hasAnyModifier(event) ||
+        !isScreenShortcut(event, { inPopup })
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      onCancel();
+    }
+
+    globalThis.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () => globalThis.removeEventListener("keydown", handleKeyDown, { capture: true });
+  }, [enabled, inPopup]);
+}
+
 /** Return `false` from `onPick` for a key that picked nothing. */
 export function useNumberKeys({
   count,

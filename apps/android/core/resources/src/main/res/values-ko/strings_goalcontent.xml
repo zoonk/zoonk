@@ -16,6 +16,7 @@
   "goalcontent_count_of": "e65b1c7c19d47cbd8b709d8f6be11058805815cba2df46a612e851d25e22231a",
   "goalcontent_course_weights_even": "4ae031184f294c55a669aff4b2927c3b4c14334a0f685a1ca5c7828acbf8280b",
   "goalcontent_course_weights_heavier": "c2f62d923cf2fa5bb33d82365388cdeb77ea82e174306525a93ff5ee5ea03295",
+  "goalcontent_covers": "81167a8b576af8e9eb87e31288411f3885f3ea07ab6d2485879f37caf4b7ad6c",
   "goalcontent_details": "d4f7546f18fc0c40d0daab0776d47fa78c5d1ccebc6974fd9a21b360c5c42307",
   "goalcontent_done_and_known": "07a23d3b769fa67202f76b17006c4b3ee158685d5457502d89dff66413a106bf",
   "goalcontent_for_reference": "bfecced53f58ff94b67523032dd848cb5c973b729b3854c34420cc64e48f490a",
@@ -28,6 +29,9 @@
   "goalcontent_lessons_known_skipped": "8623be7d001854c0e2aa92d3dde122260b31c2587f00a00203f9eccfd1883ff1",
   "goalcontent_lessons_skipped": "d501f188c0710e2e5173db78c5ab5c7370dc25298568e1367f84978ca60d8d31",
   "goalcontent_matrix_title": "6e183eea440439d0fd3a2d3fd44381c7cd3af88e0dc26e2c3fb1f881d8b6f436",
+  "goalcontent_module_missing": "7f5e1c1e52d75521a1c88188a35fda3b24d10208199a625846abecb24244b835",
+  "goalcontent_module_skipped": "109e3f0cbdfc746bf366e0ff58a5768bb010e851df0d8124afb0508c16b54eec",
+  "goalcontent_module_time": "d5a80e857fda4945f22c34c6edc039aad8fe4e78092927481d188f410598f623",
   "goalcontent_modules": "f1f3bbb9ee6f122205fb84044fb9b158dc30399e8afd6c1e2aa67d9883aabe8c",
   "goalcontent_more_chapters": "299c88859a8d877b96e5489d6667d413145d512fafba2379affd6adc118f8842",
   "goalcontent_new": "573ddc1f641b5ee9e0f6db06f67d3d0736fff0243039fb5c7470d1aafbd17cae",
@@ -189,6 +193,14 @@
     <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
     <string name="goalcontent_subject_time">이 과목은 계획에 없어요. 다른 과목을 먼저 공부해요.</string>
     <string name="goalcontent_subject_missing">이 과목은 아직 계획에 없어요.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back. -->
+    <string name="goalcontent_module_skipped">계획에서 이 모듈을 뺐어요.</string>
+    <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
+    <string name="goalcontent_module_time">이 모듈은 계획에 없어요. 다른 모듈이 우선이에요.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
+    <string name="goalcontent_module_missing">이 모듈은 아직 계획에 없어요.</string>
+    <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
+    <string name="goalcontent_covers">다루는 내용</string>
     <string name="goalcontent_adjust_plan">계획 조정하기</string>
     <string name="goalcontent_add_back">다시 추가하기</string>
     <string name="goalcontent_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>

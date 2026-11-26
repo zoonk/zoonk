@@ -967,7 +967,7 @@ describe(setAsidePublishedLesson, () => {
     const { lesson, plan: check } = await publishLesson();
     const published = await listSteps(lesson.id);
     const asked = published.flatMap((step) => step.itemId ?? []);
-    expect(asked).toHaveLength(1);
+    expect(asked).toHaveLength(2);
 
     const item = await planItemFixture({
       lessonId: lesson.id,

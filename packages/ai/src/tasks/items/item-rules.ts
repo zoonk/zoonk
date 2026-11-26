@@ -94,6 +94,7 @@ function buildItemRules({
   return selectPromptVariants({
     template: rules,
     variants: {
+      languageGoal,
       mock,
       numericEntry,
       onePick: !severalPicks,

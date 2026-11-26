@@ -1,4 +1,5 @@
 import { Prisma } from "./generated/prisma/client";
+import { NOT_LESSON_ANSWER_SQL } from "./lesson-answer";
 import { type TransactionClient } from "./index";
 
 /**
@@ -9,10 +10,14 @@ import { type TransactionClient } from "./index";
 
 function liveFirstAnswers(where: Prisma.Sql): Prisma.Sql {
   return Prisma.sql`
-    SELECT DISTINCT ON (a.item_id, a.user_id) a.item_id, a.is_correct
-    FROM attempts a
-    WHERE a.item_id IS NOT NULL AND ${where}
-    ORDER BY a.item_id, a.user_id, a.answered_at`;
+    SELECT item_id, is_correct
+    FROM (
+      SELECT DISTINCT ON (a.item_id, a.user_id) a.item_id, a.is_correct, a.from_lesson, a.step_id
+      FROM attempts a
+      WHERE a.item_id IS NOT NULL AND ${where}
+      ORDER BY a.item_id, a.user_id, a.answered_at, a.id
+    ) first_answer
+    WHERE ${NOT_LESSON_ANSWER_SQL}`;
 }
 
 export function firstAnswersSql(itemIds: Prisma.Sql): Prisma.Sql {

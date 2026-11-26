@@ -29,6 +29,10 @@
   "questions_left_blank": "41b602439d91c4e888d7b8ea603ad7704543ca7b61e9944aa273cbb5ba567e82",
   "questions_mark_correct": "2f2f8579b8e6987b9825df0893db81043acf8e2976156ea1e58bb74cc4899f03",
   "questions_mark_wrong": "d32e1d6ad7e5c61cbcb36d1f51530033f2380aedf77a1fd7dece7955738315ad",
+  "questions_match_first_tries": "95dc4a5399def864a78c5163ce127ff4c8156ec0f5604c2cf70965b7a09fc8b2",
+  "questions_match_not_a_pair": "aa172656b1075946c5843126623aefa4963e0aac13008fd5d3c4e1c1b401a705",
+  "questions_match_paired": "07a51c3fe1e27a708f2c05e0f18eadffa9170a355955024ac413ece70b97b7e4",
+  "questions_match_unpaired": "6beaa1d36ce9eddfa3feace76439964c130648fe2a7fcca82529ed9370f0903a",
   "questions_matched_with": "8250423926cbc872aeea77e2f38b93c7db59886fe04686360d266ac6622a53de",
   "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
   "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
@@ -74,6 +78,11 @@
     <string name="questions_place_wrong">%1$d. sıra, yanlış yerde</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, %2$s ile eşleştirildi</string>
+    <string name="questions_match_paired">%1$s ile %2$s eşleşti. Eşleşen çiftler: %3$d / %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s ile %2$s eşleşmiyor.</string>
+    <string name="questions_match_unpaired">%1$s ile %2$s eşleşmesi kaldırıldı.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">İlk eşleştirdiğin:</string>
     <string name="questions_your_answer">Cevabın</string>
     <string name="questions_mark_correct">Doğru</string>
     <string name="questions_mark_wrong">Yanlış</string>

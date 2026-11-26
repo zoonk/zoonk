@@ -19,6 +19,7 @@ import { QuestionActions, QuestionMainAction } from "../_components/question-act
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 import { deviceStorage } from "../_utils/device-storage";
+import { useScreenAtTop } from "../_utils/use-screen-at-top";
 import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -261,6 +262,7 @@ function RunnerScreen({
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
+  useScreenAtTop(question.itemId);
   const sheet = useMockSheetAside({ deadline, onHandIn: handIn });
 
   return (

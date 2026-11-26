@@ -50,24 +50,41 @@ describe(hearSpokenSentence, () => {
   );
 
   it.each([
-    ["sr", "инјекција", "injekcija", undefined],
-    ["zh", "李安", "里安", "Lǐ’ān"],
-    ["zh", "她叫李娜", "她叫里娜", "Tā jiào Lǐ Nà"],
+    ["it", "Ha fratelli?", "Ah, fratelli.", undefined],
+    ["de", "Er isst viel.", "Er ist viel.", undefined],
+    ["fr", "Elle a un verre.", "Et l'inverse.", undefined],
     ["fr-CA", "Ils parlent.", "Il parle.", undefined],
     ["nl", "Lijden.", "Leiden.", undefined],
     ["es", "Hola.", "Ola.", undefined],
+    ["es", "Hola", "Hora", undefined],
+    ["cs", "Být", "Byt", undefined],
+    ["ru", "Это мой код.", "Это мой кот.", undefined],
+    ["it", "Emma si scrive: e, emme, emme, a", "Emma si scrive E, M, M, A.", undefined],
+    ["en", "Did you say 312?", "Did you say three one two?", undefined],
+    ["en", "Is it a ten-minute walk?", "Is it a ten minute walk?", undefined],
+    ["sr", "инјекција", "injekcija", undefined],
+    ["sr", "инјекција", "ињекција", undefined],
     ["ja", "今日は雨です。", "は雨です。", undefined],
-    ["ko", "타이브레이크", "타이 브레이크", undefined],
+    ["ja", "きって", "きて", undefined],
     ["ja", "「住所」をよむ", "じゅうしょをよむ", undefined],
+    ["ko", "타이브레이크", "타이 브레이크", undefined],
+    ["yue", "王明", "汪明", "Wáng Míng"],
+    ["zh", "林芳", "林方", undefined],
+    ["zh", "我有三个哥哥", "我有3个哥哥", "Wǒ yǒu sān gè gēge"],
+    ["zh", "李安", "里安", "Lǐ’ān"],
+    ["zh", "她叫李娜", "她叫里娜", "Tā jiào Lǐ Nà"],
+    ["zh", "航", "行", "háng"],
+    ["zh", "李安", "里安", "Lǐān"],
+    ["zh", "我叫善平", "我叫单平", "Wǒ jiào Shàn Píng"],
   ])(
-    "lets the audio resolve a possible %s reading",
+    "lets the recording decide a %s transcript that differs from the sentence",
     async (language, expected, heard, romanization) => {
       transcribe(heard);
       verdict(expected, true);
       const result = await hearSpokenSentence({ ...recording, expected, language, romanization });
 
       expect(assessPronunciation).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({ expectedText: expected }),
+        expect.objectContaining({ expectedText: expected, transcriberHeard: heard }),
       );
 
       expect(result.match.isCorrect).toBe(true);
@@ -75,19 +92,11 @@ describe(hearSpokenSentence, () => {
   );
 
   it.each([
-    ["zh", "李安", "里安", "Lǐān"],
-    ["en", "我叫王明", "我叫王民", undefined],
     ["zh", "王明", "汪明", "Wáng Míng"],
     ["zh", "王明", "王民", "Wáng Míng"],
-    ["zh", "林芳", "林方", undefined],
-    ["yue", "王明", "汪明", "Wáng Míng"],
-    ["es", "Hola", "Hora", undefined],
-    ["cs", "Být", "Byt", undefined],
-    ["sr", "инјекција", "ињекција", undefined],
-    ["ja", "きって", "きて", undefined],
     ["en", "Take the bus", "", undefined],
   ])(
-    "preserves a distinct or unconfirmed %s reading",
+    "trusts a transcript with other Mandarin tones or no words (%s %s)",
     async (language, expected, heard, romanization) => {
       transcribe(heard);
       const result = await hearSpokenSentence({ ...recording, expected, language, romanization });

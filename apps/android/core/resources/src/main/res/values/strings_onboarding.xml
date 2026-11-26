@@ -226,13 +226,6 @@
     <string name="onboarding_placement_confirm">Confirm</string>
     <string name="onboarding_placement_stop">Stop and use my answers</string>
     <string name="onboarding_placement_answer_failed">That didn\'t go through. Your answers are kept.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">True</string>
-    <string name="onboarding_placement_false">False</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">Right</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">Wrong</string>
     <string name="onboarding_placement_unavailable_title">We\'ll see what you know in your first few days</string>
 
     <!-- The level test: a language goal's placement, in reading and listening. -->

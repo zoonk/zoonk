@@ -1,3 +1,4 @@
+import { checksEachPair } from "@zoonk/learn/match-board-state";
 import { type QuestionAction } from "@zoonk/learn/question-actions";
 import { type TaskSegment } from "@zoonk/learn/task-header";
 import { getChallengeProgress } from "./_utils/challenge-progress";
@@ -110,11 +111,12 @@ function getAnswerAction(state: LessonPlayerState, step: PlayableLibraryStep): L
     };
   }
 
+  // A board checked pair by pair checks itself with its last pair, so its action waits as Continue.
   return {
     action: "check",
     busy: false,
     disabled: !isAnswerReady(state.answers[step.id]),
-    label: "check",
+    label: checksEachPair(step) ? "continue" : "check",
   };
 }
 

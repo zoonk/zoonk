@@ -292,7 +292,12 @@ describe(getGoalPlacement, () => {
       "visual",
     ]);
 
-    expect(next?.options).toStrictEqual(["Right answer", "Wrong answer"]);
+    expect(next?.options).toStrictEqual([
+      "Right answer",
+      "Wrong answer",
+      "Incomplete answer",
+      "Unrelated answer",
+    ]);
 
     const sent = JSON.stringify(result);
 

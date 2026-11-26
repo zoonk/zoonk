@@ -12,6 +12,7 @@ import { describe, expect, it } from "vitest";
 import { toStoredItem } from "../../library/items/item-content";
 import { toScreenQuestion } from "../../library/lessons/_utils/screen-question-item";
 import { writtenTemperatureLesson } from "../../library/quality/_test-utils/written-lessons";
+import { toCheckQuestion } from "../../library/steps/_utils/check-question";
 import { toStepContent } from "../../library/steps/written-screens";
 import {
   approve,
@@ -42,6 +43,135 @@ function sharedTutorAnswer(stepId: string) {
 function setContent(model: "Step" | "StepVariant", id: string, content: object) {
   return { id, model, set: { content } };
 }
+
+async function bankedCheckFixture(retiredAt: Date | null = null) {
+  const [lesson, skill] = await Promise.all([
+    libraryLessonFixture({ contentStatus: "completed" }),
+    skillFixture(),
+  ]);
+
+  const content = { ...question, basis: null };
+  const asked = toCheckQuestion(content);
+
+  if (!asked) {
+    throw new Error("Expected a standalone check");
+  }
+
+  const item = await itemFixture({ ...toStoredItem(asked), retiredAt, skillId: skill.id });
+
+  const step = await libraryStepFixture({
+    content,
+    itemId: item.id,
+    kind: "check",
+    lessonId: lesson.id,
+    position: 0,
+    skillId: skill.id,
+  });
+
+  return { content, item, skill, step };
+}
+
+describe("banked lesson checks", () => {
+  it("keeps the lesson as the source of its bank item and retires the item when staff edits the question", async () => {
+    const { content, item, step } = await bankedCheckFixture();
+
+    await signInProposer();
+
+    await expect(
+      proposeContentFix({
+        changes: [{ id: item.id, model: "Item", set: { content: item.content } }],
+        reason: "Edit the bank copy.",
+      }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining("Fix the lesson screen"),
+      status: "invalid",
+    });
+
+    const changed = { ...content, question: "Which number is the sum of two and two?" };
+
+    const fix = await proposeFix({
+      changes: [setContent("Step", step.id, changed)],
+      reason: "Clarify the question.",
+    });
+
+    const { key } = await signInApprover();
+    await approve({ fixId: fix.id, key });
+
+    const updated = await prisma.step.findUniqueOrThrow({
+      include: { item: true },
+      where: { id: step.id },
+    });
+
+    expect(updated.itemId).not.toBe(item.id);
+
+    expect(updated.item).toMatchObject({
+      content: { question: changed.question },
+      retiredAt: null,
+    });
+
+    await expect(prisma.item.findUniqueOrThrow({ where: { id: item.id } })).resolves.toMatchObject({
+      retiredAt: expect.any(Date),
+    });
+  });
+
+  it("keeps a retired bank question out of the bank after a staff wording edit", async () => {
+    const retiredAt = new Date();
+    const { content, item, skill, step } = await bankedCheckFixture(retiredAt);
+
+    await signInProposer();
+    const changed = { ...content, question: "Which number is the sum of two and two?" };
+
+    const fix = await proposeFix({
+      changes: [setContent("Step", step.id, changed)],
+      reason: "Clarify the question.",
+    });
+
+    const { key } = await signInApprover();
+    await approve({ fixId: fix.id, key });
+
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
+      content: { question: changed.question },
+      itemId: null,
+    });
+
+    await expect(prisma.item.findMany({ where: { skillId: skill.id } })).resolves.toMatchObject([
+      { id: item.id, retiredAt },
+    ]);
+  });
+
+  it("keeps a retired bank question out of the bank after a lesson screens edit", async () => {
+    const { content, item, skill, step } = await bankedCheckFixture();
+    await prisma.item.update({ data: { retiredAt: new Date() }, where: { id: item.id } });
+
+    await signInProposer();
+    const changed = { ...content, question: "Which number is the sum of two and two?" };
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: step.lessonId,
+          model: "Lesson",
+          setScreens: { screens: [{ content: changed, id: step.id }], version: step.version },
+        },
+      ],
+      reason: "Clarify the question.",
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.step.findMany({ where: { lessonId: step.lessonId, version: step.version + 1 } }),
+    ).resolves.toMatchObject([{ content: { question: changed.question }, itemId: null }]);
+
+    await expect(
+      prisma.item.count({ where: { retiredAt: null, skillId: skill.id } }),
+    ).resolves.toBe(0);
+  });
+});
 
 describe("language exercise screens", () => {
   it("fixes a blank's sentence and answer together, deleting what was written from the old screen", async () => {

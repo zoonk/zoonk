@@ -66,7 +66,7 @@ struct TutorTurnView: View {
   private var question: some View {
     VStack(alignment: .trailing, spacing: 4) {
       if !isPage, showsTopic {
-        turn.about.label
+        turn.about.label(module: conversation.scope.isModule)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseChapterFixture,
@@ -209,6 +209,20 @@ test.describe("public Library lesson page", () => {
 
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
+  });
+
+  test("answers the lesson's first question with the number key its option shows", async ({
+    page,
+  }) => {
+    const { lessonPath, written } = await createLibraryCourse();
+    await page.goto(lessonPath);
+
+    const cloud = page.getByRole("button", { name: "No, it's more like a cloud" });
+    await expectHydrated(cloud);
+    await expect(cloud).toHaveAttribute("aria-keyshortcuts", "2");
+    await page.keyboard.press("2");
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${written.id}\\?.*answer=cloud`, "u"));
   });
 
   test("starts the lesson from a Start pressed before the page hydrates, once it does", async ({

@@ -3,7 +3,6 @@ import { z } from "zod";
 import { shouldOmitNumberedPicture } from "../../../lesson-player/picture-policy";
 import { NOT_CURRENT_SCREEN, type Resolution, refuse } from "../_utils/resolved-change";
 import { defineFixHandler, idSchema } from "./fix-handler";
-import { screenSelect } from "./screens";
 
 type PictureStored<Op extends "attachPicture" | "detachPicture"> = {
   id: string;
@@ -18,7 +17,14 @@ async function resolvePictureDetach(
   id: string,
 ): Promise<Resolution<PictureStored<"detachPicture">>> {
   const step = await db.step.findUnique({
-    select: { ...screenSelect, content: true, mediaAssetId: true },
+    select: {
+      content: true,
+      kind: true,
+      lessonId: true,
+      mediaAssetId: true,
+      retiredAt: true,
+      staged: true,
+    },
     where: { id },
   });
 
@@ -56,7 +62,13 @@ async function resolvePictureAttach(
 ): Promise<Resolution<PictureStored<"attachPicture">>> {
   const [step, asset] = await Promise.all([
     db.step.findUnique({
-      select: { ...screenSelect, mediaAssetId: true, pictureRemovedAt: true },
+      select: {
+        lessonId: true,
+        mediaAssetId: true,
+        pictureRemovedAt: true,
+        retiredAt: true,
+        staged: true,
+      },
       where: { id },
     }),
     db.mediaAsset.findUnique({ select: { visibility: true }, where: { id: mediaAssetId } }),

@@ -117,7 +117,7 @@ private fun FilledButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    DrawnBox(size) {
+    DrawnBox {
         androidx.compose.material3.Button(
             onClick = { if (!held) onClick() },
             modifier = modifier.action(variant).sized(size).busy(held),
@@ -239,7 +239,7 @@ fun OutlinedButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    DrawnBox(size) {
+    DrawnBox {
         androidx.compose.material3.OutlinedButton(
             onClick = { if (!held) onClick() },
             modifier = modifier.action(LayoutPart.Variant.Outline).sized(size).busy(held),
@@ -279,7 +279,7 @@ fun TextButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    DrawnBox(size) {
+    DrawnBox {
         androidx.compose.material3.TextButton(
             onClick = { if (!held) onClick() },
             modifier =
@@ -372,11 +372,11 @@ fun sendButtonColors(): IconButtonColors =
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-/** Main's disabled main action: `muted` with its words in `muted-foreground`, not Material's translucent ink. */
+/** Main's disabled main action: `secondary` with its words in `muted-foreground`, not Material's translucent ink. */
 @Composable
 private fun mainButtonColors(): ButtonColors =
     ButtonDefaults.buttonColors(
-        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        disabledContainerColor = MaterialTheme.zoonk.secondary,
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
@@ -452,22 +452,13 @@ private fun Modifier.sized(size: ButtonSize): Modifier =
     }
 
 /**
- * A small or medium button's layout box is the button it draws, so the words above it sit at the gap their
- * column sets: Compose still takes a tap anywhere in the 48dp touch target around it, and reports that target,
- * as the web's and Apple's small buttons take taps past their ink. A large one is near 48dp anyway.
+ * A button's layout box is the button it draws, so the words above it sit at the gap their column sets and a bar's
+ * buttons sit as far from its edges as main's: Compose still takes a tap anywhere in the 48dp touch target around it,
+ * and reports that target, as the web's and Apple's buttons take taps past their ink.
  */
 @Composable
-private fun DrawnBox(
-    size: ButtonSize,
-    content: @Composable () -> Unit,
-) {
-    if (size ==
-        ButtonSize.Large
-    ) {
-        content()
-    } else {
-        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified, content)
-    }
+private fun DrawnBox(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified, content)
 }
 
 /** Material writes every button's words in `labelLarge`; a small one takes main's 13sp. */

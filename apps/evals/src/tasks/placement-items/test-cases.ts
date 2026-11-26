@@ -255,7 +255,7 @@ const CASES: TestCase<unknown, CaseInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one typical multiple-choice question with a misconception behind every wrong option, then three tap questions that confirm it: match pairs (4 to 6 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), each in its own situation and checking the skill from another angle (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). An order question has one order only, a matching has one match per item, and a select-all question has one defensible set of right options. No tap question hints at another's answer. Each question tests only its own skill.`,
+    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one typical multiple-choice question with a misconception behind every wrong option, then three tap questions that confirm it: match pairs (4 or 5 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), each in its own situation and checking the skill from another angle (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). An order question has one order only, a matching has one match per item, and a select-all question has one defensible set of right options. No tap question hints at another's answer. Each question tests only its own skill.`,
     id: "en-biology-placement-no-exam",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -335,7 +335,44 @@ const CASES: TestCase<unknown, CaseInput>[] = [
     },
   },
   {
-    expectations: `Only tap questions, in US English, for two skills a learner said they know, asked as a session's check questions: three per skill, no quick question. Each is match pairs (4 to 6 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), in the format that fits the skill (an order for the steps of a procedure, never forced on a skill without one), each in its own situation, answered by tapping alone and right only as a whole. Facts must be right: a household budget follows income minus fixed costs, then savings; first aid for a burn cools it under running water and never uses ice or butter.`,
+    expectations: `Tap questions for a Brazilian learning Italian, a conversation skill at A1 to A2 (beginner): agreeing on a day and time to meet a friend. The Italian is natural and set in Italy, and the setup, the question and reasons are in Brazilian Portuguese. A match board has 4 or 5 pairs, and each card is a word or a short phrase the learner takes in at a glance on a phone (a day and when it is, a short question and its short answer, a line and its short reply). A card that holds a long line of dialogue, two speakers' lines ("A: Martedì per me è impossibile. B: Giovedì invece non ho impegni.") or a message fails, however correct its Italian. A whole exchange is practiced in another format, such as picking every natural reply to one line or putting a reply's words in order. Each tap question is in its own situation and answered by tapping alone.`,
+    id: "pt-it-conversation-taps-no-dialogue-cards",
+    userInput: {
+      language: "pt",
+      quickCount: 0,
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Combinar com um amigo o dia e a hora de um encontro: propor, aceitar, recusar e sugerir outro horário.",
+          level: "beginner",
+          name: "Marcar um encontro com um amigo",
+        },
+      ],
+      tapCount: 3,
+      targetLanguage: "it",
+    },
+  },
+  {
+    expectations: `Tap questions in US English for a skill whose cases are naturally long: telling which reasoning flaw an argument makes. A match board has 4 or 5 pairs, and each card is a word or a short label the learner takes in at a glance on a phone (a flaw's name and a few words that sum up a move, such as "Attacks the person"). A card that quotes a whole argument fails. Arguments that need a sentence each go to "select all that apply" (which of these arguments attack the person instead of the claim) instead of onto cards. The board is hard to guess because its pairs are close to each other (a straw man and a red herring, a false cause and a slippery slope), never because its cards are long. Each tap question is in its own situation and answered by tapping alone, and each flaw is named and explained correctly.`,
+    id: "en-wordy-skill-taps-short-cards",
+    userInput: {
+      language: "en",
+      quickCount: 0,
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Spot the reasoning flaw in an everyday argument (straw man, ad hominem, false cause, slippery slope, false dilemma, red herring) and say why it fails.",
+          level: "intermediate",
+          name: "Spotting reasoning flaws",
+        },
+      ],
+      tapCount: 3,
+    },
+  },
+  {
+    expectations: `Only tap questions, in US English, for two skills a learner said they know, asked as a session's check questions: three per skill, no quick question. Each is match pairs (4 or 5 pairs), an order (4 to 7 steps) or "select all that apply" (5 or 6 options, at least 2 right and 2 wrong), in the format that fits the skill (an order for the steps of a procedure, never forced on a skill without one), each in its own situation, answered by tapping alone and right only as a whole. Facts must be right: a household budget follows income minus fixed costs, then savings; first aid for a burn cools it under running water and never uses ice or butter.`,
     id: "en-session-check-taps-only",
     userInput: {
       language: "en",

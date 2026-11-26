@@ -8,6 +8,7 @@ import { PlayerAudioProvider } from "../player-audio-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
 import { fromServerCheck, fromSpokenGrade } from "./_utils/lesson-results";
 import { canSelfCorrect, getAnsweredStep } from "./_utils/lesson-steps";
+import { BoardMissesContext } from "./feedback/board-misses";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
 import { runPrimary } from "./lesson-action-bar";
 import {
@@ -109,28 +110,31 @@ function PracticeStepScreen({
 }) {
   const answered = getAnsweredStep({ answer: selected, step });
   const inBank = canSelfCorrect(answered);
+  const [boardMisses, setBoardMisses] = useState<React.ReactNode>(null);
 
-  const resultView = graded &&
-    (!showsOwnResult(step) || step.kind === "matchColumns" || !selected) && (
-      <LessonStepResultView
-        hyperdriveStreak={null}
-        next={{ savePending: false, savedMistake: false, willReturn: false }}
-        notes={notes}
-        result={graded}
-        step={answered}
-      />
-    );
+  const resultView = graded && (!showsOwnResult(step) || !selected) && (
+    <LessonStepResultView
+      boardMisses={boardMisses}
+      hyperdriveStreak={null}
+      next={{ savePending: false, savedMistake: false, willReturn: false }}
+      notes={notes}
+      result={graded}
+      step={answered}
+    />
+  );
 
   return (
     <>
       <WordBankCheckContext value={inBank ? resultView : null}>
-        <LessonStepView
-          answer={selected}
-          isLocked={disabled || graded !== null}
-          onAnswer={onAnswer}
-          result={graded ?? undefined}
-          step={step}
-        />
+        <BoardMissesContext value={setBoardMisses}>
+          <LessonStepView
+            answer={selected}
+            isLocked={disabled || graded !== null}
+            onAnswer={onAnswer}
+            result={graded ?? undefined}
+            step={step}
+          />
+        </BoardMissesContext>
       </WordBankCheckContext>
       {step.kind === "challenge" && !graded && <ChallengePracticeAction />}
       {!inBank && resultView}

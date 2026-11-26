@@ -96,6 +96,7 @@ export const studyAnswerInputSchema = z
 export type StudyAnswerInput = z.infer<typeof studyAnswerInputSchema>;
 
 export type QuestionAnswer = StudyAnswerInput["answer"];
+export type MatchAnswer = Extract<QuestionAnswer, { matches: number[] }>;
 
 type StudyAnswerFeedback = {
   /** Blank net-scored statements count as neither correct nor mistakes and never enter the notebook. */

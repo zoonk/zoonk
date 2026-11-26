@@ -238,7 +238,9 @@ private struct FeedbackForm: View {
       prompt: Text(
         "you@example.com",
         tableName: "Feedback",
-        comment: "Example email address in the feedback form.")
+        comment:
+          "An example email address in an empty email field. Localize \"you\" and keep example.com."
+      ).fieldPrompt()
     ) { emailLabel }
     .focused($focusedField, equals: .email)
     .textInputAutocapitalization(.never)

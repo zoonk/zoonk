@@ -102,7 +102,7 @@ async function resolveItemRetire(
   db: TransactionClient,
   id: string,
 ): Promise<Resolution<RetirementStored<"retire">>> {
-  const loaded = await loadBankItem(db, id);
+  const loaded = await loadBankItem(db, id, { allowAskedCheck: true });
 
   if (!loaded.ok) {
     return loaded;
@@ -202,7 +202,7 @@ export const itemRetire = defineFixHandler({
   planRoots: ({ id }) => ({ itemIds: [id] }),
   proposal: {
     rules:
-      "{ model: 'Item', id, retire: true } takes a practice question out of new practice. Only one no current screen asks and that isn't in a set.",
+      "{ model: 'Item', id, retire: true } takes a practice question out of new practice. A lesson check can stay in the lesson when its bank copy is retired. Questions in sets and numeric questions linked to a lesson screen cannot be retired here.",
     schema: z.strictObject({ id: idSchema, model: z.literal("Item"), retire: z.literal(true) }),
   },
   resolve: (db, proposed) => resolveItemRetire(db, proposed.id),

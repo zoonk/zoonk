@@ -16,6 +16,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
@@ -326,7 +327,7 @@ private fun BlockActions(
 }
 
 private val StudyBlockDetail.trueFalseWords: TrueFalseWords
-    get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse
+    get() = trueFalseLabels.recode()
 
 /** A swipe capsule scores net; outside capsules, the block says. */
 private fun isNetScored(

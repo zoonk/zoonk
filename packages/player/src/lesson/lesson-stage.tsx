@@ -6,7 +6,7 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../components/step-layouts";
 import { WordBankCheckContext } from "../components/word-bank";
@@ -16,6 +16,7 @@ import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { canSelfCorrect, getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
+import { BoardMissesContext } from "./feedback/board-misses";
 import {
   type LessonResultNext,
   LessonResultNotes,
@@ -178,7 +179,13 @@ function getResultNext({
   };
 }
 
-function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
+function CheckFeedback({
+  boardMisses,
+  step,
+}: {
+  boardMisses: React.ReactNode;
+  step: PlayableLibraryStep;
+}) {
   const { screen, state } = useLessonPlayer();
   const result = state.results[step.id];
 
@@ -196,6 +203,7 @@ function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
         )
       ) : (
         <LessonStepResultView
+          boardMisses={boardMisses}
           hyperdriveStreak={screen.hyperdriveStreak}
           next={next}
           result={result}
@@ -219,7 +227,15 @@ function useOwnCardNotes({ isShown, step }: { isShown: boolean; step: PlayableLi
   return { hyperdriveStreak: screen.hyperdriveStreak, ...getResultNext({ result, state, step }) };
 }
 
-function CheckAdded({ additions, step }: { additions: CheckAdditions; step: PlayableLibraryStep }) {
+function CheckAdded({
+  additions,
+  boardMisses,
+  step,
+}: {
+  additions: CheckAdditions;
+  boardMisses: React.ReactNode;
+  step: PlayableLibraryStep;
+}) {
   const { state } = useLessonPlayer();
   const answered = getAnsweredStep({ answer: state.answers[step.id], step });
   const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
@@ -229,7 +245,7 @@ function CheckAdded({ additions, step }: { additions: CheckAdditions; step: Play
       {additions.selfCorrect && (
         <SelfCorrectLine listening={answered.kind === "listening" && !cantListen} />
       )}
-      {additions.feedback && <CheckFeedback step={step} />}
+      {additions.feedback && <CheckFeedback boardMisses={boardMisses} step={step} />}
     </div>
   );
 }
@@ -278,7 +294,11 @@ export function LessonStage({
   const answered = getAnsweredStep({ answer: state.answers[step.id], step });
   const additions = getCheckAdditions({ isShown, screen, state, step });
   const ownCardNotes = useOwnCardNotes({ isShown, step });
-  const added = additions && <CheckAdded additions={additions} step={step} />;
+  const [boardMisses, setBoardMisses] = useState<React.ReactNode>(null);
+
+  const added = additions && (
+    <CheckAdded additions={additions} boardMisses={boardMisses} step={step} />
+  );
 
   // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
   const inBank = canSelfCorrect(answered);
@@ -291,13 +311,15 @@ export function LessonStage({
       <LessonScreenFrame turn={turn}>
         <WordBankCheckContext value={inBank ? added : null}>
           <OwnResultNotesContext value={ownCardNotes}>
-            <LessonStepView
-              answer={state.answers[step.id]}
-              isLocked={isShown && state.phase !== "playing"}
-              onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
-              result={result}
-              step={step}
-            />
+            <BoardMissesContext value={setBoardMisses}>
+              <LessonStepView
+                answer={state.answers[step.id]}
+                isLocked={isShown && state.phase !== "playing"}
+                onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
+                result={result}
+                step={step}
+              />
+            </BoardMissesContext>
           </OwnResultNotesContext>
         </WordBankCheckContext>
       </LessonScreenFrame>

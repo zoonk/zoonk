@@ -302,7 +302,7 @@ export function resolveCheck(
     retried: willRetry ? [...state.retried, stepId] : state.retried,
   };
 
-  return step?.kind === "matchColumns" ? advance(resolved) : resolved;
+  return resolved;
 }
 
 export function explainFirst(state: LessonPlayerState): LessonPlayerState {

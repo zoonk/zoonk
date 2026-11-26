@@ -139,6 +139,7 @@ export function bankQuestion(format: Format): Question {
     context: "The numbers and context from the original question.",
     image: null,
     itemId: "original-bank-item",
+    key: null,
     left: null,
     options: null,
     question: "The original bank question",
@@ -184,6 +185,7 @@ export function bankQuestion(format: Format): Question {
     context: null,
     entry: null,
     format,
+    key: [0, 1],
     left: ["Electron", "Proton"],
     right: ["Negative charge", "Positive charge"],
   };

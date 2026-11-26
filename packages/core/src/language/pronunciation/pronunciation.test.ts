@@ -294,33 +294,33 @@ describe(answerPronunciationReview, () => {
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("transcribes with the default model when the audio model fails", async () => {
+  it("passes a matching transcript when the audio model fails, but never fails on spelling alone", async () => {
     const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
 
-    vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
+    const answer = (text: string) => {
+      vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
 
-    vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text: "hent" } } as Awaited<
-      ReturnType<typeof transcribeSpeech>
-    >);
+      vi.mocked(transcribeSpeech).mockResolvedValueOnce({ data: { text } } as Awaited<
+        ReturnType<typeof transcribeSpeech>
+      >);
 
-    const result = await answerPronunciationReview({
-      audio: AUDIO,
-      fields: {
-        durationMs: 900,
-        goalId: goal.id,
-        roundId: crypto.randomUUID(),
-        timeZone: TIME_ZONE,
-      },
-      reviewId: review.id,
-    });
+      return answerPronunciationReview({
+        audio: AUDIO,
+        fields: {
+          durationMs: 900,
+          goalId: goal.id,
+          roundId: crypto.randomUUID(),
+          timeZone: TIME_ZONE,
+        },
+        reviewId: review.id,
+      });
+    };
 
-    expect(result).toMatchObject({ grade: { isCorrect: false, transcript: "hent" } });
+    await expect(answer("hent")).rejects.toThrow("provider down");
+    await expect(answer(word.word)).resolves.toMatchObject({ grade: { isCorrect: true } });
 
-    expect(transcribeSpeech).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ language: "en" }),
-    );
-
+    expect(transcribeSpeech).toHaveBeenCalledWith(expect.objectContaining({ language: "en" }));
     expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
   });
 

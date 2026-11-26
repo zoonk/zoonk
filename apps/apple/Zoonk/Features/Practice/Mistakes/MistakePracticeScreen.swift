@@ -52,6 +52,7 @@ struct MistakePracticeScreen: View {
       )
       .navigationBarTitleDisplayMode(.inline)
       .taskClose { closeButton }
+      .questionOptions(reportTarget)
     }
     .task(
       id:
@@ -63,6 +64,29 @@ struct MistakePracticeScreen: View {
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "mistake-practice", reportType: .saveFailure), isReport: true
     )
+  }
+
+  /// Main's `QuestionMenu`: the question or lesson screen in view, once answered on a timed drill.
+  private var reportTarget: FeedbackContext? {
+    guard case .loaded = load, let step = state.step else { return nil }
+
+    switch state.phase {
+    case .feedback, .lessonFeedback:
+      break
+    case .answering, .checking, .answerFailed, .lessonChecking:
+      if step.entry.drill.timeLimitSeconds != nil { return nil }
+    case .idea, .ending, .ended:
+      return nil
+    }
+
+    if let lesson = step.entry.lesson {
+      return FeedbackContext(
+        contentID: lesson.step.id, contentKind: .step, screen: "mistake-practice")
+    }
+
+    return step.question.map {
+      FeedbackContext(contentID: $0.itemId, contentKind: .item, screen: "mistake-practice")
+    }
   }
 
   @ViewBuilder
@@ -141,6 +165,9 @@ struct MistakePracticeScreen: View {
             isCorrect: graded.grade.isCorrect,
             notSure: graded.answer.isDontKnow && graded.sender != .timer
           ),
+          misses: step.question.flatMap {
+            PracticeAnswerText.misses(for: graded.answer, question: $0)
+          },
           explanation: graded.grade.explanation,
           workedSteps: graded.grade.isCorrect ? [] : graded.grade.workedSteps
         ) {
@@ -163,10 +190,14 @@ struct MistakePracticeScreen: View {
       isCorrect: graded.grade.isCorrect,
       notSure: graded.answer.isDontKnow && graded.sender != .timer)
 
-    return [
+    let lead: [String?] = [
       graded.sender == .timer ? DrillAnswerNotes.timesUp : nil, String(localized: verdict.label),
-      graded.grade.explanation,
-    ].compactMap(\.self).joinedSentences()
+    ]
+    let misses = state.step?.question.flatMap {
+      PracticeAnswerText.misses(for: graded.answer, question: $0)?.said
+    }
+
+    return (lead + [misses, graded.grade.explanation]).compactMap(\.self).joinedSentences()
   }
 
   private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, sender: AnswerSender)? {
@@ -193,7 +224,14 @@ struct MistakePracticeScreen: View {
       },
       isLocked: !state.acceptsAnswer,
       askedIn: "mistake:\(step.entry.mistakeId)",
-      draft: $draft)
+      draft: $draft,
+      onSubmit: { answer in
+        // The board's last pair sent it, so focus goes on to Continue as after Check.
+        if question.checksEachPair {
+          pressedWithFocus = .answer
+        }
+        Task { await check(answer, by: .check) }
+      })
   }
 
   @ViewBuilder
@@ -228,7 +266,7 @@ struct MistakePracticeScreen: View {
       }
 
       PracticeActionRow {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: step.entry.drill.kind == .noGuessing
             ? LocalizedStringResource(
               "I'm not sure", table: "Practice",
@@ -236,7 +274,7 @@ struct MistakePracticeScreen: View {
             : LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-          icon: .notSure, isBusy: checking == .notSure,
+          isBusy: checking == .notSure,
           isDisabled: !state.acceptsAnswer
         ) {
           press(.notSure)
@@ -244,18 +282,26 @@ struct MistakePracticeScreen: View {
         }
         .practiceFocus(.notSure)
 
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Check", table: "Practice", comment: "Sends the answer to be graded."),
-          isBusy: checking?.pressesCheck == true,
-          isDisabled: !state.acceptsAnswer || answer == nil
-        ) {
-          if let answer {
-            press(.check)
-            Task { await check(answer, by: .check) }
+        // A learning match sends itself with its last pair, so its main action waits as Continue.
+        if step.question?.checksEachPair == true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Continue", table: "Practice", comment: "Moves on after a grade."),
+            isBusy: checking != nil, isDisabled: true, action: {})
+        } else {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Check", table: "Practice", comment: "Sends the answer to be graded."),
+            isBusy: checking?.pressesCheck == true,
+            isDisabled: !state.acceptsAnswer || answer == nil
+          ) {
+            if let answer {
+              press(.check)
+              Task { await check(answer, by: .check) }
+            }
           }
+          .practiceFocus(.check)
         }
-        .practiceFocus(.check)
 
         ask(step, answered: false)
       }

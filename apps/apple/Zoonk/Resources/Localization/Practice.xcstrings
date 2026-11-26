@@ -275,13 +275,13 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "one" : {
+              "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld errores corregidos. Ya no están en tu cuaderno."
                 }
               },
-              "many" : {
+              "one" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld errores corregidos. Ya no están en tu cuaderno."
@@ -299,16 +299,16 @@
         "fr" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld erreur corrigée. Elle disparaît de ton carnet."
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld erreurs corrigées. Elles disparaissent de ton carnet."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreur corrigée. Elle disparaît de ton carnet."
                 }
               },
               "other" : {
@@ -323,13 +323,13 @@
         "it" : {
           "variations" : {
             "plural" : {
-              "one" : {
+              "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Hai corretto %lld errori. Non sono più nel tuo quaderno."
                 }
               },
-              "many" : {
+              "one" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Hai corretto %lld errori. Non sono più nel tuo quaderno."
@@ -371,12 +371,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -384,6 +378,12 @@
                 }
               },
               "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
+                }
+              },
+              "one" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Poprawiono %lld błędów. Znikają z twojego zeszytu."
@@ -401,16 +401,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld erro corrigido. Ele sai do seu caderno."
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld erros corrigidos. Eles saem do seu caderno."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erro corrigido. Ele sai do seu caderno."
                 }
               },
               "other" : {
@@ -5842,67 +5842,8 @@
         }
       }
     },
-    "Match these" : {
-      "comment" : "VoiceOver name of the left column.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Einträge zuordnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relaciona estos elementos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Éléments à associer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abbina questi elementi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組み合わせる項目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "연결할 항목"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopasuj te elementy"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relacione estes itens"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunları eşleştir"
-          }
-        }
-      }
-    },
     "Matched with %@" : {
-      "comment" : "VoiceOver value of a right-column entry already matched with a left entry.",
+      "comment" : "VoiceOver value of a match card already paired, naming the card it is paired with.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8874,6 +8815,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu metinle ilgili soru %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Question options" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionen zur Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones de la pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de la question"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opzioni della domanda"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題のメニュー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 옵션"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcje pytania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções da questão"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soru seçenekleri"
           }
         }
       }
@@ -14039,65 +14038,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sıradaki adımlar"
-          }
-        }
-      }
-    },
-    "With these" : {
-      "comment" : "VoiceOver name of the right column.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit diesen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con estos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec ceux-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con questi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "組み合わせ先の項目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝이 되는 항목"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z tymi elementami"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com estes"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunlarla"
           }
         }
       }

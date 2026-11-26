@@ -819,8 +819,7 @@ final class LessonPlayerStore {
 
       let attemptId = UUID().uuidString.lowercased()
 
-      // Held before anything moves on, so finishing waits for it: match columns finishes a lesson
-      // on its own check.
+      // Held before anything moves on, so finishing waits for it.
       if answer.isRecorded {
         let usedHelp = state.helped.contains(step.id)
         let answeredAt = Date.now

@@ -11,6 +11,7 @@ import {
   gradeSessionAnswer,
   parseSessionItem,
   readRecordedAnswer,
+  readsAnswerInBlockOrder,
   toSessionQuestion,
 } from "../../sessions/_utils/session-items";
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
@@ -85,11 +86,13 @@ async function describeLatestAnswer({
     ? gradeMistakeItem({ answer, replay })
     : gradeSessionAnswer({ answer, blockId, item });
 
+  const unshown = !blockId && !replay && readsAnswerInBlockOrder(item);
+
   return {
     correctAnswer: snapshot.correctAnswer ?? null,
     explanation: snapshot.explanation ?? null,
     isCorrect: attempt.isCorrect,
-    learnerAnswer: snapshot.answer,
+    learnerAnswer: unshown ? null : snapshot.answer,
   };
 }
 

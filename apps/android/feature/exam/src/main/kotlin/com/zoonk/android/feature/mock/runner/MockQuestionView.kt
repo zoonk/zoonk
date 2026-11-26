@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.essay.MAX_WRITING_CHARACTERS
 import com.zoonk.android.feature.essay.WritingLineCount
@@ -477,4 +478,4 @@ private const val DISABLED_ALPHA = 0.38f
 private const val UNSURE_TINT = 0.14f
 
 internal val MockExam.trueFalseWords: TrueFalseWords
-    get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse
+    get() = trueFalseLabels.recode()

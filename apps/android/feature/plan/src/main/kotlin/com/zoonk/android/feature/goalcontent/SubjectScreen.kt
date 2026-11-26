@@ -72,6 +72,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
@@ -107,7 +108,14 @@ fun SubjectScreen(
             plans = app.plans,
             navigator = navigator,
             menu = { ReportProblemMenu(report) },
-            ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
+            ask = {
+                AskTutor(
+                    TutorScope.Subject(goal.id.toString(), route.subjectKey, module = goal.kind != LearnerSummaryGoal.Kind.EXAM),
+                    app,
+                    navigator,
+                    appearance = it,
+                )
+            },
             mindMaps = summary.value?.places?.mindMaps == true,
             writeNow = rememberWriteNow(app, goal.id, navigator),
         )
@@ -281,7 +289,8 @@ internal fun SubjectPage(
             }
         }
 
-        item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, writes, actions) }
+        item(key = "not-planned", contentType = "notice") { NotPlannedNotice(subject, module = !syllabus.isExam, writes, actions) }
+        subjectCovers(subject.covers)
         written?.let { subjectWritten(it, actions.openAnswer, standing = !asideBeside) }
 
         subjectChapters(subject, today, actions)

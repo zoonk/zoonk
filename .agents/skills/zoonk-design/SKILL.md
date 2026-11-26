@@ -4,12 +4,12 @@ description: Design, implement, or review Zoonk interfaces on the web, iOS and A
 license: MIT
 metadata:
   author: zoonk
-  version: "6.4.4"
+  version: "6.6.0"
 ---
 
 # Zoonk design
 
-Build clean, subtle, harmonious interfaces. **Don't make me think:** make the purpose, available actions, and their consequences easy to understand. Reduce the effort of using the interface while preserving the thought that learning requires. The user's explicit requirements take precedence over this skill.
+Build clean, subtle, harmonious interfaces. **Don't make me think:** make the purpose, available actions, and their consequences easy to understand. Reduce the effort of using the interface while preserving the thought that learning requires.
 
 ## Understand the task
 
@@ -45,7 +45,7 @@ These roles each have one piece and one way on every app screen. A screen never 
 | A paid feature              | Looks like any other: no badge, chip or card says it's paid. `SubscribeGate` shows once, when the learner tries to use it ([Subscribing and limits](references/app-patterns.md#subscribing-and-limits)).                                                                          |
 | The "none" answer           | Skip. A step with Skip has no "None of these" or "Nothing to add" option.                                                                                                                                                                                                         |
 
-A [marketing page](#marketing-pages) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
+A [marketing page](references/marketing-pages.md) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
 
 Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works).
 
@@ -66,7 +66,7 @@ For the reasoning behind these principles, see [Design foundations](references/d
 
 ## Words
 
-These rules are for the product's own screens: the app a learner operates, on the web, iOS and Android, and the tools staff operate. [Marketing pages](#marketing-pages) do a different job and have their own standard.
+These rules are for the product's own screens: the app a learner operates, on the web, iOS and Android, and the tools staff operate. [Marketing pages](references/marketing-pages.md) do a different job and have their own standard.
 
 A learner gives a screen about two seconds and knows only what earlier screens showed them. Write for that person, never for someone who knows how Zoonk works.
 
@@ -94,18 +94,7 @@ Internal tools (Admin, evals, the playground, the CLI) follow the same rules for
 
 ## Marketing pages
 
-The landing page, the catalog, public course, chapter and lesson pages, pricing, shared links and the blog are read by someone who doesn't use Zoonk yet, and by search engines. That person is deciding whether to try it, not operating it, so the Words budget doesn't apply. This does:
-
-- **One decision: "is this for me, and is it worth starting?"** In this order: what this is, in the visitor's words; what they get; why to believe it; what it costs them; how to start. A section that answers none of those goes.
-- **Enough, in order.** More text is fine when each section answers a question a visitor really has and the page can be scanned: a headline that carries the point alone, one line under it, then the detail for those who read on. One point per section.
-- **One action, repeated.** One primary call to action per page, in the same words each time, visible without scrolling and again after each major section, and in the bottom bar once the page's own has scrolled away. It may name what the visitor gets ("Start learning free").
-- **Specific beats clever.** Outcomes and concrete things (what you'll be able to do, what a day looks like, the real product on screen) over adjectives and over how the system works. Every claim is one we can support, and none promises a result.
-- **No insider words.** A stranger knows none of our terms or names, so the style guide's "never" and "before that, say" columns apply in full, in a FAQ's answers too: a feature is described by what it does, never by its name, and the page speaks as "we". A plan's numbers and states (what fits, phases, lessons not ready yet) are for learners who have a plan.
-- **Questions in the visitor's voice.** A question on a marketing page, such as a FAQ's or pricing's, is the visitor asking ("Can I trust lessons made by AI?"), and its answer speaks to them.
-- **Search matters.** Course, chapter and lesson pages are found through search. Keep what earns the visit (what the course covers, the outline, real lesson text, the questions people ask), with real headings and metadata, and write each page's title and description in the words people search for. Cutting words people search for is a loss; cutting words nobody reads or searches for isn't.
-- **Hierarchy still rules.** One thing leads in every view, and a visitor knows where to look: clear, not sparse.
-
-Write and edit this copy with [copywriting](../copywriting/SKILL.md) and [copy-editing](../copy-editing/SKILL.md), check it with [seo-audit](../seo-audit/SKILL.md), and use [marketing-psychology](../marketing-psychology/SKILL.md) for how people decide. Those skills are general: where one suggests urgency, scarcity, fear of loss or a promised result, Zoonk's rules win (no pressure, no guilt, nothing we can't support). A blog post follows [zoonk-blog-post](../zoonk-blog-post/SKILL.md).
+The landing page, the catalog, public course, chapter and lesson pages, pricing, shared links and the blog are read by someone who doesn't use Zoonk yet and is deciding whether to try it, so the Words budget doesn't apply. Write, edit and judge them by [marketing pages](references/marketing-pages.md): the order a page answers a visitor's questions in, its one action, search, the skills to write it with and its first-glance test.
 
 ## Zoonk's learning experience
 
@@ -116,6 +105,7 @@ Write and edit this copy with [copywriting](../copywriting/SKILL.md) and [copy-e
 - **Honest progress.** Show progress as it is, from the person's own work, and never promise a result. Follow the [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md) for progress wording.
 - **Kind motivation.** Rewards come from learning, and what earns one shows where it's earned (a mission's row, a challenge's "7 of 10 to win"). Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
 - **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the day's study.
+- **Learning is light; tests are tests.** In lessons, practice and review, the verdict comes at the smallest step the learner takes, and after a miss they try again at once. A verdict held until the end and an exam-hard question belong only on a screen that says it's a test.
 - **Interaction is learning.** An interactive activity is the learning action: the person moves, predicts, or builds something, and a question checks what they saw. Never add one that only decorates.
 - **Readable everywhere.** Neutral text (titles, body, muted lines) meets WCAG AA on every surface it sits on, in light and dark. Colored marks, icons, tints and colored words stay soft in the regular theme and turn strict only under `prefers-contrast: more`; color is never the only cue (a word, an icon, a shape or the mark's place in an order says the same, and a legend is added only when none of them does). Theme, contrast and reduced motion follow the device, and every animation has a calm reduced-motion version.
 
@@ -139,7 +129,7 @@ The look is **Instrument**: a calm study instrument in the spirit of Linear and 
 
 Hold every screen you design, build or review to one bar: a principal designer like Jony Ive, or one at Linear, Vercel or Apple, would love it, not merely accept it. It is clean, quiet and exact, so the person sees their task and not the interface. Judge it on the running product against every aspect below, every time, clarity first. Each one is written so a screenshot or a measurement can settle it; [craft](references/craft.md) has every rule behind them, with how to check it and how it usually gets broken. Where one falls short, don't decorate it or nudge pixels: find what makes the screen harder than it needs to be, and change the UI, the UX or both until it's simpler and better. Matching the mockup or what's already there doesn't clear the bar.
 
-- **Clarity.** Someone who has never seen Zoonk can say what this screen is and what to do, from the title and the main action alone. On an app screen, count it: text elements between the title and the main action (four at most), words on a screen that asks for a decision (60 at most), terms no earlier screen taught (none), places the same fact appears (one). On a [marketing page](#marketing-pages) the counts don't apply: check that each section answers a question a visitor has, in order, under a headline that carries its point alone. Then subtract: remove a box, a label, a divider or a sentence; if the screen still works, leave it out.
+- **Clarity.** Someone who has never seen Zoonk can say what this screen is and what to do, from the title and the main action alone. On an app screen, count it: text elements between the title and the main action (four at most), words on a screen that asks for a decision (60 at most), terms no earlier screen taught (none), places the same fact appears (one). On a [marketing page](references/marketing-pages.md) the counts don't apply: check that each section answers a question a visitor has, in order, under a headline that carries its point alone. Then subtract: remove a box, a label, a divider or a sentence; if the screen still works, leave it out.
 - **Hierarchy.** Squint: what you see first is what matters first, and there is one strongest thing (the main action, or a moment's hero), and [one filled button](references/craft.md#d4-one-strongest-thing) says which button is filled where a dialog, a sheet or a suggestion shares the screen, with two button styles in a bar at most. The eye moves in the task's order, from what this is to what to do next. Anything competing with the strongest thing goes quieter or goes away; order comes from size, weight, tone and position, not from boxes or decoration.
 - **Edges and alignment.** In a column, text and boxes start on its start edge and end on its end edge, within 1px. A list whose rows show a mark has one more edge, where every label starts, mark or no mark: a row without one keeps the mark's room while the others show theirs. A bare glyph at an edge (a back link's chevron, a row's chevron, a "…") lines up by its ink, not by its box (`Button`'s `edge`): no part of it passes the edge, and it sits with the letters of the text on that edge (the chevron starts where the title's first letter starts), since letters start a little inside their box. In a list or the sidebar, marks share one center line and labels one start. Things side by side share a top and a bottom. On one line of a row, every part (a lead, a mark, the label, a value, an end glyph) is level by the middle of its capitals, whatever its face or size; text shares a baseline only with text of its own face and size, or inside one phrase. A column is start-aligned or centered, never both, and whatever reaches past it reaches the same on both sides. ([Rules](references/craft.md#edges-and-alignment))
 - **Spacing and density.** Space between blocks is a multiple of 4px; 2px steps (2, 6, 10) belong inside a control. The same kinds of things sit the same distance apart, in a group and on every screen, and the space above a section title is at least 1.5 times the space below it. Rows of one kind are one height and dividers one length. Density fits the job: a list to scan stays compact, a decision gets room, nothing is cramped at 390px, stranded at 2560px or drawn empty. ([Rules](references/craft.md#spacing-and-rhythm), [density](references/craft.md#density-and-balance))
@@ -158,9 +148,9 @@ When a screen keeps missing the bar, reviews return to the same screen, or each 
 
 ## Check the experience
 
-Walk through the task: can someone recognize what matters, predict what happens next, and recover from mistakes? Check what can be removed or combined without losing clarity. Fix unnecessary interpreting, remembering, and choosing.
+Walk through the task: can someone recognize what matters and predict what happens next? Walk one mistake through recovery on a phone: what must the learner reread, repeat or wait for before they can try again? Fix unnecessary interpreting, remembering, and choosing.
 
-Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned: a change to a shared piece is looked at on every screen that draws it, and "this screen's files didn't change" doesn't mean it looks right. Recheck observed friction. For proposals, show representative screens and transitions. State what remains unverified. Before a PR, [the verification step](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures every screen the branch touches at the sizes, languages and windows where layouts break, and readers who built none of it give each picture [independent picture review](references/craft.md#independent-picture-review).
+Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned: a change to a shared piece is looked at on every screen that draws it, and "this screen's files didn't change" doesn't mean it looks right. For proposals, show representative screens and transitions. Before a PR, [the verification step](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures every screen the branch touches at the sizes, languages and windows where layouts break, and readers who built none of it give each picture [independent picture review](references/craft.md#independent-picture-review).
 
 For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, words no earlier screen taught, lines nobody would miss, unnecessary choices, hidden progress, and effort that grows with repeated use.
 
@@ -173,9 +163,9 @@ You can't judge your own screen: you know what it means. For every new or change
 - Which words or lines don't you understand, or wouldn't miss?
 - Which names does it use (a product's, a feature's, a character's, a plan's), and what is each, from this screen alone?
 
-For a [marketing page](#marketing-pages) the reader changes: the agent is someone who has never heard of Zoonk and arrived from a search or a link, it gets the whole page at phone size, and the questions are: what is this, is it for you, what would you do next, and what would make you leave?
+For a [marketing page](references/marketing-pages.md#the-first-glance-test), the reader and the questions change.
 
-A wrong guess, an unknown word, a name it can only guess at or a "not sure" is a finding. Give it a flow's screens in the order a learner meets them, from the first one they see, so a name counts as known only after the screen that showed it. Don't explain the screen and ask again: change it, by the fix order in [Words](#words) for an app screen and by the list in [Marketing pages](#marketing-pages) for one of those, or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
+A wrong guess, an unknown word, a name it can only guess at or a "not sure" is a finding. Give it a flow's screens in the order a learner meets them, from the first one they see, so a name counts as known only after the screen that showed it. Don't explain the screen and ask again: change it, by the fix order in [Words](#words) for an app screen and by the list in [marketing pages](references/marketing-pages.md) for one of those, or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
 
 ### The craft read
 

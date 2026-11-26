@@ -34,12 +34,19 @@ export function parsePlacementItem(item: BankItem): PlacementItem | null {
     : null;
 }
 
+/** A placement question has no block, so it's shown and graded in a context of its own. @internal */
+export function getPlacementBlockId(item: PlacementItem): string {
+  return item.id;
+}
+
 export function toPlacementQuestionView(item: PlacementItem) {
+  const blockId = getPlacementBlockId(item);
+
   if (item.format === "matchPairs") {
-    return toMatchQuestion(item);
+    return { ...toMatchQuestion({ blockId, item }), key: null };
   }
 
-  return item.format === "order" ? toOrderQuestion(item) : toQuestionView(item);
+  return item.format === "order" ? toOrderQuestion({ blockId, item }) : toQuestionView(item);
 }
 
 export type PlacementQuestionView = ReturnType<typeof toPlacementQuestionView>;
@@ -51,5 +58,5 @@ export function gradePlacementAnswer({
   answer: PlacementAnswerInput["answer"];
   item: PlacementItem;
 }) {
-  return gradeSessionAnswer({ answer, blockId: item.id, item });
+  return gradeSessionAnswer({ answer, blockId: getPlacementBlockId(item), item });
 }

@@ -63,7 +63,11 @@ struct MistakeLessonQuestionView: View {
       lessonId: replay.lessonId, answer: state.currentAnswer, result: state.currentResult,
       isLocked: state.phase != .playing, waitsForPicture: false,
       select: { state.select($0, for: replay.step.id) }, resolveSpoken: resolveSpoken,
-      check: canCheck ? check : nil)
+      check: canCheck ? check : nil,
+      complete: { answer in
+        state.select(answer, for: replay.step.id)
+        check()
+      })
   }
 
   private var announcement: String? {
@@ -137,6 +141,12 @@ struct MistakeLessonQuestionView: View {
         }
       }
     } actions: {
+      if !showsIdea, grade == nil, failures > 0 {
+        PracticeSaveError(
+          failures: failures, onReport: { showsSaveReport = true },
+          retry: { Task { await send(retry: true) } })
+      }
+
       PracticeActionRow {
         if showsIdea {
           PracticeMainButton(
@@ -149,7 +159,7 @@ struct MistakeLessonQuestionView: View {
           }
         } else {
           if grade == nil {
-            PracticeSecondaryButton(
+            QuestionDontKnowButton(
               title: entry.drill.kind == .noGuessing
                 ? LocalizedStringResource(
                   "I'm not sure", table: "Practice",
@@ -157,17 +167,12 @@ struct MistakeLessonQuestionView: View {
                 : LocalizedStringResource(
                   "I don't know yet", table: "Practice",
                   comment: "Answers a question as not known yet."),
-              icon: .notSure, isDisabled: speechChecking || state.phase != .playing
+              isDisabled: speechChecking || state.phase != .playing
             ) {
               press(.notSure)
               Task { await send(dontKnow: true) }
             }
             .practiceFocus(.notSure)
-            if failures > 0 {
-              PracticeSaveError(
-                failures: failures, onReport: { showsSaveReport = true },
-                retry: { Task { await send(retry: true) } })
-            }
           }
           if let promptURL {
             LessonAudioButton(url: promptURL, style: .bar)
@@ -191,9 +196,14 @@ struct MistakeLessonQuestionView: View {
             record
               .practiceMainAction()
           } else {
+            // A board checked pair by pair sends itself with its last pair, so its action waits as
+            // Continue.
             PracticeMainButton(
-              title: LocalizedStringResource(
-                "Check", table: "Practice", comment: "Sends the answer to be graded."),
+              title: replay.step.checksEachPair
+                ? LocalizedStringResource(
+                  "Continue", table: "Practice", comment: "Moves on after a grade.")
+                : LocalizedStringResource(
+                  "Check", table: "Practice", comment: "Sends the answer to be graded."),
               isBusy: state.phase == .checking || speechChecking,
               isDisabled: !canCheck
             ) {

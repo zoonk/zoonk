@@ -1,5 +1,6 @@
 import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
 import { loadClaimEvents, loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
@@ -184,7 +185,12 @@ export async function answerStudyQuestion({
     }),
     prisma.attempt.findFirst({
       orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
-      where: { itemId: input.itemId, studySessionId: sessionId, userId },
+      where: {
+        ...NOT_LESSON_ANSWER_FILTER,
+        itemId: input.itemId,
+        studySessionId: sessionId,
+        userId,
+      },
     }),
   ]);
 

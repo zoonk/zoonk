@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { focusOn, press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import {
   type Actions,
   openPractice,
@@ -196,7 +198,7 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(page.getByText("Wrong place")).not.toBeInTheDocument();
   });
 
-  it("keeps the bank matching controls and sends the original pair indexes", async () => {
+  it("checks each pair as it's made and sends the board by itself on the last pair", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({ ...bankFeedback(), correctAnswer: { matches: [0, 1] } });
@@ -206,12 +208,137 @@ describe("exact standalone bank mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
     await page.getByRole("button", { exact: true, name: "Proton" }).click();
     await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({
+        answer: { matches: [0, 1], misses: [] },
+        itemId: "original-bank-item",
+      }),
     );
+  });
+
+  it("shows a locked pair right for a moment, then settles it out of play with its left card's number on both cards", async () => {
+    openPractice(null, { answer: vi.fn<Actions["answer"]>() }, question("matchPairs"));
+    await page.getByRole("button", { exact: true, name: "Proton" }).click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+    const locked = page.getByRole("button", { name: "Proton, matched with Positive charge" });
+    const partner = page.getByRole("button", { name: "Positive charge, matched with Proton" });
+
+    await expect.element(locked).toHaveAttribute("data-state", "right");
+    await expect.element(locked).toHaveAttribute("data-state", "done");
+    await expect.element(locked).toBeDisabled();
+
+    expect(
+      [locked, partner].map(
+        (card) => card.element().querySelector("[data-slot=match-pair-number]")?.textContent,
+      ),
+    ).toStrictEqual(["2", "2"]);
+  });
+
+  it("scrolls the result into sight above the bar when the last pair sends it on a short phone", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        explanation:
+          "Electrons carry the negative charge and orbit the nucleus. Protons carry the positive charge and sit in the nucleus with the neutrons.",
+      });
+
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport({ height: 480, width: 390 }, async () => {
+        openPractice(null, { answer }, question("matchPairs"));
+        await page.getByRole("button", { exact: true, name: "Electron" }).click();
+        await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
+        await page.getByRole("button", { exact: true, name: "Proton" }).click();
+        await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+        const feedback = page.getByRole("region", { name: "Answer feedback" });
+        await expect.element(feedback).toBeVisible();
+
+        await expect
+          .poll(() => {
+            const box = feedback.element().getBoundingClientRect();
+            const bar = document.querySelector("[data-slot=bottom-bar]")?.getBoundingClientRect();
+            return box.top >= 0 && box.bottom <= (bar?.top ?? 0);
+          })
+          .toBe(true);
+
+        const top =
+          document.querySelector("[data-slot=task-header]")?.getBoundingClientRect().bottom ?? 0;
+
+        const sliced = [...document.querySelectorAll("[data-slot=match-entry]")].filter((card) => {
+          const box = card.getBoundingClientRect();
+          return box.top < top - 1 && box.bottom > top + 1;
+        });
+
+        expect(sliced).toStrictEqual([]);
+      }),
+    );
+  });
+
+  it("keeps the first card picked after a wrong pair, sends the miss and names it in the result", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        explanation: "Electrons carry the negative charge.",
+        isCorrect: false,
+      });
+
+    openPractice(null, { answer }, question("matchPairs"));
+    const electron = page.getByRole("button", { exact: true, name: "Electron" });
+    await electron.click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
+
+    await expect
+      .element(page.getByText("Electron and Positive charge don't go together.", { exact: true }))
+      .toBeInTheDocument();
+
+    await expect.element(electron).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("button", { exact: true, name: "Negative charge" }).click();
+    await page.getByRole("button", { exact: true, name: "Proton" }).click();
+    await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
+
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback.getByText("Electrons carry the negative charge.")).toBeVisible();
+    await expect.element(feedback.getByText("Right answer")).not.toBeInTheDocument();
+
+    await expect
+      .element(feedback.getByText("Electron → Positive charge", { exact: true }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Electron, matched with Negative charge" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
+      .toHaveAttribute("data-state", "right");
+
+    expect(answer).toHaveBeenCalledWith(
+      expect.objectContaining({ answer: { matches: [0, 1], misses: [{ left: 0, right: 1 }] } }),
+    );
+  });
+
+  it("shows the solved board after I don't know yet", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { matches: [0, 1] },
+        isCorrect: false,
+      });
+
+    openPractice(null, { answer }, question("matchPairs"));
+    await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "Proton, matched with Positive charge" }))
+      .toBeDisabled();
   });
 
   it("matches with the number keys its entries show, one run across both columns, and a matched entry answers none", async () => {
@@ -223,11 +350,10 @@ describe("exact standalone bank mistake practice", () => {
     const electron = page.getByRole("button", { exact: true, name: "Electron" });
     const negative = page.getByRole("button", { exact: true, name: "Negative charge" });
     await expect.element(electron).toHaveAttribute("aria-keyshortcuts", "1");
-    await expect.element(negative).not.toHaveAttribute("aria-keyshortcuts");
+    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "3");
 
     await userEvent.keyboard("1");
     await expect.element(electron).toHaveAttribute("aria-pressed", "true");
-    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "3");
 
     await userEvent.keyboard("3");
     const matched = page.getByRole("button", { name: "Negative charge, matched with Electron" });
@@ -240,10 +366,13 @@ describe("exact standalone bank mistake practice", () => {
 
     await userEvent.keyboard("2");
     await userEvent.keyboard("4");
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
-      expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
+      expect.objectContaining({
+        answer: { matches: [0, 1], misses: [] },
+        itemId: "original-bank-item",
+      }),
     );
   });
 });

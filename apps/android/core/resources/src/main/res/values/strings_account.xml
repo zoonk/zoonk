@@ -11,7 +11,8 @@
     <string name="account_continue_with_apple">Continue with Apple</string>
     <string name="account_or">Or</string>
     <string name="account_email">Email</string>
-    <string name="account_email_placeholder">me@gmail.com</string>
+    <!-- An example email address in an empty email field. Localize "you" and keep example.com. -->
+    <string name="account_email_placeholder">you@example.com</string>
     <string name="account_continue">Continue</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <string name="account_agreement">By continuing, you agree to the Zoonk %1$s and %2$s.</string>

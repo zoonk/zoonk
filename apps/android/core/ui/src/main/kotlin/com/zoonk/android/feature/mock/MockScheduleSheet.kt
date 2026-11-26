@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,8 +35,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -99,6 +103,15 @@ private class MockScheduleModel(
     }
 }
 
+/** Main's `MockSchedule` trigger, a small `link` button: underlined words on the start edge that open [MockScheduleSheet]. */
+@Composable
+fun ChangeMockSchedule(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) = TextButton(onClick = onClick, enabled = enabled, edge = ButtonEdge.Start, size = ButtonSize.Small) {
+    Text(stringResource(R.string.mock_schedule_change), textDecoration = TextDecoration.Underline)
+}
+
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,11 +154,12 @@ fun MockScheduleSheet(
                     TextButton(
                         onClick = { model.save(null) },
                         enabled = !model.saving,
+                        edge = ButtonEdge.Start,
                     ) { Text(stringResource(R.string.mock_schedule_skip)) }
                 }
 
                 is LoadState.Failed, LoadState.Empty -> {
-                    TextButton(onClick = model::refresh) { Text(stringResource(R.string.load_failed_try_again)) }
+                    OutlinedButton(onClick = model::refresh) { Text(stringResource(R.string.load_failed_try_again)) }
                 }
 
                 LoadState.Idle, LoadState.Loading -> {
@@ -177,7 +191,11 @@ fun MockScheduleNotice(
             },
         )
         Row {
-            TextButton(onClick = { model.undo(change) }, enabled = !model.saving) { Text(stringResource(R.string.plan_undo)) }
+            TextButton(
+                onClick = { model.undo(change) },
+                enabled = !model.saving,
+                edge = ButtonEdge.Start,
+            ) { Text(stringResource(R.string.plan_undo)) }
             CloseButton(onClick = { store.dismiss(change) }, label = stringResource(R.string.plan_editor_close))
         }
         if (model.failed.value == true) Text(stringResource(R.string.today_save_failed))

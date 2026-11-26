@@ -331,7 +331,7 @@ private struct LessonPlayerContent: View {
         Image(systemName: "xmark")
       }
     }
-    .keyboardShortcut(.cancelAction)
+    .leavesOnEscape()
     // On the button, so the dialog comes from it.
     .confirmationDialog(
       Text(

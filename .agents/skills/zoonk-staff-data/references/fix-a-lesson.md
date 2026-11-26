@@ -39,7 +39,7 @@ Copy `plan` from `staff lesson`, change only what's wrong, and send the whole pl
 
 ## Check, then propose
 
-`pnpm zoonk staff fixes propose --check fix.json` prepares the fix without storing it. Exit 0 prints each change's `before` and `after`, its `effects`, and `media`: the clips, pictures and icons proposing will produce. Exit 2 lists every problem with its path, such as `setScreens.screens[3].word: …`; fix them all and check again. Then propose without `--check`. The media is produced after proposing, and the approver hears and sees it before approving.
+Check and propose the fix as [propose a fix](propose-a-fix.md) says. `--check` lists every problem with its path, such as `setScreens.screens[3].word: …`; fix them all and check again. Its `media` includes the idea icons proposing will produce; the media is produced after proposing, and the approver hears and sees it before approving.
 
 A fix holds up to 10 review units. Each change, new word or sentence declaration, and newly generated clip, picture or idea icon counts one. Kept entries and reused media add no units. Two fixes can't change one lesson in the same batch, so a lesson that needs more goes in a second fix once the first is approved.
 

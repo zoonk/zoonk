@@ -58,7 +58,7 @@ fun DayStepRow(
     onOpen: (() -> Unit)? = null,
     busy: Boolean = false,
     openFailed: Boolean = false,
-    testOut: (@Composable () -> Unit)? = null,
+    below: (@Composable () -> Unit)? = null,
     divider: Boolean = true,
 ) {
     val finished = step.isFinished
@@ -86,7 +86,7 @@ fun DayStepRow(
                     if (openFailed) StepOpenFailed()
                     if (!finished) {
                         StepLines(step, examDocument)
-                        testOut?.invoke()
+                        below?.invoke()
                     }
                 }
             },

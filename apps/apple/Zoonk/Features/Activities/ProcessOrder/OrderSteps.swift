@@ -14,7 +14,7 @@ struct OrderSteps<ID: Hashable & LosslessStringConvertible>: View {
       ForEach(Array(order.enumerated()), id: \.element) { index, id in
         if let label = text(id) {
           row(id, label: label, index: index)
-            .modifier(NumberShortcut(index: index))
+            .modifier(PickKey(index: index))
             .practiceFocus(index == 0 ? .answer : nil)
         }
       }

@@ -43,16 +43,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld espacio"
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld espacios"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld espacio"
                 }
               },
               "other" : {
@@ -127,12 +127,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld spacja"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -143,6 +137,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld spacji"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld spacja"
                 }
               },
               "other" : {
@@ -234,16 +234,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tabulación"
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld tabulaciones"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabulación"
                 }
               },
               "other" : {
@@ -318,12 +318,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tabulator"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -334,6 +328,12 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld tabulatorów"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tabulator"
                 }
               },
               "other" : {
@@ -969,6 +969,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene"
+          }
+        }
+      }
+    },
+    "You first matched:" : {
+      "comment" : "Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zuerst hast du zugeordnet:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las primeras parejas que formaste:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as d’abord associé :"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avevi abbinato:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初に組み合わせたカード："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처음에 이렇게 짝지었어요:"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najpierw połączono:"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você tinha combinado primeiro:"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk eşleştirdiğin:"
           }
         }
       }

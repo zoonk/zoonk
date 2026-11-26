@@ -101,6 +101,7 @@ const lesson: WrittenLesson = {
       ],
       question:
         "Quantas vezes as odds da origem alta de chegar ao destino alto são maiores que as da origem baixa?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -139,6 +140,7 @@ const lesson: WrittenLesson = {
       ],
       question:
         "_Uma pesquisa registrou mais mudanças de posição social; logo, comprovou menor desigualdade de oportunidades._",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -186,6 +188,7 @@ const lesson: WrittenLesson = {
       ],
       question:
         "_Uma pesquisa que compara a ocupação de cada participante aos 25 e aos 50 anos mede mobilidade intergeracional._",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -225,6 +228,7 @@ const lesson: WrittenLesson = {
         },
       ],
       question: "Qual parecer está correto?",
+      standsAlone: true,
       visual: null,
     },
   ],

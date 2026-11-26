@@ -57,8 +57,8 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
           onChange={(event) => setEmail(event.currentTarget.value)}
           placeholder={t({
             description:
-              "An example address shown in the empty email field. Keep it as written, like the app's other example addresses.",
-            message: "me@gmail.com",
+              'An example email address in an empty email field. Localize "you" and keep example.com.',
+            message: "you@example.com",
           })}
           value={email}
         />

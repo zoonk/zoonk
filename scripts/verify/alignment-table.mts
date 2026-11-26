@@ -315,6 +315,24 @@ export const EXCEPTIONS: AlignmentException[] = [
     scenario: "plan-language-after-test-dark",
   },
   {
+    configuration: "phone touch",
+    issue: 3268,
+    piece: "list-group",
+    reason:
+      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
+    relation: "line",
+    scenario: "plan-module-taken-out-en",
+  },
+  {
+    configuration: "phone touch pt",
+    issue: 3268,
+    piece: "list-group",
+    reason:
+      "A Plan row's share centers on its name and bar, which the line check reads as one line, on main too",
+    relation: "line",
+    scenario: "plan-module-taken-out-pt",
+  },
+  {
     configuration: "laptop keys",
     issue: 2832,
     piece: "page",
@@ -346,5 +364,23 @@ export const EXCEPTIONS: AlignmentException[] = [
     reason: "A two-line phase name on the Plan's roadmap leaves one word alone, on main too",
     relation: "lone-word",
     scenario: "/pt/plan",
+  },
+  {
+    configuration: "phone touch en-US",
+    issue: 3006,
+    piece: "page",
+    reason:
+      "A long dialogue match card wraps greedily and leaves one word alone on Android, on main too",
+    relation: "lone-word",
+    scenario: "review-midway",
+  },
+  {
+    configuration: "phone touch en-US",
+    issue: 3006,
+    piece: "page",
+    reason:
+      "A long dialogue match card wraps greedily and leaves one word alone on Android, on main too",
+    relation: "lone-word",
+    scenario: "review-checked-after-a-miss",
   },
 ];

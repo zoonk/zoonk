@@ -66,6 +66,7 @@ const DETAIL: Detail = {
       format: "trueFalse",
       image: null,
       itemId: "statement",
+      key: null,
       left: null,
       mistakeId: null,
       options: null,

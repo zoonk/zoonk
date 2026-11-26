@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { io } from "next/cache";
 import {
   getCheckpointQuestionCount,
@@ -119,6 +120,7 @@ export async function loadStudyBlock(
       orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
       select: { answer: true, id: true, isCorrect: true, itemId: true },
       where: {
+        AND: NOT_LESSON_ANSWER_FILTER,
         OR: [
           { itemId: { in: storedItemIds } },
           { id: { in: storedPayload.checkpointAnswers.map((answer) => answer.attemptId) } },
@@ -192,18 +194,23 @@ export async function loadStudyBlock(
     const item = items.find((candidate) => candidate.id === itemId);
     const row = rows.find((candidate) => candidate.id === itemId);
     const drill = payload.drills.find((candidate) => candidate.itemIds.includes(itemId));
+    const capsule = payload.capsules.find((candidate) => candidate.itemIds.includes(itemId));
+    const placement = payload.placementItemIds.includes(itemId);
 
     return item
       ? [
           {
-            ...toSessionQuestion({ blockId, item }),
+            ...toSessionQuestion({
+              blockId,
+              item,
+              revealMatchKey: owned.block.kind === "review" && Boolean(capsule) && !placement,
+            }),
             answered: answered.get(itemId) ?? null,
-            capsuleKey:
-              payload.capsules.find((capsule) => capsule.itemIds.includes(itemId))?.key ?? null,
+            capsuleKey: capsule?.key ?? null,
             citation: row ? toItemCitation(row) : null,
             drill: drill ? toDrillView({ drill, lessons: drillLessons }) : null,
             mistakeId: drill?.mistakeId ?? null,
-            placement: payload.placementItemIds.includes(itemId),
+            placement,
             quoted: row ? isQuotedItem(row.content) : false,
             set: row ? toItemSetView({ item: row, reveal: isSetAnswered(row.setId) }) : null,
           },

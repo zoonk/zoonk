@@ -16,6 +16,7 @@ import {
   sortedCard,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
@@ -235,15 +236,12 @@ describe("reasoning activities", () => {
     await expect.element(reason).not.toMatchTextContent("$");
   });
 
-  it("match pairs: matching each pair on the first try is right", async () => {
+  it("match pairs: matching each pair on the first try is right, checked by the last pair", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
     await matchCards("librería", "bookstore");
 
-    await expect.element(page.getByText("3 of 3 pairs matched", { exact: true })).toBeVisible();
-
-    await checkActivity();
     await expectVerdict("Correct!");
   });
 
@@ -266,7 +264,24 @@ describe("reasoning activities", () => {
     await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
     await press("5");
 
-    await expect.element(page.getByText("2 of 3 pairs matched", { exact: true })).toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "bookstore, matched with librería" }))
+      .toBeDisabled();
+  });
+
+  it("match pairs: Escape lets go of a picked card and stays, and leaves once nothing is picked", async () => {
+    const { onExit } = openActivity({ template: "matchPairs" });
+    const libreria = page.getByRole("button", { exact: true, name: "librería" });
+    await expect.element(libreria).toHaveAttribute("aria-keyshortcuts", "1");
+
+    await pressOnPage("1");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
+    await press("Escape");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "false");
+    expect(onExit).not.toHaveBeenCalled();
+
+    await press("Escape");
+    await expect.poll(() => onExit).toHaveBeenCalledOnce();
   });
 
   it("match pairs: puts each card beside its match once every pair is matched", async () => {
@@ -287,19 +302,72 @@ describe("reasoning activities", () => {
     }
   });
 
-  it("match pairs: mixing up two pairs counts as a wrong first try", async () => {
+  it("match pairs: after a wrong pair the first card stays picked, and the result names the miss under a board that marks its pair", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "success");
-    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
-    await matchCards("embarazada", "pregnant");
-    await matchCards("éxito", "success");
-    await matchCards("librería", "bookstore");
-    await checkActivity();
-    await expectVerdict("Not quite");
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).not.toBeInTheDocument();
 
     await expect
-      .element(page.getByText("embarazada goes with pregnant, not success."))
-      .toBeVisible();
+      .element(page.getByRole("button", { exact: true, name: "embarazada" }))
+      .toHaveAttribute("aria-pressed", "true");
+
+    await page.getByRole("button", { exact: true, name: "pregnant" }).click();
+    await matchCards("éxito", "success");
+    await matchCards("librería", "bookstore");
+    await expectVerdict("Not quite");
+
+    await expect.element(page.getByText("embarazada → success", { exact: true })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "embarazada, matched with pregnant" }))
+      .toHaveAttribute("data-state", "missed");
+
+    await expect
+      .element(page.getByRole("button", { name: "éxito, matched with success" }))
+      .toHaveAttribute("data-state", "right");
+
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeEnabled();
+  });
+
+  it("match pairs: shows a card's own why after a wrong try, in sight under a tall board, and no note without one", async () => {
+    const why = "Librería is a false friend: a library is a biblioteca.";
+
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport({ height: 520, width: 390 }, async () => {
+        openActivity({
+          content: {
+            ...activityContentFixtures.matchPairs,
+            fields: {
+              pairs: [
+                { id: "a", left: "embarazada", right: "pregnant" },
+                { id: "b", left: "éxito", right: "success" },
+                { id: "c", left: "librería", right: "bookstore", why },
+                { id: "d", left: "constipado", right: "having a cold" },
+                { id: "e", left: "carpeta", right: "folder" },
+              ],
+            },
+          },
+          template: "matchPairs",
+        });
+
+        await matchCards("embarazada", "success");
+        await expect.element(page.getByText(/Not quite/u)).not.toBeInTheDocument();
+
+        await page.getByRole("button", { exact: true, name: "pregnant" }).click();
+        await matchCards("librería", "folder");
+        const note = page.getByText(why, { exact: true });
+        await expect.element(note).toBeInTheDocument();
+
+        await expect
+          .poll(() => {
+            const box = note.element().getBoundingClientRect();
+            const bar = document.querySelector("[data-slot=bottom-bar]")?.getBoundingClientRect();
+            return box.bottom <= (bar?.top ?? window.innerHeight);
+          })
+          .toBe(true);
+      }),
+    );
   });
 
   it("match pairs: a screen reader hears math cards in words, not LaTeX", async () => {
@@ -332,10 +400,10 @@ describe("reasoning activities", () => {
       )
       .toBeInTheDocument();
 
-    await matchCards("1 over 2", "0.5");
+    await page.getByRole("button", { exact: true, name: "0.5" }).click();
 
     await expect
-      .element(page.getByText("Matched 1 over 2 with 0.5. 1 of 2 pairs matched.", { exact: true }))
+      .element(page.getByText("Matched 1 over 2 with 0.5. Pairs matched: 1 of 2.", { exact: true }))
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("button", { name: "1 over 2, matched" })).toBeDisabled();

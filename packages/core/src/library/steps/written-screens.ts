@@ -10,7 +10,13 @@ import { describeContentIssues, safeParseStepContent } from "./contract/step-con
 export type ScreenMathItem = Omit<MathCheckInput, "correctReason">;
 
 export type ConvertedScreen =
-  | { ok: true; kind: StepKind; content: object; mathItem: ScreenMathItem | null }
+  | {
+      ok: true;
+      kind: StepKind;
+      content: object;
+      mathItem: ScreenMathItem | null;
+      standsAlone?: boolean;
+    }
   | { ok: false; problems: string[] };
 
 type ConvertOptions = { language: string; allowImage: boolean };
@@ -246,5 +252,18 @@ export function toStepContent(screen: WrittenScreen, options: ConvertOptions): C
       : converted;
   }
 
-  return toValidatedStep({ ...toTeachingContent(screen, options.allowImage), mathItem: null });
+  const converted = toValidatedStep({
+    ...toTeachingContent(screen, options.allowImage),
+    mathItem: null,
+  });
+
+  return converted.ok && screen.kind === "check"
+    ? {
+        ...converted,
+        standsAlone:
+          screen.standsAlone === true &&
+          !screen.image &&
+          !screen.options.some((option) => option.picture),
+      }
+    : converted;
 }

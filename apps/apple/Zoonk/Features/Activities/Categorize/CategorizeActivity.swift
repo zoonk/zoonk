@@ -185,7 +185,7 @@ private struct CategorizeCanvas: View {
       }
     }
     .buttonStyle(LessonOptionStyle(mark: targetedGroupId == group.id ? .selected : .plain))
-    .modifier(ActivityNumberKey(index: index))
+    .modifier(PickKey(index: index))
     .dropDestination(for: ActivityDragItem.self) { dropped, _ in
       // A number key may have sorted the dragged card already; never sort the next one.
       guard let inHand = sorting.cardInHand(from: items), dropped.first?.id == inHand.id else {

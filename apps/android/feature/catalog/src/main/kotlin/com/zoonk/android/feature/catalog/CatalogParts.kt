@@ -61,7 +61,9 @@ import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.ForwardIcon
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.NumberKeys
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PickKeyOptions
 import com.zoonk.android.ui.components.flagEmoji
 import com.zoonk.android.ui.components.glyphInk
 import com.zoonk.android.ui.format.currentLocale
@@ -420,18 +422,19 @@ internal fun FirstQuestion(
         Spacer(Modifier.size(20.dp))
 
         val analytics = LocalEventTracker.current
-        AnswerOptionGroup {
-            screen.options.forEachIndexed { index, option ->
-                AnswerOption(
-                    marker = index + 1,
-                    picked = false,
-                    result = null,
-                    onClick = {
-                        analytics.track(AnalyticsEvent.HookAnswered(lessonId))
-                        navigator.open(AppRoute.Lesson(lessonId, firstAnswer = option.id, fromCatalog = true))
-                    },
-                ) {
-                    RichInlineText(option.text, style = MaterialTheme.typography.bodyLarge)
+        val answer = { optionId: String ->
+            analytics.track(AnalyticsEvent.HookAnswered(lessonId))
+            navigator.open(AppRoute.Lesson(lessonId, firstAnswer = optionId, fromCatalog = true))
+        }
+        // As in the lesson it opens, a number key answers with its option.
+        NumberKeys {
+            PickKeyOptions(screen.options.size, enabled = true, onPick = { answer(screen.options[it].id) }) {
+                AnswerOptionGroup {
+                    screen.options.forEachIndexed { index, option ->
+                        AnswerOption(marker = index + 1, picked = false, result = null, onClick = { answer(option.id) }) {
+                            RichInlineText(option.text, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
                 }
             }
         }

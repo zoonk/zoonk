@@ -47,6 +47,7 @@ const SHARED_EXPECTATIONS = `
   - Charts and timelines in \`visual\` are drawn by the app from their data; judge whether the data is right and matches the text
   - An explanation's \`explore\` is a template the app draws under the text with nothing asked, its fields as JSON in \`content\`; judge whether its fields are right and match the text
   - A question's \`basis\` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides
+  - A \`check\`'s \`standsAlone\` is true only when someone who has the skill could answer it from its own context, question, options and picture or visual, without the lesson's earlier screens (it states its case, gives its table, code or equation, or asks about the idea itself), and false when it leans on a case, table or picture only an earlier screen shows; flag a wrong mark either way
   - Don't evaluate JSON formatting
 `;
 

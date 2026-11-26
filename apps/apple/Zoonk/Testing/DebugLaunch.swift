@@ -2,9 +2,21 @@
   import SwiftUI
 
   /// A Debug launch setting, from the environment or as a launch argument (`-KEY value`): device
-  /// tools pass launch arguments but no launch environment.
+  /// tools pass launch arguments but no launch environment. The argument is read as given, since
+  /// UserDefaults parses it as a property list and drops JSON.
   func debugLaunchValue(_ key: String) -> String? {
-    ProcessInfo.processInfo.environment[key] ?? UserDefaults.standard.string(forKey: key)
+    let process = ProcessInfo.processInfo
+    if let value = process.environment[key] {
+      return value
+    }
+
+    guard let flag = process.arguments.lastIndex(of: "-\(key)"),
+      process.arguments.indices.contains(flag + 1)
+    else {
+      return nil
+    }
+
+    return process.arguments[flag + 1]
   }
 
   /// `ZOONK_DEBUG_LINK` opens an app path as a link to it would (`/learn/{id}`,

@@ -10,7 +10,7 @@ import { type QuestionAnswer } from "../sessions/contract";
 import { type MistakeReplay } from "./mistake-replay";
 
 type ItemReplay = Extract<MistakeReplay, { kind: "item" }>;
-const NO_EXTRAS = { left: null, right: null, select: null };
+const NO_EXTRAS = { key: null, left: null, right: null, select: null };
 
 export function toMistakeQuestion(
   replay: ItemReplay,
@@ -19,7 +19,7 @@ export function toMistakeQuestion(
   const set = item.set ?? null;
 
   if (item.format !== "numeric") {
-    return { ...toSessionQuestion({ blockId: item.id, item }), set };
+    return { ...toSessionQuestion({ blockId: item.id, item, revealMatchKey: true }), set };
   }
 
   if (!math) {

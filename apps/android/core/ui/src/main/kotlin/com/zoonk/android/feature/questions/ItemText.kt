@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.code.CodeBlock
 import com.zoonk.android.ui.code.CodeSnippet
+import com.zoonk.android.ui.components.keptWhole
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.richtext.RichSegment
 import com.zoonk.android.ui.richtext.RichTable
@@ -132,7 +133,7 @@ fun spokenItemLine(text: String): String = itemLine(text).let { it.spoken ?: it.
 
 /**
  * The question itself, with its math, as a TalkBack heading; quiet once it's graded. A [translation]
- * reads under it in the learner's language.
+ * reads under it in the learner's language. A verdict's reveal scrolls it away whole ([keptWhole]).
  */
 @Composable
 fun QuestionTitle(
@@ -142,7 +143,7 @@ fun QuestionTitle(
     translation: String = "",
 ) {
     val style = MaterialTheme.typography.titleLarge
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(modifier.keptWhole(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         RichText(
             text = text,
             modifier = Modifier.semantics { heading() },

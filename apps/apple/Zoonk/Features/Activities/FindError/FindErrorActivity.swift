@@ -123,7 +123,7 @@ private struct FindErrorCanvas: View {
     }
     .buttonStyle(ActivityTileStyle(mark: mark))
     .disabled(isChecked)
-    .modifier(ActivityNumberKey(index: index))
+    .modifier(PickKey(index: index))
     .accessibilityLabel(
       Text(
         "Step \(index + 1): \(LessonRichText.spoken(step.text))", tableName: "Activities",

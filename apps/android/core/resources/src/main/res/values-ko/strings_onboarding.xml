@@ -172,17 +172,13 @@
   "onboarding_placement_answer_failed": "0debd6987dff3330df1a5046deb39041f57bc81bc920e684c1d585e170addfbb",
   "onboarding_placement_confirm": "1392b79f35e9e3bc0cea84aba38951a8a35b9481685ef6adb3d470ca7ecf7be5",
   "onboarding_placement_dont_know": "271233c776d9e5c96baf2490272e515737f686c814b728620f39b2d0c938f522",
-  "onboarding_placement_false": "eaf48bf83c5097aa92e6cef95b7d4bea246027e62e1c25738fd23a2ef1a51ce3",
   "onboarding_placement_progress": "fa030ff8c14de3e93965f530516654a1d152f04efa31d38ef098df6545e952d1",
   "onboarding_placement_question_number": "d7d3b5a65553ceec49c944c0b8275bfdb1a23244b247e2861589c0f3d4ba9ad4",
   "onboarding_placement_ready": "2d36e8b4313365d598fe0f9b19b80852dbd7f5718d911feab5b5e25ecf6120f9",
-  "onboarding_placement_right": "7a7b2d286ea906414e15037e344704ed4f686ae27b67623738c5a868d42c1db9",
   "onboarding_placement_stop": "02e273972d7338ed2c1c7bc2586e3509d3080b9e737eab3c95280c84db1db586",
-  "onboarding_placement_true": "c872e46fbdc965984b41d78a1cda86d2de3279be370c0667d4eada144bc5772c",
   "onboarding_placement_unavailable_title": "09f24a594ddeaf335996a529ce949b200b9d9b05de7164105edcc791d73329eb",
   "onboarding_placement_waiting_material": "b5685e7cc21bfcac74b019e622489c3f81ecc6bc2e8fbbc056d26c017f4662f6",
   "onboarding_placement_waiting_time": "fe6da200e022e0348f749a4c667b3275f18b468082c1187d43fbf8c92f034770",
-  "onboarding_placement_wrong": "c9bac29490f4a2bfff337fb88ff62813dc9877064e0169aa2e3e966e652898e6",
   "onboarding_plan_answers_saved": "f7014a1763398a9a20426781bd023da07fd3ec5c9ef26fcc2b03d0e2bf538557",
   "onboarding_plan_not_started": "1ece6cce4ab56ca956fd9480675d9d58bfc5b6925ce147a93ea9950cbe093eb5",
   "onboarding_plan_ready_goal": "7447e9739ff7efa0642250c791de81b0941d7b8f874df8410b665185b68215c4",
@@ -581,13 +577,6 @@
     <string name="onboarding_placement_confirm">확인</string>
     <string name="onboarding_placement_stop">그만 풀고 내 답변 반영하기</string>
     <string name="onboarding_placement_answer_failed">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">참</string>
-    <string name="onboarding_placement_false">거짓</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">맞아요</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">틀려요</string>
     <string name="onboarding_placement_unavailable_title">처음 며칠 동안 알고 있는 내용을 확인해 볼게요</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">이 언어의 글자가 낯선가요? 테스트를 건너뛰세요. 첫 레슨에서 읽는 법을 배워요.</string>

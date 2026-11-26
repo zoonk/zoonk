@@ -208,6 +208,10 @@ internal fun ActivityView(
             content.baseMap,
             actions::takeNumberKeys,
             rounded,
+            onComplete = { done ->
+                onAnswerChange(done)
+                if (!locked) actions.runPrimary()
+            },
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
@@ -238,7 +242,11 @@ internal fun ActivityView(
             check()
             if (!canvasOnScreen && checkFirst) canvas()
 
-            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect, rounded, showsNumbers = !ownsAnswer)
+            if (result != null) {
+                ActivityFeedback(frame.check, activityAnswer, result.isCorrect, rounded, showsNumbers = !ownsAnswer) {
+                    renderer?.feedback?.invoke(content.content, activityAnswer)
+                }
+            }
         }
     }
 }
@@ -440,7 +448,7 @@ private fun ActivityDataNote(frame: ActivityFrame) {
     }
 }
 
-/** Main's `ActivityFeedback`: the verdict, then the check's own reasons, numbers or explanation. */
+/** Main's `ActivityFeedback`: the verdict, the template's own [added] lines, then the check's reasons, numbers or explanation. */
 @Composable
 private fun ActivityFeedback(
     check: ActivityCheck,
@@ -448,6 +456,7 @@ private fun ActivityFeedback(
     isCorrect: Boolean,
     rounded: ActivityRoundedAnswer?,
     showsNumbers: Boolean,
+    added: @Composable () -> Unit,
 ) {
     val reveal = LocalFeedbackReveal.current
 
@@ -457,6 +466,8 @@ private fun ActivityFeedback(
             tone = if (isCorrect) FeedbackTone.Right else FeedbackTone.Wrong,
             modifier = Modifier.revealPart(reveal, RevealPart.Verdict),
         )
+
+        added()
 
         when (check) {
             is ChoiceCheckValue -> {

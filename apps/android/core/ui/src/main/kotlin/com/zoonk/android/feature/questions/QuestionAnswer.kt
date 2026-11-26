@@ -18,7 +18,8 @@ data class AnswerCheck(
 
 /**
  * The answer controls for any format (main's `QuestionView`). [onAnswer] gets the answer as it's
- * made, null until it's complete; [onSubmit] gets one Done sends from a typed or numeric box. Key it
+ * made, null until it's complete; [onSubmit] gets one Done sends from a typed or numeric box, or a learning match its
+ * last pair sends. Key it
  * by the question. A statement shows its own words on its card, so its host leaves the title out.
  * Across a spread ([part]) only a statement's card draws on the screen's page; every control draws
  * on the turn's. A statement shows [draft], what [onAnswer] last got, so its card and its answers
@@ -86,7 +87,16 @@ fun QuestionAnswer(
         }
 
         QuestionFormat.MatchPairs -> {
-            MatchPairsQuestion(question.left.orEmpty(), question.right.orEmpty(), enabled && check == null, onAnswer, modifier)
+            MatchPairsQuestion(
+                left = question.left.orEmpty(),
+                right = question.right.orEmpty(),
+                key = question.key,
+                check = check,
+                enabled = enabled,
+                onAnswer = onAnswer,
+                onSubmit = onSubmit,
+                modifier = modifier,
+            )
         }
 
         QuestionFormat.TrueFalse -> {

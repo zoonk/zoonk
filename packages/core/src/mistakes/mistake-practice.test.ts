@@ -838,7 +838,11 @@ describe(answerMistakePractice, () => {
     });
 
     const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 2 }, durationMs: 100, itemId: unmatched.id },
+      input: {
+        answer: { selectedIndex: content.options.length },
+        durationMs: 100,
+        itemId: unmatched.id,
+      },
       mistakeId: mistake.id,
     });
 

@@ -574,6 +574,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Özetler"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Bunları eşleştir"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "Bunlarla eşleştir"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "İlk eşleştirdiğin:"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -979,6 +995,26 @@ msgstr "Bu hedefe günde {main}, diğer hedeflerine toplam {other} ayrılır."
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "{time} olarak ayarla"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "{left} ile {right} eşleşmesi kaldırıldı."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} ile {right} eşleşmiyor."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "{left} ile {right} eşleşti. Eşleşen çiftler: {matched} / {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, {other} ile eşleştirildi"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -3756,11 +3792,11 @@ msgctxt "feedback.hBQCdX"
 msgid "Your email, if you'd like a reply"
 msgstr "Cevap almak istersen e-posta adresin"
 
-#. An example email address in an empty field. Adapt it to the language.
+#. An example email address in an empty email field. Localize "you" and keep example.com.
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.OiSL94"
-msgid "myemail@gmail.com"
-msgstr "epostam@gmail.com"
+msgctxt "feedback.PwhG9W"
+msgid "you@example.com"
+msgstr "sen@example.com"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.Xx0WZV"
@@ -12442,21 +12478,6 @@ msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "Sorunun konusu"
 
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Bunları eşleştir"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "Bunlarla eşleştir"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, {other} ile eşleştirildi"
-
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"
 msgid "Right place"
@@ -13021,6 +13042,12 @@ msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number} / {total, number} ünite"
 
+#. Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.
+#: src/syllabus/subject-covers.tsx
+msgctxt "PllRqz"
+msgid "What it covers"
+msgstr "Kapsamı"
+
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "eNbJHf"
@@ -13042,16 +13069,34 @@ msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "Geri ekle"
 
+#. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6pJpYl"
+msgid "You took this module out of your plan."
+msgstr "Bu modülü planından çıkardın."
+
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "Bu branşı planından çıkardın."
+
+#. Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "NmEJhW"
+msgid "This module isn't in your plan. Other modules come first."
+msgstr "Bu modül planında yok. Önce diğer modüllere yer veriliyor."
 
 #. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "ydjRGM"
 msgid "This subject isn't in your plan. Other subjects come first."
 msgstr "Bu konu planında yok. Önce diğer konulara yer veriliyor."
+
+#. On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6YC_jf"
+msgid "This module isn't in your plan yet."
+msgstr "Bu modül henüz planında yok."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13080,9 +13125,19 @@ msgid "{total, plural, one {{done, number} of # topic} other {{done, number} of 
 msgstr "{total, plural, other {{done, number} / # konu}}"
 
 #: src/syllabus/subject-screen.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "Bu modül hakkında"
+
+#: src/syllabus/subject-screen.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Bu branş hakkında"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "qsKSNx"
+msgid "Module options"
+msgstr "Modül seçenekleri"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"
@@ -13245,6 +13300,12 @@ msgstr "{course} için {institution} sınavın her alanına eşit ağırlık ver
 msgctxt "uZd7hU"
 msgid "On the exam"
 msgstr "Sınavda"
+
+#. Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules".
+#: src/syllabus/topic-note.tsx
+msgctxt "i2ZFZr"
+msgid "Not in your plan · you took this module out"
+msgstr "Planında yok · bu modülü sen çıkardın"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx

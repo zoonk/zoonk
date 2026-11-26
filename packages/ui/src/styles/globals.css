@@ -384,8 +384,8 @@
     --secondary: var(--color-neutral-200);
     --secondary-foreground: var(--color-black);
     --muted: var(--color-neutral-200);
-    --muted-foreground: var(--color-black);
-    --faint: var(--color-black);
+    --muted-foreground: var(--color-neutral-700);
+    --faint: oklch(0.405 0 0);
     --surface-3: var(--color-neutral-300);
     --accent: var(--color-neutral-200);
     --accent-foreground: var(--color-black);
@@ -494,15 +494,15 @@
       --primary-foreground: var(--color-black);
       --secondary: var(--color-neutral-700);
       --secondary-foreground: var(--color-white);
-      --muted: var(--color-neutral-600);
-      --muted-foreground: var(--color-white);
-      --faint: var(--color-white);
-      --surface-3: var(--color-neutral-600);
+      --muted: var(--color-neutral-800);
+      --muted-foreground: oklch(0.78 0 0);
+      --faint: oklch(0.76 0 0);
+      --surface-3: oklch(0.29 0 0);
       --accent: var(--color-neutral-700);
       --accent-foreground: var(--color-white);
       --destructive: var(--color-pink-300);
       --destructive-text: var(--color-pink-50);
-      --selected-tint: var(--color-neutral-500);
+      --selected-tint: oklch(0.29 0 0);
       --warning: var(--color-amber-300);
       --warning-text: var(--color-amber-50);
       --success: var(--color-blue-200);
@@ -692,9 +692,11 @@
 
   /*
    * What focus, a link's anchor or a form's missing field scrolls to stops above the pinned bottom
-   * bar (its 44px action and the room over and under it), never behind it.
+   * bar (its 44px action and the room over and under it), never behind it. Focus inside the bar
+   * needs no room: the bar is always in sight, and with it the page would scroll down by the bar's
+   * height each time focus moves to its main action.
    */
-  :root:has([data-slot="bottom-bar"]) {
+  :root:has([data-slot="bottom-bar"]):not(:has([data-slot="bottom-bar"]:focus-within)) {
     scroll-padding-bottom: calc(2.75rem + 3 * var(--spacing-frame) + var(--page-safe-bottom));
   }
 

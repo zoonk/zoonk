@@ -23,6 +23,7 @@ import { toBlockPayload } from "../../sessions/block-payload";
 import {
   approve,
   proposeFix,
+  question,
   revertFix,
   signInApprover,
   signInProposer,
@@ -30,7 +31,7 @@ import {
 import { proposeContentFix } from "./propose-content-fix";
 
 const choice = choiceItemContent("Which rule applies here?");
-const [right, wrong] = choice.options;
+const [right, wrong, ...distractors] = choice.options;
 
 if (!right || !wrong) {
   throw new Error("Expected two options");
@@ -41,6 +42,7 @@ const reworded = {
   options: [
     { ...right, text: "The rule as stated" },
     { ...wrong, reason: "That reverses the rule." },
+    ...distractors,
   ],
   question: "Which rule applies in this case?",
 };
@@ -204,7 +206,13 @@ describe("questions a fix can't change on their own", () => {
         bankItem(),
       ]);
 
-      await libraryStepFixture({ itemId: onScreen.id, lessonId: lesson.id });
+      await libraryStepFixture({
+        content: question,
+        itemId: onScreen.id,
+        kind: "check",
+        lessonId: lesson.id,
+      });
+
       await signInProposer();
 
       const change = operation === "set" ? setContent : replaceContent;
@@ -219,9 +227,7 @@ describe("questions a fix can't change on their own", () => {
         expect.stringContaining("Private content"),
         expect.stringContaining("is retired"),
         expect.stringContaining("changes with its set"),
-        expect.stringContaining(
-          operation === "set" ? "isn't a numeric question" : "in the same fix as that screen",
-        ),
+        expect.stringContaining("Fix the lesson screen"),
       ]);
     },
   );

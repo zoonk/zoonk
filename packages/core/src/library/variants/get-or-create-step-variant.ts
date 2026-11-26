@@ -35,6 +35,7 @@ function isVariantScreen(kind: string): kind is VariantScreenKind {
 function loadStep(stepId: string) {
   return prisma.step.findUnique({
     include: {
+      item: { select: { format: true } },
       lesson: {
         select: {
           contentStatus: true,
@@ -133,7 +134,7 @@ export async function getOrCreateStepVariant({
     return { status: "notFound" };
   }
 
-  if (!isVariantScreen(step.kind) || step.itemId) {
+  if (!isVariantScreen(step.kind) || step.item?.format === "numeric") {
     return { status: "unsupported" };
   }
 

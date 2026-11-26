@@ -4,7 +4,8 @@ import Foundation
 /// own.
 enum TutorScope: Hashable, Sendable {
   case plan(goalId: String)
-  case subject(goalId: String, subjectKey: String)
+  /// `module` on a goal that isn't an exam, whose Plan lists modules: the labels say "module".
+  case subject(goalId: String, subjectKey: String, module: Bool)
   case chapter(chapterId: String)
   case mock(blockId: String)
   /// `suggestions` are the lesson's `tutorSuggestions`, each with its `lessonSuggestionID`.
@@ -23,7 +24,7 @@ enum TutorScope: Hashable, Sendable {
     switch self {
     case .plan(let goalId):
       "plan:\(goalId)"
-    case .subject(let goalId, let subjectKey):
+    case .subject(let goalId, let subjectKey, _):
       "subject:\(goalId):\(subjectKey)"
     case .chapter(let chapterId):
       "chapter:\(chapterId)"
@@ -68,6 +69,10 @@ enum TutorScope: Hashable, Sendable {
     if case .step(_, let stepId, _, _, _, _) = self { .id(stepId) } else { nil }
   }
 
+  var isModule: Bool {
+    if case .subject(_, _, true) = self { true } else { false }
+  }
+
   var mistakeId: String? {
     switch self {
     case .step(_, _, _, _, _, let id), .item(_, _, _, let id): id
@@ -77,7 +82,7 @@ enum TutorScope: Hashable, Sendable {
 
   var goalId: String? {
     switch self {
-    case .plan(let goalId), .subject(let goalId, _):
+    case .plan(let goalId), .subject(let goalId, _, _):
       goalId
     case .chapter, .mock, .lesson, .step, .item:
       nil
