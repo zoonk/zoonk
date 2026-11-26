@@ -59,7 +59,7 @@ fun FeedbackVerdict(
 ) {
     val color = tone.color()
     val style = MaterialTheme.zoonkType.verdict
-    val glyph = with(LocalDensity.current) { style.lineHeight.toDp() }
+    val glyph = VERDICT_GLYPH * glyphScale()
     val line =
         with(LocalDensity.current) {
             rememberTextMeasurer()
@@ -121,3 +121,6 @@ private fun FeedbackTone.glyph(): Int =
         FeedbackTone.Neutral -> R.drawable.ic_remove
         FeedbackTone.Almost, FeedbackTone.Wrong -> R.drawable.ic_close
     }
+
+/** Main's `size-4` glyph: a light mark beside the verdict's words, never heavier than them. */
+private val VERDICT_GLYPH = 16.dp

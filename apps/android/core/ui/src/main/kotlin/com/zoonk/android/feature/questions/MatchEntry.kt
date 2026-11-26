@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -57,8 +58,8 @@ import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.optionKeysShown
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.ZoonkRadius
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 
 /**
  * Where a card is in its match. [Paired] is a pair held until Check; [Right] a pair checked and kept, as it locks and
@@ -90,8 +91,9 @@ fun MatchEntry(
     content: @Composable () -> Unit,
 ) {
     val tone = entryTone(state)
-    // Every card sits on the page's color, so its tints look the same on an activity's panel as on the page.
-    val colorChange = tween<Color>(ZoonkMotion.QUICK_MILLIS, easing = ZoonkMotion.EaseOut)
+    // Every card sits on the page's color, so its tints look the same on an activity's panel as on the page. Cards
+    // sliding into a solved board's rows show their result from the first frame.
+    val colorChange = if (LocalBoardSolved.current) snap() else tween<Color>(ZoonkMotion.QUICK_MILLIS, easing = ZoonkMotion.EaseOut)
     val container by animateColorAsState(
         if (tone.container == Color.Transparent) MaterialTheme.colorScheme.surface else tone.container,
         colorChange,
@@ -230,19 +232,21 @@ private fun SettledMark() {
     )
 }
 
+/** A wrong try's ✕, as light as main's `size-4` one and the verdict's. */
 @Composable
 private fun WrongMark() {
     Icon(
         painterResource(R.drawable.ic_close),
         contentDescription = null,
-        modifier = Modifier.size(markSize() * MARK_SHARE),
+        modifier = Modifier.size(WRONG_MARK * glyphScale()),
         tint = MaterialTheme.zoonk.destructive,
     )
 }
 
 /**
- * A pair's number, round so it never reads as a key: in ink while the pair is held, muted once it's [done], so two
- * finished cards read as a pair only when their numbers match. Its digits are a key's, whose zero has no slash.
+ * A pair's number, round so it never reads as a key: filled in ink while the pair is held, in the muted color once it's
+ * [done], so two finished cards read as a pair only when their numbers match. Its digits are a key's, whose zero has no
+ * slash.
  */
 @Composable
 private fun PairNumber(
@@ -251,14 +255,10 @@ private fun PairNumber(
 ) {
     val colors = MaterialTheme.colorScheme
     Box(
-        Modifier.size(MARK_WIDTH * glyphScale()).background(if (done) colors.surfaceVariant else colors.onSurface, CircleShape),
+        Modifier.size(MARK_WIDTH * glyphScale()).background(if (done) colors.onSurfaceVariant else colors.onSurface, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            number.toString(),
-            color = if (done) colors.onSurfaceVariant else colors.surface,
-            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
-        )
+        Text(number.toString(), color = colors.surface, style = MaterialTheme.zoonkType.key)
     }
 }
 
@@ -272,9 +272,13 @@ internal fun matchTextStyle(wide: Boolean): TextStyle {
 /** The board's text style, which every card on it takes; it changes with the board's width. */
 internal val LocalMatchTextStyle = staticCompositionLocalOf<TextStyle?> { null }
 
+/** Whether the board is in its solved rows, where a card's look changes at once. */
+internal val LocalBoardSolved = staticCompositionLocalOf { false }
+
 private val MARK_WIDTH = 20.dp
 private const val MARK_SHARE = 0.75f
 private val PICK_DOT = 10.dp
+private val WRONG_MARK = 16.dp
 private const val PICK_KEYS = 10
 
 /** Main's `press` with `--press-scale: 0.99`. */

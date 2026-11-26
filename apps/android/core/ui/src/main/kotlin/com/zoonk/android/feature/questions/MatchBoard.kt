@@ -1,23 +1,28 @@
 package com.zoonk.android.feature.questions
 
-import androidx.compose.animation.BoundsTransform
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.animateBounds
+import androidx.compose.animation.core.DeferredTargetAnimation
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.layout.approachLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import com.zoonk.android.ui.theme.ZoonkMotion
 
 /**
@@ -25,9 +30,8 @@ import com.zoonk.android.ui.theme.ZoonkMotion
  * right, each card on one row with the card across from it and as tall as the taller of the two, or the right column
  * under the left when the board is narrow for its text. TalkBack reads down the left column, then the right. Once every
  * pair is known ([solved], each left card with its partner) the same cards slide into rows, a pair to a row, as main's
- * do; with animations off they're there at once.
+ * do, already in their result's look; with animations off they're there at once.
  */
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun <T : Any> MatchBoard(
     left: List<T>,
@@ -39,9 +43,8 @@ fun <T : Any> MatchBoard(
     val rows = solved ?: left.zip(right)
     // One keyed list, a row at a time, so a card that moves to another row stays the same card and slides there.
     val cards = rows.flatMap { (l, r) -> listOf(MatchSide.Left to l, MatchSide.Right to r) }
-    BoardWidth(modifier) { stacked ->
+    BoardWidth(modifier, solved != null) { stacked ->
         LookaheadScope {
-            val slide = Modifier.animateBounds(this, boundsTransform = SLIDE)
             Layout(
                 content = {
                     cards.forEach { (side, item) ->
@@ -49,7 +52,7 @@ fun <T : Any> MatchBoard(
                             val order = if (side == MatchSide.Left) left.indexOf(item) else left.size + right.indexOf(item)
                             // While playing, TalkBack reads a column at a time; solved, a pair at a time.
                             val reading = if (solved == null) Modifier.semantics { traversalIndex = order.toFloat() } else Modifier
-                            card(side, item, slide.then(reading))
+                            card(side, item, Modifier.slideToPlace(this@LookaheadScope).then(reading))
                         }
                     }
                 },
@@ -101,18 +104,46 @@ fun <T : Any> MatchBoard(
 @Composable
 private fun BoardWidth(
     modifier: Modifier,
+    solved: Boolean,
     content: @Composable (stacked: Boolean) -> Unit,
 ) {
     BoxWithConstraints(modifier.fillMaxWidth()) {
-        CompositionLocalProvider(LocalMatchTextStyle provides matchTextStyle(wide = maxWidth >= WIDE_BOARD)) {
+        CompositionLocalProvider(
+            LocalMatchTextStyle provides matchTextStyle(wide = maxWidth >= WIDE_BOARD),
+            LocalBoardSolved provides solved,
+        ) {
             content(maxWidth < SIDE_BY_SIDE_WIDTH * LocalDensity.current.fontScale)
         }
     }
 }
 
-/** Main's base duration on the ease-out: a card sliding to its row. */
-@OptIn(ExperimentalSharedTransitionApi::class)
-private val SLIDE = BoundsTransform { _, _ -> tween(ZoonkMotion.BASE_MILLIS, easing = ZoonkMotion.EaseOut) }
+/**
+ * A card glides from where it was to its new place, main's base duration on the ease-out, while its size takes the new
+ * row's at once, as main's do: only its place moves.
+ */
+@Composable
+private fun Modifier.slideToPlace(board: LookaheadScope): Modifier {
+    val place = remember { DeferredTargetAnimation(IntOffset.VectorConverter) }
+    val scope = rememberCoroutineScope()
+    return with(board) {
+        this@slideToPlace.approachLayout(
+            isMeasurementApproachInProgress = { false },
+            isPlacementApproachInProgress = { coordinates ->
+                place.updateTarget(lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round(), scope, SLIDE)
+                !place.isIdle
+            },
+        ) { measurable, constraints ->
+            val card = measurable.measure(constraints)
+            layout(card.width, card.height) {
+                val coordinates = coordinates ?: return@layout card.place(0, 0)
+                val shown = place.updateTarget(lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round(), scope, SLIDE)
+                card.place(shown - lookaheadScopeCoordinates.localPositionOf(coordinates, Offset.Zero).round())
+            }
+        }
+    }
+}
+
+private val SLIDE = tween<IntOffset>(ZoonkMotion.BASE_MILLIS, easing = ZoonkMotion.EaseOut)
 
 private val SIDE_BY_SIDE_WIDTH = 288.dp
 private val WIDE_BOARD = 600.dp
