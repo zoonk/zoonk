@@ -71,10 +71,12 @@ describe(calibratedWrittenStanding, () => {
     "widens a %s zero, which a model judged, like any other grade",
     (zeroKind) => {
       const zero = { ...grade(0, 0), zeroKind };
+
       const unmeasured = {
         ...zero,
         residuals: { over: [], overFloor: 0, under: [], underFloor: 0 },
       };
+
       const strict = { max: 100, minimum: { unit: "points", value: 60 } } as const;
       const low = { max: 100, minimum: { unit: "points", value: 2 } } as const;
 
