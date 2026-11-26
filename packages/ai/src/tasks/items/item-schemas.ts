@@ -1,3 +1,4 @@
+import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
 import { imageRequestSchema } from "../images/image-request-schema";
 import { lessonVisualSchema } from "../visuals/visual-schema";
@@ -20,6 +21,8 @@ const MIN_OPTIONS = 2;
 /** USMLE and the PMP print up to 8 options and the solver letters them A to H, so code drops wrong ones past it. */
 export const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 export const MAX_OPTIONS = OPTION_LETTERS.length;
+/** A match card's text is taken in at a glance in half a phone's width. */
+const MATCH_SIDE_TARGET = 24;
 /** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
 const MAX_DECIMAL_PLACES = 4;
 
@@ -125,11 +128,13 @@ const essayItem = z.object({
   sampleOutline: z.string(),
 });
 
+const matchSide = aimForCharacters(z.string(), MATCH_SIDE_TARGET);
+
 const matchPairsItem = z.object({
   format: z.literal("matchPairs"),
   difficulty,
   question: z.string(),
-  pairs: z.array(z.object({ left: z.string(), right: z.string() })).min(2),
+  pairs: z.array(z.object({ left: matchSide, right: matchSide })).min(2),
   reason: z.string(),
 });
 

@@ -33,7 +33,11 @@ vi.mock("./item-rules/typed-spoken.prompt.md", () => ({
 vi.mock("./item-rules/typed-question.prompt.md", () => ({ default: "- One clear ask.\n" }));
 
 vi.mock("./item-rules/essay.prompt.md", () => ({ default: "## essay\n\n- Rubric.\n" }));
-vi.mock("./item-rules/match-pairs.prompt.md", () => ({ default: "## matchPairs\n\n- Pairs.\n" }));
+
+vi.mock("./item-rules/match-pairs.prompt.md", () => ({
+  default: "## matchPairs\n\n- Pairs.\n{{#languageGoal}}\n- Short phrases.\n{{/languageGoal}}\n",
+}));
+
 vi.mock("./item-rules/order.prompt.md", () => ({ default: "## order\n\n- Steps.\n" }));
 
 vi.mock("./item-rules/numeric.prompt.md", () => ({
@@ -114,6 +118,16 @@ describe(withItemRules, () => {
     expect(prompt).toContain(
       "In `LANGUAGE` (in a language goal, the practiced language is in `TARGET_LANGUAGE`).",
     );
+  });
+
+  it("tells a match writer how short a language goal's cards are only in a language goal", () => {
+    const scope = { field: false, formats: ["matchPairs"], languageGoal: false } as const;
+
+    expect(withItemRules("# Role", { ...scope, languageGoal: true })).toContain(
+      "## matchPairs\n\n- Pairs.\n- Short phrases.\n",
+    );
+
+    expect(withItemRules("# Role", scope)).not.toContain("Short phrases");
   });
 
   it("shares the typed rules with spoken questions, which show no pictures", () => {
