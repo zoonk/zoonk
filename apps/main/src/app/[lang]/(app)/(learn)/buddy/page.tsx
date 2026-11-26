@@ -46,7 +46,9 @@ async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string 
     return null;
   }
 
-  const result = await getLessonQuestionThread({ target: { goalId, kind: "plan" } });
+  const result = await getLessonQuestionThread({
+    target: { conversationId: null, goalId, kind: "plan" },
+  });
 
   if (result.status !== "ready") {
     return null;

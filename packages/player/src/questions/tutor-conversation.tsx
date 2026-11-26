@@ -317,7 +317,7 @@ export function TutorConversation({
   onMissionMoment?: (moment: MissionMomentView) => void;
   tutor: LessonTutorConfig;
 }) {
-  const target = useMemo(() => ({ goalId, kind: "plan" as const }), [goalId]);
+  const target = useMemo(() => ({ conversationId: null, goalId, kind: "plan" as const }), [goalId]);
   const missionMoment = useConversationMissionMoment({ goalId, onMoment: onMissionMoment });
 
   const host = useMemo<LessonQuestionHost>(

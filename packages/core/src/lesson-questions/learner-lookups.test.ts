@@ -74,7 +74,7 @@ async function plannedLearner({ open = true }: { open?: boolean } = {}) {
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {
