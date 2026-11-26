@@ -929,12 +929,14 @@ struct SyllabusSubjectRow: View {
         Text("\(subject.lessonsDone) of \(subject.lessonsTotal) lessons", tableName: "Plan")
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
+          .layoutPart(.note)
       }
 
       if subject.notPlannedReason != nil {
         planOutsideReason(subject.notPlannedReason, module: !isExam)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
+          .layoutPart(.note)
       }
     }
   }
