@@ -16,6 +16,7 @@ import {
   sortedCard,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { onDevice } from "../_test-utils/device-media";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
@@ -312,6 +313,46 @@ describe("reasoning activities", () => {
       .toHaveAttribute("data-state", "right");
 
     await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeEnabled();
+  });
+
+  it("match pairs: shows a card's own why after a wrong try, in sight under a tall board, and no note without one", async () => {
+    const why = "Librería is a false friend: a library is a biblioteca.";
+
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport({ height: 520, width: 390 }, async () => {
+        openActivity({
+          content: {
+            ...activityContentFixtures.matchPairs,
+            fields: {
+              pairs: [
+                { id: "a", left: "embarazada", right: "pregnant" },
+                { id: "b", left: "éxito", right: "success" },
+                { id: "c", left: "librería", right: "bookstore", why },
+                { id: "d", left: "constipado", right: "having a cold" },
+                { id: "e", left: "carpeta", right: "folder" },
+              ],
+            },
+          },
+          template: "matchPairs",
+        });
+
+        await matchCards("embarazada", "success");
+        await expect.element(page.getByText(/Not quite/u)).not.toBeInTheDocument();
+
+        await page.getByRole("button", { exact: true, name: "pregnant" }).click();
+        await matchCards("librería", "folder");
+        const note = page.getByText(why, { exact: true });
+        await expect.element(note).toBeInTheDocument();
+
+        await expect
+          .poll(() => {
+            const box = note.element().getBoundingClientRect();
+            const bar = document.querySelector("[data-slot=bottom-bar]")?.getBoundingClientRect();
+            return box.bottom <= (bar?.top ?? window.innerHeight);
+          })
+          .toBe(true);
+      }),
+    );
   });
 
   it("match pairs: a screen reader hears math cards in words, not LaTeX", async () => {

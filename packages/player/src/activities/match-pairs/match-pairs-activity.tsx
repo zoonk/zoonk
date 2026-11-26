@@ -2,6 +2,7 @@
 
 import { MatchBoard } from "@zoonk/learn/match-board";
 import { MatchEntry } from "@zoonk/learn/match-entry";
+import { RevealWhenShown } from "@zoonk/learn/reveal-when-shown";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { type MatchTry, useMatchBoard } from "@zoonk/learn/use-match-board";
@@ -17,10 +18,14 @@ import { boardFromAnswer, matchAnswer } from "./match-pairs-progress";
 
 type MatchPairsProps = ActivityRendererProps<"matchPairs">;
 
-/** Why a wrong try was wrong, when its card says; the try's own cue already says it was wrong. */
+/**
+ * Why a wrong try was wrong, when its card says; the try's own cue already says it was wrong. It
+ * scrolls into sight when it appears under a tall board.
+ */
 function MissNote({ explanation }: { explanation: string }) {
   return (
     <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
+      <RevealWhenShown />
       <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
       <p>
         <NotQuiteLead /> <LessonRichText text={explanation} />

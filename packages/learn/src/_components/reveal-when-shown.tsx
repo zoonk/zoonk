@@ -68,23 +68,27 @@ function reveal(panel: HTMLElement) {
 
 /**
  * Scrolls the element it's placed in into sight once it appears, when it's below the fold or under
- * the pinned bar, by the lesson player's rule (`getReveal`): the whole feedback shows, and what
+ * the pinned bar, by the lesson player's rule (`getReveal`): the whole element shows, and what
  * scrolls away under the header leaves whole. One frame later, so the bar holds its new action.
  */
 export function RevealWhenShown() {
   const marker = useRef<HTMLSpanElement>(null);
-  const revealedByScreen = use(RevealedByScreen);
 
   useEffect(() => {
     const panel = marker.current?.parentElement;
 
-    if (revealedByScreen || !panel) {
+    if (!panel) {
       return;
     }
 
     const frame = requestAnimationFrame(() => reveal(panel));
     return () => cancelAnimationFrame(frame);
-  }, [revealedByScreen]);
+  }, []);
 
   return <span hidden ref={marker} />;
+}
+
+/** A verdict's reveal, unless its screen reveals its own feedback (`OwnFeedbackReveal`). */
+export function RevealFeedbackWhenShown() {
+  return use(RevealedByScreen) ? null : <RevealWhenShown />;
 }

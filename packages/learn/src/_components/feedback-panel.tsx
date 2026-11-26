@@ -1,7 +1,7 @@
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
-import { RevealWhenShown } from "./reveal-when-shown";
+import { RevealFeedbackWhenShown } from "./reveal-when-shown";
 
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
@@ -32,7 +32,7 @@ export function FeedbackPanel({ children, className, ...props }: React.Component
       data-slot="feedback-panel"
       {...props}
     >
-      <RevealWhenShown />
+      <RevealFeedbackWhenShown />
       {children}
     </section>
   );
