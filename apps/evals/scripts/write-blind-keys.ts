@@ -18,9 +18,9 @@ import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import {
   type WritingPromptInput,
+  getWritingKeyWriter,
   writeWritingPrompt,
 } from "@zoonk/ai/tasks/items/write-writing-prompt";
-import { getPromptVersion } from "@zoonk/utils/prompt-version";
 
 function print(line = "") {
   process.stdout.write(`${line}\n`);
@@ -34,7 +34,7 @@ async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey>
     givenQuestion: source.question,
   };
 
-  const { data, provenance, systemPrompt } = await writeWritingPrompt({
+  const { data, provenance } = await writeWritingPrompt({
     appendedInstructions: BLIND_KEY_INSTRUCTIONS,
     input,
     shared: true,
@@ -48,10 +48,7 @@ async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey>
     draw,
     latencyMs: provenance.latencyMs,
     model: provenance.model,
-    productionPromptVersion: getPromptVersion({
-      systemPrompt: systemPrompt.slice(0, -(BLIND_KEY_INSTRUCTIONS.length + 1)),
-    }),
-    promptVersion: getPromptVersion({ systemPrompt }),
+    promptRevision: getWritingKeyWriter().promptVersion,
     questionId: source.id,
   };
 }

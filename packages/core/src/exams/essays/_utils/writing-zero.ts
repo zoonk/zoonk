@@ -5,6 +5,7 @@ import { type writtenItemSchema } from "../writing-contract";
 import { WRITING_LINE_BREAK, countWritingLines } from "../writing-lines";
 
 type Basis = z.infer<typeof writtenItemSchema>;
+type ZeroKind = z.infer<typeof writingZeroKindSchema>;
 type Rule = Basis["grading"]["zeroing"][number];
 
 const IDENTITY_PLACEHOLDER =
@@ -12,6 +13,17 @@ const IDENTITY_PLACEHOLDER =
 
 const IDENTITY =
   /^(?:assinado por|assinatura\s*:|meu nome [ée]|signed by|signature\s*:|my name is)\s+(?<name>\p{L}+(?:\s+\p{L}+)+)[.!]?$/iu;
+
+const TEXT_VERIFIED_ZEROS: ReadonlySet<ZeroKind> = new Set([
+  "blank",
+  "copiedSupport",
+  "identification",
+  "tooFewLines",
+]);
+
+export function isTextVerifiedWritingZero(kind: ZeroKind | null | undefined): boolean {
+  return kind ? TEXT_VERIFIED_ZEROS.has(kind) : false;
+}
 
 function originalText(text: string, quote: string) {
   const start = text.indexOf(quote);
@@ -97,7 +109,7 @@ function matchesRule({
   evidence: WritingEvidence;
   rule: Rule;
   text: string;
-}): z.infer<typeof writingZeroKindSchema> | null {
+}): ZeroKind | null {
   const { kinds, maxLines } = rule;
 
   if (kinds?.includes("blank") && text.trim() === "") {

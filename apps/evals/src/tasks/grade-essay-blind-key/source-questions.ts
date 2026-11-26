@@ -49,6 +49,51 @@ function noticeGrading(grading: Grading, notice: string, passage: string): Gradi
   };
 }
 
+/**
+ * The 2024 notice grades ten quesitos per History question, 3 points each in questions 1 and 2
+ * and 2 in questions 3 and 4; the 2025 notice grades one "domínio do conteúdo" per question.
+ * The question itself lists what each quesito or point covers, as candidates saw it.
+ */
+function cacdNoticeCriteria({
+  notice,
+  points,
+  questionNumber,
+  year,
+}: {
+  notice: string;
+  points: number;
+  questionNumber: number;
+  year: string;
+}): Grading["criteria"] {
+  if (year === "2025") {
+    return [
+      {
+        citation: {
+          passage:
+            "Anexo IV, 3.4 e 3.5: a resposta à questão totalizará a nota relativa ao domínio do conteúdo",
+          sourceId: notice,
+        },
+        id: "content",
+        points,
+        text: "Domínio do conteúdo",
+      },
+    ];
+  }
+
+  const perQuesito = questionNumber <= 2 ? 3 : 2;
+
+  return Array.from({ length: 10 }, (_, index) => ({
+    citation: {
+      passage:
+        "Anexo IV, 3.3: 10 quesitos de avaliação em cada questão de prova; 3,00 pontos por quesito nas questões 1 e 2 e 2,00 pontos por quesito nas questões 3 e 4",
+      sourceId: notice,
+    },
+    id: `q${index + 1}`,
+    points: perQuesito,
+    text: `Quesito ${index + 1}`,
+  }));
+}
+
 function oabQuestion(cases: WritingCase[]): SourceQuestion {
   const [first] = cases;
 
@@ -116,13 +161,17 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
   const notice = first.expected?.source?.notice ?? "";
   const { basis, context, question } = first.userInput;
   const id = first.id.replace(/-\d+-pt$/u, "");
-  const year = id.split("-")[2];
+  const parts = id.split("-");
+  const year = parts[2] ?? "";
 
-  const grading = noticeGrading(
-    basis.grading,
+  const criteria = cacdNoticeCriteria({
     notice,
-    "6.8.7 As quatro questões da prova escrita de História do Brasil valerão um total de 100,00 pontos e serão avaliadas conforme os critérios constantes do item 3 do Anexo IV",
-  );
+    points: basis.points ?? 0,
+    questionNumber: Number(parts[4]?.slice(1)),
+    year,
+  });
+
+  const grading: Grading = { ...basis.grading, criteria };
 
   return {
     board: "Cebraspe",
