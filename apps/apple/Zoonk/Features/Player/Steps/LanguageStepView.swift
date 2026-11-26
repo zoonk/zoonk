@@ -867,17 +867,16 @@ private struct CheckedWord: View {
   }
 }
 
-/// A right pair locks, a wrong one counts as a mistake.
+/// A right pair locks, a wrong one counts as a mistake; the last pair checks the step.
 private struct MatchColumnsView: View {
-  @Environment(\.stacksContent) private var isStacked
-  @ActivityState("pickedLeft") private var pickedLeft: Int? = nil
+  @ActivityState("picking") private var picking = MatchPicking()
   @ActivityState("mistakes") private var mistakes = 0
-  @State private var lastMiss: Int?
 
   let exercise: LanguageExercise
   let context: LessonStepContext
 
   private var pairs: [LanguageExercise.Content.Pair] { exercise.content.pairs ?? [] }
+  private var rightItems: [String] { exercise.matchColumnsRightItems }
 
   private var matched: [LessonAnswer.Pair] {
     if case .matchColumns(let pairs, _) = context.answer {
@@ -890,112 +889,84 @@ private struct MatchColumnsView: View {
   private var board: MatchColumnsBoard {
     MatchColumnsBoard(
       pairs: pairs.map { LessonAnswer.Pair(left: $0.left, right: $0.right) },
-      rightItems: exercise.matchColumnsRightItems, matched: matched)
+      rightItems: rightItems, matched: matched)
   }
 
   private var isSolved: Bool { !pairs.isEmpty && matched.count == pairs.count }
 
-  private var allMatchedLine: String? {
-    guard isSolved, context.result == nil else {
-      return nil
-    }
-
-    return String(
-      localized: "All pairs matched. Press Check to continue.", table: "Player",
-      comment: "Every pair of a match exercise is matched")
-  }
-
   var body: some View {
-    tiles(board)
-      .fixedSize(horizontal: false, vertical: true)
-      .announcesStatus(allMatchedLine)
+    let board = self.board
 
-    if let allMatchedLine {
-      Text(allMatchedLine)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-    }
-  }
-
-  @ViewBuilder
-  private func tiles(_ board: MatchColumnsBoard) -> some View {
-    if isStacked {
-      VStack(spacing: 16) {
-        if isSolved {
-          ForEach(pairs.indices, id: \.self) { index in
-            VStack(spacing: 8) {
-              leftTile(index, board: board)
-              rightTile(index, board: board)
-            }
-          }
-        } else {
-          VStack(spacing: 8) {
-            ForEach(pairs.indices, id: \.self) { leftTile($0, board: board) }
-          }
-
-          VStack(spacing: 8) {
-            ForEach(pairs.indices, id: \.self) { rightTile($0, board: board) }
-          }
-        }
+    MatchBoard(
+      leftCount: pairs.count, rightCount: rightItems.count,
+      solvedRows: isSolved ? pairs.indices.map { MatchTry(left: $0, right: $0) } : nil
+    ) { ref in
+      MatchEntry(
+        state: state(of: ref, board: board),
+        keyIndex: ref.side == .left ? ref.index : pairs.count + ref.index,
+        action: context.isLocked ? nil : { tap(ref, board: board) }
+      ) {
+        Text(text(of: ref))
       }
-    } else {
-      Grid(horizontalSpacing: 12, verticalSpacing: 10) {
-        ForEach(pairs.indices, id: \.self) { index in
-          GridRow {
-            leftTile(index, board: board)
-            rightTile(index, board: board)
-          }
-        }
+    }
+    .matchBoardFeedback($picking, locked: matched.count)
+    .onChange(of: isSolved && context.result == nil && context.check != nil) { _, isReady in
+      if isReady {
+        context.check?()
       }
     }
   }
 
-  private func leftTile(_ index: Int, board: MatchColumnsBoard) -> some View {
-    let isMatched = board.matchedLeft.contains(index)
-
-    return Button {
-      pickedLeft = index
-    } label: {
-      Text(pairs[index].left)
-        .frame(maxHeight: .infinity, alignment: .topLeading)
+  /// Solved, each row shows its own pair.
+  private func text(of ref: MatchCardRef) -> String {
+    switch ref.side {
+    case .left: pairs[ref.index].left
+    case .right: isSolved ? pairs[ref.index].right : rightItems[ref.index]
     }
-    .buttonStyle(
-      LessonOptionStyle(mark: isMatched ? .right : pickedLeft == index ? .selected : .plain)
-    )
-    .disabled(isMatched || context.isLocked)
   }
 
-  private func rightTile(_ index: Int, board: MatchColumnsBoard) -> some View {
-    let isMatched = board.matchedRight.contains(index)
-
-    return Button {
-      pick(right: index)
-    } label: {
-      Text(isSolved ? pairs[index].right : exercise.matchColumnsRightItems[index])
-        .frame(maxHeight: .infinity, alignment: .topLeading)
-    }
-    .buttonStyle(LessonOptionStyle(mark: isMatched ? .right : lastMiss == index ? .wrong : .plain))
-    .disabled(isMatched || context.isLocked || pickedLeft == nil)
+  private func isMatched(_ ref: MatchCardRef, board: MatchColumnsBoard) -> Bool {
+    isSolved
+      || (ref.side == .left ? board.matchedLeft : board.matchedRight).contains(ref.index)
   }
 
-  private func pick(right index: Int) {
-    guard let left = pickedLeft else {
+  private func state(of ref: MatchCardRef, board: MatchColumnsBoard) -> MatchEntryState {
+    if isMatched(ref, board: board) {
+      return .right
+    }
+
+    if picking.isMissed(ref) {
+      return .wrong(picking.missCount)
+    }
+
+    return picking.selected == ref ? .selected : .idle
+  }
+
+  private func tap(_ ref: MatchCardRef, board: MatchColumnsBoard) {
+    guard !isMatched(ref, board: board),
+      let (attempt, isRight) = picking.tap(
+        ref,
+        goesTogether: {
+          board.isRight(
+            LessonAnswer.Pair(left: pairs[$0.left].left, right: rightItems[$0.right]))
+        })
+    else {
       return
     }
 
-    let pair = LessonAnswer.Pair(
-      left: pairs[left].left, right: exercise.matchColumnsRightItems[index])
-    pickedLeft = nil
+    let pair = LessonAnswer.Pair(left: pairs[attempt.left].left, right: rightItems[attempt.right])
 
-    if board.isRight(pair) {
-      lastMiss = nil
+    if isRight {
       context.select(.matchColumns(userPairs: matched + [pair], mistakes: mistakes))
+      announcePolitely(
+        MatchAnnouncement.matched(
+          pair.left, pair.right, matched: matched.count + 1, total: pairs.count))
     } else {
       mistakes += 1
-      lastMiss = index
       if !matched.isEmpty {
         context.select(.matchColumns(userPairs: matched, mistakes: mistakes))
       }
+      announcePolitely(MatchAnnouncement.missed(pair.left, pair.right))
     }
   }
 }

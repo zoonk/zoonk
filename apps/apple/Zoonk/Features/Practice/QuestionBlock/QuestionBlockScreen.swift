@@ -278,7 +278,13 @@ struct QuestionBlockView: View {
       recordingQuestions: run.detail.recordingQuestions(for: question),
       transcript: graded(phase)?.feedback.transcript,
       draft: $run.draft,
-      onSubmit: { answer in Task { await run.submit(answer) } })
+      onSubmit: { answer in
+        // The board's last pair sent it, so focus goes on to Continue as after Check.
+        if question.checksEachPair {
+          pressedWithFocus = .answer
+        }
+        Task { await run.submit(answer) }
+      })
   }
 
   private func announcement(_ phase: QuestionBlockPhase) -> String? {
@@ -290,16 +296,20 @@ struct QuestionBlockView: View {
         return nil
       }
 
-      return [
+      let lead: [String?] = [
         run.timedOut ? DrillAnswerNotes.timesUp : nil,
         String(localized: verdict(feedback, answer: answer).label),
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
+      ]
+      let confusions: [String?] = PracticeAnswerText.confusions(for: answer, question: question)
+        .map { $0.said }
+      let tally: String? =
         run.detail.isNetScored(question)
-          ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts()
-          : nil,
-      ].compactMap(\.self).joined(separator: "\n")
+        ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts() : nil
+
+      return (lead + confusions + [tally]).compactMap(\.self).joined(separator: "\n")
     default:
       return nil
     }
@@ -326,6 +336,7 @@ struct QuestionBlockView: View {
         verdict: verdict(feedback, answer: answer),
         streak: feedback.isCorrect ? feedback.hyperdrive.streak : 0,
         correctAnswerText: correctLine(feedback, question: question),
+        confusions: PracticeAnswerText.confusions(for: answer, question: question),
         explanation: feedback.explanation,
         workedSteps: feedback.isCorrect ? [] : feedback.workedSteps,
         citation: question.citation
@@ -410,7 +421,9 @@ struct QuestionBlockView: View {
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
-      } else if question?.placement == true || question?.format == .typed {
+      } else if question?.placement == true || question?.format == .typed
+        || question?.checksEachPair == true
+      {
         PracticeSecondaryButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
@@ -420,18 +433,24 @@ struct QuestionBlockView: View {
         .practiceFocus(.notSure)
       }
 
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking?.pressesCheck == true,
-        isDisabled: !accepts || answer == nil
-      ) {
-        if let answer {
-          press(.check)
-          Task { await run.submit(answer) }
+      // A learning match sends itself with its last pair, so its main action waits as Continue.
+      if question?.checksEachPair == true {
+        PracticeMainButton(
+          title: continueTitle, isBusy: phase.checking != nil, isDisabled: true, action: {})
+      } else {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Check", table: "Practice", comment: "Sends the answer to be graded."),
+          isBusy: phase.checking?.pressesCheck == true,
+          isDisabled: !accepts || answer == nil
+        ) {
+          if let answer {
+            press(.check)
+            Task { await run.submit(answer) }
+          }
         }
+        .practiceFocus(.check)
       }
-      .practiceFocus(.check)
 
       ask(answered: false)
     }

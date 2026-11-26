@@ -56,7 +56,9 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   case choice(Int)
   case choices([Int])
   case dontKnow
-  case matches([Int])
+  /// For each left entry, the right one it's matched to. A board that checks each pair as it's made
+  /// also sends its misses, in the order they happened; a held board sends none.
+  case matches([Int], misses: [MatchTry]? = nil)
   case number(Double)
   case order([Int])
   case text(String)
@@ -64,12 +66,15 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   /// Picks or pairs short of what the question asks for. The screen keeps them, so a fold
   /// keeps them too; they aren't an answer, so they're never checked or sent.
   case partial([Int?])
+  /// A board that checks each pair as it's made, before its last pair: the pairs locked so far and
+  /// the misses on the way, kept like `partial`.
+  case pairing([Int?], misses: [MatchTry])
   /// An answer box's text as typed, kept so a fold keeps "2/" or "1."; only the answer it reads as
   /// is checked or sent.
   indirect case typing(String, reads: PracticeAnswer?)
 
   private enum CodingKeys: String, CodingKey {
-    case dontKnow, isTrue, matches, number, order, selectedIndex, selectedIndexes, text
+    case dontKnow, isTrue, matches, misses, number, order, selectedIndex, selectedIndexes, text
   }
 
   var isDontKnow: Bool { self == .dontKnow }
@@ -77,7 +82,7 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   /// Nil while the answer is only partial.
   var complete: PracticeAnswer? {
     switch self {
-    case .partial: nil
+    case .partial, .pairing: nil
     case .typing(_, let answer): answer
     default: self
     }
@@ -101,7 +106,8 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
     } else if let isTrue = try container.decodeIfPresent(Bool.self, forKey: .isTrue) {
       self = .trueFalse(isTrue)
     } else if let matches = try container.decodeIfPresent([Int].self, forKey: .matches) {
-      self = .matches(matches)
+      self = .matches(
+        matches, misses: try container.decodeIfPresent([MatchTry].self, forKey: .misses))
     } else if let number = try container.decodeIfPresent(Double.self, forKey: .number) {
       self = .number(number)
     } else if let order = try container.decodeIfPresent([Int].self, forKey: .order) {
@@ -120,12 +126,14 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
     case .choice(let index): try container.encode(index, forKey: .selectedIndex)
     case .choices(let indexes): try container.encode(indexes, forKey: .selectedIndexes)
     case .dontKnow: try container.encode(true, forKey: .dontKnow)
-    case .matches(let matches): try container.encode(matches, forKey: .matches)
+    case .matches(let matches, let misses):
+      try container.encode(matches, forKey: .matches)
+      try container.encodeIfPresent(misses, forKey: .misses)
     case .number(let number): try container.encode(number, forKey: .number)
     case .order(let order): try container.encode(order, forKey: .order)
     case .text(let text): try container.encode(text, forKey: .text)
     case .trueFalse(let isTrue): try container.encode(isTrue, forKey: .isTrue)
-    case .partial, .typing:
+    case .partial, .pairing, .typing:
       throw EncodingError.invalidValue(
         self, .init(codingPath: [], debugDescription: "Only a complete answer is sent"))
     }
@@ -233,6 +241,9 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   var format: PracticeItemFormat
   var image: PracticeImage?
   var itemId: String
+  /// A learning match's answer: for each left entry, the right one it goes with. With it, the board
+  /// checks each pair as it's made; without it (a test's match), it waits for Check.
+  var key: [Int]?
   var left: [String]
   var mistakeId: String?
   var options: [String]
@@ -250,14 +261,17 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
 
   var id: String { itemId }
 
+  var checksEachPair: Bool { format == .matchPairs && key != nil }
+
   func answerToSubmit(_ draft: PracticeAnswer?) -> PracticeAnswer? {
     if let draft { return draft.complete }
     return format == .order && !options.isEmpty ? .order(Array(options.indices)) : nil
   }
 
   private enum CodingKeys: String, CodingKey {
-    case answered, area, capsuleKey, citation, context, drill, entry, format, image, itemId, left
-    case mistakeId, options, placement, question, quoted, right, select, set, skillId, unit, visual
+    case answered, area, capsuleKey, citation, context, drill, entry, format, image, itemId, key
+    case left, mistakeId, options, placement, question, quoted, right, select, set, skillId, unit,
+      visual
   }
 
   init(
@@ -287,6 +301,7 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
     format = try container.decode(PracticeItemFormat.self, forKey: .format)
     image = try container.decodeIfPresent(PracticeImage.self, forKey: .image)
     itemId = try container.decode(String.self, forKey: .itemId)
+    key = try container.decodeIfPresent([Int].self, forKey: .key)
     left = try container.decodeIfPresent([String].self, forKey: .left) ?? []
     mistakeId = try container.decodeIfPresent(String.self, forKey: .mistakeId)
     options = (try? container.decodeIfPresent([String].self, forKey: .options)) ?? []
