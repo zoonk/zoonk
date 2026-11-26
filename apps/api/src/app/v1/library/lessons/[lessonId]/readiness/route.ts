@@ -4,8 +4,7 @@ import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { settleRunActivity } from "@/workflows/_shared/run-activity";
 import { getLessonContentHookToken } from "@/workflows/lessons/lesson-content-result";
-import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
-import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
+import { readLiveLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { safeAsync } from "@zoonk/utils/error";
 import { NextResponse } from "next/server";
 import { getHookByToken } from "workflow/api";
@@ -32,24 +31,12 @@ async function observeWriter({ lessonId, runId }: { lessonId: string; runId: str
   return observeRun(hook.runId);
 }
 
-async function readReadiness(lessonId: string) {
-  const input = { lessonId, observeWriter };
-  const result = await getLessonWaitingState(input);
-
-  if (result.status !== "ended") {
-    return result;
-  }
-
-  await releaseStaleLessonClaims({ lessonId, staleRunId: result.runId });
-  return getLessonWaitingState(input);
-}
-
 async function getLessonReadiness(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]/readiness">,
 ) {
   const path = await readPathParams(context, lessonPathParamsSchema);
-  const result = await readReadiness(path.lessonId);
+  const result = await readLiveLessonWaitingState({ lessonId: path.lessonId, observeWriter });
 
   if (result.status === "unknown" || result.status === "ended") {
     return errors.serviceUnavailable();

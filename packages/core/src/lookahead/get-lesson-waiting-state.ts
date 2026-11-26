@@ -5,6 +5,7 @@ import { isChallengeIdentityKey } from "../library/challenges/challenge-lesson-s
 import {
   type LessonGenerationState,
   getLessonGenerationState,
+  releaseStaleLessonClaims,
 } from "../library/generation/lesson-generation-state";
 import { findFirstLessonWarmUp } from "./_utils/first-lesson-warm-up";
 import { findViewerLesson } from "./_utils/viewer-lesson";
@@ -145,4 +146,19 @@ export async function getLessonWaitingState({
     },
     status: "ready",
   };
+}
+
+/** The API's live read: a claim whose writer has ended is released, then the lesson is read again. */
+export async function readLiveLessonWaitingState(input: {
+  lessonId: string;
+  observeWriter: ObserveWriter;
+}): Promise<LessonWaitingResult> {
+  const result = await getLessonWaitingState(input);
+
+  if (result.status !== "ended") {
+    return result;
+  }
+
+  await releaseStaleLessonClaims({ lessonId: input.lessonId, staleRunId: result.runId });
+  return getLessonWaitingState(input);
 }
