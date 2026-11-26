@@ -1,5 +1,6 @@
+import { PLACEMENT_SCENARIOS } from "./placement.mts";
 import { SEEDED_SCREEN_SCENARIOS } from "./seeded-screens.mts";
-import { type Anchor, PHONE_AND_LAPTOP, type Scenario } from "./shape.mts";
+import { type Anchor, PHONE_AND_LAPTOP, PINNED_ACTION, type Scenario } from "./shape.mts";
 import { STATE_SCENARIOS } from "./states.mts";
 
 export type { Prerequisites, Scenario, Step } from "./shape.mts";
@@ -13,11 +14,6 @@ export type { Prerequisites, Scenario, Step } from "./shape.mts";
  */
 /** A laptop at twice the default text: large-text learners on the web, otherwise unmeasured. */
 const LAPTOP_TEXT_2X: Scenario["sizes"][number] = { pointer: "keys", size: "laptop", textScale: 2 };
-
-const PINNED_ACTION: Anchor = {
-  id: "pinned-action",
-  web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",
-};
 
 const SHEET_FRAME: Anchor = {
   id: "sheet-frame",
@@ -223,6 +219,7 @@ export const SCENARIOS: Scenario[] = [
   },
   ...STATE_SCENARIOS,
   ...SEEDED_SCREEN_SCENARIOS,
+  ...PLACEMENT_SCENARIOS,
   {
     anchors: [],
     evidence: ["[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))"],

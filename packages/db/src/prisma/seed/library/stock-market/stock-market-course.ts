@@ -6,6 +6,7 @@ import { wherePriceComesFromLesson } from "./lessons/where-price-comes-from";
 import { marketUpExplanation } from "./market-up-explanation";
 import { stockMarketChallengeItems } from "./stock-market-challenge-items";
 import { stockMarketItems } from "./stock-market-items";
+import { stockMarketPlacementItems } from "./stock-market-placement-items";
 import { stockMarketSkills } from "./stock-market-skills";
 
 export const stockMarketCourse: SeedCourse = {
@@ -198,7 +199,7 @@ export const stockMarketCourse: SeedCourse = {
   ),
   explanations: [marketUpExplanation],
   format: "core",
-  items: [...stockMarketItems, ...stockMarketChallengeItems],
+  items: [...stockMarketItems, ...stockMarketChallengeItems, ...stockMarketPlacementItems],
   key: "stock-market",
   languages: ["en", "pt"],
   skills: stockMarketSkills,
