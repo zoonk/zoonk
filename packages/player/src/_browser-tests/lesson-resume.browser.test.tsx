@@ -186,48 +186,67 @@ describe("coming back to a lesson", () => {
     },
   );
 
-  it("shows a reopened matching screen with the pairs the learner matched", async () => {
-    const matching = languageStep("matchColumns");
+  it.each([
+    {
+      pairs: [
+        { left: "2", right: "two" },
+        { left: "2", right: "dos" },
+        { left: "3", right: "three" },
+      ],
+      rightItems: ["dos", "three", "two"],
+      side: "left",
+    },
+    {
+      pairs: [
+        { left: "two", right: "2" },
+        { left: "dos", right: "2" },
+        { left: "three", right: "3" },
+      ],
+      rightItems: ["2", "3", "2"],
+      side: "right",
+    },
+  ])(
+    "restores every saved match when labels repeat on the $side",
+    async ({ pairs, rightItems }) => {
+      const step = languageStep("matchColumns", { pairs });
 
-    const lesson = buildLesson([matching, teachingStep("explanation"), teachingStep("check")], {
-      language: "pt",
-      targetLanguage: "en",
-    });
+      const matching = {
+        ...step,
+        exercise: { ...step.exercise, matchColumnsRightItems: rightItems },
+      };
 
-    const resume = [
-      runAnswer({
-        answer: {
-          kind: "matchColumns",
-          mistakes: 0,
-          userPairs: [
-            { left: "Electron", right: "Negative charge" },
-            { left: "Proton", right: "Positive charge" },
-            { left: "Neutron", right: "No charge" },
-          ],
-        },
-        stepId: matching.id,
-      }),
-    ];
+      const lesson = buildLesson([matching, teachingStep("explanation"), teachingStep("check")], {
+        language: "pt",
+        targetLanguage: "en",
+      });
 
-    const adapters = buildAdapters(lesson, {
-      startLesson: () => Promise.resolve(startedRun({ answers: resume })),
-    });
+      const resume = [
+        runAnswer({
+          answer: { kind: "matchColumns", mistakes: 0, userPairs: pairs },
+          stepId: matching.id,
+        }),
+      ];
 
-    renderLessonPlayer({ adapters, lesson, resume });
+      const adapters = buildAdapters(lesson, {
+        startLesson: () => Promise.resolve(startedRun({ answers: resume })),
+      });
 
-    await page.getByRole("button", { name: "Previous screen" }).click();
+      renderLessonPlayer({ adapters, lesson, resume });
 
-    for (const name of [
-      "Electron, matched with Negative charge",
-      "No charge, matched with Neutron",
-    ]) {
-      // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
-      await expect.element(page.getByRole("button", { exact: true, name })).toBeDisabled();
-    }
+      await page.getByRole("button", { name: "Previous screen" }).click();
 
-    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
-    expect(adapters.checkStep).not.toHaveBeenCalled();
-  });
+      await Promise.all(
+        pairs.flatMap(({ left, right }) =>
+          [`${left}, matched with ${right}`, `${right}, matched with ${left}`].map((name) =>
+            expect.element(page.getByRole("button", { exact: true, name })).toBeDisabled(),
+          ),
+        ),
+      );
+
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+      expect(adapters.checkStep).not.toHaveBeenCalled();
+    },
+  );
 
   it("draws the pairs right and names no card when an old first try picked a removed one", async () => {
     const matching = activityStep({ content: activityContentFixtures.matchPairs });

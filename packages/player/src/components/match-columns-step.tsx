@@ -30,7 +30,23 @@ function placesOf({
   pairs: readonly Pair[];
   right: readonly string[];
 }): number[] {
-  return left.map((text) => right.indexOf(pairs.find((pair) => pair.left === text)?.right ?? ""));
+  const places = left.map(() => -1);
+  const usedRight = new Set<number>();
+
+  for (const pair of pairs) {
+    const leftIndex = left.findIndex((label, index) => label === pair.left && places[index] === -1);
+
+    const rightIndex = right.findIndex(
+      (label, index) => label === pair.right && !usedRight.has(index),
+    );
+
+    if (leftIndex !== -1 && rightIndex !== -1) {
+      places[leftIndex] = rightIndex;
+      usedRight.add(rightIndex);
+    }
+  }
+
+  return places;
 }
 
 export function MatchColumnsStep({
