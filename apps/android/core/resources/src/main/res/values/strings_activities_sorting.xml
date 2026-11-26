@@ -48,10 +48,6 @@
     <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Not quite:</string>
-    <!-- Above the pairs the learner got wrong on the first try. -->
-    <string name="activities_sorting_missed_first_try">Missed on the first try</string>
-    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
-    <string name="activities_sorting_goes_with">%1$s goes with %2$s, not %3$s.</string>
 
     <string name="activities_sorting_badge_link_causes">Link causes</string>
     <string name="activities_sorting_pick_cause">Pick a cause, then pick what it led to.</string>

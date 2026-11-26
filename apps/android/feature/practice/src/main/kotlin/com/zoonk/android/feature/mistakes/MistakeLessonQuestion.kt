@@ -33,6 +33,7 @@ import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.steps.FillingColumn
+import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
@@ -40,6 +41,7 @@ import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.recordsInBar
+import com.zoonk.android.feature.player.steps.rememberBoardMisses
 import com.zoonk.android.feature.practice.DrillStage
 import com.zoonk.android.feature.practice.PAGE_PADDING
 import com.zoonk.android.feature.practice.PAGE_SPACING
@@ -129,6 +131,7 @@ internal fun MistakeLessonQuestion(
     val records = !checked && lesson.phase != LessonPhase.Checking && recordsInBar(task.step, lesson, actions)
     val language = rememberLessonLanguage(task.language, task.targetLanguage, app.speech)
     val promptStep = task.step.takeIf { viewModel.todayChoicesRead && !ideas }
+    val boardMisses = rememberBoardMisses(state.run.index)
     language.prompt?.let { PromptAudioEffect(promptStep, lesson, viewModel.cantTalk, viewModel.cantListen, it) }
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
@@ -201,7 +204,7 @@ internal fun MistakeLessonQuestion(
             }
         },
     ) { part, _, _ ->
-        CompositionLocalProvider(LocalLessonSpeech provides app.speech) {
+        CompositionLocalProvider(LocalLessonSpeech provides app.speech, LocalBoardMisses provides boardMisses) {
             if (ideas) {
                 if (part.showsScreen) DrillIdeas(task.drill, onOpenLesson = null)
                 return@CompositionLocalProvider

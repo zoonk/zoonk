@@ -55,7 +55,7 @@ fun QuestionFeedback(
             end = if (streak >= SHOWN_STREAK) pluralStringResource(R.plurals.questions_streak, streak, streak) else null,
         )
 
-        MatchFirstTries(question, answer, explanation)
+        MatchFirstTries(question, answer)
 
         if (!feedback.isCorrect && question.showsRightAnswer) {
             AnswerLine(R.string.questions_right_answer, feedback.correctAnswer, question, words, explanation)
@@ -205,22 +205,17 @@ fun MistakeNote(feedback: AnswerFeedback) {
     FeedbackNote(text)
 }
 
-/**
- * A learning match's board ends with every pair right, so its result says in words what the learner confused: each left
- * card's first wrong try, the first few.
- */
+/** A learning match's board ends with every pair right, so its result says which pairs the learner first confused. */
 @Composable
 private fun MatchFirstTries(
     question: Question,
     answer: Answer,
-    style: TextStyle,
 ) {
     val misses = (answer as? Answer.Matches)?.misses.takeIf { question.key != null } ?: return
     val left = question.left.orEmpty()
     val right = question.right.orEmpty()
-    misses.distinctBy { it.left }.take(SHOWN_FIRST_TRIES).forEach { miss ->
-        val tried = right.getOrNull(miss.right) ?: return@forEach
-        ItemLine(stringResource(R.string.questions_match_first_try, left.getOrElse(miss.left) { "" }, tried), style = style)
+    MatchMisses(misses) { side, index ->
+        itemLine((if (side == MatchSide.Left) left else right).getOrElse(index) { "" })
     }
 }
 
@@ -229,5 +224,3 @@ private val Question.showsRightAnswer: Boolean
     get() = format != QuestionFormat.MultipleChoice && format != QuestionFormat.TrueFalse && key == null
 
 private const val SHOWN_STREAK = 3
-
-private const val SHOWN_FIRST_TRIES = 3

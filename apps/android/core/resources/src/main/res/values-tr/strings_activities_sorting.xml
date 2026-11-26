@@ -21,14 +21,12 @@
   "activities_sorting_events_placed": "b0369b0fdb7fea5a7dd405fd6d546f1108cf21f48c81325cab49f1dc0e43ed96",
   "activities_sorting_every_spot_named": "22683f75117be1b5b5d5899d0ce4459c4b2175d266cdf4e4fac6466235c81c4b",
   "activities_sorting_gap_between": "24752f2160cbc46466634de06c757f1d8dafff7f4d362fa73bd2d02efe957501",
-  "activities_sorting_goes_with": "4e9474df023579d14530bc1a38d2cded04afe62b7633c4a0b515513845e79610",
   "activities_sorting_how_they_connect": "7bfc4fb896b14fbc19dbf19728560561de267dd1237fe95ce6c8c399f95d22d7",
   "activities_sorting_is_in": "e58ba319362508150d3184f8333294bfc8c599f38344f6bf0cc29789b8bd0eee",
   "activities_sorting_is_in_next": "2ae15d228982d7b268d3d8536fbba747f6faf1b36236505a06ac7cf453e626e4",
   "activities_sorting_led_to": "aa196169303041db547ec25114e31a1b878e0945e996686eb2d21816d92efc2e",
   "activities_sorting_linked": "99d19c77c5322db8b220e7a1656c0b3057b4b95bea6c87eefe6000f2f985d7eb",
   "activities_sorting_links_count": "4072fb0849d794739add44e253a0a120bb457c3fbdd1fad6b8f02939e30d190e",
-  "activities_sorting_missed_first_try": "3a033fa2d91b705f4a2370f896fb4c29d2a086f6ce9c7a58fbbd310f3f562abe",
   "activities_sorting_missed_link": "b3ecf523ebab21b6811e30e3b6ae6c02179bde4bfd0ac3b26fb90016196c88ad",
   "activities_sorting_more_count": "ab03ad8d2edd5f87bec1df7a33fc23411c12ed70cd7e5e47195946a5f785c810",
   "activities_sorting_move_to": "d44369de16dcf47076d0a5ef1aaf405a08496c4b13f44b5e0ecdfd75f57fc4af",
@@ -117,10 +115,6 @@
     <string name="activities_sorting_dont_go_together_short">Bu ikisi eşleşmiyor.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Eşleşmedi:</string>
-    <!-- Above the pairs the learner got wrong on the first try. -->
-    <string name="activities_sorting_missed_first_try">İlk denemede yanlış eşleştirdiklerin</string>
-    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
-    <string name="activities_sorting_goes_with">%1$s ile %2$s eşleşir, %3$s ile eşleşmez.</string>
     <string name="activities_sorting_badge_link_causes">Neden-sonuç ilişkisi kur</string>
     <string name="activities_sorting_pick_cause">Önce bir neden, sonra yol açtığı sonucu seç.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

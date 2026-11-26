@@ -134,7 +134,7 @@ class LanguageStepsFlowTest {
     }
 
     @Test
-    fun aWrongPairCountsAndTheLastPairSendsEveryPairWithTheMistakes() {
+    fun aWrongPairCountsAndTheLastPairSendsEveryPairWithTheMistakesThenNamesTheMiss() {
         play(listOf(matchColumns("pairs"), summaryStep("end")))
 
         rule.onNodeWithText("Match the pairs.").assertIsDisplayed()
@@ -151,6 +151,9 @@ class LanguageStepsFlowTest {
             ),
             sent("pairs"),
         )
+        // The answer only counts the miss; the board itself names it under the verdict.
+        rule.onNodeWithText("You first matched:").assertExists()
+        rule.onNodeWithText("hola → cat").assertExists()
     }
 
     @Test

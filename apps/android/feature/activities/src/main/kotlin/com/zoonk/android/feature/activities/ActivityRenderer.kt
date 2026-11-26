@@ -55,8 +55,9 @@ data class ActivityBadge(
 
 /**
  * Main's `ActivityRenderer`: a template's canvas, its badge, whether its check comes before the
- * canvas, whether it shows its data's source, and what a number key picks on its canvas (picking
- * the current answer again clears it). The frame draws everything else.
+ * canvas, whether it shows its data's source, what a number key picks on its canvas (picking
+ * the current answer again clears it), and what its [feedback] adds under the verdict. The frame
+ * draws everything else.
  */
 class ActivityRenderer(
     val badge: (ActivityStepContent) -> ActivityBadge?,
@@ -64,6 +65,7 @@ class ActivityRenderer(
     val checkFirst: (ActivityStepContent) -> Boolean = { false },
     val showsData: (ActivityStepContent) -> Boolean = { false },
     val keyPick: ((ActivityStepContent, Int) -> ActivityAnswer?)? = null,
+    val feedback: (@Composable (ActivityStepContent, ActivityAnswer?) -> Unit)? = null,
 )
 
 internal fun canvasOwnsAnswer(template: String): Boolean = template == "guessReveal"

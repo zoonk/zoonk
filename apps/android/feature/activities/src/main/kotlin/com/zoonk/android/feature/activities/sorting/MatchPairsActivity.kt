@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,18 +28,19 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
-import com.zoonk.android.feature.activities.ActivityReason
-import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
 import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
+import com.zoonk.android.feature.questions.MatchMisses
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.SolvedMatchBoard
+import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.rememberMatchBoardState
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -50,6 +50,7 @@ val matchPairsRenderer =
     ActivityRenderer(
         badge = { ActivityBadge(R.string.activities_sorting_badge_match_pairs, R.drawable.ic_link) },
         canvas = { MatchPairsActivity(it) },
+        feedback = { content, answer -> MatchPairsMisses(content as MatchPairsContent, answer) },
     )
 
 /**
@@ -71,7 +72,6 @@ private fun MatchPairsActivity(props: ActivityProps) {
         )
     val work = board.work
     val ended = board.isComplete || props.isChecked
-    val expected = props.expected.assignmentPairs.takeIf { props.isChecked }
 
     var sent by remember { mutableStateOf(false) }
     FocusPrimaryOnceChecked(sent, props.isChecked)
@@ -109,7 +109,6 @@ private fun MatchPairsActivity(props: ActivityProps) {
             }
 
             board.lastMiss.takeUnless { ended }?.let { MissNote(right[it.right].why ?: left[it.left].why) }
-            if (expected != null) MatchPairsResults(left, right, expected, work.firstTries)
         }
         board.Announcement()
     }
@@ -152,39 +151,14 @@ private fun MissNote(explanation: String?) {
     }
 }
 
+/** The pairs a match activity's answer first got wrong, said under its verdict. */
 @Composable
-private fun MatchPairsResults(
-    left: List<MatchCard>,
-    right: List<MatchCard>,
-    expected: Map<String, String>,
-    firstTries: Map<Int, Int>,
+private fun MatchPairsMisses(
+    content: MatchPairsContent,
+    answer: ActivityAnswer?,
 ) {
-    val tried = firstTries.entries.associate { (l, r) -> left[l].id to right[r].id }
-    val missed = left.filter { tried[it.id] != expected[it.id] }
-    val textOf = { id: String? -> right.firstOrNull { it.id == id }?.text }
-
-    if (missed.isNotEmpty()) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                stringResource(R.string.activities_sorting_missed_first_try),
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-            )
-            ActivityReasons {
-                missed.forEach { card ->
-                    ActivityReason(card.why) {
-                        val partner = textOf(expected[card.id]) ?: card.text
-                        val picked = textOf(tried[card.id])
-                        Text(
-                            if (picked == null) {
-                                "${card.text} → $partner"
-                            } else {
-                                stringResource(R.string.activities_sorting_goes_with, card.text, partner, picked)
-                            },
-                        )
-                    }
-                }
-            }
-        }
+    val (left, right) = remember(content) { arrangeMatchColumns(content.value.fields) }
+    MatchMisses(workFromAnswer(left, right, answer.assignmentPairs).misses) { side, index ->
+        itemLine((if (side == MatchSide.Left) left else right)[index].text)
     }
 }

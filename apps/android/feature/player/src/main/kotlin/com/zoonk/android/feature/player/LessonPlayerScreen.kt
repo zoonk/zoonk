@@ -111,6 +111,7 @@ import com.zoonk.android.feature.player.steps.AskSimpler
 import com.zoonk.android.feature.player.steps.FillingColumn
 import com.zoonk.android.feature.player.steps.LessonMapView
 import com.zoonk.android.feature.player.steps.LocalAskSimpler
+import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalResultNotes
 import com.zoonk.android.feature.player.steps.LocalScreenWork
@@ -125,6 +126,7 @@ import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.feature.player.steps.lessonBarNote
 import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
+import com.zoonk.android.feature.player.steps.rememberBoardMisses
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
@@ -662,6 +664,7 @@ private fun Content(
                 }
             }
             val work = rememberScreenWork(canvasWork, step.id, state.round(step.id), state.firstAttempts[step.id]?.round)
+            val boardMisses = rememberBoardMisses(screenKey)
 
             LaunchedEffect(screenKey) {
                 if (scrolledTo != screenKey) {
@@ -674,7 +677,11 @@ private fun Content(
 
             val layoutDirection = LocalLayoutDirection.current
 
-            CompositionLocalProvider(LocalFeedbackReveal provides reveal, LocalScreenWork provides work) {
+            CompositionLocalProvider(
+                LocalFeedbackReveal provides reveal,
+                LocalScreenWork provides work,
+                LocalBoardMisses provides boardMisses,
+            ) {
                 BoxWithConstraints(
                     Modifier
                         .fillMaxSize()

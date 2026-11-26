@@ -80,6 +80,7 @@ class MistakeMatchTest {
         val sent = ApiJson.encodeToJsonElement(QuestionAnswer.serializer(), api.answers.single().answer)
         assertEquals(ApiJson.parseToJsonElement("""{"matches":[1,0],"misses":[{"left":0,"right":0}]}"""), sent)
         rule.onNodeWithText("Continue").assertIsEnabled()
-        rule.onNodeWithText("You first matched il martedì with tomorrow.").assertExists()
+        rule.onNodeWithText("You first matched:").assertExists()
+        rule.onNodeWithText("il martedì → tomorrow").assertExists()
     }
 }

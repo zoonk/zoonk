@@ -21,14 +21,12 @@
   "activities_sorting_events_placed": "b05cbfe03c0778920623f71ec869553c98552882adcd2b146df081510e28b04f",
   "activities_sorting_every_spot_named": "7c01ade0cc982cca43040b96dc5fbc4ded6708af769a6f4f56ac34f3950a7693",
   "activities_sorting_gap_between": "e9e9c913bf08d8d30e31645ebfc7e08786ce53f3b951e078c2dd7026a672746f",
-  "activities_sorting_goes_with": "3f8c221192d031dc67fb92441b1a0b7bfe8ce70c97d2ef99c0e3ec5db9794766",
   "activities_sorting_how_they_connect": "a8e2fb5facc4d92d0e9637910deb86fcb4325cb437c6d28d4c5fbe43281fb0be",
   "activities_sorting_is_in": "b1bccd0edb8c511e7cc9186957f7c166038636ec5d0d77b218bf14fa88a0831b",
   "activities_sorting_is_in_next": "6083737a92d82f05b18cce08773656bdac2c47ad2aec72115b91e173e8aeafa3",
   "activities_sorting_led_to": "ffb0523fb63dc03ec6b750b52ab7641832f59d43ed3bbc095980fc5b1d142568",
   "activities_sorting_linked": "f6a13120ebbbb55f8a83ef74cbfbaa3f2eb293c931c76675dcb3813b7f5d542a",
   "activities_sorting_links_count": "ab27d2e8612e4f2b601e10e443ae5525fb32f4d6e44a581f3f4d5e5e2f6d3acc",
-  "activities_sorting_missed_first_try": "7e9402134b0f469636afba1a49afb6f85caccbb0b979288ca677cc69b0093fd4",
   "activities_sorting_missed_link": "62e05b7b22b9b72e2d83a7159b043cb8bd7dd5e72c9dd2da767485decd2e1478",
   "activities_sorting_more_count": "fa678324a1a5ae31b29690a1092476d2d13a5bea0ab26bd2bf1c90f63c92d198",
   "activities_sorting_move_to": "fc3f63a947add199cef818d2a8ab96851ef53ee6ab8f725331c5b364413ce6ab",
@@ -118,10 +116,6 @@
     <string name="activities_sorting_dont_go_together_short">Queste due carte non vanno insieme.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Non è la coppia giusta:</string>
-    <!-- Above the pairs the learner got wrong on the first try. -->
-    <string name="activities_sorting_missed_first_try">Coppie sbagliate al primo tentativo</string>
-    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
-    <string name="activities_sorting_goes_with">%1$s si abbina a %2$s, non a %3$s.</string>
     <string name="activities_sorting_badge_link_causes">Collega cause ed effetti</string>
     <string name="activities_sorting_pick_cause">Scegli una causa, poi il suo effetto.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

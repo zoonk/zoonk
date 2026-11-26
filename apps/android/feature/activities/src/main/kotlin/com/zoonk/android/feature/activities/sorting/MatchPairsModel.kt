@@ -50,11 +50,12 @@ internal fun workFromAnswer(
     return MatchWork(
         pairs = solvedRows(left, right).toMap(),
         misses =
-            left.mapIndexedNotNull {
-                index,
-                card,
-                ->
-                firstTries[card.id]?.takeIf { it != card.id }?.let { MatchTry(index, place(it)) }
+            left.mapIndexedNotNull { index, card ->
+                firstTries[card.id]
+                    ?.takeIf { it != card.id }
+                    ?.let(place)
+                    ?.takeIf { it >= 0 }
+                    ?.let { MatchTry(index, it) }
             },
     )
 }

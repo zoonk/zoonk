@@ -21,14 +21,12 @@
   "activities_sorting_events_placed": "7a5f44e42ddb5e8ea9a1e0924f4bcec09274b79bba5be6be3231549b75e0ff22",
   "activities_sorting_every_spot_named": "901ba929b8e81e732c05df1d29803870a9aca83a1a36c1eb8507d1d7a621ee14",
   "activities_sorting_gap_between": "d0bd6d189cc8302b7f00c4963405d6fce649493e8621bbb7190177b2027791ec",
-  "activities_sorting_goes_with": "611ede0caa4460b9099f4a4af678fbab7285c4363374698c288afff34014ae41",
   "activities_sorting_how_they_connect": "3c4b0b155693e5005ce4ad89453399f4203c0d96de7f8376af1aa0f52d7d68bf",
   "activities_sorting_is_in": "6cdaf5d6b66d563ba56f10520bc77d8af240ccaa6e0b23efa7eb26c8bc125675",
   "activities_sorting_is_in_next": "5290c0ddaa76200ac8797029afbff63a762ce67d937c4778e64ce1ddf636aff9",
   "activities_sorting_led_to": "c92915ce0e5cbb2e38b8a495930031f32027b2724d8695ddca5869aabb6e78be",
   "activities_sorting_linked": "3d20ca6ad6edee721f7f7b2cadc4b2b9a5b0c12447b79dc71fff756b977a8a68",
   "activities_sorting_links_count": "25136868103c2318116261a22ffe7584fad262896ecf3ea23235fd097d3d8cd8",
-  "activities_sorting_missed_first_try": "eba1c28cb3ecd64dc7371e4d30249e78c3290170bc7c9ede7d587256085cc97d",
   "activities_sorting_missed_link": "87d07643c2380abb1708d1bde273cc94bdc90869be57f98e1508bd4a0ad80422",
   "activities_sorting_more_count": "7b958f5f529897cee96a37c7b9aa297089b846500cd6b7ea2094a2431e9f8755",
   "activities_sorting_move_to": "3f293dbde1083e1c96d1cae03d14fc66f978be4494a6ea53e6d119ca69cdb91c",
@@ -118,10 +116,6 @@
     <string name="activities_sorting_dont_go_together_short">Esses dois não formam um par.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Não foi bem assim:</string>
-    <!-- Above the pairs the learner got wrong on the first try. -->
-    <string name="activities_sorting_missed_first_try">Errou na primeira tentativa</string>
-    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
-    <string name="activities_sorting_goes_with">%1$s combina com %2$s, não com %3$s.</string>
     <string name="activities_sorting_badge_link_causes">Ligue causas e efeitos</string>
     <string name="activities_sorting_pick_cause">Escolha uma causa e depois o que ela causou.</string>
     <!-- After a cause is picked, like "Now pick what Years of drought led to." -->

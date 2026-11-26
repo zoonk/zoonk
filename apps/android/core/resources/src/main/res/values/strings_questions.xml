@@ -27,8 +27,8 @@
     <string name="questions_match_not_a_pair">%1$s and %2$s don\'t go together.</string>
     <!-- Read by TalkBack after the learner undoes a pair on a match board that's checked at the end, like "Unmatched éxito and success." -->
     <string name="questions_match_unpaired">Unmatched %1$s and %2$s.</string>
-    <!-- In a match question's result, one line per pair the learner got wrong first: the left card, then the right card they first put with it, like "You first matched il martedì with Thursday." -->
-    <string name="questions_match_first_try">You first matched %1$s with %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as "card → card". -->
+    <string name="questions_match_first_tries">You first matched:</string>
     <string name="questions_your_answer">Your answer</string>
     <string name="questions_mark_correct">Correct</string>
     <string name="questions_mark_wrong">Wrong</string>

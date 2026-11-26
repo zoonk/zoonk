@@ -8,17 +8,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.steps.FocusPrimaryOnceChecked
+import com.zoonk.android.feature.player.steps.LocalBoardMisses
 import com.zoonk.android.feature.player.steps.QuestionScene
 import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
+import com.zoonk.android.feature.questions.MatchMisses
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.MatchWork
 import com.zoonk.android.feature.questions.SolvedMatchBoard
 import com.zoonk.android.feature.questions.rememberMatchBoardState
+import com.zoonk.android.ui.richtext.SpokenText
 
 /**
  * Main's `MatchColumnsStep`: the shared match board, each pair checked as it's made. A right pair stays matched; a
@@ -62,11 +66,14 @@ internal fun MatchColumnsView(
     var sent by remember { mutableStateOf(false) }
     FocusPrimaryOnceChecked(sent, checked)
 
+    val showMisses = LocalBoardMisses.current
+
     fun tap(spot: MatchSpot) {
         if (locked) return
         val next = board.tap(spot)
         if (next.isComplete(lefts.size)) {
             sent = true
+            showMisses?.value = { MatchMisses(next.misses) { side, index -> SpokenText(AnnotatedString(words(MatchSpot(side, index)))) } }
             onDone(answerOf(next))
         }
     }

@@ -224,6 +224,8 @@ class MatchStepScreenshots {
         show("columns-midway$suffix", columns, listOf("rent", "aluguel", "landlord", "caução", "proprietário"))
         val all = rent.flatMap { (left, right) -> listOf(left, right) }
         show("columns-solved$suffix", columns, all)
+        // The first card stays picked after its miss, so its partner is one tap away.
+        show("columns-solved-miss$suffix", columns, listOf("landlord", "caução", "proprietário", "rent", "aluguel") + all.drop(4))
     }
 
     @Test
