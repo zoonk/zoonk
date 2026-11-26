@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "player_language_all_matched": "b0045b1ec0c8896985dae6e803e014cf31f260b017a52c3aff64382f8dcb1697",
   "player_language_alphabet": "9a75905cbb28a8f57b550a5a4a3e42060022b3ac69944c0d1acea223f7f769c3",
   "player_language_blank": "9473ed0882cb1318a5440cf308da113d1a0fb585a68f2b4d9908495a2e352b1d",
   "player_language_blank_checked": "7cf041c4a0931b43578d47da93be580d04e05da6c45035dc08f287d3364db5a6",
@@ -10,16 +9,13 @@
   "player_language_correct": "3b55cf98428eb2276bc171b833050c769937a5ae6223a2450e2796b3825f4db2",
   "player_language_incorrect": "9a4db2084abeec35b4423f700a286e1ad5aae197aef856b1c547a04d138835a0",
   "player_language_match_the_pairs": "702db3d055ea0515952d98d0e36dce8ee03d048b77a1f3aa888d21d8caa18105",
-  "player_language_matched": "1d090b2684c6bf10b4bc5e8f4f190c56fdc2f44582cc350e2091a9884d7d00f1",
   "player_language_move_earlier": "2ed35e4e64e19ce5c7d7cc2e90712e4a2591fd08ba8fc9f2b48b1e26b23a84d4",
   "player_language_move_later": "349f0d723bee88389032e43db84b3753c84c4ea46b58ea06cedb12e3f014fd5b",
-  "player_language_not_a_pair": "6d8f82b3cf96ed588dd32bff8342c376d1e63e2de33f749df975404d07fedc3e",
   "player_language_pick_words": "e31a2a278eb7423f2c2ae8a9e15204443d4b298c24e228305419e479931d8cdf",
   "player_language_play_pronunciation": "eba3f83b4097837079be37dac39ca89e79581a87d7f4d09e039e3577ae7dc1ae",
   "player_language_position": "aabe8c14447a6f8992c2c2c744dca733c99d584389a256b1191667550d04ed6b",
   "player_language_pronunciation_tip": "4580e077ee459ba62d355f696c87d2c38b8d13bcd776b8d9cab9b396b31aecbf",
   "player_language_remove": "14ff913326249a3c362be8bb0d8e33406004a23f670d76887dad57722f3941e3",
-  "player_language_selected": "f3b97b5c5f46f420e31c11ba45d38d3be8ce287988d4238833a91f5541d89693",
   "player_language_show_translation": "1a33eb95999a1850171271e0314404fa18a987d82973929f9fb50aaf041c307f",
   "player_language_translate": "fe842c72b11015a10d6bdbc069a5e65ad14bb6ee198bf33c657bfc2f1ea15b72",
   "player_language_usage": "6d6afda6f0f542a88afc6af1afd0bb5d2a92aebf2522e870c37fdce149cbcb61",
@@ -67,11 +63,4 @@
     <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
     <string name="player_language_blank_checked">Luka %1$d: %2$s. %3$s.</string>
     <string name="player_language_match_the_pairs">Połącz w pary.</string>
-    <string name="player_language_all_matched">Połączono wszystkie pary. Naciśnij „Sprawdź”, aby kontynuować.</string>
-    <!-- Screen reader state of a word already paired with its match. -->
-    <string name="player_language_matched">Dopasowane</string>
-    <!-- Screen reader state of the word picked to pair next. -->
-    <string name="player_language_selected">Wybrane</string>
-    <!-- Said by the screen reader when two picked words don't go together. -->
-    <string name="player_language_not_a_pair">To nie para</string>
 </resources>

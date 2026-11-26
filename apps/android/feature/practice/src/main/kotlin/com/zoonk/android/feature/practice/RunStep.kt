@@ -454,7 +454,8 @@ internal fun AnswerActions(
         val main = remember { FocusRequester() }
         val moveFocus = rememberMoveFocus()
         var notSureSent by rememberSaveable { mutableStateOf(false) }
-        LaunchedEffect(done) { if (done && notSureSent) moveFocus(main) }
+        // A learning match sends itself with its last pair, so its verdict, like "I don't know yet"'s, takes focus to Continue.
+        LaunchedEffect(done) { if (done && (notSureSent || question.key != null)) moveFocus(main) }
 
         if (phase ==
             RunPhase.AnswerFailed

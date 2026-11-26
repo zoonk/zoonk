@@ -134,18 +134,16 @@ class LanguageStepsFlowTest {
     }
 
     @Test
-    fun aWrongPairFlashesAndCountsThenEveryPairIsSentWithTheMistakes() {
+    fun aWrongPairCountsAndTheLastPairSendsEveryPairWithTheMistakes() {
         play(listOf(matchColumns("pairs"), summaryStep("end")))
 
         rule.onNodeWithText("Match the pairs.").assertIsDisplayed()
         tap("hola")
         tap("cat")
-        rule.mainClock.advanceTimeBy(1_000)
-        tap("hola")
+        // The first word stays picked after a miss, so its partner is one tap away, even while the miss still shows.
         tap("hello")
         tap("gato")
         tap("cat")
-        tap("Check")
 
         assertEquals(
             Json.parseToJsonElement(

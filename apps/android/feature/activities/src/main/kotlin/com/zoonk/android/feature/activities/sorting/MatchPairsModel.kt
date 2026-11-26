@@ -3,6 +3,9 @@ package com.zoonk.android.feature.activities.sorting
 import com.zoonk.android.feature.activities.assignmentAnswer
 import com.zoonk.android.feature.activities.seededShuffle
 import com.zoonk.android.feature.player.model.ActivityAnswer
+import com.zoonk.android.feature.questions.MatchSide
+import com.zoonk.android.feature.questions.MatchTry
+import com.zoonk.android.feature.questions.MatchWork
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf27Fields
 
 internal data class MatchCard(
@@ -10,8 +13,6 @@ internal data class MatchCard(
     val text: String,
     val why: String?,
 )
-
-internal enum class MatchSide { Left, Right }
 
 private fun sideCards(
     fields: PlayableLibraryStepAnyOfContentOneOf27Fields,
@@ -32,39 +33,42 @@ internal fun arrangeMatchColumns(fields: PlayableLibraryStepAnyOfContentOneOf27F
     return left to right
 }
 
+/** Each left card's place with its partner's place on the right, in the left order. */
 internal fun solvedRows(
     left: List<MatchCard>,
     right: List<MatchCard>,
-): List<Pair<MatchCard, MatchCard>> {
-    val partners = right.associateBy { it.id }
-    return left.map { card -> card to partners.getValue(card.id) }
+): List<Pair<Int, Int>> = left.mapIndexed { index, card -> index to right.indexOfFirst { it.id == card.id } }
+
+/** The board an answer left: every pair made, and each left card's first try that missed. */
+internal fun workFromAnswer(
+    left: List<MatchCard>,
+    right: List<MatchCard>,
+    firstTries: Map<String, String>?,
+): MatchWork {
+    if (firstTries == null) return MatchWork()
+    val place = { id: String? -> right.indexOfFirst { it.id == id } }
+    return MatchWork(
+        pairs = solvedRows(left, right).toMap(),
+        misses =
+            left.mapIndexedNotNull {
+                index,
+                card,
+                ->
+                firstTries[card.id]?.takeIf { it != card.id }?.let { MatchTry(index, place(it)) }
+            },
+    )
 }
 
-internal data class MatchProgress(
-    val firstTries: Map<String, String> = emptyMap(),
-    val matched: List<String> = emptyList(),
-)
-
-internal fun MatchProgress.recordTry(
-    left: MatchCard,
-    right: MatchCard,
-): MatchProgress =
-    MatchProgress(
-        firstTries = if (left.id in firstTries) firstTries else firstTries + (left.id to right.id),
-        matched = if (left.id == right.id) matched + left.id else matched,
-    )
-
+/** Once every pair is matched, each left card's first try, as main's activity checks it. */
 internal fun matchAnswer(
-    pairIds: List<String>,
-    progress: MatchProgress,
+    left: List<MatchCard>,
+    right: List<MatchCard>,
+    work: MatchWork,
 ): ActivityAnswer? =
-    if (pairIds.all { it in progress.matched }) {
-        assignmentAnswer(pairIds.associateWith { progress.firstTries[it] ?: it })
+    if (work.isComplete(left.size)) {
+        assignmentAnswer(work.firstTries.entries.associate { (l, r) -> left[l].id to right[r].id })
     } else {
         null
     }
-
-internal fun progressFromAnswer(pairs: Map<String, String>?): MatchProgress =
-    pairs?.let { MatchProgress(firstTries = it, matched = it.keys.toList()) } ?: MatchProgress()
 
 private const val MAX_ATTEMPTS = 32

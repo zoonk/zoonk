@@ -1,4 +1,4 @@
-package com.zoonk.android.feature.activities.sorting
+package com.zoonk.android.feature.questions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -13,9 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
-/** With [alignRows], side by side, a card shares its row and height with the card across from it. */
+/**
+ * The one board for every screen that asks to match these with those (main's `MatchBoard`): the left column beside the
+ * right, or stacked over it when the board is narrow for its text. With [alignRows], side by side, a card shares its
+ * row and height with the card across from it.
+ */
 @Composable
-internal fun <T : Any> MatchBoard(
+fun <T : Any> MatchBoard(
     left: List<T>,
     right: List<T>,
     alignRows: Boolean,
@@ -45,8 +49,9 @@ internal fun <T : Any> MatchBoard(
     }
 }
 
+/** The board once every pair is known: each left card with its partner, on one row side by side. */
 @Composable
-internal fun <T : Any> SolvedMatchBoard(
+fun <T : Any> SolvedMatchBoard(
     pairs: List<Pair<T, T>>,
     modifier: Modifier = Modifier,
     card: @Composable (side: MatchSide, item: T, modifier: Modifier) -> Unit,
@@ -67,10 +72,7 @@ internal fun <T : Any> SolvedMatchBoard(
     }
 }
 
-/**
- * Side by side only while a matched card keeps a ten-letter word whole beside its check mark: 288dp at default text,
- * growing with the learner's text size.
- */
+/** Side by side only while each card keeps a ten-letter word whole: 288dp at default text, growing with the learner's text size. */
 @Composable
 private fun BoardWidth(
     modifier: Modifier,

@@ -18,6 +18,16 @@
     <string name="questions_place_wrong">Place %1$d, wrong place</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, matched with %2$s</string>
+    <!-- Read by TalkBack after a right pair on a match board, like "Matched éxito with success. Pairs matched: 2 of 3." -->
+    <string name="questions_match_paired">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
+    <!-- Read by TalkBack after a wrong pair on a match board, like "éxito and pregnant don't go together." -->
+    <string name="questions_match_not_a_pair">%1$s and %2$s don\'t go together.</string>
+    <!-- Read by TalkBack after a card's words once it's in a pair, like "Matched with success". -->
+    <string name="questions_match_partner">Matched with %1$s</string>
+    <!-- Read by TalkBack after a card's words on a finished match board, for a pair the learner got wrong before getting it right, like "Missed on the first try. Goes with success". -->
+    <string name="questions_match_missed_partner">Missed on the first try. Goes with %1$s</string>
+    <!-- Read by TalkBack after a card's words on a match board shown solved, like "Goes with success". -->
+    <string name="questions_match_goes_with">Goes with %1$s</string>
     <string name="questions_your_answer">Your answer</string>
     <string name="questions_mark_correct">Correct</string>
     <string name="questions_mark_wrong">Wrong</string>

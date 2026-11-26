@@ -247,7 +247,10 @@ fun LanguageStepView(
             (exercise.content as? ExerciseContent.MatchColumns)?.let { pairs ->
                 val instruction = stripWrappingQuotes(pairs.question ?: stringResource(R.string.player_language_match_the_pairs))
                 QuestionWithTurn(part, { QuestionText(instruction) }) { question ->
-                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, question)
+                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, { done ->
+                        select(done)
+                        if (!locked) actions.runPrimary()
+                    }, question)
                 }
             }
         }

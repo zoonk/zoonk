@@ -55,7 +55,7 @@ fun QuestionFeedback(
             end = if (streak >= SHOWN_STREAK) pluralStringResource(R.plurals.questions_streak, streak, streak) else null,
         )
 
-        if (!feedback.isCorrect && question.format.showsRightAnswer) {
+        if (!feedback.isCorrect && question.showsRightAnswer) {
             AnswerLine(R.string.questions_right_answer, feedback.correctAnswer, question, words, explanation)
         }
 
@@ -203,8 +203,8 @@ fun MistakeNote(feedback: AnswerFeedback) {
     FeedbackNote(text)
 }
 
-/** Choices and statements mark the right option themselves. */
-private val QuestionFormat.showsRightAnswer: Boolean
-    get() = this != QuestionFormat.MultipleChoice && this != QuestionFormat.TrueFalse
+/** Choices, statements and a learning match's solved board mark the right answer themselves. */
+private val Question.showsRightAnswer: Boolean
+    get() = format != QuestionFormat.MultipleChoice && format != QuestionFormat.TrueFalse && key == null
 
 private const val SHOWN_STREAK = 3

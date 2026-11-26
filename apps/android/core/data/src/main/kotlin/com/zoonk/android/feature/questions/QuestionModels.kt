@@ -11,6 +11,7 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
@@ -380,52 +381,15 @@ internal object AnswerSerializer : KSerializer<Answer> {
         fun indexes(key: String) = json.getValue(key).jsonArray.map { it.jsonPrimitive.int }
 
         return when {
-            "selectedIndex" in json -> {
-                Answer.Choice(json.getValue("selectedIndex").jsonPrimitive.int)
-            }
-
-            "selectedIndexes" in json -> {
-                Answer.Choices(indexes("selectedIndexes"))
-            }
-
-            "isTrue" in json -> {
-                Answer.TrueFalse(json.getValue("isTrue").jsonPrimitive.boolean)
-            }
-
-            "matches" in json -> {
-                val misses =
-                    json["misses"]?.jsonArray?.map {
-                        MatchTry(
-                            it.jsonObject
-                                .getValue("left")
-                                .jsonPrimitive.int,
-                            it.jsonObject
-                                .getValue("right")
-                                .jsonPrimitive.int,
-                        )
-                    }
-                Answer.Matches(indexes("matches"), misses)
-            }
-
-            "number" in json -> {
-                Answer.Numeric(json.getValue("number").jsonPrimitive.double)
-            }
-
-            "order" in json -> {
-                Answer.Order(indexes("order"))
-            }
-
-            "text" in json -> {
-                Answer.Text(json.getValue("text").jsonPrimitive.content)
-            }
-
-            json["dontKnow"]?.jsonPrimitive?.booleanOrNull == true -> {
-                Answer.DontKnow
-            }
-
-            else -> {
-                throw IllegalArgumentException("Unknown answer: $json")
-            }
+            "selectedIndex" in json -> Answer.Choice(json.getValue("selectedIndex").jsonPrimitive.int)
+            "selectedIndexes" in json -> Answer.Choices(indexes("selectedIndexes"))
+            "isTrue" in json -> Answer.TrueFalse(json.getValue("isTrue").jsonPrimitive.boolean)
+            "matches" in json -> Answer.Matches(indexes("matches"), json["misses"]?.jsonArray?.map(::matchTry))
+            "number" in json -> Answer.Numeric(json.getValue("number").jsonPrimitive.double)
+            "order" in json -> Answer.Order(indexes("order"))
+            "text" in json -> Answer.Text(json.getValue("text").jsonPrimitive.content)
+            json["dontKnow"]?.jsonPrimitive?.booleanOrNull == true -> Answer.DontKnow
+            else -> throw IllegalArgumentException("Unknown answer: $json")
         }
     }
 
@@ -436,51 +400,35 @@ internal object AnswerSerializer : KSerializer<Answer> {
         val element: JsonObject =
             buildJsonObject {
                 when (value) {
-                    is Answer.Choice -> {
-                        put("selectedIndex", value.index)
-                    }
-
-                    is Answer.Choices -> {
-                        putJsonArray("selectedIndexes") { value.indexes.forEach { add(JsonPrimitive(it)) } }
-                    }
-
-                    is Answer.TrueFalse -> {
-                        put("isTrue", value.isTrue)
-                    }
-
-                    is Answer.Matches -> {
-                        putJsonArray("matches") { value.matches.forEach { add(JsonPrimitive(it)) } }
-                        value.misses?.let { misses ->
-                            putJsonArray("misses") {
-                                misses.forEach { miss ->
-                                    add(
-                                        buildJsonObject {
-                                            put("left", miss.left)
-                                            put("right", miss.right)
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    is Answer.Numeric -> {
-                        put("number", value.value)
-                    }
-
-                    is Answer.Order -> {
-                        putJsonArray("order") { value.order.forEach { add(JsonPrimitive(it)) } }
-                    }
-
-                    is Answer.Text -> {
-                        put("text", value.text)
-                    }
-
-                    Answer.DontKnow -> {
-                        put("dontKnow", true)
-                    }
+                    is Answer.Choice -> put("selectedIndex", value.index)
+                    is Answer.Choices -> putJsonArray("selectedIndexes") { value.indexes.forEach { add(JsonPrimitive(it)) } }
+                    is Answer.TrueFalse -> put("isTrue", value.isTrue)
+                    is Answer.Matches -> putMatches(value)
+                    is Answer.Numeric -> put("number", value.value)
+                    is Answer.Order -> putJsonArray("order") { value.order.forEach { add(JsonPrimitive(it)) } }
+                    is Answer.Text -> put("text", value.text)
+                    Answer.DontKnow -> put("dontKnow", true)
                 }
             }
         (encoder as JsonEncoder).encodeJsonElement(element)
+    }
+}
+
+private fun matchTry(element: JsonElement): MatchTry =
+    element.jsonObject.let { MatchTry(it.getValue("left").jsonPrimitive.int, it.getValue("right").jsonPrimitive.int) }
+
+private fun JsonObjectBuilder.putMatches(answer: Answer.Matches) {
+    putJsonArray("matches") { answer.matches.forEach { add(JsonPrimitive(it)) } }
+    answer.misses?.let { misses ->
+        putJsonArray("misses") {
+            misses.forEach {
+                add(
+                    buildJsonObject {
+                        put("left", it.left)
+                        put("right", it.right)
+                    },
+                )
+            }
+        }
     }
 }

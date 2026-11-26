@@ -36,11 +36,4 @@
     <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
     <string name="player_language_blank_checked">Blank %1$d: %2$s. %3$s.</string>
     <string name="player_language_match_the_pairs">Match the pairs.</string>
-    <string name="player_language_all_matched">All pairs matched. Press Check to continue.</string>
-    <!-- Screen reader state of a word already paired with its match. -->
-    <string name="player_language_matched">Matched</string>
-    <!-- Screen reader state of the word picked to pair next. -->
-    <string name="player_language_selected">Selected</string>
-    <!-- Said by the screen reader when two picked words don't go together. -->
-    <string name="player_language_not_a_pair">Not a pair</string>
 </resources>

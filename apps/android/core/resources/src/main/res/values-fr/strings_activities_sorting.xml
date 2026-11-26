@@ -10,13 +10,11 @@
   "activities_sorting_badge_put_in_order": "1c706ffbfbdf0f4391416c22b7293ad0a284ce06365a1129c016a1053d7ba1af",
   "activities_sorting_badge_sort_groups": "de1fc9014580df7f1dddb9a2f1085df2eeaa60f4bdbaa00387a442dc755bd845",
   "activities_sorting_belongs_in": "728f10ae59f5a546499a56970fafcb3db3598621b6faa52831c4c3d5d421cc3c",
-  "activities_sorting_card_matched": "6265c8be97c7b552570c0bece1659254bdc2a9a3bc62dcf9a471624599261e2b",
   "activities_sorting_cards_to_match": "21326c0be5582fa43567c4847b94359aae548c5193af8a46676d454c429d117f",
   "activities_sorting_cause": "7be45bbce4ed8d380f00edd4a12e61b3700fde419aed234f25ab9ec5e0887a5b",
   "activities_sorting_cause_picked": "03543341fa699b3fc0902279aac95d9cd8280e96f7cff295d5111a6d5a149379",
   "activities_sorting_causes_and_effects": "ecf6825f480538f2c72d9a7e976468bb40f6beed760f8503e52b9125f7c00291",
   "activities_sorting_correct_answer": "0b5a5d1d5d0729347ed929c239c892e68843b91406b8c9bab69fdad3b6c05c63",
-  "activities_sorting_dont_go_together": "aeaa344a731af430f789b40b266d08d452282c8a44410aced4f5fb47aeeb9d9b",
   "activities_sorting_dont_go_together_short": "b3d25fce48f1cf6c674c0232fe0e6628d7a676d809b8bb872a24113e08f2f5dd",
   "activities_sorting_drag_onto_timeline": "cd7a4478d8b9b117d7662a6f16193c21b90e4c495e3c221c0971d6abbf68bef3",
   "activities_sorting_drag_steps": "d6f45bda97f9de1b5abcbc8fc46b06ac8628e5180612771b7c10838169e37be0",
@@ -30,7 +28,6 @@
   "activities_sorting_led_to": "eee877fb4e5f192626460756c90816a5c40b0df2bd6ae7a865f5c0e20983ee6f",
   "activities_sorting_linked": "f2af7076bf34ccffce3bf56ed892d2c5621d3b95344dfe09294568d2e5db181a",
   "activities_sorting_links_count": "330aaeecab9fec20b5fd31dcd48f43c74cb7982be53e2027645617bcd1e2e439",
-  "activities_sorting_matched": "2ad55345b406a9dfbd23e1b885025d7c65c545b4f835a70e9369bafcd4c1cd3d",
   "activities_sorting_missed_first_try": "2a34f198e13687e1b696e7a1cbaac1ab75c1ad4d5e936bc0a17febc212416b62",
   "activities_sorting_missed_link": "2172b0dff79516a630835c23aa9d198ac07953105bd228dc2c5407c16abaafd7",
   "activities_sorting_more_count": "79e0717426423621d0046dcfafaedc18da7113bd7493bcfafdb61e3445cf6918",
@@ -43,7 +40,6 @@
   "activities_sorting_not_quite": "7fd9f5589f35ac228f40c74b7bc155139e7300c50b95e4c9080af1a9214c3d43",
   "activities_sorting_not_straight": "312b3a3e4a2a37244e296cb954fd29694c5311d67461972b1e3248d67a39d363",
   "activities_sorting_now_pick": "8a0d8a07f9356b70f0cfd4be8853122fb2af54119a32a8323bb00ce74826734f",
-  "activities_sorting_pairs_matched": "9940ac7e136a4afee35aee8a78da2a477bbc5bd898d6f547dcbbb8c3cc4120b3",
   "activities_sorting_pick_a_name": "d3778bf3b0affaf58f67900740ffa4ab93f350873ff1ae3d3d48a5604b9dbbb8",
   "activities_sorting_pick_cause": "9989566db95ccde10a72713daf392468c549705cb2c2a8c9522dfb12287e2856",
   "activities_sorting_place_on_timeline": "721e749d86084a1bcbbfce9b67412e0afb5181e37ac23168d3333422a73c0b0d",
@@ -117,20 +113,8 @@
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">Tu l’avais placé en %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Associe les paires</string>
-    <!-- Pairs matched so far out of all of them, like "1 of 3 pairs matched". -->
-    <plurals name="activities_sorting_pairs_matched">
-        <item quantity="one">%1$d paire associée sur %2$d</item>
-        <item quantity="many">%1$d paires associées sur %2$d</item>
-        <item quantity="other">%1$d paires associées sur %2$d</item>
-    </plurals>
     <!-- The name of the two columns of cards, for TalkBack. -->
     <string name="activities_sorting_cards_to_match">Cartes à associer</string>
-    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
-    <string name="activities_sorting_card_matched">%1$s, association trouvée</string>
-    <!-- Read by TalkBack after a match, like "Matched éxito with success. Pairs matched: 2 of 3." -->
-    <string name="activities_sorting_matched">Tu as associé %1$s à %2$s. Paires associées : %3$d sur %4$d.</string>
-    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
-    <string name="activities_sorting_dont_go_together">%1$s et %2$s ne vont pas ensemble.</string>
     <string name="activities_sorting_dont_go_together_short">Ces deux éléments ne vont pas ensemble.</string>
     <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Pas tout à fait :</string>
