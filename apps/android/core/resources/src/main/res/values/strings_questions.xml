@@ -18,16 +18,10 @@
     <string name="questions_place_wrong">Place %1$d, wrong place</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, matched with %2$s</string>
-    <!-- Read by TalkBack after a pair is made on a match board, like "Matched éxito with success. 2 of 3 pairs matched." -->
-    <plurals name="questions_match_paired">
-        <item quantity="one">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</item>
-        <item quantity="other">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</item>
-    </plurals>
-    <!-- Read by TalkBack after a wrong pair on a match board, like "éxito and pregnant don't go together." -->
+    <string name="questions_match_paired">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s and %2$s don\'t go together.</string>
-    <!-- Read by TalkBack after the learner undoes a pair on a match board that's checked at the end, like "Unmatched éxito and success." -->
     <string name="questions_match_unpaired">Unmatched %1$s and %2$s.</string>
-    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as "card → card". -->
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
     <string name="questions_match_first_tries">You first matched:</string>
     <string name="questions_your_answer">Your answer</string>
     <string name="questions_mark_correct">Correct</string>

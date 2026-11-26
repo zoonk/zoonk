@@ -425,13 +425,12 @@ enum MatchAnnouncement {
   static func matched(_ left: String, _ right: String, matched: Int, total: Int) -> String {
     String(
       localized:
-        "Matched \(left) with \(right). \(matched) of \(total) pairs matched.",
-      table: "Activities", locale: .appLanguage, comment: "VoiceOver, after a pair is matched")
+        "Matched \(left) with \(right). Pairs matched: \(matched) of \(total).",
+      table: "Activities", locale: .appLanguage)
   }
 
   static func missed(_ left: String, _ right: String) -> String {
     String(
-      localized: "\(left) and \(right) don't go together.", table: "Activities",
-      comment: "VoiceOver, after two cards that don't match are picked")
+      localized: "\(left) and \(right) don't go together.", table: "Activities")
   }
 }

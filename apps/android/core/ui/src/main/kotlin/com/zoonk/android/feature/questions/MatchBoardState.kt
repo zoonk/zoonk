@@ -83,7 +83,7 @@ class MatchBoardState internal constructor(
     ) {
         if (checksPairs) haptics.performHapticFeedback(HapticFeedbackType.Confirm)
         val (left, right) = words(pair)
-        announcement = resources.getQuantityString(R.plurals.questions_match_paired, made, left, right, made, count)
+        announcement = resources.getString(R.string.questions_match_paired, left, right, made, count)
     }
 
     private fun unpaired(pair: MatchTry) {

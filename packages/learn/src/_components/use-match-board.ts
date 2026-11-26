@@ -80,10 +80,12 @@ function useMoveLine({
       return [line, why].filter(Boolean).join(space);
     }
 
-    return t(
-      "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}",
-      { left, matched: pairedCount(pairs), right, total: String(total) },
-    );
+    return t("Matched {left} with {right}. Pairs matched: {matched} of {total}.", {
+      left,
+      matched: String(pairedCount(pairs)),
+      right,
+      total: String(total),
+    });
   };
 }
 

@@ -388,7 +388,7 @@ describe("reasoning activities", () => {
     await page.getByRole("button", { exact: true, name: "0.5" }).click();
 
     await expect
-      .element(page.getByText("Matched 1 over 2 with 0.5. 1 of 2 pairs matched.", { exact: true }))
+      .element(page.getByText("Matched 1 over 2 with 0.5. Pairs matched: 1 of 2.", { exact: true }))
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("button", { name: "1 over 2, matched" })).toBeDisabled();
