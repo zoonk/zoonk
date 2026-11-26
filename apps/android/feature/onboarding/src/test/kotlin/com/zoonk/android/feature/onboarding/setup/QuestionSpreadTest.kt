@@ -24,6 +24,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
+import com.zoonk.android.feature.onboarding.trueFalseQuestion
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
@@ -36,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -124,5 +126,18 @@ class QuestionSpreadTest {
         rule.onNodeWithText("Confirm").performClick()
         val answer = api.placementAnswers.single().answer as TapAnswer.OrderAnswerValue
         assertEquals(listOf(1L, 0L, 3L, 2L), answer.value.order)
+    }
+
+    @Test
+    fun aStatementStaysBeforeTheFoldWithItsAnswersAfterIt() {
+        api.placement = placementOf(next = trueFalseQuestion())
+        showQuestion()
+
+        for ((change, spread) in listOf(::open to true, ::close to false, ::open to true)) {
+            change()
+            val statement = rule.onNodeWithText("A contract needs consideration to be binding.").fetchSemanticsNode().boundsInRoot
+            val answer = rule.onNodeWithText("True").fetchSemanticsNode().boundsInRoot
+            assertTrue(if (spread) statement.right <= answer.left else statement.bottom <= answer.top)
+        }
     }
 }
