@@ -36,20 +36,19 @@ const ENTRY_TONE: Record<MatchEntryState, string> = {
 
 const SETTLED: ReadonlySet<MatchEntryState> = new Set(["done", "missed", "right"]);
 
-/** A pick's mark in ink, as a radio's dot: the number key that picks it where there's a keyboard. */
-function PickMark({ pickKeyLabel }: { pickKeyLabel: string | null }) {
-  const dot = <span className="bg-selected size-2.5 rounded-full" data-slot="match-pick-mark" />;
-
-  if (!pickKeyLabel) {
-    return dot;
-  }
-
+/** A pick's mark in ink, as a radio's dot; where a keyboard picks the card, its key turns ink instead. */
+function PickMark({ keyLabel }: { keyLabel: string | null }) {
   return (
     <>
-      <Kbd className="bg-selected text-selected-foreground hidden ring-0 pointer-fine:inline-flex">
-        {pickKeyLabel}
-      </Kbd>
-      <span className="contents pointer-fine:hidden">{dot}</span>
+      {keyLabel && (
+        <Kbd className="bg-selected text-selected-foreground hidden ring-0 pointer-fine:inline-flex">
+          {keyLabel}
+        </Kbd>
+      )}
+      <span
+        className={cn("bg-selected size-2.5 rounded-full", keyLabel && "pointer-fine:hidden")}
+        data-slot="match-pick-mark"
+      />
     </>
   );
 }
@@ -92,7 +91,7 @@ function EntryMark({
   const key = keyed ? pickKey(index) : null;
 
   if (state === "selected") {
-    return <PickMark pickKeyLabel={key ?? null} />;
+    return <PickMark keyLabel={key ?? null} />;
   }
 
   if (!key) {
