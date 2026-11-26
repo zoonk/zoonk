@@ -157,7 +157,8 @@ export function QuestionBlock({
   const blockDrill = useBlockDrill({ detail, index: run.state.index });
   const draft = useDraftAnswer(run.state.index, question);
   const aside = useBlockAside({ question, tutor });
-  useScreenAtTop(phase.kind === "finished" ? "finished" : run.state.index);
+  const screen = `${blockDrill.stage === "idea"}:${run.state.index}`;
+  useScreenAtTop(phase.kind === "finished" ? "finished" : screen);
 
   if (phase.kind === "finished") {
     return (

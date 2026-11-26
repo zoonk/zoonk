@@ -119,7 +119,7 @@ export function LanguagePatternScreen({
   const practice = usePracticeVerb();
   const drill = usePatternDrill({ drill: pattern.drill, practice: actions.practice });
   const { step } = drill;
-  useScreenAtTop(step.kind === "result" ? "result" : drill.index);
+  useScreenAtTop(`${step.kind}:${drill.index}`);
 
   if (pattern.kind === "typos" || pattern.drill.length === 0) {
     return <TyposPattern dismiss={actions.dismiss} exitHref={exitHref} pattern={pattern} />;
