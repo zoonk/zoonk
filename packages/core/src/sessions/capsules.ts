@@ -1,6 +1,9 @@
+import { MATCH_SIDE_TARGET } from "@zoonk/ai/tasks/items/schemas";
 import { type ItemFormat } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleave } from "@zoonk/utils/interleave";
+import { isJsonObject } from "@zoonk/utils/json";
+import { segmentWords } from "@zoonk/utils/string";
 
 /** Swipe capsules use net scoring for exams where wrong answers cancel right ones. */
 export const CAPSULE_FORMATS = ["rapidFire", "matchPairs", "swipe"] as const;
@@ -8,6 +11,11 @@ export const CAPSULE_FORMATS = ["rapidFire", "matchPairs", "swipe"] as const;
 export type CapsuleFormat = (typeof CAPSULE_FORMATS)[number];
 
 const CAPSULE_QUESTIONS = 3;
+const MATCH_LABEL_HEADROOM = 1.25;
+const MAX_MATCH_LABEL_LENGTH = Math.ceil(MATCH_SIDE_TARGET * MATCH_LABEL_HEADROOM);
+const MAX_MATCH_LABEL_WORDS = 5;
+const MAX_LIGHT_MATCH_PAIRS = 5;
+const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
 export type DueSkill = { lessonId: string | null; skillId: string; title: string };
 
@@ -19,6 +27,7 @@ export type CapsuleGroup = {
 };
 
 export type CapsuleItemCandidate = {
+  content: unknown;
   format: ItemFormat;
   id: string;
   /** Set in the learner's field (work and career goals): asked before general questions. */
@@ -50,30 +59,31 @@ export function groupIntoCapsules(skills: readonly DueSkill[]): CapsuleGroup[] {
   });
 }
 
-export function pickCapsuleFormat({
-  formats,
-  netScoring,
-}: {
-  formats: readonly ItemFormat[];
-  netScoring: boolean;
-}): CapsuleFormat {
-  if (netScoring && formats.includes("trueFalse")) {
-    return "swipe";
+function isShortMatchLabel(label: unknown): boolean {
+  if (typeof label !== "string") {
+    return false;
   }
 
-  return formats.includes("matchPairs") ? "matchPairs" : "rapidFire";
+  const text = label.trim();
+
+  return (
+    Boolean(text) &&
+    [...GRAPHEMES.segment(text)].length <= MAX_MATCH_LABEL_LENGTH &&
+    segmentWords(text).length <= MAX_MATCH_LABEL_WORDS
+  );
 }
 
-function isFormatFor({ format, item }: { format: CapsuleFormat; item: CapsuleItemCandidate }) {
-  if (format === "swipe") {
-    return item.format === "trueFalse";
-  }
-
-  if (format === "matchPairs") {
-    return item.format === "matchPairs";
-  }
-
-  return RAPID_FIRE_FORMATS.has(item.format);
+/** A quick review board has at most five pairs of labels that fit a phone's half column. */
+export function isLightMatch(content: unknown): boolean {
+  return (
+    isJsonObject(content) &&
+    Array.isArray(content.pairs) &&
+    content.pairs.length >= 2 &&
+    content.pairs.length <= MAX_LIGHT_MATCH_PAIRS &&
+    content.pairs.every(
+      (pair) => isJsonObject(pair) && isShortMatchLabel(pair.left) && isShortMatchLabel(pair.right),
+    )
+  );
 }
 
 function byLeastRecent(a: CapsuleItemCandidate, b: CapsuleItemCandidate): number {
@@ -83,23 +93,55 @@ function byLeastRecent(a: CapsuleItemCandidate, b: CapsuleItemCandidate): number
   );
 }
 
-/** Takes one question per skill in turn; matching capsules ask one item, other formats up to three. */
+/** Start with the least recent eligible question, then take one per skill in turn. */
 export function pickCapsuleItems({
   candidates,
-  format,
+  netScoring,
   skillIds,
 }: {
   candidates: readonly CapsuleItemCandidate[];
-  format: CapsuleFormat;
+  netScoring: boolean;
   skillIds: readonly string[];
-}): string[] {
-  const usable = candidates.filter((item) => isFormatFor({ format, item })).toSorted(byLeastRecent);
-  const size = format === "matchPairs" ? 1 : CAPSULE_QUESTIONS;
-  const perSkill = skillIds.map((skillId) => usable.filter((item) => item.skillId === skillId));
+}): { format: CapsuleFormat; itemIds: string[] } {
+  const ordered = candidates
+    .filter((item) => skillIds.includes(item.skillId))
+    .toSorted(byLeastRecent);
 
-  return interleave(perSkill)
-    .slice(0, size)
-    .map((item) => item.id);
+  const firstStatement = netScoring ? ordered.find((item) => item.format === "trueFalse") : null;
+
+  const first =
+    firstStatement ??
+    ordered.find((item) =>
+      item.format === "matchPairs"
+        ? isLightMatch(item.content)
+        : RAPID_FIRE_FORMATS.has(item.format),
+    ) ??
+    ordered.find((item) => item.format === "matchPairs");
+
+  if (!first) {
+    return { format: "rapidFire", itemIds: [] };
+  }
+
+  if (first.format === "matchPairs") {
+    return { format: "matchPairs", itemIds: [first.id] };
+  }
+
+  const usable = ordered.filter((item) =>
+    firstStatement ? item.format === "trueFalse" : RAPID_FIRE_FORMATS.has(item.format),
+  );
+
+  const orderedSkills = [first.skillId, ...skillIds.filter((skillId) => skillId !== first.skillId)];
+
+  const perSkill = orderedSkills.map((skillId) =>
+    usable.filter((item) => item.skillId === skillId),
+  );
+
+  return {
+    format: firstStatement ? "swipe" : "rapidFire",
+    itemIds: interleave(perSkill)
+      .slice(0, CAPSULE_QUESTIONS)
+      .map((item) => item.id),
+  };
 }
 
 /** Returns the earliest skill due date, or null until any skill has been answered. */

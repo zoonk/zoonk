@@ -23,8 +23,8 @@ The app skips a skill's lessons only when the learner gets its quick question an
 - Each stands alone: a learner who never saw a lesson, but has the skill, can answer it.
 - For each one, pick the format that fits what the skill does, and use more than one format for a skill when more than one fits. Never force a format: a skill with no real order gets no `order` question.
   - `order` when the skill puts steps, stages or events in the one order that works (a procedure, a calculation's steps, a timeline, the words of a sentence).
-  - `matchPairs` when the skill links cases to what they are or do (examples to their category, symptoms to causes, situations to the rule that applies, words to meanings).
-  - `selectAll` when the skill judges which of several cases meet a condition (which expenses are deductible, which sentences are correct, which actions are safe).
+  - `matchPairs` when the skill links short items to what they are or do (terms to meanings, examples to their category, symptoms to causes, words to their translation).
+  - `selectAll` when the skill judges which of several cases meet a condition (which expenses are deductible, which sentences are correct, which actions are safe), and when its cases need a sentence each.
 
 ## order
 
@@ -35,7 +35,7 @@ The app skips a skill's lessons only when the learner gets its quick question an
 ## matchPairs
 
 - `question`: the situation and the command ("Match each … to …").
-- `pairs`: 4 to 6 pairs. Each left item matches exactly one right item, and no right item could also fit another left item. Keep both sides short, and never let a pair match by a word they share.
+- `pairs`: 4 or 5 pairs, since three let a guess through. Each left item matches exactly one right item, and no right item could also fit another left item. Never let a pair match by a word they share. A board is hard to guess because its right items are close to each other, never because its cards are long.
 - `reason`: why each left item goes with its right item.
 
 ## selectAll

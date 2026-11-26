@@ -36,7 +36,7 @@ export function parsePlacementItem(item: BankItem): PlacementItem | null {
 
 export function toPlacementQuestionView(item: PlacementItem) {
   if (item.format === "matchPairs") {
-    return toMatchQuestion(item);
+    return { ...toMatchQuestion(item), key: null };
   }
 
   return item.format === "order" ? toOrderQuestion(item) : toQuestionView(item);

@@ -264,6 +264,51 @@ describe("shared daily skill reviews", () => {
     ).resolves.toStrictEqual([]);
   });
 
+  it("uses quick questions before wordy matches and keeps a skill with only a wordy match", async () => {
+    const { remaining, shared, third, user } = await setup();
+
+    const content = {
+      pairs: [
+        { left: "Mars", right: "A planet with a surface rich in iron oxide" },
+        { left: "Moon", right: "Earth's only natural satellite" },
+      ],
+      question: "Match each object with its description.",
+      reason: "The Moon orbits Earth.",
+    };
+
+    await Promise.all([
+      itemFixture({ content, format: "matchPairs", skillId: shared.id }),
+      prisma.item.update({ data: { content, format: "matchPairs" }, where: { id: third.id } }),
+    ]);
+
+    const capsules = await loadReviewCapsules({
+      dailyMinutes: 20,
+      examBlueprintId: null,
+      field: null,
+      horizon: getReviewHorizon({
+        finalStretchStart: null,
+        goal: { kind: "learn", targetDate: null },
+        localDate: TODAY,
+        timeZone: "UTC",
+      }),
+      netScoring: false,
+      planLessons: [],
+      skillIds: [shared.id, remaining.id],
+      userId: user.id,
+    });
+
+    expect(capsules).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ format: "rapidFire", skillIds: [shared.id] }),
+        expect.objectContaining({
+          format: "matchPairs",
+          itemIds: [third.id],
+          skillIds: [remaining.id],
+        }),
+      ]),
+    );
+  });
+
   it("persists the filtered payload when resuming an already active review", async () => {
     const fixture = await setup();
     const ref = { blockId: fixture.otherBlock.id, sessionId: fixture.other.id };

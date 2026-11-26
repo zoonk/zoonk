@@ -4,12 +4,12 @@ description: Design, implement, or review Zoonk interfaces on the web, iOS and A
 license: MIT
 metadata:
   author: zoonk
-  version: "6.5.0"
+  version: "6.6.0"
 ---
 
 # Zoonk design
 
-Build clean, subtle, harmonious interfaces. **Don't make me think:** make the purpose, available actions, and their consequences easy to understand. Reduce the effort of using the interface while preserving the thought that learning requires. The user's explicit requirements take precedence over this skill.
+Build clean, subtle, harmonious interfaces. **Don't make me think:** make the purpose, available actions, and their consequences easy to understand. Reduce the effort of using the interface while preserving the thought that learning requires.
 
 ## Understand the task
 
@@ -105,6 +105,7 @@ The landing page, the catalog, public course, chapter and lesson pages, pricing,
 - **Honest progress.** Show progress as it is, from the person's own work, and never promise a result. Follow the [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md) for progress wording.
 - **Kind motivation.** Rewards come from learning, and what earns one shows where it's earned (a mission's row, a challenge's "7 of 10 to win"). Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
 - **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the day's study.
+- **Learning is light; tests are tests.** In lessons, practice and review, the verdict comes at the smallest step the learner takes, and after a miss they try again at once. A verdict held until the end and an exam-hard question belong only on a screen that says it's a test.
 - **Interaction is learning.** An interactive activity is the learning action: the person moves, predicts, or builds something, and a question checks what they saw. Never add one that only decorates.
 - **Readable everywhere.** Neutral text (titles, body, muted lines) meets WCAG AA on every surface it sits on, in light and dark. Colored marks, icons, tints and colored words stay soft in the regular theme and turn strict only under `prefers-contrast: more`; color is never the only cue (a word, an icon, a shape or the mark's place in an order says the same, and a legend is added only when none of them does). Theme, contrast and reduced motion follow the device, and every animation has a calm reduced-motion version.
 
@@ -147,9 +148,9 @@ When a screen keeps missing the bar, reviews return to the same screen, or each 
 
 ## Check the experience
 
-Walk through the task: can someone recognize what matters, predict what happens next, and recover from mistakes? Check what can be removed or combined without losing clarity. Fix unnecessary interpreting, remembering, and choosing.
+Walk through the task: can someone recognize what matters and predict what happens next? Walk one mistake through recovery on a phone: what must the learner reread, repeat or wait for before they can try again? Fix unnecessary interpreting, remembering, and choosing.
 
-Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned: a change to a shared piece is looked at on every screen that draws it, and "this screen's files didn't change" doesn't mean it looks right. Recheck observed friction. For proposals, show representative screens and transitions. State what remains unverified. Before a PR, [the verification step](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures every screen the branch touches at the sizes, languages and windows where layouts break, and readers who built none of it give each picture [independent picture review](references/craft.md#independent-picture-review).
+Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned: a change to a shared piece is looked at on every screen that draws it, and "this screen's files didn't change" doesn't mean it looks right. For proposals, show representative screens and transitions. Before a PR, [the verification step](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures every screen the branch touches at the sizes, languages and windows where layouts break, and readers who built none of it give each picture [independent picture review](references/craft.md#independent-picture-review).
 
 For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, words no earlier screen taught, lines nobody would miss, unnecessary choices, hidden progress, and effort that grows with repeated use.
 
