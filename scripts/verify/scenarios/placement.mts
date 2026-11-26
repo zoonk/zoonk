@@ -3,6 +3,12 @@ import { PHONE_AND_LAPTOP, PINNED_ACTION, type Prerequisites, type Scenario } fr
 const PEDRO: Prerequisites["persona"] = { flags: ["--locale", "en"], name: "pedro" };
 const ANA: Prerequisites["persona"] = { flags: ["--locale", "en"], name: "ana" };
 
+/** What proves the question's format, beside its words. */
+const SELECT_ALL = "[data-slot=answer-option-group][role=group]";
+const SELECT_ONE = "[data-slot=answer-option-group][role=radiogroup]";
+const MATCH = "[data-slot=match-board]";
+const ORDER = "[data-slot=activity-sortable-list]";
+
 /** A test's question, written by the seed, in the page that asks it; each start saves a sitting. */
 function question(scenario: Omit<Scenario, "anchors" | "sizes" | "writes">): Scenario {
   return { ...scenario, anchors: [PINNED_ACTION], sizes: PHONE_AND_LAPTOP, writes: true };
@@ -14,6 +20,7 @@ function question(scenario: Omit<Scenario, "anchors" | "sizes" | "writes">): Sce
  */
 export const PLACEMENT_SCENARIOS: Scenario[] = [
   question({
+    evidence: [SELECT_ALL],
     id: "placement.level-check.select-all",
     prerequisites: { persona: PEDRO, state: "placement" },
     proof: "Question 1",
@@ -21,6 +28,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     screen: "/today",
   }),
   question({
+    evidence: [ORDER],
     id: "placement.level-check.order",
     prerequisites: { persona: PEDRO, state: "placement" },
     proof: "Drag the steps into order.",
@@ -35,6 +43,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     screen: "/today",
   }),
   question({
+    evidence: [SELECT_ONE],
     id: "placement-test.question",
     prerequisites: { persona: PEDRO },
     proof: "Part 1",
@@ -42,6 +51,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     screen: "/placement-test",
   }),
   question({
+    evidence: [SELECT_ALL],
     id: "focus-test.select-all",
     prerequisites: { persona: ANA },
     proof: "Question 1 of 10",
@@ -49,6 +59,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     screen: "/focus-test",
   }),
   question({
+    evidence: [MATCH],
     id: "focus-test.match",
     prerequisites: { persona: ANA },
     proof: "Question 2 of 10",
@@ -63,6 +74,7 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
   }),
   {
     ...question({
+      evidence: [SELECT_ONE],
       id: "level-test.question",
       prerequisites: { persona: { name: "marcos" } },
       proof: "I don't know yet",
