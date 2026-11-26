@@ -275,7 +275,10 @@ private struct MatchEntryStyle: ButtonStyle {
       // As on the page, on a lesson's tinted canvas too.
       .background(Color(.background), in: shape)
       .scaleEffect(configuration.isPressed ? 0.99 : 1)
-      .animation(MatchMotion.settle(duration: 0.15), value: state)
+      // A verdict's look shows at once; a pair settling out of its cue fades.
+      .animation(
+        state == .right || state == .missed ? nil : MatchMotion.settle(duration: 0.15),
+        value: state)
   }
 
   // Main's board text: 14 on a phone and 16 wider, on 24-point lines.
