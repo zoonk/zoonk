@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.pickIndex
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -260,8 +261,7 @@ private fun runnerKey(
 ): Boolean {
     if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
     if (event.isCtrlPressed || event.isAltPressed || event.isMetaPressed) return false
-    val digit = NUMBER_KEYS.indexOf(event.key).takeIf { it >= 0 } ?: NUMPAD_KEYS.indexOf(event.key)
-    if (digit >= 0) return viewModel.pickOption(digit)
+    event.key.pickIndex()?.let { return viewModel.pickOption(it) }
     val last = run.position >= run.questions.lastIndex
     return when (event.key) {
         Key.DirectionRight -> {
@@ -644,6 +644,3 @@ private val MAP_GAP = 8.dp
 private val MAP_TARGET = 48.dp
 private val SHEET_GAP = 8.dp
 private const val LARGE_FONT_SCALE = 1.5f
-private val NUMBER_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
-private val NUMPAD_KEYS =
-    listOf(Key.NumPad1, Key.NumPad2, Key.NumPad3, Key.NumPad4, Key.NumPad5, Key.NumPad6, Key.NumPad7, Key.NumPad8, Key.NumPad9)

@@ -37,6 +37,7 @@ import com.zoonk.android.feature.questions.Announcement
 import com.zoonk.android.feature.questions.MatchBoard
 import com.zoonk.android.feature.questions.MatchEntry
 import com.zoonk.android.feature.questions.MatchMisses
+import com.zoonk.android.feature.questions.MatchNumberKeys
 import com.zoonk.android.feature.questions.MatchSide
 import com.zoonk.android.feature.questions.MatchSpot
 import com.zoonk.android.feature.questions.SolvedMatchBoard
@@ -55,7 +56,7 @@ val matchPairsRenderer =
 
 /**
  * Main's `MatchPairsActivity`: the shared match board, each pair checked as it's made. A miss says why under the board
- * until the next tap, and the last pair sends the answer by itself ([ActivityProps.onComplete]).
+ * until the next tap, and the last pair sends the answer by itself ([ActivityProps.onComplete]). Number keys pick cards.
  */
 @Composable
 private fun MatchPairsActivity(props: ActivityProps) {
@@ -84,6 +85,10 @@ private fun MatchPairsActivity(props: ActivityProps) {
         if (answer == null) props.onAnswerChange(null) else props.onComplete(answer)
     }
 
+    fun canTap(spot: MatchSpot) = !ended && !props.isLocked && work.partnerOf(spot) == null
+
+    MatchNumberKeys(props.takeNumberKeys, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } }
+
     val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, modifier ->
         val spot = MatchSpot(side, index)
         val cards = if (side == MatchSide.Left) left else right
@@ -91,7 +96,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
         val state = work.stateOf(spot, held = false, ended = ended)
         MatchEntry(
             state = state,
-            onClick = { tap(spot) }.takeIf { !ended && !props.isLocked && partner == null },
+            onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = modifier,
             label = board.label(spot, partner),
             cue = work.cue,

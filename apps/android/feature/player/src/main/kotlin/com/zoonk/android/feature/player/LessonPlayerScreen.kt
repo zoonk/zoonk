@@ -150,6 +150,7 @@ import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.isWideLayout
+import com.zoonk.android.ui.components.pickIndex
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -510,7 +511,7 @@ private fun handleKey(
     leave: () -> Unit,
     completionAction: () -> (() -> Unit)?,
 ): Boolean {
-    val digit = DIGIT_KEYS.indexOf(key)
+    val digit = key.pickIndex()
 
     return when {
         (key == Key.Enter || key == Key.NumPadEnter) && state.phase == LessonPhase.Completed -> {
@@ -542,7 +543,7 @@ private fun handleKey(
             true
         }
 
-        digit >= 0 && state.phase == LessonPhase.Playing -> {
+        digit != null && state.phase == LessonPhase.Playing -> {
             if (actions.pressNumberKey(digit)) return true
             val step = screen.step ?: return false
             val pick = keyPick(step, digit, state) ?: return false
@@ -555,8 +556,6 @@ private fun handleKey(
         }
     }
 }
-
-private val DIGIT_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 
 @Composable
 private fun Segments(

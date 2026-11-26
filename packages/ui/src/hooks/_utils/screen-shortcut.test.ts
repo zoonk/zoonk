@@ -114,17 +114,16 @@ describe(isScreenShortcut, () => {
 });
 
 describe(getNumberKeyIndex, () => {
-  it("maps 1 to 9 to the first nine options", () => {
-    const keys = ["1", "5", "9"].map((key) =>
+  it("maps 1 to 9 to the first nine options and 0 to the tenth", () => {
+    const keys = ["1", "5", "9", "0"].map((key) =>
       getNumberKeyIndex(new KeyboardEvent("keydown", { key })),
     );
 
-    expect(keys).toStrictEqual([0, 4, 8]);
+    expect(keys).toStrictEqual([0, 4, 8, 9]);
   });
 
-  it("ignores 0, other keys and shortcut chords such as Cmd+1", () => {
+  it("ignores other keys and shortcut chords such as Cmd+1", () => {
     const presses = [
-      { key: "0" },
       { key: "a" },
       { key: " " },
       { key: "1", metaKey: true },
@@ -134,7 +133,7 @@ describe(getNumberKeyIndex, () => {
 
     expect(
       presses.map((init) => getNumberKeyIndex(new KeyboardEvent("keydown", init))),
-    ).toStrictEqual([null, null, null, null, null, null]);
+    ).toStrictEqual([null, null, null, null, null]);
   });
 });
 

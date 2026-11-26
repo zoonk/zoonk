@@ -166,7 +166,7 @@ private struct StepSolverCanvas: View {
               }
               .buttonStyle(ActivityTileStyle(mark: isPicked ? .wrong : .plain))
               .disabled(isPicked)
-              .modifier(ActivityNumberKey(index: choiceIndex))
+              .modifier(PickKey(index: choiceIndex))
             }
           }
 
