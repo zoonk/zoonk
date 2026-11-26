@@ -29,9 +29,9 @@ jobs:
 
   compile-release:
     name: compile (release)
-    # Release lint and the R8 build take over 5 minutes each here, so they run only when started by
-    # hand; agents run them locally instead.
-    if: github.event_name == 'workflow_dispatch'
+    # Release lint and the R8 build take over 5 minutes each here, so pull requests skip them (agents run
+    # them locally); they run after merge, so a miss turns main red the same day, and on demand.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     concurrency:
