@@ -2,7 +2,9 @@ package com.zoonk.android.feature.questions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import com.zoonk.android.ui.components.LocalOptionKeys
 import com.zoonk.android.ui.components.LocalPickKeys
 
 /**
@@ -46,7 +48,8 @@ fun MatchPairsQuestion(
 
     fun canTap(spot: MatchSpot) = enabled && !ended && (key == null || work.partnerOf(spot) == null)
 
-    LocalPickKeys.current?.let { keys -> MatchNumberKeys(keys::take, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } } }
+    val keys = LocalPickKeys.current
+    keys?.let { MatchNumberKeys(it::take, left.size) { spot -> canTap(spot).also { if (it) tap(spot) } } }
 
     val card: @Composable (MatchSide, Int, Modifier) -> Unit = { side, index, cardModifier ->
         val spot = MatchSpot(side, index)
@@ -57,6 +60,7 @@ fun MatchPairsQuestion(
             state = state,
             onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = cardModifier,
+            place = spot.place(left.size),
             pair = made?.let { if (side == MatchSide.Left) index else it }?.plus(1),
             label = board.label(spot, partner),
             cue = work.cue,
@@ -64,10 +68,13 @@ fun MatchPairsQuestion(
     }
 
     Box(modifier) {
-        if (key != null && ended) {
-            SolvedMatchBoard(left.indices.map { it to key[it] }, card = card)
-        } else {
-            MatchBoard(left.indices.toList(), right.indices.toList(), card = card)
+        // Where the frame sends number keys, the cards show the ones that pick them.
+        CompositionLocalProvider(LocalOptionKeys provides (keys != null)) {
+            if (key != null && ended) {
+                SolvedMatchBoard(left.indices.map { it to key[it] }, card = card)
+            } else {
+                MatchBoard(left.indices.toList(), right.indices.toList(), card = card)
+            }
         }
         board.Announcement()
     }

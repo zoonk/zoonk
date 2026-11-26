@@ -100,6 +100,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             state = state,
             onClick = { tap(spot) }.takeIf { canTap(spot) },
             modifier = modifier,
+            place = spot.place(left.size),
             label = board.label(spot, partner),
             cue = work.cue,
         ) { RichText(cards[index].text) }

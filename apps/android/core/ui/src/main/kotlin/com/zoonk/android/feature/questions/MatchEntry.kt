@@ -1,8 +1,10 @@
 package com.zoonk.android.feature.questions
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,11 +48,14 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTone
 import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.OptionKey
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.components.focusRing
 import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.components.markSize
+import com.zoonk.android.ui.components.optionKeysShown
 import com.zoonk.android.ui.theme.GeistMono
+import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -65,17 +70,20 @@ enum class MatchEntryState { Idle, Selected, Paired, Right, Done, Missed, Wrong,
 
 /**
  * One side of a pair on every screen that asks to match these with those (main's `MatchEntry`). Its words start at the
- * card's top edge; its mark (a pick's dot, a kept pair's check, a wrong try's ✕, or a held pair's number, [pair] counted
- * from one) sits level with the first line at the end, in room every state keeps, so pairing moves no words. [onClick]
- * is null where the card can't be tapped. [label] is what TalkBack reads in place of the words once the card is in a
- * pair, such as "pregnant, matched with grávida", and [cue] restarts a wrong card's shake for each new miss. A press
- * gives way a little, as main's does, and leaves no tint, so both cards of a try show its tone alike.
+ * card's top edge; its mark (the number key that picks it where a keyboard does, a pick's dot or that key in ink, a kept
+ * pair's check, a wrong try's ✕, or a held pair's number, [pair] counted from one) sits level with the first line at the
+ * end, in room every state keeps, so pairing moves no words. [place] is the card's place on the board, the left column
+ * first, which names its key. [onClick] is null where the card can't be tapped. [label] is what TalkBack reads in place
+ * of the words once the card is in a pair, such as "pregnant, matched with grávida", and [cue] restarts a wrong card's
+ * shake for each new miss. A press gives way a little, as main's does, and leaves no tint, so both cards of a try show
+ * its tone alike; its fill and words change color quickly, as main's do.
  */
 @Composable
 fun MatchEntry(
     state: MatchEntryState,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    place: Int? = null,
     pair: Int? = null,
     label: String? = null,
     cue: Int = 0,
@@ -83,7 +91,19 @@ fun MatchEntry(
 ) {
     val tone = entryTone(state)
     // Every card sits on the page's color, so its tints look the same on an activity's panel as on the page.
-    val container = if (tone.container == Color.Transparent) MaterialTheme.colorScheme.surface else tone.container
+    val colorChange = tween<Color>(ZoonkMotion.QUICK_MILLIS, easing = ZoonkMotion.EaseOut)
+    val container by animateColorAsState(
+        if (tone.container == Color.Transparent) MaterialTheme.colorScheme.surface else tone.container,
+        colorChange,
+        label = "fill",
+    )
+    val words by animateColorAsState(tone.contentColor, colorChange, label = "words")
+    // Main's `pickKey`: 1 to 9, then 0 for the tenth; a card past it, done or unclickable has none.
+    val key =
+        place
+            ?.takeIf { it < PICK_KEYS && onClick != null && optionKeysShown() }
+            ?.takeIf { state == MatchEntryState.Idle || state == MatchEntryState.Selected }
+            ?.let { (it + 1) % PICK_KEYS }
     val shape = RoundedCornerShape(ZoonkRadius.xl)
     val style = LocalMatchTextStyle.current ?: matchTextStyle(wide = false)
     val shake = remember { Animatable(0f) }
@@ -137,10 +157,11 @@ fun MatchEntry(
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // A card with a [label] is read by it alone, once, wherever TalkBack merges it.
-            val words = if (label == null) Modifier else Modifier.clearAndSetSemantics {}
-            Box(Modifier.weight(1f).then(words)) { ProvideTextStyle(style.copy(color = tone.contentColor)) { content() } }
+            val spoken = if (label == null) Modifier else Modifier.clearAndSetSemantics {}
+            Box(Modifier.weight(1f).then(spoken)) { ProvideTextStyle(style.copy(color = words)) { content() } }
             MarkSlot(style) {
                 when {
+                    key != null -> OptionKey(key, picked = state == MatchEntryState.Selected)
                     state == MatchEntryState.Selected -> PickMark()
                     state == MatchEntryState.Right -> DoneMark()
                     state == MatchEntryState.Done -> SettledMark(MaterialTheme.colorScheme.onSurfaceVariant)
@@ -249,6 +270,7 @@ internal val LocalMatchTextStyle = staticCompositionLocalOf<TextStyle?> { null }
 private val MARK_WIDTH = 20.dp
 private const val MARK_SHARE = 0.75f
 private val PICK_DOT = 10.dp
+private const val PICK_KEYS = 10
 
 /** Main's `press` with `--press-scale: 0.99`. */
 private const val PRESS_SCALE = 0.99f
