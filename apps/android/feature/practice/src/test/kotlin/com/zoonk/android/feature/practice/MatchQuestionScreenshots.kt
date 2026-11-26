@@ -158,7 +158,7 @@ class MatchQuestionScreenshots {
         // A wrong try's cue outlasts its shake, which is all idling waits for.
         if (settle) rule.mainClock.advanceTimeBy(CUE) else rule.mainClock.advanceTimeBy(FRAME * 4)
         if (settle) rule.waitForIdle()
-        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
+        val bitmap = rule.onRoot().captureRender(scenario = name).asAndroidBitmap()
         writeRender(File(folder, "$name.png").apply { parentFile?.mkdirs() }, bitmap)
     }
 
