@@ -8,19 +8,19 @@ import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
 import {
   LIST_ROW_CLASS,
-  LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
   ListRowLink,
+  ListRowLinkWithAction,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { FactSegments } from "../_components/task-meta";
-import { LearnLink } from "../learn-link";
+import { SavedBookmarkIcon } from "../saves/save-button";
 import { buildStudyHref } from "./_utils/mind-map-urls";
 import { type MindMapsPage, type MindMapsPageChapter } from "./_utils/mind-maps-page";
-import { MindMapSaveButton, SavedBookmarkIcon, SavedLabel } from "./mind-map-save-button";
+import { MindMapSaveButton, SavedLabel } from "./mind-map-save-button";
 import { MindMapSlot } from "./mind-map-slot";
 
 const LEADING_CLASS = "py-2";
@@ -104,11 +104,14 @@ export type SavedMapRowData = SavedMindMapView & Pick<MindMapsPageChapter, "thum
  * read alike.
  */
 export function SavedMapRow({
-  onRemove,
+  isSaved,
+  onToggle,
   saved,
   study,
 }: {
-  onRemove: () => void;
+  /** False once the learner removed it here: the row stays until they leave, to save it again. */
+  isSaved: boolean;
+  onToggle: () => void;
   saved: SavedMapRowData;
   study: string;
 }) {
@@ -121,38 +124,37 @@ export function SavedMapRow({
   };
 
   return (
-    <div className="flex items-center gap-1" data-slot="saved-map-row">
-      <LearnLink
-        className={cn(LIST_ROW_INTERACTIVE_CLASS, "min-w-0 flex-1")}
-        href={buildStudyHref({ place: place || null, study, view: "saved" })}
-        prefetch="intent"
-      >
-        <ListRowLeading className={LEADING_CLASS}>
-          {isChapter ? (
-            <MindMapSlot thumbnailUrl={saved.thumbnailUrl}>
-              <KindIcon kind="mindMap" />
-            </MindMapSlot>
-          ) : (
-            <MindMapSlot filled thumbnailUrl={null}>
-              <NetworkIcon className="text-muted-foreground size-4" />
-            </MindMapSlot>
-          )}
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{saved.title}</ListRowTitle>
-          <ListRowDescription>{kind}</ListRowDescription>
-        </ListRowContent>
-      </LearnLink>
-
-      <MindMapSaveButton
-        edge="end"
-        labelled={false}
-        onToggle={onRemove}
-        saved
-        size="icon-lg"
-        variant="ghost"
-      />
-    </div>
+    <ListRowLinkWithAction
+      action={
+        <MindMapSaveButton
+          edge="end"
+          labelled={false}
+          onToggle={onToggle}
+          saved={isSaved}
+          size="icon-lg"
+          title={saved.title}
+          variant="ghost"
+        />
+      }
+      href={buildStudyHref({ place: place || null, study, view: "saved" })}
+      prefetch="intent"
+    >
+      <ListRowLeading className={LEADING_CLASS}>
+        {isChapter ? (
+          <MindMapSlot thumbnailUrl={saved.thumbnailUrl}>
+            <KindIcon kind="mindMap" />
+          </MindMapSlot>
+        ) : (
+          <MindMapSlot filled thumbnailUrl={null}>
+            <NetworkIcon className="text-muted-foreground size-4" />
+          </MindMapSlot>
+        )}
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>{saved.title}</ListRowTitle>
+        <ListRowDescription>{kind}</ListRowDescription>
+      </ListRowContent>
+    </ListRowLinkWithAction>
   );
 }
 

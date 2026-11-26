@@ -6,6 +6,7 @@ import { type MindMapLimit, useLiveLimit } from "../_components/help-limit-notic
 import { usePoll } from "../_utils/use-poll";
 import { useReadOrder } from "../_utils/use-read-order";
 import { useRereadServed, useServedState } from "../_utils/use-served-state";
+import { useKeptRows } from "../saves/use-kept-rows";
 import {
   type MindMapsPage,
   type MindMapsPageChapter,
@@ -13,7 +14,7 @@ import {
   toPageStop,
 } from "./_utils/mind-maps-page";
 import { type MindMapLibraryActions, type MindMapRequestOutcome } from "./mind-map-actions";
-import { type SavedMapTarget, useMindMapSaves } from "./use-mind-map-saves";
+import { type SavedMapTarget, toSavedMapKey, useMindMapSaves } from "./use-mind-map-saves";
 
 const DRAWING_POLL_MS = 5000;
 const WRITING_POLL_MS = 15_000;
@@ -43,13 +44,22 @@ function withStatus({
   };
 }
 
-function withoutSaved(page: MindMapsPage, { kind, targetId }: SavedMapTarget): MindMapsPage {
+function withChapterSaved({
+  page,
+  saved,
+  target,
+}: {
+  page: MindMapsPage;
+  saved: boolean;
+  target: SavedMapTarget;
+}): MindMapsPage {
   return {
     ...page,
     chapters: page.chapters.map((chapter) =>
-      kind === "chapter" && chapter.chapterId === targetId ? { ...chapter, saved: false } : chapter,
+      target.kind === "chapter" && chapter.chapterId === target.targetId
+        ? { ...chapter, saved }
+        : chapter,
     ),
-    saved: page.saved.filter((saved) => saved.kind !== kind || saved.targetId !== targetId),
   };
 }
 
@@ -109,13 +119,19 @@ export function useMindMapsLibrary({
   const saves = useMindMapSaves({
     onSaved: (target, saved) => {
       order.supersedeReads();
-
-      if (!saved) {
-        setPage((current) => withoutSaved(current, target));
-      }
+      setPage((current) => withChapterSaved({ page: current, saved, target }));
     },
     save: actions.save,
   });
+
+  // A save that can no longer open has no bookmark to tap again, so its Remove takes it away.
+  const savedRows = useKeptRows({
+    isKept: (entry) => entry.available && saves.isTouched(entry),
+    keyOf: toSavedMapKey,
+    rows: page.saved,
+  }).filter((entry) => entry.available || saves.isSaved({ saved: true, target: entry }));
+
+  const stillSaved = savedRows.filter((entry) => saves.isSaved({ saved: true, target: entry }));
 
   const refresh = async () => {
     const read = order.startRead();
@@ -251,6 +267,12 @@ export function useMindMapsLibrary({
         retry: start,
         shown: local?.shown ?? chapter.status,
       };
+    },
+    saved: {
+      /** What the deck of saved maps holds: none the learner removed here, none that can't open. */
+      deck: stillSaved.filter((entry) => entry.available).length,
+      listed: stillSaved.length,
+      rows: savedRows,
     },
     saves,
   };

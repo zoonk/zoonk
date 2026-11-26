@@ -98,6 +98,37 @@ export function ListRowLink({
   );
 }
 
+/** A row that opens something, with its own button at its end, outside the link. */
+export function ListRowLinkWithAction({
+  action,
+  children,
+  className,
+  href,
+  lessonWritten,
+  prefetch,
+}: {
+  action: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  href: string;
+  lessonWritten?: boolean;
+  prefetch?: LearnPrefetch;
+}) {
+  return (
+    <div className="flex items-center gap-1" data-slot="list-row-with-action">
+      <LearnLink
+        className={cn(LIST_ROW_INTERACTIVE_CLASS, "min-w-0 flex-1", className)}
+        href={href}
+        lessonWritten={lessonWritten}
+        prefetch={prefetch}
+      >
+        {children}
+      </LearnLink>
+      {action}
+    </div>
+  );
+}
+
 /**
  * `disabled` keeps the row in focus, as Button's `focusableWhenDisabled` does, so a row waiting on
  * its press doesn't drop keyboard focus to the page.

@@ -164,7 +164,7 @@ test.describe("Mind maps", () => {
     }
   });
 
-  test("a map saved while studying stays in Saved until the learner removes it", async ({
+  test("a map saved while studying stays in Saved, and one removed there can be saved again", async ({
     browser,
   }) => {
     const { first, second, user } = await createLearner();
@@ -203,19 +203,24 @@ test.describe("Mind maps", () => {
 
       await page.getByRole("link", { name: "Leave" }).click();
 
-      await page
-        .getByRole("navigation", { name: "Mind maps" })
-        .getByRole("link", { name: /^Saved/u })
-        .click();
+      const tabs = page.getByRole("navigation", { name: "Mind maps" });
+      await tabs.getByRole("link", { name: /^Saved/u }).click();
 
       const saved = page.getByRole("list", { name: "Saved maps" });
       const savedMap = saved.getByRole("link", { name: new RegExp(second.chapter.title, "u") });
 
       await expect(savedMap).toBeVisible();
-      await saved.getByRole("button", { name: "Saved" }).click();
-
-      await expect(savedMap).toBeHidden();
+      await saved.getByRole("button", { name: `Saved ${second.chapter.title}` }).click();
       await expect.poll(savedCount).toBe(0);
+
+      // The row stays until the learner leaves, out of the tab's count, so a tap saves it again.
+      const again = saved.getByRole("button", { name: `Save ${second.chapter.title}` });
+      await expect(savedMap).toBeVisible();
+      await expect(again).toHaveAttribute("aria-pressed", "false");
+      await expect(tabs.getByRole("link", { name: /^Saved/u })).not.toContainText("1");
+
+      await again.click();
+      await expect.poll(savedCount).toBe(1);
     } finally {
       await page.context().close();
     }
