@@ -1,0 +1,45 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Couldn't remove this lesson. Try again." : {
+      "comment" : "Taking a lesson out of the saved lessons didn't work, so it's still saved"
+    },
+    "Couldn't save this lesson. Try again." : {
+      "comment" : "Saving a lesson didn't work, so its bookmark is back as it was"
+    },
+    "No longer available" : {
+      "comment" : "Saved lessons that can't open anymore"
+    },
+    "Nothing saved yet" : {
+      "comment" : "Title when the learner hasn't saved a lesson for this goal"
+    },
+    "Remove" : {
+      "comment" : "Takes a saved lesson that can't open anymore off the list"
+    },
+    "Remove from saved" : {
+      "comment" : "Takes a lesson out of the learner's saved lessons"
+    },
+    "Save" : {
+      "comment" : "Saves a lesson to do again"
+    },
+    "Save %@" : {
+      "comment" : "Names a lesson row's bookmark, which saves the lesson to do again"
+    },
+    "Saved" : {
+      "comment" : "A lesson the learner saved to do again: the Save button's state"
+    },
+    "Saved %@" : {
+      "comment" : "Names a lesson row's bookmark once the lesson is saved; tapping it removes it"
+    },
+    "Saved lessons" : {
+      "comment" : "Title of the page listing the lessons the learner saved to do again"
+    },
+    "Show more" : {
+      "comment" : "Shows the next saved lessons of a long list"
+    },
+    "Tap the bookmark on a lesson to keep it here." : {
+      "comment" : "Explains how a lesson gets on the saved lessons page, before there's any"
+    }
+  },
+  "version" : "1.0"
+}

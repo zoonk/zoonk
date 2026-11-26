@@ -52,6 +52,7 @@ private struct CompletedLessonsList: View {
       content(lessons, query: query, chips: isBeside ? nil : filter)
     }
     .loads(lessons)
+    .lessonSaveFailureAlert(goalId: goalId)
   }
 
   private var title: Text {
@@ -119,7 +120,7 @@ private struct CompletedLessonsList: View {
       ForEach(months(page.lessons)) { month in
         Section {
           ForEach(month.lessons) { lesson in
-            CompletedLessonRow(lesson: lesson, today: today)
+            CompletedLessonRow(lesson: lesson, goalId: goalId, today: today)
           }
         } header: {
           SectionTitle(Text(month.title))
@@ -255,10 +256,12 @@ private struct CompletedLessonGroupsSection: View {
   }
 }
 
+/// Opens the lesson to do again; its bookmark saves it without opening it.
 private struct CompletedLessonRow: View {
   @Environment(AppRouter.self) private var router
 
   let lesson: CompletedLesson
+  let goalId: String
   let today: String
 
   var body: some View {
@@ -282,8 +285,11 @@ private struct CompletedLessonRow: View {
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
-      .disclosureChevron()
     }
+    .savesLesson(
+      LessonSaveTarget(
+        lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
+      goalId: goalId, server: lesson.saved)
   }
 }
 

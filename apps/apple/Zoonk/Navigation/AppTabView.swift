@@ -150,6 +150,7 @@ struct AppTabView: View {
       case .exam, .mockExam: places?.exam == true
       case .speaking: places?.speaking == true
       case .mindMaps: places?.mindMaps == true
+      case .savedLessons: places?.savedLessons == true
       case .completedLessons: places?.completedLessons == true
       case .certificates: places?.certificates == true
       default: true

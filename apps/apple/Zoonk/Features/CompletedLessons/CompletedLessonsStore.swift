@@ -7,6 +7,7 @@ struct CompletedLesson: Equatable, Identifiable, Sendable {
   let chapterTitle: String?
   /// The learner's calendar day of its latest finish, `YYYY-MM-DD`.
   let finishedOn: String
+  var saved: Bool
 
   var id: String { lessonId }
 }
@@ -81,6 +82,30 @@ final class CompletedLessonsStore {
     return list
   }
 
+  /// A save the server took, in every page read so far.
+  func show(saved: Bool, lessonId: String) {
+    for list in lists.values {
+      guard
+        list.value?.lessons.contains(where: { $0.lessonId == lessonId && $0.saved != saved })
+          == true
+      else {
+        continue
+      }
+
+      list.update { page in
+        var page = page
+        page.lessons = page.lessons.map { lesson in
+          var lesson = lesson
+          if lesson.lessonId == lessonId {
+            lesson.saved = saved
+          }
+          return lesson
+        }
+        return page
+      }
+    }
+  }
+
   /// A replay moves its lesson to the top and shifts the pages after it, so a lesson already shown
   /// isn't added again; that also makes a second load of the same page harmless.
   func loadMore(_ query: CompletedLessonsQuery) async {
@@ -143,7 +168,7 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
           lessons: list.data.map { lesson in
             CompletedLesson(
               lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle,
-              finishedOn: lesson.finishedOn)
+              finishedOn: lesson.finishedOn, saved: lesson.saved)
           },
           nextCursor: list.pagination.nextCursor,
           filter: (list.filter?.value1).map(CompletedLessonsFilter.init))

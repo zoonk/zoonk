@@ -56,7 +56,8 @@ final class CompletedLessonsTests: XCTestCase {
   private func page(_ ids: [String], next: String?) -> CompletedLessonsPage {
     CompletedLessonsPage(
       lessons: ids.map {
-        CompletedLesson(lessonId: $0, title: $0, chapterTitle: nil, finishedOn: "2026-11-01")
+        CompletedLesson(
+          lessonId: $0, title: $0, chapterTitle: nil, finishedOn: "2026-11-01", saved: false)
       },
       nextCursor: next)
   }
