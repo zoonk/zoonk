@@ -2,7 +2,7 @@ import { useState } from "react";
 import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "../_test-utils/render";
-import { stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
+import { TUTOR_ANSWER, stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { TutorConversation } from "../questions/tutor-conversation";
 import { type LessonQuestionThreadPage } from "../questions/use-lesson-question-sessions";
@@ -53,6 +53,10 @@ function TwoConversations({
 
 function composer() {
   return page.getByRole("textbox", { name: "Message Zu" });
+}
+
+function topOf(text: string) {
+  return page.getByText(text).element().getBoundingClientRect().top;
 }
 
 async function ask(question: string) {
@@ -185,5 +189,36 @@ describe("the buddy's conversations", () => {
     await page.getByRole("button", { name: "Open the earlier one" }).click();
     await expect.element(composer()).toHaveValue("Why do I study fractions first?");
     await expect.element(lost).toBeVisible();
+  });
+
+  it("opens another conversation at its latest turn, even when it has no more turns than the one left", async () => {
+    const api = stubTutorApi({});
+    const longAnswer = `${TUTOR_ANSWER} `.repeat(30);
+
+    const thread = (questions: string[]): LessonQuestionThreadPage => ({
+      ...NOTHING_ASKED,
+      questions: questions.map((question) =>
+        api.question({ answer: longAnswer, question, status: "completed" }),
+      ),
+    });
+
+    render(
+      <TwoConversations
+        earlier={thread(["What is a share?", "What is a bond?", "What is a fund?"])}
+        latest={thread([
+          "What is an orbit?",
+          "Why don't satellites fall?",
+          "What is escape velocity?",
+        ])}
+      />,
+    );
+
+    await expect.poll(() => topOf("What is escape velocity?")).toBeLessThan(window.innerHeight / 2);
+
+    window.scrollTo({ top: 0 });
+    await page.getByRole("button", { name: "Open the earlier one" }).click();
+
+    await expect.poll(() => topOf("What is a fund?")).toBeLessThan(window.innerHeight / 2);
+    expect(topOf("What is a fund?")).toBeGreaterThanOrEqual(0);
   });
 });

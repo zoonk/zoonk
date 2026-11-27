@@ -74,6 +74,7 @@ function useBroughtQuestion({
 
 function ConversationBody({
   composerLabel,
+  conversationId,
   draft,
   greeting,
   greetingAction,
@@ -85,7 +86,7 @@ function ConversationBody({
   renderPlanChange,
   renderToolOffer,
   suggestions,
-}: TutorConversationProps & { missionMoment: MissionMomentView | null }) {
+}: TutorConversationProps & { conversationId: string; missionMoment: MissionMomentView | null }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
   const { canAskQuestions, load, state } = controller;
@@ -112,6 +113,7 @@ function ConversationBody({
         greeting={greeting}
         greetingAction={greetingAction}
         identity={identity}
+        key={conversationId}
         missionMoment={missionMoment}
         renderPlanChange={renderPlanChange}
         renderToolOffer={renderToolOffer}
@@ -206,7 +208,11 @@ export function TutorConversation({
         key={goalId}
         target={target}
       >
-        <ConversationBody {...props} missionMoment={missionMoment.moment} />
+        <ConversationBody
+          {...props}
+          conversationId={conversationId}
+          missionMoment={missionMoment.moment}
+        />
       </LessonQuestionHostProvider>
     </LessonQuestionNavigationContext>
   );
