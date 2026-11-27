@@ -202,6 +202,7 @@ export async function finishPlacementPartAction({
   goalId,
   ...input
 }: {
+  answered?: number;
   attemptId: string;
   goalId: string;
   part: number;

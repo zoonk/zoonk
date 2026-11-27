@@ -172,12 +172,10 @@ test.describe("An exam's Focus test in onboarding", () => {
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(question(page, 1)).toBeVisible();
 
-    const dontKnow = page.getByRole("button", { name: "I don't know yet" });
-    await dontKnow.click();
-    await expect(page.getByRole("alert").filter({ hasText: "didn't go through" })).toBeVisible();
-
-    await dontKnow.click();
+    // The answer reached the server and only its reply was lost, so a read finds the test moved on.
+    await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(question(page, 2)).toBeVisible();
+    await expect(page.getByRole("alert").filter({ hasText: "didn't go through" })).toBeHidden();
 
     await page.reload();
     await expect(question(page, 2)).toBeVisible();
