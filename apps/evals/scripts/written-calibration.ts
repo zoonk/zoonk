@@ -247,7 +247,7 @@ function boardAnswers(prefix: (id: string) => string | null, runs: Map<string, R
       return [];
     }
 
-    const enem = testCase.userInput.basis.grading.kind === "enem";
+    const enem = testCase.userInput.basis.grading.criteria.some(({ awards }) => awards);
 
     return [
       {
@@ -313,7 +313,7 @@ async function printProvenance({
 
   const total = keys.spentUsd + readers.spentUsd + gradingSpent;
   const saved = unique([...prompts.values()].flatMap((set) => [...set]));
-  const grader = getWritingGrader("oab");
+  const grader = getWritingGrader();
 
   print("# Written grades against blind keys\n");
 
@@ -321,9 +321,7 @@ async function printProvenance({
     `Spend: keys $${keys.spentUsd.toFixed(4)}, ablation readers $${readers.spentUsd.toFixed(4)}, grading $${gradingSpent.toFixed(4)}; total $${total.toFixed(4)}.`,
   );
 
-  print(
-    `Grader ${grader.model} (high), prompt ${grader.promptVersion} (oab) / ${getWritingGrader("points").promptVersion} (points); saved runs used ${saved}.`,
-  );
+  print(`Grader ${grader.model} (high), prompt ${grader.promptVersion}; saved runs used ${saved}.`);
 
   print(
     `Writer ${unique(keys.keys.map(({ model }) => model))}, template revision ${unique(keys.keys.map(({ promptRevision }) => promptRevision))} (current ${getWritingKeyWriter().promptVersion}).\n`,
@@ -393,11 +391,8 @@ function buildCalibration({
     floors,
     generatedAt: new Date().toISOString(),
     grader: {
-      model: getWritingGrader("oab").model,
-      promptRevision: {
-        oab: getWritingGrader("oab").promptVersion,
-        points: getWritingGrader("points").promptVersion,
-      },
+      model: getWritingGrader().model,
+      promptVersion: getWritingGrader().promptVersion,
       reasoning: "high",
     },
     keyWriter: {

@@ -65,7 +65,7 @@ type WrittenTaskFact = {
   criterionPoints?: number[];
   /** The group whose every subject, and only those, the task is on; null when it names none. */
   drawsOn?: string | null;
-  grading?: WrittenGrading["kind"] | null;
+  grading?: GradingKind | null;
   handwritten?: boolean | null;
   language?: { factor: number; method: "errorsPerLine" | "perError" | "other" } | null;
   lines?: number | null;
@@ -75,12 +75,14 @@ type WrittenTaskFact = {
 };
 
 type WrittenGrading = {
-  criteria: { points: number | null }[];
-  kind: "enem" | "levels" | "oab" | "points";
+  criteria: { awards?: unknown[]; points: number | null }[];
   language: { factor: number | null; method: string } | null;
   rounding: unknown;
+  totalSuppressed?: boolean;
   zeroing: unknown[];
 };
+
+type GradingKind = "enem" | "levels" | "oab" | "points";
 
 type WrittenTask = {
   count: number;
@@ -480,14 +482,32 @@ function hasLanguageRule(fact: WrittenTaskFact, grading: WrittenGrading | null |
   return language?.method === fact.language.method && language.factor === fact.language.factor;
 }
 
+const SHEET_OF_KIND = { enem: "scale", levels: "levels", oab: "points", points: "points" } as const;
+
+/** Cases still name the kinds a sheet used to carry: each reads as the sheet that replaced it. */
+function readSheet(grading: WrittenGrading | null | undefined) {
+  if (!grading) {
+    return null;
+  }
+
+  if (grading.criteria.some(({ awards }) => awards?.length)) {
+    return "scale";
+  }
+
+  return !grading.totalSuppressed && grading.criteria.some(({ points }) => points !== null)
+    ? "points"
+    : "levels";
+}
+
 function hasGrading(fact: WrittenTaskFact, grading: WrittenGrading | null | undefined): boolean {
-  const kind = grading?.kind ?? null;
+  const kind = readSheet(grading);
   const points = grading?.criteria.map((criterion) => criterion.points) ?? [];
 
   return (
     (fact.grading === undefined ||
-      kind === fact.grading ||
-      (fact.grading === null && kind === "levels")) &&
+      (fact.grading === null
+        ? kind === null || kind === "levels"
+        : kind === SHEET_OF_KIND[fact.grading])) &&
     (fact.criterionPoints === undefined ||
       JSON.stringify(points) === JSON.stringify(fact.criterionPoints)) &&
     hasLanguageRule(fact, grading) &&

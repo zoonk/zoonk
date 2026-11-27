@@ -1,9 +1,9 @@
+import { SCORING_SHEET_EXAMPLES } from "@zoonk/core/exams/essays/scoring-sheet-examples";
 import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
 import { CEBRASPE_PUBLISHED_CASES } from "./cases/cebraspe-published";
 import { ENEM_PUBLISHED_CASES } from "./cases/enem-published";
 import { FGV_PUBLISHED_CASES } from "./cases/fgv-published";
 import {
-  type Arithmetic,
   type Basis,
   type GradeWritingExpected,
   type GradeWritingInput,
@@ -39,8 +39,6 @@ const OAB_NOTICE = "https://oab.fgv.br/arq/649/604111_46%20eou.%20edital%20de%20
 
 const OAB_STANDARD =
   "https://oab.fgv.br/arq/649/410537_OAB%2046%20-%20PADR%C3%83O%20DE%20RESPOSTA%20-%20B002%20-%20DIREITO%20CIVIL.pdf";
-
-const CEBRASPE_ARITHMETIC: Arithmetic = { rounding: null };
 
 /**
  * Built from Cebraspe's published definitive answer standard for MPO 2024, Cargo 1, Prova
@@ -163,11 +161,8 @@ const IMPACT_BASIS = basis({
   total: 70,
 });
 
-const ENEM_LEVELS: Grading = {
-  criteria: [],
-  kind: "enem",
-  language: null,
-  rounding: null,
+const ENEM_SHEET: Grading = {
+  ...SCORING_SHEET_EXAMPLES.enem.grading,
   zeroing: [
     {
       citation: {
@@ -182,11 +177,11 @@ const ENEM_LEVELS: Grading = {
 };
 
 const ENEM_CRITERIA = [
-  { id: "c1", name: "Domínio da modalidade escrita formal", points: null },
-  { id: "c2", name: "Compreensão da proposta e repertório", points: null },
-  { id: "c3", name: "Seleção e organização de argumentos", points: null },
-  { id: "c4", name: "Mecanismos linguísticos de coesão", points: null },
-  { id: "c5", name: "Proposta de intervenção", points: null },
+  { id: "c1", name: "Domínio da modalidade escrita formal", points: 200 },
+  { id: "c2", name: "Compreensão da proposta e repertório", points: 200 },
+  { id: "c3", name: "Seleção e organização de argumentos", points: 200 },
+  { id: "c4", name: "Mecanismos linguísticos de coesão", points: 200 },
+  { id: "c5", name: "Proposta de intervenção", points: 200 },
 ];
 
 function enemBasis(theme: string, title: string): Basis {
@@ -215,7 +210,7 @@ function enemBasis(theme: string, title: string): Basis {
       },
     ],
     criteria: ENEM_CRITERIA,
-    grading: ENEM_LEVELS,
+    grading: ENEM_SHEET,
     lines: null,
     taskKey: "enem-redacao",
     title,
@@ -263,13 +258,7 @@ const OAB_KEY_POINTS = [
   "Valor da causa de R$ 4.600,00 (art. 292, VI, do CPC); local, data, advogado e OAB",
 ];
 
-const NO_SCALE: Grading = {
-  criteria: [],
-  kind: "levels",
-  language: null,
-  rounding: null,
-  zeroing: [],
-};
+const NO_SCALE: Grading = { criteria: [], language: null, rounding: null, zeroing: [] };
 
 const LAI_BASIS = basis({
   aspects: [
@@ -352,8 +341,8 @@ const OAB_BASIS = basis({
     { id: "technique", name: "Técnica profissional", points: null },
   ],
   grading: {
+    conventions: SCORING_SHEET_EXAMPLES.oab.grading.conventions,
     criteria: [],
-    kind: "oab",
     language: null,
     rounding: null,
     zeroing: [
@@ -413,11 +402,11 @@ const ALL_PLANO_REAL = [0, 1, 2, 3, 4, 5, 6, 7];
 
 function planoReal(text: string): GradeWritingInput {
   return {
-    arithmetic: CEBRASPE_ARITHMETIC,
     basis: PLANO_REAL_BASIS,
     context: null,
     keyPoints: PLANO_REAL_KEY_POINTS,
     language: "pt",
+    numeric: true,
     question: PLANO_REAL_QUESTION,
     text,
   };
@@ -425,25 +414,23 @@ function planoReal(text: string): GradeWritingInput {
 
 function impact(text: string): GradeWritingInput {
   return {
-    arithmetic: CEBRASPE_ARITHMETIC,
     basis: IMPACT_BASIS,
     context: null,
     keyPoints: IMPACT_KEY_POINTS,
     language: "pt",
+    numeric: true,
     question: IMPACT_QUESTION,
     text,
   };
 }
 
-const ENEM_ARITHMETIC: Arithmetic = { rounding: null };
-
 function heritage(text: string): GradeWritingInput {
   return {
-    arithmetic: ENEM_ARITHMETIC,
     basis: enemBasis(HERITAGE_THEME, "Herança africana no Brasil"),
     context: HERITAGE_CONTEXT,
     keyPoints: [],
     language: "pt",
+    numeric: true,
     question: HERITAGE_QUESTION,
     text,
   };
@@ -604,7 +591,6 @@ const EXISTING_CASES: WritingCase[] = [
     },
     id: "enem-off-topic-zero-pt",
     userInput: {
-      arithmetic: ENEM_ARITHMETIC,
       basis: enemBasis(
         "Desafios para combater a desinformação sobre vacinas no Brasil",
         "Desinformação sobre vacinas",
@@ -612,6 +598,7 @@ const EXISTING_CASES: WritingCase[] = [
       context: null,
       keyPoints: [],
       language: "pt",
+      numeric: true,
       question: VACCINE_PROMPT,
       text: LEVELS_ANSWERS.offTopicSocialMedia,
     },
@@ -626,11 +613,11 @@ const EXISTING_CASES: WritingCase[] = [
     },
     id: "no-scale-levels-lai-wrong-secrecy-terms-pt",
     userInput: {
-      arithmetic: null,
       basis: LAI_BASIS,
       context: null,
       keyPoints: LAI_KEY_POINTS,
       language: "pt",
+      numeric: false,
       question: LAI_PROMPT,
       text: LEVELS_ANSWERS.cebraspeLai,
     },
@@ -646,11 +633,11 @@ const EXISTING_CASES: WritingCase[] = [
     },
     id: "oab-peca-wrong-provisions-pt",
     userInput: {
-      arithmetic: null,
       basis: OAB_BASIS,
       context: null,
       keyPoints: OAB_KEY_POINTS,
       language: "pt",
+      numeric: false,
       question: OAB_PROMPT,
       text: LEVELS_ANSWERS.oabConsumerRefund,
     },
@@ -665,11 +652,11 @@ const EXISTING_CASES: WritingCase[] = [
     },
     id: "no-scale-class-test-split-infinitive-en",
     userInput: {
-      arithmetic: null,
       basis: PHOTOSYNTHESIS_BASIS,
       context: null,
       keyPoints: [],
       language: "en",
+      numeric: false,
       question: PHOTOSYNTHESIS_QUESTION,
       text: EN_ANSWERS.classTestPhotosynthesis,
     },
@@ -809,7 +796,6 @@ const FGV_TJAM_CASE = publishedCase({
       passage: "11.4.1 Cada questão da prova escrita P2 valerá 0,4 (quatro décimos) pontos.",
       sourceId: "tjam-2013-edital-001",
     },
-    kind: "points",
     lines: 15,
     question:
       "José deixou um seguro de vida em favor da filha menor, Marina. Sua mãe, Luísa, pede alvará para receber o capital em nome da filha. O Ministério Público pede que o dinheiro permaneça depositado em juízo até a maioridade, salvo necessidade comprovada. Examine a situação e apresente solução fundamentada.",
@@ -857,7 +843,7 @@ const OAB_CASES = [
     source: OAB_SOURCE,
     userInput: publishedQuestion({
       citation: OAB_ITEM_CITATION,
-      kind: "oab",
+      conventions: SCORING_SHEET_EXAMPLES.oab.grading.conventions,
       lines: 30,
       question:
         "Joaquim doou à filha Júlia um imóvel de R$ 1 milhão, sem dispensá-la da colação. Quando ele faleceu, deixou R$ 1,5 milhão e três filhas, Elena, Carla e Júlia. Júlia renunciou à herança e tem uma filha, Paula. A) Paula sucede por representação? Qual o efeito da renúncia sobre a partilha? B) A renúncia protege o imóvel de Júlia? Indique a medida cabível às irmãs.",
@@ -894,7 +880,7 @@ const OAB_CASES = [
     source: OAB_SOURCE,
     userInput: publishedQuestion({
       citation: OAB_ITEM_CITATION,
-      kind: "oab",
+      conventions: SCORING_SHEET_EXAMPLES.oab.grading.conventions,
       lines: 30,
       question:
         "Paulo Dirceu, de 23 anos, quer retirar Dirceu de seu prenome. O pai, que também se chama Dirceu, abandonou a família quando Paulo era bebê. A) A exclusão é juridicamente possível? B) Paulo é obrigado a ajuizar ação para fazê-la? Fundamente.",
@@ -969,11 +955,11 @@ function enemZeroCase({
     id: `enem-${id}-openai`,
     source: ENEM_SOURCE,
     userInput: {
-      arithmetic: { rounding: null },
       basis: { ...task, grading: { ...task.grading, zeroing: ENEM_ZERO_RULES }, lines: 30 },
       context: ENEM_ZERO_ANSWERS.support,
       keyPoints: [],
       language: "pt",
+      numeric: true,
       question:
         "Redija um texto dissertativo-argumentativo em português formal sobre os desafios para combater a desinformação sobre vacinas no Brasil. Apresente uma proposta de intervenção que respeite os direitos humanos.",
       text,

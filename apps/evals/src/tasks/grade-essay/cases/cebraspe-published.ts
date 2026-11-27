@@ -110,7 +110,6 @@ function questionInput({
       passage: `Anexo IV, item ${annex} e padrão definitivo`,
       sourceId: `cacd-${year}-standards`,
     },
-    kind: "points",
     ...question,
     taskKey: `cacd-${year}-${key}`,
     text,
@@ -118,7 +117,6 @@ function questionInput({
 
   input.context = question.context ?? null;
   input.basis.grading.zeroing = zeroing(year, noticeSection);
-  input.arithmetic = { rounding: null };
   return input;
 }
 

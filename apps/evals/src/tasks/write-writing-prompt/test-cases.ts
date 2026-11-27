@@ -64,7 +64,6 @@ const ENEM_REDACAO: WrittenTask = {
     "uma redação em Língua Portuguesa, texto dissertativo-argumentativo, com nota entre 0 e 1.000 pontos",
   grading: {
     criteria: [],
-    kind: "enem",
     language: null,
     rounding: null,
     zeroing: [
@@ -124,7 +123,6 @@ const OAB_PECA: WrittenTask = {
         text: "capacidade de interpretação e exposição e técnica profissional",
       },
     ],
-    kind: "oab",
     language: null,
     rounding: {
       citation: {
@@ -158,7 +156,7 @@ const ESSAY_NO_SCALE: WrittenTask = {
   count: 1,
   description:
     "one essay of about 500 words on a question about the industrial revolution in Britain",
-  grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+  grading: { criteria: [], language: null, rounding: null, zeroing: [] },
   handwritten: null,
   key: "written-history-essay",
   lines: null,

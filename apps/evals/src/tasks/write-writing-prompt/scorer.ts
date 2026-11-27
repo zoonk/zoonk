@@ -81,7 +81,7 @@ function checkEnem({
   input: WriteWritingPromptInput;
   output: WritingPromptOutput;
 }) {
-  const enem = input.unit === "answer" && input.task.grading.kind === "enem";
+  const enem = input.unit === "answer" && /\benem\b/iu.test(input.exam);
   const ids = output.criteria.map(({ id }) => id);
 
   return enem && ids.join(",") !== ENEM_IDS.join(",")

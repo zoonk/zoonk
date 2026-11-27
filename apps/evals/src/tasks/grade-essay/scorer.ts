@@ -1,8 +1,8 @@
 import { createFixedScore } from "@/lib/score";
 import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
-import { createWritingQuoteLookup } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { markWritingRows } from "@zoonk/core/exams/essays/writing-marks";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { type GradeWritingOutput } from "./task";
 
@@ -140,7 +140,12 @@ function errorChecks({
   ];
 }
 
-/** Earned the way the arithmetic counts it: once, on its criterion, with a verified quote. */
+/** Marked on the board's own scale, where aspects describe the answer and earn no points. */
+function hasBoardScale({ basis }: GradeWritingInput) {
+  return basis.grading.criteria.some(({ awards }) => awards);
+}
+
+/** Earned the way the arithmetic counts it: above its lowest award, with a quote found in the answer. */
 function creditedAspects({
   input,
   output,
@@ -150,20 +155,10 @@ function creditedAspects({
   output: GradeWritingOutput;
   text: string;
 }) {
-  const byIndex = Map.groupBy(output.evidence.aspects, (aspect) => aspect.aspectIndex);
-  const findQuote = createWritingQuoteLookup(text);
-
   return new Set(
-    [...byIndex.entries()].flatMap(([index, reports]) => {
-      const [report] = reports;
-
-      return reports.length === 1 &&
-        report?.earned &&
-        input.basis.aspects[index]?.criterionId === report.criterionId &&
-        findQuote(report.quote)
-        ? [index]
-        : [];
-    }),
+    markWritingRows({ basis: input.basis, eligible: text, evidence: output.evidence }).flatMap(
+      ({ row, verified }) => (row.aspect !== undefined && verified ? [row.aspect] : []),
+    ),
   );
 }
 
@@ -191,11 +186,7 @@ function creditChecks({
 
   const detail = `Aspect agreement ${indexes.length - falseCredit.length - missed.length}/${indexes.length}. Credited ${[...credited].toSorted((a, b) => a - b).join(",") || "none"}; expected ${expected.earned.join(",") || "none"}${uncertain.size > 0 ? ` (either way: ${[...uncertain].join(",")})` : ""}. False credit: ${falseCredit.join(",") || "none"}; missed: ${missed.join(",") || "none"}.`;
 
-  if (
-    input.basis.points === null ||
-    input.arithmetic === null ||
-    input.basis.grading.kind === "enem"
-  ) {
+  if (input.basis.points === null || !input.numeric || hasBoardScale(input)) {
     return [{ detail, name: "credit", passed: falseCredit.length + missed.length <= 1 }];
   }
 
@@ -228,7 +219,7 @@ function expectedScore({
   input: GradeWritingInput;
   errors: number;
 }): Range | null {
-  if (!input.arithmetic) {
+  if (!input.numeric) {
     return null;
   }
 
@@ -237,7 +228,7 @@ function expectedScore({
     return { high: total, low: total };
   }
 
-  if (input.basis.grading.kind === "enem") {
+  if (hasBoardScale(input)) {
     return null;
   }
 
@@ -327,7 +318,7 @@ function zeroCheck({
   input: GradeWritingInput;
   output: GradeWritingOutput;
 }): Check[] {
-  if (!input.arithmetic) {
+  if (!input.numeric) {
     return [];
   }
 

@@ -7,6 +7,7 @@ import {
   buildWritingFeedback,
 } from "@zoonk/core/exams/essays/writing-feedback";
 import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { getWritingGraderSheet } from "@zoonk/core/exams/essays/writing-sheet";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { scoreWritingGrade } from "./scorer";
 import { TEST_CASES } from "./test-cases";
@@ -21,12 +22,12 @@ export type GradeWritingOutput = {
 
 /** Grades as production does, then applies the arithmetic a numeric enablement would pin. */
 async function generate({
-  arithmetic,
   basis,
   context,
   keyPoints,
   language,
   model,
+  numeric,
   question,
   reasoning,
   text,
@@ -41,19 +42,13 @@ async function generate({
   const eligible = ignoredFrom === null ? text : text.slice(0, ignoredFrom);
 
   const graded = await gradeWritingEvidence({
-    aspects: basis.aspects,
+    ...getWritingGraderSheet(basis),
     context,
     keyPoints,
     language,
     model,
     question,
     reasoning,
-    scoringBasis: {
-      ...basis.grading,
-      criteria: basis.grading.criteria.length > 0 ? basis.grading.criteria : basis.criteria,
-      lines: basis.lines,
-      points: basis.points,
-    },
     text: eligible,
     useFallback,
   });
@@ -69,13 +64,13 @@ async function generate({
   });
 
   const result = applyWritingArithmetic({
-    arithmetic,
     basis,
     context,
     eligible,
     estimatedLines,
     evidence,
     feedback,
+    numeric,
   });
 
   return { ...graded, data: { estimatedLines, evidence, result } };
@@ -83,7 +78,7 @@ async function generate({
 
 export const gradeEssayTask: Task<GradeWritingInput, GradeWritingOutput, GradeWritingExpected> = {
   description:
-    "Grade written answers as evidence (aspects, criterion levels, exact-quoted language errors) on CGU, Enem, OAB and no-scale bases; code-scored for false deductions, false zeroes, credit and pass-side decisions",
+    "Grade written answers as evidence (one award per row of the scoring sheet, limits, counted parts, exact-quoted language errors) on CGU, Enem, OAB and no-scale sheets; code-scored for false deductions, false zeroes, credit and pass-side decisions",
   generate,
   id: "grade-essay",
   name: "Grade essay",

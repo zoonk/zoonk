@@ -1,6 +1,5 @@
 import { type TestCase } from "@/lib/types";
 import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contract";
-import { type applyWritingArithmetic } from "@zoonk/core/exams/essays/writing-feedback";
 import { WRITING_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
 import { type z } from "zod";
 
@@ -8,7 +7,6 @@ export type Basis = z.infer<typeof writtenItemSchema>;
 export type Grading = Basis["grading"];
 export type WritingCase = TestCase<GradeWritingExpected, GradeWritingInput>;
 export type ZeroKind = NonNullable<Grading["zeroing"][number]["kinds"]>[number];
-export type Arithmetic = Parameters<typeof applyWritingArithmetic>[0]["arithmetic"];
 
 export type GradeWritingInput = {
   language: string;
@@ -17,7 +15,8 @@ export type GradeWritingInput = {
   text: string;
   keyPoints: string[];
   basis: Basis;
-  arithmetic: Arithmetic;
+  /** Whether the grade is worked out in points, as a passed calibration would switch it on. */
+  numeric: boolean;
 };
 
 /**
@@ -113,7 +112,7 @@ export function publishedCase({
 export function publishedQuestion({
   title,
   taskKey,
-  kind,
+  conventions,
   lines,
   sections,
   citation,
@@ -122,7 +121,7 @@ export function publishedQuestion({
 }: {
   title: string;
   taskKey: string;
-  kind: "points" | "oab";
+  conventions?: Grading["conventions"];
   lines: number;
   sections: { id: string; name: string; aspects: [string, number][] }[];
   citation: { passage: string; sourceId: string };
@@ -140,7 +139,6 @@ export function publishedQuestion({
   const total = Number(criteria.reduce((sum, criterion) => sum + criterion.points, 0).toFixed(2));
 
   return {
-    arithmetic: { rounding: null },
     basis: basis({
       aspects,
       criteria,
@@ -151,7 +149,7 @@ export function publishedQuestion({
           points: value,
           text: name,
         })),
-        kind,
+        ...(conventions && { conventions }),
         language: null,
         rounding: null,
         zeroing: [],
@@ -164,6 +162,7 @@ export function publishedQuestion({
     context: null,
     keyPoints: aspects.map((aspect) => aspect.description),
     language: "pt",
+    numeric: true,
     question,
     text,
   };
