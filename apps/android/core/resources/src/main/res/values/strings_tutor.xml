@@ -36,7 +36,6 @@
     <string name="tutor_about_module">About this module</string>
     <string name="tutor_about_question">About this question</string>
 
-    <string name="tutor_empty_title">What would you like help with?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s is an AI study buddy and can make mistakes.</string>
     <string name="tutor_guest_title">Create a free account to ask questions</string>

@@ -607,18 +607,21 @@ internal fun EmptyThread(
     canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
-    CenteredState {
-        identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
-        Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
-        Text(
-            stringResource(R.string.tutor_empty_ai, identity.name),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
+            Text(
+                stringResource(R.string.tutor_empty_ai, identity.name),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
         if (suggestions.isNotEmpty()) {
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 suggestions.forEach { suggestion ->

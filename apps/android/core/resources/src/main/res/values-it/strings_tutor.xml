@@ -33,7 +33,6 @@
   "tutor_description_step": "fc33e6f3ff8e7bfddd8258abb8e2b3dbf9755c40e02833bd60b2882e3e8d985c",
   "tutor_description_subject": "6bd9239a1f58547d08826ad2e55014ffef0c5ea14c0f530cf69b4dfafcf7d181",
   "tutor_empty_ai": "e9e9b27014b7490917bb1b6cc5985bf95ecdf56ad487904bd714537ca6150cd5",
-  "tutor_empty_title": "4aa4122d976ca524807e75de0ee55eee510d6826e6f6e48f41f4b70077970cfc",
   "tutor_error_failed": "cda02d674b8fdfa6c32276797522fa3a16282f957b020e51610eccd14102f57e",
   "tutor_error_gone": "3c4b06858fc4609ca9bb891dc99b9571e0c5088fc8af832420ac58751e25ce76",
   "tutor_error_invalid": "f4e92e745b04450b5743a5cc64febc8bf0ccf97f383bb0a13194523eb902ef4a",
@@ -157,7 +156,6 @@
     <string name="tutor_about_subject">Su questa materia</string>
     <string name="tutor_about_module">Informazioni sul modulo</string>
     <string name="tutor_about_question">Su questa domanda</string>
-    <string name="tutor_empty_title">Su cosa vorresti una mano?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s è il tuo socio di studio con l’IA e può sbagliare.</string>
     <string name="tutor_guest_title">Crea un account gratuito per fare domande</string>

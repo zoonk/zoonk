@@ -33,7 +33,6 @@
   "tutor_description_step": "b7cf82f64115fc91d7f9214a974d1b5914893b20357f6a2c5f43f61138a1bd5c",
   "tutor_description_subject": "ad89137509de359f4510d1d1d8fdd241c3104be90fdb574dc3784cb8dabc0fe7",
   "tutor_empty_ai": "da223673d5f6cc3e29836feaca1547f52d0b345cf7664e6b7fe9178ca74d9b0b",
-  "tutor_empty_title": "deea7745cfc1073ab8caed2808d7143da2d2e06d39dadd0f7e4b08cf35ca07d5",
   "tutor_error_failed": "ece9f17ab86ac5dd44f29d7f467c50fe7133aa30dd02d97c9aebb44541749aef",
   "tutor_error_gone": "44a95f045901474b116a649b03cbd45799d768e780a5656113efc04c2e338b6c",
   "tutor_error_invalid": "833a4c3941ee7f85c80e46c39c2d8465bf5106f8d2bb7def9b279bcc12655873",
@@ -157,7 +156,6 @@
     <string name="tutor_about_subject">Bu konu hakkında</string>
     <string name="tutor_about_module">Bu modül hakkında</string>
     <string name="tutor_about_question">Bu soru hakkında</string>
-    <string name="tutor_empty_title">Hangi konuda yardım istersin?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s, ders arkadaşın olan bir yapay zekâdır ve hata yapabilir.</string>
     <string name="tutor_guest_title">Soru sormak için ücretsiz bir hesap oluştur</string>

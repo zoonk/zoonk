@@ -33,7 +33,6 @@
   "tutor_description_step": "502ff1bc753f914058e34416f48f87c9fea09a4db2a1415720da6a38b685cad7",
   "tutor_description_subject": "3b1d4ef5eebdcacd2f71183fd71555c7480dce2c4267e4997d32bd5163897b52",
   "tutor_empty_ai": "080cf9328c49bd05df390343e511921801bfd8cb294802b16aae4cf2dfeb5da2",
-  "tutor_empty_title": "0ee73d5a31fb4b57b9345db04a3de8f940a0e7e0a953be936b053dd2cde2c2a2",
   "tutor_error_failed": "5aa6475d4f3df9ba6ab84639d7f12e9e92ae80ae26361c83dba6b09602abf2d7",
   "tutor_error_gone": "2ac0312325802e50d364c2ccdb9b46f31b4cc2476f3fbde57bf1472b57463676",
   "tutor_error_invalid": "6cab6dd1dda35f18437ee2743fee49c73a8f61ab52bbf41c95573f21d953f28f",
@@ -157,7 +156,6 @@
     <string name="tutor_about_subject">この科目について</string>
     <string name="tutor_about_module">このモジュールについて</string>
     <string name="tutor_about_question">この問題について</string>
-    <string name="tutor_empty_title">どんなことをお手伝いしましょうか？</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">学習の相棒の%1$sはAIです。間違えることもあります。</string>
     <string name="tutor_guest_title">無料アカウントを作成して質問する</string>

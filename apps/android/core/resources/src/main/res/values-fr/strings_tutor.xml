@@ -33,7 +33,6 @@
   "tutor_description_step": "ecef043f75bebe9d44c476607ec67e3fde970ff268754177968954dbbe19266e",
   "tutor_description_subject": "e5dca42293f0417e143bbb117363459c6ab24625ff9a3385275ae953eafa19f6",
   "tutor_empty_ai": "8da5ddb67bb6351f19d8bf57db0f887804227b75153bd4a928372887ee3a04fd",
-  "tutor_empty_title": "dd3526a21f337522457c5347771919e5f0663c822a7f6ec26dd9867abd57f2a4",
   "tutor_error_failed": "169f7825a73ddd4a981f9de847b66d9d5f19072b683b45c171698b472eb5027e",
   "tutor_error_gone": "f0de231e2413933b105e8d6b8139e1322623f394a040698db6eec6b516ab8927",
   "tutor_error_invalid": "0d68684291d169792cd6ca3fd787430fcac564d14f5f07bb72252ff77d5f6dae",
@@ -157,7 +156,6 @@
     <string name="tutor_about_subject">À propos de cette matière</string>
     <string name="tutor_about_module">À propos de ce module</string>
     <string name="tutor_about_question">À propos de cette question</string>
-    <string name="tutor_empty_title">Sur quoi aimerais-tu de l’aide ?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s est un binôme d’étude doté d’une IA et peut faire des erreurs.</string>
     <string name="tutor_guest_title">Crée un compte gratuit pour poser des questions</string>
