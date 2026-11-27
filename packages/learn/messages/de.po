@@ -6658,16 +6658,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "Wörter aussprechen"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "Muster üben"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "Uns ist ein Muster aufgefallen: {pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7284,17 +7274,6 @@ msgid "Do your first review"
 msgstr "Deine erste Wiederholung machen"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "Deinen ersten Fehler korrigieren"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "Ein Muster üben"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7388,11 +7367,6 @@ msgid "Practice writing"
 msgstr "Schreiben üben"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Einen Fehler korrigieren} other {# Fehler korrigieren}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "Aussprache üben"
@@ -7451,16 +7425,6 @@ msgstr ", zum heutigen Aufsatz"
 msgctxt "GKiQ-V"
 msgid ", go to today's practice"
 msgstr ", zur heutigen Übung"
-
-#: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr ", deine Fehler üben"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr ", zum Muster"
 
 #: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"

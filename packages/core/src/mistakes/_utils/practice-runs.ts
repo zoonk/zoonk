@@ -78,52 +78,6 @@ export function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
   return answer.fixedMistakeIds.filter((id): id is string => typeof id === "string");
 }
 
-/** Only server-recorded corrections may satisfy missions; reopened or later-fixed entries cannot prove this run's contribution. */
-export async function hasPracticeRunCorrection({
-  from,
-  runId,
-  through,
-  tx,
-  userId,
-}: {
-  from: Date;
-  runId: string;
-  through: Date;
-  tx: TransactionClient;
-  userId: string;
-}): Promise<boolean> {
-  const run = await tx.learningEvent.findFirst({
-    select: { contentIds: true },
-    where: { id: runId, lessonKind: MISTAKE_PRACTICE_LEDGER_KIND, userId },
-  });
-
-  if (!run) {
-    return false;
-  }
-
-  const answers = await tx.attempt.findMany({
-    select: { answer: true, answeredAt: true },
-    where: {
-      answer: { not: "", path: ["practiceMistakeId"] },
-      answeredAt: { gte: from, lte: through },
-      id: { in: readRunAnswerIds(run) },
-      isCorrect: true,
-      studySessionId: null,
-      userId,
-    },
-  });
-
-  const corrections = answers.flatMap((answer) =>
-    readFixedMistakeIds(answer.answer).map((id) => ({ fixedAt: answer.answeredAt, id })),
-  );
-
-  if (corrections.length === 0) {
-    return false;
-  }
-
-  return (await tx.mistake.count({ where: { OR: corrections, status: "fixed", userId } })) > 0;
-}
-
 export function toRunContentIds(answers: readonly PracticeAnswer[]): Record<string, string> {
   return { answerIds: answers.map((answer) => answer.id).join(ANSWER_ID_SEPARATOR) };
 }

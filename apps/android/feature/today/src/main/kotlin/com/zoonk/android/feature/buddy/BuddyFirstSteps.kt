@@ -130,8 +130,6 @@ private fun firstStepName(
     when (kind) {
         Kind.SOMETHING_NEW -> stringResource(R.string.buddy_page_first_lesson)
         Kind.REVIEW -> stringResource(R.string.buddy_page_first_review)
-        Kind.FIX_MISTAKE -> stringResource(R.string.buddy_page_first_mistake)
-        Kind.PATTERN -> stringResource(R.string.buddy_page_first_pattern)
         Kind.ASK_BUDDY -> stringResource(R.string.buddy_page_first_ask, buddyName)
         Kind.ESSAY -> stringResource(R.string.buddy_page_first_essay)
         Kind.CALL -> stringResource(R.string.buddy_page_first_call)
@@ -168,9 +166,7 @@ private fun whenLine(comes: BuddyFirstStepsStepsInnerWhen): String =
         is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOf2Value -> {
             stringResource(
                 when (comes.value.kind) {
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.MISTAKE -> R.string.buddy_page_when_mistake
                     BuddyFirstStepsStepsInnerWhenOneOf2.Kind.REVIEW -> R.string.buddy_page_when_review
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.PATTERN -> R.string.buddy_page_when_pattern
                     BuddyFirstStepsStepsInnerWhenOneOf2.Kind.CALL -> R.string.buddy_page_when_call
                     BuddyFirstStepsStepsInnerWhenOneOf2.Kind.BUDDY -> R.string.buddy_page_when_buddy
                     BuddyFirstStepsStepsInnerWhenOneOf2.Kind.LESSON -> R.string.buddy_page_when_lesson

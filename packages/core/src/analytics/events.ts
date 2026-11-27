@@ -202,7 +202,7 @@ type MechanicsEvents = {
   "Hyperdrive Reached": { multiplier: number };
   "Logbook Viewed": NoProperties;
   "Milestone Earned": { key: string; milestone: "badge" | "belt" | "glasses" | "buddy_stage" };
-  "Mission Completed": { full_meal: boolean; mission: MissionKind | "fix" | "new" };
+  "Mission Completed": { full_meal: boolean; mission: MissionKind | "new" };
 };
 
 type SettingsEvents = { "Memory Turned Off": NoProperties; "Plan Edited": { change_kind: string } };

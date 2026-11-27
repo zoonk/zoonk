@@ -14,9 +14,7 @@
   "buddy_page_first_challenge": "9ede1d95b8e8b3382e2d532f55ce19561b8065637578197777dfeceb68f69615",
   "buddy_page_first_essay": "db85b2b92d19c05578bf3df834ede82f3cf294a794a260524190eb02dfcacd81",
   "buddy_page_first_lesson": "8e016c698be4924c1aca5ffff4634909a75494d7caeb2ebd233e17f001db953e",
-  "buddy_page_first_mistake": "5e1f1d6ec7f79852d22faed14b6305d44c0fd07d7758c10527ce57cb4a756924",
   "buddy_page_first_mock": "303adcb64ca5b62d59646a4f5e59ea9cddec14de354ac0d4e5c230a1167f7ccb",
-  "buddy_page_first_pattern": "2665fc78b598f06f699a338457a50d66b251dd4368f9e4de198114ca811038e0",
   "buddy_page_first_review": "6ddaf3c5adb06357f4575269b1b28e94a11aff0f38f6540b4a652258ecce322c",
   "buddy_page_first_steps": "9390a97334515cc339b7f805da0f98d1f235ed64185a892239dc1473acace12a",
   "buddy_page_first_steps_done": "ad8947d4e8c3af042021a369744e7325c8e14caae6349970af970bb9897fdaef",
@@ -45,9 +43,7 @@
   "buddy_page_when_challenge_on": "12bdadf82457aeee4db2d004735fff8e0bd9b6e10e273ffe17cc74db70964039",
   "buddy_page_when_essay": "14c18a4453869b496a0744cd2ef091479ba4c527a5dc1c744c3418f4fd44d487",
   "buddy_page_when_lesson": "75a60cb3f241ddbb2e3cc2ad8cfa0b777b71fc17e9eefb043a7c0428a3d780f9",
-  "buddy_page_when_mistake": "1ad1212d8a65e453feef94baafe36f3506bb339f9f617071a55884bc002e9f39",
   "buddy_page_when_mock": "acdf9548c7bbc868c57aeb7b0a949b02c1de6f5e4f684dc6872c59dec045936c",
-  "buddy_page_when_pattern": "acfb97d1725fc082239c6d54313d3d2f43a7ed64da9fd36618cdbc2badc5d516",
   "buddy_page_when_review": "794345660791a20017c7b398752d693961a8d3264429fa6d38d19c3aaa66baeb"
 }
 -->
@@ -91,9 +87,6 @@
     <string name="buddy_page_first_steps_done">Planındaki her tür etkinliği denedin.</string>
     <string name="buddy_page_first_lesson">İlk dersini bitir</string>
     <string name="buddy_page_first_review">İlk tekrarını yap</string>
-    <string name="buddy_page_first_mistake">İlk hatanı düzelt</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
-    <string name="buddy_page_first_pattern">Tekrarlayan bir hatan üzerinde çalış</string>
     <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">%1$s adlı arkadaşına bir şey sor</string>
     <string name="buddy_page_first_essay">İlk kompozisyonunu yaz</string>
@@ -107,9 +100,7 @@
     <string name="buddy_page_when_challenge_on">İlk meydan okumanda, %1$s tarihinde</string>
     <string name="buddy_page_when_challenge">İlk meydan okumanda</string>
     <string name="buddy_page_when_essay">İlk kompozisyon gününde</string>
-    <string name="buddy_page_when_mistake">İlk hatandan sonraki gün</string>
     <string name="buddy_page_when_review">İlk tekrarının zamanı geldiğinde</string>
-    <string name="buddy_page_when_pattern">Hataların tekrarlamaya başladığında</string>
     <string name="buddy_page_when_call">Yeniden sohbet süren olduğunda</string>
     <string name="buddy_page_when_buddy">Tekrar soru sorabildiğinde</string>
     <string name="buddy_page_when_lesson">Bir sonraki ders gününde</string>

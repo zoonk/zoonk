@@ -49,7 +49,7 @@ export const todayPaths = {
   "/today": {
     get: {
       description:
-        "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, the read uses the device's local day without changing the goal or planning. Start follows the device zone and settles the plan. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
+        "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, and at most one insight. With `timeZone`, the read uses the device's local day without changing the goal or planning. Start follows the device zone and settles the plan. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
       operationId: "getToday",
       requestParams: { query: todayStudySessionInputSchema },
       responses: {

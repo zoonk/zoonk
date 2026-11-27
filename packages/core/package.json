@@ -224,7 +224,7 @@
     "./language/patterns/dismiss": "./src/language/patterns/dismiss-mistake-pattern.ts",
     "./language/patterns/get": "./src/language/patterns/get-mistake-pattern.ts",
     "./language/patterns/practice": "./src/language/patterns/practice-mistake-pattern.ts",
-    "./language/patterns/today": "./src/language/patterns/get-today-pattern.ts",
+    "./language/patterns/noticed": "./src/language/patterns/get-noticed-pattern.ts",
     "./language/pronunciation/answer": "./src/language/pronunciation/answer-pronunciation-review.ts",
     "./language/pronunciation/contract": "./src/language/pronunciation/pronunciation-contract.ts",
     "./language/pronunciation/finish": "./src/language/pronunciation/finish-pronunciation-round.ts",

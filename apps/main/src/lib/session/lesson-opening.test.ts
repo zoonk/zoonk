@@ -1,4 +1,4 @@
-import { type DayWork, toDayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type DayWork, dayBlockRefSchema, toDayBlockRef } from "@zoonk/core/sessions/day-block";
 import { describe, expect, it } from "vitest";
 import { getStudyLessonHref, readLessonOpening } from "./lesson-opening";
 
@@ -55,7 +55,7 @@ describe("a lesson's URL opening intent", () => {
     ).toStrictEqual({
       goalId: SESSION,
       shownDate: "2026-11-07",
-      target: { kind: "ref", ref: toDayBlockRef(block) },
+      target: { kind: "ref", ref: dayBlockRefSchema.parse(toDayBlockRef(block)) },
     });
   });
 
