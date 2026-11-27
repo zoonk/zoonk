@@ -1,10 +1,11 @@
 import SwiftUI
 
-/// Main's `ChoiceList` row: one of a few choices to pick. Its words, then a ring at the row's end
-/// that fills with a check once picked, the picked row on the pick's tint, so the rows read as
+/// Main's `ChoiceList` row, or its `CheckList` row where several can be picked: one of a few choices
+/// to pick. Its words, then its `ChoiceMark`, the picked row on the pick's tint, so the rows read as
 /// choices before any is picked. What a pick leads to is the screen's action, in its bar. For
 /// `ZoonkList`'s rows.
 struct ChoiceRow<Words: View>: View {
+  var picks: ChoiceMark.Kind = .one
   let isPicked: Bool
   /// A choice the learner can't pick yet shows a lock where its ring would be.
   var isLocked = false
@@ -13,19 +14,22 @@ struct ChoiceRow<Words: View>: View {
 
   var body: some View {
     Button(action: action) {
-      ChoiceRowLabel(isPicked: isPicked, isLocked: isLocked) {
+      ChoiceRowLabel(picks: picks, isPicked: isPicked, isLocked: isLocked) {
         words
       }
     }
     .disabled(isLocked)
     .pickedRow(isPicked)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
+    .choiceTraits(picks, isPicked: isPicked)
   }
 }
 
 extension ChoiceRow where Words == ChoiceWords {
-  init(_ title: Text, detail: Text? = nil, isPicked: Bool, action: @escaping () -> Void) {
-    self.init(isPicked: isPicked, action: action) {
+  init(
+    _ title: Text, detail: Text? = nil, picks: ChoiceMark.Kind = .one, isPicked: Bool,
+    action: @escaping () -> Void
+  ) {
+    self.init(picks: picks, isPicked: isPicked, action: action) {
       ChoiceWords(title: title, detail: detail)
     }
   }
@@ -33,6 +37,7 @@ extension ChoiceRow where Words == ChoiceWords {
 
 /// A choice row's label, for a row whose button is its own, such as one that shows it's saving.
 struct ChoiceRowLabel<Words: View>: View {
+  var picks: ChoiceMark.Kind = .one
   let isPicked: Bool
   var isLocked = false
   @ViewBuilder let words: Words
@@ -43,14 +48,16 @@ struct ChoiceRowLabel<Words: View>: View {
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
 
-      Image(systemName: isLocked ? "lock" : isPicked ? "checkmark.circle.fill" : "circle")
-        .foregroundStyle(
-          isLocked
-            ? AnyShapeStyle(.mutedForeground)
-            : AnyShapeStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
-        )
-        .accessibilityHidden(true)
-        .layoutPart(.end)
+      Group {
+        if isLocked {
+          Image(systemName: "lock")
+            .foregroundStyle(.mutedForeground)
+            .accessibilityHidden(true)
+        } else {
+          ChoiceMark(kind: picks, isPicked: isPicked)
+        }
+      }
+      .layoutPart(.end)
     }
     .contentShape(.rect)
     .layoutRow(.choiceList)

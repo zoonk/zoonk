@@ -210,7 +210,7 @@ struct ProfileQuestionSections: View {
     Section {
       ForEach(view.options, id: \.id) { option in
         ProfileRow(
-          label: Text(option.label), detail: option.description.map { Text($0) },
+          label: Text(option.label), detail: option.description.map { Text($0) }, picks: .several,
           isOn: draft.picks.contains(option.id)
         ) {
           draft.toggle(option.id)
@@ -251,7 +251,7 @@ struct ProfileQuestionSections: View {
 
       ForEach(view.options, id: \.id) { option in
         ProfileRow(
-          label: Text(option.label), detail: option.description.map { Text($0) },
+          label: Text(option.label), detail: option.description.map { Text($0) }, picks: .several,
           isOn: draft.picks.contains(option.id)
         ) {
           draft.toggle(option.id)
@@ -427,11 +427,12 @@ private struct ToolField: View {
 private struct ProfileRow: View {
   let label: Text
   var detail: Text?
+  var picks: ChoiceMark.Kind = .one
   let isOn: Bool
   let action: () -> Void
 
   var body: some View {
-    ChoiceRow(label, detail: detail, isPicked: isOn, action: action)
+    ChoiceRow(label, detail: detail, picks: picks, isPicked: isOn, action: action)
   }
 }
 
