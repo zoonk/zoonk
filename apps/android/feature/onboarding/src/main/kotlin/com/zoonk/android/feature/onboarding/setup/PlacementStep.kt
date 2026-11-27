@@ -47,8 +47,6 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
-import com.zoonk.android.feature.placementtest.LengthChoice
-import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
@@ -77,99 +75,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
-/** A language goal with a target language takes its level test instead, which its caller picks before this. */
-@Composable
-internal fun ColumnScope.PlacementStep(
-    goalId: String,
-    subject: String,
-    run: GenerationRun,
-    onRetryRun: (() -> Unit)?,
-    store: OnboardingStore,
-    onProgress: (Float?) -> Unit,
-    onDone: suspend () -> WriteOutcome<*>,
-    onReportSaveFailure: () -> Unit = {},
-    lengthChoice: SetupTestChoice,
-) {
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
-    VisitOf(vm.visit)
-    val resource = store.placements[goalId]
-    val placement by resource.collectShown()
-    val phase = vm.phase(placement)
-    val scope = rememberCoroutineScope()
-    val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
-    val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
-    val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
-    val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
-
-    when (shown) {
-        PlacementPhase.Loading -> {
-            StepLoading()
-        }
-
-        PlacementPhase.LoadFailed -> {
-            SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
-        }
-
-        PlacementPhase.ChooseLength -> {
-            TrackOnboardingQuestion(goalId, "placement")
-            LengthChoice(
-                wholeCourseMinutes = lengthChoice.minutes,
-                pressed =
-                    when {
-                        vm.isStarting -> Pressed.Main
-                        vm.isSaving -> Pressed.Other
-                        else -> lengthChoice.pressed
-                    },
-                failed = vm.finishFailed || lengthChoice.failed,
-                onStart = { length -> if (length == PlacementLength.QUICK) vm.start() else lengthChoice.startWhole() },
-                onSkip = { finish(true) },
-            )
-        }
-
-        PlacementPhase.Waiting -> {
-            PlacementWaiting(
-                run = run.withPoll(poll.stopped),
-                onRetry = if (poll.stopped) poll::restart else onRetryRun,
-                hold = hold,
-                pending = vm.isSaving,
-                failed = vm.finishFailed,
-                onSkip = { finish(false) },
-            )
-        }
-
-        PlacementPhase.Unavailable -> {
-            PlacementUnavailable(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
-        }
-
-        is PlacementPhase.Question -> {
-            SetupContent {
-                FinishFailed(vm.finishFailed)
-                key(shown.item.itemId) {
-                    PlacementQuestion(
-                        item = shown.item,
-                        subject = subject.labelCase(),
-                        position = stringResource(R.string.onboarding_placement_question_number, shown.number),
-                        labels = shown.labels,
-                        pending = vm.isSaving,
-                        saveFailures = vm.saveFailures,
-                        onReportSaveFailure = onReportSaveFailure,
-                        onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                        onStop = { vm.finish(fromScratch = false, fromQuestion = true) },
-                        canStop = shown.number > 1,
-                    )
-                }
-            }
-        }
-
-        PlacementPhase.Done -> {
-            PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
-        }
-    }
-}
-
 @Composable
 internal fun ColumnScope.StepLoading() {
     SetupContent {
@@ -177,7 +82,11 @@ internal fun ColumnScope.StepLoading() {
     }
 }
 
-/** The Focus test passes its own way out of the wait: a learner with answers uses them, one on a plan just goes back. */
+/**
+ * The wait for a test's questions, with its way out there from the start: "Skip" with where the test waits in
+ * [onboarding], "Not now" on the plan. [skipLabel] replaces it where leaving does more, as the Focus test's "See my
+ * result" does for a learner with answers.
+ */
 @Composable
 internal fun ColumnScope.PlacementWaiting(
     run: GenerationRun,
@@ -186,16 +95,10 @@ internal fun ColumnScope.PlacementWaiting(
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String = stringResource(R.string.onboarding_language_test_skip),
-    skipNote: String? = null,
-    existingPlan: Boolean = false,
+    onboarding: Boolean,
+    existingPlan: Boolean = !onboarding,
+    skipLabel: String? = null,
 ) {
-    var patient by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        delay(PATIENCE)
-        patient = true
-    }
-
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
     val title =
         stringResource(
@@ -211,31 +114,21 @@ internal fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        skip =
-            if (patient || run.status == GenerationRun.Status.Failed) {
-                {
-                    FinishFailed(failed)
-                    OutlinedButton(
-                        busy = pending,
-                        onClick = onSkip,
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                    ) {
-                        Text(skipLabel)
-                    }
-                    skipNote?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            } else {
-                null
-            },
+        skip = {
+            FinishFailed(failed)
+            OutlinedButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+                Text(skipLabel ?: stringResource(if (onboarding) R.string.onboarding_skip else R.string.placementtest_not_now))
+            }
+            if (onboarding && skipLabel == null) {
+                Text(
+                    text = stringResource(R.string.focustest_skip_note),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        },
     ) { share ->
         GenerationWait(kind, shown, onRetry, share = share) {
             OnboardingHeading(
@@ -271,7 +164,7 @@ internal fun ColumnScope.PlacementQuestion(
     stopLabel: String = stringResource(R.string.onboarding_placement_stop),
     /** Said right above Stop, when stopping is worth suggesting. */
     stopHint: String? = null,
-    /** Where the question sits, at the end of [subject]'s row, such as "Question 2" or a whole-course test's part. */
+    /** Where the question sits, at the end of [subject]'s row, such as "Question 2 of 12" or the full test's part too. */
     position: String? = null,
     media: @Composable () -> Unit = {},
 ) {
@@ -434,5 +327,4 @@ internal fun FinishFailed(
 
 internal fun String.labelCase() = replaceFirstChar { it.uppercase() }
 
-private val PATIENCE = 20.seconds
 private const val READS_MATERIAL_STEP = "readExamNotice"

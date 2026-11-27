@@ -25,6 +25,7 @@ private data class SentTestAnswer(
     val answerIndices: List<Long>?,
     val durationMs: Long,
     val skipped: Boolean,
+    val audioDeferred: Boolean = false,
 )
 
 /**
@@ -63,7 +64,10 @@ internal class LevelTestViewModel(
     val finishFailed get() = finishFailure.value != null
 
     private val test get() = store.levelTest(goalId, attemptId)
-    private var sent: SentTestAnswer? = null
+    private var sent by mutableStateOf<SentTestAnswer?>(null)
+
+    /** "Can't listen now" is saving. */
+    val deferring get() = isSaving && sent?.audioDeferred == true
 
     fun phase(state: LoadState<LanguageLevelTest>) = levelTestPhase(state, stopped)
 
@@ -104,15 +108,20 @@ internal class LevelTestViewModel(
         return read
     }
 
+    /** "Can't listen now": the test stops asking listening questions and goes to what it found. */
+    fun deferAudio(questionId: String) = answer(questionId, Answer.DontKnow, durationMs = 0, audioDeferred = true)
+
     /**
      * [answer] is a pick, a confirmation's picks, or "I don't know"; a [skipped] listening question doesn't count toward
      * a level.
      */
+
     fun answer(
         questionId: String,
         answer: Answer,
         durationMs: Long,
         skipped: Boolean = false,
+        audioDeferred: Boolean = false,
     ) {
         if (isSaving) return
         finishFailure.clear()
@@ -123,9 +132,10 @@ internal class LevelTestViewModel(
         val duration =
             previous
                 ?.takeIf {
-                    it.copy(durationMs = durationMs) == SentTestAnswer(questionId, answerIndex, answerIndices, durationMs, skipped)
+                    it.copy(durationMs = durationMs) ==
+                        SentTestAnswer(questionId, answerIndex, answerIndices, durationMs, skipped, audioDeferred)
                 }?.durationMs ?: durationMs
-        val sending = SentTestAnswer(questionId, answerIndex, answerIndices, duration, skipped)
+        val sending = SentTestAnswer(questionId, answerIndex, answerIndices, duration, skipped, audioDeferred)
         isSaving = true
         viewModelScope.launch {
             if (previous != null) {
@@ -153,6 +163,7 @@ internal class LevelTestViewModel(
                     sending.skipped,
                     attemptId,
                     sending.answerIndices,
+                    sending.audioDeferred,
                 )
             when (saved) {
                 is WriteOutcome.Done -> {

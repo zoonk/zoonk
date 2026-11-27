@@ -17,8 +17,12 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
+import com.zoonk.android.data.TestContext
+import com.zoonk.android.data.TestRow
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
 import com.zoonk.android.data.value
@@ -34,6 +38,7 @@ import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.PlanAttempt
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.setup.StepLoading
+import com.zoonk.android.feature.onboarding.setup.isPending
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.plan.lessonsSkippedLine
@@ -53,7 +58,9 @@ import com.zoonk.android.ui.components.LevelRangeBar
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.languageName
+import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOut
 import com.zoonk.api.models.LanguageLevelTestOutNext
@@ -65,8 +72,8 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
- * `/level-test`: a language course's level test from its plan, its level test-outs, and the walk a
- * whole-course test goes on with. Other courses have none, so they go to the plan, as main redirects.
+ * `/level-test`: a language course's level test from its plan, and its level test-outs. Other courses have none, so
+ * they go to the plan, as main redirects.
  */
 @Composable
 fun LevelTestScreen(
@@ -79,8 +86,8 @@ fun LevelTestScreen(
     val language = goal?.kind == LearnerSummaryGoal.Kind.LANGUAGE && goal.targetLanguage != null
     val elsewhere = AppRoute.Plan().takeIf { goal != null && !language }
     CompositionLocalProvider(LocalSetupSpeech provides app.speech) {
-        TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator) { _, setProgress ->
-            goal?.takeIf { language }?.let { LevelTestPlanFlow(it, route.testOut, app, navigator, setProgress) }
+        TestTask(app.learnerSummary.summary, summary, goal, elsewhere, navigator) { _, onSitting ->
+            goal?.takeIf { language }?.let { LevelTestPlanFlow(it, route.testOut, app, navigator, onSitting) }
         }
     }
 }
@@ -91,47 +98,64 @@ private fun ColumnScope.LevelTestPlanFlow(
     testOutFirst: Boolean,
     app: AppContainer,
     navigator: AppNavigator,
-    onProgress: (Float?) -> Unit,
+    onSitting: (Sitting?) -> Unit,
 ) {
     val goalId = goal.id.toString()
     val targetLanguage = goal.targetLanguage.orEmpty()
     val store = app.onboarding
+    val tracker = LocalEventTracker.current
     val vm = viewModel(key = "level-test-plan:$goalId") { LevelTestPlanViewModel(goalId, store, createSavedStateHandle()) }
     VisitOf(vm.visit)
-    ActOn(vm.walking) {
-        navigator.closeTask()
-        navigator.open(AppRoute.PlacementTest(goalId))
-    }
+    val plan by app.plans.plan[goal.id].collectShown()
+    val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value
+    val testOutLevel = row?.nextTestOutLevel?.value
+    val opened by store.levelTest(goalId, null).collectShown()
+    // Coming back to a test left open goes on with it; a finished one is offered again.
+    val open = opened.value?.takeIf { !it.isFinished }?.openAttemptId
+    LaunchedEffect(open) { open?.let(vm::resume) }
     val attempt = vm.attemptId
     val testOut = vm.testOutId
+    val test = languageTest(goalId, onboarding = false, opened.value)
 
     when {
         testOut != null -> {
-            TestOutFlow(goalId, testOut, app, vm, onProgress, onLeave = navigator::closeTask)
+            TestOutFlow(goalId, testOut, app, vm, onSitting, onLeave = navigator::closeTask)
         }
 
         attempt != null -> {
-            val plan by app.plans.plan[goal.id].collectShown()
-            val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOf1Value)?.value
-            val testOutLevel = row?.nextTestOutLevel?.value
             LevelTestSteps(
                 goalId = goalId,
                 targetLanguage = targetLanguage,
                 store = store,
                 navigator = navigator,
-                onProgress = onProgress,
+                onSitting = onSitting,
                 plan =
-                    PlanAttempt(attempt, onLeave = navigator::closeTask, leaving = false) { result ->
+                    PlanAttempt(attempt, onLeave = navigator::closeTask, leaving = false, visit = vm.sitting) { result ->
                         val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
+                        val lesson = result.result?.nextLesson
                         LevelResult(
                             result = result,
-                            walks = false,
                             targetLanguage = targetLanguage,
                             testOutLevel = testOutLevel,
                             pressed = vm.pressed,
                             failed = vm.failed,
-                            onDone = navigator::closeTask,
-                            onWalkTopics = vm::walkTopics,
+                            action =
+                                stringResource(
+                                    if (lesson !=
+                                        null
+                                    ) {
+                                        R.string.placementtest_start_lesson
+                                    } else {
+                                        R.string.placementtest_done
+                                    },
+                                ),
+                            onAction = {
+                                navigator.closeTask()
+                                lesson?.let {
+                                    tracker.track(AnalyticsEvent.TestLessonStarted(test, it.id.toString()))
+                                    navigator.open(AppRoute.Lesson(it.id.toString()))
+                                }
+                            },
                             onTestOut = { vm.testOut(it, Pressed.Other) },
                             undo = rememberPlacementUndo(app.plans, goal.id, changeId),
                         )
@@ -139,86 +163,141 @@ private fun ColumnScope.LevelTestPlanFlow(
             )
         }
 
+        opened.isPending || open != null -> {
+            StepLoading()
+        }
+
         else -> {
-            LanguageTestEntry(app.plans, goal.id) { walking, row ->
-                if (walking) {
-                    TestRedirect(AppRoute.PlacementTest(goalId), navigator)
-                } else {
-                    val testOutLevel = row?.nextTestOutLevel?.value
-                    LengthChoice(
-                        wholeCourseMinutes = row?.estimatedMinutes?.toInt() ?: 0,
-                        pressed = vm.pressed,
-                        failed = vm.failed,
-                        onStart = vm::start,
-                        testOutLevel = testOutLevel,
-                        initial = if (testOutFirst) TestChoice.TestOut else TestChoice.Quick,
-                        onTestOut = { testOutLevel?.let(vm::testOut) },
-                    )
-                }
-            }
+            val facts = opened.value?.let { testFacts(it.total.toInt(), it.estimatedMinutes.toInt()) }.orEmpty()
+            val rows =
+                listOfNotNull(
+                    OfferRow(TestRow.Quick, stringResource(R.string.placementtest_level_title), facts.factsLine()),
+                    testOutLevel?.let {
+                        OfferRow(
+                            TestRow.TestOut,
+                            stringResource(R.string.placementtest_test_out, it),
+                            stringResource(R.string.placementtest_test_out_description, it),
+                        )
+                    },
+                )
+            TestOffer(
+                title = stringResource(R.string.placementtest_start_title),
+                sentence = stringResource(R.string.placementtest_choose_description),
+                rows = rows,
+                initial = if (testOutFirst) TestRow.TestOut else TestRow.Quick,
+                pressed = vm.pressed,
+                failed = vm.failed,
+                onChoose = { if (it == TestRow.TestOut) testOutLevel?.let(vm::testOut) else vm.start() },
+                test = test,
+                chip = stringResource(R.string.placementtest_level_title),
+                facts = facts,
+                onNotNow = {
+                    tracker.track(AnalyticsEvent.TestSkipped(test))
+                    navigator.closeTask()
+                },
+            )
         }
     }
 }
 
-/** Main's `LevelResult`: each skill's range, what the test skipped, and the way on. */
+/** A language's level test for analytics: its ceiling and the open attempt, once the read has them. */
+internal fun languageTest(
+    goalId: String,
+    onboarding: Boolean,
+    read: LanguageLevelTest?,
+    attemptId: UUID? = read?.openAttemptId,
+) = TestContext(
+    goalId = goalId,
+    test = TestContext.Kind.Language,
+    surface = if (onboarding) TestContext.Surface.Onboarding else TestContext.Surface.Plan,
+    questions = read?.total,
+    attemptId = attemptId?.toString(),
+)
+
+/** The test read without an attempt: the latest sitting, which a new visit goes on with until it has a result. */
+internal val LanguageLevelTest.openAttemptId: UUID?
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
+        }
+
+internal val LanguageLevelTest.isFinished: Boolean
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.result != null
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.result != null
+        }
+
+internal val LanguageLevelTest.total: Long
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.total
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.total
+        }
+
+internal val LanguageLevelTest.estimatedMinutes: Long
+    get() =
+        when (this) {
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.estimatedMinutes
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.estimatedMinutes
+        }
+
+/**
+ * Main's `LevelResult`: each skill's range ("Not tested yet" for one whose questions weren't finished), what the test
+ * skipped, and the lesson the plan goes on with.
+ */
 @Composable
 internal fun ColumnScope.LevelResult(
     result: LanguageLevelTestResult,
-    walks: Boolean,
     targetLanguage: String,
     testOutLevel: String?,
     pressed: Pressed?,
     failed: Boolean,
-    onDone: () -> Unit,
-    onWalkTopics: () -> Unit,
+    action: String,
+    onAction: () -> Unit,
     onTestOut: (String) -> Unit,
     undo: PlacementUndoViewModel? = null,
-    onboarding: Boolean = false,
+    busy: Boolean = false,
 ) {
-    val skipped =
-        result.result
-            ?.levelsSkipped
-            .orEmpty()
-            .map { it.value }
     val lessons = result.result?.lessonsSkipped?.toInt() ?: 0
     val ranges = result.result?.ranges.orEmpty()
     TestOutcome(
         title = stringResource(R.string.placementtest_your_level, languageName(targetLanguage, currentLocale())),
         lead =
-            if (skipped.isNotEmpty()) {
-                pluralStringResource(R.plurals.placementtest_levels_skipped, lessons, lessons, skipped.joinToString(", "))
-            } else {
-                stringResource(R.string.placementtest_keeps_adjusting)
+            when {
+                lessons > 0 -> pluralStringResource(R.plurals.placementtest_lessons_you_know, lessons, lessons)
+                READING in ranges && LISTENING !in ranges -> stringResource(R.string.placementtest_listening_later)
+                else -> stringResource(R.string.placementtest_keeps_adjusting)
             },
-        action =
-            stringResource(
-                when {
-                    walks -> R.string.placementtest_keep_going
-                    onboarding -> R.string.onboarding_continue
-                    else -> R.string.placementtest_done
-                },
-            ),
-        onAction = if (walks) onWalkTopics else onDone,
-        busy = pressed == Pressed.Main,
-        enabled = pressed != Pressed.Other,
+        action = action,
+        onAction = onAction,
+        busy = busy || pressed == Pressed.Main,
+        enabled = !busy && pressed != Pressed.Other,
         failed = failed,
         undo = undo,
     ) {
-        val rows =
-            RANGE_SKILLS.mapNotNull { (key, skill) ->
-                ranges[key]?.let { range ->
-                    val low = CEFR_LEVELS.indexOf(range.low.value)
-                    val high = CEFR_LEVELS.indexOf(range.high.value)
-                    LevelRow(
-                        com.zoonk.android.feature.onboarding.setup
-                            .skillName(skill),
-                        levelRange(range),
-                    ) { LevelRangeBar(low, high, it) }
+        LevelRows(
+            RANGE_SKILLS.map { (key, skill) ->
+                val range = ranges[key]
+                val name =
+                    com.zoonk.android.feature.onboarding.setup
+                        .skillName(skill)
+                if (range == null) {
+                    LevelRow(name, stringResource(R.string.placementtest_not_tested)) { LevelRangeBar(-1, -1, it) }
+                } else {
+                    LevelRow(name, levelRange(range)) {
+                        LevelRangeBar(CEFR_LEVELS.indexOf(range.low.value), CEFR_LEVELS.indexOf(range.high.value), it)
+                    }
                 }
-            }
-        if (rows.isNotEmpty()) LevelRows(rows)
+            },
+        )
+        result.result
+            ?.nextLesson
+            ?.takeIf { undo?.restoredLessons == null }
+            ?.let { UpNext(it.title) }
 
-        if (testOutLevel != null && !walks) {
+        if (testOutLevel != null) {
             TextButton(
                 onClick = { onTestOut(testOutLevel) },
                 enabled = pressed != Pressed.Main && undo?.saving != true,
@@ -238,7 +317,7 @@ private fun ColumnScope.TestOutFlow(
     attemptId: UUID,
     app: AppContainer,
     vm: LevelTestPlanViewModel,
-    onProgress: (Float?) -> Unit,
+    onSitting: (Sitting?) -> Unit,
     onLeave: () -> Unit,
 ) {
     val resource = app.onboarding.levelTestOuts[LevelTestAttempt(goalId, attemptId)]
@@ -251,7 +330,21 @@ private fun ColumnScope.TestOutFlow(
     val hold = rememberReadyHold(ready = !preparing)
     val next = test?.next?.takeIf { hold.over }
     LaunchedEffect(next?.itemId, test?.total) {
-        onProgress(test?.takeIf { next != null && it.total > 0 }?.let { it.answered.toFloat() / it.total })
+        onSitting(
+            test?.takeIf { next != null && it.total > 0 }?.let {
+                sitting(
+                    TestContext(
+                        goalId,
+                        TestContext.Kind.LevelTestOut,
+                        TestContext.Surface.Plan,
+                        questions = it.total,
+                        attemptId = attemptId.toString(),
+                    ),
+                    it.answered,
+                    it.total,
+                )
+            },
+        )
     }
 
     when {
@@ -265,14 +358,13 @@ private fun ColumnScope.TestOutFlow(
 
         preparing || !hold.over -> {
             PlacementWaiting(
-                existingPlan = true,
                 run = run.withPoll(poll.stopped),
                 onRetry = if (poll.stopped) poll::restart else null,
                 hold = hold,
                 pending = false,
                 failed = false,
                 onSkip = onLeave,
-                skipLabel = stringResource(R.string.placementtest_not_now),
+                onboarding = false,
             )
         }
 
@@ -358,9 +450,11 @@ internal fun ColumnScope.TestOutResult(
 }
 
 private val CEFR_LEVELS = listOf("A1", "A2", "B1", "B2", "C1", "C2")
+private const val READING = "reading"
+private const val LISTENING = "listening"
 
 private val RANGE_SKILLS =
     listOf(
-        "reading" to LanguageLevelTestOneOf1LevelsInner.Skill.READING,
-        "listening" to LanguageLevelTestOneOf1LevelsInner.Skill.LISTENING,
+        READING to LanguageLevelTestOneOf1LevelsInner.Skill.READING,
+        LISTENING to LanguageLevelTestOneOf1LevelsInner.Skill.LISTENING,
     )

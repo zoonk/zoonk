@@ -106,7 +106,10 @@ fun focusSittingOf(
      "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
 
-fun focusOfferOf(minutes: Int = 15) = """{"minutes":$minutes}"""
+fun focusOfferOf(
+    minutes: Int = 6,
+    questions: Int = 6,
+) = """{"minutes":$minutes,"questions":$questions}"""
 
 /** Suggested focus rows, the most needed first. */
 fun focusOf(
@@ -278,7 +281,7 @@ fun levelTestOf(
     ApiJson.decodeFromString(
         """
         {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
-         "showAlphabetNote":false,"targetLanguage":"it","total":$total${attemptJson(attemptId)}}
+         "showAlphabetNote":false,"targetLanguage":"it","total":$total,"estimatedMinutes":6${attemptJson(attemptId)}}
         """.trimIndent(),
     )
 
@@ -289,10 +292,10 @@ fun preparingTestOf(
     ApiJson.decodeFromString(
         """{"expectedSeconds":120,"showAlphabetNote":false,"startedAt":${startedAt?.let {
             "\"$it\""
-        } ?: "null"},"status":"preparing"${attemptJson(attemptId)}}""",
+        } ?: "null"},"status":"preparing","total":12,"estimatedMinutes":6${attemptJson(attemptId)}}""",
     )
 
-private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it","length":"quick"""" }.orEmpty()
+private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it"""" }.orEmpty()
 
 /** CGU 2026's specialty choice, with [subject] the option the plan follows or null until the learner picks. */
 fun specialtyChoice(subject: String? = null) =

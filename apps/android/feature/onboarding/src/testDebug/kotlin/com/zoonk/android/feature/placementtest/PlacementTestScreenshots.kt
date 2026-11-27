@@ -18,9 +18,11 @@ import androidx.compose.ui.test.performClick
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TestContext
+import com.zoonk.android.data.TestRow
 import com.zoonk.android.feature.onboarding.GOAL_ID
-import com.zoonk.android.feature.onboarding.setup.LevelTestLanguageNotes
 import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
@@ -31,6 +33,7 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.Select
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
@@ -77,44 +80,99 @@ class PlacementTestScreenshots(
     }
 
     @Test
-    fun chooseLearn() = shoot("choose-learn") { LengthChoice(wholeCourseMinutes = 40, pressed = null, failed = false, onStart = {}) }
-
-    @Test
-    fun chooseOnboarding() =
-        shoot("choose-onboarding") {
-            LengthChoice(wholeCourseMinutes = 40, pressed = null, failed = false, onStart = {}, onSkip = {})
-        }
-
-    @Test
-    fun chooseOnboardingWithoutWholeCourse() =
-        shoot("choose-onboarding-no-whole-course") {
-            LengthChoice(wholeCourseMinutes = 0, pressed = null, failed = false, onStart = {}, onSkip = {})
-        }
-
-    @Test
-    fun chooseOnboardingLanguage() =
-        shoot("choose-onboarding-language") {
-            LengthChoice(
-                wholeCourseMinutes = 60,
+    fun courseOfferOnboarding() =
+        shoot("course-offer-onboarding") {
+            TestOffer(
+                title = "Where would you like to start?",
+                sentence = "A test finds the lessons you can skip.",
+                rows =
+                    listOf(
+                        firstLessonRow(),
+                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
+                        OfferRow(TestRow.WholeCourse, "Full test", fullTestFacts(14, 85).factsLine()),
+                    ),
+                initial = TestRow.Quick,
                 pressed = null,
                 failed = false,
-                onStart = {},
-                onSkip = {},
-                notes = { LevelTestLanguageNotes("en", showAlphabetNote = true) },
+                onChoose = {},
+                test = TEST,
             )
         }
 
     @Test
-    fun chooseLanguage() =
-        shoot("choose-language") {
-            LengthChoice(
-                wholeCourseMinutes = 60,
+    fun courseOfferPlan() =
+        shoot("course-offer-plan") {
+            TestOffer(
+                title = "Skip what you already know",
+                sentence = "A test finds the lessons you can skip.",
+                rows =
+                    listOf(
+                        OfferRow(TestRow.Quick, "Quick test", testFacts(12, 6).factsLine()),
+                        OfferRow(TestRow.WholeCourse, "Full test", fullTestFacts(14, 85).factsLine()),
+                    ),
+                initial = TestRow.Quick,
                 pressed = null,
                 failed = false,
-                onStart = {},
-                testOutLevel = "B2",
-                initial = TestChoice.TestOut,
+                onChoose = {},
+                test = TEST,
+                onNotNow = {},
             )
+        }
+
+    @Test
+    fun courseOfferPlanOneTest() =
+        shoot("course-offer-plan-one-test") {
+            TestOffer(
+                title = "Skip what you already know",
+                sentence = "A test finds the lessons you can skip.",
+                rows = listOf(OfferRow(TestRow.Quick, "Quick test", "")),
+                initial = TestRow.Quick,
+                pressed = null,
+                failed = false,
+                onChoose = {},
+                test = TEST,
+                chip = "Test what you know",
+                facts = testFacts(12, 6),
+                onNotNow = {},
+            )
+        }
+
+    @Test
+    fun languageOfferPlan() =
+        shoot("language-offer-plan") {
+            TestOffer(
+                title = "Skip what you already know",
+                sentence = "A test finds the lessons you can skip.",
+                rows =
+                    listOf(
+                        OfferRow(TestRow.Quick, "Level test", testFacts(12, 6).factsLine()),
+                        OfferRow(TestRow.TestOut, "Test out of B2", "Skip B2 if you already know it"),
+                    ),
+                initial = TestRow.TestOut,
+                pressed = null,
+                failed = false,
+                onChoose = {},
+                test = TEST,
+                onNotNow = {},
+            )
+        }
+
+    @Test
+    fun continueBetweenParts() =
+        shoot("course-continue-between-parts") {
+            ContinueTest(listOf("Part 4 of 14", "About 1 hr 6 min left"), null, false, {}, "Not now", {})
+        }
+
+    @Test
+    fun continueStopped() =
+        shoot("course-continue-stopped") {
+            ContinueTest(listOf("Part 5 of 14", "Question 4 of 12"), null, false, {}, "Not now", {})
+        }
+
+    @Test
+    fun questionFullTest() =
+        shoot("course-question-full") {
+            Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
         }
 
     @Test
@@ -149,55 +207,47 @@ class PlacementTestScreenshots(
     fun partOver() = shoot("part-over") { PlacementDone(pending = false, failed = false, onContinue = {}) }
 
     @Test
-    fun betweenParts() =
-        shoot("between-parts", captureUndo = true) {
-            BetweenParts(
-                lessonsSkipped = 6,
-                minutesLeft = 25,
-                pressed = null,
-                failed = false,
-                onFinishForToday = {},
-                onKeepGoing = {},
-                undo = undo(),
-            )
+    fun partDone() =
+        shoot("course-checkpoint", captureUndo = true, undone = "Part 3 of 14 done") {
+            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesEach = 6, null, false, {}, {}, undo())
         }
 
     @Test
-    fun betweenOnboardingParts() =
-        shoot("between-onboarding-parts") {
-            BetweenParts(
-                lessonsSkipped = 6,
-                minutesLeft = 25,
-                pressed = null,
-                failed = false,
-                onFinishForToday = {},
-                onKeepGoing = {},
-                undo = undo(),
-                inSetup = true,
-            )
+    fun partDoneNothingSkipped() =
+        shoot("course-checkpoint-none-skipped") {
+            PartDone(3, 14, 0, heldUntilTomorrow = false, partsLeft = 1, minutesEach = 6, null, false, {}, {}, undo = null)
+        }
+
+    @Test
+    fun partStopped() =
+        shoot("course-stopped") {
+            PartStopped(5, 14, 4, lessonsSkipped = 1, action = "Done", onAction = {}, busy = false, undo = undo())
         }
 
     @Test
     fun resultQuick() =
-        shoot("result-quick", captureUndo = true) {
-            PlacementResult(lessonsSkipped = 1, nextTopic = "Contracts", onDone = {}, undo = undo())
+        shoot("course-result-quick", captureUndo = true) {
+            PlacementResult(
+                lessonsSkipped = 5,
+                nextLesson = "Loops with for",
+                action = "Start lesson",
+                onAction = {},
+                undo = undo(),
+                rest = partsLeftFacts(13, 6),
+                onTestTheRest = {},
+            )
         }
 
     @Test
     fun resultNothingSkipped() =
-        shoot(
-            "result-nothing-skipped",
-        ) { PlacementResult(lessonsSkipped = 0, nextTopic = "Torts", onDone = {}) }
+        shoot("course-result-none-skipped") {
+            PlacementResult(lessonsSkipped = 0, nextLesson = "Loops with for", action = "Continue", onAction = {})
+        }
 
     @Test
     fun resultHeldUntilTomorrow() =
-        shoot("result-retake-tomorrow") {
-            PlacementResult(
-                lessonsSkipped = 0,
-                nextTopic = "Contracts",
-                onDone = {},
-                heldUntilTomorrow = true,
-            )
+        shoot("course-result-retake-tomorrow") {
+            PlacementResult(lessonsSkipped = 0, nextLesson = null, action = "Done", onAction = {}, heldUntilTomorrow = true)
         }
 
     @Test
@@ -205,15 +255,29 @@ class PlacementTestScreenshots(
         shoot("level-result", captureUndo = true) {
             LevelResult(
                 result = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT),
-                walks = false,
                 targetLanguage = "it",
                 testOutLevel = "B2",
                 pressed = null,
                 failed = false,
-                onDone = {},
-                onWalkTopics = {},
+                action = "Start lesson",
+                onAction = {},
                 onTestOut = {},
                 undo = undo(),
+            )
+        }
+
+    @Test
+    fun levelResultListeningNotTested() =
+        shoot("language-result-listening-not-tested") {
+            LevelResult(
+                result = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), READING_ONLY),
+                targetLanguage = "it",
+                testOutLevel = null,
+                pressed = null,
+                failed = false,
+                action = "Continue",
+                onAction = {},
+                onTestOut = {},
             )
         }
 
@@ -225,7 +289,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun existingPlanWait() =
-        shoot("plan-wait") {
+        shoot("wait-plan") {
             PlacementWaiting(
                 run = GenerationRun(),
                 onRetry = null,
@@ -233,7 +297,35 @@ class PlacementTestScreenshots(
                 pending = false,
                 failed = false,
                 onSkip = {},
-                existingPlan = true,
+                onboarding = false,
+            )
+        }
+
+    @Test
+    fun onboardingWait() =
+        shoot("wait-onboarding") {
+            PlacementWaiting(
+                run = GenerationRun(),
+                onRetry = null,
+                hold = rememberReadyHold(ready = false),
+                pending = false,
+                failed = false,
+                onSkip = {},
+                onboarding = true,
+            )
+        }
+
+    @Test
+    fun failedWait() =
+        shoot("wait-failed") {
+            PlacementWaiting(
+                run = GenerationRun(GenerationRun.Status.Failed, GenerationFailure.Generation),
+                onRetry = {},
+                hold = rememberReadyHold(ready = false),
+                pending = false,
+                failed = false,
+                onSkip = {},
+                onboarding = false,
             )
         }
 
@@ -261,7 +353,7 @@ class PlacementTestScreenshots(
     ) = PlacementQuestion(
         item = Question("item-1", format, question, options = options, select = select, left = left, right = right),
         subject = "Contract law",
-        position = "Part 1",
+        position = "Part 3 of 14 · Question 5 of 12",
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = false,
         saveFailures = 0,
@@ -283,6 +375,7 @@ class PlacementTestScreenshots(
     private fun shoot(
         name: String,
         captureUndo: Boolean = false,
+        undone: String = "No lessons skipped",
         content: @Composable ColumnScope.() -> Unit,
     ) {
         compose.setContent {
@@ -295,7 +388,7 @@ class PlacementTestScreenshots(
         capture(name)
         if (captureUndo) {
             compose.onNodeWithText("Undo").performClick()
-            compose.onNodeWithText("No lessons skipped").assertExists()
+            compose.onNodeWithText(undone).assertExists()
             capture("$name-undo")
         }
     }
@@ -327,7 +420,14 @@ class PlacementTestScreenshots(
 
         const val LEVEL_RESULT =
             """{"levels":[],"result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-21T14:00:00Z",
-             "lessonsSkipped":12,"levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}}}}"""
+             "lessonsSkipped":12,"levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}},
+             "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"Ordering at a restaurant"}}}"""
+
+        val TEST = TestContext(GOAL_ID, TestContext.Kind.Course, TestContext.Surface.Plan)
+
+        const val READING_ONLY =
+            """{"levels":[],"result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-21T14:00:00Z","end":"audio_deferred",
+             "lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"B1","high":"B2"}}}}"""
 
         const val TEST_OUT =
             """{"answered":12,"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","level":"B2","next":null,"preparing":false,"total":12,

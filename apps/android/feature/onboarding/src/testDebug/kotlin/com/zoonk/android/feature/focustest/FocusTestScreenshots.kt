@@ -261,7 +261,7 @@ class FocusTestScreenshots(
                             plans,
                             GenerationRun(),
                             onRetryRun = null,
-                            onProgress = {},
+                            onSitting = {},
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
                         )
                     }

@@ -25,9 +25,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 /**
- * The test taken from the plan (main's `usePlacementTest`). Opening it only reads; starting a part,
- * answering and closing a part are POSTs from the learner's taps. A part that asks nothing more
- * closes in the same save.
+ * A course's test, in onboarding and from the plan (main's `usePlacementTest`). Opening it only reads; starting a part,
+ * answering and closing a part are POSTs from the learner's taps. A part that asks nothing more closes in the same save.
  */
 internal class PlacementTestViewModel(
     private val goalId: String,
@@ -37,10 +36,17 @@ internal class PlacementTestViewModel(
     /** This visit to the test: a save that fails says so only on it. */
     val visit = Visit()
 
+    /** When this visit began and whether it opened a sitting, for the first question's analytics. */
+    val sitting = TestVisit()
+
+    /** Onboarding's "First lesson" saved the learner's choice to start from scratch: the setup goes on. */
+    val declined = visit.outcome<Unit>()
+
     private val failure = visit.outcome<Unit>()
     private val saveFailure = visit.outcome<Int>()
 
     private var savedClosed by handle.saved { "" }
+    private var autoStarted by handle.saved { false }
 
     /** What a part closed in this visit did, shown until the learner moves on, after a reclaimed process too. */
     private var closed by mutableStateOf(
@@ -63,28 +69,44 @@ internal class PlacementTestViewModel(
 
     val busy get() = pressed != null || answering
 
-    fun phase(placement: LoadState<Placement>) = placementTestPhase(placement, closed)
-
-    fun setupPhase(placement: LoadState<Placement>): PlacementTestPhase {
-        val phase = phase(placement)
-        if (phase != PlacementTestPhase.Choose) return phase
-        val result = placement.value?.result ?: return phase
-        return PlacementTestPhase.Result(
-            PlacementLength.WHOLE_COURSE,
-            result.lessonsSkipped.toInt(),
-            attemptId = result.attemptId,
-            heldUntilTomorrow = result.heldUntilTomorrow == true,
-        )
-    }
+    /** [finished]: a test that's over shows its result rather than a new offer, as onboarding does. */
+    fun phase(
+        placement: LoadState<Placement>,
+        finished: Boolean = false,
+    ) = placementTestPhase(placement, closed, finished)
 
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
 
-    /** Opens a test of this [length], or the next part of the open one. */
-    fun start(length: PlacementLength) = save(Pressed.Main) { open(length) }
+    /** Opens a test of this [length], the next part of the open one, or the one the learner stopped. */
+    fun start(
+        length: PlacementLength,
+        button: Pressed = Pressed.Main,
+    ) = save(button) {
+        sitting.started()
+        open(length)
+    }
+
+    /** A learner who asked for the test on the level question goes straight in, once. */
+    fun startAsked() {
+        if (autoStarted) return
+        autoStarted = true
+        start(PlacementLength.QUICK)
+    }
+
+    /** Onboarding's "First lesson": every phase starts at its beginning. */
+    fun decline() =
+        save(Pressed.Main) { asked ->
+            val finished = store.finishPlacement(goalId, fromScratch = true)
+            if (finished is WriteOutcome.Done) declined.send(asked, Unit)
+            finished is WriteOutcome.Done || finished == WriteOutcome.Obsolete
+        }
 
     /** Closes a part the learner came back to after its questions ran out. */
     fun finishPart(attempt: PlacementAttempt) = save(Pressed.Main) { close(attempt) }
+
+    /** Moves on from what a closed part showed, to the test as the server has it. */
+    fun dismissClosed() = show(null)
 
     fun answer(
         question: PlacementTestPhase.Question,
@@ -114,13 +136,13 @@ internal class PlacementTestViewModel(
         }
     }
 
-    /** "Stop and use my answers": closes the part with what it has. */
+    /** "Stop and use my answers": closes the part with the answers the learner saw. */
     fun stop(question: PlacementTestPhase.Question) {
         if (busy) return
         answering = true
         val asked = visit.number
         viewModelScope.launch {
-            if (!close(question.attempt)) saveFailure.send(asked, saveFailures + 1)
+            if (!close(question.attempt, answered = question.attempt.answered)) saveFailure.send(asked, saveFailures + 1)
             answering = false
         }
     }
@@ -142,24 +164,13 @@ internal class PlacementTestViewModel(
         }
 
     /** Closing a part applies what it skipped; another device that closed it first wins, and the read says where the test is. */
-    private suspend fun close(attempt: PlacementAttempt): Boolean {
-        val finished = store.finishPlacement(goalId, fromScratch = false, attempt = attempt.part())
+    private suspend fun close(
+        attempt: PlacementAttempt,
+        answered: Long? = null,
+    ): Boolean {
+        val finished = store.finishPlacement(goalId, fromScratch = false, attempt = attempt.part(), answered = answered)
         if (finished is WriteOutcome.Done) {
-            val completion = finished.value
-            val skipped = completion.lessonsSkipped.toInt()
-            val changeId = completion.changeId.takeIf { skipped > 0 }
-            show(
-                completion.attempt?.let {
-                    PlacementTestPhase.Between(it, skipped, changeId, heldUntilTomorrow = completion.heldUntilTomorrow == true)
-                }
-                    ?: PlacementTestPhase.Result(
-                        attempt.length,
-                        completion.result?.lessonsSkipped?.toInt() ?: skipped,
-                        changeId = changeId,
-                        attemptId = attempt.id,
-                        heldUntilTomorrow = (completion.result?.heldUntilTomorrow ?: completion.heldUntilTomorrow) == true,
-                    ),
-            )
+            show(finished.value.phase(attempt))
             return true
         }
         if (finished == WriteOutcome.Obsolete) return true
@@ -168,25 +179,25 @@ internal class PlacementTestViewModel(
         val now =
             placements.state.value.value
                 ?.attempt
-        return now == null || now.id != attempt.id || now.part != attempt.part || now.partComplete
+        return now == null || now.id != attempt.id || now.part != attempt.part || now.partComplete || now.resume != null
     }
 
     private fun show(part: PlacementTestPhase?) {
         closed = part
-        val saved = part?.let { ClosedPart(between = it as? PlacementTestPhase.Between, result = it as? PlacementTestPhase.Result) }
-        savedClosed = saved?.let { ApiJson.encodeToString(ClosedPart.serializer(), it) }.orEmpty()
+        savedClosed = part?.let { ApiJson.encodeToString(ClosedPart.serializer(), ClosedPart.of(it)) }.orEmpty()
     }
 
+    /** [action] gets the visit it was asked on, and says whether it saved. */
     private fun save(
         button: Pressed,
-        action: suspend () -> Boolean,
+        action: suspend (asked: Int) -> Boolean,
     ) {
         if (busy) return
         pressed = button
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
-            if (!action()) failure.send(asked, Unit)
+            if (!action(asked)) failure.send(asked, Unit)
             pressed = null
         }
     }
@@ -195,10 +206,20 @@ internal class PlacementTestViewModel(
 /** What a closed part shows, as a reclaimed process restores it. */
 @Serializable
 private data class ClosedPart(
-    val between: PlacementTestPhase.Between? = null,
+    val done: PlacementTestPhase.PartDone? = null,
+    val stopped: PlacementTestPhase.PartStopped? = null,
     val result: PlacementTestPhase.Result? = null,
 ) {
-    val phase: PlacementTestPhase? get() = between ?: result
+    val phase: PlacementTestPhase? get() = done ?: stopped ?: result
+
+    companion object {
+        fun of(phase: PlacementTestPhase) =
+            ClosedPart(
+                done = phase as? PlacementTestPhase.PartDone,
+                stopped = phase as? PlacementTestPhase.PartStopped,
+                result = phase as? PlacementTestPhase.Result,
+            )
+    }
 }
 
 internal fun PlacementAttempt.part() = PlacementPart(id, part)

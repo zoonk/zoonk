@@ -83,6 +83,7 @@ class SetupOutcomesTest {
                         goalId: String,
                         fromScratch: Boolean,
                         attempt: PlacementPart?,
+                        answered: Long?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)

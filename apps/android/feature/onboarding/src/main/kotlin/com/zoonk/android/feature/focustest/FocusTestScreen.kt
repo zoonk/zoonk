@@ -16,12 +16,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.TestProgress
+import com.zoonk.android.feature.placementtest.Sitting
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -59,13 +61,17 @@ internal fun FocusTestScreen(
 ) {
     val summary by summaries.collectShown()
     val goal = summary.value?.goals?.firstOrNull { goal -> route.goalId?.let { goal.id.toString() == it } ?: goal.isActive }
-    var progress by remember { mutableStateOf<Float?>(null) }
+    var sitting by remember { mutableStateOf<Sitting?>(null) }
     val scope = rememberCoroutineScope()
+    val tracker = LocalEventTracker.current
 
     // The screens name the test above their headlines; the bar shows the questions' progress.
     TaskScaffold(
-        onClose = navigator::closeTask,
-        title = { progress?.let { TestProgress(it) } },
+        onClose = {
+            sitting?.let { tracker.track(it.left) }
+            navigator.closeTask()
+        },
+        title = { sitting?.let { TestProgress(it.share) } },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
@@ -80,7 +86,7 @@ internal fun FocusTestScreen(
                             plans = plans,
                             run = remember { GenerationRun() },
                             onRetryRun = null,
-                            onProgress = { progress = it },
+                            onSitting = { sitting = it },
                             onLeft = navigator::closeTask,
                             plan =
                                 OnPlan(

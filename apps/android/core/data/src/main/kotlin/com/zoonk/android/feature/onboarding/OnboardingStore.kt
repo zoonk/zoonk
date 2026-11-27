@@ -54,7 +54,6 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.SourceReadStatus
-import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.async
@@ -555,8 +554,9 @@ class OnboardingStore(
         goalId: String,
         fromScratch: Boolean,
         attempt: PlacementPart? = null,
+        answered: Long? = null,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
-        api.finishPlacement(it, goalId, fromScratch, attempt)
+        api.finishPlacement(it, goalId, fromScratch, attempt, answered)
     }
 
     /** A language goal's onboarding level test; each answer replies with its next step. */
@@ -579,16 +579,17 @@ class OnboardingStore(
 
     suspend fun prepareLevelTest(goalId: String) = write { api.prepareLevelTest(it, goalId) }
 
-    /** Opens a level test from the plan, or answers with the one already open. */
-    suspend fun startLevelTest(
-        goalId: String,
-        length: StartLanguageLevelTestInput.Length,
-    ) = write(
-        invalidating = setOf(DataDomain.Goals),
-        replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
-    ) { api.startLevelTest(it, goalId, length) }
+    /** Opens the level test, or answers with the one already open. */
+    suspend fun startLevelTest(goalId: String) =
+        write(
+            invalidating = setOf(DataDomain.Goals),
+            replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
+        ) { api.startLevelTest(it, goalId) }
 
-    /** [answerIndices] answers a level's confirmation, where every right option is picked. */
+    /**
+     * [answerIndices] answers a level's confirmation, where every right option is picked. [audioDeferred] is "Can't listen
+     * now" on a listening question: it ends the test's listening without scoring the question.
+     */
     suspend fun answerLevelTest(
         goalId: String,
         questionId: String,
@@ -597,6 +598,7 @@ class OnboardingStore(
         skipped: Boolean,
         attemptId: UUID? = null,
         answerIndices: List<Long>? = null,
+        audioDeferred: Boolean = false,
     ) = write(replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
         api.answerLevelTest(
             it,
@@ -608,6 +610,7 @@ class OnboardingStore(
                 attemptId = attemptId,
                 durationMs = durationMs,
                 skipped = true.takeIf { skipped },
+                audioDeferred = true.takeIf { audioDeferred },
             ),
         )
     }

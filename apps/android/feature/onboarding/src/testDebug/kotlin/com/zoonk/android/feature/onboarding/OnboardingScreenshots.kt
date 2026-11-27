@@ -63,7 +63,6 @@ import com.zoonk.android.feature.onboarding.course.CourseStartScreen
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
-import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.start.AttachPanel
@@ -71,7 +70,8 @@ import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.MaterialIntent
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
 import com.zoonk.android.feature.onboarding.start.StartGoalViewModel
-import com.zoonk.android.feature.placementtest.SetupTestChoice
+import com.zoonk.android.feature.placementtest.PlacementSetup
+import com.zoonk.android.feature.placementtest.PlacementSetupEnd
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.planlink.PlanLinkScreen
@@ -92,6 +92,8 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.PlacementAttempt
+import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
@@ -165,21 +167,15 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun placementWaiting() {
-        var run by mutableStateOf(
-            GenerationRun(
-                status = GenerationRun.Status.Following,
-                steps = mapOf("understandGoal" to StepState.Completed, "buildSkillGraph" to StepState.Started),
-            ),
-        )
-        val api = FakeOnboardingApi().apply { placement = placementOf(status = "preparing", next = null) }
-        compose.setContent { ZoonkTheme { Surface { Placement(api, run) } } }
+        val api =
+            FakeOnboardingApi().apply {
+                placement = placementOf(status = "done", next = null)
+                sitting = { placementOf(status = "waitingForQuestions", next = null).copy(attempt = QUICK_ATTEMPT) }
+            }
+        compose.setContent { ZoonkTheme { Surface { Placement(api) } } }
         compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
         write("placement-waiting-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
-
-        run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
-        compose.waitForIdle()
-        write("placement-waiting-failed-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** The questions of a new language pair wait for the learner's Start, so it's tapped first. */
@@ -903,21 +899,14 @@ class OnboardingScreenshots {
                         AppRoute.StartGoal(draftId = DRAFT_ID),
                     )
                 },
-                "placement-length-choice" to {
-                    Placement(FakeOnboardingApi())
+                "placement-offer" to {
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(status = "done", next = null) })
                 },
                 "placement-question" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
+                    Placement(FakeOnboardingApi().apply { placement = placementOf().copy(attempt = QUICK_ATTEMPT.copy(answered = 2)) })
                 },
                 "placement-order" to {
-                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = orderQuestion(), started = true, spent = 0.6) })
-                },
-                "placement-done" to {
-                    Placement(
-                        FakeOnboardingApi().apply {
-                            placement = placementOf(status = "done", next = null, answered = 9, started = true, dayBudgetUsed = true)
-                        },
-                    )
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = orderQuestion()).copy(attempt = QUICK_ATTEMPT) })
                 },
                 "reveal" to {
                     Reveal(
@@ -1258,24 +1247,44 @@ class OnboardingScreenshots {
         }
 
         @Composable
-        private fun Placement(
-            api: FakeOnboardingApi,
-            run: GenerationRun = GenerationRun(),
-        ) {
+        private fun Placement(api: FakeOnboardingApi) {
             val store = rememberStore(api)
             SetupColumn {
-                PlacementStep(
-                    GOAL_ID,
+                PlacementSetup(
+                    UUID.fromString(GOAL_ID),
                     "bar exam",
-                    run,
-                    onRetryRun = {},
-                    store,
-                    onProgress = {},
-                    onDone = { WriteOutcome.Done(Unit) },
-                    lengthChoice = SetupTestChoice(0, null, false) {},
+                    targetLanguage = null,
+                    placement = ApiJson.decodeFromString(COURSE_OFFER),
+                    store = store,
+                    plans = rememberPlans(FakePlanApi()),
+                    navigator = rememberAppNavigator(),
+                    end = PlacementSetupEnd(saving = false) {},
+                    onSitting = {},
+                    onReportSaveFailure = {},
                 )
             }
         }
+
+        val QUICK_ATTEMPT =
+            PlacementAttempt(
+                answered = 0,
+                chapter = "Civil procedure",
+                estimatedMinutes = 6,
+                id = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+                length = PlacementLength.QUICK,
+                nextPart = null,
+                part = 1,
+                partComplete = false,
+                parts = 14,
+                partsLeft = 14,
+                questions = 12,
+                remainingEstimatedMinutes = 85,
+                resume = null,
+                totalEstimatedMinutes = 85,
+            )
+
+        const val COURSE_OFFER =
+            """{"mode":"offer","test":{"kind":"course","offer":{"estimatedMinutes":6,"questions":12,"wholeCourse":{"estimatedMinutes":85,"parts":14}}}}"""
 
         @Composable
         private fun Reveal(

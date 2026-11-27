@@ -21,6 +21,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PlanPlacementTestOneOf
 import com.zoonk.api.models.PlanPlacementTestOneOf1
+import com.zoonk.api.models.PlacementLength
 
 /** The test's first sitting, for a learner who hasn't started it and whose time doesn't cover everything: where a focus would help most. */
 fun focusTestOffer(plan: Plan): FocusTestOffer? =
@@ -28,10 +29,10 @@ fun focusTestOffer(plan: Plan): FocusTestOffer? =
         ?.takeIf { it.state == FocusTestSummary.State.NOT_STARTED && planCoverage(plan) != null }
         ?.offer
 
-/** The test's one line on the plan: what it's for and what it costs, what's left, or where its result is. */
+/** The test's one line on the plan: what it's for and what it costs, where the learner is, or where its result is. */
 @Composable
 internal fun focusTestLine(summary: FocusTestSummary): String {
-    val minutes = summary.offer?.minutes?.let { formatMinutes(it.toInt(), currentLocale()) }
+    val minutes = summary.offer?.minutes?.let { stringResource(R.string.placementtest_about, formatMinutes(it.toInt(), currentLocale())) }
     return when (summary.state) {
         FocusTestSummary.State.NOT_STARTED -> {
             factsLine(
@@ -41,7 +42,7 @@ internal fun focusTestLine(summary: FocusTestSummary): String {
         }
 
         FocusTestSummary.State.SITTING -> {
-            factsLine(stringResource(R.string.focustest_in_progress), minutes?.let { stringResource(R.string.focustest_time_left, it) })
+            factsLine(stringResource(R.string.focustest_in_progress), summary.sitting?.let { questionOf(it.answered + 1, it.questions) })
         }
 
         FocusTestSummary.State.CHECKED -> {
@@ -91,46 +92,96 @@ fun lessonsSkippedLine(lessons: Int): String =
         pluralStringResource(R.plurals.placementtest_lessons_skipped, lessons, lessons)
     }
 
-/** The test's one line on the plan: what it's for, what's left, or its last result and when. */
+@Composable
+private fun questionOf(
+    number: Long,
+    total: Long,
+): String = stringResource(R.string.onboarding_test_question_progress, number.toInt(), total.toInt())
+
+@Composable
+private fun partOf(
+    part: Long,
+    parts: Long,
+): String = stringResource(R.string.placementtest_part_of, part.toInt(), parts.toInt())
+
+/** The test's one line on the plan: what it's for and what it costs, where the learner is, or its last result and when. */
 @Composable
 private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
-    val (state, minutes, result) =
-        when (test) {
-            is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
-                Triple(
-                    test.value.state.value,
-                    test.value.estimatedMinutes,
-                    test.value.result?.let { it.finishedAt to it.lessonsSkipped },
-                )
-            }
+    val about = { minutes: Long -> stringResource(R.string.placementtest_about, formatMinutes(minutes.toInt(), locale)) }
+    val done = { finishedAt: kotlin.time.Instant, lessonsSkipped: Long ->
+        factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, locale))
+    }
+    return when (test) {
+        is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
+            val row = test.value
+            val result = row.result
+            when {
+                row.state == PlanPlacementTestOneOf1.State.CONTINUE -> {
+                    factsLine(
+                        stringResource(R.string.placementtest_in_progress),
+                        row.total?.let { questionOf((row.answered ?: 0) + 1, it) },
+                    )
+                }
 
-            is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
-                Triple(
-                    test.value.state.value,
-                    test.value.estimatedMinutes,
-                    test.value.result?.let { it.finishedAt to it.lessonsSkipped },
-                )
+                result != null -> {
+                    done(result.finishedAt, result.lessonsSkipped)
+                }
+
+                else -> {
+                    factsLine(stringResource(R.string.placementtest_find_level), about(row.estimatedMinutes))
+                }
             }
         }
-    if (state == CONTINUE) {
-        return factsLine(
-            stringResource(R.string.placementtest_in_progress),
-            stringResource(R.string.placementtest_time_left, formatMinutes(minutes.toInt(), locale)),
-        )
+
+        is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
+            val row = test.value
+            val attempt = row.attempt
+            val result = row.result
+            val resume = attempt?.resume
+            val quickEnded = attempt?.length == PlacementLength.QUICK && (attempt.partComplete || resume != null)
+            when {
+                // A quick test that ended isn't in progress: its row shows its result.
+                quickEnded && result != null -> {
+                    done(result.finishedAt, result.lessonsSkipped)
+                }
+
+                attempt != null && resume != null -> {
+                    factsLine(partOf(resume.part, attempt.parts), questionOf(resume.question, attempt.questions))
+                }
+
+                attempt != null && attempt.partComplete -> {
+                    factsLine(
+                        partOf(attempt.nextPart ?: attempt.part, attempt.parts),
+                        stringResource(R.string.placementtest_about_left, formatMinutes(attempt.remainingEstimatedMinutes.toInt(), locale)),
+                    )
+                }
+
+                attempt != null && attempt.length == PlacementLength.WHOLE_COURSE -> {
+                    factsLine(partOf(attempt.part, attempt.parts), questionOf(attempt.answered + 1, attempt.questions))
+                }
+
+                attempt != null -> {
+                    factsLine(stringResource(R.string.placementtest_in_progress), questionOf(attempt.answered + 1, attempt.questions))
+                }
+
+                result != null -> {
+                    done(result.finishedAt, result.lessonsSkipped)
+                }
+
+                else -> {
+                    factsLine(stringResource(R.string.placementtest_skip_lessons), row.offer?.let { about(it.estimatedMinutes) })
+                }
+            }
+        }
     }
-    val (finishedAt, lessonsSkipped) =
-        result ?: return stringResource(
-            if (test.isLanguage) R.string.placementtest_find_level else R.string.placementtest_skip_lessons,
-        )
-    return factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, locale))
 }
 
 val PlanPlacementTest.isLanguage: Boolean get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value
 
-/** A language course's test starts with its level; only a whole-course test past it walks the course's topics. */
+/** A language course's test is its level test. */
 val PlanPlacementTest.opensLevelTest: Boolean
-    get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value && value.attempt == null
+    get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value
 
 /** A test there's nothing left to check with has no row, as main hides it. */
 fun PlanPlacementTest.isShown(): Boolean =
@@ -159,6 +210,5 @@ internal fun PlanPlacementTestRow(
     )
 }
 
-private const val CONTINUE = "continue"
 private const val READING = "reading"
 private const val LISTENING = "listening"
