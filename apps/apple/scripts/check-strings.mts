@@ -69,7 +69,11 @@ function readStringsData(file: string): StringsData & { builtAt: number } {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The Swift compiler writes this file.
   const data = JSON.parse(readFileSync(file, "utf8")) as Omit<StringsData, "file">;
   const source = existsSync(data.source) ? realpathSync(data.source) : data.source;
-  return { ...data, builtAt: statSync(file).mtimeMs, file, source };
+  // Swift leaves a .stringsdata file untouched when its extracted strings are unchanged.
+  const object = statSync(file.replace(/\.stringsdata$/u, ".o"), { throwIfNoEntry: false });
+  const builtAt = Math.max(statSync(file).mtimeMs, object?.mtimeMs ?? 0);
+
+  return { ...data, builtAt, file, source };
 }
 
 /** Each app source file's newest build, with the strings the app looks up exactly. */
