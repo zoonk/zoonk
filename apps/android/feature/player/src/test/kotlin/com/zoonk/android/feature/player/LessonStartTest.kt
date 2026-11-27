@@ -8,6 +8,7 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRun
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -752,6 +754,102 @@ class LessonStartTest {
                 advanceUntilIdle()
                 assertTrue(vm.state.value?.run is LessonRun.Started)
             }
+        }
+
+    @Test fun cachedLessonShowsImmediatelyAndFreshProgressReplacesItBeforeInput() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), checkStep(TWO)))
+            val fresh = lesson.copy(resume = ApiJson.decodeFromString(answered(ONE)))
+            val vm = player(null, tapped = false)
+            vm.open(lesson)
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            vm.open(fresh)
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            runCurrent()
+            assertTrue(api.startOpenings.isEmpty())
+
+            api.startGate = CompletableDeferred()
+            vm.select(LessonAnswer.Check("right"))
+            vm.open(lesson)
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                LessonAnswer.Check("right"),
+                vm.state.value
+                    ?.answers
+                    ?.get(TWO),
+            )
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(1, api.startOpenings.size)
+        }
+
+    @Test fun finishingARestoredLessonStartsAndCompletesIt() =
+        runTest(dispatcher) {
+            api.runAnswers = answered(ONE)
+            lesson = playable(listOf(checkStep(ONE))).copy(resume = ApiJson.decodeFromString(api.runAnswers))
+            api.load = LessonLoad.Ready(lesson)
+            val vm = player(null, tapped = false)
+            vm.open(lesson)
+            advanceUntilIdle()
+            assertEquals(
+                CompletionStatus.Ready,
+                vm.state.value
+                    ?.completion
+                    ?.status,
+            )
+            assertTrue(api.startOpenings.isEmpty())
+
+            vm.dispatch(LessonAction.CompletionRetried)
+            vm.state.first { it?.completion?.status != CompletionStatus.Saving }
+            assertEquals(1, api.startOpenings.size)
+            assertEquals(listOf(RUN_ID), api.completions)
+            assertEquals(
+                CompletionStatus.Saved,
+                vm.state.value
+                    ?.completion
+                    ?.status,
+            )
+        }
+
+    @Test fun standaloneLessonWaitsForInputBeforeStarting() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE)))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
+            val vm = player(null, tapped = false)
+            vm.open(lesson)
+            runCurrent()
+            assertNotNull(vm.state.value?.currentStep)
+            vm.restoreAnswer(LessonAnswer.Check("right"))
+            runCurrent()
+            assertTrue(api.startOpenings.isEmpty())
+            vm.act()
+            vm.act()
+            runCurrent()
+            assertEquals(1, api.startOpenings.size)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(
+                vm.state.value
+                    ?.run
+                    .toString(),
+                vm.state.value?.run is LessonRun.Started,
+            )
         }
 
     @Test fun restoredStartWaitsAndOpenedReturnsToToday() =

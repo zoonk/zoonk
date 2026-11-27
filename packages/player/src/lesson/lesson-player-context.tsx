@@ -84,6 +84,7 @@ type LessonPlayerConfig = {
   >;
   linkComponent: PlayerLinkComponent;
   outline: boolean;
+  saved?: boolean;
   routes: LessonPlayerRoutes;
   slots: LessonPlayerSlots;
   soundsEnabled: boolean;

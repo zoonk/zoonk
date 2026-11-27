@@ -10,6 +10,15 @@ struct PlayableLesson: Hashable, Sendable {
   let steps: [LessonStep]
   let summary: LessonSummary?
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
+  var resume: [LessonRunAnswer] = []
+  var saved: Bool? = nil
+}
+
+private func lessonRunAnswer(_ answer: Components.Schemas.LibraryLessonRunAnswer) -> LessonRunAnswer
+{
+  LessonRunAnswer(
+    stepId: answer.stepId, answeredAt: answer.answeredAt, answer: answer.answer?.value1,
+    result: LessonStepResult(answer.result, answerText: answer.result.answerText))
 }
 
 struct LessonOutline: Hashable, Sendable {
@@ -134,7 +143,8 @@ struct LessonPlayerAPI: Sendable {
             targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapter?.title,
             steps: lesson.steps,
             summary: lesson.summary?.value1,
-            tutorSuggestions: ready.tutorSuggestions))
+            tutorSuggestions: ready.tutorSuggestions,
+            resume: (ready.resume ?? []).map(lessonRunAnswer), saved: ready.saved))
       case .case2(let outline):
         let lesson = outline.lesson
         return .notGenerated(
@@ -190,11 +200,7 @@ struct LessonPlayerAPI: Sendable {
         LessonRunStart(
           runId: run.runId, sessionId: run.sessionId, clockId: run.clockId,
           startedAt: run.startedAt,
-          answers: run.answers.map {
-            LessonRunAnswer(
-              stepId: $0.stepId, answeredAt: $0.answeredAt, answer: $0.answer?.value1,
-              result: LessonStepResult($0.result, answerText: $0.result.answerText))
-          },
+          answers: run.answers.map(lessonRunAnswer),
           hyperdrive: LessonHyperdriveStart(
             knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
           optionalStepIds: run.optionalStepIds ?? [], saved: run.saved))

@@ -38,7 +38,8 @@ internal fun MatchColumnsView(
     answer: LessonAnswer?,
     checked: Boolean,
     locked: Boolean,
-    onAnswer: (LessonAnswer?) -> Unit,
+    onPick: () -> Unit,
+    onRestore: (LessonAnswer) -> Unit,
     onDone: (LessonAnswer) -> Unit,
     takeNumberKeys: (((Int) -> Boolean)?) -> Unit,
     question: @Composable () -> Unit,
@@ -63,7 +64,7 @@ internal fun MatchColumnsView(
 
     // After the app was closed in the background, the saved pairs come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
-        if (answer == null && !checked && board.isComplete) onAnswer(answerOf(work))
+        if (answer == null && !checked && board.isComplete) onRestore(answerOf(work))
     }
 
     var sent by remember { mutableStateOf(false) }
@@ -78,6 +79,7 @@ internal fun MatchColumnsView(
 
     fun tap(spot: MatchSpot) {
         if (locked) return
+        onPick()
         val next = board.tap(spot)
         if (next.isComplete(lefts.size)) {
             sent = true

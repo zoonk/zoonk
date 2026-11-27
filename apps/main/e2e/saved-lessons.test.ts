@@ -100,7 +100,6 @@ test.describe("Saved lessons", () => {
 
       const started = waitForLessonStart(page, unfinished.id);
       await page.goto(`/learn/${unfinished.id}`);
-      await started;
 
       const save = page.getByRole("button", { exact: true, name: "Save" });
       await expect(save).toHaveAttribute("aria-pressed", "false");
@@ -111,6 +110,7 @@ test.describe("Saved lessons", () => {
       await expect.poll(() => savedCount(user.id)).toBe(1);
 
       await page.getByRole("button", { name: /^Continue/u }).click();
+      await started;
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
       await expect(saved).toHaveAttribute("aria-pressed", "true");
 
@@ -201,9 +201,15 @@ test.describe("Saved lessons", () => {
       await save.click();
       await expect.poll(() => savedCount(user.id)).toBe(1);
 
-      const started = waitForLessonStart(page, finished.id);
+      const starts: string[] = [];
+
+      page.on("request", (request) => {
+        if (new URL(request.url()).pathname === `/api/library/lessons/${finished.id}/starts`) {
+          starts.push(request.url());
+        }
+      });
+
       await page.getByRole("main").getByRole("link", { name: finished.title }).click();
-      await started;
 
       const saved = page.getByRole("button", { exact: true, name: "Saved" });
       await expect(saved).toHaveAttribute("aria-pressed", "true");
@@ -212,6 +218,7 @@ test.describe("Saved lessons", () => {
 
       await page.getByRole("link", { name: "Leave" }).click();
       await expect(page).toHaveURL(/\/completed-lessons$/u);
+      expect(starts).toHaveLength(0);
 
       await expect(save).toHaveAttribute("aria-pressed", "false");
       await save.click();
@@ -279,10 +286,8 @@ test.describe("Saved lessons", () => {
       await expect(gone).toBeHidden();
       await expect.poll(() => savedCount(user.id)).toBe(2);
 
-      const started = waitForLessonStart(page, unfinished.id);
       await list.getByRole("link", { name: new RegExp(unfinished.title, "u") }).click();
       await expect(page).toHaveURL(/from=%2Fsaved-lessons/u);
-      await started;
 
       await page.getByRole("link", { name: "Leave" }).click();
       await expect(page).toHaveURL(/\/saved-lessons$/u);

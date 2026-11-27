@@ -88,6 +88,7 @@ internal fun ArrangeWordsView(
     language: String,
     speech: SpeechPlayer?,
     onAnswer: (LessonAnswer?) -> Unit,
+    onRestore: (LessonAnswer) -> Unit,
     prompt: @Composable () -> Unit,
 ) {
     val correctWords = remember(answerText, kind) { acceptedWords(answerText, kind) }
@@ -109,7 +110,7 @@ internal fun ArrangeWordsView(
     // After the app was closed in the background, the saved words come back but the player's answer doesn't.
     LaunchedEffect(Unit) {
         if (answer == null && !checked && placed.isNotEmpty()) {
-            onAnswer(kind.answer(placed.map(PlacedWord::word)))
+            onRestore(kind.answer(placed.map(PlacedWord::word)))
         }
     }
 

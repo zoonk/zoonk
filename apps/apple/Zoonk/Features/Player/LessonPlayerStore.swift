@@ -262,6 +262,7 @@ final class LessonPlayerStore {
 
     // Another session's answers are never sent with this one's.
     if identity != self.identity {
+      if self.identity != nil { activated = false }
       held = []
       heldOnDevice = nil
       clock = nil
@@ -280,7 +281,13 @@ final class LessonPlayerStore {
 
     do {
       let revision = lessonResource.revision
-      if refresh {
+      if !refresh, identity != nil, case .ready(let cached) = lessonResource.value,
+        !cached.steps.contains(where: isUnplayable)
+      {
+        showLesson(cached)
+        if activated { beginStart() }
+      }
+      if refresh || !activated {
         await lessonResource.refresh()
       } else {
         await lessonResource.load()
@@ -311,20 +318,11 @@ final class LessonPlayerStore {
             LessonOutline(id: lesson.id, title: lesson.title, description: "", estimatedMinutes: 0))
           return
         }
-        guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
-        self.lesson = lesson
-        heldForRun = []
-        var state = LessonPlayerState(
-          lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
-        leaveOutDictation(&state)
-        self.state = state
-        works = [:]
-        acted = false
-        workedHere = []
-        openedAt = .now
-        // Written content can paint before admission; server actions await the run.
-        screen = .playing
-        if opening == nil || activated {
+        if screen != .playing || (!activated && self.lesson != lesson) {
+          guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
+          showLesson(lesson)
+        }
+        if activated {
           beginStart()
           await starting?.value
         }
@@ -338,7 +336,24 @@ final class LessonPlayerStore {
     }
   }
 
-  func cancelStart() { starting?.cancel() }
+  private func showLesson(_ lesson: PlayableLesson) {
+    if screen != .playing { openedAt = .now }
+    self.lesson = lesson
+    heldForRun = []
+    var state = LessonPlayerState(
+      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
+    leaveOutDictation(&state)
+    state.resume(from: lesson.resume)
+    self.state = state
+    works = [:]
+    acted = false
+    workedHere = []
+    screen = .playing
+  }
+
+  func leave() {
+    starting?.cancel()
+  }
 
   @discardableResult
   func setVisible(_ visible: Bool) -> Task<Void, Never>? {
@@ -435,7 +450,6 @@ final class LessonPlayerStore {
     beginStart()
   }
 
-  /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
   func act() {
     if let step = state?.currentStep, step.kind == .activity { workedHere.insert(step.id) }
     acted = true
@@ -727,14 +741,14 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
-    activate()
     guard let stepId = state?.currentStep?.id else { return }
+    act()
     workedHere.insert(stepId)
     state?.select(answer, for: stepId)
   }
 
   func continueLesson() {
-    activate()
+    act()
     writeExampleLinesOnce()
     sendUnsaved()
     state?.continueLesson()
@@ -742,23 +756,25 @@ final class LessonPlayerStore {
   }
 
   func goBack() {
+    act()
     state?.goBack()
   }
 
   func explainFirst() {
     if let stepId = state?.currentStep?.id { workedHere.insert(stepId) }
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
   func knowThis() {
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
   func dontKnow() {
+    act()
     guard let stepId = state?.currentStep?.id else { return }
     state?.dontKnow(stepId)
   }
@@ -806,7 +822,7 @@ final class LessonPlayerStore {
       return
     }
 
-    activate()
+    act()
     writeExampleLinesOnce()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 

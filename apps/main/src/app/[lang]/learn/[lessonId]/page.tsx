@@ -17,7 +17,7 @@ import {
   getPlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/get";
 import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/playable-lesson";
-import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
+import { getLessonVisit } from "@zoonk/core/lesson-player/progress";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
@@ -236,7 +236,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     goalId,
     fit,
     finishedBlockId,
-    resume,
+    { resume, saved },
     tutor,
     [challengeTeam, tutorSuggestions, waiting],
     routing,
@@ -247,7 +247,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
     getActiveGoalId(),
     getLessonFit({ lessonId }),
     finishedBlockRead,
-    getLessonProgress({ lessonId }),
+    getLessonVisit({ lessonId }),
     getTutorViewer(),
     lessonDetailsRead,
     routingRead,
@@ -287,6 +287,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           learnerId={session?.user.id ?? null}
           lesson={played.lesson}
           resume={resume}
+          saved={saved}
           routing={routing}
           finishedBlockId={finishedBlockId}
           opening={opening}
