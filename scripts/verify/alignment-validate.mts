@@ -54,6 +54,7 @@ const OPTIONAL = z
     text: z.string(),
     textBox: z.enum(["capitals", "ideographic face"]),
     textRole: z.enum(["button", "facts", "label", "title"]),
+    texts: z.union([z.int().nonnegative(), NOT_MEASURED]),
     type: z.string(),
     variant: z.string(),
   })

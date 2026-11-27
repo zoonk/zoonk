@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type Bounds, type Capture } from "./alignment-capture.mts";
-import { LABEL_TYPE, element, fixtureCapture } from "./alignment-fixtures.mts";
+import { LABEL_TYPE, element, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /**
@@ -345,5 +345,14 @@ describe("a progress bar under a row's name", () => {
       lineMiss(barred(lineRow("value", 30, 0), 12, 200)),
       /the value 15 below the label's middle/u,
     );
+  });
+});
+
+describe("descriptions Android draws in one note", () => {
+  it("counts each description the note says it drew, so a mark beside three lines sits on the first", () => {
+    const capture = real("android reveal clipped note 239de6628e, phone");
+    const birds = line(capture).filter((finding) => finding.detail.includes("How birds use sound"));
+
+    assert.deepEqual(birds, []);
   });
 });

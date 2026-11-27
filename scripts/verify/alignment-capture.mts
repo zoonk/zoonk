@@ -60,6 +60,8 @@ export type CaptureElement = {
   disabled?: boolean;
   /** A text's: how many lines it runs to. */
   lines?: number | NotMeasured;
+  /** A note's: how many descriptions it draws, where one note holds them all (Android). */
+  texts?: number | NotMeasured;
   type?: string;
   text?: string;
   name?: string;

@@ -117,10 +117,12 @@ function misses(context: Context, row: CaptureElement, own: CaptureElement[]): M
   // empty bar's faint track), its box still holds the line the row makes room for.
   const baseline = measured(label.capBottom);
 
-  const notes = own.filter((element) => {
-    const place = element.part === "note" ? (drawn(element) ?? box(element.bounds)) : null;
-    return place && place.bottom > place.top && baseline !== null && place.top >= baseline;
-  }).length;
+  const notes = own
+    .filter((element) => {
+      const place = element.part === "note" ? (drawn(element) ?? box(element.bounds)) : null;
+      return place && place.bottom > place.top && baseline !== null && place.top >= baseline;
+    })
+    .reduce((count, note) => count + (measured(note.texts, 1) ?? 1), 0);
 
   const lines = measured(label.lines, 1);
 
