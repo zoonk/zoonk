@@ -3,7 +3,7 @@ import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
 import { withSavedNextStep } from "./_utils/writing-next-step";
-import { WRITING_LINE_WIDTHS } from "./writing-lines";
+import { WRITING_CHARACTERS_PER_LINE, WRITING_MAX_CHARACTERS_PER_LINE } from "./writing-lines";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -48,17 +48,22 @@ export const writingPromptSchema = writingBasisSchema
       .int()
       .positive()
       .describe("Characters a line in a typical hand, as the estimated line count uses"),
-    denseCharactersPerLine: z
+    maxCharactersPerLine: z
       .int()
       .positive()
       .describe(
-        "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width",
+        "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
       ),
   })
   .meta({ id: "WritingPrompt" });
 
+/** The widths are measured on real handwriting, so a saved task reads at today's, never its own. */
 export function readWritingPrompt(value: unknown): z.infer<typeof writingPromptSchema> {
-  return { ...writingBasisSchema.parse(value), ...WRITING_LINE_WIDTHS };
+  return {
+    ...writingBasisSchema.parse(value),
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+  };
 }
 
 const keyedWritingRowKind = z.enum(["definitePoint", "judgedScale"]);

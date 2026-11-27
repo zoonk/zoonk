@@ -15,6 +15,7 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
 import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
+import cacd2025HistoryQ4 from "./_test-utils/cacd-2025-history-q4.json";
 import { calibrationFixture, rowCalibrationFixture } from "./_test-utils/writing-calibration";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
@@ -33,7 +34,11 @@ import {
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import { WRITING_LINE_WIDTHS, countWritingLines } from "./writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_MAX_CHARACTERS_PER_LINE,
+  countWritingLines,
+} from "./writing-lines";
 import { isNumericWritingRubric } from "./writing-rubric-policy";
 
 vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) => ({
@@ -701,81 +706,58 @@ describe(getWritingTaskBasis, () => {
   });
 });
 
-/** Answers of `characters` a line in equal paragraphs, filling `lines` lines of the sheet. */
-function handwrittenAnswer({
-  characters,
-  lines,
-  paragraphs,
-}: {
-  characters: number;
-  lines: number;
-  paragraphs: number;
-}) {
-  const length = Math.floor((characters * lines) / paragraphs);
-  const paragraph = "Uma frase da resposta. ".repeat(length).slice(0, length).trim();
-  return Array.from({ length: paragraphs }, () => paragraph).join("\n\n");
+function count(text: string, limit: number) {
+  return countWritingLines({
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+    limit,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+    text,
+  });
 }
 
 describe(countWritingLines, () => {
   // CACD 2024 Portuguese essay, 69.5/70 on 70 handwritten lines, guide pp. 34–36:
   // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
   it("keeps a full 70-line answer that the board graded in full", () => {
-    expect(
-      countWritingLines({ ...WRITING_LINE_WIDTHS, limit: 70, text: cacd2024Essay }).ignoredFrom,
-    ).toBeNull();
+    expect(count(cacd2024Essay, 70)).toStrictEqual({ estimatedLines: 55, ignoredFrom: null });
   });
 
-  // Widths the same guide records: each transcription's characters over the lines its writer
-  // filled ("nº de linhas escritas"), every answer read in full by Cebraspe.
-  it.each([
-    { characters: 127, lines: 40, paragraphs: 4, source: "history Q4, 20 of 20" },
-    {
-      characters: 133,
-      lines: 40,
-      paragraphs: 1,
-      source: "international politics Q4, written small",
-    },
-    { characters: 111, lines: 60, paragraphs: 3, source: "history Q2" },
-    { characters: 130, lines: 60, paragraphs: 19, source: "2025 history Q1, 30 of 30" },
-    { characters: 62, lines: 30, paragraphs: 4, source: "translation" },
-  ])(
-    "grades in full a published answer of $characters characters a line ($source)",
-    async (answer) => {
-      mockEvidence();
-      const text = handwrittenAnswer(answer);
+  // CACD 2025 history Q4, 20/20 on 40 handwritten lines, the densest hand in the guides:
+  // https://drive.google.com/file/d/1iyvblAfecpqH2SSnKNP1NzOc2vntNiWK/view
+  it("grades in full an answer a dense hand fit, though a typical hand would run over", () => {
+    const { estimatedLines, ignoredFrom } = count(cacd2025HistoryQ4, 40);
 
-      const writing = { ...basis, lines: answer.lines };
-
-      const grade = await gradeWriting({
-        content: { ...content, writing },
-        language: "pt",
-        previousNextSteps: [],
-        text,
-      });
-
-      expect(grade.ignoredFrom).toBeNull();
-      expect(vi.mocked(gradeWritingEvidence).mock.lastCall?.[0].text).toBe(text);
-    },
-  );
-
-  it("stops where even the densest measured handwriting runs past the sheet", () => {
-    const text = handwrittenAnswer({ characters: 180, lines: 40, paragraphs: 4 });
-
-    const { estimatedLines, ignoredFrom } = countWritingLines({
-      ...WRITING_LINE_WIDTHS,
-      limit: 40,
-      text,
-    });
-
-    expect(estimatedLines).toBeGreaterThan(60);
-    expect(ignoredFrom).toBeGreaterThan(text.length * 0.8);
+    expect(estimatedLines).toBeGreaterThan(40);
+    expect(ignoredFrom).toBeNull();
   });
 
-  it("reads a task saved with an older line width at the measured ones", () => {
-    expect(readWritingPrompt({ ...basis, charactersPerLine: 55 })).toMatchObject({
-      charactersPerLine: 87,
-      denseCharactersPerLine: 155,
+  it("stops reading where no published hand could fit the text", () => {
+    const { ignoredFrom } = count(`${cacd2025HistoryQ4}\n${cacd2025HistoryQ4}`, 40);
+
+    expect(ignoredFrom).toBeGreaterThan(cacd2025HistoryQ4.length);
+    expect(ignoredFrom).toBeLessThan(cacd2025HistoryQ4.length * 2);
+  });
+
+  it.each([55, 70])("reads a task saved at %i characters a line at today's widths", (width) => {
+    expect(readWritingPrompt({ ...basis, charactersPerLine: width })).toMatchObject({
+      charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+      maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
     });
+  });
+
+  it("grades a dense answer in full whatever width its task was saved with", async () => {
+    mockEvidence();
+    const writing = writtenItemSchema.parse({ ...basis, charactersPerLine: 55, lines: 40 });
+
+    const grade = await gradeWriting({
+      content: { ...content, writing },
+      language: "pt",
+      previousNextSteps: [],
+      text: cacd2025HistoryQ4,
+    });
+
+    expect(grade.ignoredFrom).toBeNull();
+    expect(vi.mocked(gradeWritingEvidence).mock.lastCall?.[0].text).toBe(cacd2025HistoryQ4);
   });
 
   it.each(lineFixtures)(

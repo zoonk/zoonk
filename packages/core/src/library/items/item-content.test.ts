@@ -189,7 +189,7 @@ describe(parseItemContent, () => {
     expect(item).toMatchObject({ content: { writing: basis } });
     expect(item).not.toHaveProperty("content.writing.charactersPerLine");
     const question = readWritingPrompt(writing);
-    expect(question).toMatchObject({ charactersPerLine: 87, denseCharactersPerLine: 155 });
+    expect(question).toMatchObject({ charactersPerLine: 87, maxCharactersPerLine: 160 });
     expect(question.criteria).toStrictEqual([criterion]);
     expect(question).not.toHaveProperty("aspects");
     expect(question).not.toHaveProperty("grading");

@@ -43,9 +43,13 @@
   "essay_level_missing": "d9083562a03840036052cc39c439d06adf196fe4be0e10f1d3f3d3e20720a622",
   "essay_level_partial": "8848a6b3e30c9e76224a2decbb10823c38c9c1de924c894181fbd7dedfad879f",
   "essay_level_strong": "4ae0dac8c9b357f8dabfe4c4746905d4cf6b58d527a52d89f4e219a9c9c78e89",
+  "essay_limit_text": "99a3b622f157a017871268cda5820fc422b2775c3a68fa888d5590e14b6649e5",
+  "essay_limit_text_any": "6e8697d03b0b1e3fb5c37f2e9d47cb462740bf018b4868e411efc684e2b5c6f3",
   "essay_limit_title": "e65109bc2f62995a35be2ff571781e07eb5bde0a42d60c633486e267e841223d",
   "essay_limit_title_any": "e47f312e69b34e5595be8791a4f6c0e4a3545c4224cd0aef9acd0cde30c53b9d",
   "essay_lines_empty": "a87e184165e2b6706ae5163d43a1ef9f84617de83255314fa78ea03841ac0307",
+  "essay_lines_end_unread": "3fa4e757ece84e07969690fb39b64e9d749ff46a18f779d2851510b7fe1407d9",
+  "essay_lines_may_not_fit": "df96c0c0bdafca5f0a01bd57d06b46814422f2d5c87dd74cfd705fada1f57ea8",
   "essay_lines_question": "7b484b9419b561d62ca10d9fa3e345e853ff0f8999c1f8383a78188389a4385c",
   "essay_lines_used": "515543acb7eaf85227dae1f8e404f35bfb3bb55461a8cdfae073b5b12d7ba423",
   "essay_minus": "ee0f5375ee112a6ea1f3ef7b35535eedf10321801f4cfeba36479709752e8856",
@@ -62,6 +66,8 @@
   "essay_part_minimum": "c279833844589540a056daf24c00515a0cb482fca20f802b57e2262054f9d87a",
   "essay_part_minimum_points": "b237cb8012d3c3d1615ecf76bc8d054e3138379a00f9b2d5735683c7bb15f7af",
   "essay_part_minimum_total": "2738ef03704cdd87c24c6eea373b48aa48524d11a5d513315ab646b07a535022",
+  "essay_past_limit": "1bb26200aaeda46329f06f8189f0e295e20399f018335abbd1e70ea8e49accf6",
+  "essay_past_line": "0517999fe475de47931f7571e5cada5d091b015d6de2c9b8f7e96181a49fa349",
   "essay_points": "cfd52f8436b365cd72fa2ee86a3d2fabd8057984a383ca1751d708d1a74d1372",
   "essay_points_of": "74de6b45fab1d14d87a065be80d95d804d553e2d6a5c461bd23b56d54bde333d",
   "essay_points_split": "b04f171879e988ce8686799338fdb3a9fa5795816912fb9f9222940af059268f",
@@ -188,6 +194,10 @@
     <plurals name="essay_lines_empty">
         <item quantity="other">%1$d行中0行</item>
     </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">約%1$d行／%2$d行 · 紙に収まらない可能性があります</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">約%1$d行／%2$d行 · 末尾は読まれません</string>
     <string name="essay_conflict_title">別の端末で答案が変更されました</string>
     <string name="essay_conflict_body">ここで書いている内容を残すか、別の端末の内容に切り替えられます。</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -243,6 +253,8 @@
         <item quantity="other">%1$d行に収める</item>
     </plurals>
     <string name="essay_limit_title_any">行数の上限に収める</string>
+    <string name="essay_limit_text">採点者は%1$d行目で読むのをやめるため、その先は読まれません。</string>
+    <string name="essay_limit_text_any">採点者は行数の上限で読むのをやめるため、その先は読まれません。</string>
     <string name="essay_short_title">もっと長い回答を書く</string>
     <string name="essay_short_text">この回答は短すぎて採点できません。書き足してから、もう一度送信してください。</string>
     <string name="essay_zero_title">質問に答える</string>
@@ -279,6 +291,8 @@
     <string name="essay_see_comments">コメントを見る</string>
     <string name="essay_comments">コメント</string>
     <string name="essay_your_text">テキスト</string>
+    <string name="essay_past_line">%1$d行目以降は採点者は読みません</string>
+    <string name="essay_past_limit">上限を超えた部分は採点者は読みません</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">「%1$s」と書いています（%2$s）</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

@@ -58,10 +58,8 @@ function WritingNextStep({
         quote={null}
         text={
           lines
-            ? t("Even in small handwriting, it runs past line {lines}, where graders stop.", {
-                lines: String(lines),
-              })
-            : t("Even in small handwriting, it runs past the line limit, where graders stop.")
+            ? t("Graders stop at line {lines}, so the rest isn't read.", { lines: String(lines) })
+            : t("Graders stop at the line limit, so the rest isn't read.")
         }
         title={
           lines
@@ -297,7 +295,7 @@ export function WritingResultView({
         <WritingNextStep grade={grade} lines={prompt.lines} text={text} />
       </div>
       <WritingCriteria grade={grade} prompt={prompt} />
-      <WritingMarkedText grade={grade} prompt={prompt} text={text} />
+      <WritingMarkedText grade={grade} lines={prompt.lines} text={text} />
     </div>
   );
 }

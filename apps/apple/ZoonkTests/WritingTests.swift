@@ -18,43 +18,73 @@ final class WrittenTrendTests: XCTestCase {
 /// Core's `countWritingLines` gives these counts and offsets; the writer, the result and the
 /// server must agree on where the board stops reading.
 final class WritingLinesTests: XCTestCase {
-  /// Core's shared cases (`packages/core/src/exams/essays/_test-utils/writing-lines.json`).
-  func testMatchesCoresSharedCases() {
-    let cases:
-      [(text: String, perLine: Int, dense: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
-        ("e\u{301}🙂\r\n\r\nnext", 2, 2, 2, 3, 10),
-        ("aaaaaaaaaa\n", 10, 10, 1, 1, nil),
-        ("aaaaaaaaaa\r\n", 10, 10, 1, 1, nil),
-        ("aaaaaaaaaa\r", 10, 10, 1, 1, nil),
-        ("aaaaaaaaaa\u{2028}", 10, 10, 1, 1, nil),
-        ("aaaaaaaaaa\u{2029}", 10, 10, 1, 1, nil),
-        ("aaaaaaaaaa\r\n\r\n", 10, 10, 1, 1, nil),
-        ("ab\n\ncd", 5, 5, 1, 2, 4),
-        ("\n\nab\n \t\u{a0}\r\n\u{2029}cd\n\n", 5, 5, 2, 2, nil),
-        ("abcdefgh", 4, 6, 2, 2, nil),
-        ("abcdefghij", 4, 6, 2, 3, nil),
-        ("abcdefghijklm", 4, 6, 2, 4, 12),
-        ("abcdefghijklm", 4, 6, nil, 4, nil),
-        ("👍🏽👨\u{200d}👩\u{200d}👧e\u{301}x", 2, 2, 1, 2, 12),
-        ("", 10, 10, 1, 0, nil),
-      ]
+  private struct SharedCase: Decodable {
+    let charactersPerLine: Int
+    let maxCharactersPerLine: Int
+    let limit: Int?
+    let text: String
+    let estimatedLines: Int
+    let ignoredFrom: Int?
+  }
+
+  func testMatchesCoresSharedCases() throws {
+    let file = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent()
+      .appending(path: "../../../packages/core/src/exams/essays/_test-utils/writing-lines.json")
+    let cases = try JSONDecoder().decode([SharedCase].self, from: Data(contentsOf: file))
+
+    XCTAssertFalse(cases.isEmpty)
 
     for item in cases {
-      let count = WritingLines.count(
-        item.text, charactersPerLine: item.perLine, denseCharactersPerLine: item.dense,
-        limit: item.limit)
-      XCTAssertEqual(count.estimatedLines, item.lines, "lines of \(item.text.debugDescription)")
-      XCTAssertEqual(count.ignoredFrom, item.ignoredFrom, "limit of \(item.text.debugDescription)")
+      XCTAssertEqual(
+        WritingLines.count(
+          item.text, charactersPerLine: item.charactersPerLine,
+          maxCharactersPerLine: item.maxCharactersPerLine, limit: item.limit),
+        .init(estimatedLines: item.estimatedLines, ignoredFrom: item.ignoredFrom),
+        item.text.debugDescription)
     }
   }
 
-  func testTheWordALimitSplitsIsMarkedPastItWhole() throws {
-    let grade = try decode(WritingResult.self, Self.levels(ignoredFrom: 6, errors: "[]"))
+  func testCountsLinesAsCoreDoes() {
+    let cases: [(text: String, perLine: Int, limit: Int?, lines: Int, ignoredFrom: Int?)] = [
+      ("abcdef", 5, 3, 2, nil),
+      ("ab\r\ncd", 5, 1, 2, 4),
+      ("abcde\nf", 5, 3, 2, nil),
+      ("a\n\n\nb", 5, 2, 2, nil),
+      ("👍🏽 👨‍👩‍👧e\u{301}x", 2, 1, 3, 5),
+      ("line\u{2028}two\u{2029}three", 10, nil, 3, nil),
+      ("\n", 5, nil, 0, nil),
+      ("abc def ghi jkl", 3, 2, 4, 8),
+    ]
 
-    let pieces = WritingMarks.pieces(grade: grade, text: "abc defghij")
+    for item in cases {
+      XCTAssertEqual(
+        WritingLines.count(
+          item.text, charactersPerLine: item.perLine, maxCharactersPerLine: item.perLine,
+          limit: item.limit),
+        .init(estimatedLines: item.lines, ignoredFrom: item.ignoredFrom),
+        item.text.debugDescription)
+    }
+  }
 
-    XCTAssertEqual(pieces.map(\.ignored), [false, true])
-    XCTAssertEqual(pieces.last?.start, 4)
+  func testTheCounterSaysTheEndIsUnreadOnlyWhenNoHandwritingFitsIt() throws {
+    let writing = try decode(
+      WritingPrompt.self,
+      """
+      {"charactersPerLine":10,"criteria":[],"keySource":"practiceKey","lines":1,\
+      "maxCharactersPerLine":20,"minimumWords":0,"points":null,"taskKey":"short","title":"T",\
+      "unit":"answer"}
+      """)
+    let count = { WritingLabels.lineCount($0, writing: writing) }
+
+    XCTAssertEqual(count(String(repeating: "a", count: 10)).words, "about 1 of 1 lines")
+    XCTAssertFalse(count(String(repeating: "a", count: 10)).isOver)
+    XCTAssertEqual(
+      count(String(repeating: "a", count: 20)).words, "about 2 of 1 lines · may not fit on paper")
+    XCTAssertTrue(count(String(repeating: "a", count: 20)).isOver)
+    XCTAssertEqual(
+      count(String(repeating: "a", count: 21)).words,
+      "about 3 of 1 lines · the end won't be read")
   }
 
   func testAnErrorAfterAnEmojiIsMarkedAtItsUTF16Offset() throws {
@@ -125,18 +155,6 @@ final class WritingLinesTests: XCTestCase {
       WritingMarks.attributed(
         grade: grade, lines: 30, text: "e\u{301}🙂 short", noteFont: .body, numberFont: .body
       ).characters.isEmpty)
-  }
-
-  func testALimitOnTheSpaceAfterAWordLeavesThatWordRead() {
-    XCTAssertEqual(WritingMarks.wordStart("abc def", 3), 3)
-    XCTAssertEqual(WritingMarks.wordStart("alpha beta", 5), 5)
-    XCTAssertEqual(WritingMarks.wordStart("abc defghij", 6), 4)
-    XCTAssertEqual(WritingMarks.wordStart("abc\ndef", 4), 4)
-
-    let cut = WritingLines.count(
-      "abc def", charactersPerLine: 3, denseCharactersPerLine: 3, limit: 1
-    ).ignoredFrom
-    XCTAssertEqual(cut.map { WritingMarks.wordStart("abc def", $0) }, 3)
   }
 
   static func levels(ignoredFrom: Int?, errors: String) -> String {
@@ -784,9 +802,9 @@ final class WritingDraftTests: XCTestCase {
     {"blockId":"\(blockId)","context":null,"drafts":\(drafts),"draft":\(draft),\
     "gradesLeft":6,"pacing":{"minutes":70,"source":"estimated"},"question":"Write it.",\
     "sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
-    "writing":{"charactersPerLine":55,"denseCharactersPerLine":85,"criteria":[{"id":"c1","name":"Content","points":null}],\
-    "keySource":"practiceKey","lines":30,"minimumWords":30,"points":30,"taskKey":"short",\
-    "title":"Internal and external control","unit":"answer"}}
+    "writing":{"charactersPerLine":55,"criteria":[{"id":"c1","name":"Content","points":null}],\
+    "keySource":"practiceKey","lines":30,"maxCharactersPerLine":160,"minimumWords":30,\
+    "points":30,"taskKey":"short","title":"Internal and external control","unit":"answer"}}
     """
   }
 }

@@ -1,12 +1,10 @@
 "use client";
 
-import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
+import { type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
-import { toWordStart } from "./word-start";
-import { WritingLineCount, getWritingFit } from "./writing-line-count";
 
 type Mark = { error: number | null; ignored: boolean; step: boolean };
 
@@ -17,8 +15,7 @@ function cutText({ grade, text }: { grade: WritingResult; text: string }): Piece
   const stepQuote = grade.nextStep?.quote;
   const stepStart = stepQuote ? text.indexOf(stepQuote) : -1;
 
-  const ignoredFrom =
-    grade.ignoredFrom === null ? text.length : toWordStart(text, grade.ignoredFrom);
+  const ignoredFrom = Math.min(grade.ignoredFrom ?? text.length, text.length);
 
   const cuts = new Set([0, text.length, ignoredFrom]);
 
@@ -61,20 +58,16 @@ function isErrorEnd(pieces: Piece[], index: number): boolean {
   return piece?.error !== null && pieces[index + 1]?.error !== piece?.error;
 }
 
-/**
- * The learner's text as sent, with each language error marked and numbered, and what graders
- * wouldn't read set apart. A text that fits its sheet only in small handwriting says so under it.
- */
+/** The learner's text as sent, with each language error marked and numbered, and what graders wouldn't read set apart. */
 export function WritingMarkedText({
   grade,
-  prompt,
+  lines,
   text,
 }: {
   grade: WritingResult;
-  prompt: WritingPrompt;
+  lines: number | null;
   text: string;
 }) {
-  const { lines } = prompt;
   const t = useExtracted();
   const pieces = cutText({ grade, text });
   const errorCount = grade.errors.length;
@@ -100,10 +93,8 @@ export function WritingMarkedText({
               {startsIgnored && (
                 <span className="text-warning-text my-2 block font-mono text-xs" role="note">
                   {lines
-                    ? t("Past line {lines} even in small handwriting: not read", {
-                        lines: String(lines),
-                      })
-                    : t("Past the limit even in small handwriting: not read")}
+                    ? t("Past line {lines}: graders stop reading here", { lines: String(lines) })
+                    : t("Past the limit: graders stop reading here")}
                 </span>
               )}
               <span
@@ -127,10 +118,6 @@ export function WritingMarkedText({
           );
         })}
       </p>
-
-      {grade.ignoredFrom === null && getWritingFit({ text, writing: prompt })?.fit === "small" && (
-        <WritingLineCount text={text} writing={prompt} />
-      )}
 
       {errorCount > 0 && (
         <StepRows aria-label={t("Language errors")}>

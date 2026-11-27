@@ -101,7 +101,7 @@ internal fun WritingResultView(
             WritingNextStep(step, prompt.lines?.toInt(), headingFirst = grade.points == null)
         }
         WritingCriteria(grade, prompt)
-        WritingMarkedText(grade, (step as? NextStep.Criterion)?.quote, prompt, text)
+        WritingMarkedText(grade, (step as? NextStep.Criterion)?.quote, prompt.lines?.toInt(), text)
     }
 }
 
@@ -260,10 +260,9 @@ private fun WritingNextStep(
 
             NextStep.Limit -> {
                 if (lines != null) {
-                    pluralStringResource(R.plurals.essay_limit_title, lines, lines) to
-                        stringResource(R.string.essay_limit_past_sheet, lines)
+                    pluralStringResource(R.plurals.essay_limit_title, lines, lines) to stringResource(R.string.essay_limit_text, lines)
                 } else {
-                    stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_past_sheet_any)
+                    stringResource(R.string.essay_limit_title_any) to stringResource(R.string.essay_limit_text_any)
                 }
             }
 
@@ -495,18 +494,14 @@ private fun WritingCriteria(
     }
 }
 
-/**
- * The learner's text as sent, each language error marked and numbered, and what graders wouldn't read
- * set apart. A text that fits its sheet only in small handwriting says so under it.
- */
+/** The learner's text as sent, each language error marked and numbered, and what graders wouldn't read set apart. */
 @Composable
 private fun WritingMarkedText(
     grade: WritingGrade,
     stepQuote: String?,
-    prompt: WritingPromptOutput,
+    lines: Int?,
     text: String,
 ) {
-    val lines = prompt.lines?.toInt()
     val errors = grade.errors.size
     val errorStyle =
         SpanStyle(
@@ -522,7 +517,7 @@ private fun WritingMarkedText(
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Medium,
         )
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) }
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length)
     val marked =
         remember(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle) {
             markText(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
@@ -537,24 +532,11 @@ private fun WritingMarkedText(
         Text(readable, style = MaterialTheme.typography.bodyLarge)
         ignoredFrom?.let {
             Text(
-                if (lines != null) {
-                    stringResource(R.string.essay_past_line_small_hand, lines)
-                } else {
-                    stringResource(R.string.essay_past_limit_small_hand)
-                },
+                if (lines != null) stringResource(R.string.essay_past_line, lines) else stringResource(R.string.essay_past_limit),
                 color = MaterialTheme.zoonk.warningText,
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(marked.subSequence(marked.offsetOf(it), marked.length), style = MaterialTheme.typography.bodyLarge)
-        }
-        // Graded in full, but it fits the sheet only written small.
-        val fit = remember(text, prompt) { writingFit(text, prompt) }
-        if (ignoredFrom == null && lines != null && fit?.second == WritingFit.SmallHandwriting) {
-            Text(
-                writingLinesLabel(fit.first.estimated, lines, WritingFit.SmallHandwriting),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.data,
-            )
         }
         if (errors > 0) {
             Column {
@@ -619,7 +601,7 @@ private fun markText(
     numberStyle: SpanStyle,
 ): MarkedText {
     val stepRange = stepQuote?.let { quote -> text.indexOf(quote).takeIf { it >= 0 }?.let { it until it + quote.length } }
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) } ?: text.length
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length) ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
     val cuts =
         (
@@ -651,20 +633,6 @@ private fun markText(
             offsets[text.length] = length
         }
     return MarkedText(annotated, offsets)
-}
-
-/**
- * A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
- * A limit on the space after a word leaves that word where the grader read it.
- */
-internal fun wordStart(
-    text: String,
-    offset: Int,
-): Int {
-    if (offset >= text.length || text[offset].isWhitespace()) return offset
-    var start = offset
-    while (start > 0 && !text[start - 1].isWhitespace()) start--
-    return start
 }
 
 private const val LEVEL_CELLS = 4

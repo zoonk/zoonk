@@ -242,11 +242,9 @@ enum WritingLabels {
     return facts
   }
 
-  /// "about 23 of 30 lines" ("0 of 30 lines" while empty), or the words written where the question
-  /// has no line limit. Past the limit it says whether the text fits if written small or
-  /// its end won't be read; `isOver` is the latter.
+  /// "about 23 of 30 lines" ("0 of 30 lines" while empty), or the words written where the question has no line limit.
   static func lineCount(_ text: String, writing: WritingPrompt) -> (words: String, isOver: Bool) {
-    guard let limit = writing.lines, let measured = WritingLines.fit(text, writing: writing) else {
+    guard let limit = writing.lines else {
       let words = WordCount.count(text)
       return (
         String(localized: "\(words) words", table: "Essay", comment: "An answer's word count"),
@@ -258,33 +256,37 @@ enum WritingLabels {
       return (String(localized: "0 of \(limit) lines", table: "Essay"), false)
     }
 
-    let used = measured.count.estimatedLines
+    let count = WritingLines.count(
+      text, charactersPerLine: writing.charactersPerLine,
+      maxCharactersPerLine: writing.maxCharactersPerLine, limit: limit)
+    let used = count.estimatedLines
 
-    switch measured.fit {
-    case .fits:
-      return (String(localized: "about \(used) of \(limit) lines", table: "Essay"), false)
-    case .smallHandwriting:
-      return (smallHandwriting(used: used, limit: limit), false)
-    case .over:
+    if count.ignoredFrom != nil {
       return (
         String(
           localized: "about \(used) of \(limit) lines · the end won't be read",
           table: "Essay",
           comment:
-            "The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line."
+            "The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end."
         ),
         true
       )
     }
-  }
 
-  static func smallHandwriting(used: Int, limit: Int) -> String {
-    String(
-      localized: "about \(used) of \(limit) lines · fits if written small",
-      table: "Essay",
-      comment:
-        "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small."
-    )
+    return used > limit
+      ? (
+        String(
+          localized: "about \(used) of \(limit) lines · may not fit on paper",
+          table: "Essay",
+          comment:
+            "The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it."
+        ),
+        true
+      )
+      : (
+        String(
+          localized: "about \(used) of \(limit) lines", table: "Essay"),
+        false
+      )
   }
-
 }

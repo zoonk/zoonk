@@ -34882,12 +34882,12 @@
             "maximum": 9007199254740991,
             "description": "Characters a line in a typical hand, as the estimated line count uses"
           },
-          "denseCharactersPerLine": {
+          "maxCharactersPerLine": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width"
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded"
           }
         },
         "required": [
@@ -34900,7 +34900,7 @@
           "title",
           "unit",
           "charactersPerLine",
-          "denseCharactersPerLine"
+          "maxCharactersPerLine"
         ]
       },
       "WritingTask": {
@@ -105912,12 +105912,12 @@
             "maximum": 9007199254740991,
             "description": "Characters a line in a typical hand, as the estimated line count uses"
           },
-          "denseCharactersPerLine": {
+          "maxCharactersPerLine": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width"
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded"
           }
         },
         "required": [
@@ -105930,7 +105930,7 @@
           "title",
           "unit",
           "charactersPerLine",
-          "denseCharactersPerLine"
+          "maxCharactersPerLine"
         ],
         "additionalProperties": false
       },

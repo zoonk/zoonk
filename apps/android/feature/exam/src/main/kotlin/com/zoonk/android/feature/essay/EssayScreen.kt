@@ -703,32 +703,27 @@ internal fun WritingLineCount(
         )
         return
     }
-    val (lines, fit) = remember(text, writing) { requireNotNull(writingFit(text, writing)) }
-    val over = fit == WritingFit.Over
+    val lines =
+        remember(text, writing.charactersPerLine, writing.maxCharactersPerLine, limit) {
+            countWritingLines(text, writing.charactersPerLine.toInt(), writing.maxCharactersPerLine.toInt(), limit)
+        }
+    val used = lines.estimated
+    val over = used > limit
     Text(
         if (text.isBlank()) {
             pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
+        } else if (lines.ignoredFrom != null) {
+            stringResource(R.string.essay_lines_end_unread, used, limit)
+        } else if (over) {
+            stringResource(R.string.essay_lines_may_not_fit, used, limit)
         } else {
-            writingLinesLabel(lines.estimated, limit, fit)
+            pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },
         modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = if (over) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurfaceVariant,
         style = style,
     )
 }
-
-/** "about 23 of 30 lines", and past the limit whether it fits if written small or its end won't be read. */
-@Composable
-internal fun writingLinesLabel(
-    used: Int,
-    limit: Int,
-    fit: WritingFit,
-): String =
-    when (fit) {
-        WritingFit.Fits -> pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
-        WritingFit.SmallHandwriting -> pluralStringResource(R.plurals.essay_lines_small_hand, limit, used, limit)
-        WritingFit.Over -> pluralStringResource(R.plurals.essay_lines_past_sheet, limit, used, limit)
-    }
 
 @Composable
 private fun StatusLine(

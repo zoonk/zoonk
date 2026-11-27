@@ -46,9 +46,9 @@ struct WritingPrompt: Hashable, Decodable, Sendable {
 
   var charactersPerLine: Int
   var criteria: [Criterion]
-  var denseCharactersPerLine: Int
   var keySource: KeySource
   var lines: Int?
+  var maxCharactersPerLine: Int
   var minimumWords: Int
   /// Nil on prompts written before it was recorded.
   var partMinimum: PartMinimum?

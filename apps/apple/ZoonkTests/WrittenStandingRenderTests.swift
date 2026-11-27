@@ -18,7 +18,7 @@ final class WrittenStandingRenderTests: XCTestCase {
   ]
 
   private static let prompt = """
-    {"charactersPerLine":55,"denseCharactersPerLine":85,"keySource":"notice","lines":30,\
+    {"charactersPerLine":87,"keySource":"notice","lines":30,"maxCharactersPerLine":160,\
     "minimumWords":30,"points":100,"taskKey":"q1","title":"Internal and external control",\
     "unit":"answer","criteria":[{"id":"c1","name":"Argument","points":40},\
     {"id":"c2","name":"Cohesion","points":30},{"id":"c3","name":"Language","points":30}]}
@@ -83,7 +83,7 @@ final class WrittenStandingRenderTests: XCTestCase {
       height: 1100, to: folder.appending(path: "ios-result-levels.png"))
 
     let line = "Control keeps public power accountable. "
-    for (name, lines) in [("fits", 20), ("small-hand", 36), ("over", 52)] {
+    for (name, lines) in [("fits", 20), ("may-not-fit", 36), ("over", 60)] {
       let essay = try decode(
         EssayView.self,
         """
@@ -92,21 +92,21 @@ final class WrittenStandingRenderTests: XCTestCase {
         "sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active","writing":\(Self.prompt)}
         """)
       let writer = EssayWriter(store: store, view: essay, admissionId: nil)
-      writer.write(String(repeating: line, count: lines * 55 / line.count))
+      writer.write(String(repeating: line, count: lines * 87 / line.count))
       try await write(
         NavigationStack { WritingEditorPage(writer: writer, essay: essay, onSend: {}) },
         height: 844, to: folder.appending(path: "ios-counter-\(name).png"))
     }
 
-    let text = String(repeating: line, count: 52 * 55 / line.count)
+    let text = String(repeating: line, count: 60 * 87 / line.count)
     let past = WritingLines.count(
-      text, charactersPerLine: 55, denseCharactersPerLine: 85, limit: 30
+      text, charactersPerLine: 87, maxCharactersPerLine: 160, limit: 30
     ).ignoredFrom
     let cut = try decode(
       WritingResult.self,
       WritingLinesTests.levels(ignoredFrom: past, errors: "[]"))
     try await write(
-      ZoonkList { WritingMarkedTextSection(grade: cut, prompt: prompt, text: text) },
+      ZoonkList { WritingMarkedTextSection(grade: cut, lines: prompt.lines, text: text) },
       height: 1600, to: folder.appending(path: "ios-result-not-read.png"))
   }
 

@@ -4,7 +4,7 @@ import SwiftUI
 /// underlined, and what graders wouldn't read set apart (main's `WritingMarkedText`).
 struct WritingMarkedTextSection: View {
   let grade: WritingResult
-  let prompt: WritingPrompt
+  let lines: Int?
   let text: String
 
   @Environment(\.self) private var environment
@@ -13,21 +13,12 @@ struct WritingMarkedTextSection: View {
     Section {
       Text(
         WritingMarks.attributed(
-          grade: grade, lines: prompt.lines, text: text,
+          grade: grade, lines: lines, text: text,
           noteFont: TypeStyle.data.font(in: environment),
           numberFont: TypeStyle.small.font(in: environment))
       )
       .typeStyle(.reading)
       .textSelection(.enabled)
-
-      // Graded in full, but it fits the sheet only written small.
-      if grade.ignoredFrom == nil, let limit = prompt.lines,
-        let measured = WritingLines.fit(text, writing: prompt), measured.fit == .smallHandwriting
-      {
-        Text(WritingLabels.smallHandwriting(used: measured.count.estimatedLines, limit: limit))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-      }
 
       ForEach(Array(grade.errors.enumerated()), id: \.offset) { index, error in
         ListRow(
@@ -84,7 +75,7 @@ enum WritingMarks {
       }
     }
     let ignoredFrom =
-      grade.ignoredFrom.map { snap(wordStart(text, min(max($0, 0), length)), edges, up: false) }
+      grade.ignoredFrom.map { snap(min(max($0, 0), length), edges, up: false) }
       ?? length
     let errors = grade.errors.map { error -> (start: Int, end: Int)? in
       let end = error.start + error.quote.utf16.count
@@ -112,20 +103,6 @@ enum WritingMarks {
         ignored: start >= ignoredFrom,
         step: step.map { start >= $0.start && start < $0.end } ?? false)
     }
-  }
-
-  /// A line limit falls inside a word as often as not; the word it splits is shown as past it,
-  /// whole. A limit on the space after a word leaves that word read.
-  static func wordStart(_ text: String, _ offset: Int) -> Int {
-    let units = Array(text.utf16)
-    let isWordUnit = { (unit: UInt16) in
-      Unicode.Scalar(unit).map { !$0.properties.isWhitespace } ?? true
-    }
-
-    guard offset > 0, offset < units.count, isWordUnit(units[offset]) else { return offset }
-
-    let splitWord = units[..<offset].reversed().prefix(while: isWordUnit)
-    return offset - splitWord.count
   }
 
   /// Where each character of `text` starts, in UTF-16 code units, and where the text ends.
@@ -161,11 +138,9 @@ enum WritingMarks {
           "\n"
             + (lines.map {
               String(
-                localized: "Past line \(String($0)) even in small handwriting: not read",
-                table: "Essay")
+                localized: "Past line \(String($0)): graders stop reading here", table: "Essay")
             }
-              ?? String(
-                localized: "Past the limit even in small handwriting: not read", table: "Essay"))
+              ?? String(localized: "Past the limit: graders stop reading here", table: "Essay"))
             + "\n")
         note.foregroundColor = .warningText
         note.font = noteFont

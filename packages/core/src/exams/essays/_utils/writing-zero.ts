@@ -52,8 +52,7 @@ function originalText(text: string, quote: string) {
 function shortEnough(text: string, maxLines: number | null | undefined) {
   return (
     typeof maxLines === "number" &&
-    estimateWritingLines({ charactersPerLine: WRITING_CHARACTERS_PER_LINE, text: text.trim() }) <=
-      maxLines
+    estimateWritingLines({ charactersPerLine: WRITING_CHARACTERS_PER_LINE, text }) <= maxLines
   );
 }
 

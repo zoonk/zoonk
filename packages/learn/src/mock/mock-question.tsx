@@ -14,7 +14,7 @@ import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
-import { WritingLineCount } from "../writing/writing-line-count";
+import { WritingLineCount } from "../writing/writing-editor";
 import { WritingQuestionBody } from "../writing/writing-question";
 import { useMockScreen } from "./mock-context";
 import { isNumberedMockQuestion, useMockQuestionLabel } from "./mock-labels";

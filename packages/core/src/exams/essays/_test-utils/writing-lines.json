@@ -1,122 +1,130 @@
 [
   {
     "charactersPerLine": 2,
-    "denseCharactersPerLine": 2,
+    "maxCharactersPerLine": 2,
+    "limit": 2,
+    "text": "é🙂\r\n\r\nnext",
     "estimatedLines": 3,
-    "ignoredFrom": 10,
-    "limit": 2,
-    "text": "e\u0301🙂\r\n\r\nnext"
+    "ignoredFrom": 8
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\n",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\n"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r\n",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\r\n"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\r"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\u2028",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\u2028"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\u2029",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\u2029"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aaaaaaaaaa\r\n\r\n",
     "estimatedLines": 1,
-    "ignoredFrom": null,
-    "limit": 1,
-    "text": "aaaaaaaaaa\r\n\r\n"
-  },
-  {
-    "charactersPerLine": 5,
-    "denseCharactersPerLine": 5,
-    "estimatedLines": 2,
-    "ignoredFrom": 4,
-    "limit": 1,
-    "text": "ab\n\ncd"
-  },
-  {
-    "charactersPerLine": 5,
-    "denseCharactersPerLine": 5,
-    "estimatedLines": 2,
-    "ignoredFrom": null,
-    "limit": 2,
-    "text": "\n\nab\n \t\u00a0\r\n\u2029cd\n\n"
-  },
-  {
-    "charactersPerLine": 4,
-    "denseCharactersPerLine": 6,
-    "estimatedLines": 2,
-    "ignoredFrom": null,
-    "limit": 2,
-    "text": "abcdefgh"
-  },
-  {
-    "charactersPerLine": 4,
-    "denseCharactersPerLine": 6,
-    "estimatedLines": 3,
-    "ignoredFrom": null,
-    "limit": 2,
-    "text": "abcdefghij"
-  },
-  {
-    "charactersPerLine": 4,
-    "denseCharactersPerLine": 6,
-    "estimatedLines": 4,
-    "ignoredFrom": 12,
-    "limit": 2,
-    "text": "abcdefghijklm"
-  },
-  {
-    "charactersPerLine": 4,
-    "denseCharactersPerLine": 6,
-    "estimatedLines": 4,
-    "ignoredFrom": null,
-    "limit": null,
-    "text": "abcdefghijklm"
-  },
-  {
-    "charactersPerLine": 2,
-    "denseCharactersPerLine": 2,
-    "estimatedLines": 2,
-    "ignoredFrom": 12,
-    "limit": 1,
-    "text": "👍🏽👨\u200d👩\u200d👧e\u0301x"
+    "ignoredFrom": null
   },
   {
     "charactersPerLine": 10,
-    "denseCharactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "",
     "estimatedLines": 0,
-    "ignoredFrom": null,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 2,
+    "text": "aa\n \t\n\nbb",
+    "estimatedLines": 2,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
     "limit": 1,
-    "text": ""
+    "text": "\n\n  aa  \n\n",
+    "estimatedLines": 1,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 20,
+    "limit": 1,
+    "text": "aaaaaaaaaaaaaaaaaaaa",
+    "estimatedLines": 2,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 20,
+    "limit": 1,
+    "text": "aaaaaaaaaaaaaaaaaaaa b",
+    "estimatedLines": 3,
+    "ignoredFrom": 21
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 2,
+    "text": "aaaaaaaaaa \nb",
+    "estimatedLines": 2,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "a a a a Brazil",
+    "estimatedLines": 2,
+    "ignoredFrom": 8
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 2,
+    "text": "A\n\uFEFFbbbbbbbbbb",
+    "estimatedLines": 3,
+    "ignoredFrom": 2
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aa\u00A0bb\u0085cc",
+    "estimatedLines": 1,
+    "ignoredFrom": null
   }
 ]

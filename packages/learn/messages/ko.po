@@ -3243,7 +3243,7 @@ msgid "Not saved yet. It's kept on this device."
 msgstr "아직 저장되지 않았어요. 이 기기에 보관되어 있어요."
 
 #: src/essay/essay-word-count.tsx
-#: src/writing/writing-line-count.tsx
+#: src/writing/writing-editor.tsx
 msgctxt "-8LNI4"
 msgid "{count, plural, one {# word} other {# words}}"
 msgstr "{count, plural, other {#단어}}"
@@ -13232,7 +13232,7 @@ msgid "{count, plural, one {about # line} other {about # lines}}"
 msgstr "{count, plural, other {약 #줄}}"
 
 #: src/syllabus/subject-written-score.tsx
-#: src/writing/writing-line-count.tsx
+#: src/writing/writing-editor.tsx
 #: src/writing/writing-points-header.tsx
 msgctxt "sKcJTn"
 msgid "about {used} of {lines} lines"
@@ -14055,6 +14055,23 @@ msgid "Keep this one"
 msgstr "이 버전 유지"
 
 #: src/writing/writing-editor.tsx
+msgctxt "a2NxUG"
+msgid "0 of {lines} lines"
+msgstr "0/{lines}줄"
+
+#. The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.
+#: src/writing/writing-editor.tsx
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr "약 {used}/{lines}줄 · 끝부분은 읽지 않아요"
+
+#. The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.
+#: src/writing/writing-editor.tsx
+msgctxt "VxrG7A"
+msgid "about {used} of {lines} lines · may not fit on paper"
+msgstr "약 {used}/{lines}줄 · 종이에 다 들어가지 않을 수 있어요"
+
+#: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"
 msgid "This answer is {count} characters too long. Shorten it to save and grade it."
 msgstr "답변이 글자 수 제한보다 {count}자 많아요. 저장하고 채점하려면 줄여 주세요."
@@ -14151,23 +14168,6 @@ msgstr "내일 다시: 오늘은 더 이상 채점할 수 없어요"
 msgctxt "cvptXL"
 msgid "Back on {date}: no more grading today"
 msgstr "{date}에 다시: 오늘은 더 이상 채점할 수 없어요"
-
-#: src/writing/writing-line-count.tsx
-msgctxt "a2NxUG"
-msgid "0 of {lines} lines"
-msgstr "0/{lines}줄"
-
-#. The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.
-#: src/writing/writing-line-count.tsx
-msgctxt "B33WO_"
-msgid "about {used} of {lines} lines · fits if written small"
-msgstr ""
-
-#. The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line.
-#: src/writing/writing-line-count.tsx
-msgctxt "O21PBU"
-msgid "about {used} of {lines} lines · the end won't be read"
-msgstr ""
 
 #: src/writing/writing-next-step.tsx
 msgctxt "BQrBD9"
@@ -14275,14 +14275,14 @@ msgid "Write a longer answer"
 msgstr "답안을 더 길게 쓰기"
 
 #: src/writing/writing-result.tsx
-msgctxt "2TSlUm"
-msgid "Even in small handwriting, it runs past line {lines}, where graders stop."
-msgstr ""
+msgctxt "QYZhu-"
+msgid "Graders stop at line {lines}, so the rest isn't read."
+msgstr "채점은 {lines}번째 줄까지만 진행돼요. 그 뒤는 읽지 않아요."
 
 #: src/writing/writing-result.tsx
-msgctxt "0sJLK2"
-msgid "Even in small handwriting, it runs past the line limit, where graders stop."
-msgstr ""
+msgctxt "UIwidi"
+msgid "Graders stop at the line limit, so the rest isn't read."
+msgstr "채점은 줄 수 제한까지만 진행돼요. 그 뒤는 읽지 않아요."
 
 #: src/writing/writing-result.tsx
 msgctxt "rxvcLB"
@@ -14426,14 +14426,14 @@ msgid "With one, we write your question and grade what you write."
 msgstr "계정이 있으면 문제를 만들고, 작성한 답변을 채점해요."
 
 #: src/writing/writing-text.tsx
-msgctxt "h4IHcs"
-msgid "Past line {lines} even in small handwriting: not read"
-msgstr ""
+msgctxt "-QTlEJ"
+msgid "Past line {lines}: graders stop reading here"
+msgstr "{lines}번째 줄 이후: 여기부터 채점자가 읽지 않아요"
 
 #: src/writing/writing-text.tsx
-msgctxt "A2kY2e"
-msgid "Past the limit even in small handwriting: not read"
-msgstr ""
+msgctxt "ecaPI4"
+msgid "Past the limit: graders stop reading here"
+msgstr "분량 제한 이후: 여기부터 채점자가 읽지 않아요"
 
 #: src/writing/writing-text.tsx
 msgctxt "agrPL7"

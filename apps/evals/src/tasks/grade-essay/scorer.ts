@@ -1,7 +1,10 @@
 import { createFixedScore } from "@/lib/score";
 import { canDetectLanguage, detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
-import { WRITING_LINE_WIDTHS, countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  estimateWritingLines,
+} from "@zoonk/core/exams/essays/writing-lines";
 import { markWritingRows } from "@zoonk/core/exams/essays/writing-marks";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { type GradeWritingOutput } from "./task";
@@ -233,9 +236,8 @@ function expectedScore({
 
   const { basis, text } = input;
 
-  const { estimatedLines } = countWritingLines({
-    ...WRITING_LINE_WIDTHS,
-    limit: basis.lines,
+  const estimatedLines = estimateWritingLines({
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     text,
   });
 

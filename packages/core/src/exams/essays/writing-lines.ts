@@ -1,64 +1,55 @@
 export const WRITING_LINE_BREAK = /\r\n|[\r\n\u2028\u2029]/u;
-const LINE_BREAKS = new RegExp(WRITING_LINE_BREAK.source, "gu");
-const BLANK = /^\p{White_Space}*$/u;
 const GRAPHEMES = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
 // Median of 38 published handwritten answers from CACD 2024–2025 and Inep’s 2020 booklet.
 export const WRITING_CHARACTERS_PER_LINE = 87;
 
-// The densest of 122 published CACD answers read in full: a 2025 history answer of 7,771
-// characters and 19 paragraphs on 60 lines, marked 30 of 30 (#3265).
-export const WRITING_DENSE_CHARACTERS_PER_LINE = 155;
+// The densest hand a board read in full: every CACD 2024–2025 answer in the candidate guides fits
+// its sheet's limit at this width (the densest needs 159), so a typed answer is cut only where no
+// published hand could have fit it.
+export const WRITING_MAX_CHARACTERS_PER_LINE = 160;
 
-/** Both widths are measured on real handwriting, so a saved task reads at today's, never its own. */
-export const WRITING_LINE_WIDTHS = {
-  charactersPerLine: WRITING_CHARACTERS_PER_LINE,
-  denseCharactersPerLine: WRITING_DENSE_CHARACTERS_PER_LINE,
-};
+const SPACE = /^\p{White_Space}+$/u;
 
-/**
- * The sheet lines a text takes at `charactersPerLine`, and the UTF-16 offset of its first
- * grapheme past line `limit`. A line break starts a line, and a blank line takes none, since a
- * handwritten sheet skips no line between paragraphs.
- */
-function layOutLines({
-  charactersPerLine,
-  limit,
-  text,
-}: {
-  charactersPerLine: number;
-  limit: number | null;
-  text: string;
-}) {
+// A paragraph starts on the next line of the sheet, none is left blank between paragraphs, and a
+// space never starts a line, so only text opens one. The text past the limit starts at a word.
+function countLines(text: string, charactersPerLine: number, limit: number | null) {
   let lines = 0;
-  let pastLimitFrom: number | null = null;
-  let start = 0;
+  let passedFrom: number | null = null;
+  let used = 0;
+  let broken = false;
+  let wordStart = 0;
 
-  const ends = [...text.matchAll(LINE_BREAKS), { 0: "", index: text.length }];
+  for (const { index, segment } of GRAPHEMES.segment(text)) {
+    const space = SPACE.test(segment);
 
-  for (const { 0: lineBreak, index: end } of ends) {
-    const line = text.slice(start, end);
-
-    if (!BLANK.test(line)) {
-      let position = 0;
-
-      for (const { index } of GRAPHEMES.segment(line)) {
-        if (limit !== null && lines + Math.floor(position / charactersPerLine) >= limit) {
-          pastLimitFrom ??= start + index;
-        }
-
-        position += 1;
+    if (WRITING_LINE_BREAK.test(segment)) {
+      broken = lines > 0;
+    } else if (!space) {
+      if (lines === 0 || broken || used === charactersPerLine) {
+        lines += 1;
+        used = 0;
+        broken = false;
       }
 
-      lines += Math.ceil(position / charactersPerLine);
+      if (limit !== null && lines > limit) {
+        passedFrom ??= wordStart;
+      }
+
+      used += 1;
+    } else if (lines > 0 && !broken && used < charactersPerLine) {
+      used += 1;
     }
 
-    start = end + lineBreak.length;
+    if (space) {
+      wordStart = index + segment.length;
+    }
   }
 
-  return { lines, pastLimitFrom };
+  return { lines, passedFrom };
 }
 
+/** How many lines of the sheet the text would take at a typical hand. */
 export function estimateWritingLines({
   charactersPerLine,
   text,
@@ -66,28 +57,27 @@ export function estimateWritingLines({
   charactersPerLine: number;
   text: string;
 }) {
-  return layOutLines({ charactersPerLine, limit: null, text }).lines;
+  return countLines(text, charactersPerLine, null).lines;
 }
 
 /**
- * `estimatedLines` counts the text at a typical hand. Graders read up to `ignoredFrom`, where it
- * would pass the limit even at `denseCharactersPerLine`, so no answer that fits the sheet in real
- * handwriting loses its end.
+ * `estimatedLines` counts at a typical hand (`charactersPerLine`), so the learner sees how much
+ * of the sheet an answer would take; `ignoredFrom` is where the text passes `limit` even at the
+ * densest published hand (`maxCharactersPerLine`), the part no grader would read.
  */
 export function countWritingLines({
   charactersPerLine,
-  denseCharactersPerLine,
   limit,
+  maxCharactersPerLine,
   text,
 }: {
   charactersPerLine: number;
-  denseCharactersPerLine: number;
   limit: number | null;
+  maxCharactersPerLine: number;
   text: string;
 }) {
   return {
     estimatedLines: estimateWritingLines({ charactersPerLine, text }),
-    ignoredFrom: layOutLines({ charactersPerLine: denseCharactersPerLine, limit, text })
-      .pastLimitFrom,
+    ignoredFrom: countLines(text, maxCharactersPerLine, limit).passedFrom,
   };
 }

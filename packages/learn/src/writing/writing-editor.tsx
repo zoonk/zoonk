@@ -4,12 +4,81 @@ import {
   MAX_ESSAY_CHARACTERS,
   type WritingPrompt,
 } from "@zoonk/core/exams/essays/writing-contract";
+import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
+import { countWords } from "@zoonk/utils/string";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId } from "react";
 import { ESSAY_FIELD_CLASS } from "../essay/essay-labels";
-import { WritingLineCount } from "./writing-line-count";
+
+/** "about 23 of 30 lines": the count stays in view under the field, and what's past the limit says so. */
+export function WritingLineCount({
+  id,
+  text,
+  writing,
+}: {
+  id: string;
+  text: string;
+  writing: WritingPrompt;
+}) {
+  const t = useExtracted();
+
+  if (writing.lines === null) {
+    return (
+      <p className="text-muted-foreground font-mono text-xs tabular-nums" id={id}>
+        {t("{count, plural, one {# word} other {# words}}", { count: countWords(text) })}
+      </p>
+    );
+  }
+
+  const { estimatedLines, ignoredFrom } = countWritingLines({
+    charactersPerLine: writing.charactersPerLine,
+    limit: writing.lines,
+    maxCharactersPerLine: writing.maxCharactersPerLine,
+    text,
+  });
+
+  const over = estimatedLines > writing.lines;
+  const values = { lines: String(writing.lines), used: String(estimatedLines) };
+
+  const countLine = () => {
+    if (!text.trim()) {
+      return t("0 of {lines} lines", { lines: values.lines });
+    }
+
+    if (ignoredFrom !== null) {
+      return t({
+        description:
+          "The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.",
+        message: "about {used} of {lines} lines · the end won't be read",
+        values,
+      });
+    }
+
+    return over
+      ? t({
+          description:
+            "The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.",
+          message: "about {used} of {lines} lines · may not fit on paper",
+          values,
+        })
+      : t("about {used} of {lines} lines", values);
+  };
+
+  return (
+    <p
+      aria-live="polite"
+      className={cn(
+        "font-mono text-xs tabular-nums",
+        over ? "text-warning-text" : "text-muted-foreground",
+      )}
+      id={id}
+    >
+      {countLine()}
+    </p>
+  );
+}
 
 /** A copy restored from before the field had its limit: it says what to cut instead of failing to save. */
 function TooLong({ text }: { text: string }) {

@@ -43,9 +43,13 @@
   "essay_level_missing": "d6988528a5083c35c73f5449d4dae4c3e90d9139c3f6d4e4e9d7cc9ba85ca716",
   "essay_level_partial": "2fd7bd893b4a34ee1509a433f8dffeadbb875e0e038fbfb8dd18f99886b711c4",
   "essay_level_strong": "fbe0037c200c31b43fc2dc2438c174663fb1dc184ea7b0fbcaa0180aeb61d530",
+  "essay_limit_text": "6a7c11dbf8abc2121af292d97f51eb0f7b10e75ede92394e8a0eef63959b766d",
+  "essay_limit_text_any": "980e5c9de6b9d52781b900cfae1842da6ddf75b162d9623cc11c95e7c11bf3e1",
   "essay_limit_title": "c0ad55675fd46e5e0c312cc45bd833822bef87314b54a264c9a57d4424ba761b",
   "essay_limit_title_any": "d3292a6f977f1f588420bff20d40c44c46cc28fd8b2ced81bfde5281d0aad639",
   "essay_lines_empty": "1ccb2cfb31893472a12c55c99a9331da38bff9922c39ba9c0d5b64032233420e",
+  "essay_lines_end_unread": "6db6eb61e79ea0702169ee6f2f1d452da89697cfcf3cc8ed4f07c1326c63de8b",
+  "essay_lines_may_not_fit": "b11ae5c8251674af09e000fd8e9428b607efb76019389363c8bde6d046ca235e",
   "essay_lines_question": "80b295da658ef266804ae7eba0e6b32e8617daadbee157fb323cb711afe63b39",
   "essay_lines_used": "4700c2848da81b77798faf04cd2e427f5b49990d6629712fe4bcc9ef1b6cfc2c",
   "essay_minus": "4cd0e85e94a9e3527827e9913193a2280d9856a0a18446b62c06a389786c58f8",
@@ -62,6 +66,8 @@
   "essay_part_minimum": "fc0041c91ace52e884c4b961ed948b739c80a1783615b2e5a6c880ea8c8a7c72",
   "essay_part_minimum_points": "4e16c46fb2c22d1ee2c6c892abc35fd9ced953ded1c65d198cf642fb530b63dc",
   "essay_part_minimum_total": "52f6823f8bfe8d374479182cf17f2cc2751728c9183699464664cb3a2c9c0bd5",
+  "essay_past_limit": "73ffd840d723dbb999822b98426a46205ea737602f8070f8e643d5c5d55a5973",
+  "essay_past_line": "6cc8a6aacf7f1f0b2b1321d539f39b9f04b933bfe570fefb1b49107f1784a737",
   "essay_points": "1239b7a72b00b72dd59e1e37e7c7b01efd304f8a8bc8fa3ac096181157ed52b1",
   "essay_points_of": "7f1e8fe54b1f2956cea7364b3677e8d41f1624f7b38c14ed3c56bbaa5cbb954c",
   "essay_points_split": "31b9dafccc86978a77dcc741b7480f2130bd8347c6ab46729d3a66d37343f507",
@@ -192,6 +198,10 @@
         <item quantity="one">0 von %1$d Zeile</item>
         <item quantity="other">0 von %1$d Zeilen</item>
     </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">ca. %1$d von %2$d Zeilen · passt vielleicht nicht aufs Papier</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">ca. %1$d von %2$d Zeilen · das Ende wird nicht gelesen</string>
     <string name="essay_conflict_title">Diese Antwort wurde auf einem anderen Gerät geändert</string>
     <string name="essay_conflict_body">Behalte die Version, an der du hier schreibst, oder wechsle zur anderen.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -250,6 +260,8 @@
         <item quantity="other">In %1$d Zeilen passen</item>
     </plurals>
     <string name="essay_limit_title_any">Halte das Zeilenlimit ein</string>
+    <string name="essay_limit_text">Die Bewertung endet bei Zeile %1$d; der Rest wird nicht mehr gelesen.</string>
+    <string name="essay_limit_text_any">Die Bewertung endet am Zeilenlimit; der Rest wird nicht mehr gelesen.</string>
     <string name="essay_short_title">Schreib eine längere Antwort</string>
     <string name="essay_short_text">Diese Antwort ist zu kurz, um sie zu bewerten. Schreib mehr dazu und schick sie noch einmal ab.</string>
     <string name="essay_zero_title">Beantworte die gestellte Frage</string>
@@ -287,6 +299,8 @@
     <string name="essay_see_comments">Kommentare ansehen</string>
     <string name="essay_comments">Kommentare</string>
     <string name="essay_your_text">Dein Text</string>
+    <string name="essay_past_line">Nach Zeile %1$d: Bewertende lesen hier nicht weiter</string>
+    <string name="essay_past_limit">Hinter dem Limit: Bewertende lesen hier nicht weiter</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">Du hast „%1$s“ geschrieben (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

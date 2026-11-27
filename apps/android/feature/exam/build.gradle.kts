@@ -18,3 +18,10 @@ dependencies {
     testImplementation(testFixtures(project(":feature:conversation")))
     testImplementation(testFixtures(project(":feature:plan")))
 }
+
+val writingLineCases = rootProject.file("../../packages/core/src/exams/essays/_test-utils/writing-lines.json")
+
+tasks.withType<Test>().configureEach {
+    inputs.file(writingLineCases)
+    systemProperty("zoonk.writingLines", writingLineCases.absolutePath)
+}

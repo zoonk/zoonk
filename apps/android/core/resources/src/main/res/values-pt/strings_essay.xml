@@ -43,9 +43,13 @@
   "essay_level_missing": "f229eb5a663b623c9b1501e97078c7014a4e18f55f7fab4aa9bbf167e573660f",
   "essay_level_partial": "8e2cc987778b6718b912c0c4111b297739ced78506575bd1fd396f72fc287654",
   "essay_level_strong": "399a31386a9a33cd05cb886e39eacc0ee6dcdf067e5e333f8480cb5d76167a2c",
+  "essay_limit_text": "1af6dfe475ca334c6ff7fffcf683881bb4d429fdce917596297a7abb82be7a0a",
+  "essay_limit_text_any": "0754631fc4c13cb7fd338c9d0c32233e78a85b59a23ff25be0c312aab5784d09",
   "essay_limit_title": "e6fc3989d97622bc5d9f7e8b0f3e9ae93f3435bd36cf6ff99ebc6f1ca13b10ce",
   "essay_limit_title_any": "e476423538578e76ceadc23a01de0399f8adb40b41f5145b1434eae1c93c13a5",
   "essay_lines_empty": "ad9fabb8df2c8102787132068b60826eb5236a31cb02cd76ecd45f64a21fdbdb",
+  "essay_lines_end_unread": "1bbb9daaf4aae775241be8d63f39382f579c3c34c6f6165bf68b6874198b55b0",
+  "essay_lines_may_not_fit": "8eeda19bd7b5f48c88af57eff751a8505eca9f62cef179b0c30908e2036c4f1a",
   "essay_lines_question": "11bdf6e44b8fed471e2e6555f5af35828e04b0bca8bcb61bed0d559b23be9422",
   "essay_lines_used": "6eef4160fe7d70f3ab457a81fe5dd9a6909ad8e895aa3c2936ab425ddd7dd82e",
   "essay_minus": "7599382f501dc8ace1a70312c591a206aae72771f6d4348d46641bd6534a663c",
@@ -62,6 +66,8 @@
   "essay_part_minimum": "7509b1c0802cfe7d51842f414f69ab204980ff22f138a603784dcda547dda98c",
   "essay_part_minimum_points": "2cbd8e1af5224a7b259a9cd3768c6eec84dd00479a42c44c4db4ea50b613194a",
   "essay_part_minimum_total": "509da3491a9b1d503a04c1c0baa488820f4feead397a761c939bf6f3dc579e06",
+  "essay_past_limit": "ad5b49fb13ec2288298f3603f6e4c40933e946dd904f0178536f34460ba5c0f6",
+  "essay_past_line": "46036a4202e45fcfe307029fe7c9a870066bdb5a4e88cb404c77e6673acd1fd2",
   "essay_points": "66b3867ff3c1e706f810f92383b922e8a961bb938f1aa9bd2cd7ec75f704f7c9",
   "essay_points_of": "cb0caf2a8ed4640da8c288625fad4c42787685c350ee656c6875e0cb977b226c",
   "essay_points_split": "89ec7cfc6cb6403ebf982010dc1b119a3fb5fff2d6326f386a8a0a1da266fedf",
@@ -196,6 +202,10 @@
         <item quantity="many">0 de %1$d linhas</item>
         <item quantity="other">0 de %1$d linhas</item>
     </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">cerca de %1$d de %2$d linhas · talvez não caiba no papel</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">cerca de %1$d de %2$d linhas · o final não será lido</string>
     <string name="essay_conflict_title">Esta resposta mudou em outro dispositivo</string>
     <string name="essay_conflict_body">Mantenha a versão que você está escrevendo aqui ou troque pela outra.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -257,6 +267,8 @@
         <item quantity="other">Faça caber em %1$d linhas</item>
     </plurals>
     <string name="essay_limit_title_any">Faça caber no limite de linhas</string>
+    <string name="essay_limit_text">Quem corrige para na linha %1$d, então o restante não é lido.</string>
+    <string name="essay_limit_text_any">Quem corrige para no limite de linhas, então o restante não é lido.</string>
     <string name="essay_short_title">Escreva uma resposta mais longa</string>
     <string name="essay_short_text">Esta resposta é curta demais para ser corrigida. Escreva mais e envie de novo.</string>
     <string name="essay_zero_title">Responda ao que foi perguntado</string>
@@ -295,6 +307,8 @@
     <string name="essay_see_comments">Ver comentários</string>
     <string name="essay_comments">Comentários</string>
     <string name="essay_your_text">Seu texto</string>
+    <string name="essay_past_line">Depois da linha %1$d: os corretores param de ler aqui</string>
+    <string name="essay_past_limit">Depois do limite: os corretores param de ler aqui</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">Você escreveu “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

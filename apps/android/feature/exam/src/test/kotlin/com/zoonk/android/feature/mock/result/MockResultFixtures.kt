@@ -69,7 +69,7 @@ internal const val MISSED =
     "question":"Which word is a noun?","set":null,"unsure":false}"""
 
 private const val ESSAY_WRITING =
-    """{"charactersPerLine":87,"denseCharactersPerLine":135,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,
+    """{"charactersPerLine":87,"keySource":"practiceKey","lines":30,"maxCharactersPerLine":160,"minimumWords":30,"points":null,
     "taskKey":"essay","title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},
     {"id":"c2","name":"Cohesion","points":null}]}"""
 
