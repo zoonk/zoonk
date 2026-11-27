@@ -419,6 +419,7 @@ const LINKS: JourneyLinks = {
   logbook: "/logbook",
   mindMaps: null,
   placementTest: "/placement-test",
+  savedLessons: null,
   subject: (key) => `/plan/${key}`,
 };
 

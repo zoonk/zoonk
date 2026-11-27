@@ -50,6 +50,16 @@ enum MindMapDeck {
     }
   }
 
+  /// A saved map's row opens it in the Saved deck, or in its kind's once the learner removed it
+  /// there, since the Saved deck no longer holds it.
+  static func tab(opening save: SavedMindMap, isSaved: Bool) -> GoalMindMaps.Tab {
+    guard !isSaved else {
+      return .saved
+    }
+
+    return save.kind == .chapter ? .chapters : .lessons
+  }
+
   /// Where a deck opens: the tapped map, else the last one read on this device, else the first. A
   /// chapter opens at its first map. A lesson in two chapters opens in the one it was read in.
   static func start(

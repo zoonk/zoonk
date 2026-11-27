@@ -143,18 +143,7 @@ struct AppTabView: View {
   }
 
   private var studyTabs: [AppTab] {
-    let places = learner.summary.value?.places
-
-    return AppTab.study.filter { tab in
-      switch tab {
-      case .exam, .mockExam: places?.exam == true
-      case .speaking: places?.speaking == true
-      case .mindMaps: places?.mindMaps == true
-      case .completedLessons: places?.completedLessons == true
-      case .certificates: places?.certificates == true
-      default: true
-      }
-    }
+    AppTab.listedStudy(for: learner.summary.value?.places, showing: router.selectedTab)
   }
 }
 

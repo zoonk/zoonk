@@ -118,10 +118,12 @@ private fun Project.buildIdentity(): CommandLineArgumentProvider {
                 workingDir = root
                 commandLine("git", *args)
             }.standardOutput.asBytes
+    // `:/` is the repository's top: run from apps/android, git would see only the files under it.
+    // Files `.gitattributes` marks `never-on-screen`, such as tests, can't change a picture.
+    val sources = arrayOf(":/", ":(top,exclude,attr:never-on-screen)")
     val commit = git("rev-parse", "HEAD")
-    val changes = git("diff", "HEAD", "--binary")
-    // `:/` is the repository's top: run from apps/android, `ls-files` would list only the files under it.
-    val untracked = git("ls-files", "--others", "--exclude-standard", "--full-name", "-z", "--", ":/")
+    val changes = git("diff", "HEAD", "--binary", "--", *sources)
+    val untracked = git("ls-files", "--others", "--exclude-standard", "--full-name", "-z", "--", *sources)
     val top = git("rev-parse", "--show-toplevel")
     return CommandLineArgumentProvider {
         val digest = MessageDigest.getInstance("SHA-256")

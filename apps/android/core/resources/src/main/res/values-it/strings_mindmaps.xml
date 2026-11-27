@@ -43,6 +43,7 @@
   "mindmaps_previous": "d88bf22a87c9b4f564128850e071d3716c50dbef77df1fae68819d2a316476ec",
   "mindmaps_ready": "c1468b226423ee4a633779b0a25650600b6fb66e01012eeeadad86bb720fdb3e",
   "mindmaps_remove": "436ff8dbd38dde5b204ad490c226f783a5eb483486e422edcf62f305ea3b31fb",
+  "mindmaps_remove_map_failed": "98b69e03e47ee1aea67cf62fdfdadec78e8b71410893b16377b9230a760f01ba",
   "mindmaps_remove_spoken": "0c12242bcfb92dc7c1d96151542d4a563a89def6007102a7b1e982b470f4d9a8",
   "mindmaps_row_description": "14408c00f36152038091eff8bca11dffe8083ada8de991ac2b69ca550f56066d",
   "mindmaps_row_description_finish": "50be52bf7dfb5f490b2d4cc40e0c99e4fa0e5302b040daf662e56dc6d2d01406",
@@ -50,8 +51,10 @@
   "mindmaps_save": "a8bb93ddd45668ef393c8e1291a365b42f6fc1c12c22da3e62cf5434719ca49e",
   "mindmaps_save_failed": "300c61c42fec2140d272edae34adf5e35862073a51148963f5a1c45b1cb5e55c",
   "mindmaps_save_map_failed": "45b88b66df2c8c760b642e8e5bdb3365ca34bf50e6efa4aab691d7adca5f7104",
+  "mindmaps_save_named": "aa4857c05a74fc6c2889c171cd9a8d63bcf7f2b3cf2760fc7ee726374ef10739",
   "mindmaps_saved": "0a254e57e81c3b497494e2ac8a07285c6665adc5b38c9bd074457e490a61a9e2",
   "mindmaps_saved_empty": "e5529798f95baeb82507126c5fe4b9ea837c8c550ee40816230a5a0b2b9ef400",
+  "mindmaps_saved_named": "759c7e943cc741b9372243cd6a31d3e9b95bf0dbcbca77fd8a43877092d50839",
   "mindmaps_saved_state": "a5f8de03642847e5f2344dacd5278dcca9bac6c51e55bde3b4405a800d6a72e3",
   "mindmaps_show_all": "341619c9803ccbacc80c96de1e37b9065eed08fc48355c75347cb5d80068cd09",
   "mindmaps_shown_as": "8e27ad76f92c74f09e4f4e929be9de2a3a84c15d3e5765f3054124d1c1deb2cb",
@@ -206,9 +209,13 @@
     <string name="mindmaps_save">Salva</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Salvata</string>
+    <string name="mindmaps_save_named">Salva %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">Salvata %1$s</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Rimuovi dalle mappe salvate</string>
     <string name="mindmaps_save_map_failed">Non abbiamo potuto salvare questa mappa. Riprova.</string>
+    <string name="mindmaps_remove_map_failed">Non siamo riusciti a rimuovere questa mappa. Riprova.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">Altre opzioni</string>
     <string name="mindmaps_previous">Torna indietro</string>

@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
+import { requireCheckoutDatabase } from "./checkout-database";
 import { Prisma, PrismaClient, UsageKind as StoredUsageKind } from "./generated/prisma/client";
 import { getDatabaseUrl } from "./local-database";
 import { createDatabasePool } from "./pool";
@@ -8,7 +9,7 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const pool = createDatabasePool(getDatabaseUrl());
+const pool = createDatabasePool(requireCheckoutDatabase(getDatabaseUrl()));
 
 attachDatabasePool(pool);
 

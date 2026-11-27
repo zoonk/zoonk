@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   buildImageProviderOptions,
   buildProviderOptions,
@@ -43,7 +43,7 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual({
       gateway: {
         models: ["openai/gpt-6-luna"],
-        order: ["anthropic", "vertex", "openai", "azure", "google"],
+        order: ["anthropic", "google", "vertex", "openai", "azure"],
       },
     });
   });
@@ -73,6 +73,52 @@ describe(buildProviderOptions, () => {
         serviceTier: "flex",
       },
     });
+  });
+
+  it("leaves out a tier the model doesn't offer, which our provider key would refuse", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["anthropic/claude-opus-5.5"],
+        model: "openai/gpt-6.2-sol",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+  });
+
+  it("lets the first model that takes tiers decide when Claude answers first", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["openai/gpt-6-luna"],
+        model: "anthropic/claude-haiku-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway.serviceTier,
+    ).toBe("flex");
+
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["openai/gpt-6.2-sol"],
+        model: "anthropic/claude-opus-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+  });
+
+  it("reads tiers from what the gateway serves, not from a provider's announced price", () => {
+    vi.useFakeTimers({ now: new Date("2026-12-02T00:00:00Z") });
+
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["google/gemini-4-argon"],
+        model: "anthropic/claude-sonnet-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+
+    vi.useRealTimers();
   });
 
   it("asks the gateway to serve the same model fast", () => {
@@ -146,7 +192,7 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual({
       gateway: {
         models: ["anthropic/claude-sonnet-5.5", "openai/gpt-6-luna"],
-        order: ["anthropic", "vertex", "openai", "azure", "google"],
+        order: ["anthropic", "google", "vertex", "openai", "azure"],
       },
     });
   });

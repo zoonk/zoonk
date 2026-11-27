@@ -4,6 +4,8 @@ const POLL_MS = 1000;
 const REQUEST_TIMEOUT_MS = 5000;
 const SERVER_ERROR = 500;
 const NOT_FOUND = 404;
+const FIRST_REDIRECT = 300;
+const FIRST_CLIENT_ERROR = 400;
 
 // Main and the API first: every sign-in and native build points at them.
 const SERVICE_ORDER = ["main", "api"];
@@ -39,23 +41,76 @@ export function isAppAnswer({ body, status }: { body: string; status: number }):
   return status < SERVER_ERROR && !(status === NOT_FOUND && body.includes("No app registered"));
 }
 
-async function answers(url: string): Promise<boolean> {
+export function redirectsToItself({
+  location,
+  status,
+  url,
+}: {
+  location: string | null;
+  status: number;
+  url: string;
+}): boolean {
+  return (
+    status >= FIRST_REDIRECT &&
+    status < FIRST_CLIENT_ERROR &&
+    location !== null &&
+    new URL(location, url).href === new URL(url).href
+  );
+}
+
+type Answer = { loops: boolean; service: Service };
+
+async function getAnswer(service: Service): Promise<Answer | null> {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(service.url, {
       redirect: "manual",
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
-    return isAppAnswer({ body: await response.text(), status: response.status });
+    const body = await response.text();
+
+    if (!isAppAnswer({ body, status: response.status })) {
+      return null;
+    }
+
+    const location = response.headers.get("location");
+
+    return {
+      loops: redirectsToItself({ location, status: response.status, url: service.url }),
+      service,
+    };
   } catch {
-    return false;
+    return null;
   }
 }
 
-async function everyAppAnswers(services: Service[]): Promise<boolean> {
-  const up = await Promise.all(services.map(async ({ url }) => answers(url)));
+async function getEveryAnswer(services: Service[]): Promise<Answer[] | null> {
+  const answers = await Promise.all(services.map(async (service) => getAnswer(service)));
+  const answered = answers.filter((answer) => answer !== null);
 
-  return up.every(Boolean);
+  return answered.length === services.length ? answered : null;
+}
+
+async function waitForEveryAnswer({
+  services,
+  signal,
+}: {
+  services: Service[];
+  signal: AbortSignal;
+}): Promise<Answer[]> {
+  const answers = await getEveryAnswer(services);
+
+  if (answers) {
+    return answers;
+  }
+
+  await sleep(POLL_MS, undefined, { signal });
+
+  return waitForEveryAnswer({ services, signal });
+}
+
+function formatLoop({ name, url }: Service): string {
+  return `${getLabel(name)} redirects ${url} to itself, so a browser can't open it.`;
 }
 
 /**
@@ -69,17 +124,18 @@ export async function announceWhenReady({
   services: Service[];
   signal: AbortSignal;
 }): Promise<void> {
-  try {
-    // oxlint-disable-next-line no-await-in-loop -- polls until every app answers
-    while (!(await everyAppAnswers(services))) {
-      // oxlint-disable-next-line no-await-in-loop -- waits between polls
-      await sleep(POLL_MS, undefined, { signal });
-    }
-  } catch {
+  const answers = await waitForEveryAnswer({ services, signal }).catch(() => null);
+
+  if (!answers || signal.aborted) {
     return;
   }
 
-  if (!signal.aborted) {
-    process.stdout.write(`\nReady\n${formatServices(services)}\n\n`);
+  const loops = answers.filter((answer) => answer.loops).map((answer) => answer.service);
+
+  if (loops.length > 0) {
+    process.stderr.write(`\n${loops.map((service) => formatLoop(service)).join("\n")}\n\n`);
+    return;
   }
+
+  process.stdout.write(`\nReady\n${formatServices(services)}\n\n`);
 }

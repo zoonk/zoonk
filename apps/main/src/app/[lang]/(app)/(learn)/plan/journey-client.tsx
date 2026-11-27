@@ -136,15 +136,13 @@ export function JourneyBuildingClient({ goalId, goalStatus, goalTitle }: Planles
 
 type JourneyScreenProps = React.ComponentProps<typeof JourneyScreen>;
 
-function getJourneyLinks({
-  completedLessons,
-  goalKind,
-  hasMindMaps,
-}: {
-  completedLessons: boolean;
-  goalKind: JourneyScreenProps["goal"]["kind"];
-  hasMindMaps: boolean;
-}): JourneyLinks {
+/** The learner's places the Plan lists under "More" once each has something to show. */
+type JourneyPlaces = { completedLessons: boolean; hasMindMaps: boolean; savedLessons: boolean };
+
+function getJourneyLinks(
+  goalKind: JourneyScreenProps["goal"]["kind"],
+  { completedLessons, hasMindMaps, savedLessons }: JourneyPlaces,
+): JourneyLinks {
   return {
     challenge: (planItemId) => `/challenge/${planItemId}`,
     chapter: (chapterId) =>
@@ -157,6 +155,7 @@ function getJourneyLinks({
     logbook: "/logbook",
     mindMaps: hasMindMaps ? "/mind-maps" : null,
     placementTest: "/placement-test",
+    savedLessons: savedLessons ? "/saved-lessons" : null,
     subject: (key) => `/plan/${key}`,
   };
 }
@@ -203,16 +202,14 @@ type JourneyClientProps = Omit<
 > & {
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover" | "readPlanAgain">;
   certificates: FieldMapView["certificates"];
-  completedLessons: boolean;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
-  hasMindMaps: boolean;
   language: LanguageProgressView | null;
   next: StudyNext | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
   readAt: number;
   resume: GoalStatusControl["resume"];
-};
+} & JourneyPlaces;
 
 /** One opens its page; several open Certificates, marked for Plus while any is locked. */
 function getCertificatesView(
@@ -244,6 +241,7 @@ export function JourneyClient({
   preparation,
   readAt,
   resume,
+  savedLessons,
   ...props
 }: JourneyClientProps & { buddy: PlanTutor["buddy"] }) {
   const router = useRouter();
@@ -325,7 +323,7 @@ export function JourneyClient({
           },
         }}
         goalStatus={status}
-        links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}
+        links={getJourneyLinks(props.goal.kind, { completedLessons, hasMindMaps, savedLessons })}
         openAdjust={arrival === ADJUST_TIME ? "time" : arrival === ADJUST_PLAN}
         openFocus={arrival === CHOOSE_FOCUS}
         openFullCourse={arrival === STUDY_EVERYTHING}

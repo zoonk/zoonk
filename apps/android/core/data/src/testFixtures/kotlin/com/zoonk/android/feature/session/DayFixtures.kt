@@ -34,7 +34,6 @@ fun step(
         title = "Lesson $position",
         canDo = null,
         subject = null,
-        areas = emptyList(),
         topics = emptyList(),
         oftenTested = false,
         estimatedMinutes = 5,

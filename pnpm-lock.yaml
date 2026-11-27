@@ -1291,6 +1291,9 @@ importers:
       pg:
         specifier: 8.23.1
         version: 8.23.1
+      pg-connection-string:
+        specifier: 2.14.1
+        version: 2.14.1
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
