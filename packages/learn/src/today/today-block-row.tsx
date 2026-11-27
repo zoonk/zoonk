@@ -12,7 +12,7 @@ import { type MissionView } from "../missions/mission-links";
 import { MockSchedule } from "../mock/mock-schedule";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
-import { useBlockTitle } from "../session/use-block-copy";
+import { useBlockTitle, useRemedialLine } from "../session/use-block-copy";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
@@ -95,6 +95,9 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
 
 const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-4");
 
+/** Why the plan added a row is a sentence: cut short at large text, it would lose its point. */
+const WHY_LINE_CLASS = "text-muted-foreground text-xs leading-4 text-pretty";
+
 function RowLines({
   block,
   isNext,
@@ -108,15 +111,17 @@ function RowLines({
   const { actions } = useTodayScreen();
   const isGettingReady = useStepGettingReady();
   const stepLabel = useStepLabel({ includeSubject: false });
+  const remedialLine = useRemedialLine();
   const subject = useBlockSubject()(block);
   const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
+  const lineClass = line === remedialLine(block) ? WHY_LINE_CLASS : ROW_LINE_CLASS;
 
   return (
     <>
       {(showSubject || block.subjectExtra) && subject && (
         <span className={ROW_LINE_CLASS}>{subject}</span>
       )}
-      {!isFinished(block) && line && <span className={ROW_LINE_CLASS}>{line}</span>}
+      {!isFinished(block) && line && <span className={lineClass}>{line}</span>}
 
       {isNext && block.canTestOut && block.chapterId && (
         <TestOutStartLink compact onStart={() => actions.startTestOut(block.chapterId ?? "")} />
