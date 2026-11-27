@@ -14641,11 +14641,6 @@ msgid "Likely above the {minimum} points needed"
 msgstr "Prawdopodobnie powyżej wymaganego minimum {minimum} pkt"
 
 #: src/writing/written-standing.tsx
-msgctxt "kLoJFQ"
-msgid "Likely {points} points short of the {minimum} needed"
-msgstr "Prawdopodobnie brakuje {points} pkt do wymaganego minimum {minimum} pkt"
-
-#: src/writing/written-standing.tsx
 msgctxt "sUornn"
 msgid "Likely below the {minimum} points needed"
 msgstr "Prawdopodobnie poniżej wymaganego minimum {minimum} pkt"

@@ -99,7 +99,7 @@ function PointsScale({ written }: { written: WrittenSubject }) {
           />
         )}
         {minimum && <MinimumLegend>{minimumLine(written.points)}</MinimumLegend>}
-        <WrittenStandingLine part={{ ...written.points, decimals }} />
+        <WrittenStandingLine part={written.points} />
       </div>
       <StepRows>
         {tasks.map((task) => (

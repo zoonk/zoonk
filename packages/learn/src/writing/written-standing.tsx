@@ -6,22 +6,18 @@ import { CheckIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useFormatScore } from "../essay/essay-labels";
 import { getMinimumPoints } from "./minimum-points";
-import { useFormatPointsRange } from "./writing-labels";
 
-type Part = Pick<
-  WrittenProjection["parts"][number],
-  "decimals" | "max" | "minimum" | "range" | "standing"
->;
+type Part = Pick<WrittenProjection["parts"][number], "max" | "minimum" | "range" | "standing">;
 
 /**
  * A written part's estimate against its own minimum. Each verdict is "likely": it comes from how
- * closely graders' marks match the board's, never a promise. Without one, an estimate beside a
- * minimum would read as a pass, so the line says it can't tell.
+ * closely graders' marks match the board's, never a promise, so it never says by how much; the
+ * estimate beside it shows the gap. Without one, an estimate beside a minimum would read as a
+ * pass, so the line says it can't tell.
  */
 export function WrittenStandingLine({ className, part }: { className?: string; part: Part }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
-  const formatRange = useFormatPointsRange();
   const minimum = part.minimum && getMinimumPoints({ max: part.max, minimum: part.minimum });
   const { range, standing } = part;
 
@@ -42,18 +38,10 @@ export function WrittenStandingLine({ className, part }: { className?: string; p
   }
 
   if (standing === "below") {
-    // The verdict can come from the last mock while the estimate averages later answers.
-    const short = { high: minimum - range.low, low: minimum - range.high };
-
     return (
       <p className={cn(line, "text-destructive-text")}>
         <XIcon aria-hidden="true" className="size-3.5 shrink-0" />
-        {short.low > 0
-          ? t("Likely {points} points short of the {minimum} needed", {
-              minimum: points,
-              points: formatRange(short, { decimals: part.decimals }),
-            })
-          : t("Likely below the {minimum} points needed", { minimum: points })}
+        {t("Likely below the {minimum} points needed", { minimum: points })}
       </p>
     );
   }

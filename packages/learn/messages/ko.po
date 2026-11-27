@@ -14641,11 +14641,6 @@ msgid "Likely above the {minimum} points needed"
 msgstr "필요한 {minimum}점보다 높을 가능성이 높아요"
 
 #: src/writing/written-standing.tsx
-msgctxt "kLoJFQ"
-msgid "Likely {points} points short of the {minimum} needed"
-msgstr "필요한 {minimum}점에 {points}점 정도 모자랄 가능성이 높아요"
-
-#: src/writing/written-standing.tsx
 msgctxt "sUornn"
 msgid "Likely below the {minimum} points needed"
 msgstr "필요한 {minimum}점에 못 미칠 가능성이 높아요"
