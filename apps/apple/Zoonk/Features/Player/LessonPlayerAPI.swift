@@ -302,7 +302,15 @@ struct LessonPlayerAPI: Sendable {
             PlanRevealLead(goalID: $0.goalId, goalTitle: $0.goalTitle, planReady: $0.planReady)
           },
           placementOffer: completion.placementOffer.flatMap {
-            try? PracticeJSON.recode($0, as: LevelCheckOffer.self)
+            switch $0 {
+            case .case1(let offer):
+              LevelCheckOffer(goalId: offer.goalId, kind: .quick)
+            case .case2(let offer) where offer.level != .unrecognized:
+              LevelCheckOffer(
+                goalId: offer.goalId, kind: .levelTestOut, level: offer.level.rawValue)
+            case .case2, .case3:
+              nil
+            }
           }))
     case .unprocessableContent:
       return .incomplete

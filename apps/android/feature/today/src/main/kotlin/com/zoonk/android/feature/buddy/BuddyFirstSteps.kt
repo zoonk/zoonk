@@ -159,8 +159,12 @@ private fun firstStepLine(step: BuddyFirstStepsStepsInner): String? {
 }
 
 @Composable
-private fun whenLine(comes: BuddyFirstStepsStepsInnerWhen): String =
+private fun whenLine(comes: BuddyFirstStepsStepsInnerWhen): String? =
     when (comes) {
+        is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOf3Value -> {
+            null
+        }
+
         is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOfValue -> {
             comes.value.date?.let {
                 stringResource(R.string.buddy_page_when_challenge_on, formatDate(it.toJavaLocalDate(), currentLocale()))

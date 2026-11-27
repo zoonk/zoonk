@@ -227,7 +227,7 @@ internal fun MockResult(
             // Main's `MockPlanDecline` and `MockPlanAccept`: while the plan step asks, its answers are the bar's, in place of the way on.
             val asking =
                 view.adapt
-                    ?.let { adapt -> offers.open(adapt)?.let { offer -> offerCopy(offer, adapt)?.let { it to offer } } }
+                    ?.let { adapt -> offers.open(adapt)?.let { offerCopy(it, adapt) to it } }
                     ?.takeIf { current?.id == PLAN && position == shown.lastIndex }
             val heading = remember { FocusRequester() }
             var announced by rememberSaveable { mutableStateOf(current?.id) }

@@ -57,7 +57,10 @@ internal val LanguageLevelTest.showAlphabetNote: Boolean
 private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
-        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf4Value -> LevelTestPhase.Waiting
+        is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf4Value -> {
+            LevelTestPhase.Waiting
+        }
+
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
             LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt())
         }

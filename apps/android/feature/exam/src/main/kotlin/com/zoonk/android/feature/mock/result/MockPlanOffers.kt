@@ -190,10 +190,6 @@ private fun offerTitle(
     adapt: MockAdapt?,
 ): String =
     when (offer) {
-        Offer.UNKNOWN_DEFAULT_OPEN_API -> {
-            ""
-        }
-
         Offer.SKIP -> {
             val lessons = adapt?.skip?.lessons?.toInt() ?: 0
             pluralStringResource(R.plurals.mock_result_skip_title, lessons, lessons)
@@ -208,13 +204,9 @@ private fun offerTitle(
 internal fun offerCopy(
     offer: Offer,
     adapt: MockAdapt,
-): OfferCopy? {
+): OfferCopy {
     val locale = currentLocale()
     return when (offer) {
-        Offer.UNKNOWN_DEFAULT_OPEN_API -> {
-            null
-        }
-
         Offer.SKIP -> {
             val topics = adapt.skip?.topics.orEmpty()
             val named = topics.take(TOPICS_NAMED)
@@ -265,7 +257,7 @@ internal fun PlanChange(
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OfferStatus(adapt, offers)
         open?.let { offer ->
-            val copy = offerCopy(offer, adapt) ?: return@let
+            val copy = offerCopy(offer, adapt)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (showTitle) Text(copy.title, style = MaterialTheme.typography.bodyMedium)
@@ -286,7 +278,7 @@ internal fun InlinePlanAnswers(
     onAccept: (Offer) -> Unit,
     onDecline: (Offer) -> Unit,
 ) {
-    val copy = offerCopy(offer, adapt) ?: return
+    val copy = offerCopy(offer, adapt)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedButton(busy = offers.applying, onClick = { onAccept(offer) }, size = ButtonSize.Small) { Text(copy.accept) }
         TextButton(onClick = { onDecline(offer) }, enabled = !offers.applying, size = ButtonSize.Small) { Text(copy.decline) }

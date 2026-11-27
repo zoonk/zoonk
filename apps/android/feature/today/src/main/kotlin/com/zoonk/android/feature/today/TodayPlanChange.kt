@@ -218,7 +218,6 @@ private fun answeredText(answer: PlanChangeAnswer): String =
         PlanChangeDecisionInput.Status.APPLIED -> planChangeAppliedLine(answer.change.todaySession)
         PlanChangeDecisionInput.Status.DECLINED -> stringResource(R.string.today_plan_stays)
         PlanChangeDecisionInput.Status.UNDONE -> stringResource(R.string.plan_change_undone)
-        PlanChangeDecisionInput.Status.UNKNOWN_DEFAULT_OPEN_API -> ""
         PlanChangeDecisionInput.Status.SEEN -> stringResource(R.string.today_noted)
     }
 

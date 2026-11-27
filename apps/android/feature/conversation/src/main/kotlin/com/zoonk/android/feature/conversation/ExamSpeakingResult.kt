@@ -132,7 +132,7 @@ internal fun ExamSpeakingResult(
     actions: ResultActions,
     dayMoment: @Composable () -> Unit = {},
 ) {
-    val feedback = (conversation.result?.feedback as? LanguageConversationResultFeedback.ExamspeakingWrapper)?.value
+    val feedback = (conversation.result?.feedback as? LanguageConversationResultFeedback.ExamSpeakingFeedbackValue)?.value
     val language = conversation.targetLanguage
     val graded =
         feedback
@@ -426,7 +426,7 @@ internal fun SpeakingMockResult(
     dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback =
-        when (val mock = (conversation.result?.feedback as? LanguageConversationResultFeedback.SpeakingmockWrapper)?.value) {
+        when (val mock = (conversation.result?.feedback as? LanguageConversationResultFeedback.LanguageSpeakingMockFeedbackValue)?.value) {
             is LanguageSpeakingMockFeedback.LanguageSpeakingMockFeedbackOneOfValue -> null
             is LanguageSpeakingMockFeedback.LanguageIeltsSpeakingMockFeedbackValue -> mock.value.recode<_, MockFeedback>()
             is LanguageSpeakingMockFeedback.LanguageToeflSpeakingMockFeedbackValue -> mock.value.recode<_, MockFeedback>()

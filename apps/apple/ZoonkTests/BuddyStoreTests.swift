@@ -5,6 +5,12 @@ import XCTest
 
 @MainActor
 final class BuddyStoreTests: XCTestCase {
+  func testAnUnrecognizedBuddyCannotBeSentAsAChoice() {
+    XCTAssertNil(BuddyChoice(kind: .unrecognized, name: "Octo", glasses: .round).input)
+    XCTAssertNil(BuddyChoice(kind: .otto, name: nil, glasses: .unrecognized).input)
+    XCTAssertEqual(BuddyChoice(kind: .otto, name: "Octo", glasses: .round).input?.kind, .otto)
+  }
+
   func testPickedBuddyShowsAtOnceAndStaysWhenSaved() async {
     let api = BuddyAPIStub()
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))

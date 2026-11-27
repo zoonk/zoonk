@@ -277,6 +277,10 @@ class TestOutViewModel(
         when (val result = store.writeQuestions(key)) {
             is MutationResult.Done -> {
                 when (val writing = result.value) {
+                    is CreateChapterTestOutGeneration200Response.CreateChapterTestOutGeneration200ResponseAnyOfValue -> {
+                        Written.Failed
+                    }
+
                     is CreateChapterTestOutGeneration200Response.TestOutGenerationValue -> {
                         val generationId = writing.value.generationId
                         if (writing.value.status == TestOutGeneration.Status.GENERATING && generationId != null) {
