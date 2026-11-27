@@ -6,7 +6,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { findMemoryForTask } from "../memory/get-memory-for-task";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import {
@@ -331,6 +331,48 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     await expect(countTutorMessages(second.id)).resolves.toBe(0);
     expect(findMemoryForTask).not.toHaveBeenCalled();
     expect(updateMemoryFromActivity).not.toHaveBeenCalled();
+  });
+
+  it("answers a guest's tapped suggestion from its shared answer, though guests have no allowance", async () => {
+    const [shared, author, guest] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    const first = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: author.id,
+    });
+
+    await answerQuestion({ questionId: first.id, text: "A simpler take." });
+
+    mockGuestSession(guest.id);
+
+    const created = await createLessonQuestion({
+      input: {
+        context: { kind: "step", stepId: shared.step.id, stepNumber: shared.step.stepNumber },
+        question: WORDS.simpler,
+        requestId: randomUUID(),
+        suggestion: "simpler",
+      },
+      target: { kind: "lesson", lessonId: shared.lesson.id },
+      wordSuggestion,
+    });
+
+    expect(created.status).toBe("created");
+
+    const questionId = created.status === "created" ? created.question.id : "";
+
+    await expect(claimLessonQuestionAnswer({ questionId })).resolves.toStrictEqual({
+      answer: "A simpler take.",
+      questionId,
+      status: "shared",
+    });
+
+    await expect(countTutorMessages(guest.id)).resolves.toBe(0);
   });
 
   it("answers a question the learner typed for them alone, with their memory, even in a suggestion's words", async () => {
