@@ -7,7 +7,7 @@ import {
   getStopWithLauncherEnvironment,
   runForegroundCommand,
 } from "./process.mts";
-import { SERVICE_HOST, claimServicePort } from "./service-port.mts";
+import { claimServicePort } from "./service-port.mts";
 
 const [serviceName, appScript = "dev:app"] = process.argv
   .slice(2)
@@ -55,7 +55,9 @@ try {
       ...pnpmCommand.args,
       "run",
       appScript,
-      ...(serviceName === "mailbox" ? [] : ["--hostname", SERVICE_HOST]),
+      // Next builds the URLs its proxy sees on `localhost`; under another hostname, Main's
+      // locale rewrites count as external and redirect every English page to itself.
+      ...(serviceName === "mailbox" ? [] : ["--hostname", "localhost"]),
     ],
     command: pnpmCommand.command,
     currentDirectory,

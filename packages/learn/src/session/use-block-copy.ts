@@ -1,10 +1,9 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
 import { isAlreadyFixed } from "./block-kind";
-import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
 
@@ -19,6 +18,7 @@ type BlockCopyInput = Pick<
   | "kind"
   | "mistakesOnly"
   | "patternId"
+  | "practiceNumber"
   | "questions"
   | "reinforcement"
   | "returning"
@@ -128,7 +128,8 @@ export function useRemedialLine() {
 
 export function useBlockTitle() {
   const t = useExtracted();
-  const format = useFormatter();
+  // Elsewhere "Practice" names an action; here it names a block.
+  const tBlock = useExtracted("practiceBlock");
   const checkpointTitle = useCheckpointTitle();
   const reviewTitle = useReviewTitle();
   const writingTitle = useWritingTaskTitle();
@@ -182,27 +183,29 @@ export function useBlockTitle() {
       return t("Practice mistakes");
     }
 
-    const focus = getPracticeFocus(block);
-
-    if (focus?.kind === "topic") {
+    // A subject's practice asks only about it; any other practice mixes topics, so none names it.
+    if (block.title) {
       return t({
         description:
-          'A block of the day\'s practice. {topic} names the topic most of its questions are on, like "Calculating discounts".',
-        message: "Practice: {topic}",
-        values: { topic: focus.name },
+          'A block practising one subject the learner chose. {subject} names it, like "Percentages".',
+        message: "Practice: {subject}",
+        values: { subject: block.title },
       });
     }
 
-    if (focus?.kind === "areas") {
+    if (block.practiceNumber) {
       return t({
         description:
-          'A block of the day\'s practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".',
-        message: "Practice: {areas}",
-        values: { areas: format.list(focus.names, { type: "conjunction" }) },
+          'One of the day\'s practice blocks, numbered in the order the day lists them, like "Practice 2".',
+        message: "Practice {number, number}",
+        values: { number: block.practiceNumber },
       });
     }
 
-    return t("Mixed practice");
+    return tBlock({
+      description: "A block of the day's practice questions, when it's the day's only one",
+      message: "Practice",
+    });
   };
 }
 

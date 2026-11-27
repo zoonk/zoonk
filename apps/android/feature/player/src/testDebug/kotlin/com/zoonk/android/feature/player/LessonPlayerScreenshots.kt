@@ -47,6 +47,7 @@ import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.steps.LocalChallengeTeam
+import com.zoonk.android.feature.savedlessons.LessonBookmark
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -407,6 +408,7 @@ class LessonPlayerScreenshots {
                             exits,
                             rememberAppNavigator(),
                             tutor = tutor,
+                            bookmark = { LessonBookmark(saved = index % 2 == 1) {} },
                         )
                     }
                 }

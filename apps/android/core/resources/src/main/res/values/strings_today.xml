@@ -122,6 +122,8 @@
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Lessons you want to do again</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Do a lesson again</string>
     <plurals name="today_mistakes_ready">
@@ -225,11 +227,6 @@
     </plurals>
     <string name="today_add_to_today">Add to today</string>
     <string name="today_unfinished_setup">You didn\'t finish setting this up.</string>
-    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
-    <plurals name="today_step_more_topics">
-        <item quantity="one">%d more topic</item>
-        <item quantity="other">%d more topics</item>
-    </plurals>
     <string name="today_step_every_topic">Every topic</string>
     <string name="mock_schedule_title">Change mock exam date</string>
     <string name="mock_schedule_change">Change schedule</string>

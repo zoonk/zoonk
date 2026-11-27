@@ -86,6 +86,7 @@
   "today_resume": "86777ddd59b4426bc804091d67466763e3fdbf6ebf7aeb7d1f802f31e1f84e16",
   "today_resume_effect": "695a467ed129fea4c7a7b75fa3990c05ee5bae54a678799539083b5ac007607d",
   "today_save_failed": "9ca8b48792f3149522121de8fda9dd639a8d815c70f66f616169ee00673289fb",
+  "today_saved_lessons_line": "53898ec9a1badedb1c37240bca5b7f0524b29aa25685f7f2b1f48f3e42ecc55b",
   "today_see_changes": "f201e31f4fb2aca94779627d8b90268a617f64d8a57e7ebf11b0be7d01bfc22b",
   "today_see_day_challenge": "32beea04a06e0f816c0d0a47eab66fc1502d20a7cfe6c837f9bc65a59761bdbb",
   "today_see_day_mock": "3f12ffb6d7b913d261ddbd983f46a7b6dffd208d12c37e628bd1c9468d1de1c4",
@@ -112,7 +113,6 @@
   "today_step_done": "66f05d74f98fc6409eedc7745104cdd37408d48ac3c7d9281bfb51d802cfaea7",
   "today_step_every_topic": "882bd1c27d4622e92015e1f04d604a9f6b0b4bf374a2c2e0a8d715b2b4f3cb55",
   "today_step_extra": "70bde37bc589eca75b3ae9d85583cc4835ec55a1c36b90050284e20e200b640c",
-  "today_step_more_topics": "0ccec1f3bbc0e70c922896f1375a3b01a6fd6f2949f9d860e976e7a3c56c88bb",
   "today_step_next": "5f6aeb6fbb1fcf504b870f7010bcfcc113cfb8f20fc9a0c3e183eb42b4b93627",
   "today_step_often_tested": "a7318c4ea8c2ea922f52f29dbf511975f989d90bbbb77bad97c8a369ee89c2b7",
   "today_step_open_failed": "7dcb0b251c0ace16f4f822bc8f077b77d27cb1333f51657a9f60ddd12fb955fd",
@@ -287,6 +287,8 @@
     <string name="today_practice_anytime">Ćwicz, kiedy chcesz</string>
     <string name="today_mistakes_notebook">Zeszyt błędów</string>
     <string name="today_mistakes_redo">Popraw błędne odpowiedzi</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Lekcje, do których chcesz wrócić</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Zrób lekcję jeszcze raz</string>
     <plurals name="today_mistakes_ready">
@@ -400,13 +402,6 @@
     </plurals>
     <string name="today_add_to_today">Dodaj na dziś</string>
     <string name="today_unfinished_setup">Nie dokończono jeszcze tworzenia tego celu.</string>
-    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
-    <plurals name="today_step_more_topics">
-        <item quantity="one">%d dodatkowy temat</item>
-        <item quantity="few">%d dodatkowe tematy</item>
-        <item quantity="many">%d dodatkowych tematów</item>
-        <item quantity="other">%d dodatkowego tematu</item>
-    </plurals>
     <string name="today_step_every_topic">Wszystkie tematy</string>
     <string name="mock_schedule_title">Zmień termin egzaminu próbnego</string>
     <string name="mock_schedule_change">Zmień termin</string>

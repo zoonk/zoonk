@@ -21,10 +21,9 @@ final class MindMapsStore {
   @ObservationIgnored private var maps: [String: Resource<ChapterMindMap>] = [:]
   @ObservationIgnored private var lessons: [String: Resource<ChapterLessonMaps>] = [:]
 
-  /// What each learner asked for while it saves: shown at once, and dropped once the save is done
-  /// or failed, when the maps read say again.
-  private(set) var pendingSaves: [PendingSave: Bool] = [:]
-  private(set) var saveFailure: SaveFailure?
+  /// A save is the learner's in every goal whose maps hold it, and the Saved tab lists saves in
+  /// syllabus order, which only the server knows.
+  let saves: Saves<SaveTarget>
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
@@ -41,6 +40,12 @@ final class MindMapsStore {
     self.cache = cache
     self.drawingPoll = drawingPoll
     self.writingPoll = writingPoll
+    saves = Saves(cache: cache, invalidating: [.savedMindMaps]) { token, goalId, key, saved in
+      try await api.save(token: token, goalId: goalId, key: key, saved: saved)
+    }
+    saves.show = { [weak self] target, saved, goalId in
+      self?.show(saved, target: target, goalId: goalId)
+    }
   }
 
   /// A read only, at the day of a stop that was still ahead when its offer arrived, so the counts
@@ -152,55 +157,6 @@ final class MindMapsStore {
     }
 
     positions.save(position, userId: userId, goalId: goalId, tab: tab)
-  }
-
-  /// `server` is what the maps read last says.
-  func isSaved(_ key: MindMapKey, server: Bool) -> Bool {
-    guard let session = cache.session.authenticatedSession else {
-      return server
-    }
-
-    return pendingSaves[PendingSave(session: session, key: key)] ?? server
-  }
-
-  /// Shown at once. Taps faster than the saves end in the last one asked for; a failure goes back
-  /// to what the maps read says and says so. Not `QueuedSaves`: the server takes the state wanted,
-  /// so only each map's last tap is sent, and a map saves where the goal's list isn't read, such as
-  /// the chapter's map viewer.
-  func setSaved(_ saved: Bool, target: SaveTarget, goalId: String) {
-    guard let session = cache.session.authenticatedSession else {
-      return
-    }
-
-    let pending = PendingSave(session: session, key: target.key)
-    let isSaving = pendingSaves[pending] != nil
-    pendingSaves[pending] = saved
-
-    if saveFailure?.key == target.key {
-      saveFailure = nil
-    }
-
-    guard !isSaving else {
-      return
-    }
-
-    Task {
-      await save(pending, target: target, goalId: goalId)
-    }
-  }
-
-  /// Hidden once the session it was made for changes.
-  func saveFailed(goalId: String) -> Bool {
-    guard let saveFailure else {
-      return false
-    }
-
-    return saveFailure.goalId == goalId
-      && saveFailure.session == cache.session.authenticatedSession
-  }
-
-  func dismissSaveFailure() {
-    saveFailure = nil
   }
 
   /// Starts every chapter map one tap can start; what it couldn't start shows in the list read
@@ -348,41 +304,6 @@ final class MindMapsStore {
     }
   }
 
-  private func save(_ pending: PendingSave, target: SaveTarget, goalId: String) async {
-    let key = pending.key
-    var sent: Bool?
-
-    while let wanted = pendingSaves[pending], wanted != sent {
-      let api = api
-      let result: MutationResult<Bool> =
-        cache.session.authenticatedSession == pending.session
-        ? await cache.mutate { identity in
-          try await api.save(token: identity.bearerToken, goalId: goalId, key: key, saved: wanted)
-        } : .obsolete
-
-      switch result {
-      case .done(let saved):
-        sent = saved
-        show(saved, target: target, goalId: goalId)
-      case .failed:
-        pendingSaves[pending] = nil
-        saveFailure = SaveFailure(goalId: goalId, key: key, session: pending.session)
-      case .obsolete:
-        pendingSaves[pending] = nil
-        return
-      }
-    }
-
-    pendingSaves[pending] = nil
-
-    // A save the server took is the learner's in every goal whose maps hold it, a later tap's
-    // failure included, and the Saved tab lists saves in syllabus order, which only the server
-    // knows.
-    if sent != nil {
-      cache.invalidate([.savedMindMaps])
-    }
-  }
-
   /// Every copy of the map read so far says it, so dropping the pending save changes nothing shown.
   private func show(_ saved: Bool, target: SaveTarget, goalId: String) {
     let key = target.key
@@ -515,19 +436,8 @@ final class MindMapsStore {
 }
 
 /// A map to save, with what the Saved tab shows of it before the list is read again.
-struct SaveTarget: Equatable, Sendable {
+struct SaveTarget: Saveable {
   let key: MindMapKey
   let title: String
   let chapterId: String?
-}
-
-struct PendingSave: Hashable, Sendable {
-  let session: AuthenticatedSession
-  let key: MindMapKey
-}
-
-struct SaveFailure: Equatable, Sendable {
-  let goalId: String
-  let key: MindMapKey
-  let session: AuthenticatedSession
 }

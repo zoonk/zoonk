@@ -25,6 +25,7 @@ import com.zoonk.android.feature.session.WritingRow
 import com.zoonk.android.feature.session.alreadyFixed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
+import com.zoonk.android.feature.session.practiceTopicsLine
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.remedialLine
 import com.zoonk.android.ui.components.Eyebrow
@@ -158,7 +159,6 @@ private fun stepLine(
 ): String? {
     val count = step.questions.toInt()
     val remedial = remedialLine(step)
-    val moreTopics = step.topics.size - 1
 
     return when {
         step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
@@ -169,8 +169,7 @@ private fun stepLine(
 
         remedial != null -> remedial
 
-        // The title names a practice's first topic, so the line counts the others.
-        step.practisesTopics && moreTopics > 0 -> pluralStringResource(R.plurals.today_step_more_topics, moreTopics, moreTopics)
+        step.practisesTopics -> practiceTopicsLine(step.topics)
 
         step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
 

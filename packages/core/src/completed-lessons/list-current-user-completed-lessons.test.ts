@@ -139,17 +139,21 @@ describe(listCurrentUserCompletedLessons, () => {
       hasMore: false,
       lessons: [
         {
+          available: false,
           chapterTitle: "Waves",
           finishedOn: "2026-10-29",
           group: null,
           lessonId: replayed.id,
+          saved: false,
           title: "Interference",
         },
         {
+          available: false,
           chapterTitle: null,
           finishedOn: "2026-10-25",
           group: null,
           lessonId: single.id,
+          saved: false,
           title: "Explained by you",
         },
       ],

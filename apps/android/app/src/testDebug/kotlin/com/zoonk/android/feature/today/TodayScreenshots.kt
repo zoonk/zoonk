@@ -280,6 +280,7 @@ class TodayScreenshots {
                             MOCKS,
                             SPEAKING,
                             completedLessons = true,
+                            savedLessons = true,
                             navigate = {},
                         )
                     },

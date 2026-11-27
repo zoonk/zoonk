@@ -86,6 +86,7 @@
   "today_resume": "2978c8efa3ea9a28c95ac8b052432bc937b54fa4458611decaf15a6b22d55f27",
   "today_resume_effect": "8d04268c73ddd7daf1bcf31c9d7f70cadaafcd51eeedd42e006576e96555b224",
   "today_save_failed": "62afa501eeb9717c3f297c31bd8f498206e5352af6ff171b6fdccef8faaee2bc",
+  "today_saved_lessons_line": "92cc47ef7ddb5802a058189f3cc362fae1e5ea57a451328d110451f5757df514",
   "today_see_changes": "4b7d23d362269e8750ac37c6639175980d78ab24a8334589f3a2f3ab69b8bcf1",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
@@ -112,7 +113,6 @@
   "today_step_done": "90d9d386e7e18b5c6778264cc6c389e26dfd3249b760eccb1e1fdedbc6e983e3",
   "today_step_every_topic": "da3e6173ae801da1955dae47f97b6517d95205f573094fbf0f2fafe7c89a7b66",
   "today_step_extra": "2d0007030951976bd029bb5833f68abb52e86f480cafd081567bbb13ab6aebe8",
-  "today_step_more_topics": "d2ce640111a21303ce3d05d64dbaeea64cd49264c9fcf0b1b1c2ee5de902a6b9",
   "today_step_next": "565ec18b1fea89f3c8e3846f16c35926b4d93874d974a9a584b4a2a312b41228",
   "today_step_often_tested": "a97731e5a441a4c9c97afed54e0ac2aa46da575ca4ac9a39d41e2bc8e6be7764",
   "today_step_open_failed": "5049e930375960e8f1fbf788b5c4565e4ff97ce8c9bb55fa9055c8690dbf7375",
@@ -269,6 +269,8 @@
     <string name="today_practice_anytime">いつでも練習</string>
     <string name="today_mistakes_notebook">間違いノート</string>
     <string name="today_mistakes_redo">間違えた問題を解き直す</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">もう一度取り組みたいレッスン</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">レッスンをもう一度学ぶ</string>
     <plurals name="today_mistakes_ready">
@@ -367,10 +369,6 @@
     </plurals>
     <string name="today_add_to_today">今日の学習に追加する</string>
     <string name="today_unfinished_setup">この目標の設定がまだ終わっていません。</string>
-    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
-    <plurals name="today_step_more_topics">
-        <item quantity="other">ほかに%dトピック</item>
-    </plurals>
     <string name="today_step_every_topic">すべてのトピック</string>
     <string name="mock_schedule_title">模試の日程を変更</string>
     <string name="mock_schedule_change">日程を変更</string>

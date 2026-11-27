@@ -179,7 +179,7 @@ private struct PausedGoalSummary: LearnerSummaryAPIClient {
       level: nil, nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: true, mindMaps: false,
-        readyMistakes: 0, speaking: false),
+        readyMistakes: 0, savedLessons: false, speaking: false),
       readAt: .now, tier: .plus, timeZone: "America/Sao_Paulo", todayBlocksLeft: nil)
   }
 

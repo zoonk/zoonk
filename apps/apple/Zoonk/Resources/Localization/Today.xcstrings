@@ -60,8 +60,7 @@
         }
       }
     },
-    "%@ and %lld more" : {
-      "comment" : "A short list of topics and how many more",
+    "%@ and %lld more topics" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -77,13 +76,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg weiteres"
+                      "value" : "%arg weiteres Thema"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg weitere"
+                      "value" : "%arg weitere Themen"
                     }
                   }
                 }
@@ -105,13 +104,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more topic"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more topics"
                     }
                   }
                 }
@@ -130,10 +129,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tema más"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg más"
+                      "value" : "%arg temas más"
                     }
                   }
                 }
@@ -155,13 +160,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg autre"
+                      "value" : "%arg autre sujet"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg autres"
+                      "value" : "%arg autres sujets"
                     }
                   }
                 }
@@ -183,13 +188,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg altro"
+                      "value" : "%arg altro argomento"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg altri"
+                      "value" : "%arg altri argomenti"
                     }
                   }
                 }
@@ -200,7 +205,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@、%#@more@"
+            "value" : "%1$@、ほかに%#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -211,7 +216,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "ほか%argトピック"
+                      "value" : "%argトピック"
                     }
                   }
                 }
@@ -222,7 +227,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 외 %#@more@"
+            "value" : "%1$@ 및 주제 %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -233,7 +238,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg개"
+                      "value" : "%arg개 더"
                     }
                   }
                 }
@@ -244,7 +249,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ i %#@more@"
+            "value" : "%1$@ i jeszcze %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -252,10 +257,28 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematy"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematów"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg temat"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "jeszcze %arg"
+                      "value" : "%arg tematu"
                     }
                   }
                 }
@@ -266,7 +289,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e %#@more@"
+            "value" : "%1$@ e mais %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -274,10 +297,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tópico"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg"
+                      "value" : "%arg tópicos"
                     }
                   }
                 }
@@ -299,7 +328,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg tane daha"
+                      "value" : "%arg konu daha"
                     }
                   }
                 }
@@ -1302,178 +1331,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld ders daha"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld more topics" : {
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld weiteres Thema"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld weitere Themen"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld more topic"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld more topics"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tema más"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld temas más"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld sujet de plus"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld sujets de plus"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld altro argomento"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld altri argomenti"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "ほか%lld件のトピック"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "그 외 주제 %lld개"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tematy więcej"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld temat więcej"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tematów więcej"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Mais %lld tópico"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Mais %lld tópicos"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld konu daha"
                 }
               }
             }
@@ -2599,6 +2456,185 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hafta %lld"
+          }
+        }
+      }
+    },
+    "%lld topics · %@" : {
+      "comment" : "Today's line under a practice: how many topics it mixes, then the one it asks most, like \"3 topics · Calculating discounts\".",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld Thema · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld Themen · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%1$lld topic · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%1$lld topics · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tema · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld temas · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld sujet · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld sujets · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld argomento · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld argomenti · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lldトピック · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld개 주제 · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tematy · %2$@"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tematów · %2$@"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld temat · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tematu · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tópico · %2$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tópicos · %2$@"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld konu · %2$@"
+                }
+              }
+            }
           }
         }
       }
@@ -6580,6 +6616,65 @@
         }
       }
     },
+    "Lessons you want to do again" : {
+      "comment" : "The line under Saved lessons in Practice anytime.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen, die du noch einmal machen möchtest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones que quieres volver a hacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons à refaire"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni da rifare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度取り組みたいレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 하고 싶은 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje, do których chcesz wrócić"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas que você quer fazer de novo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden çalışmak istediğin dersler"
+          }
+        }
+      }
+    },
     "Let's fit your plan to the days left." : {
       "comment" : "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes.",
       "localizations" : {
@@ -6878,65 +6973,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yanlış defteri"
-          }
-        }
-      }
-    },
-    "Mixed practice" : {
-      "comment" : "A practice block",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gemischte Übungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Práctica variada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entraînement varié"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esercizi misti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "総合練習"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "혼합 연습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ćwiczenia mieszane"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática variada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Karma alıştırma"
           }
         }
       }
@@ -8126,6 +8162,65 @@
         }
       }
     },
+    "Practice %lld" : {
+      "comment" : "One of the day's practice blocks, numbered in the order the day lists them, like \"Practice 2\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übung %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Práctica %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercitazione %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습 %lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwiczenie %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alıştırma %lld"
+          }
+        }
+      }
+    },
     "Practice %lld min" : {
       "comment" : "Adds practice on a day with nothing new; the number is minutes",
       "localizations" : {
@@ -8539,61 +8634,68 @@
         }
       }
     },
-    "Practice: %@" : {
-      "comment" : "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\"",
+    "practiceBlock" : {
+      "comment" : "A block of the day's practice questions, when it's the day's only one",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übungen: %@"
+            "value" : "Übung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Práctica: %@"
+            "value" : "Práctica"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entraînement : %@"
+            "value" : "Entraînement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi: %@"
+            "value" : "Esercitazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "練習：%@"
+            "value" : "練習"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습: %@"
+            "value" : "연습"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwiczenia: %@"
+            "value" : "Ćwiczenia"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prática: %@"
+            "value" : "Prática"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alıştırma: %@"
+            "value" : "Alıştırma"
           }
         }
       }
@@ -8629,7 +8731,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi: %@"
+            "value" : "Esercitazione: %@"
           }
         },
         "ja" : {
@@ -8641,7 +8743,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습: %@"
+            "value" : "%@ 연습"
           }
         },
         "pl" : {
@@ -8664,8 +8766,8 @@
         }
       }
     },
-    "practiceTopic" : {
-      "comment" : "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\".",
+    "practiceSubject" : {
+      "comment" : "A block practising one subject the learner chose. {subject} names it, like \"Percentages\".",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
@@ -8695,7 +8797,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi: %@"
+            "value" : "Esercitazione: %@"
           }
         },
         "ja" : {
@@ -8707,13 +8809,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습: %@"
+            "value" : "%@ 연습"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwiczenia: %@"
+            "value" : "Ćwiczenie: %@"
           }
         },
         "pt" : {
@@ -9432,6 +9534,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "genel tekrar"
+          }
+        }
+      }
+    },
+    "Saved lessons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones guardadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons enregistrées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni salvate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisane lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas salvas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilen dersler"
           }
         }
       }

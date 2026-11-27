@@ -43,7 +43,6 @@ export function useMindMapRequest({
 }) {
   const [local, setLocal] = useState<Local | null>(null);
   const [localView, setLocalView] = useState(view);
-  const [savedNow, setSavedNow] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
   const order = useReadOrder();
   const { chapterId, status } = view;
@@ -51,19 +50,12 @@ export function useMindMapRequest({
   if (localView !== view) {
     setLocalView(view);
     setLocal(null);
-    setSavedNow(null);
   }
 
-  const saves = useMindMapSaves({
-    onSaved: (_target, saved) => {
-      order.supersedeReads();
-      setSavedNow(saved);
-    },
-    save: actions.save,
-  });
+  const saves = useMindMapSaves({ save: actions.save });
 
   const saveState = {
-    saved: savedNow ?? view.saved,
+    saved: view.saved,
     target: { kind: "chapter", targetId: chapterId },
   } as const;
 

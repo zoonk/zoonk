@@ -104,14 +104,9 @@ function Reader({
   const [at, setAt] = useState<ReaderPlace>({ index: start, turn: null });
   // Kept from map to map while the learner studies, so one who reads the text keeps reading it.
   const [mapView, setMapView] = useState<ChapterMapView>("map");
-  const [stored, setStored] = useState<ReadonlyMap<string, boolean>>(new Map());
   const chapters = useChapterLessons({ deck, index: at.index, load: actions.lessonMaps, loaded });
 
-  const saves = useMindMapSaves({
-    onSaved: (target, isSaved) =>
-      setStored((current) => new Map(current).set(toSavedMapKey(target), isSaved)),
-    save: actions.save,
-  });
+  const saves = useMindMapSaves({ save: actions.save });
 
   const shown = deck[at.index] ?? slide;
   const chapterLessons = shown.kind === "lesson" ? chapters.lessons[shown.chapterId] : undefined;
@@ -133,10 +128,7 @@ function Reader({
 
   const savedKeys = new Set(saved.map((map) => toSavedMapKey(map)));
 
-  const savedState = target && {
-    saved: stored.get(toSavedMapKey(target)) ?? savedKeys.has(toSavedMapKey(target)),
-    target,
-  };
+  const savedState = target && { saved: savedKeys.has(toSavedMapKey(target)), target };
 
   const save: MindMapSave | null = savedState && {
     onToggle: () => saves.toggle(savedState),

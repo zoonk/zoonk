@@ -51,11 +51,14 @@ type Sort = { before?: boolean; misleads?: boolean; rule?: string };
 export type Finding = FindingState &
   Sort & { crop?: string; id: string; measurement?: string; text: string };
 
-/** The PR fixes what misleads a learner, whoever brought it, and a named rule it broke itself. */
+/**
+ * The PR fixes what it brought: a finding the before picture doesn't show that misleads a learner or
+ * breaks a named rule. One the base shows too is filed in the issue that tracks it.
+ */
 export function blocks({ before, misleads, rule }: Finding): boolean {
   return (
-    misleads === true ||
-    (before === false && rule !== undefined && !/^none(?:\s*:|$)/iu.test(rule.trim()))
+    before === false &&
+    (misleads === true || (rule !== undefined && !/^none(?:\s*:|$)/iu.test(rule.trim())))
   );
 }
 

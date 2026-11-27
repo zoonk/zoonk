@@ -182,6 +182,9 @@ const learnerSummarySchema = z
             description:
               "How many of the active goal's open notebook mistakes have practice material",
           }),
+        savedLessons: z
+          .boolean()
+          .meta({ description: "The active goal has a saved lesson to list" }),
         speaking: z.boolean(),
       })
       .meta({

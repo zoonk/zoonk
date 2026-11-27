@@ -125,6 +125,7 @@ function block(learner: SampleLearner, position: number): DayBlockView {
     planItemId: `item-${position}`,
     planItemKey: null,
     position,
+    practiceNumber: null,
     preparing: false,
     questions: 8,
     refresh: false,

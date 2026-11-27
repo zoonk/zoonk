@@ -120,9 +120,13 @@
     <string name="mindmaps_save">Save</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Saved</string>
+    <string name="mindmaps_save_named">Save %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">Saved %1$s</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Remove from saved</string>
     <string name="mindmaps_save_map_failed">Couldn\'t save this map. Try again.</string>
+    <string name="mindmaps_remove_map_failed">Couldn\'t remove this map. Try again.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">More options</string>
     <string name="mindmaps_previous">Previous</string>

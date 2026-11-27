@@ -86,6 +86,7 @@
   "today_resume": "e6ad0adc1fac0f358706f7d82cb9857a32c0f90d0ca2e53d17d14a8225eca706",
   "today_resume_effect": "4ba754c486a3d6078dd525b60ff9ed144b67ea5038dbcdaf73dbc215a9c93b21",
   "today_save_failed": "95a8110c4ec020641aa939263acefff396f190cb565a63f21df6cfa498c891ca",
+  "today_saved_lessons_line": "90d414d8040f75bc2824b7c9ed434b746db6b54f9e79e98085c3a58310a40221",
   "today_see_changes": "e11a246a826be71e0402b1188d63b9a33c79ae95c086eda84dba3138f2fe01ee",
   "today_see_day_challenge": "ca6aa2a829ddc9f567279d64cc0919d123b5e3df52d64721fa814f54d287123c",
   "today_see_day_mock": "4e965831c20b2a60123b4e46fa5ddd8039fede0194d6a3a58d73d419b70ecc44",
@@ -112,7 +113,6 @@
   "today_step_done": "4ed8a68cbf5bf611ad4dbf7bbd4891cbdfe6d42b35336971e27c7db2e66a6bfd",
   "today_step_every_topic": "bcda124079fa2fa9cb85d80f2ed6707b8d81d2a19e87ba1e9469b2624d86651d",
   "today_step_extra": "7f24c4124aead8ad69bda1d116de2639a0e316fc8a4475c436299ad57c8794c8",
-  "today_step_more_topics": "ee355055e634de6ee1512421de4e76247b3aa6eee970be28e0b8f5c571b618d0",
   "today_step_next": "a864cce1dbd79f1349f7620c06dc9dfc3185abe8ba5ea95d3225acb806045d88",
   "today_step_often_tested": "41babfbc2beaaa29db3434ac4f41c250794a733201a60a6bb1383c377b2e07ed",
   "today_step_open_failed": "6e24ae7c8e26eb89bd664748d490fe4e723c0ce6a42c8796971c63a942cddab3",
@@ -275,6 +275,8 @@
     <string name="today_practice_anytime">İstediğin zaman pratik yap</string>
     <string name="today_mistakes_notebook">Yanlış defteri</string>
     <string name="today_mistakes_redo">Yanlış yaptığın soruları tekrar çöz</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Yeniden çalışmak istediğin dersler</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Bir dersi yeniden çalış</string>
     <plurals name="today_mistakes_ready">
@@ -378,11 +380,6 @@
     </plurals>
     <string name="today_add_to_today">Bugüne ekle</string>
     <string name="today_unfinished_setup">Bu hedefi oluşturmayı tamamlamadın.</string>
-    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
-    <plurals name="today_step_more_topics">
-        <item quantity="one">%d konu daha</item>
-        <item quantity="other">%d konu daha</item>
-    </plurals>
     <string name="today_step_every_topic">Tüm konular</string>
     <string name="mock_schedule_title">Deneme sınavının tarihini değiştir</string>
     <string name="mock_schedule_change">Tarihi değiştir</string>

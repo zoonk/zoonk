@@ -12,11 +12,12 @@
     <string name="session_block_new_lesson">New lesson</string>
     <string name="session_block_writing_draft_saved">Your draft is saved</string>
     <string name="session_block_practice_mistakes">Practice mistakes</string>
-    <string name="session_block_mixed_practice">Mixed practice</string>
-    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_practice_areas">Practice: %1$s</string>
-    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_practice_topic">Practice: %1$s</string>
+    <!-- A block of the day's practice questions, when it's the day's only one -->
+    <string name="session_block_practice">Practice</string>
+    <!-- One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2". -->
+    <string name="session_block_practice_number">Practice %1$d</string>
+    <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
+    <string name="session_block_practice_subject">Practice: %1$s</string>
     <string name="session_block_rematch_lesson">Short lesson before the rematch</string>
     <plurals name="session_block_fix_mistakes">
         <item quantity="one">Fix %d mistake</item>
@@ -52,6 +53,11 @@
         <item quantity="other">%d questions on every topic</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="one">%1$d topic · %2$s</item>
+        <item quantity="other">%1$d topics · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="one">%1$s and %2$d more topic</item>
         <item quantity="other">%1$s and %2$d more topics</item>

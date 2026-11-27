@@ -91,6 +91,8 @@ const OWNERS: Record<string, string> = {
     "The question block, above the question's split.",
   "Features/Reminders/RemindersView.swift: emailSave, pushSetup, timeSave":
     "Reminders, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
+  "Features/Saving/SaveControls.swift: visit":
+    "A screen's save visit (lessonSaveVisit, mindMapSaveVisit), attached where each screen holds its split or has none; the write itself goes on in Saves.",
   "Features/Search/SearchScreen.swift: goalSwitch": "Search, which holds its PaneSplit.",
   "Features/Session/SessionScreen.swift: action":
     "The next stop, above the split NextStopWait draws.",

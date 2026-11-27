@@ -91,6 +91,7 @@ class PlanLinks(
     val hasExam: Boolean get() = page.isExam
     val hasMindMaps: Boolean get() = page.summary.places.mindMaps
     val hasCompletedLessons: Boolean get() = page.summary.places.completedLessons
+    val hasSavedLessons: Boolean get() = page.summary.places.savedLessons
 
     fun chapter(chapterId: String) =
         open(
@@ -110,6 +111,8 @@ class PlanLinks(
     fun mindMaps() = open(AppRoute.MindMaps())
 
     fun completedLessons() = open(AppRoute.CompletedLessons)
+
+    fun savedLessons() = open(AppRoute.SavedLessons)
 
     fun logbook() = open(AppRoute.Logbook)
 
@@ -445,6 +448,7 @@ internal fun PlanContent(
     // The drawer lists them where there's one, as main's sidebar does from `lg`.
     val withoutDrawer = LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
     val completedLessonsRow = links.hasCompletedLessons && withoutDrawer
+    val savedLessonsRow = links.hasSavedLessons && withoutDrawer
     val mindMapsRow = links.hasMindMaps && withoutDrawer
     var pathOpen by rememberSaveable { mutableStateOf(false) }
     val list = rememberLazyListState()
@@ -527,7 +531,13 @@ internal fun PlanContent(
                         }
                     }
                     item(key = "more", contentType = "more") {
-                        MoreSection(links, completedLessons = completedLessonsRow, mindMaps = mindMapsRow, exam = !asideBeside)
+                        MoreSection(
+                            links,
+                            savedLessons = savedLessonsRow,
+                            completedLessons = completedLessonsRow,
+                            mindMaps = mindMapsRow,
+                            exam = !asideBeside,
+                        )
                     }
                     barNoteInPage(noteRoom)
                 }

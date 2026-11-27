@@ -612,6 +612,7 @@ describe(getLearnerSummary, () => {
       exam: true,
       mindMaps: true,
       readyMistakes: 0,
+      savedLessons: false,
       speaking: false,
     });
   });

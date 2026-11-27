@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics, useRemedialLine } from "../session/use-block-copy";
+import { toTopicWords } from "../syllabus/topic-number";
 import { useExtraLabel } from "../syllabus/use-extra-label";
 import { useWritingLine } from "../writing/writing-header";
 import { useTodayScreen } from "./today-context";
@@ -46,11 +47,19 @@ export function useStepLabel({ includeSubject = true } = {}) {
       return remedial;
     }
 
-    // The title names a practice's first topic, so the line counts the others.
-    if (practisesTopics(block) && block.topics.length > 1) {
-      return t("{count, plural, one {# more topic} other {# more topics}}", {
-        count: block.topics.length - 1,
-      });
+    // A practice's name doesn't say what it's on, so the line counts its topics before naming the
+    // one it asks most: a long name can only cut off its own end.
+    if (practisesTopics(block)) {
+      const topic = toTopicWords(block.topics[0] ?? "");
+
+      return block.topics.length === 1
+        ? topic
+        : t({
+            description:
+              'Today\'s line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".',
+            message: "{count, plural, one {# topic} other {# topics}} · {topic}",
+            values: { count: block.topics.length, topic },
+          });
     }
 
     if (block.checkpoint) {
