@@ -64,4 +64,29 @@ final class MockPointsTests: XCTestCase {
     XCTAssertEqual(part.standing, .unrecognized)
     XCTAssertEqual(part.range, WritingRange(high: 64, low: 58))
   }
+
+  func testAMinimumUnitOrScaleThisVersionDoesntKnowKeepsTheEstimate() throws {
+    let wire = try JSONDecoder().decode(
+      Components.Schemas.WrittenPartPoints.self,
+      from: Data(
+        #"{"max":100,"minimum":{"unit":"tenths","value":50},"name":"Discursive test","range":{"high":64,"low":58},"scale":"bands","standing":"met","tasks":[]}"#
+          .utf8))
+    let part: WrittenPartPoints = try PracticeJSON.recode(wire)
+
+    XCTAssertNil(part.minimum)
+    XCTAssertNil(part.scale)
+    XCTAssertEqual(part.shownScale, .points)
+    XCTAssertEqual(part.range, WritingRange(high: 64, low: 58))
+  }
+
+  func testAWrittenStandingKeepsTheResultFromSayingEveryMinimumWasReached() {
+    var result = points([test("Math", met: true)])
+    result.written = [
+      WrittenPartPoints(
+        decimals: 0, max: 100, minimum: nil, name: "Discursive test",
+        range: WritingRange(high: 64, low: 58), scale: .points, standing: .met, tasks: [])
+    ]
+
+    XCTAssertFalse(result.reachedEveryMinimum)
+  }
 }

@@ -30,8 +30,11 @@ enum WritingLabels {
   private static let floatSlack = 1e-9
 
   /// A headline's ends rounded outward, the low one down and the high one up, so it never claims
-  /// more than its parts.
+  /// more than its parts. One grade isn't a range: it stays as it is, for the number format to round
+  /// as it rounds the parts beside it, so 48.01 reads "48", never "48–49".
   static func roundedOutward(_ range: WritingRange, decimals: Int) -> WritingRange {
+    guard abs(range.high - range.low) >= floatSlack else { return range }
+
     let step = pow(10, Double(decimals))
 
     return WritingRange(

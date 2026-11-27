@@ -71,7 +71,7 @@ private struct SubjectWrittenPoints: View {
           MinimumLegend(minimumText(minimum, max: points.max))
         }
 
-        WrittenStandingLine(part: points, decimals: decimals)
+        WrittenStandingLine(part: points)
       }
       .padding(.vertical, 4)
 

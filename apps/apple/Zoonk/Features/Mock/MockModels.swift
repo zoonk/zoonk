@@ -250,7 +250,8 @@ struct MockResult: Hashable, Decodable, Sendable {
   }
 }
 
-struct PointsMinimum: Hashable, Decodable, Sendable {
+/// A minimum in a unit this version doesn't know can't be placed, so its row reads as having none.
+struct PointsMinimum: Hashable, OmittableAPIContent, Sendable {
   enum Unit: String, Decodable, Sendable {
     case points
     case percent
@@ -322,10 +323,11 @@ struct MockPoints: Hashable, Decodable, Sendable {
   }
 
   /// The mock exam checked at least one minimum and every one was reached. A written part's
-  /// minimum is at best likely reached, so a mock with one never says every minimum was.
+  /// minimum is at best likely reached, so a mock with one never says every minimum was. A
+  /// standing means the part has a minimum, even one in a unit this version can't read.
   var reachedEveryMinimum: Bool {
     tests.contains { $0.met == true } && !tests.contains { $0.met == false }
-      && !(written ?? []).contains { $0.minimum != nil }
+      && !(written ?? []).contains { $0.minimum != nil || $0.standing != nil }
   }
 }
 

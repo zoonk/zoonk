@@ -298,6 +298,14 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(WritingLabels.partPoints(6.125), "6.13")
   }
 
+  func testOneGradeReadsAsOneNumberRoundedLikeItsParts() {
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 48.01, low: 48.01), decimals: 0, headline: true), "48")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 78.01, low: 78.01), of: 100, decimals: 0, headline: true),
+      "78 of 100")
+  }
+
   func testAHeadlineRangeRoundsOutwardSoItNeverClaimsMoreThanItsParts() {
     XCTAssertEqual(
       WritingLabels.roundedOutward(.init(high: 17.41, low: 12.06), decimals: 1),
@@ -338,9 +346,6 @@ final class WritingResultDecodingTests: XCTestCase {
     )
 
     XCTAssertEqual(part.minimumPoints, 20)
-    XCTAssertEqual(
-      WritingLabels.range(.init(high: 20 - 10, low: 20 - 15), decimals: 0), "5–10",
-      "5–10 points short of the 20 needed, never 35–40 of 50")
   }
 
   func testAWholeAnswerIsNamedByItsLineLimitOnlyWhenNoOtherTaskSharesIt() {

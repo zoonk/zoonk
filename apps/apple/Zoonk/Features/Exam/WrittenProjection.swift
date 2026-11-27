@@ -42,8 +42,9 @@ struct WrittenPartPoints: Hashable, Decodable, Sendable {
   }
 }
 
-/// Whether a written part can be estimated in points yet, or its answers are graded by level.
-enum WritingScale: String, Decodable, Sendable {
+/// Whether a written part can be estimated in points yet, or its answers are graded by level. A
+/// scale this version doesn't know reads as not said, so the part falls back on its range.
+enum WritingScale: String, OmittableAPIContent, Sendable {
   case levels
   case points
 }
@@ -272,14 +273,13 @@ private struct ScoreRow<Detail: View>: View {
 
 /// A written part's estimate against its own minimum, as main's `WrittenStandingLine` says it.
 /// Each verdict is "likely": it comes from how closely graders' marks match the board's, never a
-/// promise. Without one, an estimate beside a minimum would read as a pass, so the line says it
-/// can't tell.
+/// promise, so it never says by how much; the estimate beside it shows the gap. Without one, an
+/// estimate beside a minimum would read as a pass, so the line says it can't tell.
 struct WrittenStandingLine: View {
   let part: WrittenPartPoints
-  var decimals: Int?
 
   var body: some View {
-    if let minimum = part.minimumPoints, let range = part.range {
+    if let minimum = part.minimumPoints, part.range != nil {
       let points = WritingLabels.points(minimum)
 
       switch part.standing {
@@ -292,16 +292,8 @@ struct WrittenStandingLine: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       case .below:
-        // The verdict can come from the last mock while the estimate averages later answers.
-        let short = WritingRange(high: minimum - range.low, low: minimum - range.high)
         Label {
-          if short.low > 0 {
-            Text(
-              "Likely \(WritingLabels.range(short, decimals: decimals ?? part.decimals)) points short of the \(points) needed",
-              tableName: "Plan")
-          } else {
-            Text("Likely below the \(points) points needed", tableName: "Plan")
-          }
+          Text("Likely below the \(points) points needed", tableName: "Plan")
         } icon: {
           Image(systemName: "xmark")
         }
