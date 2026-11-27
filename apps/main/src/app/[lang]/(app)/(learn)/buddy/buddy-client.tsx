@@ -20,6 +20,7 @@ import {
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
+import { type BuddyPageRead } from "./buddy-first-page";
 import { useBuddyPages } from "./buddy-pages";
 import { useBuddyConversations } from "./use-buddy-conversations";
 
@@ -68,6 +69,7 @@ function BuddyConversation({
 export function BuddyClient({
   canAsk,
   conversations,
+  firstPage,
   goalId,
   readAt,
   situation,
@@ -77,6 +79,8 @@ export function BuddyClient({
   canAsk: boolean;
   /** Null for a guest, who can't ask and so has none. */
   conversations: BuddyConversations | null;
+  /** What the page drawn with this layout read, in the same server render. */
+  firstPage: BuddyPageRead | null;
   goalId: string;
   readAt: number;
   situation: TutorSituation;
@@ -87,7 +91,7 @@ export function BuddyClient({
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId, { learner: viewerId });
 
-  const pages = useBuddyPages();
+  const pages = useBuddyPages(firstPage);
 
   const { list, open, questionSaved } = useBuddyConversations({
     goalId,

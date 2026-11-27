@@ -1,41 +1,28 @@
 "use client";
 
-import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import { createContext, use, useState } from "react";
-
-type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
-
-type PageRead = {
-  conversationId?: string;
-  /** The learner's own conversation, of a goal that isn't the active one. */
-  ofAnotherGoal?: boolean;
-  thread?: ThreadPage | null;
-};
+import { type BuddyPageRead } from "./buddy-first-page";
 
 function createBuddyPages() {
-  const read = new Map<string, ThreadPage>();
+  const read = new Map<string, NonNullable<BuddyPageRead["thread"]>>();
   const ofAnotherGoal = new Set<string>();
-  const firstPage = Promise.withResolvers<null>();
-  let hasPage = false;
 
   return {
-    /** Settles once a page has said what it read, so the conversation starts with it. */
-    firstPage: firstPage.promise,
-    hasPage: () => hasPage,
     isOfAnotherGoal: (conversationId: string) => ofAnotherGoal.has(conversationId),
-    keep: (page: PageRead) => {
-      if (page.conversationId && page.thread) {
-        read.set(page.conversationId, page.thread);
+    keep: ({ conversationId, ofAnotherGoal: elsewhere = false, thread }: BuddyPageRead) => {
+      if (!conversationId) {
+        return;
       }
 
-      if (page.conversationId && page.ofAnotherGoal) {
-        ofAnotherGoal.add(page.conversationId);
-      } else if (page.conversationId) {
-        ofAnotherGoal.delete(page.conversationId);
+      if (thread) {
+        read.set(conversationId, thread);
       }
 
-      hasPage = true;
-      firstPage.resolve(null);
+      if (elsewhere) {
+        ofAnotherGoal.add(conversationId);
+      } else {
+        ofAnotherGoal.delete(conversationId);
+      }
     },
     /** Null for a conversation no page read, which then loads itself. */
     readOf: (conversationId: string) => read.get(conversationId) ?? null,
@@ -44,20 +31,10 @@ function createBuddyPages() {
 
 const BuddyPagesContext = createContext<ReturnType<typeof createBuddyPages> | null>(null);
 
-function useBuddyPagesChannel() {
-  const pages = use(BuddyPagesContext);
-
-  if (!pages) {
-    throw new Error("The buddy's pages and its conversation must be inside BuddyPages");
-  }
-
-  return pages;
-}
-
 /**
- * The buddy's layout draws the conversation, and the page under it only knows which one its URL
- * names. The page is drawn first and says here what it read of that one, so the conversation has it
- * in the same server render and from the first paint.
+ * What the buddy's pages read of the conversations their URLs named. The layout draws the
+ * conversation, so a page draws nothing and keeps its read here, while rendering, as the page is
+ * drawn before the conversation.
  */
 export function BuddyPages({ children }: { children: React.ReactNode }) {
   // oxlint-disable-next-line react/hook-use-state -- Made once and never replaced, so there is no setter.
@@ -66,25 +43,25 @@ export function BuddyPages({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * What a buddy page draws: nothing. It hands over the conversation its URL names as the server
- * read it, while rendering, as the page is drawn before the conversation. A page that names none
- * (a blank one) hands over nothing.
+ * The first page's read comes from the server's render as `first`: while hydrating, the page is
+ * drawn after what's around it.
  */
-export function BuddyPage(page: PageRead) {
-  useBuddyPagesChannel().keep(page);
-  return null;
-}
+export function useBuddyPages(first: BuddyPageRead | null) {
+  const pages = use(BuddyPagesContext);
 
-/**
- * What the pages handed over. It waits for the first page inside a `Suspense` of its own: while
- * hydrating, the page is drawn after what's around it.
- */
-export function useBuddyPages() {
-  const pages = useBuddyPagesChannel();
+  if (!pages) {
+    throw new Error("The buddy's pages and its conversation must be inside BuddyPages");
+  }
 
-  if (!pages.hasPage()) {
-    use(pages.firstPage);
+  if (first) {
+    pages.keep(first);
   }
 
   return pages;
+}
+
+/** What a buddy page draws: nothing. A page that names no conversation (a blank one) keeps nothing. */
+export function BuddyPage(page: BuddyPageRead) {
+  useBuddyPages(page);
+  return null;
 }

@@ -9,6 +9,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { BuddyClient } from "./buddy-client";
+import { readFirstBuddyPage } from "./buddy-first-page";
 import { findBuddyGoal } from "./buddy-goal";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
 import { BuddyPages } from "./buddy-pages";
@@ -40,10 +41,10 @@ async function readConversations({ canAsk, goalId }: { canAsk: boolean; goalId: 
 
 /**
  * The whole screen is drawn here, and the page under it only hands over the conversation its URL
- * names (`BuddyPage`). So opening another conversation, or a new one getting its own
+ * names (`handOverBuddyPage`). So opening another conversation, or a new one getting its own
  * address, changes the turns alone: the list, the composer and an answer on its way stay as they are.
  */
-async function BuddyContent({ children }: { children: React.ReactNode }) {
+async function BuddyContent() {
   const [readAt, result, goal, session] = await Promise.all([
     getReadAt(),
     getBuddyStatus({}),
@@ -69,35 +70,36 @@ async function BuddyContent({ children }: { children: React.ReactNode }) {
 
   const canAsk = !session.user.isAnonymous;
 
-  const [hasMistake, conversations] = await Promise.all([
+  const [hasMistake, conversations, firstPage] = await Promise.all([
     hasGoalMistake(goal.id),
     readConversations({ canAsk, goalId: goal.id }),
+    readFirstBuddyPage(),
   ]);
 
   return (
-    <BuddyPages>
-      {children}
-
-      <Suspense fallback={<BuddyScreenSkeleton />}>
-        <BuddyClient
-          canAsk={canAsk}
-          conversations={conversations}
-          goalId={goal.id}
-          key={goal.id}
-          readAt={readAt}
-          situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
-          status={result.buddy}
-          viewerId={session.user.id}
-        />
-      </Suspense>
-    </BuddyPages>
+    <BuddyClient
+      canAsk={canAsk}
+      conversations={conversations}
+      firstPage={firstPage}
+      goalId={goal.id}
+      key={goal.id}
+      readAt={readAt}
+      situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
+      status={result.buddy}
+      viewerId={session.user.id}
+    />
   );
 }
 
+/** The page is beside the screen, not inside it, so both are read at once and the page hands over. */
 export default function BuddyLayout({ children }: LayoutProps<"/[lang]/buddy">) {
   return (
-    <Suspense fallback={<BuddyScreenSkeleton />}>
-      <BuddyContent>{children}</BuddyContent>
-    </Suspense>
+    <BuddyPages>
+      <Suspense fallback={null}>{children}</Suspense>
+
+      <Suspense fallback={<BuddyScreenSkeleton />}>
+        <BuddyContent />
+      </Suspense>
+    </BuddyPages>
   );
 }
