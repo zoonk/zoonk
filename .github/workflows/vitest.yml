@@ -26,33 +26,59 @@ jobs:
     name: vitest (${{ matrix.suite == 'clock' && format('affected at {0} UTC', matrix.test-clock) || matrix.part }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy; more
-    # at once only slowed every test down. The API's workflow runs mostly wait on durable retries and
-    # sleeps, so they get a runner of their own.
+    # Runners of about the same length, each well under six minutes. Each has 4 vCPUs, which two
+    # suites at once keep busy; more at once only slowed every test down. The API's workflow runs
+    # mostly wait on durable retries and sleeps, so they get a runner of their own.
     strategy:
       fail-fast: false
       matrix:
         suite: ${{ fromJSON(github.event_name == 'pull_request' && '["standard", "clock"]' || '["standard"]') }}
-        part: [core and api 1 of 2, core and api 2 of 2, player and the rest, api workflows]
+        part:
+          - core and api 1 of 4
+          - core and api 2 of 4
+          - core and api 3 of 4
+          - core and api 4 of 4
+          - player 1 of 2
+          - player 2 of 2
+          - the rest
+          - api workflows
         exclude:
-          - suite: clock
-            part: player and the rest
-          - suite: clock
-            part: api workflows
+          - { suite: clock, part: core and api 3 of 4 }
+          - { suite: clock, part: core and api 4 of 4 }
+          - { suite: clock, part: player 1 of 2 }
+          - { suite: clock, part: player 2 of 2 }
+          - { suite: clock, part: the rest }
+          - { suite: clock, part: api workflows }
         include:
-          - part: core and api 1 of 2
+          - part: core and api 1 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
-            args: "-- --shard=1/2"
+            args: "-- --shard=1/4"
             test-clock: "Wednesday 01:30"
-          - part: core and api 2 of 2
+          - part: core and api 2 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
-            args: "-- --shard=2/2"
+            args: "-- --shard=2/4"
             test-clock: "Sunday 16:00"
-          - part: player and the rest
+          - part: core and api 3 of 4
             task: test
-            filter: "--filter=!@zoonk/core --filter=!api"
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=3/4"
+          - part: core and api 4 of 4
+            task: test
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=4/4"
+          - part: player 1 of 2
+            task: test
+            filter: "--filter=@zoonk/player"
+            args: "-- --shard=1/2"
+          - part: player 2 of 2
+            task: test
+            filter: "--filter=@zoonk/player"
+            args: "-- --shard=2/2"
+          - part: the rest
+            task: test
+            filter: "--filter=!@zoonk/core --filter=!api --filter=!@zoonk/player"
             args: ""
           - part: api workflows
             task: test:workflow

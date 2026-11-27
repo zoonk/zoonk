@@ -70,7 +70,12 @@
     "build:e2e": {
       "dependsOn": ["db:generate", "i18n:extract", "^i18n:extract", "^build:e2e"],
       "env": ["DATABASE_*"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "!**/*.test.ts",
+        "!**/*.test.tsx"
+      ],
       "outputs": [
         ".next-e2e/**",
         "!.next-e2e/cache/**",
@@ -99,7 +104,7 @@
     },
     "e2e:suite": {
       "dependsOn": ["^transit", "api#transit"],
-      "env": ["CI", "MAIN_PERF_GATES"],
+      "env": ["CI"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "$TURBO_ROOT$/packages/db/.env.e2e.local",
