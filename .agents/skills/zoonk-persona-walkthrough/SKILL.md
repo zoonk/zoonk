@@ -30,7 +30,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 
 - Walk the production build `pnpm start` serves, not a dev server ([which server](../../guides/local-app.md#which-server)).
 - A builder can't unknow the implementation. For substantial changes, have a separate agent walk with only the persona brief, the journeys to cover and the app URL, without the diff, and report back; the builder fixes. When you walk your own work, write down what the persona knows before each screen and judge only from what the screen shows.
-- Start with zoonk-design's [first-glance test](../zoonk-design/SKILL.md#the-first-glance-test) on every new or changed screen, before the walk, so the walker's first read is still a first read.
+- Start with zoonk-design's [first-glance test](../zoonk-design/references/checks.md#the-first-glance-test) on every new or changed screen, before the walk, so the walker's first read is still a first read.
 - Enter through the normal UI, reach the outcome, then come back: the next day, after a gap, on another device.
 - Cover the unhappy paths in [journeys](references/journeys.md) for every surface the change reaches, not only the screen you edited.
 - At each screen, ask as the persona:
@@ -43,7 +43,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 
 ## 4. Fix, push back, and lock it in
 
-- Fix friction within scope, and confusion by zoonk-design's [Words](../zoonk-design/SKILL.md#words) fix order, where a new sentence is the last resort. When the better experience conflicts with the request or a repository rule, explain the conflict concretely and propose the alternative instead of building the worse version silently.
+- Fix friction within scope, and confusion by zoonk-design's [Words](../zoonk-design/references/words.md) fix order, where a new sentence is the last resort. When the better experience conflicts with the request or a repository rule, explain the conflict concretely and propose the alternative instead of building the worse version silently.
 - Give a reproducible problem a regression test when [zoonk-testing](../zoonk-testing/SKILL.md)'s bar says one is worth it, at the cheapest layer that reproduces it: a core test for a rule or a plan's behavior, an eval case for AI output, a player browser test for lesson interactions, and an E2E journey (seeded persona copies through `asPersona`) only for a high-risk flow nothing cheaper catches. Wording, layout and other low-risk fixes are checked by walking the journey again, not by a permanent test.
 - Walk the affected journey again after the fix.
 

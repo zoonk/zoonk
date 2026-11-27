@@ -1,10 +1,10 @@
 ---
 name: zoonk-design
-description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on clarity, hierarchy, edges and alignment, spacing and density, shape and control sizes, typography, color and contrast, iconography, states and behavior, each with rules a screenshot or a measurement can check; draw each app screen before wording it, so each fact is a mark, a number or a meter before it's a line of text; write what words are left in the learner's words, and a marketing page (landing, catalog, public course pages, pricing, blog) to its own standard for a visitor deciding whether to start; rethink it from first principles with alternative concepts when it falls short; draw each role (a page's top, the way back, the main action, an overlay, a gate) with its one piece on every screen; and finish with a scan, a first-glance test, a craft read and a role read by agents that see only the screenshots.
+description: Design, build or review a Zoonk screen on the web, iOS or Android, marketing pages included: how it's structured, drawn, worded and moves, the one piece each role uses, and the reads a screen passes before it ships.
 license: MIT
 metadata:
   author: zoonk
-  version: "6.8.0"
+  version: "7.0.0"
 ---
 
 # Zoonk design
@@ -36,20 +36,18 @@ Use the piece that does this. Extend the one that does almost this, in the same 
 
 These roles each have one piece and one way on every app screen. A screen never draws its own, spaces one its own way or words one differently ([rules and checks](references/craft.md#roles)):
 
-| Role                        | The one way                                                                                                                                                                                                                                                                       |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A page's top                | `PageTop` (`@zoonk/ui/components/page-top`; inside the app's frame the layout draws `PageTopBar` and the page its `PageTitle`): the bar, then the title; a bar that holds nothing gives its row to the title. No page sets its own top padding.                                   |
-| The way back                | `BackLink`: a left chevron and the name of the page it goes back to, always both. A task (a full-screen flow) keeps ✕.                                                                                                                                                            |
-| A page's own actions        | The end of its top bar (`PageTopBar`'s `actions`): words as a `size="bar"` button, a glyph alone as `icon-bar`, the "…" last. Nothing sits beside a pushed page's title. A tab root (Today, Plan, the buddy) has no bar: its own action ends its title row, in the small size.    |
-| A screen's main action      | `BottomBar` (`@zoonk/ui/components/bottom-bar`), last in the page: pinned at the bottom on a phone and a computer, the action full width on a phone and at the bar's end on a computer. A screen with no main action has no bar.                                                  |
-| What opens over a page      | `Drawer`: a sheet from the bottom on a phone, a centered dialog on a computer. A question that needs an answer is an `AlertDialog`, something edited beside the page a `SidePanel`. The piece decides by screen size, never the screen.                                           |
-| A button                    | Its label and at most one glyph. The main action that Enter presses is an `EnterButton`, and ⏎ is its one glyph, where the spinner goes while it works. A button Enter doesn't press may have one icon, or trail a chevron (`FORWARD_ICON`) when it goes forward. Never an arrow. |
-| The small line over a title | `Eyebrow` (`@zoonk/learn/eyebrow`): a chip written as a sentence, never mono, uppercase or plain text, over a task's, a card's, a sheet's or a question's title. A page's own title has no line over it, and something finished says so in its title, never in a chip.            |
-| Paying                      | The action reads "Subscribe", everywhere: never the plan's name or another verb ([the words learners never see](../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first)).                                                                                              |
-| A paid feature              | Looks like any other: no badge, chip or card says it's paid. `SubscribeGate` shows once, when the learner tries to use it ([Subscribing and limits](references/app-patterns.md#subscribing-and-limits)).                                                                          |
-| The "none" answer           | Skip. A step with Skip has no "None of these" or "Nothing to add" option.                                                                                                                                                                                                         |
+- **A page's top.** `PageTop` (`@zoonk/ui/components/page-top`; inside the app's frame the layout draws `PageTopBar` and the page its `PageTitle`): the bar, then the title; a bar that holds nothing gives its row to the title. No page sets its own top padding.
+- **The way back.** `BackLink`: a left chevron and the name of the page it goes back to, always both. A task (a full-screen flow) keeps ✕.
+- **A page's own actions.** The end of its top bar (`PageTopBar`'s `actions`): words as a `size="bar"` button, a glyph alone as `icon-bar`, the "…" last. Nothing sits beside a pushed page's title. A tab root (Today, Plan, the buddy) has no bar: its own action ends its title row, in the small size.
+- **A screen's main action.** `BottomBar` (`@zoonk/ui/components/bottom-bar`), last in the page: pinned at the bottom on a phone and a computer, the action full width on a phone and at the bar's end on a computer. A screen with no main action has no bar.
+- **What opens over a page.** `Drawer`: a sheet from the bottom on a phone, a centered dialog on a computer. A question that needs an answer is an `AlertDialog`, something edited beside the page a `SidePanel`. The piece decides by screen size, never the screen.
+- **A button.** Its label and at most one glyph. The main action that Enter presses is an `EnterButton`, and ⏎ is its one glyph, where the spinner goes while it works. A button Enter doesn't press may have one icon, or trail a chevron (`FORWARD_ICON`) when it goes forward. Never an arrow.
+- **The small line over a title.** `Eyebrow` (`@zoonk/learn/eyebrow`): a chip written as a sentence, never mono, uppercase or plain text, over a task's, a card's, a sheet's or a question's title. A page's own title has no line over it, and something finished says so in its title, never in a chip.
+- **Paying.** The action reads "Subscribe", everywhere: never the plan's name or another verb ([the words learners never see](../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first)).
+- **A paid feature.** Looks like any other: no badge, chip or card says it's paid. `SubscribeGate` shows once, when the learner tries to use it ([Subscribing and limits](references/app-patterns.md#subscribing-and-limits)).
+- **The "none" answer.** Skip. A step with Skip has no "None of these" or "Nothing to add" option.
 
-A [marketing page](references/marketing-pages.md) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
+A [marketing page](references/marketing-pages.md) is outside a page's top and a screen's main action: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
 
 Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works).
 
@@ -61,33 +59,7 @@ Resolve unnecessary decisions, give attention a clear order, make each element e
 
 ## Words
 
-These rules are for the product's own screens: the app a learner operates, on the web, iOS and Android, and the tools staff operate. [Marketing pages](references/marketing-pages.md) do a different job and have their own standard.
-
-A learner gives a screen about two seconds and knows only what earlier screens showed them. Write for that person, never for someone who knows how Zoonk works.
-
-- **One message.** Before writing, finish this sentence: "This screen tells the learner ___ so they can ___." The title says it. Everything else supports it or leaves.
-- **Words come last.** A screen's words are what is left once its [sketch](references/show-first.md#the-sketch) has given each fact its first carrier, so most are labels on something drawn. Between the title and the main action, one line at most belongs to nothing drawn ([V3](references/show-first.md#v3-one-free-line)): a sentence of 20 words at most that says what this is and why it's worth doing (a test's offer: what it finds and what the learner gets), or a line of three facts at most. That is a ceiling, never a slot to fill: a screen that needs no sentence has none. A list row is a title and at most one short line, and a result leads with one number. Need more? Make it a step, or put it behind one "Details" link.
-- **The learner's words.** Use a product term (plan, focus, phase, time a day, Brain Power…) only on or after the screen that shows the learner what it is. Before that, say the plain thing ("how long you study each day"). The [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first) lists each term, where it's taught and the words learners never see. If a string needs a translator note to explain a word, the learner doesn't know the word either: rewrite the string.
-- **Names wait for their screen.** A name is a term too ("your buddy", "Zu", "Plus", a feature's name): it appears only after the screen that introduces it. Until then we speak as "we" ("We break explanations into small steps"). The buddy is introduced on "Choose your buddy", the last of onboarding's questions about the learner, so every onboarding screen before it (the goal, the language, how to address you, what applies to you) and every marketing page say "we", never "your buddy" or its name.
-- **What they get, not how it works.** Say what the learner gets and what to do. How Zoonk picks, counts, saves, schedules or estimates goes behind a tap (a number's sheet, "How this works"), for the few who ask. A question says what we'll use the answer for ("We'll adapt lessons to your needs"), never the list of what the system does with each answer.
-- **Say it when it happens.** A caveat, limit or exception appears where and when it applies (the day a lesson moves, the question a test can't ask), not on the screen where the learner decides to start. Being true doesn't earn a line its place. Being needed now, to decide or to act, does.
-- **Buttons are verbs they already know.** "Start", "Continue", "Skip", "Save", "Try again": a main action is one or two words, any other button three at most, in every language: a translation says no more than its English. A label never names the next screen, a term from a later screen, a duration or a consequence ("Continue to daily time", "Start the 20-minute test", "Archive and hide this goal"). If the consequence matters, the screen says it once, above the button. The one label that says its consequence is a test's way out, "Stop and use my answers" ([exceptions](references/craft.md#exceptions-the-user-granted)).
-- **Once.** On one screen a fact is said once, unless a sentence needs it as its subject or it is a setting's own row: the Plan's header doesn't name the goal the top bar already names, and its Schedule number doesn't say "45 min a day" beside a "Time a day" row that says "45 min". A line that would repeat on every row goes to the list's header, or goes.
-- **No bookkeeping.** Counts and system states ("Questions on 2 of 18 subjects", "lessons aren't written yet") appear only when they change what the learner does next.
-- **A fallback is the next step.** When we can't do the usual thing and the learner loses nothing, say what happens instead ("We'll find your level in your first days"), never what we couldn't do: that reads as an error.
-- **Examples travel.** A placeholder or an example is one a learner in any country knows, or it's written per market.
-
-When a review or a walk finds that a learner wouldn't understand something, fix it in this order and stop at the first that works:
-
-1. Remove the thing that needs explaining.
-2. Rename it in the learner's words.
-3. Show it: let something already on the screen say it, or draw it (a mark, a number, a meter, an example).
-4. Move the explanation to the moment it matters.
-5. Add a sentence, and take another one out.
-
-A screen that gained a line this way gets [the scan](references/show-first.md#the-scan) again before the finding closes.
-
-Internal tools (Admin, evals, the playground, the CLI) follow the same rules for a staff person: [internal tools](references/internal-tools.md).
+A screen tells the learner one thing, and its words are what's left once its [sketch](references/show-first.md#the-sketch) has drawn each fact: mostly labels on something drawn, in words the learner already knows. [Words](references/words.md) has the rules for every string on a product screen (the one free line, terms and names, buttons, what to say when) and the order to fix one a learner doesn't understand.
 
 ## Marketing pages
 
@@ -145,32 +117,7 @@ When a screen keeps missing the bar, reviews return to the same screen, or each 
 
 ## Check the experience
 
-Walk through the task: can someone recognize what matters and predict what happens next? Walk one mistake through recovery on a phone: what must the learner reread, repeat or wait for before they can try again? Fix unnecessary interpreting, remembering, and choosing.
-
-Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned: a change to a shared piece is looked at on every screen that draws it, and "this screen's files didn't change" doesn't mean it looks right. Before a PR, [the verification step](../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches) pictures every screen the branch touches at the sizes, languages and windows where layouts break, and readers who built none of it give each picture [independent picture review](references/craft.md#independent-picture-review).
-
-For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, words no earlier screen taught, lines nobody would miss, unnecessary choices, hidden progress, and effort that grows with repeated use.
-
-### The first-glance test
-
-You can't judge your own screen: you know what it means. For every new or changed screen, give an agent that has seen neither the code, the spec nor this conversation one phone-size screenshot, its squint copy (`pnpm design:sketch --squint <picture>`) and [show before you say](references/show-first.md), and nothing else. It runs [the scan](references/show-first.md#the-scan) first, then answers:
-
-- What is this screen for?
-- What would you tap, and what do you expect to happen?
-- Which words or lines don't you understand, or wouldn't miss?
-- Which names does it use (a product's, a feature's, a character's, a plan's), and what is each, from this screen alone?
-
-For a [marketing page](references/marketing-pages.md#the-first-glance-test), the reader and the questions change.
-
-A scan that falls short (V1 to V3), a wrong guess, an unknown word, a name it can only guess at or a "not sure" is a finding. A reader given a screen as text can't run the scan, so that isn't this test. Give it a flow's screens in the order a learner meets them, from the first one they see, so a name counts as known only after the screen that showed it. Don't explain the screen and ask again: change it, by the fix order in [Words](#words) for an app screen and by the list in [marketing pages](references/marketing-pages.md) for one of those, or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
-
-### The craft read
-
-The first-glance test asks whether a screen is understood; the craft read asks whether it is drawn right, and you can't judge that on your own screen either. For every new or changed screen, once it works and before the designer's review ([verify](../verify/SKILL.md)), give an agent that didn't build it the screenshots at 390 and 1440, the same screenshots of the existing screens that do the same thing (the ones the PR names), [craft](references/craft.md) and [show before you say](references/show-first.md), and nothing else. It answers [the craft read's questions](references/craft.md#the-craft-read) for each screenshot and reports each fault as [a finding](references/craft.md#a-finding): the place, the rule, what is wrong with its numbers, and whether the fault is the screen's or a shared piece's.
-
-Fix every finding in what the change drew that misleads a learner or breaks a named rule, and every one that is [drift](../../../AGENTS.md#architecture-shared-by-all-workspaces) from a screen that does the same job, file the rest in an issue, and have a reader check only that each fix held and nothing got worse, once. A fault in a shared piece (a bar, a button, a list row, a token's use) is fixed in that piece, so every screen gets it, never with a margin on the one screen. A finding that the design system itself breaks a rule goes to the user once, as a decision about the system. When a finding is one of the system's [deliberate choices](references/craft.md#deliberate-choices) or an [exception the user granted](references/craft.md#exceptions-the-user-granted), say so and leave it.
-
-A screen's own readers can't see that it differs from another area's. So when a change draws or moves one of the [roles](#find-the-piece-before-you-build-one), touches a role's piece, or was built by more than one agent, run [the role read](references/craft.md#the-role-read).
+Use what you built in the production build, at every size, as the people it serves would, with a mistake walked through recovery. Then readers who built none of it judge each new or changed screen from its pictures alone: [the first-glance test](references/checks.md#the-first-glance-test) asks whether it's understood, [the craft read](references/checks.md#the-craft-read) whether it's drawn right, and the role read whether each role is drawn one way. [Check the experience](references/checks.md) has the sizes, what each reader gets and asks, and how findings get fixed.
 
 ## iOS and Android
 
