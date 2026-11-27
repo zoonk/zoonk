@@ -2,6 +2,30 @@ import { writtenGradingSchema } from "../../../library/exams/written-grading";
 import { type listWrittenTasks } from "../../../library/exams/written-tasks";
 
 type Basis = Pick<ReturnType<typeof listWrittenTasks>[number], "grading" | "lines" | "points">;
+type ZeroRule = { kinds?: readonly string[] | null; maxLines?: number | null };
+
+const LINE_COUNTED_ZEROS = new Set(["copiedSupport", "tooFewLines"]);
+
+/**
+ * The answers a sheet zeroes, whichever way its notice was read into rules: one rule naming two
+ * triggers zeroes what two rules naming one each do. A line limit belongs only to triggers counted
+ * in lines.
+ */
+function groupZeroTriggers(zeroing: readonly ZeroRule[]) {
+  const triggers = zeroing.flatMap(({ kinds, maxLines }) =>
+    (kinds ?? []).map((kind) => ({
+      kind,
+      maxLines: LINE_COUNTED_ZEROS.has(kind) ? (maxLines ?? null) : null,
+    })),
+  );
+
+  return [...Map.groupBy(triggers, ({ maxLines }) => maxLines)]
+    .map(([maxLines, own]) => ({
+      kinds: [...new Set(own.map(({ kind }) => kind))].toSorted(),
+      maxLines,
+    }))
+    .toSorted((first, second) => (first.maxLines ?? 0) - (second.maxLines ?? 0));
+}
 
 function readsAsNumbers(rounding: Basis["grading"]["rounding"]) {
   return rounding && { mode: rounding.mode, stage: rounding.stage, step: rounding.step };
@@ -26,10 +50,7 @@ function getWritingGradingFacts(grading: Basis["grading"]) {
       method: language.method,
     },
     rounding: readsAsNumbers(rounding),
-    zeroing: zeroing.map(({ kinds, maxLines }) => ({
-      kinds: [...(kinds ?? [])].toSorted(),
-      maxLines: maxLines ?? null,
-    })),
+    zeroing: groupZeroTriggers(zeroing),
     ...(combination && { combination: { method: combination.method, step: combination.step } }),
     ...(limits?.length && { limits: limits.map(({ criteria: ids, max }) => ({ ids, max })) }),
     ...(scales.length > 0 && {
@@ -129,6 +150,37 @@ function withCitation(value: unknown) {
     : value;
 }
 
+function isZeroRule(rule: unknown): rule is ZeroRule {
+  return typeof rule === "object" && rule !== null;
+}
+
+/** A stored basis with its zero rules grouped as a new reading groups them. */
+function withGroupedZeroTriggers(saved: string | null): string | null {
+  const value = saved === null ? null : readTaskBasis(saved);
+
+  if (!Array.isArray(value)) {
+    return saved;
+  }
+
+  const [lines, points, grading] = value as unknown[];
+
+  if (
+    typeof grading !== "object" ||
+    grading === null ||
+    !("zeroing" in grading) ||
+    !Array.isArray(grading.zeroing) ||
+    !grading.zeroing.every((rule) => isZeroRule(rule))
+  ) {
+    return saved;
+  }
+
+  return JSON.stringify([
+    lines,
+    points,
+    { ...grading, zeroing: groupZeroTriggers(grading.zeroing) },
+  ]);
+}
+
 export function matchesWritingTaskBasis({
   prompt,
   task,
@@ -142,9 +194,7 @@ export function matchesWritingTaskBasis({
     return getWritingTaskBasis(prompt) === taskBasis;
   }
 
-  return [
-    prompt.taskBasis,
-    withoutStoredKind(prompt.taskBasis),
-    legacyTaskBasis(prompt.taskBasis),
-  ].includes(taskBasis);
+  return [prompt.taskBasis, withoutStoredKind(prompt.taskBasis), legacyTaskBasis(prompt.taskBasis)]
+    .map((saved) => withGroupedZeroTriggers(saved))
+    .includes(taskBasis);
 }

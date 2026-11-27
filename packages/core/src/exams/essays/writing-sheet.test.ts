@@ -457,6 +457,41 @@ describe("sheets stored before awards existed", () => {
 
     expect(grade).toMatchObject({ content: { high: 21, low: 21 }, kind: "points", max: 30 });
   });
+
+  it("keeps an issued question when a new reading of its notice splits or groups its zero rules", () => {
+    const task = sectionTaskSchema.parse(cguIssuedTask.task);
+    const grading = task.grading ?? writtenGradingSchema.parse(cguIssuedTask.task.grading);
+    const [rule] = grading.zeroing;
+
+    const issued = writtenItemSchema.parse({
+      ...cguIssuedTask.writing,
+      grading: cguIssuedTask.task.grading,
+      taskBasis: cguIssuedTask.taskBasis,
+    });
+
+    const reread = (zeroing: typeof grading.zeroing, rounding = grading.rounding) =>
+      matchesWritingTaskBasis({
+        prompt: issued,
+        task: { grading: { ...grading, rounding, zeroing }, lines: 30, points: 30 },
+      });
+
+    const split = (rule?.kinds ?? []).map((kind) => ({ ...rule, kinds: [kind] }));
+
+    expect(split).toHaveLength(2);
+    expect(reread(split)).toBe(true);
+    expect(reread(split.toReversed())).toBe(true);
+    expect(reread([split[0] ?? rule])).toBe(false);
+
+    expect(
+      reread(grading.zeroing, {
+        citation: { passage: "", sourceId: "" },
+        mode: "nearest",
+        stage: "total",
+        step: 0.01,
+        text: "duas casas decimais",
+      }),
+    ).toBe(false);
+  });
 });
 
 const EXAM_NAMES = /\b(?:enem|oab|inep|fgv|cebraspe|cacd|cgu|ielts)\b/iu;
