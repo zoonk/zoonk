@@ -871,6 +871,14 @@ describe("a learner's own material", () => {
         questions: null,
         weight: null,
       },
+      {
+        ...subject,
+        name: "Física",
+        passages: [{ document: 1, passage: "# Cinemática - MUV" }],
+        questions: null,
+        topics: ["Velocidade média"],
+        weight: null,
+      },
     ],
   });
 
@@ -898,35 +906,43 @@ describe("a learner's own material", () => {
     return { checked: toCitedFacts(facts).map((fact) => fact.id), content };
   }
 
-  it("keeps a subject its passage names without asking the check, which still judges the exam's details", () => {
+  it("keeps a subject its passage names or whose topics the notes state without asking the check, which still judges the exam's details", () => {
     const { checked, content } = read({ material: true, supportedIds: [] });
 
     expect(checked).toStrictEqual(["subjects.0.questions", "subjects.2"]);
 
     expect(content.structure.subjects.map((item) => [item.name, item.questions])).toStrictEqual([
       ["Cinemática - MUV", null],
+      ["Física", null],
     ]);
 
     expect(isUsableBlueprint({ content, shared: false })).toBe(true);
   });
 
-  it("leaves to the check a subject its quoted passage doesn't name, or notes without text", () => {
+  it("leaves to the check a subject the notes neither name nor state a topic of, or notes without text", () => {
     const unnamed = read({ material: true, supportedIds: ["subjects.2"] });
     const unread = read({ material: true, supportedIds: [], text: null });
 
     expect(unnamed.content.structure.subjects.map((item) => item.name)).toStrictEqual([
       "Cinemática - MUV",
       "Medieval History",
+      "Física",
     ]);
 
-    expect(unread.checked).toContain("subjects.0");
+    expect(unread.checked).toStrictEqual(expect.arrayContaining(["subjects.0", "subjects.3"]));
     expect(unread.content.structure.subjects).toStrictEqual([]);
   });
 
   it("leaves an exam notice's subjects to the check", () => {
     const { checked, content } = read({ material: false, supportedIds: [] });
 
-    expect(checked).toStrictEqual(["subjects.0", "subjects.0.questions", "subjects.2"]);
+    expect(checked).toStrictEqual([
+      "subjects.0",
+      "subjects.0.questions",
+      "subjects.2",
+      "subjects.3",
+    ]);
+
     expect(content.structure.subjects).toStrictEqual([]);
   });
 });

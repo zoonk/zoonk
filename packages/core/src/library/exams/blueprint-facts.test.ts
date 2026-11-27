@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DOCUMENTS, NOTICE, blueprintExtraction } from "./_test-utils/blueprint-extraction";
-import { findStatedTopics, listBlueprintFacts, toCitedFacts } from "./blueprint-facts";
+import { listBlueprintFacts, toCitedFacts } from "./blueprint-facts";
+import { findStatedTopics } from "./blueprint-passages";
 
 function countedFormat({
   countPassage,

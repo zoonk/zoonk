@@ -11,13 +11,12 @@ import { mockFacts } from "./blueprint-mock-facts";
 import {
   type ExtractionDocument,
   type Passage,
-  isNameQuoted,
+  isInLearnerNotes,
   listCountPassages,
   listFoundPassages,
   listMarkingPassages,
   toPartPassages,
 } from "./blueprint-passages";
-import { findNamesInDocument } from "./passage-check";
 
 type Extraction = BlueprintExtraction;
 
@@ -68,7 +67,7 @@ function subjectFacts({ documents, extraction, found, material }: FactSource): F
 
     const claims = toFacts({
       claims: [
-        { id, settled: material && isNameQuoted({ documents, ...subject }), statement: name },
+        { id, settled: material && isInLearnerNotes({ documents, subject }), statement: name },
         subject.questions !== null && {
           id: `${id}.questions`,
           statement: `${name} has ${subject.questions} questions`,
@@ -317,28 +316,4 @@ export function toCitedFacts(facts: FactEntry[]): CitedFact[] {
       passage: item.citations.map((citation) => citation.passage).join(" … "),
       statement: item.statement,
     }));
-}
-
-/** Without searchable document text, topics rely on the model's reading. */
-export function findStatedTopics({
-  documents,
-  subject,
-}: {
-  documents: ExtractionDocument[];
-  subject: Extraction["subjects"][number];
-}): string[] {
-  const numbers = new Set(subject.passages.map((passage) => passage.document));
-  const cited = [...numbers].flatMap((number) => documents[number - 1] ?? []);
-
-  if (cited.some((document) => !document.text)) {
-    return subject.topics;
-  }
-
-  const stated = new Set(
-    cited.flatMap((document) =>
-      document.text ? [...findNamesInDocument({ names: subject.topics, text: document.text })] : [],
-    ),
-  );
-
-  return subject.topics.filter((topic) => stated.has(topic));
 }
