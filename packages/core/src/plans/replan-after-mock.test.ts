@@ -29,6 +29,7 @@ type Outcome = "blank" | "right" | "wrong";
 async function setup() {
   vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ["Date"] });
   vi.setSystemTime(START);
+
   onTestFinished(() => {
     vi.useRealTimers();
   });
