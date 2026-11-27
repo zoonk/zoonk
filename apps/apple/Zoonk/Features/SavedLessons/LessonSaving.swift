@@ -52,10 +52,11 @@ struct LessonSaveButton: View {
 
   let target: LessonSaveTarget
   let goalId: String
-  let server: Bool
+  /// Nil until the lesson's run says, while it can't be tapped yet.
+  let server: Bool?
 
   var body: some View {
-    let isSaved = store.saves.isSaved(target.lessonId, server: server)
+    let isSaved = store.saves.isSaved(target.lessonId, server: server ?? false)
 
     SaveToggle(
       isSaved: isSaved,
@@ -67,6 +68,7 @@ struct LessonSaveButton: View {
       store.saves.set(!isSaved, target, goalId: goalId)
     }
     .labelStyle(.iconOnly)
+    .disabled(server == nil)
   }
 }
 

@@ -478,18 +478,17 @@ private struct LessonPlayerContent: View {
     return state.segments
   }
 
-  /// Main's bookmark before "…", from the first screen to the end, once the run says whether the
-  /// learner saved it. A save is made from the active goal, so there's none without one.
-  private var lessonSave: (target: LessonSaveTarget, goalId: String, saved: Bool)? {
-    guard savesLesson, !isRefused, let goalId = store.goalID, let lesson = store.lesson,
-      let saved = savedLessons?.runSaved(lessonId: lesson.id)
-    else {
+  /// Main's bookmark before "…", from the first screen to the end. A save is made from the active
+  /// goal, so there's none without one. It holds its place while the run says whether the learner
+  /// saved the lesson (`saved` nil), so the bar never moves as it answers.
+  private var lessonSave: (target: LessonSaveTarget, goalId: String, saved: Bool?)? {
+    guard savesLesson, !isRefused, let goalId = store.goalID, let lesson = store.lesson else {
       return nil
     }
 
     return (
       LessonSaveTarget(lessonId: lesson.id, title: lesson.title, chapterTitle: lesson.chapterTitle),
-      goalId, saved
+      goalId, savedLessons?.runSaved(lessonId: lesson.id)
     )
   }
 
