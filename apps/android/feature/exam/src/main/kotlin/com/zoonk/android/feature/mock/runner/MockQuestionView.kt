@@ -278,10 +278,7 @@ private fun EssayAnswer(
         readOnly = run.pending,
         colors = writingAreaColors(),
         focusRing = writingAreaFocusRing(),
-        label =
-            stringResource(
-                if (run.view.essayRubric == MockExam.EssayRubric.ENEM) R.string.mock_your_essay else R.string.questions_your_answer,
-            ),
+        label = stringResource(R.string.questions_your_answer),
         // The field's own line, so TalkBack reads the count with the field, not on every word.
         supportingText = {
             if (writing != null) {

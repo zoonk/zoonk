@@ -12,8 +12,6 @@
   "mock_cell_unsure": "ad2d8913b825513ef80c8ffae202522696db8f3f37dd100c2011c2acba7cdd0c",
   "mock_continue": "8fdb544d63b79b7e2a2f57ba5eea4d52a5cef2beb4d7be5087cc15fb4b292bcf",
   "mock_continue_section": "cf11cdc71796562873e389f24c5481314e6c36f67fe4e12ea687f8a8ff434516",
-  "mock_essay_blank": "ce8543c6a4ee0cb7164c70ab1e1b17dded3472d63352408adb2786f5cfa24caf",
-  "mock_essays_blank": "52d374db82c3456fbe0f87eede8ef209c82f8509b10b37e274c4fc6f466f7e05",
   "mock_every_answered": "fc6e1fc77e528fad15867a5cb198cb62615ddee32519a556ded3aa124a9d608d",
   "mock_expired_detail": "6be650add720bb8b911942976ba0857f6879490a9dd7436f371c0f99641f2460",
   "mock_expired_title": "3e807c7e777ce3eb985a4329f6670f191812af1626c7f65794a32d0875aa1765",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "b81bf0f873a17832f5bee8477d1b990232e570d1b92a63845c51b39479130cad",
   "mock_written_question_blank": "f8b100d1832a65bb35fde67d0e16a5d83554cfa90ec3a714679d79168bec8548",
   "mock_written_question_place": "2c44da12b8e9e60a56936d5cab5e656a4897f93ead9e9b13be1e4d6a420ec127",
-  "mock_written_questions_blank": "89c93bf74a4b049285709a7d5788c8bda54449931e929093e943e54aa7544bdd",
-  "mock_your_essay": "5412f327926c6ffbbeff8701778178cc0d1970a3a93722825c89239f0bc2b321"
+  "mock_written_questions_blank": "89c93bf74a4b049285709a7d5788c8bda54449931e929093e943e54aa7544bdd"
 }
 -->
 <resources>
@@ -194,7 +191,6 @@
         <item quantity="other">Tu hésites sur %d réponses.</item>
     </plurals>
     <string name="mock_every_answered">Toutes les questions ont une réponse.</string>
-    <string name="mock_essay_blank">La rédaction est vide.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">La réponse rédigée est vide.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
@@ -202,11 +198,6 @@
         <item quantity="one">%d question écrite est sans réponse.</item>
         <item quantity="many">%d réponses rédigées sont vides.</item>
         <item quantity="other">%d réponses rédigées sont vides.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d rédaction est vide.</item>
-        <item quantity="many">%d rédactions sont vides.</item>
-        <item quantity="other">%d rédactions sont vides.</item>
     </plurals>
     <string name="mock_hand_in_final">Après cela, tu ne pourras plus modifier tes réponses.</string>
     <string name="mock_keep_answering">Continuer à répondre</string>
@@ -259,7 +250,6 @@
     <string name="mock_expired_title">Le temps s’est écoulé pendant ton absence</string>
     <string name="mock_expired_detail">Celui-ci ne compte pas.</string>
     <string name="mock_take_another">En faire un autre</string>
-    <string name="mock_your_essay">Ta rédaction</string>
     <plurals name="mock_words">
         <item quantity="one">%d mot</item>
         <item quantity="many">%d mots</item>

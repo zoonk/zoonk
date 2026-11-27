@@ -759,7 +759,7 @@ final class WritingDraftTests: XCTestCase {
     """
     {"blockId":"\(blockId)","context":null,"drafts":\(drafts),"draft":\(draft),\
     "gradesLeft":6,"pacing":{"minutes":70,"source":"estimated"},"question":"Write it.",\
-    "rubric":"points","sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
+    "sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
     "writing":{"charactersPerLine":55,"denseCharactersPerLine":85,"criteria":[{"id":"c1","name":"Content","points":null}],\
     "keySource":"practiceKey","lines":30,"minimumWords":30,"points":30,"taskKey":"short",\
     "title":"Internal and external control","unit":"answer"}}

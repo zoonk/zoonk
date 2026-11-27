@@ -812,13 +812,8 @@ private struct MockEssaySections: View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
         // The question's topic names it; its whole prompt was on the question's own page.
-        if let title = essay.writing?.title {
-          Text(title)
-            .typeStyle(.rowTitle)
-        } else {
-          LessonTextBlocks(essay.question)
-            .typeStyle(.body.weight(.semibold))
-        }
+        Text(essay.writing.title)
+          .typeStyle(.rowTitle)
         if essay.unsure {
           FactSegments(facts: [.unsure])
             .typeStyle(.note)
@@ -836,8 +831,8 @@ private struct MockEssaySections: View {
       }
     }
 
-    if let grade = essay.grade, let writing = essay.writing {
-      WritingResultSections(grade: grade, prompt: writing, text: essay.text ?? "")
+    if let grade = essay.grade {
+      WritingResultSections(grade: grade, prompt: essay.writing, text: essay.text ?? "")
     }
   }
 

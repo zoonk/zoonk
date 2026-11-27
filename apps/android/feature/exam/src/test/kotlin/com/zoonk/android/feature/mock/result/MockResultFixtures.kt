@@ -53,18 +53,22 @@ internal const val MISSED =
     "format":"multipleChoice","itemId":"$ITEM_THREE","learnerAnswer":"run","number":3,"outcome":"wrong",
     "question":"Which word is a noun?","set":null,"unsure":false}"""
 
+private const val ESSAY_WRITING =
+    """{"charactersPerLine":87,"denseCharactersPerLine":135,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,
+    "taskKey":"essay","title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},
+    {"id":"c2","name":"Cohesion","points":null}]}"""
+
 internal fun pendingEssay(
     item: String = ESSAY_ONE,
     unsure: Boolean = false,
 ) =
-    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow.","unsure":$unsure}"""
+    """{"area":"Writing","context":null,"grade":null,"itemId":"$item","question":"Write about cities.","status":"pending","text":"Cities grow.","unsure":$unsure,
+    "writing":$ESSAY_WRITING}"""
 
 internal fun gradedEssay(unsure: Boolean = false) =
     """{"area":"Writing","context":null,"itemId":"$ESSAY_ONE","question":"Write about cities.","status":"graded","unsure":$unsure,
     "text":"Cities grow and that is it. Transport must follow them.",
-    "writing":{"charactersPerLine":87,"denseCharactersPerLine":135,"keySource":"practiceKey","lines":30,"minimumWords":30,"points":null,"taskKey":"essay",
-      "title":"Cities and transport","unit":"answer","criteria":[{"id":"c1","name":"Argument","points":null},
-      {"id":"c2","name":"Cohesion","points":null}]},
+    "writing":$ESSAY_WRITING,
     "grade":{"kind":"levels","errors":[],"ignoredFrom":null,"progress":null,
      "criteria":[{"comment":"Loose.","id":"c1","level":"partial","name":"Argument","quote":"Cities grow and that is it."},
       {"comment":"Linked.","id":"c2","level":"strong","name":"Cohesion","quote":null}],

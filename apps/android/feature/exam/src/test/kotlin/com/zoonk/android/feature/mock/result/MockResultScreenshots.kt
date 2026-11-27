@@ -464,7 +464,7 @@ class MockResultScreenshots {
     private fun essaysOnly(vararg essays: String) =
         finishedMock(
             result = result(extra = """"total":0,"correct":0,"areas":[],"topics":[]"""),
-            extra = """"essayRubric":"enem","essays":[${essays.joinToString(",")}]""",
+            extra = """"essays":[${essays.joinToString(",")}]""",
         )
 
     private fun show(

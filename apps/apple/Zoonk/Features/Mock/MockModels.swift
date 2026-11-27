@@ -353,7 +353,7 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   var text: String?
   /// The learner marked it "Not sure".
   var unsure: Bool
-  var writing: WritingPrompt?
+  var writing: WritingPrompt
 
   var id: String { itemId }
 }

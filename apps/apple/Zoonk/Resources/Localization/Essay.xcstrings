@@ -2230,65 +2230,6 @@
         }
       }
     },
-    "Essay · ENEM rubric" : {
-      "comment" : "An ENEM essay task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aufsatz · ENEM-Bewertungskriterien"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redacción · rúbrica ENEM"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rédaction · grille d’évaluation ENEM"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tema · griglia di valutazione ENEM"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "小論文・ENEMの採点基準"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "에세이 · ENEM 채점 기준"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wypracowanie · kryteria oceniania ENEM"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redação · critérios do ENEM"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kompozisyon · ENEM değerlendirme ölçütleri"
-          }
-        }
-      }
-    },
     "Estimated score" : {
       "localizations" : {
         "de" : {
