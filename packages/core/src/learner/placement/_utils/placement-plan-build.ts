@@ -9,7 +9,7 @@ import { pickPlacementItemSkillIds } from "../placement-item-picks";
 import { type OwnLevel } from "../placement-steps";
 
 /** Lost generation runs must not leave placement waiting indefinitely. */
-const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
+export const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
 
 type PlanBuild = {
   failed: boolean;
@@ -25,7 +25,7 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
-  partPrepared,
+  partSettled,
   requestedSkillIds,
   tx = prisma,
 }: {
@@ -39,7 +39,7 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
-  partPrepared?: boolean;
+  partSettled?: boolean;
   requestedSkillIds?: readonly string[];
   tx?: TransactionClient;
 }): Promise<PlanBuild> {
@@ -65,7 +65,7 @@ export async function loadPlanBuild({
   const writingSince = Math.max(graphWrittenAt.getTime(), askedAt?.getTime() ?? 0);
 
   const writing =
-    (partPrepared === undefined ? plan.placementPreparedAt === null : !partPrepared) &&
+    (partSettled === undefined ? plan.placementPreparedAt === null : !partSettled) &&
     Date.now() - writingSince < QUESTION_WRITING_WINDOW_MS;
 
   const graph = parsePlanGraph(plan.graph);

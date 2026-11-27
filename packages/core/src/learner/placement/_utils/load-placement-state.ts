@@ -108,14 +108,15 @@ async function loadPlacementFacts({
     () =>
       loadPlanBuild({
         askedAt: exam.placement?.attempt
-          ? new Date(exam.placement.attempt.partStartedAt)
+          ? new Date(exam.placement.attempt.partRequestedAt ?? exam.placement.attempt.partStartedAt)
           : getTestStart(exam.test),
         everySkill: exam.answeredOnly,
         focusAreas: exam.focusAreas,
         goalId,
         knownAreas: exam.knownAreas,
         ownLevel,
-        partPrepared: exam.placement?.attempt?.partPrepared,
+        partSettled:
+          exam.placement?.attempt?.partPreparationFailed || exam.placement?.attempt?.partPrepared,
         requestedSkillIds:
           exam.placement?.attempt?.partSkillIds ?? exam.placement?.attempt?.skillIds,
         tx,

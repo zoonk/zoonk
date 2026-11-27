@@ -48,6 +48,13 @@ export const placementAttemptViewSchema = z
       .int()
       .positive()
       .meta({ description: "Fixed question ceiling for the current part" }),
+    remainingEstimatedMinutes: z
+      .int()
+      .nonnegative()
+      .meta({
+        description:
+          "Estimated minutes for the unanswered questions in this attempt's remaining parts",
+      }),
     resume: z.object({ part: z.int().positive(), question: z.int().positive() }).nullable(),
     totalEstimatedMinutes: z
       .int()
@@ -110,7 +117,7 @@ export const placementStatusSchema = z
   .enum(["preparing", "asking", "waitingForQuestions", "done", "unavailable", "failed"])
   .meta({
     description:
-      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the part or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the run building the goal's plan gave up before it had skills; start it again with POST /goals/{goalId}/generations.",
+      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the part or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the plan build stopped before it had skills, or preparation stopped before an open course part had questions. Starting the sitting again retries its part.",
     id: "PlacementStatus",
   });
 

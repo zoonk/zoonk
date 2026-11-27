@@ -131,6 +131,7 @@ export const levelTestResultSchema = z.object({
   finishedAt: z.iso.datetime(),
   lessonsSkipped: z.int().nonnegative().default(0),
   levelsSkipped: z.array(z.enum(CEFR_LEVELS)),
+  nextLesson: z.object({ id: uuidSchema(), title: z.string() }).optional(),
   ranges: levelTestRangesSchema,
 });
 

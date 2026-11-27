@@ -150,7 +150,7 @@ async function savePart({
     userId,
   });
 
-  if (!attemptQuestions) {
+  if (!attemptQuestions || state.status === "failed") {
     return unchanged(null);
   }
 
@@ -174,7 +174,7 @@ async function savePart({
     attemptQuestions.complete ? undefined : attemptQuestions.answered,
   );
 
-  const newTopics = new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered ?? 0));
+  const newTopics = new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered));
 
   const { confirmed, heldUntilTomorrow, partLessonsSkipped, testedOutPlanItemIds, sharedItemIds } =
     await applyPartAnswers({
