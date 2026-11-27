@@ -28,8 +28,6 @@
   "language_level_up": "7b9cc81f860d1813de0de44e4283c7ffbd416d37105c9963c66cf3ba0176ca5a",
   "language_levels_move": "ec7fcfb1f6b41bfb3ea37ae7b03ac2f306f6dfc42225054fb2f88b714111afc9",
   "language_pattern_noticed": "3e640e799841069d1a703ab49638bb607727f4da9daae84c0308dc8358c9485a",
-  "language_pattern_noticed_summary": "b9a93f45d297dd1b60d1f61cc251ec6b273187273d0da36c4732074def937f7a",
-  "language_pattern_practice": "5c4c21788383515218de950e08daa56c5a0693135b46403afc1e2e0ad104bda3",
   "language_pattern_typos": "2076bdf45be86b4b5ae90207ae6605b49b09945bbb5b7a4001fb47e6bef211e5",
   "language_pattern_typos_description": "4d357dfd3d9c259da7fadf1b4a7270c674cea4db426164e9ff9e026e016cdc73",
   "language_practice_estimates": "23dec09e933f85041242c89056131b0e79d618d465bc42f418755eea8a7f14fa",
@@ -135,10 +133,6 @@
     <string name="language_alphabet_skip_failed">保存できませんでした。もう一度お試しください。</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">声に出して言う</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">ミスの傾向が見つかりました：%1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">練習する</string>
     <string name="language_level">%1$sのレベル</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

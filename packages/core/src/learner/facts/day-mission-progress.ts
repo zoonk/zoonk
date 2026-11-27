@@ -4,7 +4,6 @@ import { cacheTag } from "next/cache";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { type MissionPick } from "../../sessions/missions/catalog";
 import { type DayProgressQuery, queryDayProgress } from "../../sessions/missions/mission-day-views";
-import { readGoalPlan } from "../_utils/read-goal-plan";
 
 async function readProgressRow(
   userId: string,
@@ -17,11 +16,13 @@ async function readProgressRow(
 
   cacheTag(getUserProgressCacheTag(userId));
 
-  return queryDayProgress(
-    prisma,
-    { from: new Date(from), goalId, kinds, to: new Date(to), userId },
-    readGoalPlan,
-  );
+  return queryDayProgress(prisma, {
+    from: new Date(from),
+    goalId,
+    kinds,
+    to: new Date(to),
+    userId,
+  });
 }
 
 /** GET-only: the day's mission counts, read once per request for the learner summary and the day. */

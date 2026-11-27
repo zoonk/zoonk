@@ -7,7 +7,7 @@ import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
 import { mockIdentitySchema, returningLessonSchema } from "./day-block";
-import { MISSION_KINDS } from "./missions/catalog";
+import { savedMissionKindsSchema } from "./missions/catalog";
 
 const capsuleSchema = z.object({
   format: z.enum(CAPSULE_FORMATS),
@@ -77,7 +77,7 @@ const blockPayloadSchema = z.object({
     .default(null),
   /** Retain the earned mission moment so retries and redraws return the same result. */
   missionResult: z
-    .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
+    .object({ completed: savedMissionKindsSchema, fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
   mistakeIds: z.array(z.string()).default([]),

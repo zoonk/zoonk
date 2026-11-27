@@ -28,7 +28,7 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { type DayBlockRef, findNextCall } from "@zoonk/core/sessions/day-block";
 import { SpeakingPracticeRow } from "@zoonk/learn/language/speaking";
-import { LanguagePracticeRow } from "@zoonk/learn/language/today";
+import { PronunciationNotice } from "@zoonk/learn/language/today";
 import { MockEntryRow } from "@zoonk/learn/mock/entry";
 import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
@@ -77,7 +77,6 @@ function toHostNotices({
   goalId: string;
 }): TodayHostNotices {
   const { language, today } = data;
-  const hasPractice = Boolean(today.pattern ?? language?.pronunciation);
 
   const { answered, request: upload } = toHostUpload({
     state: uploadState,
@@ -85,16 +84,12 @@ function toHostNotices({
   });
 
   return {
-    practice:
-      language && hasPractice ? (
-        <LanguagePracticeRow
-          hrefs={{
-            pattern: today.pattern ? `/pattern/${today.pattern.id}` : null,
-            pronunciation: `/pronunciation?goal=${goalId}`,
-          }}
-          today={{ pattern: today.pattern, pronunciation: language.pronunciation }}
-        />
-      ) : null,
+    practice: language?.pronunciation ? (
+      <PronunciationNotice
+        href={`/pronunciation?goal=${goalId}`}
+        pronunciation={language.pronunciation}
+      />
+    ) : null,
     sourceChange: today.sourceChange ? <TodayChangeNotice message={today.sourceChange} /> : null,
     uploadRequest: upload ? (
       <UploadRequestClient

@@ -14,9 +14,7 @@
   "buddy_page_first_challenge": "5de23b5feeda8be655b0df331030e16f3b2b618293146f3913a68d395524d270",
   "buddy_page_first_essay": "322a66d3b4329ffe6e6f1aae23bc1155177e9591483522ab25e9eafcf5119e10",
   "buddy_page_first_lesson": "2f8967bc0ab41865e17e4a7e6df6e694125dcdd95d4eb821f654ff94e1ea10cf",
-  "buddy_page_first_mistake": "102c6123d77b873b41f3a11215b3743853e5cbcf635a3a18f8df701fde225c3a",
   "buddy_page_first_mock": "4b00172a9c9326a62ef1df1af3c3a2c8cbb669ee510f24b5ded943af9aaae8a7",
-  "buddy_page_first_pattern": "693aad5c859d60126de3ae5e67969c32902503588d426b35ca63b8f4c2f37beb",
   "buddy_page_first_review": "031b59c4ce59cf400b5af5825dff19c7cd5eda3035f1b111db0ab1bddaa1c375",
   "buddy_page_first_steps": "30e30456c782eed8f06682d678998a5e8b1e65280bcebe9da5dafc0377e44553",
   "buddy_page_first_steps_done": "c3b193e1a253dc0268eca8cc4c4fe17a523efa5a7c0d2df9b0f0eb7fc1df8f38",
@@ -45,9 +43,7 @@
   "buddy_page_when_challenge_on": "c50f5d871fc53de4fac77d6cb374606c657607c26a48d43dee953680057d76ae",
   "buddy_page_when_essay": "05f192cc5bdb8de5e277eb5db11840c161dd3c09dc7f6e72196f670e376da656",
   "buddy_page_when_lesson": "9ec3dfe751eae9e4b26f7ac0cabc82f0529f2cb4046c25417e62fba44f8ab23e",
-  "buddy_page_when_mistake": "c939f9e0460619944dbdfb4b6ebee2b2ff4dcd6cf076faace5dfcf86dae3f100",
   "buddy_page_when_mock": "d62e1cdfbf59c77ff3741f609341dc90e80271bd02d29444f8d3943cb2bc8cbd",
-  "buddy_page_when_pattern": "769263a40978b2645ad3e2b31c9ff125d52b667663d63b07a8fbe3d1e06325ed",
   "buddy_page_when_review": "19415546e4be487834d782dfe132bde16fe368db831d04d2c4fd309fd8d17b75"
 }
 -->
@@ -93,9 +89,6 @@
     <string name="buddy_page_first_steps_done">Udało ci się wypróbować wszystko, co obejmuje twój plan.</string>
     <string name="buddy_page_first_lesson">Ukończ pierwszą lekcję</string>
     <string name="buddy_page_first_review">Zrób pierwszą powtórkę</string>
-    <string name="buddy_page_first_mistake">Popraw pierwszy błąd</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
-    <string name="buddy_page_first_pattern">Popracuj nad powtarzającym się błędem</string>
     <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Zadaj pytanie kumplowi: %1$s</string>
     <string name="buddy_page_first_essay">Napisz pierwsze wypracowanie</string>
@@ -109,9 +102,7 @@
     <string name="buddy_page_when_challenge_on">Wraz z twoim pierwszym wyzwaniem, %1$s</string>
     <string name="buddy_page_when_challenge">Przy pierwszym wyzwaniu</string>
     <string name="buddy_page_when_essay">W dniu pierwszego wypracowania</string>
-    <string name="buddy_page_when_mistake">Dzień po pierwszym błędzie</string>
     <string name="buddy_page_when_review">Gdy przyjdzie czas na pierwszą powtórkę</string>
-    <string name="buddy_page_when_pattern">Gdy błędy zaczną się powtarzać</string>
     <string name="buddy_page_when_call">Gdy znów będzie dostępny czas na rozmowę</string>
     <string name="buddy_page_when_buddy">Gdy znów będzie można zadać pytanie</string>
     <string name="buddy_page_when_lesson">W dniu kolejnej lekcji</string>

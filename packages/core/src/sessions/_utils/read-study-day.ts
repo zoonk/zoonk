@@ -3,7 +3,6 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readPlannedDay } from "../../learner/facts/planned-day";
-import { readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { readPreparationInputs } from "../../learner/facts/preparation-inputs";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
@@ -86,7 +85,6 @@ export async function readStudyDay({
   const day = await planStudyDay({
     ...context,
     plannedDay,
-    readMistakes: () => readPracticeMistakes(userId, goal.id),
     readPreparation: () => readPreparationInputs(userId, goal.id),
     readUsage: () => readUsageTotals(userId),
     selection,

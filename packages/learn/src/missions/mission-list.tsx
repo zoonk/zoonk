@@ -76,7 +76,7 @@ export function MissionListRow({
 
   if ("href" in target) {
     return (
-      <ListRowLink href={target.href} onClick={target.onOpen} prefetch={target.prefetch}>
+      <ListRowLink href={target.href} onClick={target.onOpen} prefetch>
         {content}
       </ListRowLink>
     );

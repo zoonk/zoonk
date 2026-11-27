@@ -14,9 +14,7 @@
   "buddy_page_first_challenge": "420b4a99af890f53ba08a95b16dc73e40433ab20714c396ad6f583475e534b21",
   "buddy_page_first_essay": "fa91f9eb1235409680fa728f6f1097276b984fde6c6c0533867e802eb0f93b7f",
   "buddy_page_first_lesson": "b8414f0eabf7702d9692aea74021f02e4187b85954fcc70deb112cd7053c6089",
-  "buddy_page_first_mistake": "c3429fe0857c8220628bd6544f4aa5086dc0d80738f2849775ff086e0279364e",
   "buddy_page_first_mock": "1c7d0edbd93be0fc2137f457ac5c972941eca448f31b877a2891524e3c4cdcbf",
-  "buddy_page_first_pattern": "1b95d88df1d180dcb10f614ae129a5ebe98265bc42d84b03a1aa5696eba865ed",
   "buddy_page_first_review": "91e8ec038b506aa1cce756b425a8a1b1e5e77063e4a1a11309e98e78c8f79ead",
   "buddy_page_first_steps": "5001e463b2574b7f266903cce1b441a21f488a55dcd2056760bf76a8a951aaba",
   "buddy_page_first_steps_done": "c69fd385217be14e495e0cab729711ca8c32b606d101e44e0642a6fa6f5314ce",
@@ -45,9 +43,7 @@
   "buddy_page_when_challenge_on": "75b9a6e49272efa8e4f576890086a19488fe9bab73d765564018286178609e7a",
   "buddy_page_when_essay": "b8554ca09a7a86a736343421eec0fbec01d3f34c6c526ca6560a62d51cc0e76a",
   "buddy_page_when_lesson": "9660b4c2749eace255e97bc89e1dc21d462f619044a3c63cde5bef82dba58311",
-  "buddy_page_when_mistake": "c54085dce109a9d91fa6ed6d224e1506ca7cc40ada57946f229f790522b6bff6",
   "buddy_page_when_mock": "50465d95e9e3eb626e909cb92ae1a9275c7bb8b169e3dd920be84680dba7e245",
-  "buddy_page_when_pattern": "71c5fba4b5a7abf427eba8437e59a6e7184f569a3644cfad6efc38d08903aae2",
   "buddy_page_when_review": "dacd80adbe90c79305d8dbf71fe16655dc13078f7d8c59109305017e7b698950"
 }
 -->
@@ -92,9 +88,6 @@
     <string name="buddy_page_first_steps_done">Você já experimentou tudo que seu plano usa.</string>
     <string name="buddy_page_first_lesson">Concluir sua primeira aula</string>
     <string name="buddy_page_first_review">Fazer sua primeira revisão</string>
-    <string name="buddy_page_first_mistake">Corrigir seu primeiro erro</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
-    <string name="buddy_page_first_pattern">Praticar o que você costuma errar</string>
     <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Perguntar algo para %1$s</string>
     <string name="buddy_page_first_essay">Escrever sua primeira redação</string>
@@ -108,9 +101,7 @@
     <string name="buddy_page_when_challenge_on">No seu primeiro desafio, %1$s</string>
     <string name="buddy_page_when_challenge">No seu primeiro desafio</string>
     <string name="buddy_page_when_essay">No dia da sua primeira redação</string>
-    <string name="buddy_page_when_mistake">No dia seguinte ao seu primeiro erro</string>
     <string name="buddy_page_when_review">Quando for hora da sua primeira revisão</string>
-    <string name="buddy_page_when_pattern">Quando seus erros mostrarem um padrão</string>
     <string name="buddy_page_when_call">Quando você tiver tempo de conversa de novo</string>
     <string name="buddy_page_when_buddy">Quando você puder perguntar de novo</string>
     <string name="buddy_page_when_lesson">No dia da sua próxima aula</string>

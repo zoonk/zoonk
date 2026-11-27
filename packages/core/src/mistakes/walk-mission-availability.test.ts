@@ -13,12 +13,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import { loadDayMissionFacts } from "../sessions/missions/day-facts";
 import { mistakeListInputSchema } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
-describe("mistake mission and notebook availability", () => {
+describe("mistake notebook and practice availability", () => {
   afterEach(() => vi.useRealTimers());
 
   it("keeps an older mistake visible without offering practice when its skill has no questions", async () => {
@@ -178,21 +177,12 @@ describe("mistake mission and notebook availability", () => {
 
     mockSession(user.id);
 
-    const [notebook, missions, practice] = await Promise.all([
+    const [notebook, practice] = await Promise.all([
       listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
-      loadDayMissionFacts({
-        blocks: [],
-        goal,
-        localDate: new Date("2026-10-13"),
-        plannedMinutes: 20,
-        timeZone: "UTC",
-        userId: user.id,
-      }),
       getMistakePractice({ goalId: goal.id }),
     ]);
 
     expect(notebook).toMatchObject({ availability: { ready: 1 } });
-    expect(missions.readyMistakeCount).toBe(0);
     expect(practice).toMatchObject({ practice: [{ mistakeId: today.id }], status: "ready" });
   });
 
