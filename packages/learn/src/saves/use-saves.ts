@@ -21,7 +21,8 @@ export type SaveState<Target> = { saved: boolean; target: Target };
 
 /**
  * Shows the learner's choice at once and sends it as the state they want, one request at a time
- * for each thing, so quick taps end on the last one. A save that fails goes back and says so.
+ * for each thing, so quick taps end on the last one. A save that fails goes back, and says so if
+ * the learner is still on the visit of their last tap.
  * What the server last stored for a save made in this tab, on any page, wins over what the page
  * was served, a copy the router kept from before the tap included.
  */
@@ -40,8 +41,9 @@ export function useSaves<Target>({
   const [wanted, setWanted] = useState<States>(new Map());
   const stored = useStoredSaves();
   const [touched, setTouched] = useState(UNTOUCHED);
-  const sending = useRef(new Map<string, boolean>());
-  const visit = usePageVisit();
+  /** Each thing's state on its way, and the visit of the tap that asked for it. */
+  const sending = useRef(new Map<string, { saved: boolean; visit: number }>());
+  const { isCurrent, visit } = usePageVisit();
 
   const settle = (key: string) => {
     sending.current.delete(key);
@@ -52,16 +54,20 @@ export function useSaves<Target>({
     const key = keyOf(target);
     const next = sending.current.get(key);
 
-    if (next === undefined || next === last) {
+    if (next === undefined || next.saved === last) {
       settle(key);
       return;
     }
 
-    const result = await save(target, next).catch(() => null);
+    const result = await save(target, next.saved).catch(() => null);
 
     if (result === null) {
       settle(key);
-      showErrorToast(next ? failed.save : failed.remove);
+
+      if (isCurrent(next.visit)) {
+        showErrorToast(next.saved ? failed.save : failed.remove);
+      }
+
       return;
     }
 
@@ -85,9 +91,9 @@ export function useSaves<Target>({
       }));
 
       const isSending = sending.current.has(key);
-      const next = !(sending.current.get(key) ?? current(state));
+      const next = !(sending.current.get(key)?.saved ?? current(state));
 
-      sending.current.set(key, next);
+      sending.current.set(key, { saved: next, visit });
       setWanted((states) => new Map(states).set(key, next));
 
       if (!isSending) {

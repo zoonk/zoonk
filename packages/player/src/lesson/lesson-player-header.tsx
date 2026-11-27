@@ -1,7 +1,7 @@
 "use client";
 
 import { LessonSaveButton } from "@zoonk/learn/saved-lessons/save";
-import { type SaveLesson, useLessonSaves } from "@zoonk/learn/saved-lessons/saves";
+import { type LessonSaves } from "@zoonk/learn/saved-lessons/saves";
 import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskClose } from "@zoonk/learn/task-close";
 import {
@@ -86,10 +86,9 @@ function UnsavedAnswers() {
 }
 
 /** It holds its place until the run says whether the lesson is saved, so the title never moves. */
-function LessonBookmark({ save }: { save: SaveLesson }) {
+function LessonBookmark({ saves }: { saves: LessonSaves }) {
   const { lesson } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
-  const saves = useLessonSaves(save);
   const run = state.run.status === "started" ? state.run : null;
   const saveState = { saved: run?.saved ?? false, target: lesson.id };
 
@@ -138,8 +137,9 @@ function LessonProgress() {
   );
 }
 
-export function LessonPlayerHeader() {
-  const { adapters, lesson, slots } = useLessonPlayerConfig();
+/** `saves` is null where the lesson can't be saved. */
+export function LessonPlayerHeader({ saves }: { saves: LessonSaves | null }) {
+  const { lesson, slots } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
   const end = useCompletionProps();
 
@@ -170,7 +170,7 @@ export function LessonPlayerHeader() {
 
         <TaskHeaderSide align="end">
           <UnsavedAnswers />
-          {adapters.saveLesson && <LessonBookmark save={adapters.saveLesson} />}
+          {saves && <LessonBookmark saves={saves} />}
           <LessonScreenMenu />
         </TaskHeaderSide>
       </TaskHeaderBar>

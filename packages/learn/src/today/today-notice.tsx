@@ -18,7 +18,7 @@ import { TodaySuggestedGoal } from "./today-suggested-goal";
  * an older one; from then on it stays for the visit, so answering it shows what the answer did.
  */
 function useShownNotice(picked: TodayNoticeKind | null) {
-  const visit = usePageVisit();
+  const { visit } = usePageVisit();
   const [held, setHeld] = useState<{ kind: TodayNoticeKind; visit: number } | null>(null);
   const kind = held?.visit === visit ? held.kind : picked;
 

@@ -20,7 +20,7 @@ type HostUpload = {
 };
 
 export function useUploadAnswer() {
-  const visit = usePageVisit();
+  const { visit } = usePageVisit();
   const [upload, setUpload] = useState<UploadAnswer | null>(null);
   const state = upload?.visit === visit ? upload.state : null;
 
