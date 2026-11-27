@@ -785,7 +785,9 @@ class PlanScreenshots {
         val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
         val language = learnerSummary(kind = "language", title = "Spanish")
         val writingOff =
-            plan(""""steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":["writing"]}""")
+            plan(
+                """"steering":{"difficultyBias":"standard","lessonsStudied":0,"practiceBias":"balanced","skippedActivities":["writing"]}""",
+            )
         val activities = PlanPageState(language.goals.first(), writingOff, language)
         val modulesFull = plan(EDITOR_CHOICES.replace(""""subjects":["Biología"]""", """"subjects":["Biología","Química"]"""))
         val examChoices = PlanPageState(exam.goals.first(), modulesFull, exam)
