@@ -352,7 +352,9 @@ private struct BuddyContent: View {
                 Label {
                   Text(
                     "Conversations", tableName: "Buddy",
-                    comment: "Title of the list of buddy conversations")
+                    comment:
+                      "The list of the learner's separate conversations with their buddy, and the button that opens it."
+                  )
                 } icon: {
                   Image(systemName: "bubble.left.and.bubble.right")
                 }

@@ -1749,7 +1749,7 @@
       }
     },
     "Conversations" : {
-      "comment" : "Title of the list of buddy conversations",
+      "comment" : "The list of the learner's separate conversations with their buddy, and the button that opens it.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3572,7 +3572,7 @@
       }
     },
     "New conversation" : {
-      "comment" : "Starts a new conversation with the buddy",
+      "comment" : "The first row of the conversations list: starts a conversation with no questions yet.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4456,7 +4456,7 @@
       }
     },
     "Show more" : {
-      "comment" : "Loads the next buddy conversations",
+      "comment" : "A button under a list that loads more of its rows.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

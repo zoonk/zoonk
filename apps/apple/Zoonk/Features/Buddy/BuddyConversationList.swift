@@ -21,7 +21,8 @@ struct BuddyConversationList: View {
           HStack(spacing: 12) {
             Text(
               "New conversation", tableName: "Buddy",
-              comment: "Starts a new conversation with the buddy"
+              comment:
+                "The first row of the conversations list: starts a conversation with no questions yet."
             )
             .foregroundStyle(.primary)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -60,7 +61,8 @@ struct BuddyConversationList: View {
               Task { await store.loadMoreConversations(goalId: goalId) }
             } label: {
               Text(
-                "Show more", tableName: "Buddy", comment: "Loads the next buddy conversations")
+                "Show more", tableName: "Buddy",
+                comment: "A button under a list that loads more of its rows.")
             }
             .buttonStyle(.outline)
             .controlSize(.small)
@@ -77,7 +79,11 @@ struct BuddyConversationList: View {
   }
 
   var title: Text {
-    Text("Conversations", tableName: "Buddy", comment: "Title of the list of buddy conversations")
+    Text(
+      "Conversations", tableName: "Buddy",
+      comment:
+        "The list of the learner's separate conversations with their buddy, and the button that opens it."
+    )
   }
 
   @ViewBuilder
