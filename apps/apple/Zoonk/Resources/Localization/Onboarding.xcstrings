@@ -12457,7 +12457,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da próxima vez: parte %1$lld de %2$lld, questão %3$lld"
+            "value" : "Da próxima vez: parte %1$lld de %2$lld, pergunta %3$lld"
           }
         },
         "tr" : {
