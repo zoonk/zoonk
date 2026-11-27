@@ -83,25 +83,28 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testAFinishedRunGoesAgainOnlyOnWhatItDidntFix() {
-    let entries = [
-      makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b", "c"]),
-      makeEntry("m3", questions: ["d"]),
-    ]
+  func testPracticeAgainFollowsARunPlayedToItsEndWithMoreToPractice() {
+    let entries = [makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b"])]
     var state = MistakePracticeState(entries: entries)
 
     answer(&state, grade: makeGrade(isCorrect: true, fixed: true, fixedIds: ["m1"]))
     state.next()
-    XCTAssertEqual(state.entriesToPracticeAgain, [], "a run left early ends there")
+    XCTAssertFalse(
+      state.offersAgain(scope: .notebook, hasMorePractice: true), "a run left early ends there")
 
     answer(&state, grade: makeGrade(isCorrect: false))
     state.next()
-    answer(&state, grade: makeGrade(isCorrect: true))
-    state.next()
-    answer(&state, grade: makeGrade(isCorrect: true))
-    state.next()
+    XCTAssertTrue(state.offersAgain(scope: .notebook, hasMorePractice: false))
+    XCTAssertTrue(state.offersAgain(scope: .mock("k"), hasMorePractice: false))
+    XCTAssertFalse(state.offersAgain(scope: .block("b"), hasMorePractice: true))
 
-    XCTAssertEqual(state.entriesToPracticeAgain.map(\.mistakeId), ["m2", "m3"])
+    var fixedAll = MistakePracticeState(entries: [makeEntry("m1", questions: ["a"])])
+    answer(&fixedAll, grade: makeGrade(isCorrect: true, fixed: true, fixedIds: ["m1"]))
+    fixedAll.next()
+    XCTAssertFalse(fixedAll.offersAgain(scope: .notebook, hasMorePractice: false))
+    XCTAssertTrue(
+      fixedAll.offersAgain(scope: .skill("s"), hasMorePractice: true),
+      "more open entries than one run holds")
   }
 
   private func answer(

@@ -163,6 +163,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
       + Double(hiddenExtras.reduce(0) { $0 + $1.estimatedMinutes })
   }
 
+  /// Main's `SessionQueue`: rows name their subject only when the day's blocks span more than one.
+  var showsSubjects: Bool {
+    Set(blocks.compactMap { $0.subject ?? $0.subjectExtra?.rawValue }).count > 1
+  }
+
   var isStarted: Bool {
     blocks.contains { $0.status != .pending }
   }

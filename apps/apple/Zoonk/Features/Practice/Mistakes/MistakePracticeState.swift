@@ -30,6 +30,12 @@ enum MistakePracticeScope: Hashable, Sendable {
   var mockId: String? {
     if case .mock(let id) = self { id } else { nil }
   }
+
+  /// The goal the run names: a mock's run takes it from the finished sitting, so it still works
+  /// after the learner switched goals.
+  func goal(_ activeGoalId: String?) -> String? {
+    mockId == nil ? activeGoalId : nil
+  }
 }
 
 struct MistakePracticeStep: Equatable {
@@ -178,14 +184,12 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  /// A run played to its end can start again on what it didn't fix, in the same order. One the
-  /// learner left early ends there.
-  var entriesToPracticeAgain: [MistakePracticeEntry] {
-    guard index >= steps.count else { return [] }
-
-    return steps.compactMap { step in
-      step.isFirstOfEntry && !fixedIds.contains(step.entry.mistakeId) ? step.entry : nil
-    }
+  /// "Practice again" follows a run played to its end (one left early ends there) while an entry it
+  /// asked is still open or the server has more. A day's block never offers it: the day goes on
+  /// from Today.
+  func offersAgain(scope: MistakePracticeScope, hasMorePractice: Bool) -> Bool {
+    let leftUnfixed = steps.contains { !fixedIds.contains($0.entry.mistakeId) }
+    return scope.blockId == nil && index >= steps.count && (leftUnfixed || hasMorePractice)
   }
 
   var segments: [TaskSegment] {

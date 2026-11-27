@@ -528,6 +528,13 @@ struct MockVerdict: Hashable, Decodable, Sendable {
   var weakest: String?
 }
 
+extension MockView {
+  /// The sitting whose open mistakes the result offers to practice; nil once none are left.
+  var mistakesToPractice: String? {
+    practiceAvailable && purpose != .placement ? mockId : nil
+  }
+}
+
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -573,6 +580,8 @@ struct MockView: Hashable, Decodable, Sendable {
   /// The sitting, once it started: a run practices its mistakes.
   var mockId: String?
   var number: Int
+  /// The finished mock still has open mistakes to practice.
+  var practiceAvailable: Bool
   /// `practice` where the exam shares one clock with its essay: the timer is pacing, not the board's.
   var pacing: Pacing?
   var passMarks: PassMarks?
