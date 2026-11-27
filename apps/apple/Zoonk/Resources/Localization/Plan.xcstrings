@@ -27329,6 +27329,122 @@
         }
       }
     },
+    "Nothing changed. All %@ lessons are already in your plan." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts geändert. Alle Lektionen zu %@ sind bereits in deinem Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hubo cambios. Todas las lecciones de %@ ya están en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’a changé. Toutes les leçons de %@ sont déjà dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è cambiato nulla. Le lezioni di tutte le aree (%@) sono già nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更はありません。%@のレッスンはすべて、すでに学習計画に入っています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변경된 내용이 없어요. %@ 레슨은 모두 이미 계획에 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nic się nie zmieniło. Lekcje ze wszystkich tych obszarów są już w planie: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada mudou. Todas as aulas de %@ já estão no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişiklik yok. %@ için tüm dersler zaten planında."
+          }
+        }
+      }
+    },
+    "Nothing changed. To fit more of %@, study longer each day." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts geändert. Damit mehr zu %@ in deinen Plan passt, lerne täglich länger."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hubo cambios. Para incluir más de %@, estudia más tiempo cada día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’a changé. Pour intégrer davantage de %@, étudie plus longtemps chaque jour."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è cambiato nulla. Per inserire più contenuti di %@, studia più a lungo ogni giorno."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更はありません。%@をもっと学習計画に入れるには、毎日の学習時間を増やしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변경된 내용이 없어요. %@를 더 포함하려면 매일 더 오래 공부하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nic się nie zmieniło. Żeby zmieścić więcej lekcji z obszarów: %@, ucz się dłużej każdego dnia."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada mudou. Para incluir mais aulas de %@, aumente seu tempo diário."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişiklik yok. %@ için daha fazla ders sığdırmak üzere her gün daha uzun çalış."
+          }
+        }
+      }
+    },
     "Nothing is planned until you resume it." : {
       "comment" : "Explains a paused goal",
       "localizations" : {

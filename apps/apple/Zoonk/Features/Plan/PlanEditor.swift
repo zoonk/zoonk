@@ -10,7 +10,8 @@ final class PlanEditor {
     case saved(sentence: String)
     case invalid
     case undone
-    case unchanged
+    /// What the change's own words say about why nothing changed, when they say it.
+    case unchanged(sentence: String? = nil)
   }
 
   private(set) var latest: Latest?
@@ -41,13 +42,17 @@ final class PlanEditor {
 
   /// What the plan says once the change is saved: each edit's statement, unless the caller has
   /// its own.
+  /// `unchanged` words why a change left the plan as it is, when the API says why.
   @discardableResult
-  func change(_ edits: [PlanEdit], sentence: String? = nil) async -> Bool {
+  func change(
+    _ edits: [PlanEdit], sentence: String? = nil,
+    unchanged: ((UnchangedReason) -> String)? = nil
+  ) async -> Bool {
     let goalId = goalId
     let operations = edits.compactMap { try? PracticeJSON.recode($0, as: PlanChangeOperation.self) }
     let sentence = sentence ?? PlanChangeWords.statements(operations, dateKind: dateKind)
 
-    return await apply(sentence: sentence) { api, token in
+    return await apply(sentence: sentence, unchanged: unchanged) { api, token in
       try await api.change(token: token, goalId: goalId, edits: edits)
     }
   }
@@ -68,7 +73,7 @@ final class PlanEditor {
 
   @discardableResult
   func apply(
-    sentence: String,
+    sentence: String, unchanged: ((UnchangedReason) -> String)? = nil,
     _ request: @escaping (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> Bool {
     guard !isSaving else {
@@ -88,8 +93,8 @@ final class PlanEditor {
       return true
     case .done(.invalid):
       latest = .invalid
-    case .done(.unchanged):
-      latest = .unchanged
+    case .done(.unchanged(let reason)):
+      latest = .unchanged(sentence: reason.flatMap { unchanged?($0) })
     case .done(.undone):
       latest = .undone
       return true

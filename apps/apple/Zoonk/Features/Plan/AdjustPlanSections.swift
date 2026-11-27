@@ -122,6 +122,8 @@ private struct PlanFocusSection: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
   @State private var picked: Set<String>?
+  /// A pick the plan already had room for or couldn't fit more of: Save waits for another.
+  @State private var unchanged: Set<String>?
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -167,6 +169,7 @@ private struct PlanFocusSection: View {
             var next = selection
             if isPicked { next.remove(area.name) } else { next.insert(area.name) }
             picked = next
+            unchanged = nil
           } words: {
             areaWords(area, isPicked: isPicked)
           }
@@ -183,7 +186,7 @@ private struct PlanFocusSection: View {
             Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
           }
         }
-        .disabled(selection == focused)
+        .disabled(selection == focused || selection == unchanged)
       } header: {
         SectionTitle(
           Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
@@ -208,11 +211,32 @@ private struct PlanFocusSection: View {
       note: isPicked ? area.focusPart.map { Text("Only \($0)", tableName: "Plan") } : nil)
   }
 
+  /// A pick that changed nothing stays, with main's words for why at the editor's foot.
   private func focus(on selection: Set<String>, choices: [GoalPlan.Area]) async {
     let areas = choices.map(\.name).filter { selection.contains($0) }
+    let saved = await editor.change(
+      [.focusAreas(areas)],
+      unchanged: areas.isEmpty ? nil : { Self.unchangedSentence($0, areas: areas) })
 
-    await editor.change([.focusAreas(areas)])
-    picked = nil
+    if saved {
+      picked = nil
+    } else if !editor.failed, case .unchanged = editor.latest {
+      unchanged = selection
+    }
+  }
+
+  private static func unchangedSentence(_ reason: UnchangedReason, areas: [String]) -> String {
+    let names = areas.formatted(.list(type: .and))
+
+    return switch reason {
+    case .alreadyIn:
+      String(
+        localized: "Nothing changed. All \(names) lessons are already in your plan.", table: "Plan")
+    case .cantMove:
+      String(
+        localized: "Nothing changed. To fit more of \(names), study longer each day.", table: "Plan"
+      )
+    }
   }
 }
 
@@ -225,15 +249,10 @@ private struct PlanActivitiesSection: View {
 
     Section {
       FlowLayout(spacing: 8) {
-        ForEach(Self.activities, id: \.self) { activity in
+        ForEach(planActivities, id: \.self) { activity in
           let isOn = !skipped.contains(activity)
 
           ToggleChip(Text(planActivityName(activity)), isOn: isOn) {
-            // A plan practices at least one activity.
-            guard !isOn || skipped.count < Self.activities.count - 1 else {
-              return
-            }
-
             editor.run {
               await editor.change([
                 isOn ? .skipActivities([activity]) : .restoreActivities([activity])
@@ -249,8 +268,6 @@ private struct PlanActivitiesSection: View {
         ))
     }
   }
-
-  private static let activities = planActivities
 }
 
 private struct PlanWrittenPracticeSection: View {
