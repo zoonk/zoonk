@@ -100,7 +100,8 @@ test.describe("Saved lessons", () => {
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
       await expect(saved).toHaveAttribute("aria-pressed", "true");
 
-      await page.goto("/today");
+      await page.getByRole("link", { name: "Leave" }).click();
+      await expect(page).not.toHaveURL(/\/learn\//u);
       await sidebarRow(page).click();
 
       await expect(page.getByRole("heading", { level: 1, name: "Saved lessons" })).toBeVisible();
@@ -130,12 +131,14 @@ test.describe("Saved lessons", () => {
     });
 
     const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
 
     try {
       await page.goto("/completed-lessons");
 
       const save = page.getByRole("button", { name: `Save ${finished.title}` });
       await expectHydrated(save);
+      await expect(sidebarRow(page)).toHaveCount(0);
 
       const main = page.getByRole("main");
       await expect(main.getByText(gone.title)).toBeVisible();
@@ -153,13 +156,17 @@ test.describe("Saved lessons", () => {
 
       await expect(page).toHaveURL(/\/completed-lessons$/u);
       await expect.poll(() => savedCount(user.id)).toBe(1);
+      await expect(sidebarRow(page)).toBeVisible();
 
       await page.reload();
 
-      await expect(page.getByRole("button", { name: `Saved ${finished.title}` })).toHaveAttribute(
-        "aria-pressed",
-        "true",
-      );
+      const saved = page.getByRole("button", { name: `Saved ${finished.title}` });
+      await expect(saved).toHaveAttribute("aria-pressed", "true");
+
+      await expectHydrated(saved);
+      await saved.click();
+      await expect.poll(() => savedCount(user.id)).toBe(0);
+      await expect(sidebarRow(page)).toHaveCount(0);
     } finally {
       await page.context().close();
     }
