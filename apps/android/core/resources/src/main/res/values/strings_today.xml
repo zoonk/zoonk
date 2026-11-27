@@ -225,6 +225,11 @@
     </plurals>
     <string name="today_add_to_today">Add to today</string>
     <string name="today_unfinished_setup">You didn\'t finish setting this up.</string>
+    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
+    <plurals name="today_step_more_topics">
+        <item quantity="one">%d more topic</item>
+        <item quantity="other">%d more topics</item>
+    </plurals>
     <string name="today_step_every_topic">Every topic</string>
     <string name="mock_schedule_title">Change mock exam date</string>
     <string name="mock_schedule_change">Change schedule</string>

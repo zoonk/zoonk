@@ -26,7 +26,6 @@ import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.remedialLine
-import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -81,18 +80,11 @@ fun DayStepRow(
         divider = divider,
         stateDescription = state,
         leading = { BlockMark(step) },
-        supporting =
-            if (finished && !openFailed) {
-                null
-            } else {
-                {
-                    if (openFailed) StepOpenFailed()
-                    if (!finished) {
-                        StepLines(lessonStatus, writingStalled, step, examDocument)
-                        below?.invoke()
-                    }
-                }
-            },
+        supporting = {
+            if (openFailed) StepOpenFailed()
+            StepLines(lessonStatus, writingStalled, day, step, examDocument)
+            if (!finished) below?.invoke()
+        },
         meta =
             if (finished && !step.extra) {
                 null
@@ -123,68 +115,66 @@ fun DayStepRow(
     }
 }
 
-/** A row's one line: what a lesson belongs to, what practice is on, or how long a challenge is. */
+/** Main's `showSubject`: a row names its subject only on a day that mixes subjects. */
+private val DayView.mixesSubjects: Boolean
+    get() = steps.mapNotNull { it.subject ?: it.subjectExtra?.value }.distinct().size > 1
+
+/**
+ * Main's `RowLines`: the subject first, on a day that mixes subjects or for optional study, even
+ * once done; then, while it's to do, what practice is on, why it's back or how long a challenge is.
+ */
 @Composable
 private fun StepLines(
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,
+    day: DayView,
     step: DayStep,
     examDocument: ExamDocument,
 ) {
-    val count = step.questions.toInt()
     val extra = step.subjectExtra
     val subject =
-        if (extra !=
-            null
-        ) {
-            optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
-        } else {
-            step.subject
-        }
-    val remedial = remedialLine(step)
-    val line =
         when {
-            step.isGettingReady(lessonStatus, writingStalled) -> {
-                stringResource(R.string.today_step_being_written)
-            }
-
-            step.writing == WritingRow.Tomorrow -> {
-                blockDetail(step)
-            }
-
-            step.waitReason != null -> {
-                stringResource(R.string.today_step_after_lessons)
-            }
-
-            // Why it's back says more than its subject, which stays above it as on every lesson row.
-            remedial != null -> {
-                subject?.let { SubLine(it) }
-                remedial
-            }
-
-            // A written task says when it waits for tomorrow, that its draft is kept, or what a drill is for, over its subject.
-            step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> {
-                blockDetail(step)
-            }
-
-            step.practisesTopics -> {
-                shortTopicList(step.topics, named = 1)
-            }
-
-            step.checkpoint != null -> {
-                if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
-            }
-
-            step.fullReview -> {
-                stringResource(R.string.today_step_every_topic)
-            }
-
-            else -> {
-                subject
-            }
+            extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
+            day.mixesSubjects -> step.subject
+            else -> null
         }
 
-    if (line != null) SubLine(line)
+    subject?.let { SubLine(it) }
+    if (!step.isFinished) stepLine(lessonStatus, writingStalled, step)?.let { SubLine(it) }
+}
+
+/** Main's `useStepLabel` without the subject, which [StepLines] puts above it. */
+@Composable
+private fun stepLine(
+    lessonStatus: Map<String, LessonGenerationStatus>,
+    writingStalled: Boolean,
+    step: DayStep,
+): String? {
+    val count = step.questions.toInt()
+    val remedial = remedialLine(step)
+    val moreTopics = step.topics.size - 1
+
+    return when {
+        step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
+
+        step.writing == WritingRow.Tomorrow -> blockDetail(step)
+
+        step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
+
+        remedial != null -> remedial
+
+        // The title names a practice's first topic, so the line counts the others.
+        step.practisesTopics && moreTopics > 0 -> pluralStringResource(R.plurals.today_step_more_topics, moreTopics, moreTopics)
+
+        step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+
+        step.fullReview -> stringResource(R.string.today_step_every_topic)
+
+        // A written task says that its draft is kept, or what a drill is for.
+        step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
+
+        else -> null
+    }
 }
 
 @Composable
