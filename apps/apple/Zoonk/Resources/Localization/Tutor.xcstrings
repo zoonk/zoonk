@@ -60,6 +60,7 @@
         }
       }
     },
+    "%@ is an AI study buddy and can make mistakes." : {},
     "%lld mistakes to fix, with practice that brings each one back." : {
       "comment" : "What the mistakes notebook holds",
       "localizations" : {
