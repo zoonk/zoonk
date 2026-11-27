@@ -34,6 +34,7 @@ function detailPair({
     anchors: DETAIL_TOP,
     prerequisites: { persona: { name: persona } },
     proof,
+    proofWithin: "main",
     reach: [],
     screen,
     sizes: PHONE_AND_LAPTOP,
@@ -41,7 +42,7 @@ function detailPair({
 
   return [
     { ...page, id, pair: { change: [], placeholder: true, with: `${id}.placeholder` } },
-    { ...page, firstPaint: true, id: `${id}.placeholder`, proofWithin: "main" },
+    { ...page, firstPaint: true, id: `${id}.placeholder` },
   ];
 }
 

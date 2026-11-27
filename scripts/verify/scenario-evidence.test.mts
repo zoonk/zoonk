@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { hasEvidence, hasProof } from "./scenarios/evidence.mts";
 import { SCENARIOS } from "./scenarios/scenarios.mts";
-import { PHONE_AND_LAPTOP, type Scenario } from "./scenarios/shape.mts";
 
 function pageWith(visible: string[]): Parameters<typeof hasEvidence>[0] {
   return {
@@ -34,35 +33,30 @@ describe("compound scenario evidence", () => {
 });
 
 describe("words that prove a scenario", () => {
-  it("rejects duplicate visible words and accepts an exact match in the state's own region", async () => {
-    const scenario: Scenario = {
-      anchors: [],
-      id: "fixture",
-      prerequisites: { persona: "visitor" },
-      proof: "Start",
-      reach: [],
-      screen: "/fixture",
-      sizes: PHONE_AND_LAPTOP,
-    };
+  it("uses the completed-lessons title when the visible sidebar repeats it", async () => {
+    const scenario = SCENARIOS.find(({ id }) => id === "completed-lessons");
+
+    if (!scenario) {
+      throw new Error("Expected the completed-lessons scenario.");
+    }
+
+    const { proof: words } = scenario;
 
     const getByText = vi.fn(() => ({ filter: () => ({ count: async () => 2 }) }));
     const getScopedText = vi.fn(() => ({ filter: () => ({ count: async () => 1 }) }));
+    const locator = vi.fn(() => ({ getByText: getScopedText }));
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The fake supplies the locator chain the proof uses.
-    const page = {
-      getByText,
-      locator: () => ({ getByText: getScopedText }),
-    } as unknown as Parameters<typeof hasProof>[0]["page"];
-
-    await expect(hasProof({ page, scenario, words: "Start" })).rejects.toThrow(
-      "2 visible elements",
-    );
-
-    expect(getByText).toHaveBeenCalledWith("Start", { exact: true });
+    const page = { getByText, locator } as unknown as Parameters<typeof hasProof>[0]["page"];
 
     await expect(
-      hasProof({ page, scenario: { ...scenario, proofWithin: "[role=dialog]" }, words: "Start" }),
-    ).resolves.toBe(true);
+      hasProof({ page, scenario: { ...scenario, proofWithin: undefined }, words }),
+    ).rejects.toThrow("2 visible elements");
 
-    expect(getScopedText).toHaveBeenCalledWith("Start", { exact: true });
+    expect(getByText).toHaveBeenCalledWith(words, { exact: true });
+
+    await expect(hasProof({ page, scenario, words })).resolves.toBe(true);
+
+    expect(locator).toHaveBeenCalledWith("main");
+    expect(getScopedText).toHaveBeenCalledWith(words, { exact: true });
   });
 });
