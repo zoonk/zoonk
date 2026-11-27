@@ -239,11 +239,12 @@ function chooseRemedialLesson({
   );
 
   if (signal.dueSecondTake) {
-    const alternatives = ordinary.filter(
-      (lesson) => !isQuickLessonIdentityKey(lesson.identityKey) && !finished.has(lesson.id),
+    const alternative = ordinary.find(
+      (lesson) =>
+        !isQuickLessonIdentityKey(lesson.identityKey) &&
+        !finished.has(lesson.id) &&
+        isWritten(lesson),
     );
-
-    const alternative = alternatives.find((lesson) => isWritten(lesson));
 
     if (alternative) {
       return startable(alternative.id)
@@ -271,7 +272,7 @@ function chooseRemedialLesson({
     const identity = getSecondTakeIdentityKey({ ownerId, skillId });
     const writing = forSkill.find((lesson) => lesson.identityKey === identity);
 
-    return alternatives.length === 0 && needsSecondTakeWriting(writing)
+    return needsSecondTakeWriting(writing)
       ? {
           estimatedMinutes: SECOND_TAKE_MINUTES,
           followUp: { input: { skillId, userId }, kind: "writeSecondTake" },
@@ -293,7 +294,7 @@ function chooseRemedialLesson({
 
   const needsQuickLesson = quick
     ? !quick.setAsideAt && quick.contentStatus === "pending"
-    : ordinary.length === 0;
+    : !ordinary.some((lesson) => isWritten(lesson));
 
   return !chosen && needsQuickLesson
     ? {

@@ -308,6 +308,68 @@ describe("adaptive study days", () => {
     await expect(read()).resolves.toMatchObject({ teaching: [] });
   });
 
+  it.each(["pending", "failed"] as const)(
+    "owes the second take once when the skill's only other lesson is %s",
+    async (contentStatus) => {
+      const { context, goal, skill, userId } = await withRecentMisses({ replay: true });
+      const unwritten = await libraryLessonFixture({ contentStatus });
+      const input = { goalId: goal.id, shownDate: "2026-09-30", timeZone: "UTC" };
+
+      await lessonSkillFixture({ lessonId: unwritten.id, skillId: skill.id });
+
+      await expect(
+        loadDayRemediation({ context, plan: await loadDayPlan(context) }),
+      ).resolves.toMatchObject({
+        teaching: [{ followUp: { input: { skillId: skill.id, userId }, kind: "writeSecondTake" } }],
+      });
+
+      await Promise.all([openStudyDay(input), openStudyDay(input)]);
+
+      await expect(
+        prisma.followUp.count({ where: { kind: "writeSecondTake", userId } }),
+      ).resolves.toBe(1);
+    },
+  );
+
+  it("serves a written lesson another way instead of owing a second take", async () => {
+    const { context, goal, skill, userId } = await withRecentMisses({ replay: true });
+    const { lesson } = await playableLessonFixture({ steps: ["summary"] });
+
+    await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+
+    await expect(
+      loadDayRemediation({ context, plan: await loadDayPlan(context) }),
+    ).resolves.toMatchObject({
+      teaching: [{ lessonId: lesson.id, payload: { returning: "anotherWay" } }],
+    });
+
+    await openStudyDay({ goalId: goal.id, shownDate: "2026-09-30", timeZone: "UTC" });
+
+    await expect(
+      prisma.followUp.count({ where: { kind: "writeSecondTake", userId } }),
+    ).resolves.toBe(0);
+  });
+
+  it.each([null, "pending", "failed"] as const)(
+    "owes a quick lesson for a stuck skill whose other lesson is %s",
+    async (contentStatus) => {
+      const { context, skill } = await withRecentMisses({ replay: false });
+
+      await prisma.lessonSkill.deleteMany({ where: { skillId: skill.id } });
+
+      if (contentStatus) {
+        const unwritten = await libraryLessonFixture({ contentStatus });
+        await lessonSkillFixture({ lessonId: unwritten.id, skillId: skill.id });
+      }
+
+      await expect(
+        loadDayRemediation({ context, plan: await loadDayPlan(context) }),
+      ).resolves.toMatchObject({
+        teaching: [{ followUp: { input: { quickSkillId: skill.id }, kind: "writeLesson" } }],
+      });
+    },
+  );
+
   it("serves an unfinished lesson another way for the stuck skill alone", async () => {
     const { context, skill, skills } = await withRecentMisses({ replay: true });
     const { lesson } = await playableLessonFixture({ steps: ["summary"] });
