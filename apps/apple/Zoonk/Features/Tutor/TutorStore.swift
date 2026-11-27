@@ -15,8 +15,8 @@ final class TutorStore {
   }
 
   /// A later scope for the same conversation (a question now checked) is what its next question is
-  /// about.
-  func conversation(_ scope: TutorScope) -> TutorConversation {
+  /// about. `isNew` when the app just named it, so there's nothing to read until it's asked.
+  func conversation(_ scope: TutorScope, isNew: Bool = false) -> TutorConversation {
     if owner != cache.session.authenticatedSession {
       owner = cache.session.authenticatedSession
       conversations = [:]
@@ -27,7 +27,7 @@ final class TutorStore {
       return conversation
     }
 
-    let conversation = TutorConversation(scope: scope, api: api, cache: cache)
+    let conversation = TutorConversation(scope: scope, isNew: isNew, api: api, cache: cache)
     conversations[scope.conversationKey] = conversation
     return conversation
   }
@@ -51,6 +51,7 @@ final class TutorConversation {
   private(set) var earlierFailed = false
 
   @ObservationIgnored var scope: TutorScope
+  private let opening: ConversationOpening
   @ObservationIgnored private let api: any TutorAPIClient
   @ObservationIgnored private let cache: AppCache
   /// Main's chosen suggestion: sent by its id while the draft still says it.
@@ -61,19 +62,30 @@ final class TutorConversation {
   var now: () -> Date = { .now }
   private var unresolved: (question: String, suggestion: String?, id: String)?
 
-  init(scope: TutorScope, api: any TutorAPIClient, cache: AppCache) {
+  init(scope: TutorScope, isNew: Bool = false, api: any TutorAPIClient, cache: AppCache) {
     self.scope = scope
     self.api = api
     self.cache = cache
     let key = scope
+    let opening = ConversationOpening(isNew: isNew)
+    self.opening = opening
 
     thread = cache.resource(audience: .signedIn) { session in
       guard let session else {
         return nil
       }
 
+      if opening.isNew {
+        return .empty
+      }
+
       return try await api.thread(key, cursor: nil, token: session.bearerToken)
     }
+  }
+
+  /// Named by the app and nothing asked in it yet.
+  var isNew: Bool {
+    opening.isNew
   }
 
   /// Mirrors main's `getShownLessonQuestionSession`: questions about a checked answer show while
@@ -267,6 +279,8 @@ final class TutorConversation {
     }
 
     let request = unresolved ?? (question, suggestion, UUID().uuidString.lowercased())
+    // The question may be saved even when its reply never comes, so a read from now on asks.
+    opening.isNew = false
     // The composer's words leave with the question they say, and come back if it isn't asked.
     let taken =
       draft.trimmingCharacters(in: .whitespacesAndNewlines) == request.question ? draft : ""
@@ -300,10 +314,13 @@ final class TutorConversation {
       }
 
       missionMoment = asked.missionMoment
+      var changed: Set<DataDomain> = asked.missionMoment == nil ? [] : [.userSession]
 
-      if asked.missionMoment != nil {
-        cache.invalidate([.userSession])
+      if case .plan = scope {
+        changed.insert(.buddyConversations)
       }
+
+      cache.invalidate(changed)
 
       if asked.turn.status == .pending || asked.turn.status == .failed {
         await streamAnswer(asked.turn.id)
@@ -509,6 +526,16 @@ final class TutorConversation {
 
   private func update(_ id: String, _ change: (inout TutorTurn) -> Void) {
     thread.update { $0.updating(id, change) }
+  }
+}
+
+@MainActor
+@Observable
+private final class ConversationOpening {
+  var isNew: Bool
+
+  init(isNew: Bool) {
+    self.isNew = isNew
   }
 }
 

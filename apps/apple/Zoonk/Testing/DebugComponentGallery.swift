@@ -923,7 +923,7 @@
   /// The buddy's composer under an empty conversation, as the buddy's page draws it.
   private struct DebugComposer: View {
     @State private var conversation = TutorConversation(
-      scope: .plan(goalId: "debug"), api: DebugTutorAPI(),
+      scope: .plan(goalId: "debug", conversationId: "debug"), api: DebugTutorAPI(),
       cache: AppCache(
         session: .preview(
           account: CurrentAccount(

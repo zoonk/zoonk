@@ -16,6 +16,19 @@ enum AppSheet: Hashable, Identifiable {
   var id: Self { self }
 }
 
+/// A conversation the Buddy tab shows, under the goal it was opened for.
+struct BuddyOpenConversation: Equatable {
+  let goalId: String
+  let id: String
+}
+
+enum BuddyRequest: Equatable {
+  /// Under the goal the tab tutors.
+  case conversation(id: String)
+  /// A question waits in its composer, for the learner's own send.
+  case new(ask: String?)
+}
+
 @MainActor
 @Observable
 final class AppRouter {
@@ -32,6 +45,10 @@ final class AppRouter {
   var sheet: AppSheet?
   /// The speaking paper's open task in this window, as main's `/speaking?task=`.
   var speakingTask: String?
+  /// The Buddy conversation open in this window, as main's `/buddy/{id}`.
+  var buddyConversation: BuddyOpenConversation?
+  /// What a link or search asked the Buddy tab to open, taken as it shows.
+  var buddyRequest: BuddyRequest?
   private(set) var tasks: [AppRoute] = [] {
     didSet {
       hiddenTasks = hiddenTasks.filter { tasks.count > $0 + 1 }
@@ -249,6 +266,9 @@ final class AppRouter {
     case .sheet(let sheet):
       present(sheet)
       return true
+    case .buddy(let request):
+      openBuddy(request)
+      return true
     case nil:
       return false
     }
@@ -269,6 +289,11 @@ final class AppRouter {
   /// A block a buddy answer links, which says itself when the block isn't free to start anymore.
   func openAnswerLink(blockID: String) async -> MutationResult<StudyDestination> {
     await openBlock(blockID, self)
+  }
+
+  func openBuddy(_ request: BuddyRequest) {
+    buddyRequest = request
+    showRoot(of: .buddy)
   }
 
   func showRoot(of tab: AppTab) {
