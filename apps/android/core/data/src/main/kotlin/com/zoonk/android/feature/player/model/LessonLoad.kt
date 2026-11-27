@@ -87,7 +87,7 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
                     language = lesson.language,
                     targetLanguage = lesson.targetLanguage,
                     chapterId = lesson.chapter?.id?.toString(),
-                    steps = lesson.steps.mapNotNull(PlayableLibraryStep::supportedStep),
+                    steps = lesson.steps.map(PlayableLibraryStep::toLessonStep),
                     map = lesson.summary.withIdeas(),
                     tutorSuggestions = value.tutorSuggestions,
                 ),
@@ -113,7 +113,7 @@ fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
         language = language,
         targetLanguage = targetLanguage,
         chapterId = chapter?.id?.toString(),
-        steps = steps.mapNotNull(PlayableLibraryStep::supportedStep),
+        steps = steps.map(PlayableLibraryStep::toLessonStep),
         map = summary.withIdeas(),
         tutorSuggestions = emptyList(),
     )
