@@ -26,3 +26,18 @@ export function getBlockKind(
 
   return onMistakes ? "mistakes" : KIND_BY_BLOCK[block.kind];
 }
+
+/**
+ * A day's mistakes row still to open whose questions were all fixed elsewhere since the day began.
+ * A finished row keeps what it recorded.
+ */
+export function isAlreadyFixed(
+  block: Pick<StudyBlock, "questions" | "screen" | "status">,
+): boolean {
+  return (
+    block.screen === "mistakesPractice" &&
+    block.questions === 0 &&
+    block.status !== "completed" &&
+    block.status !== "skipped"
+  );
+}

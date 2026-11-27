@@ -10,6 +10,7 @@ import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row
 import { useFormatDuration } from "../_utils/time-format";
 import { type MissionView } from "../missions/mission-links";
 import { MockSchedule } from "../mock/mock-schedule";
+import { isAlreadyFixed } from "../session/block-kind";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle, useRemedialLine } from "../session/use-block-copy";
@@ -229,7 +230,7 @@ export function BlockRow({
                 data-slot="mission-row-mark"
               />
             )}
-            {!finished && <RowTime minutes={block.estimatedMinutes} />}
+            {!finished && !isAlreadyFixed(block) && <RowTime minutes={block.estimatedMinutes} />}
           </span>
         )}
       </div>
