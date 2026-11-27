@@ -1245,17 +1245,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 9/9. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 10/10. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1274,7 +1274,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-1",
         "language": "pt",
@@ -1285,7 +1286,8 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
@@ -1321,7 +1323,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-2",
         "language": "pt",
@@ -1332,24 +1335,25 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 14/14. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 18/18. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1368,7 +1372,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-1",
         "language": "en",
@@ -1379,7 +1384,8 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
@@ -1415,7 +1421,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-2",
         "language": "en",
@@ -1426,24 +1433,25 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 7/7. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1466,7 +1474,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-photo-notes-transcript-with-latex-1",
         "language": "pt",
@@ -1477,7 +1486,8 @@
               "title": "Foto das anotações de física"
             }
           ],
-          "exam": "Prova de física (1º ano), cinemática"
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
         }
       }
     },
@@ -1517,7 +1527,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-photo-notes-transcript-with-latex-2",
         "language": "pt",
@@ -1528,24 +1539,25 @@
               "title": "Foto das anotações de física"
             }
           ],
-          "exam": "Prova de física (1º ano), cinemática"
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 6/6. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1554,21 +1566,34 @@
         "expected": {
           "facts": [
             {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Current"
             },
             {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Ohm's law"
             },
             {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
             },
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-photo-notes-under-one-title-1",
         "language": "en",
@@ -1579,24 +1604,25 @@
               "title": "Photo of physics notes"
             }
           ],
-          "exam": "Physics test on circuits"
+          "exam": "Physics test on circuits",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1605,21 +1631,34 @@
         "expected": {
           "facts": [
             {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Current"
             },
             {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Ohm's law"
             },
             {
               "kind": "topic",
+              "subject": "Electricity",
               "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
             },
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-photo-notes-under-one-title-2",
         "language": "en",
@@ -1630,26 +1669,27 @@
               "title": "Photo of physics notes"
             }
           ],
-          "exam": "Physics test on circuits"
+          "exam": "Physics test on circuits",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
           "kind": "majorErrors",
-          "score": 7.466666666666667
+          "score": 7.28
         },
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
           "kind": "minorErrors",
-          "score": 7.466666666666667
+          "score": 7.28
         },
         {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 5/6. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}",
+          "conclusion": "Facts kept 1/4 (read 4). passages found 4/5. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Boyle's law\"}; {\"kind\":\"topic\",\"topic\":\"Charles's law\"}; {\"kind\":\"topic\",\"topic\":\"Ideal gas law\"}. research would not store it as the exam's blueprint",
           "kind": "potentialImprovements",
-          "score": 7.466666666666667
+          "score": 7.28
         }
       ],
       "testCase": {
@@ -1670,7 +1710,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
         "language": "en",
@@ -1681,7 +1722,8 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     },
@@ -1721,7 +1763,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
         "language": "en",
@@ -1732,7 +1775,8 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     }

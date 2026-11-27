@@ -39,7 +39,6 @@ import { readWrittenTaskSubjectsStep } from "./written-task-subjects-step";
 
 export type BlueprintReading = {
   content: BlueprintContent;
-  facts: { extracted: number; kept: number };
   problems: ReadingProblem[] | null;
   provenance: { generatedAt: string; model: string; promptVersion: string; runId: string };
   reusePolicy: { policy: ReusePolicy; sourceId: string } | null;
@@ -195,15 +194,18 @@ async function readBlueprintFormatsStep({
 async function prepareBlueprintChecksStep({
   documents,
   extraction,
+  shared,
 }: {
   documents: BlueprintTextDocument[];
   extraction: BlueprintExtraction;
+  shared: boolean;
 }) {
   "use step";
 
   const facts = listBlueprintFacts({
     documents: documents.map((document) => ({ sourceId: document.id, text: document.text })),
     extraction,
+    material: !shared,
   });
 
   return { batches: toCheckBatches(toCitedFacts(facts)), facts };
@@ -246,7 +248,7 @@ export async function extractBlueprint({
     () => withFormats,
   );
 
-  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction });
+  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction, shared });
 
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(
@@ -322,7 +324,6 @@ async function assembleBlueprintStep({
 
   return {
     content,
-    facts: { extracted: facts.length, kept: supportedIds.length },
     problems: findings
       ? findReadingProblems({
           checked: toReadSubjects(extraction),
