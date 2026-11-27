@@ -214,6 +214,7 @@ function LessonPlayerFrame() {
       <LessonHeader />
       <LessonSounds />
 
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The lesson observes input after its controls handle it. */}
       <main
         aria-label={t("Lesson content")}
         className={cn(
@@ -221,9 +222,12 @@ function LessonPlayerFrame() {
           dotPaper && "dot-paper",
         )}
         id={LESSON_CONTENT_ID}
-        onClickCapture={actions.engage}
-        onKeyDownCapture={(event) => {
-          if (event.key !== "Tab" && event.key !== "Escape") {
+        onClick={actions.engage}
+        onKeyDown={(event) => {
+          const lessonKey =
+            event.key.length === 1 || event.key === "Enter" || event.key.startsWith("Arrow");
+
+          if (lessonKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
             actions.engage();
           }
         }}

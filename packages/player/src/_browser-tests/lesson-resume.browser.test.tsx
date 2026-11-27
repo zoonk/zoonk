@@ -163,6 +163,9 @@ describe("coming back to a lesson", () => {
       renderLessonPlayer({ adapters, lesson, resume: [] });
 
       await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
+      const main = page.getByRole("main", { name: "Lesson content" }).element();
+      main.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "F5" }));
+      main.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, ctrlKey: true, key: "r" }));
       expect(startLesson).not.toHaveBeenCalled();
       await activate();
 
