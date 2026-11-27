@@ -12,8 +12,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
   ListRow,
   ListRowBody,
   ListRowChevronSpace,
@@ -207,7 +207,7 @@ function RevealSubjects({ syllabus }: { syllabus: SyllabusView }) {
         <PageSectionTitle id={titleId}>{isModule ? t("Modules") : t("Subjects")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <div className={LIST_GROUP_CLASS}>
+      <div className="divided-rows flex flex-col">
         {groups.map((group, index) => (
           <div key={group.extra ? "extra" : (group.name ?? "all")}>
             <SubjectGroupHeading
@@ -216,16 +216,17 @@ function RevealSubjects({ syllabus }: { syllabus: SyllabusView }) {
               syllabus={syllabus}
             />
 
-            <ul
+            <ListGroup
+              as="ul"
               aria-labelledby={group.extra || group.name ? `${titleId}-group-${index}` : titleId}
-              className="divided-rows"
+              className="block"
             >
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
                   <SubjectRow isModule={isModule} subject={subject} />
                 </li>
               ))}
-            </ul>
+            </ListGroup>
           </div>
         ))}
       </div>

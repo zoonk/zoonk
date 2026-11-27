@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
 import {
-  LIST_GROUP_CLASS,
+  ListGroup,
   ListRowChevronSpace,
   ListRowDescription,
   ListRowLink,
@@ -163,16 +163,17 @@ export function SyllabusSection({
 
       <SharedExamsNote sharedExams={syllabus.sharedExams} />
 
-      <div className={LIST_GROUP_CLASS}>
+      <div className="divided-rows flex flex-col">
         {groups.map((group, index) => (
           // A group's heading and its rows are one item of the list, so a rule sits above the
           // heading and none between it and its rows.
           <div key={group.extra ? "extra" : (group.name ?? "all")}>
             <SubjectGroupHeading group={group} id={getGroupId(index)} syllabus={syllabus} />
 
-            <ul
+            <ListGroup
+              as="ul"
               aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
-              className="divided-rows"
+              className="block"
             >
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
@@ -184,7 +185,7 @@ export function SyllabusSection({
                   />
                 </li>
               ))}
-            </ul>
+            </ListGroup>
           </div>
         ))}
       </div>

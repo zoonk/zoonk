@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
-import { describe, it } from "vitest";
+import { describe, it, test } from "vitest";
 import { read, setUpProbeDom } from "./alignment-probe-dom.mts";
 import { evaluateCapture } from "./alignment.mts";
 
@@ -13,6 +13,23 @@ setUpProbeDom();
 function rule(name: string) {
   return evaluateCapture(read()).filter((finding) => finding.rule === name);
 }
+
+test("reads numbered lessons in an ordered ListGroup and catches an offset label", () => {
+  document.body.innerHTML = `<ol data-slot="list-group" style="font-family: ui-sans-serif" data-box="16,100,358,88">
+    <li data-box="16,100,358,44">
+      <span data-slot="list-row-lead" data-box="16,111,14,20">1.</span>
+      <span data-slot="list-row-title" data-box="32,111,120,20">Linear equations</span>
+    </li>
+    <li data-box="16,144,358,44">
+      <span data-slot="list-row-lead" data-box="16,155,14,20">2.</span>
+      <span data-slot="list-row-title" data-box="40,155,120,20">Practice</span>
+    </li>
+  </ol>`;
+
+  assert.equal(read().elements.filter((element) => element.part === "lead").length, 2);
+  assert.equal(rule("lead-start").length, 0);
+  assert.equal(rule("label-start")[0]?.measured, 8);
+});
 
 /** The sign-in buttons: a brand mark beside words set in the system face (`ui-sans-serif`). */
 function signInButton(family: string) {

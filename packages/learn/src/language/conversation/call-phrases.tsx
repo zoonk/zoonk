@@ -4,7 +4,7 @@ import { type LanguageConversationView } from "@zoonk/core/language/conversation
 import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { LIST_GROUP_CLASS } from "../../_components/list-group";
+import { ListGroup } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
 import { SheetHeader } from "../../_components/sheet-header";
 
@@ -27,7 +27,7 @@ export function Phrases({
   return (
     <div className="flex flex-col gap-2">
       {titled && <PageSectionTitle id={titleId}>{title}</PageSectionTitle>}
-      <ul aria-labelledby={titled ? titleId : undefined} className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul" aria-labelledby={titled ? titleId : undefined}>
         {conversation.hints.map((hint, index) => (
           <li
             className="text-reading py-2.5 leading-snug"
@@ -35,10 +35,10 @@ export function Phrases({
             key={index}
             lang={conversation.targetLanguage}
           >
-            {hint}
+            <span data-slot="list-row-title">{hint}</span>
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 }

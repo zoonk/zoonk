@@ -5,7 +5,7 @@ import { MicIcon, PenLineIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { DiffLines } from "../../_components/diff-lines";
-import { LIST_GROUP_CLASS } from "../../_components/list-group";
+import { ListGroup } from "../../_components/list-group";
 import { PageSectionTitle, PageTitle } from "../../_components/page";
 
 type PatternExample = MistakePatternView["examples"][number];
@@ -14,7 +14,7 @@ function ContrastLabel({ label }: { label: string }) {
   const [head, ...rest] = label.split(" + ");
 
   return (
-    <span className="min-w-0 flex-1">
+    <span className="min-w-0 flex-1" data-slot="list-row-title">
       <span className="font-semibold">{head}</span>
       {rest.length > 0 && <span className="text-muted-foreground">{` + ${rest.join(" + ")}`}</span>}
     </span>
@@ -46,14 +46,16 @@ function ContrastRows({ contrast }: { contrast: MistakePatternView["contrast"] }
   }
 
   return (
-    <ul className={LIST_GROUP_CLASS}>
+    <ListGroup as="ul">
       {contrast.map((row) => (
         <li className="flex items-baseline gap-3 py-2.5 text-sm" key={row.label}>
           <ContrastLabel label={row.label} />
-          <span className="text-muted-foreground shrink-0 text-end">{row.example}</span>
+          <span className="text-muted-foreground shrink-0 text-end" data-slot="list-row-trailing">
+            {row.example}
+          </span>
         </li>
       ))}
-    </ul>
+    </ListGroup>
   );
 }
 

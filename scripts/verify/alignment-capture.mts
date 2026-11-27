@@ -34,6 +34,7 @@ export const ELEMENT_PARTS = [
   "holder",
   "pinned",
   "row",
+  "section-text",
   "text",
 ] as const;
 
@@ -62,6 +63,8 @@ export type CaptureElement = {
   lines?: number | NotMeasured;
   /** A row's: a supporting line sits under its label. */
   note?: boolean;
+  /** A date lead opens a run of entries whose first line also holds the row's accessories. */
+  role?: "date" | "words";
   type?: string;
   text?: string;
   name?: string;

@@ -226,7 +226,6 @@ internal fun LibraryCourseOffer(
     ListRow(
         onClick = onOpen,
         modifier = Modifier.bleed(com.zoonk.android.ui.components.LIST_ITEM_INSET),
-        leadOnFirstLine = true,
         headline = { Text(course.title) },
         supporting = { Text(stringResource(R.string.onboarding_library_course_fits)) },
         leading = { MarkIcon(R.drawable.ic_menu_book) },

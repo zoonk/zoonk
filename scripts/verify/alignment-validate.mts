@@ -48,6 +48,7 @@ const OPTIONAL = z
     overflow: z.tuple([z.number(), z.number()]),
     pinnedIn: z.string(),
     reason: z.string(),
+    role: z.enum(["date", "words"]),
     source: z.enum(["piece", "picture", "stack"]),
     stacked: z.boolean(),
     surface: z.string(),
