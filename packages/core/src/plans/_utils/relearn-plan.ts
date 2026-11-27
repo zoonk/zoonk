@@ -1,9 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { once } from "@zoonk/utils/once";
 import { getSkillArea } from "../planner/graph-areas";
 import { type PlanState } from "../planner/plan-state";
+import { type MockMiss } from "../planner/skill-order";
 import { type PlanContext } from "./plan-context";
-import { type ComputedPlan, computePlan } from "./replan";
+import { type ComputePlanRequest, type ComputedPlan, computePlan } from "./replan";
+import { loadReplanFacts } from "./replan-input";
+import { hasTakenChallenge } from "./taken-challenge";
 
 /** Topics in a skipped area stay out of the plan, missed or not. */
 export function withoutSkippedAreas({
@@ -60,24 +64,36 @@ export async function findTestedOutItemIds({
   );
 }
 
+function restorePlanItems({
+  context,
+  ids,
+}: {
+  context: PlanContext;
+  ids: ReadonlySet<string>;
+}): PlanContext {
+  const items = context.items.map((item) =>
+    ids.has(item.id) ? { ...item, completedAt: null, status: "todo" as const } : item,
+  );
+
+  return { ...context, items };
+}
+
 async function planWithRestored({
   context,
   ids,
   now,
   openedKeys,
+  sharedReads,
   state,
 }: {
   context: PlanContext;
   ids: ReadonlySet<string>;
   now: Date;
   openedKeys?: readonly string[];
+  sharedReads?: ComputePlanRequest["sharedReads"];
   state: PlanState;
 }): Promise<{ computed: ComputedPlan; restored: PlanContext }> {
-  const items = context.items.map((item) =>
-    ids.has(item.id) ? { ...item, completedAt: null, status: "todo" as const } : item,
-  );
-
-  const restored = { ...context, items };
+  const restored = restorePlanItems({ context, ids });
 
   const computed = await computePlan({
     context: restored,
@@ -85,6 +101,7 @@ async function planWithRestored({
     mode: "forced",
     now,
     ...(openedKeys && { openedKeys, todayShown: true }),
+    sharedReads,
     state,
   });
 
@@ -113,21 +130,55 @@ export async function planRelearn({
   ids,
   now,
   openedKeys,
+  sharedReads,
   state = context.state,
 }: {
   context: PlanContext;
   ids: ReadonlySet<string>;
   now: Date;
   openedKeys?: readonly string[];
+  sharedReads?: ComputePlanRequest["sharedReads"];
   state?: PlanState;
 }): Promise<{ computed: ComputedPlan; restored: PlanContext; restoredIds: Set<string> }> {
-  const first = await planWithRestored({ context, ids, now, openedKeys, state });
+  const first = await planWithRestored({ context, ids, now, openedKeys, sharedReads, state });
   const plannedIds = getPlannedIds({ computed: first.computed, ids });
 
   const { computed, restored } =
     plannedIds.size === ids.size
       ? first
-      : await planWithRestored({ context, ids: plannedIds, now, openedKeys, state });
+      : await planWithRestored({ context, ids: plannedIds, now, openedKeys, sharedReads, state });
 
   return { computed, restored, restoredIds: getPlannedIds({ computed, ids: plannedIds }) };
+}
+
+/** Both orders use the same facts, including when laying out a smaller set of restored items. */
+export function compareMockRelearnPlans({
+  misses,
+  state,
+  ...request
+}: Omit<Parameters<typeof planRelearn>[0], "sharedReads"> & {
+  misses: ReadonlyMap<string, MockMiss>;
+  state: PlanState;
+}) {
+  const { context, ids, now, openedKeys } = request;
+
+  const sharedReads = {
+    facts: once(() =>
+      loadReplanFacts({
+        context: restorePlanItems({ context, ids }),
+        mode: "forced",
+        now,
+        state: context.state,
+        todayShown: openedKeys !== undefined,
+      }),
+    ),
+    hasTakenChallenge: once(() =>
+      hasTakenChallenge({ goalId: context.goal.id, userId: context.goal.userId }),
+    ),
+  };
+
+  return Promise.all([
+    planRelearn({ ...request, sharedReads }),
+    planRelearn({ ...request, sharedReads: { ...sharedReads, mockMisses: misses }, state }),
+  ]);
 }

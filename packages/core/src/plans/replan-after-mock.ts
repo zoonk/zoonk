@@ -13,7 +13,12 @@ import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { writePlanMetadata } from "./_utils/plan-metadata-write";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { findTestedOutItemIds, planRelearn, withoutSkippedAreas } from "./_utils/relearn-plan";
+import {
+  compareMockRelearnPlans,
+  findTestedOutItemIds,
+  planRelearn,
+  withoutSkippedAreas,
+} from "./_utils/relearn-plan";
 import { type ComputedPlan, type PlanChangeRecord, revalidatePlanTags } from "./_utils/replan";
 import { getRelearnPayload, toRelearnChange } from "./bring-back-missed-lessons";
 import { withPlanRetry } from "./plan-conflict";
@@ -174,9 +179,17 @@ export async function replanAfterMock({
   timeZone: string;
 }): Promise<string[]> {
   return withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goalId, { now, timeZone });
+    const [context, latest] = await Promise.all([
+      loadPlanAtToken(goalId, { now, timeZone }),
+      findMockToFollow({ goalId, now }),
+    ]);
 
-    if (!context || !isPlanReady(context) || context.state.settings.mockReplan?.mockId === mockId) {
+    if (
+      latest?.id !== mockId ||
+      !context ||
+      !isPlanReady(context) ||
+      context.state.settings.mockReplan?.mockId === mockId
+    ) {
       return [];
     }
 
@@ -222,10 +235,14 @@ export async function replanAfterMock({
       return [];
     }
 
-    const [baseline, reordered] = await Promise.all([
-      planRelearn({ context, ids, now, openedKeys }),
-      planRelearn({ context, ids, now, openedKeys, state: withMockReplan(context.state, applied) }),
-    ]);
+    const [baseline, reordered] = await compareMockRelearnPlans({
+      context,
+      ids,
+      misses,
+      now,
+      openedKeys,
+      state: withMockReplan(context.state, applied),
+    });
 
     const movableFrom = openedKeys ? addDays(context.today, 1) : context.today;
 

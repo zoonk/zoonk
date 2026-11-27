@@ -73,23 +73,19 @@ function shapePlannerInputs<
   };
 }
 
-export async function readReplanInputs(request: ComputePlanRequest & { state: PlanState }) {
-  const {
-    carrySnapshot,
-    context,
-    mode,
-    keepPhaseDates = mode === "automatic",
-    now = new Date(),
-    movedEnds,
-    pace: paceSource = "saved",
-    releasedPhases,
-    setAsideLeftWork = false,
-    state,
-    todayShown: shownToday,
-    ...options
-  } = request;
-
-  const { activeExtraItemIds, extraSkills, resolved } = await loadExtraPlanGraph({
+export async function loadReplanFacts({
+  carrySnapshot,
+  context,
+  mode,
+  now = new Date(),
+  pace: paceSource = "saved",
+  state,
+  todayShown: shownToday,
+}: Pick<
+  ComputePlanRequest,
+  "carrySnapshot" | "context" | "mode" | "now" | "pace" | "todayShown"
+> & { state: PlanState }) {
+  const { extraSkills, getActiveItemIds, resolved } = await loadExtraPlanGraph({
     context,
     now,
     state,
@@ -128,23 +124,81 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     loadQuickBaseLessons(state.settings),
   ]);
 
-  const { items, reopenedItemIds } = reopenWrittenTestOuts({
-    items: context.items,
-    unprovenSkillIds: unprovenWrittenSkillIds,
-  });
+  const project = (forContext: PlanContext) => {
+    const { items, reopenedItemIds } = reopenWrittenTestOuts({
+      items: forContext.items,
+      unprovenSkillIds: unprovenWrittenSkillIds,
+    });
 
-  const planned = { ...context, items };
+    return {
+      ...shapePlannerInputs({ context: { ...forContext, items }, loaded, resolved, state }),
+      items,
+      reopenedItemIds,
+    };
+  };
 
-  const { fullGraph, graph, inputs } = shapePlannerInputs({
-    context: planned,
-    loaded,
-    resolved,
+  const initial = project(context);
+
+  const [bossFacts, settings] = await Promise.all([
+    loadRunBossFacts({ context, graph: initial.graph, lessons: initial.inputs.lessons, quick }),
+    choosePlanSettings({ context, inputs: initial.inputs, now, paceSource, state }),
+  ]);
+
+  return {
+    areaShares,
+    bossFacts,
+    carryOver,
+    examSubjects,
+    extraSkills,
+    getActiveItemIds,
+    materialExam,
+    project: (forContext: PlanContext) => (forContext === context ? initial : project(forContext)),
+    quick,
+    settings,
+    targetDate,
+    todayShown,
+    topicLevels,
+    writtenSkillIds,
+  };
+}
+
+export async function readReplanInputs(request: ComputePlanRequest & { state: PlanState }) {
+  const {
+    context,
+    mode,
+    keepPhaseDates = mode === "automatic",
+    movedEnds,
+    releasedPhases,
+    setAsideLeftWork = false,
     state,
-  });
+    sharedReads,
+    ...options
+  } = request;
 
-  const bossFacts = loadRunBossFacts({ context: planned, graph, lessons: inputs.lessons, quick });
-  const settings = await choosePlanSettings({ context: planned, inputs, now, paceSource, state });
+  const {
+    areaShares,
+    bossFacts,
+    carryOver,
+    examSubjects,
+    extraSkills,
+    getActiveItemIds,
+    materialExam,
+    project,
+    quick,
+    settings: readSettings,
+    targetDate,
+    todayShown,
+    topicLevels,
+    writtenSkillIds,
+  } = await (sharedReads?.facts() ?? loadReplanFacts(request));
 
+  const { fullGraph, graph, inputs, items, reopenedItemIds } = project(context);
+
+  const settings = sharedReads?.mockMisses
+    ? { ...readSettings, mockReplan: state.settings.mockReplan }
+    : readSettings;
+
+  const mockMisses = sharedReads?.mockMisses ?? inputs.mockMisses;
   const extras = graph.skills.filter((skill) => skill.extra);
 
   const weighted = weighGraphForExam({
@@ -156,7 +210,8 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
 
   const { advise, input } = chooseBases({
     ...inputs,
-    bossFacts: await bossFacts,
+    ...(mockMisses && { mockMisses }),
+    bossFacts,
     bossMinutes: listSavedBossMinutes(items),
     bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver: carryOver && {
@@ -165,7 +220,7 @@ export async function readReplanInputs(request: ComputePlanRequest & { state: Pl
     },
     examWindows: toExamWindows(context.phases),
     extras: {
-      activeItemIds: activeExtraItemIds,
+      activeItemIds: getActiveItemIds(context),
       bringBack: options.bringBackExtras ?? false,
       previousSkillIds: new Set(extraSkills.keys()),
     },

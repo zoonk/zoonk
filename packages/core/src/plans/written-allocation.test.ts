@@ -8,7 +8,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createWritingBlock } from "../exams/essays/create-writing-block";
 import { toProduceBlock } from "../exams/essays/produce-block";
@@ -34,6 +34,7 @@ import { refreshOwedStudyDay } from "../sessions/refresh-owed-study-day";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import * as plannerInputs from "./_utils/planner-inputs";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
@@ -357,7 +358,35 @@ describe("an opened day without an essay", () => {
     const shown = await readOpenedDay({ goalId: goal.id, sessionId: session.id });
 
     await finishMockMissing({ goal, skillId: writingSkill ?? "" });
+
+    const read = plannerInputs.loadPlannerInputs;
+    const revised = Promise.withResolvers<boolean>();
+    // Schedule a real Library edit between any independent reads of the same lessons.
+    const inputs = vi
+      .spyOn(plannerInputs, "loadPlannerInputs")
+      .mockImplementation(async (input) => {
+        if (input.mockReplan) {
+          await revised.promise;
+          return read(input);
+        }
+
+        const before = await read(input);
+
+        await prisma.lesson.updateMany({
+          data: { estimatedMinutes: 22 },
+          where: { id: { in: before.lessons.map(({ lessonId }) => lessonId) } },
+        });
+
+        revised.resolve(true);
+        return before;
+      });
+
+    onTestFinished(() => {
+      inputs.mockRestore();
+    });
+
     await catchUpMockReplan({ goalId: goal.id, timeZone: "UTC", userId: goal.userId });
+    inputs.mockRestore();
     await refreshOwedStudyDay({ sessionId: session.id, timeZone: "UTC", userId: goal.userId });
 
     const [day, plan, dates] = await Promise.all([
