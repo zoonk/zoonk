@@ -519,7 +519,8 @@ private struct BuddyContent: View {
       return Text(verbatim: "–")
     }
 
-    return Text((current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
+    return Text(
+      (current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
   }
 
   private var dayLine: some View {
