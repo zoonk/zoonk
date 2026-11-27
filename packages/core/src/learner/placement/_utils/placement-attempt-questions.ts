@@ -29,6 +29,32 @@ function pickTopicQuestion({
   return pickPlacementItem({ confirming, items: suitable, skillId });
 }
 
+function nextPartQuestion({
+  remainingTopics,
+  bySkill,
+  candidates,
+  preparingSkillIds,
+}: {
+  remainingTopics: readonly string[];
+  bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>;
+  candidates: ReadonlyMap<string, readonly PlacementItemCandidate[]>;
+  preparingSkillIds: ReadonlySet<string>;
+}) {
+  for (const skillId of remainingTopics) {
+    const item = pickTopicQuestion({
+      answers: bySkill.get(skillId) ?? [],
+      items: candidates.get(skillId) ?? [],
+      skillId,
+    });
+
+    if (item || preparingSkillIds.has(skillId)) {
+      return { item, waiting: !item };
+    }
+  }
+
+  return { item: null, waiting: false };
+}
+
 function getEnd({
   capped,
   complete,
@@ -161,28 +187,25 @@ export function readAttemptQuestions({
     : PART_QUESTIONS;
 
   const remainingTopics = current.filter((id) => remaining.has(id));
-  const [nextSkillId] = remainingTopics;
 
-  const item = nextSkillId
-    ? pickTopicQuestion({
-        answers: bySkill.get(nextSkillId) ?? [],
-        items: candidates.get(nextSkillId) ?? [],
-        skillId: nextSkillId,
-      })
-    : null;
+  const { item, waiting } = nextPartQuestion({
+    bySkill,
+    candidates,
+    preparingSkillIds: build.preparingSkillIds,
+    remainingTopics,
+  });
 
   const capped = partAnswers.length >= questions;
-  const complete = capped || !nextSkillId;
-  const partOver = complete || attempt.partComplete;
-  const blocked = Boolean(nextSkillId && !item && !complete);
-  const waiting = blocked && nextSkillId !== undefined && build.preparingSkillIds.has(nextSkillId);
 
   const preparationFailed = didPreparationFail({
     answered: partAnswers.length,
     attempt,
-    blocked,
+    blocked: remainingTopics.length > 0 && !item,
     waiting,
   });
+
+  const complete = capped || (!item && !waiting && !preparationFailed);
+  const partOver = complete || attempt.partComplete;
 
   const progress = readPartProgress({
     bySkill,
