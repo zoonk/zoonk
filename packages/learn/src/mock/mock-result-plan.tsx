@@ -288,34 +288,69 @@ export function PreparationMeter({ change }: { change: Preparation }) {
   );
 }
 
+type MovedTopics = MockResult["movedTopics"];
+
+function useMovedTitle() {
+  const t = useExtracted();
+  return () => t("Your plan now starts with what you missed");
+}
+
+/** The plan already moved these earlier when the mock finished: there's nothing to answer. */
+export function MockMovedTopics({
+  showTitle = true,
+  topics,
+}: {
+  showTitle?: boolean;
+  topics: NonNullable<MovedTopics>;
+}) {
+  const format = useFormatter();
+  const movedTitle = useMovedTitle();
+
+  return (
+    <div className="flex flex-col gap-1" data-slot="mock-moved-topics">
+      {showTitle && <p className="text-sm">{movedTitle()}</p>}
+      <p className="text-muted-foreground text-sm">
+        {format.list(topics.slice(0, TOPICS_NAMED), { type: "conjunction" })}
+      </p>
+    </div>
+  );
+}
+
 export function MockPlanStep({
   change,
+  movedTopics,
   preparation,
 }: {
   change: PlanChange;
+  movedTopics: MovedTopics;
   preparation: MockResult["preparation"];
 }) {
   const t = useExtracted();
   const offerCopy = useOfferCopy(change.adapt);
+  const movedTitle = useMovedTitle();
   const [firstOffer] = change.offers;
   const question = change.open ?? firstOffer;
+  const movedIsTitle = !preparation && Boolean(movedTopics);
 
   return (
     <StepCard>
       <StepHeader>
         <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>
         <StepTitle>
-          {preparation ? (
-            <PreparationReadout change={preparation} />
-          ) : (
-            question && offerCopy(question).title
-          )}
+          {preparation && <PreparationReadout change={preparation} />}
+          {movedIsTitle && movedTitle()}
+          {!preparation && !movedTopics && question && offerCopy(question).title}
         </StepTitle>
       </StepHeader>
 
       {preparation && <PreparationMeter change={preparation} />}
+      {movedTopics && <MockMovedTopics showTitle={!movedIsTitle} topics={movedTopics} />}
       {hasPlanChange(change) && (
-        <MockPlanChange answers={false} change={change} showTitle={Boolean(preparation)} />
+        <MockPlanChange
+          answers={false}
+          change={change}
+          showTitle={Boolean(preparation || movedTopics)}
+        />
       )}
     </StepCard>
   );

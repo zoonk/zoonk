@@ -24,6 +24,7 @@ import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-b
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
 import {
+  MockMovedTopics,
   MockPlanAccept,
   MockPlanChange,
   MockPlanDecline,
@@ -230,9 +231,10 @@ function useResultAside({
           </TaskAsideSection>
         )}
 
-        {hasPlanChange(change) && (
+        {(hasPlanChange(change) || result.movedTopics) && (
           <TaskAsideSection title={t("Your plan")}>
-            <MockPlanChange change={change} />
+            {result.movedTopics && <MockMovedTopics topics={result.movedTopics} />}
+            {hasPlanChange(change) && <MockPlanChange change={change} />}
           </TaskAsideSection>
         )}
       </>
@@ -258,7 +260,7 @@ function useResultSteps(result: MockResult) {
 
   const has: Record<MockResultPart, boolean> = {
     essays: essays.length > 0,
-    plan: preparation !== null || hasPlanChange(change),
+    plan: preparation !== null || hasPlanChange(change) || Boolean(result.movedTopics),
     score: result.total > 0 || (essays.length === 0 && speaking.length === 0),
     speaking: speaking.length > 0,
   };
@@ -269,7 +271,13 @@ function useResultSteps(result: MockResult) {
     essays,
     plan: [
       {
-        content: <MockPlanStep change={change} preparation={preparation} />,
+        content: (
+          <MockPlanStep
+            change={change}
+            movedTopics={result.movedTopics}
+            preparation={preparation}
+          />
+        ),
         finalAction: hasPlanChange(change) && change.open && <MockPlanAccept change={change} />,
         finalSecondAction: hasPlanChange(change) && change.open && (
           <MockPlanDecline change={change} />
