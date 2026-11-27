@@ -4,7 +4,7 @@ import {
   type DatabaseMode,
   LOCAL_DATABASE_NAMES,
   worktreeDatabaseName,
-} from "./local-database-names.ts";
+} from "#local-database-names";
 
 const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
 const POSTGRES_PROTOCOLS = new Set(["postgres:", "postgresql:"]);

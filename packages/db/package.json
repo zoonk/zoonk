@@ -2,6 +2,9 @@
   "name": "@zoonk/db",
   "private": true,
   "type": "module",
+  "imports": {
+    "#local-database-names": "./src/local-database-names.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./anonymous-records": "./src/anonymous-records.ts",
