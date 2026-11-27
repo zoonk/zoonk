@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
+import { requireCheckoutDatabase } from "../../packages/db/src/checkout-database.ts";
 import { worktreeDatabaseName } from "../../packages/db/src/local-database-names.ts";
 import { getLocalDatabaseUrl } from "../../packages/db/src/local-database.ts";
 import { requireDevelopmentDatabase } from "./databases.mts";
@@ -138,6 +139,60 @@ describe(ownDevelopmentDatabaseUrl, () => {
 
   it("ignores a checkout without a database environment", () => {
     expect(ownDevelopmentDatabaseUrl(databaseCheckout())).toBeNull();
+  });
+});
+
+function linkedWorktree(): string {
+  const worktree = databaseCheckout();
+  writeFileSync(join(worktree, ".git"), "gitdir: /checkout/.git/worktrees/example\n");
+  return worktree;
+}
+
+describe(requireCheckoutDatabase, () => {
+  it("refuses another checkout's local database in a worktree, naming both", () => {
+    const worktree = linkedWorktree();
+    const other = worktreeDatabaseName({ mode: "dev", worktree: "/elsewhere" });
+
+    for (const url of [
+      "postgres://postgres:postgres@localhost:5432/zoonk",
+      "postgresql://postgres:postgres@127.0.0.1/zoonk_test",
+      `postgres://postgres:postgres@localhost:5432/${other}`,
+      "postgres://postgres@localhost/zoonk?port=5432",
+      "postgres://postgres@LOCALHOST/zoonk",
+      "postgres://postgres@db.example.test/zoonk?host=localhost",
+      "postgres://postgres@localhost/zoonk?host=/tmp",
+      "postgres:///zoonk",
+    ]) {
+      expect(() => requireCheckoutDatabase(url, worktree)).toThrow(
+        worktreeDatabaseName({ mode: "dev", worktree }),
+      );
+    }
+
+    expect(() =>
+      requireCheckoutDatabase("postgres://postgres:postgres@localhost:5432/zoonk", worktree),
+    ).toThrow("names the local database zoonk,");
+  });
+
+  it("lets a worktree use its own databases, its test runs' copies and other servers", () => {
+    const worktree = linkedWorktree();
+    const own = (mode: "dev" | "e2e" | "test") => worktreeDatabaseName({ mode, worktree });
+
+    const urls = [
+      `postgres://postgres:postgres@localhost:5432/${own("dev")}?connect_timeout=30`,
+      `postgres://postgres:postgres@localhost:5432/${own("e2e")}`,
+      `postgres://postgres:postgres@localhost:5432/${own("test")}_run_4242`,
+      "postgres://user:secret@db.example.test/zoonk",
+    ];
+
+    expect(urls.map((url) => requireCheckoutDatabase(url, worktree))).toStrictEqual(urls);
+  });
+
+  it("leaves the primary checkout's database alone", () => {
+    const primary = databaseCheckout();
+    mkdirSync(join(primary, ".git"));
+    const url = "postgres://postgres:postgres@localhost:5432/zoonk";
+
+    expect(requireCheckoutDatabase(url, primary)).toBe(url);
   });
 });
 
