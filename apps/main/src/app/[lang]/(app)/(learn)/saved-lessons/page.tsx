@@ -15,17 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Saved lessons") };
 }
 
-/** `listed` only where the sidebar lists the page: the placeholder, which can't know, and never without a goal. */
-async function SavedLessonsBar({ listed = false }: { listed?: boolean }) {
+async function SavedLessonsBar() {
   const t = await getExtracted();
 
   return (
-    <LearnPageBar
-      back={{ href: "/today" }}
-      listed={listed ? "learner" : undefined}
-      root
-      title={t("Saved lessons")}
-    />
+    <LearnPageBar back={{ href: "/today" }} listed="learner" root title={t("Saved lessons")} />
   );
 }
 
@@ -62,9 +56,7 @@ async function SavedLessonsBody() {
 async function SavedLessonsSkeleton() {
   const t = await getExtracted();
 
-  return (
-    <DetailSkeleton aside={false} bar={<SavedLessonsBar listed />} title={t("Saved lessons")} />
-  );
+  return <DetailSkeleton aside={false} bar={<SavedLessonsBar />} title={t("Saved lessons")} />;
 }
 
 export default function SavedLessonsPage() {

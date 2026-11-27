@@ -2,7 +2,6 @@
 
 import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { saveLessonIn } from "@/lib/saved-lessons/save-lesson";
-import { useHoldSavedLessonsPlace } from "@/lib/saved-lessons/saved-lessons-place";
 import { type SavedLesson } from "@zoonk/core/saved-lessons/contract";
 import { type SavedLessonsHrefs, SavedLessonsScreen } from "@zoonk/learn/saved-lessons";
 import { useMemo } from "react";
@@ -21,7 +20,6 @@ export function SavedLessonsClient({
   goalId: string;
   lessons: SavedLesson[];
 }) {
-  useHoldSavedLessonsPlace(lessons.length > 0);
   const save = useMemo(() => saveLessonIn(goalId), [goalId]);
   return <SavedLessonsScreen hrefs={HREFS} lessons={lessons} save={save} />;
 }
