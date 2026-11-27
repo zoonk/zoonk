@@ -13,12 +13,15 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.isDialog
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
 import com.zoonk.android.data.ANA
@@ -122,6 +125,30 @@ class BuddyScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "pt-w411dp-h891dp-xxhdpi")
+    fun phonePortuguese() = capture("buddy-phone-pt", dark = false)
+
+    @Test
+    @Config(qualifiers = "pt-w411dp-h891dp-xxhdpi")
+    fun listSheetPortuguese() = capture("buddy-list-sheet-pt", dark = false, sheet = true)
+
+    @Test
+    @Config(qualifiers = "pt-w1280dp-h800dp-land-xhdpi")
+    fun widePortuguese() = capture("buddy-wide-pt", dark = false, rows = MANY, more = true)
+
+    @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun medium() = capture("buddy-medium", dark = false)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun daySheet() = capture("buddy-day-sheet", dark = false, overlay = Overlay.DAY)
+
+    @Test
+    @Config(qualifiers = "pt-w411dp-h891dp-xxhdpi")
+    fun daySheetPortuguese() = capture("buddy-day-sheet-pt", dark = false, overlay = Overlay.DAY)
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun callsNoMissionsPhone() =
         capture("calls-no-missions-phone", dark = false, status = STATUS.copy(today = STATUS.today?.copy(missions = emptyList())))
@@ -140,6 +167,7 @@ class BuddyScreenshots {
         current: String? = rows.firstOrNull()?.id,
         sheet: Boolean = false,
         more: Boolean = false,
+        overlay: Overlay? = null,
     ) {
         // A signed-in learner, as only one gets the list: the session first, since a new session drops what was read before it.
         val app = AppContainer.preview(compose.activity, account = account(ANA))
@@ -187,8 +215,33 @@ class BuddyScreenshots {
         }
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        if (overlay != null) {
+            val resources = compose.activity.resources
+            when (overlay) {
+                Overlay.DAY -> {
+                    val missions =
+                        STATUS.today
+                            ?.missions
+                            .orEmpty()
+                            .size
+                    compose
+                        .onNodeWithText(resources.getQuantityString(R.plurals.buddy_page_missions_count, missions, 0, missions))
+                        .performClick()
+                }
+            }
+            compose.waitForIdle()
+            writeRender(
+                file,
+                compose
+                    .onAllNodes(isRoot())
+                    .onLast()
+                    .captureRender()
+                    .asAndroidBitmap(),
+            )
+            return
+        }
         if (sheet) {
-            compose.onNodeWithContentDescription("Conversations").performClick()
+            compose.onNodeWithContentDescription(compose.activity.getString(R.string.buddy_page_conversations)).performClick()
             compose.waitForIdle()
             writeRender(file, compose.onNode(isDialog()).captureRender().asAndroidBitmap())
             return
@@ -202,6 +255,8 @@ class BuddyScreenshots {
                 ).assertExists()
         }
     }
+
+    private enum class Overlay { DAY }
 
     private companion object {
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
