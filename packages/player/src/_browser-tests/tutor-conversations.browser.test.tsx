@@ -15,9 +15,15 @@ const NOTHING_ASKED: LessonQuestionThreadPage = { hasMore: false, nextCursor: nu
 
 /**
  * Stands for the buddy's page: its list opens a conversation, and the page hands over what it read
- * of that one. `earlier` is what it read of the earlier conversation.
+ * of that one.
  */
-function TwoConversations({ earlier }: { earlier: LessonQuestionThreadPage }) {
+function TwoConversations({
+  earlier,
+  latest = NOTHING_ASKED,
+}: {
+  earlier: LessonQuestionThreadPage;
+  latest?: LessonQuestionThreadPage;
+}) {
   const [openId, setOpenId] = useState(NEW_ID);
 
   return (
@@ -38,7 +44,7 @@ function TwoConversations({ earlier }: { earlier: LessonQuestionThreadPage }) {
         renderPlanChange={() => null}
         renderToolOffer={() => null}
         suggestions={[]}
-        thread={openId === NEW_ID ? NOTHING_ASKED : earlier}
+        thread={openId === NEW_ID ? latest : earlier}
         tutor={buildTutor()}
       />
     </>
@@ -56,6 +62,62 @@ async function ask(question: string) {
 }
 
 describe("the buddy's conversations", () => {
+  it("shows a fresh server page when returning without dropping earlier turns, a draft, or a streaming answer", async () => {
+    const api = stubTutorApi({ pageSize: 1 });
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+
+    const savedQuestion = (question: string) => ({
+      ...api.question({ answer: "A saved answer.", question, status: "completed" }),
+      context: { kind: "plan" as const },
+    });
+
+    const older = savedQuestion("An older question");
+    const latest = savedQuestion("The latest question");
+    const elsewhere = savedQuestion("A question from another tab");
+    const firstPage = { hasMore: true, nextCursor: latest.id, questions: [latest] };
+    api.questions = [older, latest];
+
+    const view = render(<TwoConversations earlier={NOTHING_ASKED} latest={firstPage} />);
+    const loadEarlier = page.getByRole("button", { name: "Load earlier messages" });
+    await loadEarlier.click();
+    await expect.element(page.getByText(older.question)).toBeVisible();
+
+    await ask("A question I'm asking here");
+    stream.write("The answer starts");
+    await expect.element(page.getByText("The answer starts")).toBeVisible();
+    await composer().fill("My next draft");
+
+    await page.getByRole("button", { name: "Open the earlier one" }).click();
+    const running = api.questions.at(-1);
+
+    if (!running) {
+      throw new Error("Expected a question with an answer in progress");
+    }
+
+    const freshPage = {
+      ...firstPage,
+      questions: [latest, elsewhere, { ...running, status: "running" as const }],
+    };
+
+    view.rerender(<TwoConversations earlier={NOTHING_ASKED} latest={freshPage} />);
+    await page.getByRole("button", { name: "Open the new one" }).click();
+
+    try {
+      await expect.element(page.getByText(elsewhere.question)).toBeVisible();
+      await expect.element(page.getByText(older.question)).toBeVisible();
+      await expect.element(composer()).toHaveValue("My next draft");
+      await expect.element(loadEarlier).not.toBeInTheDocument();
+    } finally {
+      stream.write(" and keeps going.");
+      stream.finish();
+      stream.close();
+    }
+
+    await expect.element(page.getByText("The answer starts and keeps going.")).toBeVisible();
+    expect(api.requests.thread).toBe(1);
+  });
+
   it("keeps an answer on its way in its own conversation while the learner opens another, and shows it when they come back", async () => {
     const api = stubTutorApi({});
     const stream = tutorAnswerStream();

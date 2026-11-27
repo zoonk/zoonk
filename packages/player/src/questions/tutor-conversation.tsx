@@ -14,11 +14,9 @@ import {
   useLessonQuestionNavigation,
 } from "./lesson-question-navigation";
 import {
-  LessonQuestionControllerProvider,
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "./lesson-question-provider";
-import { lessonQuestionReducer } from "./lesson-question-state";
 import { ConversationLog, type ConversationLogProps } from "./tutor-conversation-log";
 import { useConversationMissionMoment } from "./tutor-mission-moment";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
@@ -90,10 +88,17 @@ function ConversationBody({
 }: TutorConversationProps & { missionMoment: MissionMomentView | null }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
-  const { canAskQuestions, state } = controller;
+  const { canAskQuestions, load, state } = controller;
   const ready = state.loadStatus === "ready" && state.error !== "load";
   const empty = ready && state.questions.length === 0;
   const offersSuggestions = useOffersSuggestions();
+  const waiting = canAskQuestions && state.loadStatus === "idle" && state.error !== "load";
+
+  useEffect(() => {
+    if (waiting) {
+      void load();
+    }
+  }, [load, waiting]);
 
   useBroughtQuestion({ changeDraft: controller.changeDraft, draft });
   useTurnSignals({ onAnswered, onAsked });
@@ -132,51 +137,6 @@ function ConversationBody({
         )}
       </div>
     </section>
-  );
-}
-
-/**
- * A conversation opened after the first one shows what its page read (`thread`) at once, then
- * keeps it; one no page read loads itself.
- */
-function ShownConversation({
-  children,
-  thread,
-}: {
-  children: React.ReactNode;
-  thread: LessonQuestionThreadPage | null;
-}) {
-  const controller = useLessonQuestionController();
-  const { canAskQuestions, load, showThread, state } = controller;
-  const waiting = canAskQuestions && state.loadStatus === "idle" && state.error !== "load";
-
-  useEffect(() => {
-    if (!waiting) {
-      return;
-    }
-
-    if (thread) {
-      showThread(thread);
-    } else {
-      void load();
-    }
-  }, [load, showThread, thread, waiting]);
-
-  const shown = useMemo(
-    () =>
-      waiting && thread
-        ? {
-            ...controller,
-            state: lessonQuestionReducer(state, { ...thread, type: "threadLoaded" }),
-          }
-        : controller,
-    [controller, state, thread, waiting],
-  );
-
-  return (
-    <LessonQuestionControllerProvider controller={shown}>
-      {children}
-    </LessonQuestionControllerProvider>
   );
 }
 
@@ -246,9 +206,7 @@ export function TutorConversation({
         key={goalId}
         target={target}
       >
-        <ShownConversation thread={thread}>
-          <ConversationBody {...props} missionMoment={missionMoment.moment} />
-        </ShownConversation>
+        <ConversationBody {...props} missionMoment={missionMoment.moment} />
       </LessonQuestionHostProvider>
     </LessonQuestionNavigationContext>
   );

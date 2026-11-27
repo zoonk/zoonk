@@ -8,27 +8,35 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readOwnedGoal } from "../learner/facts/owned-goal";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { getSession } from "../users/get-session";
-import { type BuddyConversations } from "./contract";
+import { type BuddyConversations, buddyConversationCursorSchema } from "./contract";
 
 const PAGE_SIZE = 30;
 
 type ConversationScope = { goalId: string; userId: string };
 type ConversationCursor = { id: string; updatedAt: Date };
-type ConversationRow = { id: string; lastAskedAt: Date; title: string };
+type ConversationRow = ConversationCursor & { lastAskedAt: Date; title: string };
 
 type ListBuddyConversationsResult =
   | ({ status: "ready" } & BuddyConversations)
   | { status: "invalidCursor" | "notFound" | "unauthorized" };
 
-function findCursor({ cursor, goalId, userId }: ConversationScope & { cursor: string }) {
-  if (!isUuid(cursor)) {
+async function findCursor({ cursor, goalId, userId }: ConversationScope & { cursor: string }) {
+  const parsed = buddyConversationCursorSchema.safeParse(cursor);
+
+  if (!parsed.success) {
     return null;
   }
 
-  return prisma.lessonQuestionThread.findFirst({
-    select: { id: true, updatedAt: true },
-    where: { goalId, id: cursor, kind: "plan", questions: { some: {} }, userId },
+  const separator = parsed.data.indexOf("/");
+  const activity = parsed.data.slice(0, separator);
+  const id = parsed.data.slice(separator + 1);
+
+  const thread = await prisma.lessonQuestionThread.findFirst({
+    select: { id: true },
+    where: { goalId, id, kind: "plan", questions: { some: {} }, userId },
   });
+
+  return thread ? { id: thread.id, updatedAt: new Date(activity) } : null;
 }
 
 function readConversations({
@@ -51,7 +59,8 @@ function readConversations({
       ORDER BY thread.updated_at DESC, thread.id DESC
       LIMIT ${take}
     )
-    SELECT page.id, first_question.question AS title, last_question.created_at AS "lastAskedAt"
+    SELECT page.id, page.updated_at AS "updatedAt", first_question.question AS title,
+      last_question.created_at AS "lastAskedAt"
     FROM page
     CROSS JOIN LATERAL (
       SELECT question FROM lesson_questions
@@ -116,6 +125,7 @@ export async function listBuddyConversations({
       : null;
 
   const page = rows.slice(0, PAGE_SIZE);
+  const boundary = rows.length > PAGE_SIZE ? page.at(-1) : undefined;
 
   return {
     conversations: page.map(({ id, lastAskedAt, title }) => ({
@@ -124,7 +134,7 @@ export async function listBuddyConversations({
       title: title.trim().replaceAll(/\s+/gu, " "),
     })),
     currentId,
-    nextCursor: rows.length > PAGE_SIZE ? (page.at(-1)?.id ?? null) : null,
+    nextCursor: boundary ? `${boundary.updatedAt.toISOString()}/${boundary.id}` : null,
     status: "ready",
   };
 }

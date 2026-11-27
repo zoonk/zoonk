@@ -45,7 +45,12 @@ async function readOlder({
   return data ?? null;
 }
 
-/** A conversation asked in here comes first; the rest keep the order they were read in. */
+function newestFirst(left: BuddyConversation, right: BuddyConversation) {
+  return (
+    Date.parse(right.lastAskedAt) - Date.parse(left.lastAskedAt) || right.id.localeCompare(left.id)
+  );
+}
+
 function listConversations({
   asked,
   read,
@@ -53,16 +58,22 @@ function listConversations({
   asked: readonly BuddyConversation[];
   read: readonly BuddyConversation[];
 }): BuddyConversation[] {
-  const titles = new Map(read.map(({ id, title }) => [id, title]));
-  const askedIds = new Set(asked.map(({ id }) => id));
+  const byId = new Map<string, BuddyConversation>();
 
-  return [
-    ...asked.map((conversation) => ({
+  // Give the server's first page the final say on titles.
+  for (const conversation of [...asked, ...read.toReversed()]) {
+    const previous = byId.get(conversation.id);
+
+    byId.set(conversation.id, {
       ...conversation,
-      title: titles.get(conversation.id) ?? conversation.title,
-    })),
-    ...read.filter(({ id }) => !askedIds.has(id)),
-  ];
+      lastAskedAt:
+        previous && Date.parse(previous.lastAskedAt) > Date.parse(conversation.lastAskedAt)
+          ? previous.lastAskedAt
+          : conversation.lastAskedAt,
+    });
+  }
+
+  return [...byId.values()].toSorted(newestFirst);
 }
 
 /** The address changes in place: the page isn't read again, so the answer on its way keeps coming. */
@@ -136,16 +147,18 @@ export function useBuddyConversations({
   const open = openId ? { blank: false, id: openId } : { blank: true, id: blankId };
 
   const questionSaved = ({ conversationId, question }: SavedQuestion) => {
-    setAsked((current) => [
-      {
-        id: conversationId,
-        lastAskedAt: question.createdAt,
-        title:
-          current.find(({ id }) => id === conversationId)?.title ??
-          question.question.trim().replaceAll(/\s+/gu, " "),
-      },
-      ...current.filter(({ id }) => id !== conversationId),
-    ]);
+    setAsked((current) =>
+      [
+        {
+          id: conversationId,
+          lastAskedAt: question.createdAt,
+          title:
+            current.find(({ id }) => id === conversationId)?.title ??
+            question.question.trim().replaceAll(/\s+/gu, " "),
+        },
+        ...current.filter(({ id }) => id !== conversationId),
+      ].toSorted(newestFirst),
+    );
 
     if (conversationId !== blankId) {
       return;
