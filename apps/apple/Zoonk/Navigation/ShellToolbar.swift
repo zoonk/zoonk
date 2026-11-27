@@ -226,7 +226,7 @@ private struct LevelLabel: View {
           "Level \(level)", tableName: "Navigation",
           comment: "Beside the belt's dot in a wide top bar: the learner's level")
       } else {
-        Text(level, format: .number)
+        Text(verbatim: level.formatted(.number.locale(.appLanguage)))
       }
     }
   }
