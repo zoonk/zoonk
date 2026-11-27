@@ -10,6 +10,7 @@ import { OnboardingDescription, OnboardingSecondaryButton } from "../onboarding/
 import { TestOutcome } from "../onboarding/test-outcome";
 import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { type ResultUndo, useResultUndo } from "../questions/undo-button";
+import { useFullTestLabel } from "./placement-test-offers";
 import { type PlacementResultPhase } from "./placement-test-phase";
 import { type TestPressed } from "./test-offer";
 import { useTestFacts } from "./use-test-facts";
@@ -223,6 +224,8 @@ export function PlacementResult({
   const t = useExtracted();
   const sentences = useSkipSentences();
   const partsLeft = usePartsLeftFacts();
+  // The short test never mentioned parts, so what's left is named as the test the offer showed.
+  const fullTest = useFullTestLabel();
   const { button, pending, undone } = useResultUndo(undo);
   const { attempt, lessonsSkipped } = result;
   const nextLesson = undone ? null : result.nextLesson;
@@ -269,7 +272,7 @@ export function PlacementResult({
       other={others}
       title={sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
-      {rest && <TaskMeta facts={partsLeft(rest)} />}
+      {rest && <TaskMeta facts={[fullTest, ...partsLeft(rest)]} />}
       {nextLesson && <UpNextLesson title={nextLesson.title} />}
     </TestOutcome>
   );

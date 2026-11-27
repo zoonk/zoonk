@@ -63,7 +63,7 @@ function PlacementQuestion({
       }
       progress={attempt.answered / attempt.questions}
       question={phase.question}
-      subject={attempt.chapter ?? subject}
+      subject={attempt.chapter?.trim() || subject}
       trueFalseLabels={phase.trueFalseLabels}
     />
   );
@@ -109,7 +109,6 @@ function PlacementAfterSitting({
         <PlacementContinue
           attempt={phase.attempt}
           failed={failed}
-          leaveLabel={onboarding ? t("Finish later") : t("Not now")}
           onContinue={test.onContinue}
           onLeave={() => {
             analytics.notNow(toSittingFacts(phase.attempt));

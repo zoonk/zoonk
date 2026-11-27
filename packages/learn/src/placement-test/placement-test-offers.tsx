@@ -39,9 +39,19 @@ export function useTestOfferTexts() {
   };
 }
 
+export function useFullTestLabel(): string {
+  const t = useExtracted();
+
+  return t({
+    description: "The long test: it checks every topic still ahead, in parts.",
+    message: "Full test",
+  });
+}
+
 function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] {
   const t = useExtracted();
   const facts = useTestFacts();
+  const fullTest = useFullTestLabel();
 
   return [
     {
@@ -59,10 +69,7 @@ function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] 
               facts.partsAnyDay(offer.wholeCourse.parts),
               facts.about(offer.wholeCourse.estimatedMinutes),
             ],
-            label: t({
-              description: "The long test: it checks every topic still ahead, in parts.",
-              message: "Full test",
-            }),
+            label: fullTest,
             value: "wholeCourse" as const,
           },
         ]
@@ -169,7 +176,6 @@ export function CoursePlanOffer({
 export function PlacementContinue({
   attempt,
   failed,
-  leaveLabel,
   onContinue,
   onLeave,
   onShown,
@@ -177,7 +183,6 @@ export function PlacementContinue({
 }: {
   attempt: PlacementAttemptView;
   failed: boolean;
-  leaveLabel: string;
   onContinue: () => void;
   onLeave: () => void;
   onShown: (offered: OfferedRows) => void;
@@ -205,7 +210,7 @@ export function PlacementContinue({
       mainLabel={t("Continue")}
       onShown={() => onShown({ preselected: "continue", rows: ["continue"] })}
       onStart={onContinue}
-      other={{ label: leaveLabel, onPress: onLeave }}
+      other={{ label: t("Finish later"), onPress: onLeave }}
       pressed={pressed}
       title={t("Continue your test")}
     />

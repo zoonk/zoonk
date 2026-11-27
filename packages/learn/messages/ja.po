@@ -1599,7 +1599,6 @@ msgstr "ズー"
 #: src/language/level-test/level-test-out-screens.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/onboarding/steps/placement-waiting.tsx
-#: src/placement-test/placement-test-flow.tsx
 #: src/placement-test/placement-test-offers.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -9319,7 +9318,7 @@ msgid "Save your plan so it's here next time."
 msgstr "次回も見られるように、学習計画を保存しましょう。"
 
 #: src/onboarding/start-over-menu.tsx
-#: src/placement-test/placement-test-flow.tsx
+#: src/placement-test/placement-test-offers.tsx
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "c6IvRW"
 msgid "Finish later"
@@ -10168,17 +10167,17 @@ msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
 msgstr ""
 
-#. The short test: about six minutes of questions.
-#: src/placement-test/placement-test-offers.tsx
-msgctxt "mleMdh"
-msgid "Quick test"
-msgstr "簡単なテスト"
-
 #. The long test: it checks every topic still ahead, in parts.
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "MVOTf7"
 msgid "Full test"
 msgstr ""
+
+#. The short test: about six minutes of questions.
+#: src/placement-test/placement-test-offers.tsx
+msgctxt "mleMdh"
+msgid "Quick test"
+msgstr "簡単なテスト"
 
 #: src/placement-test/placement-test-offers.tsx
 #: src/plan/plan-placement-test.tsx
