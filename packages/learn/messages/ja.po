@@ -6660,16 +6660,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "声に出して言う"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "練習する"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "ミスの傾向が見つかりました：{pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7286,17 +7276,6 @@ msgid "Do your first review"
 msgstr "初めて復習する"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "初めて間違いを克服する"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "ミスの傾向に合わせて練習する"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7390,11 +7369,6 @@ msgid "Practice writing"
 msgstr "小論文を書く練習をする"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, other {#個の間違いを克服する}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "発音を練習する"
@@ -7453,16 +7427,6 @@ msgstr "、今日の小論文に進む"
 msgctxt "GKiQ-V"
 msgid ", go to today's practice"
 msgstr "、今日の練習に進む"
-
-#: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr "、間違えた問題を練習する"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr "、ミスの傾向に合わせた練習に進む"
 
 #: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"

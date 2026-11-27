@@ -6660,16 +6660,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "Sesli söyle"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "Alıştırma yap"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "Tekrarlayan bir hata fark ettik: {pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7286,17 +7276,6 @@ msgid "Do your first review"
 msgstr "İlk tekrarını yap"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "İlk hatanı düzelt"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "Tekrarlayan bir hata üzerinde çalış"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7390,11 +7369,6 @@ msgid "Practice writing"
 msgstr "Yazma alıştırması yap"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Bir hatayı düzelt} other {# hatayı düzelt}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "Telaffuz alıştırması yap"
@@ -7453,16 +7427,6 @@ msgstr ", bugünkü kompozisyona git"
 msgctxt "GKiQ-V"
 msgid ", go to today's practice"
 msgstr ", bugünkü alıştırmaya git"
-
-#: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr ", yanlışların üzerinde çalış"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr ", tekrarlayan hataya git"
 
 #: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"
