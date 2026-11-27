@@ -781,8 +781,7 @@ struct PlanStudyPlaceRows: View {
         PageLink(route: .savedLessons) {
           Label {
             Text(
-              "Saved lessons", tableName: "Plan",
-              comment: "Opens the page of the lessons the learner saved to do again")
+              "Saved lessons", tableName: "Plan")
           } icon: {
             Image(systemName: AppTab.savedLessons.systemImage)
           }

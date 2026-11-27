@@ -1456,10 +1456,64 @@
       }
     },
     "Couldn't remove this map. Try again." : {
-      "comment" : "Taking a map out of the saved maps didn't work, so it's still saved"
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Mindmap konnte nicht entfernt werden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos quitar este mapa. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de retirer cette carte mentale. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a rimuovere questa mappa. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このマップの保存を解除できませんでした。もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 마인드맵을 저장 목록에서 삭제하지 못했어요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się usunąć tej mapy. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para remover esse mapa. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu harita kaldırılamadı. Tekrar dene."
+          }
+        }
+      }
     },
     "Couldn't save this map. Try again." : {
-      "comment" : "Saving a map didn't work, so its bookmark is back as it was",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1476,19 +1530,19 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer cette carte. Réessaie."
+            "value" : "Impossible d’enregistrer cette carte mentale. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non siamo riusciti a salvare questa mappa. Riprova."
+            "value" : "Non abbiamo potuto salvare questa mappa. Riprova."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このマップを保存できませんでした。もう一度お試しください。"
+            "value" : "このマップを保存できませんでした。もう一度試してください。"
           }
         },
         "ko" : {
@@ -1506,7 +1560,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar este mapa. Tente de novo."
+            "value" : "Não deu para salvar este mapa. Tente de novo."
           }
         },
         "tr" : {

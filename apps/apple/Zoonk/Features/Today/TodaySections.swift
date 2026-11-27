@@ -1161,8 +1161,7 @@ struct TodayPracticeSection: View {
         PageLink(route: .savedLessons) {
           ListRow(
             Text(
-              "Saved lessons", tableName: "Today",
-              comment: "Opens the page of the lessons the learner saved to do again"),
+              "Saved lessons", tableName: "Today"),
             description: Text(
               "Lessons you want to do again", tableName: "Today",
               comment: "The line under Saved lessons in Practice anytime.")

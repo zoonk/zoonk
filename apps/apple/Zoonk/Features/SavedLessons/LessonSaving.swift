@@ -20,21 +20,22 @@ struct LessonRowSave: ViewModifier {
       RowSaveToggle(
         isSaved: isSaved,
         save: Text(
-          "Save \(target.title)", tableName: "SavedLessons",
-          comment: "Names a lesson row's bookmark, which saves the lesson to do again"),
+          "Save \(target.title)", tableName: "SavedLessons"),
         saved: Text(
           "Saved \(target.title)", tableName: "SavedLessons",
-          comment: "Names a lesson row's bookmark once the lesson is saved; tapping it removes it")
+          comment:
+            "Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved."
+        )
       ) {
         toggle(isSaved)
       }
     }
     .savesFromRow(
       isSaved: isSaved,
-      save: Text("Save", tableName: "SavedLessons", comment: "Saves a lesson to do again"),
+      save: Text("Save", tableName: "SavedLessons"),
       remove: Text(
         "Remove from saved", tableName: "SavedLessons",
-        comment: "Takes a lesson out of the learner's saved lessons")
+        comment: "Takes a lesson out of the saved lessons, from its row's menu or swipe")
     ) {
       toggle(isSaved)
     }
@@ -60,10 +61,10 @@ struct LessonSaveButton: View {
 
     SaveToggle(
       isSaved: isSaved,
-      save: Text("Save", tableName: "SavedLessons", comment: "Saves a lesson to do again"),
+      save: Text("Save", tableName: "SavedLessons"),
       saved: Text(
         "Saved", tableName: "SavedLessons",
-        comment: "A lesson the learner saved to do again: the Save button's state")
+        comment: "Says the lesson is saved to do again later: the bookmark's state.")
     ) {
       store.saves.set(!isSaved, target, goalId: goalId)
     }
@@ -100,11 +101,10 @@ private struct LessonSaveFailureAlert: ViewModifier {
     store.saves.failure(goalId: goalId).map { failure in
       failure.saved
         ? Text(
-          "Couldn't save this lesson. Try again.", tableName: "SavedLessons",
-          comment: "Saving a lesson didn't work, so its bookmark is back as it was")
+          "Couldn't save this lesson. Try again.", tableName: "SavedLessons")
         : Text(
           "Couldn't remove this lesson. Try again.", tableName: "SavedLessons",
-          comment: "Taking a lesson out of the saved lessons didn't work, so it's still saved")
+          comment: "Taking the lesson out of the saved lessons didn't work, so it's still saved.")
     }
   }
 }

@@ -90,11 +90,9 @@ private struct MindMapSaveFailureAlert: ViewModifier {
       store.saves.failure(goalId: goalId).map { failure in
         failure.saved
           ? Text(
-            "Couldn't save this map. Try again.", tableName: "MindMaps",
-            comment: "Saving a map didn't work, so its bookmark is back as it was")
+            "Couldn't save this map. Try again.", tableName: "MindMaps")
           : Text(
-            "Couldn't remove this map. Try again.", tableName: "MindMaps",
-            comment: "Taking a map out of the saved maps didn't work, so it's still saved")
+            "Couldn't remove this map. Try again.", tableName: "MindMaps")
       }
     ) {
       store.saves.dismissFailure()

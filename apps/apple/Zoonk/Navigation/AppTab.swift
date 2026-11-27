@@ -67,8 +67,7 @@ enum AppTab: Hashable {
         comment: "Study place listing the questions the learner got wrong")
     case .savedLessons:
       LocalizedStringResource(
-        "Saved lessons", table: "Navigation",
-        comment: "Study place listing the lessons the learner saved to do again")
+        "Saved lessons", table: "Navigation")
     case .completedLessons:
       LocalizedStringResource(
         "Completed lessons", table: "Navigation",

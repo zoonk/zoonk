@@ -65,8 +65,7 @@ extension AppRoute {
         comment: "What the completed lessons page shows, under its title until it can open")
     case .savedLessons:
       LocalizedStringResource(
-        "The lessons you've saved, ready to do again anytime.", table: "Navigation",
-        comment: "What the saved lessons page shows, under its title until it can open")
+        "The lessons you save, ready to do again anytime.", table: "Navigation")
     case .speaking:
       LocalizedStringResource(
         "Calls in the language you're learning, at your level.", table: "Voice",

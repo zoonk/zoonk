@@ -15,8 +15,7 @@ struct SavedLessonsScreen: View {
     }
     .barTitleAfterHero(
       String(
-        localized: "Saved lessons", table: "SavedLessons",
-        comment: "Title of the page listing the lessons the learner saved to do again"))
+        localized: "Saved lessons", table: "SavedLessons"))
   }
 }
 
@@ -70,8 +69,7 @@ private struct SavedLessonsList: View {
           Section {
             PageHeader(
               Text(
-                "Saved lessons", tableName: "SavedLessons",
-                comment: "Title of the page listing the lessons the learner saved to do again"))
+                "Saved lessons", tableName: "SavedLessons"))
           }
 
           Section {
@@ -89,8 +87,7 @@ private struct SavedLessonsList: View {
                 shownCount += Self.pageSize
               } label: {
                 Text(
-                  "Show more", tableName: "SavedLessons",
-                  comment: "Shows the next saved lessons of a long list")
+                  "Show more", tableName: "SavedLessons")
               }
             }
           }
@@ -101,8 +98,7 @@ private struct SavedLessonsList: View {
                 UnavailableSaveRow(
                   title: lesson.title,
                   remove: Text(
-                    "Remove", tableName: "SavedLessons",
-                    comment: "Takes a saved lesson that can't open anymore off the list")
+                    "Remove", tableName: "SavedLessons")
                 ) {
                   store.saves.set(
                     false,
@@ -117,8 +113,7 @@ private struct SavedLessonsList: View {
             } header: {
               SectionTitle(
                 Text(
-                  "No longer available", tableName: "SavedLessons",
-                  comment: "Saved lessons that can't open anymore"))
+                  "No longer available", tableName: "SavedLessons"))
             }
           }
         }

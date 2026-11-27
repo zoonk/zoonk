@@ -2016,7 +2016,62 @@
       }
     },
     "Saved lessons" : {
-      "comment" : "Study place listing the lessons the learner saved to do again"
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones guardadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons enregistrées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni salvate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisane lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas salvas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilen dersler"
+          }
+        }
+      }
     },
     "Search" : {
       "comment" : "Opens search on a catalog detail screen.\nTab for searching the plan and the catalog",
@@ -2726,6 +2781,64 @@
         }
       }
     },
+    "The lessons you save, ready to do again anytime." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine gespeicherten Lektionen kannst du jederzeit wiederholen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones que guardes estarán listas para repetirlas cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons que tu enregistres, prêtes à refaire quand tu veux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le lezioni che salvi, pronte da rifare quando vuoi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したレッスンは、いつでももう一度取り組めます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 레슨은 언제든 다시 할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje, które zapisujesz, możesz powtarzać w dowolnym momencie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas que você salva ficam prontas para fazer de novo quando quiser."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydettiğin dersleri istediğin zaman yeniden yapabilirsin."
+          }
+        }
+      }
+    },
     "The lessons you've finished, ready to do again anytime." : {
       "comment" : "What the completed lessons page shows, under its title until it can open",
       "localizations" : {
@@ -2784,9 +2897,6 @@
           }
         }
       }
-    },
-    "The lessons you've saved, ready to do again anytime." : {
-      "comment" : "What the saved lessons page shows, under its title until it can open"
     },
     "The link may be old or mistyped." : {
       "comment" : "Explains why a link leads to something that doesn't exist",
