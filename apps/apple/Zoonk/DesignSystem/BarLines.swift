@@ -10,19 +10,22 @@ import SwiftUI
 /// line; a glyph keeps its size. As main's `QuestionActions`, a bar with a way back
 /// (`StepBackButton`) has no room for a labeled button before the main action, such as "I don't
 /// know yet": each takes a line of its own above, and the way back starts the row under them. On a
-/// wide bar (`WideBar`) each button keeps its own width and the lines end at the bar's end, as
-/// main's wrap from `lg`.
+/// wide bar (`WideBar`) each button keeps its own width and the lines end at the bar's end, with a
+/// way back at its start, as main's wrap from `lg`. At accessibility text sizes each labeled button
+/// takes a line of its own, except beside a way back, which keeps its row.
 struct BarLines<Content: View>: View {
   var spacing: CGFloat
   var isWide = false
   @ViewBuilder let content: Content
 
   @Environment(\.displayScale) private var displayScale
+  @Environment(\.stacksContent) private var isStacked
 
   var body: some View {
-    BarLinesLayout(spacing: spacing, isWide: isWide, scale: displayScale) {
+    BarLinesLayout(spacing: spacing, isWide: isWide, stacks: isStacked, scale: displayScale) {
       content
     }
+    .layoutStacks(isStacked)
   }
 }
 
@@ -36,6 +39,7 @@ struct BarLinesLayout: Layout {
 
   var spacing: CGFloat
   var isWide = false
+  var stacks = false
   var scale: CGFloat = 1
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
@@ -56,15 +60,26 @@ struct BarLinesLayout: Layout {
       let used = line.reduce(0) { $0 + $1.1 } + spacing * CGFloat(line.count - 1)
       var x = Self.onGrid(isWide ? bounds.maxX - used : bounds.minX, scale: scale)
 
-      for (index, width) in line {
-        subviews[index].place(
-          at: CGPoint(x: x, y: y + height / 2), anchor: .leading,
-          proposal: ProposedViewSize(width: width, height: nil))
+      for (position, (index, width)) in line.enumerated() {
+        // On a wide bar the way back keeps the bar's start, away from the actions at its end.
+        if isWide, position == 0, line.count > 1, subviews[index].containerValues.isBarWayBack {
+          place(
+            subviews[index], x: Self.onGrid(bounds.minX, scale: scale), y: y + height / 2, width)
+          continue
+        }
+
+        place(subviews[index], x: x, y: y + height / 2, width)
         x += width + spacing
       }
 
       y += height + spacing
     }
+  }
+
+  private func place(_ subview: LayoutSubview, x: CGFloat, y: CGFloat, _ width: CGFloat) {
+    subview.place(
+      at: CGPoint(x: x, y: y), anchor: .leading,
+      proposal: ProposedViewSize(width: width, height: nil))
   }
 
   private func lines(_ subviews: Subviews, width: CGFloat) -> [[(Int, CGFloat)]] {
@@ -80,7 +95,8 @@ struct BarLinesLayout: Layout {
         isWayBack: subviews[index].containerValues.isBarWayBack)
     }
 
-    return Self.lines(slots, width: width, gap: spacing, isWide: isWide, scale: scale)
+    return Self.lines(
+      slots, width: width, gap: spacing, isWide: isWide, stacks: stacks, scale: scale)
   }
 
   private func lineHeights(_ lines: [[(Int, CGFloat)]], _ subviews: Subviews) -> [CGFloat] {
@@ -94,7 +110,8 @@ struct BarLinesLayout: Layout {
   /// drawing rounds each edge to the nearest pixel, and a label that loses a fraction of a point of
   /// its one-line width to that wraps.
   static func lines(
-    _ slots: [Slot], width: CGFloat, gap: CGFloat, isWide: Bool = false, scale: CGFloat = 1
+    _ slots: [Slot], width: CGFloat, gap: CGFloat, isWide: Bool = false, stacks: Bool = false,
+    scale: CGFloat = 1
   ) -> [[(Int, CGFloat)]] {
     let width = (width * scale).rounded(.down) / scale
     let slots = slots.map { slot in
@@ -116,6 +133,7 @@ struct BarLinesLayout: Layout {
     }
 
     let mainAt = slots.firstIndex(where: \.isMain) ?? slots.endIndex
+    let stacksEach = stacks && !slots.contains(where: \.isWayBack)
     let above =
       slots.contains(where: \.isWayBack) && !isWide
       ? slots.indices.filter { $0 < mainAt && !slots[$0].isGlyph } : []
@@ -124,7 +142,9 @@ struct BarLinesLayout: Layout {
 
     for index in slots.indices where !above.contains(index) {
       if let line = row.last,
-        line.reduce(0, { $0 + slots[$1].oneLine + gap }) + needs(line, index) <= width
+        stacksEach
+          ? slots[index].isGlyph
+          : line.reduce(0, { $0 + slots[$1].oneLine + gap }) + needs(line, index) <= width
       {
         row[row.count - 1].append(index)
       } else {

@@ -40,7 +40,7 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
         Group(subviews: actions) { buttons in
           // A bar whose buttons all hide takes no room unless it has a note.
           if !buttons.isEmpty || note != nil {
-            bar(buttons)
+            bar
           }
         }
       }
@@ -48,26 +48,13 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
       .scrollEdgeEffectStyle(.hard, for: .bottom)
   }
 
-  private func bar(_ buttons: SubviewsCollection) -> some View {
-    // At accessibility sizes a bar stacks its buttons, except beside a way back, which keeps its row
-    // with the main action under "I don't know yet", as main's does.
-    let stacks = isStacked && !buttons.contains { $0.containerValues.isBarWayBack }
-
-    return Group {
-      if stacks {
-        AccessibilityStack(spacing: 8) {
-          buttons
-        }
-        .buttonSizing(.flexible)
-      } else {
-        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht"), or
-        // any beside a way back, sits on its own line above the main action.
-        BarLines(spacing: 8, isWide: isWide) {
-          actions
-        }
-        .buttonSizing(.flexible)
-      }
+  private var bar: some View {
+    // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht"), or any
+    // beside a way back, sits on its own line above the main action.
+    BarLines(spacing: 8, isWide: isWide) {
+      actions
     }
+    .buttonSizing(.flexible)
     .controlSize(.large)
     .layoutAnchor("bar")
     .environment(\.mainActionFillsRow, !isWide)

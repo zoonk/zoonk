@@ -6,8 +6,11 @@ import XCTest
 final class BarLinesTests: XCTestCase {
   private typealias Slot = BarLinesLayout.Slot
 
-  private func lines(_ slots: [Slot], width: CGFloat, isWide: Bool = false) -> [[Int]] {
-    BarLinesLayout.lines(slots, width: width, gap: 8, isWide: isWide).map { $0.map(\.0) }
+  private func lines(
+    _ slots: [Slot], width: CGFloat, isWide: Bool = false, stacks: Bool = false
+  ) -> [[Int]] {
+    BarLinesLayout.lines(slots, width: width, gap: 8, isWide: isWide, stacks: stacks)
+      .map { $0.map(\.0) }
   }
 
   private func widths(
@@ -98,5 +101,25 @@ final class BarLinesTests: XCTestCase {
     ]
 
     XCTAssertEqual(lines(slots, width: 700, isWide: true), [[0, 1, 2]])
+  }
+
+  func testAtAccessibilitySizesEachLabeledButtonTakesALineWithTheAskBesideTheMainAction() {
+    let slots = [
+      Slot(oneLine: 100), Slot(oneLine: 90, isMain: true), Slot(oneLine: 44, isGlyph: true),
+    ]
+
+    XCTAssertEqual(lines(slots, width: 358, stacks: true), [[0], [1, 2]])
+    XCTAssertEqual(
+      BarLinesLayout.lines(slots, width: 358, gap: 8, stacks: true).map { $0.map(\.1) },
+      [[358], [306, 44]])
+  }
+
+  func testAtAccessibilitySizesAWayBackKeepsItsRow() {
+    let slots = [
+      Slot(oneLine: 44, isGlyph: true, isWayBack: true), Slot(oneLine: 135),
+      Slot(oneLine: 90, isMain: true),
+    ]
+
+    XCTAssertEqual(lines(slots, width: 358, stacks: true), [[1], [0, 2]])
   }
 }
