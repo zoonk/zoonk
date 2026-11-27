@@ -172,6 +172,8 @@ async function drawSketch(fragmentPath: string, dark: boolean): Promise<string> 
       const context = await browser.newContext({
         colorScheme: dark ? "dark" : "light",
         deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
         viewport: PHONE,
       });
 
