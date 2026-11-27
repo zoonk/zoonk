@@ -236,6 +236,7 @@ fun LessonPlayer(
     certificatesMoment: CertificatesMoment? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
+    bookmark: (@Composable () -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -384,6 +385,7 @@ fun LessonPlayer(
             title = { if (!missing && ownEnd == null) LessonTitle(lesson.title) },
             actions = {
                 if (viewModel.hasUnsent) UnsavedAnswers()
+                if (!missing) bookmark?.invoke()
                 if (!missing) ScreenMenu(state, screen, viewModel)
             },
             exitConfirmation =

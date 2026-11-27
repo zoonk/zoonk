@@ -83,6 +83,7 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapAllowanceStop
+import com.zoonk.api.models.SavedMindMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -134,7 +135,15 @@ internal fun MindMapsContent(
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
                     mindMaps = shown.value,
-                    state = MindMapsState(requests, saves, createAll, host.plus(), host.tier()),
+                    state =
+                        MindMapsState(
+                            requests,
+                            saves,
+                            createAll,
+                            host.plus(),
+                            host.tier(),
+                            savedShown = maps.savedShown(shown.value.saved.filter { it.available }, saves),
+                        ),
                     actions =
                         MindMapsActions(
                             back = back,
@@ -225,6 +234,8 @@ internal data class MindMapsState(
     val createAll: CreateAll? = null,
     val plus: Boolean = false,
     val tier: LimitTier = LimitTier.Free,
+    /** The Saved tab's maps that open, each one changed on this visit kept where it showed; null lists them as read. */
+    val savedShown: List<SavedMindMap>? = null,
 )
 
 internal data class MindMapsActions(
@@ -269,7 +280,7 @@ internal fun MindMapsPage(
             toggleNotMade = { notMadeOpen = !notMadeOpen },
         )
 
-    val study = { actions.study(tab, null) }.takeIf { mindMaps.deck(tab).isNotEmpty() }
+    val study = { actions.study(tab, null) }.takeIf { mindMaps.listedSaves(state.saves).deck(tab).isNotEmpty() }
     val studyBar: (@Composable ColumnScope.() -> Unit)? =
         study?.let { { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } } }
     // With No map yet beside them, the maps' column is no longer the page's middle: the page's bars keep to its edges,

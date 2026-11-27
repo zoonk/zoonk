@@ -4,9 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.KeptRows
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Saves
 import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.api.models.SavedMindMap
+import com.zoonk.api.models.SavedMindMapState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -40,11 +44,10 @@ class MindMapViewModel(
     private val files: (Uri) -> OutputStream? = { null },
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
-    /** This visit to the screen that saves: what its saves lead to is said only on it. */
-    val visit = Visit()
+    private val keptSaved = KeptRows<SavedMindMap, MindMapTarget> { it.target }
 
-    /** A map's save that didn't, which the screen says in the app's snackbars. */
-    val saveFailed = visit.outcome<Unit>()
+    /** This visit to the screen that saves: what its saves lead to is said only on it. */
+    val visit = Visit(onEnd = keptSaved::clear)
 
     /** Whether a picture was written where the learner chose, which the screen says in the app's snackbars. */
     val pictureSaved = visit.outcome<PictureSave>()
@@ -64,48 +67,33 @@ class MindMapViewModel(
             if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
 
-    private val wanted = MutableStateFlow<Map<MindMapTarget, Boolean>>(emptyMap())
+    /** The chapter each map's save reads again: a lesson map's lives in its chapter's lesson maps. */
+    private val chapterOf = mutableMapOf<MindMapTarget, UUID?>()
 
-    /** What the learner asked for each map whose save is on its way; the reads say the rest. */
-    val saves: StateFlow<Map<MindMapTarget, Boolean>> = wanted.asStateFlow()
-    private val sending = mutableSetOf<MindMapTarget>()
+    private val mapSaves =
+        Saves<MindMapTarget>(viewModelScope, visit) { target, saved -> store.save(goalId, target, chapterOf[target], saved).saved() }
 
-    /** The visit of the tap each wanted save came from: a write that starts later still belongs to it. */
-    private val askedOn = mutableMapOf<MindMapTarget, Int>()
+    /** A map's save that didn't, which the screen says in the app's snackbars. */
+    val saveFailed get() = mapSaves.failed
 
-    /**
-     * Shows [saved] at once and sends it. Taps while one is on its way only change what's wanted,
-     * and the last one wanted is sent after it, so the server ends on the learner's last tap. A
-     * failure shows the reads again and says so.
-     */
+    /** Each map the learner saved or removed on this visit, as it shows now; the reads say the rest. */
+    val saves: StateFlow<Map<MindMapTarget, Boolean>> = mapSaves.states
+
+    /** Shows [saved] at once and sends it; quick taps end on the last one, and a failure shows the reads again and says so. */
     fun save(
         target: MindMapTarget,
         chapterId: UUID?,
         saved: Boolean,
     ) {
-        wanted.update { it + (target to saved) }
-        askedOn[target] = visit.number
-        if (!sending.add(target)) return
-
-        viewModelScope.launch {
-            while (true) {
-                val sent = wanted.value[target] ?: break
-                val started = askedOn.getValue(target)
-                val result = store.save(goalId, target, chapterId, sent)
-                if (result !is MutationResult.Done) {
-                    wanted.update { it - target }
-                    if (result is MutationResult.Failed) saveFailed.send(started, Unit)
-                    break
-                }
-                if (wanted.value[target] == sent) {
-                    wanted.update { it - target }
-                    break
-                }
-            }
-            sending.remove(target)
-            askedOn.remove(target)
-        }
+        chapterOf[target] = chapterId
+        mapSaves.set(target, saved)
     }
+
+    /** The saved maps that open, as [served] lists them now, with each one saved or removed on this visit where it showed. */
+    fun savedShown(
+        served: List<SavedMindMap>,
+        states: Map<MindMapTarget, Boolean>,
+    ): List<SavedMindMap> = keptSaved.arrange(served) { it in states }
 
     /** Create all chapter maps: the list, read again, shows them on their way. */
     fun createAll() {
@@ -201,3 +189,10 @@ class MindMapViewModel(
         const val MAX_MISSES = 3
     }
 }
+
+private fun MutationResult<SavedMindMapState>.saved(): MutationResult<Boolean> =
+    when (this) {
+        is MutationResult.Done -> MutationResult.Done(value.saved)
+        is MutationResult.Failed -> this
+        MutationResult.Obsolete -> MutationResult.Obsolete
+    }

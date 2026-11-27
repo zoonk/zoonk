@@ -38,7 +38,7 @@ class CompletedLessonsStoreTest {
         ApiJson.decodeFromString(
             CompletedLessonList.serializer(),
             """{"data":[${lessons.joinToString(",") { (id, day) ->
-                """{"chapterTitle":"Cells","finishedOn":"$day","group":null,"lessonId":"00000000-0000-4000-8000-00000000000$id","title":"Lesson $id"}"""
+                """{"chapterTitle":"Cells","finishedOn":"$day","group":null,"lessonId":"00000000-0000-4000-8000-00000000000$id","saved":false,"title":"Lesson $id"}"""
             }}],"filter":null,"pagination":{"hasMore":${nextCursor != null},"nextCursor":${nextCursor?.let { "\"$it\"" } ?: "null"}}}""",
         )
 

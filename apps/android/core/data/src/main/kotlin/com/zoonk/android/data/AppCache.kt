@@ -144,6 +144,14 @@ class KeyedResources<K, T : Any> internal constructor(
         entries.filterKeys(matches).values.forEach { it.invalidate() }
     }
 
+    /** Changes every kept read whose key [matches] in place, as [Resource.update] does. */
+    fun update(
+        matches: (K) -> Boolean,
+        transform: (T) -> T,
+    ) {
+        entries.filterKeys(matches).values.forEach { it.update(transform) }
+    }
+
     internal fun releaseInactive() {
         entries.values.removeAll { !it.isShown }
     }

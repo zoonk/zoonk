@@ -23,6 +23,7 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toStepResult
+import com.zoonk.android.feature.savedlessons.LessonBookmark
 import com.zoonk.android.feature.session.blockId
 import com.zoonk.android.feature.session.studyBlocks
 import com.zoonk.android.feature.tutor.TutorIdentity
@@ -306,6 +307,7 @@ class LessonEndScreenshots {
                         exits,
                         rememberAppNavigator(),
                         tutor = LessonTutor(TutorIdentity("Sam", look = null)) { _, _, _, _, _ -> },
+                        bookmark = { LessonBookmark(saved = true) {} },
                     )
                 }
             }

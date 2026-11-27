@@ -234,11 +234,26 @@ class MindMapScreenshots {
             chapters: List<String> = CHAPTERS,
             groups: List<String> = GROUPS,
             saved: List<String> = SAVED,
+            removedFirstSave: Boolean = false,
         ) {
             val stuck = mapOf(UUID.fromString(mapChapter(11)) to MindMapLocal(unreachable = true))
+            val maps = goalMindMaps(chapters, groups, saved, offer)
+            // Removed on this visit: its row stays, its bookmark outlined, and it leaves the tab's count and Study maps.
+            val removed =
+                maps.saved
+                    .firstOrNull()
+                    ?.target
+                    ?.takeIf { removedFirstSave }
             MindMapsPage(
-                goalMindMaps(chapters, groups, saved, offer),
-                MindMapsState(requests = stuck, createAll = createAll, plus = tier == LimitTier.Plus, tier = tier),
+                maps,
+                MindMapsState(
+                    requests = stuck,
+                    saves = listOfNotNull(removed).associateWith { false },
+                    createAll = createAll,
+                    plus = tier == LimitTier.Plus,
+                    tier = tier,
+                    savedShown = maps.saved.filter { it.available },
+                ),
                 NO_ACTIONS,
                 initialTab = tab,
                 notMadeShown = notMade,
@@ -345,6 +360,7 @@ class MindMapScreenshots {
                 "mind-maps-lessons" to { Library(tab = StudyTab.Lessons) },
                 "mind-maps-lessons-empty" to { Library(tab = StudyTab.Lessons, groups = emptyList()) },
                 "mind-maps-saved" to { Library(tab = StudyTab.Saved) },
+                "mind-maps-saved-removed" to { Library(tab = StudyTab.Saved, removedFirstSave = true) },
                 "mind-maps-saved-empty" to { Library(tab = StudyTab.Saved, saved = emptyList()) },
                 "mind-maps-empty" to { Library(chapters = emptyList(), groups = emptyList(), saved = emptyList()) },
                 "mind-map-rows-chapter" to { Rows(MindMapPlace.Chapter) },
