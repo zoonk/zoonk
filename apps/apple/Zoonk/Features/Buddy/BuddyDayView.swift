@@ -7,25 +7,11 @@ struct BuddyDayView: View {
 
   let status: BuddyStatus
   let name: String
-  /// The page's, so a tap goes on while the day's pane goes as the page joins its panes.
+  /// The page's, so a tap goes on as the sheet is drawn again.
   let tap: BuddyMissionTap
-  let onGlasses: () -> Void
-  var showsTitle = false
 
   var body: some View {
     ZoonkList {
-      if showsTitle {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-            .typeStyle(.body.weight(.semibold))
-          subtitle
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-        .listRowBackground(Color.clear)
-        .accessibilityAddTraits(.isHeader)
-      }
-
       energy
 
       if let today = status.today, !today.missions.isEmpty {
@@ -55,47 +41,6 @@ struct BuddyDayView: View {
           }
         }
       }
-
-      Section {
-        Button {
-          places.open(.memory)
-        } label: {
-          Text(
-            "What \(name) remembers", tableName: "Buddy",
-            comment: "Opens what the buddy remembers; the argument is its name"
-          )
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .disclosureChevron()
-        }
-
-        Button(action: onGlasses) {
-          LabeledContent {
-            Text(
-              "\(status.earnedGlasses) of \(status.glasses.count)", tableName: "Buddy",
-              comment: "Glasses earned of all of them"
-            )
-            .monospacedDigit()
-          } label: {
-            Text(
-              "\(name)'s glasses", tableName: "Buddy",
-              comment:
-                "Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; %@ is the buddy's name. A name, not an action."
-            )
-          }
-          .disclosureChevron()
-        }
-
-        Button {
-          places.open(.logbook)
-        } label: {
-          Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .disclosureChevron()
-        }
-      } header: {
-        SectionTitle(Text(name))
-      }
-      .foregroundStyle(.primary)
     }
   }
 

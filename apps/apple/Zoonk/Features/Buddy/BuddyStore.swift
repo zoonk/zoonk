@@ -5,14 +5,14 @@ import Observation
 @Observable
 final class BuddyStore {
   let status: Resource<BuddyStatus>
-
-  /// Waits in the Buddy tab's composer for the learner's own send.
-  var broughtQuestion: String?
+  /// A goal's next page of conversations, while it loads or once it didn't.
+  private(set) var nextConversations: [String: NextPageLoad] = [:]
 
   @ObservationIgnored private let api: any BuddyAPIClient
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private let saves: LearnerSaves
   @ObservationIgnored private var latestSave = 0
+  @ObservationIgnored private var conversationLists: [String: Resource<BuddyConversations>] = [:]
 
   init(api: any BuddyAPIClient, cache: AppCache) {
     self.api = api
@@ -28,6 +28,72 @@ final class BuddyStore {
 
       return try await api.status(
         timeZone: TimeZone.current.identifier, token: session.bearerToken)
+    }
+  }
+
+  /// The goal's conversations, the latest asked in first, with the one a visit opens.
+  func conversations(goalId: String) -> Resource<BuddyConversations> {
+    if let list = conversationLists[goalId] {
+      return list
+    }
+
+    let api = api
+    let list: Resource<BuddyConversations> = cache.resource(
+      audience: .signedIn, domains: [.buddyConversations], isEmpty: \.conversations.isEmpty
+    ) { session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.conversations(goalId: goalId, cursor: nil, token: session.bearerToken)
+    }
+
+    conversationLists[goalId] = list
+    return list
+  }
+
+  /// A conversation asked in since the first page moved to its top, so one already shown isn't
+  /// added again.
+  func loadMoreConversations(goalId: String) async {
+    let list = conversations(goalId: goalId)
+
+    guard case .loaded(let page) = list.state, let cursor = page.nextCursor,
+      nextConversations[goalId] != .loading, let session = cache.session.authenticatedSession
+    else {
+      return
+    }
+
+    let revision = list.revision
+    nextConversations[goalId] = .loading
+    defer {
+      if nextConversations[goalId] == .loading {
+        nextConversations[goalId] = nil
+      }
+    }
+
+    do {
+      let next = try await api.conversations(
+        goalId: goalId, cursor: cursor, token: session.bearerToken)
+
+      guard list.revision == revision else {
+        return
+      }
+
+      list.update { current in
+        var shown = Set(current.conversations.map(\.id))
+        var page = current
+        page.conversations += next.conversations.filter { shown.insert($0.id).inserted }
+        page.nextCursor = next.nextCursor
+        return page
+      }
+    } catch APIError.unauthorized {
+      await cache.session.expire(session)
+    } catch {
+      guard list.revision == revision, !(error is CancellationError) else {
+        return
+      }
+
+      nextConversations[goalId] = .failed
     }
   }
 
@@ -81,4 +147,9 @@ final class BuddyStore {
       }
     }
   }
+}
+
+enum NextPageLoad: Equatable {
+  case loading
+  case failed
 }
