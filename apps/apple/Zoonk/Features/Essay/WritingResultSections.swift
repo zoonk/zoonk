@@ -470,9 +470,7 @@ private struct WritingCriteriaSection: View {
     guard grade.points != nil else {
       return String(
         localized: "Graded by level: we can't yet estimate this answer's points closely enough.",
-        table: "Essay",
-        comment:
-          "Under the criteria of a written answer graded by level on a sheet that gives points")
+        table: "Essay")
     }
 
     return prompt.keySource == .notice

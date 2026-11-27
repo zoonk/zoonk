@@ -74,11 +74,7 @@ private struct MockWrittenRow: View {
         FactSegments(
           [
             part.minimum?.needs,
-            String(
-              localized: "No points estimate in this mock exam", table: "Mock",
-              comment:
-                "Under a written part of a mock exam whose answers came back without points: graded by level, or still being graded"
-            ),
+            String(localized: "No points estimate in this mock exam", table: "Mock"),
           ].compactMap { $0 }
         )
         .foregroundStyle(.mutedForeground)

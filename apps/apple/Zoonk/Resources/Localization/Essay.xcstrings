@@ -2861,6 +2861,64 @@
         }
       }
     },
+    "Graded by level: we can't yet estimate this answer's points closely enough." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewertung nach Level: Wir können die Punkte für diese Antwort noch nicht genau genug schätzen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calificada por nivel: aún no podemos estimar con suficiente precisión el puntaje de esta respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluée par niveau : nous ne pouvons pas encore estimer assez précisément les points de cette réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valutato per livello: non riusciamo ancora a stimare con sufficiente precisione i punti di questa risposta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レベルで評価：この回答の得点は、まだ十分な精度で推定できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수준별로 채점했어요: 아직 이 답변의 점수를 충분히 정확하게 예상하기 어려워요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocena według poziomu: nie możemy jeszcze wystarczająco dokładnie oszacować wyniku punktowego tej odpowiedzi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avaliada por nível: ainda não dá para estimar com precisão suficiente a pontuação desta resposta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzeye göre puanlandı: Bu cevabın puanını henüz yeterince doğru tahmin edemiyoruz."
+          }
+        }
+      }
+    },
     "Graders stop at line %@, so the rest isn't read." : {
       "localizations" : {
         "de" : {
