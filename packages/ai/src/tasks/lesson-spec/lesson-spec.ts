@@ -231,7 +231,9 @@ export async function generateLessonSpec(params: LessonSpecParams) {
     countProblems: ({ data }) =>
       data.lessons.flatMap((spec) => [
         ...getLessonSpecIssues(spec),
-        ...(params.secondTake ? getSecondTakeIssues({ secondTake: params.secondTake, spec }) : []),
+        ...(params.secondTake
+          ? getSecondTakeIssues({ language: params.language, secondTake: params.secondTake, spec })
+          : []),
       ]).length,
     draft: () => planLesson(params),
   });

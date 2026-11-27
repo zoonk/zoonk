@@ -136,6 +136,26 @@ describe(getSecondTakeIssues, () => {
     ]);
   });
 
+  it("flags a copied Japanese sentence when its neighboring sentences differ", () => {
+    const copied = "値引きのたびに、基準となる金額が変わる。";
+
+    const secondTake = {
+      ...SECOND_TAKE,
+      firstLessonMap: {
+        ...SECOND_TAKE.firstLessonMap,
+        ideas: [{ text: `「百分率」は、もとの量を百としたときの割合を表す。${copied}` }],
+      },
+    };
+
+    expect(
+      getSecondTakeIssues({
+        language: "ja",
+        secondTake,
+        spec: spec({ briefs: { 2: `図で考えよう。${copied}では計算してみよう。` } }),
+      }),
+    ).toStrictEqual([expect.objectContaining({ code: "copiedSentence" })]);
+  });
+
   it("allows a short sentence or part of a sentence both lessons say alike", () => {
     const shared = spec({
       briefs: {

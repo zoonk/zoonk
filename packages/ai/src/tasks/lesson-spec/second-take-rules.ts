@@ -20,33 +20,36 @@ type SecondTakeIssueCode = "copiedSentence" | "opening" | "screenCount" | "wrong
 
 export type SecondTakeIssue = { code: SecondTakeIssueCode; detail: string };
 
-function toComparable(text: string): string {
-  return text
-    .normalize("NFC")
-    .toLowerCase()
-    .replaceAll(/[^\p{L}\p{N}]+/gu, " ")
-    .trim();
-}
-
-function splitSentences(text: string): string[] {
-  return text
-    .split(/(?<=[.!?;:])\s+/u)
-    .map((sentence) => toComparable(sentence))
-    .filter((sentence) => sentence.split(" ").length >= MIN_COPIED_WORDS);
-}
-
 function findCopiedSentence({
+  language,
   map,
   spec,
 }: {
+  language?: string;
   map: LessonMap;
   spec: LessonSpec;
 }): string | undefined {
-  const briefs = spec.screens.map((screen) => ` ${toComparable(screen.brief)} `);
+  const sentences = new Intl.Segmenter(language, { granularity: "sentence" });
+  const words = new Intl.Segmenter(language, { granularity: "word" });
+
+  const tokenize = (text: string) =>
+    [...words.segment(text.normalize("NFC").toLowerCase())].flatMap(({ isWordLike, segment }) =>
+      isWordLike ? [segment] : [],
+    );
+
+  const briefs = spec.screens.map((screen) => ` ${tokenize(screen.brief).join(" ")} `);
 
   return map.ideas
-    .flatMap((idea) => splitSentences(idea.text))
-    .find((sentence) => briefs.some((brief) => brief.includes(` ${sentence} `)));
+    .flatMap((idea) => [...sentences.segment(idea.text)])
+    .find(({ segment }) => {
+      const tokens = tokenize(segment);
+
+      return (
+        tokens.length >= MIN_COPIED_WORDS &&
+        briefs.some((brief) => brief.includes(` ${tokens.join(" ")} `))
+      );
+    })
+    ?.segment.trim();
 }
 
 /**
@@ -55,14 +58,16 @@ function findCopiedSentence({
  * lesson's map said again. Whether it really explains the idea another way is for readers.
  */
 export function getSecondTakeIssues({
+  language,
   secondTake,
   spec,
 }: {
+  language?: string;
   secondTake: SecondTakeInput;
   spec: LessonSpec;
 }): SecondTakeIssue[] {
   const count = spec.screens.length;
-  const copied = findCopiedSentence({ map: secondTake.firstLessonMap, spec });
+  const copied = findCopiedSentence({ language, map: secondTake.firstLessonMap, spec });
   const answers = secondTake.wrongAnswers.length;
   const opensOn = spec.opensOn ?? 0;
 
