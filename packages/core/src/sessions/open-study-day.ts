@@ -5,7 +5,6 @@ import { followUpSchema } from "../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
-import { readLessonScreens } from "./_utils/lesson-screens";
 import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
@@ -95,14 +94,12 @@ async function openDay(
 
   const session =
     opened.status === "opened"
-      ? await readLessonScreens(
-          await loadOpenedDayView({
-            initialDay: opened.initialDay,
-            session: opened.session,
-            timeZone,
-            userId,
-          }),
-        )
+      ? await loadOpenedDayView({
+          initialDay: opened.initialDay,
+          session: opened.session,
+          timeZone,
+          userId,
+        })
       : null;
 
   const binding = { goalId: goal.id, localDate };
@@ -122,6 +119,7 @@ async function openDay(
   const openedTarget = target
     ? await openSessionBlock({
         block: target,
+        goalId: session.goalId,
         sessionId: session.id,
         timeZone: input.timeZone,
         userId,

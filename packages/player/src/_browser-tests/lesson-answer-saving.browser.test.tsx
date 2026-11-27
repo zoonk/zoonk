@@ -482,6 +482,8 @@ describe("saving answers", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, server), lesson });
 
     await expect.element(page.getByRole("heading", { name: EXPLANATION })).toBeVisible();
+    expect(server.startLesson).not.toHaveBeenCalled();
+    await page.getByRole("heading", { name: EXPLANATION }).click();
     await expect.poll(() => server.startLesson.mock.calls.length).toBe(1);
 
     expect(server.checkStep.mock.invocationCallOrder[0]).toBeLessThan(
@@ -535,6 +537,7 @@ describe("saving answers", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, server), lesson });
 
     await expect.element(page.getByRole("heading", { name: EXPLANATION })).toBeVisible();
+    await page.getByRole("heading", { name: EXPLANATION }).click();
     await expect.poll(() => server.checkStep.mock.calls.length).toBe(1);
 
     expect(server.checkStep.mock.calls[0]?.[0].attemptId).toBe(
@@ -601,6 +604,7 @@ describe("saving answers", () => {
     left.unmount();
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, server), lesson });
+    await page.getByRole("main", { name: "Lesson content" }).click();
 
     await expect.poll(() => unsentKeys()).toStrictEqual([]);
     expect(sentOptions(server.checkStep)).toStrictEqual(["path", "likely"]);
@@ -668,6 +672,7 @@ describe("saving answers", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, server), firstAnswer: "no", lesson });
 
     await expect.element(page.getByRole("status").filter({ hasText: "Good guess!" })).toBeVisible();
+    await page.getByRole("status").filter({ hasText: "Good guess!" }).click();
     await expect.poll(() => unsentKeys()).toStrictEqual([]);
     expect(server.checkStep.mock.calls[0]?.[0].attemptId).toBe(kept.attemptId);
   });
@@ -691,6 +696,7 @@ describe("saving answers", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
 
     await expect.element(page.getByRole("heading", { name: EXPLANATION })).toBeVisible();
+    await page.getByRole("heading", { name: EXPLANATION }).click();
     await expect.poll(() => checkStep.mock.calls.length).toBe(1);
 
     await expect

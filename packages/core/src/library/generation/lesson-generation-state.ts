@@ -18,16 +18,16 @@ function toLessonGenerationState(lesson: StateRow): LessonGenerationState {
     return { status: "ready" };
   }
 
-  if (lesson.contentStatus === "running" && lesson.contentRunId) {
-    return { runId: lesson.contentRunId, status: "generating" };
-  }
-
-  if (lesson.contentStatus === "failed") {
+  if (lesson.setAsideAt !== null || lesson.contentStatus === "failed") {
     return {
       heldBackDrafts: parseHeldBackDrafts(lesson.heldBackDrafts).length,
       setAside: lesson.setAsideAt !== null,
       status: "failed",
     };
+  }
+
+  if (lesson.contentStatus === "running" && lesson.contentRunId) {
+    return { runId: lesson.contentRunId, status: "generating" };
   }
 
   return { status: "notStarted" };

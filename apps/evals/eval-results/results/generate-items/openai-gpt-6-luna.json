@@ -1119,92 +1119,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms all three keyed sets. Item 1 has meeting times 4 s and 20/3 s, with relative-speed magnitude 4 m/s at both. Item 2 has displacement −2 m, distance 38/3 m, and zero acceleration on the horizontal segment. Item 3 has meeting time 4 s, height 40 m, and velocities −10 m/s and −25 m/s. Every item has four independently assessable options, at least one correct and one wrong, and fixedOrder is false. No correctness cap is triggered.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor represents a specific realistic error, and its explanation identifies that error: discarding a valid quadratic root, overlooking reversal of direction, or using displacement magnitude instead of distance. Recomputing the average-speed mistake gives |−2|/7 = 2/7 m/s, exactly the distractor value. Labels are specific rather than generic, and no misconception cap is triggered.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The English wording, SI units, four-option structure, and multiple-correct keys fit the requested exam format. However, the direct horizontal-segment acceleration statement is textbook-level, and the remaining problems are mostly routine meeting and area calculations. This makes the set insufficiently representative of the explicitly requested JEE Advanced reasoning demand, triggering the cap of 7 for an out-of-place exam level.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All questions require applying one-dimensional kinematics, and the set covers position functions, velocity-time integration, and delayed motion under gravity entirely in English. The unequal-acceleration meeting problem and delayed-launch problem have meaningfully different setups, but their requested outcomes overlap substantially, including a repeated direction-reversal trap. Broader variation in the reasoning targets would improve the set.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3357,
-          "outputTokens": 1104,
-          "reasoningTokens": 375
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The required JEE Advanced difficulty is not consistently met. In particular, item 2's statement that acceleration is zero from 2 s to 5 s follows immediately from the horizontal graph segment, directly violating the requirement that no statement be answerable from one formula or one reading. The meeting problems involve multiple operations, but remain relatively routine rather than consistently demanding Advanced-level reasoning.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Variety is somewhat limited: items 1 and 3 both focus on particle meetings and velocity directions, and both use essentially the same distractor about assuming that the initial direction persists.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace the direct graph-slope statement with one requiring integration followed by a further inference, such as determining a return position or comparing average speeds over selected intervals. The distance explanation would also be more useful if it showed the zero crossings at 4/3 s and 17/3 s and the resulting absolute-area calculation.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculation gives 13 s, 189 m, and 54 m, matching all three keys and worked solutions. In item 3, the intended second-phase duration of twice T produces three equal distance contributions. Across all allowed combinations, the answer ranges are 5–35, 88–284, and 3–300 respectively, and every answer is an integer. All mathematical expressions use bare variable names, and no rounding is requested.",
           "score": 10,
           "label": "Correctness",
@@ -2360,6 +2274,94 @@
           "skill": {
             "description": "Compare and order negative numbers, such as temperatures below zero.",
             "name": "Ordering negative numbers"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The signed areas sum to 2 − 6 + 2 = −2 m. Each sloping segment contributes 10/3 m of distance, so total distance is 38/3 m and average speed is 38/21 m/s, not 2/7 m/s. The constant-velocity segment has zero acceleration. A, B and D form the unique correct set.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The sole distractor is diagnostic: using displacement magnitude instead of distance gives exactly 2/7 m/s, and the feedback explains that error plainly. The distance feedback could better support learners by showing the splits at 4/3 s and 17/3 s.",
+          "score": 9,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four independently judgeable options, SI units and shuffled order fit the requested format. The horizontal-segment option falls short of JEE Advanced difficulty, and the explicit selection instruction duplicates the app's line.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The graph genuinely tests signed area, direction changes and the distinction between speed and velocity. With only one item, however, the set offers no variation in situation or difficulty across problems and samples only the graph-reading part of the requested skill.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "1 of 3 parts passed. Item 1: Shows raw text that reads as math: \"x_P\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 1: Shows raw text that reads as math: \"x_Q\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 1: Shows raw text that reads as math: \"v_P\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 1: Shows raw text that reads as math: \"v_Q\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 1: Shows raw text that reads as math: \"v_P\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 1: Shows raw text that reads as math: \"v_Q\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"y_A\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"y_B\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"y_A\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"v_A\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"v_B\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks. Item 3: Shows raw text that reads as math: \"v_A\". If it's math, write it between dollar signs, outside bold or italics, and any other dollar sign in that line as \\$. If it's code, a file name or a link, put it in backticks.",
+          "score": 4,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 1,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2885,
+          "inputTokens": 2888,
+          "outputTokens": 563,
+          "reasoningTokens": 9
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "Only one of the three requested items is present. Its distance and displacement options require multistep graph analysis, but its acceleration option can be answered just by spotting a horizontal segment, contrary to the explicit difficulty requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The stem adds “Select all that apply,” even though the app supplies that instruction.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the two zero-crossing times in the distance feedback so learners can see where to split the areas. Replace the direct slope-reading option with a claim that uses both slope and displacement, and use the two missing items to assess distinct skills such as vertical motion and a one-dimensional pursuit.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
           }
         }
       }

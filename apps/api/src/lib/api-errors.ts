@@ -11,6 +11,7 @@ export const httpStatus = {
   ok: 200,
   paymentRequired: 402,
   seeOther: 303,
+  serviceUnavailable: 503,
   tooManyRequests: 429,
   unauthorized: 401,
   unprocessableEntity: 422,
@@ -67,6 +68,8 @@ export const errors = {
   internal: (msg = "Internal server error") =>
     errorResponse("INTERNAL_ERROR", msg, httpStatus.internalError),
   notFound: (msg = "Resource not found") => errorResponse("NOT_FOUND", msg, httpStatus.notFound),
+  serviceUnavailable: (msg = "Service temporarily unavailable") =>
+    errorResponse("SERVICE_UNAVAILABLE", msg, httpStatus.serviceUnavailable),
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, httpStatus.unauthorized),
   unprocessableEntity: (msg = "Request could not be applied") =>

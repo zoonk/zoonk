@@ -57,8 +57,6 @@ fun DayStepRow(
     isNext: Boolean,
     examDocument: ExamDocument,
     modifier: Modifier = Modifier,
-    lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
-    writingStalled: Boolean = false,
     onOpen: (() -> Unit)? = null,
     busy: Boolean = false,
     openFailed: Boolean = false,
@@ -84,7 +82,7 @@ fun DayStepRow(
         leading = { BlockMark(step) },
         supporting = {
             if (openFailed) StepOpenFailed()
-            StepLines(lessonStatus, writingStalled, day, step, examDocument)
+            StepLines(day, step, examDocument)
             if (!finished) below?.invoke()
         },
         meta =
@@ -128,8 +126,6 @@ private val DayView.mixesSubjects: Boolean
  */
 @Composable
 private fun StepLines(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
     day: DayView,
     step: DayStep,
     examDocument: ExamDocument,
@@ -145,23 +141,19 @@ private fun StepLines(
     subject?.let { SubLine(it) }
     if (!step.isFinished) {
         // Why the plan added a row is a sentence, so it wraps at large text rather than losing its end.
-        val line = stepLine(lessonStatus, writingStalled, step)
+        val line = stepLine(step)
         line?.let { SubLine(it, lines = if (it == remedialLine(step)) 2 else 1) }
     }
 }
 
 /** Main's `useStepLabel` without the subject, which [StepLines] puts above it. */
 @Composable
-private fun stepLine(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
-    step: DayStep,
-): String? {
+private fun stepLine(step: DayStep): String? {
     val count = step.questions.toInt()
     val remedial = remedialLine(step)
 
     return when {
-        step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
+        step.isGettingReady -> stringResource(R.string.today_step_being_written)
 
         step.writing == WritingRow.Tomorrow -> blockDetail(step)
 
@@ -241,13 +233,11 @@ fun DayMinutes(minutes: Double) {
 }
 
 /**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
+ * Only a lesson the day's read says is being written claims to be: one nobody has started is
+ * written when the learner opens it, and one whose writing stopped reads as failed.
  */
-fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+val DayStep.isBeingWritten: Boolean
+    get() = kind == StudyBlock.Kind.LEARN && lesson?.status == LessonGenerationStatus.GENERATING
 
-fun DayStep.isGettingReady(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
-): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))
+val DayStep.isGettingReady: Boolean
+    get() = preparing || isBeingWritten

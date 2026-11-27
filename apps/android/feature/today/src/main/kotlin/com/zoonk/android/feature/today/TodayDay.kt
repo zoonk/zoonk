@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AnalyticsEvent
@@ -66,11 +70,14 @@ import com.zoonk.android.ui.scaffold.barNoteViewport
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.rememberBarNoteRoom
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.StudyBlockLesson
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 /** What Today shows of a day, worked out once per read. */
 internal class TodayDayModel(
@@ -132,14 +139,16 @@ fun TodayDay(
     snackbars: AppSnackbars,
     schedule: MockScheduleStore? = null,
     refreshIfChanged: suspend () -> Boolean,
+    refreshIfLessonsMoved: suspend (Map<UUID, StudyBlockLesson>) -> Unit,
 ) {
     val poll =
         pollWhile(
-            active = read.day.isWaitingForLessons(read.today.lessonStatus),
+            active = read.day.isWaitingForOutline,
             read = today,
             context = Triple(read.today.goal.id, read.day.localDate, read.day.sessionId),
             poll = refreshIfChanged,
         )
+    FollowLessonsBeingWritten(read.day.lessonsBeingWritten, refreshIfLessonsMoved)
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
     val fresh by today.freshState.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
@@ -265,6 +274,26 @@ fun TodayDay(
         }
     }
 }
+
+/** The day's read can't tell a writer that stopped, so only readiness moves a row on. */
+@Composable
+private fun FollowLessonsBeingWritten(
+    lessons: Map<UUID, StudyBlockLesson>,
+    refreshIfLessonsMoved: suspend (Map<UUID, StudyBlockLesson>) -> Unit,
+) {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(lessons) {
+        if (lessons.isEmpty()) return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                delay(LESSON_CHECK_INTERVAL)
+                refreshIfLessonsMoved(lessons)
+            }
+        }
+    }
+}
+
+private val LESSON_CHECK_INTERVAL = 5.seconds
 
 private fun openMission(
     opens: MissionOpens,

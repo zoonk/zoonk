@@ -215,7 +215,11 @@ describe("a limit whose day has come", () => {
         tier: "free",
       });
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson }),
+      lesson,
+      takeNavigationStart: () => true,
+    });
 
     await expect
       .element(page.getByRole("heading", { name: "You've used your free lessons" }))
@@ -247,7 +251,12 @@ describe("a limit whose day has come", () => {
         tier: "free",
       });
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson }),
+      lesson,
+      takeNavigationStart: () => true,
+    });
+
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
 
     await expect

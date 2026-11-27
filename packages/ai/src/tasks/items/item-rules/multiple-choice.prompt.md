@@ -1,7 +1,7 @@
 ## multipleChoice
 
 - `context`: the situation or support text the question needs, or null when the question stands alone.
-- `question`: the command, short and unambiguous.
+- `question`: the command, short and unambiguous.{{#severalPicks}} The app tells the learner how many to pick, so the command never says how many or that several are right ("Select all that apply", "Choose two"), even when `EXAM_STYLE`'s papers print it.{{/severalPicks}}
 - `options`: exactly `OPTION_COUNT` options{{#onePick}} with exactly one correct{{/onePick}}{{#severalPicks}}, and the learner picks every correct one: exactly `SELECT` of them correct, or, when `SELECT` is "all", one or more correct and at least one wrong. Each option is right or wrong on its own, never by pointing at another ("Both A and C"){{/severalPicks}}. Options are similar in length, specificity and confidence, and none of them is "all of the above" or "none of the above".
 - An option's `text` starts with the answer itself, never a letter or number ("A)", "(B)", "c."), even when `EXAM_STYLE` names its letters: the app shows its own.
 - `fixedOrder`: true only for a fixed list of answers whose order means something and that the exam always prints the same way (True, False, Not given; "1 only", "2 only", "both", "neither"; the four answers of a quantity comparison), which the app shows in the order written. False for every other question: the app shuffles its options.

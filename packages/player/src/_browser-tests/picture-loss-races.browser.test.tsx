@@ -392,7 +392,7 @@ describe("picture loss during a lesson", () => {
       });
 
       const adapters = buildAdapters(lesson, { startLesson: vi.fn(async () => start) });
-      renderLessonPlayer({ adapters, lesson });
+      renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
       await expect.element(page.getByText(picture.content.question)).not.toBeInTheDocument();
       expect(adapters.completeLesson).not.toHaveBeenCalled();
 
@@ -415,7 +415,7 @@ describe("picture loss during a lesson", () => {
       startLesson: vi.fn(async () => startedRun({ optionalStepIds: [] })),
     });
 
-    renderLessonPlayer({ adapters, lesson });
+    renderLessonPlayer({ adapters, lesson, takeNavigationStart: () => true });
     await expect.poll(() => adapters.startLesson).toHaveBeenCalledOnce();
     await expect.element(page.getByText(picture.content.question)).toBeVisible();
     expect(adapters.completeLesson).not.toHaveBeenCalled();

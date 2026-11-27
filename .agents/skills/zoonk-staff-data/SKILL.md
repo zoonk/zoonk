@@ -1,10 +1,10 @@
 ---
 name: zoonk-staff-data
-description: Read Zoonk production data (accounts, goals, plans, sessions, answers, any model) through the `pnpm zoonk staff` CLI, with a platform admin's own login, and propose fixes to shared Library content that a staff person then approves in Admin. Use when investigating a production bug, a learner's report or an error, answering a question about production data, or correcting a wrong lesson, screen, title or answer key.
+description: Use when investigating a production bug, a learner's report or an error, answering a question about Zoonk's production data, or correcting a wrong lesson, title or answer key.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # Reading production data

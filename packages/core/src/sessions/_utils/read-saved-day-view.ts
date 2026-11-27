@@ -6,6 +6,7 @@ import { readLessonStates } from "../../learner/facts/lesson-states";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
+import { getAlternativeStudyBlockPosition } from "../alternative-study-block";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
 import { getNextBlock } from "../day-blocks";
@@ -141,7 +142,7 @@ export async function readSavedDayView({
     }),
   );
 
-  const next = getNextBlock(blocks);
+  const nextPosition = getNextBlock(blocks)?.position ?? null;
   const extraTime = getExtraTime({ blocks: refill.blocks, current: view.current });
 
   const { id: _id, nextBlockId: _next, catchUp: _catchUp, missions, ...fields } = view;
@@ -149,6 +150,7 @@ export async function readSavedDayView({
   return withDayState<Omit<UnstartedDayView, "state">>(
     {
       ...fields,
+      alternativePosition: getAlternativeStudyBlockPosition(blocks),
       blocks,
       catchUp: catchUp
         ? { later: catchUp.later, lessonsLeft: catchUp.lessonsLeft, positions: catchUp.positions }
@@ -176,7 +178,7 @@ export async function readSavedDayView({
         const target = view.blocks.find((block) => block.id === opens.blockId);
         return target ? { ...rest, opens: { kind: "block", ref: toDayBlockRef(target) } } : rest;
       }),
-      nextPosition: next?.position ?? null,
+      nextPosition,
       sessionBar: getSessionBar(refill.blocks),
       status: "unstarted",
     },

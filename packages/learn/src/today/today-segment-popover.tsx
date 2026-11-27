@@ -164,7 +164,7 @@ export function HeldSegment({ minutes }: { minutes: number }) {
   return (
     <Popover>
       <SegmentPopover focusable={false} label={`${title}: ${time}`}>
-        <DaySegment kind="lesson" state="ahead" />
+        <DaySegment state="ahead" />
       </SegmentPopover>
       <SegmentContent facts={{ data: time }} kind="lesson" note={note} title={title} />
     </Popover>

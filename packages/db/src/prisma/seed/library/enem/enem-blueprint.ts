@@ -305,6 +305,26 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>, now: Date)
           questions: 90,
         },
         {
+          day: 1,
+          kind: "written",
+          minutes: DAY_ONE_MINUTES,
+          name: t("Languages, Humanities and essay", "Linguagens, Ciências Humanas e redação"),
+          questions: null,
+          tasks: [
+            {
+              count: 1,
+              description: t(
+                "An argumentative essay of up to 30 lines",
+                "Redação dissertativo-argumentativa de até 30 linhas",
+              ),
+              grading: { criteria: [], kind: "enem", language: null, rounding: null, zeroing: [] },
+              key: "enem-essay",
+              lines: 30,
+              points: 1000,
+            },
+          ],
+        },
+        {
           day: 2,
           kind: "objective",
           minutes: DAY_TWO_MINUTES,

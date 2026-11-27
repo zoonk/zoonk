@@ -7,8 +7,6 @@ struct DaySegments: View {
     case done
     case current
     case ahead
-    /// A block that isn't a lesson, waiting in its kind's color.
-    case kind(Color)
   }
 
   static let height = 6.0
@@ -36,7 +34,6 @@ struct DaySegments: View {
     case .done: MeterSegment(share: 1, from: fills ? 0 : nil, color: .success)
     case .current: shape.strokeBorder(.success, lineWidth: 1.5)
     case .ahead: shape.fill(Color.surface3)
-    case .kind(let color): shape.fill(color.opacity(0.35))
     }
   }
 }

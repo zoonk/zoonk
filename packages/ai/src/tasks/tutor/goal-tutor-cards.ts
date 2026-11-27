@@ -104,6 +104,7 @@ export type GoalTutorAppToolResult =
         | "notWritten"
         | "nothingDue"
         | "nothingToSkip"
+        | "oneSubject"
         | "onePerMessage"
         | "testFailedToday"
         | "unavailable";

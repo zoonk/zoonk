@@ -201,6 +201,7 @@ export function toDayBlockView({
     extra: payload.extra,
     fullReview: payload.fullReview,
     kind: block.kind,
+    lesson: null,
     lessonId: block.lessonId,
     mistakesOnly:
       block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,

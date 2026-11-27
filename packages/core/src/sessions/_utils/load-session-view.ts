@@ -1,5 +1,5 @@
 import "server-only";
-import { type ExamBlueprint } from "@zoonk/db";
+import { type ExamBlueprint, type Plan } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
 import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
@@ -31,19 +31,28 @@ async function loadDayOutlines({
   session,
 }: {
   dayMinutes: number;
-  plan: { graph: unknown } | null;
+  plan: Pick<Plan, "graph" | "lessonsAskedAt"> | null;
   session: StudySessionRow;
 }): Promise<DayOutlines> {
-  if (dayMinutes === 0 || session.status === "completed" || !session.goal) {
+  if (
+    !session.goal ||
+    session.status === "completed" ||
+    (dayMinutes === 0 && !session.blocks.some(needsReplacement))
+  ) {
     return null;
   }
 
-  return getDayOutlines({ goal: session.goal, graph: plan?.graph, localDate: session.localDate });
+  return getDayOutlines({ goal: session.goal, localDate: session.localDate, plan });
 }
 
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
   if (fresh) {
-    return { graph: fresh.plan.graph, items: fresh.plan.items, settings: fresh.plan.settings };
+    return {
+      graph: fresh.plan.graph,
+      items: fresh.plan.items,
+      lessonsAskedAt: fresh.plan.lessonsAskedAt,
+      settings: fresh.plan.settings,
+    };
   }
 
   return session.goalId ? readSavedPlan(session.userId, session.goalId) : null;
@@ -83,6 +92,35 @@ async function loadLessonReservation({
   );
 
   return getSessionLessonReservation({ ...input, plan, prerequisites });
+}
+
+function needsReplacement(block: StudySessionRow["blocks"][number]) {
+  return (
+    block.kind === "learn" &&
+    block.lessonId === null &&
+    (block.status === "pending" || block.status === "active")
+  );
+}
+
+function getDayLessonWait({
+  current,
+  outlines,
+  session,
+  unwrittenRoom,
+  ...reservation
+}: Awaited<ReturnType<typeof loadLessonReservation>> & {
+  current: boolean;
+  outlines: DayOutlines;
+  session: StudySessionRow;
+}) {
+  const waitingForReplacement =
+    current && outlines === "awaiting" && session.blocks.some(needsReplacement);
+
+  return {
+    ...reservation,
+    lessonRoom: reservation.lessonRoom || waitingForReplacement,
+    outlines: unwrittenRoom || waitingForReplacement ? (outlines ?? "idle") : null,
+  };
 }
 
 export async function loadStudySessionView({
@@ -192,9 +230,8 @@ export async function loadStudySessionView({
     dayEndsAt,
     dayMinutes,
     examAccess,
-    ...reservation,
+    ...getDayLessonWait({ current, outlines, session, unwrittenRoom, ...reservation }),
     missions,
-    outlines: unwrittenRoom ? (outlines ?? "idle") : null,
     session,
     timeZone,
     week,

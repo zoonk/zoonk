@@ -74,7 +74,6 @@ function toStartOutcome({
     : { reason: "failed" };
 }
 
-/** Posts to the app's own start route after the player mounts, never while a route is prefetched. */
 export async function startLibraryLesson({
   lessonId,
   runId,

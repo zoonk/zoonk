@@ -38,7 +38,7 @@
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
   "questions_not_quite": "1cc0cfef3c1a9b06305c65c56f639bf5443c70d5831391ccd82389bb0ff5cd05",
   "questions_pick_all": "5e40865407ecf31cbfc49eac61c494a52e310ca3cd145cc89ca351ab251a8c02",
-  "questions_pick_count": "6ba0440bad0423cec81c835bb2102ac42518c9c4abc56ab2cd968ada49be1f2a",
+  "questions_pick_count": "8c1ed8704c4aeb379ded3c51dcdd981221aa00471fa00b31a6258888d5f50e9a",
   "questions_place_right": "c41f5afd11de1b794f173d9615462f73586c693c5b4d72c7acb05ed3e1ebd032",
   "questions_place_wrong": "6dcca0bfa1e4a49352af9de46850a67fcc6077e9dd92adb4c3cb9b6012f43314",
   "questions_placement_note": "55ad8fc5b26d4433f60539e02154c119d76bc48be70e477e8115967275b1167d",
@@ -62,7 +62,7 @@
 <resources>
     <string name="questions_pick_all">해당하는 항목을 모두 선택하세요.</string>
     <plurals name="questions_pick_count">
-        <item quantity="other">선택지를 %d개 고르세요.</item>
+        <item quantity="other">보기 %d개를 선택하세요.</item>
     </plurals>
     <string name="questions_true">참</string>
     <string name="questions_false">거짓</string>

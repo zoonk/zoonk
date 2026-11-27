@@ -2,6 +2,16 @@
 
 Use the owning app's existing Playwright fixtures and `apps/<app>/e2e/` tests. Exercise real product routes; do not add app endpoints or pages solely for tests. For endpoint coverage, use real HTTP with real authentication and persistence. Direct handler tests with mocked dependencies are adapter tests.
 
+## The E2E bar
+
+E2E is our most expensive test: a build, a browser, servers, a database and seeded learners for every test, on every push, and it breaks whenever the product changes. A Playwright test earns its place only by guarding a risk:
+
+- **Impact:** if this broke and no test caught it, would it be a big deal for learners? Big deals: a learner can't sign in, get from a goal to a plan, open Today, start or finish a session, lesson or mock, make a call, ask the buddy or subscribe; loses progress, answers or data; is charged wrongly or loses paid access; sees someone else's data or hits a security hole; or AI spend starts without their click.
+- **Likelihood:** how often does this kind of thing break? Complex, stateful or concurrent code that changes often (saving answers and progress, sessions, plan changes, entitlements and limits, auth, AI-run waits, live calls) and the server/client seams break; static rendering and simple conditional copy rarely do.
+- **Cheaper coverage:** a rule that core's real-database tests, the player's browser tests or the API suite can check belongs there.
+
+Failure paths count as much as happy paths: a lost answer on a bad connection can matter more than the screen that shows it. These don't earn an E2E test: wording and which notice shows, layout and sizes, accessibility scans, SEO (metadata, structured data, sitemaps), analytics events, speed-only checks (prefetching, no skeleton) and keyboard or focus niceties. A bug in one of those gets fixed and checked in the persona walkthrough and the [verify skill](../../verify/SKILL.md)'s page measurements, without a permanent test. The `instant()` test the Next.js optimizer skills ask for proves an optimization while you make it; it ships as a permanent test only when that route clears this bar.
+
 ## Queries and waiting
 
 - Prefer `getByRole`, then `getByLabel`, `getByText`, or `getByPlaceholder`. Do not use CSS, `data-testid`, `data-slot`, or `.locator()` selectors. If the UI lacks an accessible query, fix its semantics. Scope queries to a meaningful region rather than hiding ambiguous matches with `.first()`.
@@ -20,7 +30,7 @@ Consult [Playwright actionability](https://playwright.dev/docs/actionability) or
 
 ## Coverage
 
-- Add or extend an E2E test only for a risk that clears [the E2E bar](../SKILL.md#the-e2e-bar): a big deal for learners if it broke, likely enough to break, and nothing cheaper catches it.
+- Add or extend an E2E test only for a risk that clears [the E2E bar](#the-e2e-bar): a big deal for learners if it broke, likely enough to break, and nothing cheaper catches it.
 - Before adding a test, look for the flow that already reaches the screen or state and extend it. A new test pays for its own sign-in, fixtures and navigation, so it needs behavior of its own that no existing flow can reach.
 - Assert what guards the risk, not the screen's wording, layout or accessibility.
 
@@ -44,6 +54,8 @@ Run from the repository root with an existing test path; the [development guide]
 pnpm e2e:main e2e/path/to/test.test.ts
 pnpm e2e:api e2e/path/to/test.test.ts
 ```
+
+Keep each test well under 20 seconds locally: CI splits work by test, so one long test sets its shard's time.
 
 For a demonstrated timing or isolation concern, use `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.
 

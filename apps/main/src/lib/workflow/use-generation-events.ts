@@ -18,7 +18,7 @@ export function useGenerationEvents({
   connection: number;
   namespace: string | null;
   onComplete: (runId: string) => void;
-  onError: () => void;
+  onError: (responseStatus?: number) => void;
   onMessage: (data: StepStreamMessage) => void;
   onOpen: (response: Response) => void;
   runId: string | null;
@@ -57,7 +57,7 @@ export function useGenerationEvents({
         const response = await fetch(url, { headers, signal: controller.signal });
 
         if (!response.ok) {
-          onErrorEvent();
+          onErrorEvent(response.status);
           return;
         }
 

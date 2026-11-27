@@ -4088,7 +4088,7 @@
     },
     "/library/lessons/{lessonId}/readiness": {
       "get": {
-        "description": "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete; a `challenge` (its `kind`) reports `planChallenge`, `writeChallenge`, `reviewChallenge`, then `fixChallenge` and `recheckChallenge` when its check finds errors and the writer fixes them, `redraftChallenge` when the draft is held back and written again, and `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "description": "The lesson's readiness, confirmed live writer and the learner's ready alternative. Generating covers a writer that holds the lesson's token before it claims the content. A confirmed-dead content claim is released and the current lesson state is returned. A set-aside lesson has no writer. Uncached.",
         "operationId": "getLibraryLessonReadiness",
         "security": [
           {
@@ -4159,6 +4159,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5574,7 +5584,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Current generation status",
+            "description": "Current generation status. A stalled run reports `failed`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5605,6 +5615,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5695,6 +5715,16 @@
           },
           "500": {
             "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
             "content": {
               "application/json": {
                 "schema": {
@@ -26293,7 +26323,7 @@
     },
     "/study-block-openings": {
       "post": {
-        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson isn't picked yet is prepared (`preparingLesson`); review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
+        "description": "Opens a study block the learner chose in a saved session and says which screen shows it: Continue (`next`), a tap on a block (`block`), or a mission card or buddy answer's link (`mission`). The server applies every rule of opening: a lesson that's written starts and opens in the player; one that isn't written opens nothing until the learner asks for it (`unwrittenLesson`); a step whose lesson was deleted returns to Today (`today`) and asks for the goal plan's lessons when there is a plan; review and practice start and open the session; an essay starts; a waiting language checkpoint opens its call, another challenge its intro; an active challenge resumes; a finished step opens the session; earlier work, and a step left unstarted on a day that's over, goes back to Today; Continue never begins a mock the learner didn't see, and a mission opens only a block of today still free to start (`changed`). A start prepares the session's next lessons on the server; ask for nothing after it.",
         "operationId": "openStudyBlock",
         "security": [
           {
@@ -43608,8 +43638,8 @@
           },
           "generationId": {
             "nullable": true,
-            "type": "string",
-            "description": "The run writing the content: stream GET /generations/{generationId}/events"
+            "description": "The confirmed live writer, or null when no run is writing the lesson.",
+            "type": "string"
           },
           "kind": {
             "type": "string",
@@ -53410,6 +53440,17 @@
                   "targetLanguage"
                 ],
                 "additionalProperties": false
+              },
+              "resume": {
+                "description": "Saved answers from unfinished sittings, oldest first.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LibraryLessonRunAnswer"
+                }
+              },
+              "saved": {
+                "description": "Whether the learner has bookmarked the lesson.",
+                "type": "boolean"
               },
               "status": {
                 "type": "string",
@@ -84933,6 +84974,155 @@
         ],
         "additionalProperties": false
       },
+      "LibraryLessonRunAnswer": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "nullable": true,
+            "description": "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LessonStepAnswerOutput"
+              }
+            ]
+          },
+          "answeredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "Before the run's `startedAt` for an answer from an earlier sitting"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "result": {
+            "$ref": "#/components/schemas/LessonRunAnswerResult"
+          },
+          "stepId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "answer",
+          "answeredAt",
+          "isCorrect",
+          "result",
+          "stepId"
+        ],
+        "additionalProperties": false
+      },
+      "LessonRunAnswerResult": {
+        "type": "object",
+        "properties": {
+          "checked": {
+            "type": "boolean",
+            "description": "False when the answer wasn't checked: it was neither right nor wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
+          },
+          "correctAnswer": {
+            "nullable": true,
+            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
+            "type": "string"
+          },
+          "corrections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "right": {
+                  "type": "string",
+                  "description": "The same words written correctly"
+                },
+                "wrong": {
+                  "type": "string",
+                  "description": "The learner's words as they wrote them"
+                }
+              },
+              "required": [
+                "right",
+                "wrong"
+              ],
+              "additionalProperties": false
+            },
+            "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
+          },
+          "expected": {
+            "nullable": true,
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityExpected"
+              }
+            ]
+          },
+          "feedback": {
+            "nullable": true,
+            "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          },
+          "keyPoints": {
+            "nullable": true,
+            "description": "Each key point of a typed answer and whether the answer stated it, judged by meaning",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "met": {
+                  "type": "boolean"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "met",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "savedMistake": {
+            "type": "boolean",
+            "description": "A wrong answer went to the mistakes notebook"
+          },
+          "score": {
+            "nullable": true,
+            "description": "Partial credit from 0 to 1 for typed and spoken answers and challenges",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "spelling": {
+            "nullable": true,
+            "description": "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
+            "type": "string"
+          },
+          "answerText": {
+            "nullable": true,
+            "description": "What the learner's answer reads as: the picked option's text, the typed text or what a recording heard. Null when there's nothing to show",
+            "type": "string"
+          }
+        },
+        "required": [
+          "checked",
+          "correctAnswer",
+          "corrections",
+          "expected",
+          "feedback",
+          "isCorrect",
+          "keyPoints",
+          "savedMistake",
+          "score",
+          "spelling",
+          "answerText"
+        ],
+        "additionalProperties": false,
+        "description": "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+      },
       "LessonTutorSuggestion": {
         "type": "object",
         "properties": {
@@ -85805,6 +85995,15 @@
               "checkpoint"
             ]
           },
+          "lesson": {
+            "nullable": true,
+            "description": "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StudyBlockLesson"
+              }
+            ]
+          },
           "lessonId": {
             "nullable": true,
             "type": "string",
@@ -86043,6 +86242,7 @@
           "fullReview",
           "id",
           "kind",
+          "lesson",
           "lessonId",
           "mistakesOnly",
           "netScored",
@@ -86193,6 +86393,31 @@
           }
         ],
         "type": "object"
+      },
+      "StudyBlockLesson": {
+        "type": "object",
+        "properties": {
+          "setAside": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LessonGenerationStatus"
+          }
+        },
+        "required": [
+          "setAside",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "LessonGenerationStatus": {
+        "type": "string",
+        "enum": [
+          "ready",
+          "generating",
+          "notStarted",
+          "failed"
+        ]
       },
       "StudyDayProgress": {
         "type": "object",
@@ -86704,7 +86929,7 @@
           "sessionId"
         ],
         "additionalProperties": false,
-        "description": "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it"
+        "description": "Legacy opening for a study block without a lesson; current responses use `today`."
       },
       "StudyBlockOpeningMistakesPractice": {
         "type": "object",
@@ -86964,43 +87189,7 @@
           "answers": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "answer": {
-                  "nullable": true,
-                  "description": "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/LessonStepAnswerOutput"
-                    }
-                  ]
-                },
-                "answeredAt": {
-                  "type": "string",
-                  "format": "date-time",
-                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                  "description": "Before the run's `startedAt` for an answer from an earlier sitting"
-                },
-                "isCorrect": {
-                  "type": "boolean"
-                },
-                "result": {
-                  "$ref": "#/components/schemas/LessonRunAnswerResult"
-                },
-                "stepId": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                }
-              },
-              "required": [
-                "answer",
-                "answeredAt",
-                "isCorrect",
-                "result",
-                "stepId"
-              ],
-              "additionalProperties": false
+              "$ref": "#/components/schemas/LibraryLessonRunAnswer"
             },
             "description": "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`"
           },
@@ -87083,116 +87272,6 @@
           "startedAt"
         ],
         "additionalProperties": false
-      },
-      "LessonRunAnswerResult": {
-        "type": "object",
-        "properties": {
-          "checked": {
-            "type": "boolean",
-            "description": "False when the answer wasn't checked: it was neither right nor wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
-          },
-          "correctAnswer": {
-            "nullable": true,
-            "description": "The lesson's answer when missed or when a word-bank answer is correct in another order; null for the lesson's own order. A numeric activity's is rounded to its step's `roundedAnswer`",
-            "type": "string"
-          },
-          "corrections": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "right": {
-                  "type": "string",
-                  "description": "The same words written correctly"
-                },
-                "wrong": {
-                  "type": "string",
-                  "description": "The learner's words as they wrote them"
-                }
-              },
-              "required": [
-                "right",
-                "wrong"
-              ],
-              "additionalProperties": false
-            },
-            "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
-          },
-          "expected": {
-            "nullable": true,
-            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActivityExpected"
-              }
-            ]
-          },
-          "feedback": {
-            "nullable": true,
-            "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
-            "type": "string"
-          },
-          "isCorrect": {
-            "type": "boolean"
-          },
-          "keyPoints": {
-            "nullable": true,
-            "description": "Each key point of a typed answer and whether the answer stated it, judged by meaning",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "met": {
-                  "type": "boolean"
-                },
-                "text": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "met",
-                "text"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "savedMistake": {
-            "type": "boolean",
-            "description": "A wrong answer went to the mistakes notebook"
-          },
-          "score": {
-            "nullable": true,
-            "description": "Partial credit from 0 to 1 for typed and spoken answers and challenges",
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "spelling": {
-            "nullable": true,
-            "description": "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
-            "type": "string"
-          },
-          "answerText": {
-            "nullable": true,
-            "description": "What the learner's answer reads as: the picked option's text, the typed text or what a recording heard. Null when there's nothing to show",
-            "type": "string"
-          }
-        },
-        "required": [
-          "checked",
-          "correctAnswer",
-          "corrections",
-          "expected",
-          "feedback",
-          "isCorrect",
-          "keyPoints",
-          "savedMistake",
-          "score",
-          "spelling",
-          "answerText"
-        ],
-        "additionalProperties": false,
-        "description": "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -103437,6 +103516,13 @@
       "StudySession": {
         "type": "object",
         "properties": {
+          "alternativePosition": {
+            "nullable": true,
+            "description": "Position of the first available non-lesson block other than the next block, or null when there is no next block or alternative.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "blocks": {
             "type": "array",
             "items": {
@@ -103739,6 +103825,7 @@
           }
         },
         "required": [
+          "alternativePosition",
           "blocks",
           "brainPower",
           "catchUp",
@@ -103823,6 +103910,13 @@
       "UnstartedStudyDay": {
         "type": "object",
         "properties": {
+          "alternativePosition": {
+            "nullable": true,
+            "description": "Position of the first available non-lesson block other than the next block, or null when there is no next block or alternative.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -104161,6 +104255,15 @@
                     "checkpoint"
                   ]
                 },
+                "lesson": {
+                  "nullable": true,
+                  "description": "Saved generation state of the lesson this block teaches. Null when there is no lesson or the response does not read lesson state.",
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/StudyBlockLesson"
+                    }
+                  ]
+                },
                 "lessonId": {
                   "nullable": true,
                   "type": "string",
@@ -104398,6 +104501,7 @@
                 "extra",
                 "fullReview",
                 "kind",
+                "lesson",
                 "lessonId",
                 "mistakesOnly",
                 "netScored",
@@ -104900,6 +105004,7 @@
           }
         },
         "required": [
+          "alternativePosition",
           "brainPower",
           "current",
           "dayEndsAt",
@@ -109103,15 +109208,6 @@
           "minutes"
         ],
         "additionalProperties": false
-      },
-      "LessonGenerationStatus": {
-        "type": "string",
-        "enum": [
-          "ready",
-          "generating",
-          "notStarted",
-          "failed"
-        ]
       },
       "WarmUpDeck": {
         "type": "object",

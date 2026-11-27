@@ -57,6 +57,7 @@ enum CodeWorkerSources {
   }
 
   private static let host = #"""
+    const LOAD_TIMEOUT_MS = 180_000;
     const REUSED = KIND === "python" || KIND === "sql";
     let host = null;
     let nextId = 1;
@@ -65,21 +66,30 @@ enum CodeWorkerSources {
       const url = URL.createObjectURL(new Blob([SOURCE], { type: "text/javascript" }));
       const worker = new Worker(url, { type: KIND === "python" ? "module" : "classic" });
       const ready = new Promise((resolve) => {
-        function handleMessage(event) {
-          if (event.data.type !== "ready" && event.data.type !== "loadError") return;
+        function finish(isReady) {
+          clearTimeout(timer);
           worker.removeEventListener("message", handleMessage);
+          worker.removeEventListener("error", fail);
           URL.revokeObjectURL(url);
-          resolve(event.data.type === "ready");
+          if (!isReady) discardHost(worker);
+          resolve(isReady);
         }
+        function fail() { finish(false); }
+        function handleMessage(event) {
+          if (event.data.type === "ready" || event.data.type === "loadError") {
+            finish(event.data.type === "ready");
+          }
+        }
+        const timer = setTimeout(fail, LOAD_TIMEOUT_MS);
         worker.addEventListener("message", handleMessage);
-        worker.addEventListener("error", () => resolve(false), { once: true });
+        worker.addEventListener("error", fail);
       });
       return { ready, worker };
     }
 
-    function discardHost(current) {
-      current.worker.terminate();
-      if (host === current) host = null;
+    function discardHost(worker) {
+      worker.terminate();
+      if (host?.worker === worker) host = null;
     }
 
     function getHost() {
@@ -90,10 +100,7 @@ enum CodeWorkerSources {
 
     async function warmUp() {
       if (!REUSED) return true;
-      const current = getHost();
-      const isReady = await current.ready;
-      if (!isReady) discardHost(current);
-      return isReady;
+      return getHost().ready;
     }
 
     function pythonError(traceback) {
@@ -106,7 +113,6 @@ enum CodeWorkerSources {
     async function run(request) {
       const current = getHost();
       if (!(await current.ready)) {
-        discardHost(current);
         return { stop: "unavailable" };
       }
       const id = nextId++;
@@ -116,7 +122,7 @@ enum CodeWorkerSources {
         function finish(outcome, keepWorker) {
           clearTimeout(timer);
           current.worker.removeEventListener("message", handleMessage);
-          if (!keepWorker || !REUSED) discardHost(current);
+          if (!keepWorker || !REUSED) discardHost(current.worker);
           resolve({ errorOutput: streams.stderr, output: streams.stdout.slice(0, MAX_OUTPUT_LENGTH), ...outcome });
         }
 

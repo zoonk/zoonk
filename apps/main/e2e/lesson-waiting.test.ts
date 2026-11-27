@@ -10,6 +10,7 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { expect, test } from "./fixtures";
+import { confirmLessonWriter } from "./generation-run";
 import { openAs } from "./study-day";
 
 /** Another local server may be listening on the E2E API port, so the request fails on purpose. */
@@ -137,10 +138,9 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
 
   await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
   await page.reload();
-  const start = page.getByRole("button", { name: "Prepare" });
-  await start.click();
 
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Prepare" })).toHaveCount(0);
   await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
 
   await prisma.step.deleteMany({ where: { lessonId: lesson.id } });
@@ -182,6 +182,7 @@ test.describe("A lesson still being written", () => {
     });
 
     const asked = await answerLessonWriting(page, [{ events, id: runId }]);
+    await confirmLessonWriter({ lessonId: unwritten.id, page, runId });
     await page.goto(`/learn/${unwritten.id}`);
 
     await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();

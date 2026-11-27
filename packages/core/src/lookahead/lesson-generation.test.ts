@@ -287,7 +287,12 @@ describe(getLessonWaitingState, () => {
     await planItemFixture({ lessonId: next.id, planId: plan.id, position: 1 });
     mockSession(user.id);
 
-    await expect(getLessonWaitingState({ lessonId: waiting.id })).resolves.toStrictEqual({
+    await expect(
+      getLessonWaitingState({
+        lessonId: waiting.id,
+        observeWriter: async () => ({ runId, status: "alive" }),
+      }),
+    ).resolves.toStrictEqual({
       state: {
         alternative: { kind: "lesson", lessonId: next.id, title: "Ready one" },
         generationId: runId,

@@ -44,4 +44,4 @@ For each surface the change reaches, walk the main path and the unhappy paths th
 
 - Back button, refresh, double tap, a network error, being signed out.
 - Empty, loading, disabled and error states have a clear next step.
-- Every screen has one message, in words the learner already knows ([Words](../../zoonk-design/SKILL.md#words)), and no line they wouldn't miss.
+- Every screen has one message, in words the learner already knows ([Words](../../zoonk-design/references/words.md)), and no line they wouldn't miss.

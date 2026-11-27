@@ -14,7 +14,6 @@ import { loadPracticeEntries } from "../../mistakes/_utils/practice-entries";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
-import { getNamedEssayRubric } from "../essays/essay-rubric";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
@@ -161,11 +160,11 @@ function describeOwner({
     structure: owned.structure,
   }).map(({ grading }) => grading.kind);
 
-  const rubric = kinds.find((kind) => kind !== "levels") ?? getNamedEssayRubric(owned.blueprint);
+  const rubric = kinds.find((kind) => kind !== "levels") ?? ("levels" as const);
 
   return {
     date: toIsoDate(owned.sessionDate),
-    essayRubric: asksEssays ? (rubric ?? ("levels" as const)) : null,
+    essayRubric: asksEssays ? rubric : null,
     examDocument: owned.goal ? getExamDocument(owned.goal) : "notice",
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,

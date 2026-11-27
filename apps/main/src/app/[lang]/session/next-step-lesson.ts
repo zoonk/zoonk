@@ -1,31 +1,25 @@
 import "server-only";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
-import {
-  type LessonGenerationState,
-  getLessonGenerationState,
-} from "@zoonk/core/library/generation/state";
-import { type NextStopFacts } from "@zoonk/core/sessions/page";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { type DayStep } from "@zoonk/learn/session/types";
 
+/** A run the learner just started is waited for even while the saved lesson still says the last try failed. */
 export function getNextStopLesson({
   limit,
   request,
-  state,
   step,
 }: {
   limit: LessonLimit | null;
   request: LessonRequest;
-  state: LessonGenerationState | null;
   step: DayStep;
 }): NextStopLesson {
   if (step.kind !== "learn") {
     return "ready";
   }
 
-  const status = state?.status;
+  const status = step.lesson?.status;
 
   if (status === "ready") {
     return "ready";
@@ -35,25 +29,28 @@ export function getNextStopLesson({
     return "writing";
   }
 
-  if (status === "failed") {
+  if (request.status === "writing") {
+    return "notStarted";
+  }
+
+  if (status === "failed" || request.status === "failed") {
     return "failed";
   }
 
   return request.status === "idle" && !limit ? "ready" : "notStarted";
 }
 
-export function getWritingRunId({
+/** A lesson's saved run may be long gone, so only readiness names it; this is the run the learner's tap started. */
+export function getAskedRunId({
   request,
-  state,
+  step,
 }: {
   request: LessonRequest;
-  state: LessonGenerationState | null;
+  step: DayStep;
 }): string | null {
-  if (state?.status === "generating") {
-    return state.runId;
-  }
-
-  return state?.status !== "ready" && request.status === "writing" ? request.generationId : null;
+  return step.lesson?.status !== "ready" && request.status === "writing"
+    ? request.generationId
+    : null;
 }
 
 /** Only a lesson nothing writes can be refused, so a stale `?limit=` never hides a wait. */
@@ -61,34 +58,20 @@ export function getNotWritten({
   lesson,
   limit,
   request,
-  state,
+  step,
 }: {
   lesson: NextStopLesson;
   limit: LessonLimit | null;
   request: LessonRequest;
-  state: LessonGenerationState | null;
+  step: DayStep;
 }): LessonNotWritten | null {
   if ((lesson === "notStarted" || lesson === "failed") && request.status === "setAside") {
     return request;
   }
 
-  if (lesson === "failed" && state?.status === "failed") {
-    return state.setAside ? { status: "setAside" } : null;
+  if (lesson === "failed" && step.lesson?.setAside) {
+    return { status: "setAside" };
   }
 
   return lesson === "notStarted" && limit ? { limit, status: "refused" } : null;
-}
-
-export async function loadLessonState({
-  next,
-  step,
-}: {
-  next: NextStopFacts | null;
-  step: DayStep;
-}): Promise<LessonGenerationState | null> {
-  if (next?.ref.position === step.position) {
-    return next.lessonState;
-  }
-
-  return step.kind === "learn" && step.lessonId ? getLessonGenerationState(step.lessonId) : null;
 }

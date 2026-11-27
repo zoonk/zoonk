@@ -45,7 +45,7 @@ internal fun TodayDayProgress(
     DayProgress(parts, held = held, contentDescription = stepsDone(day.sessionBar), modifier = modifier) { index ->
         val part = parts.getOrNull(index)
         if (part != null) {
-            StepSegment(part, gettingReady = part.step.isGettingReady(model.today.lessonStatus, model.writingStalled))
+            StepSegment(part, gettingReady = part.step.isGettingReady)
         } else {
             HeldSegment(model, day.heldMinutes)
         }

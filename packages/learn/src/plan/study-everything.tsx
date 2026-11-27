@@ -16,7 +16,7 @@ import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
-import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
+import { type PlanChangeOutcome, usePlanScreen, useSubjectsTakenOut } from "./plan-context";
 import {
   type FullCourse,
   useFullCourse,
@@ -112,6 +112,22 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
 
 type Shown = { course: FullCourse; open: boolean };
 
+/** The full course still leaves out a subject the learner took out, so "every" means the plan's. */
+function useFullCourseDescription(isExam: boolean): string {
+  const t = useExtracted();
+  const subjectsTakenOut = useSubjectsTakenOut();
+
+  if (isExam) {
+    return subjectsTakenOut
+      ? t("You study every topic in your plan. What doesn't fit before the exam comes after it.")
+      : t("You study every topic. What doesn't fit before the exam comes after it.");
+  }
+
+  return subjectsTakenOut
+    ? t("Every part of your plan, with no end date.")
+    : t("Every part of your goal, with no end date.");
+}
+
 function StudyEverythingSheet({
   onOpenChange,
   shown,
@@ -122,6 +138,7 @@ function StudyEverythingSheet({
   const t = useExtracted();
   const keepStudying = useKeepStudyingLabel();
   const { course, open } = shown;
+  const description = useFullCourseDescription(course.isExam);
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
@@ -129,11 +146,7 @@ function StudyEverythingSheet({
         <SheetHeader>
           <div className="flex flex-col gap-1">
             <DrawerTitle>{course.isExam ? keepStudying : t("Remove end date")}</DrawerTitle>
-            <DrawerDescription>
-              {course.isExam
-                ? t("You study every topic. What doesn't fit before the exam comes after it.")
-                : t("Every part of your goal, with no end date.")}
-            </DrawerDescription>
+            <DrawerDescription>{description}</DrawerDescription>
           </div>
         </SheetHeader>
 

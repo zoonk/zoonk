@@ -280,8 +280,8 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 ### R25. What the plan says it covers is true
 
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); pass 9 showed "you can study every topic" next to "2 of 202 don't fit" (in Portuguese).
-- **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`.
-- **Reads:** `syllabus`, `view.feasibility`, `after`.
+- **Check:** a syllabus topic shown as to study (or in progress) has a lesson still to do on a skill that teaches it; one in progress whose rest is out for time (its lessons set aside after missed days, `notPlannedReason` `time`) has none still to do; one shown out of the plan has none still to do or done; `feasibility.coreFits` never stands next to topics out for time; `fits` implies `coreFits`. `fits`, `coreFits` and the `everything` suggestion count only the areas the learner kept, so a sentence built on them that reads as the whole goal ("ready for your exam", "covers everything", the buddy's "every topic") says "everything in your plan" while an area is out by choice (`view.areas[].skipped`). The planner ranks topics by how often the exam asks them only within each area (`weighGraphByTopicFrequency`, `rankShortAreas`), so no sentence says the most-asked topics come first across the exam. Held by the clients' copy and the tutor's prompt, not by a checker.
+- **Reads:** `syllabus`, `view.feasibility`, `view.areas`, `after`.
 
 ### R26. Cap the study time suggestion and prioritize what matters
 

@@ -35,6 +35,11 @@ export const internalErrorResponse = {
   description: "Internal server error",
 } as const;
 
+export const serviceUnavailableResponse = {
+  content: { "application/json": { schema: errorSchema } },
+  description: "Workflow state temporarily unavailable (`SERVICE_UNAVAILABLE`). Retry the read.",
+} as const;
+
 export const notFoundResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "Resource not found",

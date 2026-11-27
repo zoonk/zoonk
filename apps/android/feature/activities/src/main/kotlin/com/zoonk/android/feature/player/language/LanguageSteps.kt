@@ -97,9 +97,10 @@ fun rememberLessonLanguage(
     learner: String,
     target: String?,
     speech: SpeechPlayer? = LocalLessonSpeech.current,
+    onAudioToggle: () -> Unit = {},
 ): LessonLanguage {
     val languages = remember(learner, target) { LessonLanguages(learner, target) }
-    val prompt = speech?.let { rememberPromptAudio(it, languages.target) }
+    val prompt = speech?.let { rememberPromptAudio(it, languages.target, onAudioToggle) }
     return remember(languages, prompt, speech) { LessonLanguage(languages, prompt, speech) }
 }
 
@@ -121,6 +122,7 @@ fun LanguageStepView(
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() } ?: return
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
+    val restore = { answer: LessonAnswer -> if (!locked) actions.restoreAnswer(answer) }
     val sound: (@Composable () -> Unit)? =
         prompt?.let {
             promptAudioUrl(content, actions.cantListen)?.let { url ->
@@ -183,6 +185,7 @@ fun LanguageStepView(
                         language = languages.target,
                         speech = speech,
                         onAnswer = select,
+                        onRestore = restore,
                         prompt = question,
                     )
                 }
@@ -237,6 +240,7 @@ fun LanguageStepView(
                         language = languages.learner,
                         speech = speech,
                         onAnswer = select,
+                        onRestore = restore,
                         prompt = question,
                     )
                 }
@@ -247,10 +251,21 @@ fun LanguageStepView(
             (exercise.content as? ExerciseContent.MatchColumns)?.let { pairs ->
                 val instruction = stripWrappingQuotes(pairs.question ?: stringResource(R.string.player_language_match_the_pairs))
                 QuestionWithTurn(part, { QuestionText(instruction) }) { question ->
-                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, { done ->
-                        select(done)
-                        if (!locked) actions.runPrimary()
-                    }, actions::takeNumberKeys, question)
+                    MatchColumnsView(
+                        pairs,
+                        exercise.matchColumnsRightItems,
+                        answer,
+                        result != null,
+                        locked,
+                        onPick = actions::engage,
+                        onRestore = restore,
+                        onDone = { done ->
+                            select(done)
+                            if (!locked) actions.runPrimary()
+                        },
+                        takeNumberKeys = actions::takeNumberKeys,
+                        question = question,
+                    )
                 }
             }
         }

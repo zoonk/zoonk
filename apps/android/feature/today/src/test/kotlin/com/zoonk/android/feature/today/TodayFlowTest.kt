@@ -58,6 +58,7 @@ import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OpenStudyDayRequest
@@ -195,6 +196,7 @@ class TodayFlowTest {
                         onboarding = onboarding,
                         snackbars = AppSnackbars(),
                         refreshIfChanged = store::refreshIfChanged,
+                        refreshIfLessonsMoved = store::refreshIfLessonsMoved,
                     )
                 }
             }
@@ -520,6 +522,50 @@ class TodayFlowTest {
     }
 
     @Test
+    fun aLessonRowGettingReadyAsksItsReadinessAndReadsTheDayAgainOnceItsWritingStopped() {
+        val writing =
+            fixture(
+                "study-block",
+                "id" to lessonBlock,
+                "kind" to "learn",
+                "screen" to "session",
+                "lessonId" to lesson,
+                "lesson" to
+                    buildJsonObject {
+                        put("setAside", false)
+                        put("status", "generating")
+                    },
+                "position" to 0,
+                "title" to "Cells",
+            )
+        var status = LessonReadiness.Status.GENERATING
+        todayApi.readiness = {
+            LessonReadiness(
+                alternative = null,
+                generationId = "run-1".takeIf { status == LessonReadiness.Status.GENERATING },
+                kind = LessonReadiness.Kind.LESSON,
+                setAside = false,
+                status = status,
+                warmUpId = null,
+            )
+        }
+        show("blocks" to JsonArray(listOf(writing)))
+        rule.onNodeWithText("Getting ready…").assertExists()
+
+        rule.mainClock.advanceTimeBy(6.seconds.inWholeMilliseconds)
+        assertEquals(listOf(UUID.fromString(lesson)), todayApi.readinessAsked)
+        assertEquals(0, todayApi.reads)
+
+        status = LessonReadiness.Status.FAILED
+        rule.mainClock.advanceTimeBy(5.seconds.inWholeMilliseconds)
+        rule.waitForIdle()
+
+        assertEquals(2, todayApi.readinessAsked.size)
+        assertEquals(1, todayApi.reads)
+        assertEquals(emptyList<Instant>(), todayApi.asked)
+    }
+
+    @Test
     fun aDayLeftOpenAsksWhetherItChangedUntilTheLearnersAskLapsesThenOffersToGetTheLessons() {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
@@ -720,6 +766,17 @@ class TodayFlowTest {
         ): Boolean {
             asked += since
             return changed
+        }
+
+        var readiness: (UUID) -> LessonReadiness = { error("Not used") }
+        val readinessAsked = mutableListOf<UUID>()
+
+        override suspend fun lessonReadiness(
+            session: AuthenticatedSession,
+            lessonId: UUID,
+        ): LessonReadiness {
+            readinessAsked += lessonId
+            return readiness(lessonId)
         }
 
         override suspend fun brainPower(session: AuthenticatedSession): Long? = null

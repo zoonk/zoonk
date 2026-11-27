@@ -38,18 +38,16 @@ class ScheduleRulesTest {
     }
 
     /** As the API answers: a passed date has no times, and the suggestion follows from the two times. */
-    private fun found(
-        recommended: Long? = 35,
-        focus: Long? = null,
-    ) = PlanTimeToCover(
-        fittingDate = null,
-        most = null,
-        ready = true,
-        recommendedMinutes = recommended,
-        suggested = suggestionFor(recommended, focus),
-        targetDate = LocalDate(2028, 10, 29),
-        targetDateNamedMonth = false,
-    )
+    private fun found(recommended: Long? = 35) =
+        PlanTimeToCover(
+            fittingDate = null,
+            most = null,
+            ready = true,
+            recommendedMinutes = recommended,
+            suggested = suggestionFor(recommended, null),
+            targetDate = LocalDate(2028, 10, 29),
+            targetDateNamedMonth = false,
+        )
 
     private val pastDate = found(recommended = null).copy(pastDate = true)
 
@@ -59,7 +57,7 @@ class ScheduleRulesTest {
     fun findKeepsTheWeekendsOwnTimeEvenWhenItEqualsTheWeekdayPick() {
         assertEquals(StudyWeek(EVERY_DAY, 60), findWeek(EVERY_DAY, 60))
         assertEquals(StudyWeek(EVERY_DAY), studyWeek(EVERY_DAY, 60, 60))
-        assertEquals(StudyWeek(listOf(1, 6), 60, fullCourse = true), studyWeek(listOf(1, 6), 30, 60, fullCourse = true))
+        assertEquals(StudyWeek(listOf(1, 6), 60), studyWeek(listOf(1, 6), 30, 60))
     }
 
     @Test
@@ -97,14 +95,10 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun aDatedGoalAsksAboutTheTimePickedOnlyForWhenStudyingEverythingFinishes() {
-        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 35))
-        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 30))
-        assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = true, minutes = 35))
-        assertTrue(asksAboutTime(dated = false, found = null, fullCourse = false, minutes = 35))
-        assertFalse(asksAboutTime(dated = true, found = null, fullCourse = true, minutes = 35))
-        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = true, minutes = null))
-        assertFalse(asksAboutTime(dated = true, found = pastDate, fullCourse = true, minutes = 30))
+    fun onlyAnUndatedGoalAsksAboutTheTimePicked() {
+        assertFalse(asksAboutTime(dated = true, minutes = 30))
+        assertTrue(asksAboutTime(dated = false, minutes = 35))
+        assertFalse(asksAboutTime(dated = false, minutes = null))
     }
 
     @Test
@@ -134,15 +128,6 @@ class ScheduleRulesTest {
         assertEquals(last.copy(updating = true), shownAnswer(last, asking))
         assertEquals(answered, shownAnswer(last, answered))
         assertEquals(asking, shownAnswer(asking, asking))
-    }
-
-    @Test
-    fun anExamKeepsStudyingEverythingUntilTheTimePickedCoversItAll() {
-        assertTrue(keepsFullCourse(true, found = null, minutes = 60))
-        assertTrue(keepsFullCourse(true, found(recommended = 805, focus = 240), minutes = 480))
-        assertTrue(keepsFullCourse(true, found(), minutes = 30))
-        assertFalse(keepsFullCourse(true, found(), minutes = 35))
-        assertFalse(keepsFullCourse(false, found(), minutes = 30))
     }
 
     private val building = GenerationRun(GenerationRun.Status.Following)

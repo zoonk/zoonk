@@ -913,6 +913,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "1日あたり{time}の学習をおすすめします。学習計画では、目標にとって特に重要な内容から学びます。"
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {学習計画の内容をすべて{date}までに終えるには、1日あたり{time}がおすすめです。} other {学習計画の内容をすべて{date}までに終えるには、1日あたり{time}がおすすめです。}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -962,6 +968,12 @@ msgstr "いつ終わるか計算しています…"
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "いつ終わるか計算できませんでした。"
+
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {これで、{date}までに学習計画の内容をすべて終えるのに十分です。} other {これで、{date}までに学習計画の内容をすべて終えるのに十分です。}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
@@ -10510,15 +10522,19 @@ msgid "The Focus test shows what to study most."
 msgstr "重点診断で、重点的に学ぶ科目がわかります。"
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "期日を{date}に変更する"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "計画をすべて終えられるよう日付を変更"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "すべて学べるように期日を変更する"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "期日を{date}に変更する"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
@@ -10636,6 +10652,12 @@ msgstr "「今日」では、遅れているレッスンが先に表示されま
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, other {1日の学習時間を{minutes, number}分増やして#日間続けると、順調なペースに戻れます。}}"
+
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {この学習時間なら、{date}までに学習計画の内容をすべて終えられます} other {この学習時間なら、{date}までに学習計画の内容をすべて終えられます}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -10942,9 +10964,19 @@ msgid "You'll use"
 msgstr "使うツール"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "学習計画にあるトピックをすべて学びます。試験前に終わらない分は、試験後に学びます。"
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "すべてのトピックを学びます。試験前の計画に入りきらない分は、試験後に学びます。"
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "期限を決めず、学習計画の内容をすべて学びます。"
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"
@@ -12467,11 +12499,6 @@ msgstr "「{title}」を始める"
 msgctxt "L22d5f"
 msgid "Review now"
 msgstr "今すぐ復習する"
-
-#: src/session/next-stop-wait.tsx
-msgctxt "UI79fv"
-msgid "Next lesson"
-msgstr "次のレッスン"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "kY8Exq"

@@ -1,5 +1,6 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { getRun } from "workflow/api";
+import { WorkflowRunNotFoundError } from "workflow/errors";
 import { getWorld } from "workflow/runtime";
 import { finishStalledGoalRebuild } from "../goals/cancel-stalled-rebuild";
 
@@ -25,7 +26,14 @@ function getDevServerStart(): number | null {
 
 type LastSign = { recordedAt: number; resumeAt: number };
 
-export type RunState = { stalled: boolean; status: string | null };
+type RunActivity = "alive" | "ended" | "unknown";
+
+type RunState =
+  | { activity: "alive" | "ended"; stalled: boolean; status: string }
+  | { activity: "ended" | "unknown"; stalled: false; status: null };
+
+const MISSING = { activity: "ended", stalled: false, status: null } as const;
+const UNKNOWN = { activity: "unknown", stalled: false, status: null } as const;
 
 /** Completed, failed or cancelled: the run writes nothing more. */
 export function hasRunEnded(status: string): boolean {
@@ -52,7 +60,7 @@ async function readLastSign(runId: string): Promise<LastSign | null> {
 }
 
 async function isStalled(runId: string): Promise<boolean> {
-  const { data: sign } = await safeAsync(() => readLastSign(runId));
+  const sign = await readLastSign(runId);
 
   if (!sign) {
     return false;
@@ -67,54 +75,68 @@ async function isStalled(runId: string): Promise<boolean> {
   );
 }
 
+async function classifyRun(runId: string, status: string): Promise<RunState> {
+  const stalled = ACTIVE_STATUSES.has(status) && (await isStalled(runId));
+  return { activity: stalled || hasRunEnded(status) ? "ended" : "alive", stalled, status };
+}
+
 async function readState(runId: string): Promise<RunState> {
   const run = getRun(runId);
-
-  if (!(await run.exists)) {
-    return { stalled: false, status: null };
-  }
-
-  const status = await run.status;
-  return { stalled: ACTIVE_STATUSES.has(status) && (await isStalled(runId)), status };
+  return (await run.exists) ? classifyRun(runId, await run.status) : MISSING;
 }
 
-/** A run that can't be read counts as gone: it holds nothing anyone should wait for. */
 export async function readRunState(runId: string): Promise<RunState> {
   const { data, error } = await safeAsync(() => readState(runId));
-  return error ? { stalled: false, status: null } : data;
+
+  if (!error) {
+    return data;
+  }
+
+  return WorkflowRunNotFoundError.is(error) ? MISSING : UNKNOWN;
 }
 
-/**
- * Hooks only protect live runs, so a claim left by a run that crashed, was cancelled, stalled or
- * never existed (seeded content) can be taken over instead of blocking its content forever.
- */
+/** A stalled run is cancelled before it reads as ended, so a caller can release its claim knowing it won't resume. */
+export async function settleRunActivity(runId: string): Promise<RunActivity> {
+  const { data, error } = await safeAsync(() => stopStalledRun(runId));
+  return error ? "unknown" : data.activity;
+}
+
+function requireKnownState(state: RunState, runId: string): RunState {
+  if (state.activity === "unknown") {
+    throw new Error(`Could not observe workflow run ${runId}`);
+  }
+
+  return state;
+}
+
 export async function isRunActive(runId: string): Promise<boolean> {
-  const { stalled, status } = await readRunState(runId);
-  return status !== null && ACTIVE_STATUSES.has(status) && !stalled;
+  const state = requireKnownState(await readRunState(runId), runId);
+  return state.activity === "alive";
 }
 
-/** A stalled run reads as failed so the client offers to start it again. */
 export async function readClientRunStatus(runId: string): Promise<string | null> {
-  const { stalled, status } = await readRunState(runId);
+  const { stalled, status } = requireKnownState(await readRunState(runId), runId);
   return stalled ? "failed" : status;
 }
 
 export async function readClientRun(runId: string) {
-  const { data: run } = await safeAsync(async () => {
+  const { data, error } = await safeAsync(async () => {
     const world = await getWorld();
-    return world.runs.get(runId, { resolveData: "none" });
+    const run = await world.runs.get(runId, { resolveData: "none" });
+    const { stalled } = await classifyRun(runId, run.status);
+
+    return { status: stalled ? "failed" : run.status, workflowName: run.workflowName };
   });
 
-  if (!run) {
-    return null;
+  if (error) {
+    return { outcome: WorkflowRunNotFoundError.is(error) ? "missing" : "unknown" } as const;
   }
 
-  const stalled = ACTIVE_STATUSES.has(run.status) && (await isStalled(runId));
-  return { status: stalled ? "failed" : run.status, workflowName: run.workflowName };
+  return { outcome: "found", ...data } as const;
 }
 
 export async function stopStalledRun(runId: string): Promise<RunState> {
-  const state = await readRunState(runId);
+  const state = requireKnownState(await readRunState(runId), runId);
 
   if (state.stalled) {
     await finishStalledGoalRebuild(runId);

@@ -771,7 +771,7 @@ fun SpokenRecordAction(
     modifier: Modifier = Modifier,
 ) {
     val voice = spokenVoice(step, actions)
-    VoiceAnswerButton(voice, modifier, onBlocked = { voice.blocked = true })
+    VoiceAnswerButton(voice, modifier, onRecordTap = actions::engage, onBlocked = { voice.blocked = true })
 }
 
 /** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */

@@ -287,7 +287,7 @@ fun StudyBlockOpening.route(): AppRoute? =
         }
 
         is StudyBlockOpening.StudyBlockOpeningPreparingLessonValue -> {
-            AppRoute.Session(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
+            AppRoute.Today
         }
 
         is StudyBlockOpening.StudyBlockOpeningEssayValue -> {

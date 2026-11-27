@@ -306,7 +306,7 @@ struct TodayDayView: View {
   }
 
   private var followedLessonIDs: [String] {
-    isCovered ? [] : store.writingLessonIDs(in: view)
+    isCovered ? [] : view.writingLessonIDs
   }
 
   private var language: LanguageTodayView? {

@@ -57,6 +57,8 @@ struct StudyDay: Decodable, Equatable, Sendable {
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
   let id: String?
+  /// The block core offers while the next one's lesson is written or failed.
+  let alternativePosition: Int?
   var blocks: [StudyBlock]
   let brainPower: Int
   let catchUp: CatchUp?
@@ -83,6 +85,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
+  }
+
+  var alternative: StudyBlock? {
+    alternativePosition.flatMap { position in blocks.first { $0.position == position } }
   }
 
   /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
@@ -211,14 +217,12 @@ enum DaySegment {
   case block(StudyBlock, State)
   case held(minutes: Double, ComingLessons, title: String)
 
-  /// How the part is drawn: done, next up, or waiting in its kind's color.
+  /// How the part is drawn: done, next up, or still to do on the track whatever its kind.
   var mark: DaySegments.Segment {
     switch self {
     case .block(_, .done): .done
     case .block(_, .current): .current
-    case .block(let block, .ahead):
-      block.learnKind == .lesson ? .ahead : .kind(block.learnKind.color)
-    case .held: .ahead
+    case .block(_, .ahead), .held: .ahead
     }
   }
 }
@@ -256,6 +260,8 @@ enum DayState: String, UnknownAPIValue, Sendable {
   case underway
   case waiting
 }
+
+typealias LessonStatus = Components.Schemas.LessonGenerationStatus
 
 struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   enum Kind: String, Decodable, Encodable, Sendable {
@@ -312,6 +318,12 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
     let title: String?
   }
 
+  /// As saved when the day was read; only readiness confirms `generating`.
+  struct Lesson: Decodable, Hashable, Sendable {
+    var status: LessonStatus
+    var setAside: Bool
+  }
+
   struct Checkpoint: Codable, Hashable, Sendable {
     struct MockIdentity: Codable, Hashable, Sendable {
       let day: Int?
@@ -341,6 +353,7 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   let extra: Bool
   let fullReview: Bool
   let kind: Kind
+  var lesson: Lesson?
   let lessonId: String?
   let mistakesOnly: Bool
   let mockPreparationReview: Bool?

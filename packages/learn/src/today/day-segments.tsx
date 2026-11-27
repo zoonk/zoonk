@@ -1,6 +1,5 @@
 import { METER_PARTS_CLASS, MeterPart } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type LearnKind, kindFillClass } from "../_components/kind-tile";
 
 const PERCENT = 100;
 
@@ -12,10 +11,6 @@ const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
   done: "bg-success",
 };
 
-function getAheadClass(kind?: LearnKind): string {
-  return kind && kind !== "lesson" ? cn(kindFillClass(kind), "opacity-50") : "";
-}
-
 /**
  * `share` is 0 to 1; `filling` draws a done part filling up from empty. Server components draw it
  * too (the public pages' example day and plan phases).
@@ -23,14 +18,12 @@ function getAheadClass(kind?: LearnKind): string {
 export function DaySegment({
   className,
   filling = false,
-  kind,
   share = 0,
   state,
   weight = 1,
 }: {
   className?: string;
   filling?: boolean;
-  kind?: LearnKind;
   share?: number;
   state: DaySegmentState;
   weight?: number;
@@ -38,12 +31,7 @@ export function DaySegment({
   return (
     <MeterPart
       as="span"
-      className={cn(
-        "relative overflow-hidden",
-        !filling && SEGMENT_STATE_CLASS[state],
-        state === "ahead" && getAheadClass(kind),
-        className,
-      )}
+      className={cn("relative overflow-hidden", !filling && SEGMENT_STATE_CLASS[state], className)}
       data-filling={filling || undefined}
       weight={Math.max(1, weight)}
     >
@@ -58,12 +46,7 @@ export function DaySegment({
   );
 }
 
-export type DayMeterPart = {
-  id: number | string;
-  kind?: LearnKind;
-  share?: number;
-  state: DaySegmentState;
-};
+export type DayMeterPart = { id: number | string; share?: number; state: DaySegmentState };
 
 /** A day of one part draws no meter. */
 export function drawsDayMeter({
@@ -111,12 +94,11 @@ export function DayMeter({
         <DaySegment
           filling={part.id === fillingId}
           key={part.id}
-          kind={part.kind}
           share={part.share}
           state={part.state}
         />
       ))}
-      {held && <DaySegment kind="lesson" state="ahead" />}
+      {held && <DaySegment state="ahead" />}
     </div>
   );
 }
