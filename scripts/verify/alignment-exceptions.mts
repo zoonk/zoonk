@@ -17,7 +17,7 @@ export type AlignmentException = {
 
 export const EXCEPTIONS: AlignmentException[] = [
   {
-    configuration: "phone touch",
+    configuration: "phone touch en-US",
     issue: 3315,
     piece: "page",
     reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
@@ -25,7 +25,7 @@ export const EXCEPTIONS: AlignmentException[] = [
     scenario: "04-writing-may-not-fit",
   },
   {
-    configuration: "phone touch",
+    configuration: "phone touch en-US",
     issue: 3315,
     piece: "page",
     reason: "Android's answer field scrolls a long answer with no sign it continues, on main too",
