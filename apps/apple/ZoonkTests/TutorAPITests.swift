@@ -50,6 +50,21 @@ final class TutorAPITests: XCTestCase {
     XCTAssertTrue(try XCTUnwrap(failure).isLifted(at: until))
   }
 
+  /// The question may have been saved before the error, so the conversation asks it again with the
+  /// same request id rather than as a new question.
+  func testAServerErrorWhileAskingLeavesTheQuestionToAskAgain() async {
+    let api = refusingAPI(status: 500, json: #"{"error":{"code":"INTERNAL","message":"Oops"}}"#)
+
+    do {
+      _ = try await api.ask(
+        .plan(goalId: "goal", conversationId: "conversation"), question: "Why?", suggestion: nil,
+        requestId: "request", token: "token")
+      XCTFail("Expected the ask to fail")
+    } catch {
+      XCTAssertEqual(error as? APIError, .unavailable)
+    }
+  }
+
   private func refusingAPI(status: Int, json: String) -> TutorAPI {
     TutorAPI(
       clients: APIClientFactory(

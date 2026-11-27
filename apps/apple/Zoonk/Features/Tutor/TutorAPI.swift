@@ -304,7 +304,8 @@ private func createFailure(status: Int) -> Error {
   case 401: APIError.unauthorized
   case 404: TutorFailure.gone
   case 400, 422: TutorFailure.invalid
-  default: TutorFailure.failed
+  // The question may have been saved before the error, so it's asked again with the same id.
+  default: APIError.unavailable
   }
 }
 
