@@ -7,6 +7,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LESSON_CHECK_MILLIS
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonGenerationStatus

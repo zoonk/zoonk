@@ -12,6 +12,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LessonReadinessFollower
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.perform
@@ -27,6 +28,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
@@ -61,6 +63,11 @@ class LessonWritingViewModel(
             restart = ::writeAgain,
         )
 
+    private val readiness = LessonReadinessFollower(follower)
+
+    /** Counts the learner's taps and sessions, so a read that started before one doesn't undo it. */
+    private var asks = 0
+
     /** Null while the lesson's state is read. */
     val writing: StateFlow<LessonWriting?> = mutableWriting.asStateFlow()
 
@@ -75,49 +82,58 @@ class LessonWritingViewModel(
     /** Which steps the run reports, as the lesson's readiness says. */
     val kind: StateFlow<GenerationKind> = mutableKind.asStateFlow()
 
-    /** Reads whether a run already writes it; reading never starts one. */
+    /** Starts over for the signed-in session; [followReadiness] reads whether a run already writes it. */
     fun open() {
         val session = sessions.current
-
-        if (session == owner && (
-                mutableWriting.value != null ||
-                    work.coroutineContext.job.children
-                        .any()
-            )
-        ) {
-            return
-        }
+        if (session == owner) return
 
         work.cancel()
         work = openScope()
         follower.stop()
         owner = session
+        asks++
         mutableWriting.value = null
         mutableAlternative.value = null
         mutableWarmUpId.value = null
+    }
 
-        if (session == null) return
+    /**
+     * While the screen shows: reads the lesson's readiness, and keeps reading it while the lesson is
+     * written or failed, so the lesson, a stopped run and another device's retry show as the server
+     * says. Reading never starts a run.
+     */
+    suspend fun followReadiness() {
+        if (owner == null) return
+        var asked = asks
 
-        launchWork {
-            val readiness =
-                try {
-                    store.api.readiness(session, lessonId)
-                } catch (e: ApiException) {
-                    null
+        readiness.follow(
+            read = {
+                mutableWriting.first { it == null || it == LessonWriting.Writing || it == LessonWriting.Failed }
+                asked = asks
+                cache.mutate { store.api.readiness(it, lessonId) }.also {
+                    // A first read that fails offers the start, which asks again.
+                    if (it is MutationResult.Failed && mutableWriting.value == null) mutableWriting.value = LessonWriting.NotStarted
                 }
-            mutableAlternative.value = readiness?.alternative
-            mutableWarmUpId.value = readiness?.warmUpId?.toString()
-            mutableKind.value = if (readiness?.kind == LessonReadiness.Kind.CHALLENGE) GenerationKind.Challenge else GenerationKind.Lesson
-            val generationId = readiness?.generationId
-
-            when {
-                readiness?.status == LessonReadiness.Status.READY -> mutableWriting.value = LessonWriting.Ready
-                readiness?.status == LessonReadiness.Status.GENERATING && generationId != null -> follow(generationId)
-                readiness?.setAside == true -> mutableWriting.value = LessonWriting.SetAside
-                readiness?.status == LessonReadiness.Status.FAILED -> mutableWriting.value = LessonWriting.Failed
-                else -> mutableWriting.value = LessonWriting.NotStarted
-            }
+            },
+        ) { answer ->
+            // A tap's answer that came in during the read is newer than it.
+            if (asked == asks) show(answer)
+            asked != asks || (answer.status != LessonReadiness.Status.READY && !answer.setAside)
         }
+    }
+
+    private fun show(readiness: LessonReadiness) {
+        mutableAlternative.value = readiness.alternative
+        mutableWarmUpId.value = readiness.warmUpId?.toString()
+        mutableKind.value = if (readiness.kind == LessonReadiness.Kind.CHALLENGE) GenerationKind.Challenge else GenerationKind.Lesson
+        mutableWriting.value =
+            when {
+                readiness.status == LessonReadiness.Status.READY -> LessonWriting.Ready
+                readiness.status == LessonReadiness.Status.GENERATING && readiness.generationId != null -> LessonWriting.Writing
+                readiness.setAside -> LessonWriting.SetAside
+                readiness.status == LessonReadiness.Status.FAILED -> LessonWriting.Failed
+                else -> LessonWriting.NotStarted
+            }
     }
 
     /** Only from the learner's tap: "Start this lesson", or "Try again" after it couldn't start or a slow-down. */
@@ -131,6 +147,7 @@ class LessonWritingViewModel(
         if (!canStart) return
 
         mutableWriting.value = LessonWriting.Starting
+        asks++
         launchWork {
             when (val outcome = write()) {
                 is WriteOutcome.Started -> writingStarted(outcome.generation)
@@ -155,7 +172,7 @@ class LessonWritingViewModel(
 
     private fun follow(generationId: String) {
         mutableWriting.value = LessonWriting.Writing
-        follower.follow(generationId)
+        readiness.followRun(generationId)
     }
 
     /** A run that stopped writes again; a refusal leaves the wait for what refused it. */

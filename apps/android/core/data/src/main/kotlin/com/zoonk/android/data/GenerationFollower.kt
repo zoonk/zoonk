@@ -132,6 +132,10 @@ class GenerationFollower(
         }
     }
 
+    /** Whether this still follows [generationId], or is starting a run again that may be it. */
+    fun isFollowing(generationId: String): Boolean =
+        job?.isActive == true && (followed == null || generationId == followed || generationId == state.value.id)
+
     fun stop() {
         job?.cancel()
         job = null

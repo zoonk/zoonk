@@ -44,8 +44,11 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -427,7 +430,11 @@ private fun WaitingLesson(
 
     val summary by app.learnerSummary.summary.collectShown()
 
-    LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect((session as? SessionState.SignedIn)?.session) {
+        viewModel.open()
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.followReadiness() }
+    }
 
     LessonWaitingScreen(
         outline,

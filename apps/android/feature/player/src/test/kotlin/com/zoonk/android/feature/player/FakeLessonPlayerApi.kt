@@ -120,6 +120,7 @@ class FakeLessonPlayerApi(
     val readinessStates = ArrayDeque<String>()
     var readinessKind = "lesson"
     var readinessSetAside = false
+    var readinessGenerationId = "gen-1"
     var warmUpId: String? = null
     var writes = 0
     var writeResponse: suspend () -> LessonGeneration = { ApiJson.decodeFromString("""{"generationId":"gen-1","status":"generating"}""") }
@@ -246,7 +247,7 @@ class FakeLessonPlayerApi(
         val status = readinessStates.removeFirstOrNull() ?: throw ApiException(ApiError.Network)
         val warmUp = warmUpId?.let { "\"$it\"" } ?: "null"
         return ApiJson.decodeFromString(
-            """{"alternative":null,"generationId":"gen-1","kind":"$readinessKind","setAside":$readinessSetAside,"status":"$status","warmUpId":$warmUp}""",
+            """{"alternative":null,"generationId":"$readinessGenerationId","kind":"$readinessKind","setAside":$readinessSetAside,"status":"$status","warmUpId":$warmUp}""",
         )
     }
 

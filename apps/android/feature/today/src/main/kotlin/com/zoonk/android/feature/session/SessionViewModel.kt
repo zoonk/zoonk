@@ -11,6 +11,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LessonReadinessFollower
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
@@ -20,9 +21,7 @@ import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.StudyBlockLesson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import java.util.UUID
 
 enum class SessionAction { Start, Stop, KeepGoing, ExtraTime }
@@ -54,8 +53,6 @@ class SessionViewModel(
     var lesson by mutableStateOf<LessonState?>(null)
         private set
 
-    private var followedRun: String? = null
-
     private val follower =
         GenerationFollower(
             kind = GenerationKind.Lesson,
@@ -67,6 +64,8 @@ class SessionViewModel(
                     override suspend fun status(id: String) = generations().status(id)
                 },
         )
+
+    private val lessonReadiness = LessonReadinessFollower(follower)
 
     /** The run writing the shown step's lesson. */
     val run: StateFlow<GenerationRun> = follower.run
@@ -182,41 +181,15 @@ class SessionViewModel(
         shown: StudyBlockLesson?,
         readDay: suspend () -> Unit,
     ) {
-        try {
-            var last = shown?.let { it.status.value to it.setAside }
-            while (true) {
-                // Taken before the read, since following its run can fail at once.
-                val seen = follower.run.value
-                when (val read = cache.mutate { readiness(it, lessonId) }) {
-                    MutationResult.Obsolete -> {
-                        return
-                    }
-
-                    is MutationResult.Failed -> {}
-
-                    is MutationResult.Done -> {
-                        val answer = read.value
-                        val status = answer.status
-                        if (status != LessonReadiness.Status.READY) lesson = answer.toState(lessonId)
-                        if (status == LessonReadiness.Status.GENERATING) follow(answer.generationId)
-                        val moved = last != status.value to answer.setAside
-                        last = status.value to answer.setAside
-                        if (moved || status == LessonReadiness.Status.READY) readDay()
-                        if (status == LessonReadiness.Status.NOT_STARTED || answer.setAside) return
-                    }
-                }
-                withTimeoutOrNull(LESSON_CHECK_MILLIS) { follower.run.first { it != seen && it.status == GenerationRun.Status.Failed } }
-            }
-        } finally {
-            follower.stop()
-            followedRun = null
+        var last = shown?.let { it.status.value to it.setAside }
+        lessonReadiness.follow(read = { cache.mutate { readiness(it, lessonId) } }) { answer ->
+            val status = answer.status
+            if (status != LessonReadiness.Status.READY) lesson = answer.toState(lessonId)
+            val moved = last != status.value to answer.setAside
+            last = status.value to answer.setAside
+            if (moved || status == LessonReadiness.Status.READY) readDay()
+            status != LessonReadiness.Status.NOT_STARTED && !answer.setAside
         }
-    }
-
-    private fun follow(generationId: String?) {
-        if (generationId == null || (generationId == followedRun && follower.run.value.status != GenerationRun.Status.Failed)) return
-        followedRun = generationId
-        follower.follow(generationId)
     }
 
     fun lessonWritten(position: Long) {
@@ -268,8 +241,6 @@ class SessionViewModel(
         }
     }
 }
-
-internal const val LESSON_CHECK_MILLIS = 5_000L
 
 /** Main's `NextStopLesson`; [Unknown] until readiness answers for a step whose day read didn't say. */
 enum class NextStopLesson { Ready, Unknown, Writing, Failed }
