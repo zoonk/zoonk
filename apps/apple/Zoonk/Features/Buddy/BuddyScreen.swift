@@ -526,13 +526,15 @@ private struct BuddyContent: View {
           places.open(.energy)
         } label: {
           Label {
-            if let current = status.energy.current {
+            HStack(spacing: 4) {
               Text(
-                "\((current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) Energy",
-                tableName: "Buddy",
-                comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
-            } else {
-              Text("Energy", tableName: "Progress")
+                "\(name)'s Energy", tableName: "Buddy",
+                comment: "The buddy's Energy; the argument is its name")
+              if let current = status.energy.current {
+                Text(
+                  (current / 100).formatted(
+                    .percent.precision(.fractionLength(0)).locale(.appLanguage)))
+              }
             }
           } icon: {
             Image(systemName: "bolt.fill")
@@ -542,17 +544,27 @@ private struct BuddyContent: View {
           .contentShape(.rect)
         }
 
-        if let today = status.today, !today.missions.isEmpty {
-          Button {
-            isDayShown = true
-          } label: {
+        Button {
+          isDayShown = true
+        } label: {
+          if let today = status.today, !today.missions.isEmpty {
             Label {
-              Text(
-                "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
-                tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
+              HStack(spacing: 4) {
+                Text("Today's missions", tableName: "Buddy")
+                Text(
+                  "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
+                  tableName: "Buddy", comment: "Glasses earned of all of them")
+              }
             } icon: {
               Image(systemName: "checklist")
             }
+            .frame(minHeight: 44)
+            .contentShape(.rect)
+          } else {
+            Text(
+              "\(name) today", tableName: "Buddy",
+              comment: "Title of the buddy's day; the argument is its name"
+            )
             .frame(minHeight: 44)
             .contentShape(.rect)
           }
