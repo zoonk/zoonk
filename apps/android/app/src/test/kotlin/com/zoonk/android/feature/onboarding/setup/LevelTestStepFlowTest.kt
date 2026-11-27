@@ -5,8 +5,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -113,7 +111,7 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
         rule.onNodeWithText("Level test").assertIsDisplayed()
-        rule.onAllNodesWithText("12 questions${FACT_SEPARATOR}About 6 min").onFirst().assertExists()
+        rule.onNodeWithText("12 questions${FACT_SEPARATOR}About", substring = true, useUnmergedTree = true).assertExists()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)

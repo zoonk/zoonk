@@ -86,7 +86,7 @@ internal fun ColumnScope.FocusTestOffer(
                 focus -> stringResource(R.string.focustest_find_focus)
                 else -> stringResource(R.string.focustest_find_start)
             },
-        sentence = stringResource(if (focus) R.string.focustest_offer_line_focus else R.string.focustest_offer_line),
+        sentence = stringResource(if (focus) R.string.focustest_offer_sentence else R.string.focustest_offer_line),
         rows = if (onPlan) listOf(testRow) else listOf(firstLessonRow(), testRow),
         initial = TestRow.Quick,
         pressed = pressed,

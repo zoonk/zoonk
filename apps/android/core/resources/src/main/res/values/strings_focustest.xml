@@ -6,7 +6,7 @@
     <string name="focustest_find_focus">Find what to study most</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Already know some of this?</string>
-    <string name="focustest_offer_line_focus">A test shows what you already know, so more of your time goes to what you need most.</string>
+    <string name="focustest_offer_sentence">A test shows what you already know, so more of your time goes to what you need most.</string>
     <string name="focustest_offer_line">This test shows what you already know, so your plan can skip it.</string>
     <string name="focustest_start">Start the test</string>
     <string name="focustest_skip_note">You can take the test later, from your plan.</string>
