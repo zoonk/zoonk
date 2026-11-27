@@ -7,7 +7,10 @@ import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.Analytics
 import com.zoonk.android.data.AnalyticsSdk
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.BuildConfig
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.DeviceRestoreKeys
@@ -21,6 +24,7 @@ import com.zoonk.android.data.LiveSessionApi
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.data.RestoreKeys
+import com.zoonk.android.data.SessionApi
 import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
@@ -136,6 +140,7 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.SpeechClipRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -159,6 +164,7 @@ class AppContainer private constructor(
     previewAccess: LearnerAccess?,
     analyticsSdk: AnalyticsSdk?,
     val timeSource: TimeSource = TimeSource.Monotonic,
+    previewAccount: MeResponse? = null,
 ) {
     constructor(context: Context, analyticsSdk: AnalyticsSdk?) : this(
         context,
@@ -180,7 +186,7 @@ class AppContainer private constructor(
             ?.let { PlayIntegrity(context, it, scope) }
     val sessions: SessionStore =
         SessionStore(
-            api = LiveSessionApi(api, integrity),
+            api = previewAccount?.let(::PreviewSessionApi) ?: LiveSessionApi(api, integrity),
             appleClientId = BuildConfig.APPLE_CLIENT_ID,
             appleReflectorUrl = api.baseUrl.resolve("/auth/apple/android").toString(),
             credentials = credentials,
@@ -373,12 +379,23 @@ class AppContainer private constructor(
     }
 
     companion object {
-        /** For previews and shell tests: no stored session and no requests; screens open as for [access]. */
+        /**
+         * For previews and shell tests: no requests; screens open as for [access]. With [account], the frame shows
+         * that learner signed in once `sessions.restore()` runs; without, no session is stored.
+         */
         fun preview(
             context: Context,
             access: LearnerAccess = LearnerAccess.Learner,
             timeSource: TimeSource = TimeSource.Monotonic,
-        ) = AppContainer(context, NoStoredSession, access, analyticsSdk = null, timeSource)
+            account: MeResponse? = null,
+        ) = AppContainer(
+            context,
+            account?.let(::PreviewCredentials) ?: NoStoredSession,
+            access,
+            analyticsSdk = null,
+            timeSource,
+            previewAccount = account,
+        )
     }
 }
 
@@ -413,6 +430,36 @@ internal fun learnerAccess(
 /** Main's sidebar follows every goal but quick explanations, until archived. */
 private val LearnerSummaryGoal.isFollowed: Boolean
     get() = kind != LearnerSummaryGoal.Kind.EXPLAIN && status != LearnerSummaryGoal.Status.ARCHIVED
+
+/** A preview's stored session for [account], read once at restore. */
+private class PreviewCredentials(
+    private val account: MeResponse,
+) : SessionCredentials by NoStoredSession {
+    override suspend fun read() = StoredSession(AuthenticatedSession(account.user.id.toString(), "preview", "preview"))
+}
+
+/** A preview's sign-in answers: [account] for its own session, and nothing else reaches a server. */
+private class PreviewSessionApi(
+    private val account: MeResponse,
+) : SessionApi {
+    override suspend fun currentUser(token: String) = account
+
+    override suspend fun revoke(token: String) = Unit
+
+    override suspend fun apple(
+        request: com.zoonk.api.models.AppleSessionRequest,
+        guest: AuthenticatedSession?,
+    ): String = throw ApiException(ApiError.Unavailable)
+
+    override suspend fun challenge(): String = throw ApiException(ApiError.Unavailable)
+
+    override suspend fun registerRestoreKey(
+        session: AuthenticatedSession,
+        registrationResponseJson: String,
+    ) = throw ApiException(ApiError.Unavailable)
+
+    override suspend fun restoreKeySession(authenticationResponseJson: String) = throw ApiException(ApiError.Unavailable)
+}
 
 private object NoStoredSession : SessionCredentials {
     override suspend fun read(): StoredSession? = null

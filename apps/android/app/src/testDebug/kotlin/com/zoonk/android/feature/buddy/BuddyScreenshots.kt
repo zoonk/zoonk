@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.buddy
 
 import android.graphics.Bitmap
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -8,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
@@ -21,6 +21,9 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
+import com.zoonk.android.data.ANA
+import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.account
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.today.GoalMistakes
 import com.zoonk.android.feature.tutor.BuddyConversation
@@ -41,12 +44,14 @@ import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearnerSummaryLevel
 import com.zoonk.api.models.Memory
 import com.zoonk.api.models.MistakeListAvailability
+import kotlinx.coroutines.launch
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -136,29 +141,37 @@ class BuddyScreenshots {
         sheet: Boolean = false,
         more: Boolean = false,
     ) {
+        // A signed-in learner, as only one gets the list: the session first, since a new session drops what was read before it.
+        val app = AppContainer.preview(compose.activity, account = account(ANA))
+        app.scope.launch { app.sessions.restore() }
+        // The restore writes the learner's drafts' folder off the main thread before it signs in.
+        repeat(RESTORE_TRIES) {
+            shadowOf(Looper.getMainLooper()).idle()
+            if (app.sessions.state.value is SessionState.SignedIn) return@repeat
+            Thread.sleep(RESTORE_WAIT_MILLIS)
+        }
+        check(app.sessions.state.value is SessionState.SignedIn)
         compose.setContent {
-            val context = LocalContext.current
-            val app =
-                remember {
-                    AppContainer.preview(context).apply {
-                        buddy.status.replace(status)
-                        learnerSummary.summary.replace(
-                            learnerSummary().copy(level = LearnerSummaryLevel(LearnerSummaryLevel.Color.WHITE, 2)),
-                        )
-                        tutor.conversations[GOAL].replace(
-                            BuddyConversationList(rows, current, nextCursor = if (more) CONVERSATION else null),
-                        )
-                        tutor.threads[
-                            TutorThreadKey.Plan(
-                                GOAL,
-                                CONVERSATION,
-                            ),
-                        ].replace(TutorThread(turns, hasMore = false, nextCursor = null))
-                        today.mistakes[UUID.fromString(GOAL)]
-                            .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
-                        memory.memory.replace(Memory(enabled = true, facts = emptyList()))
-                    }
+            remember {
+                app.apply {
+                    buddy.status.replace(status)
+                    learnerSummary.summary.replace(
+                        learnerSummary().copy(level = LearnerSummaryLevel(LearnerSummaryLevel.Color.WHITE, 2)),
+                    )
+                    tutor.conversations[GOAL].replace(
+                        BuddyConversationList(rows, current, nextCursor = if (more) CONVERSATION else null),
+                    )
+                    tutor.threads[
+                        TutorThreadKey.Plan(
+                            GOAL,
+                            CONVERSATION,
+                        ),
+                    ].replace(TutorThread(turns, hasMore = false, nextCursor = null))
+                    today.mistakes[UUID.fromString(GOAL)]
+                        .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
+                    memory.memory.replace(Memory(enabled = true, facts = emptyList()))
                 }
+            }
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark) {
                 Surface {
@@ -195,6 +208,8 @@ class BuddyScreenshots {
         const val BLOCK = "8c1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
 
         const val CONVERSATION = "9d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val RESTORE_TRIES = 100
+        const val RESTORE_WAIT_MILLIS = 20L
 
         val ROWS by lazy {
             val now = Clock.System.now()
