@@ -43,6 +43,7 @@ import kotlinx.serialization.json.JsonObject
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -103,6 +104,29 @@ class BuddyViewModelTest {
             assertEquals(blank, restored.openConversation(GOAL))
             assertEquals("Why osmosis?", restored.takeAsk(blank))
             assertNull(restored.takeAsk(blank))
+        }
+
+    @Test
+    fun aLinkedConversationThatIsntFoundGivesWayToWhatAVisitOpens() =
+        runTest(dispatcher) {
+            val vm = buddy()
+            vm.choose(GOAL, AppRoute.Buddy(conversationId = LINKED), list = null)
+
+            // A read answering for another conversation changes nothing.
+            vm.unreadable(GOAL, EARLIER, conversations(current = EARLIER))
+            assertEquals(LINKED, vm.openConversation(GOAL))
+
+            vm.unreadable(GOAL, LINKED, conversations(current = EARLIER))
+            assertEquals(EARLIER, vm.openConversation(GOAL))
+
+            val blank = buddy()
+            blank.choose(GOAL, AppRoute.Buddy(conversationId = LINKED), list = null)
+            blank.unreadable(GOAL, LINKED, list = null)
+            assertNull(blank.openConversation(GOAL))
+            blank.choose(GOAL, AppRoute.Buddy(conversationId = LINKED), conversations(current = null))
+            val chosen = blank.openConversation(GOAL)
+            assertNotNull(chosen)
+            assertNotEquals(LINKED, chosen)
         }
 
     @Test

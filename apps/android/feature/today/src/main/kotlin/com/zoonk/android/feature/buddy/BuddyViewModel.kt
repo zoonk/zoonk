@@ -65,6 +65,22 @@ class BuddyViewModel internal constructor(
         if (current != null) show(goalId, current) else startNew(goalId)
     }
 
+    /**
+     * [conversationId] answered not found (a link to another goal's conversation, or someone else's):
+     * the page opens what a visit opens instead, once the [list] is read.
+     */
+    fun unreadable(
+        goalId: String,
+        conversationId: String,
+        list: BuddyConversationList?,
+    ) {
+        if (openConversation(goalId) != conversationId) return
+        open = null
+        saved.remove<String>(OPEN_GOAL)
+        saved.remove<String>(OPEN_ID)
+        choose(goalId, AppRoute.Buddy(), list)
+    }
+
     fun show(
         goalId: String,
         conversationId: String,
