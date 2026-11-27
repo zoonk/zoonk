@@ -206,23 +206,21 @@ class MindMapStore(
     suspend fun save(
         goalId: UUID,
         target: MindMapTarget,
-        chapterId: UUID?,
         saved: Boolean,
     ): MutationResult<SavedMindMapState> {
         val result = cache.mutate(invalidating = setOf(DataDomain.SavedMindMaps)) { api.save(it, goalId, target, saved) }
-        if (result is MutationResult.Done) showSaved(goalId, target, chapterId, result.value.saved)
+        if (result is MutationResult.Done) showSaved(goalId, target, result.value.saved)
         return result
     }
 
-    private val queue = Saves<MindMapTarget>(cache.scope)
+    private val queue = Saves<MindMapTarget>(cache)
 
-    /** A screen's [visit] to the map saves, saving them from [goalId]; [chapterOf] is the chapter each one's save reads again. */
+    /** A screen's [visit] to the map saves, saving them from [goalId]. */
     fun saves(
         visit: Visit,
         goalId: UUID,
-        chapterOf: (MindMapTarget) -> UUID?,
     ) = queue.on(visit) { target, saved ->
-        when (val result = save(goalId, target, chapterOf(target), saved)) {
+        when (val result = save(goalId, target, saved)) {
             is MutationResult.Done -> MutationResult.Done(result.value.saved)
             is MutationResult.Failed -> result
             MutationResult.Obsolete -> MutationResult.Obsolete
@@ -232,7 +230,6 @@ class MindMapStore(
     private fun showSaved(
         goalId: UUID,
         target: MindMapTarget,
-        chapterId: UUID?,
         saved: Boolean,
     ) {
         when (target.kind) {
@@ -244,10 +241,8 @@ class MindMapStore(
             }
 
             SavedMindMapKind.LESSON -> {
-                chapterId?.let { id ->
-                    lessonMaps[ChapterKey(goalId, id)].update { maps ->
-                        maps.copy(lessons = maps.lessons.map { if (it.lessonId == target.id) it.copy(saved = saved) else it })
-                    }
+                lessonMaps.update({ it.goalId == goalId }) { maps ->
+                    maps.copy(lessons = maps.lessons.map { if (it.lessonId == target.id) it.copy(saved = saved) else it })
                 }
             }
         }

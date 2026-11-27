@@ -13,13 +13,15 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavesTest {
     private val dispatcher = StandardTestDispatcher()
+    private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val sessions = FakeSession(ana)
     private val visit = Visit()
     private val sent = mutableListOf<Pair<String, Boolean>>()
     private var hold: CompletableDeferred<Unit>? = null
     private var answer: (Boolean) -> MutationResult<Boolean> = { MutationResult.Done(it) }
 
     private fun TestScope.saves(
-        queue: Saves<String> = Saves(this),
+        queue: Saves<String> = Saves(AppCache(sessions, this)),
         on: Visit = visit,
     ) = queue.on(on) { key, saved ->
         sent += key to saved
@@ -51,7 +53,7 @@ class SavesTest {
     @Test
     fun aTapOnAnotherScreenShowsOnEveryScreenAndAFailureIsSaidWhereTheNewestTapWas() =
         runTest(dispatcher) {
-            val queue = Saves<String>(this)
+            val queue = Saves<String>(AppCache(sessions, this))
             val list = saves(queue)
             val player = saves(queue, Visit())
             val first = CompletableDeferred<Unit>().also { hold = it }
@@ -112,6 +114,36 @@ class SavesTest {
             visit.end()
 
             assertNull(saves.states.value["cells"])
+        }
+
+    @Test
+    fun anAnswerForTheLastSessionNeverTouchesTheNextOnesSaves() =
+        runTest(dispatcher) {
+            val cache = AppCache(sessions, this)
+            val queue = Saves<String>(cache)
+            val tokens = mutableListOf<Pair<String, Boolean>>()
+            val write: suspend (String, Boolean) -> MutationResult<Boolean> = { _, saved ->
+                cache.mutate { session ->
+                    tokens += session.bearerToken to saved
+                    hold?.await()
+                    saved
+                }
+            }
+            val first = CompletableDeferred<Unit>().also { hold = it }
+
+            queue.on(visit, write).set("cells", false)
+            advanceUntilIdle()
+            sessions.session = AuthenticatedSession("bia", "token-b", "local-b")
+            val next = queue.on(Visit(), write)
+            assertNull(next.states.value["cells"])
+
+            next.set("cells", true)
+            hold = null
+            first.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf("token-a" to false, "token-b" to true), tokens)
+            assertEquals(true, next.states.value["cells"])
         }
 
     @Test

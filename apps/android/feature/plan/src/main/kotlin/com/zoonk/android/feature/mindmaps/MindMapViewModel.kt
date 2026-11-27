@@ -64,10 +64,7 @@ class MindMapViewModel(
             if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
 
-    /** The chapter each map's save reads again: a lesson map's lives in its chapter's lesson maps. */
-    private val chapterOf = mutableMapOf<MindMapTarget, UUID?>()
-
-    private val mapSaves = store.saves(visit, goalId) { chapterOf[it] }
+    private val mapSaves = store.saves(visit, goalId)
 
     /** A map's save that didn't, which the screen says in the app's snackbars. */
     val saveFailed get() = mapSaves.failed
@@ -78,10 +75,8 @@ class MindMapViewModel(
     /** Shows [saved] at once and sends it; quick taps end on the last one, and a failure shows the reads again and says so. */
     fun save(
         target: MindMapTarget,
-        chapterId: UUID?,
         saved: Boolean,
     ) {
-        chapterOf[target] = chapterId
         mapSaves.set(target, saved)
     }
 

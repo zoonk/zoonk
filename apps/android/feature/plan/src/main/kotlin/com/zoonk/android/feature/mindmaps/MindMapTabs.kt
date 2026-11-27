@@ -135,7 +135,7 @@ private fun ChapterRow(
     val shown = shownMindMap(map.status.shown, local)
     val ready = shown == MindMapShown.Ready
     val saved = ready && actions.saved(target, map.saved)
-    val toggle = { actions.page.save(target, map.chapterId, !saved) }
+    val toggle = { actions.page.save(target, !saved) }
 
     SaveSwipe(saved, mapSaveWords(), onToggle = toggle.takeIf { ready }) {
         MindMapRow(
@@ -499,7 +499,7 @@ internal fun LazyListScope.savedTab(
                     detail = entry.kindLabel(),
                     remove = stringResource(R.string.mindmaps_remove),
                     spoken = stringResource(R.string.mindmaps_remove_spoken, entry.title),
-                    onRemove = { actions.page.save(entry.target, entry.chapterId, false) },
+                    onRemove = { actions.page.save(entry.target, false) },
                     leading = { MapMark(null, MindMapShown.Unavailable) },
                 )
             }
@@ -525,7 +525,7 @@ private fun SavedRow(
 ) {
     val lesson = entry.kind == SavedMindMapKind.LESSON
     val saved = actions.saved(entry.target, true)
-    val toggle = { actions.page.save(entry.target, entry.chapterId, !saved) }
+    val toggle = { actions.page.save(entry.target, !saved) }
     val words = mapSaveWords()
     var menu by remember { mutableStateOf(false) }
     val place = MapPlace(entry.chapterId.toString(), entry.targetId.toString().takeIf { lesson })

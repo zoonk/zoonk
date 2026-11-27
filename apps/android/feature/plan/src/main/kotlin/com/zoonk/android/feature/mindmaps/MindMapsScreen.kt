@@ -243,7 +243,7 @@ internal data class MindMapsActions(
     val create: (UUID) -> Unit,
     val navigate: (AppRoute) -> Unit,
     val createAll: () -> Unit = {},
-    val save: (target: MindMapTarget, chapterId: UUID?, saved: Boolean) -> Unit = { _, _, _ -> },
+    val save: (target: MindMapTarget, saved: Boolean) -> Unit = { _, _ -> },
     val study: (tab: StudyTab, place: MapPlace?) -> Unit = { _, _ -> },
 )
 
