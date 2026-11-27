@@ -49,7 +49,7 @@
   "placementtest_test_the_rest": "b8add9d1930c6d7302f7a67cf2b02ea5340494a846a331306df7819d1fc42f48",
   "placementtest_title": "6b9565f72ab097bc91ed0b3de292b9056249128d8cd31880a9f9abf491e157ed",
   "placementtest_up_next": "fd500bc5da44eace258e4d04ae9e2565d4e332422603803b955bdfb09dff385f",
-  "placementtest_up_to_questions": "387fa99af9eded21d57e732799ae4cf8c4e42132074f505abe9201bc2e3fcfcd",
+  "placementtest_up_to_questions": "0ccd3e94b3e10efa225f5e5f0b5bcd9dc8031051e7e2607c0838075eb34adad0",
   "placementtest_where_to_start": "0659a1883759d0b53f6317fe1edbf5ec4d21fd5c012b9285b9c794566d6b6638",
   "placementtest_your_level": "07adfc6bdbc8d4bf2c275d9a7687a94fbe31300409f3c17df5439be8a7dd94f8"
 }
@@ -111,7 +111,7 @@
     <!-- The most questions a test asks. It can end sooner. -->
     <plurals name="placementtest_up_to_questions">
         <item quantity="one">En fazla %d soru</item>
-        <item quantity="other">En fazla En çok %d soru</item>
+        <item quantity="other">En fazla %d soru</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">%2$d bölümün %1$d. bölümü</string>

@@ -10251,7 +10251,7 @@ msgstr "Soru {number, number} / {total, number}"
 #: src/placement-test/use-test-facts.ts
 msgctxt "HYkp5w"
 msgid "Up to {count, plural, one {# question} other {# questions}}"
-msgstr "En fazla {count, plural, one {# soru} other {En çok # soru}}"
+msgstr "En fazla {count, plural, one {# soru} other {# soru}}"
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts

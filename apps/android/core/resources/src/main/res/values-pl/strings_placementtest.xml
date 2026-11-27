@@ -49,7 +49,7 @@
   "placementtest_test_the_rest": "b30ebc54f2fa7c56b0fd08d6e21f45ee514382aee9486498b1a6b7e85a5f9d67",
   "placementtest_title": "17db165ceda770c13ecd933455c0d75886a5dab6cf4cece91999e820c72ac5cb",
   "placementtest_up_next": "93da1716da984a71aec8d04b6afa02dd7f1443156aa6ecb003d9afa3427ecf6d",
-  "placementtest_up_to_questions": "e894d67f9baab1f826c64dfbe4e661c9218015881a57b2ad53120af8ebfc3b1f",
+  "placementtest_up_to_questions": "a548ab2059dcf140507aa266981f939f6a4d2ff75ad3811ef713c1eda48e357e",
   "placementtest_where_to_start": "642aae406f331671ea258deb9be86551845dff1ddc5bcab7d92c0b522a4291db",
   "placementtest_your_level": "dbf6f8bcdd29802acff768a7bcd0378c5195353cb97acec081bf8d9af4461f24"
 }
@@ -115,9 +115,9 @@
     <!-- The most questions a test asks. It can end sooner. -->
     <plurals name="placementtest_up_to_questions">
         <item quantity="one">Maksymalnie %d pytanie</item>
-        <item quantity="few">Maksymalnie %d pytania maksymalnie</item>
+        <item quantity="few">Maksymalnie %d pytania</item>
         <item quantity="many">Maksymalnie %d pytań</item>
-        <item quantity="other">Maksymalnie maksymalnie %d pytania</item>
+        <item quantity="other">Maksymalnie %d pytania</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">Część %1$d z %2$d</string>
