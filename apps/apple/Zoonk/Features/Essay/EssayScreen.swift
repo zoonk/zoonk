@@ -231,6 +231,7 @@ private struct EssayContent: View {
           }
         }
         .presentationDetents(sheet == .question ? [.large] : [.medium, .large])
+        .zoonkSheet()
       }
       .feedbackSheet(
         isPresented: $showsSaveReport,
