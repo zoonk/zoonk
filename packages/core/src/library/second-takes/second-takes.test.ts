@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -30,9 +32,11 @@ const FIRST_MAP = {
 } as const;
 
 async function firstLesson({
+  homeChapterId = null,
   ownerId = null,
   skillId,
 }: {
+  homeChapterId?: string | null;
   ownerId?: string | null;
   skillId: string;
 }) {
@@ -40,6 +44,7 @@ async function firstLesson({
     canDo: "Compare the size of unit fractions.",
     contentStatus: "completed",
     description: "Compare equal parts of the same whole.",
+    homeChapterId,
     level: "intermediate",
     ownerId,
     summary: { ...FIRST_MAP, ideas: [...FIRST_MAP.ideas] },
@@ -206,12 +211,14 @@ describe(ensureSecondTake, () => {
   });
 
   it("keeps shared spec inputs on Library content, with check and item distractors", async () => {
-    const [user, skill] = await Promise.all([
+    const [user, skill, course] = await Promise.all([
       userFixture({ name: "LEARNER_NAME_SENTINEL" }),
       skillFixture({ name: "Compare unit fractions" }),
+      courseFixture({ title: "Mathematics" }),
     ]);
 
-    const source = await firstLesson({ skillId: skill.id });
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id, title: "Fractions" });
+    const source = await firstLesson({ homeChapterId: chapter.id, skillId: skill.id });
 
     const [item] = await Promise.all([
       itemFixture({
@@ -279,6 +286,8 @@ describe(ensureSecondTake, () => {
     const inputs = await loadLessonSpecInputs(lessonId ?? "");
 
     expect(inputs?.prompt).toMatchObject({
+      chapterTitle: "Fractions",
+      courseTitle: "Mathematics",
       language: "en",
       lessonCanDo: source.canDo,
       lessonDescription: source.description,

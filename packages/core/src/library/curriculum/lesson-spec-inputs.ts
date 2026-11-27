@@ -43,16 +43,17 @@ async function loadSecondTakeSpecInputs({
     return null;
   }
 
-  const country = getLessonCountry({ course: source.homeChapter?.homeCourse, skill });
+  const chapter = source.homeChapter;
+  const country = getLessonCountry({ course: chapter?.homeCourse, skill });
   const wrongAnswers = await loadSecondTakeWrongAnswers({ lessonId: source.id, skillId });
 
   return {
     homeChapterId: null,
     prompt: {
       activityTemplates: listPlannerTemplates(),
-      chapterTitle: source.title,
+      chapterTitle: chapter?.title ?? source.title,
       country,
-      courseTitle: source.title,
+      courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? source.title,
       isPrivate: ownerId !== null,
       language,
       lessonCanDo: source.canDo ?? undefined,

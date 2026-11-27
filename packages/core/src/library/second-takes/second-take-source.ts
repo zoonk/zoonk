@@ -20,7 +20,9 @@ export async function findSecondTakeSource({
     select: {
       canDo: true,
       description: true,
-      homeChapter: { select: { homeCourse: { select: { country: true } } } },
+      homeChapter: {
+        select: { homeCourse: { select: { country: true, title: true } }, title: true },
+      },
       id: true,
       identityKey: true,
       level: true,

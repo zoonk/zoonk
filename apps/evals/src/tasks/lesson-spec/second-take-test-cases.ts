@@ -6,9 +6,11 @@ import { type LessonSpecExpected } from "./visual-test-cases";
 
 const SECOND_TAKE_EXPECTATIONS = `
   - Exactly one lesson, never split, whose only skill is the one given with its name kept, at the given level: a second explanation for learners who studied the lesson in FIRST_LESSON_MAP and still miss the skill in the ways WRONG_ANSWERS lists
-  - Code checks the count of 6 to 10 screens, that the guess is the second screen, that \`opensOn\` names a given wrong answer and that no brief copies a sentence of the map; don't grade those again
+  - Code checks the count of 6 to 10 screens, that the guess is the second screen, that \`opensOn\` names a given wrong answer, that no explanation or worked example follows the last check and that no brief copies a sentence of the map; don't grade those again
   - It opens on the wrong answer \`opensOn\` names: the scene shows someone giving it in a new case and getting a result it can't explain, and the guess right after has that same wrong answer as its tempting option; a scene on one wrong answer and a guess on another fails
   - A screen states the fact that wrong answer's "Why it's wrong" rests on, so the learner sees why it fails
+  - Once the idea is taught, a screen comes back to the scene's own case and settles it: the right answer and why the scene's result happened. A scene whose case is never mentioned again fails
+  - Each idea the plan teaches has a check of its own before the application, and the application combines only ideas a check practiced. Each wrong answer in WRONG_ANSWERS is either taught on a screen and practiced in a check, or left out of every screen; one taught only on the screen before the application, or tested only by the application, fails
   - It teaches only what the confusion needs: the core idea, the conditions the wrong answers miss and what tells the confused ideas apart. A screen spent on another point of FIRST_LESSON_MAP or on an extension (a new case type, a side effect, what comes next) is a scope slip
   - It takes another route to the idea than FIRST_LESSON_MAP: another representation (a table, a number line, a template, a picture, a story or a case where the map states a rule) or another starting point. Put the map next to the plan: when the explanations are the map's ideas said again in other words, in the same order with the same kind of example, it's a paraphrase and fails
   - The explanation right after the guess shows the wrong answer failing in one concrete case with small numbers or one short real example, before any rule is named
@@ -16,6 +18,8 @@ const SECOND_TAKE_EXPECTATIONS = `
   - One worked example on a new case, followed by a check where the learner does a similar one with less help
   - Every check and the application is new: no question, case or set of numbers from FIRST_LESSON_MAP or WRONG_ANSWERS, and a wrong answer's sentence with one word swapped is not a new case. Each check is decided by a rule or fact an earlier screen of this plan states
   - Plain words for the level, every term explained again before any screen uses it, and every screen one idea or one decision a learner reads at a glance on a phone
+  - Light enough that a tired learner on a phone finishes it in about 4 minutes: no screen the confusion doesn't need, a worked example with only the moves the confusion turns on (a repeated move counted, not written out once per repetition), and every question's options each one short answer a learner tells apart at a glance, never two answers paired in one option
+  - \`title\` is in sentence case, isn't LESSON_TITLE, and says what's different about this lesson
   - The brief of the explanation that states the idea names where the learner's own example goes: an everyday setting outside the subject where the same idea happens
   - Don't evaluate JSON formatting; estimated minutes are computed by code
 `;
@@ -41,6 +45,71 @@ function secondTakeCase({
 }
 
 export const SECOND_TAKE_TEST_CASES: SecondTakeCase[] = [
+  secondTakeCase({
+    chapterTitle: "Exponents and scientific notation",
+    courseTitle: "Quantum physics from scratch",
+    expectations: `
+      - MUST be in US English
+      - The tempting wrong answer is a positive power for a number below 1. The plan reaches the idea another way than the map's counting of decimal-point jumps, such as rebuilding the number from the front number by multiplying or dividing by ten
+      - The check that separates two ideas tells "same value" from "valid scientific notation" (a front number of 10 or more)
+      - Wrong answers 4 and 5 are about a big number (the speed of light). Either the plan teaches big numbers on a screen and checks them before the application, or it leaves big numbers out of every screen and keeps the application on small numbers
+      - The math is right on every screen
+      - Regressions to avoid (real run, 27 Nov 2026): a scene where a dust sample of 0.004 g is entered as 4 × 10³ g and never shown written correctly; a screen teaching big numbers right before the application with no check of its own; a seven-step worked example writing out each division by ten; an application whose four options each pair two numbers; the title "Build Back the Original Number" in Title Case
+    `,
+    id: "en-scientific-notation",
+    language: "en",
+    lessonCanDo:
+      "You'll write the size of an atom and the distance to the Sun in a few characters.",
+    lessonDescription:
+      "Physics works with numbers too big and too small to write out. Scientific notation fits them in a few characters.",
+    lessonTitle: "Writing very big and very small numbers",
+    level: "beginner",
+    secondTake: {
+      firstLessonMap: {
+        ideas: [
+          { text: "Scientific notation writes a number as a × 10ⁿ, with a between 1 and 10." },
+          { text: "The power counts how many places the decimal point jumps." },
+          { text: "Big numbers get positive powers; numbers below 1 get negative ones." },
+          { text: "To compare, look at the powers first: each step up is ten times bigger." },
+        ],
+        shape: "hub",
+      },
+      wrongAnswers: [
+        {
+          answer: "5.2 × 10⁴",
+          question: "How do you write 0.00052 in scientific notation?",
+          reason:
+            "A positive power makes a big number: 52,000. Numbers below 1 need a negative power.",
+        },
+        {
+          answer: "52 × 10⁻⁵",
+          question: "How do you write 0.00052 in scientific notation?",
+          reason:
+            "It's the same value, but the front number must be between 1 and 10. Move one more place: 5.2 × 10⁻⁴.",
+        },
+        {
+          answer: "5.2 × 10⁻³",
+          question: "How do you write 0.00052 in scientific notation?",
+          reason: "Count the jumps again: from 0.00052 to 5.2 is 4 places, not 3.",
+        },
+        {
+          answer: "30 × 10⁷ m/s",
+          question:
+            "Light travels about 300,000,000 meters per second. Which is that speed in scientific notation?",
+          reason:
+            "It's the same value, but the front number has to be between 1 and 10, and 30 isn't. Move one more place: 3 × 10⁸.",
+        },
+        {
+          answer: "3 × 10⁹ m/s",
+          question:
+            "Light travels about 300,000,000 meters per second. Which is that speed in scientific notation?",
+          reason:
+            "300,000,000 has 8 places after the 3, so the power is 8. 3 × 10⁹ would be ten times faster.",
+        },
+      ],
+    },
+    skills: ["Write a number in scientific notation"],
+  }),
   secondTakeCase({
     chapterTitle: "Adding and subtracting fractions",
     courseTitle: "Everyday math",
