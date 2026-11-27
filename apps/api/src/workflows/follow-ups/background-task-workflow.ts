@@ -44,6 +44,7 @@ export type BackgroundTask = Exclude<
       | "reviewAlphabetLesson"
       | "writeLesson"
       | "writeSentenceOrders"
+      | "writeSecondTake"
       | "writeSpeakingPaper";
   }
 >;

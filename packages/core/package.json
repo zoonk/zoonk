@@ -463,6 +463,7 @@
     "./library/quality/set-aside": "./src/library/quality/set-aside-published-lesson.ts",
     "./library/quality/published-citations": "./src/library/quality/cite-published-lesson.ts",
     "./library/quality/published-checks": "./src/library/quality/published-lesson-check.ts",
+    "./library/second-takes/ensure": "./src/library/second-takes/ensure-second-take.ts",
     "./library/quick-lessons": "./src/library/quick-lessons/quick-lessons.ts",
     "./library/quick-lessons/identity": "./src/library/quick-lessons/quick-lesson-identity.ts",
     "./library/review-flags/admin": "./src/library/review-flags/review-flags-admin.ts",

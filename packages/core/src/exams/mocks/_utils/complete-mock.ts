@@ -22,6 +22,7 @@ import {
 } from "../mock-contract";
 import { gradeMock } from "./grade-mock";
 import { loadSkillAreas } from "./mock-candidates";
+import { MOCK_BLANK_ANSWER } from "./mock-item-grading";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting, type OwnedMock } from "./owned-mock";
 import { settleAnytimeMock } from "./settle-anytime-mock";
@@ -254,6 +255,18 @@ export async function completeMock({
       data: { finishedAt: new Date(), result: { ...result, reached }, status: "finished" },
       where: { id: mock.id, status: "active" },
     });
+
+    if (count && mock.conditions.purpose !== "placement") {
+      await tx.attempt.updateMany({
+        data: { evidence: "independent" },
+        where: {
+          NOT: { answer: { equals: MOCK_BLANK_ANSWER } },
+          mockExamId: mock.id,
+          skillId: { not: null },
+          userId: mock.userId,
+        },
+      });
+    }
 
     if (count && mock.goalId && mock.conditions.purpose !== "placement") {
       const now = new Date();

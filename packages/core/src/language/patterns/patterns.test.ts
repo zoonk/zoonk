@@ -1,12 +1,14 @@
 import { findMistakePattern } from "@zoonk/ai/tasks/language/mistake-pattern";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { writeLanguageStepEvidence } from "../levels/record-language-evidence";
 import { dismissMistakePattern } from "./dismiss-mistake-pattern";
 import { checkMistakePattern } from "./find-mistake-pattern";
@@ -74,7 +76,11 @@ async function languageMistakes(count: number) {
   return { ...setup, mistakes };
 }
 
-function mockPatternFound(data = PATTERN_OUTPUT) {
+function mockPatternFound(
+  data:
+    | typeof PATTERN_OUTPUT
+    | (Omit<typeof PATTERN_OUTPUT, "kind"> & { kind: "typos" }) = PATTERN_OUTPUT,
+) {
   vi.mocked(findMistakePattern).mockResolvedValue({
     data,
     provenance: {
@@ -176,6 +182,69 @@ describe("mistake patterns", () => {
       expect.objectContaining({ learnerLanguage: "pt" }),
     );
   });
+
+  it.each(["pattern", "typos"] as const)(
+    "only transfers linked, non-typo writing causes: %s",
+    async (kind) => {
+      const { mistakes, user } = await languageMistakes(3);
+
+      const attempts = await Promise.all(
+        mistakes.map(async (mistake) => {
+          const attempt = await attemptFixture({
+            isCorrect: false,
+            stepId: mistake.stepId,
+            targetLanguage: "en",
+            userId: user.id,
+          });
+
+          await prisma.mistake.update({
+            data: { attemptId: attempt.id },
+            where: { id: mistake.id },
+          });
+
+          return attempt;
+        }),
+      );
+
+      mockPatternFound({ ...PATTERN_OUTPUT, kind });
+      await checkMistakePattern({ language: "en", userId: user.id });
+
+      const gaps = await prisma.attempt.findMany({
+        select: { id: true },
+        where: { cause: "gap", userId: user.id },
+      });
+
+      expect(new Set(gaps.map(({ id }) => id))).toStrictEqual(
+        new Set(kind === "pattern" ? [attempts[0]?.id, attempts[2]?.id] : []),
+      );
+
+      const [linked] = mistakes;
+
+      if (!linked) {
+        throw new Error("Expected a linked mistake");
+      }
+
+      const snapshot = readMistakeSnapshot(linked.snapshot);
+
+      const later = await recordLearnerAnswer({
+        answer: { text: snapshot.answer ?? "" },
+        graded: { durationMs: 10_000, isCorrect: false },
+        language: "pt",
+        mistake: { questionText: snapshot.question, snapshot },
+        practicedMistakeId: linked.id,
+        purpose: "learning",
+        stepId: linked.stepId,
+        targetLanguage: "en",
+        timeZone: "UTC",
+        userId: user.id,
+      });
+
+      expect(later.attempt).toMatchObject({
+        cause: kind === "pattern" ? "gap" : null,
+        evidence: "replay",
+      });
+    },
+  );
 
   it("keeps a drill to the questions its answers can be sent back for", async () => {
     const { user } = await languageMistakes(3);

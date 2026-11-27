@@ -20555,7 +20555,7 @@
     },
     "/me/mistake-practice": {
       "get": {
-        "description": "\"Practice mistakes\": the open mistakes from earlier days, up to 50, oldest first, each with a drill chosen by its cause and one question: its own while it can still be asked, otherwise another on its skill. A mistake with no question of its own (other than a timed one) has no entry when the run already asks a question on its skill or none is left there, since a right answer on that skill fixes it too. No question comes twice in a run. With `skillId`, \"Practice this skill\": only that skill's mistakes.",
+        "description": "Open, replayable mistakes, with misses from earlier learner-local days before today's. A notebook run has up to 50 original questions. A block scope keeps the remaining entries from that block's frozen list in order. A mock scope includes only a finished mock's mistakes.",
         "operationId": "getCurrentUserMistakePractice",
         "security": [
           {
@@ -20570,6 +20570,17 @@
           "Mistakes"
         ],
         "parameters": [
+          {
+            "in": "query",
+            "name": "blockId",
+            "schema": {
+              "description": "The day block with frozen mistake IDs",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "The day block with frozen mistake IDs"
+          },
           {
             "in": "query",
             "name": "goalId",
@@ -20591,6 +20602,17 @@
                 "false"
               ]
             }
+          },
+          {
+            "in": "query",
+            "name": "mockId",
+            "schema": {
+              "description": "A finished mock whose mistakes can be practiced",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "A finished mock whose mistakes can be practiced"
           },
           {
             "in": "query",
@@ -20669,7 +20691,7 @@
     },
     "/me/mistake-practice/completions": {
       "post": {
-        "description": "Finishes a \"Practice mistakes\" run, at its end or when the learner stops early, so it counts like any practice: Brain Power (due material, with Hyperdrive), Energy, the answers and time in today's totals and a learning day. Send the answer ids the run's answers returned. Finishing the same answers again counts nothing new and returns what the run earned.",
+        "description": "Counts the first answer per mistake per local day toward Brain Power, Energy, and the day's totals. Retries add no rewards. A day block completes once every assigned mistake has been answered today or can no longer be asked. A block completion can have no answer IDs.",
         "operationId": "createMistakePracticeCompletion",
         "security": [
           {
@@ -20759,7 +20781,7 @@
     },
     "/me/mistakes": {
       "get": {
-        "description": "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters and shared practice availability. Each entry preserves the original question, answers, context, picture, visual and shared passage or recording. Mistakes from today remain visible and become available to practice on the next learner-local day; only mistakes with usable drill material are offered for practice.",
+        "description": "The mistakes notebook, newest first, filterable by goal, skill, cause and status, with counts for the filters and shared practice availability. Each entry preserves the original question, answers, context, picture, visual and shared passage or recording. Open mistakes with usable practice material are available as soon as they are saved.",
         "operationId": "listCurrentUserMistakes",
         "security": [
           {
@@ -20904,7 +20926,7 @@
     },
     "/me/mistakes/{mistakeId}/answers": {
       "post": {
-        "description": "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry and the learner's other entries with no question of their own that this question could practice on the run's goal (`run.goalId`; without it, on this question's skill only). A timed entry is fixed only by its own drill, under its clock. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
+        "description": "Grades the original question, and fixes the entry if answered right on a later learner-local day than its last miss. Each new submission gets a verdict. The same attempt ID replays its saved verdict. The first answer per mistake per local day counts toward progress.",
         "operationId": "createMistakePracticeAnswer",
         "security": [
           {
@@ -28612,6 +28634,12 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "blockId": {
+            "description": "The day block for notebook practice",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "durationMs": {
             "type": "integer",
             "minimum": 0,
@@ -32605,8 +32633,7 @@
         "type": "object",
         "properties": {
           "answerIds": {
-            "minItems": 1,
-            "maxItems": 50,
+            "maxItems": 1200,
             "type": "array",
             "items": {
               "type": "string",
@@ -32614,6 +32641,12 @@
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
             "description": "Every answer given in the run so far, as their answers returned them. Finish after each answer so a run left halfway still counts; each finish adds only the new answers to the same run"
+          },
+          "blockId": {
+            "description": "The day block with frozen mistake IDs",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "ended": {
             "description": "True once, when the learner reached the end or stopped early",
@@ -32669,7 +32702,7 @@
                 "type": "object",
                 "properties": {
                   "answerIds": {
-                    "maxItems": 49,
+                    "maxItems": 1199,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32677,6 +32710,12 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "description": "The run's earlier answers, as their answers returned them"
+                  },
+                  "blockId": {
+                    "description": "The day block with frozen mistake IDs",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
                   "goalId": {
                     "description": "The goal the run practiced, when scoped",
@@ -32717,7 +32756,7 @@
                 "type": "object",
                 "properties": {
                   "answerIds": {
-                    "maxItems": 49,
+                    "maxItems": 1199,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -32725,6 +32764,12 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "description": "The run's earlier answers, as their answers returned them"
+                  },
+                  "blockId": {
+                    "description": "The day block with frozen mistake IDs",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
                   "goalId": {
                     "description": "The goal the run practiced, when scoped",
@@ -46033,6 +46078,10 @@
             "additionalProperties": false,
             "description": "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own"
           },
+          "requiresLaterDay": {
+            "type": "boolean",
+            "description": "The answer was right on the same local day as the last miss"
+          },
           "trap": {
             "nullable": true,
             "description": "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
@@ -46055,6 +46104,7 @@
           "lessonResult",
           "mistakeStatus",
           "reached",
+          "requiresLaterDay",
           "trap",
           "workedSteps"
         ],
@@ -51359,7 +51409,7 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made"
+                "description": "How many of the active goal's open notebook mistakes have practice material"
               },
               "speaking": {
                 "type": "boolean"
@@ -95764,18 +95814,11 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Open mistakes from earlier learner-local days, available to practice now"
-              },
-              "tomorrow": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Open mistakes from today, available on the next learner-local day"
+                "description": "Open mistakes with practice material"
               }
             },
             "required": [
-              "ready",
-              "tomorrow"
+              "ready"
             ],
             "additionalProperties": false
           },
@@ -95927,11 +95970,7 @@
           },
           "practiceAvailable": {
             "type": "boolean",
-            "description": "Open and made on an earlier learner-local day; today's mistakes become available tomorrow"
-          },
-          "practiceAvailableTomorrow": {
-            "type": "boolean",
-            "description": "This open mistake has drill material and becomes available on the next learner-local day"
+            "description": "Open and has usable practice material"
           },
           "skill": {
             "nullable": true,
@@ -95968,7 +96007,6 @@
           "itemId",
           "lesson",
           "practiceAvailable",
-          "practiceAvailableTomorrow",
           "skill",
           "snapshot",
           "status"

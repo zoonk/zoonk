@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
 import { SOURCED_PLAN_KEY } from "../curriculum/save-lesson-specs";
 import { scheduleFreshnessChecks } from "../exams/freshness-checks";
+import { isSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { hasLessonMaterial } from "../sources/goal-material";
 import { selectLawArticles, toLawPages } from "../sources/law-pages";
 
@@ -39,11 +40,11 @@ async function findLessonToCheck(lessonId: string) {
 
 type LessonToCheck = NonNullable<Awaited<ReturnType<typeof findLessonToCheck>>>;
 
-/** Language, challenge and product lessons, and lessons from a learner's own material, cite no law. */
-function teachesNoLaw(lesson: LessonToCheck): boolean {
+function skipsLawResearch(lesson: LessonToCheck): boolean {
   return (
     lesson.targetLanguage !== null ||
     isChallengeIdentityKey(lesson.identityKey) ||
+    isSecondTakeIdentityKey(lesson.identityKey) ||
     Boolean(lesson.homeChapter?.homeCourse?.productId)
   );
 }
@@ -55,7 +56,7 @@ function teachesNoLaw(lesson: LessonToCheck): boolean {
 export async function loadLessonLawsInput(lessonId: string): Promise<LessonLawsInput | null> {
   const lesson = await findLessonToCheck(lessonId);
 
-  if (!lesson || lesson._count.sources > 0 || teachesNoLaw(lesson)) {
+  if (!lesson || lesson._count.sources > 0 || skipsLawResearch(lesson)) {
     return null;
   }
 

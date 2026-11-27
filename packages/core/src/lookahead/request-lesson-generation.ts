@@ -6,6 +6,7 @@ import { claimUsage, claimUsageFor } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { isVisibleTo } from "../library/_utils/library-visibility";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
+import { isSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
 /** generating follows the existing stream; start requires a caller-started run. setAside must never restart generation. */
@@ -38,11 +39,13 @@ async function getActiveGoal(userId: string) {
 
 async function requestFor({
   claim,
+  identityKey,
   lessonId,
   platform,
   userId,
 }: {
   claim: (input: Parameters<typeof claimUsage>[0]) => Promise<UsageDecision>;
+  identityKey: string;
   lessonId: string;
   platform: AnalyticsPlatform | null;
   userId: string;
@@ -64,6 +67,10 @@ async function requestFor({
   // A lesson no run will write must not consume a lesson allowance.
   if (state.status === "failed" && state.setAside) {
     return { status: "setAside" };
+  }
+
+  if (isSecondTakeIdentityKey(identityKey)) {
+    return { status: "notFound" };
   }
 
   const decision = await claim({ generated: true, kind: "lessonStart", targetId: lessonId });
@@ -100,6 +107,7 @@ export async function requestLessonGeneration({
 
   return requestFor({
     claim: claimUsage,
+    identityKey: viewer.lesson.identityKey,
     lessonId,
     platform: await getRequestPlatform(),
     userId: viewer.userId,
@@ -115,7 +123,7 @@ export async function requestLessonGenerationFor({
   userId: string;
 }): Promise<LessonGenerationRequest> {
   const lesson = await prisma.lesson.findUnique({
-    select: { ownerId: true, visibility: true },
+    select: { identityKey: true, ownerId: true, visibility: true },
     where: { id: lessonId },
   });
 
@@ -125,6 +133,7 @@ export async function requestLessonGenerationFor({
 
   return requestFor({
     claim: (input) => claimUsageFor({ ...input, userId }),
+    identityKey: lesson.identityKey,
     lessonId,
     platform: null,
     userId,

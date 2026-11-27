@@ -18,7 +18,7 @@ import {
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
-import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
+import { type LessonContentInput, lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
@@ -27,6 +27,7 @@ import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow
 import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
+import { ensureSecondTakeStep } from "./steps/ensure-second-take-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
@@ -61,6 +62,17 @@ async function startPlacementPreparation(
   const ask = `placement-items:${input.goalId}:${followUp.id}:${followUp.revision}`;
 
   await startOnce(placementItemsWorkflow, [{ ...input, analytics: { distinctId: userId } }], ask);
+}
+
+async function startLessonContent(writing: LessonContentInput | null): Promise<void> {
+  if (writing) {
+    await startOnce(lessonContentWorkflow, [writing], getLessonContentHookToken(writing.lessonId));
+  }
+}
+
+async function startSecondTake(input: { skillId: string; userId: string }): Promise<void> {
+  const lessonId = await ensureSecondTakeStep(input);
+  await startLessonContent(lessonId ? { lessonId, wait: "soon" } : null);
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
@@ -130,19 +142,12 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "preparePlacementItems":
       return startPlacementPreparation(followUp);
 
-    case "writeLesson": {
-      const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
-
-      if (writing) {
-        await startOnce(
-          lessonContentWorkflow,
-          [writing],
-          getLessonContentHookToken(writing.lessonId),
-        );
-      }
-
-      return;
-    }
+    case "writeSecondTake":
+      return startSecondTake({ skillId: followUp.input.skillId, userId });
+    case "writeLesson":
+      return startLessonContent(
+        await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId }),
+      );
     case "writeSentenceOrders":
       await startSentenceOrders(followUp.input.lessonId);
       return;

@@ -5,11 +5,18 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getUsageRule } from "../entitlements/limits";
 import { gradeSpokenAnswer } from "../library/language/grade-spoken-answer";
+import { answerMistakePractice } from "./answer-mistake-practice";
+import { getMistakePractice } from "./get-mistake-practice";
 import { loadMistakeReplay } from "./mistake-replay";
 
 const AUDIO = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" };
@@ -213,6 +220,82 @@ describe("Original notebook questions", () => {
     await expect(
       prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
     ).resolves.toBe(1);
+  });
+
+  it("keeps other block questions available at the spoken limit and completes after they are answered", async () => {
+    const { mistake, step, user } = await setup();
+    const userId = user.id;
+
+    const [session, item] = await Promise.all([
+      studySessionFixture({ startedAt: new Date(), status: "active", userId }),
+      itemFixture({ content: choiceItemContent(), skillId: mistake.skillId! }),
+    ]);
+
+    const choice = await mistakeFixture({ itemId: item.id, skillId: mistake.skillId, userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [mistake.id, choice.id] },
+      sessionId: session.id,
+      status: "active",
+    });
+
+    const count = getUsageRule({ kind: "assist", tier: "free" }).day ?? 0;
+
+    await prisma.usageRecord.createMany({
+      data: Array.from({ length: count }, () => ({
+        kind: "assist",
+        targetId: crypto.randomUUID(),
+        userId,
+      })),
+    });
+
+    await expect(
+      gradeSpokenAnswer({
+        audio: AUDIO,
+        fields: {
+          attemptId: crypto.randomUUID(),
+          blockId: block.id,
+          durationMs: 2400,
+          mistakeId: mistake.id,
+          timeZone: "UTC",
+        },
+        stepId: step.id,
+      }),
+    ).resolves.toMatchObject({ status: "limitReached" });
+
+    expect(transcribeSpeech).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "active" });
+
+    const practice = await getMistakePractice({ blockId: block.id });
+
+    expect(
+      practice.status === "ready" && practice.practice.map((entry) => entry.mistakeId),
+    ).toContain(choice.id);
+
+    await expect(
+      answerMistakePractice({
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 2000,
+          itemId: item.id,
+          run: { answerIds: [], blockId: block.id },
+          timeZone: "UTC",
+        },
+        mistakeId: choice.id,
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    await expect(
+      prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
+    ).resolves.toMatchObject({ status: "open" });
   });
 
   it("releases a failed recording grade so its retry can finish without another usage charge", async () => {

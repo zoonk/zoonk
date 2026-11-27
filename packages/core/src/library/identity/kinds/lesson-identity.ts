@@ -7,6 +7,7 @@ import { type Sql, prisma, sql } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { getContentCountryScope } from "../../content-country";
 import { QUICK_LESSON_KEY_SQL_PATTERN } from "../../quick-lessons/quick-lesson-identity";
+import { SECOND_TAKE_IDENTITY_PATTERN } from "../../second-takes/second-take-identity";
 import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type LessonIdentityRequest } from "../_utils/identity-requests";
@@ -76,6 +77,7 @@ function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
     AND l.visibility = 'public'
     AND l.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
     AND l.identity_key !~ ${QUICK_LESSON_KEY_SQL_PATTERN}
+    AND l.identity_key !~ ${SECOND_TAKE_IDENTITY_PATTERN}
     AND ${toOutsidePinnedSql(request.course?.id ?? null)}`;
 }
 

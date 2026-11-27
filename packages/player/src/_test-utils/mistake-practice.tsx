@@ -43,6 +43,7 @@ export function practiceFeedback(checked = true): NonNullable<MistakePracticeFee
     lessonResult: result(checked),
     mistakeStatus: checked ? "fixed" : "open",
     reached: NOTHING_REACHED,
+    requiresLaterDay: false,
     trap: null,
     workedSteps: [],
   };

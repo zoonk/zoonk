@@ -51,6 +51,7 @@ export async function recordStudyAnswer({
       ...(passedOverMiss && { passedOverMiss: true }),
       ...(recheck && { placementRecheck: true }),
     },
+    evidence: blank || placement ? null : "independent",
     graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
     isPlacement: placement,
     itemId: item.id,

@@ -21,7 +21,7 @@ import { type MistakeReplay } from "../mistake-replay";
 import { readMistakeSnapshot } from "../mistake-snapshot";
 import { cachedGradeDuration } from "./cached-grade-duration";
 import { runMistakeGrade } from "./mistake-grade";
-import { refuseAnsweredMistake } from "./practice-claim";
+import { refuseClosedMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 import { readSavedPracticeAnswer } from "./saved-practice-answer";
 
@@ -148,6 +148,7 @@ export async function answerLessonMistake({
         lessonResult: toCheckResult({ savedMistake: false, verdict }),
         mistakeStatus: mistake.status,
         reached: NOTHING_REACHED,
+        requiresLaterDay: false,
         trap: null,
         workedSteps: [],
       },
@@ -166,11 +167,31 @@ export async function answerLessonMistake({
     misconception: null,
   });
 
+  const isCorrect = saved?.isCorrect ?? drilled.isCorrect;
+
+  const lessonResult = toCheckResult({
+    savedMistake: !isCorrect,
+    verdict: {
+      ...verdict,
+      checked: saved ? true : verdict.checked,
+      correctAnswer: isCorrect ? null : verdict.correctAnswer,
+      isCorrect,
+    },
+  });
+
+  const feedback = {
+    correctAnswer: null,
+    explanation: verdict.feedback,
+    lessonResult,
+    trap: drilled.trap,
+    workedSteps: [],
+  };
+
   const outcome = saved
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonicalAnswer, practiceMistakeId: mistake.id },
+          answer: { ...canonicalAnswer, practiceFeedback: feedback, practiceMistakeId: mistake.id },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect, score: verdict.score },
           language: lesson.language,
@@ -195,37 +216,17 @@ export async function answerLessonMistake({
           timeZone,
           userId,
         },
-        refuse: refuseAnsweredMistake({ mistakeId: mistake.id, timeZone, userId }),
+        refuse: refuseClosedMistake({ mistakeId: mistake.id, userId }),
       });
 
   if (outcome.status === "refused") {
-    return { status: "retryable" };
+    return { status: "invalidItem" };
   }
-
-  const isCorrect =
-    outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
-
-  const lessonResult = toCheckResult({
-    savedMistake: !isCorrect,
-    verdict: {
-      ...verdict,
-      checked: saved ? true : verdict.checked,
-      correctAnswer: saved?.isCorrect ? null : verdict.correctAnswer,
-      isCorrect,
-    },
-  });
 
   return {
     feedback: await finishPracticeAnswer({
-      answerId: outcome.status === "saved" ? outcome.saved.id : outcome.recorded.attempt.id,
-      feedback: {
-        correctAnswer: null,
-        explanation: verdict.feedback,
-        isCorrect,
-        lessonResult,
-        trap: drilled.trap,
-        workedSteps: [],
-      },
+      attempt: outcome.status === "saved" ? outcome.saved : outcome.recorded.attempt,
+      feedback,
       input,
       mistakeId: mistake.id,
     }),

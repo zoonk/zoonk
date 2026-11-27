@@ -120,6 +120,7 @@
     "./tasks/lesson-spec": "./src/tasks/lesson-spec/lesson-spec.ts",
     "./tasks/lesson-spec/picture-need": "./src/tasks/lesson-spec/picture-need.ts",
     "./tasks/lesson-spec/rules": "./src/tasks/lesson-spec/lesson-spec-rules.ts",
+    "./tasks/lesson-spec/second-take": "./src/tasks/lesson-spec/second-take-rules.ts",
     "./tasks/lesson-spec/visuals": "./src/tasks/lesson-spec/lesson-visuals.ts",
     "./tasks/novice-rules": "./src/tasks/_utils/novice-rules.ts",
     "./tasks/lesson-laws": "./src/tasks/lesson-laws/lesson-laws.ts",

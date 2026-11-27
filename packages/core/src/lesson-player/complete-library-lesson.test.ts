@@ -3,14 +3,17 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -18,6 +21,9 @@ import { mockSession } from "../_test-utils/mock-session";
 import { publishLessonVersion } from "../_test-utils/publish-lesson-version";
 import { trackServerEvent } from "../analytics/server";
 import { markPlanRevealed } from "../goals/mark-plan-revealed";
+import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
+import { ensureSecondTake } from "../library/second-takes/ensure-second-take";
+import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
@@ -68,6 +74,11 @@ function complete({ lessonId, runId }: { lessonId: string; runId: string }) {
   return completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId });
 }
 
+async function finishStaticLesson(lessonId: string) {
+  const runId = await startRun(lessonId);
+  await expect(complete({ lessonId, runId })).resolves.toMatchObject({ status: "completed" });
+}
+
 async function playLesson({ checkOption = "likely" }: { checkOption?: string } = {}) {
   const setup = await setupPlayableLesson({ steps: [...LESSON] });
   const runId = await startRun(setup.lesson.id);
@@ -88,6 +99,232 @@ async function playLesson({ checkOption = "likely" }: { checkOption?: string } =
 }
 
 describe(completeLibraryLesson, () => {
+  it("cuts off pre-teaching misses, then advances only on a replay or second take", async () => {
+    freezeClock();
+    const first = new Date("2026-11-20T12:00:00Z");
+    vi.setSystemTime(first);
+
+    const { lesson, skill, user } = await setupPlayableLesson({
+      steps: ["explanation", "summary"],
+    });
+
+    await Promise.all(
+      [2, 1].map((days) =>
+        attemptFixture({
+          answeredAt: new Date(first.getTime() - days * MS_PER_DAY),
+          cause: "gap",
+          evidence: "independent",
+          isCorrect: false,
+          skillId: skill.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const signal = async () => {
+      const signals = await readSkillMistakeSignals({
+        now: new Date(),
+        skillIds: [skill.id],
+        userId: user.id,
+      });
+
+      return signals.get(skill.id);
+    };
+
+    const memory = () =>
+      prisma.learnerSkill.findUniqueOrThrow({
+        where: { userSkill: { skillId: skill.id, userId: user.id } },
+      });
+
+    await expect(signal()).resolves.toMatchObject({ stuck: true });
+    await finishStaticLesson(lesson.id);
+    await expect(memory()).resolves.toMatchObject({ helpedAt: first });
+
+    await expect(signal()).resolves.toMatchObject({
+      helpedAt: first,
+      latestMiss: null,
+      stage: "none",
+      stuck: false,
+    });
+
+    const another = await playableLessonFixture({ steps: ["explanation", "summary"] });
+    await lessonSkillFixture({ lessonId: another.lesson.id, skillId: skill.id });
+    vi.setSystemTime(new Date(first.getTime() + MS_PER_DAY));
+    await finishStaticLesson(another.lesson.id);
+    await expect(memory()).resolves.toMatchObject({ helpedAt: first });
+    await expect(signal()).resolves.toMatchObject({ helpedAt: first, stage: "none" });
+
+    const replayedAt = new Date(first.getTime() + 2 * MS_PER_DAY);
+    vi.setSystemTime(replayedAt);
+    await finishStaticLesson(lesson.id);
+    await expect(memory()).resolves.toMatchObject({ helpedAt: replayedAt });
+
+    await expect(signal()).resolves.toMatchObject({
+      helpedAt: replayedAt,
+      replayedAt,
+      stage: "replay",
+    });
+
+    await prisma.lesson.update({
+      data: { summary: { ideas: [{ text: "We can map where an electron is likely to be." }] } },
+      where: { id: lesson.id },
+    });
+
+    const lessonId = await ensureSecondTake({ skillId: skill.id, userId: user.id });
+
+    if (!lessonId) {
+      throw new Error("Expected a second take to write.");
+    }
+
+    const check = await libraryStepFixture({
+      content: playableStepContent.check,
+      kind: "check",
+      lessonId,
+      skillId: skill.id,
+    });
+
+    await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
+
+    const secondTakeAt = new Date(first.getTime() + 10 * MS_PER_DAY);
+    vi.setSystemTime(new Date(secondTakeAt.getTime() - 60_000));
+    const runId = await startRun(lessonId);
+    await answer({ runId, stepId: check.id, value: { kind: "check", optionId: "likely" } });
+    vi.setSystemTime(secondTakeAt);
+
+    await expect(complete({ lessonId, runId })).resolves.toMatchObject({
+      completion: { isFirstCompletion: true, seconds: expect.any(Number) },
+      status: "completed",
+    });
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { stepId: check.id, userId: user.id } }),
+    ).resolves.toMatchObject({ evidence: "guided" });
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({ kind: "review" });
+
+    const daily = await prisma.dailyProgress.findFirstOrThrow({
+      where: { date: toUTCMidnight(secondTakeAt), userId: user.id },
+    });
+
+    expect(daily.lessonsCompleted).toBe(0);
+    expect(daily.timeSpentSeconds).toBeGreaterThan(0);
+    await expect(memory()).resolves.toMatchObject({ helpedAt: secondTakeAt });
+
+    await expect(signal()).resolves.toMatchObject({
+      helpedAt: secondTakeAt,
+      replayedAt,
+      secondTakeAt,
+      stage: "secondTake",
+    });
+  });
+
+  it("never uses a second take's review as a replay of the original lesson", async () => {
+    freezeClock();
+    const first = new Date("2026-11-20T12:00:00Z");
+    vi.setSystemTime(first);
+
+    const { lesson, skill, user } = await setupPlayableLesson({
+      steps: ["explanation", "summary"],
+    });
+
+    await finishStaticLesson(lesson.id);
+
+    const secondTake = await playableLessonFixture({
+      lesson: { identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: skill.id }) },
+      steps: ["explanation", "summary"],
+    });
+
+    await lessonSkillFixture({ lessonId: secondTake.lesson.id, skillId: skill.id });
+
+    const signal = async () => {
+      const signals = await readSkillMistakeSignals({
+        now: new Date(),
+        skillIds: [skill.id],
+        userId: user.id,
+      });
+
+      return signals.get(skill.id);
+    };
+
+    await expect(signal()).resolves.toMatchObject({
+      replayedAt: null,
+      secondTakeAt: null,
+      stage: "none",
+    });
+
+    const secondTakeAt = new Date(first.getTime() + MS_PER_DAY);
+    vi.setSystemTime(secondTakeAt);
+
+    const runId = await startRun(secondTake.lesson.id);
+
+    await expect(complete({ lessonId: secondTake.lesson.id, runId })).resolves.toMatchObject({
+      status: "completed",
+    });
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({ endedAt: secondTakeAt, kind: "review" });
+
+    await expect(signal()).resolves.toMatchObject({
+      helpedAt: secondTakeAt,
+      replayedAt: null,
+      secondTakeAt,
+      stage: "secondTake",
+    });
+  });
+
+  it("records an independent lesson check only on the first answer to a previously taught skill", async () => {
+    const prior = await skillFixture();
+
+    const setup = await setupPlayableLesson({
+      steps: [{ kind: "check", skillId: prior.id }, "summary"],
+    });
+
+    const check = stepOfKind(setup.steps, "check");
+
+    await prisma.learnerSkill.create({
+      data: {
+        helpedAt: new Date(Date.now() - MS_PER_DAY),
+        skillId: prior.id,
+        userId: setup.user.id,
+      },
+    });
+
+    const runId = await startRun(setup.lesson.id);
+
+    await expect(
+      answer({ runId, stepId: check.id, value: { kind: "check", optionId: "path" } }),
+    ).resolves.toMatchObject({ result: { isCorrect: false }, status: "checked" });
+
+    await expect(
+      answer({ runId, stepId: check.id, value: { kind: "check", optionId: "likely" } }),
+    ).resolves.toMatchObject({ result: { isCorrect: true }, status: "checked" });
+
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      status: "completed",
+    });
+
+    const replay = await startRun(setup.lesson.id);
+
+    await expect(
+      answer({ runId: replay, stepId: check.id, value: { kind: "check", optionId: "likely" } }),
+    ).resolves.toMatchObject({ result: { isCorrect: true }, status: "checked" });
+
+    const attempts = await prisma.attempt.findMany({
+      orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+      select: { evidence: true },
+      where: { stepId: check.id, userId: setup.user.id },
+    });
+
+    expect(attempts.map(({ evidence }) => evidence)).toStrictEqual([
+      "independent",
+      "guided",
+      "guided",
+    ]);
+  });
+
   it("remembers the lesson-end placement offer until the learner dismisses it", async () => {
     const { lesson, steps, user } = await setupPlayableLesson({ steps: ["check", "summary"] });
 
