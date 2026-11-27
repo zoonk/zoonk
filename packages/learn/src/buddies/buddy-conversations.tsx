@@ -110,7 +110,7 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
   );
 }
 
-/** The aside's block from 72rem. `onOpen` runs as a row is pressed, before its conversation shows. */
+/** `onOpen` runs as a row is pressed, before its conversation shows. */
 export function BuddyConversations({
   list,
   onOpen,

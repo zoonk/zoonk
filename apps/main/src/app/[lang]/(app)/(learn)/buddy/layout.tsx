@@ -39,11 +39,6 @@ async function readConversations({ canAsk, goalId }: { canAsk: boolean; goalId: 
   return { conversations, currentId, nextCursor };
 }
 
-/**
- * The whole screen is drawn here, and the page under it only hands over the conversation its URL
- * names (`handOverBuddyPage`). So opening another conversation, or a new one getting its own
- * address, changes the turns alone: the list, the composer and an answer on its way stay as they are.
- */
 async function BuddyContent() {
   const [readAt, result, goal, session] = await Promise.all([
     getReadAt(),
@@ -91,7 +86,12 @@ async function BuddyContent() {
   );
 }
 
-/** The page is beside the screen, not inside it, so both are read at once and the page hands over. */
+/**
+ * The whole screen is drawn here, and the page under it only hands over the conversation its URL
+ * names (`handOverBuddyPage`). So opening another conversation, or a new one getting its own
+ * address, changes the turns alone: the list, the composer and an answer on its way stay as they
+ * are. The page sits beside the screen, not inside it, so both are read at once.
+ */
 export default function BuddyLayout({ children }: LayoutProps<"/[lang]/buddy">) {
   return (
     <BuddyPages>

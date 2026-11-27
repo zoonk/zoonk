@@ -4,7 +4,6 @@ import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
 import { getSession } from "@zoonk/core/users/session";
 
-/** The goal the buddy's page talks about: the learner's active one, unless it has no plan to ask about. */
 export async function findBuddyGoal() {
   const goalId = await getActiveGoalId();
 
@@ -22,7 +21,6 @@ export async function findBuddyGoal() {
   return goal.status !== "archived" && goal.kind !== "explain" ? goal : null;
 }
 
-/** A guest can't ask, so the page reads nothing of theirs. */
 export async function canAskBuddy(): Promise<boolean> {
   const session = await getSession();
   return Boolean(session && !session.user.isAnonymous);

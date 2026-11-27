@@ -60,7 +60,6 @@ export function useBuddyPages(first: BuddyPageRead | null) {
   return pages;
 }
 
-/** What a buddy page draws: nothing. A page that names no conversation (a blank one) keeps nothing. */
 export function BuddyPage(page: BuddyPageRead) {
   useBuddyPages(page);
   return null;

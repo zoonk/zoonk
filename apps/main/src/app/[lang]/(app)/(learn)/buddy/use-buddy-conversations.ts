@@ -98,15 +98,9 @@ function useNamedConversation({
 }
 
 /**
- * Which conversation is open, and the goal's list of them.
- *
- * The URL says which is open. `/buddy` opens the one the learner asked in today, as the server read
- * it or as asked here since (`readAt` tells which is newer), and a blank one otherwise, as
- * `/buddy/new` always does. A blank one's id is made here: its first question creates it under that
- * id, and the URL then names it. A URL that names another goal's conversation opens what `/buddy`
- * does, and becomes `/buddy`.
- *
- * The list is what the page read, the older ones "Show more" brought, and the ones asked in since.
+ * `/buddy` opens the conversation the learner asked in today, as the server read it or as asked
+ * here since (`readAt` tells which is newer), and a blank one otherwise, as `/buddy/new` always
+ * does. A blank one's id is made here: its first question creates it under that id.
  */
 export function useBuddyConversations({
   goalId,

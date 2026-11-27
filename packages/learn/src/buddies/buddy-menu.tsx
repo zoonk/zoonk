@@ -22,7 +22,6 @@ import { LearnLink } from "../learn-link";
 
 export type BuddyHrefs = { energy: string; logbook: string; memory: string };
 
-/** The buddy page's "…": what is the buddy's own (its look, its glasses, what it remembers), then the week. */
 export function BuddyMenu({
   buddy,
   glassesCount,

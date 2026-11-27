@@ -31,7 +31,6 @@ export type LessonQuestionHost = {
   initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
   onMissionMoment?: (moment: MissionMomentView | null) => void;
-  /** The server saved a question the learner sent in `context`. */
   onQuestionSaved?: (saved: {
     context: LessonQuestionContext;
     question: LessonQuestionResource;

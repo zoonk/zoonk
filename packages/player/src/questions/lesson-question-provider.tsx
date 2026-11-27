@@ -35,7 +35,6 @@ export function LessonQuestionHostProvider({
   );
 }
 
-/** Draws `children` from `controller` in place of the host's own. */
 export function LessonQuestionControllerProvider({
   children,
   controller,

@@ -3,7 +3,6 @@ import { type BuddyPageRead, handOverBuddyPage } from "./buddy-first-page";
 import { canAskBuddy, findBuddyGoal, readBuddyConversation } from "./buddy-goal";
 import { BuddyPage } from "./buddy-pages";
 
-/** Today's conversation when the learner already asked something today, and a blank one otherwise. */
 async function readCurrentConversation(): Promise<BuddyPageRead> {
   const [goal, canAsk] = await Promise.all([findBuddyGoal(), canAskBuddy()]);
 
