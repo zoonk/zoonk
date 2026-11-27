@@ -29,7 +29,7 @@ export function BuddyScreenSkeleton() {
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-4/5" />
         </div>
-        <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
+        <div className="mt-auto flex flex-col gap-3 pt-6 pb-3 lg:pb-6">
           <Skeleton className="h-6.5 w-4/5 rounded-md" />
           <TutorComposerSkeleton />
         </div>

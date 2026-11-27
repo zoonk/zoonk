@@ -112,7 +112,7 @@ function ConversationBody({
         renderToolOffer={renderToolOffer}
       />
 
-      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>
+      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-3")}>
         {empty && canAskQuestions && offersSuggestions && (
           <TutorSuggestions
             onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}

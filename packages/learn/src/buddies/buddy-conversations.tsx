@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import { RowPlus } from "@zoonk/ui/components/row-chevron";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { addIsoDays } from "@zoonk/utils/calendar-day";
@@ -36,32 +37,40 @@ export type BuddyConversationList = {
   openId: string | null;
 };
 
-/** Today's rows say when, earlier ones which day. A day said in words keeps the text face. */
-function LastAsked({ moment }: { moment: string }) {
+/**
+ * Today's rows say when, earlier ones which day. It's the row's line, in the text face like any
+ * row's: a time or a date in mono beside "Yesterday" in words read as two kinds of line.
+ */
+function useLastAsked() {
   const t = useExtracted();
   const formatDate = useFormatMomentDate();
   const formatTime = useFormatMomentTime();
   const { dayOf, today } = useMomentDays();
-  const day = dayOf(moment);
 
-  if (day === addIsoDays({ day: today, days: -1 })) {
-    return <ListRowDescription>{t("Yesterday")}</ListRowDescription>;
-  }
+  return (moment: string): string => {
+    const day = dayOf(moment);
 
-  return (
-    <ListRowDescription className="font-mono tabular-nums">
-      {day === today ? formatTime(moment) : formatDate(moment)}
-    </ListRowDescription>
-  );
+    if (day === today) {
+      return formatTime(moment);
+    }
+
+    return day === addIsoDays({ day: today, days: -1 }) ? t("Yesterday") : formatDate(moment);
+  };
 }
 
 function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpen?: () => void }) {
   const t = useExtracted();
+  const lastAsked = useLastAsked();
 
   return (
     <>
       <ListGroup>
-        <ListRowLink current={list.openId === null} href={list.newHref} onClick={onOpen}>
+        <ListRowLink
+          current={list.openId === null}
+          end={<RowPlus />}
+          href={list.newHref}
+          onClick={onOpen}
+        >
           <ListRowContent>
             <ListRowTitle>{t("New conversation")}</ListRowTitle>
           </ListRowContent>
@@ -77,7 +86,9 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
           >
             <ListRowContent>
               <ListRowTitle className="truncate text-nowrap">{conversation.title}</ListRowTitle>
-              <LastAsked moment={conversation.lastAskedAt} />
+              <ListRowDescription className="tabular-nums">
+                {lastAsked(conversation.lastAskedAt)}
+              </ListRowDescription>
             </ListRowContent>
           </ListRowLink>
         ))}

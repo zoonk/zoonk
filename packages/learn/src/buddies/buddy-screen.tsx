@@ -221,7 +221,7 @@ export function BuddyScreen({
           buddy={buddy}
           faceRef={chatFace.face}
           menu={
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               {conversations && (
                 <BuddyConversationsSheet className="min-[72rem]:hidden" list={conversations} />
               )}

@@ -7,7 +7,7 @@ export const BUDDY_NAME_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-sm leading-8 fon
 /**
  * Who the learner is talking to, drawn the same wherever the buddy's chat opens: its page and the
  * sheet over a lesson. `title` is the host's own heading wearing `BUDDY_NAME_CLASS`; `children` sit
- * beside the name while they fit; `menu` stays at the end.
+ * beside the name while they fit; `menu` stays at the end, level with the name's line.
  */
 export function BuddyIdentityRow({
   children,
@@ -27,7 +27,7 @@ export function BuddyIdentityRow({
         {title}
         {children}
       </div>
-      {menu}
+      {menu && <div className="flex h-8 shrink-0 items-center">{menu}</div>}
     </div>
   );
 }
