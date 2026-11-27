@@ -119,6 +119,7 @@ async function placeFullTest(
             partSkillIds: [atPart === 1 ? first : second],
             partStartedAt: new Date().toISOString(),
             parts: [[first], [second]],
+            partsAtOpen: 2,
             skillIds: [first, second],
           },
           result: null,
