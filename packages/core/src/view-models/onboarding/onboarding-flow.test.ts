@@ -22,8 +22,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
+import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
-import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
@@ -35,6 +35,7 @@ import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/m
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { PROFILE_QUESTIONS } from "../../profile/questions/profile-question-contract";
+import * as placementOffer from "./_utils/onboarding-placement";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
@@ -470,7 +471,7 @@ describe("onboarding a new goal", () => {
       userId: user.id,
     });
 
-    const flush = runDeferredWork();
+    const offer = vi.spyOn(placementOffer, "readOnboardingPlacementOffer");
 
     const save = () =>
       answerOnboardingQuestion({
@@ -480,7 +481,11 @@ describe("onboarding a new goal", () => {
 
     await expect(save()).resolves.toMatchObject({ status: "saved" });
     await expect(save()).resolves.toMatchObject({ status: "saved" });
-    await flush();
+    expect(offer).not.toHaveBeenCalled();
+
+    await Promise.all(
+      vi.mocked(after).mock.calls.map(([task]) => (typeof task === "function" ? task() : task)),
+    );
 
     const events = analytics.trackServerEvent.mock.calls.flat();
 
