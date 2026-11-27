@@ -1,4 +1,5 @@
 import XCTest
+import ZoonkAPI
 
 @testable import Zoonk
 
@@ -50,5 +51,17 @@ final class MockPointsTests: XCTestCase {
     ]
 
     XCTAssertFalse(result.reachedEveryMinimum)
+  }
+
+  func testAWrittenStandingThisVersionDoesntKnowKeepsTheEstimate() throws {
+    let wire = try JSONDecoder().decode(
+      Components.Schemas.WrittenPartPoints.self,
+      from: Data(
+        #"{"max":100,"minimum":{"unit":"points","value":50},"name":"Discursive test","range":{"high":64,"low":58},"standing":"likelyMet","tasks":[]}"#
+          .utf8))
+    let part: WrittenPartPoints = try PracticeJSON.recode(wire)
+
+    XCTAssertEqual(part.standing, .unrecognized)
+    XCTAssertEqual(part.range, WritingRange(high: 64, low: 58))
   }
 }

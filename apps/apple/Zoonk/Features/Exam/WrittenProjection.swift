@@ -3,7 +3,8 @@ import SwiftUI
 /// A written part's points: its range against its own minimum, and each task's. Ranges are nil
 /// until that task has an independent first draft with a numeric grade.
 struct WrittenPartPoints: Hashable, Decodable, Sendable {
-  enum Standing: String, Decodable, Sendable {
+  enum Standing: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case below
     case met
     case overlaps
@@ -318,7 +319,7 @@ struct WrittenStandingLine: View {
         Text("Can't say yet whether this reaches the \(points) points needed", tableName: "Plan")
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
-      case nil:
+      case .unrecognized, nil:
         EmptyView()
       }
     }
