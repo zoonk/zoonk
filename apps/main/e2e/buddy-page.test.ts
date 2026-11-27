@@ -164,17 +164,24 @@ test.describe("Buddy tab", () => {
     });
   });
 
-  test("a question from search waits in a new conversation's composer, and another learner's conversation can't be opened", async ({
+  test("a question from search waits in a new conversation's composer, and a conversation of another learner or another goal doesn't open", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const stranger = await userFixture();
       const strangerGoal = await goalFixture({ userId: stranger.id });
 
-      const [, theirs] = await Promise.all([
+      const otherGoal = await goalFixture({ userId: user.id });
+
+      const [, elsewhere, theirs] = await Promise.all([
         conversationFixture({
           goalId: user.goalId,
           question: "What should I review today?",
+          userId: user.id,
+        }),
+        conversationFixture({
+          goalId: otherGoal.id,
+          question: "A question about my other goal",
           userId: user.id,
         }),
         conversationFixture({
@@ -197,6 +204,12 @@ test.describe("Buddy tab", () => {
       await expect(composer).toHaveValue("Why is the sky blue?");
       await expect(conversation.getByRole("article")).toHaveCount(0);
       expect(await countAsked()).toBe(asked);
+
+      // Their own conversation of a goal they aren't on gives way to this goal's own.
+      await page.goto(`/buddy/${elsewhere.id}`);
+      await expect(page).toHaveURL(/\/buddy$/u);
+      await expect(conversation.getByText("Answer to: What should I review today?")).toBeVisible();
+      await expect(page.getByText("A question about my other goal")).toBeHidden();
 
       await page.goto(`/buddy/${theirs.id}`);
       await expect(page.getByText("We couldn't find this page")).toBeVisible();

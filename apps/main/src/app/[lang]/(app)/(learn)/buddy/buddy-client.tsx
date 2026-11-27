@@ -20,24 +20,28 @@ import {
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
-import { useBuddyThread } from "./buddy-threads";
+import { useBuddyPages } from "./buddy-pages";
 import { useBuddyConversations } from "./use-buddy-conversations";
 
 const HREFS: BuddyHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
 
-type OpenConversation = { blank: boolean; id: string };
+type ThreadPage = ReturnType<ReturnType<typeof useBuddyPages>["readOf"]>;
+
+const NOTHING_ASKED: NonNullable<ThreadPage> = { hasMore: false, nextCursor: null, questions: [] };
 
 /** A question from search (`?ask=`) waits in the composer: only the learner's own send asks it. */
 function BuddyConversation({
   canAsk,
-  conversation,
+  conversationId,
   goalId,
   onQuestionSaved,
+  thread,
 }: {
   canAsk: boolean;
-  conversation: OpenConversation;
+  conversationId: string;
   goalId: string;
   onQuestionSaved: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
+  thread: ThreadPage;
 }) {
   const content = useBuddyTutor();
   const router = useRouter();
@@ -46,11 +50,10 @@ function BuddyConversation({
   const tutor = useTutorConfig({ appLinks, buddy: null, canAsk });
 
   const question = useSearchParams().get("ask") ?? undefined;
-  const thread = useBuddyThread(conversation);
 
   return (
     <TutorConversation
-      conversationId={conversation.id}
+      conversationId={conversationId}
       draft={question}
       goalId={goalId}
       onMissionMoment={() => router.refresh()}
@@ -84,8 +87,11 @@ export function BuddyClient({
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId, { learner: viewerId });
 
+  const pages = useBuddyPages();
+
   const { list, open, questionSaved } = useBuddyConversations({
     goalId,
+    isOfAnotherGoal: pages.isOfAnotherGoal,
     read: conversations,
     readAt,
   });
@@ -120,9 +126,10 @@ export function BuddyClient({
     >
       <BuddyConversation
         canAsk={canAsk}
-        conversation={open}
+        conversationId={open.id}
         goalId={goalId}
         onQuestionSaved={questionSaved}
+        thread={open.blank ? NOTHING_ASKED : pages.readOf(open.id)}
       />
     </BuddyScreen>
   );

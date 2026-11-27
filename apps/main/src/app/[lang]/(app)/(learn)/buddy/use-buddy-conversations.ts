@@ -9,7 +9,7 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { type BuddyConversation, type BuddyConversationList } from "@zoonk/learn/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type OlderConversations = Pick<BuddyConversations, "conversations" | "nextCursor">;
 
@@ -20,6 +20,8 @@ const NAMED_CONVERSATION = /^\/buddy\/(?!new$|earlier-questions$)(?<id>[^/]+)$/u
 const NEW_CONVERSATION = "/buddy/new";
 
 const BLANK_PAGE = /\/buddy(?:\/new)?\/?$/u;
+
+const CONVERSATION_PAGE = /\/buddy\/[^/]+\/?$/u;
 
 async function readOlder({
   cursor,
@@ -74,22 +76,46 @@ function nameConversationInUrl(conversationId: string) {
   );
 }
 
+/** The conversation the URL names, unless it's another goal's: that URL becomes `/buddy`. */
+function useNamedConversation({
+  isOfAnotherGoal,
+  pathname,
+}: {
+  isOfAnotherGoal: (conversationId: string) => boolean;
+  pathname: string;
+}): string | null {
+  const address = NAMED_CONVERSATION.exec(pathname)?.groups?.id ?? null;
+  const misplaced = address !== null && isOfAnotherGoal(address);
+
+  useEffect(() => {
+    if (misplaced) {
+      const path = globalThis.location.pathname.replace(CONVERSATION_PAGE, "/buddy");
+      globalThis.history.replaceState(null, "", path);
+    }
+  }, [misplaced]);
+
+  return misplaced ? null : address;
+}
+
 /**
  * Which conversation is open, and the goal's list of them.
  *
  * The URL says which is open. `/buddy` opens the one the learner asked in today, as the server read
  * it or as asked here since (`readAt` tells which is newer), and a blank one otherwise, as
  * `/buddy/new` always does. A blank one's id is made here: its first question creates it under that
- * id, and the URL then names it.
+ * id, and the URL then names it. A URL that names another goal's conversation opens what `/buddy`
+ * does, and becomes `/buddy`.
  *
  * The list is what the page read, the older ones "Show more" brought, and the ones asked in since.
  */
 export function useBuddyConversations({
   goalId,
+  isOfAnotherGoal,
   read,
   readAt,
 }: {
   goalId: string;
+  isOfAnotherGoal: (conversationId: string) => boolean;
   /** Null for a guest, who can't ask and so has none. */
   read: BuddyConversations | null;
   readAt: number;
@@ -100,7 +126,7 @@ export function useBuddyConversations({
   const [asked, setAsked] = useState<readonly BuddyConversation[]>([]);
   const [request, setRequest] = useState<"busy" | "failed" | "idle">("idle");
 
-  const named = NAMED_CONVERSATION.exec(pathname)?.groups?.id ?? null;
+  const named = useNamedConversation({ isOfAnotherGoal, pathname });
   const startAnother = () => setBlankId(crypto.randomUUID());
 
   // The blank one was sent and the URL names it now, so the next blank page starts another.

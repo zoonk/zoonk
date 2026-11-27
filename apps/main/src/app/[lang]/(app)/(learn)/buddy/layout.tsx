@@ -11,7 +11,7 @@ import { Suspense } from "react";
 import { BuddyClient } from "./buddy-client";
 import { findBuddyGoal } from "./buddy-goal";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
-import { BuddyThreads } from "./buddy-threads";
+import { BuddyPages } from "./buddy-pages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -40,7 +40,7 @@ async function readConversations({ canAsk, goalId }: { canAsk: boolean; goalId: 
 
 /**
  * The whole screen is drawn here, and the page under it only hands over the conversation its URL
- * names (`ProvideBuddyThread`). So opening another conversation, or a new one getting its own
+ * names (`BuddyPage`). So opening another conversation, or a new one getting its own
  * address, changes the turns alone: the list, the composer and an answer on its way stay as they are.
  */
 async function BuddyContent({ children }: { children: React.ReactNode }) {
@@ -75,7 +75,7 @@ async function BuddyContent({ children }: { children: React.ReactNode }) {
   ]);
 
   return (
-    <BuddyThreads>
+    <BuddyPages>
       {children}
 
       <Suspense fallback={<BuddyScreenSkeleton />}>
@@ -90,7 +90,7 @@ async function BuddyContent({ children }: { children: React.ReactNode }) {
           viewerId={session.user.id}
         />
       </Suspense>
-    </BuddyThreads>
+    </BuddyPages>
   );
 }
 
