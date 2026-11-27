@@ -38,6 +38,7 @@ internal fun MatchColumnsView(
     answer: LessonAnswer?,
     checked: Boolean,
     locked: Boolean,
+    onPick: () -> Unit,
     onRestore: (LessonAnswer) -> Unit,
     onDone: (LessonAnswer) -> Unit,
     takeNumberKeys: (((Int) -> Boolean)?) -> Unit,
@@ -78,6 +79,7 @@ internal fun MatchColumnsView(
 
     fun tap(spot: MatchSpot) {
         if (locked) return
+        onPick()
         val next = board.tap(spot)
         if (next.isComplete(lefts.size)) {
             sent = true

@@ -97,9 +97,10 @@ fun rememberLessonLanguage(
     learner: String,
     target: String?,
     speech: SpeechPlayer? = LocalLessonSpeech.current,
+    onAudioToggle: () -> Unit = {},
 ): LessonLanguage {
     val languages = remember(learner, target) { LessonLanguages(learner, target) }
-    val prompt = speech?.let { rememberPromptAudio(it, languages.target) }
+    val prompt = speech?.let { rememberPromptAudio(it, languages.target, onAudioToggle) }
     return remember(languages, prompt, speech) { LessonLanguage(languages, prompt, speech) }
 }
 
@@ -250,10 +251,21 @@ fun LanguageStepView(
             (exercise.content as? ExerciseContent.MatchColumns)?.let { pairs ->
                 val instruction = stripWrappingQuotes(pairs.question ?: stringResource(R.string.player_language_match_the_pairs))
                 QuestionWithTurn(part, { QuestionText(instruction) }) { question ->
-                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, restore, { done ->
-                        select(done)
-                        if (!locked) actions.runPrimary()
-                    }, actions::takeNumberKeys, question)
+                    MatchColumnsView(
+                        pairs,
+                        exercise.matchColumnsRightItems,
+                        answer,
+                        result != null,
+                        locked,
+                        onPick = actions::engage,
+                        onRestore = restore,
+                        onDone = { done ->
+                            select(done)
+                            if (!locked) actions.runPrimary()
+                        },
+                        takeNumberKeys = actions::takeNumberKeys,
+                        question = question,
+                    )
                 }
             }
         }

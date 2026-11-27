@@ -64,6 +64,8 @@ val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 /** What a screen's view can ask the player to do. */
 @Stable
 interface StepActions {
+    fun engage() = Unit
+
     fun select(answer: LessonAnswer?)
 
     fun restoreAnswer(answer: LessonAnswer) = select(answer)
