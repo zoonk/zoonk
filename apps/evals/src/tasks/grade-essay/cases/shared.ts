@@ -54,6 +54,8 @@ export type GradeWritingExpected = {
     scoreReference?: string;
   };
   zeroKind?: ZeroKind;
+  /** Why a published answer is left out of calibration, such as a transcription that can't be what the board read. */
+  doubtful?: string;
   feedbackLanguage: "en" | "pt";
 };
 

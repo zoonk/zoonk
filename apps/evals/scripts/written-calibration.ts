@@ -243,7 +243,7 @@ function boardAnswers(prefix: (id: string) => string | null, runs: Map<string, R
     const official = testCase.expected?.officialTotal;
     const caseRuns = runs.get(testCase.id);
 
-    if (!stratum || official === undefined || !caseRuns) {
+    if (!stratum || official === undefined || !caseRuns || testCase.expected?.doubtful) {
       return [];
     }
 
