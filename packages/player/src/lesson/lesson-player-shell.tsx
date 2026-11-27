@@ -222,6 +222,7 @@ function LessonPlayerFrame() {
           dotPaper && "dot-paper",
         )}
         id={LESSON_CONTENT_ID}
+        // oxlint-disable-next-line zoonk/held-press-control -- Lesson controls replay their own early presses. The content landmark observes the resulting click.
         onClick={actions.engage}
         onKeyDown={(event) => {
           const lessonKey =
