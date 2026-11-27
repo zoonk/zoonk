@@ -91,12 +91,14 @@ struct MockResultView: View {
       }
       .bottomBar { actions }
     } single: {
+      // Main's steps in order: the score with what supports it and the questions to review, then
+      // each part, then the plan.
       ReviewList(review: view.review, place: $choices.reviewPlace) {
         scoreSections
         diagnosisSections
+        reviewSections
         partSections
         planSections(answersInBar: true)
-        reviewSections
       }
       .bottomBar {
         if let offer = choices.plan.asking(view.adapt) {
@@ -135,10 +137,21 @@ struct MockResultView: View {
     run.essayGrading == .grading && view.essays.contains { $0.status == .pending }
   }
 
+  private var showsScore: Bool {
+    guard let result = view.result else { return false }
+
+    return result.total > 0 || (view.essays.isEmpty && view.speaking == nil)
+  }
+
   @ViewBuilder
   private var scoreSections: some View {
-    if let result = view.result, result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
+    if let result = view.result, showsScore {
       MockScoreSections(view: view, result: result, part: .score)
+
+      // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
+      if result.points?.missedMinimum == nil {
+        DayMomentSections(result: view.day)
+      }
     }
   }
 
@@ -185,20 +198,25 @@ struct MockResultView: View {
     }
   }
 
+  /// Each part's result. Without a score, the day's moment follows the first, as it ends main's
+  /// first step.
   @ViewBuilder
   private var partSections: some View {
-    // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
-    if view.result?.points?.missedMinimum == nil {
-      DayMomentSections(result: view.day)
-    }
-
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
       MockEssaySections(
         run: run, essay: essay, number: index + 1, total: view.essays.count)
+
+      if index == 0, !showsScore {
+        DayMomentSections(result: view.day)
+      }
     }
 
     if let speaking = view.speaking {
       MockSpeakingSection(paper: speaking) { choices.speakingTask = $0 }
+
+      if view.essays.isEmpty, !showsScore {
+        DayMomentSections(result: view.day)
+      }
     }
   }
 
