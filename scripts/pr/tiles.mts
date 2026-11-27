@@ -16,6 +16,7 @@ import {
   readManifest,
   readOf,
 } from "./media.mts";
+import { type Picture, sortPictures } from "./tile-pairs.mts";
 
 /** Vision models shrink an image past about 1.15 megapixels or 1568 px on a side. */
 const MAX_PIXELS = 1_150_000;
@@ -57,8 +58,6 @@ export function tileBoxes({ height, width }: { height: number; width: number }):
 }
 
 const VIDEO_EXTENSIONS = new Set([".mov", ".mp4", ".webm"]);
-
-type Picture = { folder: string; id: string; item: ManifestItem; path: string };
 
 type Measured = { folder: string; report: AlignmentReport };
 
@@ -105,13 +104,6 @@ function describeItem(item: ManifestItem): string {
   ]
     .filter(Boolean)
     .join(" · ");
-}
-
-/** What pairs an after with its before by name, or "" for a picture with none. */
-function pairKey(item: ManifestItem): string {
-  return isRecorded(item) && item.kind === "shot"
-    ? [item.platform, item.name, item.viewport, item.scheme].join(" ")
-    : "";
 }
 
 async function cutPicture({
@@ -239,15 +231,6 @@ async function blindPart({
     return [];
   }
 
-  const befores = pictures.filter(({ item }) => item.side === "before");
-
-  const before = new Map(
-    befores.flatMap((picture) => {
-      const key = pairKey(picture.item);
-      return key ? [[key, picture] as const] : [];
-    }),
-  );
-
   const sections: string[] = [];
 
   for (const [index, picture] of blind.entries()) {
@@ -255,29 +238,6 @@ async function blindPart({
       ...(await pictureSection({ heading: `${index + 1}. ${picture.id}`, link, picture, sheet })),
     );
   }
-
-  const pairs = blind.map((picture) => ({ pair: before.get(pairKey(picture.item)), picture }));
-
-  // A before registered by hand has no name to pair by, so the reader matches it by eye.
-  const unmatched = befores.filter((one) => !pairs.some(({ pair }) => pair === one));
-
-  const unpaired =
-    unmatched.length > 0
-      ? "no before by name: compare it with the one below that shows this screen; only if none does is it a new screen, with everything on it this change's"
-      : "no before, so everything on it is this change's";
-
-  const sort = [
-    ...pairs.map(({ pair, picture }) =>
-      pair ? `- ${picture.id}: [${pair.id}](${link(pair.path)})` : `- ${picture.id}: ${unpaired}`,
-    ),
-    ...(unmatched.length > 0
-      ? [
-          "",
-          "Before pictures nothing matched by name:",
-          ...unmatched.map(({ id, path }) => `- [${id}](${link(path)})`),
-        ]
-      : []),
-  ];
 
   const numbers = measured.flatMap(({ folder, report }) =>
     (report.findings ?? []).map(
@@ -306,7 +266,7 @@ async function blindPart({
     "",
     "Only now open the before pictures. For each finding, mark whether the before picture shows it too, and whether it stops or misleads a learner: wrong or missing information, an action they can't find or use, text cut so the meaning is lost.",
     "",
-    ...sort,
+    ...sortPictures({ blind, link, pictures }),
     "",
   ];
 }

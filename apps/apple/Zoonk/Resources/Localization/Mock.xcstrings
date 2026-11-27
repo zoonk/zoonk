@@ -423,7 +423,7 @@
       }
     },
     "%@ of %@" : {
-      "comment" : "Points of a total, like '182 of 260'",
+      "comment" : "A written test question's place, like '1 of 2'\nPoints of a total, like '182 of 260'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4909,7 +4909,7 @@
       }
     },
     "Blank" : {
-      "comment" : "A blank question\nBlank answers",
+      "comment" : "Blank answers",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5857,7 +5857,7 @@
       }
     },
     "Details" : {
-      "comment" : "Opens everything else about a mock exam's result\nTitle of a mock exam's details",
+      "comment" : "Title of a mock exam's details",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6977,7 +6977,7 @@
       }
     },
     "Hand in" : {
-      "comment" : "Confirms handing in\nHands in from the answer sheet",
+      "comment" : "Confirms handing in\nHands in from the answer sheet\nHands in the last section",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8175,6 +8175,7 @@
     },
     "mockReviewBlank" : {
       "comment" : "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8240,6 +8241,7 @@
     },
     "mockReviewPartlyRight" : {
       "comment" : "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8305,6 +8307,7 @@
     },
     "mockReviewRight" : {
       "comment" : "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8370,6 +8373,7 @@
     },
     "mockReviewWrong" : {
       "comment" : "How the learner's answer to one question went, on its row in the mock exam's review list, like \"Question 3 · Biology · Right\".",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9998,7 +10002,7 @@
       }
     },
     "Questions" : {
-      "comment" : "Labels the number of questions in an exam or a mock exam.",
+      "comment" : "The answer sheet's questions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11237,7 +11241,7 @@
       }
     },
     "Start" : {
-      "comment" : "Starts a speaking task's call\nStarts the picked mock",
+      "comment" : "Starts a speaking task's call\nStarts mock speaking\nStarts the picked mock",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14819,7 +14823,7 @@
       }
     },
     "You left it blank." : {
-      "comment" : "A blank essay\nA blank question",
+      "comment" : "A blank essay",
       "localizations" : {
         "de" : {
           "stringUnit" : {

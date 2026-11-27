@@ -4,7 +4,7 @@ import { type ExamFormatDay } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted, useFormatter } from "next-intl";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -106,11 +106,19 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   return (
     <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-compact min-w-0 font-medium">{dayTitle({ day, numbered })}</span>
-        <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
+        <span className="text-compact min-w-0 font-medium" data-slot="list-row-title">
+          {dayTitle({ day, numbered })}
+        </span>
+        <span
+          className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden"
+          data-slot="list-row-trailing"
+        >
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
-        <span className="text-muted-foreground basis-full pt-0.5 text-xs">
+        <span
+          className="text-muted-foreground basis-full pt-0.5 text-xs"
+          data-slot="list-row-description"
+        >
           {parts}
           {/* Unbroken from " ·" on, so a wrapped line never starts or ends on the dot. */}
           {count && <span className="whitespace-nowrap">{` · ${count}`}</span>}
@@ -132,11 +140,11 @@ export function ExamFormatSection() {
         {detail && exam.format.length > 1 && <PageSectionDetail>{detail}</PageSectionDetail>}
       </PageSectionHeader>
 
-      <ul aria-labelledby={FORMAT_TITLE_ID} className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul" aria-labelledby={FORMAT_TITLE_ID}>
         {exam.format.map((day) => (
           <DayRow day={day} key={day.day} numbered={exam.format.length > 1} />
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

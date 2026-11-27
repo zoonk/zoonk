@@ -117,7 +117,7 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
     const { carried, folder } = await recapture({ picture: await png({ left: 11 }) });
 
     assert.equal(carried?.read, undefined);
-    assert.deepEqual(carried?.retakes, { file: RETAKEN, read: READ });
+    assert.deepEqual(carried?.retakes, { file: RETAKEN, read: READ, sha256: sha256(await png()) });
     assert.deepEqual(readFileSync(join(folder, RETAKEN)), await png());
   });
 
@@ -127,8 +127,25 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
       picture: await png({ left: 12 }),
     });
 
-    assert.deepEqual(carried?.retakes, { file: RETAKEN, read: READ });
+    assert.deepEqual(carried?.retakes, {
+      file: RETAKEN,
+      read: READ,
+      sha256: sha256(await png({ left: 2 })),
+    });
+
     assert.deepEqual(readFileSync(join(folder, RETAKEN)), await png({ left: 2 }));
+  });
+
+  it("carries the read when a retake returns to the pixels last read", async () => {
+    const earlier = await png({ left: 2 });
+
+    const { read } = await recapture({
+      before: { read: undefined, retakes: { file: RETAKEN, read: READ } },
+      now: { sha256: sha256(earlier) },
+      picture: earlier,
+    });
+
+    assert.deepEqual(read, { ...READ, carriedFrom: sha256(earlier) });
   });
 
   it("never carries a read across a changed scenario, viewport, locale, scheme or scale", async () => {

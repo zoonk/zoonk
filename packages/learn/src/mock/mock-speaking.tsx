@@ -15,7 +15,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import { QuestionTitle } from "../_components/question-title";
 import { DoneMark } from "../_components/status-mark";
 import { TaskActions } from "../_components/task-layout";
@@ -42,7 +42,9 @@ function SpeakingTaskRow({ number, task }: { number: number; task: SpeakingTask 
         <p className="text-muted-foreground font-mono text-xs tabular-nums">
           {t("Task {number, number} · {time}", { number, time: minutes(task.minutes) })}
         </p>
-        <p className="text-sm leading-snug font-medium">{task.name}</p>
+        <p className="text-sm leading-snug font-medium" data-slot="list-row-title">
+          {task.name}
+        </p>
       </div>
 
       {done ? (
@@ -74,11 +76,11 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
           : t("Every task is done. Hand in this section to go on.")}
       </p>
 
-      <ol className={LIST_GROUP_CLASS}>
+      <ListGroup as="ol">
         {paper.tasks.map((task, index) => (
           <SpeakingTaskRow key={task.key} number={index + 1} task={task} />
         ))}
-      </ol>
+      </ListGroup>
     </div>
   );
 }

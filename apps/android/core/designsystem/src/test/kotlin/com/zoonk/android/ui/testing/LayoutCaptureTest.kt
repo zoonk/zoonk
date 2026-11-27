@@ -121,8 +121,7 @@ class LayoutCaptureTest {
             capture {
                 ListRow(
                     headline = { Text("How atoms share or transfer electrons to form bonds.") },
-                    leading = { Text("1", style = MaterialTheme.typography.bodyMedium.withTabularFigures()) },
-                    leadOnFirstLine = true,
+                    lead = { Text("1", style = MaterialTheme.typography.bodyMedium.withTabularFigures()) },
                     meta = { Text("7 min") },
                     onClick = {},
                 )
@@ -136,7 +135,10 @@ class LayoutCaptureTest {
         val labelBounds = label.getJSONArray("bounds")
         val valueBounds = value.getJSONArray("bounds")
         val endBounds = end.getJSONArray("bounds")
-        val numberBounds = own.first { it.optString("part") == "mark" }.getJSONArray("bounds")
+        val number = own.first { it.optString("part") == "lead" }
+        val numberBounds = number.getJSONArray("bounds")
+        assertTrue(number.has("capTop"))
+        assertTrue(number.has("capBottom"))
         val middle = rowBounds.getDouble(1) + rowBounds.getDouble(3) / 2
         assertEquals("The title wraps to two lines", 2, label.getInt("lines"))
         assertTrue("The value stays beside the title", valueBounds.getDouble(0) >= labelBounds.getDouble(0) + labelBounds.getDouble(2))

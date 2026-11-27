@@ -48,7 +48,8 @@
   "essay_limit_title": "e6fc3989d97622bc5d9f7e8b0f3e9ae93f3435bd36cf6ff99ebc6f1ca13b10ce",
   "essay_limit_title_any": "e476423538578e76ceadc23a01de0399f8adb40b41f5145b1434eae1c93c13a5",
   "essay_lines_empty": "ad9fabb8df2c8102787132068b60826eb5236a31cb02cd76ecd45f64a21fdbdb",
-  "essay_lines_over": "25a0015829d17267580d63d068e972862022bc12f15e145c912c09278488deb6",
+  "essay_lines_end_unread": "1bbb9daaf4aae775241be8d63f39382f579c3c34c6f6165bf68b6874198b55b0",
+  "essay_lines_may_not_fit": "8eeda19bd7b5f48c88af57eff751a8505eca9f62cef179b0c30908e2036c4f1a",
   "essay_lines_question": "11bdf6e44b8fed471e2e6555f5af35828e04b0bca8bcb61bed0d559b23be9422",
   "essay_lines_used": "6eef4160fe7d70f3ab457a81fe5dd9a6909ad8e895aa3c2936ab425ddd7dd82e",
   "essay_minus": "7599382f501dc8ace1a70312c591a206aae72771f6d4348d46641bd6534a663c",
@@ -201,12 +202,10 @@
         <item quantity="many">0 de %1$d linhas</item>
         <item quantity="other">0 de %1$d linhas</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">cerca de %1$d de %2$d linha · %3$d não serão lidas</item>
-        <item quantity="many">cerca de %1$d de %2$d linhas · %3$d não serão lidas</item>
-        <item quantity="other">cerca de %1$d de %2$d linhas · %3$d não serão lidas</item>
-    </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">cerca de %1$d de %2$d linhas · talvez não caiba no papel</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">cerca de %1$d de %2$d linhas · o final não será lido</string>
     <string name="essay_conflict_title">Esta resposta mudou em outro dispositivo</string>
     <string name="essay_conflict_body">Mantenha a versão que você está escrevendo aqui ou troque pela outra.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->

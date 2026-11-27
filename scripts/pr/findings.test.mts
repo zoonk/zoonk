@@ -11,7 +11,7 @@ const polish: Finding = {
   before: false,
   id: "polish-1",
   misleads: false,
-  rule: "none",
+  rule: "none: visual grouping",
   state: "open",
   text: "The helper could sit closer to its field",
 };
@@ -133,7 +133,7 @@ describe("the PR's list of findings closed without a fix", () => {
       { ...polish, issue: 2790, state: "issue" },
       {
         ...onBase,
-        reason: "Craft's deliberate choice: a hovered row | passes",
+        reason: "Craft's deliberate choice: a hovered row | passes (media/plan.png)",
         state: "not-a-fault",
       },
       { ...broken, grantedBy: "the user", state: "exception" },
@@ -158,7 +158,7 @@ describe("the PR's list of findings closed without a fix", () => {
         "| Finding | Pictures | Closed |",
         "| --- | --- | --- |",
         `| The helper could sit closer to its field | \`${where}/a.png\`, \`${where}/b.png\` | Filed in #2790 |`,
-        `| The chevrons end 4 px apart | \`${where}/a.png\` | Not a fault: Craft\\'s deliberate choice\\: a hovered row \\| passes |`,
+        `| The chevrons end 4 px apart | \`${where}/a.png\` | Not a fault: Craft\\'s deliberate choice\\: a hovered row \\| passes \\(media\\/plan\\.png\\) |`,
         `| The chevrons end 4 px apart | \`${where}/a.png\` | Exception granted by the user |`,
       ].join("\n"),
     );

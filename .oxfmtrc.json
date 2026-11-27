@@ -40,7 +40,7 @@
     "packages/utils/src/math-spans-native-fixtures.json",
     "apps/android/core/resources/src/main/assets/sandbox/index.html",
     "apps/evals/eval-results",
-    "**/messages/**",
+    "**/messages/*.po",
     ".turbo",
     "pnpm-lock.yaml"
   ]

@@ -11,7 +11,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DetailAsideSection, DetailContent, DetailLayout } from "../_components/detail-page";
 import {
-  LIST_GROUP_CLASS,
+  ListGroup,
   ListRowBody,
   ListRowContent,
   ListRowDescription,
@@ -86,13 +86,13 @@ function MonthSection({
         </PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul">
         {lessons.map((lesson) => (
           <li key={lesson.lessonId}>
             <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} />
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

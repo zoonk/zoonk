@@ -1010,65 +1010,6 @@
         }
       }
     },
-    "New goal" : {
-      "comment" : "Search group to start a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neues Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuevo objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nouvel objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuovo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nowy cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Novo objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni hedef"
-          }
-        }
-      }
-    },
     "Practice your mistakes" : {
       "comment" : "Search action that practices the mistakes ready for review",
       "localizations" : {
@@ -1778,7 +1719,7 @@
       }
     },
     "Switch to %@" : {
-      "comment" : "Search row that switches to another goal; the value is its title",
+      "comment" : "Search row that switches to another goal; the value is its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {

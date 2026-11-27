@@ -1,5 +1,6 @@
 import { shuffle } from "@zoonk/utils/shuffle";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { anyOrder } from "../../_test-utils/any-order";
 import {
   type TranslationOption,
   type WordBankOption,
@@ -194,9 +195,47 @@ describe(serializeExerciseSteps, () => {
       ],
     });
 
-    expect(result[0]?.fillBlankOptions).toStrictEqual([wordOption("sky"), wordOption("ground")]);
+    expect(anyOrder(result[0]?.fillBlankOptions)).toStrictEqual(
+      anyOrder([wordOption("sky"), wordOption("ground")]),
+    );
 
-    expect(result[1]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
+    expect(anyOrder(result[1]?.matchColumnsRightItems)).toStrictEqual(anyOrder(["1", "2"]));
+  });
+
+  it("orders each step's choices the same on every build, however they arrive", () => {
+    const sentence = makeSentence({ distractors: ["Abend", "Fenster", "Tag"], id: "30" });
+
+    const steps = [
+      makeStep({
+        content: {
+          context: "A greeting",
+          options: ["Hallo", "Tschüss", "Danke", "Bitte"].map((text, index) => ({
+            feedback: `${text} feedback`,
+            id: text,
+            isCorrect: index === 0,
+            text,
+          })),
+          question: "How do you say hello?",
+        },
+        id: "5",
+        kind: "multipleChoice",
+      }),
+      makeStep({
+        content: {
+          pairs: ["1", "2", "3", "4"].map((right, index) => ({ left: `L${index}`, right })),
+          question: "Match the pairs",
+        },
+        id: "6",
+        kind: "matchColumns",
+      }),
+      makeStep({ content: {}, id: "7", kind: "reading", sentence }),
+    ];
+
+    const first = serialize({ steps });
+
+    shuffleMock.mockImplementation(<T>(items: readonly T[]) => [...items].toReversed());
+
+    expect(serialize({ steps })).toStrictEqual(first);
   });
 
   it("serializes the step word and sentence distractor arrays", () => {
@@ -299,12 +338,14 @@ describe(serializeExerciseSteps, () => {
       ],
     );
 
-    expect(result[0]?.translationOptions).toStrictEqual([
-      translationOption({ id: "10", word: "boa noite" }),
-      translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "boa tarde" }),
-      translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "bom dia" }),
-      translationOption({ id: "distractor:até logo", word: "até logo" }),
-    ]);
+    expect(anyOrder(result[0]?.translationOptions)).toStrictEqual(
+      anyOrder([
+        translationOption({ id: "10", word: "boa noite" }),
+        translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "boa tarde" }),
+        translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "bom dia" }),
+        translationOption({ id: "distractor:até logo", word: "até logo" }),
+      ]),
+    );
   });
 
   it("adds the visible translation prompt punctuation to every translation option", () => {
@@ -334,11 +375,13 @@ describe(serializeExerciseSteps, () => {
       [makeDistractorWord({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde." })],
     );
 
-    expect(result[0]?.translationOptions).toMatchObject([
-      { id: "10", word: "Bom dia" },
-      { audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde" },
-      { id: "distractor:boa noite", word: "Boa noite" },
-    ]);
+    expect(anyOrder(result[0]?.translationOptions)).toMatchObject(
+      anyOrder([
+        { id: "10", word: "Bom dia" },
+        { audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde" },
+        { id: "distractor:boa noite", word: "Boa noite" },
+      ]),
+    );
   });
 
   it("builds reading and listening word banks from stored distractors only", () => {
@@ -365,20 +408,19 @@ describe(serializeExerciseSteps, () => {
       ],
     });
 
-    expect(result[0]?.wordBankOptions).toStrictEqual([
-      wordOption("Guten"),
-      wordOption("Morgen,"),
-      wordOption("Lara."),
-      wordOption("Abend", { audioUrl: "/audio/abend.mp3" }),
-      wordOption("Fenster"),
-    ]);
+    expect(anyOrder(result[0]?.wordBankOptions)).toStrictEqual(
+      anyOrder([
+        wordOption("Guten"),
+        wordOption("Morgen,"),
+        wordOption("Lara."),
+        wordOption("Abend", { audioUrl: "/audio/abend.mp3" }),
+        wordOption("Fenster"),
+      ]),
+    );
 
-    expect(result[1]?.wordBankOptions).toStrictEqual([
-      wordOption("Bom"),
-      wordOption("dia,"),
-      wordOption("Lara."),
-      wordOption("tchau"),
-    ]);
+    expect(anyOrder(result[1]?.wordBankOptions)).toStrictEqual(
+      anyOrder([wordOption("Bom"), wordOption("dia,"), wordOption("Lara."), wordOption("tchau")]),
+    );
   });
 
   it("keeps sentence word metadata from sentence words when available", () => {

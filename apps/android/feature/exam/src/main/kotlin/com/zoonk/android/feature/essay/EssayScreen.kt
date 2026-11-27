@@ -703,14 +703,19 @@ internal fun WritingLineCount(
         )
         return
     }
-    val used =
-        remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
+    val lines =
+        remember(text, writing.charactersPerLine, writing.maxCharactersPerLine, limit) {
+            countWritingLines(text, writing.charactersPerLine.toInt(), writing.maxCharactersPerLine.toInt(), limit)
+        }
+    val used = lines.estimated
     val over = used > limit
     Text(
         if (text.isBlank()) {
             pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
+        } else if (lines.ignoredFrom != null) {
+            stringResource(R.string.essay_lines_end_unread, used, limit)
         } else if (over) {
-            pluralStringResource(R.plurals.essay_lines_over, limit, used, limit, used - limit)
+            stringResource(R.string.essay_lines_may_not_fit, used, limit)
         } else {
             pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },

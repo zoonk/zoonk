@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
-import { hasEvidence } from "./scenarios/evidence.mts";
+import { describe, expect, it, vi } from "vitest";
+import { hasEvidence, hasProof } from "./scenarios/evidence.mts";
 import { SCENARIOS } from "./scenarios/scenarios.mts";
 
-function pageWith(visible: string[]) {
+function pageWith(visible: string[]): Parameters<typeof hasEvidence>[0] {
   return {
     locator: (selector: string) => ({
-      first: () => ({ isVisible: async () => visible.includes(selector) }),
+      filter: () => ({ count: async () => Number(visible.includes(selector)) }),
     }),
   };
 }
@@ -29,5 +29,34 @@ describe("compound scenario evidence", () => {
     const noStop = "[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))";
     await expect(hasEvidence(pageWith([noStop]), lifted?.evidence ?? [])).resolves.toBe(true);
     await expect(hasEvidence(pageWith([]), lifted?.evidence ?? [])).resolves.toBe(false);
+  });
+});
+
+describe("words that prove a scenario", () => {
+  it("uses the completed-lessons title when the visible sidebar repeats it", async () => {
+    const scenario = SCENARIOS.find(({ id }) => id === "completed-lessons");
+
+    if (!scenario) {
+      throw new Error("Expected the completed-lessons scenario.");
+    }
+
+    const { proof: words } = scenario;
+
+    const getByText = vi.fn(() => ({ filter: () => ({ count: async () => 2 }) }));
+    const getScopedText = vi.fn(() => ({ filter: () => ({ count: async () => 1 }) }));
+    const locator = vi.fn(() => ({ getByText: getScopedText }));
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The fake supplies the locator chain the proof uses.
+    const page = { getByText, locator } as unknown as Parameters<typeof hasProof>[0]["page"];
+
+    await expect(
+      hasProof({ page, scenario: { ...scenario, proofWithin: undefined }, words }),
+    ).rejects.toThrow("2 visible elements");
+
+    expect(getByText).toHaveBeenCalledWith(words, { exact: true });
+
+    await expect(hasProof({ page, scenario, words })).resolves.toBe(true);
+
+    expect(locator).toHaveBeenCalledWith("main");
+    expect(getScopedText).toHaveBeenCalledWith(words, { exact: true });
   });
 });

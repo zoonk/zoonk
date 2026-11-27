@@ -24,6 +24,7 @@ import {
 import { languageConversationCreatedSchema } from "../src/lib/openapi/schemas/language";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
@@ -166,7 +167,7 @@ test.describe("Checkpoints API", () => {
       await previous;
 
       await api.post(`${blockPath}/answers`, {
-        data: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.itemId },
+        data: { answer: tapOption(question.options), durationMs: 4000, itemId: question.itemId },
       });
     }, Promise.resolve());
 

@@ -1,4 +1,5 @@
-import "@repo/packages/player/src/_test-utils/browser.css";
+import "@repo/apps/main/src/app/globals.css";
+import "@repo/packages/player/src/_test-utils/fonts/fonts.css";
 import mainEn from "@repo/apps/main/messages/en.po";
 import mainPt from "@repo/apps/main/messages/pt.po";
 import { mergeMessages } from "@repo/apps/main/src/i18n/merge-messages.ts";
@@ -10,8 +11,6 @@ import { TODAY } from "./story";
 
 type View = (p: { lang: "en" | "pt"; state: string; q: URLSearchParams }) => React.ReactNode;
 
-// A module that no longer compiles against the app only loses its own views. `views=<module>` loads only
-// that one, so a stage with many pieces doesn't load every screen's code once per piece.
 const modules = import.meta.glob<{ views: Record<string, View> }>([
   "./player.tsx",
   "./art.tsx",
@@ -22,12 +21,8 @@ const only = q.get("views");
 const wanted = Object.entries(modules)
   .filter(([path]) => !only || path === `./${only}/index.tsx` || path === `./${only}.tsx`)
   .map(([, load]) => load());
-const loaded = await Promise.allSettled(wanted);
-const views: Record<string, View> = {};
-for (const result of loaded) {
-  if (result.status === "fulfilled") Object.assign(views, result.value.views);
-  else console.error(result.reason);
-}
+const loaded = await Promise.all(wanted);
+const views: Record<string, View> = Object.assign({}, ...loaded.map((module) => module.views));
 
 const lang = q.get("lang") === "pt" ? "pt" : "en";
 const messages = mergeMessages(
@@ -35,8 +30,10 @@ const messages = mergeMessages(
   await learnMessages(lang),
   lang === "pt" ? mainPt : mainEn,
 );
-const View =
-  views[q.get("view") ?? ""] ?? (() => <pre>{Object.keys(views).sort().join("\n")}</pre>);
+const view = q.get("view");
+const View = view ? views[view] : () => <pre>{Object.keys(views).sort().join("\n")}</pre>;
+
+if (!View) throw new Error(`Unknown studio view: ${view}`);
 
 createRoot(document.getElementById("root")!).render(
   <NextIntlClientProvider

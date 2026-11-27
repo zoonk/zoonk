@@ -4,6 +4,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
@@ -89,12 +90,14 @@ describe("a miss on a topic below the known bar", () => {
 
     expect([...new Set(lessonsBefore.map((item) => item.status))]).toStrictEqual(["todo"]);
 
+    const askedId = asked && "itemId" in asked ? (asked.itemId ?? "") : "";
+
     const result = await answerStudyQuestion({
       blockId: review.id,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInBlock({ blockId: review.id, itemId: askedId, right: false }),
         durationMs: 3000,
-        itemId: asked && "itemId" in asked ? (asked.itemId ?? "") : "",
+        itemId: askedId,
         timeZone: TIME_ZONE,
       },
       sessionId: session!.id,

@@ -32,6 +32,7 @@ import {
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
@@ -196,7 +197,7 @@ async function playBlock({
 
     await readBody({
       response: await api.post(`${blockPath}/answers`, {
-        data: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.itemId },
+        data: { answer: tapOption(question.options), durationMs: 4000, itemId: question.itemId },
       }),
       schema: studyAnswerFeedbackResponseSchema,
     });
@@ -367,10 +368,17 @@ test.describe("Study sessions API", () => {
       "fixMistake",
     ]);
 
+    const notebook = await readBody({
+      response: await api.get(`/v1/me/mistake-practice?goalId=${goal.id}&timeZone=UTC`),
+      schema: mistakePracticeResponseSchema,
+    });
+
+    const replayed = notebook.practice.find((entry) => entry.mistakeId === mistake.id);
+
     const correction = await readBody({
       response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(replayed?.questions[0]?.options),
           attemptId: randomUUID(),
           durationMs: 2000,
           itemId: mistake.itemId,

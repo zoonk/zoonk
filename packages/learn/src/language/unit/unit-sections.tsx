@@ -4,8 +4,8 @@ import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_CLASS,
+  ListGroup,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -31,7 +31,7 @@ export function UnitObjectives({ view }: { view: LanguageUnitView }) {
           {finished ? t("I can already…") : t("By the end of this unit")}
         </PageSectionTitle>
       </PageSectionHeader>
-      <ul className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul">
         {unit.objectives.slice(0, SHOWN_OBJECTIVES).map((objective) => (
           <li className={LIST_ROW_CLASS} key={objective}>
             <ListRowLeading>
@@ -42,7 +42,7 @@ export function UnitObjectives({ view }: { view: LanguageUnitView }) {
             </ListRowContent>
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

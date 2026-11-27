@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { trackServerEvent } from "../../analytics/server";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
@@ -118,7 +119,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: first?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 90_000,
         flagged: true,
         itemId: first?.itemId ?? "",
@@ -128,7 +133,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: second?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 60_000,
         flagged: false,
         itemId: second?.itemId ?? "",
@@ -141,11 +150,11 @@ describe("mock exams", () => {
     });
 
     await Promise.all(
-      rest.map((question, index) =>
+      rest.map(async (question, index) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 30_000,
             flagged: index === 0,
             itemId: question.itemId,
@@ -225,7 +234,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: wrongUnsure?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 1000,
         flagged: true,
         itemId: wrongUnsure?.itemId ?? "",
@@ -233,11 +246,11 @@ describe("mock exams", () => {
     });
 
     await Promise.all(
-      rest.map((question) =>
+      rest.map(async (question) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 1000,
             flagged: false,
             itemId: question.itemId,
@@ -263,11 +276,11 @@ describe("mock exams", () => {
     const running = await runningMock(blockId);
 
     await Promise.all(
-      (running.current?.questions ?? []).map((question) =>
+      (running.current?.questions ?? []).map(async (question) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 1000,
             flagged: false,
             itemId: question.itemId,

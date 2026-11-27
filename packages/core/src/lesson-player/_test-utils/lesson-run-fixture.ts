@@ -1,14 +1,18 @@
-import { prisma } from "@zoonk/db";
+import { type LearningEvent, prisma } from "@zoonk/db";
 
 export function lessonRunFixture({
   endedAt = null,
+  kind = "lesson",
   lessonId,
+  lessonKind = "library",
   startedAt = new Date(),
   studySessionId,
   userId,
 }: {
   endedAt?: Date | null;
+  kind?: LearningEvent["kind"];
   lessonId: string;
+  lessonKind?: string;
   startedAt?: Date;
   studySessionId?: string;
   userId: string;
@@ -22,8 +26,8 @@ export function lessonRunFixture({
       contentIds: { lessonId, ...(studySessionId && { studySessionId }) },
       endedAt,
       hour: startedAt.getUTCHours(),
-      kind: "lesson",
-      lessonKind: "library",
+      kind,
+      lessonKind,
       localDate,
       startedAt,
       titleSnapshot: "Test lesson",
