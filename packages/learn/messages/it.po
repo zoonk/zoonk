@@ -1579,13 +1579,6 @@ msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Non ancora"
 
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Missioni di oggi"
-
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
 msgid "Beep"
@@ -7552,6 +7545,12 @@ msgstr "Hai guadagnato +{points} punti di Potenza Mentale."
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Missioni completate"
+
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Missioni di oggi"
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx

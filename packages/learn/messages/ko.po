@@ -1579,13 +1579,6 @@ msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
 
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "오늘의 미션"
-
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
 msgid "Beep"
@@ -7552,6 +7545,12 @@ msgstr "두뇌력 +{points} 보상을 받았어요."
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "미션 완료"
+
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "오늘의 미션"
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
