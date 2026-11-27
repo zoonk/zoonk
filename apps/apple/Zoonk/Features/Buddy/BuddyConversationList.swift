@@ -18,20 +18,21 @@ struct BuddyConversationList: View {
     ZoonkList {
       Section {
         Button(action: startNew) {
-          HStack(spacing: 12) {
+          ListRow(
             Text(
               "New conversation", tableName: "Buddy",
               comment:
                 "The first row of the conversations list: starts a conversation with no questions yet."
             )
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
+          ) {
+            EmptyView()
+          } trailing: {
             // Where the other rows' chevrons are, as main's row ends with its plus.
             Image(systemName: "plus")
               .font(.body.weight(.semibold))
               .imageScale(.small)
               .foregroundStyle(Color(.tertiaryLabel))
+              .layoutPart(.end)
               .accessibilityHidden(true)
           }
           .contentShape(.rect)
@@ -137,20 +138,17 @@ struct BuddyConversationList: View {
     return Button {
       select(conversation.id)
     } label: {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        Text(conversation.title)
-          .foregroundStyle(.primary)
-          .lineLimit(1)
-          .frame(maxWidth: .infinity, alignment: .leading)
-
+      ListRow(Text(conversation.title)) {
+        EmptyView()
+      } trailing: {
         Text(
           Calendar.current.isDateInToday(conversation.lastAskedAt)
             ? PlanDate.timeOfDay(conversation.lastAskedAt)
             : PlanDate.momentDay(conversation.lastAskedAt)
         )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
+        .layoutRole(.date)
       }
+      .lineLimit(1)
       .disclosureChevron()
     }
     .currentRow(isOpen)
