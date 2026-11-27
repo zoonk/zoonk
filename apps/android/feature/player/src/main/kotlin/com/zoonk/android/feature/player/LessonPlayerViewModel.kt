@@ -333,11 +333,16 @@ class LessonPlayerViewModel(
     fun open(lesson: PlayableLesson) {
         val session = sessions.current
 
-        if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) return
+        if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) {
+            if (!activated && this.lesson != lesson) {
+                showLesson(lesson)
+                leaveOutUnheardDictations()
+            }
+            return
+        }
 
         work.cancel()
         work = openScope()
-        this.lesson = lesson
         if (owner != session) activated = false
         owner = session
         admittedRunId = null
@@ -357,16 +362,21 @@ class LessonPlayerViewModel(
         val reading = day.read(session, work)
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
-        mutableState.value =
-            LessonPlayerState
-                .initial(lesson.id, lesson.playedSteps, now = openedAt)
-                .resume(lesson.resume.map(LibraryLessonRunAnswer::toRunAnswer), openedAt)
-                .withFirstAnswer(openedAt)
+        showLesson(lesson)
         work.launch {
             reading.join()
             leaveOutUnheardDictations()
         }
         if (activated) startRun()
+    }
+
+    private fun showLesson(lesson: PlayableLesson) {
+        this.lesson = lesson
+        mutableState.value =
+            LessonPlayerState
+                .initial(lesson.id, lesson.playedSteps, now = openedAt)
+                .resume(lesson.resume.map(LibraryLessonRunAnswer::toRunAnswer), openedAt)
+                .withFirstAnswer(openedAt)
     }
 
     fun resume() {

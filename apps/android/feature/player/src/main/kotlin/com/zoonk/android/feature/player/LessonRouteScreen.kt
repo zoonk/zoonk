@@ -93,6 +93,9 @@ fun LessonRouteScreen(
     val resource = remember(route.lessonId) { app.lessonPlayer.lesson(route.lessonId) }
     val cachedOnEntry = remember(resource) { resource.state.value.value is LessonLoad.Ready }
     val load by resource.collectShown()
+    LaunchedEffect(resource) {
+        if (cachedOnEntry) resource.refresh()
+    }
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session is SessionState.SignedIn
     val scope = rememberCoroutineScope()
@@ -140,7 +143,7 @@ fun LessonRouteScreen(
         is LoadState.Loaded -> {
             when (val lesson = state.value) {
                 is LessonLoad.Ready -> {
-                    PlayingLesson(route, app, lesson, navigator, exits, refreshOnOpen = cachedOnEntry)
+                    PlayingLesson(route, app, lesson, navigator, exits)
                 }
 
                 is LessonLoad.SessionRequired -> {
@@ -173,7 +176,6 @@ internal fun PlayingLesson(
     navigator: AppNavigator,
     exits: LessonPlayerExits,
     endSlot: LessonEndSlot? = null,
-    refreshOnOpen: Boolean = false,
 ) {
     val viewModel =
         viewModel(key = "lesson:${route.lessonId}") {
@@ -228,10 +230,8 @@ internal fun PlayingLesson(
             }
         }
 
-    LaunchedEffect(load.lesson.id, signedIn) {
-        val current = if (endSlot == null) app.lessonPlayer.lesson(route.lessonId) else null
-        if (refreshOnOpen) current?.refresh() else current?.load()
-        viewModel.open((current?.state?.value?.value as? LessonLoad.Ready)?.lesson ?: load.lesson)
+    LaunchedEffect(load.lesson, signedIn) {
+        viewModel.open(load.lesson)
     }
 
     val bookmark =

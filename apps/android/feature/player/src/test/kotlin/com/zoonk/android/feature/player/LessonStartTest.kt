@@ -756,6 +756,48 @@ class LessonStartTest {
             }
         }
 
+    @Test fun cachedLessonShowsImmediatelyAndFreshProgressReplacesItBeforeInput() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE), checkStep(TWO)))
+            val fresh = lesson.copy(resume = ApiJson.decodeFromString(answered(ONE)))
+            val vm = player(null, tapped = false)
+            vm.open(lesson)
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            vm.open(fresh)
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            runCurrent()
+            assertTrue(api.startOpenings.isEmpty())
+
+            api.startGate = CompletableDeferred()
+            vm.select(LessonAnswer.Check("right"))
+            vm.open(lesson)
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(
+                LessonAnswer.Check("right"),
+                vm.state.value
+                    ?.answers
+                    ?.get(TWO),
+            )
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(1, api.startOpenings.size)
+        }
+
     @Test fun finishingARestoredLessonStartsAndCompletesIt() =
         runTest(dispatcher) {
             api.runAnswers = answered(ONE)
