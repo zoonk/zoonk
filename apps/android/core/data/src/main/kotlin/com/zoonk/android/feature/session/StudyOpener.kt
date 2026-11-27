@@ -390,13 +390,7 @@ private fun DayStep.shown() =
                 weakest,
                 mistakesPractice = screen == StudyBlock.Screen.MISTAKES_PRACTICE,
                 mockPreparationReview = true.takeIf { mockPreparationReview },
-                returning =
-                    returning?.let { shown ->
-                        OpenStudyDayRequestTargetOneOfShownFlags.Returning.entries.first {
-                            it.value ==
-                                shown.value
-                        }
-                    },
+                returning = OpenStudyDayRequestTargetOneOfShownFlags.Returning.entries.firstOrNull { it.value == returning?.value },
             ),
         kind = OpenStudyDayRequestTargetOneOfShown.Kind.valueOf(kind.name),
         lessonId = lessonId,

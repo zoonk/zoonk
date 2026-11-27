@@ -292,7 +292,7 @@ struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
   }
 
   /// Why a lesson the learner already had is back in the day.
-  enum Returning: String, Codable, Sendable {
+  enum Returning: String, Codable, OmittableAPIContent, Sendable {
     /// The same lesson again, for a skill they keep missing.
     case again
     /// A second lesson that explains the skill another way.

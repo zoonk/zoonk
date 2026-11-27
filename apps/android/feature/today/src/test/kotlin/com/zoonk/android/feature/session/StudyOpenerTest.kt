@@ -26,6 +26,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
@@ -337,6 +338,33 @@ class StudyOpenerTest {
             assertEquals(JsonPrimitive(true), refs[0].getValue("flags").jsonObject.getValue("mistakesPractice"))
             assertEquals(JsonPrimitive(pattern.toString()), refs[1].getValue("patternId"))
             assertEquals(JsonPrimitive("anotherWay"), refs[2].getValue("flags").jsonObject.getValue("returning"))
+        }
+
+    @Test
+    fun aReturningReasonThisVersionDoesNotKnowOpensTheRowWithoutEchoingIt() =
+        runTest {
+            val api = FakeStudyApi()
+            api.dayOpening = opening("today")
+            val lesson =
+                step(
+                    0,
+                    screen = StudyBlock.Screen.SESSION,
+                    saved = false,
+                ).copy(returning = StudyBlock.Returning.UNKNOWN_DEFAULT_OPEN_API)
+
+            opener(api).open(day(listOf(lesson), saved = false), lesson, next = false, goalId = GOAL)
+
+            val flags =
+                ApiRequestJson
+                    .encodeToJsonElement(OpenStudyDayRequest.serializer(), api.opened.single())
+                    .jsonObject
+                    .getValue("target")
+                    .jsonObject
+                    .getValue("ref")
+                    .jsonObject
+                    .getValue("flags")
+                    .jsonObject
+            assertFalse("returning" in flags)
         }
 
     private fun unwritten() =

@@ -87,6 +87,27 @@ final class StudyAPITests: XCTestCase {
     }
   }
 
+  /// A reason a newer server gives for a lesson being back keeps the lesson's own row, without a
+  /// line this version can't say.
+  func testAnUnknownReturningReasonKeepsAnOrdinaryLessonRow() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let wire = try JSONDecoder().decode(
+      Components.Schemas.StudyBlock.self,
+      from: JSONSerialization.data(
+        withJSONObject: base.merging([
+          "id": "01a182f3-64b4-7b61-82d2-47d32878c252", "practiceNumber": NSNull(),
+          "returning": "lastChance",
+        ]) { $1 })
+    )
+    let block: StudyBlock = try StudyJSON.recode(wire)
+    let plain = try JSONDecoder().decode(StudyBlock.self, from: Data(Self.block.utf8))
+
+    XCTAssertNil(block.returning)
+    XCTAssertEqual(block.displayTitle, plain.displayTitle)
+    XCTAssertEqual(block.label, plain.label)
+  }
+
   /// A day's mistakes all fixed elsewhere since it opened: the row says so, with no line, until
   /// opening it marks it done; a finished row keeps the count it recorded.
   func testAMistakesRowWithNothingLeftReadsAlreadyFixed() throws {
