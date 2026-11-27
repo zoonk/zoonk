@@ -185,7 +185,7 @@ function sizeProblems(root: string, files: string[], options: Required<Options>)
 
     return bytes > ceiling
       ? [
-          `${path} is ${bytes} bytes, over the ${ceiling} it may hold until it's split. Take as much out as you add, or split it by subject.`,
+          `${path} is ${bytes} bytes, over the ${ceiling} it may hold until it's split. Split it: move what not every task needs into its own file and link it, then lower this ceiling.`,
         ]
       : [];
   });

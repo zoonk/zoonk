@@ -111,7 +111,7 @@ When you're:
 ## Maintaining these instructions
 
 - **Keep this file short:** it holds the principles, the rules that hold on every task, and the index. A procedure, a list of cases, a tool's manual and anything that belongs to one area go in the small file the index points at.
-- **One subject per file, and small.** A guide, a skill's entry and a reference each do one job, so reading one costs little. When a file grows a second subject, split it and add its line to the index or to the skill's entry. A skill's `SKILL.md` is a short entry that says when to read each of its references, with what matters most at the top.
+- **One subject per file, and small.** A guide, a skill's entry and a reference each do one job, so reading one costs little. When a file grows a second subject, split it and link the part from the index or the skill's entry. A `SKILL.md` holds only what every task that opens it needs, most important first; what only some need is a reference it says when to read. Its description says when to use it, not what it holds: every agent reads every description.
 - **One home per rule.** State a rule in one place and link to it from everywhere else; a second copy drifts.
 - **Goal and reason before any number.** Say what to do, what it serves and why, in a sentence or two. Keep a number only when it's a constraint we can't change; any other number is a target, and the piece or the check owns the value. A check is a lead and a guard against a fault coming back, never the definition of a good result.
 - **No example from the task that prompted a rule,** and at most one example. When you add to a file, look for what it lets you take out. `pnpm agent-rules:check` holds each file's size, every link and anchor, and the skill symlinks.
