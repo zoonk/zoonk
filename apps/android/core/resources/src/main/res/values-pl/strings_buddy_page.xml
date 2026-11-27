@@ -39,7 +39,7 @@
   "buddy_page_suggest_lighter": "b70bd7a3200b9884041362223d84aff2ea1029b58ba3644e75ce2090056c80a3",
   "buddy_page_suggest_mistake": "fbc795af1390da5256238577df71ced4a945fd251e50e6d338aeaa83bc969a86",
   "buddy_page_suggest_plan_today": "699fc9fdc9392c622c43f8bc13978e36e0711b9428e3922828445fb8da79f506",
-  "buddy_page_today": "f069bad9f99c69d5e6f474ab5292baeea1d1c510ad804d7d95169abe434671c6",
+  "buddy_page_today": "5664feb2c10691bb866f47b245ddfab9953fdd7248558ec6942cad8ce46e0393",
   "buddy_page_weekly_summary": "6b0dc77f698e9749c692e082b8326cf811084ceec78f08749f5311da090a4c08"
 }
 -->
@@ -67,7 +67,7 @@
     <!-- A button under a list that loads more of its rows. -->
     <string name="buddy_page_show_more">Pokaż więcej</string>
     <string name="buddy_page_conversations_more_failed">Nie udało się wczytać kolejnych czatów. Spróbuj ponownie.</string>
-    <string name="buddy_page_today">%1$s dzisiaj</string>
+    <string name="buddy_page_today">%1$s dziś</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">Energia: %1$s</string>
     <string name="buddy_page_energy_starts">Pojawi się po pierwszej lekcji.</string>

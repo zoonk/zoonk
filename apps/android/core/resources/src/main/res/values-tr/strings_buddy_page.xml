@@ -6,7 +6,7 @@
   "buddy_page_conversations": "0f06fb5bb629f94a83f8ee69353b9b337fdec6abd59b369ec273133b9defe06d",
   "buddy_page_conversations_more_failed": "f1e1d6505e96c17b87d039076408fd121b355ede202797b1e668f86fadd64835",
   "buddy_page_count": "c3f976fd5c8f397db6e7d00d2285b265d4d268b94480cce01e15e8239866a61f",
-  "buddy_page_energy_named": "f105751a5de19889bc6b2a19fe39dfb28fed7e00201bdf66b37c14d62fe08bc7",
+  "buddy_page_energy_named": "0d3070168f1297845e3ebb70059b231f4edcfd2aa064469f4c09061a32ea3761",
   "buddy_page_energy_napping": "e6cc71a49be6914f7384642d7c6a611b68af90d6c21f7436d0f94ba8eae13cf9",
   "buddy_page_energy_starts": "c0f5183fc34cb95e425c92921ebe906fd543c3a2f1fecc636779dbe87090b128",
   "buddy_page_energy_study": "d8d8236e9e803c3c24cb184647c8852891376b7d15dc4411ccab93086684caf8",
@@ -69,7 +69,7 @@
     <string name="buddy_page_conversations_more_failed">Daha fazla yazışma yüklenemedi. Tekrar dene.</string>
     <string name="buddy_page_today">Bugün %1$s ile</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
-    <string name="buddy_page_energy_named">%1$s · Enerji</string>
+    <string name="buddy_page_energy_named">%1$s için Enerji</string>
     <string name="buddy_page_energy_starts">İlk dersinle başlar.</string>
     <string name="buddy_page_energy_napping">%1$s şekerleme yapıyor. Uyandırmak için ders çalış.</string>
     <string name="buddy_page_energy_study">Enerjini yüksek tutmak için bugün çalış.</string>

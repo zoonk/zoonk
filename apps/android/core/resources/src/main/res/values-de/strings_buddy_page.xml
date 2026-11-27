@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "buddy_page_change": "1652113d49848fa0cc9c46d81e81c22032bd5d64af1736406a548e602241d656",
+  "buddy_page_change": "976ead4530f24c6742f71a0dae2f1cd5c46f22e5f9d1004baa68265fe76a1151",
   "buddy_page_choose": "d093b60508f3af8bfc575d5e356be683af34f0fb1ee8fc6d6cd5971ccc5a20f5",
   "buddy_page_conversations": "b2c71bff6c884473e46f75969c12965db150381f6972655b89e4049affdd62e7",
   "buddy_page_conversations_more_failed": "2e008b483c48909f75f78f72f65688c6dfc10409694ba2e411f7236ba3a5e17a",
@@ -45,7 +45,7 @@
 -->
 <resources>
     <string name="buddy_page_more">Mehr über %1$s</string>
-    <string name="buddy_page_change">%1$s ändern</string>
+    <string name="buddy_page_change">%1$s wechseln</string>
     <string name="buddy_page_choose">Wähle deinen Buddy</string>
     <string name="buddy_page_weekly_summary">Wochenübersicht</string>
     <string name="buddy_page_count">%1$s von %2$s</string>

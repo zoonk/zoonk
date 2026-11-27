@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "buddy_page_change": "e6cd1d9edd3e1a658b9c30ca70f4fdb2d40328b0309d8f2a87c620bd6ca876e5",
+  "buddy_page_change": "7f83b73f0c6fdd9ecbb1d8620aedb31d8d11d5e4b715cf03910275ab1637909b",
   "buddy_page_choose": "8cc628f3e6164234c9912c1368142bbc9677bfea007e2d5e5b2b54a0ffef20ba",
   "buddy_page_conversations": "a6cbde901f8427eee10793ae5e77c67b03f79e927dc2b61c56ac6a73dfdb8f4a",
   "buddy_page_conversations_more_failed": "70addeab400d77f303b1542105afa1539754fe61913a0b192754e208702bf69f",
@@ -45,7 +45,7 @@
 -->
 <resources>
     <string name="buddy_page_more">En savoir plus sur %1$s</string>
-    <string name="buddy_page_change">Changer %1$s</string>
+    <string name="buddy_page_change">Remplacer %1$s</string>
     <string name="buddy_page_choose">Choisis ton binôme</string>
     <string name="buddy_page_weekly_summary">Résumé de la semaine</string>
     <string name="buddy_page_count">%1$s sur %2$s</string>
