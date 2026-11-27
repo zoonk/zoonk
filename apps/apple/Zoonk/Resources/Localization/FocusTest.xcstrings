@@ -125,7 +125,64 @@
         }
       }
     },
-    "A test shows what you already know, so more of your time goes to what you need most." : {},
+    "A test shows what you already know, so more of your time goes to what you need most." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Test zeigt, was du schon kannst. So kannst du mehr Zeit für das nutzen, was du am meisten brauchst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba muestra lo que ya sabes, para que dediques más tiempo a lo que más necesitas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test montre ce que tu connais déjà, pour consacrer plus de temps à ce dont tu as le plus besoin."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test mostra cosa sai già, così puoi dedicare più tempo a ciò di cui hai più bisogno."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストで知っていることがわかるので、必要なことにもっと時間を使えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트를 보면 이미 아는 내용을 확인할 수 있어, 꼭 필요한 내용에 더 많은 시간을 쓸 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test pokazuje, co już wiesz, dzięki czemu więcej czasu poświęcasz na to, czego najbardziej potrzebujesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test, zaten bildiklerini gösterir; böylece zamanının çoğu en çok ihtiyaç duyduğun konulara ayrılır."
+          }
+        }
+      }
+    },
     "Already know some of this?" : {
       "localizations" : {
         "de" : {
