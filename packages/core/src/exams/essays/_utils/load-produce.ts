@@ -1,5 +1,6 @@
-import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import "server-only";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { loadWrittenSamples } from "../../../learner/facts/written-samples";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -13,7 +14,6 @@ import { type PlannedProduce } from "../produce-block";
 import { listPracticeWritingTasks } from "./practice-writing-tasks";
 import { getWritingScope } from "./writing-scope";
 
-const MS_PER_MINUTE = 60_000;
 const SHARED_CLOCK_PRACTICE_MINUTES = 45;
 const CLASS_TEST_PRACTICE_MINUTES = 8;
 

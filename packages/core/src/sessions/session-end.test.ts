@@ -6,6 +6,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markCertificateShown } from "../certificates/mark-certificate-shown";
@@ -552,7 +553,6 @@ describe("ending a session", () => {
   });
 });
 
-const MS_PER_SECOND = 1000;
 const at = (second: number) => new Date(SESSION_NOW.getTime() + second * MS_PER_SECOND);
 
 describe(scoreLessonAnswers, () => {

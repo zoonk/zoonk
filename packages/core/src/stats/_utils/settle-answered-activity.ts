@@ -1,10 +1,9 @@
 import { type TransactionClient } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type JsonObject } from "@zoonk/utils/json";
 import { type ProgressLock, applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta } from "../../sessions/brain-power";
 import { recordLearningEvent } from "../record-learning-event";
-
-const MS_PER_SECOND = 1000;
 
 /** Questions left open while the learner was away do not count the whole absence as study. */
 const MAX_QUESTION_SECONDS = 300;

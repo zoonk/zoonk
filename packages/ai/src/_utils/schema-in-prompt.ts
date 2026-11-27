@@ -1,3 +1,4 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import {
   type JSONSchema7,
   NoObjectGeneratedError,
@@ -13,10 +14,6 @@ function asNode(definition: Definition): JSONSchema7 | undefined {
   return typeof definition === "object" ? definition : undefined;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 /** Zod writes `.nullable()` as `null` in the type or in `anyOf`. */
 function acceptsNull(definition: Definition): boolean {
   const node = asNode(definition);
@@ -30,7 +27,7 @@ function fitsBranch(node: JSONSchema7, value: unknown): boolean {
     return node.type === "array";
   }
 
-  if (!isRecord(value) || node.type !== "object") {
+  if (!isJsonObject(value) || node.type !== "object") {
     return false;
   }
 
@@ -69,7 +66,7 @@ function fillOmittedNulls(value: unknown, node: JSONSchema7): unknown {
 
   const { properties } = node;
 
-  if (!isRecord(value) || !properties) {
+  if (!isJsonObject(value) || !properties) {
     return value;
   }
 

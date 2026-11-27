@@ -1,5 +1,6 @@
-import "server-only";
 import { prisma } from "@zoonk/db";
+import "server-only";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
 import { isStillAsked } from "../../../library/items/item-image";
@@ -13,8 +14,6 @@ import { type MockItemGrade, gradeMockItem } from "./mock-item-grading";
 import { type MockItem, loadMockItems } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
-
-const MS_PER_MINUTE = 60_000;
 
 type AskedQuestion = {
   answer: MockAnswer | null;

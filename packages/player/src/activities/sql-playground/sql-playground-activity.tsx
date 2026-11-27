@@ -2,6 +2,7 @@
 
 import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { PROGRAM_TIME_LIMIT_MS } from "@zoonk/core/library/activities/program-limits";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
@@ -25,7 +26,6 @@ type QueryState =
   | { result: QueryResult; status: "done" }
   | null;
 
-const MS_PER_SECOND = 1000;
 const RUNTIME_NAME = "SQLite";
 
 function stateFromAnswer(answer: SqlPlaygroundProps["answer"]): QueryState {

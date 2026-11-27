@@ -1,5 +1,6 @@
-import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
+import "server-only";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
@@ -17,8 +18,6 @@ import {
   type PronunciationRoundInput,
   type PronunciationRoundResult,
 } from "./pronunciation-contract";
-
-const MS_PER_SECOND = 1000;
 
 export type FinishPronunciationRoundResult =
   | { result: PronunciationRoundResult; status: "ready" }

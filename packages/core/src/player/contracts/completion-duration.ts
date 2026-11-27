@@ -1,6 +1,7 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
+
 const SECONDS_PER_MINUTE = 60;
 const MAX_LESSON_MINUTES = 30;
-const MS_PER_SECOND = 1000;
 
 /** Idle tabs must not add hours of active study time. */
 export function getCappedLessonDurationSeconds({

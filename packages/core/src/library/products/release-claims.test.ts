@@ -1,8 +1,8 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { isDateStated, isMonthStated, isVersionStated } from "./release-claims";
 
 const DAYS = 731;
-const MS_PER_DAY = 86_400_000;
 const START = Date.UTC(2024, 0, 1);
 
 function listDates(): Date[] {

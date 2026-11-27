@@ -1,6 +1,7 @@
-import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import "server-only";
 import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
+import { MS_PER_MINUTE, MS_PER_SECOND } from "@zoonk/utils/date";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 import {
   listCheckpointQuestions,
@@ -29,8 +30,6 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 
-const MS_PER_SECOND = 1000;
-const MS_PER_MINUTE = 60_000;
 const SECONDS_PER_MINUTE = 60;
 
 const MOCK_TIME_USED = 0.85;

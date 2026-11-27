@@ -4,6 +4,7 @@ import {
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
 import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { type ComponentProps, type ReactNode } from "react";
 import { vi } from "vitest";
 import {
@@ -46,8 +47,6 @@ export function TestLink({
     </a>
   );
 }
-
-const MS_PER_MINUTE = 60_000;
 
 export function runAnswer({
   answer = null,

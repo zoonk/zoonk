@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import "server-only";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { awardMilestones } from "../../../milestones/award-milestones";
@@ -10,8 +11,6 @@ import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
 import { type GradedMockAnswer } from "../mock-analysis";
 import { type MockSitting } from "./owned-mock";
-
-const MS_PER_SECOND = 1000;
 
 export async function settleAnytimeMock({
   graded,

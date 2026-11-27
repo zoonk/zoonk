@@ -1,12 +1,6 @@
 import "server-only";
 import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
-import {
-  type CourseLevel,
-  type ExamBlueprint,
-  type Goal,
-  type ItemFormat,
-  prisma,
-} from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type ItemFormat, type Skill, prisma } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import {
@@ -44,18 +38,8 @@ export const PLACEMENT_ITEM_SKILL_SELECT = {
   targetLanguage: true,
 } as const;
 
-export type PlacementItemSkill = {
-  country: string | null;
-  description: string;
+export type PlacementItemSkill = Pick<Skill, keyof typeof PLACEMENT_ITEM_SKILL_SELECT> & {
   exam: PlacementItemExam | null;
-  id: string;
-  language: string;
-  level: CourseLevel | null;
-  name: string;
-  /** Set for a private course's skill, whose questions are personal content. */
-  ownerId: string | null;
-  /** The language a language goal's skill practices ("en"); its questions are in it. */
-  targetLanguage: string | null;
   /** Openings of every question the goal's learner can be served for the skill, so new cases do not repeat one under other names. */
   usedSituations: string[];
 };

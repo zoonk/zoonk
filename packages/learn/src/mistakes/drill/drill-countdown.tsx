@@ -3,6 +3,7 @@
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -11,7 +12,6 @@ import { useTimeLeft } from "../../_utils/use-time-left";
 import { WARNING_SECONDS, getAnnouncedSeconds } from "./countdown-announcement";
 
 const TICK_MS = 250;
-const MS_PER_SECOND = 1000;
 
 function useCountdownAnnouncement(secondsLeft: number): string {
   const t = useExtracted();

@@ -1,5 +1,6 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
+
 const PITCH_CLASSES = 12;
-const MS_PER_MINUTE = 60_000;
 
 /** Allow audio-device latency without excusing performances shifted onto the wrong beats. */
 const MAX_EARLY_SHIFT_MS = 80;

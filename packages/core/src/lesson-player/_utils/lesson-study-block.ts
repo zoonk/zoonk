@@ -1,5 +1,6 @@
-import "server-only";
 import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
+import "server-only";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { readFinishedChapter } from "../../mind-maps/finished-chapters";
@@ -13,8 +14,6 @@ import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
 import { oweDaySettlement } from "../../sessions/settle-owed-session-day";
 import { type LibraryLessonCompletion } from "../contract";
-
-const MS_PER_MINUTE = 60_000;
 
 export type RunCompletion = Omit<
   LibraryLessonCompletion,

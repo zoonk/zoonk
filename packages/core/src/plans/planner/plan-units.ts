@@ -128,35 +128,6 @@ function toPlaceholderUnit({
   } satisfies QueueUnit;
 }
 
-function apportionLessonShares({
-  needs,
-  total,
-}: {
-  needs: readonly number[];
-  total: number;
-}): number[] {
-  const counts = apportion({ total, weights: needs });
-
-  if (total < needs.length) {
-    return counts;
-  }
-
-  const shares = [...counts];
-
-  counts.forEach((count, index) => {
-    if (count > 0) {
-      return;
-    }
-
-    const largestShare = Math.max(...shares);
-    const largestIndex = shares.indexOf(largestShare);
-    shares[largestIndex] = largestShare - 1;
-    shares[index] = 1;
-  });
-
-  return shares;
-}
-
 export function assignLessonSkills({
   lessons,
   skills,
@@ -191,11 +162,12 @@ export function assignLessonSkills({
   const shared = [...groups.values()].flatMap((group) => {
     const skillIds = group[0]?.skillIds ?? [];
 
-    const counts = apportionLessonShares({
-      needs: skillIds.map((skillId) =>
+    const counts = apportion({
+      minimumOneIfPossible: true,
+      total: group.length,
+      weights: skillIds.map((skillId) =>
         Math.max(1, (sizes.get(skillId) ?? 1) - (alone.get(skillId)?.length ?? 0)),
       ),
-      total: group.length,
     });
 
     const runs = skillIds.flatMap((skillId, index) =>

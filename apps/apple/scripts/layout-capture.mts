@@ -14,6 +14,7 @@ import { existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { carryReads } from "../../../scripts/pr/carry.mts";
 import { type CaptureItem } from "../../../scripts/pr/media.mts";
 import { type Capture as AlignmentCapture } from "../../../scripts/verify/alignment-capture.mts";
@@ -129,7 +130,7 @@ async function main() {
   const folder = await appFolder(udid);
   const answered = await requestCapture(folder, scenario, values.screen ?? scenario);
 
-  if (isRecord(answered) && typeof answered.error === "string") {
+  if (isJsonObject(answered) && typeof answered.error === "string") {
     throw new Error(`The app couldn't capture the screen: ${answered.error}`);
   }
 
@@ -151,15 +152,11 @@ async function main() {
   );
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 /** What the app answered, checked before anything counts it or lands in a capture folder. */
 const missing = (what: string) => new Error(`The app's answer isn't a capture: ${what}.`);
 
 export function parseCapture(value: unknown): Capture {
-  if (!isRecord(value)) {
+  if (!isJsonObject(value)) {
     throw missing("not an object");
   }
 
@@ -174,7 +171,7 @@ export function parseCapture(value: unknown): Capture {
   }
 
   if (
-    !isRecord(configuration) ||
+    !isJsonObject(configuration) ||
     typeof configuration.size !== "string" ||
     typeof configuration.width !== "number" ||
     typeof configuration.height !== "number" ||
@@ -184,9 +181,9 @@ export function parseCapture(value: unknown): Capture {
   }
 
   if (
-    !isRecord(build) ||
+    !isJsonObject(build) ||
     typeof build.commit !== "string" ||
-    !isRecord(picture) ||
+    !isJsonObject(picture) ||
     typeof picture.file !== "string" ||
     typeof picture.sha256 !== "string"
   ) {
@@ -244,15 +241,15 @@ export async function saveCapture({
     alignmentFile,
     { captures: [] },
     (value) =>
-      isRecord(value) &&
+      isJsonObject(value) &&
       Array.isArray(value.captures) &&
       value.captures.every(
         (existing) =>
-          isRecord(existing) &&
-          isRecord(existing.picture) &&
+          isJsonObject(existing) &&
+          isJsonObject(existing.picture) &&
           typeof existing.picture.file === "string" &&
           typeof existing.screen === "string" &&
-          isRecord(existing.configuration),
+          isJsonObject(existing.configuration),
       ),
   );
 
@@ -261,7 +258,7 @@ export async function saveCapture({
     [],
     (value) =>
       Array.isArray(value) &&
-      value.every((existing) => isRecord(existing) && typeof existing.file === "string"),
+      value.every((existing) => isJsonObject(existing) && typeof existing.file === "string"),
   );
 
   alignment.captures = mergeCapture(alignment.captures, capture);

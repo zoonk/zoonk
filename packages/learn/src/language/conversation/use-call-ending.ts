@@ -1,5 +1,6 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { type CallLength, type TimedCue, takeDueExamCue } from "./live-call-clock";
 import { sendLiveCallCue } from "./live-call-commands";
@@ -18,7 +19,6 @@ import { type LiveCallSession } from "./live-call-session";
 import { type ObjectiveCheckResult } from "./use-objective-checks";
 
 const TICK_MS = 250;
-const MS_PER_SECOND = 1000;
 
 const NO_CUES: readonly TimedCue[] = [];
 

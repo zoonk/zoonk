@@ -9,7 +9,7 @@ import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixture
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-contents";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_WEEK } from "@zoonk/utils/date";
 import { captureAnalytics } from "./analytics";
 import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
@@ -103,7 +103,7 @@ async function createChapterGuest(browser: Browser) {
     playableLessonFixture({ lesson: { title: "Why the electron doesn't fall" }, steps: ["check"] }),
   ]);
 
-  const nextWeek = new Date(Date.now() + 7 * MS_PER_DAY);
+  const nextWeek = new Date(Date.now() + MS_PER_WEEK);
   const lessons = [first.lesson, second.lesson];
 
   const [

@@ -13,7 +13,7 @@ import { listPastQuestionExamples } from "../library/items/past-question-example
 import { loadUsedSituations } from "../library/items/used-situations";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { readItemExamPlan, toItemExam } from "./item-exam";
-import { type PlacementItemSkill } from "./placement-item-skills";
+import { PLACEMENT_ITEM_SKILL_SELECT, type PlacementItemSkill } from "./placement-item-skills";
 
 const EXAM_FORMAT_SKILLS = 3;
 
@@ -117,19 +117,12 @@ export async function pickExamFormatSkills({
 
   const rows = await prisma.skill.findMany({
     select: {
-      country: true,
-      description: true,
-      id: true,
+      ...PLACEMENT_ITEM_SKILL_SELECT,
       isQuantitative: true,
       items: {
         select: { content: true, examBlueprintId: true, format: true },
         where: { format: { in: ["multipleChoice", "numeric"] }, mockOnly: false },
       },
-      language: true,
-      level: true,
-      name: true,
-      ownerId: true,
-      targetLanguage: true,
     },
     where: { id: { in: ranked } },
   });

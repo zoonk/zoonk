@@ -1,7 +1,6 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getTimeZoneOffsetMs } from "@zoonk/utils/time-zone";
 
-const MS_PER_MINUTE = 60_000;
 const MINUTES_PER_HOUR = 60;
 const MINUTES_PER_DAY = 1440;
 const SEND_WINDOW_MINUTES = 60;
