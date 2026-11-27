@@ -6,6 +6,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 
 const MISTAKE_PRACTICE_LEDGER_KIND = "mistakePractice";
 
@@ -15,7 +16,6 @@ const MAX_RUN_AGE_MS = 86_400_000;
 /** Cap idle answer time so an abandoned tab cannot inflate the study day. */
 const MAX_SECONDS_PER_ANSWER = 180;
 
-const MS_PER_SECOND = 1000;
 const ANSWER_ID_SEPARATOR = ",";
 
 function findAnswers(tx: TransactionClient, where: AttemptWhereInput) {

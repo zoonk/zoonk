@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { MS_PER_HOUR } from "../../../packages/utils/src/date.ts";
 import { WHOAMI_REQUEST } from "./args.ts";
 import { type StoredLogin, credentialsPath, readLogin, saveLogin } from "./credentials.ts";
 import { EXIT_CODES } from "./errors.ts";
@@ -24,7 +25,6 @@ type FakeApiOptions = {
   refresh: RefreshAnswer | RefreshAnswer[];
 };
 
-const HOUR_MS = 3_600_000;
 const ME = { user: { email: "owner@zoonk.test", id: "user-1", name: "Owner", role: "admin" } };
 const MAIN = join(import.meta.dirname, "main.ts");
 const directories: string[] = [];
@@ -215,7 +215,7 @@ describe(sendAuthorized, () => {
 
     await saveLogin({
       file,
-      login: storedLogin("revoked", Date.now() + HOUR_MS),
+      login: storedLogin("revoked", Date.now() + MS_PER_HOUR),
       origin: api.origin,
     });
 
@@ -232,11 +232,19 @@ describe(sendAuthorized, () => {
     const api = await startFakeApi({
       acceptedToken: "access-other",
       beforeRejecting: () =>
-        saveLogin({ file, login: storedLogin("other", Date.now() + HOUR_MS), origin: api.origin }),
+        saveLogin({
+          file,
+          login: storedLogin("other", Date.now() + MS_PER_HOUR),
+          origin: api.origin,
+        }),
       refresh: { body: { error: "invalid_grant" }, status: 400 },
     });
 
-    await saveLogin({ file, login: storedLogin("old", Date.now() + HOUR_MS), origin: api.origin });
+    await saveLogin({
+      file,
+      login: storedLogin("old", Date.now() + MS_PER_HOUR),
+      origin: api.origin,
+    });
 
     const result = await sendAuthorized({ file, origin: api.origin, request: WHOAMI_REQUEST });
 

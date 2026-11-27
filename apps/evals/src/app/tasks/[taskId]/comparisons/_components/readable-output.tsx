@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
+import { isJsonObject } from "@zoonk/utils/json";
 import { humanizeKey } from "../_utils/words";
 
 export type OutputMark = { anchor: string; label: string; major: boolean; quote: string };
@@ -7,10 +8,6 @@ export type OutputMark = { anchor: string; label: string; major: boolean; quote:
 type Segment = { mark?: OutputMark; text: string };
 
 const NO_MARKS: OutputMark[] = [];
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 const HEADER_KEYS = new Set(["kind", "template", "type"]);
 
@@ -180,7 +177,7 @@ function Fields({
 
         return (
           <div className="flex flex-col gap-1" key={key}>
-            <FieldLabel group={isRecord(value) || Array.isArray(value)}>
+            <FieldLabel group={isJsonObject(value) || Array.isArray(value)}>
               {humanizeKey(key)}
             </FieldLabel>
             <Value marks={marks} value={value} />
@@ -200,7 +197,7 @@ function formatPrimitive(value: string | number | boolean): string {
 }
 
 function ListItem({ index, item, marks }: { index: number; item: unknown; marks: OutputMark[] }) {
-  const heading = isRecord(item)
+  const heading = isJsonObject(item)
     ? Object.entries(item).find(
         (entry): entry is [string, string] =>
           HEADER_KEYS.has(entry[0]) && typeof entry[1] === "string" && Boolean(entry[1].trim()),
@@ -268,7 +265,7 @@ function Value({
     return <List items={value} marks={marks} />;
   }
 
-  if (isRecord(value)) {
+  if (isJsonObject(value)) {
     return <Fields headingKey={headingKey} marks={marks} record={value} />;
   }
 

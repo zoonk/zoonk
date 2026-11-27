@@ -1,3 +1,4 @@
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { checkChapterInProgressKept } from "../_test-utils/rules/work-rules";
 import { type PlanOperation } from "../plan-contract";
@@ -8,7 +9,6 @@ import { applyPlanOperations } from "./plan-operations";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
-const HOUR_MS = 3_600_000;
 
 const graph: PlanGraph = {
   phases: [
@@ -111,7 +111,7 @@ function steerMidChapter({
       return saved;
     }
 
-    const finishedAt = day + (item.skillId === chapterSkillId ? 2 : 1) * HOUR_MS;
+    const finishedAt = day + (item.skillId === chapterSkillId ? 2 : 1) * MS_PER_HOUR;
     return { ...saved, completedAt: new Date(finishedAt), status: "done" as const };
   });
 

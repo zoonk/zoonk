@@ -16,6 +16,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { preparingMockResponseSchema } from "../src/lib/openapi/schemas/mocks";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
@@ -28,7 +29,6 @@ import { createBearerLearner } from "./helpers/bearer";
 import { createExamGoal as createFundedExamGoal } from "./helpers/exams";
 import { readBody } from "./helpers/response";
 
-const DAY_MS = 86_400_000;
 const DAYS_TO_EXAM = 20;
 const SAO_PAULO = "America/Sao_Paulo";
 
@@ -52,7 +52,7 @@ async function createExamGoal(userId: string) {
     goalFixture({
       dailyMinutes: 20,
       kind: "exam",
-      targetDate: new Date(today.getTime() + DAYS_TO_EXAM * DAY_MS),
+      targetDate: new Date(today.getTime() + DAYS_TO_EXAM * MS_PER_DAY),
       timezone: "UTC",
       title: "Test exam",
       userId,
@@ -277,13 +277,13 @@ test.describe("Today API", () => {
     const { goal, plan } = await createExamGoal(userId);
     const today = localDay("UTC");
     const day = toIsoDay(today);
-    const mockDate = toIsoDay(new Date(today.getTime() + 10 * DAY_MS));
+    const mockDate = toIsoDay(new Date(today.getTime() + 10 * MS_PER_DAY));
 
     const contributions = [
       { date: day, minutes: 30.125 },
-      { date: toIsoDay(new Date(today.getTime() + DAY_MS)), minutes: 29.625 },
-      { date: toIsoDay(new Date(today.getTime() + 7 * DAY_MS)), minutes: 30.125 },
-      { date: toIsoDay(new Date(today.getTime() + 8 * DAY_MS)), minutes: 30.125 },
+      { date: toIsoDay(new Date(today.getTime() + MS_PER_DAY)), minutes: 29.625 },
+      { date: toIsoDay(new Date(today.getTime() + 7 * MS_PER_DAY)), minutes: 30.125 },
+      { date: toIsoDay(new Date(today.getTime() + 8 * MS_PER_DAY)), minutes: 30.125 },
     ];
 
     const funding = [{ contributions, date: mockDate, minutes: 165 }];
@@ -346,7 +346,7 @@ test.describe("Today API", () => {
       where: { examBlueprintId: blueprintId, mockOnly: true },
     });
 
-    const yesterday = new Date(Date.now() - DAY_MS);
+    const yesterday = new Date(Date.now() - MS_PER_DAY);
 
     await Promise.all([
       prisma.item.updateMany({
@@ -360,7 +360,7 @@ test.describe("Today API", () => {
       itemFixture({ skillId }),
       learnerSkillFixture({
         difficulty: 5,
-        due: new Date(Date.now() + DAY_MS),
+        due: new Date(Date.now() + MS_PER_DAY),
         lastReviewedAt: yesterday,
         reps: 2,
         skillId,

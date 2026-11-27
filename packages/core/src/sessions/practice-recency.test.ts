@@ -3,6 +3,7 @@ import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
@@ -13,8 +14,6 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
-
-const HOUR_MS = 3_600_000;
 
 describe("today's practice", () => {
   beforeEach(() => {
@@ -50,13 +49,13 @@ describe("today's practice", () => {
       layOutPlanFixture(plan.id),
       dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
       attemptFixture({
-        answeredAt: new Date(SESSION_NOW.getTime() - 2 * HOUR_MS),
+        answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_HOUR),
         itemId: placedToday?.id,
         skillId,
         userId: user.id,
       }),
       attemptFixture({
-        answeredAt: new Date(SESSION_NOW.getTime() - 20 * HOUR_MS),
+        answeredAt: new Date(SESSION_NOW.getTime() - 20 * MS_PER_HOUR),
         isCorrect: false,
         itemId: placedLastNight?.id,
         skillId,

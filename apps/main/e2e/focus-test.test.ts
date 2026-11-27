@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 
@@ -11,7 +12,6 @@ const CITATION = { passage: "passage", sourceId: "notice" };
 const SUBJECTS = ["Portuguese", "Administrative law", "Statistics"];
 const QUESTIONS_PER_SUBJECT = 2;
 const DAYS_TO_EXAM = 60;
-const MS_PER_DAY = 86_400_000;
 const SHORT_DAILY_MINUTES = 5;
 const LESSONS_PAST_THE_TIME = 60;
 

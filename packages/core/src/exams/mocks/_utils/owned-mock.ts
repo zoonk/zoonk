@@ -8,6 +8,7 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
@@ -193,8 +194,6 @@ export async function findOwnedMock(id: string): Promise<OwnedMockResult> {
 
   return owned ? { owned, status: "ready" } : { status: "notFound" };
 }
-
-const MS_PER_MINUTE = 60_000;
 
 type SittingClock = Pick<MockSitting, "conditions" | "sectionIndex" | "sectionStartedAt">;
 

@@ -1,14 +1,14 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { loadTodayPlanChange } from "./today-plan-change";
 
 const NOW = new Date("2026-10-05T12:00:00Z");
-const HOUR_MS = 60 * 60 * 1000;
 
 function hoursAgo(hours: number): Date {
-  return new Date(NOW.getTime() - hours * HOUR_MS);
+  return new Date(NOW.getTime() - hours * MS_PER_HOUR);
 }
 
 async function setup() {

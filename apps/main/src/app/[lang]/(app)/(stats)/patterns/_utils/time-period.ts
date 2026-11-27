@@ -1,3 +1,4 @@
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { getHourFormatter } from "@zoonk/utils/date-format";
 
 const TIME_PERIOD_HOURS = [
@@ -6,8 +7,6 @@ const TIME_PERIOD_HOURS = [
   { end: 18, start: 12 },
   { end: 24, start: 18 },
 ] as const;
-
-const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
 
 const HOURS_PER_DAY = 24;
 
@@ -26,7 +25,7 @@ function getClockHour({
     return { hour: String(hour).padStart(2, "0"), period: null };
   }
 
-  const parts = formatter.formatToParts(new Date(hour * MILLISECONDS_PER_HOUR));
+  const parts = formatter.formatToParts(new Date(hour * MS_PER_HOUR));
 
   return {
     hour: parts.find((part) => part.type === "hour")?.value ?? String(hour % (HOURS_PER_DAY / 2)),

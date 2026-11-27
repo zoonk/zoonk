@@ -1,4 +1,5 @@
 import { type MasteryState, type MistakeCause } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { countWords } from "@zoonk/utils/string";
 
 export type MistakeSignals = {
@@ -14,7 +15,6 @@ export type MistakeSignals = {
 };
 
 const READING_WORDS_PER_MINUTE = 250;
-const MS_PER_MINUTE = 60_000;
 const MIN_READING_MS = 1500;
 
 const GUESS_READING_SHARE = 0.5;

@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
@@ -18,7 +19,6 @@ export type PracticeClaims = {
 
 /** Promote aging unconfirmed claims so low-weight topics cannot wait indefinitely. */
 const DUE_AFTER_DAYS = 7;
-const DAY_MS = 86_400_000;
 
 const ASKED_WINDOW_DAYS = 14;
 
@@ -42,7 +42,7 @@ async function loadLastAsked({
       kind: { in: ["practice", "review"] },
       session: {
         goalId,
-        localDate: { gte: new Date(today.getTime() - ASKED_WINDOW_DAYS * DAY_MS), lt: today },
+        localDate: { gte: new Date(today.getTime() - ASKED_WINDOW_DAYS * MS_PER_DAY), lt: today },
       },
     },
   });
@@ -79,7 +79,7 @@ export async function loadPracticeClaims({
   userId: string;
 }): Promise<PracticeClaims> {
   const claims = await loadDatedClaims({ goalId: goal.id, readClaims, skillIds, userId });
-  const dueBefore = now.getTime() - DUE_AFTER_DAYS * DAY_MS;
+  const dueBefore = now.getTime() - DUE_AFTER_DAYS * MS_PER_DAY;
 
   const toConfirm = [...claims].filter(([, { claim }]) => claim === "toConfirm");
 

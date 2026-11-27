@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import {
   BufferSource,
@@ -24,8 +25,6 @@ const OPUS_FRAME_COUNTS = 64;
 
 /** The samples an AAC-LC frame decodes to, per channel. */
 const AAC_FRAME_SAMPLES = 1024;
-
-const MS_PER_SECOND = 1000;
 
 function readOpusPacketMs([toc = 0, count = 0]: Uint8Array): number {
   const frames = [1, 2, 2, count % OPUS_FRAME_COUNTS][toc % TOC_CODES] ?? 0;

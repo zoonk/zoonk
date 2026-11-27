@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { sendEmail } from "@zoonk/mailer";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { guestAuth, signUp } from "../guests/_test-utils/guest-auth";
 import { createCertificate } from "../guests/_test-utils/learner-data";
@@ -12,7 +13,6 @@ vi.hoisted(() => {
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
 });
 
-const DAY_MS = 86_400_000;
 const CUSTOMER = "cus_plus";
 
 const stripe = vi.hoisted(() => ({
@@ -155,7 +155,7 @@ async function learner() {
 }
 
 function addStorePlus({
-  periodEnd = new Date(Date.now() + 30 * DAY_MS),
+  periodEnd = new Date(Date.now() + 30 * MS_PER_DAY),
   provider = "apple",
   userId,
 }: {
@@ -492,7 +492,7 @@ describe("one Plus per learner on the website", () => {
   it("leaves website Plus alone while the learner has no store Plus", async () => {
     const stripeFake = fakeStripe();
     const { userId } = await learner();
-    await addStorePlus({ periodEnd: new Date(Date.now() - DAY_MS), userId });
+    await addStorePlus({ periodEnd: new Date(Date.now() - MS_PER_DAY), userId });
     stripeFake.add("active");
 
     await expect(endWebPlusBesideStorePlus({ userId })).resolves.toStrictEqual([]);
@@ -506,7 +506,7 @@ describe("one Plus per learner on the website", () => {
     const { headers, userId } = await learner();
 
     // Apple's expiry hasn't reached us, so the row still says active after its period.
-    const lapsed = await addStorePlus({ periodEnd: new Date(Date.now() - DAY_MS), userId });
+    const lapsed = await addStorePlus({ periodEnd: new Date(Date.now() - MS_PER_DAY), userId });
 
     stripe.searchCustomers.mockResolvedValue({ data: [] });
     stripe.createCustomer.mockResolvedValue({ id: CUSTOMER });

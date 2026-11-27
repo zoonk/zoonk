@@ -1,8 +1,8 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
+
 export type MotionDuration = "base" | "burst" | "fill" | "frame" | "pop" | "quick" | "settle";
 
 export type MotionEasing = "accelerate" | "follow" | "out" | "spring" | "swing";
-
-const MS_PER_SECOND = 1000;
 
 export const BEAT_MS = 250;
 export const STAGGER_MS = 100;

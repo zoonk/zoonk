@@ -3,6 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
@@ -13,7 +14,6 @@ import { openTodayView } from "./_test-utils/open-today-view";
 import { readBlockPayload } from "./block-payload";
 
 const START = new Date("2020-09-28T12:00:00Z");
-const DAY_MILLISECONDS = 86_400_000;
 
 describe("a low-pace course's fixed checkpoint budget", () => {
   beforeEach(() => {
@@ -82,16 +82,16 @@ describe("a low-pace course's fixed checkpoint budget", () => {
           where: { kind: "lesson", planId: plan.id },
         }),
         studySessionFixture({
-          endedAt: new Date(boss.scheduledFor.getTime() - DAY_MILLISECONDS),
+          endedAt: new Date(boss.scheduledFor.getTime() - MS_PER_DAY),
           goalId: goal.id,
-          localDate: new Date(boss.scheduledFor.getTime() - DAY_MILLISECONDS),
+          localDate: new Date(boss.scheduledFor.getTime() - MS_PER_DAY),
           plannedMinutes: dailyMinutes,
           status: "completed",
           userId: user.id,
         }),
       ]);
 
-      vi.setSystemTime(new Date(boss.scheduledFor.getTime() + DAY_MILLISECONDS / 2));
+      vi.setSystemTime(new Date(boss.scheduledFor.getTime() + MS_PER_DAY / 2));
 
       await expect(
         getChallenge({ input: { timeZone: "UTC" }, planItemId: boss.id }),
@@ -172,7 +172,7 @@ describe("a low-pace course's fixed checkpoint budget", () => {
       throw new Error("Expected the course's actual weekly checkpoint");
     }
 
-    const previous = new Date(weekly.scheduledFor.getTime() - DAY_MILLISECONDS);
+    const previous = new Date(weekly.scheduledFor.getTime() - MS_PER_DAY);
 
     await Promise.all([
       ...questions.map((question) =>
@@ -197,7 +197,7 @@ describe("a low-pace course's fixed checkpoint budget", () => {
       }),
     ]);
 
-    vi.setSystemTime(new Date(weekly.scheduledFor.getTime() + DAY_MILLISECONDS / 2));
+    vi.setSystemTime(new Date(weekly.scheduledFor.getTime() + MS_PER_DAY / 2));
     const result = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     if (result.status !== "ready") {

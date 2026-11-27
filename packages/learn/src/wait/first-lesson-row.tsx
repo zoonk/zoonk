@@ -1,6 +1,7 @@
 "use client";
 
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useState } from "react";
@@ -10,11 +11,9 @@ import { formatClock } from "../_utils/clock";
 import { getGenerationKind } from "../generation/generation-kinds";
 import { type GenerationFirstLesson, type GenerationRun } from "../generation/generation-run";
 
-const SECOND_MS = 1000;
-
 /** How long a lesson usually takes to write, from its phases' usual durations. */
 const LESSON_MS =
-  getGenerationKind("lesson").phases.reduce((sum, phase) => sum + phase.seconds, 0) * SECOND_MS;
+  getGenerationKind("lesson").phases.reduce((sum, phase) => sum + phase.seconds, 0) * MS_PER_SECOND;
 
 const ALMOST_DONE = 95;
 
@@ -26,7 +25,7 @@ function useNow(active: boolean): number {
       return;
     }
 
-    const timer = setInterval(() => setNow(Date.now()), SECOND_MS);
+    const timer = setInterval(() => setNow(Date.now()), MS_PER_SECOND);
     return () => clearInterval(timer);
   }, [active]);
 

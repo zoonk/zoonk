@@ -12,9 +12,7 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-
-const MINUTE_MS = 60_000;
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 
 const LESSON_IDEA = "A discount comes off the price you pay.";
 
@@ -60,7 +58,7 @@ async function createCauseDrill({
   // Each cause is a minute newer than the one before, so practice drills them in the order given.
   const mistake = await mistakeFixture({
     cause,
-    createdAt: new Date(Date.now() - MS_PER_DAY * 2 + index * MINUTE_MS),
+    createdAt: new Date(Date.now() - MS_PER_DAY * 2 + index * MS_PER_MINUTE),
     itemId: original.id,
     skillId: skill.id,
     snapshot: { answer: "Wrong answer", question: drillQuestion(cause, "original") },

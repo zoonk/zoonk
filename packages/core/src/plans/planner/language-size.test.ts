@@ -79,6 +79,19 @@ describe(sizeLanguageGraph, () => {
     expect(graph).toStrictEqual(planned);
   });
 
+  it.each([
+    [653, [653, 1, 1, 1]],
+    [655, [655, 1, 1, 1]],
+  ] as const)("keeps open situations after %i settled lessons", (settled, expected) => {
+    const { planned } = sizeLanguageGraph({
+      ...sizing,
+      graph: graphOf([settled, 100, 1, 1]),
+      settledSkillIds: new Set(["s1"]),
+    });
+
+    expect(lessonsOf(planned)).toStrictEqual(expected);
+  });
+
   it("counts the guided hours between the levels, half of each hour in new lessons", () => {
     expect(sizeFrom("none", "A2")).toBe(1425);
     expect(sizeFrom("intermediate", "B2")).toBe(sizeFrom("B1", "B2"));

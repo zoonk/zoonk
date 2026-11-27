@@ -7,14 +7,12 @@ import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { toItemSetStimulus } from "../../library/items/check-item-set-keys";
 import { getPublicItemFilter } from "../../library/items/item-field";
 import { parseItemSetContent } from "../../library/items/item-set-content";
+import { ITEM_WRITING_SKILL_SELECT } from "../../library/items/item-writing-skill";
 import { listPastQuestionExamples } from "../../library/items/past-question-examples";
 import { getItemSituation, toSituationOpening } from "../../library/items/used-situations";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { getGoalItemExam } from "../../lookahead/item-exam";
-import {
-  PLACEMENT_ITEM_SKILL_SELECT,
-  type PlacementItemSkill,
-} from "../../lookahead/placement-item-skills";
+import { type PlacementItemSkill } from "../../lookahead/placement-item-skills";
 import { getWrongPenalty } from "../scoring/mock-scoring";
 import { readLessonRecallQuestions } from "./mock-lesson-questions";
 
@@ -135,7 +133,7 @@ export async function loadMockWritingSkills({
       where: { id: goalId },
     }),
     prisma.skill.findMany({
-      select: PLACEMENT_ITEM_SKILL_SELECT,
+      select: ITEM_WRITING_SKILL_SELECT,
       where: { id: { in: [...skillIds] } },
     }),
   ]);

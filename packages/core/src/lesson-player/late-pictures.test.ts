@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { setupPlayableLesson } from "./_test-utils/playable-lesson-setup";
@@ -10,11 +11,10 @@ import { completeLibraryLesson } from "./complete-library-lesson";
 import { startLibraryLesson } from "./start-library-lesson";
 
 const NOW = new Date("2026-10-13T12:00:00.000Z");
-const MINUTE_MS = 60_000;
 const TIME_ZONE = "UTC";
 
 function minutesFromNow(minutes: number): Date {
-  return new Date(NOW.getTime() + minutes * MINUTE_MS);
+  return new Date(NOW.getTime() + minutes * MS_PER_MINUTE);
 }
 
 async function runWithNumberedQuestion({ writtenAgo }: { writtenAgo: number }) {

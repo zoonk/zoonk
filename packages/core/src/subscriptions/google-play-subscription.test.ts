@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { SignJWT, exportJWK, exportPKCS8, generateKeyPair } from "jose";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -17,8 +18,6 @@ const PUSH_KEY_ID = "test-push-key";
 const ORDER_ID = "GPA.3300-0000-0000-00000";
 
 const START_TIME = new Date("2026-10-01T12:00:00.000Z");
-const MINUTE_MS = 60_000;
-const DAY_MS = 86_400_000;
 
 const NOTIFICATION = {
   canceled: 3,
@@ -57,7 +56,7 @@ function makePurchase({
   acknowledged = false,
   autoRenewEnabled = true,
   basePlanId = "monthly",
-  expiryTime = new Date(Date.now() + 30 * DAY_MS),
+  expiryTime = new Date(Date.now() + 30 * MS_PER_DAY),
   extra = {},
   productId = "plus",
   state = "SUBSCRIPTION_STATE_ACTIVE",
@@ -292,7 +291,7 @@ function claimDirectly({ purchaseToken, userId }: { purchaseToken: string; userI
   return prisma.subscription.create({
     data: {
       billingInterval: "month",
-      periodEnd: new Date(now.getTime() + 30 * DAY_MS),
+      periodEnd: new Date(now.getTime() + 30 * MS_PER_DAY),
       periodStart: now,
       plan: "plus",
       provider: "google",
@@ -347,7 +346,7 @@ describe("Google Play subscriptions", () => {
     it("links and acknowledges a purchase made for the signed-in account", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const expiryTime = new Date(Date.now() + 30 * DAY_MS);
+      const expiryTime = new Date(Date.now() + 30 * MS_PER_DAY);
       setPurchase(purchaseToken, { accountId: user.id, expiryTime });
       mockSession(user.id);
 
@@ -551,7 +550,7 @@ describe("Google Play subscriptions", () => {
       setPurchase(yearlyToken, {
         accountId: user.id,
         basePlanId: "yearly",
-        expiryTime: new Date(Date.now() + 365 * DAY_MS),
+        expiryTime: new Date(Date.now() + 365 * MS_PER_DAY),
         extra: { linkedPurchaseToken: monthlyToken },
       });
 
@@ -623,7 +622,7 @@ describe("Google Play subscriptions", () => {
       setPurchase(purchaseToken, { accountId: user.id });
       await pushSubscriptionChange(purchaseToken, NOTIFICATION.purchased);
 
-      const renewedUntil = new Date(Date.now() + 60 * DAY_MS);
+      const renewedUntil = new Date(Date.now() + 60 * MS_PER_DAY);
 
       setPurchase(purchaseToken, {
         accountId: user.id,
@@ -644,8 +643,8 @@ describe("Google Play subscriptions", () => {
     it("keeps access until the period ends after the learner cancels", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const expiryTime = new Date(Date.now() + 10 * DAY_MS);
-      const cancelTime = new Date(Date.now() - DAY_MS);
+      const expiryTime = new Date(Date.now() + 10 * MS_PER_DAY);
+      const cancelTime = new Date(Date.now() - MS_PER_DAY);
 
       setPurchase(purchaseToken, {
         accountId: user.id,
@@ -679,7 +678,7 @@ describe("Google Play subscriptions", () => {
       setPurchase(purchaseToken, { accountId: user.id });
       await pushSubscriptionChange(purchaseToken, NOTIFICATION.purchased);
 
-      const expiredAt = new Date(Date.now() - DAY_MS);
+      const expiredAt = new Date(Date.now() - MS_PER_DAY);
 
       setPurchase(purchaseToken, {
         accountId: user.id,
@@ -707,14 +706,14 @@ describe("Google Play subscriptions", () => {
 
       setPurchase(purchaseToken, {
         ...retrying,
-        expiryTime: new Date(Date.now() + 3 * DAY_MS),
+        expiryTime: new Date(Date.now() + 3 * MS_PER_DAY),
         state: "SUBSCRIPTION_STATE_IN_GRACE_PERIOD",
       });
 
       await pushSubscriptionChange(purchaseToken, NOTIFICATION.inGracePeriod);
       await expect(hasPlus(user.id)).resolves.toBe(true);
 
-      const heldSince = new Date(Date.now() - DAY_MS);
+      const heldSince = new Date(Date.now() - MS_PER_DAY);
 
       setPurchase(purchaseToken, {
         ...retrying,
@@ -731,7 +730,11 @@ describe("Google Play subscriptions", () => {
 
       await expect(hasPlus(user.id)).resolves.toBe(false);
 
-      setPurchase(purchaseToken, { ...retrying, expiryTime: new Date(Date.now() + 30 * DAY_MS) });
+      setPurchase(purchaseToken, {
+        ...retrying,
+        expiryTime: new Date(Date.now() + 30 * MS_PER_DAY),
+      });
+
       await pushSubscriptionChange(purchaseToken, NOTIFICATION.recovered);
 
       await expect(findGoogleSubscription(purchaseToken)).resolves.toMatchObject({
@@ -745,7 +748,7 @@ describe("Google Play subscriptions", () => {
     it("ends access at once when the purchase is refunded", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const paidUntil = new Date(Date.now() + 20 * DAY_MS);
+      const paidUntil = new Date(Date.now() + 20 * MS_PER_DAY);
       setPurchase(purchaseToken, { accountId: user.id, expiryTime: paidUntil });
       await pushSubscriptionChange(purchaseToken, NOTIFICATION.purchased);
 
@@ -931,14 +934,14 @@ describe("Google Play subscriptions", () => {
         accountId: user.id,
         acknowledged: true,
         autoRenewEnabled: false,
-        expiryTime: new Date(Date.now() - MINUTE_MS),
+        expiryTime: new Date(Date.now() - MS_PER_MINUTE),
         state: "SUBSCRIPTION_STATE_EXPIRED",
       });
 
       const replacement = {
         accountId: user.id,
         basePlanId: "yearly",
-        expiryTime: new Date(Date.now() + 365 * DAY_MS),
+        expiryTime: new Date(Date.now() + 365 * MS_PER_DAY),
         extra: { linkedPurchaseToken: oldToken },
       };
 
@@ -976,7 +979,7 @@ describe("Google Play subscriptions", () => {
       const replacement = {
         accountId: user.id,
         basePlanId: "yearly",
-        expiryTime: new Date(Date.now() + 365 * DAY_MS),
+        expiryTime: new Date(Date.now() + 365 * MS_PER_DAY),
         extra: { linkedPurchaseToken: oldToken },
       };
 
@@ -1013,7 +1016,7 @@ describe("Google Play subscriptions", () => {
 
       const replacement = {
         accountId: user.id,
-        expiryTime: new Date(Date.now() + 30 * DAY_MS),
+        expiryTime: new Date(Date.now() + 30 * MS_PER_DAY),
         extra: { linkedPurchaseToken: oldToken },
       };
 
@@ -1035,7 +1038,7 @@ describe("Google Play subscriptions", () => {
         accountId: user.id,
         acknowledged: true,
         autoRenewEnabled: false,
-        expiryTime: new Date(Date.now() - MINUTE_MS),
+        expiryTime: new Date(Date.now() - MS_PER_MINUTE),
         state: "SUBSCRIPTION_STATE_EXPIRED",
       });
 
@@ -1093,7 +1096,7 @@ describe("Google Play subscriptions", () => {
         accountId: user.id,
         acknowledged: true,
         autoRenewEnabled: false,
-        expiryTime: new Date(Date.now() - MINUTE_MS),
+        expiryTime: new Date(Date.now() - MS_PER_MINUTE),
         state: "SUBSCRIPTION_STATE_EXPIRED",
       });
 
@@ -1117,22 +1120,22 @@ describe("Google Play subscriptions", () => {
     it("keeps Plus past a paid period nobody notified about while Google retries the payment", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const paidUntil = new Date(Date.now() + DAY_MS);
+      const paidUntil = new Date(Date.now() + MS_PER_DAY);
       setPurchase(purchaseToken, { accountId: user.id, expiryTime: paidUntil });
       mockSession(user.id);
       await sync(purchaseToken);
 
       vi.useFakeTimers({ toFake: ["Date"] });
-      vi.setSystemTime(paidUntil.getTime() + MINUTE_MS);
+      vi.setSystemTime(paidUntil.getTime() + MS_PER_MINUTE);
       await expect(hasPlus(user.id)).resolves.toBe(true);
 
       await expect(checkRenewal(purchaseToken)).resolves.toStrictEqual(
-        new Date(paidUntil.getTime() + DAY_MS),
+        new Date(paidUntil.getTime() + MS_PER_DAY),
       );
 
       await expect(hasPlus(user.id)).resolves.toBe(true);
 
-      const renewedUntil = new Date(paidUntil.getTime() + 30 * DAY_MS);
+      const renewedUntil = new Date(paidUntil.getTime() + 30 * MS_PER_DAY);
 
       setPurchase(purchaseToken, {
         accountId: user.id,
@@ -1140,7 +1143,7 @@ describe("Google Play subscriptions", () => {
         expiryTime: renewedUntil,
       });
 
-      vi.setSystemTime(paidUntil.getTime() + DAY_MS + MINUTE_MS);
+      vi.setSystemTime(paidUntil.getTime() + MS_PER_DAY + MS_PER_MINUTE);
       await expect(checkRenewal(purchaseToken)).resolves.toStrictEqual(renewedUntil);
 
       await expect(findGoogleSubscription(purchaseToken)).resolves.toMatchObject({
@@ -1152,8 +1155,8 @@ describe("Google Play subscriptions", () => {
     it("follows a grace period Google extends after the first read, then ends access on hold", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const graceUntil = new Date(Date.now() + DAY_MS);
-      const extendedUntil = new Date(Date.now() + 3 * DAY_MS);
+      const graceUntil = new Date(Date.now() + MS_PER_DAY);
+      const extendedUntil = new Date(Date.now() + 3 * MS_PER_DAY);
 
       const inGrace = {
         accountId: user.id,
@@ -1166,13 +1169,13 @@ describe("Google Play subscriptions", () => {
       await sync(purchaseToken);
 
       vi.useFakeTimers({ toFake: ["Date"] });
-      vi.setSystemTime(graceUntil.getTime() + MINUTE_MS);
+      vi.setSystemTime(graceUntil.getTime() + MS_PER_MINUTE);
       setPurchase(purchaseToken, { ...inGrace, expiryTime: extendedUntil });
 
       await expect(checkRenewal(purchaseToken)).resolves.toStrictEqual(extendedUntil);
       await expect(hasPlus(user.id)).resolves.toBe(true);
 
-      vi.setSystemTime(extendedUntil.getTime() + MINUTE_MS);
+      vi.setSystemTime(extendedUntil.getTime() + MS_PER_MINUTE);
 
       setPurchase(purchaseToken, {
         ...inGrace,
@@ -1187,7 +1190,7 @@ describe("Google Play subscriptions", () => {
     it("acknowledges a saved purchase from its checks when the learner's request fails and nothing else comes", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const expiryTime = new Date(Date.now() + 30 * DAY_MS);
+      const expiryTime = new Date(Date.now() + 30 * MS_PER_DAY);
       setPurchase(purchaseToken, { expiryTime });
 
       await expect(
@@ -1210,7 +1213,7 @@ describe("Google Play subscriptions", () => {
         purchaseToken,
       ]);
 
-      expect(lastCheckAt.getTime() - savedAt).toBeLessThan(DAY_MS);
+      expect(lastCheckAt.getTime() - savedAt).toBeLessThan(MS_PER_DAY);
       await expect(findGooglePlayRenewalCheckAt(subscriptionId)).resolves.toStrictEqual(expiryTime);
       await expect(hasPlus(user.id)).resolves.toBe(true);
     });
@@ -1218,13 +1221,13 @@ describe("Google Play subscriptions", () => {
     it("ends a stored purchase Google calls permanently invalid and stops checking it", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
-      const paidUntil = new Date(Date.now() + DAY_MS);
+      const paidUntil = new Date(Date.now() + MS_PER_DAY);
       setPurchase(purchaseToken, { accountId: user.id, acknowledged: true, expiryTime: paidUntil });
       mockSession(user.id);
       await sync(purchaseToken);
 
       vi.useFakeTimers({ toFake: ["Date"] });
-      vi.setSystemTime(paidUntil.getTime() + MINUTE_MS);
+      vi.setSystemTime(paidUntil.getTime() + MS_PER_MINUTE);
       google.gone.add(purchaseToken);
 
       await expect(checkRenewal(purchaseToken)).resolves.toBeNull();
@@ -1239,7 +1242,7 @@ describe("Google Play subscriptions", () => {
     it("asks Google nothing before the checkpoint or once Google has ended the purchase", async () => {
       const user = await userFixture();
       const [renewedToken, endedToken] = [makePurchaseToken(), makePurchaseToken()];
-      const renewedUntil = new Date(Date.now() + 30 * DAY_MS);
+      const renewedUntil = new Date(Date.now() + 30 * MS_PER_DAY);
 
       setPurchase(renewedToken, {
         accountId: user.id,
@@ -1249,7 +1252,7 @@ describe("Google Play subscriptions", () => {
 
       setPurchase(endedToken, {
         accountId: user.id,
-        expiryTime: new Date(Date.now() - MINUTE_MS),
+        expiryTime: new Date(Date.now() - MS_PER_MINUTE),
         state: "SUBSCRIPTION_STATE_EXPIRED",
       });
 
@@ -1270,7 +1273,7 @@ describe("Google Play subscriptions", () => {
       await prisma.subscription.createMany({
         data: [renewing, canceled].map((user) => ({
           cancelAtPeriodEnd: user === canceled,
-          periodEnd: new Date(Date.now() - MINUTE_MS),
+          periodEnd: new Date(Date.now() - MS_PER_MINUTE),
           plan: "plus",
           provider: "google" as const,
           providerSubscriptionId: makePurchaseToken(),

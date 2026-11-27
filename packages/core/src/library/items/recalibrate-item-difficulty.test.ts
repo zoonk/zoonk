@@ -5,14 +5,12 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_HOUR, toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { recalibrateItemDifficulties } from "./recalibrate-item-difficulty";
 
-const HOUR_MS = 3_600_000;
-
 function isolatedNow(): Date {
-  return new Date(Date.UTC(2090, 0, 1) + Math.floor(Math.random() * 1_000_000) * HOUR_MS * 24);
+  return new Date(Date.UTC(2090, 0, 1) + Math.floor(Math.random() * 1_000_000) * MS_PER_HOUR * 24);
 }
 
 function attemptRows({
@@ -53,7 +51,7 @@ async function answerByLearners({
   });
 
   const userIds = users.map((user) => user.id);
-  const answeredAt = new Date(now.getTime() - HOUR_MS);
+  const answeredAt = new Date(now.getTime() - MS_PER_HOUR);
 
   await prisma.attempt.createMany({ data: attemptRows({ answeredAt, itemId, results, userIds }) });
 
@@ -96,7 +94,7 @@ describe(recalibrateItemDifficulties, () => {
       }
 
       const item = await itemFixture({ content: FOUR_OPTIONS, difficulty: 0, skillId: skill.id });
-      const answeredAt = new Date(now.getTime() - HOUR_MS);
+      const answeredAt = new Date(now.getTime() - MS_PER_HOUR);
 
       await attemptFixture({
         answeredAt,
@@ -182,7 +180,7 @@ describe(recalibrateItemDifficulties, () => {
 
     await prisma.attempt.createMany({
       data: attemptRows({
-        answeredAt: new Date(now.getTime() - HOUR_MS / 2),
+        answeredAt: new Date(now.getTime() - MS_PER_HOUR / 2),
         itemId: item.id,
         results: userIds.map(() => true),
         userIds,

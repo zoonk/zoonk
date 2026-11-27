@@ -4,16 +4,16 @@ import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filt
 import { getLearnerActivityDaysSql, utcTodaySql } from "@/data/stats/_utils/learner-activity";
 import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { type Sql, prisma, sql } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 const EARLIER_DAYS_IN_WEEK = 6;
-const MILLISECONDS_PER_DAY = 86_400 * 1000;
 
 type ActiveLearnerRhythm = { daily: number | null; weekly: number | null };
 
 /** Days before anyone was active are left out, so an all-time average isn't diluted. */
 function getRhythmSeriesSql({ end, start }: { end: Date; start: Date }): Sql {
-  const activityStart = new Date(start.getTime() - EARLIER_DAYS_IN_WEEK * MILLISECONDS_PER_DAY);
+  const activityStart = new Date(start.getTime() - EARLIER_DAYS_IN_WEEK * MS_PER_DAY);
 
   return sql`
     WITH activity AS (

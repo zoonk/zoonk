@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { examStructureSchema } from "./blueprint-contract";
 import { getExamChoiceFormat } from "./exam-choice-format";
@@ -28,8 +29,6 @@ async function readStructure(id: string) {
   const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id } });
   return examStructureSchema.parse(stored.structure);
 }
-
-const DAY_MS = 86_400_000;
 
 describe(recordChoiceOptions, () => {
   it("looks up the options of a notice that doesn't state them once, and the format then has them", async () => {
@@ -94,7 +93,7 @@ describe(recordChoiceOptions, () => {
     const lookUp = (days: number) =>
       findChoiceOptionsLookup({
         examBlueprintId: blueprint.id,
-        now: new Date(checkedAt.getTime() + days * DAY_MS),
+        now: new Date(checkedAt.getTime() + days * MS_PER_DAY),
       });
 
     await expect(lookUp(10)).resolves.toBeNull();

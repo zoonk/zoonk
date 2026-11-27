@@ -1,6 +1,6 @@
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { type LearnerAnswer } from "../record-learner-answer";
-import { getLocalAnswerTime } from "./local-time";
+import { getLearnerLocalTime } from "./local-time";
 
 /** Callers must resolve merged skills before supplying the answer. */
 export function createLearnerAttempt({
@@ -30,7 +30,7 @@ export function createLearnerAttempt({
       studySessionId: input.studySessionId ?? null,
       targetLanguage: input.targetLanguage ?? null,
       userId: input.userId,
-      ...getLocalAnswerTime({ date: answeredAt, timeZone: input.timeZone }),
+      ...getLearnerLocalTime({ date: answeredAt, timeZone: input.timeZone }),
     },
   });
 }

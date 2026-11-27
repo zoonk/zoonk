@@ -2,6 +2,7 @@
 
 import { type ExamRunningMock as ExamRunningMockView } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import {
   CURRENT_ROW_CLASS,
@@ -18,8 +19,6 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useTimeLeft } from "../_utils/use-time-left";
 import { getMockSubject, useMockTitle } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
-
-const MS_PER_MINUTE = 60_000;
 
 const TICK_MS = 15_000;
 

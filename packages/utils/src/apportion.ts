@@ -3,9 +3,11 @@
  * when every weight is zero.
  */
 export function apportion({
+  minimumOneIfPossible = false,
   total,
   weights,
 }: {
+  minimumOneIfPossible?: boolean;
   total: number;
   weights: readonly number[];
 }): number[] {
@@ -26,7 +28,19 @@ export function apportion({
       .map((entry) => entry.index),
   );
 
-  return whole.map((count, index) => count + (extra.has(index) ? 1 : 0));
+  const counts = whole.map((count, index) => count + (extra.has(index) ? 1 : 0));
+
+  if (minimumOneIfPossible && total >= weights.length) {
+    counts.forEach((count, index) => {
+      if (count === 0) {
+        const largest = Math.max(...counts);
+        counts[counts.indexOf(largest)] = largest - 1;
+        counts[index] = 1;
+      }
+    });
+  }
+
+  return counts;
 }
 
 /**

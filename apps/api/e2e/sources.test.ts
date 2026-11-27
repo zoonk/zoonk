@@ -9,6 +9,7 @@ import {
   sourceChangeNoticeFixture,
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY, MS_PER_HOUR } from "@zoonk/utils/date";
 import {
   changeNoticesResponseSchema,
   learnerSourcesResponseSchema,
@@ -19,11 +20,8 @@ import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 import { privateUploadFixture } from "./helpers/sources";
 
-const HOUR_MS = 3_600_000;
-const DAY_MS = 86_400_000;
-
 function hoursAgo(hours: number) {
-  return new Date(Date.now() - hours * HOUR_MS);
+  return new Date(Date.now() - hours * MS_PER_HOUR);
 }
 
 function uploadedFile(pathname: string) {
@@ -405,7 +403,7 @@ test.describe("Sources API", () => {
     ]);
 
     const goal = await goalFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       examBlueprintId: blueprint.id,
       kind: "exam",
       userId: learner.userId,
@@ -425,7 +423,10 @@ test.describe("Sources API", () => {
         message: "The Civil Code changed article 5.",
         sourceId: law.id,
       }),
-      sourceChangeNoticeFixture({ createdAt: new Date(Date.now() - 2 * DAY_MS), sourceId: law.id }),
+      sourceChangeNoticeFixture({
+        createdAt: new Date(Date.now() - 2 * MS_PER_DAY),
+        sourceId: law.id,
+      }),
       sourceChangeNoticeFixture({ createdAt: hoursAgo(1), sourceId: unrelated.id }),
     ]);
 

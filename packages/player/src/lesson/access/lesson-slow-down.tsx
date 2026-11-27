@@ -1,12 +1,11 @@
 "use client";
 
 import { TaskActionBar, TaskActions, TaskStopMessage } from "@zoonk/learn/task-layout";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { HourglassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { PlayerContentFrame } from "../../components/step-layouts";
-
-const MS_PER_SECOND = 1000;
 
 /** A lesson that can't open: what stopped, one line, and its one way on in the bar where "Check" is. */
 export function AccessLayout({
