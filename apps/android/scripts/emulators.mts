@@ -5,7 +5,7 @@ import { homedir, platform } from "node:os";
 import path from "node:path";
 
 /** Long enough for any pause in someone's work; an emulator left this long belongs to a task that ended. */
-export const IDLE_EMULATOR_MS = 2 * 60 * 60 * 1000;
+const IDLE_EMULATOR_MS = 2 * 60 * 60 * 1000;
 
 const SECOND_MS = 1000;
 const MINUTE_S = 60;
