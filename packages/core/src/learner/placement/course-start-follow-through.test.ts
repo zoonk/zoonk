@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -62,6 +62,28 @@ describe("course placement after completion", () => {
 
     await expect(prisma.planItem.findFirstOrThrow({ where })).resolves.toMatchObject({
       status: "todo",
+    });
+  });
+
+  it("starts after lessons filed under a topic that teach finer Library skills", async () => {
+    const { finish, planItems, skills } = await setup();
+    const finer = await skillFixture();
+
+    await prisma.lessonSkill.updateMany({
+      data: { skillId: finer.id },
+      where: { lessonId: planItems[0]!.lessonId!, skillId: skills[0]!.id },
+    });
+
+    const finished = await finish();
+
+    expect(finished).toMatchObject({
+      completion: {
+        lessonsSkipped: 4,
+        result: {
+          course: { chapters: [{ skipped: 4, start: true }], lessons: 5 },
+          nextLesson: { id: planItems[4]!.lessonId },
+        },
+      },
     });
   });
 });

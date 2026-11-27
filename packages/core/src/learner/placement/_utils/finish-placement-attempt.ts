@@ -120,6 +120,7 @@ async function savePart({
     attempt.search
       ? await applyCourseStart({
           goalId,
+          lineSkillIds: attempt.search.topics?.map((topic) => topic.id),
           now,
           startedPastSkillIds: attemptQuestions.startedPastSkillIds,
           tx,
@@ -166,7 +167,10 @@ async function savePart({
     itemIds: [...testedOutPlanItemIds, ...sharedItemIds],
     now,
     receipt: receiptKey,
-    ...(attempt.search && { startedPastSkillIds: attemptQuestions.startedPastSkillIds }),
+    ...(attempt.search && {
+      lineSkillIds: attempt.search.topics?.map((topic) => topic.id),
+      startedPastSkillIds: attemptQuestions.startedPastSkillIds,
+    }),
     timeZone,
     tx,
     userId,
