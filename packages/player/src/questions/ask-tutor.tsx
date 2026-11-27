@@ -20,7 +20,10 @@ import {
 import { ModuleSubjectContext, useModuleSubject } from "./module-subject";
 import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
-type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
+/** The plan's conversations are the buddy's page, never a drawer over another screen. */
+type ScreenKind = Exclude<LessonQuestionScreenKind, "plan">;
+
+type ScreenTarget = Extract<TutorTarget, { kind: ScreenKind }>;
 
 const questionPanel = createOnDemand(() => import("./lesson-question-panel"));
 
@@ -29,7 +32,7 @@ function preloadDrawer() {
   preloadTutorMarkdown();
 }
 
-function useOpenDrawer(kind: LessonQuestionScreenKind) {
+function useOpenDrawer(kind: ScreenKind) {
   const { open } = useLessonQuestionController();
 
   return () => {
@@ -44,7 +47,7 @@ const PRELOAD_ON_INTENT = {
   onPointerEnter: preloadDrawer,
 };
 
-function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: string }) {
+function useAskLabel({ kind, name }: { kind: ScreenKind; name: string }) {
   const t = useExtracted();
   const isModule = useModuleSubject();
 
@@ -53,8 +56,6 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
       return t("Ask {name} about this chapter", { name });
     case "mock":
       return t("Ask {name} about this mock exam", { name });
-    case "plan":
-      return t("Ask {name} about your plan", { name });
     case "subject":
       return isModule
         ? t("Ask {name} about this module", { name })
@@ -80,13 +81,7 @@ const BAR_ASK_CLASS = cn(
 const BAR_ASK_LABEL_CLASS =
   "truncate max-[18rem]:hidden max-sm:group-data-title-away/page-bar:hidden";
 
-function AskTutorRow({
-  identity,
-  kind,
-}: {
-  identity: TutorIdentity;
-  kind: LessonQuestionScreenKind;
-}) {
+function AskTutorRow({ identity, kind }: { identity: TutorIdentity; kind: ScreenKind }) {
   const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
@@ -110,7 +105,7 @@ function AskTutorButton({
   size,
 }: {
   identity: TutorIdentity;
-  kind: LessonQuestionScreenKind;
+  kind: ScreenKind;
   size: AskTutorSize;
 }) {
   const t = useExtracted();

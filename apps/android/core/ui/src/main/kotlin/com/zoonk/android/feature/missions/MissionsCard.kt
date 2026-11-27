@@ -165,7 +165,7 @@ private fun MissionsTitle(
         }
 
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(title, style = MaterialTheme.typography.titleSmall)
+        Text(title, style = MaterialTheme.zoonkType.sectionTitle)
         if (fold != null) {
             Icon(
                 painterResource(R.drawable.ic_expand_more),

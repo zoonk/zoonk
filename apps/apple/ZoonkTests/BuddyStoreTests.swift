@@ -1,3 +1,5 @@
+import HTTPTypes
+import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -44,6 +46,73 @@ final class BuddyStoreTests: XCTestCase {
     XCTAssertTrue(saved, "a signed-out learner is told nothing")
   }
 
+  func testShowMoreAddsTheNextConversationsOnce() async {
+    let api = BuddyAPIStub()
+    api.pages = [
+      "": BuddyConversations(
+        conversations: [.fixture("a"), .fixture("b")], currentId: "a", nextCursor: "b"),
+      "b": BuddyConversations(
+        conversations: [.fixture("b"), .fixture("c")], currentId: nil, nextCursor: nil),
+    ]
+    let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
+    let list = store.conversations(goalId: "goal")
+    await list.load()
+
+    await store.loadMoreConversations(goalId: "goal")
+
+    XCTAssertEqual(list.value?.conversations.map(\.id), ["a", "b", "c"])
+    XCTAssertEqual(list.value?.currentId, "a", "the first page says which one a visit opens")
+    XCTAssertNil(list.value?.nextCursor)
+    XCTAssertNil(store.nextConversations["goal"])
+  }
+
+  func testAVisitOpensTodaysConversationOrANewOneOnceTheListSays() {
+    XCTAssertNil(BuddyOpening.next(request: nil, isOpen: false, list: .waiting))
+    XCTAssertEqual(
+      BuddyOpening.next(request: nil, isOpen: false, list: .read(currentId: "today")),
+      .conversation(id: "today"))
+    XCTAssertEqual(
+      BuddyOpening.next(request: nil, isOpen: false, list: .read(currentId: nil)), .new(ask: nil))
+    XCTAssertEqual(
+      BuddyOpening.next(request: nil, isOpen: false, list: nil), .new(ask: nil),
+      "a guest has no list")
+    XCTAssertNil(
+      BuddyOpening.next(request: nil, isOpen: true, list: .read(currentId: "today")),
+      "a conversation left open stays")
+    XCTAssertEqual(
+      BuddyOpening.next(
+        request: .conversation(id: "linked"), isOpen: true, list: .read(currentId: "today")),
+      .conversation(id: "linked"))
+    XCTAssertEqual(
+      BuddyOpening.next(request: .new(ask: "Why?"), isOpen: false, list: .waiting),
+      .new(ask: "Why?"))
+  }
+
+  func testTheConversationListDecodesAsTheAPISendsIt() async throws {
+    let id = "0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10"
+    let transport = AnsweringTransport(
+      answer: #"""
+        {"conversations":[{"id":"\#(id)","title":"Why do orbits curve?",\#
+        "lastAskedAt":"2026-11-26T14:05:09.123Z"}],"currentId":null,"nextCursor":"\#(id)"}
+        """#)
+    let api = BuddyAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
+
+    let page = try await api.conversations(
+      goalId: "c3b30782-4de7-4386-83fa-934eee74e049", cursor: id, token: "token")
+
+    XCTAssertEqual(page.conversations.first?.title, "Why do orbits curve?")
+    XCTAssertEqual(
+      page.conversations.first?.lastAskedAt.timeIntervalSince1970 ?? 0, 1_795_701_909.123,
+      accuracy: 0.001)
+    XCTAssertNil(page.currentId)
+    XCTAssertEqual(page.nextCursor, id)
+    XCTAssertEqual(
+      transport.paths.value,
+      ["/goals/c3b30782-4de7-4386-83fa-934eee74e049/buddy/conversations?cursor=\(id)"])
+  }
+
   func testExpiredSessionOnAnInsightAnswerIsObsolete() async {
     let session = SessionStore.preview(account: .buddyTestAccount)
     let api = BuddyAPIStub()
@@ -63,9 +132,17 @@ private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
   var shownStatus = BuddyStatus.fixture
   var saveFailure: Error?
   var answerFailure: Error?
+  /// Each cursor's page; the first page's key is "".
+  var pages: [String: BuddyConversations] = [:]
 
   func status(timeZone: String, token: String) async throws -> BuddyStatus {
     shownStatus
+  }
+
+  func conversations(goalId: String, cursor: String?, token: String) async throws
+    -> BuddyConversations
+  {
+    pages[cursor ?? ""] ?? BuddyConversations(conversations: [], currentId: nil, nextCursor: nil)
   }
 
   func save(_ buddy: BuddyChoice, token: String) async throws {
@@ -98,6 +175,40 @@ extension BuddyStatus {
     stage: .baby,
     thisWeek: .init(fixes: 0, newIdeas: 0, reviews: 0),
     today: nil)
+}
+
+extension BuddyConversation {
+  fileprivate static func fixture(_ id: String) -> BuddyConversation {
+    BuddyConversation(id: id, lastAskedAt: .now, title: "Question \(id)")
+  }
+}
+
+private struct AnsweringTransport: ClientTransport {
+  let answer: String
+  let paths = RecordedPaths()
+
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
+    async throws -> (HTTPResponse, HTTPBody?)
+  {
+    paths.append(request.path ?? "")
+    return (
+      HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+      HTTPBody(answer)
+    )
+  }
+}
+
+private final class RecordedPaths: @unchecked Sendable {
+  private let lock = NSLock()
+  private var stored: [String] = []
+
+  var value: [String] {
+    lock.withLock { stored }
+  }
+
+  func append(_ path: String) {
+    lock.withLock { stored.append(path) }
+  }
 }
 
 extension MemoryInsight {

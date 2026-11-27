@@ -96,6 +96,21 @@ const CANONICAL_OPERATIONS = [
   },
   { method: "get", operationId: "getLessonQuestionThread", path: "/lessons/{lessonId}/questions" },
   { method: "post", operationId: "createLessonQuestion", path: "/lessons/{lessonId}/questions" },
+  {
+    method: "get",
+    operationId: "listBuddyConversations",
+    path: "/goals/{goalId}/buddy/conversations",
+  },
+  {
+    method: "get",
+    operationId: "getBuddyConversationQuestionThread",
+    path: "/goals/{goalId}/buddy/conversations/{conversationId}/questions",
+  },
+  {
+    method: "post",
+    operationId: "createBuddyConversationQuestion",
+    path: "/goals/{goalId}/buddy/conversations/{conversationId}/questions",
+  },
   { method: "get", operationId: "getLessonQuestion", path: "/questions/{questionId}" },
   {
     method: "post",

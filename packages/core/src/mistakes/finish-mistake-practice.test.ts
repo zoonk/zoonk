@@ -194,6 +194,48 @@ describe(finishMistakePractice, () => {
     ).toStrictEqual([first, second].toSorted());
   });
 
+  it("keeps earlier answers when an overlapping finish extends a run", async () => {
+    freezeClock();
+    const { mistake, user } = await setup();
+
+    const savedAnswer = async (secondsAgo: number) => {
+      const attempt = await attemptFixture({
+        answer: { practiceMistakeId: mistake.id },
+        answeredAt: new Date(Date.now() - secondsAgo * 1000),
+        durationMs: 1000,
+        userId: user.id,
+      });
+
+      return attempt.id;
+    };
+
+    const [first, second, third] = await Promise.all([
+      savedAnswer(60),
+      savedAnswer(40),
+      savedAnswer(20),
+    ]);
+
+    await finishMistakePractice({ answerIds: [first, second], timeZone: "UTC" });
+    await finishMistakePractice({ answerIds: [second, third], timeZone: "UTC" });
+    const replay = await finishMistakePractice({ answerIds: [first], timeZone: "UTC" });
+
+    expect(replay).toMatchObject({
+      result: { brainPower: 12, correct: 3, seconds: 61, total: 3 },
+      status: "ready",
+    });
+
+    await expect(loadRuns(user.id)).resolves.toMatchObject([
+      { contentIds: { answerIds: [first, second, third].join(",") }, correctAnswers: 3 },
+    ]);
+
+    await expect(loadToday(user.id)).resolves.toMatchObject({
+      brainPowerEarned: 12,
+      correctAnswers: 3,
+      interactiveCompleted: 1,
+      timeSpentSeconds: 61,
+    });
+  });
+
   it("files a run that goes past midnight under the day it ended, as the ledger dates every activity", async () => {
     freezeClock();
     vi.setSystemTime(new Date("2026-11-10T23:59:00Z"));

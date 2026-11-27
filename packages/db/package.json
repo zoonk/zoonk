@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "imports": {
+    "#local-database": "./src/local-database.ts",
     "#local-database-names": "./src/local-database-names.ts"
   },
   "exports": {
@@ -42,7 +43,8 @@
     "@prisma/client": "7.10.1",
     "@vercel/functions": "catalog:",
     "@zoonk/utils": "workspace:*",
-    "pg": "8.23.1"
+    "pg": "8.23.1",
+    "pg-connection-string": "2.14.1"
   },
   "devDependencies": {
     "@prisma/generator-helper": "7.10.1",

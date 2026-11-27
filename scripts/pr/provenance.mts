@@ -22,6 +22,15 @@ async function git(repository: string, args: string[]): Promise<string> {
   return stdout.trim();
 }
 
+/**
+ * The files a picture of `app` can be drawn from: the app and the shared packages, without the
+ * files `.gitattributes` marks `never-on-screen`, such as tests. `.gitattributes` counts itself,
+ * since a change to it changes which files count.
+ */
+export function screenSources(app: string): string[] {
+  return [`apps/${app}`, "packages", ".gitattributes", ":(top,exclude,attr:never-on-screen)"];
+}
+
 export async function sha256File(path: string): Promise<string> {
   return createHash("sha256")
     .update(await readFile(path))
@@ -149,7 +158,7 @@ export async function readCheckoutBuild({
   app: string;
   repository: string;
 }): Promise<CheckoutBuild> {
-  const paths = [`apps/${app}`, "packages"];
+  const paths = screenSources(app);
   const buildIdFile = join(repository, "apps", app, ".next", "BUILD_ID");
 
   const [commit, changes] = await Promise.all([

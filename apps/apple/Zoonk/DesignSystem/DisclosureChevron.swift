@@ -42,4 +42,29 @@ extension View {
     }
     .contentShape(.rect)
   }
+
+  /// A button row that starts something new, as main's `RowPlus`: the plus in the chevron's slot,
+  /// so the row doesn't read as one more of the items listed under it.
+  func disclosurePlus() -> some View {
+    HStack(spacing: 12) {
+      self.environment(\.rowHasChevron, true)
+      DisclosurePlus()
+    }
+    .contentShape(.rect)
+  }
+}
+
+/// The plus that ends a row starting something new, drawn as `DisclosureChevron` is.
+struct DisclosurePlus: View {
+  @ScaledMetric(relativeTo: .body) private var systemInset = 5.0 / 3
+
+  var body: some View {
+    Image(systemName: "plus")
+      .font(.body.weight(.semibold))
+      .imageScale(.small)
+      .foregroundStyle(Color(.tertiaryLabel))
+      .padding(.trailing, systemInset)
+      .accessibilityHidden(true)
+      .layoutPart(.end)
+  }
 }

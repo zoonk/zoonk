@@ -171,6 +171,23 @@ describe(generatePlacementItems, () => {
     await expect(writtenSkillFields()).resolves.toStrictEqual(["skill", "taps"]);
   });
 
+  it("asks for taps in a schema OpenAI's structured outputs accept", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ skills: [{ skill: 1, taps: [] }] }),
+    );
+
+    await generatePlacementItems({
+      country: null,
+      language: "en",
+      quickFormat: "multipleChoice",
+      skills: [{ ...skill, quickCount: 0, tapCount: 3 }],
+    });
+
+    const format = await vi.mocked(generateText).mock.calls[0]?.[0].output?.responseFormat;
+
+    expect(JSON.stringify(format)).not.toContain("oneOf");
+  });
+
   it("sets a language goal's questions where the practiced language is spoken", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({ skills: [{ quick: [], skill: 1 }] }),
