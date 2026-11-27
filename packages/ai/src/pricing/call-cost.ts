@@ -37,8 +37,12 @@ function getModelPricing({ at, model }: { at: Date; model: string }): ModelPrici
   return change?.pricing ?? MODEL_PRICES[model];
 }
 
+/**
+ * From the gateway's own listing, not a provider's announced price, which can name a tier the
+ * gateway's route for the model doesn't serve.
+ */
 export function getOfferedServiceTiers(model: string): ServiceTier[] {
-  const tiers = getModelPricing({ at: new Date(), model })?.serviceTiers ?? {};
+  const tiers = GATEWAY_PRICES.models[model]?.serviceTiers ?? {};
   return (["flex", "priority"] as const).filter((tier) => tiers[tier]);
 }
 

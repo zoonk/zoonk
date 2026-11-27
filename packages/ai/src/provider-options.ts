@@ -7,7 +7,7 @@ export type Reasoning = NonNullable<LanguageModelCallOptions["reasoning"]>;
 export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
 
 const providerOrderByModelPrefix = {
-  anthropic: ["anthropic", "vertex", "openai", "azure", "google"],
+  anthropic: ["anthropic", "google", "vertex", "openai", "azure"],
   google: ["google", "vertex", "openai", "azure", "anthropic"],
   openai: ["openai", "azure", "google", "anthropic", "vertex"],
 } satisfies Record<string, string[]>;

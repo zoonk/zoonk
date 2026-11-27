@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   buildImageProviderOptions,
   buildProviderOptions,
@@ -43,7 +43,7 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual({
       gateway: {
         models: ["openai/gpt-6-luna"],
-        order: ["anthropic", "vertex", "openai", "azure", "google"],
+        order: ["anthropic", "google", "vertex", "openai", "azure"],
       },
     });
   });
@@ -104,6 +104,21 @@ describe(buildProviderOptions, () => {
         useFallback: true,
       }).gateway,
     ).not.toHaveProperty("serviceTier");
+  });
+
+  it("reads tiers from what the gateway serves, not from a provider's announced price", () => {
+    vi.useFakeTimers({ now: new Date("2026-12-02T00:00:00Z") });
+
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["google/gemini-4-argon"],
+        model: "anthropic/claude-sonnet-5.5",
+        serviceTier: "flex",
+        useFallback: true,
+      }).gateway,
+    ).not.toHaveProperty("serviceTier");
+
+    vi.useRealTimers();
   });
 
   it("asks the gateway to serve the same model fast", () => {
@@ -177,7 +192,7 @@ describe(buildProviderOptions, () => {
     ).toStrictEqual({
       gateway: {
         models: ["anthropic/claude-sonnet-5.5", "openai/gpt-6-luna"],
-        order: ["anthropic", "vertex", "openai", "azure", "google"],
+        order: ["anthropic", "google", "vertex", "openai", "azure"],
       },
     });
   });
