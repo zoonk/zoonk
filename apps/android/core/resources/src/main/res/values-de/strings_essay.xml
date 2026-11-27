@@ -49,8 +49,8 @@
   "essay_limit_title": "c0ad55675fd46e5e0c312cc45bd833822bef87314b54a264c9a57d4424ba761b",
   "essay_limit_title_any": "d3292a6f977f1f588420bff20d40c44c46cc28fd8b2ced81bfde5281d0aad639",
   "essay_lines_empty": "1ccb2cfb31893472a12c55c99a9331da38bff9922c39ba9c0d5b64032233420e",
-  "essay_lines_end_unread": "6db6eb61e79ea0702169ee6f2f1d452da89697cfcf3cc8ed4f07c1326c63de8b",
-  "essay_lines_may_not_fit": "b11ae5c8251674af09e000fd8e9428b607efb76019389363c8bde6d046ca235e",
+  "essay_lines_end_unread": "acc1661b28487a91e9aaa548d3772c1f7af3eb25413e9f3e99cde54fe6a3b88d",
+  "essay_lines_may_not_fit": "80e0fb88fd87b0785b0ab85ba56d114ce8e4c564de079b02bb9b684d9f50d244",
   "essay_lines_question": "80b295da658ef266804ae7eba0e6b32e8617daadbee157fb323cb711afe63b39",
   "essay_lines_used": "4700c2848da81b77798faf04cd2e427f5b49990d6629712fe4bcc9ef1b6cfc2c",
   "essay_minus": "4cd0e85e94a9e3527827e9913193a2280d9856a0a18446b62c06a389786c58f8",
@@ -200,9 +200,15 @@
         <item quantity="other">0 von %1$d Zeilen</item>
     </plurals>
     <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
-    <string name="essay_lines_may_not_fit">ca. %1$d von %2$d Zeilen · passt vielleicht nicht aufs Papier</string>
+    <plurals name="essay_lines_may_not_fit">
+        <item quantity="one">ca. %1$d von %2$d Zeile · passt vielleicht nicht aufs Papier</item>
+        <item quantity="other">ca. %1$d von %2$d Zeilen · passt vielleicht nicht aufs Papier</item>
+    </plurals>
     <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
-    <string name="essay_lines_end_unread">ca. %1$d von %2$d Zeilen · das Ende wird nicht gelesen</string>
+    <plurals name="essay_lines_end_unread">
+        <item quantity="one">ca. %1$d von %2$d Zeile · das Ende wird nicht gelesen</item>
+        <item quantity="other">ca. %1$d von %2$d Zeilen · das Ende wird nicht gelesen</item>
+    </plurals>
     <string name="essay_conflict_title">Diese Antwort wurde auf einem anderen Gerät geändert</string>
     <string name="essay_conflict_body">Behalte die Version, an der du hier schreibst, oder wechsle zur anderen.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->

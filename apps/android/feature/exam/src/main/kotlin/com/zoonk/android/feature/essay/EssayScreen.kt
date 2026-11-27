@@ -713,9 +713,9 @@ internal fun WritingLineCount(
         if (text.isBlank()) {
             pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
         } else if (lines.ignoredFrom != null) {
-            stringResource(R.string.essay_lines_end_unread, used, limit)
+            pluralStringResource(R.plurals.essay_lines_end_unread, limit, used, limit)
         } else if (over) {
-            stringResource(R.string.essay_lines_may_not_fit, used, limit)
+            pluralStringResource(R.plurals.essay_lines_may_not_fit, limit, used, limit)
         } else {
             pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },

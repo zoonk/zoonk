@@ -49,8 +49,8 @@
   "essay_limit_title": "c4ca36b956fa32312142cfbb71865e9b94bb7221d05db55b467dc8d63d700a9a",
   "essay_limit_title_any": "2724c2f244ee09893458b84f4c2c33f3f7964561a29c8d3b48e1e87d5bbb65ef",
   "essay_lines_empty": "454440efcb3c81646ef5a7586f244f70c530a1ff1568a729960d3edbc25260b4",
-  "essay_lines_end_unread": "ccfc0057c6f4dd97161939dffed8badf08c11358278e97c1a9d9ae1930d45e8a",
-  "essay_lines_may_not_fit": "ab5ecce364571742cc896bf17b884ddd8c9afebb03c37731111bd2578fce8905",
+  "essay_lines_end_unread": "80e86d139cf60371793bdc4a297143d77f68244665b3ee639bfc18f260ec2859",
+  "essay_lines_may_not_fit": "1bfb43fd3aa137f775e965e00b65c51aaafa87dd4b0dee88144787e1cb111d72",
   "essay_lines_question": "ede5cea0fbdfb6284f8ae6de74dc019e259915dc346250abceb80938f2765b0f",
   "essay_lines_used": "c7d0fa2ca7b84200ab3603b038b5b2c53fad236c7568c2f3fef4625ac22665dc",
   "essay_minus": "cee8b1e9f5b28b4f0e936a86edc9e45b59d649e67f6360afd7535961bfdc9caa",
@@ -204,9 +204,17 @@
         <item quantity="other">0 righe su %1$d righe</item>
     </plurals>
     <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
-    <string name="essay_lines_may_not_fit">circa %1$d righe su %2$d · potrebbero non entrare sul foglio</string>
+    <plurals name="essay_lines_may_not_fit">
+        <item quantity="one">circa %1$d righe su %2$d · potrebbero non entrare sul foglio</item>
+        <item quantity="many">circa %1$d righe su %2$d · potrebbero non entrare sul foglio</item>
+        <item quantity="other">circa %1$d righe su %2$d · potrebbero non entrare sul foglio</item>
+    </plurals>
     <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
-    <string name="essay_lines_end_unread">circa %1$d righe su %2$d · la parte finale non verrà letta</string>
+    <plurals name="essay_lines_end_unread">
+        <item quantity="one">circa %1$d righe su %2$d · la parte finale non verrà letta</item>
+        <item quantity="many">circa %1$d righe su %2$d · la parte finale non verrà letta</item>
+        <item quantity="other">circa %1$d righe su %2$d · la parte finale non verrà letta</item>
+    </plurals>
     <string name="essay_conflict_title">Questa risposta è cambiata su un altro dispositivo</string>
     <string name="essay_conflict_body">Mantieni la versione che stai scrivendo qui oppure passa all’altra.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
