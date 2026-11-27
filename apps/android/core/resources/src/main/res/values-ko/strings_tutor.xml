@@ -38,7 +38,6 @@
   "tutor_error_invalid": "23285c6a210c34ab3c6b2c1f899cea3a10743c5ff8c014465ccf95afc7472ee1",
   "tutor_error_last_question": "8267b48cacf2fbfbf47644a3232726dda3be5494e31642171a31cef46852dfeb",
   "tutor_error_session": "a3ade70f49bc1f13be314bbf3559ddf26793d3ba5f629ca160ec52020899504d",
-  "tutor_error_slow_down": "30d617c4bc0e77ff1d9d9b19e1837070797c14ee54508fa680a40d65748655ec",
   "tutor_error_subscription": "ad22c372795f544b4cdc262f8e3cbe22462e33cfbf837ecf534b5c76a4139b07",
   "tutor_get_answer": "1431b267b46f3f244b9b146a93f15318822ce782ef587e4e400126d2bc35340e",
   "tutor_guest_title": "eefa841451388e07ea02ef6408540f265dc5a3e9134fcc872a20103986d9c65a",
@@ -173,7 +172,6 @@
     <string name="tutor_error_subscription">질문하려면 구독이 필요해요</string>
     <string name="tutor_error_gone">이 레슨은 더 이상 이용할 수 없어요.</string>
     <string name="tutor_error_invalid">이 질문을 보내지 못했어요. 다시 시도해 보세요.</string>
-    <string name="tutor_error_slow_down">잠시 쉬었다가 다시 질문해 보세요.</string>
     <string name="tutor_error_failed">문제가 생겼어요. 다시 시도해 보세요.</string>
     <string name="tutor_error_last_question">마지막 질문을 보내지 못했어요. 다시 시도해 보세요.</string>
     <string name="tutor_sign_in">로그인</string>

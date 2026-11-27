@@ -38,7 +38,6 @@
   "tutor_error_invalid": "0d68684291d169792cd6ca3fd787430fcac564d14f5f07bb72252ff77d5f6dae",
   "tutor_error_last_question": "e4d2655cb65ebc0eb9318f126f53be6d2726196433b826fd4bf0ebe7f54e4239",
   "tutor_error_session": "cc4ab8c04c5d419fefeb8a9967fa5fb36696c1447f7ae51bf2a61cf72effa1cb",
-  "tutor_error_slow_down": "eb874257e5848d6516e1acbde7d696160b80c9628a878a4b0a5b2102c5714915",
   "tutor_error_subscription": "62a56514293a28f9451795e08fee3585996e512feeba5c7991468345a38ab5ad",
   "tutor_get_answer": "8b49edd9a95158f826c53dfcaad6d7b10ac41c0ab91ddd62cf250475c4d501c1",
   "tutor_guest_title": "267075a5028d127c8d79a4bf590d2236025d7a0142ae41138aa17b9cc117cc8a",
@@ -173,7 +172,6 @@
     <string name="tutor_error_subscription">Poser des questions nécessite un abonnement</string>
     <string name="tutor_error_gone">Cette leçon n’est plus disponible.</string>
     <string name="tutor_error_invalid">Nous n’avons pas pu envoyer cette question. Réessaie.</string>
-    <string name="tutor_error_slow_down">Fais une courte pause, puis pose à nouveau ta question.</string>
     <string name="tutor_error_failed">Un problème est survenu. Réessaie.</string>
     <string name="tutor_error_last_question">Nous n’avons pas pu envoyer ta dernière question. Réessaie.</string>
     <string name="tutor_sign_in">Se connecter</string>
