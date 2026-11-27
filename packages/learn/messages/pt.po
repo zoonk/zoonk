@@ -2495,7 +2495,7 @@ msgstr "Capítulo {number, number}"
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
-msgstr "{count, plural, other {Aulas: #}}"
+msgstr "{count, plural, one {# aula} many {# aulas} other {# aulas}}"
 
 #: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx

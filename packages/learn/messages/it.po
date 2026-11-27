@@ -10189,7 +10189,7 @@ msgstr "Test"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "yjiD94"
 msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr "{skipped, plural, one {# lezione saltata su {lessons, number}} other {# lezioni saltate su {lessons, number}}}"
+msgstr "{skipped, plural, one {# di {lessons, number} lezioni saltate} other {# di {lessons, number} lezioni saltate}}"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"

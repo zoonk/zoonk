@@ -10189,7 +10189,7 @@ msgstr "Prueba de nivel"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "yjiD94"
 msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr "{skipped, plural, one {Se saltó # de {lessons, number} lecciones} many {Se saltaron # de {lessons, number} lecciones} other {Se saltaron # de {lessons, number} lecciones}}"
+msgstr "{skipped, plural, one {# de {lessons, number} lecciones saltadas} many {# de {lessons, number} lecciones saltadas} other {# de {lessons, number} lecciones saltadas}}"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
