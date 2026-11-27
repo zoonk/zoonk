@@ -298,10 +298,13 @@ class StudyOpenerTest {
             val day = day(listOf(mistakes, drill))
 
             assertEquals(
-                MutationResult.Done(AppRoute.MistakePractice(blockId = blockId(0).toString())),
+                MutationResult.Done(AppRoute.MistakePractice(blockId = blockId(0).toString(), sessionId = SESSION.toString())),
                 opener(api).open(day, mistakes, next = false, goalId = GOAL),
             )
-            assertEquals(MutationResult.Done(AppRoute.Pattern(pattern)), opener(api).open(day, drill, next = false, goalId = GOAL))
+            assertEquals(
+                MutationResult.Done(AppRoute.Pattern(pattern, SESSION.toString())),
+                opener(api).open(day, drill, next = false, goalId = GOAL),
+            )
         }
 
     @Test

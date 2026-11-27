@@ -8,6 +8,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.practice.RunPhase
@@ -16,6 +18,8 @@ import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.api.models.LessonStepCheckResult
 import kotlinx.coroutines.CompletableDeferred
@@ -61,7 +65,17 @@ class MistakePracticeViewModelTest {
         saved: SavedStateHandle = SavedStateHandle(),
         clock: () -> Long = { 0L },
         key: PracticeKey = PracticeKey(goalId = null),
-    ) = practiceViewModel(AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), api, clock, saved, key = key)
+        sessionId: UUID? = null,
+        steps: SessionSteps? = null,
+    ) = practiceViewModel(
+        AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)),
+        api,
+        clock,
+        saved,
+        key = key,
+        sessionId = sessionId,
+        steps = steps,
+    )
 
     private suspend fun TestScope.started(viewModel: MistakePracticeViewModel): PracticeState {
         viewModel.practice.load()
@@ -112,13 +126,10 @@ class MistakePracticeViewModelTest {
     }
 
     @Test
-    fun practiceAgainReadsAFreshBatchWhileThisOneLeftAMistakeOpen() =
+    fun practiceAgainFollowsTheFinishAndReadsAFreshBatch() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
-            api.answer = {
-                val itemId = (it as BankInput).value.itemId.toString()
-                if (itemId == FIRST) practiceFeedback(fixed = true) else practiceFeedback()
-            }
+            api.finish = { completion(hasMorePractice = true) }
             val viewModel = viewModel(api)
             started(viewModel)
             playToEnd(viewModel)
@@ -138,49 +149,31 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
-    fun aRunWhoseFinishFailedStillGoesAgainOnWhatItLeftOpen() =
+    fun aBatchThatLeftTodaysMissesOpenDoesNotGoAgainUnlessTheFinishSaysSo() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
-            api.finish = { throw ApiException(ApiError.Network) }
+            api.answer = { practiceFeedback(requiresLaterDay = true) }
             val viewModel = viewModel(api)
             started(viewModel)
             playToEnd(viewModel)
 
-            assertNull(viewModel.now.end?.summary)
-            assertEquals(true, viewModel.now.offersAgain)
+            assertEquals(false, viewModel.now.offersAgain)
         }
 
     @Test
-    fun aBatchThatFixedEverythingGoesAgainOnlyWhenTheScopeHasMore() =
+    fun theScoreComesFromTheRunsOwnAnswersEvenWhenTheFinishCountedNothing() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
-            api.answer = { practiceFeedback(fixed = true) }
+            api.answer = {
+                val itemId = (it as BankInput).value.itemId.toString()
+                practiceFeedback(isCorrect = itemId == FIRST)
+            }
+            api.finish = { completion(correct = 0, total = 0) }
             val viewModel = viewModel(api)
             started(viewModel)
             playToEnd(viewModel)
-            assertEquals(false, viewModel.now.offersAgain)
 
-            api.finish = { completion(hasMorePractice = true) }
-            val more = viewModel(api)
-            started(more)
-            playToEnd(more)
-            assertEquals(true, more.now.offersAgain)
-        }
-
-    @Test
-    fun aRunLeftEarlyDoesNotPracticeAgain() =
-        runTest(dispatcher) {
-            val api = FakeMistakesApi(twoMistakes)
-            api.finish = { completion(hasMorePractice = true) }
-            val viewModel = viewModel(api)
-            started(viewModel)
-
-            viewModel.answer()
-            advanceUntilIdle()
-            viewModel.leave()
-            advanceUntilIdle()
-
-            assertEquals(false, viewModel.now.offersAgain)
+            assertEquals(MomentScore(answered = 2, correct = 1), viewModel.now.score)
         }
 
     @Test
@@ -240,6 +233,37 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun aBlockRunGoesOnToItsSessionsNextStop() =
+        runTest(dispatcher) {
+            val sessionId = UUID.randomUUID()
+            val continued = mutableListOf<UUID>()
+            val steps =
+                object : SessionSteps {
+                    override suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> {
+                        continued += sessionId
+                        return MutationResult.Done(AppRoute.Today)
+                    }
+
+                    override suspend fun stop(sessionId: UUID): MutationResult<AppRoute> = error("Not stopped")
+                }
+            val viewModel =
+                viewModel(
+                    FakeMistakesApi(practice()),
+                    key = PracticeKey(goalId = null, blockId = UUID.randomUUID()),
+                    sessionId = sessionId,
+                    steps = steps,
+                )
+
+            viewModel.beginEmpty()
+            advanceUntilIdle()
+            viewModel.continueSession()
+            advanceUntilIdle()
+
+            assertEquals(listOf(sessionId), continued)
+            assertEquals(AppRoute.Today, viewModel.sessionMove.value.leaving)
+        }
+
+    @Test
     fun aBlockRunSendsItsBlockWithEachAnswer() =
         runTest(dispatcher) {
             val blockId = UUID.randomUUID()
@@ -286,13 +310,13 @@ class MistakePracticeViewModelTest {
             api.answer = { practiceFeedback(isCorrect = false) }
             val store = MistakesStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))) { "UTC" }
             val key = PracticeKey(goalId = null, skillId = null)
-            val first = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle()) { 0L }
+            val first = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle(), now = { 0L })
             started(first)
             first.answer()
             advanceUntilIdle()
 
             api.read = practice(practiceEntry(SECOND_MISTAKE, practiceQuestion(SECOND)))
-            val next = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle()) { 0L }
+            val next = MistakePracticeViewModel(key, store, noChoices(), FakeSession(null), SavedStateHandle(), now = { 0L })
             next.begin((next.practice.state.value as LoadState.Loaded).value)
             next.practice.load()
             advanceUntilIdle()

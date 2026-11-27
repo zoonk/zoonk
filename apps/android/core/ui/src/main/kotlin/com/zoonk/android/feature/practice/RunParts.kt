@@ -87,6 +87,7 @@ private fun RunDone(
     title: String,
     saving: Boolean,
     detail: String?,
+    error: String?,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -104,6 +105,9 @@ private fun RunDone(
                 )
                 detail?.takeUnless { saving }?.let {
                     Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                }
+                error?.takeUnless { saving }?.let {
+                    Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
                 }
             }
             if (!saving) content()
@@ -174,6 +178,8 @@ fun RunFinished(
     headerTitle: String? = null,
     actions: (@Composable () -> Unit)? = null,
     onAction: () -> Unit = onClose,
+    /** Why the run isn't over yet (its end didn't get through), under the title as main's save error. */
+    error: String? = null,
     content: @Composable () -> Unit,
 ) {
     ResultScreen {
@@ -195,7 +201,7 @@ fun RunFinished(
                     }
                 }
             },
-        ) { padding -> RunDone(title, saving, detail, modifier = Modifier.padding(padding), content = content) }
+        ) { padding -> RunDone(title, saving, detail, error, modifier = Modifier.padding(padding), content = content) }
     }
 }
 
