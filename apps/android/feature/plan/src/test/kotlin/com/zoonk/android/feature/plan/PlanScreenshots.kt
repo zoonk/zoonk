@@ -1249,7 +1249,6 @@ class PlanScreenshots {
               "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":14,"high":16}},
                {"key":"long","name":"60-line question","max":70,"range":{"low":33,"high":38}}]}]}"""
 
-        /** An estimate from practice answers, with no mock to say where it stands against the minimum. */
         val WRITTEN_UNMEASURED =
             """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":118,"high":131},"max":200,
             "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":56,"high":63},"standing":"unmeasured",

@@ -79,7 +79,6 @@ internal fun testRows(points: MockPoints): List<TestRow> {
     return rows.filter { it.met == false } + rows.filter { it.met != false }
 }
 
-/** The written parts with something to say here: an estimate, or a minimum still to reach. */
 internal fun writtenRows(points: MockPoints): List<WrittenPartPoints> =
     points.written.orEmpty().filter {
         it.range != null ||
@@ -199,7 +198,6 @@ private fun TestRowItem(row: TestRow) {
     }
 }
 
-/** A written part beside the tests: its estimate and where it stands, or why it has none. */
 @Composable
 private fun WrittenRowItem(part: WrittenPartPoints) {
     val range = part.range
@@ -297,7 +295,6 @@ private fun requirementLine(
     }
 }
 
-/** What a test still to judge needs: "Needs 50 points", or its share of the points. */
 @Composable
 private fun requirementLine(minimum: PointsMinimum): String =
     if (minimum.unit == PointsMinimum.Unit.PERCENT) {

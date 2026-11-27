@@ -20,7 +20,6 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WrittenPartPoints
 import com.zoonk.api.models.WrittenPartPointsMinimum
 
-/** The part's minimum in its own points: a percent minimum is that share of its maximum, as its meter's tick is. */
 fun WrittenPartPoints.minimumPoints(): Double? {
     val minimum = minimum ?: return null
     if (minimum.unit != WrittenPartPointsMinimum.Unit.PERCENT) return minimum.value

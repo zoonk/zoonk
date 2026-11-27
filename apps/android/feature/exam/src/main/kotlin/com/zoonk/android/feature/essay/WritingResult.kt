@@ -405,7 +405,6 @@ private fun criteriaFooter(
     when {
         grade.points == null && prompt.criteria.all { it.points == null } -> stringResource(R.string.essay_no_points_in_notice)
 
-        // An answer on a sheet with points can still come back by level, even after one with points.
         grade.points == null -> stringResource(R.string.essay_graded_by_level_why)
 
         prompt.keySource == WritingPromptOutput.KeySource.NOTICE -> stringResource(R.string.essay_criteria_from_notice)

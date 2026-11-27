@@ -37,10 +37,6 @@ internal const val FULL_POINTS =
     {"asked":10,"earned":8,"max":10,"met":true,"minimum":{"unit":"percent","value":50},"projected":null,"short":null,"name":"Libras","qualifying":true}],
     "unjudged":[{"minimum":{"unit":"points","value":20},"name":"Discursive test"}]}"""
 
-/**
- * A full mock whose objective tests reached their minimums, with its written test estimated as [range] (or not yet,
- * when null) and standing [standing] against its own minimum.
- */
 internal fun writtenPoints(
     standing: String,
     range: String?,

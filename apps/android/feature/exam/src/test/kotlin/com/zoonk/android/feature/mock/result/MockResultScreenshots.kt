@@ -491,7 +491,6 @@ class MockResultScreenshots {
                 "passMarks":{"language":"pt","texts":["Será eliminado o candidato que obtiver nota inferior a 10 pontos."]}""",
         )
 
-    /** The details sheet's points by test, with the written test standing [standing] at [range]. */
     private fun writtenDetails(
         standing: String,
         range: String,
