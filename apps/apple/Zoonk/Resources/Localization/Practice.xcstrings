@@ -5553,65 +5553,6 @@
         }
       }
     },
-    "It comes back another day to make sure." : {
-      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Frage kommt an einem anderen Tag noch einmal dran, um sicherzugehen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volverá a aparecer otro día para comprobarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On te la reposera un autre jour pour vérifier."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La riprenderemo un altro giorno per sicurezza."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "確認のため、別の日にもう一度出てきます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확실히 익힐 수 있도록 다른 날 다시 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróci do tego innego dnia, żeby się upewnić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse erro aparece de novo em outro dia para confirmar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Emin olmak için başka bir gün yeniden karşına çıkar."
-          }
-        }
-      }
-    },
     "It starts here when it's ready." : {
       "comment" : "A challenge waits for its questions.",
       "localizations" : {
@@ -12385,6 +12326,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yüklenemedi"
+          }
+        }
+      }
+    },
+    "This question comes back another day to make sure." : {
+      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage kommt an einem anderen Tag noch einmal, damit du sie wirklich kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta volverá otro día para comprobar que ya la sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question reviendra un autre jour pour vérifier que tu la connais bien."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa domanda tornerà un altro giorno per verificare che tu l’abbia imparata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "定着を確認するため、この問題は別の日にもう一度出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확실히 익힐 수 있도록 이 문제는 다른 날 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wrócimy do tego pytania innego dnia, żeby sprawdzić, czy nadal pamiętasz odpowiedź."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa pergunta vai voltar outro dia para garantir que você aprendeu."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emin olmak için bu soru başka bir gün tekrar karşına çıkacak."
           }
         }
       }
