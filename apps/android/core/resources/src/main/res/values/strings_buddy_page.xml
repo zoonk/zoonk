@@ -32,11 +32,6 @@
     <string name="buddy_page_energy_starts">It starts with your first lesson.</string>
     <string name="buddy_page_energy_napping">%1$s is napping. Study to wake it up.</string>
     <string name="buddy_page_energy_study">Study today to keep Energy up.</string>
-    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
-    <plurals name="buddy_page_missions_count">
-        <item quantity="one">%1$d of %2$d mission</item>
-        <item quantity="other">%1$d of %2$d missions</item>
-    </plurals>
     <string name="buddy_page_fully_grown">Fully grown</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Grows when you reach %1$s</string>

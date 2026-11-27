@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -48,6 +47,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -113,18 +113,24 @@ internal fun BuddyTodayLine(
         }
         TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
             if (today != null && today.missions.isNotEmpty()) {
-                MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
+                val locale = currentLocale()
+                val total = today.missions.size
+                MissionsRing(done, total, Modifier.size(icon), strokeWidth = RING_STROKE)
                 Spacer(Modifier.width(MISSIONS_GAP))
+                Text(stringResource(R.string.missions_title), color = muted, style = number)
+                Text(
+                    stringResource(
+                        R.string.buddy_page_count,
+                        formatNumber(done.toDouble(), locale),
+                        formatNumber(total.toDouble(), locale),
+                    ),
+                    Modifier.padding(start = ENERGY_GAP),
+                    color = muted,
+                    style = number,
+                )
+            } else {
+                Text(stringResource(R.string.buddy_page_today, name), color = muted, style = number)
             }
-            Text(
-                today
-                    ?.takeIf {
-                        it.missions.isNotEmpty()
-                    }?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
-                    ?: stringResource(R.string.buddy_page_today, name),
-                color = muted,
-                style = number,
-            )
         }
     }
 

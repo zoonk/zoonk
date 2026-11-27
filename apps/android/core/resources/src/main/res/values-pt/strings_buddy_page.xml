@@ -29,7 +29,6 @@
   "buddy_page_goal_placeholder": "18cd55359389c65033e317063617ad5232823ffa468cb3c50e4c1b09597c5318",
   "buddy_page_greeting": "ad58a242ad160b30f30549094d026db54b6cdf9f52644301918af96025b6d900",
   "buddy_page_grows": "c05d650eb3ecb3dc78394ae4b778d556f69250c7d75cbdc8002e9d82868d30eb",
-  "buddy_page_missions_count": "d42c8cbb1c3585b59f504d17bcacdd7f349da8d8b21ef61e4fef6a31e6684d50",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
   "buddy_page_new_conversation": "551a62f675dc5394f0a3ab891166fcb2af5ae0525f0b18f00123461f0a0afaaf",
   "buddy_page_placeholder": "2b158a3f408b5c8487d15394532aa431b5a41cc1787256f65df6a0047554ccdc",
@@ -74,12 +73,6 @@
     <string name="buddy_page_energy_starts">Começa na sua primeira aula.</string>
     <string name="buddy_page_energy_napping">%1$s está cochilando. Estude e %1$s acorda.</string>
     <string name="buddy_page_energy_study">Estude hoje para manter a Energia.</string>
-    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
-    <plurals name="buddy_page_missions_count">
-        <item quantity="one">%1$d de %2$d missão</item>
-        <item quantity="many">%1$d de %2$d missões</item>
-        <item quantity="other">%1$d de %2$d missões</item>
-    </plurals>
     <string name="buddy_page_fully_grown">Crescimento completo</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Cresce quando você alcança a %1$s</string>

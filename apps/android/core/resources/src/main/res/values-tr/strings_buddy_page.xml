@@ -29,7 +29,6 @@
   "buddy_page_goal_placeholder": "c3e7fc18c8875cfd3ebf3c11ff0c54d7e62de4db55493eda5fd8042f6ed1d4ad",
   "buddy_page_greeting": "4b83c1fa23bf6d22e1838a55ae1e23cfd7a57fe4135d7e2293a2a97cbcf0e832",
   "buddy_page_grows": "dd9d9861f7d5878f1482f5c346a983a45cb087cb15e1a66360caef3921c8c4b8",
-  "buddy_page_missions_count": "6c101c5c3c3ca9d46f24817d1e9b4b106e4d955037196da9bbf09041d44024d8",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
   "buddy_page_new_conversation": "f55c57ed3cc62f5285c11643429903aef242ab1729272a1bb6cfcaa983ead469",
   "buddy_page_placeholder": "01f1dd536ef0424dca1d0c0ade7c85d3c1a83e80a74e8ece4f7f40ed726426a9",
@@ -74,11 +73,6 @@
     <string name="buddy_page_energy_starts">İlk dersinle başlar.</string>
     <string name="buddy_page_energy_napping">%1$s şekerleme yapıyor. Uyandırmak için ders çalış.</string>
     <string name="buddy_page_energy_study">Enerjini yüksek tutmak için bugün çalış.</string>
-    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
-    <plurals name="buddy_page_missions_count">
-        <item quantity="one">%1$d / %2$d görev</item>
-        <item quantity="other">%1$d / %2$d görev</item>
-    </plurals>
     <string name="buddy_page_fully_grown">Büyümesini tamamladı</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">%1$s seviyesine ulaştığında büyür</string>
