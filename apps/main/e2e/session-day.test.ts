@@ -61,11 +61,12 @@ async function createFirstWeekDay() {
 
 /** Today opens a question block on its intro, which waits for the learner's Start. */
 async function startFromIntro(page: Page) {
-  await expect(
+  // Enter is a page shortcut, whose listener attaches only after the page hydrates.
+  await pressUntil(
+    () => page.keyboard.press("Enter"),
     page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
-  ).toBeEnabled();
-
-  await page.keyboard.press("Enter");
+    { visible: false },
+  );
 }
 
 async function answerPlacement(page: Page) {
@@ -178,14 +179,15 @@ test("reopening a fully answered block waits for Finish before completing the se
 
   await page.reload();
 
-  // Enabled once the page is interactive, so Enter reaches it.
-  await expect(page.getByRole("button", { exact: true, name: "Finish" })).toBeEnabled();
+  const finish = page.getByRole("button", { exact: true, name: "Finish" });
+  await expect(finish).toBeVisible();
 
   await expect(
     prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
   ).resolves.toMatchObject({ status: "active" });
 
-  await page.keyboard.press("Enter");
+  // Enter is a page shortcut, whose listener attaches only after the page hydrates.
+  await pressUntil(() => page.keyboard.press("Enter"), finish, { visible: false });
 
   await expect
     .poll(async () => {
