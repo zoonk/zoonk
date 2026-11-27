@@ -19,7 +19,7 @@
   "mistakes_practice_done": "0a29443494aecc664a156bd82a5bb5ca4f6d4d8384ec9f3e04a7946069d87e20",
   "mistakes_practice_end": "fffe220e6f6e1f41f6380ffead980c4bc9829f9107048eba8b29cce4135dc95b",
   "mistakes_practice_fixed": "e9894e560d70f22ec1b989115f6d501be5644281b881ca9b16e69ae85ae87b17",
-  "mistakes_practice_later_day": "cbae549368247875728ec96277fab64b145a77187b60461b5f063e220c12d4ca",
+  "mistakes_practice_later_day": "bde3665e203c9306c734fbe26851a4af6e36a81c4d0af8ccecec0df4c9f928c8",
   "mistakes_practice_not_marked": "cd93db29a4409ebdc6ac9f4d6a68933c64f795ee890f2446a93f092ad9dad167",
   "mistakes_practice_not_saved": "a52d055ce3a2cea5d2bb98cb9ec0f4bb4918ae95c3a18b935e6ef728f57ff7bd",
   "mistakes_practice_title": "44d9d18aac7f7cf0cd7d76cd6336f2bff590737c4b59939cb351fbd3af15c29d",
@@ -58,7 +58,7 @@
     <string name="mistakes_cause_guess">찍어서 고름</string>
     <string name="mistakes_practice_topic">이 주제 연습하기</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">확실히 익힐 수 있도록 다른 날 다시 나와요.</string>
+    <string name="mistakes_practice_later_day">확실히 익힐 수 있도록 이 문제는 다른 날 다시 나와요.</string>
     <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">다시 연습하기</string>
     <!-- The button that leaves a finished practice of mistakes. -->

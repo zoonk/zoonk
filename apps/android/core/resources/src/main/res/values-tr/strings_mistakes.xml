@@ -19,7 +19,7 @@
   "mistakes_practice_done": "8961b9ae0086d7250a95689c09ebf28c52bcbaf9d0f2d7e4e5eae870a1b81008",
   "mistakes_practice_end": "568071e91bd37f4fbe0afc95392a3b371a204f0173b080dd017f36c276a6bfd7",
   "mistakes_practice_fixed": "3d26a89032cdd18b0d96996658c1d0f211c29a0d80b4a6a01deae1b2bc7d72fd",
-  "mistakes_practice_later_day": "5a6349a90cc6cd65d1ccf5ec0f818ebad230e470a2b082898c9f853c062b9bcc",
+  "mistakes_practice_later_day": "3f4067eb16d1428b1ef2c28383a292bb4d7d5d56e9056e36528699e0a463228b",
   "mistakes_practice_not_marked": "0d04a61bcc85301cca2bf6e7830c245863556ed060bb3f5b205c465298a81418",
   "mistakes_practice_not_saved": "e3191249f3b065bc7338d28ddafce9cbd3f842c5277fb9f2399108a63d1a59c9",
   "mistakes_practice_title": "37b0b4f3c940210dfec9f98fef3a3f9887a1f7412e62c74161f26edfb627835a",
@@ -59,7 +59,7 @@
     <string name="mistakes_cause_guess">Tahmin ettin</string>
     <string name="mistakes_practice_topic">Bu konuda alıştırma yap</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">Emin olmak için başka bir gün yeniden karşına çıkar.</string>
+    <string name="mistakes_practice_later_day">Emin olmak için bu soru başka bir gün tekrar karşına çıkacak.</string>
     <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">Tekrar çalış</string>
     <!-- The button that leaves a finished practice of mistakes. -->

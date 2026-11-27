@@ -19,7 +19,7 @@
   "mistakes_practice_done": "eb4fc4930f9fd773f74f6f70342d677156eadcee0e73846d32b3c4572dbeec7f",
   "mistakes_practice_end": "7365a1b1d308541d44fc11a4751176c253f1843a8fb3509ba2c9ed6431118b16",
   "mistakes_practice_fixed": "359d4c4bfa5dff995bf2474902ee064caec8307572f048ce1f49b05cc10820d8",
-  "mistakes_practice_later_day": "7ee4698755b01f0b159555de4535ac4d37101d22b99332be31151b1bb6657cf3",
+  "mistakes_practice_later_day": "88f35ec4fa127811e7e3d233112387e9585d1eb9356995ccd0675c6468fdd0e4",
   "mistakes_practice_not_marked": "fa1dc83fff71e6cce73a0c3669b57607a7ee2f4d09561f82a9a09e29ef360d4b",
   "mistakes_practice_not_saved": "48dd5eaa09acf5f32a579fcfa5092a78ddc906357a994ca5a361089446a6334e",
   "mistakes_practice_title": "e3820f9cc6c6850516df19a3c19e4fa2f0550169d5a10dedf0c3782684a668f9",
@@ -60,7 +60,7 @@
     <string name="mistakes_cause_guess">Hiciste una suposición</string>
     <string name="mistakes_practice_topic">Practicar este tema</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">Volverá a aparecer otro día para comprobarlo.</string>
+    <string name="mistakes_practice_later_day">Esta pregunta volverá otro día para comprobar que ya la sabes.</string>
     <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">Practicar de nuevo</string>
     <!-- The button that leaves a finished practice of mistakes. -->

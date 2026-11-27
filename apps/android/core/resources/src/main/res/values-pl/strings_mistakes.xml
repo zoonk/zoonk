@@ -19,7 +19,7 @@
   "mistakes_practice_done": "7365edaf817ec61db597cee3df5fa77c118098bb19da0cfc356122d25a23440c",
   "mistakes_practice_end": "b7dbf24ae30e2e49959418f289c082e02fc1a2bd4ab0bedb5fc7631afe18366f",
   "mistakes_practice_fixed": "d8028044861184afb3144a91b79de85ac8583b711529f74ad180c093ff884831",
-  "mistakes_practice_later_day": "ba760f5124f2fb7e811b62f9081d74495887165f9886a0aa38d80058cced3f2a",
+  "mistakes_practice_later_day": "4627b4d8a4f3db7cebd9cc47cda40551b2959aa144929d467e5d07ee05474afd",
   "mistakes_practice_not_marked": "c544af8446ed8537d8e1ec86f0f8596c1957fd290a7079eff054857f5fd424c7",
   "mistakes_practice_not_saved": "477560e20837de03703ae397efbe4fbfcce149ab4896ea0ce32fbbb754ab2168",
   "mistakes_practice_title": "8ef524a5e01b687312b096be524cf28f19c8da42ea2fe2a7651d9f1bb553a33a",
@@ -61,7 +61,7 @@
     <string name="mistakes_cause_guess">Zgadywanie</string>
     <string name="mistakes_practice_topic">Przećwicz ten temat</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">Wróci do tego innego dnia, żeby się upewnić.</string>
+    <string name="mistakes_practice_later_day">Wrócimy do tego pytania innego dnia, żeby sprawdzić, czy nadal pamiętasz odpowiedź.</string>
     <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">Ćwicz ponownie</string>
     <!-- The button that leaves a finished practice of mistakes. -->

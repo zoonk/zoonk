@@ -19,7 +19,7 @@
   "mistakes_practice_done": "e2a452f7d62af3b7f8e0a655a63be44bd8e3c34418a8240372cf5cc2614f536f",
   "mistakes_practice_end": "a27bec73363f70467fa32b7fa584fbe5d558c120f31fa2f889154b222c44f8e4",
   "mistakes_practice_fixed": "51b9bd33e05b33539c8410ecdd45cc5029d6e3fd3fa8e6e7217039904a3223b5",
-  "mistakes_practice_later_day": "4582168bbca9bda2fb5b90a96cf659673c4a47806e4ddebd88986d6e64a6609f",
+  "mistakes_practice_later_day": "09c9a03ef25e6e668a2bc65b70ab0a41ccbaea361b0ee4c67e578dadba4f6a4a",
   "mistakes_practice_not_marked": "9c69f32e498ef34dee23dec8b15c9797b1fbac82becb83fea7df667d0341835b",
   "mistakes_practice_not_saved": "d3ee024be662a521fe4041d669f9cd8d1b3f88e9eb982086e105f46f1a762e0a",
   "mistakes_practice_title": "7edc98e6a1adcbc053fbde105dd356df5c21839db2def8015edf0f102e8cf02b",
@@ -58,7 +58,7 @@
     <string name="mistakes_cause_guess">予想で答えました</string>
     <string name="mistakes_practice_topic">このトピックを練習する</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">確認のため、別の日にもう一度出てきます。</string>
+    <string name="mistakes_practice_later_day">定着を確認するため、この問題は別の日にもう一度出てきます。</string>
     <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">もう一度練習する</string>
     <!-- The button that leaves a finished practice of mistakes. -->
