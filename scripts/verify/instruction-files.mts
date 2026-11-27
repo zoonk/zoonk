@@ -201,7 +201,7 @@ function description(skill: string): string | undefined {
   const lines = skill.replaceAll("\r\n", "\n");
   const frontmatter = /^---\n(?<yaml>[^]*?)\n---$/mu.exec(lines)?.groups?.yaml;
 
-  return /^description:[ \t]*(?<text>.*)$/mu.exec(frontmatter ?? "")?.groups?.text.trim();
+  return /^description:[ \t]*(?<text>.*)$/mu.exec(frontmatter ?? "")?.groups?.text?.trim();
 }
 
 /** Quotes, block scalars and a `: ` or ` #` inside the text change what YAML reads, or fail to parse. */
