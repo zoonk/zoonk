@@ -21,7 +21,8 @@ import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
-import { type WritingCalibration } from "./_utils/writing-calibration";
+import { type WritingCalibration, writingCalibrationSchema } from "./_utils/writing-calibration";
+import savedCalibration from "./_utils/writing-calibration-data.json";
 import { applyWritingArithmetic, buildWritingFeedback } from "./_utils/writing-feedback";
 import { createWritingQuoteLookup } from "./_utils/writing-quotes";
 import { getWritingTaskBasis, matchesWritingTaskBasis } from "./_utils/writing-task-basis";
@@ -395,6 +396,39 @@ describe("writing grades", () => {
     expect(result(no)).toMatchObject({ kind: "points", zeroReason: null });
   });
 
+  it("returns zero and the exam's line rule on a measured sheet", async () => {
+    calibration.current = writingCalibrationSchema.parse(savedCalibration);
+
+    try {
+      const rule = "Answers of one line or fewer score zero.";
+
+      const writing = {
+        ...basis,
+        grading: {
+          ...basis.grading,
+          zeroing: [{ citation, kinds: ["tooFewLines" as const], maxLines: 1, text: rule }],
+        },
+      };
+
+      await expect(
+        gradeWriting({
+          content: { ...content, writing },
+          language: "en",
+          previousNextSteps: [],
+          text: "Claim",
+        }),
+      ).resolves.toMatchObject({
+        kind: "points",
+        nextStep: { kind: "zero" },
+        total: { high: 0, low: 0 },
+        zeroKind: "tooFewLines",
+        zeroReason: rule,
+      });
+    } finally {
+      calibration.current = null;
+    }
+  });
+
   it("gives a blank answer the blank rule when a line-count rule comes first", () => {
     const rubric = {
       ...basis,
@@ -487,10 +521,7 @@ describe("writing grades", () => {
 
     calibration.current = calibrationFixture({
       grader,
-      rows: {
-        definitePoint: rowCalibrationFixture(),
-        judgedScale: rowCalibrationFixture({ points: false }),
-      },
+      rows: { definitePoint: rowCalibrationFixture(), judgedScale: rowCalibrationFixture() },
     });
 
     try {
@@ -530,7 +561,7 @@ describe("writing grades", () => {
 
       await expect(
         gradeWriting({ ...input, content: { ...content, writing: mixed } }),
-      ).resolves.toMatchObject({ kind: "levels" });
+      ).resolves.toMatchObject({ kind: "points" });
 
       calibration.current = calibrationFixture({ grader });
       provider.mockResolvedValueOnce({ data: evidence, provenance });

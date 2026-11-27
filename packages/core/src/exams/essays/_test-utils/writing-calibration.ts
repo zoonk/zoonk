@@ -5,12 +5,7 @@ export function weightedResiduals(shares: number[]) {
 }
 
 export function rowCalibrationFixture(overrides: Partial<RowCalibration> = {}): RowCalibration {
-  return {
-    points: true,
-    residuals: { over: [], under: [] },
-    verdicts: { above: true, below: true },
-    ...overrides,
-  };
+  return { residuals: { over: [], under: [] }, ...overrides };
 }
 
 export function calibrationFixture(

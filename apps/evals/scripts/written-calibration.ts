@@ -12,11 +12,10 @@ import {
 import { getWritingGrader } from "@zoonk/ai/tasks/grading/grade-essay";
 import { getWritingKeyWriter } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import {
-  WRITING_PART_ERROR_RATE,
   type WeightedResidual,
   type WritingCalibration,
   type WritingGrader,
-  rankWritingResiduals,
+  getWritingMargin,
   writingCalibrationSchema,
 } from "@zoonk/core/exams/essays/writing-calibration";
 import { type WritingRowKind, writingRowKind } from "@zoonk/core/exams/essays/writing-contract";
@@ -24,10 +23,8 @@ import { type WritingRowKind, writingRowKind } from "@zoonk/core/exams/essays/wr
 const RESULT_DIRECTORY = "eval-results/written-calibration";
 const OUTPUT = "../../packages/core/src/exams/essays/_utils/writing-calibration-data.json";
 const ANALYSIS_CUTOFF_SHARE = 0.6;
-const TAIL_COVERAGE = 1 - WRITING_PART_ERROR_RATE / 2;
-const MIN_COHORT_FOR_WEAK_GATE = 5;
-const MAX_WIDTH = 1 / 3;
-const EPSILON = 1e-10;
+const ERROR_TOLERANCE = 1e-10;
+const POINTS_TOLERANCE = 1e-6;
 
 type Range = { high: number; low: number };
 
@@ -137,7 +134,7 @@ function residuals(folds: Fold[], side: keyof Residual): WeightedResidual[] {
     .toSorted((a, b) => a.share - b.share);
 }
 
-function pointBar(answers: MeasuredAnswer[]) {
+function pointErrors(answers: MeasuredAnswer[]) {
   const errors = answers
     .map(({ residual }) => Math.max(residual.over, residual.under))
     .toSorted((a, b) => a - b);
@@ -148,128 +145,40 @@ function pointBar(answers: MeasuredAnswer[]) {
     ((errors[middle] ?? Number.NaN) + (errors[Math.floor((errors.length - 1) / 2)] ?? Number.NaN)) /
     2;
 
-  const within = errors.filter((error) => error <= 0.2 + EPSILON).length / errors.length;
+  const within = errors.filter((error) => error <= 0.2 + ERROR_TOLERANCE).length / errors.length;
 
-  return { median, passes: median <= 0.1 + EPSILON && within >= 0.8, within };
-}
-
-function coverage(answers: MeasuredAnswer[], margin: number | null, side: keyof Residual) {
-  return margin === null
-    ? Number.NaN
-    : answers.filter(({ residual }) => residual[side] <= margin + EPSILON).length / answers.length;
-}
-
-function binomialCdf(failures: number, trials: number, rate: number) {
-  let probability = (1 - rate) ** trials;
-  let cumulative = probability;
-
-  for (let count = 1; count <= failures; count += 1) {
-    probability *= ((trials - count + 1) * rate) / (count * (1 - rate));
-    cumulative += probability;
-  }
-
-  return cumulative;
-}
-
-function upperErrorBound(wrong: number, adverse: number) {
-  if (adverse === 0) {
-    return Number.NaN;
-  }
-
-  if (wrong === adverse) {
-    return 1;
-  }
-
-  let low = 0;
-  let high = 1;
-
-  // Invert the one-sided exact binomial test.
-  for (let iteration = 0; iteration < 40; iteration += 1) {
-    const middle = (low + high) / 2;
-
-    if (binomialCdf(wrong, adverse, middle) > 0.05) {
-      low = middle;
-    } else {
-      high = middle;
-    }
-  }
-
-  return high;
-}
-
-function verdict(answers: MeasuredAnswer[], side: "above" | "below", margin: number | null) {
-  let adverse = 0;
-  let right = 0;
-  let wrong = 0;
-
-  for (const { cutoff, estimates, mark, max } of answers) {
-    if (margin === null) {
-      return { adverse: 0, passes: false, right: 0, upper: Number.NaN, wrong: 0 };
-    }
-
-    const threshold = (cutoff ?? ANALYSIS_CUTOFF_SHARE) * max;
-    const truth = side === "above" ? mark >= threshold : mark < threshold;
-
-    const calls = estimates.map(({ high, low }) =>
-      side === "above"
-        ? low - margin * max >= threshold - 1e-6
-        : high + margin * max < threshold - 1e-6,
-    );
-
-    adverse += Number(!truth);
-    wrong += Number(!truth && calls.some(Boolean));
-    right += Number(truth && calls.every(Boolean));
-  }
-
-  const upper = upperErrorBound(wrong, adverse);
-  return { adverse, passes: upper <= 0.1 && right > 0, right, upper, wrong };
+  return { median, within };
 }
 
 const percent = (value: number | null) =>
   value === null || Number.isNaN(value) ? "—" : `${(value * 100).toFixed(1)}%`;
 
-function foldResult(fold: Fold, training: Fold[]) {
-  const { answers, measured } = fold;
-  const weak = measured.filter(({ mark, max }) => mark < max / 2);
-  const weakCount = answers.filter(({ mark, max }) => mark < max / 2).length;
-  const all = pointBar(measured);
-  const low = pointBar(weak);
-  const over = rankWritingResiduals(residuals(training, "over"), TAIL_COVERAGE);
-  const under = rankWritingResiduals(residuals(training, "under"), TAIL_COVERAGE);
-  const overCoverage = coverage(measured, over, "over");
-  const underCoverage = coverage(measured, under, "under");
-  const above = verdict(measured, "above", over);
-  const below = verdict(measured, "below", under);
-  const complete = measured.length === answers.length;
+function verdict(answers: MeasuredAnswer[], side: "above" | "below", margin: number | null) {
+  if (margin === null) {
+    return "—";
+  }
 
-  const points =
-    complete &&
-    all.passes &&
-    (weakCount < MIN_COHORT_FOR_WEAK_GATE || low.passes) &&
-    over !== null &&
-    under !== null &&
-    over + under <= MAX_WIDTH + EPSILON &&
-    overCoverage >= TAIL_COVERAGE &&
-    underCoverage >= TAIL_COVERAGE;
+  let runs = 0;
+  let called = 0;
+  let wrong = 0;
 
-  return {
-    above,
-    all,
-    below,
-    complete,
-    low,
-    over,
-    overCoverage,
-    points,
-    under,
-    underCoverage,
-    weak,
-    weakCount,
-  };
-}
+  for (const { cutoff, estimates, mark, max } of answers) {
+    const threshold = (cutoff ?? ANALYSIS_CUTOFF_SHARE) * max;
+    const met = mark >= threshold;
 
-function displayVerdict({ adverse, right, upper, wrong }: ReturnType<typeof verdict>) {
-  return adverse ? `${wrong}/${adverse} (upper ${percent(upper)}, right ${right})` : "—";
+    for (const { high, low } of estimates) {
+      const call =
+        side === "above"
+          ? low - margin * max >= threshold - POINTS_TOLERANCE
+          : high + margin * max < threshold - POINTS_TOLERANCE;
+
+      runs += 1;
+      called += Number(call);
+      wrong += Number(call && met !== (side === "above"));
+    }
+  }
+
+  return `${percent(called / runs)} / ${percent(wrong / called)}`;
 }
 
 const [directory = RESULT_DIRECTORY, output = OUTPUT] = process.argv.slice(2);
@@ -291,53 +200,31 @@ const measured = listCalibrationCohorts().map((cohort) =>
 const rows: WritingCalibration["rows"] = {};
 
 const table = [
-  "| Row kind | Held-out source | Complete / planned | Below half complete / planned | Median error / within 20% | Below-half median / within 20% | Over / under margin | Over / under coverage | Wrong above / adverse | Wrong below / adverse | Points fold |",
-  "| --- | --- | ---: | ---: | --- | --- | --- | --- | --- | --- | --- |",
+  "| Row kind | Held-out source | Measured / planned | Median error | Within 20% | Over / under margin | Likely above called / wrong | Likely below called / wrong |",
+  "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
 ];
 
 for (const kind of writingRowKind.options) {
   const folds = measured.filter((fold) => fold.kind === kind);
 
-  const results = folds.map((fold) => {
-    const result = foldResult(
-      fold,
-      folds.filter(({ source }) => source !== fold.source),
-    );
-
-    const {
-      above,
-      all,
-      below,
-      complete,
-      low,
-      over,
-      overCoverage,
-      points,
-      under,
-      underCoverage,
-      weak,
-      weakCount,
-    } = result;
-
-    const failure = complete ? "fail" : "incomplete";
+  for (const fold of folds) {
+    const training = folds.filter(({ source }) => source !== fold.source);
+    const { median, within } = pointErrors(fold.measured);
+    const over = getWritingMargin(residuals(training, "over"));
+    const under = getWritingMargin(residuals(training, "under"));
+    const above = verdict(fold.measured, "above", over);
+    const below = verdict(fold.measured, "below", under);
 
     table.push(
-      `| ${kind} | ${fold.source} | ${fold.measured.length}/${fold.answers.length} | ${weak.length}/${weakCount} | ${percent(all.median)} / ${percent(all.within)} | ${percent(low.median)} / ${percent(low.within)} | ${percent(over)} / ${percent(under)} | ${percent(overCoverage)} / ${percent(underCoverage)} | ${displayVerdict(above)} | ${displayVerdict(below)} | ${points ? "pass" : failure} |`,
+      `| ${kind} | ${fold.source} | ${fold.measured.length}/${fold.answers.length} | ${percent(median)} | ${percent(within)} | ${percent(over)} / ${percent(under)} | ${above} | ${below} |`,
     );
+  }
 
-    return result;
-  });
-
-  const points = results.length >= 2 && results.every((result) => result.points);
-
-  rows[kind] = {
-    points,
-    residuals: { over: residuals(folds, "over"), under: residuals(folds, "under") },
-    verdicts: {
-      above: points && results.every(({ above }) => above.passes),
-      below: points && results.every(({ below }) => below.passes),
-    },
-  };
+  if (folds.filter((fold) => fold.measured.length > 0).length >= 2) {
+    rows[kind] = {
+      residuals: { over: residuals(folds, "over"), under: residuals(folds, "under") },
+    };
+  }
 }
 
 const calibration = writingCalibrationSchema.parse({ ...provenance, rows });
