@@ -904,7 +904,6 @@ struct SyllabusSubjectRow: View {
   }
 
   /// Main's subject bar: an exam's preparation, else the lessons studied and those already known.
-  /// Under the name it is the row's second line.
   @ViewBuilder private var bar: some View {
     Group {
       if isExam {

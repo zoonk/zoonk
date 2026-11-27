@@ -511,7 +511,6 @@ internal object LayoutCapture {
                         }
                     }
                 fields["text"] = text(node)
-                // A drawing with no words (a progress bar) is read by its ink, as a mark is.
                 if (laidOutTexts.isEmpty() && drawsNoWords(node)) {
                     fields["ink"] = pixelInk(bounds(node))
                     return

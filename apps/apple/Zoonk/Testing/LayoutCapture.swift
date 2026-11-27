@@ -46,7 +46,6 @@
       var styles: [StyleRect] = []
       var role: LayoutRole?
       var text: Text?
-      /// A part drawn with no words (`layoutPart(_:words:)`), read by its ink.
       var words = true
       var dynamicTypeSize: DynamicTypeSize = .large
       var legibility: LegibilityWeight?
