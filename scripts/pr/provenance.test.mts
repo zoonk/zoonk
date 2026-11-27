@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { describe, it } from "vitest";
 import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
 
@@ -28,11 +28,12 @@ function makeBuiltCheckout() {
   mkdirSync(join(repository, "apps/main/.next"), { recursive: true });
   mkdirSync(join(repository, "packages/ui"), { recursive: true });
   writeFileSync(join(repository, ".gitignore"), ".next\n");
+  copyFileSync(resolve(import.meta.dirname, "../../.gitattributes"), join(repository, ".gitattributes"));
   writeFileSync(join(repository, "apps/main/page.txt"), "page");
   writeFileSync(join(repository, "packages/ui/row.txt"), "row");
   const written = new Date(WRITTEN);
 
-  for (const source of [".gitignore", "apps/main/page.txt", "packages/ui/row.txt"]) {
+  for (const source of [".gitignore", ".gitattributes", "apps/main/page.txt", "packages/ui/row.txt"]) {
     utimesSync(join(repository, source), written, written);
   }
 
@@ -111,5 +112,21 @@ describe("the build a web picture shows", () => {
 
     assert.match(first.changes ?? "", /^[0-9a-f]{64}$/u);
     assert.notEqual(first.changes, second.changes);
+  });
+
+  it("keeps the build current and clean while only tests change", async () => {
+    const { built, repository } = makeBuiltCheckout();
+    const later = new Date(built.getTime() + MINUTE);
+
+    for (const test of ["apps/main/e2e/plan.test.ts", "packages/ui/row.test.tsx"]) {
+      mkdirSync(join(repository, test, ".."), { recursive: true });
+      writeFileSync(join(repository, test), "a test");
+      utimesSync(join(repository, test), later, later);
+    }
+
+    const checkout = await readCheckoutBuild({ app: "main", repository });
+
+    assert.equal(checkout.changes, undefined);
+    assert.equal(checkout.current, "abc123");
   });
 });

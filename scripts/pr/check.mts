@@ -17,7 +17,7 @@ import {
   readManifest,
   readOf,
 } from "./media.mts";
-import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
+import { commitIncludes, latestCommitSince, screenSources, sha256File } from "./provenance.mts";
 import { type CheckResult, type Problem } from "./report.mts";
 
 type Entry = { folder: string; item: ManifestItem };
@@ -79,10 +79,7 @@ function cachedGit(repository: string): Git {
       const key = `${commit} ${app}`;
 
       if (!latest.has(key)) {
-        latest.set(
-          key,
-          latestCommitSince({ commit, paths: [`apps/${app}`, "packages"], repository }),
-        );
+        latest.set(key, latestCommitSince({ commit, paths: screenSources(app), repository }));
       }
 
       return latest.get(key);
