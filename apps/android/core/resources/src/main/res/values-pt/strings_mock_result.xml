@@ -118,6 +118,7 @@
   "mock_result_up": "91c890ffb20d188c166e81e5f3e388695211fcb16a252ea02dd78963e7a23741",
   "mock_result_up_from": "72e832839ad39c38889c13116beb84b5eab19116c730a8c6ccc549374e65434a",
   "mock_result_work_on": "5cbda25219a5ad54de19a46537574790f92ec1f8dc5e0e3447df3cf34167a94e",
+  "mock_result_written_no_estimate": "a36ccd9c42821fd805444c28b271fb83e06bb3c6c0ea68faa6f3ea3a9e116b47",
   "mock_result_wrong": "f1e545bcf2532f3b969867e67d70e680fe7e1fe35e5c400b6d1ef5c422933542",
   "mock_result_your_plan": "cb752fba892207e5a8ce59cd2f8cf3aef65ced1a6ae5a4cb2d7d5d2bee796104",
   "mock_result_your_preparation": "49742edca489064bb402a6d638204701cca6f4d633e902dd607ee8242b4ce947"
@@ -232,6 +233,7 @@
     <string name="mock_result_reached_points_decimal">Atingiu o mínimo de %1$s pontos</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the percent of its points it needs, such as "40%". -->
     <string name="mock_result_needs_percent">Precisa de %1$s dos pontos</string>
+    <string name="mock_result_written_no_estimate">Sem estimativa de pontuação neste simulado</string>
     <!-- Under a test whose minimum this mock can't judge. %1$s is the points it needs, possibly a decimal. -->
     <plurals name="mock_result_needs_points">
         <item quantity="one">Precisa de %1$s ponto</item>

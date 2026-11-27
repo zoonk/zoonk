@@ -504,16 +504,18 @@
   "plan_why_phase_dates_later": "536f87f85afd59b401051d6952f61d08378b935ad68e774b80f11a9d42631054",
   "plan_why_phase_end_later": "2d2b7df762253ae7b6bb84ca9a04de346ceb440c5817524a2f0500c2b01d4bae",
   "plan_why_phase_end_off_rest": "278c315959452326cfe9e69cc1928664b2b4b3efc6ac003d23e43956191d4451",
-  "plan_written_above_minimum": "29d9e956b8a22903bc69e1e42318f50c16d69a7e5e0aa1c48f6b6f54d6f16348",
+  "plan_written_above_minimum": "96fe11bc5373e395a643fc30393aedadc10ed9d695526109a652ba1779429930",
   "plan_written_asks_for": "dd1ee23f553738fbb2e8fe50e509c997defdef09ec32ce5ad7379daeada5546f",
   "plan_written_asks_for_share": "e3e5af6099b5bee7c92917e767c1770e38599edf47e61dbe7c78194a4d47035e",
-  "plan_written_below_minimum": "7f5cde6ddc472150e9809eb44ffb65b77ae13347185aee7a565277b4739ba009",
-  "plan_written_close_to_minimum": "6669a02d45fa3931301555834a31dfaef463096e41ac93a3f130647d10fd82c2",
+  "plan_written_below_minimum": "7793976a5dbc114df76889c4260d03e55c9e296f7677c841a36c59f05931bd89",
+  "plan_written_cant_say": "decc7d0439d12293b255e7157e10797d02278c7b98e521e129fa1f29e20d85a5",
+  "plan_written_close_to_minimum": "554dfdf0590ce945fee6fe8d45567bc1edb56b6aa420243b41c520304cb94258",
+  "plan_written_likely_below": "ad04ffb332463e2eeaba076916bccb83318d3aa70f9098df295adc3803137179",
   "plan_written_not_measured": "979d5edb82806272d70460de305bdaef83aef5ff45658a7c7b2e728a6ea638ce",
   "plan_written_not_measured_half": "7f359c1492ba38fdd54ac0cef5d6e891674b2e619a28f5f54b8f1c26410b046a",
   "plan_written_not_measured_share": "db2796f4550d81b65b1c2dd96901773f61c2b80531f1a77935f7682157fb6dd7",
   "plan_written_objective": "77b424140f78fc3be26757cd5cb35bbee13e2aacb227cf716be997c1e03cc041",
-  "plan_written_points_below": "62a8e8b1d2c0843fd99c1afa054c00077576b4c085f2240724f60bc95e37e3cc",
+  "plan_written_points_below": "17ff888eb73d146991d9b096e4263264e285bc55b0a8642181c9637f60acfb96",
   "plan_you_are_here_suffix": "2f61c12bb05b1e5c9ec264c4a266263ca65b8675d139483436eae7bc5a9020ae",
   "plan_your_level": "0aa17a176581c23fcdfd2c31a401f30881b6dc107b9476f557fb69904545f87b",
   "plan_your_pace": "88ff44ae808a593ad2153f9c0fd5b9d5091b5fdadcadcd9858aeeca7251c6542",
@@ -1481,14 +1483,16 @@
     <string name="plan_call_not_in_plan">Twój plan nie obejmuje rozmowy</string>
     <string name="plan_outside_past_basics">Pominięte · znasz już podstawy</string>
     <string name="plan_outside_skipped_base">Pominięte · twój wybór</string>
-    <string name="plan_written_below_minimum">Poniżej progu zaliczenia</string>
+    <string name="plan_written_below_minimum">Prawdopodobnie poniżej minimum wymaganego do zdania</string>
     <string name="plan_written_asks_for">Z %1$s trzeba zdobyć %2$s pkt, niezależnie od pozostałych wyników.</string>
     <string name="plan_written_asks_for_share">Do zaliczenia %1$s potrzeba %2$s punktów, niezależnie od pozostałych wyników.</string>
     <string name="plan_written_not_measured">%1$s nie ma jeszcze wyniku.</string>
     <string name="plan_written_not_measured_half">%1$s (połowa wyniku końcowego) nie ma jeszcze wyniku.</string>
     <string name="plan_written_not_measured_share">%1$s (%2$s wyniku końcowego) nie ma jeszcze wyniku.</string>
     <string name="plan_written_objective">Test obiektywny</string>
-    <string name="plan_written_above_minimum">Powyżej wymaganego minimum %1$s pkt</string>
-    <string name="plan_written_points_below">Brakuje %1$s pkt do wymaganego minimum %2$s</string>
-    <string name="plan_written_close_to_minimum">Blisko wymaganego minimum %1$s</string>
+    <string name="plan_written_above_minimum">Prawdopodobnie powyżej wymaganego minimum %1$s pkt</string>
+    <string name="plan_written_points_below">Prawdopodobnie brakuje %1$s pkt do wymaganego minimum %2$s pkt</string>
+    <string name="plan_written_likely_below">Prawdopodobnie poniżej wymaganego minimum %1$s pkt</string>
+    <string name="plan_written_close_to_minimum">Wynik może być powyżej lub poniżej wymaganego minimum %1$s pkt</string>
+    <string name="plan_written_cant_say">Nie można jeszcze stwierdzić, czy wynik osiągnie wymagane minimum %1$s pkt</string>
 </resources>

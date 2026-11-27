@@ -504,16 +504,18 @@
   "plan_why_phase_dates_later": "09624ad55bb08dc4d83735f6dab347c8331579d88bfac6cb2432187121600a81",
   "plan_why_phase_end_later": "ccb81acaa07a6d0fe394789827312220f1a54ea1906b1239c1016835a4931cdf",
   "plan_why_phase_end_off_rest": "f349025f7db0c125e64bf56cb625fc8eabb7d1dd19261d24c11f33e8f4bcebdc",
-  "plan_written_above_minimum": "20f4470344ae614ee697be77d6210d54a8425a71d299d1a1889082fbdb9f8681",
+  "plan_written_above_minimum": "53c2e54f48ecaeacb44d61efa52270906b2311a87ea7458fb11ec80705c63361",
   "plan_written_asks_for": "d4793b8fe5ca789b2184c44916d50a4af0f7d7b98e5097b2d1263ed8d9e10559",
   "plan_written_asks_for_share": "12879f5387b72f104765923ee5a723b5ff665e93847518743dfd48ad942e9887",
-  "plan_written_below_minimum": "109777454ef54e71fdc5bd3fc7265d43ea26456817ba8521a249fb43383aa133",
-  "plan_written_close_to_minimum": "b1589103d00896fe9c4ea3eded94ddb57f417bcf62ad304750792334a0cb9705",
+  "plan_written_below_minimum": "0e6fc9bed8e499efccc9232d7639f7644274164af1b5bccb277ab74db81d04db",
+  "plan_written_cant_say": "a951581f192880962a4905a6acbec3418651b33d1dc5d659da8967b7a4e75b56",
+  "plan_written_close_to_minimum": "4db1d718cc015058df263f8caf2db66d37235ea4ed75e93057d24daa1b4cce27",
+  "plan_written_likely_below": "5312b7b5836862b290430787bb014d365e722d01cd58adb4bdc2de67abfe14de",
   "plan_written_not_measured": "ac4549752bad0cf9ebeebc01a06cff287762695f5c4b415ed23ed115ce6dcf78",
   "plan_written_not_measured_half": "0b48cfc6f22085f9888bfc04bd3691617512649473862b417772cccd15083076",
   "plan_written_not_measured_share": "8d3dc6038c3a9f5ddf252de2be8d21124fb090a06da4d07f2c212c17eff7d7ec",
   "plan_written_objective": "d2296c1b72bf30bd04d9de67c724edad17b81ee4fc9197ec6c658013d238fbc9",
-  "plan_written_points_below": "ead1d323d2ccec02e6b519ffc43fd696be288adbcf32c274fa4e133b91b7a461",
+  "plan_written_points_below": "8aae0f5505380aa600859645fc85f2e22f7438d902fbdaaa44ab93dc1e7dafa0",
   "plan_you_are_here_suffix": "a5de9bea67715eb66aac362d6169bd878da55ee2e9144be4df4648b3e09619e7",
   "plan_your_level": "8d42ee1b842b7b2df49de28c84ddaf446bf1c17920c5a01443f825826ff36e47",
   "plan_your_pace": "71cca99cd65eff7ea3a1daabf04192de2ffe20b2df19f66851081b9cb21e98f7",
@@ -1280,14 +1282,16 @@
     <string name="plan_call_not_in_plan">대화는 계획에 없어요</string>
     <string name="plan_outside_past_basics">건너뜀 · 기초를 이미 알고 있어요</string>
     <string name="plan_outside_skipped_base">건너뜀 · 직접 선택했어요</string>
-    <string name="plan_written_below_minimum">합격 최소 점수 미달</string>
+    <string name="plan_written_below_minimum">합격선에 못 미칠 가능성이 높아요</string>
     <string name="plan_written_asks_for">다른 점수와 관계없이 %1$s에서 %2$s점을 받아야 해요.</string>
     <string name="plan_written_asks_for_share">다른 점수와 관계없이 %1$s에서 배점의 %2$s를 받아야 해요.</string>
     <string name="plan_written_not_measured">%1$s은(는) 아직 측정되지 않았어요.</string>
     <string name="plan_written_not_measured_half">%1$s은(는) 최종 점수의 절반인데 아직 측정되지 않았어요.</string>
     <string name="plan_written_not_measured_share">%1$s은(는) 최종 점수의 %2$s에 해당하며 아직 측정되지 않았어요.</string>
     <string name="plan_written_objective">객관식 시험</string>
-    <string name="plan_written_above_minimum">필요한 최소 점수인 %1$s점보다 높아요</string>
-    <string name="plan_written_points_below">필요 점수 %2$s점에 %1$s점 모자라요</string>
-    <string name="plan_written_close_to_minimum">필요한 최소 점수 %1$s점에 가까워요</string>
+    <string name="plan_written_above_minimum">필요한 %1$s점보다 높을 가능성이 높아요</string>
+    <string name="plan_written_points_below">필요한 %2$s점에 %1$s점 정도 모자랄 가능성이 높아요</string>
+    <string name="plan_written_likely_below">필요한 %1$s점에 못 미칠 가능성이 높아요</string>
+    <string name="plan_written_close_to_minimum">필요한 %1$s점보다 높을 수도 낮을 수도 있어요</string>
+    <string name="plan_written_cant_say">필요한 %1$s점에 도달할지 아직 알 수 없어요</string>
 </resources>

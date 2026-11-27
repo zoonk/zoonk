@@ -31,6 +31,7 @@
   "essay_grade_answer": "44afea377dddb5e6b5cce730f3886c25d233c7bd09a7bdac92246a306c34807f",
   "essay_grade_rewrite": "2d8568a8948098c6717cf447606d112aa90478c8e00ad41bfbaa17946489f6cd",
   "essay_graded_by_level": "be6e43be5200e13fd2a033cd5e0a36b8e1d2b48ae033647132b5e5b4ed4d5082",
+  "essay_graded_by_level_why": "2be8c60fbc6ba891afa372401d5baaff8b751810fb0d44cd2415783339a8602a",
   "essay_graded_earlier_version": "48f04c78ec812cb62e97759467efb73a9a1a89c904ef866ce8a07e46fda2b8d0",
   "essay_grading": "2e5495029770829d751b2931a753a92dc913257cbdd3b9388132ed88adf6f03e",
   "essay_grading_criteria": "0e01bb7b267c335f2287d6c1c102e6de56532ffdb0198530bd8b418e354c2a92",
@@ -304,6 +305,7 @@
     <string name="essay_no_points_in_notice">El aviso del examen no indica cuántos puntos vale cada criterio.</string>
     <string name="essay_criteria_from_notice">Criterios y puntajes del aviso del examen.</string>
     <string name="essay_criteria_from_notice_practice_key">Criterios y puntajes del aviso del examen. La clave de respuestas es nuestra y sirve para practicar.</string>
+    <string name="essay_graded_by_level_why">Calificada por nivel: aún no podemos estimar con suficiente precisión el puntaje de esta respuesta.</string>
     <string name="essay_see_comments">Ver comentarios</string>
     <string name="essay_comments">Comentarios</string>
     <string name="essay_your_text">Tu texto</string>

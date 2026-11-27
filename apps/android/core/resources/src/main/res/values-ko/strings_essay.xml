@@ -31,6 +31,7 @@
   "essay_grade_answer": "5bdff337170276d5fe5f3ad00efbbeb307c3f5e3cc870b8686630333ffefe97a",
   "essay_grade_rewrite": "20077ab6b92cbbc16cc581c4c9b8b242cc4e90a0f41ae250a19e95eecd2bba69",
   "essay_graded_by_level": "551bfa395095ed0a9dbfa5f41fa54588cc59fa99b762689b7434554691a96067",
+  "essay_graded_by_level_why": "dbc8948397a992639ba2f204f948fef6c2b2fb634f68e6cb5cb50cfede114a60",
   "essay_graded_earlier_version": "93b3c2ac579f980aa1221cd845349b09efbe6476e81ec7fa2899b6ef0703cb19",
   "essay_grading": "f3939b75fa7e6e9b7afd353cc213982bb346acf58231288a8d07200af01f460d",
   "essay_grading_criteria": "de3d83089067d550f87a5f05c7bd5d2fecaeb4e4d6871f81f8e4f5ddeb86416a",
@@ -288,6 +289,7 @@
     <string name="essay_no_points_in_notice">시험 공고에 각 기준의 배점이 나와 있지 않아요.</string>
     <string name="essay_criteria_from_notice">시험 공고에 나온 채점 기준과 배점이에요.</string>
     <string name="essay_criteria_from_notice_practice_key">시험 공고에 나온 채점 기준과 배점이에요. 답안 기준은 연습용으로 저희가 만들었어요.</string>
+    <string name="essay_graded_by_level_why">수준별로 채점했어요: 아직 이 답변의 점수를 충분히 정확하게 예상하기 어려워요.</string>
     <string name="essay_see_comments">평가 의견 보기</string>
     <string name="essay_comments">평가 의견</string>
     <string name="essay_your_text">내 텍스트</string>
