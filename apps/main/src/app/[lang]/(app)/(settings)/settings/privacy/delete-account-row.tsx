@@ -104,7 +104,7 @@ export function DeleteAccountRow({
 
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
-            <AlertDialogAction busy={isPending} onClick={deleteAccount} variant="destructive">
+            <AlertDialogAction busy={isPending} enter="off" onClick={deleteAccount} variant="destructive">
               {t("Delete my account")}
             </AlertDialogAction>
           </AlertDialogFooter>

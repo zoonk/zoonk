@@ -2,11 +2,13 @@
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
 import { Button } from "@zoonk/ui/components/button";
+import { EnterButton, type NoGlyph } from "@zoonk/ui/components/enter-button";
 import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
-import { cn } from "@zoonk/ui/lib/utils";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
+import { useOpeningFocus } from "./_utils/opening-focus";
 import type * as React from "react";
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
@@ -46,9 +48,12 @@ function AlertDialogContent({
   children,
   className,
   finalFocus,
+  initialFocus,
+  ref,
   ...props
 }: AlertDialogPrimitive.Popup.Props) {
   const handoff = useFocusAfterMenuItem(finalFocus);
+  const opening = useOpeningFocus<HTMLDivElement>({ initialFocus });
 
   return (
     <AlertDialogPortal>
@@ -63,6 +68,8 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         {...props}
         finalFocus={handoff.finalFocus}
+        initialFocus={opening.initialFocus}
+        ref={mergeRefs(opening.ref, ref)}
       >
         <MenuOpenerNotice onOpen={handoff.onOpen} />
         <PopupShortcutLayer value>{children}</PopupShortcutLayer>
@@ -120,8 +127,40 @@ function AlertDialogDescription({
   );
 }
 
-function AlertDialogAction({ size = "lg", ...props }: React.ComponentProps<typeof Button>) {
-  return <Button data-slot="alert-dialog-action" size={size} {...props} />;
+type ButtonProps = Omit<
+  React.ComponentProps<typeof Button>,
+  "icon" | "iconPosition" | "keyHint" | "variant"
+> &
+  NoGlyph;
+
+/**
+ * The answer the question asks for, and the one Enter presses (`EnterButton`). One that Enter must
+ * not press, since it deletes, cancels a subscription or hands in, says so with `enter="off"`: it
+ * shows no ⏎, and it alone may be drawn `destructive`. Any other answer is a plain `Button`.
+ */
+function AlertDialogAction({
+  enter,
+  size = "lg",
+  variant,
+  ...props
+}: ButtonProps &
+  (
+    | { enter?: "bound"; variant?: never }
+    | { enter: "off"; variant?: "default" | "destructive" }
+  )) {
+  if (enter === "off") {
+    return (
+      <Button
+        data-enter="off"
+        data-slot="alert-dialog-action"
+        size={size}
+        variant={variant}
+        {...props}
+      />
+    );
+  }
+
+  return <EnterButton data-slot="alert-dialog-action" size={size} {...props} />;
 }
 
 function AlertDialogCancel({

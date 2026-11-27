@@ -2,6 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "../_components/enter-button";
 import { DrawerContent, DrawerFooter } from "@zoonk/ui/components/drawer";
 import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -78,9 +79,9 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-        <Button onClick={onDone} size="lg">
+        <EnterButton onClick={onDone} size="lg">
           {t("Done")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </>
   );

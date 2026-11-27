@@ -2,6 +2,7 @@
 
 import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "../_components/enter-button";
 import {
   Drawer,
   DrawerContent,
@@ -192,9 +193,9 @@ function NameDialogForm({
         <Button onClick={onClose} size="lg" type="button" variant="outline">
           {t("Cancel")}
         </Button>
-        <Button busy={pending} disabled={!canSave} focusableWhenDisabled size="lg" type="submit">
+        <EnterButton busy={pending} disabled={!canSave} size="lg" type="submit">
           {t("Save")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </form>
   );

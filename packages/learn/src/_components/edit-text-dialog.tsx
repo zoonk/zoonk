@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "./enter-button";
 import {
   Drawer,
   DrawerContent,
@@ -109,14 +110,14 @@ export function EditTextDialog({
             >
               {t("Cancel")}
             </Button>
-            <Button
+            <EnterButton
               busy={isPending}
               disabled={!trimmed || trimmed === value}
               size="lg"
               type="submit"
             >
               {t("Save")}
-            </Button>
+            </EnterButton>
           </DrawerFooter>
         </form>
       </DrawerPopup>
