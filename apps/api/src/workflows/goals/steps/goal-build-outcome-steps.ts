@@ -1,3 +1,4 @@
+import { type PlacementPartPreparation } from "@zoonk/core/follow-ups/contract";
 import { finishGoalRebuild, isGoalRebuildOwed } from "@zoonk/core/goals/rebuild-follow-up";
 import { recordGoalBuildFailure } from "@zoonk/core/goals/record-generation";
 import { requestGoalPlacement } from "@zoonk/core/learner/placement/request";
@@ -58,7 +59,7 @@ export async function recordPlacementPreparedStep({
 }: {
   failed: number;
   goalId: string;
-  placementPart?: { attemptId: string; part: number };
+  placementPart?: PlacementPartPreparation;
   planRunId: string | null;
   written: number;
 }): Promise<void> {
@@ -72,7 +73,7 @@ export async function recordPlacementPreparedStep({
     });
   }
 
-  await recordPlacementPrepared({ goalId, placementPart, planRunId });
+  await recordPlacementPrepared({ failed: failed > 0, goalId, placementPart, planRunId });
 }
 
 export async function isPlanPreparedStep(goalId: string): Promise<boolean> {

@@ -43,6 +43,25 @@ function getEnd({
   return complete ? "material_exhausted" : "stopped";
 }
 
+function didPreparationFail({
+  answered,
+  attempt,
+  blocked,
+  waiting,
+}: {
+  answered: number;
+  attempt: PlacementAttempt;
+  blocked: boolean;
+  waiting: boolean;
+}) {
+  return (
+    blocked &&
+    !waiting &&
+    answered === 0 &&
+    (attempt.partPreparationFailed === true || attempt.partPrepared === false)
+  );
+}
+
 export function readAttemptQuestions({
   attempt,
   attempts,
@@ -84,7 +103,8 @@ export function readAttemptQuestions({
     ? Math.min(PART_QUESTIONS, current.length * QUESTIONS_PER_TOPIC)
     : PART_QUESTIONS;
 
-  const nextSkillId = current.find((id) => remaining.has(id));
+  const remainingTopics = current.filter((id) => remaining.has(id));
+  const [nextSkillId] = remainingTopics;
 
   const item = nextSkillId
     ? pickTopicQuestion({
@@ -97,6 +117,14 @@ export function readAttemptQuestions({
   const capped = partAnswers.length >= questions;
   const complete = capped || !nextSkillId;
   const blocked = Boolean(nextSkillId && !item && !complete);
+  const waiting = blocked && nextSkillId !== undefined && build.preparingSkillIds.has(nextSkillId);
+
+  const preparationFailed = didPreparationFail({
+    answered: partAnswers.length,
+    attempt,
+    blocked,
+    waiting,
+  });
 
   const remainingParts = parts
     .map((ids, index) => ({ ids: ids.filter((id) => remaining.has(id)), part: index + 1 }))
@@ -122,9 +150,11 @@ export function readAttemptQuestions({
     partAnswers: partAnswers.map((row) => row.skillId),
     parts: parts.length,
     partsLeft: remainingParts.length,
+    preparationFailed,
     questions,
+    remainingTopics,
     totalEstimatedMinutes: getCourseMinutes(parts.flat().length * QUESTIONS_PER_TOPIC),
     unknowns: partAnswers.filter((row) => toPlacementEvidence(row)?.outcome === "dontKnow").length,
-    waiting: blocked && nextSkillId !== undefined && build.preparingSkillIds.has(nextSkillId),
+    waiting,
   };
 }

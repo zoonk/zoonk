@@ -33,7 +33,7 @@ export async function loadAttemptState({
     status = "asking";
   } else if (questions.waiting) {
     status = "waitingForQuestions";
-  } else if (build.failed && plan.skills.length === 0) {
+  } else if (questions.preparationFailed || (build.failed && plan.skills.length === 0)) {
     status = "failed";
   }
 
