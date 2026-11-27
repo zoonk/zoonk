@@ -36,7 +36,6 @@ class LanguagePracticeNoticeWidthTest {
                 Box(Modifier.width(288.dp)) {
                     LanguagePracticeNotice(
                         UUID.fromString("00000000-0000-4000-8000-000000000001"),
-                        null,
                         LanguageTodayPronunciation(3, listOf("hello", "world", "again")),
                         SuggestionLayout.Line,
                         {},

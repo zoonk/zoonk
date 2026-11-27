@@ -28,8 +28,6 @@
   "language_level_up": "dc4fd4e90bdc227bfd1e4df37ad9bfe9da75229c8c211f1d53dfeaedef404317",
   "language_levels_move": "ba240d6f6ca534bfe1fcd095095b221b71f85df8eadae0870276d4083e8cf75a",
   "language_pattern_noticed": "51a35d866f4338b99c3dfd3c3d38b4b2caacc2ed0262403ab5a1111c5d49bc84",
-  "language_pattern_noticed_summary": "678a271b0955c54f14a69e6342f8f783b9666a9737a105cc25f2072948b3333e",
-  "language_pattern_practice": "ab7e0108d4492eec1c32bc379518292ba685067a4d514a38e80944103f3c10ce",
   "language_pattern_typos": "068d3bcc738ab189dbaee4596510d7f53a86a65d6c80e820de46bbc4884f5e6f",
   "language_pattern_typos_description": "212618524b8f4956af523f661cd58080eef018308a4563982600fd290922d910",
   "language_practice_estimates": "c574aba1bb3d66d640b7d98d40e5e2025c10bd00f9bd2149f61bbb23f809309b",
@@ -141,10 +139,6 @@
     <string name="language_alphabet_skip_failed">L’enregistrement a échoué. Réessaie.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Dis-les</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Nous avons remarqué une tendance : %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Entraîne-toi</string>
     <string name="language_level">Niveau en %1$s</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

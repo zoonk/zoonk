@@ -28,8 +28,6 @@
   "language_level_up": "c2f76de9d2d276340db5525e0c9cac11eec4f8ee2c9872afc90684a13cf2b7d5",
   "language_levels_move": "f2974907a65bc6c4e7b59210388781970fd5f30f37426674e6840dd0184ee83e",
   "language_pattern_noticed": "261e97ac353e6b79aa1151ac85e9654767b7cfa0c0108378ae646a0d2fd8f214",
-  "language_pattern_noticed_summary": "96cd5b758b251c04a015a28ef279e2cc2d88ddbd0bb931f93acf26081b7ea6fa",
-  "language_pattern_practice": "eacc019f44f222d871bbfdd6dc329e43236d0e1b8e229779315528567d7c5954",
   "language_pattern_typos": "21b82ee8be32eb3aabe744d75a3eeac39c8bc5f29759262ab9eabfce140109ed",
   "language_pattern_typos_description": "1ab8d6332bc73837a2d71f36de15c1705046f9aec919fa53af54d5658ea157e9",
   "language_practice_estimates": "830ba9947f608b06dee627b08d6f72ec44ceaad5f7384dc0c0572356adc53973",
@@ -135,10 +133,6 @@
     <string name="language_alphabet_skip_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">소리 내어 말하기</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">이런 실수 패턴을 발견했어요: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">연습하기</string>
     <string name="language_level">%1$s 레벨</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>
