@@ -17,6 +17,7 @@ import {
 } from "../_utils/library-rows";
 import { assertHomeVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
+import { getSecondTakeSkillId } from "../second-takes/second-take-identity";
 
 export type NewLessonDetails = Partial<
   Pick<LessonUncheckedCreateInput, "canDo" | "spec" | "specRunId" | "specStatus">
@@ -83,6 +84,20 @@ function pickLessonSlug({ taken, title }: { taken: readonly string[]; title: str
 async function insertLesson({ input, slug }: { input: CreateLibraryLessonInput; slug: string }) {
   return writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { skillIds: input.skillIds });
+    const secondTakeSkillId = getSecondTakeSkillId(input.identityKey);
+
+    if (secondTakeSkillId) {
+      const skill = await tx.skill.findUnique({
+        select: { mergedIntoId: true },
+        where: { id: secondTakeSkillId },
+      });
+
+      if (skill?.mergedIntoId) {
+        throw new Error(
+          "The skill for this second take merged while the lesson was being prepared.",
+        );
+      }
+    }
 
     return tx.lesson.create({
       data: {

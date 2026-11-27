@@ -11,6 +11,7 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { mockAdminSession } from "../../_test-utils/mock-session";
 import { requestLessonGenerationFor } from "../../lookahead/request-lesson-generation";
 import { findTeachingLessonIds } from "../../mistakes/drill-lessons";
 import { findMistakeLessons } from "../../mistakes/mistake-lessons";
@@ -22,6 +23,7 @@ import { completeLessonContent } from "../generation/lesson-generation-state";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
 import { getPublicLibraryLesson } from "../lessons/get-public-library-lesson";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
+import { mergeSkillForAdmin } from "../skills/merge-skill";
 import { ensureSecondTake } from "./ensure-second-take";
 import { findSecondTakes } from "./find-second-takes";
 import { getSecondTakeIdentityKey } from "./second-take-identity";
@@ -59,6 +61,185 @@ async function firstLesson({
 
   return lesson;
 }
+
+describe("second takes across skill merges", () => {
+  it.each([false, true])(
+    "keeps the lesson writable after the merge (claimed: %s)",
+    async (claimed) => {
+      const admin = await userFixture({ role: "admin" });
+      const ownerId = claimed ? admin.id : null;
+      const visibility = ownerId ? "private" : "public";
+
+      const [duplicate, survivor] = await Promise.all([
+        skillFixture({ name: "Unit fractions", ownerId, visibility }),
+        skillFixture({ name: "Comparing unit fractions", ownerId, visibility }),
+      ]);
+
+      const source = await firstLesson({ ownerId, skillId: duplicate.id });
+      const lessonId = (await ensureSecondTake({ skillId: duplicate.id, userId: admin.id }))!;
+      const workflowRunId = randomUUID();
+
+      const claim = claimed
+        ? await claimLibraryGeneration({ id: lessonId, target: "lessonContent", workflowRunId })
+        : null;
+
+      expect(claim).toBe(claimed ? "claimed" : null);
+      mockAdminSession(admin.id);
+
+      await expect(
+        mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id }),
+      ).resolves.toMatchObject({ status: "merged" });
+
+      await expect(loadLessonSpecInputs(lessonId)).resolves.toMatchObject({
+        prompt: {
+          lessonTitle: source.title,
+          secondTake: { firstLessonMap: FIRST_MAP },
+          skills: [survivor.name],
+        },
+      });
+
+      await expect(ensureSecondTake({ skillId: duplicate.id, userId: admin.id })).resolves.toBe(
+        lessonId,
+      );
+
+      await expect(ensureSecondTake({ skillId: survivor.id, userId: admin.id })).resolves.toBe(
+        lessonId,
+      );
+
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: lessonId } }),
+      ).resolves.toMatchObject({
+        contentRunId: claimed ? workflowRunId : null,
+        identityKey: getSecondTakeIdentityKey({ ownerId, skillId: survivor.id }),
+      });
+
+      const version = claimed
+        ? await saveLessonContent({
+            language: duplicate.language,
+            lessonId,
+            screens: [
+              {
+                content: playableStepContent.check,
+                kind: "check",
+                mathItem: null,
+                provenance: {
+                  generatedAt: new Date(),
+                  model: "fixture",
+                  promptVersion: "fixture",
+                  runId: workflowRunId,
+                  sources: [],
+                },
+                skillId: duplicate.id,
+              },
+            ],
+            summary: { ...FIRST_MAP, ideas: [...FIRST_MAP.ideas] },
+            workflowRunId,
+          })
+        : null;
+
+      expect(version === null).toBe(!claimed);
+
+      await expect(
+        prisma.step.findMany({ select: { skillId: true }, where: { lessonId } }),
+      ).resolves.toStrictEqual(claimed ? [{ skillId: survivor.id }] : []);
+    },
+  );
+
+  it("serves the same written lesson for the survivor without owing a new one", async () => {
+    const [admin, duplicate, survivor] = await Promise.all([
+      userFixture({ role: "admin" }),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    await firstLesson({ skillId: duplicate.id });
+    const lessonId = (await ensureSecondTake({ skillId: duplicate.id, userId: admin.id }))!;
+
+    await Promise.all([
+      libraryStepFixture({ lessonId, position: 0, skillId: duplicate.id }),
+      prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } }),
+    ]);
+
+    mockAdminSession(admin.id);
+    await mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id });
+
+    const lessons = await findSecondTakes({ skillIds: [survivor.id], userId: admin.id });
+    const owed = await ensureSecondTake({ skillId: survivor.id, userId: admin.id });
+
+    expect({ lesson: lessons.get(survivor.id)?.lessonId, owed }).toStrictEqual({
+      lesson: lessonId,
+      owed: null,
+    });
+  });
+
+  it.each([false, true])(
+    "sets aside a duplicate when both skills have a take (written: %s)",
+    async (written) => {
+      const [admin, duplicate, survivor] = await Promise.all([
+        userFixture({ role: "admin" }),
+        skillFixture(),
+        skillFixture(),
+      ]);
+
+      await Promise.all([
+        firstLesson({ skillId: duplicate.id }),
+        firstLesson({ skillId: survivor.id }),
+      ]);
+
+      const [discarded, kept] = await Promise.all([
+        ensureSecondTake({ skillId: duplicate.id, userId: admin.id }),
+        ensureSecondTake({ skillId: survivor.id, userId: admin.id }),
+      ]);
+
+      const workflowRunId = randomUUID();
+
+      await expect(
+        claimLibraryGeneration({ id: discarded!, target: "lessonContent", workflowRunId }),
+      ).resolves.toBe("claimed");
+
+      if (written) {
+        await Promise.all([
+          libraryStepFixture({ lessonId: discarded!, position: 0, skillId: duplicate.id }),
+          libraryStepFixture({ lessonId: kept!, position: 0, skillId: survivor.id }),
+        ]);
+
+        await prisma.lesson.updateMany({
+          data: { contentStatus: "completed" },
+          where: { id: { in: [discarded!, kept!] } },
+        });
+      }
+
+      mockAdminSession(admin.id);
+      await mergeSkillForAdmin({ duplicateId: duplicate.id, survivorId: survivor.id });
+
+      await expect(completeLessonContent({ lessonId: discarded!, workflowRunId })).resolves.toBe(
+        written,
+      );
+
+      await expect(
+        prisma.lesson.findUniqueOrThrow({ where: { id: discarded! } }),
+      ).resolves.toMatchObject({
+        contentStatus: written ? "completed" : "failed",
+        setAsideAt: expect.any(Date),
+      });
+
+      const lessons = await findSecondTakes({ skillIds: [survivor.id], userId: admin.id });
+      expect(lessons.get(survivor.id)?.lessonId).toBe(written ? kept : undefined);
+
+      await expect(ensureSecondTake({ skillId: duplicate.id, userId: admin.id })).resolves.toBe(
+        written ? null : kept,
+      );
+
+      await expect(
+        claimLibraryGeneration({
+          id: discarded!,
+          target: "lessonContent",
+          workflowRunId: randomUUID(),
+        }),
+      ).resolves.not.toBe("claimed");
+    },
+  );
+});
 
 describe(ensureSecondTake, () => {
   it("converges under concurrent asks and retries, and all learners see the one written lesson", async () => {

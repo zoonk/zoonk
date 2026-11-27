@@ -1,5 +1,5 @@
 import "server-only";
-import { DbNull, prisma } from "@zoonk/db";
+import { DbNull, type TransactionClient } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { readLessonMap } from "../lessons/lesson-map";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
@@ -7,15 +7,17 @@ import { isQuickLessonIdentityKey } from "../quick-lessons/quick-lesson-identity
 import { SECOND_TAKE_KEY_WHERE } from "./second-take-identity";
 
 export async function findSecondTakeSource({
+  db,
   language,
   ownerId,
   skillId,
 }: {
+  db: TransactionClient;
   language: string;
   ownerId: string | null;
   skillId: string;
 }) {
-  const lessons = await prisma.lesson.findMany({
+  const lessons = await db.lesson.findMany({
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: {
       canDo: true,

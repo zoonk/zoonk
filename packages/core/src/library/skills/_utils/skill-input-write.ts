@@ -1,9 +1,11 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
+import { lockSourceRoots } from "../../../plans/_utils/plan-source-publication";
 import { PlanInputWriteConflictError, lockPlanInputWrite } from "../../_utils/plan-input-write";
 
 type SkillInputs = {
+  lessonIds?: readonly string[];
   masterySkillId?: string;
   referencedSkillIds?: readonly string[];
   skillIds: readonly string[];
@@ -11,7 +13,7 @@ type SkillInputs = {
 
 async function loadPlanIds(tx: TransactionClient, input: SkillInputs) {
   const [dependentPlanIds, mastery] = await Promise.all([
-    resolvePlanInputDependents(tx, { skillIds: input.skillIds }),
+    resolvePlanInputDependents(tx, { lessonIds: input.lessonIds, skillIds: input.skillIds }),
     input.masterySkillId
       ? tx.learnerSkill.findMany({ where: { skillId: input.masterySkillId } })
       : Promise.resolve([]),
@@ -84,7 +86,10 @@ export async function lockSkillPlanInputs({
 
   return lockPlanInputWrite({
     loadPlanIds: () => loadPlanIds(tx, input),
-    lockSources: () => lockSources({ input, lockIds, tx }),
+    lockSources: async () => {
+      await lockSourceRoots(tx, { lessonIds: input.lessonIds ?? [], skillIds: [] });
+      await lockSources({ input, lockIds, tx });
+    },
     tx,
   });
 }

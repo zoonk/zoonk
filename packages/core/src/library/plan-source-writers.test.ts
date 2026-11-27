@@ -451,6 +451,11 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/skills/merge-skill.ts": [
     {
       verdict: "covered",
+      why: "the skill protocol locks the second takes and marks their dependents before changing either lesson",
+      writes: ["lesson.update"],
+    },
+    {
+      verdict: "covered",
       why: "the skill protocol locks the endpoints and aliases (`skill-input-write`)",
       writes: [
         "chapterSkill.createMany",

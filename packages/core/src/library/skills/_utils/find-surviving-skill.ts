@@ -1,13 +1,14 @@
 import "server-only";
-import { type Skill, prisma } from "@zoonk/db";
+import { type Skill, type TransactionClient, prisma } from "@zoonk/db";
 
 const MAX_MERGE_DEPTH = 5;
 
 export async function findSurvivingSkill(
   skillId: string,
+  db: TransactionClient = prisma,
   visitedIds: readonly string[] = [],
 ): Promise<{ skill: Skill; visitedIds: string[] } | null> {
-  const skill = await prisma.skill.findUnique({ where: { id: skillId } });
+  const skill = await db.skill.findUnique({ where: { id: skillId } });
 
   if (!skill) {
     return null;
@@ -19,5 +20,5 @@ export async function findSurvivingSkill(
     return { skill, visitedIds: path };
   }
 
-  return findSurvivingSkill(skill.mergedIntoId, path);
+  return findSurvivingSkill(skill.mergedIntoId, db, path);
 }
