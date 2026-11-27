@@ -99,7 +99,6 @@
     </plurals>
     <string name="player_in_your_own_words">In your own words</string>
     <string name="player_cant_write_now">Skip writing questions today</string>
-    <string name="player_dont_know_yet">I don\'t know yet</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Explain first</string>
     <string name="player_enter_hint">Press Enter to check, Shift+Enter for a new line.</string>

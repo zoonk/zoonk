@@ -62,6 +62,11 @@ export type Scenario = {
   pair?: { change: string[]; placeholder?: boolean; with: string };
 };
 
+export const PINNED_ACTION: Anchor = {
+  id: "pinned-action",
+  web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",
+};
+
 export const PHONE_AND_LAPTOP: Scenario["sizes"] = [
   { pointer: "touch", size: "phone" },
   { pointer: "keys", size: "laptop" },

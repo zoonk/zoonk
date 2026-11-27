@@ -11,6 +11,7 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.booleanOrNull
@@ -38,6 +39,8 @@ data class Question(
     val select: Select? = null,
     val left: List<String>? = null,
     val right: List<String>? = null,
+    /** A learning match's key: for each left entry, the shown place of its partner, so each pair is checked as it's made. */
+    val key: List<Int>? = null,
     val entry: NumericEntry? = null,
     val unit: NumericUnit? = null,
     val context: String? = null,
@@ -308,8 +311,10 @@ sealed interface Answer {
         val isTrue: Boolean,
     ) : Answer
 
+    /** [misses] are a board checked pair by pair's wrong tries, in order; a board checked at the end has none. */
     data class Matches(
         val matches: List<Int>,
+        val misses: List<MatchTry>? = null,
     ) : Answer
 
     data class Numeric(
@@ -327,6 +332,15 @@ sealed interface Answer {
     /** "I don't know yet", "I'm not sure", a blank statement, or a timed drill's time up. */
     data object DontKnow : Answer
 }
+
+/** A left entry and a right entry tried together, by their shown places. */
+data class MatchTry(
+    val left: Int,
+    val right: Int,
+)
+
+/** The most wrong tries a match answer sends, the earliest first. */
+const val MAX_MATCH_MISSES = 32
 
 /** The options an answer picks, in its order; none for other answers. */
 val Answer?.picks: List<Int>
@@ -370,7 +384,7 @@ internal object AnswerSerializer : KSerializer<Answer> {
             "selectedIndex" in json -> Answer.Choice(json.getValue("selectedIndex").jsonPrimitive.int)
             "selectedIndexes" in json -> Answer.Choices(indexes("selectedIndexes"))
             "isTrue" in json -> Answer.TrueFalse(json.getValue("isTrue").jsonPrimitive.boolean)
-            "matches" in json -> Answer.Matches(indexes("matches"))
+            "matches" in json -> Answer.Matches(indexes("matches"), json["misses"]?.jsonArray?.map(::matchTry))
             "number" in json -> Answer.Numeric(json.getValue("number").jsonPrimitive.double)
             "order" in json -> Answer.Order(indexes("order"))
             "text" in json -> Answer.Text(json.getValue("text").jsonPrimitive.content)
@@ -389,7 +403,7 @@ internal object AnswerSerializer : KSerializer<Answer> {
                     is Answer.Choice -> put("selectedIndex", value.index)
                     is Answer.Choices -> putJsonArray("selectedIndexes") { value.indexes.forEach { add(JsonPrimitive(it)) } }
                     is Answer.TrueFalse -> put("isTrue", value.isTrue)
-                    is Answer.Matches -> putJsonArray("matches") { value.matches.forEach { add(JsonPrimitive(it)) } }
+                    is Answer.Matches -> putMatches(value)
                     is Answer.Numeric -> put("number", value.value)
                     is Answer.Order -> putJsonArray("order") { value.order.forEach { add(JsonPrimitive(it)) } }
                     is Answer.Text -> put("text", value.text)
@@ -397,5 +411,24 @@ internal object AnswerSerializer : KSerializer<Answer> {
                 }
             }
         (encoder as JsonEncoder).encodeJsonElement(element)
+    }
+}
+
+private fun matchTry(element: JsonElement): MatchTry =
+    element.jsonObject.let { MatchTry(it.getValue("left").jsonPrimitive.int, it.getValue("right").jsonPrimitive.int) }
+
+private fun JsonObjectBuilder.putMatches(answer: Answer.Matches) {
+    putJsonArray("matches") { answer.matches.forEach { add(JsonPrimitive(it)) } }
+    answer.misses?.let { misses ->
+        putJsonArray("misses") {
+            misses.forEach {
+                add(
+                    buildJsonObject {
+                        put("left", it.left)
+                        put("right", it.right)
+                    },
+                )
+            }
+        }
     }
 }

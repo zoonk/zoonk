@@ -1,4 +1,5 @@
 import { type CourseCategory } from "@zoonk/utils/categories";
+import { type CefrLevel } from "@zoonk/utils/cefr";
 import {
   type CourseFormat,
   type CourseLevel,
@@ -81,6 +82,21 @@ export type SeedChapter = {
 
 type SeedVocabulary = { text: string; pronunciation?: Localized; tip?: Localized };
 
+type SeedLevelTestPassage = {
+  id: string;
+  level: CefrLevel;
+  skill: "listening" | "reading";
+  passage: string;
+  question: string;
+  options: string[];
+};
+
+/** The language pair's level test bank, shaped as core's `levelTestBankSchema` reads it. */
+export type SeedLevelTest = {
+  questions: (SeedLevelTestPassage & { answerIndex: number })[];
+  confirmations: (SeedLevelTestPassage & { answerIndices: number[] })[];
+};
+
 export type SeedCourse = {
   key: string;
   /** Course slugs are unique per organization, so each language has its own. */
@@ -97,4 +113,6 @@ export type SeedCourse = {
   items: readonly SeedItem[];
   words?: readonly SeedVocabulary[];
   sentences?: readonly SeedVocabulary[];
+  /** A language course's level test, so its learners' level check opens without writing one. */
+  levelTest?: SeedLevelTest;
 };

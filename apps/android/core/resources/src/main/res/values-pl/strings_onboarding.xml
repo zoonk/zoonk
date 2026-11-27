@@ -172,17 +172,13 @@
   "onboarding_placement_answer_failed": "1792b676282d66dd8575b0ab22940ac925d5d1f0f2c343263f0f15f90918a450",
   "onboarding_placement_confirm": "2c9ce11e78dd1a8a6f684c75ea0aad25b39e1b705723695d45af0f0dd6029c46",
   "onboarding_placement_dont_know": "c2f1f1adcd8931ed770570b8040263ba510c89df099194928f2460b23cdc1e56",
-  "onboarding_placement_false": "ac5caed6a92458242d68e76ce6316124c182c4c6448d672cee25e23f585ad644",
   "onboarding_placement_progress": "99067341bbd69e815af97526e9d8b66826f65c128aee36b1b909da05c5719fc5",
   "onboarding_placement_question_number": "dfd9886f88c4803b84b7a46203796f3e7a234a94db8b88b49d1be22693ef3784",
   "onboarding_placement_ready": "d40f60d6674bb7da6afd002a133fd0feab63e9ae255465d7a236637045e5e9aa",
-  "onboarding_placement_right": "ac264ec61c94109946f5de9be6dfd9129ae85977ebaa3234074248ad1bd663ed",
   "onboarding_placement_stop": "ba3c832aa7401776b468b7094fb2f63543c23e96a6d61a6fea4f2e41f34ac225",
-  "onboarding_placement_true": "fc0c09f61fe8a5e8ebbbcf7cdc02520db1b68427a95016f924768d4ec35f60c5",
   "onboarding_placement_unavailable_title": "e081a2e6d1de796211f97d223912ff8655888ffa654424c9cf0408159fef7946",
   "onboarding_placement_waiting_material": "521b474f039387ed4517acdb64262f75e5dcd5ec999acf9e06ea8c05cb19aedf",
   "onboarding_placement_waiting_time": "6ad927daebadf6eea83afb724fedbdb2e6109748ea33436bb7c3c7ab2c5b1ca0",
-  "onboarding_placement_wrong": "580be32900283ff6f404e66ba717dcca361e25c91c3cae7998937a2ccb47a4a5",
   "onboarding_plan_answers_saved": "80d2470c670ea42423e2b1c705631026008f07043041a610c65150463fb5dd6b",
   "onboarding_plan_not_started": "e58e677724da223ea0cb468f5e4ce158c05f548b97bde6aa8a72fbda199d6eac",
   "onboarding_plan_ready_goal": "6a379d107e3783f90edcbc59546c3b4b0efe21958453969068bd9465a80b2fbe",
@@ -587,13 +583,6 @@
     <string name="onboarding_placement_confirm">Potwierdź</string>
     <string name="onboarding_placement_stop">Przerwij i użyj moich odpowiedzi</string>
     <string name="onboarding_placement_answer_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">Prawda</string>
-    <string name="onboarding_placement_false">Fałsz</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">Poprawne</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">Błędne</string>
     <string name="onboarding_placement_unavailable_title">Sprawdzimy, co już wiesz, w ciągu kilku pierwszych dni</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">Nie znasz jeszcze tego alfabetu? Pomiń test. Na pierwszej lekcji nauczysz się go czytać.</string>

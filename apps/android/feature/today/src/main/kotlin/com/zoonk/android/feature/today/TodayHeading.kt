@@ -13,7 +13,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.zoonk.android.R
+import com.zoonk.android.feature.mock.ChangeMockSchedule
 import com.zoonk.android.feature.plan.shortDayRange
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.ui.components.PageTitleRow
@@ -217,10 +217,10 @@ internal fun DayTime(
         footer = { dismiss ->
             val id = funding.planItemId
             if (id != null && schedule != null) {
-                TextButton(onClick = {
+                ChangeMockSchedule {
                     dismiss()
                     schedule(id)
-                }) { Text(stringResource(R.string.mock_schedule_change)) }
+                }
             }
         },
         modifier = modifier,

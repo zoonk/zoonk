@@ -2,6 +2,7 @@ import { FIRST_ANSWER_PARAM } from "@/lib/public/public-hrefs";
 import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
 import { LessonRichText } from "@zoonk/learn/rich-text/lesson";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { FirstAnswerForm } from "./first-answer-form";
 
 export function FirstScreenChoices({
@@ -22,6 +23,7 @@ export function FirstScreenChoices({
   return (
     <FirstAnswerForm
       action={action}
+      count={options.length}
       label={spoken.blocks(question)}
       lessonId={lessonId}
       origin={origin}
@@ -29,6 +31,7 @@ export function FirstScreenChoices({
       <AnswerOptionGroup role="group">
         {options.map((option, index) => (
           <AnswerOption
+            aria-keyshortcuts={shortcutKeys("pick", index)}
             key={option.id}
             marker={index + 1}
             name={FIRST_ANSWER_PARAM}

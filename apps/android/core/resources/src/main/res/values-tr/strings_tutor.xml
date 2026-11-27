@@ -5,6 +5,7 @@
   "tutor_about_chapter": "b3557b163ecea916a6d1a7cc72f99a3232da00cc4f87f3b5dbc01962fb523602",
   "tutor_about_lesson": "f676d23127e2ab8fd440dc95e3979c553a16b85493f70437717bc77f8b62e7fd",
   "tutor_about_mock": "c17f504120a4143e43fd77695fb13e476caf4cc6568a87e01b3fd9b6c4dddb6f",
+  "tutor_about_module": "469efbfcba8a6ec32159e60f85470dab3c8d2fe3515706a03d92a3763decb414",
   "tutor_about_plan": "b796d8cc6fb85fa8bd8bd5e5a86d37832e64e2cbce309c8213716e07494a61c6",
   "tutor_about_question": "957e8b43a2f63eda7d9a84ca87a6f97c46a3add0d58ae95d948fbad2c6f0214b",
   "tutor_about_step": "d16df48ec6b986766f44a645a85666d1f2c42f6fe0b2d2e8550174bc7c80958f",
@@ -15,6 +16,7 @@
   "tutor_ask_chapter": "85432b2752d39a40c98f3096599f22d420797a742717e27cbbad3e7d7f4402b2",
   "tutor_ask_for_help": "e7af862e89c0004b52eed3498c1786348f8f87609961f04f7c1748cf66c92502",
   "tutor_ask_mock": "862fe818609f21dfe0d750b35e60299b611428eab0731805b962f671513e55bf",
+  "tutor_ask_module": "79013a1a628ac5cb067d0377c362c7de2170526097ac32db2ed1cc3fc92e6893",
   "tutor_ask_plan": "d57eaa40f4d0e9ff6ec29264575aed4b7c8d77d562398b4e84a8fead7b2529e7",
   "tutor_ask_question": "a17287f3733a9989167efc2a89ec445871618f8a2e2e1f697421d17da9eb64d5",
   "tutor_ask_screen": "4d0660a60d1120f797f64c95a39ba827bea34f974f3385b2ec357768969cb3a5",
@@ -26,6 +28,7 @@
   "tutor_description_item": "19d199c15033f631cdeccf09d5f96937d6d21026aa66124ee1b762eedcee3d49",
   "tutor_description_lesson": "c8020ab09203332951e173784c62ce7d88dc52451ed2f790ca9ebe32be60b700",
   "tutor_description_mock": "9da1d28766021fe2642c3aac64f9f610e7912e4c8c6b89a9317c4bc115b717ac",
+  "tutor_description_module": "bc481672f5890aaddd606a6294986798d7a71aed7dbbe55fafac18cf3131929c",
   "tutor_description_plan": "4931f4ca69525612d29d2cd750474896ade2c0f491be07f316601e2fdad19583",
   "tutor_description_step": "b7cf82f64115fc91d7f9214a974d1b5914893b20357f6a2c5f43f61138a1bd5c",
   "tutor_description_subject": "ad89137509de359f4510d1d1d8fdd241c3104be90fdb574dc3784cb8dabc0fe7",
@@ -93,13 +96,6 @@
   "tutor_offer_variety_applied": "19931206484a79fa8722ae654cb98addc0c43288efab6b8aa68a0e538577d219",
   "tutor_offer_variety_description": "0f90ea439abd2d132eb43bf2a5d3c0825ad4e810aae776ad9ba0f1c04dab0b77",
   "tutor_page_sign_up": "b21cf9fdcce86db8fb7fdcc78b8af677020d2a760a8b4791e963debb0931b5c0",
-  "tutor_placeholder_answer": "bb897194ac19037e38c4e46a833476b79ec820121b80434ba856b388bb157677",
-  "tutor_placeholder_chapter": "982b1980eeb66fd78c5fbb7c5672c380d68f666c0f5a960cc4c0b03860a58565",
-  "tutor_placeholder_item": "81e9a3b3cdde61476fc1f32ee93ec2969877c06a36ebbfd3ad0f6e004b5f9557",
-  "tutor_placeholder_lesson": "d6f789eb12bca8be9213685a3c806283d81e351d9844c0934ddc3e4333c63c82",
-  "tutor_placeholder_mock": "04314bd60bb0403087954fd03accc0a30fb7c7ba23c64674b4e5e537c3e01e16",
-  "tutor_placeholder_plan": "2922c63309a1dba0e56a825e9cbf7d6dc883f4f31bc58020d57d44135451b68c",
-  "tutor_placeholder_subject": "54e4c7b66898ed531109bc58777e8871b4887bc5f940cdd0110836447ab60767",
   "tutor_plan_change_apply": "6c3287eab6a6bf85875c89600f5b9fc1e5659940dd31329f79bae0eb1559d8ae",
   "tutor_plan_change_declined": "356aee17920e73a1c4fa98c86ebf4d581c6758488e299d620dad7e41105521ab",
   "tutor_plan_change_failed": "dbab4dc7b6369c90455b11fce329d0c1550e7c4f1cc8c76fa4ee70292db23548",
@@ -138,6 +134,7 @@
     <string name="tutor_ask_mock">Bu deneme sınavı hakkında %1$s ile konuş</string>
     <string name="tutor_ask_plan">Planın hakkında %1$s ile konuş</string>
     <string name="tutor_ask_subject">Bu konu hakkında %1$s ile konuş</string>
+    <string name="tutor_ask_module">Bu modül hakkında %1$s ile konuş</string>
     <string name="tutor_ask_answer">Cevabınla ilgili sorularını %1$s ile paylaş</string>
     <string name="tutor_ask_question">Bu soruyla ilgili sorularını %1$s ile paylaş</string>
     <string name="tutor_ask_screen">Bu ekranla ilgili sorularını %1$s ile paylaş</string>
@@ -148,6 +145,7 @@
     <string name="tutor_description_mock">Bu deneme sınavıyla ilgili sorular sor</string>
     <string name="tutor_description_plan">Planınla ilgili sorular sor</string>
     <string name="tutor_description_subject">Bu konu hakkında soru sor</string>
+    <string name="tutor_description_module">Bu modül hakkında soru sor</string>
     <string name="tutor_description_item">Bu soruyla ilgili soru sor</string>
     <string name="tutor_close">Soruları kapat</string>
     <string name="tutor_about_answer">Cevabın hakkında</string>
@@ -157,6 +155,7 @@
     <string name="tutor_about_plan">Planın hakkında</string>
     <string name="tutor_about_step">Bu kısım hakkında</string>
     <string name="tutor_about_subject">Bu konu hakkında</string>
+    <string name="tutor_about_module">Bu modül hakkında</string>
     <string name="tutor_about_question">Bu soru hakkında</string>
     <string name="tutor_empty_title">Hangi konuda yardım istersin?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
@@ -181,13 +180,6 @@
     <string name="tutor_error_last_question">Son sorunu gönderemedik. Tekrar dene.</string>
     <string name="tutor_sign_in">Giriş yap</string>
     <string name="tutor_try_again">Tekrar dene</string>
-    <string name="tutor_placeholder_chapter">Bu üniteyle ilgili soru sor…</string>
-    <string name="tutor_placeholder_mock">Bu deneme sınavıyla ilgili soru sor…</string>
-    <string name="tutor_placeholder_plan">Planınla ilgili soru sor…</string>
-    <string name="tutor_placeholder_subject">Bu konu hakkında soru sor…</string>
-    <string name="tutor_placeholder_item">Bu soruyla ilgili soru sor…</string>
-    <string name="tutor_placeholder_answer">Cevabın hakkında soru sor…</string>
-    <string name="tutor_placeholder_lesson">Ders içeriğiyle ilgili soru sor…</string>
     <string name="tutor_send">Gönder</string>
     <string name="tutor_retry_last_question">Son sorunu tekrar gönder</string>
     <string name="tutor_suggest_walk_through">Bu cevabı adım adım açıkla</string>

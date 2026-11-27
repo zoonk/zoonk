@@ -409,6 +409,19 @@ internal fun Modifier.focusRing(
     ink: Color,
 ): Modifier = ringOutside(shape, ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH)
 
+/**
+ * [focusRing] while [focused] says so. The modifier stays in place either way, so a press that focuses the piece
+ * doesn't rebuild the press handling after it in the chain.
+ */
+fun Modifier.focusRing(
+    shape: Shape,
+    ink: Color,
+    focused: () -> Boolean,
+): Modifier =
+    drawBehind {
+        if (focused()) drawRingOutside(shape.createOutline(size, layoutDirection, this), ink.copy(alpha = 0.5f), FOCUS_RING_WIDTH.toPx())
+    }
+
 /** A ring [width] wide just outside [shape], its corners following the shape's own. */
 private fun Modifier.ringOutside(
     shape: Shape,

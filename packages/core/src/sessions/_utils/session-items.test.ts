@@ -39,10 +39,91 @@ describe(toSessionQuestion, () => {
     expect(first.left).toStrictEqual(["20% off", "Buy 3, pay 2", "Up 10%, down 10%"]);
     expect(first.right).not.toStrictEqual(["Pay 80%", "About 33% off", "1% less"]);
     expect(toSessionQuestion({ blockId, item }).right).toStrictEqual(first.right);
+    expect(first.key).toBeNull();
+
+    expect(toSessionQuestion({ blockId, item, revealMatchKey: true }).key).toStrictEqual(
+      matchItem.content.pairs.map((pair) => first.right?.indexOf(pair.right)),
+    );
+  });
+
+  it("shows a board in a new order in another block", () => {
+    const item = parseSessionItem({
+      ...matchItem,
+      content: {
+        ...matchItem.content,
+        pairs: Array.from({ length: 6 }, (_, index) => ({
+          left: `Left ${index}`,
+          right: `Right ${index}`,
+        })),
+      },
+    });
+
+    if (!item) {
+      throw new Error("The match item should parse");
+    }
+
+    const boards = new Set(
+      Array.from({ length: 10 }, (_, index) =>
+        toSessionQuestion({
+          blockId: `0199a0b1-0000-7000-8000-${String(index).padStart(12, "0")}`,
+          item,
+        }).right?.join(","),
+      ),
+    );
+
+    expect(boards.size).toBeGreaterThan(1);
   });
 });
 
 describe(gradeSessionAnswer, () => {
+  it("records the wrong tries in shown order and grades a repaired board wrong", () => {
+    const item = parseSessionItem(matchItem);
+
+    if (!item) {
+      throw new Error("The match item should parse");
+    }
+
+    const right = toSessionQuestion({ blockId, item }).right ?? [];
+    const matches = matchItem.content.pairs.map((pair) => right.indexOf(pair.right));
+
+    const misses = [
+      { left: 1, right: right.indexOf("Pay 80%") },
+      { left: 0, right: right.indexOf("1% less") },
+    ];
+
+    const answer = { matches, misses };
+    const graded = gradeSessionAnswer({ answer, blockId, item });
+
+    expect(graded.isCorrect).toBe(false);
+    expect(graded.snapshot.answer).toBe("Buy 3, pay 2 → Pay 80%; 20% off → 1% less");
+    expect(readRecordedAnswer(graded.recorded)).toStrictEqual(answer);
+
+    expect(gradeSessionAnswer({ answer: { matches, misses: [] }, blockId, item }).isCorrect).toBe(
+      true,
+    );
+  });
+
+  it("grades an out-of-range miss or a claimed miss on a right pair wrong", () => {
+    const item = parseSessionItem(matchItem);
+
+    if (!item) {
+      throw new Error("The match item should parse");
+    }
+
+    const right = toSessionQuestion({ blockId, item }).right ?? [];
+    const matches = matchItem.content.pairs.map((pair) => right.indexOf(pair.right));
+
+    for (const miss of [
+      { left: 0, right: right.indexOf("Pay 80%") },
+      { left: 3, right: 0 },
+      { left: 0, right: 3 },
+    ]) {
+      const graded = gradeSessionAnswer({ answer: { matches, misses: [miss] }, blockId, item });
+      expect(graded.isCorrect).toBe(false);
+      expect(graded.snapshot.answer).toBeNull();
+    }
+  });
+
   it("grades matches against the order the learner saw", () => {
     const item = parseSessionItem(matchItem);
 

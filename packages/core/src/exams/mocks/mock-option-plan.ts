@@ -13,22 +13,23 @@ export function toSubjectCandidates({
   candidates: readonly MockCandidate[];
   structure: ExamStructure | null;
 }): MockCandidate[] {
-  const subjectOf = (area: string | null) => {
-    const subject = area ? findAreaSubject({ area, structure }) : undefined;
-    return subject && structure && isQuestionSubject({ structure, subject }) ? subject : undefined;
-  };
+  const matched = candidates.map((candidate) => {
+    const subject = candidate.area
+      ? findAreaSubject({ area: candidate.area, structure })
+      : undefined;
 
-  const matched = candidates.map((candidate) => ({
-    candidate,
-    subject: subjectOf(candidate.area),
-  }));
+    const asked = subject && structure && isQuestionSubject({ structure, subject });
 
-  if (!matched.some((entry) => entry.subject)) {
-    return [...candidates];
+    return { asked, candidate, subject };
+  });
+
+  // Areas the notice doesn't name still fill a paper; a written or spoken paper's never do.
+  if (!matched.some(({ asked }) => asked)) {
+    return matched.flatMap(({ candidate, subject }) => (subject ? [] : [candidate]));
   }
 
-  return matched.flatMap(({ candidate, subject }) =>
-    subject ? [{ ...candidate, area: subject.name }] : [],
+  return matched.flatMap(({ asked, candidate, subject }) =>
+    asked && subject ? [{ ...candidate, area: subject.name }] : [],
   );
 }
 

@@ -2,7 +2,6 @@ package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 
 /**
@@ -240,7 +239,6 @@ fun LessonPlayerState.resolveCheck(
     stepId: String,
     result: StepResult,
     counts: Boolean,
-    now: Long,
 ): LessonPlayerState {
     val step = steps[stepId]
     val isFirst = counts && stepId !in firstVerdicts
@@ -253,20 +251,17 @@ fun LessonPlayerState.resolveCheck(
     val willRetry =
         isMiss && quickCheck == null && step != null && step.isRetryStep && stepId !in retried && stepId !in unavailableStepIds
 
-    val resolved =
-        copy(
-            checkFailed = false,
-            firstVerdicts = if (isFirst) firstVerdicts + (stepId to result.isCorrect) else firstVerdicts,
-            misses = missesAfter(counts, result.isCorrect, step),
-            notice = notice.takeUnless { it == LessonNotice.SelfCorrect || stepId in recovery },
-            phase = LessonPhase.Feedback,
-            queue = if (willRetry) queue + stepId else queue,
-            quickCheck = if (isMiss) quickCheck?.copy(missed = true) else quickCheck,
-            results = results + (stepId to result),
-            retried = if (willRetry) retried + stepId else retried,
-        )
-
-    return if (step?.kind == StepKind.MatchColumns) resolved.advance(now) else resolved
+    return copy(
+        checkFailed = false,
+        firstVerdicts = if (isFirst) firstVerdicts + (stepId to result.isCorrect) else firstVerdicts,
+        misses = missesAfter(counts, result.isCorrect, step),
+        notice = notice.takeUnless { it == LessonNotice.SelfCorrect || stepId in recovery },
+        phase = LessonPhase.Feedback,
+        queue = if (willRetry) queue + stepId else queue,
+        quickCheck = if (isMiss) quickCheck?.copy(missed = true) else quickCheck,
+        results = results + (stepId to result),
+        retried = if (willRetry) retried + stepId else retried,
+    )
 }
 
 fun LessonPlayerState.explainFirst(now: Long): LessonPlayerState {

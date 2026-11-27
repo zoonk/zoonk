@@ -30,7 +30,13 @@ import { type ItemSetView } from "../../library/items/item-set-view";
 import { toItemSetView } from "../../library/items/item-sets";
 import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { type QuestionAnswer, studyAnswerInputSchema } from "../contract";
-import { type MatchItem, gradeMatch, parseMatchItem, toMatchQuestion } from "./match-items";
+import {
+  type MatchItem,
+  getMatchKey,
+  gradeMatch,
+  parseMatchItem,
+  toMatchQuestion,
+} from "./match-items";
 import { type OrderItem, gradeOrder, parseOrderItem, toOrderQuestion } from "./order-items";
 
 /** Review capsules draw fresh numeric values on each visit. */
@@ -116,19 +122,30 @@ function serveInBlock({ blockId, item }: { blockId: string; item: MathItem }) {
   return serveMath({ item, seed: `${blockId}:${item.id}` });
 }
 
-const NO_EXTRAS = { entry: null, left: null, right: null, select: null, unit: null };
+const NO_EXTRAS = { entry: null, key: null, left: null, right: null, select: null, unit: null };
 
-/** The question as the learner sees it in a block, never with its answer. */
-export function toSessionQuestion({ blockId, item }: { blockId: string; item: SessionItem }) {
+export function toSessionQuestion({
+  blockId,
+  item,
+  revealMatchKey = false,
+}: {
+  blockId: string;
+  item: SessionItem;
+  revealMatchKey?: boolean;
+}) {
   switch (item.format) {
     case "numeric": {
       const version = serveInBlock({ blockId, item });
       return { ...NO_EXTRAS, ...toMathQuestionView({ item, version }) };
     }
     case "matchPairs":
-      return { ...NO_EXTRAS, ...toMatchQuestion(item) };
+      return {
+        ...NO_EXTRAS,
+        ...toMatchQuestion({ blockId, item }),
+        key: revealMatchKey ? getMatchKey({ blockId, item }) : null,
+      };
     case "order":
-      return { ...NO_EXTRAS, ...toOrderQuestion(item) };
+      return { ...NO_EXTRAS, ...toOrderQuestion({ blockId, item }) };
     case "typed":
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
@@ -140,6 +157,11 @@ export function toSessionQuestion({ blockId, item }: { blockId: string; item: Se
 }
 
 export type SessionQuestion = ReturnType<typeof toSessionQuestion>;
+
+/** A match or order answer is indexes into the order its block showed, so it reads back only there. */
+export function readsAnswerInBlockOrder(item: SessionItem): boolean {
+  return item.format === "matchPairs" || item.format === "order";
+}
 
 export type GradedSessionAnswer = {
   correctAnswer: QuestionAnswer;
@@ -204,7 +226,7 @@ export function gradeSessionAnswer({
 }): GradedSessionAnswer {
   switch (item.format) {
     case "matchPairs":
-      return gradeMatch({ answer, item });
+      return gradeMatch({ answer, blockId, item });
     case "numeric":
       return gradeMathAnswer({
         answer: "number" in answer ? answer.number : null,
@@ -212,7 +234,7 @@ export function gradeSessionAnswer({
         version: serveInBlock({ blockId, item }),
       });
     case "order":
-      return gradeOrder({ answer, item });
+      return gradeOrder({ answer, blockId, item });
     case "typed":
       return gradeTypedByCode({ answer, item });
     case "multipleChoice":

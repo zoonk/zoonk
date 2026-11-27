@@ -21,6 +21,29 @@ extension View {
     modifier(TaskCloseToolbar(close: close()))
   }
 
+  /// Esc lets go of something the screen holds (a picked match card) while `isHeld`, instead of
+  /// leaving: main's board takes Esc ahead of the ✕. The task's close gives up its Esc meanwhile.
+  func holdsEscape(_ isHeld: Bool, cancel: @escaping () -> Void) -> some View {
+    // iOS gives a button in a `background` no keyboard shortcut, so this one sits beside the content.
+    ZStack {
+      self
+
+      if isHeld {
+        Button(action: cancel) { EmptyView() }
+          .keyboardShortcut(.cancelAction)
+          .frame(width: 0, height: 0)
+          .opacity(0)
+          .accessibilityHidden(true)
+      }
+    }
+    .preference(key: EscapeHoldKey.self, value: isHeld)
+  }
+
+  /// A task close's Esc, which it gives up while the screen holds Esc (`holdsEscape`).
+  func leavesOnEscape() -> some View {
+    modifier(LeavesOnEscape())
+  }
+
   /// A screen's own options in the toolbar's "…" menu: the system's overflow menu on iOS 27, which
   /// also takes what a short bar can't fit, and a menu of its own before it.
   func taskOptions<Actions: View>(
@@ -105,8 +128,12 @@ private struct TaskTitleToolbar: ViewModifier {
 
 private struct TaskCloseToolbar<Close: View>: ViewModifier {
   let close: Close
+  @State private var isEscapeHeld = false
 
   func body(content: Content) -> some View {
+    let content = content.onPreferenceChange(EscapeHoldKey.self) { isEscapeHeld = $0 }
+    let close = close.environment(\.isEscapeHeld, isEscapeHeld)
+
     if #available(iOS 27, *) {
       content.toolbar {
         ToolbarItem(placement: .cancellationAction) { close }
@@ -117,6 +144,26 @@ private struct TaskCloseToolbar<Close: View>: ViewModifier {
         ToolbarItem(placement: .cancellationAction) { close }
       }
     }
+  }
+}
+
+private struct EscapeHoldKey: PreferenceKey {
+  static let defaultValue = false
+
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {
+    value = value || nextValue()
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var isEscapeHeld = false
+}
+
+private struct LeavesOnEscape: ViewModifier {
+  @Environment(\.isEscapeHeld) private var isEscapeHeld
+
+  func body(content: Content) -> some View {
+    content.keyboardShortcut(isEscapeHeld ? nil : .cancelAction)
   }
 }
 

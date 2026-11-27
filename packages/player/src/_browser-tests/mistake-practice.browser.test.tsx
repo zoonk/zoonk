@@ -9,6 +9,10 @@ import {
 } from "../_test-utils/mistake-practice";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
+function matchCard(name: string) {
+  return page.getByRole("button", { exact: true, name });
+}
+
 describe("exact lesson mistake practice", () => {
   afterEach(() => vi.restoreAllMocks());
 
@@ -142,6 +146,39 @@ describe("exact lesson mistake practice", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     expect(actions.finish).not.toHaveBeenCalled();
+  });
+
+  it("waits on Continue while a lesson's board is played, then names its first wrong try", async () => {
+    const graded = feedback();
+
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...graded,
+        isCorrect: false,
+        lessonResult: graded.lessonResult && { ...graded.lessonResult, isCorrect: false },
+      });
+
+    openPractice(languageStep("matchColumns"), { answer });
+
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toBeDisabled();
+    await matchCard("Electron").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Negative charge").click();
+    await matchCard("Proton").click();
+    await matchCard("Positive charge").click();
+    await matchCard("Neutron").click();
+    await matchCard("No charge").click();
+
+    const result = page.getByRole("region", { name: "Answer feedback" });
+
+    await expect
+      .element(result.getByText("Electron → Positive charge", { exact: true }))
+      .toBeVisible();
+
+    expect(answer).toHaveBeenCalledWith(
+      expect.objectContaining({ answer: expect.objectContaining({ mistakes: 1 }) }),
+    );
   });
 
   it.each([

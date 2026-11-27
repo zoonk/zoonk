@@ -67,7 +67,6 @@
   "player_create_account_to_save": "2a6a56abb8bda7e60d54135c8fad96a732235482ebdb9c55ed1ac67fcbffdfd2",
   "player_didnt_get_it": "393ba213dfbdcb15520e6bde8fdadd7439e79b225822ba98539d85b814b61ad1",
   "player_done": "1d377f03544eac42c690dbe068d79c9dfdbc78a5588e8114fc50541c4c351195",
-  "player_dont_know_yet": "c3e07971d778f9f0873d721b656f1da0e773a414951be31ae7ee75a387b5be67",
   "player_drawing_picture": "bbe51661ed264e3ab80bd61924c2caee20654938f11366a8e237cb13fba14a78",
   "player_enter_hint": "4143d892e106c39102448fdab42a194fd5feeeaa157ae06c73be2754bcb9b684",
   "player_example": "ef8f6e1d27661b6da067e186e44c9fd464421fc525f450997df4369698712486",
@@ -289,7 +288,6 @@
     </plurals>
     <string name="player_in_your_own_words">Com suas palavras</string>
     <string name="player_cant_write_now">Pular perguntas com resposta escrita hoje</string>
-    <string name="player_dont_know_yet">Ainda não sei</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">Ver explicação primeiro</string>
     <string name="player_enter_hint">Pressione Enter para conferir e Shift+Enter para começar uma nova linha.</string>

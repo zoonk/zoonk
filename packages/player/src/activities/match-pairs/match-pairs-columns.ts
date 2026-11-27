@@ -1,10 +1,9 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 
-type MatchFields = Pick<ActivityContentFor<"matchPairs">["fields"], "pairs">;
+export type MatchFields = Pick<ActivityContentFor<"matchPairs">["fields"], "pairs">;
 
 export type MatchCard = { id: string; text: string; why: string | null };
-type MatchRow = { left: MatchCard; right: MatchCard };
 
 const MAX_ATTEMPTS = 32;
 
@@ -31,17 +30,4 @@ export function arrangeMatchColumns(fields: MatchFields): {
   const right = candidates.find((candidate) => !hasAlignedPair(left, candidate)) ?? rightCards;
 
   return { left, right };
-}
-
-export function solvedRows({
-  left,
-  right,
-}: {
-  left: readonly MatchCard[];
-  right: readonly MatchCard[];
-}): MatchRow[] {
-  return left.flatMap((card) => {
-    const partner = right.find((other) => other.id === card.id);
-    return partner ? [{ left: card, right: partner }] : [];
-  });
 }

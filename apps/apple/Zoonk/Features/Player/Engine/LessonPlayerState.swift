@@ -612,10 +612,6 @@ struct LessonPlayerState: Equatable, Sendable {
       retried.insert(stepId)
     }
 
-    // Matching pairs gives feedback pair by pair, so its check moves on without a second tap.
-    if step.kind == .matchColumns {
-      advance(now: now)
-    }
   }
 
   /// The server recorded a device-graded answer: its verdict, when its idea comes back, and whether

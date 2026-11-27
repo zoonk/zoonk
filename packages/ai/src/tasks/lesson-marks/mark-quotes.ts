@@ -1,4 +1,5 @@
 import { findCodeFences, removeCodeFences } from "@zoonk/utils/code-fence";
+import { type InlineMarkup, parseInlineMarkupRanges } from "@zoonk/utils/inline-markup";
 
 /** A `$` after a capital is a currency sign ("R$ 30"), which the rich text leaves as text. */
 const MARKUP = /[*`|\n]|(?<!\p{Lu})\$/u;
@@ -13,6 +14,7 @@ const LOWERCASE_START = /^\p{Ll}/u;
 /** A numbered item's marker ("2. ") ends in a period, but the item's sentence starts after it. */
 const LIST_MARKER = /(?:^|\n)[^\S\n]*\d{1,3}[.)][^\S\n]+$/u;
 const BOLD = "**";
+const LEADING_BOLD = /^(?:\*\*)+/u;
 
 /**
  * Plain words the rendered text shows together: the text's own characters once its bold marks are
@@ -37,7 +39,7 @@ function startsSentence({ before, quote }: { before: string; quote: string }): b
   }
 
   return (
-    !LOWERCASE_START.test(quote) &&
+    !LOWERCASE_START.test(quote.replace(LEADING_BOLD, "")) &&
     !LIST_MARKER.test(before) &&
     (SENTENCE_BREAK.test(before) || CJK_SENTENCE_BREAK.test(before) || LINE_BREAK.test(before))
   );
@@ -59,7 +61,7 @@ function endsSentence({ after, quote }: { after: string; quote: string }): boole
   }
 
   return (
-    !LOWERCASE_START.test(next) &&
+    !LOWERCASE_START.test(next.replace(LEADING_BOLD, "")) &&
     ((SENTENCE_END.test(quote) && /^\s/u.test(after)) ||
       CJK_SENTENCE_END.test(quote) ||
       (endsWithCodeBlock(quote) && after.startsWith("\n")))
@@ -101,77 +103,223 @@ function keepsCodeWhole({
   );
 }
 
-/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
-function withListMarker({ quote, text }: { quote: string; text: string }): string {
-  const start = text.indexOf(quote);
-  const marker = start === -1 ? null : LIST_MARKER.exec(text.slice(0, start));
-  return marker ? `${marker[0].trimStart()}${quote}` : quote;
-}
-
-const REGEXP_SYNTAX = /[\\^$.*+?()[\]{}|]/gu;
-const LINE_BREAKS = /(?:\r?\n)+/u;
+const INLINE_MARK = /[`*]/u;
 const INTRODUCES = /[:：]$/u;
 
-/** Copying across a code block's closing fence, models often drop the blank line after it. */
-function withTextLineBreaks({ quote, text }: { quote: string; text: string }): string {
-  if (text.includes(quote)) {
-    return quote;
-  }
+type Span = { end: number; start: number };
 
-  const lines = quote
-    .split(LINE_BREAKS)
-    .map((line) => line.replaceAll(REGEXP_SYNTAX, String.raw`\$&`));
+/** How many characters open and close each mark a copy may leave out. */
+const MARK_SIZE: Partial<Record<InlineMarkup["kind"], number>> = { bold: 2, code: 1 };
 
-  return new RegExp(lines.join(LINE_BREAKS.source), "u").exec(text)?.[0] ?? quote;
+/** Where the prose's inline code and bold marks sit; what's inside them stays as written. */
+function findMarkPlaces(text: string): Set<number> {
+  const bounds = [0, ...findCodeSpans(text).flatMap(({ end, start }) => [start, end]), text.length];
+
+  return new Set(
+    bounds.flatMap((from, index) =>
+      index % 2 === 0
+        ? parseInlineMarkupRanges(text.slice(from, bounds[index + 1])).flatMap((range) =>
+            Array.from({ length: MARK_SIZE[range.kind] ?? 0 }, (_, at) => [
+              from + range.start + at,
+              from + range.end - 1 - at,
+            ]).flat(),
+          )
+        : [],
+    ),
+  );
 }
 
-/** Where the quote sits in the text's prose: a program can print the same words. */
-function findInProse({
-  quote,
-  spans,
-  text,
-}: {
-  quote: string;
-  spans: readonly { end: number; start: number }[];
-  text: string;
-}): number {
-  let start = text.indexOf(quote);
+/**
+ * The text as a model copies it: prose without its inline code and bold marks and with single
+ * line breaks, since models drop a blank line; everything else as written. `offsets` holds each
+ * kept character's place.
+ */
+function readCopy(text: string): { offsets: number[]; value: string } {
+  const code = findCodeSpans(text);
+  const marks = findMarkPlaces(text);
 
-  while (start !== -1 && spans.some((code) => start >= code.start && start < code.end)) {
-    start = text.indexOf(quote, start + 1);
+  return text.split("").reduce<{ offsets: number[]; value: string }>(
+    (read, char, at) => {
+      const inCode = code.some((span) => at >= span.start && at < span.end);
+
+      if (
+        char === "\r" ||
+        marks.has(at) ||
+        (!inCode && char === "\n" && read.value.endsWith("\n"))
+      ) {
+        return read;
+      }
+
+      read.offsets.push(at);
+      return { offsets: read.offsets, value: read.value + char };
+    },
+    { offsets: [], value: "" },
+  );
+}
+
+function occurrences({ of, within }: { of: string; within: string }): number[] {
+  const found: number[] = [];
+
+  for (let at = of ? within.indexOf(of) : -1; at !== -1; at = within.indexOf(of, at + 1)) {
+    found.push(at);
   }
 
-  return start;
+  return found;
+}
+
+/**
+ * A repaired copy may leave out the text's marks and blank lines, never change or add a character:
+ * a program's own stars and spaces tell two programs apart.
+ */
+function dropsOnlyMarks({ copy, span, text }: { copy: string; span: Span; text: string }): boolean {
+  const marks = findMarkPlaces(text);
+  const wanted = copy.replaceAll("\r", "").replaceAll(/\n+/gu, "\n");
+  let next = 0;
+  let previous = "";
+
+  for (let at = span.start; at < span.end; at += 1) {
+    const char = text[at] ?? "";
+
+    if (char === wanted[next]) {
+      next += 1;
+    } else if (!marks.has(at) && char !== "\r" && !(char === "\n" && previous === "\n")) {
+      return false;
+    }
+
+    previous = char === "\r" ? previous : char;
+  }
+
+  return next === wanted.length;
+}
+
+/**
+ * Every place the text holds what the model copied: word for word first, then with the blank lines
+ * and inline marks the copy dropped.
+ */
+function locateCopies({ quote, text }: { quote: string; text: string }): Span[] {
+  const { offsets, value } = readCopy(text);
+
+  /** The copy's own stars may be a program's or bold the model kept, so both readings are tried. */
+  const readings = new Set([
+    readCopy(quote).value.trim(),
+    quote.replaceAll("\r", "").replaceAll(/\n+/gu, "\n").trim(),
+  ]);
+
+  const repaired = [...readings]
+    .flatMap((copy) =>
+      occurrences({ of: copy, within: value }).map((at) => ({
+        end: (offsets[at + copy.length - 1] ?? 0) + 1,
+        start: offsets[at] ?? 0,
+      })),
+    )
+    .map((span) => withMarks({ span, text }))
+    .filter((span) => dropsOnlyMarks({ copy: quote.trim(), span, text }));
+
+  return [
+    ...occurrences({ of: quote, within: text }).map((at) => ({
+      end: at + quote.length,
+      start: at,
+    })),
+    ...repaired,
+  ];
+}
+
+/** The copies seen swap a block and its intro; more parts would make the search grow by their factorial. */
+const MAX_REORDERED_PARTS = 4;
+
+/** A model sometimes copies a block ahead of the sentence that introduces it; the text's order stands. */
+function locateReordered({ quote, text }: { quote: string; text: string }): Span[] {
+  const cuts = [0, ...findCodeSpans(quote).flatMap(({ end, start }) => [start, end]), quote.length];
+
+  const places = cuts
+    .slice(1)
+    .map((end, index) => quote.slice(cuts[index], end))
+    .filter((part) => part.trim() !== "")
+    .map((part) => locateCopies({ quote: part, text }));
+
+  if (places.length < 2 || places.length > MAX_REORDERED_PARTS) {
+    return [];
+  }
+
+  const extend = (span: Span, left: readonly Span[][]): Span[] =>
+    left.length === 0
+      ? [span]
+      : left.flatMap((spans, index) =>
+          spans
+            .filter(
+              (next) => next.start >= span.end && text.slice(span.end, next.start).trim() === "",
+            )
+            .flatMap((next) =>
+              extend({ end: next.end, start: span.start }, left.toSpliced(index, 1)),
+            ),
+        );
+
+  return places.flatMap((spans, index) =>
+    spans.flatMap((span) => extend(span, places.toSpliced(index, 1))),
+  );
+}
+
+/** A copy that left out the marks around it ("**Try it.**") takes them back. */
+function withMarks({ span, text }: { span: Span; text: string }): Span {
+  let { end, start } = span;
+
+  while (INLINE_MARK.test(text[start - 1] ?? "")) {
+    start -= 1;
+  }
+
+  while (INLINE_MARK.test(text[end] ?? "")) {
+    end += 1;
+  }
+
+  return { end, start };
+}
+
+/** A quote of a numbered item's words, widened to its marker ("2. ") so the item keeps its number. */
+function withListMarker({ span, text }: { span: Span; text: string }): Span {
+  const marker = LIST_MARKER.exec(text.slice(0, span.start));
+  return marker ? { ...span, start: span.start - marker[0].trimStart().length } : span;
 }
 
 /**
  * A sentence that traces the code block before it, or introduces the one after it, shows the case
  * with that program, so the frame takes the block too and the program never sits outside it.
  */
-function withAdjacentCode({ quote, text }: { quote: string; text: string }): string {
+function withAdjacentCode({ span, text }: { span: Span; text: string }): Span {
+  const { end, start } = span;
   const spans = findCodeSpans(text);
-  const start = findInProse({ quote, spans, text });
-  const end = start + quote.length;
 
-  if (start === -1 || spans.some((code) => code.start >= start && code.end <= end)) {
-    return quote;
+  if (spans.some((code) => code.start >= start && code.end <= end)) {
+    return span;
   }
 
   const traced = spans.find(
     (code) => code.end <= start && text.slice(code.end, start).trim() === "",
   );
 
-  const introduced = INTRODUCES.test(quote)
+  const introduced = INTRODUCES.test(text.slice(start, end))
     ? spans.find((code) => code.start >= end && text.slice(end, code.start).trim() === "")
     : undefined;
 
-  return text.slice(traced?.start ?? start, introduced?.end ?? end);
+  return { end: introduced?.end ?? end, start: traced?.start ?? start };
 }
 
-/** The text's own span for an example the model copied, widened to what the frame must not split. */
+/**
+ * The text's own span for an example the model copied, widened to what the frame must not split.
+ * A program can print the same words as the prose, so the first place that makes a frame wins.
+ */
 export function fitExampleQuote({ quote, text }: { quote: string; text: string }): string {
-  const copied = withTextLineBreaks({ quote, text });
-  return withAdjacentCode({ quote: withListMarker({ quote: copied, text }), text });
+  const copies = locateCopies({ quote, text });
+
+  const fitted = (copies.length > 0 ? copies : locateReordered({ quote, text })).map((span) => {
+    const widened = withAdjacentCode({
+      span: withListMarker({ span: withMarks({ span, text }), text }),
+      text,
+    });
+
+    return text.slice(widened.start, widened.end);
+  });
+
+  return fitted.find((example) => isExampleQuote({ quote: example, text })) ?? fitted[0] ?? quote;
 }
 
 /**

@@ -30,17 +30,19 @@ export function parseOrderItem(item: BankItem): OrderItem | null {
   }
 }
 
-function getStepOrder(item: OrderItem): number[] {
-  return getShownOrder({ count: item.content.steps.length, seed: item.id });
+type ShownOrderItem = { blockId: string; item: OrderItem };
+
+function getStepOrder({ blockId, item }: ShownOrderItem): number[] {
+  return getShownOrder({ count: item.content.steps.length, seed: `${blockId}:${item.id}` });
 }
 
-export function toOrderQuestion(item: OrderItem) {
+export function toOrderQuestion({ blockId, item }: ShownOrderItem) {
   return {
     context: null,
     format: item.format,
     image: null,
     itemId: item.id,
-    options: getStepOrder(item).map((index) => item.content.steps[index] ?? ""),
+    options: getStepOrder({ blockId, item }).map((index) => item.content.steps[index] ?? ""),
     question: item.content.question,
     skillId: item.skillId,
     visual: null,
@@ -52,8 +54,8 @@ function describeSteps({ item, steps }: { item: OrderItem; steps: readonly numbe
 }
 
 /** Input order indexes refer to displayed steps; mismatched answer shapes count as wrong. */
-export function gradeOrder({ answer, item }: { answer: QuestionAnswer; item: OrderItem }) {
-  const shown = getStepOrder(item);
+export function gradeOrder({ answer, blockId, item }: ShownOrderItem & { answer: QuestionAnswer }) {
+  const shown = getStepOrder({ blockId, item });
   const steps = "order" in answer ? answer.order.map((index) => shown[index] ?? -1) : [];
 
   const isCorrect =

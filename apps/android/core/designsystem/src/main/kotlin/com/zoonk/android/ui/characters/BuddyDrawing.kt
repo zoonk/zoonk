@@ -17,27 +17,16 @@ internal class BuddyDrawing(
     private val crop: BuddyCrop,
     private val belt: Color,
 ) : CharacterDrawing<BuddyExpression> {
-    private val stageScale = look.stage.scale
+    /** The face draws the head alone, at one size for every stage, so a baby's face isn't a dot at icon sizes. */
+    private val whole = crop != BuddyCrop.Face
+    private val stageScale = if (whole) look.stage.scale else 1f
 
-    /** The face's square, so a baby's face isn't a dot at icon sizes. */
     override val viewBox: Rect =
         when (crop) {
-            BuddyCrop.Whole -> {
-                Rect(0f, 0f, BUDDY_VIEW_SIZE, BUDDY_VIEW_SIZE)
-            }
-
-            BuddyCrop.Face -> {
-                val size = FACE_SIZE * stageScale
-                val centerY = Ground.y - (Ground.y - FACE_CENTER_Y) * stageScale
-                Rect(Offset(Ground.x - size / 2, centerY - size / 2), Size(size, size))
-            }
-
-            BuddyCrop.Ink -> {
-                look.bodyInk
-            }
+            BuddyCrop.Whole -> Rect(0f, 0f, BUDDY_VIEW_SIZE, BUDDY_VIEW_SIZE)
+            BuddyCrop.Face -> look.kind.faceBox
+            BuddyCrop.Ink -> look.bodyInk
         }
-
-    override val clipsToBox: Boolean get() = crop == BuddyCrop.Face
 
     override fun pose(
         expression: BuddyExpression,
@@ -46,8 +35,8 @@ internal class BuddyDrawing(
 
     private val lights =
         when (look.kind) {
-            BuddyKind.Zu -> listOf(Light(36f, 11f, 11f, look.glow), Light(84f, 11f, 11f, look.glow))
-            BuddyKind.Beep -> listOf(Light(60f, 10f, 10f, look.glow))
+            BuddyKind.Zu -> listOf(Light(36f, 11f, 11f, look.glow, whole), Light(84f, 11f, 11f, look.glow, whole))
+            BuddyKind.Beep -> listOf(Light(60f, 10f, 10f, look.glow, whole))
             BuddyKind.Noodle, BuddyKind.Otto -> emptyList()
         }
 
@@ -56,8 +45,8 @@ internal class BuddyDrawing(
 
         val drawFace: ArtPainter.() -> Unit = {
             part(CharacterPart.Face, FacePivot) {
-                drawBuddyFace(face)
-                group(transform = { if (napping) translate(0f, SLEEPY_EYES_OFFSET) }) { drawGlasses(look.glasses) }
+                drawBuddyFace(face, snores = whole)
+                group(transform = { if (napping) translate(0f, SLEEPY_EYES_OFFSET) }) { drawGlasses(look.glasses, chain = whole) }
             }
         }
 
@@ -93,20 +82,24 @@ internal class BuddyDrawing(
         napping: Boolean,
         face: ArtPainter.() -> Unit,
     ) {
-        part(CharacterPart.Shadow, Offset(60f, 115f)) { fill(Zu.shadow, Color.Black, alpha = 0.12f) }
-        part(CharacterPart.Feet, Offset(60f, 111f)) {
-            fill(Zu.footLeft, Zu.limb)
-            fill(Zu.footRight, Zu.limb)
+        if (whole) {
+            part(CharacterPart.Shadow, Offset(60f, 115f)) { fill(Zu.shadow, Color.Black, alpha = 0.12f) }
+            part(CharacterPart.Feet, Offset(60f, 111f)) {
+                fill(Zu.footLeft, Zu.limb)
+                fill(Zu.footRight, Zu.limb)
+            }
         }
         part(CharacterPart.Body, Offset(60f, 112f)) {
-            part(CharacterPart.ArmLeft, Offset(42.5f, 89.5f)) { fill(Zu.armLeft, Zu.arm) }
-            part(CharacterPart.ArmRight, Offset(77.5f, 89.5f)) { fill(Zu.armRight, Zu.arm) }
-            part(CharacterPart.Torso, Offset(60f, 97f)) {
-                fill(Zu.torso, Zu.torsoSkin)
-                clip(Zu.torso) { beltPiece(Zu.belt, edge = 0.14f, width = 1.2f) }
-                beltPiece(Zu.tieLeft, edge = 0.16f)
-                beltPiece(Zu.tieRight, edge = 0.16f)
-                beltPiece(Zu.knot, edge = 0.2f)
+            if (whole) {
+                part(CharacterPart.ArmLeft, Offset(42.5f, 89.5f)) { fill(Zu.armLeft, Zu.arm) }
+                part(CharacterPart.ArmRight, Offset(77.5f, 89.5f)) { fill(Zu.armRight, Zu.arm) }
+                part(CharacterPart.Torso, Offset(60f, 97f)) {
+                    fill(Zu.torso, Zu.torsoSkin)
+                    clip(Zu.torso) { beltPiece(Zu.belt, edge = 0.14f, width = 1.2f) }
+                    beltPiece(Zu.tieLeft, edge = 0.16f)
+                    beltPiece(Zu.tieRight, edge = 0.16f)
+                    beltPiece(Zu.knot, edge = 0.2f)
+                }
             }
             part(CharacterPart.Head, Offset(60f, 86f)) {
                 zuAntenna(CharacterPart.AntennaLeft, napping)
@@ -139,24 +132,30 @@ internal class BuddyDrawing(
     }
 
     private fun ArtPainter.noodle(face: ArtPainter.() -> Unit) {
-        part(CharacterPart.Shadow, Offset(60f, 113f)) { fill(Noodle.shadow, Color.Black, alpha = 0.08f) }
-        part(CharacterPart.Feet, Offset(60f, 106f)) {
-            fill(Noodle.footLeft, Noodle.foot)
-            fill(Noodle.footRight, Noodle.foot)
+        if (whole) {
+            part(CharacterPart.Shadow, Offset(60f, 113f)) { fill(Noodle.shadow, Color.Black, alpha = 0.08f) }
+            part(CharacterPart.Feet, Offset(60f, 106f)) {
+                fill(Noodle.footLeft, Noodle.foot)
+                fill(Noodle.footRight, Noodle.foot)
+            }
         }
         part(CharacterPart.Body, Offset(60f, 108f)) {
-            part(CharacterPart.ArmLeft, Offset(22f, 70f)) { fill(Noodle.armLeft, Noodle.arm) }
-            part(CharacterPart.ArmRight, Offset(98f, 70f)) { fill(Noodle.armRight, Noodle.arm) }
+            if (whole) {
+                part(CharacterPart.ArmLeft, Offset(22f, 70f)) { fill(Noodle.armLeft, Noodle.arm) }
+                part(CharacterPart.ArmRight, Offset(98f, 70f)) { fill(Noodle.armRight, Noodle.arm) }
+            }
             part(CharacterPart.Head, Offset(60f, 104f)) {
                 clip(Noodle.outline) {
                     fill(Noodle.canvas, Noodle.shade)
-                    beltPiece(Noodle.band, edge = 0.12f, width = 1.5f)
+                    if (whole) beltPiece(Noodle.band, edge = 0.12f, width = 1.5f)
                 }
                 Noodle.folds.forEach { stroke(it, Noodle.fold, 3f, alpha = 0.8f, cap = StrokeCap.Round) }
                 fill(Noodle.shine, Color.White, alpha = 0.35f)
-                beltPiece(Noodle.tieLeft, edge = 0.15f, width = 1.2f)
-                beltPiece(Noodle.tieRight, edge = 0.15f, width = 1.2f)
-                beltPiece(Noodle.knot, edge = 0.18f, width = 1.2f)
+                if (whole) {
+                    beltPiece(Noodle.tieLeft, edge = 0.15f, width = 1.2f)
+                    beltPiece(Noodle.tieRight, edge = 0.15f, width = 1.2f)
+                    beltPiece(Noodle.knot, edge = 0.18f, width = 1.2f)
+                }
                 face()
             }
         }
@@ -166,20 +165,24 @@ internal class BuddyDrawing(
         napping: Boolean,
         face: ArtPainter.() -> Unit,
     ) {
-        part(CharacterPart.Shadow, Offset(60f, 115.5f)) { fill(Beep.shadow, Color.Black, alpha = 0.12f) }
-        part(CharacterPart.Feet, Offset(60f, 110f)) {
-            fill(Beep.footLeft, Beep.steel)
-            fill(Beep.footRight, Beep.steel)
+        if (whole) {
+            part(CharacterPart.Shadow, Offset(60f, 115.5f)) { fill(Beep.shadow, Color.Black, alpha = 0.12f) }
+            part(CharacterPart.Feet, Offset(60f, 110f)) {
+                fill(Beep.footLeft, Beep.steel)
+                fill(Beep.footRight, Beep.steel)
+            }
         }
         part(CharacterPart.Body, Offset(60f, 112f)) {
-            part(CharacterPart.ArmLeft, Offset(36f, 94f)) { fill(Beep.armLeft, Beep.arm) }
-            part(CharacterPart.ArmRight, Offset(84f, 94f)) { fill(Beep.armRight, Beep.arm) }
-            part(CharacterPart.Torso, Offset(60f, 101f)) {
-                fill(Beep.torso, Beep.torsoMetal)
-                clip(Beep.torso) { beltPiece(Beep.belt, edge = 0.14f, width = 1.2f) }
-                beltPiece(Beep.tieLeft, edge = 0.16f)
-                beltPiece(Beep.tieRight, edge = 0.16f)
-                beltPiece(Beep.knot, edge = 0.2f)
+            if (whole) {
+                part(CharacterPart.ArmLeft, Offset(36f, 94f)) { fill(Beep.armLeft, Beep.arm) }
+                part(CharacterPart.ArmRight, Offset(84f, 94f)) { fill(Beep.armRight, Beep.arm) }
+                part(CharacterPart.Torso, Offset(60f, 101f)) {
+                    fill(Beep.torso, Beep.torsoMetal)
+                    clip(Beep.torso) { beltPiece(Beep.belt, edge = 0.14f, width = 1.2f) }
+                    beltPiece(Beep.tieLeft, edge = 0.16f)
+                    beltPiece(Beep.tieRight, edge = 0.16f)
+                    beltPiece(Beep.knot, edge = 0.2f)
+                }
             }
             part(CharacterPart.Head, Offset(60f, 92f)) {
                 part(CharacterPart.Antenna, Offset(60f, 26f)) {
@@ -204,27 +207,31 @@ internal class BuddyDrawing(
     }
 
     private fun ArtPainter.otto(face: ArtPainter.() -> Unit) {
-        part(CharacterPart.Shadow, Offset(60f, 116f)) { fill(Otto.shadow, Color.Black, alpha = 0.12f) }
+        if (whole) part(CharacterPart.Shadow, Offset(60f, 116f)) { fill(Otto.shadow, Color.Black, alpha = 0.12f) }
         // The outer tentacles are Otto's arms; the three between them stand.
         part(CharacterPart.Body, Offset(60f, 112f)) {
-            part(CharacterPart.ArmLeft, Offset(36f, 84f)) {
-                stroke(Otto.armLeft, Otto.tentacle, 9f, cap = StrokeCap.Round)
-                fill(Otto.armTipLeft, Otto.tip, alpha = 0.9f)
-            }
-            part(CharacterPart.ArmRight, Offset(84f, 84f)) {
-                stroke(Otto.armRight, Otto.tentacle, 9f, cap = StrokeCap.Round)
-                fill(Otto.armTipRight, Otto.tip, alpha = 0.9f)
-            }
-            part(CharacterPart.Feet, Offset(60f, 112f)) {
-                Otto.legs.forEach { stroke(it, Otto.tentacle, 9f, cap = StrokeCap.Round) }
-                Otto.legTips.forEach { fill(it, Otto.tip, alpha = 0.9f) }
+            if (whole) {
+                part(CharacterPart.ArmLeft, Offset(36f, 84f)) {
+                    stroke(Otto.armLeft, Otto.tentacle, 9f, cap = StrokeCap.Round)
+                    fill(Otto.armTipLeft, Otto.tip, alpha = 0.9f)
+                }
+                part(CharacterPart.ArmRight, Offset(84f, 84f)) {
+                    stroke(Otto.armRight, Otto.tentacle, 9f, cap = StrokeCap.Round)
+                    fill(Otto.armTipRight, Otto.tip, alpha = 0.9f)
+                }
+                part(CharacterPart.Feet, Offset(60f, 112f)) {
+                    Otto.legs.forEach { stroke(it, Otto.tentacle, 9f, cap = StrokeCap.Round) }
+                    Otto.legTips.forEach { fill(it, Otto.tip, alpha = 0.9f) }
+                }
             }
             part(CharacterPart.Head, Offset(60f, 90f)) {
                 fill(Otto.head, Otto.skin)
-                beltPiece(Otto.belt, edge = 0.16f, width = 1.2f)
-                beltPiece(Otto.tieLeft, edge = 0.16f)
-                beltPiece(Otto.tieRight, edge = 0.16f)
-                beltPiece(Otto.knot, edge = 0.2f)
+                if (whole) {
+                    beltPiece(Otto.belt, edge = 0.16f, width = 1.2f)
+                    beltPiece(Otto.tieLeft, edge = 0.16f)
+                    beltPiece(Otto.tieRight, edge = 0.16f)
+                    beltPiece(Otto.knot, edge = 0.2f)
+                }
                 fill(Otto.shine, Color.White, alpha = 0.42f)
                 Otto.spots.forEach { fill(it, Otto.spot) }
                 face()
@@ -232,6 +239,19 @@ internal class BuddyDrawing(
         }
     }
 }
+
+/**
+ * Main's `FACE_BOX`: the head's square over every face and pair of glasses, with 2 units to spare,
+ * in the drawing's units.
+ */
+private val BuddyKind.faceBox: Rect
+    get() =
+        when (this) {
+            BuddyKind.Beep -> Rect(Offset(7f, -5.5f), Size(106f, 106f))
+            BuddyKind.Noodle -> Rect(Offset(10f, 9.6f), Size(100f, 100f))
+            BuddyKind.Otto -> Rect(Offset(14f, 8f), Size(92f, 92f))
+            BuddyKind.Zu -> Rect(Offset(13.5f, -1.75f), Size(93f, 93f))
+        }
 
 /** `Ink` frames the body by its drawn outline ([bodyInk]), where it stands alone and nothing may move when it changes. */
 enum class BuddyCrop { Whole, Face, Ink }
@@ -299,8 +319,9 @@ private class Light(
     y: Float,
     haloRadius: Float,
     glow: Float,
+    grows: Boolean,
 ) {
-    private val reach = haloRadius * (1 + HALO_GROWTH * glow)
+    private val reach = if (grows) haloRadius * (1 + HALO_GROWTH * glow) else haloRadius
     val halo: Path? = if (glow > 0f) circle(x, y, reach) else null
     val haloFill: Brush =
         Brush.radialGradient(
@@ -444,6 +465,4 @@ private val DimLight = Color(0xFFC9A37E)
 private val Ground = Offset(60f, 116f)
 private val FacePivot = Offset(60f, 64f)
 internal const val BUDDY_VIEW_SIZE = 120f
-private const val FACE_CENTER_Y = 60f
-private const val FACE_SIZE = 96f
 private const val HALO_GROWTH = 1.5f

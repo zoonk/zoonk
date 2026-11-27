@@ -78,6 +78,11 @@ struct ActivityStepView: View {
         if !context.isLocked {
           context.select(value.map(LessonAnswer.activity))
         }
+      },
+      complete: { value in
+        if !context.isLocked {
+          context.complete(.activity(value))
+        }
       }, baseMap: content.baseMap, roundedAnswer: content.roundedAnswer)
 
     // As on main, nothing on the canvas answers (taps, menus, number keys) until a required

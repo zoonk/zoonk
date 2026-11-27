@@ -27,6 +27,7 @@ fun hidesAskedTotal(
  * While [isLocked] (being checked or checked) the player takes no new answer, so a canvas changes nothing.
  * [baseMap] is a map activity's base map as the API draws it, with its places already projected.
  * [takeNumberKeys] gives the screen's number keys to a canvas whose keys act on its own state.
+ * [onComplete] gives an answer and checks it at once, for a canvas whose last move finishes it, as a match board's last pair.
  */
 data class ActivityProps(
     val content: ActivityStepContent,
@@ -41,6 +42,7 @@ data class ActivityProps(
     val baseMap: ActivityBaseMap? = null,
     val takeNumberKeys: (((Int) -> Boolean)?) -> Unit = {},
     val roundedAnswer: ActivityRoundedAnswer? = null,
+    val onComplete: (ActivityAnswer) -> Unit = onAnswerChange,
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked
     val isExploring: Boolean get() = phase == ActivityPhase.Explore
@@ -53,8 +55,9 @@ data class ActivityBadge(
 
 /**
  * Main's `ActivityRenderer`: a template's canvas, its badge, whether its check comes before the
- * canvas, whether it shows its data's source, and what a number key picks on its canvas (picking
- * the current answer again clears it). The frame draws everything else.
+ * canvas, whether it shows its data's source, what a number key picks on its canvas (picking
+ * the current answer again clears it), and what its [feedback] adds under the verdict. The frame
+ * draws everything else.
  */
 class ActivityRenderer(
     val badge: (ActivityStepContent) -> ActivityBadge?,
@@ -62,6 +65,7 @@ class ActivityRenderer(
     val checkFirst: (ActivityStepContent) -> Boolean = { false },
     val showsData: (ActivityStepContent) -> Boolean = { false },
     val keyPick: ((ActivityStepContent, Int) -> ActivityAnswer?)? = null,
+    val feedback: (@Composable (ActivityStepContent, ActivityAnswer?) -> Unit)? = null,
 )
 
 internal fun canvasOwnsAnswer(template: String): Boolean = template == "guessReveal"

@@ -28880,6 +28880,31 @@
               "maximum": 9007199254740991
             },
             "description": "For each left entry, the index of the right entry it was matched to"
+          },
+          "misses": {
+            "description": "Wrong pairs tried in order, using the indexes of the shown columns",
+            "maxItems": 32,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "left": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "right": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "left",
+                "right"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -40210,6 +40235,16 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "key": {
+                  "nullable": true,
+                  "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
                 "left": {
                   "nullable": true,
                   "description": "Match pairs: the left column",
@@ -40316,6 +40351,7 @@
                 "format",
                 "image",
                 "itemId",
+                "key",
                 "left",
                 "mistakeId",
                 "options",
@@ -48014,6 +48050,16 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
+              "key": {
+                "nullable": true,
+                "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
               "left": {
                 "nullable": true,
                 "description": "Match pairs: the left column",
@@ -48085,6 +48131,7 @@
               "format",
               "image",
               "itemId",
+              "key",
               "left",
               "options",
               "question",
@@ -87546,6 +87593,13 @@
                   "matchPairs"
                 ]
               },
+              "key": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              },
               "left": {
                 "type": "array",
                 "items": {
@@ -87576,6 +87630,7 @@
               "skillId",
               "visual",
               "format",
+              "key",
               "left",
               "options",
               "question",
@@ -89903,6 +89958,13 @@
             },
             "description": "Every chapter of the plan in this subject: the ones done, then in the order the plan studies them next"
           },
+          "covers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What it would teach, by the names of its skills in the plan's graph, in the graph's order. Set only while it's out of the plan (`notPlannedReason`) and has no `topics` or `chapters`; empty otherwise"
+          },
           "displayWeight": {
             "nullable": true,
             "description": "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; an assumed weight is an estimate, not a number the notice states. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
@@ -90106,6 +90168,7 @@
         "required": [
           "areas",
           "chapters",
+          "covers",
           "displayWeight",
           "group",
           "imageUrl",
@@ -95096,6 +95159,16 @@
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
+                      "key": {
+                        "nullable": true,
+                        "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        }
+                      },
                       "left": {
                         "nullable": true,
                         "description": "Match pairs: the left column",
@@ -95184,6 +95257,7 @@
                       "format",
                       "image",
                       "itemId",
+                      "key",
                       "left",
                       "options",
                       "question",
@@ -103977,6 +104051,16 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
+                "key": {
+                  "nullable": true,
+                  "description": "For a learning match, the shown right index for each left entry; null otherwise",
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
                 "left": {
                   "nullable": true,
                   "description": "Match pairs: the left column",
@@ -104083,6 +104167,7 @@
                 "format",
                 "image",
                 "itemId",
+                "key",
                 "left",
                 "mistakeId",
                 "options",

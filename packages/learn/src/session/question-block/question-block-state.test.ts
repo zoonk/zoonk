@@ -17,6 +17,7 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     format: "multipleChoice" as const,
     image: null,
     itemId,
+    key: null,
     left: null,
     mistakeId: null,
     options: ["A", "B"],

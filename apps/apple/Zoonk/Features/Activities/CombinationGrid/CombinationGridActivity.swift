@@ -290,7 +290,7 @@ private struct CombinationGridCanvas: View {
               .frame(maxWidth: .infinity)
             }
             .buttonStyle(ActivityTileStyle(mark: .plain))
-            .modifier(ActivityNumberKey(index: index))
+            .modifier(PickKey(index: index))
           }
         }
       }

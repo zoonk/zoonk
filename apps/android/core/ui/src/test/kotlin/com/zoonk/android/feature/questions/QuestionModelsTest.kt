@@ -16,6 +16,7 @@ class QuestionModelsTest {
                 Answer.Choices(listOf(0, 3)) to """{"selectedIndexes":[0,3]}""",
                 Answer.TrueFalse(false) to """{"isTrue":false}""",
                 Answer.Matches(listOf(1, 0)) to """{"matches":[1,0]}""",
+                Answer.Matches(listOf(1, 0), listOf(MatchTry(0, 0))) to """{"matches":[1,0],"misses":[{"left":0,"right":0}]}""",
                 Answer.Numeric(2.5) to """{"number":2.5}""",
                 Answer.Order(listOf(2, 0, 1)) to """{"order":[2,0,1]}""",
                 Answer.Text("Na") to """{"text":"Na"}""",

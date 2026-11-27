@@ -1,6 +1,7 @@
 "use client";
 
 import { MainActionSlotProvider } from "@zoonk/learn/main-action-slot";
+import { OwnFeedbackReveal } from "@zoonk/learn/reveal-when-shown";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
@@ -219,7 +220,9 @@ function LessonPlayerFrame() {
         tabIndex={-1}
       >
         <div className="flex min-h-full flex-col">
-          <LessonContent />
+          <OwnFeedbackReveal>
+            <LessonContent />
+          </OwnFeedbackReveal>
         </div>
       </main>
 

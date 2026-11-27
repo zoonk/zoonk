@@ -29,6 +29,10 @@
   "questions_left_blank": "5edd9588baf22604dbae2527694ae511e86adf74935ffb77e49332fc2e35b2ed",
   "questions_mark_correct": "e72879bb7442482be03d30a09fffc1b258f4daddd018d01d88fc187788847469",
   "questions_mark_wrong": "c6343e2a052d1cfa61c90dbf1ed00e7505a44555bbbd91e50d8a451268426896",
+  "questions_match_first_tries": "08a4d682db1a5ec208e38db9ed785ce252fc9fc13ee1da474d9d098aae57b593",
+  "questions_match_not_a_pair": "4c9a91ebfb2eccfd16330f0afa2ae5a5b570949afff289c4f1a5aa001ea5c909",
+  "questions_match_paired": "347b588660b7c6b2ddaf200f94ec600c6886350d42814e8613a97fd40ca8be37",
+  "questions_match_unpaired": "16a86435f79c0cc6ecfd8b3daee7303887d6548687ed22d2e6cc92f38cef02aa",
   "questions_matched_with": "256e1cff86b2858ccaa312b7c78ef3f68728d00564cc96644e967c11190c23db",
   "questions_mistake_fixed": "cd5460a3f4fe549052ed9d0a9c456ae159294f5156ef4457e6f1bf702e4eeb58",
   "questions_mistakes_fixed": "dd935979acfeac761f921a8a20c7b70c1809d9eb0de4415e40c7d70576d69c5b",
@@ -73,6 +77,11 @@
     <string name="questions_place_wrong">%1$d番目、位置が違います</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s、%2$sとペアになっています</string>
+    <string name="questions_match_paired">「%1$s」と「%2$s」を組み合わせました。組み合わせたペア：%4$d組中%3$d組。</string>
+    <string name="questions_match_not_a_pair">%1$sと%2$sは組み合わせが違います。</string>
+    <string name="questions_match_unpaired">%1$sと%2$sのペアを解除しました。</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">最初に組み合わせたカード：</string>
     <string name="questions_your_answer">選んだ答え</string>
     <string name="questions_mark_correct">正解</string>
     <string name="questions_mark_wrong">不正解</string>

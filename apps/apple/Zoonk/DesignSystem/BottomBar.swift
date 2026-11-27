@@ -5,10 +5,9 @@ extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
   /// `safeAreaBar` on the page's background under a hairline, so content scrolls out of sight under
   /// it and never shows through its see-through outline buttons. Its buttons are 44pt,
-  /// 8pt apart in one row, the main action last (or followed only by a task's Ask) and taking the
-  /// room the others leave; when they don't fit one row, or at an accessibility text size, they
-  /// stack, each as wide as the bar. On a wide bar the row sits at the bar's end, the main action at
-  /// its own width instead. Its one line (`note`) floats over the screen just
+  /// 8pt apart, the main action last (or followed only by a task's Ask) and taking the room the
+  /// others leave on its line (`BarLines`). In a wide window (`WideBar`) the row sits at the bar's
+  /// end, the main action at its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
@@ -24,12 +23,12 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
 
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.isTaskScreen) private var isTask
+  @Environment(\.windowWidth) private var windowWidth
   @State private var columns: [ColumnMargins] = []
-  @State private var width: CGFloat = 0
   @State private var listMargins: NSDirectionalEdgeInsets?
 
   private var column: ColumnMargins? { columns.count == 1 ? columns.first : nil }
-  private var isWide: Bool { width >= WideBar.width && !isStacked }
+  private var isWide: Bool { WideBar.isWide(windowWidth: windowWidth, isStacked: isStacked) }
 
   func body(content: Content) -> some View {
     content
@@ -50,27 +49,24 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
   }
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
-    Group {
-      if isWide || isStacked || buttons.count < 2 {
+    // At accessibility sizes a bar stacks its buttons, except beside a way back, which keeps its row
+    // with the main action under "I don't know yet", as main's does.
+    let stacks = isStacked && !buttons.contains { $0.containerValues.isBarWayBack }
+
+    return Group {
+      if isWide || stacks || buttons.count < 2 {
         AccessibilityStack(spacing: 8) {
           buttons
         }
         // A lone button on a phone takes the whole row, as the main action does beside others.
         .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
       } else {
-        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht") sits on
-        // its own line above the main action, and is read first, as drawn.
-        ViewThatFits(in: .horizontal) {
-          HStack(spacing: 8) {
-            actions
-          }
-          .buttonSizing(.automatic)
-
-          VStack(spacing: 8) {
-            actions
-          }
-          .buttonSizing(.flexible)
+        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht"), or
+        // any beside a way back, sits on its own line above the main action.
+        BarLines(spacing: 8) {
+          actions
         }
+        .buttonSizing(.flexible)
       }
     }
     .controlSize(.large)
@@ -78,11 +74,6 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
-    .onGeometryChange(for: CGFloat.self) {
-      $0.size.width
-    } action: {
-      width = $0
-    }
     .barColumn(column, listMargins: listMargins, isTask: isTask)
     .scenePadding(.vertical)
     .background(ListMarginsReader { listMargins = $0 })
@@ -140,14 +131,38 @@ extension View {
 
 }
 
-/// A bar from main's `sm` (less the scene's margins) puts its main action at its end, at least
-/// this wide.
+/// Main's bar from its `lg`, a window at least that wide: the main action sits at the bar's end, at
+/// least `mainActionMinWidth` wide. Narrower, as any iPad in portrait (`PaneSpace`), the bar is a
+/// phone's, with "I don't know yet" above the way back.
 enum WideBar {
-  static let width: CGFloat = 600
   static let mainActionMinWidth: CGFloat = 160
+
+  static func isWide(windowWidth: CGFloat, isStacked: Bool) -> Bool {
+    windowWidth >= PaneSpace.minimumPagesWidth && !isStacked
+  }
+}
+
+extension View {
+  /// Measures the window for the bars in it (`windowWidth`): on the window's root, so a sheet's bar
+  /// follows the window as main's follows the viewport.
+  func measuresWindowWidth() -> some View {
+    modifier(WindowWidthReader())
+  }
+}
+
+private struct WindowWidthReader: ViewModifier {
+  @State private var width: CGFloat = 0
+
+  func body(content: Content) -> some View {
+    content
+      .environment(\.windowWidth, width)
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { width = $0 }
+  }
 }
 
 extension EnvironmentValues {
+  /// The window's width, as main's breakpoints read the viewport's.
+  @Entry var windowWidth: CGFloat = 0
   /// In a narrow bottom bar, the main action takes the room its row's other buttons
   /// leave.
   @Entry var mainActionFillsRow = false

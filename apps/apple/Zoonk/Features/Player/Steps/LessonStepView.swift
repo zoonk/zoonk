@@ -6,6 +6,8 @@ enum LessonStepPart {
 }
 
 struct LessonStepView: View {
+  @Environment(\.activityRenderers) private var activityRenderers
+
   let step: LessonStep
   let state: LessonPlayerState
   let store: LessonPlayerStore
@@ -56,11 +58,16 @@ struct LessonStepView: View {
       select: { store.select($0) },
       resolveSpoken: { store.resolveSpoken($0, stepId: step.id) },
       check: state.phase == .playing
-        && step.canCheck(state.answers[step.id], openedAt: store.openedAt) ? check : nil)
+        && step.canCheck(state.answers[step.id], openedAt: store.openedAt) ? check : nil,
+      complete: { answer in
+        store.select(answer)
+        check()
+      })
   }
 
   private func check() {
-    Task { await store.check() }
+    let grade = activityRenderers.grade(for: step)
+    Task { await store.check(gradeActivity: grade) }
   }
 }
 
@@ -116,6 +123,9 @@ struct LessonStepContext {
   let resolveSpoken: @MainActor (SpokenAnswerVerdict) -> Void
   /// The main button's check, or nil while that button is disabled.
   let check: (@MainActor () -> Void)?
+  /// Selects a finished answer and checks it once, as a match board does on its last pair. A
+  /// failed check waits for the learner's Retry.
+  let complete: @MainActor (LessonAnswer) -> Void
 }
 
 private struct HookStepView: View {
@@ -230,7 +240,7 @@ private struct ExplanationStepView: View {
         renderer.canvas(
           ActivityCanvasContext(
             template: explore.template, payload: explore.payload, check: nil, phase: .explore,
-            answer: nil, setAnswer: { _ in }, baseMap: explore.baseMap))
+            answer: nil, setAnswer: { _ in }, complete: { _ in }, baseMap: explore.baseMap))
 
         ActivityDataNote(data: explore.data)
       }

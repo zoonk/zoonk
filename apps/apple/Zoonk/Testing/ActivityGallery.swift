@@ -170,7 +170,7 @@
           renderer.canvas(
             ActivityCanvasContext(
               template: content.template, payload: content.payload, check: nil, phase: .explore,
-              answer: nil, setAnswer: { _ in }, baseMap: content.baseMap))
+              answer: nil, setAnswer: { _ in }, complete: { _ in }, baseMap: content.baseMap))
         }
       } else {
         ActivityStepView(
@@ -178,7 +178,8 @@
           context: LessonStepContext(
             lessonId: "gallery", answer: answer, result: result,
             isLocked: result != nil, waitsForPicture: false,
-            select: { answer = $0 }, resolveSpoken: { _ in }, check: nil),
+            select: { answer = $0 }, resolveSpoken: { _ in }, check: nil,
+            complete: { answer = $0 }),
           part: part)
       }
     }

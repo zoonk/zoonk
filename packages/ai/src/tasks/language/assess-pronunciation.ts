@@ -22,6 +22,13 @@ const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
  */
 const defaultModel = "google/gemini-3.8-flash";
 
+/**
+ * With the transcript as a second listener's guess, low reasoning judged 54 of 54 recordings whose
+ * transcript differed from the sentence and 32 of 34 labeled clips (25 Nov 2026); the default
+ * reasoning without it judged 52 and 27, at twice the cost and wait (p50 9.7 s against 4.9 s).
+ */
+const defaultReasoning: Reasoning = "low";
+
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before judging each word. */
 const schema = z.object({
   transcript: z.string(),
@@ -49,6 +56,7 @@ export type AssessPronunciationParams = {
   language: string;
   learnerLanguage?: string;
   romanization?: string | null;
+  transcriberHeard?: string;
   model?: string;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
@@ -60,21 +68,24 @@ function buildUserPrompt({
   language,
   learnerLanguage,
   romanization,
+  transcriberHeard,
 }: {
   expectedWords: readonly string[];
   expectedText: string;
   language: string;
   learnerLanguage?: string;
   romanization?: string | null;
+  transcriberHeard?: string;
 }): string {
   const learnerLine = learnerLanguage
     ? `LEARNER_LANGUAGE: ${getPromptLanguageName({ language: learnerLanguage })}\n`
     : "";
 
   const reading = romanization ? `\nEXPECTED_PRONUNCIATION: ${romanization}` : "";
+  const transcriber = transcriberHeard ? `\nTRANSCRIBER_HEARD: ${transcriberHeard}` : "";
 
   return `LANGUAGE: ${getPromptLanguageName({ language })}
-${learnerLine}EXPECTED_SENTENCE: ${expectedText}${reading}
+${learnerLine}EXPECTED_SENTENCE: ${expectedText}${reading}${transcriber}
 WORDS:
 ${expectedWords.map((word, index) => `${index + 1}. ${word}`).join("\n")}`;
 }
@@ -92,7 +103,8 @@ export async function assessPronunciation({
   mediaType,
   model = defaultModel,
   romanization,
-  reasoning,
+  reasoning = defaultReasoning,
+  transcriberHeard,
 }: AssessPronunciationParams) {
   const expectedWords = splitExpectedWords(expectedText);
 
@@ -102,6 +114,7 @@ export async function assessPronunciation({
     language,
     learnerLanguage,
     romanization,
+    transcriberHeard,
   });
 
   const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });

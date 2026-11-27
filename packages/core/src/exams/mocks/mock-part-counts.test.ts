@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getMockFormatMix } from "./mock-format-mix";
 import { planOptionMock } from "./mock-option-plan";
-import { listMockOptions } from "./mock-options";
-import { type MockCandidate } from "./mock-plan";
+import { getSubjectShares, listMockOptions } from "./mock-options";
+import { type MockCandidate, countPlannedQuestions, planMock } from "./mock-plan";
+import { getMockQuestionsShortfall } from "./mock-shortfall";
 import { getMockSizeSource } from "./mock-size-source";
 
 const citation = { passage: "From the notice.", sourceId: "notice" };
@@ -164,5 +166,113 @@ describe("paper counts", () => {
 
     expect(countByTest(structure)).toStrictEqual({ P1: 40, P2: 40, P3: 0 });
     expect(countByTest(structure, true)).toStrictEqual({ P1: 20, P2: 20, P3: 0 });
+  });
+});
+
+/** A weekly paper from an empty bank: the questions written in one pass, then what the paper seats. */
+function seatAfterOneWrite(
+  structure: ExamStructure,
+  areas = structure.subjects.map(({ name }) => name),
+): number {
+  const candidates: MockCandidate[] = [];
+
+  const assemble = () =>
+    planMock({
+      adaptive: false,
+      candidates,
+      fullLength: false,
+      mockNumber: 0,
+      structure,
+      subjectShares: getSubjectShares(structure),
+    });
+
+  const writes = getMockQuestionsShortfall({
+    candidates,
+    mix: getMockFormatMix(structure),
+    option: { questions: (structure.mock?.totalQuestions ?? 0) / 2 },
+    plan: assemble(),
+    skills: areas.map((area) => ({ area, id: area })),
+    structure,
+  });
+
+  candidates.push(
+    ...writes.flatMap(({ questionsPerSkill, skillIds }) =>
+      skillIds.flatMap((skillId) =>
+        Array.from({ length: questionsPerSkill }, (_, index) => ({
+          answered: false,
+          area: skillId,
+          difficulty: null,
+          format: "choice",
+          itemFormat: "multipleChoice" as const,
+          itemId: `${skillId}#${index}`,
+          skillId,
+        })),
+      ),
+    ),
+  );
+
+  return countPlannedQuestions(assemble());
+}
+
+describe("writing a weekly paper's questions", () => {
+  it("writes what each test's subjects seat when the tests' counts don't split evenly", () => {
+    const structure = structureWith({
+      scoring: { parts: [part("P1", 40), part("P2", 40), part("P3", 90)] },
+    });
+
+    structure.subjects = structure.subjects.filter(
+      (item) => item.group === "P3" || !["Legislação", "Economia", "Finanças"].includes(item.name),
+    );
+
+    expect(seatAfterOneWrite(structure)).toBe(85);
+  });
+
+  it("writes the rest of the paper for subjects the notice doesn't count", () => {
+    const structure = structureWith({
+      questions: (name) => (name === "Língua Portuguesa" ? 10 : null),
+      scoring: {},
+    });
+
+    if (structure.mock) {
+      structure.mock.sections = [{ ...structure.mock.sections[0]!, questions: 20 }];
+      structure.mock.totalQuestions = 20;
+    }
+
+    structure.subjects = structure.subjects.slice(0, 2);
+
+    expect(seatAfterOneWrite(structure)).toBe(10);
+  });
+
+  it("writes a whole paper when the notice counts no subject's questions", () => {
+    expect(seatAfterOneWrite(structureWith({ scoring: {} }))).toBe(85);
+  });
+
+  it("writes what each section seats when the notice lists its subjects in another order", () => {
+    const papers = ["Mathematics", "History"];
+
+    const structure: ExamStructure = {
+      formats: [],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: papers.map((name) => ({
+          day: null,
+          kind: "objective" as const,
+          minutes: 90,
+          name,
+          questions: 45,
+        })),
+        timeLimitMinutes: 180,
+        totalQuestions: 90,
+      },
+      rules: [],
+      subjects: papers
+        .toReversed()
+        .map((name) => ({ citation, name, questions: 45, topics: [], weight: null })),
+    };
+
+    expect(seatAfterOneWrite(structure, papers)).toBe(45);
   });
 });

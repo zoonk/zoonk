@@ -164,13 +164,37 @@ final class WritingResultDecodingTests: XCTestCase {
       SyllabusSubject.self,
       """
       {
-        "areas":["Writing"],"chapters":[],"group":"Written test (P2)","key":"writing","lessonsDone":0,
+        "areas":["Writing"],"chapters":[],"covers":[],"group":"Written test (P2)","key":"writing",
+        "lessonsDone":0,
         "lessonsKnown":0,"lessonsTotal":1,"name":"Writing","sharedWith":[],"shortName":"Writing",
         "source":"notice","topics":[],"writtenPart":"Written test"
       }
       """)
 
     XCTAssertEqual(practice.subject(for: subject)?.points.name, "Written test")
+  }
+
+  func testOptionalStudyInAWrittenPartsAreaIsNotThatPart() throws {
+    let practice = try decode(
+      GoalPlan.WrittenPractice.self,
+      """
+      {
+        "cadence":"weekly","parts":["Essay"],"subjects":[{
+          "answers":[],"trend":[],"points":{"name":"Essay","max":100,"tasks":[]}
+        }]
+      }
+      """)
+    let optional = try decode(
+      SyllabusSubject.self,
+      """
+      {
+        "areas":["Essay"],"chapters":[],"covers":[],"extra":true,"key":"essay-2",
+        "lessonsDone":0,"lessonsKnown":0,"lessonsTotal":1,"name":"Essay","sharedWith":[],
+        "shortName":"Essay","source":"plan","topics":[]
+      }
+      """)
+
+    XCTAssertNil(practice.subject(for: optional))
   }
 
   func testALevelsResultHasNoTotal() throws {

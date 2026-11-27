@@ -172,17 +172,13 @@
   "onboarding_placement_answer_failed": "dc315ea7e40da9cd12686d3981efe28490609e16dffbc6466d0f9f27495b01e3",
   "onboarding_placement_confirm": "1208dd241d8e4b37ec44a7a575c298eef6250fb55827791c2890355bfa005dcd",
   "onboarding_placement_dont_know": "b03bea579c0b9952514ca26cc118a8265db2f32a6223e47c61d058c1da0fbd14",
-  "onboarding_placement_false": "fa34c8a6a37680452aae488671acf1436a5860c97ad2fac8923cf23911605dff",
   "onboarding_placement_progress": "50c5851803e6e221f905ab08c0faeb028c01be2ad216dd3fb431d8625c8c3178",
   "onboarding_placement_question_number": "667c578cf73c18867dd4d7195f1da2709c636278e1537cec24ce0ea6bf86766f",
   "onboarding_placement_ready": "1cecb0c2f019fb7b709dce0b3e1c7a5e5bef6c17bf60997a06ce2c872fc66831",
-  "onboarding_placement_right": "fc74d7569abb1e7a0f762555d6e7db71ba8c9c1f87666d993911e3027443f90e",
   "onboarding_placement_stop": "d2a84c4e3ba085a1a3fcfee4112e6fa73cab22047c71086d26899d2a7bee812e",
-  "onboarding_placement_true": "fad82db82db2575a949342914f22ba64571a47479d3cc686c7cca48c44218d81",
   "onboarding_placement_unavailable_title": "9612f1ee126013bab07054f87b7fc84e3750778f21b58f37d01606fd4bf639d7",
   "onboarding_placement_waiting_material": "1550062cdc191bd064cea066eac8dd786ba4400b1167ca7c321be298d83ad0fd",
   "onboarding_placement_waiting_time": "974fdebe3b4d8693011d4c37ef110b4ce76c3266c984f25d1ec8c63c87b91168",
-  "onboarding_placement_wrong": "6806dd00064f57ef1ece1e0ad1f6448f0be3268bdc626495329bb48388f5b911",
   "onboarding_plan_answers_saved": "f2ab23f1dbc700f0ec16476c270e53111ef80807740b233a55d132c63642b044",
   "onboarding_plan_not_started": "694edbfdec83227aca6fc05dbeaabefb22b0fb225e4906e590b5e9ec3d056287",
   "onboarding_plan_ready_goal": "4d1b6cf7d1b4825bd29c84c7e47f8ae6a0f9836a42b2e7c394f142ebc1173b10",
@@ -585,13 +581,6 @@
     <string name="onboarding_placement_confirm">Confirmar</string>
     <string name="onboarding_placement_stop">Parar e usar minhas respostas</string>
     <string name="onboarding_placement_answer_failed">Não deu certo. Suas respostas foram mantidas.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">Verdadeiro</string>
-    <string name="onboarding_placement_false">Falso</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">Certo</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">Errado</string>
     <string name="onboarding_placement_unavailable_title">A gente vê o que você já sabe nos seus primeiros dias</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">Ainda não conhece esse alfabeto? Pule o teste. Você aprende a ler na primeira aula.</string>

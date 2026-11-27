@@ -172,17 +172,13 @@
   "onboarding_placement_answer_failed": "2808bf12c12da45bea49f19931e82b8b3bcb0475d5e707e7fbbf09ff34f4c7ee",
   "onboarding_placement_confirm": "cfb698156ee7a9af3eb6e58e0257743a3f5a5b20f109be1ca0ac473a17bb902f",
   "onboarding_placement_dont_know": "58bbfe8d7ea000a82977cf708e10a6a678641224019e0b52ec728a2b13fbd377",
-  "onboarding_placement_false": "44b8a8d35c4e1b0238938d43ec1ea41e10c977df2bb4e4891b8ffc62d527f617",
   "onboarding_placement_progress": "0ede62889428674da1dcb5071327961525284e27850f5b594456f1309691b7f4",
   "onboarding_placement_question_number": "0244ad899e4231a04fb7ad16a4792e1d12cf52c742f9ac2b319d44370358932f",
   "onboarding_placement_ready": "cde26a55f41ce9f8ddadf3962e4072d710f834cc60803d909064e37da537905f",
-  "onboarding_placement_right": "74455806749c008c649b1b9db826b74ac9885ceac3221638b023e660ac0673fe",
   "onboarding_placement_stop": "dee28e807c746242c378454c59b01de776ef328dfc43a56c83f224edaedfe95e",
-  "onboarding_placement_true": "16af2dbe9cbfa732b57c0254dc7dd79181c68e689831cd827beaa49528778b10",
   "onboarding_placement_unavailable_title": "6a1d6ec8151f541c42941baa1e48267c48ba0bcf2736ab296b4dd216d3bd4f99",
   "onboarding_placement_waiting_material": "df22a2477a012ac1f288032b2c6e071597109624031eb420c6e6227aa45f0a2e",
   "onboarding_placement_waiting_time": "9e9a2a5de46c219086e517f5feeb3f5f8df16244c36d13e99eea7cf90aac3c95",
-  "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
   "onboarding_plan_answers_saved": "3e850aff7c53a5910893dd6877f66ad063448733c504ca1d429147140084237a",
   "onboarding_plan_not_started": "a56fda34d86aa7ab10acc862fd3a3b2dd5e263492eb3c6d578f0c46326ab9610",
   "onboarding_plan_ready_goal": "22fe08f81a24a1ac819cf1a84b3884d24448660252a04d7a5756c9ce2c57d1dd",
@@ -583,13 +579,6 @@
     <string name="onboarding_placement_confirm">Onayla</string>
     <string name="onboarding_placement_stop">Durdur ve cevaplarımı kullan</string>
     <string name="onboarding_placement_answer_failed">Gönderilemedi. Cevapların saklanıyor.</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">Doğru</string>
-    <string name="onboarding_placement_false">Yanlış</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">Doğru</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">Yanlış</string>
     <string name="onboarding_placement_unavailable_title">İlk birkaç gününde neler bildiğini göreceğiz</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">Alfabesini bilmiyor musun? Testi atla. İlk dersinde okumayı öğreneceksin.</string>

@@ -1,6 +1,7 @@
 import { pt } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedCourse, type SeedItem } from "../types";
+import { englishLevelTest } from "./english-level-test";
 import { englishSkills } from "./english-skills";
 import { englishUnits } from "./english-units";
 
@@ -95,6 +96,7 @@ export const englishCourse: SeedCourse = {
   items: englishItems,
   key: "english",
   languages: ["pt"],
+  levelTest: englishLevelTest,
   sentences: [
     { text: "How much is the rent?" },
     { text: "Are utilities included?" },

@@ -1642,26 +1642,6 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "ジョン・スノウの1854年の地図をもとに簡略化した街路図です。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "この2枚はペアではありません。"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "HfJhT9"
-msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
-msgstr "{left}と{right}がペアになりました。{matched, plural, other {#組のペアができました（全{total}組）。}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "5sU5Ih"
-msgid "{left} and {right} don't go together."
-msgstr "{left}と{right}はペアではありません。"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "LbHKlv"
-msgid "{text}, matched"
-msgstr "{text}、ペアになりました"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "ペアにするカード"
@@ -1670,16 +1650,6 @@ msgstr "ペアにするカード"
 msgctxt "jih4mf"
 msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "カードが2列に並んでいます。左右の列から1枚ずつ選んで、ペアにします。{matched, plural, other {#組のペアができました（全{total}組）。}}"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "rnH_6_"
-msgid "<left></left> goes with <right></right>, not <guess></guess>."
-msgstr "<left></left>と組になるのは<right></right>で、<guess></guess>ではありません。"
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "kzygtu"
-msgid "Missed on the first try"
-msgstr "1回目に間違えた組み合わせ"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
@@ -2835,20 +2805,10 @@ msgctxt "wCy_Tc"
 msgid "Translate"
 msgstr "訳してください"
 
-#: src/components/match-board.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
-
 #: src/components/match-columns-step.tsx
 msgctxt "fV1MzK"
 msgid "Match the pairs."
 msgstr "ペアを作ってください。"
-
-#: src/components/match-columns-step.tsx
-msgctxt "ja1JDt"
-msgid "All pairs matched. Press Check to continue."
-msgstr "すべてのペアができました。続けるには「答え合わせ」を押してください。"
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/not-quite-lead.tsx
@@ -3663,6 +3623,11 @@ msgid "Ask {name} about your plan"
 msgstr "学習計画について{name}に質問する"
 
 #: src/questions/ask-tutor.tsx
+msgctxt "VgQdYo"
+msgid "Ask {name} about this module"
+msgstr "{name}にこのモジュールについて質問する"
+
+#: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "この科目について{name}に質問する"
@@ -3784,6 +3749,11 @@ msgid "Ask questions about your plan"
 msgstr "学習計画について質問できます"
 
 #: src/questions/lesson-question-panel.tsx
+msgctxt "eDiytU"
+msgid "Ask questions about this module"
+msgstr "このモジュールについて質問する"
+
+#: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
 msgstr "この科目について質問できます"
@@ -3827,6 +3797,11 @@ msgstr "この模試についての質問"
 msgctxt "Nx3NqL"
 msgid "Questions about your plan"
 msgstr "学習計画についての質問"
+
+#: src/questions/lesson-question-thread.tsx
+msgctxt "KCTpmM"
+msgid "Questions about this module"
+msgstr "このモジュールについての質問"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
@@ -3882,6 +3857,11 @@ msgstr "学習計画について"
 msgctxt "e0zkbG"
 msgid "About this part"
 msgstr "この部分について"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "このモジュールについて"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"
