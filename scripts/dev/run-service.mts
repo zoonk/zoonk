@@ -55,6 +55,9 @@ try {
       ...pnpmCommand.args,
       "run",
       appScript,
+      // Next builds the URLs its proxy sees on `localhost`; under another hostname, Main's
+      // locale rewrites count as external and redirect every English page to itself.
+      ...(serviceName === "mailbox" ? [] : ["--hostname", "localhost"]),
     ],
     command: pnpmCommand.command,
     currentDirectory,
