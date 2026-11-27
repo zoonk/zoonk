@@ -232,9 +232,13 @@ export async function finishLessonRun({
         userId,
       }));
 
-    const { languageGoals, planItemIds }: CompletedLessonItems = isReview
-      ? { languageGoals: [], planItemIds: [] }
-      : await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
+    const replaysOutsidePlan =
+      isReplay && block !== null && isOutsidePlanLesson(readBlockPayload(block));
+
+    const { languageGoals, planItemIds }: CompletedLessonItems =
+      secondTakeSkillId || replaysOutsidePlan
+        ? { languageGoals: [], planItemIds: [] }
+        : await completeLessonPlanItems(tx, { lessonId, now: completedAt, userId });
 
     await finishLessonChapters(tx, {
       eventId: run.id,
