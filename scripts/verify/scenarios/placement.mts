@@ -7,6 +7,7 @@ const ANA: Prerequisites["persona"] = { flags: ["--locale", "en"], name: "ana" }
 const SELECT_ALL = "[data-slot=answer-option-group][role=group]";
 const SELECT_ONE = "[data-slot=answer-option-group][role=radiogroup]";
 const MATCH = "[data-slot=match-board]";
+const ORDER = "[aria-roledescription=sortable]";
 
 /** A test's question, written by the seed, in the page that asks it; each start saves a sitting. */
 function question(scenario: Omit<Scenario, "anchors" | "sizes" | "writes">): Scenario {
@@ -38,8 +39,8 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     screen: "/placement-test",
   }),
   question({
-    evidence: [SELECT_ONE],
-    id: "placement.level-check.choice",
+    evidence: [ORDER],
+    id: "placement.level-check.order",
     prerequisites: { persona: PEDRO, state: "placement" },
     proof: "I don't know yet",
     reach: [{ click: "Continue" }, { click: "Start" }],
@@ -49,12 +50,12 @@ export const PLACEMENT_SCENARIOS: Scenario[] = [
     evidence: [MATCH],
     id: "placement.level-check.match",
     prerequisites: { persona: PEDRO, state: "placement" },
-    proof: "I don't know yet",
-    reach: [{ click: "Continue" }, { click: "Start" }, { click: "$20.12" }, { click: "Confirm" }],
+    proof: "Match each group to what a company owes it.",
+    reach: [{ click: "Continue" }, { click: "Start" }, { click: "I don't know yet" }],
     screen: "/today",
   }),
   question({
-    evidence: [SELECT_ONE],
+    evidence: [ORDER],
     id: "placement-test.question",
     prerequisites: { persona: PEDRO },
     proof: "I don't know yet",
