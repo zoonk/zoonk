@@ -149,6 +149,7 @@ private struct CurrentRow: ViewModifier {
         }
       }
       .listRowSeparator(isCurrent ? .hidden : .automatic)
+      .containerValue(\.hidesSeparatorsAround, isCurrent)
   }
 }
 

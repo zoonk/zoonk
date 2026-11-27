@@ -8,8 +8,8 @@ extension EnvironmentValues {
 extension ContainerValues {
   /// A block draws no hairline under this row, as the list draws none under a row that hides it.
   @Entry var hidesSeparatorBelow = false
-  /// A picked row: the hairlines touching it go clear, as the list hides them, so nothing moves
-  /// when the pick does.
+  /// A picked or current row: the hairlines touching it go clear, as the list hides them, so
+  /// nothing moves when the pick does.
   @Entry var hidesSeparatorsAround = false
 }
 
