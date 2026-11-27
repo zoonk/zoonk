@@ -18,12 +18,14 @@ class SavesTest {
     private var hold: CompletableDeferred<Unit>? = null
     private var answer: (Boolean) -> MutationResult<Boolean> = { MutationResult.Done(it) }
 
-    private fun TestScope.saves() =
-        Saves<String>(this, visit) { key, saved ->
-            sent += key to saved
-            hold?.await()
-            answer(saved)
-        }
+    private fun TestScope.saves(
+        queue: Saves<String> = Saves(this),
+        on: Visit = visit,
+    ) = queue.on(on) { key, saved ->
+        sent += key to saved
+        hold?.await()
+        answer(saved)
+    }
 
     @Test
     fun tapsWhileASaveIsOnItsWayEndOnTheLastOneAndKeepWhatTheServerStored() =
@@ -44,6 +46,29 @@ class SavesTest {
 
             assertEquals(listOf("cells" to true, "cells" to false), sent)
             assertEquals(false, saves.states.value["cells"])
+        }
+
+    @Test
+    fun aTapOnAnotherScreenShowsOnEveryScreenAndAFailureIsSaidWhereTheNewestTapWas() =
+        runTest(dispatcher) {
+            val queue = Saves<String>(this)
+            val list = saves(queue)
+            val player = saves(queue, Visit())
+            val first = CompletableDeferred<Unit>().also { hold = it }
+
+            list.set("cells", true)
+            advanceUntilIdle()
+            player.set("cells", false)
+            assertEquals(false, list.states.value["cells"])
+
+            answer = { MutationResult.Failed(ApiError.Network) }
+            first.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf("cells" to true), sent)
+            assertNull(list.states.value["cells"])
+            assertNull(list.failed.value)
+            assertEquals(SaveFailure.Save, player.failed.value)
         }
 
     @Test

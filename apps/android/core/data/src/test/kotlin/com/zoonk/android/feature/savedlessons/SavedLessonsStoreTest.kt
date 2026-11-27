@@ -15,7 +15,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -89,18 +88,41 @@ class SavedLessonsStoreTest {
         }
 
     @Test
+    fun aSaveAnsweredLateOnOneScreenNeverUndoesARemovalTheLearnerMadeOnAnother() =
+        runTest(dispatcher) {
+            val (saved, _) = stores()
+            val completedLessons = saved.saves(Visit(), goalId)
+            val player = saved.saves(Visit(), goalId)
+            val late = CompletableDeferred<Unit>().also { api.hold = it }
+
+            completedLessons.set(lessonId, true)
+            advanceUntilIdle()
+            api.hold = null
+            val runStarted = saved.runStarting(lessonId)
+            player.set(lessonId, false)
+            advanceUntilIdle()
+            late.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf(lessonId to true, lessonId to false), api.writes)
+            assertEquals(emptyList<UUID>(), api.lessons.map { it.lessonId })
+            assertEquals(false, runStarted(true))
+            assertEquals(false, player.states.value[lessonId])
+        }
+
+    @Test
     fun aSaveAskedOnAScreenThatWentStillReachesTheServerAndEveryListReadsIt() =
         runTest(dispatcher) {
             val (saved, _) = stores()
             val shown = launch { saved.list[goalId].shown.collect {} }
             advanceUntilIdle()
             val reads = api.reads
-            val screen = CoroutineScope(SupervisorJob() + dispatcher)
             val hold = CompletableDeferred<Unit>().also { api.hold = it }
+            val screen = Visit()
 
-            saved.saves(screen, Visit(), goalId).set(lessonId, true)
+            saved.saves(screen, goalId).set(lessonId, true)
             advanceUntilIdle()
-            screen.cancel()
+            screen.end()
             hold.complete(Unit)
             advanceUntilIdle()
 

@@ -13,7 +13,6 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
 import com.zoonk.api.models.SaveLessonInput
 import com.zoonk.api.models.SavedLessonList
-import kotlinx.coroutines.CoroutineScope
 import java.util.UUID
 
 interface SavedLessonsApi {
@@ -89,10 +88,11 @@ class SavedLessonsStore(
         return { saved -> if (taken[lessonId] == before) saved else lastTaken.getValue(lessonId) }
     }
 
-    /** A screen's saves of lessons for [goalId], the goal they're saved from, on its [visit]. */
+    private val queue = Saves<UUID>(cache.scope)
+
+    /** A screen's [visit] to the lesson saves, saving them from [goalId]. */
     fun saves(
-        scope: CoroutineScope,
         visit: Visit,
         goalId: UUID,
-    ) = Saves<UUID>(scope, visit) { lessonId, saved -> save(goalId, lessonId, saved) }
+    ) = queue.on(visit) { lessonId, saved -> save(goalId, lessonId, saved) }
 }

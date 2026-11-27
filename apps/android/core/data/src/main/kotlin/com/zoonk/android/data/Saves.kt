@@ -1,44 +1,112 @@
 package com.zoonk.android.data
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
 
 /** What a save that didn't go through was asked to do, so the screen words its failure. */
 enum class SaveFailure { Save, Remove }
 
 /**
- * One screen's saves of one kind of thing (a map, a lesson), main's `useSaves`: each tap shows at once and is sent as
- * the state the learner wants, one request at a time for each thing, so quick taps end on the last one. What the
- * server stored wins over what the screen was served until [visit] ends; a save that fails goes back, and the
- * failure is owed to the visit it was asked on. A save is sent even once its screen goes, as the learner asked for
- * it. [write] answers whether it's saved now.
+ * The app's saves of one kind of thing (a map, a lesson), main's tab saves: each tap shows on every screen at once and
+ * is sent as the state the learner wants, one request at a time for each thing whichever screen it was made on, so
+ * quick taps end on the last one and what the server took last is what every screen shows. A save is sent even once
+ * its screen goes, as the learner asked for it. [scope] is the app's.
  */
 class Saves<K : Any>(
     private val scope: CoroutineScope,
+) {
+    private class Tap(
+        val saved: Boolean,
+        val asker: SaveVisit<*>,
+        val visit: Int,
+        val write: suspend (saved: Boolean) -> MutationResult<Boolean>,
+    )
+
+    /** Each thing's newest tap while a request for it is out. */
+    private val taps = mutableMapOf<K, Tap>()
+
+    /** What the server took last for each thing, until a save of it fails. */
+    private val stored = mutableMapOf<K, Boolean>()
+
+    private val visits = mutableListOf<WeakReference<SaveVisit<K>>>()
+
+    /** A screen's [visit] to these saves; [write] sends one and answers whether it's saved now. */
+    fun on(
+        visit: Visit,
+        write: suspend (key: K, saved: Boolean) -> MutationResult<Boolean>,
+    ): SaveVisit<K> = SaveVisit(this, visit, write).also { visits += WeakReference(it) }
+
+    internal fun set(
+        key: K,
+        saved: Boolean,
+        asker: SaveVisit<K>,
+        visit: Int,
+        write: suspend (saved: Boolean) -> MutationResult<Boolean>,
+    ) {
+        val sending = key in taps
+        taps[key] = Tap(saved, asker, visit, write)
+        show()
+        if (!sending) scope.launch { send(key) }
+    }
+
+    /** What [touched] shows of these saves: every tap on its way, and what the server took for the rest. */
+    internal fun shown(touched: Set<K>): Map<K, Boolean> = stored.filterKeys { it in touched } + taps.mapValues { it.value.saved }
+
+    private suspend fun send(key: K) {
+        while (true) {
+            val tap = taps.getValue(key)
+            val result = tap.write(tap.saved)
+            if (result is MutationResult.Done) {
+                stored[key] = result.value
+                if (taps.getValue(key).saved != tap.saved) continue
+            } else {
+                stored -= key
+                val newest = taps.getValue(key)
+                if (result is MutationResult.Failed) {
+                    newest.asker.failed.send(
+                        newest.visit,
+                        if (tap.saved) SaveFailure.Save else SaveFailure.Remove,
+                    )
+                }
+            }
+            break
+        }
+        taps -= key
+        show()
+    }
+
+    private fun show() {
+        visits.removeAll { it.get()?.show() == null }
+    }
+}
+
+/**
+ * One screen's visit to the app's [Saves], main's `useSaves`: it shows every tap on its way, and what the server took
+ * for the things changed on this visit over what the screen was served, until the visit ends. A save that fails goes
+ * back, and the failure is owed to the visit of the newest tap.
+ */
+class SaveVisit<K : Any> internal constructor(
+    private val saves: Saves<K>,
     private val visit: Visit,
     private val write: suspend (key: K, saved: Boolean) -> MutationResult<Boolean>,
 ) {
     val failed = visit.outcome<SaveFailure>()
 
-    private val wanted = MutableStateFlow<Map<K, Boolean>>(emptyMap())
-    private val stored = MutableStateFlow<Map<K, Boolean>>(emptyMap())
-    private val current = MutableStateFlow<Map<K, Boolean>>(emptyMap())
+    private val touched = mutableSetOf<K>()
+    private val current = MutableStateFlow(saves.shown(touched))
 
-    /** Each thing the learner changed on this visit, as it shows now: on its way, or as the server stored it. */
+    /** Each thing that shows otherwise than the screen was served: on its way, or as the server stored it. */
     val states: StateFlow<Map<K, Boolean>> = current.asStateFlow()
 
-    private val sending = mutableSetOf<K>()
-
-    /** The visit of the tap each wanted save came from: a write that starts later still belongs to it. */
-    private val askedOn = mutableMapOf<K, Int>()
-
     init {
-        visit.opening(onEnd = { change { stored.value = emptyMap() } })
+        visit.opening(onEnd = {
+            touched.clear()
+            show()
+        })
     }
 
     /** Shows [saved] at once and sends it, after the one on its way when there is one. */
@@ -46,36 +114,16 @@ class Saves<K : Any>(
         key: K,
         saved: Boolean,
     ) {
-        change { wanted.value += key to saved }
-        askedOn[key] = visit.number
-        if (!sending.add(key)) return
-
-        scope.launch {
-            while (true) {
-                val sent = wanted.value[key] ?: break
-                val started = askedOn.getValue(key)
-                val result = withContext(NonCancellable) { write(key, sent) }
-                if (result is MutationResult.Done) {
-                    if (started == visit.number) change { stored.value += key to result.value }
-                    if (wanted.value[key] != sent) continue
-                } else if (result is MutationResult.Failed) {
-                    failed.send(started, if (sent) SaveFailure.Save else SaveFailure.Remove)
-                }
-                change { wanted.value -= key }
-                break
-            }
-            sending.remove(key)
-            askedOn.remove(key)
-        }
+        touched += key
+        saves.set(key, saved, this, visit.number) { write(key, it) }
     }
 
-    private inline fun change(edit: () -> Unit) {
-        edit()
-        current.value = stored.value + wanted.value
+    internal fun show() {
+        current.value = saves.shown(touched)
     }
 }
 
-/** Whether [key] shows as saved: as the learner changed it on this visit, or as the screen was [served]. */
+/** Whether [key] shows as saved: as a visit's [SaveVisit.states] say, or as the screen was [served]. */
 fun <K : Any> Map<K, Boolean>.isSaved(
     key: K,
     served: Boolean,
