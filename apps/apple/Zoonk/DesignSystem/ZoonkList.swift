@@ -165,6 +165,7 @@ private struct HidesSeparators: ViewModifier {
     content
       .listRowSeparator(isHidden ? .hidden : .automatic)
       .id(redraws)
+      .containerValue(\.hidesSeparatorsAround, isHidden)
       .onChange(of: isHidden) { wasHidden, _ in
         if wasHidden {
           redraws += 1

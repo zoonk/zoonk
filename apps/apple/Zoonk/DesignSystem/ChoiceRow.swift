@@ -9,6 +9,9 @@ struct ChoiceRow<Words: View>: View {
   let isPicked: Bool
   /// A choice the learner can't pick yet shows a lock where its ring would be.
   var isLocked = false
+  /// A choice that can't be picked now, such as one past its list's limit, dims, as main's
+  /// `CheckList` rows do.
+  var canPick = true
   let action: () -> Void
   @ViewBuilder let words: Words
 
@@ -17,8 +20,9 @@ struct ChoiceRow<Words: View>: View {
       ChoiceRowLabel(picks: picks, isPicked: isPicked, isLocked: isLocked) {
         words
       }
+      .opacity(canPick ? 1 : 0.5)
     }
-    .disabled(isLocked)
+    .disabled(isLocked || !canPick)
     .pickedRow(isPicked)
     .choiceTraits(picks, isPicked: isPicked)
   }
@@ -27,9 +31,9 @@ struct ChoiceRow<Words: View>: View {
 extension ChoiceRow where Words == ChoiceWords {
   init(
     _ title: Text, detail: Text? = nil, picks: ChoiceMark.Kind = .one, isPicked: Bool,
-    action: @escaping () -> Void
+    canPick: Bool = true, action: @escaping () -> Void
   ) {
-    self.init(picks: picks, isPicked: isPicked, action: action) {
+    self.init(picks: picks, isPicked: isPicked, canPick: canPick, action: action) {
       ChoiceWords(title: title, detail: detail)
     }
   }

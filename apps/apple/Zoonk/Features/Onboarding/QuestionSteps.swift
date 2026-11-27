@@ -1161,7 +1161,7 @@ private struct ExamChoiceQuestion: View {
             ExamPickLimit(take: choice.take)
               .listRowSeparator(.hidden)
 
-            ExamOptionToggles(
+            ExamOptionChecks(
               options: options, take: choice.take,
               picked: Binding(
                 get: { picks[choice.group] ?? [] },
@@ -1331,18 +1331,16 @@ private struct SubjectsLevelQuestion: View {
 
       Section {
         ForEach(subjects, id: \.name) { item in
-          Toggle(
-            isOn: Binding(
-              get: { known.contains(item.name) },
-              set: { isOn in
-                if isOn {
-                  known.insert(item.name)
-                } else {
-                  known.remove(item.name)
-                }
-              })
+          let isKnown = known.contains(item.name)
+
+          ChoiceRow(
+            Text(verbatim: item.shortName ?? item.name), picks: .several, isPicked: isKnown
           ) {
-            Text(item.shortName ?? item.name)
+            if isKnown {
+              known.remove(item.name)
+            } else {
+              known.insert(item.name)
+            }
           }
         }
       }

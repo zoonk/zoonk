@@ -95,7 +95,7 @@ private struct PlanExamChoiceSection: View {
       ExamPickLimit(take: choice.take)
         .listRowSeparator(.hidden)
 
-      ExamOptionToggles(
+      ExamOptionChecks(
         options: choice.options, take: choice.take,
         picked: Binding(get: { picked }, set: { draft = $0 }))
 
@@ -112,7 +112,6 @@ private struct PlanExamChoiceSection: View {
     } header: {
       SectionTitle(Text.examChoiceQuestion(group: choice.group, take: choice.take))
     }
-    .tint(.success)
     .onChange(of: choice.subjects) { draft = nil }
   }
 }

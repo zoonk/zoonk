@@ -77,8 +77,9 @@ struct ExamPickLimit: View {
   }
 }
 
-/// An exam choice's options as toggles: once `take` are on, the others wait until one is off.
-struct ExamOptionToggles: View {
+/// Main's `CheckList` with its `max`: an exam choice's options, each with a square; once `take` are
+/// ticked, the others dim until one is unticked.
+struct ExamOptionChecks: View {
   let options: [GoalPlan.ExamChoice.Option]
   let take: Int
   @Binding var picked: [String]
@@ -87,26 +88,16 @@ struct ExamOptionToggles: View {
     let picks = ExamOptionPicks(options: options.map(\.name), take: take, names: picked)
 
     ForEach(options, id: \.name) { option in
-      let canPick = picks.canPick(option.name)
+      let isPicked = picks.names.contains(option.name)
 
-      Toggle(
-        isOn: Binding(
-          get: { picks.names.contains(option.name) },
-          set: { isOn in
-            var next = picks
-            next.set(option.name, picked: isOn)
-            picked = next.names
-          })
+      ChoiceRow(
+        Text(verbatim: option.shortName ?? option.name), picks: .several, isPicked: isPicked,
+        canPick: picks.canPick(option.name)
       ) {
-        Text(option.shortName ?? option.name)
-          .foregroundStyle(canPick ? Color(.foreground) : .faint)
-
-        if let shortName = option.shortName, shortName != option.name {
-          Text(option.name)
-            .foregroundStyle(canPick ? .mutedForeground : .faint)
-        }
+        var next = picks
+        next.set(option.name, picked: !isPicked)
+        picked = next.names
       }
-      .disabled(!canPick)
     }
   }
 }
