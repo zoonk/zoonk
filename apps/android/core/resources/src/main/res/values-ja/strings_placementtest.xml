@@ -11,6 +11,7 @@
   "placementtest_first_lesson": "27b5348ad48ffe1bcfe219519f0fd7622a328aa53727b91c220d2419044d0024",
   "placementtest_first_lesson_line": "5854cf7fe13e596bcb868984fbc82c004c9e46801e77f39c184f512ff794cbed",
   "placementtest_full_test": "34c01e4a4e08ae8e17822b9e665a58766e9c003e1e78fcf4c89dd72dccb3fca5",
+  "placementtest_got_shorter": "c60f82353249d85294b0c3cdd9d847bcd00540c24b464e77af4c18d304efb184",
   "placementtest_in_progress": "043be67d30508fb01883dab65906b95b926149ea022158d8a702b2d014c21f5e",
   "placementtest_keep_going": "b2d6a98132bb6ac306a254621dea96b673db247eadd7c0727729ad0b88a31268",
   "placementtest_keeps_adjusting": "e584a031736dddc3cacbadf3bc013cc4a79cecee71944448e0eed5be52f1d3a4",
@@ -116,6 +117,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">全%2$dパート中%1$dパート完了</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">このパートでスキップしたレッスンはありません。</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">テストが短くなりました。まだ知らないトピックを前提とするトピックは出題されません。</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="other">このパートで、すでに知っている%dレッスンをスキップしました。</item>

@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +36,7 @@ import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
@@ -108,9 +108,7 @@ private class MockScheduleModel(
 fun ChangeMockSchedule(
     enabled: Boolean = true,
     onClick: () -> Unit,
-) = TextButton(onClick = onClick, enabled = enabled, edge = ButtonEdge.Start, size = ButtonSize.Small) {
-    Text(stringResource(R.string.mock_schedule_change), textDecoration = TextDecoration.Underline)
-}
+) = LinkButton(stringResource(R.string.mock_schedule_change), onClick = onClick, enabled = enabled, size = ButtonSize.Small)
 
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterial3Api::class)

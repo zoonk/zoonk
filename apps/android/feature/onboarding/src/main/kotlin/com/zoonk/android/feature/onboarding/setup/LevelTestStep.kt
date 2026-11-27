@@ -43,7 +43,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -78,13 +77,12 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.Select
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
@@ -216,14 +214,9 @@ internal fun InterfaceOffer(language: String) {
     val translated = supported != null && (0 until supported.size()).any { supported[it].language == own.language }
     if (!translated || own.language == currentLocale().language) return
 
-    TextButton(onClick = {
+    LinkButton(stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)), onClick = {
         context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own)
-    }, edge = ButtonEdge.Start) {
-        Text(
-            stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)),
-            textDecoration = TextDecoration.Underline,
-        )
-    }
+    })
 }
 
 @Composable
@@ -302,15 +295,16 @@ private fun ColumnScope.TestQuestion(
             ),
         media = {
             if (listening) {
-                ListeningMessage(question, targetLanguage, audioPending, audio, navigator)
-                TextButton(
-                    onClick = { vm.deferAudio(question.id) },
-                    busy = vm.deferring,
-                    enabled = !vm.isSaving,
-                    focusableWhenDisabled = vm.isSaving,
-                    edge = ButtonEdge.Start,
-                ) {
-                    Text(stringResource(R.string.onboarding_language_test_cant_listen), textDecoration = TextDecoration.Underline)
+                // No gap: the link's touch target alone puts its words close under the audio they belong to, far from the question.
+                Column {
+                    ListeningMessage(question, targetLanguage, audioPending, audio, navigator)
+                    LinkButton(
+                        text = stringResource(R.string.onboarding_language_test_cant_listen),
+                        onClick = { vm.deferAudio(question.id) },
+                        busy = vm.deferring,
+                        enabled = !vm.isSaving,
+                        focusableWhenDisabled = vm.isSaving,
+                    )
                 }
             }
         },

@@ -31,7 +31,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -61,13 +60,12 @@ import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
@@ -215,7 +213,8 @@ internal fun ColumnScope.PlacementQuestion(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                TextButton(
+                LinkButton(
+                    text = stopLabel,
                     onClick = {
                         sender = PlacementSender.Stop
                         onStop()
@@ -223,10 +222,7 @@ internal fun ColumnScope.PlacementQuestion(
                     busy = pending && sender == PlacementSender.Stop,
                     enabled = !pending,
                     focusableWhenDisabled = pending,
-                    edge = ButtonEdge.Start,
-                ) {
-                    Text(stopLabel, textDecoration = TextDecoration.Underline)
-                }
+                )
             }
         },
     ) {

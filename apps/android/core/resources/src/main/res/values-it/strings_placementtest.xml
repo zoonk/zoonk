@@ -11,6 +11,7 @@
   "placementtest_first_lesson": "5609aed3c9bdf4ea5027f7d135b4d09c378e853646b728f65ba65ca3e9c9b3c5",
   "placementtest_first_lesson_line": "77f8214663b4b19cf57c254f18689d9460fc26643407ba23ecfdb54f073649bb",
   "placementtest_full_test": "7cfbbfcb2e13d25c7dcb4a31208be290419ae36b3e2834ca47202d43d99654e0",
+  "placementtest_got_shorter": "a6ff3da1390c2fc7df7c1904214a690ec45f923b02ae113738011f90398483a0",
   "placementtest_in_progress": "325da7fb27924163488360523ae4582236185bacbcbac932927f01310619cf26",
   "placementtest_keep_going": "8b7cf2e78b50d4cb6420a6e8ffd2e8e642abf3cd3ec9028ab8122f30b1c0f3e7",
   "placementtest_keeps_adjusting": "2f0c65956c97150e3480b7c33208761b3791781013408620a145a03642975c28",
@@ -122,6 +123,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">Parte %1$d di %2$d completata</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">Nessuna lezione saltata in questa parte.</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">Il test è più breve: non vengono verificati gli argomenti che si basano su quelli che ancora non conosci.</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="one">In questa parte hai saltato %d lezione che conoscevi già.</item>

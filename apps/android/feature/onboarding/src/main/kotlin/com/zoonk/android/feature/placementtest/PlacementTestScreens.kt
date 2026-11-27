@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
@@ -41,6 +42,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.BarError
 
 /** One of the offer's rows: what it starts ([id]), its name and its facts, if it has any. */
@@ -171,9 +173,28 @@ internal fun testTheRestFacts(
     minutesLeft: Int,
 ): List<String> = listOf(stringResource(R.string.placementtest_full_test)) + partsLeftFacts(partsLeft, minutesLeft)
 
+/** What's left of the test, with why it's less than the learner was told when it [removed parts][partsRemoved]. */
+@Composable
+private fun PartsLeft(
+    facts: List<String>,
+    partsRemoved: Int,
+) {
+    if (facts.isEmpty() && partsRemoved == 0) return
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (facts.isNotEmpty()) Facts(facts)
+        if (partsRemoved > 0) {
+            Text(
+                stringResource(R.string.placementtest_got_shorter),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
 /**
- * After a part of the full test (main's `PlacementCheckpoint`): it's done, what it skipped and what's left. "Keep going"
- * goes on with the next part; "Finish later" leaves the rest for another day.
+ * After a part of the full test (main's `PlacementCheckpoint`): it's done, what it skipped, that the answers are saved,
+ * and what's left. "Keep going" goes on with the next part; "Finish later" leaves the rest for another day.
  */
 @Composable
 internal fun ColumnScope.PartDone(
@@ -183,6 +204,7 @@ internal fun ColumnScope.PartDone(
     heldUntilTomorrow: Boolean,
     partsLeft: Int,
     minutesLeft: Int,
+    partsRemoved: Int,
     pressed: Pressed?,
     failed: Boolean,
     onFinishLater: () -> Unit,
@@ -193,14 +215,17 @@ internal fun ColumnScope.PartDone(
     SetupContent {
         OnboardingHeading(
             stringResource(R.string.placementtest_part_done, part, parts),
-            when {
-                restored != null -> restoredLessonsLine(restored)
-                heldUntilTomorrow && lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
-                else -> partSkippedLine(lessonsSkipped)
-            },
+            joinSentences(
+                when {
+                    restored != null -> restoredLessonsLine(restored)
+                    heldUntilTomorrow && lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
+                    else -> partSkippedLine(lessonsSkipped)
+                },
+                stringResource(R.string.onboarding_answers_saved),
+            ),
             announceDescription = restored != null,
         )
-        Facts(partsLeftFacts(partsLeft, minutesLeft))
+        PartsLeft(partsLeftFacts(partsLeft, minutesLeft), partsRemoved)
         TestActions(
             action = stringResource(R.string.placementtest_keep_going),
             onAction = onKeepGoing,
@@ -275,13 +300,22 @@ internal fun ColumnScope.ContinueTest(
 internal fun placementKnownLine(lessons: Int): String =
     stringResource(if (lessons == 1) R.string.placementtest_known_one else R.string.placementtest_known_other)
 
-/** A result's next lesson, under "Up next", until an Undo puts the skipped lessons back. */
+/**
+ * A result's next lesson, under "Up next", until an Undo puts the skipped lessons back. The title drops the leading
+ * under its last line, so its letters sit as far from the card's bottom as the chip from its top.
+ */
 @Composable
 internal fun UpNext(title: String) {
     OutlinedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Eyebrow(stringResource(R.string.placementtest_up_next))
-            Text(title, style = MaterialTheme.typography.titleSmall)
+            Text(
+                title,
+                style =
+                    MaterialTheme.typography.titleSmall.copy(
+                        lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.LastLineBottom),
+                    ),
+            )
         }
     }
 }
@@ -302,6 +336,7 @@ internal fun ColumnScope.PlacementResult(
     failed: Boolean = false,
     heldUntilTomorrow: Boolean = false,
     rest: List<String> = emptyList(),
+    partsRemoved: Int = 0,
     onTestTheRest: (() -> Unit)? = null,
 ) {
     TestOutcome(
@@ -312,7 +347,6 @@ internal fun ColumnScope.PlacementResult(
                 heldUntilTomorrow -> stringResource(R.string.placementtest_retake_tomorrow)
                 else -> stringResource(R.string.placementtest_plan_stays)
             },
-        facts = rest,
         action = action,
         onAction = onAction,
         busy = busy || pressed == Pressed.Main,
@@ -332,6 +366,7 @@ internal fun ColumnScope.PlacementResult(
                 }
             },
     ) {
+        PartsLeft(rest, partsRemoved)
         nextLesson?.takeIf { undo?.restoredLessons == null }?.let { UpNext(it) }
     }
 }
@@ -347,7 +382,6 @@ internal fun ColumnScope.TestOutcome(
     enabled: Boolean = true,
     failed: Boolean = false,
     undo: PlacementUndoViewModel? = null,
-    facts: List<String> = emptyList(),
     other: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
@@ -358,7 +392,6 @@ internal fun ColumnScope.TestOutcome(
             if (restored != null) restoredLessonsLine(restored) else lead,
             announceDescription = restored != null,
         )
-        if (facts.isNotEmpty()) Facts(facts)
         content()
         TestActions(action, onAction, busy, enabled, failed, undo, other)
     }

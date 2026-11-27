@@ -19,8 +19,10 @@ import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlacementLength
+import com.zoonk.api.models.PlacementResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -276,6 +278,21 @@ class PlacementTestViewModelTest {
         }
 
     @Test
+    fun aPartThatLeftLaterPartsOutSaysSoOnItsCheckpointAndOnTheTestsResult() {
+        val opened = ApiJson.decodeFromString(PlacementAttempt.serializer(), PART_ONE)
+        val closed = completion(attempt = attemptOf("wholeCourse", 1, complete = true, partsRemoved = 2), skipped = 0).closed(opened)
+        val result =
+            ApiJson.decodeFromString(
+                PlacementResult.serializer(),
+                RESULT_OF_3.replace("\"lessonsSkipped\":3", "\"lessonsSkipped\":3,\"partsRemoved\":11"),
+            )
+
+        assertEquals(2, (closed.phase as PlacementTestPhase.PartDone).partsRemoved)
+        assertEquals(11, result.phase(attempt = null).partsRemoved)
+        assertEquals(0, completion(attempt = PART_ONE_CLOSED, skipped = 0).closed(opened).done?.partsRemoved)
+    }
+
+    @Test
     fun stoppingMidPartSaysWhereTheTestPicksUpAndComingBackContinuesThere() =
         runTest {
             val api =
@@ -475,8 +492,9 @@ class PlacementTestViewModelTest {
             complete: Boolean,
             answered: Int = 0,
             resume: Int? = null,
+            partsRemoved: Int = 0,
         ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":6,"answered":$answered,
-            |"chapter":"Loops","nextPart":${if (complete) part + 1 else "null"},"parts":3,"partsLeft":${if (complete) 2 else 3 - part + 1},"partsRemoved":0,
+            |"chapter":"Loops","nextPart":${if (complete) part + 1 else "null"},"parts":3,"partsLeft":${if (complete) 2 else 3 - part + 1},"partsRemoved":$partsRemoved,
             |"questions":12,"remainingEstimatedMinutes":12,"resume":${resume?.let { """{"part":$part,"question":$it}""" } ?: "null"},
             |"totalEstimatedMinutes":18}
             """.trimMargin()

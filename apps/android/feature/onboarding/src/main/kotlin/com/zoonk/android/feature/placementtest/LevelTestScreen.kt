@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.placementtest
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +11,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -54,10 +52,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LevelRangeBar
+import com.zoonk.android.ui.components.LinkButton
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.languageName
@@ -302,14 +299,12 @@ internal fun ColumnScope.LevelResult(
             ?.let { UpNext(it.title) }
 
         if (testOutLevel != null) {
-            TextButton(
+            LinkButton(
+                text = stringResource(R.string.placementtest_test_out, testOutLevel),
                 onClick = { onTestOut(testOutLevel) },
                 enabled = pressed != Pressed.Main && undo?.saving != true,
                 busy = pressed == Pressed.Other,
-                edge = ButtonEdge.Start,
-            ) {
-                Text(stringResource(R.string.placementtest_test_out, testOutLevel), textDecoration = TextDecoration.Underline)
-            }
+            )
         }
         appLanguage?.let { InterfaceOffer(it) }
     }

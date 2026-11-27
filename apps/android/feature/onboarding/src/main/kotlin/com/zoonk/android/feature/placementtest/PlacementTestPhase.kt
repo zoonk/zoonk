@@ -63,7 +63,7 @@ internal sealed interface PlacementTestPhase {
         val attempt: PlacementAttempt,
     ) : PlacementTestPhase
 
-    /** A full test's part, done; more parts are left. */
+    /** A full test's part, done; more parts are left. [partsRemoved]: later parts this part left out. */
     @Serializable
     data class PartDone(
         @Contextual val attemptId: UUID,
@@ -74,6 +74,7 @@ internal sealed interface PlacementTestPhase {
         val minutesLeft: Int,
         @Contextual val changeId: UUID? = null,
         val heldUntilTomorrow: Boolean = false,
+        val partsRemoved: Int = 0,
     ) : PlacementTestPhase
 
     /** A full test stopped with questions left in its part: where it picks up. */
@@ -90,6 +91,7 @@ internal sealed interface PlacementTestPhase {
     /**
      * The test's end: what it skipped in all and the lesson the plan goes on with. A quick test with [partsLeft] can go
      * on as the full test. [changeId] is set only when undoing it puts back every lesson the title counts.
+     * [partsRemoved]: parts the test's last part left out.
      */
     @Serializable
     data class Result(
@@ -101,6 +103,7 @@ internal sealed interface PlacementTestPhase {
         val nextLesson: String? = null,
         val partsLeft: Int = 0,
         val minutesLeft: Int = 0,
+        val partsRemoved: Int = 0,
     ) : PlacementTestPhase
 }
 
@@ -236,6 +239,7 @@ internal fun PlacementResult.phase(attempt: PlacementAttempt?) =
         nextLesson = nextLesson?.title,
         partsLeft = attempt?.takeIf { it.length == PlacementLength.QUICK }?.partsLeft?.toInt() ?: 0,
         minutesLeft = attempt?.minutesLeft ?: 0,
+        partsRemoved = partsRemoved?.toInt() ?: 0,
     )
 
 /** What closing [attempt]'s part showed, and where it left the test. */
@@ -283,6 +287,7 @@ private fun PlacementCompletion.phase(attempt: PlacementAttempt): PlacementTestP
                 minutesLeft = next.minutesLeft,
                 changeId = changeId,
                 heldUntilTomorrow = held,
+                partsRemoved = next.partsRemoved.toInt(),
             )
         }
 

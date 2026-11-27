@@ -11,6 +11,7 @@
   "placementtest_first_lesson": "97780b2408057d8958d6646ed007b6b3e729369e56bc759f37698a7343e31848",
   "placementtest_first_lesson_line": "8a5077b511b934f9c1dfd4f0271082ab31cf2bcc896ba717bc3ae8fbe5589590",
   "placementtest_full_test": "cccff92851980a1e7bf011ccdadae76df3173558f23454cc40506eb15ad2c112",
+  "placementtest_got_shorter": "db062259a677a631a29c079c9c08666979672831cb46dda2093205757bf9b946",
   "placementtest_in_progress": "9c8ce250eb86a254686f41b6060806dbb8c0b4b3447c30683ae0394eaf5bb66a",
   "placementtest_keep_going": "ffba700e24be0bd4e19463ba16974298d9fdc49f98775948fa1698193e16473f",
   "placementtest_keeps_adjusting": "a3e620fb3087b0cd8d99bb4362cd7e04d97981c74e40a76502c039bcd2864189",
@@ -119,6 +120,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">%1$d / %2$d bölüm tamamlandı</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">Bu bölümde plandan çıkarılan ders yok.</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">Test kısaldı: Henüz bilmediğin konuların üzerine kurulu konular test edilmiyor.</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="one">Bu bölümde zaten bildiğin %d ders plandan çıkarıldı.</item>
