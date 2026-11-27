@@ -12,6 +12,7 @@ import { fillRemainingLessonTime, getWritingMinutes } from "./_utils/fill-sessio
 import { canHoldPhaseChallenges } from "./_utils/phase-challenge-day";
 import { buildCheckpointBlock, buildMockDay } from "./_utils/planned-checkpoint-block";
 import { type PracticeTopic, buildPracticeBlocks } from "./_utils/practice-blocks";
+import { type RemedialWork, fundRemedialBlocks } from "./_utils/remedial-blocks";
 import {
   getLessonMinutes,
   getNewLessons,
@@ -91,6 +92,7 @@ export type SessionBuildInput = {
   fullReviewSkillIds?: readonly string[] | null;
   /** The scheduled practice that uses the rest of a review day. */
   reviewPlanItemId: string | null;
+  remedial?: RemedialWork;
   /** A selected review is identified before Open assigns its persisted row ID. */
   reviewPlanItemKey?: string | null;
   /** Reviews weak studied topics when nothing is due and no other work remains. */
@@ -332,7 +334,7 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
     ...calendar.map((checkpoint) => buildCheckpointBlock(checkpoint)),
   ].filter((block) => block !== null);
 
-  return fillRemainingLessonTime({
+  const filled = fillRemainingLessonTime({
     available,
     blocks: fillReview({ blocks: built, budget: dayBudget, input: reviewInput, writingMinutes }),
     budget: dayBudget,
@@ -344,4 +346,6 @@ function buildMixedDay(input: SessionBuildInput, dayBudget: number) {
     produceMinutes,
     writingMinutes,
   });
+
+  return fundRemedialBlocks({ ...filled, budget: dayBudget, input, writingMinutes });
 }

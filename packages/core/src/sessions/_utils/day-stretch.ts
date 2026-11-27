@@ -5,6 +5,7 @@ import {
   isPhaseChallenge,
 } from "../../checkpoints/_utils/challenge-reach";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 
 type Identified = { planItemId: string | null; planItemKey?: string | null };
@@ -232,6 +233,7 @@ export function orderDayBlocks<
   },
 >({ blocks, items }: { blocks: readonly Block[]; items: readonly ChallengeReachItem[] }): Block[] {
   const ranks = [
+    "mistakes",
     "review",
     "writtenPlacement",
     "reinforcement",
@@ -244,6 +246,10 @@ export function orderDayBlocks<
   const group = (block: Block): (typeof ranks)[number] => {
     const payload = readBlockPayload(block);
 
+    if (payload.mistakeIds.length > 0) {
+      return "mistakes";
+    }
+
     if (block.kind === "review") {
       return "review";
     }
@@ -252,7 +258,7 @@ export function orderDayBlocks<
       return "writtenPlacement";
     }
 
-    if (payload.reinforcement) {
+    if (payload.patternId || isOutsidePlanLesson(payload)) {
       return "reinforcement";
     }
 

@@ -54,7 +54,13 @@ function withoutKept({
   kept: readonly StudySessionBlock[];
   session: StudySessionRow;
 }): SessionBuildInput {
-  const kinds = new Set(kept.map((block) => block.kind));
+  const kinds = new Set(
+    kept.flatMap((block) => {
+      const payload = readBlockPayload(block);
+      return payload.mistakeIds.length > 0 || payload.patternId ? [] : [block.kind];
+    }),
+  );
+
   const lessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
   const itemIds = new Set(kept.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
 
@@ -130,6 +136,7 @@ export async function planRestOfDayWithPlan({
     keepsBlocks: kept.length > 0,
     keepsMock: kept.some((block) => readBlockPayload(block).checkpoint?.mock),
     keptLessonIds,
+    savedDay: true,
     selection,
   });
 
@@ -177,7 +184,7 @@ async function replaceNotStartedBlocks({
     plan,
     plannedMinutes,
   } = selection && unstarted
-    ? await planStudyDay({ ...context, selection })
+    ? await planStudyDay({ ...context, savedDay: true, selection })
     : await planRestOfDayWithPlan({ day, kept, selection });
 
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });

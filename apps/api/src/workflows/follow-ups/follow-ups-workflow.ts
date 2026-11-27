@@ -131,7 +131,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return startPlacementPreparation(followUp);
 
     case "writeLesson": {
-      const writing = await requestLessonWritingStep({ lessonId: followUp.input.lessonId, userId });
+      const writing = await requestLessonWritingStep(followUp.input, userId);
 
       if (writing) {
         await startOnce(

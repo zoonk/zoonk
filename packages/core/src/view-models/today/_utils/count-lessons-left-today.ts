@@ -5,6 +5,7 @@ import {
   type SessionPlanItem,
   getSessionItemIdentity,
 } from "../../../sessions/_utils/session-plan-item";
+import { isOutsidePlanLesson } from "../../../sessions/day-block";
 import { type DayView } from "../../../sessions/day-view";
 
 /** Counts unfinished plan items once even when bonus blocks duplicate them or another session completes them. */
@@ -18,7 +19,7 @@ export async function countLessonsLeftToday({
   const blocks = session.blocks.filter(
     (block) =>
       block.kind === "learn" &&
-      !block.reinforcement &&
+      !isOutsidePlanLesson(block) &&
       (block.status === "pending" || block.status === "active"),
   );
 

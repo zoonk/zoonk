@@ -971,3 +971,139 @@ describe("filling ordinary study days", () => {
     expect(result.plannedMinutes).toBe(240);
   });
 });
+
+const teaching = (id: string, minutes: number) => ({
+  canDo: null,
+  estimatedMinutes: minutes,
+  kind: "learn" as const,
+  lessonId: id,
+  payload: toBlockPayload({ returning: "again" }),
+});
+
+const newLessons = (blocks: ReturnType<typeof buildSessionBlocks>["blocks"]) =>
+  blocks
+    .filter(
+      (block) => block.kind === "learn" && !block.payload.returning && !block.payload.reinforcement,
+    )
+    .map((block) => [block.lessonId, block.estimatedMinutes, block.payload.planItemId]);
+
+describe("funding remedial blocks", () => {
+  const mistakes = [
+    { id: "first", minutes: 0.75, skillId: "s0" },
+    { id: "same-skill", minutes: 0.75, skillId: "s0" },
+    { id: "other-skill", minutes: 2, skillId: "s1" },
+  ];
+
+  it("leads an exam learner's day with missed questions and keeps dated plan lessons whole", () => {
+    const before = buildSessionBlocks(baseInput);
+
+    const after = buildSessionBlocks({
+      ...baseInput,
+      placementItemIds: ["placement", "recheck"],
+      placementRecheckItemIds: ["recheck"],
+      remedial: { dated: true, mistakes, teaching: [teaching("old", 5), teaching("other", 3)] },
+    });
+
+    expect(after.blocks[0]?.payload.mistakeIds).toStrictEqual([
+      "first",
+      "other-skill",
+      "same-skill",
+    ]);
+
+    expect(
+      after.blocks.find((block) => block.kind === "review")?.payload.placementItemIds,
+    ).toStrictEqual(["placement", "recheck"]);
+
+    expect(
+      after.blocks.filter((block) => block.payload.returning).map((block) => block.lessonId),
+    ).toStrictEqual(["old"]);
+
+    const datedBefore = buildSessionBlocks({
+      ...baseInput,
+      placementItemIds: ["placement", "recheck"],
+      placementRecheckItemIds: ["recheck"],
+    });
+
+    expect(newLessons(after.blocks)).toStrictEqual(newLessons(datedBefore.blocks));
+    expect(after.plannedMinutes).toBeLessThanOrEqual(baseInput.dailyMinutes);
+    expect(before.blocks.some((block) => block.payload.returning)).toBe(false);
+  });
+
+  it("uses the language pattern as teaching after review", () => {
+    const pattern = {
+      ...teaching("pattern", 3),
+      kind: "practice" as const,
+      lessonId: null,
+      payload: toBlockPayload({ patternId: "019ea8a4-f48a-70e8-98af-d72c80b44280" }),
+    };
+
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      remedial: { dated: false, mistakes: [], teaching: [pattern] },
+    });
+
+    expect(blocks[0]?.kind).toBe("review");
+    expect(blocks[1]?.payload.patternId).toBe(pattern.payload.patternId);
+    expect(blocks[2]?.kind).toBe("learn");
+  });
+
+  it("uses at most the last ordinary lesson on an undated day", () => {
+    const input = {
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 24,
+      lessons: [lesson("first", 8), lesson("last", 8)],
+      practice: [],
+    };
+
+    const { blocks } = buildSessionBlocks({
+      ...input,
+      remedial: { dated: false, mistakes: [], teaching: [teaching("return", 8)] },
+    });
+
+    expect(blocks.map((block) => block.lessonId)).toStrictEqual(["return", "first"]);
+
+    const dated = buildSessionBlocks({
+      ...input,
+      remedial: { dated: true, mistakes: [], teaching: [teaching("return", 8)] },
+    });
+
+    expect(dated).toStrictEqual(buildSessionBlocks(input));
+  });
+
+  it("preserves a healthy day and excludes a lesson too long to fund", () => {
+    const baseline = buildSessionBlocks(baseInput);
+
+    expect(
+      buildSessionBlocks({
+        ...baseInput,
+        remedial: { dated: true, mistakes: [], teaching: [teaching("too-long", 40)] },
+      }),
+    ).toStrictEqual(baseline);
+
+    expect(
+      buildSessionBlocks({ ...baseInput, remedial: { dated: true, mistakes: [], teaching: [] } }),
+    ).toStrictEqual(baseline);
+  });
+
+  it("keeps welcome-back mistakes short and keeps remedial work off a full-mock day", () => {
+    const remedial = { dated: true, mistakes, teaching: [teaching("again", 4)] };
+    const welcome = buildSessionBlocks({ ...baseInput, freshStart: "welcomeBack", remedial });
+    expect(welcome.blocks[0]?.payload.mistakeIds).toStrictEqual(["first"]);
+
+    const mock = { ...baseInput, checkpoints: [{ ...boss, mock: true }], mockReplacesDay: true };
+    expect(buildSessionBlocks({ ...mock, remedial })).toStrictEqual(buildSessionBlocks(mock));
+  });
+
+  it("uses one block for a returning lesson also picked for boss reinforcement", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [{ ...boss, reinforcement: [lesson("return", 3)] }],
+      remedial: { dated: true, mistakes: [], teaching: [teaching("return", 3)] },
+    });
+
+    expect(blocks.filter((block) => block.lessonId === "return")).toMatchObject([
+      { payload: { reinforcement: true, returning: "again" } },
+    ]);
+  });
+});

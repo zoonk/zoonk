@@ -17,6 +17,9 @@ function getContent({
     block.kind,
     block.lessonId,
     block.estimatedMinutes,
+    block.payload.patternId,
+    block.payload.returning,
+    ...block.payload.mistakeIds,
     block.payload.writing?.taskKey,
     block.payload.writing?.unit,
     block.payload.writingLessonId,
@@ -103,6 +106,9 @@ export function getKeptBlocks(
     return (
       block.status !== "pending" ||
       extra ||
+      payload.mistakeIds.length > 0 ||
+      payload.patternId !== null ||
+      payload.returning !== null ||
       hasWritingProgress(payload) ||
       (writingLessonId !== undefined &&
         openedLessons.has(writingLessonId) &&
