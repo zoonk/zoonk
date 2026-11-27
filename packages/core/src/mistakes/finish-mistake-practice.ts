@@ -179,7 +179,7 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
       userId: input.userId,
     });
 
-    const { fresh, run, runAnswers } = matchRun({ answers, runs });
+    const { fresh, run, runAnswers } = await matchRun(tx, { answers, runs, userId: input.userId });
 
     if (fresh.length === 0) {
       return unchanged({

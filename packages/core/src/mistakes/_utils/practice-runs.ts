@@ -1,5 +1,11 @@
 import "server-only";
-import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Attempt,
+  type AttemptWhereInput,
+  type LearningEvent,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { MS_PER_SECOND } from "@zoonk/utils/date";
 
 const MISTAKE_PRACTICE_LEDGER_KIND = "mistakePractice";
@@ -12,10 +18,15 @@ const MAX_SECONDS_PER_ANSWER = 180;
 
 const ANSWER_ID_SEPARATOR = ",";
 
-export type PracticeAnswer = Pick<
-  Attempt,
-  "answeredAt" | "durationMs" | "id" | "isCorrect" | "itemId" | "skillId"
->;
+function findAnswers(tx: TransactionClient, where: AttemptWhereInput) {
+  return tx.attempt.findMany({
+    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+    select: { answeredAt: true, durationMs: true, id: true, isCorrect: true },
+    where,
+  });
+}
+
+export type PracticeAnswer = Awaited<ReturnType<typeof findAnswers>>[number];
 
 /** Returns answers only if every id belongs to the learner's recent standalone mistake practice. */
 export async function loadPracticeAnswers({
@@ -27,23 +38,12 @@ export async function loadPracticeAnswers({
 }): Promise<PracticeAnswer[] | null> {
   const ids = [...new Set(answerIds)];
 
-  const answers = await prisma.attempt.findMany({
-    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
-    select: {
-      answeredAt: true,
-      durationMs: true,
-      id: true,
-      isCorrect: true,
-      itemId: true,
-      skillId: true,
-    },
-    where: {
-      answer: { not: "", path: ["practiceMistakeId"] },
-      answeredAt: { gte: new Date(Date.now() - MAX_RUN_AGE_MS) },
-      id: { in: ids },
-      studySessionId: null,
-      userId,
-    },
+  const answers = await findAnswers(prisma, {
+    answer: { not: "", path: ["practiceMistakeId"] },
+    answeredAt: { gte: new Date(Date.now() - MAX_RUN_AGE_MS) },
+    id: { in: ids },
+    studySessionId: null,
+    userId,
   });
 
   if (answers.length !== ids.length) {
@@ -132,6 +132,7 @@ export function loadCountedRuns(
   { since, userId }: { since: Date; userId: string },
 ) {
   return tx.learningEvent.findMany({
+    orderBy: { id: "asc" },
     select: {
       brainPower: true,
       contentIds: true,
@@ -147,23 +148,26 @@ export function loadCountedRuns(
 type CountedRun = Awaited<ReturnType<typeof loadCountedRuns>>[number];
 
 /** Counted answers are excluded; overlapping answers identify the existing run to extend. */
-export function matchRun({
-  answers,
-  runs,
-}: {
-  answers: readonly PracticeAnswer[];
-  runs: readonly CountedRun[];
-}) {
+export async function matchRun(
+  tx: TransactionClient,
+  {
+    answers,
+    runs,
+    userId,
+  }: { answers: readonly PracticeAnswer[]; runs: readonly CountedRun[]; userId: string },
+) {
   const ids = new Set(answers.map((answer) => answer.id));
   const counted = new Set(runs.flatMap((run) => readRunAnswerIds(run)));
   const run = runs.find((candidate) => readRunAnswerIds(candidate).some((id) => ids.has(id)));
-  const inRun = new Set(run ? readRunAnswerIds(run) : []);
+  const fresh = answers.filter((answer) => !counted.has(answer.id));
+  const members = new Set([...(run ? readRunAnswerIds(run) : []), ...fresh.map(({ id }) => id)]);
 
-  return {
-    fresh: answers.filter((answer) => !counted.has(answer.id)),
-    run: run ?? null,
-    runAnswers: answers.filter((answer) => inRun.has(answer.id) || !counted.has(answer.id)),
-  };
+  const runAnswers =
+    fresh.length > 0 && !members.isSubsetOf(ids)
+      ? await findAnswers(tx, { id: { in: [...members] }, userId })
+      : answers.filter(({ id }) => members.has(id));
+
+  return { fresh, run: run ?? null, runAnswers };
 }
 
 export const MISTAKE_PRACTICE_EVENT = {

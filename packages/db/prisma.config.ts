@@ -10,7 +10,7 @@ config();
 const url = new URL(requireCheckoutDatabase(getUnpooledDatabaseUrl()));
 url.searchParams.set("connect_timeout", "30");
 
-/** @internal */
+/** @public */
 export default defineConfig({
   datasource: { url: url.href },
   // The regular seed, then core's seed of Library courses and personas, whose plans need core's planner. Prisma runs the seed
