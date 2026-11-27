@@ -5,7 +5,6 @@ export type Tally = Omit<MockPoints, "parts" | "unjudged">;
 export type TestRow = Tally & { name: string | null; qualifying: boolean };
 export type WrittenPart = NonNullable<MockPoints["written"]>[number];
 
-/** The written parts with something to say here: an estimate, or a minimum still to reach. */
 export function getWrittenRows(points: MockPoints): WrittenPart[] {
   return (points.written ?? []).filter((part) => part.range || part.minimum);
 }

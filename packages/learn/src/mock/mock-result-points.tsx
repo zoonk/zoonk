@@ -210,7 +210,6 @@ function UnjudgedLine({ entry }: { entry: MockPoints["unjudged"][number] }) {
   );
 }
 
-/** A written part beside the tests: its estimate and where it stands, or why it has none. */
 function WrittenRowItem({ part }: { part: WrittenPart }) {
   const t = useExtracted();
   const formatMinimum = useFormatMinimum();

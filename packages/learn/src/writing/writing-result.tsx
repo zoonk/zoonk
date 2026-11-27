@@ -184,7 +184,6 @@ function useCriteriaFooter(prompt: WritingPrompt, grade: WritingResult): string 
     return t("The exam notice doesn't say how many points each criterion is worth.");
   }
 
-  // An answer on a sheet with points can still come back by level, even after one with points.
   if (grade.kind === "levels") {
     return t("Graded by level: we can't yet estimate this answer's points closely enough.");
   }
