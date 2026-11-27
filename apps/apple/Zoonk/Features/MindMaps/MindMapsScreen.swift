@@ -555,7 +555,7 @@ private struct SavedRow: View {
   var body: some View {
     let isSaved = store.saves.isSaved(save.key, server: isListed)
 
-    HStack(spacing: 4) {
+    HStack(spacing: RowSaveToggle.gap) {
       Button {
         router.open(
           .mindMapStudy(
