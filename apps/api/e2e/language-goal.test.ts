@@ -423,15 +423,16 @@ test.describe("Language goal API", () => {
 
     expect(first.next.question.answerIndex).toBeUndefined();
 
-    const answered = await apiContext.post(`${path}/answers`, {
-      data: { answerIndex: 0, questionId: first.next.question.id },
-    });
+    const right = {
+      answerIndex: first.next.question.options.indexOf("Certa"),
+      questionId: first.next.question.id,
+    };
+
+    const answered = await apiContext.post(`${path}/answers`, { data: right });
 
     expect(await answered.json()).toMatchObject({ answered: 1, lastCorrect: true });
 
-    const stale = await apiContext.post(`${path}/answers`, {
-      data: { answerIndex: 0, questionId: first.next.question.id },
-    });
+    const stale = await apiContext.post(`${path}/answers`, { data: right });
 
     expect(stale.status()).toBe(200);
     expect(await stale.json()).toMatchObject({ answered: 1, lastCorrect: null });

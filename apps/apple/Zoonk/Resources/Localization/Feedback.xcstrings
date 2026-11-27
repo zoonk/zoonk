@@ -473,7 +473,7 @@
       }
     },
     "Report a problem" : {
-      "comment" : "Navigation title for the form reporting a problem with a page",
+      "comment" : "Navigation title for the form reporting a problem with a page\nOpens the feedback form to report a problem",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -735,26 +735,6 @@ msgctxt "OvhCe0"
 msgid "Online courses with a study plan for each day"
 msgstr "毎日の学習計画で学べるオンライン講座"
 
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "レベル{level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "レベル"
-
-#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "xjYKLD"
-msgid "{belt}, Level {level}"
-msgstr "{belt}、レベル{level}"
-
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
 msgid "Skip to content"
@@ -791,6 +771,11 @@ msgstr "メニュー"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}、レベル{level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "レベル{level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -1583,6 +1568,13 @@ msgstr "概要"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "学習データ"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "レベル"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx

@@ -53,7 +53,10 @@ export type Finding = FindingState &
 
 /** The PR fixes what misleads a learner, whoever brought it, and a named rule it broke itself. */
 export function blocks({ before, misleads, rule }: Finding): boolean {
-  return misleads === true || (before === false && rule !== undefined && rule !== "none");
+  return (
+    misleads === true ||
+    (before === false && rule !== undefined && !/^none(?:\s*:|$)/iu.test(rule.trim()))
+  );
 }
 
 /**
@@ -74,7 +77,7 @@ export type Read = {
  * own, so the retake's read checks only the fixes against it. With no `file`, that picture was
  * gone, so the retake gets a whole read that keeps these findings.
  */
-export type Retake = { file?: string; read: Read };
+export type Retake = { file?: string; read: Read; sha256?: string };
 
 /**
  * `file` is relative to its manifest's folder, with forward slashes, since Markdown links use it.
@@ -187,8 +190,8 @@ export async function writeManifest(folder: string, items: ManifestItem[]): Prom
 }
 
 /**
- * A picture registered again with the same bytes keeps its record, read and findings included.
- * New bytes replace it, unread, except that a record made by hand never replaces a capture's.
+ * A capture replaces its record even when its pixels match, because the build may have changed.
+ * A record made by hand keeps its read when its bytes match and never replaces a capture.
  */
 export async function registerItems(folder: string, added: ManifestItem[]): Promise<void> {
   const existing = (await readManifest(folder)) ?? [];
@@ -197,12 +200,7 @@ export async function registerItems(folder: string, added: ManifestItem[]): Prom
   const replacing = added.filter((item) => {
     const earlier = byFile.get(item.file);
 
-    if (!earlier) {
-      return true;
-    }
-
-    const byHandOverCapture = isRecorded(earlier) && !isRecorded(item);
-    return earlier.sha256 !== item.sha256 && !byHandOverCapture;
+    return !earlier || isRecorded(item) || (!isRecorded(earlier) && earlier.sha256 !== item.sha256);
   });
 
   const files = new Set(replacing.map((item) => item.file));

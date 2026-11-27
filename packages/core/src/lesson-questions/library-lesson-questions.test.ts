@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -14,6 +15,7 @@ import {
   setupPlayableLesson,
   stepOfKind,
 } from "../lesson-player/_test-utils/playable-lesson-setup";
+import { getPlayableLibraryLesson } from "../lesson-player/get-playable-library-lesson";
 import { toMemoryFactView } from "../memory/_utils/memory-fact-view";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
@@ -133,6 +135,31 @@ describe("questions about a Library lesson", () => {
     expect(thread).toMatchObject({
       status: "ready",
       thread: { lessonId: lesson.id, questions: [{ id: question.id }] },
+    });
+  });
+
+  it("shows the tutor a check's options in the order the learner's sitting shows them", async () => {
+    const { lesson, steps } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const playedSteps = played?.status === "ready" ? played.lesson.steps : [];
+    const playedCheck = playedSteps.find((step) => step.id === check.id);
+
+    const shown =
+      playedCheck?.kind === "check" ? playedCheck.content.options.map(({ id }) => id) : [];
+
+    const question = await ask({
+      context: { kind: "step", stepId: check.id, stepNumber: 3 },
+      lessonId: lesson.id,
+    });
+
+    const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } });
+
+    expect(shown).not.toStrictEqual(playableStepContent.check.options.map(({ id }) => id));
+
+    expect(stored.contextSnapshot).toMatchObject({
+      step: { content: { options: shown.map((id) => ({ id })) } },
     });
   });
 

@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { describe, it } from "vitest";
+import { mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import { describe, it, test } from "vitest";
 import CASES from "../verify/alignment-cases.json" with { type: "json" };
 import APPLE from "../verify/fixtures/apple-platform-limits.json" with { type: "json" };
+import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type ManifestItem } from "./media.mts";
@@ -319,3 +320,39 @@ describe("pr:media check with declared platform limits", () => {
     assert.doesNotMatch(printed, /stored claim/u);
   });
 });
+
+test.each(["default", "explicit"])(
+  "fails a blocking finding in an omitted capture under the %s root",
+  async (rootKind) => {
+    const { capture: makeCapture, repository, shot: makeShot } = checkFixture();
+    const shown = makeCapture([makeShot({ file: "shown.png" })]);
+
+    const omitted = makeCapture([
+      makeShot({
+        file: "omitted.png",
+        read: {
+          ...CLEAN,
+          findings: [{ id: "hidden", misleads: true, state: "open", text: "Wrong lesson date" }],
+        },
+      }),
+    ]);
+
+    const defaultRoot = join(repository, "tmp/pr-media");
+    const omittedFolder = rootKind === "default" ? join(defaultRoot, "other") : omitted.folder;
+
+    if (rootKind === "default") {
+      mkdirSync(defaultRoot, { recursive: true });
+      renameSync(omitted.folder, omittedFolder);
+    }
+
+    const result = await checkBody({
+      folders: rootKind === "explicit" ? [omittedFolder] : [],
+      markdown: `![](${relative(repository, join(shown.folder, "shown.png"))})`,
+      repository,
+      root: repository,
+    });
+
+    assert.deepEqual(kinds(result), ["finding"]);
+    assert.equal(result.problems[0]?.picture, join(omittedFolder, "omitted.png"));
+  },
+);

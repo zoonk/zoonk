@@ -7,6 +7,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { lowGuessTapItems } from "../learner/_test-utils/placement-tap-items";
 import { loadPlacementPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
@@ -44,9 +45,6 @@ function setClock(offset: number) {
     timeZone: "UTC",
   });
 }
-
-const RIGHT = 0;
-const WRONG = 1;
 
 const NOTES = "4) Organelas (CAI MUITO!!)";
 const ANNOUNCEMENT = "A prof disse: vai ter uma dissertativa sobre osmose!";
@@ -335,7 +333,11 @@ describe.each([
 
     const answer = await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: RIGHT }, durationMs: 4000, itemId: question ?? "" },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId: question ?? "" }),
+        durationMs: 4000,
+        itemId: question ?? "",
+      },
       sessionId,
     });
 
@@ -359,7 +361,10 @@ describe.each([
         await answerStudyQuestion({
           blockId: first.blockId,
           input: {
-            answer: { selectedIndex: RIGHT },
+            answer: await pickItemInBlock({
+              blockId: first.blockId,
+              itemId: first.payload.itemIds.find(isOrdinary)!,
+            }),
             durationMs: 4000,
             itemId: first.payload.itemIds.find(isOrdinary)!,
           },
@@ -375,7 +380,11 @@ describe.each([
         answerStudyQuestion({
           blockId,
           input: {
-            answer: { selectedIndex: WRONG },
+            answer: await pickItemInBlock({
+              blockId,
+              itemId: payload.itemIds.find(isOrdinary)!,
+              right: false,
+            }),
             durationMs: 4000,
             itemId: payload.itemIds.find(isOrdinary)!,
           },
@@ -487,7 +496,11 @@ describe("a known topic Pedro's time left without lessons", () => {
 
     await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: WRONG }, durationMs: 4000, itemId: question ?? "" },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId: question ?? "", right: false }),
+        durationMs: 4000,
+        itemId: question ?? "",
+      },
       sessionId,
     });
 

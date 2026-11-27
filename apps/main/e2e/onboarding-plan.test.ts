@@ -5,10 +5,11 @@ import {
 import { prisma } from "@zoonk/db";
 import { holdScripts } from "@zoonk/e2e/hydration";
 import { isJsonObject } from "@zoonk/utils/json";
+import { pressAnswerKey } from "./answer-key";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
-import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
@@ -28,12 +29,19 @@ test.describe("Placement and the plan", () => {
     await expect(question).toBeVisible();
     const stop = page.getByRole("button", { name: "Stop and use my answers" });
     await expect(stop).toBeHidden();
-    const first = await question.textContent();
-    await page.keyboard.press("1");
-    await expect(page.getByRole("radio").first()).toBeChecked();
+    const first = await question.innerText();
+    const solution = solvePlacementEquation(first);
+
+    if (solution === null) {
+      throw new Error(`Expected a one-step equation, got ${first}`);
+    }
+
+    const right = page.getByRole("radio", { exact: true, name: solution });
+    await pressAnswerKey(page, right);
+    await expect(right).toBeChecked();
     await page.keyboard.press("Enter");
 
-    await expect(question).not.toHaveText(first ?? "");
+    await expect(question).not.toHaveText(first);
     await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
 
     await page.reload();

@@ -9,6 +9,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
@@ -479,9 +480,11 @@ describe("exact-question practice", () => {
       prisma.mistake.findUnique({ where: { id: recorded.mistake.id } }),
     ).resolves.toMatchObject({ status: "open" });
 
+    const right = await pickInMistake({ mistakeId: recorded.mistake.id });
+
     await expect(
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id },
+        input: { answer: right, durationMs: 2000, itemId: bank.id },
         mistakeId: recorded.mistake.id,
       }),
     ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });

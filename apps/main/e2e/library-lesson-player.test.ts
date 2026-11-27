@@ -10,6 +10,7 @@ import { TEACHING_LESSON_STEPS } from "@zoonk/testing/fixtures/playable-step-con
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { captureAnalytics } from "./analytics";
+import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
 import { waitForLessonStart } from "./study-day";
 
@@ -53,11 +54,9 @@ async function followWorkedExample(page: Page) {
 
 async function answerCheckWithKeys(page: Page) {
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
-  await page.keyboard.press("2");
-
-  await expect(
-    page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
-  ).toBeChecked();
+  const right = page.getByRole("radio", { name: "Where the electron is most likely to be found" });
+  await pressAnswerKey(page, right);
+  await expect(right).toBeChecked();
 
   await page.keyboard.press("Enter");
   await expectVerdict(page, "Correct!");

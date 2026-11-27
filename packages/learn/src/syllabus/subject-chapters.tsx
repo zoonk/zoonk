@@ -12,8 +12,8 @@ import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -159,7 +159,7 @@ export function SubjectChapters({
         </span>
       </PageSectionHeader>
 
-      <ul className={LIST_GROUP_CLASS} id={listId}>
+      <ListGroup as="ul" id={listId}>
         {done.length > 0 && (
           <li>
             <DoneChapters chapterHref={chapterHref} chapters={done} />
@@ -181,7 +181,7 @@ export function SubjectChapters({
             />
           </li>
         )}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

@@ -73,7 +73,7 @@ export function SyllabusChapterRow({
 
   const content = (
     <>
-      <ListRowLeading firstLine>
+      <ListRowLeading>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={chapter.known} />
       </ListRowLeading>
       <ListRowBody>

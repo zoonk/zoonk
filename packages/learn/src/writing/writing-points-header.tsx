@@ -1,7 +1,7 @@
 "use client";
 
 import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
-import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import { estimateWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   LabeledStepTitle,
@@ -78,8 +78,7 @@ export function PointsHeader({
 
   const estimatedLines =
     grade.estimatedLines ??
-    countWritingLines({ charactersPerLine: prompt.charactersPerLine, limit: prompt.lines, text })
-      .estimatedLines;
+    estimateWritingLines({ charactersPerLine: prompt.charactersPerLine, text });
 
   return (
     <StepCard className="items-stretch">

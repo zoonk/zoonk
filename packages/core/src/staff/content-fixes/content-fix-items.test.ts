@@ -18,6 +18,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInBlock } from "../../_test-utils/shown-choice";
 import { answerStudyQuestion } from "../../sessions/answer-study-question";
 import { toBlockPayload } from "../../sessions/block-payload";
 import {
@@ -313,7 +314,11 @@ describe("replacing a practice question", () => {
     await expect(
       answerStudyQuestion({
         blockId: block.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: item.id },
+        input: {
+          answer: pickInBlock({ blockId: block.id, item }),
+          durationMs: 4000,
+          itemId: item.id,
+        },
         sessionId: session.id,
       }),
     ).resolves.toMatchObject({ status: "ready" });

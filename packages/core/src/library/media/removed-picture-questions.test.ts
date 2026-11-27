@@ -9,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInBlock, pickItemInMock } from "../../_test-utils/shown-choice";
 import { finishMock } from "../../exams/mocks/finish-mock";
 import { getMock } from "../../exams/mocks/get-mock";
 import { saveMockAnswer } from "../../exams/mocks/save-mock-answer";
@@ -22,8 +23,6 @@ import { type BlockPayload, toBlockPayload } from "../../sessions/block-payload"
 import { finishStudyBlock } from "../../sessions/finish-study-block";
 import { getStudyBlock } from "../../sessions/get-study-block";
 import { removeImageAsset } from "./check-image-asset";
-
-const RIGHT = { selectedIndex: 0 };
 
 function picturedContent() {
   return {
@@ -73,8 +72,15 @@ async function heldQuestions({
 
   const ids = { blockId: block.id, sessionId: session.id };
 
-  const answer = (itemId: string) =>
-    answerStudyQuestion({ ...ids, input: { answer: RIGHT, durationMs: 4000, itemId } });
+  const answer = async (itemId: string) =>
+    answerStudyQuestion({
+      ...ids,
+      input: {
+        answer: await pickItemInBlock({ blockId: block.id, itemId }),
+        durationMs: 4000,
+        itemId,
+      },
+    });
 
   return { answer, asset, ids, pictured, plain };
 }
@@ -211,10 +217,15 @@ describe("a question whose picture is removed after a failed check", () => {
 
     mockSession(user.id);
 
-    const save = (itemId: string) =>
+    const save = async (itemId: string) =>
       saveMockAnswer({
         blockId: mock.id,
-        input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId },
+        input: {
+          answer: await pickItemInMock({ itemId, mockId: mock.id }),
+          durationMs: 4000,
+          flagged: false,
+          itemId,
+        },
       });
 
     await save(earlier.id);
@@ -319,7 +330,12 @@ describe("a question whose picture is removed after a failed check", () => {
 
     await saveMockAnswer({
       blockId: mock.id,
-      input: { answer: RIGHT, durationMs: 4000, flagged: false, itemId: plain.id },
+      input: {
+        answer: await pickItemInMock({ itemId: plain.id, mockId: mock.id }),
+        durationMs: 4000,
+        flagged: false,
+        itemId: plain.id,
+      },
     });
 
     await expect(

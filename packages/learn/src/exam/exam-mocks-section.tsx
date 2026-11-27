@@ -3,7 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { LearnLink } from "../learn-link";
 import { MockSummaryRow } from "../mock/mock-summary-row";
@@ -39,7 +39,7 @@ export function ExamMocks({ entry = false }: { entry?: boolean }) {
       </PageSectionHeader>
 
       {(running || exam.nextMock || exam.mocks.length > 0) && (
-        <ol aria-labelledby={MOCKS_TITLE_ID} className={LIST_GROUP_CLASS}>
+        <ListGroup as="ol" aria-labelledby={MOCKS_TITLE_ID}>
           {exam.runningMocks.map((mock, index) => (
             <li aria-current={index === 0 ? "step" : undefined} key={mock.id}>
               <ExamRunningMock current={index === 0} running={mock} />
@@ -51,7 +51,7 @@ export function ExamMocks({ entry = false }: { entry?: boolean }) {
             </li>
           )}
           <ExamMockRows />
-        </ol>
+        </ListGroup>
       )}
 
       {entry && !running && (

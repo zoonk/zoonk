@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
+import { pressAnswerKey } from "./answer-key";
 import { expect, test } from "./fixtures";
 import { createStudyDay, openAs, pressUntil } from "./study-day";
 
@@ -55,11 +56,13 @@ test.describe("Study reminders", () => {
     const row = page.getByRole("link", { exact: true, name: lesson.title });
     await row.click();
 
-    await expectHydrated(
-      page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
-    );
+    await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
 
-    await page.keyboard.press("2");
+    const right = page.getByRole("radio", {
+      name: "Where the electron is most likely to be found",
+    });
+
+    await pressAnswerKey(page, right);
     await page.keyboard.press("Enter");
     await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     await page.keyboard.press("Enter");
