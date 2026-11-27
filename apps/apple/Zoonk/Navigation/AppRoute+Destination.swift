@@ -63,6 +63,10 @@ extension AppRoute {
       LocalizedStringResource(
         "The lessons you've finished, ready to do again anytime.", table: "Navigation",
         comment: "What the completed lessons page shows, under its title until it can open")
+    case .savedLessons:
+      LocalizedStringResource(
+        "The lessons you've saved, ready to do again anytime.", table: "Navigation",
+        comment: "What the saved lessons page shows, under its title until it can open")
     case .speaking:
       LocalizedStringResource(
         "Calls in the language you're learning, at your level.", table: "Voice",
@@ -96,6 +100,8 @@ extension AppRoute {
       MistakesScreen()
     case .completedLessons:
       CompletedLessonsScreen()
+    case .savedLessons:
+      SavedLessonsScreen()
     case .speaking:
       SpeakingScreen()
     case .statistics(let section):
@@ -192,8 +198,8 @@ extension AppTab {
       }
     case .search:
       SearchScreen()
-    case .mistakes, .completedLessons, .certificates, .exam, .mockExam, .speaking, .mindMaps,
-      .statistics, .stats:
+    case .mistakes, .savedLessons, .completedLessons, .certificates, .exam, .mockExam, .speaking,
+      .mindMaps, .statistics, .stats:
       studyRoute?.destination
     }
   }

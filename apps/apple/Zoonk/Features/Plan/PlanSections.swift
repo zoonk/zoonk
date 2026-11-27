@@ -595,7 +595,8 @@ struct PlanMoreSection: View {
   var body: some View {
     let places = learner.summary.value?.places
     let hasPlaces =
-      places?.completedLessons == true || places?.mindMaps == true || goal.kind == .exam
+      places?.savedLessons == true || places?.completedLessons == true || places?.mindMaps == true
+      || goal.kind == .exam
 
     if tabBarPlacement?.listsStudyPlaces != true, hasPlaces {
       PageSection {

@@ -316,20 +316,20 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextSave()
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    XCTAssertTrue(store.isSaved(Self.chapterKey, server: false))
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
+    XCTAssertTrue(store.saves.isSaved(Self.chapterKey, server: false))
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
       await !(!api.isHoldingSave)
     }
 
     await api.releaseSave()
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     XCTAssertEqual(list.value?.chapters.first?.saved, true)
     XCTAssertEqual(list.value?.saved.map(\.targetId), ["chapter"])
-    XCTAssertFalse(store.saveFailed(goalId: "goal"))
+    XCTAssertNil(store.saves.failure(goalId: "goal"))
   }
 
   func testAFailedSaveGoesBackAndSaysSo() async {
@@ -339,15 +339,15 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.failSaves(1)
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     XCTAssertFalse(
-      store.isSaved(Self.chapterKey, server: list.value?.chapters.first?.saved ?? true))
-    XCTAssertTrue(store.saveFailed(goalId: "goal"))
-    XCTAssertFalse(store.saveFailed(goalId: "another goal"))
+      store.saves.isSaved(Self.chapterKey, server: list.value?.chapters.first?.saved ?? true))
+    XCTAssertNotNil(store.saves.failure(goalId: "goal"))
+    XCTAssertNil(store.saves.failure(goalId: "another goal"))
   }
 
   func testTapsFasterThanTheSaveEndInTheLastOneAskedFor() async {
@@ -357,17 +357,17 @@ final class MindMapsStoreTests: XCTestCase {
     await list.load()
     await api.holdNextSave()
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
       await !(!api.isHoldingSave)
     }
 
-    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
-    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(false, Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
+    store.saves.set(false, Self.chapterTarget, goalId: "goal")
     await api.releaseSave()
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     let calls = await api.calls
@@ -385,9 +385,9 @@ final class MindMapsStoreTests: XCTestCase {
     await other.load()
     await otherMap.load()
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     await other.load()
@@ -404,22 +404,22 @@ final class MindMapsStoreTests: XCTestCase {
     await other.load()
     await api.holdNextSave()
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
       await !(!api.isHoldingSave)
     }
 
-    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(false, Self.chapterTarget, goalId: "goal")
     await api.failSaves(1)
     await api.releaseSave()
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     await other.load()
     let calls = await api.calls
     XCTAssertEqual(calls.saves, [true, false])
-    XCTAssertTrue(store.saveFailed(goalId: "goal"))
+    XCTAssertNotNil(store.saves.failure(goalId: "goal"))
     XCTAssertEqual(other.value?.saved.map(\.targetId), ["chapter"])
   }
 
@@ -431,19 +431,19 @@ final class MindMapsStoreTests: XCTestCase {
     let store = MindMapsStore(api: api, cache: cache, drawingPoll: .zero, writingPoll: .zero)
     await api.holdNextSave()
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
       await !(!api.isHoldingSave)
     }
 
     await accounts.signIn(session, as: "learner-b")
     cache.followSession()
-    XCTAssertFalse(store.isSaved(Self.chapterKey, server: false), "B never sees A's tap")
+    XCTAssertFalse(store.saves.isSaved(Self.chapterKey, server: false), "B never sees A's tap")
 
-    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    store.saves.set(true, Self.chapterTarget, goalId: "goal")
     await api.releaseSave()
     _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.pendingSaves.isEmpty)
+      !(!store.saves.pending.isEmpty)
     }
 
     let calls = await api.calls
@@ -1341,7 +1341,7 @@ private struct OneGoalSummaryStub: LearnerSummaryAPIClient {
       level: nil, nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: false, mindMaps: true,
-        readyMistakes: 0, speaking: false),
+        readyMistakes: 0, savedLessons: false, speaking: false),
       readAt: .now, tier: .free, timeZone: "America/Sao_Paulo", todayBlocksLeft: nil)
   }
 

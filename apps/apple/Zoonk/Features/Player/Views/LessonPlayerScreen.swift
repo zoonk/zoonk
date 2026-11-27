@@ -7,18 +7,21 @@ final class LessonPlayerDependencies {
   let preferences: Resource<LearningPreferences>
   let blockFinished: @MainActor (_ sessionID: String, BlockMoment) -> Void
   let sessionStarted: @MainActor (_ sessionID: String) -> Void
+  let runStarted: @MainActor (_ lessonID: String, _ saved: Bool) -> Void
   private var lessons: [String: Resource<LessonLoad>] = [:]
 
   init(
     api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>,
     blockFinished: @escaping @MainActor (_ sessionID: String, BlockMoment) -> Void,
-    sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void
+    sessionStarted: @escaping @MainActor (_ sessionID: String) -> Void,
+    runStarted: @escaping @MainActor (_ lessonID: String, _ saved: Bool) -> Void = { _, _ in }
   ) {
     self.api = api
     self.cache = cache
     self.preferences = preferences
     self.blockFinished = blockFinished
     self.sessionStarted = sessionStarted
+    self.runStarted = runStarted
   }
 
   /// A host that plays the lesson its own way, as an explanation, reshapes what's played; the tutor's
@@ -86,8 +89,8 @@ struct LessonPlayerScreen: View {
           api: player.api, cache: player.cache, preferences: player.preferences,
           lessonResource: player.lesson(id: lessonId, hostedAs: host),
           blockFinished: player.blockFinished,
-          sessionStarted: player.sessionStarted),
-        ending: ending
+          sessionStarted: player.sessionStarted, runStarted: player.runStarted),
+        ending: ending, savesLesson: host == nil
       )
       .id(lessonId)
     }
@@ -101,15 +104,19 @@ private struct LessonPlayerContent: View {
   @Environment(\.lessonAudio) private var audio
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
+  @Environment(SavedLessonsStore.self) private var savedLessons: SavedLessonsStore?
   @State private var store: LessonPlayerStore
   let ending: LessonEndSlot?
+  /// False where a host plays the lesson its own way, as an explanation.
+  let savesLesson: Bool
   @State private var isLeaving = false
   @State private var isShowingMap = false
   @State private var soundOwner = UUID().uuidString
 
-  init(store: LessonPlayerStore, ending: LessonEndSlot?) {
+  init(store: LessonPlayerStore, ending: LessonEndSlot?, savesLesson: Bool) {
     _store = State(initialValue: store)
     self.ending = ending
+    self.savesLesson = savesLesson
   }
 
   var body: some View {
@@ -134,7 +141,14 @@ private struct LessonPlayerContent: View {
               UnsavedAnswersButton()
             }
           }
+
+          if let save = lessonSave {
+            ToolbarItem(placement: .primaryAction) {
+              LessonSaveButton(target: save.target, goalId: save.goalId, server: save.saved)
+            }
+          }
         }
+        .lessonSaveFailureAlert(goalId: lessonSave?.goalId ?? "")
         .taskOptions(
           isShown: store.screen == .playing && store.state != nil && !isRefused,
           label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
@@ -462,6 +476,20 @@ private struct LessonPlayerContent: View {
     }
 
     return state.segments
+  }
+
+  /// Main's bookmark before "…", from the first screen to the end. A save is made from the active
+  /// goal, so there's none without one. It holds its place while the run says whether the learner
+  /// saved the lesson (`saved` nil), so the bar never moves as it answers.
+  private var lessonSave: (target: LessonSaveTarget, goalId: String, saved: Bool?)? {
+    guard savesLesson, !isRefused, let goalId = store.goalID, let lesson = store.lesson else {
+      return nil
+    }
+
+    return (
+      LessonSaveTarget(lessonId: lesson.id, title: lesson.title, chapterTitle: lesson.chapterTitle),
+      goalId, savedLessons?.runSaved(lessonId: lesson.id)
+    )
   }
 
   private var isRefused: Bool {

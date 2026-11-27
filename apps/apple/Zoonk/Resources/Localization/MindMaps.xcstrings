@@ -1455,8 +1455,11 @@
         }
       }
     },
+    "Couldn't remove this map. Try again." : {
+      "comment" : "Taking a map out of the saved maps didn't work, so it's still saved"
+    },
     "Couldn't save this map. Try again." : {
-      "comment" : "Saving or removing a saved map didn't work, so it's back as it was",
+      "comment" : "Saving a map didn't work, so its bookmark is back as it was",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2873,65 +2876,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Henüz kaydedilmiş bir şey yok"
-          }
-        }
-      }
-    },
-    "OK" : {
-      "comment" : "Closes the message that a save didn't work",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceptar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tamam"
           }
         }
       }

@@ -2015,6 +2015,9 @@
         }
       }
     },
+    "Saved lessons" : {
+      "comment" : "Study place listing the lessons the learner saved to do again"
+    },
     "Search" : {
       "comment" : "Opens search on a catalog detail screen.\nTab for searching the plan and the catalog",
       "localizations" : {
@@ -2781,6 +2784,9 @@
           }
         }
       }
+    },
+    "The lessons you've saved, ready to do again anytime." : {
+      "comment" : "What the saved lessons page shows, under its title until it can open"
     },
     "The link may be old or mistyped." : {
       "comment" : "Explains why a link leads to something that doesn't exist",

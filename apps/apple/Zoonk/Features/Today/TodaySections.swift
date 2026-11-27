@@ -1157,6 +1157,25 @@ struct TodayPracticeSection: View {
         }
       }
 
+      if places?.savedLessons == true {
+        PageLink(route: .savedLessons) {
+          ListRow(
+            Text(
+              "Saved lessons", tableName: "Today",
+              comment: "Opens the page of the lessons the learner saved to do again"),
+            description: Text(
+              "Lessons you want to do again", tableName: "Today",
+              comment: "The line under Saved lessons in Practice anytime.")
+          ) {
+            Image(systemName: AppTab.savedLessons.systemImage)
+              .typeStyle(.rowTitle)
+              .imageScale(.medium)
+              .foregroundStyle(LearnKind.lesson.color)
+              .accessibilityHidden(true)
+          }
+        }
+      }
+
       if places?.completedLessons == true {
         PageLink(route: .completedLessons) {
           ListRow(

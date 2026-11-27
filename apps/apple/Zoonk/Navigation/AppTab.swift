@@ -6,6 +6,7 @@ enum AppTab: Hashable {
   case buddy
   case search
   case mistakes
+  case savedLessons
   case completedLessons
   case certificates
   case exam
@@ -19,7 +20,7 @@ enum AppTab: Hashable {
   /// The sidebar's Study group, in its order. Certificates and the statistics overview aren't in
   /// the sidebar: the account menu, the belt mark and search open them.
   static let study: [AppTab] = [
-    .mistakes, .mindMaps, .mockExam, .exam, .speaking, .completedLessons,
+    .mistakes, .mindMaps, .mockExam, .exam, .speaking, .savedLessons, .completedLessons,
   ]
 
   /// The sidebar's Stats group, in its order.
@@ -32,6 +33,7 @@ enum AppTab: Hashable {
   var studyRoute: AppRoute? {
     switch self {
     case .mistakes: .mistakes
+    case .savedLessons: .savedLessons
     case .completedLessons: .completedLessons
     case .certificates: .certificates
     case .exam: .exam
@@ -63,6 +65,10 @@ enum AppTab: Hashable {
       LocalizedStringResource(
         "Mistakes notebook", table: "Navigation",
         comment: "Study place listing the questions the learner got wrong")
+    case .savedLessons:
+      LocalizedStringResource(
+        "Saved lessons", table: "Navigation",
+        comment: "Study place listing the lessons the learner saved to do again")
     case .completedLessons:
       LocalizedStringResource(
         "Completed lessons", table: "Navigation",
@@ -101,6 +107,7 @@ enum AppTab: Hashable {
     case .buddy: "face.smiling"
     case .search: "magnifyingglass"
     case .mistakes: "square.and.pencil"
+    case .savedLessons: "bookmark"
     case .completedLessons: "clock.arrow.circlepath"
     case .certificates: "rosette"
     case .exam: "graduationcap"

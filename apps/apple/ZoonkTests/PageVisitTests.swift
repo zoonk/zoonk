@@ -170,7 +170,7 @@ struct OneGoalSummary: LearnerSummaryAPIClient {
       level: level, nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: kind == .exam, mindMaps: false,
-        readyMistakes: 0, speaking: true),
+        readyMistakes: 0, savedLessons: false, speaking: true),
       readAt: .now, tier: .plus, timeZone: "America/Sao_Paulo", todayBlocksLeft: nil)
   }
 

@@ -6659,6 +6659,9 @@
         }
       }
     },
+    "Lessons you want to do again" : {
+      "comment" : "The line under Saved lessons in Practice anytime."
+    },
     "Let's fit your plan to the days left." : {
       "comment" : "Under \"You missed a few days\": the plan has more lessons than the days left hold. Followed by a button to see the plan's changes.",
       "localizations" : {
@@ -9573,6 +9576,9 @@
           }
         }
       }
+    },
+    "Saved lessons" : {
+      "comment" : "Opens the page of the lessons the learner saved to do again"
     },
     "Say %lld words again" : {
       "comment" : "Mispronounced words due to be said again today",

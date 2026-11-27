@@ -1563,7 +1563,7 @@ private actor HeldAnswersTransport: ClientTransport {
       return (
         HTTPResponse(status: .created, headerFields: headerFields),
         HTTPBody(
-          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
+          #"{"answers": \#(runAnswers), "hyperdrive": {"knownStepIds": [], "streak": 0}, "optionalStepIds": [], "replay": false, "saved": false, "sessionId":null, "runId": "run", "startedAt": "2026-11-07T09:00:00.000Z"}"#
         )
       )
     case "createStepCheck":
@@ -1767,7 +1767,7 @@ private actor OpeningStartTransport: ClientTransport {
     return (
       HTTPResponse(status: .created, headerFields: headers),
       HTTPBody(
-        #"{"answers":\#(runAnswers),"clockId":\#(clockIds[min(count - 1, clockIds.count - 1)].map { "\"\($0)\"" } ?? "null"),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
+        #"{"answers":\#(runAnswers),"clockId":\#(clockIds[min(count - 1, clockIds.count - 1)].map { "\"\($0)\"" } ?? "null"),"hyperdrive":{"knownStepIds":[],"streak":0},"replay":false,"runId":"run","saved":false,"sessionId":"canonical","startedAt":"2026-11-07T09:00:00.000Z"}"#
       )
     )
   }

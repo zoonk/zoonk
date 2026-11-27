@@ -31542,6 +31542,9 @@
         }
       }
     },
+    "Saved lessons" : {
+      "comment" : "Opens the page of the lessons the learner saved to do again"
+    },
     "Say %lld words again" : {
       "comment" : "Mispronounced words due to be said again today",
       "localizations" : {
