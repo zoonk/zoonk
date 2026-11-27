@@ -41,7 +41,8 @@ export type MockHrefs = {
   again: string;
   continue: string;
   exit: string;
-  mistakes: string;
+  /** Practice on one finished mock's mistakes. */
+  mistakes: (mockId: string) => string;
   speakingTask: (conversationId: string) => string;
 };
 

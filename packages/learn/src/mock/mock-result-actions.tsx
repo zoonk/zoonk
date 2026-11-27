@@ -10,25 +10,28 @@ import { useMockScreen } from "./mock-context";
 /** On a phone the bar's second action takes the line above the main one and the way back. */
 export const BAR_SECOND_ACTION_CLASS = "shrink-0 max-lg:basis-full";
 
-function useMistakeCount(): number {
+/** The mock whose mistakes can be practiced now; null when it has none to practice. */
+function usePracticedMock(): string | null {
   const { runner } = useMockScreen();
+  const { mockId, purpose, review } = runner.view;
+
   // A question with several picks answered partly right missed some, so the notebook keeps it too.
-  return runner.view.review.filter(
-    (entry) => entry.outcome === "wrong" || entry.outcome === "partial",
-  ).length;
+  const missed = review.some((entry) => entry.outcome === "wrong" || entry.outcome === "partial");
+
+  return purpose !== "placement" && missed ? mockId : null;
 }
 
 export function MockResultActions() {
   const t = useExtracted();
-  const { hrefs, runner } = useMockScreen();
-  const mistakes = useMistakeCount();
+  const { hrefs } = useMockScreen();
+  const mockId = usePracticedMock();
 
-  if (runner.view.purpose === "placement" || mistakes === 0) {
+  if (!mockId) {
     return <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>;
   }
 
   return (
-    <TaskMainLink href={hrefs.mistakes}>
+    <TaskMainLink href={hrefs.mistakes(mockId)}>
       {t({
         description: "Opens practice on the mistakes that are ready to fix.",
         id: "practiceMistakesAction",
@@ -45,10 +48,9 @@ export function MockResultActions() {
  */
 export function MockResultContinue() {
   const t = useExtracted();
-  const { hrefs, runner } = useMockScreen();
-  const mistakes = useMistakeCount();
+  const { hrefs } = useMockScreen();
 
-  if (mistakes === 0 || runner.view.purpose === "placement") {
+  if (!usePracticedMock()) {
     return null;
   }
 

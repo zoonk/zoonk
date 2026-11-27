@@ -50,13 +50,12 @@ export function MockClient({
 
   const exit = mock.purpose === "placement" ? continueHref : "/today";
 
-  // Practice brings mistakes back only from tomorrow, so the mock's are reviewed in the notebook.
   const hrefs = useMemo(
     () => ({
       again: againHref,
       continue: continueHref,
       exit,
-      mistakes: "/mistakes",
+      mistakes: (mockId: string) => `/mistakes/practice?mockId=${mockId}`,
       speakingTask: (conversationId: string) => `/conversation/${conversationId}?mock=${blockId}`,
     }),
     [againHref, blockId, continueHref, exit],

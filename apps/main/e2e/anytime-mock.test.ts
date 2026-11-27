@@ -179,6 +179,58 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
   });
 
+  test("a finished mock's Practice mistakes opens a run of that mock's mistakes at once", async ({
+    browser,
+  }) => {
+    const { answers, user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+    let asked = 0;
+
+    await page.goto("/mock/new");
+
+    await page
+      .getByRole("radiogroup", { name: "The exam" })
+      .getByText("The full exam", { exact: true })
+      .click();
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+
+    await answerMockQuestions({
+      answers,
+      knows: () => {
+        asked += 1;
+        return asked % 2 === 0;
+      },
+      page,
+    });
+
+    await page
+      .getByRole("button", { name: /^Hand in/u })
+      .first()
+      .click();
+
+    await confirmMockHandIn(page);
+
+    // An anytime mock's address names the mock itself.
+    const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
+    const practice = page.getByRole("link", { name: /^Practice mistakes/u });
+
+    await expect(async () => {
+      if (!(await practice.isVisible())) {
+        await page.getByRole("button", { exact: true, name: "Continue" }).click();
+      }
+
+      await expect(practice).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await practice.click();
+    await expect(page).toHaveURL(`/mistakes/practice?mockId=${mockId}`);
+    await expect(page.getByRole("radio").first()).toBeVisible();
+
+    await page.context().close();
+  });
+
   test("keeps the mock action bar in place, with no empty row, when an answer fails to save", async ({
     browser,
   }) => {
