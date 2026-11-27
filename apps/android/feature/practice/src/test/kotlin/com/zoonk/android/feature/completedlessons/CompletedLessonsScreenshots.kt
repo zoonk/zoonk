@@ -16,10 +16,13 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.savedlessons.FakeSavedLessonsApi
+import com.zoonk.android.feature.savedlessons.SavedLessonsStore
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
@@ -85,7 +88,7 @@ class CompletedLessonsScreenshots {
         val data =
             lessons.filter { group == null || it.group == group }.mapIndexed { index, lesson ->
                 """{"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
-                "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","title":"${lesson.title}"}"""
+                "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","saved":${index == 1},"title":"${lesson.title}"}"""
             }
         val filter =
             """{"groups":[{"key":"biology","lessons":212,"name":"Biology"},{"key":"chemistry","lessons":96,"name":"Chemistry"},
@@ -112,19 +115,16 @@ class CompletedLessonsScreenshots {
         group: String? = null,
     ) {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
-        val store =
-            CompletedLessonsStore(
-                { _, query, _ -> list(empty, query.group) },
-                AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
-                session,
-            )
+        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+        val store = CompletedLessonsStore({ _, query, _ -> list(empty, query.group) }, cache, session)
+        val saved = SavedLessonsStore(FakeSavedLessonsApi(), cache, store)
         rule.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface {
                     PageScaffold(onBack = {}) { padding ->
                         Box(
                             Modifier.fillMaxSize().padding(padding),
-                        ) { CompletedLessons(goalId, LocalDate.now(), store, rememberLazyListState()) {} }
+                        ) { CompletedLessons(goalId, LocalDate.now(), store, saved, AppSnackbars(), rememberLazyListState()) {} }
                     }
                 }
             }

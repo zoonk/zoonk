@@ -42,6 +42,7 @@ internal fun TodayPractice(
     isExam: Boolean,
     isLanguage: Boolean,
     completedLessons: Boolean,
+    savedLessons: Boolean = false,
     navigate: (AppRoute) -> Unit,
 ) {
     val mistakes by store.mistakes[goalId].collectShown()
@@ -63,7 +64,7 @@ internal fun TodayPractice(
             null
         }
 
-    TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, navigate)
+    TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, savedLessons, navigate)
 }
 
 @Composable
@@ -72,18 +73,28 @@ fun TodayPracticeRows(
     mocks: MockOptions?,
     speaking: LanguageTodaySpeaking?,
     completedLessons: Boolean,
+    savedLessons: Boolean = false,
     navigate: (AppRoute) -> Unit,
 ) {
     val mock = mocks?.takeIf { it.running != null || it.options.isNotEmpty() }
     val ready = mistakes?.ready?.toInt() ?: 0
     val tomorrow = mistakes?.tomorrow?.toInt() ?: 0
-    if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons) return
+    if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons && !savedLessons) return
 
     val rows =
         buildList<@Composable () -> Unit> {
             mock?.let { add { MockRow(it, navigate) } }
             speaking?.let { add { SpeakingRow(it, navigate) } }
             if (ready + tomorrow > 0) add { MistakesRow(ready, tomorrow, navigate) }
+            if (savedLessons) {
+                add {
+                    PracticeRow(
+                        kind = LearnKind.Lesson,
+                        title = stringResource(R.string.navigation_saved_lessons),
+                        description = stringResource(R.string.today_saved_lessons_line),
+                    ) { navigate(AppRoute.SavedLessons) }
+                }
+            }
             if (completedLessons) {
                 add {
                     PracticeRow(

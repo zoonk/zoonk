@@ -8,6 +8,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.SaveFailure
 import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
@@ -695,7 +696,7 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aSaveShowsAtOnceThenTheListShowsWhatTheServerKept() =
+    fun aSaveShowsAtOnceThenWhatTheServerKept() =
         runTest(dispatcher) {
             val (maps, store) = setUp()
             val shown = launch { store.list[goalId].shown.collect {} }
@@ -708,7 +709,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(target to true), api.saved)
-            assertNull(maps.saves.value[target])
+            assertEquals(true, maps.saves.value[target])
             assertTrue(store.listed(chapterId).saved)
             shown.cancel()
         }
@@ -737,7 +738,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(target to true, target to false), api.saved)
-            assertNull(maps.saves.value[target])
+            assertEquals(false, maps.saves.value[target])
         }
 
     @Test
@@ -752,7 +753,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertNull(maps.saves.value[target])
-            assertEquals(Unit, actOn(maps.saveFailed))
+            assertEquals(SaveFailure.Save, actOn(maps.saveFailed))
             assertNull(actOn(maps.saveFailed))
         }
 

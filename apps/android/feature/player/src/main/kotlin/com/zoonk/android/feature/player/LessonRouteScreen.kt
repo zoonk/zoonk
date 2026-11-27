@@ -55,6 +55,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.isSaved
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
@@ -69,6 +70,8 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LocalChallengeTeam
+import com.zoonk.android.feature.savedlessons.LessonBookmark
+import com.zoonk.android.feature.savedlessons.rememberLessonSaves
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.feature.tutor.tutorIdentity
@@ -81,6 +84,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** `/learn/{lessonId}`: the lesson's screens, its outline while it waits to be written, or a visitor's way in. */
 @Composable
@@ -226,6 +230,8 @@ internal fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
+    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, viewModel.savedAtStart.takeUnless { endSlot != null })
+
     val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
     val team =
         if (hasChallenge) {
@@ -260,10 +266,31 @@ internal fun PlayingLesson(
                     CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
                 },
                 finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
+                bookmark = bookmark,
             )
             LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
         }
     }
+}
+
+/**
+ * The player's bookmark for a lesson of the library whose run started ([savedAtStart] says whether it was saved then),
+ * saved from the active goal: none without one, since the save needs it.
+ */
+@Composable
+private fun lessonBookmark(
+    app: AppContainer,
+    goalId: UUID?,
+    lessonId: String,
+    savedAtStart: Boolean?,
+): (@Composable () -> Unit)? {
+    val id = remember(lessonId) { runCatching { UUID.fromString(lessonId) }.getOrNull() }
+    if (goalId == null || id == null) return null
+    val saves = rememberLessonSaves(app.savedLessons, goalId, app.snackbars)
+    val states by saves.states.collectAsStateWithLifecycle()
+    savedAtStart ?: return null
+    val saved = states.isSaved(id, savedAtStart)
+    return { LessonBookmark(saved) { saves.set(id, !saved) } }
 }
 
 /**
