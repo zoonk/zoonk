@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +44,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -92,7 +95,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** `/buddy`: the buddy and its day beside the goal's conversation, or its offer to start a goal. */
+/** `/buddy`: the buddy and its day over the goal's conversations, or its offer to start a goal. */
 @Composable
 fun BuddyScreen(
     route: AppRoute.Buddy,
@@ -112,9 +115,9 @@ fun BuddyScreen(
                 read is LoadState.Loaded && learner != null -> {
                     val goalId = learner.tutoredGoalId
                     if (goalId == null) {
-                        BuddyGoalStart(read.value, route.ask, app, navigator)
+                        BuddyGoalStart(read.value, route.ask, navigator)
                     } else {
-                        BuddyPage(read.value, goalId, route.ask, app, navigator)
+                        BuddyPage(read.value, goalId, route, app, navigator)
                     }
                 }
 
@@ -146,23 +149,27 @@ private val LearnerSummary.tutoredGoalId: String?
             ?.id
             ?.toString()
 
+/**
+ * The goal's open conversation beside the list of its others: in the pane where there's room, and
+ * in a sheet from the title row where there isn't. A guest, who can't ask, has neither.
+ */
 @Composable
 fun BuddyPage(
     status: BuddyStatus,
     goalId: String,
-    ask: String?,
+    route: AppRoute.Buddy,
     app: AppContainer,
     navigator: AppNavigator,
     access: TutorAccess = rememberTutorAccess(app),
 ) {
-    val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.studyOpener) }
+    val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.studyOpener, app.tutor, createSavedStateHandle()) }
     val look = status.look()
     val name = buddyName(look.kind, status.buddy.name)
     val face = rememberBuddyActorState()
-    val tutor = rememberTutor(TutorScope.Plan(goalId), app)
     val mistakes by remember(goalId) { app.today.mistakes[UUID.fromString(goalId)] }.collectShown()
     var editing by rememberSaveable { mutableStateOf(false) }
     var wearing by rememberSaveable { mutableStateOf(false) }
+    var listing by rememberSaveable { mutableStateOf(false) }
     val coroutines = rememberCoroutineScope()
     // Only while awake: asleep it naps on, and glowing it's already beaming.
     val react: (BuddyAct) -> Unit = { act -> if (look.energyState == BuddyEnergyState.Awake) coroutines.launch { face.play(act) } }
@@ -181,6 +188,13 @@ fun BuddyPage(
         }
     }
     val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
+    val asks = access == TutorAccess.Ask
+    val listRead = if (asks) remember(goalId) { app.tutor.conversations[goalId] }.collectShown().value else null
+    val list = listRead?.value
+    val hasConversations = list?.conversations?.isNotEmpty() == true
+    // A guest's conversation is only the buddy's hello: it's never read or sent, so it's named here.
+    val guestConversation = rememberSaveable(goalId) { UUID.randomUUID().toString() }
+    val conversationId = if (asks) vm.openConversation(goalId) else guestConversation
 
     OnVisitEnd(vm, goalId, onEnd = vm::endVisit)
     ActOn(vm.route) {
@@ -193,10 +207,7 @@ fun BuddyPage(
         keyboard?.show()
         asking = false
     }
-    LaunchedEffect(ask) {
-        if (ask != null && !vm.askPlaced && tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask)
-        vm.askPlaced = true
-    }
+    LaunchedEffect(goalId, list, asks) { if (asks) vm.choose(goalId, route, list) }
 
     val page =
         TutorPage(
@@ -216,9 +227,40 @@ fun BuddyPage(
             open = navigator::open,
             startCall = app.conversations,
         )
+    val tutor = conversationId?.let { rememberTutor(TutorScope.Plan(goalId, it), app) }
+    val rows =
+        list?.let {
+            val shown =
+                tutor
+                    ?.thread
+                    ?.collectShown()
+                    ?.value
+                    ?.value
+            val sending =
+                tutor
+                    ?.state
+                    ?.collectAsStateWithLifecycle()
+                    ?.value
+                    ?.asking == true
+            val unsent = shown?.turns.isNullOrEmpty() && !sending && it.conversations.none { row -> row.id == conversationId }
+            BuddyConversationRows(it, openId = conversationId.takeUnless { unsent }, vm.loadingMore, vm.moreFailed)
+        }
+    val conversationTaps =
+        BuddyConversationTaps(
+            open = { vm.show(goalId, it) },
+            startNew = { if (rows?.openId != null) vm.startNew(goalId) },
+            showMore = { vm.showMore(goalId) },
+        )
+
+    if (tutor != null) {
+        LaunchedEffect(tutor) {
+            val ask = vm.takeAsk(conversationId) ?: return@LaunchedEffect
+            if (tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask)
+        }
+    }
 
     PageWithSupportingPane(
-        supportingPane = { BuddyDayPane(status, look, name, taps, onGlasses = { wearing = true }, navigator, app) },
+        supportingPane = if (asks) ({ rows?.let { BuddyConversationsPane(it, conversationTaps) } }) else null,
     ) { beside ->
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).weight(1f)) {
@@ -228,20 +270,40 @@ fun BuddyPage(
                     name,
                     status,
                     Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp),
-                    line = if (beside) null else ({ BuddyTodayLine(status, look, name, taps, dayOpen, { dayOpen = it }, navigator) }),
+                    line = { BuddyTodayLine(status, look, name, taps, dayOpen, { dayOpen = it }, navigator) },
                     menu = {
-                        BuddyMenu(
-                            status,
-                            name,
-                            onEdit = { editing = true },
-                            onGlasses = { wearing = true },
-                            navigator,
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (asks && !beside) BuddyConversationsButton(hasConversations, onOpen = { listing = true })
+                            BuddyMenu(
+                                status,
+                                name,
+                                onEdit = { editing = true },
+                                onGlasses = { wearing = true },
+                                navigator,
+                            )
+                        }
                     },
                 )
-                TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
+                when {
+                    tutor != null -> {
+                        key(conversationId) {
+                            TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
+                        }
+                    }
+
+                    listRead is LoadState.Failed -> {
+                        LoadFailedMessage(onRetry = { coroutines.launch { app.tutor.conversations[goalId].refresh() } })
+                    }
+
+                    else -> {
+                        PageLoading()
+                    }
+                }
             }
         }
+        // Where the pane shows the list, a sheet left open from a narrower window has ended.
+        LaunchedEffect(beside) { if (beside) listing = false }
+        if (listing && !beside && rows != null) BuddyConversationsSheet(rows, conversationTaps, onDismiss = { listing = false })
     }
 
     BuddyChanges(
@@ -441,6 +503,14 @@ private fun BuddyMenu(
                 },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_eyeglasses), contentDescription = null) },
                 trailingIcon = { GlassesCount(status) },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.buddy_page_remembers, name)) },
+                onClick = {
+                    open = false
+                    navigator.open(AppRoute.Memory)
+                },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_psychology), contentDescription = null) },
             )
             HorizontalDivider()
             DropdownMenuItem(

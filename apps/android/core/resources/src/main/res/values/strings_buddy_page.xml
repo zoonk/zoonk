@@ -19,6 +19,14 @@
     <string name="buddy_page_suggest_mistake">Explain my last mistake</string>
     <string name="buddy_page_suggest_focus">What should I focus on first?</string>
 
+    <!-- The list of the learner's separate conversations with their buddy, and the button that opens it. -->
+    <string name="buddy_page_conversations">Conversations</string>
+    <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
+    <string name="buddy_page_new_conversation">New conversation</string>
+    <!-- Loads the next page of older conversations. -->
+    <string name="buddy_page_show_more">Show more</string>
+    <string name="buddy_page_conversations_more_failed">Couldn\'t load more conversations. Try again.</string>
+
     <string name="buddy_page_today">%1$s today</string>
     <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
     <string name="buddy_page_energy_named">%1$s\'s Energy</string>
