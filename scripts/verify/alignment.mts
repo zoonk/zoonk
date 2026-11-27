@@ -12,6 +12,7 @@ import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { cutLeads } from "./alignment-cut.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import { evenLeads } from "./alignment-even.mts";
+import { type AlignmentException, EXCEPTIONS } from "./alignment-exceptions.mts";
 import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
@@ -30,12 +31,7 @@ import { pinnedLeads } from "./alignment-pinned.mts";
 import { roomLeads } from "./alignment-room.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
-import {
-  type AlignmentException,
-  DECLARATIONS,
-  EXCEPTIONS,
-  type Relation,
-} from "./alignment-table.mts";
+import { DECLARATIONS, type Relation } from "./alignment-table.mts";
 import { lineEndLeads, loneWordLeads } from "./alignment-wrap.mts";
 
 /**
