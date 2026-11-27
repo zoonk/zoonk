@@ -1,3 +1,4 @@
+import { LANGUAGE_LEVEL_TEST_OFFER } from "@zoonk/core/language/level-test/contract";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   INITIAL_BANK_WAIT,
@@ -12,6 +13,7 @@ const ASKED_AT = Date.parse("2026-09-28T10:00:00Z");
 const BANK_START_MS = 45_000;
 
 const idle = {
+  ...LANGUAGE_LEVEL_TEST_OFFER,
   expectedSeconds: 120,
   showAlphabetNote: false,
   startedAt: null,

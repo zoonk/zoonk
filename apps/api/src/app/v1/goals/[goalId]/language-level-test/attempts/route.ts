@@ -10,12 +10,12 @@ async function startLevelTest(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test/attempts">,
 ) {
-  const [{ goalId }, { length }] = await Promise.all([
+  const [{ goalId }] = await Promise.all([
     readPathParams(context, goalPathParamsSchema),
     readBody(request, startLanguageLevelTestInputSchema),
   ]);
 
-  const result = await startLanguageLevelTest({ goalId, length });
+  const result = await startLanguageLevelTest({ goalId });
 
   return result.status === "ready" ? NextResponse.json(result.test) : levelTestError(result.status);
 }

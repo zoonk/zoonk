@@ -14,7 +14,6 @@ import {
   type PlacementRecord,
   getAttemptParts,
   readPlacementAttempt,
-  readReadyAssessmentId,
   splitPlacementParts,
 } from "./placement-attempt-record";
 
@@ -168,20 +167,8 @@ export async function openPlacementAttempt({
     async (tx) => {
       const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
       const record = readPlacementAttempt(goal);
-      const assessmentId = goal.kind === "language" ? readReadyAssessmentId(goal.details) : null;
-
-      const allowed =
-        goal.kind === "learn" ||
-        (goal.kind === "language" &&
-          length === "wholeCourse" &&
-          Boolean(record.attempt || assessmentId));
-
-      if (!allowed) {
+      if (goal.kind !== "learn") {
         return unchanged(false);
-      }
-
-      if (!record.attempt && assessmentId !== null && record.assessmentId === assessmentId) {
-        return unchanged(true);
       }
 
       const at = new Date().toISOString();
@@ -211,13 +198,9 @@ export async function openPlacementAttempt({
         skillIds,
       };
 
-      await savePlacementAttempt({
-        goal,
-        record: { ...record, ...(assessmentId && { assessmentId }), attempt, finishedParts: [] },
-        tx,
-      });
+      await savePlacementAttempt({ goal, record: { ...record, attempt, finishedParts: [] }, tx });
 
-      if (goal.planRevealedAt || goal.kind === "language") {
+      if (goal.planRevealedAt) {
         await owePartQuestions({ goalId, skillIds: first, tx, userId });
       }
 

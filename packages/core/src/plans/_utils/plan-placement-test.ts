@@ -1,16 +1,13 @@
 import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
+import { LANGUAGE_LEVEL_TEST_OFFER } from "../../language/level-test/level-test-contract";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
 import { readCoursePlacementOffer } from "../../learner/placement/_utils/course-placement-offer";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
   type PlacementAttempt,
-  type PlacementAttemptView,
   type PlacementRecord,
-  getCourseOffer,
-  isTopicAhead,
-  readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { readPlacementResult } from "../../learner/placement/_utils/placement-result";
@@ -34,35 +31,13 @@ async function readAttemptPlacement(
   });
 }
 
-async function readLanguageRow({
-  attemptView,
-  context,
-  now,
-  placement,
-}: {
-  attemptView: PlacementAttemptView | null;
-  context: PlanContext;
-  now: Date;
-  placement: PlacementRecord;
-}): Promise<PlanView["placementTest"]> {
+async function readLanguageRow(
+  context: PlanContext,
+  now: Date,
+): Promise<PlanView["placementTest"]> {
   const { goal } = context;
   const summary = readLevelTestSummary(goal);
-  const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
-  const continuing = attemptView || summary.attempt || waitingForTopicWalk;
   const idleState = summary.result ? "result" : "start";
-  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
-
-  const ahead = context.state.graph.skills.filter((skill) =>
-    isTopicAhead(lessonsBySkill.get(skill.skillId)),
-  );
-
-  const offer = getCourseOffer(ahead.length);
-
-  const estimatedMinutes =
-    attemptView?.totalEstimatedMinutes ??
-    offer?.wholeCourse?.estimatedMinutes ??
-    offer?.estimatedMinutes ??
-    0;
 
   const [nextTestOutLevel, levelResult] = await Promise.all([
     summary.openTestOutLevel ??
@@ -77,12 +52,12 @@ async function readLanguageRow({
   ]);
 
   return {
-    attempt: attemptView,
-    estimatedMinutes,
+    attempt: null,
+    estimatedMinutes: LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes,
     kind: "language",
     nextTestOutLevel,
     result: levelResult,
-    state: continuing ? "continue" : idleState,
+    state: summary.attempt ? "continue" : idleState,
   };
 }
 
@@ -132,15 +107,11 @@ export async function readPlanPlacementTest(
     return null;
   }
 
-  const placement = readPlacementAttempt(goal);
-  const { attempt } = placement;
-
-  const attemptPlacement = await readAttemptPlacement(context, attempt);
-  const attemptView = attemptPlacement?.attempt ?? null;
-
   if (goal.kind === "language") {
-    return readLanguageRow({ attemptView, context, now, placement });
+    return readLanguageRow(context, now);
   }
 
+  const placement = readPlacementAttempt(goal);
+  const attemptPlacement = await readAttemptPlacement(context, placement.attempt);
   return readCourseRow({ attemptPlacement, context, placement });
 }

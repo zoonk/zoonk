@@ -73,6 +73,18 @@ export function getStepLanguageSkill(kind: StepKind): LanguageSkill | null {
   return STEP_SKILLS[kind] ?? null;
 }
 
+export function languagePlanningBand(score: number) {
+  if (score >= CEFR_LEVELS.indexOf("C1")) {
+    return CEFR_LEVELS.indexOf("C1");
+  }
+
+  if (score >= CEFR_LEVELS.indexOf("B1")) {
+    return CEFR_LEVELS.indexOf("B1");
+  }
+
+  return CEFR_LEVELS.indexOf("A1");
+}
+
 export function getContentCeiling(level: CourseLevel): number {
   return CONTENT_CEILINGS[level];
 }

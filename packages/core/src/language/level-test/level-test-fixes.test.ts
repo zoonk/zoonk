@@ -142,7 +142,14 @@ describe("level test answers to a question fixed during the test", () => {
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: false } });
 
     const { answer } = await lastAnswer(goalId);
-    expect(answer).toStrictEqual({ answerIndex: 0, correct: false, durationMs: 0, id: first });
+
+    expect(answer).toStrictEqual({
+      answerIndex: 0,
+      answeredAt: expect.any(String),
+      correct: false,
+      durationMs: 0,
+      id: first,
+    });
   });
 
   it("excuses the first answer to a question fixed while the learner was on it", async () => {

@@ -57,7 +57,7 @@ export async function finishGoalPlacement({
 
   if (input.attemptId) {
     const completion =
-      (owned.goal.kind === "learn" || owned.goal.kind === "language") && !input.fromScratch
+      owned.goal.kind === "learn" && !input.fromScratch
         ? await finishPlacementAttempt({
             answered: input.answered,
             attemptId: input.attemptId,

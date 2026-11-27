@@ -18,7 +18,7 @@ export type PlacementSittingResult =
  * Opens an exam goal's next sitting, the first or a further one, and marks its Focus test started.
  * Asking again while a sitting is open returns that sitting; one with nothing left to ask is
  * finished first. With nothing to ask at all, the state comes back with no sitting.
- * `unavailable`: the goal isn't an exam.
+ * `unavailable`: the goal does not use course placement or Focus.
  */
 export async function startPlacementSitting({
   goalId,
@@ -35,9 +35,7 @@ export async function startPlacementSitting({
 
   const { goal, userId } = owned;
 
-  const length = input.length ?? (goal.kind === "learn" ? "quick" : undefined);
-
-  if (goal.kind !== "exam" && length === undefined) {
+  if (goal.kind !== "learn" && goal.kind !== "exam") {
     return { status: "unavailable" };
   }
 
@@ -45,12 +43,8 @@ export async function startPlacementSitting({
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  if (goal.kind !== "exam" && length !== undefined) {
-    const opened = await openPlacementAttempt({ goalId, length, userId });
-
-    if (!opened && goal.kind !== "learn") {
-      return { status: "unavailable" };
-    }
+  if (goal.kind === "learn") {
+    await openPlacementAttempt({ goalId, length: input.length ?? "quick", userId });
 
     const plan = await loadPlacementPlan(goalId);
 

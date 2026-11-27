@@ -198,7 +198,6 @@ private fun LanguageLevelTest.savedResult(attemptId: UUID): LanguageLevelTestRes
                 lessonsSkipped = saved.lessonsSkipped,
                 levelsSkipped = saved.levelsSkipped.map { LanguageLevelTestResultResult.LevelsSkipped.valueOf(it.name) },
                 ranges = saved.ranges,
-                wholeCourseReady = saved.wholeCourseReady,
             ),
     )
 }

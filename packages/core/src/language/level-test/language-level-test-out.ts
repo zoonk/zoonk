@@ -7,7 +7,6 @@ import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { createLearnerAttempt } from "../../learner/_utils/create-learner-attempt";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { gradeSessionAnswer, parseSessionItem } from "../../sessions/_utils/session-items";
 import {
   availableLevelTestOut,
@@ -26,11 +25,7 @@ import {
   type LevelTestOutProgress,
   isOpenLevelTestOut,
 } from "./level-test-out-contract";
-import {
-  hasOpenLanguageTopicWalk,
-  readLevelTestAttempts,
-  readLevelTestSummary,
-} from "./read-level-test-summary";
+import { readLevelTestAttempts, readLevelTestSummary } from "./read-level-test-summary";
 
 const PREPARATION_WINDOW_MS = 10 * 60 * 1000;
 
@@ -111,11 +106,7 @@ export async function startLanguageLevelTestOut({
     const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
     const { attempt, testOut } = readLevelTestAttempts(current);
 
-    if (
-      hasOpenLanguageTopicWalk(current) ||
-      readPendingTopicWalkAssessmentId(current) !== null ||
-      (attempt && !attempt.result)
-    ) {
+    if (attempt && !attempt.result) {
       return unchanged(null);
     }
 

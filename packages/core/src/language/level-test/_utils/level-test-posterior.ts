@@ -50,14 +50,6 @@ export function getMean(posterior: Posterior) {
   return posterior.reduce((sum, { probability, theta }) => sum + theta * probability, 0);
 }
 
-export function getDeviation(posterior: Posterior) {
-  const mean = getMean(posterior);
-
-  return Math.sqrt(
-    posterior.reduce((sum, { probability, theta }) => sum + probability * (theta - mean) ** 2, 0),
-  );
-}
-
 export function getLowerBound(posterior: Posterior) {
   const quantile = posterior.reduceRight(
     ({ bound, tail }, { probability, theta }) => ({

@@ -121,7 +121,7 @@ internal fun ColumnScope.PlacementSetup(
                 val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
                 LevelResult(
                     result = result,
-                    walks = result.result?.wholeCourseReady == true,
+                    walks = false,
                     targetLanguage = targetLanguage,
                     testOutLevel = null,
                     pressed = if (end.saving) Pressed.Main else assessment.pressed,
@@ -140,6 +140,6 @@ internal fun ColumnScope.PlacementSetup(
 private val LanguageLevelTest.openAttemptId: UUID?
     get() =
         when (this) {
-            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId.takeIf { value.length != null }
-            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId.takeIf { value.length != null }
+            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.attemptId
+            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.attemptId
         }

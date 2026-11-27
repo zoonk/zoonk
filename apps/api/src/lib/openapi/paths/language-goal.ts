@@ -69,7 +69,7 @@ const levelTestPaths = {
     post: {
       ...common,
       description:
-        "Opens a Quick or Whole course test and schedules missing questions. An attempt already open is returned with its saved progress.",
+        "Opens a language level test and schedules missing questions. An attempt already open is returned with its saved progress.",
       operationId: "startLanguageLevelTest",
       requestBody: {
         content: { "application/json": { schema: startLanguageLevelTestInputSchema } },
@@ -102,7 +102,7 @@ const levelTestPaths = {
     post: {
       ...common,
       description:
-        "Answers the test's current question. `answerIndex` null means \"I don't know\". An answer to any other question, such as one sent twice or one the test no longer asks, saves nothing and returns the test as it is now.",
+        "Answers the test's current question. Set audioDeferred on a listening question to finish without scoring it. `answerIndex` null means \"I don't know\". An answer to any other question, such as one sent twice or one the test no longer asks, saves nothing and returns the test as it is now.",
       operationId: "answerLanguageLevelTest",
       requestBody: {
         content: { "application/json": { schema: levelTestAnswerInputSchema } },
