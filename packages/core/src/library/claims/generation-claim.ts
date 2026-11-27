@@ -74,7 +74,7 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
     claim: (db, { id, workflowRunId }) =>
       db.lesson.updateMany({
         data: { contentRunId: workflowRunId, contentStatus: "running" },
-        where: { contentStatus: { in: CLAIMABLE_STATUSES }, id, setAsideAt: null },
+        where: { contentStatus: { in: CLAIMABLE_STATUSES }, id },
       }),
     finish: ({ id, status, workflowRunId }) =>
       prisma.lesson.updateMany({
@@ -96,7 +96,7 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
     claim: (db, { id, workflowRunId }) =>
       db.lesson.updateMany({
         data: { specRunId: workflowRunId, specStatus: "running" },
-        where: { id, setAsideAt: null, specStatus: { in: CLAIMABLE_STATUSES } },
+        where: { id, specStatus: { in: CLAIMABLE_STATUSES } },
       }),
     finish: ({ id, status, workflowRunId }) =>
       prisma.lesson.updateMany({

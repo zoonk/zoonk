@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { parseItemContent } from "../items/item-content";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { safeParseStepContent } from "../steps/contract/step-contract";
@@ -52,15 +52,13 @@ function getWrongAnswers({ item, content, kind }: SourceQuestion, skillId: strin
 }
 
 export async function loadSecondTakeWrongAnswers({
-  db,
   lessonId,
   skillId,
 }: {
-  db: TransactionClient;
   lessonId: string;
   skillId: string;
 }) {
-  const questions = await db.step.findMany({
+  const questions = await prisma.step.findMany({
     orderBy: [{ position: "asc" }, { id: "asc" }],
     select: {
       content: true,

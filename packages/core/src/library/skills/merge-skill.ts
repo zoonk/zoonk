@@ -9,7 +9,7 @@ import {
   getSkillCacheTag,
 } from "../../cache/tags";
 import { getAdminAccess } from "../../users/get-admin-access";
-import { PlanInputWriteConflictError, writePlanInputs } from "../_utils/plan-input-write";
+import { writePlanInputs } from "../_utils/plan-input-write";
 import { getSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { findSurvivingSkill } from "./_utils/find-surviving-skill";
 import { lockSkillPlanInputs } from "./_utils/skill-input-write";
@@ -140,67 +140,32 @@ function secondTakeKey(skill: Skill): string {
   });
 }
 
-function readSecondTakes(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
-  return tx.lesson.findMany({
-    select: {
-      contentStatus: true,
-      id: true,
-      identityKey: true,
-      setAsideAt: true,
-      specStatus: true,
-    },
-    where: {
-      identityKey: { in: [secondTakeKey(duplicate), secondTakeKey(survivor)] },
-      language: survivor.language,
-    },
+async function moveSecondTake(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
+  const from = secondTakeKey(duplicate);
+  const to = secondTakeKey(survivor);
+
+  const lessons = await tx.lesson.findMany({
+    select: { id: true, identityKey: true, setAsideAt: true },
+    where: { identityKey: { in: [from, to] }, language: survivor.language },
   });
-}
 
-async function moveSecondTake({
-  lockedIds,
-  pair,
-  tx,
-}: {
-  lockedIds: readonly string[];
-  pair: SkillPair;
-  tx: TransactionClient;
-}) {
-  const lessons = await readSecondTakes(tx, pair);
+  const take = lessons.find(({ identityKey }) => identityKey === from);
 
-  if (lessons.some(({ id }) => !lockedIds.includes(id))) {
-    throw new PlanInputWriteConflictError("A second take appeared while merging its skill.");
-  }
-
-  const duplicate = lessons.find(
-    ({ identityKey }) => identityKey === secondTakeKey(pair.duplicate),
-  );
-
-  if (!duplicate) {
+  if (!take) {
     return;
   }
 
-  const identityKey = secondTakeKey(pair.survivor);
-  const survivorExists = lessons.some((lesson) => lesson.identityKey === identityKey);
-
   await tx.lesson.update({
-    data: survivorExists
-      ? {
-          contentStatus: duplicate.contentStatus === "completed" ? undefined : "failed",
-          setAsideAt: duplicate.setAsideAt ?? new Date(),
-          specStatus: duplicate.specStatus === "completed" ? undefined : "failed",
-        }
-      : { identityKey },
-    where: { id: duplicate.id },
+    data: lessons.some(({ identityKey }) => identityKey === to)
+      ? { setAsideAt: take.setAsideAt ?? new Date() }
+      : { identityKey: to },
+    where: { id: take.id },
   });
 }
 
 async function mergeInto(pair: SkillPair) {
   return writePlanInputs(async (tx) => {
-    const takes = await readSecondTakes(tx, pair);
-    const lockedLessonIds = takes.map(({ id }) => id);
-
     const planIds = await lockSkillPlanInputs({
-      lessonIds: lockedLessonIds,
       masterySkillId: pair.duplicate.id,
       skillIds: [pair.duplicate.id, pair.survivor.id],
       tx,
@@ -217,7 +182,7 @@ async function mergeInto(pair: SkillPair) {
 
     await markLockedPlanInputsChanged(tx, { planIds });
 
-    await moveSecondTake({ lockedIds: lockedLessonIds, pair, tx });
+    await moveSecondTake(tx, pair);
     const userIds = await moveLearnerSkills(tx, pair);
 
     await movePointers(tx, pair);

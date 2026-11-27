@@ -1,8 +1,7 @@
 import "server-only";
-import { type Lesson, type TransactionClient, prisma } from "@zoonk/db";
-import { isVisibleTo } from "../_utils/library-visibility";
+import { type Lesson, prisma } from "@zoonk/db";
+import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
-import { findSurvivingSkill } from "../skills/_utils/find-surviving-skill";
 import { SECOND_TAKE_MINUTES, getSecondTakeIdentityKey } from "./second-take-identity";
 import { findSecondTakeSource } from "./second-take-source";
 
@@ -12,55 +11,34 @@ function lessonToWrite(lesson: Pick<Lesson, "contentStatus" | "id" | "setAsideAt
     : lesson.id;
 }
 
-async function readSecondTake({
-  db,
-  skillId,
-  userId,
-}: {
-  db: TransactionClient;
-  skillId: string;
-  userId: string;
-}) {
-  const found = await findSurvivingSkill(skillId, db);
-  const skill = found?.skill;
+/** Internal workflow bridge. The follow-up must be owed by the learner's day-opening write. */
+export async function ensureSecondTake({ skillId, userId }: { skillId: string; userId: string }) {
+  const skill = await prisma.skill.findFirst({
+    select: { language: true, ownerId: true, targetLanguage: true, visibility: true },
+    where: { ...libraryRowsVisibleTo(userId), id: skillId, mergedIntoId: null },
+  });
 
-  if (!skill || skill.mergedIntoId || !isVisibleTo({ row: skill, viewerId: userId })) {
+  if (!skill || (skill.visibility === "private" && skill.ownerId !== userId)) {
     return null;
   }
 
   const ownerId = skill.visibility === "private" ? userId : null;
-  const identityKey = getSecondTakeIdentityKey({ ownerId, skillId: skill.id });
+  const identityKey = getSecondTakeIdentityKey({ ownerId, skillId });
 
-  const existing = await db.lesson.findUnique({
+  const existing = await prisma.lesson.findUnique({
     select: { contentStatus: true, id: true, setAsideAt: true },
     where: { languageIdentity: { identityKey, language: skill.language } },
   });
 
   if (existing) {
-    return { existing: lessonToWrite(existing) };
+    return lessonToWrite(existing);
   }
 
-  const source = await findSecondTakeSource({
-    db,
-    language: skill.language,
-    ownerId,
-    skillId: skill.id,
-  });
+  const source = await findSecondTakeSource({ language: skill.language, ownerId, skillId });
 
-  return source ? { identityKey, ownerId, skill, source } : null;
-}
-
-/** Internal workflow bridge. The follow-up must be owed by the learner's day-opening write. */
-export async function ensureSecondTake({ skillId, userId }: { skillId: string; userId: string }) {
-  const found = await prisma.$transaction((db) => readSecondTake({ db, skillId, userId }), {
-    isolationLevel: "RepeatableRead",
-  });
-
-  if (!found || "existing" in found) {
-    return found?.existing ?? null;
+  if (!source) {
+    return null;
   }
-
-  const { identityKey, ownerId, skill, source } = found;
 
   const { lesson } = await createLibraryLesson({
     canDo: source.canDo,
@@ -77,7 +55,7 @@ export async function ensureSecondTake({ skillId, userId }: { skillId: string; u
       promptVersion: "pending",
       runId: "pending",
     },
-    skillIds: [skill.id],
+    skillIds: [skillId],
     targetLanguage: skill.targetLanguage,
     title: source.title,
   });

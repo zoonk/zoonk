@@ -451,7 +451,7 @@ const REGISTRY: Record<string, Registration[]> = {
   "library/skills/merge-skill.ts": [
     {
       verdict: "covered",
-      why: "the skill protocol locks the second takes and marks their dependents before changing either lesson",
+      why: "the skill protocol marks dependent plans before moving a second take to the survivor",
       writes: ["lesson.update"],
     },
     {

@@ -1,6 +1,6 @@
 import "server-only";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { listPlannerTemplates } from "../activities/writer-templates";
 import { getLessonCountry } from "../content-country";
@@ -27,19 +27,17 @@ export type LessonSpecInputs = {
 };
 
 async function loadSecondTakeSpecInputs({
-  db,
   lesson,
   skill,
   skillId,
 }: {
-  db: TransactionClient;
   lesson: { language: string; ownerId: string | null; targetLanguage: string | null };
   skill: { country: string | null; name: string };
   skillId: string;
 }): Promise<LessonSpecInputs | null> {
   const { language, ownerId, targetLanguage } = lesson;
 
-  const source = await findSecondTakeSource({ db, language, ownerId, skillId });
+  const source = await findSecondTakeSource({ language, ownerId, skillId });
 
   if (!source) {
     return null;
@@ -47,7 +45,7 @@ async function loadSecondTakeSpecInputs({
 
   const chapter = source.homeChapter;
   const country = getLessonCountry({ course: chapter?.homeCourse, skill });
-  const wrongAnswers = await loadSecondTakeWrongAnswers({ db, lessonId: source.id, skillId });
+  const wrongAnswers = await loadSecondTakeWrongAnswers({ lessonId: source.id, skillId });
 
   return {
     homeChapterId: null,
@@ -69,8 +67,8 @@ async function loadSecondTakeSpecInputs({
   };
 }
 
-function readLessonForSpec(db: TransactionClient, lessonId: string) {
-  return db.lesson.findUnique({
+function readLessonForSpec(lessonId: string) {
+  return prisma.lesson.findUnique({
     include: {
       homeChapter: {
         include: {
@@ -91,30 +89,37 @@ function readLessonForSpec(db: TransactionClient, lessonId: string) {
 
 type LessonForSpec = NonNullable<Awaited<ReturnType<typeof readLessonForSpec>>>;
 
-async function readSpecSource(db: TransactionClient, lessonId: string) {
-  const lesson = await readLessonForSpec(db, lessonId);
+function readSecondTakeSpec(lesson: LessonForSpec, skillId: string) {
+  const skill = lesson.skills.find((link) => link.skillId === skillId)?.skill;
+  return skill ? loadSecondTakeSpecInputs({ lesson, skill, skillId }) : null;
+}
+
+export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpecInputs | null> {
+  const lesson = await readLessonForSpec(lessonId);
 
   if (!lesson) {
     return null;
   }
 
-  const skillId = getSecondTakeSkillId(lesson.identityKey);
+  const secondTakeSkillId = getSecondTakeSkillId(lesson.identityKey);
 
-  if (!skillId) {
-    return lesson;
+  if (secondTakeSkillId) {
+    const inputs = await readSecondTakeSpec(lesson, secondTakeSkillId);
+
+    if (inputs) {
+      return inputs;
+    }
+
+    // A merge can move the source between reads. Missing inputs would set the lesson aside.
+    const moved = await readLessonForSpec(lessonId);
+    const movedSkillId = moved && getSecondTakeSkillId(moved.identityKey);
+
+    return moved && movedSkillId && movedSkillId !== secondTakeSkillId
+      ? readSecondTakeSpec(moved, movedSkillId)
+      : null;
   }
 
-  const skill = lesson.skills.find((link) => link.skillId === skillId)?.skill;
-  return skill ? loadSecondTakeSpecInputs({ db, lesson, skill, skillId }) : null;
-}
-
-export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpecInputs | null> {
-  // A skill merge moves the second take and its source together. Read both from the same snapshot.
-  const source = await prisma.$transaction((db) => readSpecSource(db, lessonId), {
-    isolationLevel: "RepeatableRead",
-  });
-
-  return source && "identityKey" in source ? loadOrdinarySpecInputs(source) : source;
+  return loadOrdinarySpecInputs(lesson);
 }
 
 async function loadOrdinarySpecInputs(lesson: LessonForSpec): Promise<LessonSpecInputs> {
