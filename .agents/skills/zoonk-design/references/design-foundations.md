@@ -2,6 +2,19 @@
 
 Always remember this: "Design is not just what it looks like and feels like. Design is how it works." (Steve Jobs)
 
+## What each principle asks of a screen
+
+- **Resolve unnecessary decisions.** Provide a useful default path. Use known context and reversible defaults; ask people to choose where their preferences or circumstances matter.
+- **Give attention a clear order.** Decide what matters now, what supports it, and what can wait. Make the next action obvious; keep alternatives available without giving every option equal emphasis. Reconsider competing elements before fitting them into a tidier layout.
+- **Make each element earn its place.** Remove labels that restate the obvious and repeated representations of the same information. Before adding a separate widget, consider whether an existing element can communicate it naturally. Look for simpler combinations of information and action while keeping their meaning clear.
+- **Organize complexity around the task.** Sequence decisions when one answer determines what comes next. Keep related information together when people need to compare it. Reveal infrequent detail on demand through discoverable controls. Judge total effort: extra steps and hidden information can create more work.
+- **Make behavior predictable.** Use familiar concepts, short labels in words the person already knows, and consistent interactions. Keep needed context visible. If using it needs an explanation, improve the interaction; what guidance is left goes where the uncertainty occurs, when it occurs.
+- **Build confidence.** Show state and feedback promptly. Prevent likely mistakes, preserve work, and make correction easy. Keep meaningful choices accessible.
+- **Design the whole journey.** Preserve context and consistent placement across transitions. Each addition should fit the surrounding experience. Reusing components alone does not make a coherent interface.
+- **Express care.** Make people feel capable and comfortable through thoughtful language, balanced proportions, responsive feedback, and smooth continuity. Delight should remain pleasant through repeated use.
+
+The sections below give the reasoning.
+
 ## Start with the experience
 
 Jobs's emphasis on the customer's experience and Saarinen's emphasis on context lead to a practical question: what should this product help someone accomplish, and what is getting in their way? Resolve that before arranging controls. A capability earns its place through usefulness in the whole experience. [Jobs](https://allaboutstevejobs.com/videos/misc/wwdc_1997_closing_chat), [Saarinen](https://linear.app/now/output-isn-t-design).
