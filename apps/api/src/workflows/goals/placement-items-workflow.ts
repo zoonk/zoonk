@@ -1,3 +1,4 @@
+import { type PlacementPartPreparation } from "@zoonk/core/follow-ups/contract";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
@@ -18,7 +19,7 @@ import { readShortPlanPracticeStep } from "./steps/short-plan-practice-step";
 export type PlacementItemsInput = {
   analytics?: ContentAnalytics;
   goalId: string;
-  placementPart?: { attemptId: string; part: number };
+  placementPart?: PlacementPartPreparation;
   skillIds?: string[];
   waitsForNotice?: boolean;
 };

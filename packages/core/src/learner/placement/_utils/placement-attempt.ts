@@ -4,18 +4,21 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
+import { type PlacementPartPreparation } from "../../../follow-ups/follow-up-contract";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
 import { loadCoursePlacementTopics } from "./course-placement-offer";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import {
+  type PlacementAttempt,
   type PlacementLength,
   type PlacementRecord,
   getAttemptParts,
   readPlacementAttempt,
   splitPlacementParts,
 } from "./placement-attempt-record";
+import { QUESTION_WRITING_WINDOW_MS } from "./placement-plan-build";
 
 export async function savePlacementAttempt({
   goal,
@@ -42,34 +45,64 @@ async function owePartQuestions({
   userId,
 }: {
   goalId: string;
-  placementPart?: { attemptId: string; part: number };
+  placementPart: PlacementPartPreparation;
   skillIds: string[];
   tx: TransactionClient;
   userId: string;
 }) {
-  if (placementPart && skillIds.length === 0) {
+  if (skillIds.length === 0) {
     return;
-  }
-
-  if (!placementPart) {
-    await tx.plan.updateMany({ data: { placementPreparedAt: null }, where: { goalId } });
   }
 
   await oweFollowUps({
     db: tx,
     followUps: [
       {
-        input: {
-          goalId,
-          ...(placementPart && { placementPart }),
-          ...(skillIds.length > 0 && { skillIds }),
-          waitsForNotice: false,
-        },
+        input: { goalId, placementPart, skillIds, waitsForNotice: false },
         kind: "preparePlacementItems",
       },
     ],
     userId,
   });
+}
+
+async function retryPartQuestions({
+  at,
+  current,
+  goal,
+  tx,
+}: {
+  at: string;
+  current: PlacementAttempt;
+  goal: Pick<Goal, "id" | "userId">;
+  tx: TransactionClient;
+}): Promise<PlacementAttempt> {
+  const waited = Date.parse(at) - Date.parse(current.partRequestedAt ?? current.partStartedAt);
+
+  if (
+    !current.partPreparationFailed &&
+    (current.partPrepared !== false || waited < QUESTION_WRITING_WINDOW_MS)
+  ) {
+    return current;
+  }
+
+  const { id: goalId, userId } = goal;
+  const plan = await loadPlacementPlan(goalId, tx);
+  const { attemptQuestions } = await loadPlacementWithSummary({ goalId, plan, tx, userId });
+
+  if (!attemptQuestions?.preparationFailed) {
+    return current;
+  }
+
+  await owePartQuestions({
+    goalId,
+    placementPart: { attemptId: current.id, part: current.part, requestedAt: at },
+    skillIds: attemptQuestions.remainingTopics,
+    tx,
+    userId,
+  });
+
+  return { ...current, partPreparationFailed: false, partPrepared: false, partRequestedAt: at };
 }
 
 async function resumePlacementAttempt({
@@ -90,7 +123,13 @@ async function resumePlacementAttempt({
   const { id: goalId, userId } = goal;
 
   if (!current.partComplete) {
-    if (!current.paused && (current.length === length || length === "quick")) {
+    const retried = await retryPartQuestions({ at, current, goal, tx });
+
+    if (
+      retried === current &&
+      !current.paused &&
+      (current.length === length || length === "quick")
+    ) {
       return unchanged(true);
     }
 
@@ -99,7 +138,7 @@ async function resumePlacementAttempt({
       record: {
         ...record,
         attempt: {
-          ...current,
+          ...retried,
           length: length === "wholeCourse" ? length : current.length,
           paused: false,
         },
@@ -140,7 +179,9 @@ async function resumePlacementAttempt({
         length: "wholeCourse",
         part,
         partComplete: false,
+        partPreparationFailed: false,
         partPrepared: false,
+        partRequestedAt: null,
         partSkillIds,
         partStartedAt: at,
         parts: getAttemptParts(current),
@@ -167,6 +208,7 @@ export async function openPlacementAttempt({
     async (tx) => {
       const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
       const record = readPlacementAttempt(goal);
+
       if (goal.kind !== "learn") {
         return unchanged(false);
       }
@@ -192,6 +234,7 @@ export async function openPlacementAttempt({
         lessonsSkipped: 0,
         part: 1,
         partComplete: false,
+        ...(goal.planRevealedAt && { partPrepared: false }),
         partSkillIds: first,
         partStartedAt: at,
         parts,
@@ -201,7 +244,13 @@ export async function openPlacementAttempt({
       await savePlacementAttempt({ goal, record: { ...record, attempt, finishedParts: [] }, tx });
 
       if (goal.planRevealedAt) {
-        await owePartQuestions({ goalId, skillIds: first, tx, userId });
+        await owePartQuestions({
+          goalId,
+          placementPart: { attemptId: attempt.id, part: 1 },
+          skillIds: first,
+          tx,
+          userId,
+        });
       }
 
       return true;

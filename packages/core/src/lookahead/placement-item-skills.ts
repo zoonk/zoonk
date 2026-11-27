@@ -9,6 +9,7 @@ import {
 } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
+import { type PlacementPartPreparation } from "../follow-ups/follow-up-contract";
 import {
   LOW_GUESS_ANSWERS_TO_SKIP,
   isLowGuessTap,
@@ -329,21 +330,28 @@ export async function readPlacementPlanRunId(goalId: string): Promise<string | n
 
 /** A previous curriculum's question writer cannot finish waiting for the rebuilt curriculum. */
 export async function recordPlacementPrepared({
+  failed = false,
   goalId,
   placementPart,
   planRunId,
 }: {
+  failed?: boolean;
   goalId: string;
-  placementPart?: { attemptId: string; part: number };
+  placementPart?: PlacementPartPreparation;
   planRunId: string | null;
 }): Promise<void> {
   if (placementPart) {
     await prisma.$executeRaw`
       UPDATE goals
-      SET details = jsonb_set(details, '{placementTest,attempt,partPrepared}', 'true'::jsonb)
+      SET details = jsonb_set(
+        jsonb_set(details, '{placementTest,attempt,partPrepared}', to_jsonb(${!failed}::boolean)),
+        '{placementTest,attempt,partPreparationFailed}', to_jsonb(${failed}::boolean)
+      )
       WHERE id = ${goalId}::uuid
         AND details #>> '{placementTest,attempt,id}' = ${placementPart.attemptId}
         AND details #>> '{placementTest,attempt,part}' = ${String(placementPart.part)}
+        AND (details #>> '{placementTest,attempt,partRequestedAt}')
+          IS NOT DISTINCT FROM ${placementPart.requestedAt ?? null}::text
     `;
 
     return;
