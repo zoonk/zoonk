@@ -9,10 +9,11 @@ struct ShellToolbar: ViewModifier {
   @Environment(\.tabBarPlacement) private var tabBarPlacement
   @State private var barWidth: CGFloat?
   /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
-  /// chevron (34), the gap the bar leaves before its next item (12), "Level 12" (83), the spacer
-  /// (20) and the account (52). Less, and the bar
-  /// sends the level and the account to its overflow menu.
+  /// chevron (34), the gap the bar leaves before its next item (12), the level, the spacer (20) and
+  /// the account (52). Less, and the bar sends the level and the account to its overflow menu. The
+  /// level is "Level 12" (83) in a regular width and "12" (37) in a compact one.
   @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 244
+  @ScaledMetric(relativeTo: .body) private var besideNameByNumber: CGFloat = 198
   /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
   /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
   @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
@@ -50,7 +51,12 @@ struct ShellToolbar: ViewModifier {
       return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
     }
 
-    return max(shortestName, barWidth - besideName)
+    return max(shortestName, barWidth - (isLevelInWords ? besideName : besideNameByNumber))
+  }
+
+  /// A compact bar shows the level's number alone, as main's does below its wide layout.
+  private var isLevelInWords: Bool {
+    horizontalSizeClass != .compact
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -93,7 +99,7 @@ struct ShellToolbar: ViewModifier {
         }
 
         ToolbarItem(placement: .topBarTrailing) {
-          LevelPlaceholder()
+          LevelPlaceholder(inWords: isLevelInWords)
         }
 
         ToolbarSpacer(.fixed, placement: .topBarTrailing)
@@ -105,7 +111,9 @@ struct ShellToolbar: ViewModifier {
 
   private var level: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
-      if let level = learner.summary.value?.level { LevelButton(level: level) }
+      if let level = learner.summary.value?.level {
+        LevelButton(level: level, inWords: isLevelInWords)
+      }
     }
   }
 
@@ -122,6 +130,7 @@ private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
 
   let level: LearnerLevel
+  let inWords: Bool
 
   var body: some View {
     let belt = level.belt
@@ -129,13 +138,7 @@ private struct LevelButton: View {
     Button {
       router.open(.statistics(section: .level))
     } label: {
-      HStack(spacing: 6) {
-        BeltDot(belt: belt)
-
-        Text(
-          "Level \(level.level)", tableName: "Navigation",
-          comment: "Beside the belt's dot in a wide top bar: the learner's level")
-      }
+      LevelLabel(belt: belt, level: level.level, inWords: inWords)
     }
     .accessibilityLabel(
       Text(
@@ -192,13 +195,31 @@ private struct GoalSwitcherPlaceholder: View {
 }
 
 private struct LevelPlaceholder: View {
+  let inWords: Bool
+
+  var body: some View {
+    LevelLabel(belt: .white, level: 1, inWords: inWords)
+      .placeholderShape()
+  }
+}
+
+private struct LevelLabel: View {
+  let belt: ProgressBelt
+  let level: Int
+  let inWords: Bool
+
   var body: some View {
     HStack(spacing: 6) {
-      BeltDot(belt: .white)
+      BeltDot(belt: belt)
 
-      Text(verbatim: "1")
+      if inWords {
+        Text(
+          "Level \(level)", tableName: "Navigation",
+          comment: "Beside the belt's dot in a wide top bar: the learner's level")
+      } else {
+        Text(level, format: .number)
+      }
     }
-    .placeholderShape()
   }
 }
 
