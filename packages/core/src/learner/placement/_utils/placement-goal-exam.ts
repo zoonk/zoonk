@@ -55,6 +55,7 @@ export async function loadGoalExam(goalId: string, tx: TransactionClient) {
     areaShares: getChosenAreaShares({ graph, settings, structure }),
     examBlueprintId: blueprint?.id ?? null,
     focusAreas: settings.focusAreas,
+    goalKind: goal?.kind,
     goalCreatedAt: goal?.createdAt ?? null,
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],

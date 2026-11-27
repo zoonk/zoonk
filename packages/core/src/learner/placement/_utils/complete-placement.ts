@@ -29,7 +29,6 @@ export type PlacementCompletion = {
   heldUntilTomorrow?: true;
   knownSkillIds: string[];
   lessonsSkipped: number;
-  partLessonsSkipped?: number;
   phases: PhaseStart[];
   result?: PlacementResult | null;
   testedOutPlanItemIds: string[];
@@ -109,7 +108,6 @@ export async function completePlacement({
           answered: closed.answered,
           end: closed.end,
           lessonsSkipped: applied.lessonsSkipped,
-          partsLeft: 0,
           unknowns: closed.dontKnow,
         },
       }),

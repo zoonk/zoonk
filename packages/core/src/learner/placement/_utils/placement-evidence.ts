@@ -203,6 +203,7 @@ export async function loadEvidence({
         !isLessonAnswer(attempt) &&
         attempt.mockExamId === null &&
         !("practiceMistakeId" in answerData) &&
+        answerData.courseSearch !== true &&
         answerData.placementPending !== true
       ) {
         confirmationAnswers.push(answer);

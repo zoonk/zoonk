@@ -14,6 +14,7 @@ import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { testOutKnownPlanItems } from "../../_utils/test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
 import { type PlacementCompletion } from "./complete-placement";
+import { applyCourseStart } from "./course-start-items";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import { SITTING_ANSWER_SQL } from "./placement-answers";
 import { savePlacementAttempt } from "./placement-attempt";
@@ -21,9 +22,8 @@ import {
   type PlacementAttempt,
   type PlacementRecord,
   readPlacementAttempt,
-  settlePlacementPart,
 } from "./placement-attempt-record";
-import { readPlacementNextLesson } from "./placement-result";
+import { readPlacementCourse, readPlacementNextLesson } from "./placement-result";
 
 async function applyPartAnswers({
   attempt,
@@ -179,16 +179,24 @@ async function savePart({
   const newTopics = new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered));
 
   const { confirmed, heldUntilTomorrow, partLessonsSkipped, testedOutPlanItemIds, sharedItemIds } =
-    await applyPartAnswers({
-      attempt,
-      goal,
-      now,
-      plan,
-      skillIds: state.knownSkillIds,
-      timeZone,
-      today,
-      tx,
-    });
+    attempt.search
+      ? await applyCourseStart({
+          goalId,
+          now,
+          plan,
+          startedPastSkillIds: attemptQuestions.startedPastSkillIds,
+          tx,
+        })
+      : await applyPartAnswers({
+          attempt,
+          goal,
+          now,
+          plan,
+          skillIds: state.knownSkillIds,
+          timeZone,
+          today,
+          tx,
+        });
 
   const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
   const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
@@ -197,7 +205,6 @@ async function savePart({
     answered: attemptQuestions.answered,
     end: attemptQuestions.end,
     lessonsSkipped: partLessonsSkipped,
-    partsLeft: attemptQuestions.partsLeft,
     unknowns: attemptQuestions.unknowns,
   };
 
@@ -210,11 +217,16 @@ async function savePart({
     testedOutPlanItemIds,
   };
 
+  const nextLesson = await readPlacementNextLesson(goalId, tx);
+  const course = await readPlacementCourse(goalId, new Set(testedOutPlanItemIds), tx);
+  const first = attempt.search?.topics?.find(
+    (topic) => !attemptQuestions.startedPastSkillIds.includes(topic.id),
+  );
   await savePlacementAttempt({
     goal: current,
     record: {
       ...record,
-      attempt: settlePlacementPart({ attempt, lessonsSkipped, progress: attemptQuestions }),
+      attempt: null,
       finishedParts: [...finishedParts, receipt],
       result: {
         ...held,
@@ -222,8 +234,10 @@ async function savePart({
         finish,
         finishedAt: now.toISOString(),
         lessonsSkipped,
-        nextLesson: await readPlacementNextLesson(goalId, tx),
-        partsRemoved: attemptQuestions.partsRemovedOnFinish,
+        nextLesson,
+        course,
+        chapter: nextLesson?.chapter ?? first?.chapter ?? null,
+        ...(attempt.search && { startedPastSkillIds: attemptQuestions.startedPastSkillIds }),
       },
     },
     tx,
@@ -248,7 +262,7 @@ async function savePart({
         ...testEventContext(current, {
           attemptId,
           part,
-          parts: attemptQuestions.partsAfterFinish,
+          parts: 1,
           questions: attemptQuestions.questions,
           test: "course",
         }),
@@ -257,7 +271,7 @@ async function savePart({
         end: finish.end,
         lessons_skipped: finish.lessonsSkipped,
         levels_skipped: 0,
-        parts_left: finish.partsLeft,
+        parts_left: 0,
         unknowns: finish.unknowns,
       },
     },
@@ -323,7 +337,6 @@ export async function finishPlacementAttempt({
     ...(saved.heldUntilTomorrow && { heldUntilTomorrow: saved.heldUntilTomorrow }),
     knownSkillIds: saved.knownSkillIds,
     lessonsSkipped: saved.lessonsSkipped,
-    partLessonsSkipped: saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
     testedOutPlanItemIds: saved.testedOutPlanItemIds,

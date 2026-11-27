@@ -1,53 +1,13 @@
 import { type TransactionClient } from "@zoonk/db";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { getAreaStarts, getPhaseStarts } from "../placement-steps";
 import { type PlacementFacts, type PlacementLoad } from "./load-placement-state";
 import { readAttemptQuestions } from "./placement-attempt-questions";
-import {
-  type PlacementAttempt,
-  type PlacementAttemptView,
-  type PlacementResult,
-} from "./placement-attempt-record";
-import { readPlacementResult } from "./placement-result";
+import { type PlacementAttempt } from "./placement-attempt-record";
 import { loadQuestion } from "./placement-state-view";
-
-function readAttemptView({
-  attempt,
-  chapter,
-  questions,
-  result,
-}: {
-  attempt: PlacementAttempt;
-  chapter: string | null;
-  questions: ReturnType<typeof readAttemptQuestions>;
-  result: PlacementResult | null;
-}): PlacementAttemptView {
-  return {
-    answered: Math.min(questions.answered, questions.questions),
-    chapter,
-    estimatedMinutes: questions.estimatedMinutes,
-    id: attempt.id,
-    length: attempt.length,
-    nextPart: questions.nextPart?.part ?? null,
-    part: attempt.part,
-    partComplete: attempt.partComplete,
-    parts: attempt.partComplete ? questions.parts : questions.partsAtOpen,
-    partsLeft: questions.partsLeft,
-    partsRemoved: attempt.partComplete ? (result?.partsRemoved ?? 0) : 0,
-    questions: questions.questions,
-    remainingEstimatedMinutes: questions.remainingEstimatedMinutes,
-    resume:
-      attempt.paused && !questions.complete
-        ? { part: attempt.part, question: questions.answered + 1 }
-        : null,
-    totalEstimatedMinutes: questions.totalEstimatedMinutes,
-  };
-}
 
 export async function loadAttemptState({
   attempt,
   facts,
-  goalId,
   plan,
   tx,
 }: {
@@ -57,40 +17,25 @@ export async function loadAttemptState({
   plan: GoalPlan;
   tx: TransactionClient;
 }): Promise<PlacementLoad> {
-  const { attempts, build, exam, items } = facts;
-  const questions = readAttemptQuestions({ attempt, attempts, build, items, plan });
-  const next = await loadQuestion(questions.item?.id, tx);
-  const statuses = new Map(questions.knownSkillIds.map((id) => [id, "known" as const]));
-
-  let status: PlacementLoad["state"]["status"] = "unavailable";
-
-  if (attempt.partComplete || attempt.paused || questions.complete) {
-    status = "done";
-  } else if (next) {
-    status = "asking";
-  } else if (questions.waiting) {
-    status = "waitingForQuestions";
-  } else if (questions.preparationFailed || (build.failed && plan.skills.length === 0)) {
-    status = "failed";
-  }
-
-  const result =
-    attempt.paused || attempt.partComplete
-      ? await readPlacementResult({ goalId, placement: exam.placement, tx })
-      : null;
-
+  const questions = readAttemptQuestions({ attempt, attempts: facts.attempts, plan });
+  const next = await loadQuestion(questions.itemId ?? undefined, tx);
+  const status = questions.waiting ? "waitingForQuestions" : next ? "asking" : "done";
   return {
     attemptQuestions: questions,
     focusTest: null,
     state: {
       answered: questions.answered,
-      areas: getAreaStarts({ skills: plan.skills, statuses }),
-      attempt: readAttemptView({
-        attempt,
-        chapter: next ? questions.chapter : null,
-        questions,
-        result,
-      }),
+      areas: [],
+      attempt: {
+        answered: questions.answered,
+        chapter: questions.chapter,
+        estimatedMinutes: questions.estimatedMinutes,
+        id: attempt.id,
+        length: "quick",
+        part: 1,
+        partComplete: false,
+        questions: questions.questions,
+      },
       complete: questions.complete,
       dayBudgetSpent: Math.min(1, questions.answered / questions.questions),
       dayBudgetUsed: questions.answered >= questions.questions,
@@ -98,11 +43,11 @@ export async function loadAttemptState({
       knownSkillIds: questions.knownSkillIds,
       needsItems: [],
       next,
-      phases: getPhaseStarts({ skills: plan.skills, statuses }),
-      result,
+      phases: [],
+      result: null,
       started: true,
       status,
-      trueFalseLabels: exam.trueFalseLabels,
+      trueFalseLabels: facts.exam.trueFalseLabels,
     },
   };
 }

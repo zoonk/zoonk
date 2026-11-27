@@ -245,7 +245,6 @@ export const placementCompletionResponseSchema = z
     heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
     knownSkillIds: z.array(skillIdSchema),
     lessonsSkipped: z.number().int().nonnegative(),
-    partLessonsSkipped: z.number().int().nonnegative().optional(),
     phases: z.array(phaseStartSchema),
     result: placementResultSchema.nullable().optional(),
     testedOutPlanItemIds: z.array(uuidSchema()),

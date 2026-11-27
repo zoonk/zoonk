@@ -5,6 +5,7 @@ import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analy
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
+import { createLearnerAttempt } from "../_utils/create-learner-attempt";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
@@ -14,6 +15,7 @@ import {
   publishLearnerAnswer,
 } from "../record-learner-answer";
 import { loadWritingSkillIds } from "../writing-skills";
+import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { type PlacementAttempt, readPlacementAttempt } from "./_utils/placement-attempt-record";
@@ -89,10 +91,10 @@ function answerEventContext({
   sittingAnswers: number;
 }) {
   if (course?.attempt) {
-    const { id, part, parts, questions } = course.attempt;
+    const { id, part, questions } = course.attempt;
 
     return {
-      ...testEventContext(goal, { attemptId: id, part, parts, questions, test: "course" }),
+      ...testEventContext(goal, { attemptId: id, part, parts: 1, questions, test: "course" }),
       question_number: course.answered + 1,
     };
   }
@@ -149,6 +151,8 @@ async function recordPlacementAnswer({
     const sitting = readFocusTestRecord(goal)?.sitting;
     const focusTestId = sitting?.id ?? null;
 
+    if (goal.kind === "learn" && !attemptId) return unchanged(null);
+
     if (!matchesAttempt({ attempt, attemptId, part })) {
       return unchanged(null);
     }
@@ -184,6 +188,19 @@ async function recordPlacementAnswer({
     }
 
     const analytics = answerEventContext({ course, goal, sitting, sittingAnswers });
+
+    if (attempt?.search) {
+      await createLearnerAttempt({
+        answeredAt: new Date(),
+        transaction: tx,
+        input: {
+          ...input,
+          answer: { ...input.answer, courseSearch: true },
+          focusTestId: attempt.id,
+        },
+      });
+      return { analytics, events: [], isCorrect: input.graded.isCorrect };
+    }
 
     const { events } = await persistLearnerAnswer({
       input: {
@@ -237,6 +254,23 @@ export async function answerPlacementQuestion({
   const graded = gradePlacementAnswer({ answer: input.answer, item });
   const { snapshot } = graded;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
+
+  const previous = readPlacementAttempt(owned.goal).attempt;
+  if (previous && !previous.search && previous.id === input.attemptId && plan) {
+    await finishPlacementAttempt({
+      attemptId: previous.id,
+      part: previous.part,
+      goal: owned.goal,
+      timeZone,
+    });
+    const { state: placement } = await loadPlacementWithSummary({
+      goalId,
+      plan,
+      userId: owned.userId,
+      timeZone,
+    });
+    return { status: "ready", isCorrect: graded.isCorrect, placement };
+  }
 
   const saved = await recordPlacementAnswer({
     attemptId: input.attemptId,

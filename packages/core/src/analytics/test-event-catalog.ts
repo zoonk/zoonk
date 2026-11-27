@@ -22,6 +22,7 @@ export type TestEnd =
   | "audio_deferred"
   | "check_missed"
   | "check_passed"
+  | "found"
   | "material_exhausted"
   | "nothing_to_check"
   | "question_cap"

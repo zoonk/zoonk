@@ -88398,8 +88398,8 @@
           "estimatedMinutes": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Estimated minutes for the current part"
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
           },
           "id": {
             "type": "string",
@@ -88407,85 +88407,29 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "length": {
-            "$ref": "#/components/schemas/PlacementLength"
-          },
-          "nextPart": {
-            "nullable": true,
-            "description": "Number of the next part with topics remaining",
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "type": "string",
+            "enum": [
+              "quick"
+            ]
           },
           "part": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "type": "number",
+            "enum": [
+              1
+            ]
           },
           "partComplete": {
-            "type": "boolean"
-          },
-          "parts": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991,
-            "description": "Total when the current part opened, updated when it closes"
-          },
-          "partsLeft": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Parts with questions remaining, including the current part if unfinished"
-          },
-          "partsRemoved": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Parts removed during the current part, zero until it closes"
+            "type": "boolean",
+            "enum": [
+              false
+            ]
           },
           "questions": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Fixed question ceiling for the current part"
-          },
-          "remainingEstimatedMinutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Estimated minutes for the unanswered questions in this attempt's remaining parts"
-          },
-          "resume": {
-            "nullable": true,
-            "type": "object",
-            "properties": {
-              "part": {
-                "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
-                "maximum": 9007199254740991
-              },
-              "question": {
-                "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "part",
-              "question"
-            ],
-            "additionalProperties": false
-          },
-          "totalEstimatedMinutes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Estimated minutes for the current, completed and retained future parts"
+            "description": "Question ceiling fixed when the test starts"
           }
         },
         "required": [
@@ -88494,16 +88438,9 @@
           "estimatedMinutes",
           "id",
           "length",
-          "nextPart",
           "part",
           "partComplete",
-          "parts",
-          "partsLeft",
-          "partsRemoved",
-          "questions",
-          "remainingEstimatedMinutes",
-          "resume",
-          "totalEstimatedMinutes"
+          "questions"
         ],
         "additionalProperties": false
       },
@@ -88885,15 +88822,11 @@
                   "stopped",
                   "question_cap",
                   "material_exhausted",
-                  "unknown_streak"
+                  "unknown_streak",
+                  "found"
                 ]
               },
               "lessonsSkipped": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "partsLeft": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991
@@ -88908,7 +88841,6 @@
               "answered",
               "end",
               "lessonsSkipped",
-              "partsLeft",
               "unknowns"
             ],
             "additionalProperties": false
@@ -88930,6 +88862,53 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "chapter": {
+            "nullable": true,
+            "type": "string"
+          },
+          "course": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "lessons": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "chapters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lessons": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "skipped": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "start": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "lessons",
+                    "skipped",
+                    "start"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "lessons",
+              "chapters"
+            ],
+            "additionalProperties": false
+          },
           "nextLesson": {
             "nullable": true,
             "type": "object",
@@ -88941,36 +88920,34 @@
               },
               "title": {
                 "type": "string"
+              },
+              "estimatedMinutes": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
+              },
+              "chapter": {
+                "nullable": true,
+                "type": "string"
               }
             },
             "required": [
               "id",
-              "title"
+              "title",
+              "estimatedMinutes",
+              "chapter"
             ],
             "additionalProperties": false
-          },
-          "part": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
-          "partLessonsSkipped": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "partsRemoved": {
-            "description": "Parts removed during the part recorded by this result",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
           }
         },
         "required": [
           "attemptId",
           "finishedAt",
-          "lessonsSkipped"
+          "lessonsSkipped",
+          "chapter",
+          "course",
+          "nextLesson"
         ],
         "additionalProperties": false
       },
@@ -89104,15 +89081,11 @@
                   "stopped",
                   "question_cap",
                   "material_exhausted",
-                  "unknown_streak"
+                  "unknown_streak",
+                  "found"
                 ]
               },
               "lessonsSkipped": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "partsLeft": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991
@@ -89127,7 +89100,6 @@
               "answered",
               "end",
               "lessonsSkipped",
-              "partsLeft",
               "unknowns"
             ],
             "additionalProperties": false
@@ -89158,11 +89130,6 @@
             }
           },
           "lessonsSkipped": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "partLessonsSkipped": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -92738,34 +92705,11 @@
                     "minimum": 0,
                     "exclusiveMinimum": true,
                     "maximum": 9007199254740991
-                  },
-                  "wholeCourse": {
-                    "nullable": true,
-                    "type": "object",
-                    "properties": {
-                      "estimatedMinutes": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
-                        "maximum": 9007199254740991
-                      },
-                      "parts": {
-                        "type": "integer",
-                        "minimum": 2,
-                        "maximum": 9007199254740991
-                      }
-                    },
-                    "required": [
-                      "estimatedMinutes",
-                      "parts"
-                    ],
-                    "additionalProperties": false
                   }
                 },
                 "required": [
                   "estimatedMinutes",
-                  "questions",
-                  "wholeCourse"
+                  "questions"
                 ],
                 "additionalProperties": false
               },
@@ -100371,34 +100315,11 @@
                         "minimum": 0,
                         "exclusiveMinimum": true,
                         "maximum": 9007199254740991
-                      },
-                      "wholeCourse": {
-                        "nullable": true,
-                        "type": "object",
-                        "properties": {
-                          "estimatedMinutes": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "exclusiveMinimum": true,
-                            "maximum": 9007199254740991
-                          },
-                          "parts": {
-                            "type": "integer",
-                            "minimum": 2,
-                            "maximum": 9007199254740991
-                          }
-                        },
-                        "required": [
-                          "estimatedMinutes",
-                          "parts"
-                        ],
-                        "additionalProperties": false
                       }
                     },
                     "required": [
                       "estimatedMinutes",
-                      "questions",
-                      "wholeCourse"
+                      "questions"
                     ],
                     "additionalProperties": false
                   }
