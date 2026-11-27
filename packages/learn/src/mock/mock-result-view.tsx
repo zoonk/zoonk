@@ -278,8 +278,8 @@ function useResultSteps(result: MockResult) {
             preparation={preparation}
           />
         ),
-        finalAction: hasPlanChange(change) && change.open && <MockPlanAccept change={change} />,
-        finalSecondAction: hasPlanChange(change) && change.open && (
+        finalAction: change.open && hasPlanChange(change) && <MockPlanAccept change={change} />,
+        finalSecondAction: change.open && hasPlanChange(change) && (
           <MockPlanDecline change={change} />
         ),
         id: "plan",

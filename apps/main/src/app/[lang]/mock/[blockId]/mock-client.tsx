@@ -35,7 +35,7 @@ export function MockClient({
 
   const actions = useMemo<MockActions>(
     () => ({
-      adapt: (offer) => adaptPlanFromMockAction(blockId, offer, getLocalTimeZone()),
+      adapt: () => adaptPlanFromMockAction(blockId, "skip", getLocalTimeZone()),
       answer: (input) => saveMockAnswerAction(blockId, input),
       endBreak: () => endMockBreakAction(blockId),
       finish: () => finishMockAction(blockId, getLocalTimeZone()),
