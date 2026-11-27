@@ -303,6 +303,44 @@ describe(ensureSecondTake, () => {
     expect(JSON.stringify(inputs?.prompt)).not.toContain("SENTINEL");
   });
 
+  it("uses the first lesson's language exercise feedback as wrong-answer reasons", async () => {
+    const [user, skill] = await Promise.all([
+      userFixture(),
+      skillFixture({ targetLanguage: "fr" }),
+    ]);
+
+    const source = await firstLesson({ skillId: skill.id });
+
+    await libraryStepFixture({
+      content: {
+        options: [
+          { feedback: "Use du before pain.", id: "partitive", isCorrect: true, text: "du pain" },
+          {
+            feedback: "Des is for plural nouns.",
+            id: "plural",
+            isCorrect: false,
+            text: "des pain",
+          },
+        ],
+        question: "How do you say some bread?",
+      },
+      kind: "multipleChoice",
+      lessonId: source.id,
+      skillId: skill.id,
+    });
+
+    const lessonId = await ensureSecondTake({ skillId: skill.id, userId: user.id });
+    const inputs = await loadLessonSpecInputs(lessonId ?? "");
+
+    expect(inputs?.prompt.secondTake?.wrongAnswers).toStrictEqual([
+      {
+        answer: "des pain",
+        question: "How do you say some bread?",
+        reason: "Des is for plural nouns.",
+      },
+    ]);
+  });
+
   it("never chooses a written second take when looking for the skill's ordinary lesson", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 

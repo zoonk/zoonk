@@ -12,6 +12,17 @@ type SourceQuestion = {
   kind: string;
 };
 
+function getWrongLanguageOptions(content: unknown) {
+  const exercise = safeParseStepContent("multipleChoice", content).data;
+  const question = exercise?.question ?? exercise?.context;
+
+  return exercise && question
+    ? exercise.options
+        .filter((option) => !option.isCorrect)
+        .map(({ feedback, text }) => ({ answer: text, question, reason: feedback }))
+    : [];
+}
+
 function getWrongAnswers({ item, content, kind }: SourceQuestion, skillId: string) {
   if (item?.format === "multipleChoice" && item.skillId === skillId) {
     const parsed = parseItemContent({ content: item.content, format: "multipleChoice" });
@@ -25,6 +36,10 @@ function getWrongAnswers({ item, content, kind }: SourceQuestion, skillId: strin
           reason: misconception ? `${misconception}: ${reason}` : reason,
         }));
     }
+  }
+
+  if (kind === "multipleChoice") {
+    return getWrongLanguageOptions(content);
   }
 
   const check = kind === "check" ? safeParseStepContent("check", content).data : null;
@@ -54,7 +69,12 @@ export async function loadSecondTakeWrongAnswers({
       ...CURRENT_STEPS,
       AND: [
         { OR: [{ skillId }, { skillId: null }] },
-        { OR: [{ kind: "check" }, { item: { format: "multipleChoice", skillId } }] },
+        {
+          OR: [
+            { kind: { in: ["check", "multipleChoice"] } },
+            { item: { format: "multipleChoice", skillId } },
+          ],
+        },
       ],
       lessonId,
     },
