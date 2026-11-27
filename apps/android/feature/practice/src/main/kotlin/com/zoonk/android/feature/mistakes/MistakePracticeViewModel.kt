@@ -101,6 +101,9 @@ data class PracticeState(
     val lesson: LessonPlayerState? = null,
     val lessonGrade: MistakePracticeFeedback? = null,
 ) {
+    /** A day block's completion failed and hasn't got through since: the run waits on "Try again". */
+    val unsaved: Boolean get() = end == null && finishFailures > 0
+
     /**
      * A run played to its end goes again while this batch left a mistake open or its scope has more;
      * one left early ends there.

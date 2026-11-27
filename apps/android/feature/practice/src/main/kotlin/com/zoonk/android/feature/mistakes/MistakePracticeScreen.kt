@@ -230,7 +230,7 @@ private fun PracticeDone(
 
     MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
-            title = stringResource(R.string.practice_done_title),
+            title = stringResource(if (state.unsaved) R.string.mistakes_practice_not_saved else R.string.practice_done_title),
             action = stringResource(R.string.mistakes_practice_done),
             saving = state.finishing,
             onClose = onClose,
@@ -254,8 +254,8 @@ private fun PracticeDone(
 
 /**
  * "Practice again" while this batch left a mistake open or the scope has more, else Done. A day
- * block's Done waits for its completion, which marks its row on Today, and says when it didn't get
- * through; the rest are counted as they go.
+ * block's run waits for its completion, which marks its row on Today, and offers "Try again" when
+ * it didn't get through; the rest are counted as they go.
  */
 @Composable
 private fun DoneBar(
@@ -264,11 +264,15 @@ private fun DoneBar(
     onReport: () -> Unit,
 ) {
     val again = viewModel.practicesAgain && state.offersAgain
-    val unsaved = state.end == null && state.finishFailures > 0 && !state.finishing
 
     when {
-        unsaved -> {
-            SaveErrorText(state.finishFailures, onRetry = viewModel::retryFinish, onReport = onReport)
+        state.unsaved -> {
+            if (!state.finishing) {
+                // An emptied block has no answers to keep, so the line says only that it didn't go through.
+                val message =
+                    stringResource(if (state.answerIds.isEmpty()) R.string.mistakes_practice_not_through else R.string.practice_save_error)
+                SaveErrorText(state.finishFailures, onReport = onReport, firstFailureMessage = message)
+            }
         }
 
         again && state.again == AgainLoad.Failed -> {
@@ -280,17 +284,24 @@ private fun DoneBar(
         }
     }
     TaskActions { width ->
-        if (again) {
-            Button(busy = state.again == AgainLoad.Loading, onClick = viewModel::practiceAgain, modifier = width) {
-                Text(stringResource(R.string.mistakes_practice_again))
+        when {
+            state.unsaved -> {
+                Button(busy = state.finishing, onClick = viewModel::retryFinish, modifier = width) {
+                    Text(stringResource(R.string.practice_try_again))
+                }
             }
-        } else {
-            Button(
-                busy = state.finishing,
-                onClick = viewModel::leave,
-                enabled = !unsaved,
-                modifier = width,
-            ) { Text(stringResource(R.string.mistakes_practice_done)) }
+
+            again -> {
+                Button(busy = state.again == AgainLoad.Loading, onClick = viewModel::practiceAgain, modifier = width) {
+                    Text(stringResource(R.string.mistakes_practice_again))
+                }
+            }
+
+            else -> {
+                Button(busy = state.finishing, onClick = viewModel::leave, modifier = width) {
+                    Text(stringResource(R.string.mistakes_practice_done))
+                }
+            }
         }
     }
 }
