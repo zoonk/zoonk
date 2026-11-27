@@ -90,6 +90,17 @@ export function reduceLessonQuestionThreadAction({
         requestError: null,
       };
     case "threadLoaded":
+      if (action.fromPage && state.loadStatus === "ready") {
+        return {
+          ...state,
+          ...getRefreshedPagination({ action, state }),
+          ...mergeServerQuestions({
+            latestQuestions: action.questions.filter(({ id }) => id !== state.activeQuestionId),
+            state,
+          }),
+        };
+      }
+
       return {
         ...state,
         ...getRefreshedPagination({ action, state }),

@@ -67,8 +67,6 @@ export type LessonQuestionController = {
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
   sendSuggestion: (suggestion: OfferedSuggestion) => Promise<void>;
-  /** Shows a thread the page already read, in place of loading it. */
-  showThread: (thread: LessonQuestionThreadPage) => void;
   state: LessonQuestionState;
   suggestions: readonly LessonTutorSuggestion[];
   unresolvedQuestion: string | null;
@@ -160,11 +158,6 @@ export function useLessonQuestions({
     [dispatch],
   );
 
-  const showThread = useCallback(
-    (thread: LessonQuestionThreadPage) => dispatch({ ...thread, type: "threadLoaded" }),
-    [dispatch],
-  );
-
   const { checkAnswer, retryAnswer, streamAnswer } = useLessonQuestionAnswers({
     canAskQuestions,
     connection,
@@ -215,7 +208,6 @@ export function useLessonQuestions({
     retryAnswer,
     send,
     sendSuggestion,
-    showThread,
     state,
     suggestions,
     unresolvedQuestion,
