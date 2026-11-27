@@ -19,6 +19,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.layout.FoldingFeature
+import androidx.window.testing.layout.FoldingFeature
+import androidx.window.testing.layout.TestWindowLayoutInfo
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.WithTabRootBar
@@ -65,7 +69,10 @@ import kotlin.time.Duration.Companion.days
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class BuddyScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -140,6 +147,10 @@ class BuddyScreenshots {
     fun medium() = capture("buddy-medium", dark = false)
 
     @Test
+    @Config(qualifiers = "w852dp-h883dp-xhdpi")
+    fun book() = capture("buddy-book", dark = false, fold = true)
+
+    @Test
     @Config(qualifiers = "pt-w411dp-h891dp-xxhdpi")
     fun daySheetPortuguese() = capture("buddy-day-sheet-pt", dark = false, day = true)
 
@@ -183,6 +194,7 @@ class BuddyScreenshots {
         sheet: Boolean = false,
         more: Boolean = false,
         day: Boolean = false,
+        fold: Boolean = false,
     ) {
         // A signed-in learner, as only one gets the list: the session first, since a new session drops what was read before it.
         val app = AppContainer.preview(compose.activity, account = account(ANA))
@@ -228,6 +240,7 @@ class BuddyScreenshots {
                 }
             }
         }
+        if (fold) unfold()
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         if (sheet) {
@@ -251,6 +264,22 @@ class BuddyScreenshots {
                 ).assertExists()
         }
     }
+
+    private fun unfold() =
+        repeat(2) {
+            compose.waitForIdle()
+            folds.overrideWindowLayoutInfo(
+                TestWindowLayoutInfo(
+                    listOf(
+                        FoldingFeature(
+                            compose.activity,
+                            state = FoldingFeature.State.FLAT,
+                            orientation = FoldingFeature.Orientation.VERTICAL,
+                        ),
+                    ),
+                ),
+            )
+        }
 
     private companion object {
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
