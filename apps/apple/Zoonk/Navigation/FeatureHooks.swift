@@ -81,19 +81,15 @@ extension TutorPlaces {
         switch opens {
         case .case1(let block):
           Task { await router.open(blockID: block.blockId) }
-        case .case7(let area):
-          router.open(.chapter(chapterId: area.areaId))
         case .case2:
-          router.open(.mistakePractice())
-        case .case3(let pattern):
-          router.open(.pattern(patternId: pattern.patternId))
-        case .case4:
           router.open(.pronunciation())
-        case .case5(let call):
+        case .case3(let call):
           router.open(.languageUnit(chapterId: call.chapterId))
-        case .case6:
+        case .case4:
           router.select(.buddy)
-        case .case8:
+        case .case5(let area):
+          router.open(.chapter(chapterId: area.areaId))
+        case .case6:
           router.open(.mockChooser)
         }
       case .missionStep(let destination):

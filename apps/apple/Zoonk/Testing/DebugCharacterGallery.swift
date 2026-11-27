@@ -239,7 +239,7 @@
             {"detail": null, "done": \(paid ? 1 : 0), "kind": "somethingNew", "minutes": 10,
              "opens": null, "status": "\(paid ? "done" : "todo")", "total": 1,
              "waitReason": null},
-            {"detail": null, "done": \(paid ? 2 : 1), "kind": "fixMistake", "minutes": 4,
+            {"detail": null, "done": \(paid ? 2 : 1), "kind": "practice", "minutes": 4,
              "opens": null, "status": "\(paid ? "done" : "todo")", "total": 2,
              "waitReason": null}]}
         """
