@@ -8,7 +8,8 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickInMistake } from "../_test-utils/shown-choice";
 import { getMock } from "../exams/mocks/get-mock";
@@ -425,4 +426,102 @@ describe("Scoped mistake practice", () => {
     });
   });
 
+  it("grades a day's replay in its own option order and fixes the notebook entry it missed", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-11T12:00:00Z"));
+
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const content = choiceItemContent();
+
+    const extras = ["Fifth", "Sixth", "Seventh", "Eighth"].map((text) => ({
+      isCorrect: false,
+      misconception: null,
+      reason: `${text} isn't it.`,
+      text,
+    }));
+
+    const row = await itemFixture({
+      content: { ...content, options: [...content.options, ...extras] },
+      skillId: skill.id,
+    });
+
+    const item = parseChoiceItem(row);
+
+    if (item?.format !== "multipleChoice") {
+      throw new Error("The missed question must be a playable multiple-choice question");
+    }
+
+    const stored = item.content.options.map((option) => option.text);
+    const wrongAtFirst = { selectedIndex: stored.indexOf("Wrong answer") };
+    const graded = gradeChoiceAnswer({ answer: wrongAtFirst, item });
+
+    const { mistake } = await recordLearnerAnswer({
+      answer: wrongAtFirst,
+      graded: { durationMs: 4000, isCorrect: false },
+      itemId: item.id,
+      language: "en",
+      mistake: { questionText: graded.snapshot.question, snapshot: graded.snapshot },
+      purpose: "learning",
+      skillId: skill.id,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    if (!mistake) {
+      throw new Error("The miss must open a notebook entry");
+    }
+
+    vi.setSystemTime(new Date("2026-11-12T12:00:00Z"));
+
+    const session = await studySessionFixture({
+      startedAt: new Date(),
+      status: "active",
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [mistake.id] },
+      sessionId: session.id,
+      status: "pending",
+    });
+
+    mockSession(user.id);
+    const practice = await getMistakePractice({ blockId: block.id, timeZone: "UTC" });
+    const shown = practice.status === "ready" ? practice.practice[0]?.questions[0]?.options : [];
+
+    expect(shown).not.toStrictEqual(stored);
+    expect(shown?.toSorted()).toStrictEqual(stored.toSorted());
+
+    const input = {
+      answer: { selectedIndex: shown?.indexOf("Right answer") ?? -1 },
+      attemptId: randomUUID(),
+      durationMs: 4000,
+      itemId: item.id,
+      run: { answerIds: [], blockId: block.id },
+      timeZone: "UTC",
+    };
+
+    const first = await answerMistakePractice({ input, mistakeId: mistake.id });
+
+    expect(first).toMatchObject({
+      feedback: { fixed: true, fixedMistakeIds: [mistake.id], isCorrect: true },
+      status: "ready",
+    });
+
+    await expect(
+      answerMistakePractice({
+        input: { ...input, answer: { selectedIndex: shown?.indexOf("Wrong answer") ?? -1 } },
+        mistakeId: mistake.id,
+      }),
+    ).resolves.toStrictEqual(first);
+
+    const [entries, played] = await Promise.all([
+      prisma.mistake.findMany({ where: { userId: user.id } }),
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ]);
+
+    expect(entries).toMatchObject([{ id: mistake.id, status: "fixed" }]);
+    expect(played.status).toBe("completed");
+  });
 });
