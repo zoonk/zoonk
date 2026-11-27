@@ -1,11 +1,11 @@
 "use client";
 
 import { type WrittenProjection } from "@zoonk/core/exams/scoring/written-points-contract";
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { EnterButton } from "../../_components/enter-button";
 import { useFormatScore } from "../../essay/essay-labels";
 import { useWriteNow } from "../../learn-context";
 import { getMinimumPoints, getMinimumShare } from "../../writing/minimum-points";
@@ -242,7 +242,7 @@ function WriteAction({ goalId, taskKey }: { goalId: string; taskKey?: string }) 
   }
 
   return (
-    <Button
+    <EnterButton
       busy={busy}
       className="w-full"
       onClick={async () => {
@@ -256,7 +256,7 @@ function WriteAction({ goalId, taskKey }: { goalId: string; taskKey?: string }) 
       size="lg"
     >
       {t("Write")}
-    </Button>
+    </EnterButton>
   );
 }
 
