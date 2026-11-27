@@ -133,6 +133,5 @@ private fun IntroRow(
         headline = { Text(title) },
         leading = { MarkIcon(icon) },
         supporting = { Text(description) },
-        leadOnFirstLine = true,
     )
 }

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getAllowedHosts,
+  getAppProtocol,
   getBaseUrl,
   getDevelopmentTrustedOrigins,
   isCorsAllowedOrigin,
@@ -65,6 +66,22 @@ describe(getBaseUrl, () => {
     vi.stubEnv("VERCEL_ENV", "");
     vi.stubEnv("VERCEL_URL", "");
     expect(() => getBaseUrl()).toThrow("NEXT_PUBLIC_APP_DOMAIN environment variable is not set");
+  });
+});
+
+describe(getAppProtocol, () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it.each([
+    ["development", "https://api.zoonk.local:1356", "https"],
+    ["development", "http://api.zoonk.localhost:1355", "http"],
+    ["production", "http://api.zoonk.localhost:1355", "https"],
+  ])("uses the correct protocol in %s with Portless URL %s", (environment, url, expected) => {
+    vi.stubEnv("VERCEL_ENV", environment);
+    vi.stubEnv("PORTLESS_URL", url);
+    expect(getAppProtocol()).toBe(expected);
   });
 });
 

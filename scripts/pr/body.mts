@@ -59,12 +59,14 @@ export function bodyMedia(markdown: string): { images: BodyImage[]; unsupported:
     markdown,
   );
 
+  const literalPunctuation = /\\[!-/:-@[-`{-~]/gu;
+
   const { other } = OTHER_MEDIA.reduce(
     ({ other: earlier, rest: left }, pattern) => ({
       other: [...earlier, ...[...left.matchAll(pattern)].map((match) => match[0].trim())],
       rest: left.replaceAll(pattern, " "),
     }),
-    { other: new Array<string>(), rest },
+    { other: new Array<string>(), rest: rest.replaceAll(literalPunctuation, " ") },
   );
 
   return { images: read, unsupported: [...new Set(other)] };

@@ -1,4 +1,5 @@
-import { createWriteStream } from "node:fs";
+import { createWriteStream, mkdirSync, openSync } from "node:fs";
+import { dirname } from "node:path";
 import { Pool } from "pg";
 
 const CONNECTION_TIMEOUT_MS = 10_000;
@@ -33,7 +34,9 @@ function rowCountOf(value: unknown): number | null {
 
 /** For `pnpm verify:pages --queries` only: it logs SQL and timings, never parameters. */
 function logQueries(pool: Pool, file: string) {
-  const log = createWriteStream(file, { flags: "a" });
+  mkdirSync(dirname(file), { recursive: true });
+  const log = createWriteStream(file, { fd: openSync(file, "a") });
+  log.write('{"queryLog":"ready"}\n');
 
   pool.on("connect", (client) => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- pg's overloads, called as they came.
@@ -77,15 +80,15 @@ function logQueries(pool: Pool, file: string) {
 }
 
 export function createDatabasePool(connectionString: string | undefined) {
+  const building = process.env.NEXT_PHASE === "phase-production-build";
   /** Fluid reuses concurrent connections; bound both socket setup and waiting for a free client. */
   const pool = new Pool({
     connectionString,
     connectionTimeoutMillis: CONNECTION_TIMEOUT_MS,
-    max:
-      process.env.NEXT_PHASE === "phase-production-build" ? BUILD_MAX_CONNECTIONS : MAX_CONNECTIONS,
+    max: building ? BUILD_MAX_CONNECTIONS : MAX_CONNECTIONS,
   });
 
-  if (process.env.ZOONK_QUERY_LOG) {
+  if (process.env.ZOONK_QUERY_LOG && !building) {
     logQueries(pool, process.env.ZOONK_QUERY_LOG);
   }
 

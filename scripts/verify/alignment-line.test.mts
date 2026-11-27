@@ -50,8 +50,7 @@ function oneLine(at: number) {
   };
 }
 
-/** The same row with a text lead (a date) on its label's first line. */
-function led(capture: Capture): Capture {
+function led(capture: Capture, role?: "date"): Capture {
   return {
     ...capture,
     elements: [
@@ -62,6 +61,7 @@ function led(capture: Capture): Capture {
         id: "date",
         ink: [0, 9, 20, 12],
         part: "lead",
+        role,
         row: "r0",
         type: LABEL_TYPE,
       }),
@@ -81,27 +81,6 @@ function faced(capture: Capture): Capture {
 
 function lineMiss(capture: Capture) {
   return evaluateCapture(capture).find((finding) => finding.rule === "line")?.detail ?? "";
-}
-
-function appleLead(at: number, gap: number): Capture {
-  const capture = led(lineRow("mark", at, 1));
-
-  return {
-    ...capture,
-    elements: capture.elements.map((part) => {
-      if (part.part === "row") {
-        return { ...part, ink: part.bounds };
-      }
-
-      if (part.id === "date") {
-        return { ...part, bounds: [22 - gap, 9, 20, 12], ink: [22 - gap, 9, 20, 12] };
-      }
-
-      return part.part === "label" ? { ...part, bounds: [42, 8, 100, 14] } : part;
-    }),
-    platform: "apple",
-    unit: "pt",
-  };
 }
 
 describe("one line of a row, as craft E5 places each part", () => {
@@ -149,19 +128,18 @@ describe("one line of a row, as craft E5 places each part", () => {
   });
 
   it("puts every part of a row with a text lead on its first entry's line (craft E6)", () => {
-    assert.equal(lineMiss(led(lineRow("value", 15, 1))), "");
+    assert.equal(lineMiss(led(lineRow("value", 15, 1), "date")), "");
 
     assert.match(
-      lineMiss(led(lineRow("value", 20, 1))),
+      lineMiss(led(lineRow("value", 20, 1), "date")),
       /the value 5 below the label's first line/u,
     );
   });
 
-  it("checks a numbered Apple title's mark at the row center and a date-led row at the first line", () => {
-    assert.equal(lineMiss(appleLead(30, 6)), "");
-    assert.match(lineMiss(appleLead(15, 6)), /the mark 15 above the row's center/u);
-    assert.equal(lineMiss(appleLead(15, 12)), "");
-    assert.match(lineMiss(appleLead(30, 12)), /the mark 15 below the label's first line/u);
+  it("centers a numbered row's mark and value beside a title and one description", () => {
+    assert.equal(lineMiss(led(lineRow("value", 30, 1))), "");
+    assert.equal(lineMiss(led(lineRow("mark", 30, 1))), "");
+    assert.match(lineMiss(led(lineRow("mark", 15, 1))), /the mark 15 above the row's center/u);
   });
 
   it("sets a label with no capitals (Japanese, Korean) on its ideographic face, and says so", () => {

@@ -1,4 +1,5 @@
 import { skipAfterTimeout } from "@zoonk/testing/skip-after-timeout";
+import { installTestClock } from "@zoonk/testing/test-clock";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { boundaries, resetBoundaries } from "./mocks/boundaries";
 import { resetWorkflowMockState } from "./mocks/workflow";
@@ -26,6 +27,7 @@ Object.entries(boundaries).forEach(([path, mocks]) => {
 });
 
 skipAfterTimeout();
+installTestClock();
 
 // Test files share workers: each starts as a fresh one would, and leaves no fake clock, stubbed
 // global or spy behind for the next.

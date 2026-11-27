@@ -3605,7 +3605,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Moves on after a grade.",
+      "comment" : "Goes back into a challenge already started.\nMoves on after a grade.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4962,7 +4962,7 @@
       }
     },
     "His shield is broken. You won!" : {
-      "comment" : "Under the verdict that wins a phase challenge.",
+      "comment" : "Under the verdict that wins a Trickster duel.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5548,7 +5548,7 @@
       }
     },
     "Leave blank" : {
-      "comment" : "Answer that leaves a statement blank where a wrong answer cancels a right one.",
+      "comment" : "Answer that leaves a statement blank where a wrong answer cancels a right one.\nLeaves an exam question unanswered.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6138,7 +6138,7 @@
       }
     },
     "Mistakes come back for practice from the day after you make them." : {
-      "comment" : "Why no mistake is ready to practice yet.\nWhy today's mistakes can't be practiced yet.",
+      "comment" : "Why no mistake is ready to practice yet.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6315,7 +6315,7 @@
       }
     },
     "Mock exam" : {
-      "comment" : "Title of a weekly mock exam block.",
+      "comment" : "Title of a mock exam challenge.\nTitle of a weekly mock exam block.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6605,65 +6605,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tarihine taşındı"
-          }
-        }
-      }
-    },
-    "net %lld" : {
-      "comment" : "A net-scored block's score: right answers minus wrong ones.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Netto %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "neto %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Score net : %lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "netto %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "差し引きスコア %lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "순점수 %lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "netto %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "saldo %lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld net"
           }
         }
       }
@@ -8193,7 +8134,7 @@
       }
     },
     "Practice mistakes" : {
-      "comment" : "Title of a block that only fixes mistakes.\nTitle of the mistakes practice run.",
+      "comment" : "Title of the mistakes practice run.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9340,7 +9281,7 @@
       }
     },
     "Rematch" : {
-      "comment" : "Over a challenge's second go\nTitle of a second go at the Trickster.",
+      "comment" : "Over a challenge's second go",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10380,7 +10321,7 @@
       }
     },
     "See result" : {
-      "comment" : "Finishes a checkpoint to see its result.\nOpens a finished checkpoint's result.",
+      "comment" : "Ends a pattern drill to see its result.\nFinishes a checkpoint to see its result.\nOpens a finished checkpoint's result.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11972,7 +11913,7 @@
       }
     },
     "The Trickster" : {
-      "comment" : "Title of a phase or final checkpoint duel.",
+      "comment" : "Title of a Trickster duel.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12444,7 +12385,7 @@
       }
     },
     "This week's topics" : {
-      "comment" : "Heading over a weekly challenge's topics.",
+      "comment" : "Opens a weekly challenge's topics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12981,7 +12922,7 @@
       }
     },
     "Trap hunter badge" : {
-      "comment" : "Reward of a won phase challenge.",
+      "comment" : "Reward of a won Trickster duel.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13099,7 +13040,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Loads a practice screen again.\nSends an answer that didn't save again.",
+      "comment" : "Sends an answer that didn't save again.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13335,7 +13276,7 @@
       }
     },
     "Undo" : {
-      "comment" : "Puts a passed test-out's skipped lessons back in the plan.\nPuts the plan back as it was before a focus test.\nUndoes moving a weekly challenge.",
+      "comment" : "Puts a passed test-out's skipped lessons back in the plan.\nUndoes moving a weekly challenge.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13866,7 +13807,7 @@
       }
     },
     "What he asked" : {
-      "comment" : "Heading over a finished phase challenge's topics.",
+      "comment" : "Opens a finished Trickster duel's topics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13925,7 +13866,7 @@
       }
     },
     "What he'll ask" : {
-      "comment" : "Heading over a phase challenge's topics.",
+      "comment" : "Opens a Trickster duel's topics.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

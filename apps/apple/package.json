@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "i18n:lint": "eloqnt lint --strict",
-    "i18n": "node scripts/add-missing-strings.mts && reuse-translations && eloqnt translate",
+    "i18n:sync": "node scripts/check-strings.mts --write",
+    "i18n": "pnpm i18n:sync && reuse-translations && eloqnt translate",
     "palette": "node scripts/generate-palette.mts",
     "typecheck": "tsrs --noEmit"
   },

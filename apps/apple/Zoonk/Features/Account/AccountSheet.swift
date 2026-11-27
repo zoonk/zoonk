@@ -363,25 +363,21 @@ private struct SettingsHubView: View {
 
   var body: some View {
     ZoonkList {
-      Section {
-        if !isGuest {
+      if !isGuest {
+        Section {
           AccountSectionLink(destination: .profile, sectionOpen: sectionOpen) {
-            AccessibilityStack(spacing: 12, stackedSpacing: 8) {
+            ListRow(
+              Text(account.user.preferredName), description: Text(account.user.email),
+              stackedLeadingSpacing: 8
+            ) {
               AccountAvatar(user: account.user, size: avatarSize)
                 .accessibilityHidden(true)
-
-              VStack(alignment: .leading, spacing: 1) {
-                Text(account.user.preferredName)
-                  .typeStyle(.rowTitle)
-
-                Text(account.user.email)
-                  .typeStyle(.meta)
-                  .foregroundStyle(.mutedForeground)
-              }
             }
           }
         }
+      }
 
+      Section {
         AccountSectionLink(destination: .certificates, sectionOpen: sectionOpen) {
           ListRow(
             Text(
@@ -479,8 +475,7 @@ private struct SettingsHubView: View {
               await session.signOut()
             }
           } label: {
-            Text("Log out", tableName: "Account", comment: "Account log-out action")
-              .typeStyle(.rowTitle)
+            ListRow(Text("Log out", tableName: "Account", comment: "Account log-out action"))
           }
           .foregroundStyle(.primary)
         }

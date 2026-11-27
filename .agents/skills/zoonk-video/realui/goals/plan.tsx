@@ -160,6 +160,7 @@ export function examPlanView(lang: Lang): Props["plan"] {
       practiceBias: "balanced",
       skippedActivities: [],
     },
+    suggestedTime: null,
     tools: [],
     week: {
       days: WEEK.map((day) => ({
@@ -169,6 +170,17 @@ export function examPlanView(lang: Lang): Props["plan"] {
         mockFunding: null,
         state:
           day < TODAY ? (day === WEEK[0] ? "rest" : "done") : day === TODAY ? "today" : "upcoming",
+        study: {
+          completed: day === WEEK[1] ? 3 : 0,
+          date: day,
+          goalMinutes: day === WEEK[0] || day === WEEK[6] ? 0 : exam.minutesPerDay,
+          hitGoal: day === WEEK[1],
+          isToday: day === TODAY,
+          kind: day === WEEK[0] || day === WEEK[6] ? "rest" : "study",
+          minutes: day === WEEK[1] ? 52 : 0,
+          studied: day === WEEK[1],
+          total: day === WEEK[1] ? 3 : 0,
+        },
       })),
       endDate: "2026-11-07",
       startDate: "2026-11-01",
@@ -185,6 +197,7 @@ export function examSyllabus(lang: Lang): SyllabusView {
     courseWeights: null,
     examDocument: "notice",
     fromMaterial: false,
+    hasNotice: true,
     goal: { displayName: exam.title, id: "exam", kind: "exam", title: exam.title },
     kind: "notice",
     knownTopicsReturn: "practice",
@@ -255,8 +268,10 @@ export function ExamPlan({ lang, state }: { lang: Lang; state?: string }) {
           course: () => "/course",
           exam: "/exam",
           focusTest: "/focus-test",
+          levelTest: "/level-test",
           logbook: "/logbook",
           mindMaps: null,
+          placementTest: "/placement-test",
           subject: (key: string) => `/plan/${key}`,
         }}
         plan={plan}
