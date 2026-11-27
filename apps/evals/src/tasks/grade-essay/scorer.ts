@@ -1,5 +1,5 @@
 import { createFixedScore } from "@/lib/score";
-import { detectLanguage } from "@/lib/text-language";
+import { canDetectLanguage, detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
 import { WRITING_LINE_WIDTHS, countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { markWritingRows } from "@zoonk/core/exams/essays/writing-marks";
@@ -391,14 +391,22 @@ function feedbackChecks({
       ]
     : [];
 
+  const { feedbackLanguage } = expected;
+
+  const languageChecks: Check[] = canDetectLanguage(feedbackLanguage)
+    ? [
+        {
+          detail: `Feedback language: expected ${feedbackLanguage}, detected ${language ?? "unknown"}.`,
+          name: "language",
+          passed: language === feedbackLanguage,
+        },
+      ]
+    : [];
+
   return [
     ...levels,
     stepCheck,
-    {
-      detail: `Feedback language: expected ${expected.feedbackLanguage}, detected ${language ?? "unknown"}.`,
-      name: "language",
-      passed: language === expected.feedbackLanguage,
-    },
+    ...languageChecks,
     {
       detail: `${quoted.filter((criterion) => criterion.quote).length} of ${quoted.length} assessed criteria quote the answer exactly.`,
       name: "quotes",
@@ -417,7 +425,7 @@ function competenceChecks({
 }): Check[] {
   return Object.entries(expected.officialCompetences ?? {}).map(([id, official]) => {
     const row = result.kind === "points" ? result.rows.find((entry) => entry.id === id) : null;
-    const band = row?.range;
+    const band = row && (row.range ?? { high: row.earned, low: row.earned });
 
     return {
       detail: `${id}: published ${official}, ${band ? `range ${band.low}–${band.high}` : "no range"}.`,

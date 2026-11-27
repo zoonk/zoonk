@@ -146,7 +146,16 @@ export function verifiedWritingZero({
   eligible: string;
   evidence: WritingEvidence;
 }) {
-  for (const rule of basis.grading.zeroing) {
+  const { zeroing } = basis.grading;
+
+  const blankRule =
+    eligible.trim() === "" ? zeroing.find(({ kinds }) => kinds?.includes("blank")) : undefined;
+
+  if (blankRule) {
+    return { kind: "blank" as const, reason: blankRule.text };
+  }
+
+  for (const rule of zeroing) {
     const kind = matchesRule({ context, evidence, rule, text: eligible });
 
     if (kind) {
