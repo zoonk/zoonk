@@ -109,7 +109,6 @@ function technicalCases({
 
     const input = publishedQuestion({
       citation: { passage: `Padrão de resposta, questão ${number}`, sourceId: reference },
-      kind: "points",
       lines,
       question: question.question,
       sections: questionSections(question),
