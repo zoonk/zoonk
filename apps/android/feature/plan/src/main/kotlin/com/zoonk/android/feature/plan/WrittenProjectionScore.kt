@@ -106,7 +106,8 @@ internal fun WrittenProjectionScore(
                     written = true,
                 ) {
                     TaskRows(part)
-                    WrittenStandingLine(part)
+                    // The headline already says this part is likely below its minimum.
+                    if (part != below) WrittenStandingLine(part)
                 }
             }
         }

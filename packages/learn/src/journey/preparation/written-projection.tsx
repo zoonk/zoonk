@@ -235,6 +235,8 @@ export function WrittenProjectionScore({
   const t = useExtracted();
   const headline = useHeadline(projection);
   const write = getProjectionWriteTask(projection);
+  // The headline already says this part is likely below its minimum.
+  const below = projection.parts.find(({ standing }) => standing === "below");
 
   return (
     <section className="flex flex-col gap-3" data-slot="written-projection">
@@ -271,7 +273,7 @@ export function WrittenProjectionScore({
             written
           >
             {getPartScale(part) === "points" && <TaskRows part={part} />}
-            <WrittenStandingLine part={part} />
+            {part !== below && <WrittenStandingLine part={part} />}
           </ScoreRow>
         ))}
       </div>

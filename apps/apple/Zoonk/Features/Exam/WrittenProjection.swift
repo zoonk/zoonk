@@ -160,7 +160,10 @@ struct WrittenProjectionSections: View {
               }
             }
           }
-          WrittenStandingLine(part: part)
+          // The headline already says this part is likely below its minimum.
+          if projection.headline != .below(part) {
+            WrittenStandingLine(part: part)
+          }
         }
       }
     } footer: {
