@@ -17,6 +17,14 @@ const UPSC_CSE_2026_NOTICE = {
   url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
 };
 
+/** Inep's guide to the redação: its five scales with their descriptors and its zero rules. */
+const ENEM_WRITING_GUIDE = {
+  title: "A redação no Enem 2025: cartilha do participante",
+  url: "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf",
+};
+
+const ENEM_SCALE = [0, 40, 80, 120, 160, 200];
+
 /** An invented notice whose written test states its lines but no scale or grading rule. */
 const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO
 EDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO
@@ -33,6 +41,29 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        { count: 1, criteriaTotal: 35, kind: "writtenTask" },
+        { kind: "writtenTask", limits: 1 },
+        { kind: "writtenTask", zeroing: true },
+        /** Each factual error takes a point off one criterion, which no sheet field holds. */
+        { kind: "writtenTask", total: false },
+      ],
+    },
+    id: "matura-2025-polski-rozszerzony-scoring-rules",
+    language: "pl",
+    userInput: {
+      documents: [
+        {
+          title:
+            "Zasady oceniania rozwiązań zadań: egzamin maturalny, język polski, poziom rozszerzony, 21 maja 2025",
+          url: "https://oke.poznan.pl/files/cms/875/mpop_r0_200_2505_zasady.pdf",
+        },
+      ],
+      exam: "Egzamin maturalny z języka polskiego, poziom rozszerzony",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { kind: "scoring", method: "wrongCancelsRight" },
         { groups: ["P1", "P2", "P3", "P4"], kind: "groupedSubjects" },
         { kind: "subject", name: "Prova discursiva" },
@@ -46,32 +77,38 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "finalShare", parts: ["discursiva"], share: 0.5 },
         { kind: "session", mentions: "manhã" },
         { kind: "session", mentions: "tarde" },
+        { count: 1, drawsOn: "P2", handwritten: true, kind: "writtenTask", lines: 30, points: 30 },
         {
-          count: 1,
+          combination: null,
           criterionPoints: [30],
-          drawsOn: "P2",
-          grading: "points",
-          handwritten: true,
+          kind: "writtenTask",
+          points: 30,
+          scales: [null],
+          total: true,
+        },
+        {
           kind: "writtenTask",
           language: { factor: 6, method: "errorsPerLine" },
-          lines: 30,
           points: 30,
-          rounding: false,
-          zeroing: true,
+          rounding: true,
+        },
+        { kind: "writtenTask", points: 30, zeroKinds: ["blank", "offTopic"], zeroing: true },
+        { count: 1, drawsOn: "P3", handwritten: true, kind: "writtenTask", lines: 60, points: 70 },
+        {
+          combination: null,
+          criterionPoints: [70],
+          kind: "writtenTask",
+          points: 70,
+          scales: [null],
+          total: true,
         },
         {
-          count: 1,
-          criterionPoints: [70],
-          drawsOn: "P3",
-          grading: "points",
-          handwritten: true,
           kind: "writtenTask",
           language: { factor: 14, method: "errorsPerLine" },
-          lines: 60,
           points: 70,
-          rounding: false,
-          zeroing: true,
+          rounding: true,
         },
+        { kind: "writtenTask", points: 70, zeroKinds: ["blank", "offTopic"], zeroing: true },
       ],
     },
     id: "cgu-2026-affc-ti-points",
@@ -121,13 +158,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "timeLimit", minutes: 300 },
         { kind: "testedLanguage", language: null },
         { kind: "sharedClock" },
+        { count: 1, kind: "writtenTask", lines: 30, points: 1000, total: true },
+        { kind: "writtenTask", points: 1000, scales: Array.from({ length: 5 }, () => ENEM_SCALE) },
         {
-          count: 1,
-          grading: "enem",
           kind: "writtenTask",
-          lines: null,
           points: 1000,
-          zeroing: true,
+          zeroKinds: ["blank", "offTopic", "tooFewLines", "wrongForm"],
         },
       ],
     },
@@ -139,6 +175,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
           title: "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
           url: "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf",
         },
+        ENEM_WRITING_GUIDE,
       ],
       exam: "ENEM",
     },
@@ -329,22 +366,30 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "session", mentions: "13" },
         {
           count: 1,
-          grading: "oab",
+          criterionPoints: [5],
           handwritten: true,
           kind: "writtenTask",
           language: null,
           lines: null,
           points: 5,
-          rounding: true,
+          rounding: false,
+          scales: [null],
+          total: true,
+        },
+        {
+          kind: "writtenTask",
+          points: 5,
+          zeroKinds: ["blank", "offTopic", "wrongForm"],
           zeroing: true,
         },
         {
           count: 4,
-          grading: "oab",
+          criterionPoints: [1.25],
           handwritten: true,
           kind: "writtenTask",
           lines: 30,
           points: 1.25,
+          total: true,
         },
       ],
     },
@@ -367,12 +412,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
           count: 1,
           criterionPoints: [],
           drawsOn: null,
-          grading: null,
           handwritten: null,
           kind: "writtenTask",
           language: null,
           lines: 30,
           points: null,
+          total: false,
         },
         { kind: "section", minutes: 240, questions: 40 },
         { kind: "sharedClock" },

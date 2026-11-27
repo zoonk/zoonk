@@ -685,405 +685,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/4 (read 3). passages found 65/65. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}",
-          "kind": "majorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 3). passages found 65/65. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}",
-          "kind": "minorErrors",
-          "score": 9.2
-        },
-        {
-          "conclusion": "Facts kept 3/4 (read 3). passages found 65/65. problems left 1. missing: {\"count\":1,\"grading\":\"oab\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":true,\"zeroing\":true}",
-          "kind": "potentialImprovements",
-          "score": 9.2
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "section",
-              "minutes": 300
-            },
-            {
-              "kind": "session",
-              "mentions": "13"
-            },
-            {
-              "count": 1,
-              "grading": "oab",
-              "handwritten": true,
-              "kind": "writtenTask",
-              "language": null,
-              "lines": null,
-              "points": 5,
-              "rounding": true,
-              "zeroing": true
-            },
-            {
-              "count": 4,
-              "grading": "oab",
-              "handwritten": true,
-              "kind": "writtenTask",
-              "lines": 30,
-              "points": 1.25
-            }
-          ]
-        },
-        "id": "oab-47-2a-fase-written-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
-              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
-            }
-          ],
-          "exam": "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 9/15 (read 11). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "majorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 9/15 (read 11). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "minorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 9/15 (read 11). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "potentialImprovements",
-          "score": 8.719999999999999
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "questionCount",
-              "value": 180
-            },
-            {
-              "date": "2026-11-08",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-11-15",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-06-05",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguagens",
-              "questions": 45
-            },
-            {
-              "kind": "subject",
-              "name": "Matemática",
-              "questions": 45
-            },
-            {
-              "kind": "choice",
-              "options": [
-                "Inglês",
-                "Espanhol"
-              ],
-              "partOf": "Linguagens"
-            },
-            {
-              "format": "multipleChoice",
-              "kind": "format"
-            },
-            {
-              "format": "essay",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "itemResponseTheory"
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 330
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 300
-            },
-            {
-              "kind": "testedLanguage",
-              "language": null
-            },
-            {
-              "kind": "sharedClock"
-            },
-            {
-              "count": 1,
-              "grading": "enem",
-              "kind": "writtenTask",
-              "lines": null,
-              "points": 1000,
-              "zeroing": true
-            }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      },
-      "score": 8.719999999999999
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 6/15 (read 13). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
-          "kind": "majorErrors",
-          "score": 8.08
-        },
-        {
-          "conclusion": "Facts kept 6/15 (read 13). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
-          "kind": "minorErrors",
-          "score": 8.08
-        },
-        {
-          "conclusion": "Facts kept 6/15 (read 13). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"criterionPoints\":[30],\"drawsOn\":\"P2\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"lines\":30,\"points\":30,\"rounding\":false,\"zeroing\":true}; {\"count\":1,\"criterionPoints\":[70],\"drawsOn\":\"P3\",\"grading\":\"points\",\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"lines\":60,\"points\":70,\"rounding\":false,\"zeroing\":true}",
-          "kind": "potentialImprovements",
-          "score": 8.08
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "scoring",
-              "method": "wrongCancelsRight"
-            },
-            {
-              "groups": [
-                "P1",
-                "P2",
-                "P3",
-                "P4"
-              ],
-              "kind": "groupedSubjects"
-            },
-            {
-              "kind": "subject",
-              "name": "Prova discursiva"
-            },
-            {
-              "kind": "markingRow",
-              "part": [
-                "P3"
-              ],
-              "points": 2,
-              "wrongPoints": 2
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 8
-              },
-              "part": [
-                "P1"
-              ],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 12
-              },
-              "part": [
-                "P2"
-              ],
-              "questions": 40
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 54
-              },
-              "part": [
-                "P3"
-              ],
-              "questions": 90
-            },
-            {
-              "kind": "scoredPart",
-              "minimum": {
-                "unit": "points",
-                "value": 50
-              },
-              "part": [
-                "P4",
-                "discursiva"
-              ]
-            },
-            {
-              "kind": "totalMinimum",
-              "minimum": {
-                "unit": "points",
-                "value": 78
-              }
-            },
-            {
-              "kind": "finalShare",
-              "parts": [
-                "P1",
-                "P2",
-                "P3"
-              ],
-              "share": 0.5
-            },
-            {
-              "kind": "finalShare",
-              "parts": [
-                "discursiva"
-              ],
-              "share": 0.5
-            },
-            {
-              "kind": "session",
-              "mentions": "manhã"
-            },
-            {
-              "kind": "session",
-              "mentions": "tarde"
-            },
-            {
-              "count": 1,
-              "criterionPoints": [
-                30
-              ],
-              "drawsOn": "P2",
-              "grading": "points",
-              "handwritten": true,
-              "kind": "writtenTask",
-              "language": {
-                "factor": 6,
-                "method": "errorsPerLine"
-              },
-              "lines": 30,
-              "points": 30,
-              "rounding": false,
-              "zeroing": true
-            },
-            {
-              "count": 1,
-              "criterionPoints": [
-                70
-              ],
-              "drawsOn": "P3",
-              "grading": "points",
-              "handwritten": true,
-              "kind": "writtenTask",
-              "language": {
-                "factor": 14,
-                "method": "errorsPerLine"
-              },
-              "lines": 60,
-              "points": 70,
-              "rounding": false,
-              "zeroing": true
-            }
-          ]
-        },
-        "id": "cgu-2026-affc-ti-points-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
-              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
-            }
-          ],
-          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
-          "kind": "majorErrors",
-          "score": 6.8
-        },
-        {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
-          "kind": "minorErrors",
-          "score": 6.8
-        },
-        {
-          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"grading\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
-          "kind": "potentialImprovements",
-          "score": 6.8
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "count": 1,
-              "criterionPoints": [],
-              "drawsOn": null,
-              "grading": null,
-              "handwritten": null,
-              "kind": "writtenTask",
-              "language": null,
-              "lines": 30,
-              "points": null
-            },
-            {
-              "kind": "section",
-              "minutes": 240,
-              "questions": 40
-            },
-            {
-              "kind": "sharedClock"
-            }
-          ]
-        },
-        "id": "municipal-notice-written-no-scale-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "text": "PREFEITURA MUNICIPAL DE VALE ALTO\nEDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO\n\n5 DAS PROVAS\n5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.\n5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).\n5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.\n5.4 A prova discursiva será corrigida apenas para os candidatos classificados na prova objetiva até a 50ª posição.\n6 DO CRONOGRAMA\n6.1 As provas serão aplicadas em 15 de março de 2027.",
-              "title": "Edital nº 3/2026 – Prefeitura de Vale Alto"
-            }
-          ],
-          "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 20/22 (read 20). passages found 143/143. problems left 0. missing: {\"kind\":\"totalMinimum\",\"minimum\":{\"unit\":\"points\",\"value\":120}}; {\"count\":1,\"kind\":\"writtenTask\",\"language\":{\"factor\":0.5,\"method\":\"perError\"},\"lines\":70,\"points\":70}",
           "kind": "majorErrors",
           "score": 9.709090909090909
@@ -1239,6 +840,521 @@
             }
           ],
           "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/21 (read 15). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"points\":30,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":30,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"points\":70,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":70,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}",
+          "kind": "majorErrors",
+          "score": 8.019047619047619
+        },
+        {
+          "conclusion": "Facts kept 8/21 (read 15). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"points\":30,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":30,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"points\":70,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":70,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}",
+          "kind": "minorErrors",
+          "score": 8.019047619047619
+        },
+        {
+          "conclusion": "Facts kept 8/21 (read 15). passages found 82/82. problems left 0. missing: {\"groups\":[\"P1\",\"P2\",\"P3\",\"P4\"],\"kind\":\"groupedSubjects\"}; {\"kind\":\"markingRow\",\"part\":[\"P3\"],\"points\":2,\"wrongPoints\":2}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":8},\"part\":[\"P1\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":12},\"part\":[\"P2\"],\"questions\":40}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":54},\"part\":[\"P3\"],\"questions\":90}; {\"kind\":\"scoredPart\",\"minimum\":{\"unit\":\"points\",\"value\":50},\"part\":[\"P4\",\"discursiva\"]}; {\"kind\":\"finalShare\",\"parts\":[\"P1\",\"P2\",\"P3\"],\"share\":0.5}; {\"count\":1,\"drawsOn\":\"P2\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":30}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":6,\"method\":\"errorsPerLine\"},\"points\":30,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":30,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}; {\"count\":1,\"drawsOn\":\"P3\",\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":60,\"points\":70}; {\"kind\":\"writtenTask\",\"language\":{\"factor\":14,\"method\":\"errorsPerLine\"},\"points\":70,\"rounding\":true}; {\"kind\":\"writtenTask\",\"points\":70,\"zeroKinds\":[\"blank\",\"offTopic\"],\"zeroing\":true}",
+          "kind": "potentialImprovements",
+          "score": 8.019047619047619
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "scoring",
+              "method": "wrongCancelsRight"
+            },
+            {
+              "groups": [
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "kind": "groupedSubjects"
+            },
+            {
+              "kind": "subject",
+              "name": "Prova discursiva"
+            },
+            {
+              "kind": "markingRow",
+              "part": [
+                "P3"
+              ],
+              "points": 2,
+              "wrongPoints": 2
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 8
+              },
+              "part": [
+                "P1"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 12
+              },
+              "part": [
+                "P2"
+              ],
+              "questions": 40
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 54
+              },
+              "part": [
+                "P3"
+              ],
+              "questions": 90
+            },
+            {
+              "kind": "scoredPart",
+              "minimum": {
+                "unit": "points",
+                "value": 50
+              },
+              "part": [
+                "P4",
+                "discursiva"
+              ]
+            },
+            {
+              "kind": "totalMinimum",
+              "minimum": {
+                "unit": "points",
+                "value": 78
+              }
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "P1",
+                "P2",
+                "P3"
+              ],
+              "share": 0.5
+            },
+            {
+              "kind": "finalShare",
+              "parts": [
+                "discursiva"
+              ],
+              "share": 0.5
+            },
+            {
+              "kind": "session",
+              "mentions": "manhã"
+            },
+            {
+              "kind": "session",
+              "mentions": "tarde"
+            },
+            {
+              "count": 1,
+              "drawsOn": "P2",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 30
+            },
+            {
+              "combination": null,
+              "criterionPoints": [
+                30
+              ],
+              "kind": "writtenTask",
+              "points": 30,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "language": {
+                "factor": 6,
+                "method": "errorsPerLine"
+              },
+              "points": 30,
+              "rounding": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 30,
+              "zeroKinds": [
+                "blank",
+                "offTopic"
+              ],
+              "zeroing": true
+            },
+            {
+              "count": 1,
+              "drawsOn": "P3",
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 60,
+              "points": 70
+            },
+            {
+              "combination": null,
+              "criterionPoints": [
+                70
+              ],
+              "kind": "writtenTask",
+              "points": 70,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "language": {
+                "factor": 14,
+                "method": "errorsPerLine"
+              },
+              "points": 70,
+              "rounding": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 70,
+              "zeroKinds": [
+                "blank",
+                "offTopic"
+              ],
+              "zeroing": true
+            }
+          ]
+        },
+        "id": "cgu-2026-affc-ti-points-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – CGU 2026 – Auditor Federal de Finanças e Controle (atualizado)",
+              "url": "https://cdn.cebraspe.org.br/concursos/CGU_26_AFFC/arquivos/FDEEFB41D8ACD48AB369A9915EA1A48C67389EC91427E98F6F264E19B1F63FB9.pdf"
+            }
+          ],
+          "exam": "CGU 2026, Auditor Federal de Finanças e Controle, TI – Desenvolvimento de Sistemas"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "majorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "minorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 10). passages found 75/75. problems left 0. missing: {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "potentialImprovements",
+          "score": 8.494117647058824
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 1000,
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "scales": [
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ]
+              ]
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "tooFewLines",
+                "wrongForm"
+              ]
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
+          "kind": "majorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
+          "kind": "minorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 2/5 (read 2). passages found 65/65. problems left 1. missing: {\"count\":1,\"criterionPoints\":[5],\"handwritten\":true,\"kind\":\"writtenTask\",\"language\":null,\"lines\":null,\"points\":5,\"rounding\":false,\"scales\":[null],\"total\":true}; {\"kind\":\"writtenTask\",\"points\":5,\"zeroKinds\":[\"blank\",\"offTopic\",\"wrongForm\"],\"zeroing\":true}; {\"count\":4,\"criterionPoints\":[1.25],\"handwritten\":true,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1.25,\"total\":true}",
+          "kind": "potentialImprovements",
+          "score": 8.08
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "section",
+              "minutes": 300
+            },
+            {
+              "kind": "session",
+              "mentions": "13"
+            },
+            {
+              "count": 1,
+              "criterionPoints": [
+                5
+              ],
+              "handwritten": true,
+              "kind": "writtenTask",
+              "language": null,
+              "lines": null,
+              "points": 5,
+              "rounding": false,
+              "scales": [
+                null
+              ],
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 5,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "wrongForm"
+              ],
+              "zeroing": true
+            },
+            {
+              "count": 4,
+              "criterionPoints": [
+                1.25
+              ],
+              "handwritten": true,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 1.25,
+              "total": true
+            }
+          ]
+        },
+        "id": "oab-47-2a-fase-written-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "kind": "majorErrors",
+          "score": 6.8
+        },
+        {
+          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "kind": "minorErrors",
+          "score": 6.8
+        },
+        {
+          "conclusion": "Facts kept 0/3 (read 3). passages found 22/22. problems left 0. missing: {\"count\":1,\"criterionPoints\":[],\"drawsOn\":null,\"handwritten\":null,\"kind\":\"writtenTask\",\"language\":null,\"lines\":30,\"points\":null,\"total\":false}; {\"kind\":\"section\",\"minutes\":240,\"questions\":40}; {\"kind\":\"sharedClock\"}",
+          "kind": "potentialImprovements",
+          "score": 6.8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "count": 1,
+              "criterionPoints": [],
+              "drawsOn": null,
+              "handwritten": null,
+              "kind": "writtenTask",
+              "language": null,
+              "lines": 30,
+              "points": null,
+              "total": false
+            },
+            {
+              "kind": "section",
+              "minutes": 240,
+              "questions": 40
+            },
+            {
+              "kind": "sharedClock"
+            }
+          ]
+        },
+        "id": "municipal-notice-written-no-scale-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "PREFEITURA MUNICIPAL DE VALE ALTO\nEDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO\n\n5 DAS PROVAS\n5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.\n5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).\n5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.\n5.4 A prova discursiva será corrigida apenas para os candidatos classificados na prova objetiva até a 50ª posição.\n6 DO CRONOGRAMA\n6.1 As provas serão aplicadas em 15 de março de 2027.",
+              "title": "Edital nº 3/2026 – Prefeitura de Vale Alto"
+            }
+          ],
+          "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo"
         }
       }
     }
