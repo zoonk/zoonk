@@ -1,3 +1,4 @@
+import { basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -27,6 +28,24 @@ const nextImageShim = fileURLToPath(
 const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
+
+const serveLocalRuntimes: BrowserCommand<[]> = async ({ page }) => {
+  for (const [pattern, directory] of [
+    ["https://cdn.jsdelivr.net/pyodide/*/full/*", "pyodide"],
+    ["https://cdn.jsdelivr.net/npm/sql.js@*/dist/*", "sql.js/dist"],
+  ] as const) {
+    // oxlint-disable-next-line no-await-in-loop -- Install both routes before a worker can start.
+    await page.context().route(pattern, (route) => {
+      const file = basename(new URL(route.request().url()).pathname);
+
+      const path = fileURLToPath(
+        new URL(`../core/node_modules/${directory}/${file}`, import.meta.url),
+      );
+
+      return route.fulfill({ headers: { "access-control-allow-origin": "*" }, path });
+    });
+  }
+};
 
 const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = async (
   { page },
@@ -144,7 +163,7 @@ export default defineConfig({
         extends: true,
         test: {
           browser: {
-            commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
+            commands: { answerPicture, emulateMedia, holdPictures, serveLocalRuntimes, tap, touch },
             connectTimeout: process.env.CI ? CI_BROWSER_CONNECT_TIMEOUT_MS : undefined,
             enabled: true,
             headless: true,

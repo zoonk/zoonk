@@ -1,5 +1,5 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import {
   checkActivity,
@@ -10,11 +10,9 @@ import {
   press,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { serveLocalRuntimes } from "../_test-utils/local-runtimes";
 import { runProgram } from "../activities/_sandbox/run-program";
 import { REGEX_TIME_LIMIT_MS } from "../activities/_sandbox/sandbox-host";
-
-/** Pyodide downloads from the CDN on first use in each fresh browser page. */
-const PYTHON_TIMEOUT_MS = 60_000;
 
 const javascriptRunner = {
   ...activityContentFixtures.codeRunner,
@@ -83,30 +81,26 @@ async function stepForward(times: number) {
 }
 
 describe("computing activities", () => {
-  it(
-    "code runner: fixing the loop in Python prints the expected output",
-    { timeout: PYTHON_TIMEOUT_MS },
-    async () => {
-      openActivity({ template: "codeRunner" });
-      await page.getByRole("button", { name: "Run" }).click();
+  beforeAll(serveLocalRuntimes);
 
-      await expect
-        .element(page.getByText("range stops before its end."), { timeout: PYTHON_TIMEOUT_MS })
-        .toBeVisible();
+  it("code runner: fixing the loop in Python prints the expected output", async () => {
+    openActivity({ template: "codeRunner" });
+    await page.getByRole("button", { name: "Run" }).click();
 
-      await editableLine(2).fill("for n in range(1, 101):");
+    await expect.element(page.getByText("range stops before its end.")).toBeVisible();
 
-      await expect
-        .element(page.getByText("You changed the code. Run it again to see the new output."))
-        .toBeVisible();
+    await editableLine(2).fill("for n in range(1, 101):");
 
-      await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
-      await page.getByRole("button", { name: "Run" }).click();
-      await expectCount(page.getByText("5050", { exact: true }), 2);
-      await checkActivity();
-      await expectVerdict("Correct!");
-    },
-  );
+    await expect
+      .element(page.getByText("You changed the code. Run it again to see the new output."))
+      .toBeVisible();
+
+    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
+    await page.getByRole("button", { name: "Run" }).click();
+    await expectCount(page.getByText("5050", { exact: true }), 2);
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
 
   it("code runner: JavaScript output that differs is wrong", async () => {
     openActivity({ content: javascriptRunner, template: "codeRunner" });
