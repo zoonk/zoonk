@@ -3,7 +3,7 @@ import { type Response } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { holdScripts } from "@zoonk/e2e/hydration";
+import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -298,7 +298,6 @@ test.describe("Mind maps", () => {
       const savedMap = saved.getByRole("link", { name: new RegExp(first.chapter.title, "u") });
       const remove = saved.getByRole("button", { name: `Saved ${first.chapter.title}` });
 
-      await expectHydrated(remove);
       await remove.click();
       await expect.poll(savedCount).toBe(0);
       await expect(savedMap).toBeVisible();
