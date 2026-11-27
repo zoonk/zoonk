@@ -46,7 +46,8 @@ vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) =>
 
 const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
 
-vi.mock("./_utils/writing-calibration", () => ({
+vi.mock(import("./_utils/writing-calibration"), async (importOriginal) => ({
+  ...(await importOriginal()),
   get writingCalibration() {
     return calibration.current;
   },

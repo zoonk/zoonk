@@ -8,7 +8,8 @@ import { projectWritten } from "./written-projection";
 
 const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
 
-vi.mock("../essays/_utils/writing-calibration", () => ({
+vi.mock(import("../essays/_utils/writing-calibration"), async (importOriginal) => ({
+  ...(await importOriginal()),
   get writingCalibration() {
     return calibration.current;
   },
