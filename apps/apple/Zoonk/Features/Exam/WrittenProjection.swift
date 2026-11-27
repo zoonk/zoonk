@@ -61,15 +61,14 @@ struct WrittenProjection: Hashable, Decodable, Sendable {
     case unmeasured(WrittenPartPoints)
   }
 
-  /// A part graded by level has no points to wait for, so the headline never says it's waiting.
+  /// A part graded by level has no points to wait for, and one with an estimate says on its own row
+  /// whether it reaches its minimum, so the headline names only a part with no estimate yet.
   var headline: Headline? {
     if let below = parts.first(where: { $0.standing == .below }) {
       return .below(below)
     }
 
-    if let unmeasured = parts.first(where: {
-      $0.shownScale == .points && ($0.standing == .unmeasured || $0.range == nil)
-    }) {
+    if let unmeasured = parts.first(where: { $0.shownScale == .points && $0.range == nil }) {
       return .unmeasured(unmeasured)
     }
 
@@ -100,7 +99,7 @@ struct WrittenProjectionSections: View {
         case .below(let part):
           // A part's name comes from the notice, so it opens a sentence rather than sitting inside one.
           Text(
-            "Below the minimum to pass", tableName: "Plan"
+            "Likely below the minimum to pass", tableName: "Plan"
           )
           .typeStyle(.stepHeading)
           if let minimum = part.minimum {
@@ -159,7 +158,7 @@ struct WrittenProjectionSections: View {
               }
             }
           }
-          PartStanding(part: part)
+          WrittenStandingLine(part: part)
         }
       }
     } footer: {
@@ -270,9 +269,14 @@ private struct ScoreRow<Detail: View>: View {
   }
 }
 
-/// Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers.
-private struct PartStanding: View {
+/// A written part's estimate against its own minimum, as main's `WrittenStandingLine` says it.
+/// Each verdict is "likely": it comes from how closely graders' marks match the board's, never a
+/// promise. Without one, an estimate beside a minimum would read as a pass, so the line says it
+/// can't tell.
+struct WrittenStandingLine: View {
   let part: WrittenPartPoints
+  /// The decimals its range is said in, when the page shows another than the part's own.
+  var decimals: Int?
 
   var body: some View {
     if let minimum = part.minimumPoints, let range = part.range {
@@ -281,17 +285,23 @@ private struct PartStanding: View {
       switch part.standing {
       case .met:
         Label {
-          Text("Above the \(points) points needed", tableName: "Plan")
+          Text("Likely above the \(points) points needed", tableName: "Plan")
         } icon: {
           Image(systemName: "checkmark").foregroundStyle(.successText)
         }
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       case .below:
+        // The verdict can come from the last mock while the estimate averages later answers.
+        let short = WritingRange(high: minimum - range.low, low: minimum - range.high)
         Label {
-          Text(
-            "\(WritingLabels.range(.init(high: minimum - range.low, low: minimum - range.high), decimals: part.decimals)) points short of the \(points) needed",
-            tableName: "Plan")
+          if short.low > 0 {
+            Text(
+              "Likely \(WritingLabels.range(short, decimals: decimals ?? part.decimals)) points short of the \(points) needed",
+              tableName: "Plan")
+          } else {
+            Text("Likely below the \(points) points needed", tableName: "Plan")
+          }
         } icon: {
           Image(systemName: "xmark")
         }
@@ -299,13 +309,17 @@ private struct PartStanding: View {
         .foregroundStyle(.destructiveText)
       case .overlaps:
         Label {
-          Text("Close to the \(points) points needed", tableName: "Plan")
+          Text("Could be either side of the \(points) points needed", tableName: "Plan")
         } icon: {
           Image(systemName: "exclamationmark.triangle")
         }
         .typeStyle(.note)
         .foregroundStyle(.warningText)
-      case .unmeasured, nil:
+      case .unmeasured:
+        Text("Can't say yet whether this reaches the \(points) points needed", tableName: "Plan")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      case nil:
         EmptyView()
       }
     }

@@ -405,8 +405,8 @@ private struct WritingCriteriaSection: View {
     } header: {
       SectionTitle(Text("Criteria", tableName: "Essay"))
     } footer: {
-      if let source {
-        SectionFooter { Text(source) }
+      if let footer {
+        SectionFooter { Text(footer) }
       }
     }
   }
@@ -462,14 +462,21 @@ private struct WritingCriteriaSection: View {
     row.decimals ?? grade.points?.decimals
   }
 
-  private var source: String? {
+  private var footer: String? {
     if grade.points == nil, prompt.criteria.allSatisfy({ $0.points == nil }) {
       return String(
         localized: "The exam notice doesn't say how many points each criterion is worth.",
         table: "Essay")
     }
 
-    guard grade.points != nil else { return nil }
+    // An answer on a sheet with points can still come back by level, even after one with points.
+    guard grade.points != nil else {
+      return String(
+        localized: "Graded by level: we can't yet estimate this answer's points closely enough.",
+        table: "Essay",
+        comment:
+          "Under the criteria of a written answer graded by level on a sheet that gives points")
+    }
 
     return prompt.keySource == .notice
       ? String(

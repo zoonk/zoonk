@@ -24,6 +24,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.writing.WrittenStandingLine
+import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -33,6 +35,8 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockPoints
 import com.zoonk.api.models.MockPointsUnjudgedInner
 import com.zoonk.api.models.PointsMinimum
+import com.zoonk.api.models.WrittenPartPoints
+import com.zoonk.api.models.WrittenPartPointsMinimum
 import kotlin.math.roundToLong
 
 /** A test of the exam, or its objective tests together when [name] is null. */
@@ -75,12 +79,23 @@ internal fun testRows(points: MockPoints): List<TestRow> {
     return rows.filter { it.met == false } + rows.filter { it.met != false }
 }
 
-internal fun hasTestRows(points: MockPoints?): Boolean = points != null && (testRows(points).isNotEmpty() || points.unjudged.isNotEmpty())
+/** The written parts with something to say here: an estimate, or a minimum still to reach. */
+internal fun writtenRows(points: MockPoints): List<WrittenPartPoints> =
+    points.written.orEmpty().filter {
+        it.range != null ||
+            it.minimum != null
+    }
 
-/** True when the mock exam checked at least one minimum and every one was reached. */
+internal fun hasTestRows(points: MockPoints?): Boolean =
+    points != null && (testRows(points).isNotEmpty() || points.unjudged.isNotEmpty() || writtenRows(points).isNotEmpty())
+
+/**
+ * True when the mock exam checked at least one minimum and every one was reached. A written part's minimum is at
+ * best likely reached, so a mock with one never says every minimum was.
+ */
 internal fun reachedEveryMinimum(points: MockPoints?): Boolean {
     val rows = points?.let(::testRows).orEmpty()
-    return rows.any { it.met == true } && rows.none { it.met == false }
+    return rows.any { it.met == true } && rows.none { it.met == false } && points?.written.orEmpty().none { it.minimum != null }
 }
 
 /** What the result leads with when a test's minimum is missed, instead of the score. */
@@ -123,14 +138,19 @@ internal fun missedMinimum(points: MockPoints?): MissedMinimum? {
 @Composable
 internal fun PointsByTest(points: MockPoints) {
     val rows = testRows(points)
-    if (rows.isEmpty() && points.unjudged.isEmpty()) return
+    val written = writtenRows(points)
+    if (rows.isEmpty() && written.isEmpty() && points.unjudged.isEmpty()) return
 
     ResultSection(stringResource(R.string.mock_result_by_test)) {
-        if (rows.isNotEmpty()) {
+        if (rows.isNotEmpty() || written.isNotEmpty()) {
             Column {
                 rows.forEachIndexed { index, row ->
                     if (index > 0) HorizontalDivider()
                     TestRowItem(row)
+                }
+                written.forEachIndexed { index, part ->
+                    if (rows.isNotEmpty() || index > 0) HorizontalDivider()
+                    WrittenRowItem(part)
                 }
             }
         }
@@ -179,6 +199,52 @@ private fun TestRowItem(row: TestRow) {
     }
 }
 
+/** A written part beside the tests: its estimate and where it stands, or why it has none. */
+@Composable
+private fun WrittenRowItem(part: WrittenPartPoints) {
+    val range = part.range
+    val max = part.max
+    val decimals = part.decimals?.toInt() ?: 0
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .padding(vertical = 12.dp)
+            .semantics(mergeDescendants = true) {},
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(part.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+            if (range != null && max != null) {
+                WrittenStandingLine(part, decimals)
+            } else {
+                Text(
+                    listOfNotNull(
+                        part.minimum?.let { requirementLine(it.toPointsMinimum()) },
+                        stringResource(R.string.mock_result_written_no_estimate),
+                    ).factsLine(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+        if (range != null && max != null) {
+            Text(
+                stringResource(R.string.mock_result_points_of, pointsRange(range.low, range.high, decimals), points(max)),
+                style = MaterialTheme.typography.labelLarge.withTabularFigures(),
+            )
+        }
+    }
+}
+
+private fun WrittenPartPointsMinimum.toPointsMinimum(): PointsMinimum =
+    PointsMinimum(
+        unit = if (unit == WrittenPartPointsMinimum.Unit.PERCENT) PointsMinimum.Unit.PERCENT else PointsMinimum.Unit.POINTS,
+        value = value,
+    )
+
 /** A line led by a check when [met] or a cross when not, so a miss reads in words and shape, not only in color. */
 @Composable
 private fun MarkedLine(
@@ -226,14 +292,19 @@ private fun requirementLine(
         }
 
         null -> {
-            if (inPercent) {
-                stringResource(R.string.mock_result_needs_percent, needed)
-            } else {
-                pluralPoints(R.plurals.mock_result_needs_points, R.string.mock_result_needs_points_decimal, minimum.value)
-            }
+            requirementLine(minimum)
         }
     }
 }
+
+/** What a test still to judge needs: "Needs 50 points", or its share of the points. */
+@Composable
+private fun requirementLine(minimum: PointsMinimum): String =
+    if (minimum.unit == PointsMinimum.Unit.PERCENT) {
+        stringResource(R.string.mock_result_needs_percent, minimumText(minimum))
+    } else {
+        pluralPoints(R.plurals.mock_result_needs_points, R.string.mock_result_needs_points_decimal, minimum.value)
+    }
 
 @Composable
 private fun projectedLine(points: MockPoints): String? {

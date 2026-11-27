@@ -39,4 +39,16 @@ final class MockPointsTests: XCTestCase {
     XCTAssertFalse(result.reachedEveryMinimum)
     XCTAssertNil(result.missedMinimum)
   }
+
+  func testAWrittenMinimumNeverLetsTheResultSayEveryMinimumWasReached() {
+    var result = points([test("Math", met: true), test("Writing", met: true)])
+    result.written = [
+      WrittenPartPoints(
+        decimals: 0, max: 100, minimum: PointsMinimum(unit: .points, value: 50),
+        name: "Discursive test", range: WritingRange(high: 64, low: 58), scale: .points,
+        standing: .met, tasks: [])
+    ]
+
+    XCTAssertFalse(result.reachedEveryMinimum)
+  }
 }

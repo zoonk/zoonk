@@ -359,6 +359,9 @@ class PlanScreenshots {
                 "09-score-before-levels" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_LEVELS)), links) },
                 "10-score-after" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_AFTER)), links) },
                 "10b-score-below-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_BELOW)), links) },
+                "10c-score-overlaps-minimum" to { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_OVERLAPS)), links) },
+                "10d-score-unmeasured-estimate" to
+                    { links -> PreparationDetails(Standing.Preparation(withWritten(WRITTEN_UNMEASURED)), links) },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
                 "plan-change-diff" to
                     { _ ->
@@ -1221,6 +1224,19 @@ class PlanScreenshots {
             "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":41,"high":47},"standing":"below",
               "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":12,"high":14}},
                {"key":"long","name":"60-line question","max":70,"range":{"low":29,"high":33}}]}]}"""
+
+        val WRITTEN_OVERLAPS =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":109,"high":122},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":47,"high":54},"standing":"overlaps",
+              "tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":14,"high":16}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":33,"high":38}}]}]}"""
+
+        /** An estimate from practice answers, with no mock to say where it stands against the minimum. */
+        val WRITTEN_UNMEASURED =
+            """{"objective":{"low":62,"high":68},"objectiveMax":100,"combined":{"low":118,"high":131},"max":200,
+            "parts":[{"name":"Written test","max":100,"minimum":{"unit":"points","value":50},"range":{"low":56,"high":63},"standing":"unmeasured",
+              "scale":"points","tasks":[{"key":"short","name":"30-line question","max":30,"range":{"low":17,"high":19}},
+               {"key":"long","name":"60-line question","max":70,"range":{"low":39,"high":44}}]}]}"""
 
         val EDITOR_CHOICES =
             """

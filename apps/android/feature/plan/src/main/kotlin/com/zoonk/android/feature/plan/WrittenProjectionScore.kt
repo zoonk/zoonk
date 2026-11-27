@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -22,15 +19,14 @@ import com.zoonk.android.feature.goalcontent.WriteNow
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.PointsValue
 import com.zoonk.android.feature.writing.RangeMeter
+import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
-import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.feature.writing.toName
 import com.zoonk.android.feature.writing.writingTaskName
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.WritingRangeOutput
 import com.zoonk.api.models.WrittenPartPoints
 import com.zoonk.api.models.WrittenPartPointsMinimum
@@ -48,9 +44,9 @@ internal fun WrittenProjectionScore(
     writeNow: WriteNow?,
 ) {
     val below = projection.parts.firstOrNull { it.standing == WrittenPartPoints.Standing.BELOW }
-    // A part graded by level has no points to wait for, so the headline doesn't say it's waiting.
-    val unmeasured =
-        projection.parts.firstOrNull { it.inPoints() && (it.standing == WrittenPartPoints.Standing.UNMEASURED || it.range == null) }
+    // A part graded by level has no points to wait for, and one with an estimate says on its own row whether it
+    // reaches its minimum, so the headline names only a part with no estimate yet.
+    val unmeasured = projection.parts.firstOrNull { it.inPoints() && it.range == null }
     val combined = projection.combined
     val max = projection.max
 
@@ -102,7 +98,7 @@ internal fun WrittenProjectionScore(
                     written = true,
                 ) {
                     TaskRows(part)
-                    Standing(part)
+                    WrittenStandingLine(part)
                 }
             }
         }
@@ -176,60 +172,6 @@ private fun TaskRows(part: WrittenPartPoints) {
             }
         }
     }
-}
-
-/** Said against the part's own minimum, never the objective's: 50 of 100 on the sum of its answers. */
-@Composable
-private fun Standing(part: WrittenPartPoints) {
-    val range = part.range ?: return
-    val minimum = part.minimumPoints() ?: return
-    val locale = currentLocale()
-    val points = formatPoints(minimum, locale)
-    val decimals = part.decimals?.toInt() ?: 0
-
-    when (part.standing) {
-        WrittenPartPoints.Standing.MET -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_check), null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.tertiary)
-                MetaLine(stringResource(R.string.plan_written_above_minimum, points))
-            }
-        }
-
-        WrittenPartPoints.Standing.BELOW -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_close), null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.error)
-                Text(
-                    stringResource(
-                        R.string.plan_written_points_below,
-                        pointsRange(minimum - range.high, minimum - range.low, decimals),
-                        points,
-                    ),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
-
-        WrittenPartPoints.Standing.OVERLAPS -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_warning), null, Modifier.size(14.dp), tint = MaterialTheme.zoonk.warningText)
-                Text(
-                    stringResource(R.string.plan_written_close_to_minimum, points),
-                    color = MaterialTheme.zoonk.warningText,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
-
-        WrittenPartPoints.Standing.UNMEASURED, null -> {}
-    }
-}
-
-/** The part's minimum in its own points: a percent minimum is that share of its maximum, as its meter's tick is. */
-internal fun WrittenPartPoints.minimumPoints(): Double? {
-    val minimum = minimum ?: return null
-    if (minimum.unit != WrittenPartPointsMinimum.Unit.PERCENT) return minimum.value
-    return max?.let { minimum.value / PERCENT * it }
 }
 
 private const val PERCENT = 100.0

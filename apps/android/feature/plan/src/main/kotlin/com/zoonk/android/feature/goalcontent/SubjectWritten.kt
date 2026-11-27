@@ -29,6 +29,7 @@ import com.zoonk.android.feature.writing.MinimumLegend
 import com.zoonk.android.feature.writing.PointsReadout
 import com.zoonk.android.feature.writing.PointsValue
 import com.zoonk.android.feature.writing.RangeMeter
+import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.formatPoints
 import com.zoonk.android.feature.writing.minimumShare
 import com.zoonk.android.feature.writing.pointsRange
@@ -235,6 +236,7 @@ internal fun WrittenStanding(written: WrittenPracticeSubjectsInner) {
             }
             max?.let { RangeMeter(range?.low, range?.high, it, minimumShare = share) }
             minimumLine?.let { MinimumLegend(it) }
+            WrittenStandingLine(points, decimals)
         }
         Column {
             points.tasks.forEachIndexed { index, task ->

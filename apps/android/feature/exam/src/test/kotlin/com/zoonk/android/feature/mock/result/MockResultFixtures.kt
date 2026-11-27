@@ -37,6 +37,21 @@ internal const val FULL_POINTS =
     {"asked":10,"earned":8,"max":10,"met":true,"minimum":{"unit":"percent","value":50},"projected":null,"short":null,"name":"Libras","qualifying":true}],
     "unjudged":[{"minimum":{"unit":"points","value":20},"name":"Discursive test"}]}"""
 
+/**
+ * A full mock whose objective tests reached their minimums, with its written test estimated as [range] (or not yet,
+ * when null) and standing [standing] against its own minimum.
+ */
+internal fun writtenPoints(
+    standing: String,
+    range: String?,
+): String =
+    """"points":{"asked":260,"earned":182,"max":260,"met":true,"minimum":{"unit":"points","value":130},"projected":null,"short":null,
+    "parts":[{"asked":60,"earned":40,"max":60,"met":true,"minimum":{"unit":"points","value":8},"projected":null,"short":null,"name":"P1","qualifying":false},
+    {"asked":200,"earned":142,"max":200,"met":true,"minimum":{"unit":"percent","value":40},"projected":null,"short":null,"name":"P2","qualifying":false}],
+    "unjudged":[],
+    "written":[{"name":"Discursive test","max":100,"minimum":{"unit":"points","value":50},"range":$range,"standing":"$standing","decimals":0,
+      "tasks":[{"key":"q1","name":"Question 1","max":100,"range":$range}]}]}"""
+
 /** Half of the same exam: each test projected onto its whole length, nothing judged. */
 internal const val HALF_POINTS =
     """"points":{"asked":130,"earned":91,"max":260,"met":null,"minimum":{"unit":"points","value":130},"projected":182,"short":null,

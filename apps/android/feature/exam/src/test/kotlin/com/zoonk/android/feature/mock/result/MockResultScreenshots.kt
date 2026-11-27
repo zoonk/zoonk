@@ -195,6 +195,41 @@ class MockResultScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenMet() {
+        show(finishedMock(result = result(extra = writtenPoints("met", """{"low":58,"high":64}"""))))
+        capture("result-phone-written-met")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenBelow() {
+        show(finishedMock(result = result(extra = writtenPoints("below", """{"low":38,"high":44}"""))))
+        capture("result-phone-written-below")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenOverlaps() {
+        show(finishedMock(result = result(extra = writtenPoints("overlaps", """{"low":47,"high":55}"""))))
+        capture("result-phone-written-overlaps")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenUnmeasured() {
+        show(finishedMock(result = result(extra = writtenPoints("unmeasured", """{"low":58,"high":64}"""))))
+        capture("result-phone-written-unmeasured")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneWrittenNoEstimate() {
+        show(finishedMock(result = result(extra = writtenPoints("unmeasured", """null"""))))
+        capture("result-phone-written-no-estimate")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
     fun phoneHalfPoints() {
         show(finishedMock(result = result(extra = HALF_POINTS), extra = HALF_SHAPE))
         capture("result-phone-points-half")

@@ -70,6 +70,8 @@ private struct SubjectWrittenPoints: View {
         if let minimum = points.minimum {
           MinimumLegend(minimumText(minimum, max: points.max))
         }
+
+        WrittenStandingLine(part: points, decimals: decimals)
       }
       .padding(.vertical, 4)
 

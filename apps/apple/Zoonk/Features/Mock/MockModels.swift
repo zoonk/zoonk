@@ -313,11 +313,20 @@ struct MockPoints: Hashable, Decodable, Sendable {
     return tests.filter { $0.met == false } + tests.filter { $0.met != false }
   }
 
-  var hasTests: Bool { !parts.isEmpty || minimum != nil || !unjudged.isEmpty }
+  /// The written parts with something to say here: an estimate, or a minimum still to reach.
+  var writtenRows: [WrittenPartPoints] {
+    (written ?? []).filter { $0.range != nil || $0.minimum != nil }
+  }
 
-  /// The mock exam checked at least one minimum and every one was reached.
+  var hasTests: Bool {
+    !parts.isEmpty || minimum != nil || !unjudged.isEmpty || !writtenRows.isEmpty
+  }
+
+  /// The mock exam checked at least one minimum and every one was reached. A written part's
+  /// minimum is at best likely reached, so a mock with one never says every minimum was.
   var reachedEveryMinimum: Bool {
     tests.contains { $0.met == true } && !tests.contains { $0.met == false }
+      && !(written ?? []).contains { $0.minimum != nil }
   }
 }
 
