@@ -182,7 +182,7 @@ describe("Whole-course question preparation", () => {
     const { id: attemptId } = opened.placement.attempt;
 
     expect(opened.placement).toMatchObject({
-      attempt: { part: 1, parts: 3, questions: 12 },
+      attempt: { part: 1, parts: 3, partsRemoved: 0, questions: 12 },
       next: null,
       status: "waitingForQuestions",
     });
@@ -197,7 +197,14 @@ describe("Whole-course question preparation", () => {
       finishGoalPlacement({ goalId: goal.id, input: { attemptId } }),
     ).resolves.toMatchObject({
       completion: {
-        attempt: { id: attemptId, part: 1, partComplete: false, resume: { part: 1, question: 1 } },
+        attempt: {
+          id: attemptId,
+          part: 1,
+          partComplete: false,
+          parts: 3,
+          partsRemoved: 0,
+          resume: { part: 1, question: 1 },
+        },
         finish: { answered: 0, end: "stopped", partsLeft: 3 },
       },
     });

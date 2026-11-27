@@ -41,6 +41,7 @@ const attemptSchema = z.object({
   partSkillIds: z.array(uuidSchema()).optional(),
   partStartedAt: z.iso.datetime(),
   parts: z.array(z.array(uuidSchema())).optional(),
+  partsAtOpen: z.int().positive().optional(),
   paused: z.boolean().optional(),
   skillIds: z.array(uuidSchema()),
 });

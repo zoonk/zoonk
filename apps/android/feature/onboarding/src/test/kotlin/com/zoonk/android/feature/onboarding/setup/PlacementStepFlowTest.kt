@@ -144,6 +144,7 @@ class PlacementStepFlowTest {
                 partComplete = false,
                 parts = 2,
                 partsLeft = 2,
+                partsRemoved = 0,
                 questions = 12,
                 remainingEstimatedMinutes = 12,
                 resume = null,

@@ -61,7 +61,7 @@ final class PlacementTestContractTests: XCTestCase {
       {"estimatedMinutes":85,"kind":"learn","offer":null,"result":null,"state":"continue",
        "attempt":{"answered":3,"chapter":null,"estimatedMinutes":6,
                   "id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","length":"wholeCourse",
-                  "nextPart":5,"part":5,"partComplete":false,"parts":14,"partsLeft":10,
+                  "nextPart":5,"part":5,"partComplete":false,"parts":14,"partsLeft":10,"partsRemoved":0,
                   "questions":12,"resume":{"part":5,"question":4},"totalEstimatedMinutes":85,
                   "remainingEstimatedMinutes":60}}
       """#)

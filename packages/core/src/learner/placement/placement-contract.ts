@@ -37,13 +37,20 @@ export const placementAttemptViewSchema = z
       .meta({ description: "Number of the next part with topics remaining" }),
     part: z.number().int().positive(),
     partComplete: z.boolean(),
-    parts: z.int().positive(),
+    parts: z
+      .int()
+      .positive()
+      .meta({ description: "Total when the current part opened, updated when it closes" }),
     partsLeft: z
       .int()
       .nonnegative()
       .meta({
         description: "Parts with questions remaining, including the current part if unfinished",
       }),
+    partsRemoved: z
+      .int()
+      .nonnegative()
+      .meta({ description: "Parts removed during the current part, zero until it closes" }),
     questions: z
       .int()
       .positive()
@@ -96,6 +103,11 @@ export const placementResultSchema = z
     nextLesson: z.object({ id: uuidSchema(), title: z.string() }).nullable().optional(),
     part: z.int().positive().optional(),
     partLessonsSkipped: z.int().nonnegative().optional(),
+    partsRemoved: z
+      .int()
+      .nonnegative()
+      .optional()
+      .meta({ description: "Parts removed during the part recorded by this result" }),
   })
   .meta({ id: "PlacementResult" });
 

@@ -1209,7 +1209,7 @@ class PlanScreenshots {
         const val LEARN_TEST_CONTINUE =
             """{"kind":"learn","state":"continue","estimatedMinutes":85,"result":null,"offer":null,
              "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":3,"partComplete":true,"estimatedMinutes":6,
-              "answered":12,"chapter":null,"nextPart":4,"parts":14,"partsLeft":11,"questions":12,"remainingEstimatedMinutes":66,"resume":null,
+              "answered":12,"chapter":null,"nextPart":4,"parts":14,"partsLeft":11,"partsRemoved":0,"questions":12,"remainingEstimatedMinutes":66,"resume":null,
               "totalEstimatedMinutes":85}}"""
 
         const val LEARN_TEST_RESULT =
