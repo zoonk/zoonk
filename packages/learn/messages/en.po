@@ -7567,6 +7567,7 @@ msgstr "Your practice isn't saved yet"
 #. Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/practice-done.tsx
+#: src/session/use-block-copy.ts
 msgctxt "Q3nyx6"
 msgid "Already fixed"
 msgstr "Already fixed"
