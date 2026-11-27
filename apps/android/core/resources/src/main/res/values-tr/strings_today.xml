@@ -88,6 +88,7 @@
   "today_resume": "e6ad0adc1fac0f358706f7d82cb9857a32c0f90d0ca2e53d17d14a8225eca706",
   "today_resume_effect": "4ba754c486a3d6078dd525b60ff9ed144b67ea5038dbcdaf73dbc215a9c93b21",
   "today_save_failed": "95a8110c4ec020641aa939263acefff396f190cb565a63f21df6cfa498c891ca",
+  "today_saved_lessons_line": "90d414d8040f75bc2824b7c9ed434b746db6b54f9e79e98085c3a58310a40221",
   "today_see_changes": "e11a246a826be71e0402b1188d63b9a33c79ae95c086eda84dba3138f2fe01ee",
   "today_see_day_challenge": "ca6aa2a829ddc9f567279d64cc0919d123b5e3df52d64721fa814f54d287123c",
   "today_see_day_mock": "4e965831c20b2a60123b4e46fa5ddd8039fede0194d6a3a58d73d419b70ecc44",
@@ -276,6 +277,8 @@
     <string name="today_practice_anytime">İstediğin zaman pratik yap</string>
     <string name="today_mistakes_notebook">Yanlış defteri</string>
     <string name="today_mistakes_redo">Yanlış yaptığın soruları tekrar çöz</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Yeniden çalışmak istediğin dersler</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Bir dersi yeniden çalış</string>
     <string name="today_mistakes_return_tomorrow">Bugünkü yanlışların yarın tekrar karşına çıkar</string>

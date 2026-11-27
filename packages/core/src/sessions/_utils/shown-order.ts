@@ -34,3 +34,10 @@ export function getShownOrder({ count, seed }: { count: number; seed: string }):
 
   return draw(0);
 }
+
+export function showInOrder<T>({ items, seed }: { items: readonly T[]; seed: string }): T[] {
+  return getShownOrder({ count: items.length, seed }).flatMap((index) => {
+    const item = items[index];
+    return item === undefined ? [] : [item];
+  });
+}

@@ -5,6 +5,7 @@ function seeded({
   fixture,
   screen,
   proof,
+  proofWithin,
   reach = [],
   evidence = [],
   free = false,
@@ -14,6 +15,7 @@ function seeded({
   fixture: string;
   screen: string;
   proof: string;
+  proofWithin?: string;
   reach?: Scenario["reach"];
   evidence?: string[];
   free?: boolean;
@@ -31,6 +33,7 @@ function seeded({
       },
     },
     proof,
+    proofWithin,
     reach,
     screen,
     sizes: PHONE_AND_LAPTOP.map((size) => ({ ...size, locale })),
@@ -39,10 +42,10 @@ function seeded({
 
 export const SEEDED_SCREEN_SCENARIOS: Scenario[] = [
   seeded({
-    evidence: ["input"],
     fixture: "understood",
     id: "onboarding.understood.edit",
     proof: "Save",
+    proofWithin: "li form:has(input[data-slot=input])",
     reach: [{ click: "Edit Goal" }],
     screen: "/start",
   }),
@@ -72,12 +75,19 @@ export const SEEDED_SCREEN_SCENARIOS: Scenario[] = [
     proof: "I can already…",
     screen: "/content/units/[unit]",
   }),
-  seeded({ fixture: "paused", id: "today.paused", proof: "Resume", screen: "/today" }),
+  seeded({
+    fixture: "paused",
+    id: "today.paused",
+    proof: "This goal is paused.",
+    screen: "/today",
+  }),
   {
     ...seeded({
       fixture: "failed-plan",
       id: "plan.build-failed",
       proof: "Try again",
+      proofWithin:
+        '[role=alert]:has-text("Something went wrong on our side"), [role=alert]:has-text("Building your plan stopped"), [role=alert]:has-text("Your plan didn\'t start")',
       screen: "/start/[goal]",
     }),
     failure: "plan-build",

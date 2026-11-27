@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
-import { describe, it } from "vitest";
+import { describe, it, test } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture } from "./check-fixture.mts";
 import { deviceSection } from "./device-section.mts";
@@ -258,4 +258,46 @@ describe("pnpm pr:media device: the scheme a picture shows", () => {
 
     assert.equal(item.scheme, "dark");
   });
+});
+
+test("refuses a non-PNG without replacing the existing after picture or manifest", async () => {
+  const { repository } = checkFixture();
+  const installed = { commit: head(repository), dirty: false };
+  const { item, to } = await take(repository, installed, "apple");
+
+  await assert.rejects(
+    takeDevicePicture({
+      bridge: bridge(installed, true, Buffer.concat([Buffer.from("multiple displays\n"), PICTURE])),
+      deviceId: "booted-device",
+      name: "sheet over plan",
+      platform: "apple",
+      repository,
+      to,
+    }),
+    /valid PNG/u,
+  );
+
+  assert.deepEqual(await readManifest(to), [{ ...item, read: CLEAN }]);
+  assert.equal(await sha256File(join(to, item.file)), item.sha256);
+});
+
+test("records the new build when a device recapture has the same pixels", async () => {
+  const { repository } = checkFixture();
+  const previous = head(repository);
+  const { to } = await take(repository, { commit: previous, dirty: false }, "apple");
+  execFileSync("git", ["commit", "--allow-empty", "-qm", "new build"], { cwd: repository });
+  const current = head(repository);
+
+  const recaptured = await takeDevicePicture({
+    bridge: bridge({ commit: current, dirty: false }),
+    deviceId: "booted-device",
+    name: "sheet over plan",
+    platform: "apple",
+    repository,
+    to,
+  });
+
+  assert.equal(recaptured.build.commit, current);
+  assert.equal(recaptured.read?.by, CLEAN.by);
+  assert.deepEqual(await readManifest(to), [recaptured]);
 });

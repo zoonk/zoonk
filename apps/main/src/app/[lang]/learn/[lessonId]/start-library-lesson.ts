@@ -54,6 +54,7 @@ function toStartOutcome({
           reason: "started",
           replay: run.data.replay,
           runId: run.data.runId,
+          saved: run.data.saved,
           startedAt: run.data.startedAt,
         }
       : { reason: "failed" };

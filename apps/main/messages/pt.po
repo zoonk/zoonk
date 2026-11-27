@@ -179,6 +179,20 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Continuar a sessão de hoje"
 
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Aulas salvas"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Aulas concluídas"
+
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -241,13 +255,6 @@ msgstr "Colega"
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "Caderno de erros"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
-msgctxt "odE1Ih"
-msgid "Completed lessons"
-msgstr "Aulas concluídas"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -735,26 +742,6 @@ msgctxt "OvhCe0"
 msgid "Online courses with a study plan for each day"
 msgstr "Cursos online com um plano de estudos para cada dia"
 
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "Nível {level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Nível"
-
-#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "xjYKLD"
-msgid "{belt}, Level {level}"
-msgstr "{belt}, Nível {level}"
-
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
 msgid "Skip to content"
@@ -791,6 +778,11 @@ msgstr "Menu"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, nível {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Nível {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -909,6 +901,11 @@ msgstr "Criar meu plano"
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "Resumo do seu plano"
+
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "FH8mtx"
+msgid "The lessons you save, ready to do again anytime."
+msgstr "As aulas que você salva ficam prontas para fazer de novo quando quiser."
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"
@@ -1583,6 +1580,13 @@ msgstr "Visão geral"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Suas estatísticas"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Nível"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx

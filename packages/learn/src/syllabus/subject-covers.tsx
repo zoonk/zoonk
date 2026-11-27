@@ -1,5 +1,5 @@
 import { useExtracted } from "next-intl";
-import { LIST_GROUP_CLASS, ListRow, ListRowContent, ListRowTitle } from "../_components/list-group";
+import { ListGroup, ListRow, ListRowContent, ListRowTitle } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 
 const COVERS_TITLE_ID = "subject-covers-title";
@@ -23,7 +23,7 @@ export function SubjectCovers({ covers }: { covers: readonly string[] }) {
         </PageSectionTitle>
       </PageSectionHeader>
 
-      <ul aria-labelledby={COVERS_TITLE_ID} className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul" aria-labelledby={COVERS_TITLE_ID}>
         {covers.map((name) => (
           <li key={name}>
             <ListRow>
@@ -33,7 +33,7 @@ export function SubjectCovers({ covers }: { covers: readonly string[] }) {
             </ListRow>
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

@@ -38,7 +38,6 @@ jobs:
           - { suite: chromium 3/3, args: --project=chromium --shard=3/3 }
           - { suite: live-call-states, args: --project=live-call-states, gates: true }
     env:
-      BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"

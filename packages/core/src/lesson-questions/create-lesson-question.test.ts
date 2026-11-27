@@ -306,7 +306,12 @@ describe(createLessonQuestion, () => {
 
     expect(question.contextSnapshot).toMatchObject({
       lesson: { title: "Electron clouds" },
-      step: { content: playableStepContent.check },
+      step: {
+        content: {
+          ...playableStepContent.check,
+          options: expect.arrayContaining(playableStepContent.check.options),
+        },
+      },
     });
   });
 });

@@ -120,16 +120,18 @@ async function gradeStudyAnswer({
   answer,
   blockId,
   item,
+  keepsStoredOrder,
   session,
   userId,
 }: {
   answer: StudyAnswerInput["answer"];
   blockId: string;
   item: SessionItem;
+  keepsStoredOrder?: boolean;
   session: StudySessionRow;
   userId: string;
 }): Promise<GradedSessionAnswer> {
-  const graded = gradeSessionAnswer({ answer, blockId, item });
+  const graded = gradeSessionAnswer({ answer, blockId, item, keepsStoredOrder });
 
   if (item.format !== "typed" || graded.isCorrect || !("text" in answer)) {
     return graded;
@@ -209,8 +211,20 @@ export async function answerStudyQuestion({
   const storedAnswer = getStoredCheckpointAnswer({ block, previous });
 
   const graded = storedAnswer
-    ? gradeSessionAnswer({ answer: storedAnswer, blockId: block.id, item })
-    : await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, session, userId });
+    ? gradeSessionAnswer({
+        answer: storedAnswer,
+        blockId: block.id,
+        item,
+        keepsStoredOrder: !payload.shufflesOptions,
+      })
+    : await gradeStudyAnswer({
+        answer: input.answer,
+        blockId: block.id,
+        item,
+        keepsStoredOrder: !payload.shufflesOptions,
+        session,
+        userId,
+      });
 
   const drill = payload.drills.find((candidate) => candidate.itemIds.includes(item.id));
 

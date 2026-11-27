@@ -4,20 +4,20 @@ import { type Context, EDGE, box, finding, tenths } from "./alignment-geometry.m
 /**
  * At the scroll's end nothing rests under a pinned bar: the page keeps room for it, so its last
  * row ends above the bar's top (#12's Save bar over a condition's caption). The probe records a
- * pinned bar only when the page is at its scroll's end, where this can be judged. A dialog or sheet
- * on top covers the page and its bar, so its rows rest over the bar, not under it.
+ * pinned bar only at its scroller's end. Browser captures say what the bar is drawn over;
+ * captures without that evidence can compare boxes on the unobstructed page.
  */
 export function pinnedLeads(context: Context): AlignmentFinding[] {
   const { activeSurface, elements } = context.capture;
-
-  if (activeSurface !== "page") {
-    return [];
-  }
 
   const bars = elements.filter((element) => element.part === "pinned");
   const rows = elements.filter((element) => element.part === "row");
 
   return bars.flatMap((bar) => {
+    if (!bar.coversRows && activeSurface !== "page") {
+      return [];
+    }
+
     const pinned = box(bar.bounds);
 
     // What the bar holds rides with it: a group the capture names as drawn in it, or one drawn as
@@ -36,12 +36,19 @@ export function pinnedLeads(context: Context): AlignmentFinding[] {
     );
 
     return rows.flatMap((row) => {
-      if (row.group !== null && own.has(row.group)) {
+      if (bar.coversRows && !bar.coversRows.includes(row.id)) {
+        return [];
+      }
+
+      if (!bar.coversRows && row.group !== null && own.has(row.group)) {
         return [];
       }
 
       const drawn = box(row.bounds);
-      const covered = drawn.bottom - pinned.top;
+
+      const covered = bar.coversRows
+        ? Math.min(drawn.bottom, pinned.bottom) - Math.max(drawn.top, pinned.top)
+        : drawn.bottom - pinned.top;
 
       if (
         covered <= EDGE ||

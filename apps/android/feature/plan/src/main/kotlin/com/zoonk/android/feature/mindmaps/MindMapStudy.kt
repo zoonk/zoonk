@@ -285,7 +285,7 @@ private val Slide.serverSaved: Boolean
 /** [zoom] opens a chapter's map full screen; [settled] is each map the learner stops on, to resume there. */
 internal data class StudyActions(
     val close: () -> Unit,
-    val save: (target: MindMapTarget, chapterId: UUID?, saved: Boolean) -> Unit,
+    val save: (target: MindMapTarget, saved: Boolean) -> Unit,
     val navigate: (AppRoute) -> Unit,
     val zoom: (chapterId: UUID) -> Unit,
     val settled: (DeckSlot) -> Unit = {},
@@ -321,7 +321,7 @@ internal fun MindMapStudy(
             if (last) actions.close() else goTo(page + 1)
         }
     }
-    val toggleSave = { target?.let { actions.save(it, chapterOf(current), !saved) } }
+    val toggleSave = { target?.let { actions.save(it, !saved) } }
 
     // Kept from map to map, so a learner who reads the text keeps reading it.
     var asText by rememberSaveable { mutableStateOf(false) }

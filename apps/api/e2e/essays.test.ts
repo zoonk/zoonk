@@ -5,6 +5,7 @@ import {
   writingResultSchema,
   writingStartSchema,
 } from "@zoonk/core/exams/essays/writing-contract";
+import { WRITING_MAX_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -221,7 +222,7 @@ test.describe("Essays API", () => {
         rubric: "levels",
         sessionId,
         status: "active",
-        writing: prompt,
+        writing: { ...prompt, maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE },
         writingTask: WRITING_TASK,
       });
 

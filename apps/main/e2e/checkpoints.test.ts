@@ -2,6 +2,7 @@ import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   answerDuelQuestion,
+  checkDuelQuestion,
   createCheckpointLearner,
   playDuel,
 } from "./checkpoint-fixtures";
@@ -135,9 +136,7 @@ test.describe("A checkpoint from today's session", () => {
       await answerDuelQuestion(page, number);
     }
 
-    await page.keyboard.press("1");
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+    await checkDuelQuestion(page, CHECKPOINT_PASS_MARK);
 
     const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
     await page.getByRole("button", { name: /^See result/u }).click();

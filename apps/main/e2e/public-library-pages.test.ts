@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
+import { holdScripts } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseChapterFixture,
@@ -13,6 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
 
 async function createLibraryCourse() {
@@ -218,9 +219,7 @@ test.describe("public Library lesson page", () => {
     await page.goto(lessonPath);
 
     const cloud = page.getByRole("button", { name: "No, it's more like a cloud" });
-    await expectHydrated(cloud);
-    await expect(cloud).toHaveAttribute("aria-keyshortcuts", "2");
-    await page.keyboard.press("2");
+    await pressAnswerKey(page, cloud);
 
     await expect(page).toHaveURL(new RegExp(`/learn/${written.id}\\?.*answer=cloud`, "u"));
   });

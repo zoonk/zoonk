@@ -25,11 +25,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.isSaved
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.savedlessons.LessonRowBookmark
+import com.zoonk.android.feature.savedlessons.LessonRowBookmarkSpace
+import com.zoonk.android.feature.savedlessons.LessonSaveRow
+import com.zoonk.android.feature.savedlessons.SavedLessonsStore
+import com.zoonk.android.feature.savedlessons.rememberLessonSaves
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -87,7 +95,7 @@ fun CompletedLessonsScreen(
                     // `finishedOn` is the goal's local day, and the summary is read again at its midnight.
                     val today = LocalDate.now(read.timeZone?.let(ZoneId::of) ?: ZoneId.systemDefault())
                     val goal = read.goals.firstOrNull { it.id == goalId }
-                    CompletedLessons(goalId, today, app.completedLessons, listState) {
+                    CompletedLessons(goalId, today, app.completedLessons, app.savedLessons, app.snackbars, listState) {
                         navigator.open(AppRoute.Lesson(it.toString()))
                     }
                 }
@@ -119,9 +127,13 @@ internal fun CompletedLessons(
     goalId: UUID,
     today: LocalDate,
     store: CompletedLessonsStore,
+    savedLessons: SavedLessonsStore,
+    snackbars: AppSnackbars,
     listState: LazyListState,
     onOpen: (UUID) -> Unit,
 ) {
+    val saves = rememberLessonSaves(savedLessons, goalId, snackbars)
+    val states by saves.states.collectAsStateWithLifecycle()
     var group by rememberSaveable(goalId) { mutableStateOf<String?>(null) }
     val query = CompletedLessonsQuery(goalId, group)
     val resource = store.lessons[query]
@@ -203,7 +215,10 @@ internal fun CompletedLessons(
                         formatDate(month, locale, DateStyle.MonthName, today).replaceFirstChar { it.titlecase(locale) },
                         Modifier.padding(bottom = 8.dp),
                     )
-                    lessons.forEachIndexed { index, lesson -> LessonRow(lesson, first = index == 0, today, onOpen) }
+                    lessons.forEachIndexed { index, lesson ->
+                        val saved = states.isSaved(lesson.lessonId, lesson.saved)
+                        LessonRow(lesson, first = index == 0, today, saved, onToggle = { saves.set(lesson.lessonId, !saved) }, onOpen)
+                    }
                 }
             }
         }
@@ -270,17 +285,47 @@ private fun LessonRow(
     lesson: CompletedLesson,
     first: Boolean,
     today: LocalDate,
+    saved: Boolean,
+    onToggle: () -> Unit,
     onOpen: (UUID) -> Unit,
 ) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         if (!first) ListDivider()
-        ListRow(
-            headline = { Text(lesson.title) },
-            supporting = listRowDescription(lesson.chapterTitle),
-            meta = { Text(formatDate(lesson.finishedOn.toJavaLocalDate(), currentLocale(), DateStyle.Day, today)) },
-            onClick = { onOpen(lesson.lessonId) },
-        )
+        if (lesson.available) {
+            LessonSaveRow(saved, onToggle) { longPressLabel, onLongPress ->
+                LessonRowContent(
+                    lesson,
+                    today,
+                    onClick = { onOpen(lesson.lessonId) },
+                    onLongClickLabel = longPressLabel,
+                    onLongClick = onLongPress,
+                    trailing = { LessonRowBookmark(lesson.title, saved, onToggle) },
+                )
+            }
+        } else {
+            LessonRowContent(lesson, today, trailing = { LessonRowBookmarkSpace() })
+        }
     }
+}
+
+@Composable
+private fun LessonRowContent(
+    lesson: CompletedLesson,
+    today: LocalDate,
+    onClick: (() -> Unit)? = null,
+    onLongClickLabel: String? = null,
+    onLongClick: (() -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    ListRow(
+        headline = { Text(lesson.title) },
+        supporting = listRowDescription(lesson.chapterTitle),
+        meta = { Text(formatDate(lesson.finishedOn.toJavaLocalDate(), currentLocale(), DateStyle.Day, today)) },
+        onClick = onClick,
+        onLongClickLabel = onLongClickLabel,
+        onLongClick = onLongClick,
+        trailing = trailing,
+    )
 }
 
 /** While another group's lessons load, their place keeps part of the screen, so the filter over it stays put. */

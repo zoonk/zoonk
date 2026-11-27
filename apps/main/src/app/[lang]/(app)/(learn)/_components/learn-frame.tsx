@@ -9,9 +9,8 @@ import {
   LearnShell,
   LearnShellContent,
   LearnSkipLink,
-  NO_WAY_BACK,
 } from "@zoonk/learn/shell";
-import { PageTopBar } from "@zoonk/ui/components/page-top";
+import { LearnTabRootBar } from "@zoonk/learn/tab-root-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { LearnBarEnd } from "./learn-bar-end";
@@ -31,41 +30,13 @@ async function SkipToContent() {
   return <LearnSkipLink>{t("Skip to content")}</LearnSkipLink>;
 }
 
-/** From `lg` the sidebar holds the goal, search and the account, so the bar holds nothing there. */
-function PhoneOnly({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="contents lg:hidden" data-phone-only="">
-      {children}
-    </div>
-  );
-}
-
-/**
- * A tab's own page (Today, Plan, the buddy) has the frame's bar; a pushed page draws its own. In
- * its own column, so it scrolls away with the page.
- */
 function LearnTopBar() {
   return (
     <TabRootOnly>
-      {/* A learner's goal name keeps about ten letters at any text size; a visitor's search needs no room held. */}
-      <div
-        className={cn(FRAME_COLUMN_CLASS, "signed-in:[--bar-start-min:min(100%,11rem)]")}
-        data-slot="learn-frame-bar"
-      >
-        <PageTopBar
-          className={NO_WAY_BACK.computer.bare}
-          actions={
-            <PhoneOnly>
-              <LearnBarEnd visitor={<VisitorBarLinks />} />
-            </PhoneOnly>
-          }
-          back={
-            <PhoneOnly>
-              <LearnGoalMenu visitor={<LearnBarSearch edge="start" />} />
-            </PhoneOnly>
-          }
-        />
-      </div>
+      <LearnTabRootBar
+        end={<LearnBarEnd visitor={<VisitorBarLinks />} />}
+        start={<LearnGoalMenu visitor={<LearnBarSearch edge="start" />} />}
+      />
     </TabRootOnly>
   );
 }

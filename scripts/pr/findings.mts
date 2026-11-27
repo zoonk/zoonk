@@ -83,7 +83,7 @@ export async function resolveFinding({
 
   if (state.state === "issue" && blocks(found)) {
     throw new Error(
-      `${id} is one this PR must fix: it misleads a learner, or the PR broke rule ${found.rule}. Fix it and resolve it with --fixed <commit>, or --exception "<who granted it>" when the user granted one.`,
+      `${id} is one this PR must fix: the PR brought it, and it misleads a learner or breaks rule ${found.rule}. Fix it and resolve it with --fixed <commit>, or --exception "<who granted it>" when the user granted one.`,
     );
   }
 

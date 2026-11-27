@@ -46,6 +46,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.balanced
@@ -64,14 +65,14 @@ import kotlin.math.roundToInt
  * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
  * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
- * spans the list. [leadOnFirstLine] keeps the leading mark on the first line; the value
+ * spans the list. [lead] puts a number or date on the first line; the value
  * and end stay centered on the row. A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
  * is a value rather than a control passes `true`; a row that can't open in a list whose other rows end with
  * a glyph passes [chevronSpace], so its value ends where theirs do (main's `ListRowChevronSpace`). [onLongClick] opens what else a tappable row offers,
  * such as a menu, which TalkBack names with [onLongClickLabel]. The mark is centered on the words beside one
  * or two lines (the title however it wraps, a value moved under it, each description) and on the first line
- * beside three or more (E5); a lead that is text ([leadOnFirstLine], a number or a date) is always on the first.
+ * beside three or more (E5); a text lead is always on the first.
  */
 @Composable
 fun ListRow(
@@ -90,13 +91,14 @@ fun ListRow(
     expanded: Boolean? = null,
     stateDescription: String? = null,
     leading: (@Composable () -> Unit)? = null,
-    leadOnFirstLine: Boolean = false,
+    lead: (@Composable () -> Unit)? = null,
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
     chevronSpace: Boolean = false,
 ) {
+    require(leading == null || lead == null)
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
         when {
@@ -117,7 +119,6 @@ fun ListRow(
                     LayoutPart.Part.Row,
                     // A row keeping an empty end slot ends its value where the slot starts.
                     endInset = if (keepsSlot) LIST_ITEM_INSET + endSlot + LEADING_GAP else LIST_ITEM_INSET,
-                    firstLine = leadOnFirstLine,
                 ).fillMaxWidth()
                 .heightIn(min = MIN_HEIGHT)
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
@@ -158,10 +159,10 @@ fun ListRow(
         RowContent(
             parts = parts,
             firstLine = MaterialTheme.typography.titleSmall,
-            leadOnFirstLine = leadOnFirstLine,
+            leadingOnFirstLine = lead != null,
             modifier = Modifier.weight(1f),
             mark =
-                leading?.let { mark ->
+                (leading ?: lead)?.let { content ->
                     {
                         CompositionLocalProvider(LocalContentColor provides quiet, LocalMarkEdge provides ButtonEdge.Start) {
                             Box(
@@ -170,9 +171,9 @@ fun ListRow(
                                         minWidth = markSize(),
                                         minHeight = markSize(),
                                     ).offset(x = -2.dp * glyphScale())
-                                    .layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark),
+                                    .layoutPart(LayoutPart.LIST, if (lead != null) LayoutPart.Part.Lead else LayoutPart.Part.Mark),
                                 contentAlignment = Alignment.Center,
-                            ) { mark() }
+                            ) { content() }
                         }
                     }
                 },
@@ -312,7 +313,7 @@ fun MarkedLine(
     RowContent(
         parts = remember { RowParts() },
         firstLine = firstLine,
-        leadOnFirstLine = true,
+        leadingOnFirstLine = true,
         modifier = modifier,
         mark = {
             CompositionLocalProvider(LocalMarkEdge provides ButtonEdge.Start) {
@@ -325,9 +326,10 @@ fun MarkedLine(
 
 /**
  * A row's mark, title, value and descriptions, placed as E5 and E6 say. The value sits at the end, past
- * [VALUE_GAP], or moves under the title when the title would get too little room (half the width, or what
- * it needs) or the words beside it would stand taller than with it under them. Beside one or two lines (the title however it wraps, a value moved under it, each description)
- * the mark is centered on the words; beside three or more, or as a text lead ([leadOnFirstLine]), it is
+ * [VALUE_GAP], so a list's values keep one column however its titles wrap, and moves under the title only
+ * when the title would get less than [TITLE_BASIS] (or what it needs) or the words are narrower than
+ * [STACKED_WIDTH], as main's title row wraps. Beside one or two lines (the title however it wraps, a value moved under it, each description)
+ * the mark is centered on the words; beside three or more, or as a text lead ([leadingOnFirstLine]), it is
  * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
  * sits on the row's center.
  */
@@ -335,7 +337,7 @@ fun MarkedLine(
 private fun RowContent(
     parts: RowParts,
     firstLine: TextStyle,
-    leadOnFirstLine: Boolean,
+    leadingOnFirstLine: Boolean,
     modifier: Modifier,
     mark: (@Composable () -> Unit)?,
     title: @Composable () -> Unit,
@@ -357,14 +359,11 @@ private fun RowContent(
         val titleMeasurable = titles.first()
         val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
         val notesMeasurable = notes.firstOrNull()
-        val wordsHeightAt = { textWidth: Int ->
-            titleMeasurable.minIntrinsicHeight(textWidth) + (notesMeasurable?.minIntrinsicHeight(textWidth) ?: 0)
-        }
         val beside =
             valuePlaceable == null ||
                 (
-                    room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2) &&
-                        wordsHeightAt(room) <= wordsHeightAt(width) + valuePlaceable.height
+                    width >= STACKED_WIDTH.roundToPx() &&
+                        room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), TITLE_BASIS.roundToPx())
                 )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
         val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
@@ -375,7 +374,7 @@ private fun RowContent(
         val wordsHeight = titlePlaceable.height + (under?.height ?: 0) + (notesPlaceable?.height ?: 0)
         val markHeight = markPlaceable?.height ?: 0
         // The words' measuring has just counted their lines.
-        val middle = if (markPlaceable != null && (leadOnFirstLine || parts.lines >= THREE_LINES)) line else wordsHeight
+        val middle = if (markPlaceable != null && (leadingOnFirstLine || parts.lines >= THREE_LINES)) line else wordsHeight
         // Whichever reaches higher above the middle sets the top.
         val markTop = ((middle - markHeight) / 2f).coerceAtLeast(0f).roundToInt()
         val wordsTop = ((markHeight - middle) / 2f).coerceAtLeast(0f).roundToInt()
@@ -471,6 +470,10 @@ private val END_SLOT = 16.dp
 
 /** Main's `gap-3` between a row's title and the value at its end. */
 private val VALUE_GAP = 12.dp
+
+/** Main's title row: the title keeps 6rem beside a value, and words narrower than 11rem stack. */
+private val TITLE_BASIS = 96.sp
+private val STACKED_WIDTH = 176.sp
 
 /** E5: beside three lines or more, a row's mark goes with the first. */
 private const val THREE_LINES = 3

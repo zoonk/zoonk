@@ -17,18 +17,17 @@ class PracticeBlockTitleGermanTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun aTopicPracticeTakesTheWebsTopicWording() {
+    fun aNumberedPracticeTakesTheWebsWording() {
         val practice =
             decodeFixture<StudyBlock>("study-block").copy(
                 kind = StudyBlock.Kind.PRACTICE,
-                areas = listOf("Mathe"),
                 topics = listOf("Rabatte berechnen"),
             )
         var titles = emptyList<String>()
 
-        rule.setContent { titles = listOf(practice, practice.copy(extra = true)).map { blockTitle(it.toDayStep()) } }
+        rule.setContent { titles = listOf(practice, practice.copy(practiceNumber = 2)).map { blockTitle(it.toDayStep()) } }
         rule.waitForIdle()
 
-        assertEquals(listOf("Übung: Rabatte berechnen", "Übung: Rabatte berechnen"), titles)
+        assertEquals(listOf("Übung", "Übung 2"), titles)
     }
 }

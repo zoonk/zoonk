@@ -2,7 +2,7 @@ import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type writingZeroKindSchema } from "../../../library/exams/written-grading";
 import { type writtenItemSchema } from "../writing-contract";
-import { WRITING_LINE_BREAK, countWritingLines } from "../writing-lines";
+import { WRITING_LINE_BREAK, estimateWritingLines } from "../writing-lines";
 
 type Basis = z.infer<typeof writtenItemSchema>;
 type Rule = Basis["grading"]["zeroing"][number];
@@ -36,11 +36,7 @@ function originalText(text: string, quote: string) {
 function shortEnough(text: string, maxLines: number | null | undefined, basis: Basis) {
   return (
     typeof maxLines === "number" &&
-    countWritingLines({
-      charactersPerLine: basis.charactersPerLine,
-      limit: null,
-      text: text.trim(),
-    }).estimatedLines <= maxLines
+    estimateWritingLines({ charactersPerLine: basis.charactersPerLine, text }) <= maxLines
   );
 }
 

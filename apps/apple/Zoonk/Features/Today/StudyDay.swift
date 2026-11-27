@@ -310,7 +310,6 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let id: String?
   let answered: Int
   let areaId: String?
-  let areas: [String]
   let brainPower: Int
   let canDo: String?
   let canTestOut: Bool
@@ -329,6 +328,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   let planItemId: String?
   let planItemKey: String?
   let position: Int
+  let practiceNumber: Int?
   let preparing: Bool
   let questions: Int
   let refresh: Bool

@@ -4,7 +4,7 @@
   "ignoreIssues": { "**/.next/**/types/routes.d.ts": ["types"] },
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["build-and-start", "make", "psql", "turbo!"],
-  "ignoreDependencies": ["@prisma/client", "next", "portless", "tsx"],
+  "ignoreDependencies": ["@prisma/client", "next", "tsx"],
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {

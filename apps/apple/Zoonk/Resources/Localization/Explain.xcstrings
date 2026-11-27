@@ -588,7 +588,7 @@
       }
     },
     "Quick explanation · %@" : {
-      "comment" : "Eyebrow over a quick explanation's title: its kind and length",
+      "comment" : "Chip over a quick explanation's title: its kind and length",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -824,7 +824,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Asks again for a slow quick explanation\nLoads the explanation again",
+      "comment" : "Asks again for a slow quick explanation",
       "localizations" : {
         "de" : {
           "stringUnit" : {

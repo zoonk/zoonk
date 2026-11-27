@@ -11,8 +11,8 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
   ListRow,
   ListRowButton,
   ListRowContent,
@@ -112,7 +112,7 @@ export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul" aria-labelledby={titleId}>
         {shown.map((group) => (
           <li key={group.topic.name}>
             <MatrixGroupRow group={group} />
@@ -130,7 +130,7 @@ export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
             </ListRowButton>
           </li>
         )}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }

@@ -23,6 +23,7 @@ enum LayoutPart: String {
   case value
   /// What closes a row on its end edge: a chevron, a checkmark.
   case end
+  case holder
 }
 
 /// What a value says where the pieces' captures compare its face with its column's: a word in a
@@ -49,6 +50,15 @@ extension View {
   func layoutNest() -> some View {
     #if DEBUG
       modifier(LayoutNestReporter())
+    #else
+      self
+    #endif
+  }
+
+  /// A section label or footer that a plain list may draw in a cell of its own.
+  func layoutSectionText() -> some View {
+    #if DEBUG
+      modifier(LayoutSectionTextReporter())
     #else
       self
     #endif

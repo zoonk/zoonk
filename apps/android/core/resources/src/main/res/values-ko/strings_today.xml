@@ -88,6 +88,7 @@
   "today_resume": "8953c78feeeebcdcf1cca975e9b9b909249a520dfbc6f4587d217541a76b664f",
   "today_resume_effect": "8727388af898a5097e96dadb7c3da21456b282bdf66a026f44f7f1c0e22643b2",
   "today_save_failed": "740763a2ae8e5f163a5da691446d97c86c21152714d7d38484a0e64738d04a31",
+  "today_saved_lessons_line": "0243bce6e3063832823e1c12d336f2872705fd54e0a8006747e02e65790e3f86",
   "today_see_changes": "eeb5d9ef13b06986e93d382b78fc40382b07a9dd8f32b9350246acfce5e46a16",
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
@@ -270,6 +271,8 @@
     <string name="today_practice_anytime">언제든 연습하기</string>
     <string name="today_mistakes_notebook">오답 노트</string>
     <string name="today_mistakes_redo">틀린 문제 다시 풀기</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">다시 하고 싶은 레슨</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">레슨 다시 하기</string>
     <string name="today_mistakes_return_tomorrow">오늘 틀린 문제는 내일 다시 나와요</string>

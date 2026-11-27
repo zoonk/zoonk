@@ -118,6 +118,7 @@ export const story = {
         title: '"Ser" and "estar"',
         wrong: "Soy cansado.",
         right: "Estoy cansado.",
+        translation: "I’m tired.",
         rule: "For how you feel right now, use estar.",
         rows: [
           ["ser", "+ what something is", "Soy de Chicago"],
@@ -234,7 +235,7 @@ export const story = {
         ["Qual alternativa explica a função da vírgula no trecho?", "time"],
         ['O termo "efêmero" no poema significa…', "guessed"],
       ],
-      essay: { total: 760, comps: [160, 160, 120, 160, 160] },
+      essay: { title: "Redação", total: 760, comps: [160, 160, 120, 160, 160] },
     },
     language: {
       title: "Falar inglês para morar em Londres",
@@ -271,6 +272,7 @@ export const story = {
         title: "“Since” e “for”",
         wrong: "I live here since 2020.",
         right: "I've lived here since 2020.",
+        translation: "Moro aqui desde 2020.",
         rule: "Começou no passado e continua? Use have + particípio.",
         rows: [
           ["since", "+ quando começou", "since 2020"],

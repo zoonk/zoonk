@@ -24,7 +24,55 @@ import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "../library/language/sentence-order
 import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
+import { CAPSULE_LEDGER_KIND } from "../milestones/award-milestones";
+import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
+import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
+import { checkLessonStep } from "./check-lesson-step";
+import { completeLibraryLesson } from "./complete-library-lesson";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
+import { startLibraryLesson } from "./start-library-lesson";
+
+const FIVE_OPTION_CHECK = {
+  ...playableStepContent.check,
+  options: [
+    ...playableStepContent.check.options,
+    {
+      id: "speed",
+      isCorrect: false,
+      reason: "It shows chances, not speed.",
+      text: "How fast it moves",
+    },
+    { id: "charge", isCorrect: false, reason: "It shows chances, not charge.", text: "Its charge" },
+  ],
+};
+
+const STORED_CHECK_ORDER = FIVE_OPTION_CHECK.options.map((option) => option.id);
+
+async function shownCheckOrder(lessonId: string) {
+  const result = await getPlayableLibraryLesson({ lessonId });
+  const steps = result?.status === "ready" ? result.lesson.steps : [];
+  const check = steps.find((step) => step.kind === "check");
+  return check?.kind === "check" ? check.content.options.map((option) => option.id) : [];
+}
+
+/** Plays the lesson through, tapping the check's right option by its id, and finishes it. */
+async function sitThrough({ checkId, lessonId }: { checkId: string; lessonId: string }) {
+  const started = await startLibraryLesson({ input: { timeZone: "UTC" }, lessonId });
+  const runId = started.status === "started" ? started.run.runId : "";
+
+  const checked = await checkLessonStep({
+    input: {
+      answer: { kind: "check", optionId: "likely" },
+      durationMs: 5000,
+      runId,
+      timeZone: "UTC",
+    },
+    stepId: checkId,
+  });
+
+  const completed = await completeLibraryLesson({ input: { runId, timeZone: "UTC" }, lessonId });
+  return { checked, completed };
+}
 
 function exploring(template: "formulaModel" | "processOrder", fields: unknown) {
   return {
@@ -36,6 +84,144 @@ function exploring(template: "formulaModel" | "processOrder", fields: unknown) {
 describe(getPlayableLibraryLesson, () => {
   beforeEach(() => {
     mockSession(randomUUID());
+  });
+
+  it("keeps the same reading tiles across lesson reads when more than four distractors are stored", async () => {
+    const { lesson, sentence } = await languageLessonFixture();
+    const distractors = ["are", "many", "cost", "pay", "house", "flat"];
+
+    await prisma.lessonSentence.update({
+      data: { distractors },
+      where: { lessonId_sentenceId: { lessonId: lesson.id, sentenceId: sentence.id } },
+    });
+
+    async function readTiles() {
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+      const reading =
+        result?.status === "ready" && result.lesson.steps.find((step) => step.kind === "reading");
+
+      if (!reading || !("exercise" in reading)) {
+        throw new Error("Expected a reading step");
+      }
+
+      return reading.exercise.wordBankOptions.map((option) => option.word);
+    }
+
+    const first = await readTiles();
+
+    expect(first.filter((word) => distractors.includes(word)).toSorted()).toStrictEqual([
+      "are",
+      "cost",
+      "many",
+      "pay",
+    ]);
+
+    await expect(readTiles()).resolves.toStrictEqual(first);
+  });
+
+  it("lays a check's options out in one order for a sitting, a new one once the lesson is finished, and grades the option tapped", async () => {
+    const { lesson, steps } = await setupPlayableLesson({
+      steps: [{ content: FIVE_OPTION_CHECK, kind: "check" }, "summary"],
+    });
+
+    const checkId = stepOfKind(steps, "check").id;
+    const first = await shownCheckOrder(lesson.id);
+
+    expect(first).not.toStrictEqual(STORED_CHECK_ORDER);
+    expect(first.toSorted()).toStrictEqual(STORED_CHECK_ORDER.toSorted());
+    await expect(shownCheckOrder(lesson.id)).resolves.toStrictEqual(first);
+
+    const sittings = [];
+
+    for (const _ of [1, 2]) {
+      // oxlint-disable-next-line no-await-in-loop -- One sitting finishes before the next starts.
+      const { checked, completed } = await sitThrough({ checkId, lessonId: lesson.id });
+
+      expect(checked).toMatchObject({ result: { isCorrect: true }, status: "checked" });
+      expect(completed).toMatchObject({ completion: { correctCount: 1 }, status: "completed" });
+
+      // oxlint-disable-next-line no-await-in-loop -- Read once this sitting has finished.
+      sittings.push(await shownCheckOrder(lesson.id));
+    }
+
+    for (const order of sittings) {
+      expect(order).not.toStrictEqual(STORED_CHECK_ORDER);
+      expect(order.toSorted()).toStrictEqual(STORED_CHECK_ORDER.toSorted());
+    }
+
+    expect(sittings.some((order) => order.join(",") !== first.join(","))).toBe(true);
+  });
+
+  it("lays out a challenge's choices, a choice check and a dialogue's replies for the sitting", async () => {
+    const challenge = playableStepContent.challenge;
+
+    const { lesson } = await setupPlayableLesson({
+      steps: [
+        { content: activityContentFixtures.areaModel, kind: "activity" },
+        { content: activityContentFixtures.dialogueSimulator, kind: "activity" },
+        { content: challenge, kind: "challenge" },
+        "summary",
+      ],
+    });
+
+    const readLists = async () => {
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+      return steps.flatMap((step) => {
+        if (step.kind === "challenge") {
+          return step.content.nodes.map((node) => node.choices.map((choice) => choice.id));
+        }
+
+        if (step.kind !== "activity") {
+          return [];
+        }
+
+        const { check } = step.content;
+
+        return step.content.template === "dialogueSimulator"
+          ? [step.content.fields.replies.map((reply) => reply.id)]
+          : [check.kind === "choice" ? check.options.map((option) => option.id) : []];
+      });
+    };
+
+    const stored = [
+      activityContentFixtures.areaModel.check.options.map((option) => option.id),
+      activityContentFixtures.dialogueSimulator.fields.replies.map((reply) => reply.id),
+      ...challenge.nodes.map((node) => node.choices.map((choice) => choice.id)),
+    ];
+
+    const shown = await readLists();
+
+    expect(shown.map((ids) => ids.toSorted())).toStrictEqual(stored.map((ids) => ids.toSorted()));
+    await expect(readLists()).resolves.toStrictEqual(shown);
+
+    const longLists = shown.filter((ids) => ids.length > 2);
+
+    expect(longLists.length).toBeGreaterThan(2);
+
+    expect(
+      shown.filter((ids, index) => ids.length > 2 && ids.join(",") === stored[index]?.join(",")),
+    ).toStrictEqual([]);
+  });
+
+  it("keeps a sitting's order when a review capsule on the lesson ends", async () => {
+    const { lesson, user } = await setupPlayableLesson({
+      steps: [{ content: FIVE_OPTION_CHECK, kind: "check" }, "summary"],
+    });
+
+    const first = await shownCheckOrder(lesson.id);
+
+    await lessonRunFixture({
+      endedAt: new Date(),
+      kind: "review",
+      lessonId: lesson.id,
+      lessonKind: CAPSULE_LEDGER_KIND,
+      userId: user.id,
+    });
+
+    await expect(shownCheckOrder(lesson.id)).resolves.toStrictEqual(first);
   });
 
   it("serves every screen in order with its parsed content and image", async () => {

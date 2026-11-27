@@ -10,6 +10,7 @@
     "./browser-preflight": "./src/browser-preflight.ts",
     "./skip-after-timeout": "./src/skip-after-timeout.ts",
     "./stalled-run-reporter": "./src/stalled-run-reporter.ts",
+    "./test-clock": "./src/test-clock.ts",
     "./fixtures/accounts": "./src/fixtures/accounts.ts",
     "./fixtures/activity-checks": "./src/fixtures/activity-contents/activity-checks.ts",
     "./fixtures/activity-contents": "./src/fixtures/activity-contents.ts",

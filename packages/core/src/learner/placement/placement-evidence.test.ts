@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { describe, expect, it } from "vitest";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { lowGuessTapItems } from "../_test-utils/placement-tap-items";
@@ -101,7 +102,11 @@ describe("a finished Focus test after later study", () => {
 
     const first = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 10_000, itemId: started.next!.itemId },
+      input: {
+        answer: await pickInPlacement({ itemId: started.next!.itemId }),
+        durationMs: 10_000,
+        itemId: started.next!.itemId,
+      },
     });
 
     await taps.reduce<Promise<typeof first>>(

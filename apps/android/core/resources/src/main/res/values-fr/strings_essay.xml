@@ -48,7 +48,8 @@
   "essay_limit_title": "9f0598ee107985b0f46d8bf44be4299bf3fc1790df4177b69975ca8536114b3c",
   "essay_limit_title_any": "66dfd7f4ba94d0dfd2727f640a904b06f672fe66241dda1a9f170f7f24f4e3e1",
   "essay_lines_empty": "82ed3ad53cd8ce930329fef349f1a4a540d7fb7eac41f0168130eb2ffda14591",
-  "essay_lines_over": "9436e8fbfa5c17bf2a9066e3aaf43fe30583a6857194823652b41c9e97652c4f",
+  "essay_lines_end_unread": "b9deac59ba9bf04c017fd1958fc2f18cff2d4ecf1c32f90246af8ab6d0410c91",
+  "essay_lines_may_not_fit": "8affa39b229dc44ce8a5412af1270efaad7e90fee3fe64f923aac28aee398c2c",
   "essay_lines_question": "681c47adf980bbb61e0f6921011689087b63522a0fddcffb57dfc3531f0e9732",
   "essay_lines_used": "839f5ec178c9129cfc7ed62dd119779834bca0d392e2942cda9f312d90d6dbf4",
   "essay_minus": "689cf8e60ffbb92537f64ca18a72ba1e885c8c0983564573161ad47e57f99a13",
@@ -201,11 +202,17 @@
         <item quantity="many">0 sur %1$d lignes</item>
         <item quantity="other">0 sur %1$d lignes</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">environ %1$d sur %2$d ligne · %3$d ne seront pas lues</item>
-        <item quantity="many">environ %1$d sur %2$d lignes · %3$d ne seront pas lues</item>
-        <item quantity="other">environ %1$d sur %2$d lignes · %3$d ne seront pas lues</item>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <plurals name="essay_lines_may_not_fit">
+        <item quantity="one">environ %1$d lignes sur %2$d · risque de ne pas tenir sur la copie</item>
+        <item quantity="many">environ %1$d lignes sur %2$d · risque de ne pas tenir sur la copie</item>
+        <item quantity="other">environ %1$d lignes sur %2$d · risque de ne pas tenir sur la copie</item>
+    </plurals>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <plurals name="essay_lines_end_unread">
+        <item quantity="one">environ %1$d lignes sur %2$d · la fin ne sera pas lue</item>
+        <item quantity="many">environ %1$d lignes sur %2$d · la fin ne sera pas lue</item>
+        <item quantity="other">environ %1$d lignes sur %2$d · la fin ne sera pas lue</item>
     </plurals>
     <string name="essay_conflict_title">Cette réponse a changé sur un autre appareil</string>
     <string name="essay_conflict_body">Garde la version que tu écris ici ou passe à l’autre.</string>

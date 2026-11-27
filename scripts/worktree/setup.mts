@@ -3,6 +3,7 @@
 import { realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { getPnpmCommand } from "../dev/process.mts";
+import { configureAndroidDebugSigning } from "./android-debug-signing.mts";
 import {
   listRemovedWorktrees,
   pruneDatabases,
@@ -10,10 +11,10 @@ import {
 } from "./cleanup.mts";
 import {
   databaseName,
+  generatePrisma,
   markDatabase,
   migrateDatabase,
   prepareDatabases,
-  prisma,
   seedDatabase,
 } from "./databases.mts";
 import {
@@ -99,7 +100,7 @@ async function setupDatabases({ isolated, source }: { isolated: boolean; source:
   log("Generating Prisma and applying migrations…");
 
   await together([
-    prisma({ args: ["generate"], worktree }),
+    generatePrisma(worktree),
     ...databases.map((database) => migrateDatabase({ database, worktree })),
   ]);
 
@@ -132,6 +133,7 @@ async function main(): Promise<void> {
 
   const primary = realpathSync(dirname(commonDirectory));
   copyEnvironment({ primary, worktree });
+  configureAndroidDebugSigning(worktree);
   const source = process.env.CI ? null : localSource(primary);
 
   const problem = source && (await findPostgresProblem(source));
@@ -154,7 +156,7 @@ async function main(): Promise<void> {
     );
 
     await installDependencies();
-    await prisma({ args: ["generate"], worktree });
+    await generatePrisma(worktree);
   }
 
   if (!process.env.CI) {

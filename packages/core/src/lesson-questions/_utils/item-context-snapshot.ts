@@ -1,9 +1,13 @@
 import "server-only";
 import { type ItemScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
-import { prisma } from "@zoonk/db";
+import { type Attempt, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
-import { gradeMistakeItem, toMistakeQuestion } from "../../mistakes/mistake-item";
+import {
+  getAnsweredShowing,
+  gradeMistakeItem,
+  toMistakeQuestion,
+} from "../../mistakes/mistake-item";
 import { type MistakeReplay, loadMistakeReplay } from "../../mistakes/mistake-replay";
 import {
   type SessionItem,
@@ -50,32 +54,40 @@ function describeQuestion(question: SessionQuestion): ItemScopeContext["question
   return { format: question.format, options, text };
 }
 
-async function describeLatestAnswer({
-  blockId,
-  item,
+function findLatestAnswer({
+  itemId,
   mistakeId,
-  replay,
   sessionId,
   userId,
 }: {
-  blockId: string;
-  item: SessionItem;
+  itemId: string;
   mistakeId?: string;
-  replay?: Extract<MistakeReplay, { kind: "item" }>;
   sessionId: string | null;
   userId: string;
-}): Promise<ItemScopeContext["answer"]> {
-  const attempt = await prisma.attempt.findFirst({
+}) {
+  return prisma.attempt.findFirst({
     orderBy: { answeredAt: "desc" },
     where: {
       userId,
-      ...(mistakeId
-        ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } }
-        : { itemId: item.id }),
+      ...(mistakeId ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } } : { itemId }),
       ...(sessionId ? { studySessionId: sessionId } : {}),
     },
   });
+}
 
+function describeAnswer({
+  attempt,
+  blockId,
+  item,
+  keepsStoredOrder,
+  replay,
+}: {
+  attempt: Attempt | null;
+  blockId: string;
+  item: SessionItem;
+  keepsStoredOrder?: boolean;
+  replay?: Extract<MistakeReplay, { kind: "item" }>;
+}): ItemScopeContext["answer"] {
   const answer = attempt ? readRecordedAnswer(attempt.answer) : null;
 
   if (!attempt || !answer) {
@@ -83,8 +95,8 @@ async function describeLatestAnswer({
   }
 
   const { snapshot } = replay
-    ? gradeMistakeItem({ answer, replay })
-    : gradeSessionAnswer({ answer, blockId, item });
+    ? gradeMistakeItem({ answer, replay, showing: blockId })
+    : gradeSessionAnswer({ answer, blockId, item, keepsStoredOrder });
 
   const unshown = !blockId && !replay && readsAnswerInBlockOrder(item);
 
@@ -117,21 +129,16 @@ async function buildMistakeItemContext({
   }
 
   const { item } = replay;
-  const question = toMistakeQuestion(replay);
 
-  const answer = context.answered
-    ? await describeLatestAnswer({
-        blockId: "",
-        item,
-        mistakeId: mistake.id,
-        replay,
-        sessionId: null,
-        userId,
-      })
+  const attempt = context.answered
+    ? await findLatestAnswer({ itemId, mistakeId: mistake.id, sessionId: null, userId })
     : null;
 
+  const showing = getAnsweredShowing({ answer: attempt?.answer, mistake });
+  const question = toMistakeQuestion({ replay, showing });
+
   return {
-    answer,
+    answer: describeAnswer({ attempt, blockId: showing, item, replay }),
     language: item.language,
     question: describeQuestion(question),
     scope: { kind: "item" },
@@ -181,15 +188,16 @@ export async function buildItemContextSnapshot({
   }
 
   const blockId = block?.id ?? "";
+  const keepsStoredOrder = block ? !readBlockPayload(block).shufflesOptions : undefined;
 
-  const answer = context.answered
-    ? await describeLatestAnswer({ blockId, item, sessionId: block?.sessionId ?? null, userId })
+  const attempt = context.answered
+    ? await findLatestAnswer({ itemId, sessionId: block?.sessionId ?? null, userId })
     : null;
 
   return {
-    answer,
+    answer: describeAnswer({ attempt, blockId, item, keepsStoredOrder }),
     language: row.language,
-    question: describeQuestion(toSessionQuestion({ blockId, item })),
+    question: describeQuestion(toSessionQuestion({ blockId, item, keepsStoredOrder })),
     scope: { kind: "item" },
     set: toItemSetView({ item: row })?.text ?? null,
     skill: row.skill.name,

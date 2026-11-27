@@ -50,9 +50,9 @@ export type WebPiece = {
 type Piece = { name: string; relations: Relation[]; web?: WebPiece };
 
 const LIST_PARTS = {
-  end: "svg.lucide-chevron-right, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
-  label: "[data-slot=list-row-title], [data-slot=week-day-item]",
-  lead: "[data-slot=week-day-date]",
+  end: "svg.lucide-chevron-right, svg.lucide-bookmark, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
+  label: "[data-slot=list-row-title]",
+  lead: "[data-slot=list-row-lead]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
   // A line under the label: a description, or a progress bar, which has no words.
   note: "[data-slot=list-row-description], [data-slot=coverage-bar]",
@@ -60,9 +60,7 @@ const LIST_PARTS = {
 } satisfies WebPiece["parts"];
 
 /**
- * What a list and its rows are for every probe. A row is what `LIST_GROUP_CLASS` divides: the
- * group's children, or the items of one list inside, whatever slot a row carries (`list-row`,
- * the first week's `week-day`).
+ * A row is what ListGroup divides: the group's children, or the items of one list inside.
  */
 export const LIST_GROUP = {
   group: "[data-slot=list-group]",
@@ -145,7 +143,7 @@ const PIECES: Piece[] = [
     web: {
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {
-        end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
+        end: "svg.lucide-chevron-right, svg.lucide-bookmark, [data-slot=fold-chevron]",
         label: "[data-slot=path-row-words] > :first-child",
         mark: "[data-slot=path-row-mark], [data-slot=status-mark]",
         note: "[data-slot=path-row-words] > :not(:first-child)",

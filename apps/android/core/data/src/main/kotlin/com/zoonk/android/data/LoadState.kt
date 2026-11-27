@@ -41,6 +41,7 @@ enum class DataDomain {
     LearnerModel,
     LearningProfile,
     Memory,
+    SavedLessons,
     SavedMindMaps,
     StudyReminder,
     UserProgress,
