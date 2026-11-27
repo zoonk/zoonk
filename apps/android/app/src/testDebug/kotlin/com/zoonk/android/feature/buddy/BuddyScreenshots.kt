@@ -249,7 +249,10 @@ class BuddyScreenshots {
             return
         }
         if (day) {
-            compose.onNodeWithContentDescription("'s Energy", substring = true).performClick()
+            val buddy = status.buddy.name ?: compose.activity.getString(R.string.buddy_name_zu)
+            compose
+                .onNodeWithContentDescription(compose.activity.getString(R.string.buddy_page_energy_named, buddy), substring = true)
+                .performClick()
             compose.waitForIdle()
             writeRender(file, compose.onNode(isDialog()).captureRender().asAndroidBitmap())
             return
