@@ -36,7 +36,8 @@ function widestMargin(calibration: readonly RowCalibration[], side: "over" | "un
     : null;
 }
 
-function answerBounds(grade: CalibratedWritingGrade | null): WritingRange | null {
+/** Where the board's mark likely falls for one graded answer: its range widened by the grader's error. */
+export function calibratedAnswerBounds(grade: CalibratedWritingGrade | null): WritingRange | null {
   if (!grade) {
     return null;
   }
@@ -64,5 +65,8 @@ export function calibratedWrittenStanding({
   grades: readonly (CalibratedWritingGrade | null)[];
   part: PartMinimum;
 }) {
-  return writtenStanding({ ...part, range: sumRanges(grades.map((grade) => answerBounds(grade))) });
+  return writtenStanding({
+    ...part,
+    range: sumRanges(grades.map((grade) => calibratedAnswerBounds(grade))),
+  });
 }

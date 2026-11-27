@@ -11,11 +11,16 @@ import { matchesWritingTaskBasis } from "../essays/_utils/writing-task-basis";
 import { canCalibrateWritingTask } from "../essays/writing-rubric-policy";
 import { isWrittenSubject } from "../mocks/written-subject";
 import {
+  calibratedAnswerBounds,
+  getCalibratedWritingGrade,
+} from "../scoring/calibrated-written-standing";
+import {
   type WritingRange,
   type WrittenTask,
   scaleWritingRange,
   scoreWrittenParts,
   sumRanges,
+  writtenStanding,
 } from "../scoring/written-points";
 import { type WrittenProjection } from "../scoring/written-points-contract";
 import { withMockStanding } from "./written-projection-standing";
@@ -27,7 +32,14 @@ function equalPoints(first: number, second: number): boolean {
   return Math.abs(first - second) < POINTS_TOLERANCE;
 }
 
-function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): WritingRange | null {
+type TaskProjection = { bounds: WritingRange | null; range: WritingRange };
+
+/**
+ * The task's estimate, the average of its recent independent answers, and where the board's mark
+ * likely falls around it: each answer widened by the grader's measured error, as a mock's verdict
+ * is, so practice and mocks call the minimum by the same rule.
+ */
+function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): TaskProjection | null {
   const { points } = task;
 
   if (points === null) {
@@ -36,6 +48,7 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
 
   const used = new Set<string>();
   const ranges: WritingRange[] = [];
+  const bounds: (WritingRange | null)[] = [];
 
   const eligible = samples.filter(
     ({ answer, numericEligible, prompt }) =>
@@ -46,10 +59,17 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
       matchesWritingTaskBasis({ prompt, task }),
   );
 
-  for (const { answer, itemId } of eligible) {
+  for (const { answer, itemId, prompt } of eligible) {
     if (answer.grade.kind === "points" && !used.has(itemId)) {
+      const factor = (points * task.count) / answer.grade.max;
+
+      const answerBounds = calibratedAnswerBounds(
+        getCalibratedWritingGrade({ basis: prompt, grade: answer.grade, observed: answer.grader }),
+      );
+
       used.add(itemId);
-      ranges.push(scaleWritingRange(answer.grade.total, (points * task.count) / answer.grade.max));
+      ranges.push(scaleWritingRange(answer.grade.total, factor));
+      bounds.push(answerBounds && scaleWritingRange(answerBounds, factor));
     }
 
     if (ranges.length === RECENT_PROMPTS) {
@@ -58,14 +78,27 @@ function projectTask(task: WrittenTask, samples: readonly WrittenSample[]): Writ
   }
 
   const range = sumRanges(ranges);
-  return range && scaleWritingRange(range, 1 / ranges.length);
+  const bound = sumRanges(bounds);
+
+  return (
+    range && {
+      bounds: bound && scaleWritingRange(bound, 1 / bounds.length),
+      range: scaleWritingRange(range, 1 / ranges.length),
+    }
+  );
 }
 
+/**
+ * Each written part's estimate and where it likely stands against its minimum: from the last mock
+ * when one sat the part, from the practice answers behind the estimate otherwise.
+ */
 export function projectWrittenParts({
+  mocks = [],
   samples,
   structure,
   tasks = listWrittenTasks({ structure }),
 }: {
+  mocks?: Awaited<ReturnType<typeof readLatestWrittenMocks>>;
   samples: readonly WrittenSample[];
   structure: ExamStructure | null;
   tasks?: ReturnType<typeof listWrittenTasks>;
@@ -76,23 +109,36 @@ export function projectWrittenParts({
 
   const bySection = Map.groupBy(tasks, ({ section }) => section);
 
+  const projected = new Map(
+    tasks.map((task) => [task.key, numeric.has(task.key) ? projectTask(task, samples) : null]),
+  );
+
   const parts = scoreWrittenParts({
-    rangeForTask: (task) => (numeric.has(task.key) ? projectTask(task, samples) : null),
+    rangeForTask: (task) => projected.get(task.key)?.range ?? null,
     structure,
     tasks,
   });
 
-  return parts.map((part) => ({
-    ...part,
-    decimals: getWritingDecimals(
-      part.max,
-      bySection.get(part.name)?.map(({ grading }) => grading),
-      part.tasks.map(({ max }) => max ?? 0),
-    ),
-    scale: part.tasks.every(({ key }) => numeric.has(key))
-      ? ("points" as const)
-      : ("levels" as const),
-  }));
+  return withMockStanding({
+    mocks,
+    parts: parts.map((part) => ({
+      ...part,
+      decimals: getWritingDecimals(
+        part.max,
+        bySection.get(part.name)?.map(({ grading }) => grading),
+        part.tasks.map(({ max }) => max ?? 0),
+      ),
+      scale: part.tasks.every(({ key }) => numeric.has(key))
+        ? ("points" as const)
+        : ("levels" as const),
+      standing: writtenStanding({
+        max: part.max,
+        minimum: part.minimum,
+        range: sumRanges(part.tasks.map(({ key }) => projected.get(key)?.bounds ?? null)),
+      }),
+    })),
+    samples,
+  });
 }
 
 type ScorePart = { max: number | null; name: string; range: WritingRange | null };
@@ -236,11 +282,7 @@ export function projectWritten({
   samples: readonly WrittenSample[];
   structure: ExamStructure;
 }): WrittenProjection | null {
-  const parts = withMockStanding({
-    mocks,
-    parts: projectWrittenParts({ samples, structure }),
-    samples,
-  });
+  const parts = projectWrittenParts({ mocks, samples, structure });
 
   if (parts.length === 0) {
     return null;

@@ -312,3 +312,47 @@ describe("a verdict from the latest mock exam beside an estimate from practice",
     expect(projected?.standing).toBe("unmeasured");
   });
 });
+
+describe("a verdict from practice answers alone", () => {
+  const GRADER = { model: "fixture/model", promptVersion: "fixture-revision" };
+
+  function graded(answer: Parameters<typeof sample>[0]): WrittenSample {
+    const taken = sample(answer);
+    return { ...taken, answer: { ...taken.answer, grader: GRADER } };
+  }
+
+  function standing(short: number, long: number) {
+    return projectWritten({
+      objective: OBJECTIVE,
+      samples: [
+        graded({ high: short, key: "short", low: short }),
+        graded({ high: long, key: "long", low: long }),
+      ],
+      structure: CGU,
+    })?.parts[0]?.standing;
+  }
+
+  beforeEach(() => {
+    calibration.current = calibrationFixture({
+      rows: {
+        definitePoint: rowCalibrationFixture({
+          residuals: {
+            over: weightedResiduals([0.1, 0.1, 0.1, 0.1]),
+            under: weightedResiduals([0.1, 0.1, 0.1, 0.1]),
+          },
+        }),
+      },
+    });
+  });
+
+  it.each([
+    { long: 62, short: 28, verdict: "met" },
+    { long: 28, short: 20, verdict: "overlaps" },
+    { long: 12, short: 6, verdict: "below" },
+  ])(
+    "calls $short + $long against the minimum of 50 as $verdict, by the grader's measured error",
+    ({ long, short, verdict }) => {
+      expect(standing(short, long)).toBe(verdict);
+    },
+  );
+});
