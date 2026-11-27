@@ -1,9 +1,10 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { type PlannedStudyDay } from "./plan-study-day";
+import { type PlannedStudyDay, getPlanAllocationBlocks } from "./plan-study-day";
 import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
 import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
@@ -32,7 +33,7 @@ export async function persistStudyDay({
   const key = { goalId: day.goal.id, localDate: day.localDate, userId: day.userId };
 
   const persistsPlan =
-    planned.blocks.length > 0 ||
+    getPlanAllocationBlocks(planned).length > 0 ||
     selection.computed !== null ||
     selection.inputKeyUpdate !== undefined;
 
@@ -108,6 +109,13 @@ export async function persistStudyDay({
             sessionId: session.id,
           };
         }),
+      });
+
+      await oweFollowUps({
+        db: tx,
+        followUps: planned.input.remedial?.followUps ?? [],
+        keepExisting: true,
+        userId: day.userId,
       });
 
       return { sessionId: session.id, status: "created" };

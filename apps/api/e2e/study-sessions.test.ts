@@ -355,22 +355,6 @@ test.describe("Study sessions API", () => {
       "askBuddy",
     ]);
 
-    const thread = await prisma.lessonQuestionThread.create({
-      data: { goalId: goal.id, kind: "plan", userId },
-    });
-
-    await prisma.lessonQuestion.create({
-      data: {
-        contextKind: "plan",
-        contextSnapshot: {},
-        goalId: goal.id,
-        question: "What should I study first?",
-        requestFingerprint: randomUUID(),
-        requestId: randomUUID(),
-        threadId: thread.id,
-      },
-    });
-
     const { session: again } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}`),
       schema: todayResponseSchema,
@@ -403,10 +387,27 @@ test.describe("Study sessions API", () => {
       schema: studyBlockCompletionSchema,
     });
 
-    expect(lessonDone).toMatchObject({ fullMeal: { paid: true } });
+    expect(lessonDone.sessionCompleted).toBe(false);
+
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId },
+    });
+
+    await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "lesson",
+        contextSnapshot: {},
+        goalId: goal.id,
+        question: "When would I compare ratios?",
+        requestFingerprint: randomUUID(),
+        requestId: randomUUID(),
+        threadId: thread.id,
+      },
+    });
 
     const practiceDone = await playBlock({ api, blockId: practice?.id ?? "", sessionId: today.id });
-    expect(practiceDone).toMatchObject({ fullMeal: { paid: false }, sessionCompleted: true });
+    expect(practiceDone).toMatchObject({ fullMeal: { paid: true }, sessionCompleted: true });
+    expect([reviewDone, lessonDone].some(({ fullMeal }) => fullMeal.paid)).toBe(false);
 
     const summary = await readBody({
       response: await api.get(`/v1/study-sessions/${today.id}/summary`),
@@ -427,6 +428,61 @@ test.describe("Study sessions API", () => {
     });
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
+  });
+
+  test("opens a later saved block while remedial work stays pending", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "remedial-openings" });
+    const session = await studySessionFixture({ userId });
+
+    const [mistakes, pattern, later] = await Promise.all([
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { mistakeIds: [randomUUID()] },
+        position: 0,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({
+        kind: "practice",
+        payload: { patternId: randomUUID() },
+        position: 1,
+        sessionId: session.id,
+      }),
+      studySessionBlockFixture({ kind: "practice", position: 2, sessionId: session.id }),
+    ]);
+
+    const view = await readBody({
+      response: await api.get(`/v1/study-sessions/${session.id}`),
+      schema: studySessionResponseSchema,
+    });
+
+    expect(view.blocks.map(({ screen }) => screen)).toStrictEqual([
+      "mistakesPractice",
+      "pattern",
+      "session",
+    ]);
+
+    const open = (blockId: string) =>
+      api.post("/v1/study-block-openings", {
+        data: { target: { blockId, kind: "block" }, timeZone: "UTC" },
+      });
+
+    await expect(
+      readBody({ response: await open(later.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: later.id, kind: "session" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mistakes.id } }),
+    ).resolves.toMatchObject({ status: "pending" });
+
+    await expect(
+      readBody({ response: await open(pattern.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: pattern.id, kind: "pattern" });
+
+    await expect(
+      readBody({ response: await open(mistakes.id), schema: studyBlockOpeningSchema }),
+    ).resolves.toMatchObject({ blockId: mistakes.id, kind: "mistakesPractice" });
+
+    await api.dispose();
   });
 
   test("opens the day's next step with the day, then each step where the server says", async () => {

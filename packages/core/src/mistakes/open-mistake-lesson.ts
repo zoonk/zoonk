@@ -10,6 +10,7 @@ import { getLearnerModelCacheTag } from "../cache/tags";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { ensureQuickLessons } from "../library/quick-lessons/quick-lessons";
+import { SECOND_TAKE_KEY_WHERE } from "../library/second-takes/second-take-identity";
 import { createSkill } from "../library/skills/create-skill";
 import { getSession } from "../users/get-session";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
@@ -175,7 +176,7 @@ export async function openMistakeLesson(
         where: {
           ...CURRENT_STEPS,
           itemId: mistake.itemId,
-          lesson: { ...libraryRowsVisibleTo(userId), setAsideAt: null },
+          lesson: { ...libraryRowsVisibleTo(userId), NOT: SECOND_TAKE_KEY_WHERE, setAsideAt: null },
         },
       })
     : null;

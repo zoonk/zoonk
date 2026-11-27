@@ -1,4 +1,10 @@
-import { type Attempt, type MistakeCause, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Attempt,
+  type Mistake,
+  type MistakeCause,
+  type TransactionClient,
+  prisma,
+} from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type LearnerAnswer } from "../record-learner-answer";
 import { getLocalAnswerTime } from "./local-time";
@@ -41,26 +47,42 @@ export function writeAttemptAttribution({
   attempt,
   cause,
   fixedMistakeIds,
+  notebookMistake,
   replayed,
   transaction,
 }: {
   attempt: Attempt;
   cause: MistakeCause | null;
   fixedMistakeIds: string[];
+  notebookMistake?: Pick<Mistake, "id" | "attemptId">;
   replayed: boolean;
   transaction: TransactionClient;
 }): Promise<Attempt> | Attempt {
   const exactReplay = attempt.evidence === "independent" && replayed;
   const answer = isJsonObject(attempt.answer) ? attempt.answer : {};
-  const recordAttribution = fixedMistakeIds.length > 0 || "fixedMistakeIds" in answer;
 
-  if (!cause && !exactReplay && !recordAttribution) {
+  const mockMistakeId =
+    attempt.mockExamId && notebookMistake?.attemptId !== attempt.id
+      ? notebookMistake?.id
+      : undefined;
+
+  const recordsFix = fixedMistakeIds.length > 0 || "fixedMistakeIds" in answer;
+
+  if (!cause && !exactReplay && !recordsFix && !mockMistakeId) {
     return attempt;
   }
 
   return transaction.attempt.update({
     data: {
-      ...(recordAttribution ? { answer: { ...answer, fixedMistakeIds } } : {}),
+      ...(recordsFix || mockMistakeId
+        ? {
+            answer: {
+              ...answer,
+              ...(recordsFix && { fixedMistakeIds }),
+              ...(mockMistakeId && { mockMistakeId }),
+            },
+          }
+        : {}),
       cause,
       ...(exactReplay ? { evidence: "replay" } : {}),
     },

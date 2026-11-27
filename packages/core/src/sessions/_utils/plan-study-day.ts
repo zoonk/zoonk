@@ -21,9 +21,15 @@ export type PlannedStudyDay = {
   preparing: ReadonlySet<number>;
 };
 
+export function getPlanAllocationBlocks(day: Pick<PlannedStudyDay, "blocks" | "input">) {
+  return day.input.remedial
+    ? buildSessionBlocks({ ...day.input, remedial: undefined }).blocks
+    : day.blocks;
+}
+
 /** The day's blocks without its missions, for reads that show only what the day holds. */
 export async function planDayBlocks(
-  context: SessionDayContext & { selection: SelectedDayPlan },
+  context: SessionDayContext & { savedDay?: boolean; selection: SelectedDayPlan },
 ): Promise<Omit<PlannedStudyDay, "missions" | "preparing">> {
   const plan = await loadDayPlan(context);
   const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
@@ -36,6 +42,7 @@ export async function planStudyDay(
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     readUsage?: () => Promise<UsageTotals>;
     plannedDay?: Omit<PlannedStudyDay, "missions" | "preparing">;
+    savedDay?: boolean;
     selection: SelectedDayPlan;
   },
 ): Promise<PlannedStudyDay> {

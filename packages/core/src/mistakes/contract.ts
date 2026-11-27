@@ -1,6 +1,7 @@
 import { type MistakeCause, type MistakeStatus } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { MAX_EXAM_QUESTIONS } from "../exams/mocks/mock-structure";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
 import { lessonStepAnswerSchema } from "../lesson-player/contract";
 import { studyAnswerInputSchema } from "../sessions/contract";
@@ -9,18 +10,7 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
 
 export const mistakeAvailabilitySchema = z.object({
-  ready: z
-    .number()
-    .int()
-    .min(0)
-    .meta({
-      description: "Open mistakes from earlier learner-local days, available to practice now",
-    }),
-  tomorrow: z
-    .number()
-    .int()
-    .min(0)
-    .meta({ description: "Open mistakes from today, available on the next learner-local day" }),
+  ready: z.number().int().min(0).meta({ description: "Open mistakes with practice material" }),
 });
 
 export type MistakeAvailability = z.infer<typeof mistakeAvailabilitySchema>;
@@ -41,11 +31,15 @@ export type MistakeListInput = z.infer<typeof mistakeListInputSchema>;
 
 export const mistakePracticeInputSchema = z
   .object({
+    blockId: uuidSchema().optional().meta({ description: "The day block with frozen mistake IDs" }),
     goalId: uuidSchema().optional().meta({ description: "Only mistakes on this goal's skills" }),
     includeAllFormats: z
       .enum(["true", "false"])
       .transform((value) => value === "true")
       .optional(),
+    mockId: uuidSchema()
+      .optional()
+      .meta({ description: "A finished mock whose mistakes can be practiced" }),
     skillId: uuidSchema()
       .optional()
       .meta({
@@ -53,11 +47,15 @@ export const mistakePracticeInputSchema = z
       }),
     timeZone: answerTimeZoneSchema,
   })
-  .strict();
+  .strict()
+  .refine(
+    ({ blockId, mockId, skillId }) => !(blockId && mockId) && !((blockId || mockId) && skillId),
+    { message: "Choose one practice scope" },
+  );
 
 export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 
-/** A run's questions and answers alike: each answer re-sends the run's earlier ones. */
+/** Normal notebook runs are short, while a mock run can hold all of its questions. */
 export const MAX_PRACTICE_ANSWERS = 50;
 
 const mistakePracticeAnswerCommon = z
@@ -69,8 +67,9 @@ const mistakePracticeAnswerCommon = z
       .object({
         answerIds: z
           .array(uuidSchema())
-          .max(MAX_PRACTICE_ANSWERS - 1)
+          .max(MAX_EXAM_QUESTIONS - 1)
           .meta({ description: "The run's earlier answers, as their answers returned them" }),
+        blockId: mistakePracticeInputSchema.shape.blockId,
         goalId: uuidSchema()
           .optional()
           .meta({ description: "The goal the run practiced, when scoped" }),
@@ -106,12 +105,12 @@ export const mistakePracticeFinishInputSchema = z
   .object({
     answerIds: z
       .array(uuidSchema())
-      .min(1)
-      .max(MAX_PRACTICE_ANSWERS)
+      .max(MAX_EXAM_QUESTIONS)
       .meta({
         description:
           "Every answer given in the run so far, as their answers returned them. Finish after each answer so a run left halfway still counts; each finish adds only the new answers to the same run",
       }),
+    blockId: mistakePracticeInputSchema.shape.blockId,
     ended: z
       .boolean()
       .optional()
@@ -122,6 +121,10 @@ export const mistakePracticeFinishInputSchema = z
     timeZone: answerTimeZoneSchema,
   })
   .strict()
+  .refine(({ answerIds, blockId }) => answerIds.length > 0 || Boolean(blockId), {
+    message: "Send at least one answer or a practice block",
+    path: ["answerIds"],
+  })
   .meta({ id: "MistakePracticeFinishInput" });
 
 export type MistakePracticeFinishInput = z.infer<typeof mistakePracticeFinishInputSchema>;

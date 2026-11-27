@@ -1,5 +1,6 @@
 import "server-only";
 import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
+import { isCreditedPracticeAnswer } from "./practice-claim";
 
 const MISTAKE_PRACTICE_LEDGER_KIND = "mistakePractice";
 
@@ -14,7 +15,7 @@ const ANSWER_ID_SEPARATOR = ",";
 
 export type PracticeAnswer = Pick<
   Attempt,
-  "answeredAt" | "durationMs" | "id" | "isCorrect" | "itemId" | "skillId"
+  "answer" | "answeredAt" | "durationMs" | "id" | "isCorrect" | "itemId" | "skillId"
 >;
 
 /** Returns answers only if every id belongs to the learner's recent standalone mistake practice. */
@@ -30,6 +31,7 @@ export async function loadPracticeAnswers({
   const answers = await prisma.attempt.findMany({
     orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
     select: {
+      answer: true,
       answeredAt: true,
       durationMs: true,
       id: true,
@@ -108,15 +110,16 @@ export function matchRun({
   answers: readonly PracticeAnswer[];
   runs: readonly CountedRun[];
 }) {
-  const ids = new Set(answers.map((answer) => answer.id));
+  const credited = answers.filter((answer) => isCreditedPracticeAnswer(answer.answer));
+  const ids = new Set(credited.map((answer) => answer.id));
   const counted = new Set(runs.flatMap((run) => readRunAnswerIds(run)));
   const run = runs.find((candidate) => readRunAnswerIds(candidate).some((id) => ids.has(id)));
   const inRun = new Set(run ? readRunAnswerIds(run) : []);
 
   return {
-    fresh: answers.filter((answer) => !counted.has(answer.id)),
+    fresh: credited.filter((answer) => !counted.has(answer.id)),
     run: run ?? null,
-    runAnswers: answers.filter((answer) => inRun.has(answer.id) || !counted.has(answer.id)),
+    runAnswers: credited.filter((answer) => inRun.has(answer.id) || !counted.has(answer.id)),
   };
 }
 

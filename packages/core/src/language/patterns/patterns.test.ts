@@ -3,7 +3,12 @@ import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -11,6 +16,7 @@ import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { writeLanguageStepEvidence } from "../levels/record-language-evidence";
 import { dismissMistakePattern } from "./dismiss-mistake-pattern";
+import { findFreshMistakePatternWithDrill } from "./find-fresh-pattern";
 import { checkMistakePattern } from "./find-mistake-pattern";
 import { getMistakePattern } from "./get-mistake-pattern";
 import { practiceMistakePattern } from "./practice-mistake-pattern";
@@ -316,6 +322,22 @@ describe("mistake patterns", () => {
       status: "ready",
     });
 
+    await expect(
+      findFreshMistakePatternWithDrill({ goalId: goal.id, language: "en", userId: user.id }),
+    ).resolves.toMatchObject({ id: pattern.id });
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: getDateInTimeZone({ date: new Date(), timeZone: "America/Sao_Paulo" }),
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "practice",
+      payload: { patternId: pattern.id },
+      sessionId: session.id,
+    });
+
     const requestId = crypto.randomUUID();
 
     const invalid = await practiceMistakePattern({
@@ -333,10 +355,17 @@ describe("mistake patterns", () => {
     expect(result).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
     expect(result.status === "ready" && result.result.brainPower).toBeGreaterThan(0);
 
+    const completed = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    expect(completed).toMatchObject({ completedAt: expect.any(Date), status: "completed" });
+
     await practiceMistakePattern({
       input: { answers: ["since", "since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
     });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ completedAt: completed.completedAt, status: "completed" });
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { practiced: true },

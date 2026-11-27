@@ -578,6 +578,8 @@ extension StudyBlockOpening {
     case .unwrittenLesson(let lesson): lesson.sessionId
     case .preparingLesson(let step): step.sessionId
     case .essay(let essay): essay.sessionId
+    case .mistakesPractice(let practice): practice.sessionId
+    case .pattern(let pattern): pattern.sessionId
     case .checkpoint(let checkpoint): checkpoint.sessionId
     case .mock(let mock): mock.sessionId
     case .challenge(let challenge): challenge.sessionId
@@ -608,7 +610,7 @@ extension StudyDestination {
       self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
     case .session(let session):
       self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
-    case .today:
+    case .today, .mistakesPractice, .pattern:
       self = .today
     case .changed:
       self = .changed

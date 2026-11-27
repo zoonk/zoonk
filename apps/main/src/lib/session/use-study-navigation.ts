@@ -231,6 +231,10 @@ export function useGoToStudyDestination({ refresh }: { refresh?: () => void } = 
         router.push(`/checkpoint/${destination.blockId}?session=${destination.sessionId}`);
       } else if (destination.kind === "mock") {
         router.push(`/mock/${destination.blockId}?session=${destination.sessionId}`);
+      } else if (destination.kind === "mistakesPractice") {
+        router.push(`/mistakes/practice?blockId=${destination.blockId}`);
+      } else if (destination.kind === "pattern") {
+        router.push(`/pattern/${destination.patternId}`);
       } else if (destination.kind === "essay") {
         // Opening a written question is its start: the tap admits the grading or starts the question's writing.
         const blockId = destination.blockId;

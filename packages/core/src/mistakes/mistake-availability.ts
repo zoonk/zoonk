@@ -4,7 +4,7 @@ import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readPracticeMistakes } from "../learner/facts/practice-mistakes";
-import { visibleMistakeWhere } from "./_utils/visible-mistake";
+import { openVisibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeAvailability } from "./contract";
 import {
   type PracticeMistake,
@@ -26,16 +26,7 @@ export async function getPracticeTimeZone({
   return goal ? getAnswerTimeZone({ goal, timeZone }) : getLearnerTimeZone({ timeZone, userId });
 }
 
-/** Practice and fixing require recall on a later local day than the last miss, never repeating a just-shown answer. */
-export function readyMistakeWhere({ localDate, timeZone }: LocalDay) {
-  return {
-    ...visibleMistakeWhere,
-    missedAt: { lt: getStartOfLocalDay({ localDate, timeZone }) },
-    status: "open",
-  } as const;
-}
-
-/** For open mistakes already read; queries filter with `readyMistakeWhere`. */
+/** Older misses remain eligible for a later-day correction. */
 export function listReadyMistakes<TMistake extends Pick<PracticeMistake, "missedAt">>({
   localDate,
   mistakes,
@@ -72,57 +63,33 @@ async function loadPracticeEligibleMistakes({
       stepId: true,
       userId: true,
     },
-    where: { ...visibleMistakeWhere, skillId, status: "open", userId },
+    where: { ...openVisibleMistakeWhere, skillId, userId },
   });
 
   return filterMistakesWithPracticeMaterial({ mistakes });
 }
 
 /** Caller must authorize the learner and scoped goal first. */
-export async function loadMistakePracticeAvailability({
-  localDate,
-  timeZone,
-  ...scope
-}: {
+export async function loadMistakePracticeAvailability(scope: {
   goalId?: string;
-  localDate: Date;
   skillId?: string;
-  timeZone: string;
   userId: string;
-}): Promise<{
-  availability: MistakeAvailability;
-  readyIds: ReadonlySet<string>;
-  tomorrowIds: ReadonlySet<string>;
-}> {
+}): Promise<{ availability: MistakeAvailability; readyIds: ReadonlySet<string> }> {
   const eligible = await loadPracticeEligibleMistakes(scope);
-  const ready = listReadyMistakes({ localDate, mistakes: eligible, timeZone });
-  const readyIds = new Set(ready.map((mistake) => mistake.id));
-
-  const tomorrowIds = new Set(
-    eligible.filter((mistake) => !readyIds.has(mistake.id)).map((mistake) => mistake.id),
-  );
-
-  return {
-    availability: { ready: readyIds.size, tomorrow: tomorrowIds.size },
-    readyIds,
-    tomorrowIds,
-  };
+  const readyIds = new Set(eligible.map((mistake) => mistake.id));
+  return { availability: { ready: readyIds.size }, readyIds };
 }
 
 export async function countReadyMistakes({
   goalId,
-  timeZone,
-  today,
   userId,
 }: {
   goalId: string;
-  timeZone: string;
-  today: Date;
   userId: string;
 }): Promise<number> {
   const candidate = await prisma.mistake.findFirst({
     select: { id: true },
-    where: { ...readyMistakeWhere({ localDate: today, timeZone }), userId },
+    where: { ...openVisibleMistakeWhere, userId },
   });
 
   if (!candidate) {
@@ -130,5 +97,5 @@ export async function countReadyMistakes({
   }
 
   const mistakes = await readPracticeMistakes(userId, goalId);
-  return listReadyMistakes({ localDate: today, mistakes, timeZone }).length;
+  return mistakes.length;
 }

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { getUsageRule } from "@zoonk/core/entitlements/limits";
 import { readMistakeSnapshot } from "@zoonk/core/mistakes/snapshot";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -11,7 +12,13 @@ import {
 } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import {
   gradeMathAnswer,
   parseMathItem,
@@ -23,6 +30,7 @@ import {
 import { withRecordedNumbers } from "../../../packages/core/src/library/items/item-math";
 import {
   mistakeLessonSchema,
+  mistakeListResponseSchema,
   mistakePracticeCompletionSchema,
   mistakePracticeFeedbackSchema,
   mistakePracticeResponseSchema,
@@ -114,6 +122,233 @@ test.describe("Mistake practice API", () => {
 
     expect(response.status()).toBe(401);
     await api.dispose();
+  });
+
+  test("rehearses today's mistake in its block and returns the saved verdict on retry", async () => {
+    const [{ api, userId }, stranger] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "scoped-mistake-practice" }),
+      createBearerLearner({ baseURL, prefix: "scoped-mistake-stranger" }),
+    ]);
+
+    const { goal, mistake } = await createMistakeGoal({ cause: "trap", userId });
+
+    const [today, study] = await Promise.all([
+      prisma.mistake.update({ data: { missedAt: new Date() }, where: { id: mistake.id } }),
+      studySessionFixture({ goalId: goal.id, startedAt: new Date(), status: "active", userId }),
+    ]);
+
+    const anotherItem = await itemFixture({
+      content: choiceItemContent(),
+      skillId: mistake.skillId!,
+    });
+
+    const another = await mistakeFixture({
+      itemId: anotherItem.id,
+      skillId: mistake.skillId,
+      userId,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [today.id] },
+      sessionId: study.id,
+      status: "active",
+    });
+
+    const blockPath = `/v1/me/mistake-practice?blockId=${block.id}`;
+    const answerPath = `/v1/me/mistakes/${today.id}/answers`;
+    const completionPath = "/v1/me/mistake-practice/completions";
+
+    try {
+      const notebook = await readBody({
+        response: await api.get(`/v1/me/mistakes?goalId=${goal.id}`),
+        schema: mistakeListResponseSchema,
+      });
+
+      expect(notebook.availability).toStrictEqual({ ready: 2 });
+      expect(notebook.data.find((entry) => entry.id === today.id)?.practiceAvailable).toBe(true);
+
+      const foreignBlock = await stranger.api.get(blockPath);
+      expect(foreignBlock.status()).toBe(404);
+
+      const scoped = await readBody({
+        response: await api.get(blockPath),
+        schema: mistakePracticeResponseSchema,
+      });
+
+      expect(scoped.practice.map((entry) => entry.mistakeId)).toStrictEqual([today.id]);
+
+      const completion = { answerIds: [], blockId: block.id, ended: true, timeZone: "UTC" };
+      const foreignCompletion = await stranger.api.post(completionPath, { data: completion });
+      expect(foreignCompletion.status()).toBe(404);
+
+      const premature = await api.post(completionPath, { data: completion });
+      expect(premature.status()).toBe(200);
+
+      await expect(
+        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+      ).resolves.toMatchObject({ status: "active" });
+
+      const input = {
+        answer: { selectedIndex: 0 },
+        attemptId: randomUUID(),
+        durationMs: 4000,
+        itemId: today.itemId,
+        run: { answerIds: [], blockId: block.id },
+        timeZone: "UTC",
+      };
+
+      const outside = await api.post(`/v1/me/mistakes/${another.id}/answers`, {
+        data: { ...input, itemId: anotherItem.id },
+      });
+
+      expect(outside.status()).toBe(404);
+
+      const feedback = await readBody({
+        response: await api.post(answerPath, { data: input }),
+        schema: mistakePracticeFeedbackSchema,
+      });
+
+      expect(feedback).toMatchObject({ fixed: false, isCorrect: true, requiresLaterDay: true });
+
+      const retry = await readBody({
+        response: await api.post(answerPath, { data: { ...input, answer: { selectedIndex: 1 } } }),
+        schema: mistakePracticeFeedbackSchema,
+      });
+
+      expect(retry).toStrictEqual(feedback);
+
+      const repeat = await readBody({
+        response: await api.post(answerPath, {
+          data: { ...input, answer: { selectedIndex: 1 }, attemptId: randomUUID(), run: undefined },
+        }),
+        schema: mistakePracticeFeedbackSchema,
+      });
+
+      expect(repeat).toMatchObject({ fixed: false, isCorrect: false, requiresLaterDay: false });
+
+      const result = await readBody({
+        response: await api.post(completionPath, {
+          data: { ...completion, answerIds: [feedback.answerId, repeat.answerId] },
+        }),
+        schema: mistakePracticeCompletionSchema,
+      });
+
+      expect(result).toMatchObject({ brainPower: 2, correct: 1, total: 1 });
+
+      await expect(
+        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+      ).resolves.toMatchObject({ status: "completed" });
+    } finally {
+      await Promise.all([api.dispose(), stranger.api.dispose()]);
+    }
+  });
+
+  test("settles an all-spoken block without grading after the assist allowance runs out", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "spoken-mistake-limit" });
+
+    const [session, lesson] = await Promise.all([
+      studySessionFixture({ startedAt: new Date(), status: "active", userId }),
+      libraryLessonFixture({ language: "pt", targetLanguage: "en" }),
+      usageRecordsFixture({
+        count: getUsageRule({ kind: "assist", tier: "free" }).day ?? 0,
+        createdAt: new Date(),
+        kind: "assist",
+        userId,
+      }),
+    ]);
+
+    const step = await libraryStepFixture({
+      content: {
+        language: "en",
+        prompt: "Ask about the rent.",
+        targetText: "How much is the rent?",
+      },
+      kind: "spokenAnswer",
+      lessonId: lesson.id,
+    });
+
+    const mistake = await mistakeFixture({ stepId: step.id, userId });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: { mistakeIds: [mistake.id] },
+      sessionId: session.id,
+      status: "active",
+    });
+
+    try {
+      const response = await api.post(`/v1/steps/${step.id}/spoken-answers`, {
+        multipart: {
+          attemptId: randomUUID(),
+          audio: {
+            buffer: Buffer.from(ONE_SECOND_RECORDING),
+            mimeType: "audio/webm",
+            name: "answer.webm",
+          },
+          blockId: block.id,
+          durationMs: "1000",
+          mistakeId: mistake.id,
+          timeZone: "UTC",
+        },
+      });
+
+      expect(response.status()).toBe(402);
+
+      await expect(response.json()).resolves.toMatchObject({
+        error: { code: "USAGE_LIMIT_REACHED" },
+      });
+
+      await expect(
+        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+      ).resolves.toMatchObject({ status: "completed" });
+
+      await expect(prisma.attempt.count({ where: { userId } })).resolves.toBe(0);
+    } finally {
+      await api.dispose();
+    }
+  });
+
+  test("keeps a mock's practice hidden until it finishes", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-mistake-practice" });
+    const { mistake } = await createMistakeGoal({ cause: "gap", userId });
+
+    const mock = await prisma.mockExam.create({
+      data: { conditions: {}, sectionStartedAt: new Date(), userId },
+    });
+
+    const attempt = await attemptFixture({
+      answer: { selectedIndex: 1 },
+      isCorrect: false,
+      itemId: mistake.itemId,
+      mockExamId: mock.id,
+      userId,
+    });
+
+    try {
+      await prisma.mistake.update({
+        data: { attemptId: attempt.id, missedAt: new Date() },
+        where: { id: mistake.id },
+      });
+
+      const path = `/v1/me/mistake-practice?mockId=${mock.id}`;
+      const unfinished = await api.get(path);
+      expect(unfinished.status()).toBe(404);
+
+      await prisma.mockExam.update({
+        data: { finishedAt: new Date(), status: "finished" },
+        where: { id: mock.id },
+      });
+
+      const scoped = await readBody({
+        response: await api.get(path),
+        schema: mistakePracticeResponseSchema,
+      });
+
+      expect(scoped.practice.map((entry) => entry.mistakeId)).toStrictEqual([mistake.id]);
+    } finally {
+      await api.dispose();
+    }
   });
 
   test("replays an original lesson question and fixes only that notebook entry", async () => {

@@ -42,6 +42,7 @@ export const spokenAnswerFieldsSchema = z
       .optional()
       .meta({ description: "For notebook practice, a JSON array of the run's earlier answer IDs" }),
     attemptId: uuidSchema().optional(),
+    blockId: uuidSchema().optional().meta({ description: "The day block for notebook practice" }),
     durationMs: z.coerce
       .number()
       .int()

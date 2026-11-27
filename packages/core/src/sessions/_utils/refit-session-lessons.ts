@@ -1,6 +1,6 @@
 import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
-import "server-only";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
+import "server-only";
 import {
   type ChallengeReachItem,
   isPhaseChallenge,
@@ -9,6 +9,7 @@ import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits"
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { getSessionUsedMinutes } from "../session-minutes";
 import { getLessonLookahead } from "./day-lessons";
 import { orderDayBlocks } from "./day-stretch";
@@ -50,7 +51,7 @@ async function trimSessionLessons({
         block.status === "pending" &&
         block.startedAt === null &&
         !payload.extra &&
-        !payload.reinforcement
+        !isOutsidePlanLesson(payload)
       );
     })
     .toReversed();

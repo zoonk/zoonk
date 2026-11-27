@@ -12,6 +12,7 @@ import { findLastCheckpointResults } from "../../checkpoints/_utils/checkpoint-r
 import { getPassMark } from "../../checkpoints/checkpoint-rules";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { readBlockPayload } from "../block-payload";
+import { isOutsidePlanLesson } from "../day-block";
 import { type PlannedCheckpoint, type PlannedLesson } from "../session-builder";
 import { isMockOnlyDay } from "./day-mock";
 import { isSavedReviewDay } from "./day-review";
@@ -38,7 +39,7 @@ function getFirstLessonPosition({
   const lessons = new Set(
     blocks.flatMap((block) => {
       const payload = readBlockPayload(block);
-      return block.kind === "learn" && !payload.reinforcement ? [payload.planItemId] : [];
+      return block.kind === "learn" && !isOutsidePlanLesson(payload) ? [payload.planItemId] : [];
     }),
   );
 

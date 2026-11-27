@@ -28,7 +28,8 @@ export function withLessonScreens<
   return {
     ...day,
     blocks: day.blocks.map((block) => {
-      const screened = { ...block, screen: getBlockScreen(block, lessonStates) };
+      const screened =
+        block.kind === "learn" ? { ...block, screen: getBlockScreen(block, lessonStates) } : block;
 
       return {
         ...screened,

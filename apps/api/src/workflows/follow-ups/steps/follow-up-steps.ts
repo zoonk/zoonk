@@ -1,9 +1,10 @@
-import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
+import { type FollowUp, type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import {
   endFollowUp,
   listFollowUps,
   listLearnersWithOldFollowUps,
 } from "@zoonk/core/follow-ups/rows";
+import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
 import { requestLessonGenerationFor } from "@zoonk/core/lookahead/request-lesson-generation";
 import { requestChapterMindMapFor } from "@zoonk/core/mind-maps/request";
 import { type LessonContentInput } from "../../lessons/lesson-content-workflow";
@@ -30,14 +31,24 @@ export async function listLearnersWithOldFollowUpsStep(): Promise<string[]> {
   return listLearnersWithOldFollowUps();
 }
 
-export async function requestLessonWritingStep({
-  lessonId,
-  userId,
-}: {
-  lessonId: string;
-  userId: string;
-}): Promise<LessonContentInput | null> {
+export async function requestLessonWritingStep(
+  input: Extract<FollowUp, { kind: "writeLesson" }>["input"],
+  userId: string,
+): Promise<LessonContentInput | null> {
   "use step";
+
+  let lessonId: string | undefined;
+
+  if ("lessonId" in input) {
+    ({ lessonId } = input);
+  } else {
+    const lessons = await ensureQuickLessons({ skillIds: [input.quickSkillId] });
+    lessonId = lessons.get(input.quickSkillId)?.lessonId;
+  }
+
+  if (!lessonId) {
+    return null;
+  }
 
   const writing = await requestLiveLessonWriting({
     lessonId,

@@ -42,18 +42,7 @@ const mistakeSchema = z
         description:
           "The original lesson, or a lesson on the same skill, at the time the notebook was read. Null when there is no existing lesson. POST /v1/me/mistakes/{mistakeId}/lesson also works when this field is null.",
       }),
-    practiceAvailable: z
-      .boolean()
-      .meta({
-        description:
-          "Open and made on an earlier learner-local day; today's mistakes become available tomorrow",
-      }),
-    practiceAvailableTomorrow: z
-      .boolean()
-      .meta({
-        description:
-          "This open mistake has drill material and becomes available on the next learner-local day",
-      }),
+    practiceAvailable: z.boolean().meta({ description: "Open and has usable practice material" }),
     skill: z
       .object({ id: uuidSchema(), name: z.string() })
       .nullable()
