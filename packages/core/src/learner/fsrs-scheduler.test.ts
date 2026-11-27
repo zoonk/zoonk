@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { type GradedAnswer } from "./answer-rating";
 import {
@@ -175,16 +176,18 @@ describe(getSkillRetrievability, () => {
   it("starts at 1 and falls over time, reaching about 90% at the stability", () => {
     const memory = review(NEW_SKILL_MEMORY, "2026-09-01T12:00:00Z");
     const reviewedAt = new Date("2026-09-01T12:00:00Z").getTime();
-    const dayMs = 86_400_000;
 
     const atReview = getSkillRetrievability({ memory, now: new Date(reviewedAt) });
 
     const atStability = getSkillRetrievability({
       memory,
-      now: new Date(reviewedAt + memory.stability * dayMs),
+      now: new Date(reviewedAt + memory.stability * MS_PER_DAY),
     });
 
-    const muchLater = getSkillRetrievability({ memory, now: new Date(reviewedAt + 60 * dayMs) });
+    const muchLater = getSkillRetrievability({
+      memory,
+      now: new Date(reviewedAt + 60 * MS_PER_DAY),
+    });
 
     expect(atReview).toBe(1);
     expect(atStability).toBeCloseTo(0.9, 2);

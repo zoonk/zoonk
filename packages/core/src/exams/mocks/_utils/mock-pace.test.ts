@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { loadMockPace } from "./mock-pace";
 
 const ANSWERS_PER_MOCK = 25;
-const SECONDS = 1000;
 
 async function finishedMocks({
   blueprintId,
@@ -40,7 +40,7 @@ async function finishedMocks({
       Array.from({ length: ANSWERS_PER_MOCK }, () => ({
         answer: { selectedIndex: 0 },
         answeredAt: finishedAt,
-        durationMs: seconds * SECONDS,
+        durationMs: seconds * MS_PER_SECOND,
         hour: finishedAt.getUTCHours(),
         isCorrect: true,
         localDate: new Date("2026-09-20T00:00:00Z"),
@@ -62,7 +62,7 @@ describe(loadMockPace, () => {
 
     await prisma.anonymousMockAnswer.createMany({
       data: Array.from({ length: ANSWERS_PER_MOCK }, () => ({
-        durationMs: 120 * SECONDS,
+        durationMs: 120 * MS_PER_SECOND,
         examBlueprintId: blueprint.id,
         finishedOn: new Date("2026-09-21T00:00:00Z"),
         learnerKey,

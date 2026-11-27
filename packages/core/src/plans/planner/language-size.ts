@@ -98,7 +98,7 @@ function listLeftOut({
 }
 
 /**
- * Each band's open situations share the lessons left after its settled situations. A band that
+ * Each band's open situations share the lessons left after its settled situations, with at least one per situation. A band that
  * gets none of the hours keeps its situations' sizes.
  */
 function resize({

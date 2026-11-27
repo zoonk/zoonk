@@ -1,5 +1,5 @@
-import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import "server-only";
+import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { celebrateProgress } from "../../milestones/celebrate-progress";

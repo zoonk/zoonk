@@ -1,19 +1,19 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getWeeklyChallenge } from "../checkpoints/get-weekly-challenge";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { openTodayView } from "./_test-utils/open-today-view";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 
-const YESTERDAY = new Date(SESSION_TODAY.getTime() - DAY_MS);
+const YESTERDAY = new Date(SESSION_TODAY.getTime() - MS_PER_DAY);
 
 async function examWithYesterdaysMock({ plus = false }: { plus?: boolean } = {}) {
   const user = await userFixture();

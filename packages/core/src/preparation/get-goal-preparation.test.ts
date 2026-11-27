@@ -6,6 +6,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -19,8 +20,7 @@ import { measureSessionState } from "../sessions/_utils/capture-snapshot";
 import { getGoalPreparation } from "./get-goal-preparation";
 
 const NOW = new Date();
-const DAY_MS = 86_400_000;
-const daysAgo = (days: number) => new Date(NOW.getTime() - days * DAY_MS);
+const daysAgo = (days: number) => new Date(NOW.getTime() - days * MS_PER_DAY);
 
 function mockClock(now = NOW) {
   vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(now);
@@ -951,7 +951,7 @@ describe(getGoalPreparation, () => {
       planItems.map((item, index) =>
         prisma.planItem.update({
           data: {
-            scheduledFor: new Date(today.getTime() + (index - 2) * DAY_MS),
+            scheduledFor: new Date(today.getTime() + (index - 2) * MS_PER_DAY),
             status: index < 3 ? "done" : "todo",
           },
           where: { id: item.id },
@@ -973,7 +973,10 @@ describe(getGoalPreparation, () => {
     await Promise.all(
       planItems.map((item, index) =>
         prisma.planItem.update({
-          data: { scheduledFor: new Date(today.getTime() + (index + 5) * DAY_MS), status: "done" },
+          data: {
+            scheduledFor: new Date(today.getTime() + (index + 5) * MS_PER_DAY),
+            status: "done",
+          },
           where: { id: item.id },
         }),
       ),
@@ -988,7 +991,7 @@ describe(getGoalPreparation, () => {
     await Promise.all([
       prisma.planItem.update({ data: { status: "skipped" }, where: { id: planItems[0]!.id } }),
       prisma.goal.update({
-        data: { targetDate: new Date(today.getTime() - DAY_MS) },
+        data: { targetDate: new Date(today.getTime() - MS_PER_DAY) },
         where: { id: goal.id },
       }),
     ]);

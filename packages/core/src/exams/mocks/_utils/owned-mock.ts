@@ -1,3 +1,4 @@
+import "server-only";
 import {
   type ExamBlueprint,
   type Goal,
@@ -7,7 +8,6 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
-import "server-only";
 import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";

@@ -1,14 +1,14 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { hasFocusGain, hasReduceEffect } from "./focus-gain";
 
-const DAY = 86_400_000;
 const START = Date.parse("2026-10-05T00:00:00Z");
 
 function lesson(skillId: string, day: number, minutes = 4) {
   return {
     kind: "lesson" as const,
     minutes,
-    scheduledFor: new Date(START + day * DAY),
+    scheduledFor: new Date(START + day * MS_PER_DAY),
     skillId,
     status: "todo" as const,
   };

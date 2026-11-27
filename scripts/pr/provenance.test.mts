@@ -4,9 +4,8 @@ import { mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import { MS_PER_MINUTE } from "../../packages/utils/src/date.ts";
 import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
-
-const MINUTE = 60_000;
 
 /** When the sources were written and committed: the test's own time, never the real clock's. */
 const WRITTEN = Date.parse("2026-01-01T12:00:00.000Z");
@@ -41,7 +40,7 @@ function makeBuiltCheckout() {
 
   const buildId = join(repository, "apps/main/.next/BUILD_ID");
   writeFileSync(buildId, "abc123\n");
-  const built = new Date(WRITTEN + MINUTE);
+  const built = new Date(WRITTEN + MS_PER_MINUTE);
   utimesSync(buildId, built, built);
   return { built, repository };
 }
@@ -84,7 +83,7 @@ describe("the build a web picture shows", () => {
     assert.equal(checkout.current, "abc123");
     assert.equal(checkout.changes, undefined);
 
-    const later = new Date(built.getTime() + MINUTE);
+    const later = new Date(built.getTime() + MS_PER_MINUTE);
     utimesSync(join(repository, "packages/ui/row.txt"), later, later);
     const outdated = await readCheckoutBuild({ app: "main", repository });
 

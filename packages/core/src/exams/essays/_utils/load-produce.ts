@@ -1,5 +1,5 @@
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import "server-only";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { loadWrittenSamples } from "../../../learner/facts/written-samples";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";

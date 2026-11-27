@@ -1,5 +1,5 @@
-import { type Goal, prisma } from "@zoonk/db";
 import "server-only";
+import { type Goal, prisma } from "@zoonk/db";
 import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
 import { MS_PER_MINUTE, MS_PER_SECOND } from "@zoonk/utils/date";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";

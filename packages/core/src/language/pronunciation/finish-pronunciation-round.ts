@@ -1,5 +1,5 @@
-import { type LearningEvent, prisma } from "@zoonk/db";
 import "server-only";
+import { type LearningEvent, prisma } from "@zoonk/db";
 import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";

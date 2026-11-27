@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
@@ -16,7 +17,7 @@ import { completeLibraryLesson } from "../lesson-player/complete-library-lesson"
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
 import { runOwedSettlements } from "./_test-utils/owed-settlements";
-import { DAY_MS, SESSION_NOW, SESSION_TODAY } from "./_test-utils/session-goal";
+import { SESSION_NOW, SESSION_TODAY } from "./_test-utils/session-goal";
 import { settleSessionDay } from "./_utils/settle-session-day";
 import { toBlockPayload } from "./block-payload";
 import { BRAIN_POWER_BONUS } from "./brain-power";
@@ -131,7 +132,7 @@ describe("a finished block's day settles even when its request fails after the b
     await failFinish(request);
     await runOwedSettlements(user.id);
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
     await openStudyDay({ goalId: goal.id, shownDate: "2026-10-01", timeZone: "UTC" });
 
     const [saved, ledger, progress, finished] = await Promise.all([
@@ -163,7 +164,7 @@ describe("a finished block's day settles even when its request fails after the b
     const { goal, request, session, user } = await practiceDay();
     await failFinish(request);
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
     await runOwedSettlements(user.id);
 
     await expect(

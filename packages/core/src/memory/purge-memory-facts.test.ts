@@ -1,13 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { purgeMemoryFacts } from "./purge-memory-facts";
 
-const DAY_MS = 86_400_000;
-
 function daysAgo(days: number): Date {
-  return new Date(Date.now() - days * DAY_MS);
+  return new Date(Date.now() - days * MS_PER_DAY);
 }
 
 describe(purgeMemoryFacts, () => {

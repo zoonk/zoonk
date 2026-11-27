@@ -29,6 +29,7 @@ import {
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { NoObjectGeneratedError } from "ai";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -38,8 +39,6 @@ import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { findAndStoreSources } from "../research/research-sources";
 import { freshnessWorkflow } from "./freshness-workflow";
 import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
-
-const DAY_MS = 86_400_000;
 
 const TASK = {
   provenance: {
@@ -556,7 +555,7 @@ describe(freshnessWorkflow, () => {
     const nextUrl = `https://cdn.cebraspe.org.br/concursos/tc_df_27_analista/${randomUUID()}.txt`;
 
     await prisma.examBlueprint.update({
-      data: { board: "FGV", examDate: new Date(Date.now() - 30 * DAY_MS) },
+      data: { board: "FGV", examDate: new Date(Date.now() - 30 * MS_PER_DAY) },
       where: { id: blueprint.id },
     });
 
@@ -620,7 +619,7 @@ describe(freshnessWorkflow, () => {
     expect(result).toMatchObject({ status: "checked" });
 
     expect(Date.parse(result.status === "checked" ? result.nextCheckAt : "")).toBeGreaterThan(
-      Date.now() + 6 * DAY_MS,
+      Date.now() + 6 * MS_PER_DAY,
     );
 
     const [stored, proposals, kept] = await Promise.all([
@@ -651,7 +650,7 @@ describe(freshnessWorkflow, () => {
     const { blueprint, source } = await examWithLearner();
 
     await prisma.examBlueprint.update({
-      data: { examDate: new Date(Date.now() - 30 * DAY_MS) },
+      data: { examDate: new Date(Date.now() - 30 * MS_PER_DAY) },
       where: { id: blueprint.id },
     });
 

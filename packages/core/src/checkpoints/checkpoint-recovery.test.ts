@@ -1,12 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   checkpointItemFixture,
   sessionGoalFixture,
@@ -106,7 +106,7 @@ describe("challenge recovery after question removal", () => {
       prisma.studySession.findUniqueOrThrow({ where: { id: ref.sessionId } }),
     ).resolves.toMatchObject({ fullMealAt: null });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
       status: "questionsNeeded",

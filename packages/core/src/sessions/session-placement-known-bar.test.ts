@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { pickItemInBlock } from "../_test-utils/shown-choice";
@@ -16,7 +17,6 @@ import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
-const DAY_MS = 86_400_000;
 
 describe("one in-session multiple-choice test answer", () => {
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe("one in-session multiple-choice test answer", () => {
     const other = library.skills[1]!.id;
 
     const { goal, plan } = await unplannedGoalFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       timezone: TIME_ZONE,
       userId: user.id,
     });
@@ -63,7 +63,7 @@ describe("one in-session multiple-choice test answer", () => {
     ]);
 
     await attemptFixture({
-      answeredAt: new Date(Date.now() - DAY_MS),
+      answeredAt: new Date(Date.now() - MS_PER_DAY),
       isCorrect: true,
       isPlacement: true,
       itemId: items[2]!.id,

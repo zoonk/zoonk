@@ -13,13 +13,13 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { Response as PageResponse, fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
 import { storeWebSource } from "../sources/web-sources";
 import { checkFreshness } from "./check-freshness";
 
 const NOW = new Date("2026-09-26T12:00:00.000Z");
-const DAY_MS = 86_400_000;
 
 function servePage(text: string) {
   vi.mocked(fetch).mockImplementation(
@@ -28,7 +28,7 @@ function servePage(text: string) {
 }
 
 function daysFromNow(days: number) {
-  return new Date(NOW.getTime() + days * DAY_MS);
+  return new Date(NOW.getTime() + days * MS_PER_DAY);
 }
 
 async function examWithLearner({

@@ -1,5 +1,5 @@
-import { type Goal, type TransactionClient } from "@zoonk/db";
 import "server-only";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";

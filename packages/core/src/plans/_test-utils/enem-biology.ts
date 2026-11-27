@@ -2,16 +2,16 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { vi } from "vitest";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { type PlanGraph } from "../planner/plan-state";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
 const TODAY = new Date("2026-10-09T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 export function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 export function isoDay(offset: number): string {
