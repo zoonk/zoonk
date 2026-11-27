@@ -57,14 +57,16 @@ function withoutKept({
     kept.filter((block) => !isRemedialPractice(readBlockPayload(block))).map(({ kind }) => kind),
   );
 
-  const remedialPractice = kept.filter((block) => isRemedialPractice(readBlockPayload(block)));
-  const remedialTeaching = kept.filter((block) => readBlockPayload(block).returning !== null);
-  const mistakes = getSessionUsedMinutes(remedialPractice.filter(({ kind }) => kind === "review"));
+  const mistakes = getSessionUsedMinutes(
+    kept.filter((block) => readBlockPayload(block).mistakeIds.length > 0),
+  );
 
-  const teaching = getSessionUsedMinutes([
-    ...remedialTeaching,
-    ...remedialPractice.filter(({ kind }) => kind === "practice"),
-  ]);
+  const teaching = getSessionUsedMinutes(
+    kept.filter((block) => {
+      const { patternId, returning } = readBlockPayload(block);
+      return patternId !== null || returning !== null;
+    }),
+  );
 
   const usedMinutes = getSessionUsedMinutes(kept) - mistakes - teaching;
 
