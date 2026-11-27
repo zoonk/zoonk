@@ -546,7 +546,7 @@ private struct BuddyContent: View {
       .typeStyle(.note)
       .monospacedDigit()
       .foregroundStyle(.mutedForeground)
-      .frame(minWidth: 44, minHeight: 44)
+      .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
       .contentShape(.rect)
     }
     .buttonStyle(.plain)
