@@ -10222,7 +10222,7 @@ msgstr "Testar o restante"
 #: src/placement-test/use-test-facts.ts
 msgctxt "XiCeiq"
 msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr "Da próxima vez: parte {part, number} de {parts, number}, questão {number, number}"
+msgstr "Da próxima vez: parte {part, number} de {parts, number}, pergunta {number, number}"
 
 #. Where the learner is in a test split into parts, such as “Part 3 of 14”.
 #: src/placement-test/use-test-facts.ts
