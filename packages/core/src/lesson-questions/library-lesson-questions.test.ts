@@ -471,6 +471,35 @@ describe("questions about a Library lesson", () => {
     ).resolves.toMatchObject([{ targetId: question.id }]);
   });
 
+  it("admits only one of two questions asked at once with one message left", async () => {
+    freezeClock();
+
+    const { lesson, steps, user } = await setupPlayableLesson();
+    await usageRecordsFixture({ count: 9, kind: "tutorMessage", userId: user.id });
+
+    const outcomes = await Promise.all(
+      [stepOfKind(steps, "explanation"), stepOfKind(steps, "check")].map((step) =>
+        createLessonQuestion({
+          input: {
+            context: { kind: "step", stepId: step.id, stepNumber: 1 },
+            question: "Why a cloud?",
+            requestId: randomUUID(),
+          },
+          target: { kind: "lesson", lessonId: lesson.id },
+        }),
+      ),
+    );
+
+    expect(outcomes.map((outcome) => outcome.status).toSorted()).toStrictEqual([
+      "created",
+      "usageRefused",
+    ]);
+
+    await expect(
+      prisma.lessonQuestion.count({ where: { thread: { userId: user.id } } }),
+    ).resolves.toBe(1);
+  });
+
   it("answers a question asked before the limit filled, even once the day's allowance is used", async () => {
     freezeClock();
 
