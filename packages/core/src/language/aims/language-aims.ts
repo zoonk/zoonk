@@ -1,4 +1,5 @@
 import {
+  CEFR_LEVELS,
   type CefrLevel,
   MAX_CEFR_SCORE,
   formatCefrScore,
@@ -80,6 +81,18 @@ export function getCefrHours(score: number): number {
   const above = level + 1 <= MAX_CEFR_SCORE ? GUIDED_HOURS[toCefrLevel(level + 1)] : below;
 
   return below + (above - below) * (score - level);
+}
+
+export function getLanguageStartBand(hours: number) {
+  if (hours >= GUIDED_HOURS.B2) {
+    return "C1";
+  }
+
+  return hours >= GUIDED_HOURS.A2 ? "B1" : "A1";
+}
+
+export function languagePlanningBand(score: number) {
+  return CEFR_LEVELS.indexOf(getLanguageStartBand(getCefrHours(score)));
 }
 
 /** Hours already behind a learner at `level`: a CEFR label, or the level they said (`basic`). */

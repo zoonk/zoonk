@@ -1,5 +1,6 @@
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
+import { getCefrHours, getLanguageStartBand, getStartHours } from "../aims/language-aims";
 import { getLevelTestEnd } from "./_utils/level-test-end";
 import { getLevelTestPlanningStart } from "./_utils/level-test-planning-start";
 import { getLevelTestStart } from "./_utils/level-test-start-score";
@@ -175,6 +176,20 @@ describe("matched-model level test", () => {
     expect(Object.keys(result.ranges)).toStrictEqual(["reading", "listening"]);
   });
 
+  it("honors corroborated CEFR statements, including half levels", () => {
+    const scores = CEFR_LEVELS.flatMap((_, index) => [index, index + 0.5]).filter(
+      (score) => score <= 5,
+    );
+
+    const starts = scores.map(
+      (start) => runTest({ responds: (level) => level <= start, start }).planningStart,
+    );
+
+    expect(starts).toStrictEqual(
+      scores.map((score) => getBand(getLanguageStartBand(getCefrHours(score)))),
+    );
+  });
+
   it("keeps both levels on a missed or deferred check and grants no skip", () => {
     const learner = { responds: () => true, start: 4 };
     const missed = runTest({ ...learner, responds: (_band, check) => !check });
@@ -222,7 +237,12 @@ describe("matched-model level test", () => {
           ((result.scores.reading ?? 0) + (result.scores.listening ?? 0)) / 2,
         );
 
-        const startError = (result.planningStart ?? -1) / 2 - Math.floor(listening / 2);
+        const trueBand = Math.floor(listening / 2);
+
+        const skipBand =
+          getBand(getLanguageStartBand(getStartHours(stated ? report : null) ?? 0)) / 2;
+
+        const startError = (result.planningStart ?? -1) / 2 - trueBand;
 
         return {
           high: startError > 0,
@@ -230,6 +250,9 @@ describe("matched-model level test", () => {
           overListening: (result.floors.listening ?? 0) > listening,
           overReading: (result.floors.reading ?? 0) > theta,
           right: startError === 0,
+          skipHigh: skipBand > trueBand,
+          skipLow: skipBand < trueBand,
+          skipRight: skipBand === trueBand,
           skippable: Math.floor(listening),
           skipped,
           within: Math.abs(estimate - band) <= 1,
@@ -239,7 +262,17 @@ describe("matched-model level test", () => {
     );
 
     const share = (
-      key: "within" | "overReading" | "overListening" | "wrongSkip" | "right" | "high" | "low",
+      key:
+        | "skipHigh"
+        | "skipLow"
+        | "skipRight"
+        | "within"
+        | "overReading"
+        | "overListening"
+        | "wrongSkip"
+        | "right"
+        | "high"
+        | "low",
     ) => rows.filter((row) => row[key]).length / rows.length;
 
     const skipShare =
@@ -253,6 +286,9 @@ describe("matched-model level test", () => {
         overListening: share("overListening"),
         overReading: share("overReading"),
         right: share("right"),
+        skipHigh: share("skipHigh"),
+        skipLow: share("skipLow"),
+        skipRight: share("skipRight"),
         skipShare,
         stated,
         unequal,
@@ -266,6 +302,11 @@ describe("matched-model level test", () => {
     expect(share("overListening")).toBeLessThanOrEqual(0.01);
     expect(share("wrongSkip")).toBeLessThanOrEqual(0.01);
     expect(skipShare).toBeGreaterThan(0);
-    expect(share("right")).toBeGreaterThanOrEqual(stated ? 0.8 : 0.5);
+    expect(share("right")).toBeGreaterThanOrEqual(stated ? share("skipRight") : 0.5);
+    const highCeiling = unequal ? 0.09 : 0.07;
+
+    expect(share("high")).toBeLessThanOrEqual(
+      stated ? Math.min(highCeiling, share("skipHigh")) : highCeiling,
+    );
   });
 });
