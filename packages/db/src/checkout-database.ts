@@ -1,7 +1,7 @@
 import { realpathSync } from "node:fs";
 import { isLinkedWorktree, worktreeDatabasePrefix } from "#local-database-names";
 import { parse } from "pg-connection-string";
-import { currentCheckout } from "./local-database";
+import { currentCheckout } from "./local-database.ts";
 
 const LOCAL_HOSTS = new Set(["127.0.0.1", "::1", "localhost"]);
 
