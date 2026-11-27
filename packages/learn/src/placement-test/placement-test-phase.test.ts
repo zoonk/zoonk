@@ -103,6 +103,7 @@ describe(toPlacementTestPhase, () => {
       kind: "result",
       lessonsSkipped: 5,
       nextLesson: NEXT_LESSON,
+      partsRemoved: 0,
     });
   });
 
@@ -201,6 +202,15 @@ describe(toPlacementTestPhase, () => {
     });
   });
 
+  it("keeps the parts a finished test removed when onboarding shows its result again", () => {
+    const outcome = ready({ result: { ...RESULT, partsRemoved: 2 } });
+
+    expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toMatchObject({
+      kind: "result",
+      partsRemoved: 2,
+    });
+  });
+
   it("says a read that failed couldn't open the test", () => {
     expect(toPlacementTestPhase({ outcome: { status: "failed" }, surface: "plan" })).toStrictEqual({
       kind: "loadFailed",
@@ -247,8 +257,18 @@ describe(toFinishedPhase, () => {
         kind: "result",
         lessonsSkipped: 5,
         nextLesson: NEXT_LESSON,
+        partsRemoved: 0,
       });
     }
+  });
+
+  it("says the parts its last part removed, with no attempt left to read them from", () => {
+    const phase = toFinishedPhase({
+      attemptId: ATTEMPT_ID,
+      finished: finished({ result: { ...RESULT, part: 3, partsRemoved: 11 } }),
+    });
+
+    expect(phase).toMatchObject({ attempt: null, kind: "result", partsRemoved: 11 });
   });
 
   it("counts the whole test on its last part's result, without an Undo that restores only that part", () => {

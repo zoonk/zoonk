@@ -77,6 +77,31 @@ function usePartsLeftFacts() {
   ];
 }
 
+/** What's left of the test, with why it's less than the learner was told when parts were removed. */
+function PartsLeft({ facts, partsRemoved }: { facts: string[]; partsRemoved: number }) {
+  const t = useExtracted();
+
+  if (facts.length === 0 && partsRemoved === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <TaskMeta facts={facts} />
+      {partsRemoved > 0 && (
+        <p className="text-muted-foreground text-xs">
+          {t({
+            description:
+              "After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.",
+            message:
+              "The test got shorter: topics that build on ones you don't know yet aren't tested.",
+          })}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** A full test's part is done and others are left. */
 export function PlacementCheckpoint({
   attempt,
@@ -128,7 +153,7 @@ export function PlacementCheckpoint({
         values: { part: attempt.part, parts: attempt.parts },
       })}
     >
-      <TaskMeta facts={partsLeft(attempt)} />
+      <PartsLeft facts={partsLeft(attempt)} partsRemoved={attempt.partsRemoved} />
     </TestOutcome>
   );
 }
@@ -277,7 +302,10 @@ export function PlacementResult({
       other={others}
       title={sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
-      {rest && <TaskMeta facts={[fullTest, ...partsLeft(rest)]} />}
+      <PartsLeft
+        facts={rest ? [fullTest, ...partsLeft(rest)] : []}
+        partsRemoved={result.partsRemoved}
+      />
       {nextLesson && <UpNextLesson title={nextLesson.title} />}
     </TestOutcome>
   );

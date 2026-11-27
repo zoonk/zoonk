@@ -10202,6 +10202,12 @@ msgctxt "jPv5OK"
 msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 msgstr "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
 
+#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "jWl7zP"
+msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
+msgstr "The test got shorter: topics that build on ones you don't know yet aren't tested."
+
 #. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "dpLv4V"

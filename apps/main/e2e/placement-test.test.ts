@@ -133,7 +133,10 @@ async function placeFullTest(
 }
 
 /** A learn goal whose full test has two parts of one topic each, open at part 1 with no questions. */
-async function createTwoPartTest(userId: string, options?: { preparationFailed?: boolean }) {
+async function createTwoPartTest(
+  userId: string,
+  { dependent = false, preparationFailed = false } = {},
+) {
   const goal = await createLearnGoal(userId);
 
   const topics = await prisma.planItem.findMany({
@@ -150,11 +153,15 @@ async function createTwoPartTest(userId: string, options?: { preparationFailed?:
 
   await Promise.all([
     prisma.item.deleteMany({ where: { skillId: { in: [first, second] } } }),
-    // Unknown topics close the ones that build on them, and these tests need the second one open.
+    // Unknown topics close the ones that build on them, so only a dependent test keeps a link.
     prisma.skillPrerequisite.deleteMany({ where: { skillId: second } }),
   ]);
 
-  return placeFullTest({ first, goalId: goal.id, second }, options);
+  if (dependent) {
+    await prisma.skillPrerequisite.create({ data: { prerequisiteId: first, skillId: second } });
+  }
+
+  return placeFullTest({ first, goalId: goal.id, second }, { preparationFailed });
 }
 
 async function finishQuickTest(page: Page) {
@@ -282,6 +289,29 @@ test.describe("Testing what you know from the plan", () => {
     await expect
       .poll(() => prisma.attempt.count({ where: { focusTestId: id, itemId: item.id } }))
       .toBe(1);
+  });
+
+  test("a part whose unknown topic removes the rest of the test says why it got shorter", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { first } = await createTwoPartTest(noProgressUser.id, { dependent: true });
+    const question = "What would you do first?";
+    await itemFixture({ content: choiceItemContent(question), skillId: first });
+
+    await page.goto("/placement-test");
+    await expect(page.getByRole("heading", { name: question })).toBeVisible();
+    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
+    await page.getByRole("button", { name: "I don't know yet" }).click();
+
+    await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
+
+    await expect(
+      page.getByText(
+        "The test got shorter: topics that build on ones you don't know yet aren't tested.",
+        { exact: true },
+      ),
+    ).toBeVisible();
   });
 
   test("coming back after another device moved the test on can't answer the question kept on screen", async ({

@@ -27,6 +27,8 @@ export type PlacementResultPhase = Skips & {
   attemptId: string;
   kind: "result";
   nextLesson: PlacementResult["nextLesson"];
+  /** Parts the test left out because they build on topics the learner doesn't know yet. */
+  partsRemoved: number;
 };
 
 export type PlacementTestPhase =
@@ -107,6 +109,7 @@ function toSavedResult({
     kind: "result",
     lessonsSkipped: result.lessonsSkipped,
     nextLesson: result.nextLesson ?? null,
+    partsRemoved: result.partsRemoved ?? 0,
   };
 }
 
@@ -244,5 +247,6 @@ export function toFinishedPhase({
     kind: "result",
     lessonsSkipped,
     nextLesson: result?.nextLesson ?? null,
+    partsRemoved: result?.partsRemoved ?? 0,
   };
 }
