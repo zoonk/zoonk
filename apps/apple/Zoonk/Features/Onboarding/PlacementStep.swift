@@ -260,7 +260,8 @@ struct PlacementQuestionScreen<Media: View>: View {
 
   var body: some View {
     PracticeTaskLayout {
-      ChipRow(chip: Chip(Text(verbatim: subject)), position: Text(verbatim: position))
+      ChipRow(
+        chip: Chip(Text(verbatim: subject)), position: Text(verbatim: position), stacked: true)
 
       // Under the voice message it belongs to, closer to it than to the question, as main's link.
       if let defersAudio {

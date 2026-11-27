@@ -38,13 +38,17 @@ struct Chip: View {
 
 /// Main's `OnboardingSubject`: where the learner is sits at the chip's row's end, never inside it.
 /// When both don't fit on one line, as at a large text size, the position goes under the chip and
-/// wraps there, so the row never runs past the column's edge.
+/// wraps there, so the row never runs past the column's edge. `stacked` always puts it there: a
+/// test's question, whose chip changes with its topic, keeps its position and the question in place.
 struct ChipRow: View {
   let chip: Chip
   var position: Text?
+  var stacked = false
 
   var body: some View {
-    if let position {
+    if let position, stacked {
+      under(position)
+    } else if let position {
       ViewThatFits(in: .horizontal) {
         HStack(spacing: 12) {
           chip
@@ -54,18 +58,22 @@ struct ChipRow: View {
             .fixedSize()
         }
 
-        VStack(alignment: .leading, spacing: 4) {
-          chip
-
-          styled(position)
-            .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        under(position)
       }
     } else {
       chip
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+  }
+
+  private func under(_ position: Text) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      chip
+
+      styled(position)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 
   private func styled(_ position: Text) -> some View {

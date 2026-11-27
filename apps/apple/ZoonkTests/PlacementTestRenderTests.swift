@@ -28,6 +28,56 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testAQuestionsPlaceInTheTestStaysPutWhenItsTopicChanges() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+    let isPosition = { (label: String) in
+      label.hasPrefix("Part 1 of 4") && label.hasSuffix("Question 1 of 12")
+    }
+    try await readsWhatVoiceOverReads()
+    var tops: [String: [CGFloat]] = [:]
+
+    for (name, topic) in [
+      ("short-topic", "Fractions"), ("long-topic", "Investing for the long run"),
+      (
+        "two-row-topic",
+        "Investing for the long run while paying off your student loans and saving for a home"
+      ),
+    ] {
+      let window = try show(
+        NavigationStack {
+          PlacementQuestionScreen(
+            subject: topic, number: 1, total: 12, part: (1, 4), question: question,
+            labels: .trueFalse, isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in },
+            onStop: {})
+        }
+        .environment(AppRouter())
+        .zoonkStyles())
+      try await waitForTestCondition("Missing the position: \(spoken(in: window))") {
+        spoken(in: window).contains(where: isPosition)
+      }
+      tops[name] = [isPosition, { $0 == question.question }].map { matches in
+        accessibilityElements(in: window).first { $0.accessibilityLabel.map(matches) ?? false }?
+          .accessibilityFrame.minY ?? -1
+      }
+
+      let attachment = XCTAttachment(
+        image: UIGraphicsImageRenderer(bounds: window.bounds).image { _ in
+          window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        })
+      attachment.name = "question-header-\(name)"
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(tops["short-topic"], tops["long-topic"], "The position and question move")
+    XCTAssertGreaterThan(
+      tops["two-row-topic"]?.first ?? 0, tops["long-topic"]?.first ?? 0,
+      "Only a chip that wraps inside itself moves what's under it")
+  }
+
   func testALevelTestOffersToStopOnlyOnceStoppingSavesALevel() async throws {
     let cache = AppCache(session: SessionStore.preview())
     let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
