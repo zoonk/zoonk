@@ -485,6 +485,14 @@
 
         Text(verbatim: "A sentence in a chip, such as a lesson screen's eyebrow, takes more lines")
           .chip(wraps: true)
+
+        FlowLayout(spacing: 8) {
+          ToggleChip(Text(verbatim: "Listening"), isOn: true) {}
+          ToggleChip(Text(verbatim: "Speaking"), isOn: false) {}
+          ToggleChip(Text(verbatim: "New words"), isOn: true) {}.disabled(true)
+          ToggleChip(Text(verbatim: "I learn best with examples"), isOn: false, words: .answer) {}
+          ToggleChip(Text(verbatim: "Short lessons"), isOn: true, words: .answer) {}
+        }
       }
       .padding(.vertical, 8)
     }

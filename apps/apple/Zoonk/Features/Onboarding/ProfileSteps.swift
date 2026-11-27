@@ -310,7 +310,7 @@ struct ProfileQuestionSections: View {
   private var chips: some View {
     FlowLayout(spacing: 8) {
       ForEach(view.options, id: \.id) { option in
-        ProfileChip(label: Text(option.label), isOn: draft.picks.contains(option.id)) {
+        ToggleChip(Text(option.label), isOn: draft.picks.contains(option.id), words: .answer) {
           draft.toggle(option.id)
         }
       }
@@ -338,47 +338,24 @@ struct ProfileQuestionSections: View {
   }
 }
 
-/// Main's profile chip: picked, its tint and ink line, so picking it never changes its width.
-private struct ProfileChip<Label: View>: View {
-  let label: Label
-  let isOn: Bool
-  let action: () -> Void
-
-  var body: some View {
-    Button(action: action) {
-      label
-        .multilineTextAlignment(.leading)
-        .typeStyle(.body)
-        .foregroundStyle(Color(.foreground))
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .frame(minHeight: 44)
-        .answerSurface(isOn ? .picked : .idle, cornerRadius: Radius.md)
-    }
-    .buttonStyle(.plain)
-    .accessibilityAddTraits(isOn ? .isSelected : [])
-  }
-}
-
 /// A typed tool: a picked chip that removes it when tapped.
 private struct TypedToolChip: View {
   let name: String
   let remove: () -> Void
 
   var body: some View {
-    ProfileChip(
-      label: HStack(spacing: 6) {
+    ToggleChip(isOn: true, words: .answer, action: remove) {
+      HStack(spacing: 6) {
         Text(verbatim: name)
         Image(systemName: "xmark")
           .imageScale(.small)
           .fontWeight(.semibold)
-      },
-      isOn: true, action: remove
-    )
+      }
+    }
     .accessibilityLabel(
       Text("Remove \(name)", tableName: "AboutYou", comment: "Removes a tool the learner typed")
     )
-    .accessibilityRemoveTraits(.isSelected)
+    .accessibilityRemoveTraits([.isSelected, .isToggle])
   }
 }
 
