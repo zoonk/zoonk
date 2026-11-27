@@ -164,6 +164,51 @@ test.describe("Buddy tab", () => {
     });
   });
 
+  test("a follow-up in a conversation older than the list's first page keeps its first question as its title", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      const oldest = await conversationFixture({
+        askedAt: new Date(Date.now() - 40 * 24 * MS_PER_HOUR),
+        goalId: user.goalId,
+        question: "What is a qubit?",
+        userId: user.id,
+      });
+
+      await Promise.all(
+        Array.from({ length: 30 }, (_, index) =>
+          conversationFixture({
+            askedAt: new Date(Date.now() - (index + 1) * 24 * MS_PER_HOUR),
+            goalId: user.goalId,
+            question: `Question from day ${index + 1}`,
+            userId: user.id,
+          }),
+        ),
+      );
+
+      await stubBuddy({ answers: [{ answer: "Through measurement." }], page });
+      await page.goto(`/buddy/${oldest.id}`);
+
+      const conversation = page.getByRole("region", { name: "Conversation with Otto" });
+      const composer = conversation.getByRole("textbox", { name: "Message Otto" });
+      const list = page.getByRole("complementary", { name: "Conversations" });
+
+      await expectHydrated(composer);
+      await expect(list.getByRole("link", { name: /^What is a qubit\?/u })).toBeHidden();
+
+      await composer.fill("How do you read one?");
+      await composer.press("Enter");
+      await expect(conversation.getByText("Through measurement.")).toBeVisible();
+
+      await expect(list.getByRole("link", { name: /^What is a qubit\?/u })).toHaveAttribute(
+        "aria-current",
+        "page",
+      );
+
+      await expect(list.getByRole("link", { name: /^How do you read one\?/u })).toBeHidden();
+    });
+  });
+
   test("a question from search waits in a new conversation's composer, and a conversation of another learner or another goal doesn't open", async ({
     browser,
   }) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { getFromBrowser } from "@/lib/api/browser-api";
 import {
   type BuddyConversations,
@@ -126,6 +126,7 @@ export function useBuddyConversations({
   readAt: number;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [blankId, setBlankId] = useState(() => crypto.randomUUID());
   const [older, setOlder] = useState<OlderConversations | null>(null);
   const [asked, setAsked] = useState<readonly BuddyConversation[]>([]);
@@ -146,7 +147,19 @@ export function useBuddyConversations({
 
   const open = openId ? { blank: false, id: openId } : { blank: true, id: blankId };
 
+  const isListed = (conversationId: string) =>
+    [...(read?.conversations ?? []), ...(older?.conversations ?? []), ...asked].some(
+      ({ id }) => id === conversationId,
+    );
+
   const questionSaved = ({ conversationId, question }: SavedQuestion) => {
+    // A conversation older than the pages read has a title this visit never saw: the list read again
+    // brings its row.
+    if (conversationId !== blankId && !isListed(conversationId)) {
+      router.refresh();
+      return;
+    }
+
     setAsked((current) =>
       [
         {
