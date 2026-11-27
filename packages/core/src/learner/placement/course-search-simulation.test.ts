@@ -48,6 +48,7 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
   let known = 0;
   let found = 0;
   let short = 0;
+  let longest = 0;
   const states = new Map<number, ReturnType<typeof courseSearch>>();
   const draws = 10_000;
 
@@ -93,6 +94,7 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
         const start = topics.findIndex((topic) => !state.startedPast.has(topic.id));
         high += Number(start >= boundary + 3);
         short += Number(start === 0 && answers.length <= 3);
+        longest = Math.max(longest, answers.length);
         known += skills.slice(0, boundary).filter(Boolean).length;
         found += skills.slice(0, Math.min(start, boundary)).filter(Boolean).length;
         break;
@@ -108,7 +110,15 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
     }
   }
 
-  return { found: found / known, high: high / draws, short: short / draws };
+  const result = {
+    found: known ? found / known : 0,
+    high: high / draws,
+    longest,
+    short: short / draws,
+  };
+
+  process.stdout.write(`${JSON.stringify({ bank, count, position, profile, ...result })}\n`);
+  return result;
 }
 
 describe("course search on a frozen bank", () => {
@@ -118,15 +128,29 @@ describe("course search on a frozen bank", () => {
     positions.map((position) => ({ count, position })),
   );
 
-  it.each(courses)("limits overshoot on $count topics at $position", ({ count, position }) => {
-    expect(simulate(count, 16, "calibrated", position).high).toBeLessThanOrEqual(
-      count === 150 ? 0.05 : 0.03,
-    );
-  });
+  it.each(courses)(
+    "measures calibrated learners on $count topics at $position",
+    ({ count, position }) => {
+      simulate(count, 8, "calibrated", position);
+      const measured = simulate(count, 16, "calibrated", position);
 
-  it.each(positions)("finds known topics at %s", (position) => {
-    expect(simulate(40, 16, "calibrated", position).found).toBeGreaterThanOrEqual(0.75);
-  });
+      expect(measured.longest).toBeLessThanOrEqual(Math.min(8, count * 2));
+
+      const overshootGate = new Map([
+        [12, 0.03],
+        [40, 0.03],
+        [150, 0.05],
+      ]).get(count);
+
+      if (overshootGate !== undefined) {
+        assertOvershoot(measured.high, overshootGate);
+      }
+
+      if (count === 40) {
+        assertRecovery(measured.found);
+      }
+    },
+  );
 
   it.each([8, 16])("ends at lesson one for novices with a %i-topic bank", (bank) => {
     expect(simulate(40, bank, "novice", 0.75).short).toBeGreaterThanOrEqual(0.85);
@@ -221,6 +245,14 @@ describe("every stopping point", () => {
   );
 });
 
+function assertRecovery(found: number) {
+  expect(found).toBeGreaterThanOrEqual(0.75);
+}
+
+function assertOvershoot(value: number, limit: number) {
+  expect(value).toBeLessThanOrEqual(limit);
+}
+
 const areaCases = [12, 40, 150].flatMap((count) =>
   (count === 12 ? [2, 3] : [2, 3, 5]).flatMap((areas) =>
     ["sequential", "interleaved"].flatMap((layout) =>
@@ -229,97 +261,129 @@ const areaCases = [12, 40, 150].flatMap((count) =>
   ),
 );
 
-test.each(areaCases)(
-  "measures $profile learners on $count topics in $areas $layout areas",
-  ({ count, areas, layout, profile }) => {
-    const topics = chain(count, 16, areas).map((topic, index) => ({
-      ...topic,
-      sectionTitle: layout === "interleaved" ? String(index % areas) : topic.sectionTitle,
-    }));
+describe("knowledge across syllabus modules", () => {
+  it.each(areaCases)(
+    "measures $profile learners on $count topics in $areas $layout areas",
+    ({ count, areas, layout, profile }) => {
+      const topics = chain(count, 16, areas).map((topic, index) => ({
+        ...topic,
+        sectionTitle: layout === "interleaved" ? String(index % areas) : topic.sectionTitle,
+      }));
 
-    const groups = [...Map.groupBy(topics, (topic) => topic.sectionTitle).values()];
-    const states = new Map<number, ReturnType<typeof courseSearch>>();
-    let seed = 42;
+      const groups = [...Map.groupBy(topics, (topic) => topic.sectionTitle).values()];
+      const states = new Map<number, ReturnType<typeof courseSearch>>();
+      let seed = 42;
 
-    const draw = () => {
-      seed = (seed * 1_664_525 + 1_013_904_223) >>> 0;
-      return seed / 2 ** 32;
-    };
+      const draw = () => {
+        seed = (seed * 1_664_525 + 1_013_904_223) % 2 ** 32;
+        return seed / 2 ** 32;
+      };
 
-    let found = 0,
-      high = 0,
-      known = 0;
+      let found = 0,
+        high = 0,
+        known = 0;
 
-    for (let trial = 0; trial < 10_000; trial++) {
-      const fraction = Math.max(
-        0,
-        Math.min(
-          1,
-          0.5 + 0.2 * Math.sqrt(-2 * Math.log(1 - draw())) * Math.cos(2 * Math.PI * draw()),
-        ),
-      );
+      for (let trial = 0; trial < 10_000; trial += 1) {
+        const fraction = Math.max(
+          0,
+          Math.min(
+            1,
+            0.5 + 0.2 * Math.sqrt(-2 * Math.log(1 - draw())) * Math.cos(2 * Math.PI * draw()),
+          ),
+        );
 
-      const strong = Math.floor(draw() * areas),
-        weak = (strong + 1) % areas;
+        const strong = Math.floor(draw() * areas),
+          weak = (strong + 1) % areas;
 
-      const ends = groups.map((group, area) => {
-        if (profile === "prefix")
-          {return group.filter((topic) => Number(topic.id) < Math.round(count * fraction)).length;}
-        const extent =
-          area === strong ? 0.75 + draw() * 0.25 : (area === weak ? draw() * 0.25 : fraction);
-
-        return Math.round(group.length * extent);
-      });
-
-      const prefix = new Set(
-        groups.flatMap((group, area) => group.slice(0, ends[area]).map((topic) => topic.id)),
-      );
-
-      const learned = topics.map((topic) => draw() < (prefix.has(topic.id) ? 0.9 : 0.03));
-
-      const responses = learned.flatMap((learnedTopic) => {
-        const chance = learnedTopic ? 0.85 : 0.02;
-        return [draw() < chance, draw() < chance];
-      });
-
-      const answers: CourseSearchAnswer[] = [];
-      let path = 1;
-
-      for (;;) {
-        const state =
-          states.get(path) ?? courseSearch({ answers, ceiling: 8, position: 0.5, topics });
-
-        states.set(path, state);
-
-        if (!state.itemId) {
-          high += Number(
-            groups.some(
-              (group, i) =>
-                group.filter((topic) => state.startedPast.has(topic.id)).length >= ends[i]! + 3,
-            ),
-          );
-
-          for (const topic of topics) {
-            if (prefix.has(topic.id) && learned[Number(topic.id)]) {
-              known++;
-              if (state.startedPast.has(topic.id)) {found++;}
-            }
+        const ends = groups.map((group, area) => {
+          if (profile === "prefix") {
+            return group.filter((topic) => Number(topic.id) < Math.round(count * fraction)).length;
           }
 
-          break;
+          const extent = area === strong ? 0.75 + draw() * 0.25 : fraction;
+
+          if (area === weak) {
+            return Math.round(group.length * draw() * 0.25);
+          }
+
+          return Math.round(group.length * extent);
+        });
+
+        const prefix = new Set(
+          groups.flatMap((group, area) => group.slice(0, ends[area]).map((topic) => topic.id)),
+        );
+
+        const learned = topics.map((topic) => draw() < (prefix.has(topic.id) ? 0.9 : 0.03));
+
+        const responses = learned.flatMap((learnedTopic) => {
+          const chance = learnedTopic ? 0.85 : 0.02;
+          return [draw() < chance, draw() < chance];
+        });
+
+        const answers: CourseSearchAnswer[] = [];
+        let path = 1;
+
+        for (;;) {
+          const state =
+            states.get(path) ?? courseSearch({ answers, ceiling: 8, position: 0.5, topics });
+
+          states.set(path, state);
+
+          if (!state.itemId) {
+            high += Number(
+              groups.some(
+                (group, i) =>
+                  group.filter((topic) => state.startedPast.has(topic.id)).length >= ends[i]! + 3,
+              ),
+            );
+
+            const knownTopics = topics.filter(
+              (topic) => prefix.has(topic.id) && learned[Number(topic.id)],
+            );
+
+            known += knownTopics.length;
+            found += knownTopics.filter((topic) => state.startedPast.has(topic.id)).length;
+            break;
+          }
+
+          if (answers.length >= 8) {
+            throw new Error("Question ceiling exceeded");
+          }
+
+          const correct = responses[Number(state.itemId)]!;
+          answers.push({ correct, itemId: state.itemId });
+          path = path * 2 + Number(correct);
         }
-
-        if (answers.length >= 8) {throw new Error("Question ceiling exceeded");}
-        const correct = responses[Number(state.itemId)]!;
-        answers.push({ correct, itemId: state.itemId });
-        path = path * 2 + Number(correct);
       }
-    }
 
-    console.info({ areas, count, found: found / known, layout, overshoot: high / 10000, profile });
+      const gate =
+        profile === "prefix"
+          ? new Map([
+              [12, 0.03],
+              [40, 0.03],
+              [150, 0.05],
+            ]).get(count)
+          : new Map([
+              [12, 0.08],
+              [40, 0.08],
+            ]).get(count);
 
-    if (profile === "prefix") {expect(high / 10000).toBeLessThanOrEqual(count === 150 ? 0.05 : 0.03);}
-    else if (count === 150) {expect(found).toBeGreaterThan(0);}
-    else {expect(high / 10000).toBeLessThanOrEqual(0.08);}
-  },
-);
+      process.stdout.write(
+        `${JSON.stringify({
+          areas,
+          count,
+          found: found / known,
+          high: high / 10_000,
+          layout,
+          profile,
+        })}\n`,
+      );
+
+      expect(found).toBeGreaterThan(0);
+
+      if (gate !== undefined) {
+        assertOvershoot(high / 10_000, gate);
+      }
+    },
+  );
+});
