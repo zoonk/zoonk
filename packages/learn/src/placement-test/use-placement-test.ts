@@ -2,7 +2,11 @@
 
 import { useRef, useState } from "react";
 import { type GenerationRun } from "../generation/generation-run";
-import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
+import {
+  type PlacementAnswer,
+  type PlacementAttemptView,
+  type PlacementOutcome,
+} from "../onboarding/onboarding-actions";
 import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { isRunStopped } from "../onboarding/steps/wait-run";
 import { type PlacementLength, type PlacementTestActions } from "./placement-test-actions";
@@ -24,8 +28,8 @@ export type PlacementTestHost =
   | {
       /** "First lesson": saves that the learner starts without a test; false when it didn't. */
       decline: () => Promise<boolean>;
-      /** The learner told us their level, so the first lesson starts there. */
-      levelGiven: boolean;
+      /** The first lesson's name, where onboarding knows it. */
+      firstLesson: string | null;
       mode: "direct" | "offer" | "resume";
       surface: "onboarding";
     }
@@ -198,8 +202,9 @@ export function usePlacementTest({
     },
     failed,
     isPending,
-    /** The full test from here on: its next part, the part it stopped in, or the rest after a short test. */
-    onContinue: () => save("main", start("wholeCourse")),
+    /** Goes on with a test that was stopped before its end. */
+    onContinue: (attempt: Pick<PlacementAttemptView, "length">) =>
+      save("main", start(attempt.length)),
     onDecline: () =>
       save("main", async () =>
         host.surface === "onboarding" && (await host.decline()) ? onLeave() : false,
@@ -215,9 +220,7 @@ export function usePlacementTest({
         save("main", start(waiting.retryLength));
       }
     },
-    onStart: (length: PlacementLength) => save("main", start(length)),
-    /** "Test the rest" sits beside the result's main action. */
-    onTestTheRest: () => save("other", start("wholeCourse")),
+    onStart: () => save("main", start("quick")),
     phase,
     poll,
     pressed,

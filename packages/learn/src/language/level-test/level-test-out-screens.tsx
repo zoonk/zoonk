@@ -6,7 +6,6 @@ import { type OnboardingActions } from "../../onboarding/onboarding-actions";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { PlacementWaiting } from "../../onboarding/steps/placement-waiting";
 import { type TestAnalytics } from "../../placement-test/use-test-analytics";
-import { useTestFacts } from "../../placement-test/use-test-facts";
 import { ItemSetStimulus } from "../../questions/item-set-stimulus";
 import { type LevelTestPhase } from "./level-test-phase";
 import { TestOutResult } from "./level-test-results";
@@ -29,31 +28,32 @@ export function LevelTestOutScreens({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
-  const facts = useTestFacts();
   const { pressed } = test;
 
   switch (phase.kind) {
     case "testOut": {
       const { question, view } = phase;
       const askedIn = `${view.attemptId}:${question.itemId}`;
-      const number = view.answered + 1;
 
       return (
         <PlacementQuestionScreen
           failures={phase.failures}
           key={question.itemId}
           media={question.set && <ItemSetStimulus askedIn={askedIn} set={question.set} />}
-          number={number}
+          answered={view.answered}
           onAnswer={test.onTestOutAnswer(phase)}
           onClose={() =>
-            analytics.left({ attemptId: view.attemptId, number, questions: view.total })
+            analytics.left({
+              attemptId: view.attemptId,
+              number: view.answered + 1,
+              questions: view.total,
+            })
           }
           onStop={() => test.onTestOutStop(view.attemptId)}
           pending={test.isPending}
-          position={[facts.question({ number, total: view.total })]}
-          progress={view.answered / view.total}
           question={question}
           subject={t("Test out of {level}", { level: view.level })}
+          total={view.total}
           trueFalseLabels={trueFalseLabels}
         />
       );

@@ -2,97 +2,75 @@
 
 import { useExtracted } from "next-intl";
 import { type PlacementAttemptView } from "../onboarding/onboarding-actions";
-import { type PlacementLength } from "./placement-test-actions";
-import { TestInvitation, TestOffer, type TestOfferRow, type TestPressed } from "./test-offer";
+import { TestOffer, type TestOfferCard, type TestPressed } from "./test-offer";
 import { type TestFactsNow, type TestRowId } from "./use-test-analytics";
 import { useTestFacts } from "./use-test-facts";
 
-/** What the course's test asks before it starts; null for a row with nothing to say. */
-export type CourseTestOffer = {
-  estimatedMinutes: number;
-  questions: number;
-  wholeCourse: { estimatedMinutes: number; parts: number } | null;
-} | null;
+/** What the course's test asks before it starts; null when the server has nothing to say. */
+export type CourseTestOffer = { estimatedMinutes: number; questions: number } | null;
 
-type OfferChoice = PlacementLength | "firstLesson";
-
-/** The rows an offer put on screen, by their stable ids, the one that came picked and their counts. */
-export type OfferedRows = Pick<TestFactsNow, "parts" | "questions"> & {
+/** The cards an offer put on screen, by their stable ids, the one that came picked and its count. */
+export type OfferedRows = Pick<TestFactsNow, "questions"> & {
   preselected: TestRowId;
   rows: readonly TestRowId[];
 };
 
-const COURSE_ROW_IDS: Record<PlacementLength, TestRowId> = {
-  quick: "quick",
-  wholeCourse: "whole_course",
-};
-
+/** The words and cards every test's offer shares. */
 export function useTestOfferTexts() {
   const t = useExtracted();
+  const facts = useTestFacts();
 
   return {
-    /** Says where it starts only to a learner who told us their level. */
-    firstLesson: (levelGiven: boolean) =>
-      ({
-        facts: levelGiven ? [t("Starts at the level you gave")] : [],
-        label: t("First lesson"),
-        value: "firstLesson",
-      }) as const,
+    /** The other way to start, by the lesson's name where onboarding knows it. */
+    firstLesson: (title: string | null): TestOfferCard<"firstLesson"> => ({
+      label: t("First lesson"),
+      line: title,
+      mark: "lesson",
+      value: "firstLesson",
+    }),
     lessonsLine: t("A test finds the lessons you can skip."),
     skipTitle: t("Skip what you already know"),
     startTitle: t("Where would you like to start?"),
+    /** A test's card: the most it asks, and how long it takes as the card's readout. */
+    test: <Value extends string>({
+      label,
+      minutes,
+      questions,
+      value,
+    }: {
+      label: string;
+      minutes: number | null;
+      questions: number | null;
+      value: Value;
+    }): TestOfferCard<Value> => ({
+      label,
+      line: questions === null ? null : facts.upToQuestions(questions),
+      mark: "test",
+      minutes,
+      value,
+    }),
   };
 }
 
-export function useFullTestLabel(): string {
+function useCourseCard(offer: CourseTestOffer): TestOfferCard<"test"> {
   const t = useExtracted();
+  const texts = useTestOfferTexts();
 
-  return t({
-    description: "The long test: it checks every topic still ahead, in parts.",
-    message: "Full test",
+  return texts.test({
+    label: t({
+      description: "The name of a course's placement test, on the card that offers it.",
+      message: "Test",
+    }),
+    minutes: offer?.estimatedMinutes ?? null,
+    questions: offer?.questions ?? null,
+    value: "test",
   });
 }
 
-/** The counts the course's rows show; null where the server has none. */
-function toOfferCounts(offer: CourseTestOffer): Pick<TestFactsNow, "parts" | "questions"> {
-  return { parts: offer?.wholeCourse?.parts ?? null, questions: offer?.questions ?? null };
-}
-
-function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] {
-  const t = useExtracted();
-  const facts = useTestFacts();
-  const fullTest = useFullTestLabel();
-
-  return [
-    {
-      facts: offer
-        ? [facts.upToQuestions(offer.questions), facts.about(offer.estimatedMinutes)]
-        : [],
-      label: t({
-        description: "The short test: about six minutes of questions.",
-        message: "Quick test",
-      }),
-      value: "quick",
-    },
-    ...(offer?.wholeCourse
-      ? [
-          {
-            facts: [
-              facts.partsAnyDay(offer.wholeCourse.parts),
-              facts.about(offer.wholeCourse.estimatedMinutes),
-            ],
-            label: fullTest,
-            value: "wholeCourse" as const,
-          },
-        ]
-      : []),
-  ];
-}
-
-/** Onboarding's offer: a first lesson or a test, the short test picked. */
+/** Onboarding's offer: the test, picked, or the first lesson. */
 export function CourseStartOffer({
   failed,
-  levelGiven,
+  firstLesson,
   offer,
   onFirstLesson,
   onShown,
@@ -100,39 +78,40 @@ export function CourseStartOffer({
   pressed,
 }: {
   failed: boolean;
-  levelGiven: boolean;
+  /** The first lesson's name, where onboarding knows it. */
+  firstLesson: string | null;
   offer: CourseTestOffer;
   onFirstLesson: () => void;
   onShown: (offered: OfferedRows) => void;
-  onStart: (length: PlacementLength) => void;
+  onStart: () => void;
   pressed: TestPressed;
 }) {
   const t = useExtracted();
   const texts = useTestOfferTexts();
-  const rows = useCourseRows(offer);
+  const test = useCourseCard(offer);
 
   return (
-    <TestOffer<OfferChoice>
+    <TestOffer<"firstLesson" | "test">
+      cards={[test, texts.firstLesson(firstLesson)]}
       description={texts.lessonsLine}
       failed={failed}
-      initial="quick"
+      initial="test"
       mainLabel={(choice) => (choice === "firstLesson" ? t("Continue") : t("Start"))}
       onShown={() =>
         onShown({
-          ...toOfferCounts(offer),
           preselected: "quick",
-          rows: ["first_lesson", ...rows.map((row) => COURSE_ROW_IDS[row.value])],
+          questions: offer?.questions ?? null,
+          rows: ["quick", "first_lesson"],
         })
       }
-      onStart={(choice) => (choice === "firstLesson" ? onFirstLesson() : onStart(choice))}
+      onStart={(choice) => (choice === "firstLesson" ? onFirstLesson() : onStart())}
       pressed={pressed}
-      rows={[texts.firstLesson(levelGiven), ...rows]}
       title={texts.startTitle}
     />
   );
 }
 
-/** The Plan's offer: the tests as rows when there are two, the one test alone otherwise. */
+/** The Plan's offer: the test's card and the way in. */
 export function CoursePlanOffer({
   failed,
   offer,
@@ -145,53 +124,31 @@ export function CoursePlanOffer({
   offer: CourseTestOffer;
   onNotNow: () => void;
   onShown: (offered: OfferedRows) => void;
-  onStart: (length: PlacementLength) => void;
+  onStart: () => void;
   pressed: TestPressed;
 }) {
   const t = useExtracted();
   const texts = useTestOfferTexts();
-  const rows = useCourseRows(offer);
-  const other = { label: t("Not now"), onPress: onNotNow };
-
-  const shown = () =>
-    onShown({
-      ...toOfferCounts(offer),
-      preselected: "quick",
-      rows: rows.map((row) => COURSE_ROW_IDS[row.value]),
-    });
-
-  if (rows.length > 1) {
-    return (
-      <TestOffer
-        description={texts.lessonsLine}
-        failed={failed}
-        initial="quick"
-        onShown={shown}
-        onStart={onStart}
-        other={other}
-        pressed={pressed}
-        rows={rows}
-        title={texts.skipTitle}
-      />
-    );
-  }
+  const test = useCourseCard(offer);
 
   return (
-    <TestInvitation
-      chip={t("Test what you know")}
+    <TestOffer
+      cards={[test]}
       description={texts.lessonsLine}
-      facts={rows[0]?.facts ?? []}
       failed={failed}
-      onShown={shown}
-      onStart={() => onStart("quick")}
-      other={other}
+      initial="test"
+      onShown={() =>
+        onShown({ preselected: "quick", questions: offer?.questions ?? null, rows: ["quick"] })
+      }
+      onStart={onStart}
+      other={{ label: t("Not now"), onPress: onNotNow }}
       pressed={pressed}
       title={texts.skipTitle}
     />
   );
 }
 
-/** Back at a full test with parts left: where it stands and the way on. */
+/** Back at a test the learner stopped before its end: where it stands and the way on. */
 export function PlacementContinue({
   attempt,
   failed,
@@ -209,24 +166,22 @@ export function PlacementContinue({
 }) {
   const t = useExtracted();
   const facts = useTestFacts();
-  const { parts, resume } = attempt;
-
-  const where = resume
-    ? [
-        facts.part({ part: resume.part, parts }),
-        facts.question({ number: resume.question, total: attempt.questions }),
-      ]
-    : [
-        facts.part({ part: attempt.nextPart ?? attempt.part, parts }),
-        facts.aboutLeft(attempt.remainingEstimatedMinutes),
-      ];
+  const test = useCourseCard(null);
 
   return (
-    <TestInvitation
-      chip={t("Test what you know")}
-      facts={where}
+    <TestOffer
+      cards={[
+        {
+          ...test,
+          line: facts.question({
+            number: attempt.resume?.question ?? attempt.answered + 1,
+            total: attempt.questions,
+          }),
+        },
+      ]}
       failed={failed}
-      mainLabel={t("Continue")}
+      initial="test"
+      mainLabel={() => t("Continue")}
       onShown={() => onShown({ preselected: "continue", rows: ["continue"] })}
       onStart={onContinue}
       other={{ label: t("Finish later"), onPress: onLeave }}

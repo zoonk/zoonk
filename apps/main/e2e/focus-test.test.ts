@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
+import { stopTest, testQuestion } from "./onboarding-fixtures";
 import { refuseStartAfterWait } from "./refused-start";
 
 const CITATION = { passage: "passage", sourceId: "notice" };
@@ -177,9 +178,7 @@ async function rejectCompletion(page: Page) {
   return () => page.unroute(anyRequest);
 }
 
-function question(page: Page, number: number) {
-  return page.getByText(new RegExp(`^Question ${number} of \\d+$`, "u"));
-}
+const question = testQuestion;
 
 async function loadSaved({ goalId, userId }: { goalId: string; userId: string }) {
   const [attempts, goal] = await Promise.all([
@@ -215,7 +214,7 @@ test.describe("An exam's Focus test in onboarding", () => {
     await page.getByRole("button", { exact: true, name: "Confirm" }).click();
     await expect(question(page, 3)).toBeVisible();
 
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
+    await stopTest(page);
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
@@ -237,7 +236,6 @@ test.describe("An exam's Focus test in onboarding", () => {
     await page.goto(`/start/${goal.id}`);
 
     await expect(page.getByRole("radio", { name: /Up to \d+ questions/u })).toBeVisible();
-    await expect(page.getByText("Starts at the level you gave")).toBeHidden();
 
     await page.getByRole("radio", { name: /First lesson/u }).click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
@@ -263,7 +261,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await expect(question(page, 1)).toBeVisible();
   await page.getByRole("button", { name: "I don't know yet" }).click();
   await expect(question(page, 2)).toBeVisible();
-  await page.getByRole("button", { name: "Stop and use my answers" }).click();
+  await stopTest(page);
 
   const update = page.getByRole("button", { name: "Change my plan" });
   await expect(page.getByRole("heading", { name: "Give these subjects more time?" })).toBeVisible();

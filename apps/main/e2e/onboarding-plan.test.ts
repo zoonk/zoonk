@@ -10,7 +10,13 @@ import { pressAnswerKey } from "./answer-key";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
-import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
+import {
+  ANSWERED,
+  createMappedGoal,
+  solvePlacementEquation,
+  testLeave,
+  testQuestion,
+} from "./onboarding-fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
@@ -53,9 +59,10 @@ test.describe("Placement and the plan", () => {
 
     const question = page.getByRole("heading", { name: /^Solve x/u });
     await expect(question).toBeVisible();
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
-    const stop = page.getByRole("button", { name: "Stop and use my answers" });
-    await expect(stop).toBeHidden();
+    await expect(testQuestion(page, 1, 12)).toBeVisible();
+    // Stopping on the first question would use no answer, so ✕ only leaves.
+    const leave = testLeave(page);
+    await expect(leave).not.toHaveAttribute("aria-haspopup");
     const first = await question.innerText();
     const solution = solvePlacementEquation(first);
 
@@ -69,11 +76,11 @@ test.describe("Placement and the plan", () => {
     await expect(right).toBeChecked();
     await page.keyboard.press("Enter");
 
-    await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
+    await expect(testQuestion(page, 2, 12)).toBeVisible();
 
     await page.reload();
-    await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
-    await expect(stop).toBeEnabled();
+    await expect(testQuestion(page, 2, 12)).toBeVisible();
+    await expect(leave).toHaveAttribute("aria-haspopup", "dialog");
 
     // An unknown topic closes the ones that build on it, so here the test has nothing more to ask.
     await page.getByRole("button", { name: "I don't know yet" }).click();

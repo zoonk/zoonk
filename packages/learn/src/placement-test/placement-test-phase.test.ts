@@ -96,14 +96,12 @@ describe(toPlacementTestPhase, () => {
     expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({ kind: "offer" });
 
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual({
-      attempt: null,
       attemptId: ATTEMPT_ID,
       changeId: CHANGE_ID,
       heldUntilTomorrow: false,
       kind: "result",
       lessonsSkipped: 5,
       nextLesson: NEXT_LESSON,
-      partsRemoved: 0,
     });
   });
 
@@ -177,12 +175,12 @@ describe(toPlacementTestPhase, () => {
     });
   });
 
-  it("says where a full test stands between parts and after a stop midway", () => {
+  it("goes on with a test that was stopped before its end and has no result", () => {
     const between = { ...FULL, partComplete: true };
     const stopped = { ...FULL, resume: { part: 3, question: 5 } };
 
     for (const attempt of [between, stopped]) {
-      const outcome = ready({ attempt, result: RESULT });
+      const outcome = ready({ attempt });
 
       expect(toPlacementTestPhase({ outcome, surface: "plan" })).toStrictEqual({
         attempt,
@@ -191,23 +189,13 @@ describe(toPlacementTestPhase, () => {
     }
   });
 
-  it("shows a short test that ended as its result, with the rest of the course still to test", () => {
+  it("shows a test that ended as its result", () => {
     const ended = { ...QUICK, partComplete: true };
     const outcome = ready({ attempt: ended, result: RESULT });
 
     expect(toPlacementTestPhase({ outcome, surface: "plan" })).toMatchObject({
-      attempt: ended,
       kind: "result",
       lessonsSkipped: 5,
-    });
-  });
-
-  it("keeps the parts a finished test removed when onboarding shows its result again", () => {
-    const outcome = ready({ result: { ...RESULT, partsRemoved: 2 } });
-
-    expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toMatchObject({
-      kind: "result",
-      partsRemoved: 2,
     });
   });
 
@@ -219,27 +207,7 @@ describe(toPlacementTestPhase, () => {
 });
 
 describe(toFinishedPhase, () => {
-  it("stops a full test's finished part at its checkpoint, counting that part's skips", () => {
-    const attempt = { ...FULL, partComplete: true };
-    const phase = toFinishedPhase({ attemptId: ATTEMPT_ID, finished: finished({ attempt }) });
-
-    expect(phase).toStrictEqual({
-      attempt,
-      changeId: CHANGE_ID,
-      heldUntilTomorrow: false,
-      kind: "checkpoint",
-      lessonsSkipped: 2,
-    });
-  });
-
-  it("says where a full test resumes when the learner stopped midway, never that the part is done", () => {
-    const attempt = { ...FULL, resume: { part: 3, question: 5 } };
-    const phase = toFinishedPhase({ attemptId: ATTEMPT_ID, finished: finished({ attempt }) });
-
-    expect(phase).toMatchObject({ attempt, kind: "stopped", lessonsSkipped: 2 });
-  });
-
-  it("ends the short test at its result, stopped or not, while the course has parts left", () => {
+  it("ends the test at its result, stopped or not", () => {
     const complete = { ...QUICK, partComplete: true };
     const stopped = { ...QUICK, resume: { part: 1, question: 5 } };
 
@@ -250,25 +218,14 @@ describe(toFinishedPhase, () => {
       });
 
       expect(phase).toStrictEqual({
-        attempt,
         attemptId: ATTEMPT_ID,
         changeId: CHANGE_ID,
         heldUntilTomorrow: false,
         kind: "result",
         lessonsSkipped: 5,
         nextLesson: NEXT_LESSON,
-        partsRemoved: 0,
       });
     }
-  });
-
-  it("says the parts its last part removed, with no attempt left to read them from", () => {
-    const phase = toFinishedPhase({
-      attemptId: ATTEMPT_ID,
-      finished: finished({ result: { ...RESULT, part: 3, partsRemoved: 11 } }),
-    });
-
-    expect(phase).toMatchObject({ attempt: null, kind: "result", partsRemoved: 11 });
   });
 
   it("counts the whole test on its last part's result, without an Undo that restores only that part", () => {
@@ -277,23 +234,7 @@ describe(toFinishedPhase, () => {
       finished: finished({ result: { ...RESULT, lessonsSkipped: 9, part: 14 } }),
     });
 
-    expect(phase).toMatchObject({
-      attempt: null,
-      changeId: null,
-      kind: "result",
-      lessonsSkipped: 9,
-    });
-  });
-
-  it("offers no Undo on a part whose earlier stop already skipped some of what the screen counts", () => {
-    const attempt = { ...FULL, partComplete: true };
-
-    const phase = toFinishedPhase({
-      attemptId: ATTEMPT_ID,
-      finished: finished({ attempt, lessonsSkipped: 1, partLessonsSkipped: 3 }),
-    });
-
-    expect(phase).toMatchObject({ changeId: null, kind: "checkpoint", lessonsSkipped: 3 });
+    expect(phase).toMatchObject({ changeId: null, kind: "result", lessonsSkipped: 9 });
   });
 
   it("carries a skip held until tomorrow", () => {

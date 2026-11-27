@@ -28,30 +28,22 @@ function useRowFacts() {
       ? [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)]
       : [invitation, minutes ? facts.about(minutes) : null];
 
-  /** A short test that ended shows its result; a full test with parts left says where it stands. */
+  /** A test that ended shows its result; one that's open says where it stands. */
   const course = (test: CourseRow) => {
     const { attempt } = test;
     const resting = attempt && (attempt.partComplete || attempt.resume !== null);
 
-    if (!attempt || (attempt.length === "quick" && resting)) {
+    if (!attempt || (test.result && resting)) {
       return result(test, t("Skip lessons you already know"), test.offer?.estimatedMinutes);
     }
 
-    const question = facts.question({
-      number: attempt.resume?.question ?? attempt.answered + 1,
-      total: attempt.questions,
-    });
-
-    if (attempt.length === "quick") {
-      return [t("In progress"), question];
-    }
-
-    return attempt.partComplete
-      ? [
-          facts.part({ part: attempt.nextPart ?? attempt.part, parts: attempt.parts }),
-          facts.aboutLeft(attempt.remainingEstimatedMinutes),
-        ]
-      : [facts.part({ part: attempt.part, parts: attempt.parts }), question];
+    return [
+      t("In progress"),
+      facts.question({
+        number: attempt.resume?.question ?? attempt.answered + 1,
+        total: attempt.questions,
+      }),
+    ];
   };
 
   return (test: PlacementTestRow) => {

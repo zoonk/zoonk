@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Locator, type Page } from "@playwright/test";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import {
@@ -37,6 +38,25 @@ export const ANSWERED = [
   "buddy",
   ...PROFILE_QUESTIONS,
 ];
+
+/** Where a test is, which only its header's segments say; `total` is any when omitted. */
+export function testQuestion(page: Page, number: number, total?: number): Locator {
+  return page
+    .getByRole("progressbar", {
+      name: new RegExp(`^Question ${number} of ${total ?? String.raw`\d+`}$`, "u"),
+    })
+    .filter({ visible: true });
+}
+
+/** A test's ✕: it offers the two ways out once stopping gives a result, and only leaves before. */
+export function testLeave(page: Page): Locator {
+  return page.getByRole("link", { exact: true, name: "Leave" }).filter({ visible: true });
+}
+
+export async function stopTest(page: Page) {
+  await testLeave(page).click();
+  await page.getByRole("button", { name: "Stop and use my answers" }).click();
+}
 
 export function solvePlacementEquation(question: string): string | null {
   const equation = /x \+ (?<addend>\d+) = (?<total>\d+)/u.exec(question)?.groups;

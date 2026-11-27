@@ -4,7 +4,13 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
-import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
+import {
+  ANSWERED,
+  createMappedGoal,
+  solvePlacementEquation,
+  stopTest,
+  testQuestion,
+} from "./onboarding-fixtures";
 
 const STEPS = [
   "Write the equation",
@@ -51,8 +57,6 @@ async function createLearnGoal(userId: string, { onboarding = false } = {}) {
   return goal;
 }
 
-const confirm = (page: Page) => page.getByRole("button", { exact: true, name: "Confirm" }).click();
-
 async function sortSteps(page: Page) {
   const list = page.getByRole("list", { name: "Steps, in your order" });
   const rows = list.getByRole("button");
@@ -73,8 +77,11 @@ async function sortSteps(page: Page) {
   /* oxlint-enable no-await-in-loop */
 }
 
+const atQuestion = (page: Page, number: number) =>
+  expect(testQuestion(page, number, 12)).toBeVisible();
+
 async function answerRight(page: Page) {
-  const title = page.getByRole("heading", { level: 1, name: /Solve x \+|Put the/u });
+  const title = page.getByRole("heading", { level: 2, name: /Solve x \+|Put the/u });
   const text = await title.innerText();
   const solution = solvePlacementEquation(text);
 
@@ -133,10 +140,7 @@ async function placeFullTest(
 }
 
 /** A learn goal whose full test has two parts of one topic each, open at part 1 with no questions. */
-async function createTwoPartTest(
-  userId: string,
-  { dependent = false, preparationFailed = false } = {},
-) {
+async function createTwoPartTest(userId: string, { preparationFailed = false } = {}) {
   const goal = await createLearnGoal(userId);
 
   const topics = await prisma.planItem.findMany({
@@ -153,13 +157,9 @@ async function createTwoPartTest(
 
   await Promise.all([
     prisma.item.deleteMany({ where: { skillId: { in: [first, second] } } }),
-    // Unknown topics close the ones that build on them, so only a dependent test keeps a link.
+    // Unknown topics close the ones that build on them.
     prisma.skillPrerequisite.deleteMany({ where: { skillId: second } }),
   ]);
-
-  if (dependent) {
-    await prisma.skillPrerequisite.create({ data: { prerequisiteId: first, skillId: second } });
-  }
 
   return placeFullTest({ first, goalId: goal.id, second }, { preparationFailed });
 }
@@ -169,17 +169,17 @@ async function finishQuickTest(page: Page) {
 
   for (const number of [1, 2, 3, 4]) {
     // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
-    await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
+    await atQuestion(page, number);
     // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
     await answerRight(page);
   }
 
-  await page.getByRole("button", { name: "Stop and use my answers" }).click();
+  await stopTest(page);
   await expect(page.getByRole("heading", { name: /^[1-9]\d* lessons? skipped$/u })).toBeVisible();
 }
 
 test.describe("Testing what you know from the plan", () => {
-  test("a quick test skips lessons and Undo on the result restores them", async ({
+  test("a test skips lessons and Undo on the result restores them", async ({
     noProgressUser,
     userWithoutProgress: page,
   }, testInfo) => {
@@ -190,7 +190,7 @@ test.describe("Testing what you know from the plan", () => {
 
     await expect(page.getByRole("heading", { name: "Skip what you already know" })).toBeVisible();
 
-    await expect(page.getByRole("radio", { name: /Quick/u })).toBeChecked();
+    await expect(page.getByText("Up to 12 questions", { exact: true })).toBeVisible();
     await finishQuickTest(page);
     expect(await skippedLessons(goal.id)).toBeGreaterThan(0);
 
@@ -223,7 +223,6 @@ test.describe("Testing what you know from the plan", () => {
     });
 
     await page.goto("/placement-test");
-    await page.getByRole("radio", { name: /Full test/u }).click();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(
@@ -236,82 +235,6 @@ test.describe("Testing what you know from the plan", () => {
     await expect(page.getByText("Reading your goal", { exact: true })).toBeHidden();
     await expect(page.getByText("Choosing what to learn", { exact: true })).toBeHidden();
     await page.screenshot({ path: testInfo.outputPath("placement-plan-wait.png") });
-  });
-
-  test("a later part waits for its own question after the first part's wait", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }, testInfo) => {
-    const { first, id, second } = await createTwoPartTest(noProgressUser.id);
-
-    const waiting = page.getByRole("heading", {
-      exact: true,
-      level: 1,
-      name: "Getting your test ready",
-    });
-
-    await page.goto("/placement-test");
-    await expect(waiting).toBeVisible();
-
-    const firstQuestion = "What would you do first?";
-    await itemFixture({ content: choiceItemContent(firstQuestion), skillId: first });
-    await expect(page.getByRole("heading", { name: firstQuestion })).toBeVisible();
-    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
-    await page.getByRole("button", { name: "I don't know yet" }).click();
-    await expect(page.getByRole("heading", { name: "Part 1 of 2 done" })).toBeVisible();
-
-    await expect(
-      page.getByText("No lessons skipped in this part. Your answers are saved.", { exact: true }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { exact: true, name: "Keep going" }).click();
-
-    const secondQuestion = "What would you do next?";
-    await expect(waiting).toBeVisible();
-    await expect(page.getByRole("heading", { name: firstQuestion })).toBeHidden();
-
-    await page.getByRole("link", { exact: true, name: "Leave" }).click();
-    await expect(page).toHaveURL(/\/plan$/u);
-    await page.getByRole("link", { name: /Test what you know.*Part 2 of 2/u }).click();
-    await expect(waiting).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath("placement-part-two-wait.png") });
-
-    const item = await itemFixture({ content: choiceItemContent(secondQuestion), skillId: second });
-
-    await expect(page.getByRole("heading", { name: secondQuestion })).toBeVisible();
-    await expect(page.getByText("Part 2 of 2").filter({ visible: true })).toBeVisible();
-    await expect(page.getByText("Question 1 of 4").filter({ visible: true })).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath("placement-part-two.png") });
-
-    await page.getByRole("radio", { name: "Right answer" }).click();
-    await confirm(page);
-
-    await expect
-      .poll(() => prisma.attempt.count({ where: { focusTestId: id, itemId: item.id } }))
-      .toBe(1);
-  });
-
-  test("a part whose unknown topic removes the rest of the test says why it got shorter", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { first } = await createTwoPartTest(noProgressUser.id, { dependent: true });
-    const question = "What would you do first?";
-    await itemFixture({ content: choiceItemContent(question), skillId: first });
-
-    await page.goto("/placement-test");
-    await expect(page.getByRole("heading", { name: question })).toBeVisible();
-    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
-    await page.getByRole("button", { name: "I don't know yet" }).click();
-
-    await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
-
-    await expect(
-      page.getByText(
-        "The test got shorter: topics that build on ones you don't know yet aren't tested.",
-        { exact: true },
-      ),
-    ).toBeVisible();
   });
 
   test("coming back after another device moved the test on can't answer the question kept on screen", async ({
@@ -334,7 +257,7 @@ test.describe("Testing what you know from the plan", () => {
     await expect(page).toHaveURL(/\/plan$/u);
 
     await holdActionAnswer(page, "/placement-test", {
-      start: () => page.getByRole("link", { name: /Test what you know.*Part 2 of 2/u }).click(),
+      start: () => page.getByRole("link", { name: /Test what you know/u }).click(),
       whileHeld: async () => {
         // The question kept from the last visit stays on screen, but it can't be answered until
         // this visit has read where the test is.
@@ -344,7 +267,6 @@ test.describe("Testing what you know from the plan", () => {
     });
 
     await expect(page.getByRole("heading", { name: secondQuestion })).toBeVisible();
-    await expect(page.getByText("Part 2 of 2").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "I don't know yet" }).click();
 
     await expect
@@ -372,11 +294,10 @@ test.describe("Testing what you know from the plan", () => {
     await page.getByRole("button", { name: "I don't know yet" }).click();
 
     await expect(page.getByRole("heading", { name: secondQuestion })).toBeVisible();
-    await expect(page.getByText("Part 2 of 2").filter({ visible: true })).toBeVisible();
     await expect(page.getByText("That didn't go through. Your answers are kept.")).toBeHidden();
   });
 
-  test("a part whose questions couldn't be written opens once Try again works", async ({
+  test("a test whose questions couldn't be written opens once Try again works", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -407,7 +328,6 @@ test.describe("Testing what you know from the plan", () => {
     await retry.click();
 
     await expect(page.getByRole("heading", { name: question })).toBeVisible();
-    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
   });
 
   test("offers no B2 test-out while B2 has no lessons it could skip", async ({
@@ -506,47 +426,30 @@ test.describe("Testing what you know from the plan", () => {
     expect(await prisma.attempt.count({ where: { focusTestId: attemptId } })).toBe(1);
   });
 
-  test("a full test says where the learner is, and picks up where they left or stopped", async ({
+  test("a test says where the learner is on Plan, and picks up where they left", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     await createLearnGoal(noProgressUser.id);
 
     await page.goto("/placement-test");
-    await page.getByRole("radio", { name: /Full test/u }).click();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
-
-    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
-    await expect(page.getByText("Question 1 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(page, 1);
     await answerRight(page);
 
     await page.goto("/plan");
 
     await expect(
-      page.getByRole("link", { name: /Test what you know.*Part 1 of 2.*Question 2 of 12/u }),
+      page.getByRole("link", { name: /Test what you know.*In progress.*Question 2 of 12/u }),
     ).toBeVisible();
 
     await page.goto("/placement-test");
     await expect(page.getByRole("button", { name: "I don't know yet" })).toBeVisible();
-    await expect(page.getByText("Question 2 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(page, 2);
 
     await page.reload();
     await answerRight(page);
-
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
-    await expect(page.getByRole("heading", { name: "Your answers are saved" })).toBeVisible();
-    await expect(page.getByText("Next time: part 1 of 2, question 3")).toBeVisible();
-    await page.getByRole("button", { exact: true, name: "Done" }).click();
-
-    await page
-      .getByRole("link", { name: /Test what you know.*Part 1 of 2.*Question 3 of 12/u })
-      .click();
-
-    await expect(page.getByRole("heading", { name: "Continue your test" })).toBeVisible();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
-    // The Plan the learner came from is kept hidden behind this page, with the same words on its row.
-    await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
-    await expect(page.getByText("Question 3 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(page, 3);
   });
 
   test("Stop on a question another tab already answered shows where the test is instead", async ({
@@ -556,22 +459,21 @@ test.describe("Testing what you know from the plan", () => {
     await createLearnGoal(noProgressUser.id);
 
     await page.goto("/placement-test");
-    await page.getByRole("radio", { name: /Full test/u }).click();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
-    await expect(page.getByText("Question 1 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(page, 1);
     await answerRight(page);
-    await expect(page.getByText("Question 2 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(page, 2);
 
     const other = await page.context().newPage();
     await other.goto("/placement-test");
-    await expect(other.getByText("Question 2 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(other, 2);
     await answerRight(other);
-    await expect(other.getByText("Question 3 of 12").filter({ visible: true })).toBeVisible();
+    await atQuestion(other, 3);
 
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
+    await stopTest(page);
 
-    await expect(page.getByText("Question 3 of 12").filter({ visible: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Your answers are saved" })).toBeHidden();
+    await atQuestion(page, 3);
+    await expect(page.getByRole("heading", { name: /lessons? skipped$/u })).toBeHidden();
   });
 });
 
@@ -599,7 +501,7 @@ test("a test's skip appears on Plan and Today and can be undone from Today", asy
   expect(await skippedLessons(goal.id)).toBe(0);
 });
 
-test("onboarding's quick test ends on its result, and the rest of the course continues from Plan", async ({
+test("onboarding's test ends on its result, which a reload keeps", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -607,28 +509,19 @@ test("onboarding's quick test ends on its result, and the rest of the course con
 
   await page.goto(`/start/${goal.id}`);
   await expect(page.getByRole("heading", { name: "Where would you like to start?" })).toBeVisible();
-  await expect(page.getByRole("radio", { name: /Quick test/u })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /^Test/u })).toBeChecked();
   await page.getByRole("button", { exact: true, name: "Start" }).click();
-  await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
+  await atQuestion(page, 1);
   await answerRight(page);
 
-  await page.getByRole("button", { name: "Stop and use my answers" }).click();
+  await stopTest(page);
   await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
-  await expect(page.getByRole("button", { exact: true, name: "Test the rest" })).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole("heading", { name: "No lessons skipped" })).toBeVisible();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
-  await page.getByRole("button", { exact: true, name: "Start" }).click();
-  await expect(page).toHaveURL(/\/today$/u);
-  await page.goto("/plan");
-
-  await page.getByRole("link", { name: /Test what you know.*No lessons skipped/u }).click();
-  await page.getByRole("button", { exact: true, name: "Test the rest" }).click();
-  await expect(page.getByText("Part 1 of 2").filter({ visible: true })).toBeVisible();
-  await expect(page.getByText("Question 2 of 12").filter({ visible: true })).toBeVisible();
 });
 
 test("a saved retake result explains why it skipped nothing after Undo", async ({

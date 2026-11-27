@@ -15,6 +15,7 @@ import {
   answerLiveCalls,
   blockMicrophone,
 } from "./live-peer";
+import { stopTest, testLeave, testQuestion } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
@@ -383,22 +384,23 @@ test.describe("Language practice in the plan", () => {
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
 
-    const stop = page.getByRole("button", { name: "Stop and use my answers" });
+    const leave = testLeave(page);
 
     for (const number of [1, 2, 3, 4]) {
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
-      await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
-      // Stopping before a skill's questions are done would use no answer, so it isn't offered yet.
+      await expect(testQuestion(page, number, 12)).toBeVisible();
+      // Stopping before a skill's questions are done would use no answer, so ✕ only leaves.
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
-      await expect(stop).toBeHidden();
+      await expect(leave).not.toHaveAttribute("aria-haspopup");
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await page.getByRole("button", { name: "Confirm" }).click();
     }
 
-    await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
-    await expect(stop).toBeVisible();
+    await expect(testQuestion(page, 5, 12)).toBeVisible();
+    await expect(leave).toHaveAttribute("aria-haspopup", "dialog");
+    await expect(page.getByRole("button", { name: "Can't listen now" })).toBeVisible();
 
     const clip = await routeSpeechClips(page);
     await page.getByRole("button", { name: "Play the message" }).click();
@@ -414,6 +416,9 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
+    // Once the message has played to its end, the way around it gives its place to the miss.
+    await page.getByRole("button", { name: "I didn't understand" }).click();
+    await expect(testQuestion(page, 6, 12)).toBeVisible();
     await page.getByRole("button", { name: "Can't listen now" }).click();
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
@@ -482,19 +487,18 @@ test.describe("Language practice in the plan", () => {
 
     for (const number of [1, 2, 3, 4]) {
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
-      await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
+      await expect(testQuestion(page, number, 12)).toBeVisible();
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await page.getByRole("button", { name: "Confirm" }).click();
     }
 
-    await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
+    await expect(testQuestion(page, 5, 12)).toBeVisible();
 
     await holdActionAnswer(page, `/start/${goal.id}`, {
-      start: () => page.getByRole("button", { name: "Stop and use my answers" }).click(),
+      start: () => stopTest(page),
       whileHeld: async () => {
-        await expect(page.getByRole("button", { name: "Stop and use my answers" })).toBeDisabled();
         await expect(page.getByRole("button", { name: "Can't listen now" })).toBeDisabled();
         await expect(page.getByRole("radio", { name: /^Right [ABC][12]$/u })).toBeDisabled();
       },

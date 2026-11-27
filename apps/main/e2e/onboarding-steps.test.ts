@@ -4,7 +4,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
-import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, mapGoalSkills, testQuestion } from "./onboarding-fixtures";
 import { refuseStartAfterWait } from "./refused-start";
 
 /** The page gives a run 45 s to appear. */
@@ -111,9 +111,7 @@ test.describe("Waiting for a test the learner asked for", () => {
 
     await mapGoalSkills({ goalId: goal.id });
 
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible({
-      timeout: NEXT_CHECK_TIMEOUT_MS,
-    });
+    await expect(testQuestion(page, 1, 12)).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
   });
 
   test("a start that doesn't go through once questions arrive offers Try again", async ({
@@ -151,7 +149,7 @@ test.describe("Waiting for a test the learner asked for", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { exact: true, name: "Try again" }).click();
-    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
+    await expect(testQuestion(page, 1, 12)).toBeVisible();
   });
 });
 

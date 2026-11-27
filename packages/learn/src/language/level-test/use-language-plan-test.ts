@@ -62,7 +62,8 @@ export type LanguagePlanTestActions = {
 export type LevelTestHost =
   | {
       /** The learner told us their level, so the first lesson starts there. */
-      levelGiven: boolean;
+      /** The first lesson's name, where onboarding knows it. */
+      firstLesson: string | null;
       mode: "direct" | "offer" | "resume";
       surface: "onboarding";
     }

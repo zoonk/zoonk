@@ -279,7 +279,6 @@ msgstr "{days, plural, one {Manca circa # giorno} other {Mancano circa # giorni}
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
-#: src/placement-test/placement-test-flow.tsx
 #: src/placement-test/placement-test-offers.tsx
 #: src/placement-test/placement-test-screens.tsx
 #: src/questions/test-out-run.tsx
@@ -834,6 +833,7 @@ msgstr "Visualizza"
 
 #: src/_components/task-close.tsx
 #: src/mock/mock-runner-view.tsx
+#: src/onboarding/onboarding-task.tsx
 #: src/writing/writing-write-screen.tsx
 msgctxt "fnihsY"
 msgid "Leave"
@@ -3893,7 +3893,6 @@ msgstr "{count, plural, one {Il tuo piano salta anche # lezione su ciò che sai 
 
 #: src/focus-test/focus-test-screens.tsx
 #: src/onboarding/steps/placement-screens.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "Abbiamo salvato le tue risposte"
@@ -6288,11 +6287,6 @@ msgctxt "Z05RU-"
 msgid "Level test"
 msgstr "Test di livello"
 
-#: src/language/level-test/level-test-offer.tsx
-msgctxt "3NCmfj"
-msgid "Skip {level} if you already know it"
-msgstr "Salta {level} se lo conosci già"
-
 #. A short test of one language level, such as “Test out of B2”.
 #: src/language/level-test/level-test-offer.tsx
 #: src/language/level-test/level-test-out-screens.tsx
@@ -6301,6 +6295,11 @@ msgstr "Salta {level} se lo conosci già"
 msgctxt "h5ZSCC"
 msgid "Test out of {level}"
 msgstr "Fai il test di {level}"
+
+#: src/language/level-test/level-test-offer.tsx
+msgctxt "3NCmfj"
+msgid "Skip {level} if you already know it"
+msgstr "Salta {level} se lo conosci già"
 
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
@@ -6316,16 +6315,6 @@ msgstr "Ascolta il messaggio"
 msgctxt "jsopgk"
 msgid "The voice message is on its way…"
 msgstr "Stiamo preparando il messaggio vocale…"
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "T6bERo"
-msgid "Getting the message ready. The first time can take a few seconds."
-msgstr "Stiamo preparando il messaggio. La prima volta può volerci qualche secondo."
-
-#: src/language/level-test/level-test-parts.tsx
-msgctxt "yFzzBV"
-msgid "You got a voice message. Listen and answer."
-msgstr "Hai ricevuto un messaggio vocale. Ascolta e rispondi."
 
 #. A CEFR level range the test found for reading, such as “B1–B2”.
 #: src/language/level-test/level-test-parts.tsx
@@ -6346,21 +6335,22 @@ msgctxt "xBapiR"
 msgid "This takes a minute or two."
 msgstr "Ci vuole un minuto o due."
 
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "-JyB5g"
-msgid "Skip this question"
-msgstr "Salta questa domanda"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "U86096"
-msgid "I didn't understand the audio"
-msgstr "Non ho capito l’audio"
-
 #. Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test.
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "KjCRMy"
 msgid "Can't listen now"
 msgstr "Non posso ascoltare ora"
+
+#. Button on a listening question, after the learner played the message: they heard it and didn't understand it.
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "DxEIkj"
+msgid "I didn't understand"
+msgstr ""
+
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "-JyB5g"
+msgid "Skip this question"
+msgstr "Salta questa domanda"
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "H4wCrn"
@@ -8188,7 +8178,6 @@ msgid "Come back to this page to start it."
 msgstr "Torna su questa pagina per iniziare."
 
 #: src/mock/mock-preparing.tsx
-#: src/placement-test/use-test-facts.ts
 msgctxt "89t5lc"
 msgid "About {time} left"
 msgstr "Ancora circa {time}"
@@ -8666,7 +8655,6 @@ msgstr "Simulazione consegnata"
 #: src/mock/mock-screen.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Abbiamo salvato le tue risposte."
@@ -8703,7 +8691,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "Hai completato tutti i compiti. Dopo la consegna non potrai rifarli in questa simulazione."
 
 #: src/mock/mock-speaking.tsx
-#: src/placement-test/placement-test-screens.tsx
 msgctxt "JiaScE"
 msgid "Keep going"
 msgstr "Continua"
@@ -9295,15 +9282,28 @@ msgctxt "UdYIBZ"
 msgid "Or start this ready-made course now"
 msgstr "Oppure inizia subito questo corso già pronto"
 
-#: src/onboarding/onboarding-bar.tsx
-msgctxt "jVVPcv"
-msgid "Questions answered"
-msgstr "Domande a cui hai risposto"
-
 #: src/onboarding/onboarding-page.tsx
 msgctxt "EKtClK"
 msgid "Getting started"
 msgstr "Primi passi"
+
+#: src/onboarding/onboarding-task.tsx
+#: src/onboarding/start-over-menu.tsx
+#: src/placement-test/placement-test-offers.tsx
+msgctxt "c6IvRW"
+msgid "Finish later"
+msgstr "Completa più tardi"
+
+#: src/onboarding/onboarding-task.tsx
+msgctxt "8Zf--i"
+msgid "Stop and use my answers"
+msgstr "Interrompi e usa le mie risposte"
+
+#: src/onboarding/onboarding-task.tsx
+#: src/placement-test/use-test-facts.ts
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "Domanda {number, number} di {total, number}"
 
 #. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
 #: src/onboarding/plan-receipt.tsx
@@ -9346,13 +9346,6 @@ msgstr "Il tuo piano fin qui"
 msgctxt "_zDDtb"
 msgid "Save your plan so it's here next time."
 msgstr "Salva il tuo piano per ritrovarlo qui la prossima volta."
-
-#: src/onboarding/start-over-menu.tsx
-#: src/placement-test/placement-test-offers.tsx
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "c6IvRW"
-msgid "Finish later"
-msgstr "Completa più tardi"
 
 #: src/onboarding/start-over-menu.tsx
 msgctxt "kbmC81"
@@ -9607,11 +9600,6 @@ msgstr "Stiamo leggendo i documenti ufficiali"
 msgctxt "vFV7b5"
 msgid "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today."
 msgstr "Questo piano segue la struttura abituale dell’esame mentre finiamo di leggere i documenti ufficiali. Se richiedono modifiche al tuo piano, deciderai tu nella schermata Oggi."
-
-#: src/onboarding/steps/placement-question.tsx
-msgctxt "8Zf--i"
-msgid "Stop and use my answers"
-msgstr "Interrompi e usa le mie risposte"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "rxz4rg"
@@ -10173,11 +10161,6 @@ msgid "Reason"
 msgstr "Motivo"
 
 #: src/placement-test/placement-test-offers.tsx
-msgctxt "C8qBZz"
-msgid "Starts at the level you gave"
-msgstr "Inizia dal livello che hai indicato"
-
-#: src/placement-test/placement-test-offers.tsx
 msgctxt "mvfEjE"
 msgid "First lesson"
 msgstr "Prima lezione"
@@ -10197,23 +10180,11 @@ msgctxt "jZ8hrg"
 msgid "Where would you like to start?"
 msgstr "Da dove vuoi iniziare?"
 
-#. The long test: it checks every topic still ahead, in parts.
+#. The name of a course's placement test, on the card that offers it.
 #: src/placement-test/placement-test-offers.tsx
-msgctxt "MVOTf7"
-msgid "Full test"
-msgstr "Test completo"
-
-#. The short test: about six minutes of questions.
-#: src/placement-test/placement-test-offers.tsx
-msgctxt "mleMdh"
-msgid "Quick test"
-msgstr "Test breve"
-
-#: src/placement-test/placement-test-offers.tsx
-#: src/plan/plan-placement-test.tsx
-msgctxt "QZI9sA"
-msgid "Test what you know"
-msgstr "Verifica ciò che sai"
+msgctxt "xu6eM8"
+msgid "Test"
+msgstr ""
 
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "G9nQHt"
@@ -10225,63 +10196,10 @@ msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "Oggi hai annullato queste lezioni. Rispondi di nuovo domani per saltarle."
 
-#. After one part of a test: how many lessons that part took out of the learner's plan.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "jPv5OK"
-msgid "{count, plural, =0 {No lessons skipped in this part.} one {This part skipped # lesson you already know.} other {This part skipped # lessons you already know.}}"
-msgstr "{count, plural, =0 {Nessuna lezione saltata in questa parte.} one {In questa parte hai saltato # lezione che conoscevi già.} many {In questa parte hai saltato # lezioni che conoscevi già.} other {In questa parte hai saltato # lezioni che conoscevi già.}}"
-
-#. After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "jWl7zP"
-msgid "The test got shorter: topics that build on ones you don't know yet aren't tested."
-msgstr "Il test è più breve: non vengono verificati gli argomenti che si basano su quelli che ancora non conosci."
-
-#. The title after one part of a test split into parts, such as “Part 3 of 14 done”.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "dpLv4V"
-msgid "Part {part, number} of {parts, number} done"
-msgstr "Parte {part, number} di {parts, number} completata"
-
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
 msgstr "Inizia la lezione"
-
-#. Button after the short test: goes on to test the rest of the course, in parts.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "T8fqdI"
-msgid "Test the rest"
-msgstr "Continua il test"
-
-#. Where a learner who stopped a test picks it up: the part of the test and the question in it.
-#: src/placement-test/use-test-facts.ts
-msgctxt "XiCeiq"
-msgid "Next time: part {part, number} of {parts, number}, question {number, number}"
-msgstr "La prossima volta: parte {part, number} di {parts, number}, domanda {number, number}"
-
-#. Where the learner is in a test split into parts, such as “Part 3 of 14”.
-#: src/placement-test/use-test-facts.ts
-msgctxt "0UGVVt"
-msgid "Part {part, number} of {parts, number}"
-msgstr "Parte {part, number} di {parts, number}"
-
-#. How many parts the long test has. The learner can take each part on a different day.
-#: src/placement-test/use-test-facts.ts
-msgctxt "CTgGII"
-msgid "{count, plural, one {# part, any day you like} other {# parts, any day you like}}"
-msgstr "{count, plural, one {# parte, quando vuoi} many {Puoi fare tutte le # parti quando vuoi} other {# parti, quando vuoi}}"
-
-#. How many parts of a test the learner still has to take.
-#: src/placement-test/use-test-facts.ts
-msgctxt "91hHI1"
-msgid "{count, plural, one {# part left} other {# parts left}}"
-msgstr "{count, plural, one {# parte da fare} many {Ti restano # parti da fare} other {# parti ancora da fare}}"
-
-#: src/placement-test/use-test-facts.ts
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "Domanda {number, number} di {total, number}"
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts
@@ -10728,6 +10646,11 @@ msgstr "Salta le lezioni che conosci già"
 msgctxt "Ye4GUJ"
 msgid "Find your level and skip what you know"
 msgstr "Trova il tuo livello e salta ciò che sai già"
+
+#: src/plan/plan-placement-test.tsx
+msgctxt "QZI9sA"
+msgid "Test what you know"
+msgstr "Verifica ciò che sai"
 
 #: src/plan/plan-properties.tsx
 msgctxt "xqyYxG"
