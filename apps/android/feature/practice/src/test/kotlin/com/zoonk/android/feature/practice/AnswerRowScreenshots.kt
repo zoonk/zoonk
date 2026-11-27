@@ -146,8 +146,7 @@ class AnswerRowScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun severalChecked() =
-        show("several-checked", several, taps = listOf("Os consumidores", "Os decompositores"), check = true)
+    fun severalChecked() = show("several-checked", several, taps = listOf("Os consumidores", "Os decompositores"), check = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

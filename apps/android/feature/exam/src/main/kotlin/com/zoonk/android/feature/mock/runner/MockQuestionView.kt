@@ -149,8 +149,6 @@ private fun Options(
 ) {
     val words = run.view.trueFalseWords
     val labels = question.question.options.orEmpty()
-    // Where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
-    val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
 
     AnswerOptionGroup {
         run.optionAnswers(question).orEmpty().forEachIndexed { index, option ->
@@ -160,7 +158,6 @@ private fun Options(
                 result = null,
                 onClick = { viewModel.pickOption(index) },
                 enabled = !locked,
-                glyph = if (glyphs) painterResource(statementGlyph(option)) else null,
             ) {
                 when (option) {
                     is Answer.TrueFalse -> {
@@ -182,13 +179,6 @@ private fun Options(
         }
     }
 }
-
-private fun statementGlyph(option: Answer?): Int =
-    when ((option as? Answer.TrueFalse)?.isTrue) {
-        true -> R.drawable.ic_check
-        false -> R.drawable.ic_close
-        null -> R.drawable.ic_remove
-    }
 
 @Composable
 private fun Picks(
