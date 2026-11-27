@@ -338,41 +338,44 @@ private struct BuddyContent: View {
       })
   }
 
-  /// The buddy's face, its name as the page's title and its Energy on one row, as main's; where the
-  /// list isn't beside it, its button ends the row too: the bar has no room left on a phone.
+  /// The buddy's face, its name as the page's title and its Energy after the name on one row, as
+  /// main's; where the list isn't beside it, its button ends the row: the bar has no room left on a
+  /// phone.
   private func thread(listsBeside: Bool) -> some View {
     conversationView
       .safeAreaBar(edge: .top) {
         MarkedRow(alignment: .center, stackedSpacing: 4) {
           face
         } content: {
-          Text(name)
-            .typeStyle(.pageTitle)
-            .foregroundStyle(Color(.foreground))
-            .accessibilityAddTraits(.isHeader)
-            .heroTitle()
-        } end: {
-          HStack(spacing: 4) {
-            energyButton
+          // Beside the name it reads as the buddy's status, not as one of the row's buttons.
+          AccessibilityStack(spacing: 10, stackedSpacing: 0) {
+            Text(name)
+              .typeStyle(.pageTitle)
+              .foregroundStyle(Color(.foreground))
+              .accessibilityAddTraits(.isHeader)
+              .heroTitle()
 
-            if !listsBeside, list?.value != nil {
-              Button {
-                isListShown = true
-              } label: {
-                Label {
-                  Text(
-                    "Conversations", tableName: "Buddy",
-                    comment:
-                      "The list of the learner's separate conversations with their buddy, and the button that opens it."
-                  )
-                } icon: {
-                  Image(systemName: "bubble.left.and.bubble.right")
-                }
-                .labelStyle(.iconOnly)
+            energyButton
+              .fixedSize()
+          }
+        } end: {
+          if !listsBeside, list?.value != nil {
+            Button {
+              isListShown = true
+            } label: {
+              Label {
+                Text(
+                  "Conversations", tableName: "Buddy",
+                  comment:
+                    "The list of the learner's separate conversations with their buddy, and the button that opens it."
+                )
+              } icon: {
+                Image(systemName: "bubble.left.and.bubble.right")
               }
-              .buttonStyle(.ghost.icon.endsRow)
-              .controlSize(.small)
+              .labelStyle(.iconOnly)
             }
+            .buttonStyle(.ghost.icon.endsRow)
+            .controlSize(.small)
           }
         }
         .listRowEdges()
@@ -546,7 +549,7 @@ private struct BuddyContent: View {
       .typeStyle(.note)
       .monospacedDigit()
       .foregroundStyle(.mutedForeground)
-      .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+      .frame(minWidth: 44, minHeight: 44, alignment: .leading)
       .contentShape(.rect)
     }
     .buttonStyle(.plain)
