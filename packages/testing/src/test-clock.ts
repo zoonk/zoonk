@@ -14,7 +14,12 @@ export function installTestClock(): void {
   }
 
   function startClock(): void {
-    vi.useFakeTimers({ now: instant, shouldAdvanceTime: true, toFake: ["Date"] });
+    vi.useFakeTimers({
+      advanceTimeDelta: 1,
+      now: instant,
+      shouldAdvanceTime: true,
+      toFake: ["Date"],
+    });
   }
 
   startClock();
