@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma, sql } from "@zoonk/db";
 import { completedLessonRuns } from "../../../completed-lessons/_utils/completed-lesson-runs";
+import { savedLessonsForGoal } from "../../../saved-lessons/_utils/saved-lessons-for-goal";
 
 const RECENT_STUDY_DAYS = 4;
 
@@ -15,6 +16,7 @@ export type LearnerFacts = {
   hasCertificates: boolean;
   lastActiveAt: Date | null;
   recentStudyDays: StudyDay[];
+  savedLessonGoalIds: string[];
   /** The learner's speaking score, by language. */
   speakingScores: Record<string, number>;
   totalBrainPower: bigint | null;
@@ -37,6 +39,12 @@ export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
         WHERE g.user_id = u.id AND g.status <> 'archived'
           AND EXISTS (${completedLessonRuns({ goalId: sql`g.id`, userId: sql`u.id` })})
       ) AS "completedLessonGoalIds",
+      (
+        SELECT coalesce(json_agg(g.id), '[]'::json)
+        FROM goals g
+        WHERE g.user_id = u.id AND g.status <> 'archived'
+          AND EXISTS (${savedLessonsForGoal({ goalId: sql`g.id`, userId: sql`u.id` })})
+      ) AS "savedLessonGoalIds",
       EXISTS (SELECT 1 FROM certificates c WHERE c.user_id = u.id) AS "hasCertificates",
       (
         SELECT coalesce(json_object_agg(l.language, l.score), '{}'::json)

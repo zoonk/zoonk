@@ -12,6 +12,7 @@
 ## Glossary
 
 - “lesson”: “aula”, not “lição”
+- “bookmark” (the icon that saves a lesson or a map): “ícone de salvar”, not “marcador”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
 - “topic”: “tópico”, not “assunto” or “tema”

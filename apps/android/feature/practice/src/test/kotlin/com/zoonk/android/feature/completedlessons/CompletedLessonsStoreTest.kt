@@ -30,6 +30,7 @@ class CompletedLessonsStoreTest {
     private val query = CompletedLessonsQuery(UUID.fromString("00000000-0000-4000-8000-0000000000a1"))
     private val pages = mutableMapOf<String?, () -> CompletedLessonList>()
     private var gate: CompletableDeferred<Unit>? = null
+    private val limits = mutableListOf<Long>()
 
     private fun page(
         lessons: List<Pair<Int, String>>,
@@ -38,14 +39,15 @@ class CompletedLessonsStoreTest {
         ApiJson.decodeFromString(
             CompletedLessonList.serializer(),
             """{"data":[${lessons.joinToString(",") { (id, day) ->
-                """{"chapterTitle":"Cells","finishedOn":"$day","group":null,"lessonId":"00000000-0000-4000-8000-00000000000$id","title":"Lesson $id"}"""
+                """{"available":true,"chapterTitle":"Cells","finishedOn":"$day","group":null,"lessonId":"00000000-0000-4000-8000-00000000000$id","saved":false,"title":"Lesson $id"}"""
             }}],"filter":null,"pagination":{"hasMore":${nextCursor != null},"nextCursor":${nextCursor?.let { "\"$it\"" } ?: "null"}}}""",
         )
 
     private fun TestScope.store(): CompletedLessonsStore {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val api =
-            CompletedLessonsApi { _, _, cursor ->
+            CompletedLessonsApi { _, _, cursor, limit ->
+                limits += limit
                 if (cursor != null) gate?.await()
                 pages.getValue(cursor)()
             }
@@ -101,6 +103,60 @@ class CompletedLessonsStoreTest {
 
             assertEquals(listOf(4 to "2026-11-02"), store.shown())
         }
+
+    @Test
+    fun aPageAskedForWhileTheListIsReadAgainJoinsItFromWhereItEndsNow() =
+        runTest(dispatcher) {
+            pages[null] = { page(listOf(1 to "2026-11-01"), nextCursor = "c1") }
+            pages["c1"] = { page(listOf(2 to "2026-10-30"), nextCursor = null) }
+            gate = CompletableDeferred()
+            val store = store()
+            store.lessons[query].refresh()
+
+            val more = async { store.more(query) }
+            advanceUntilIdle()
+            // A save the server took reads the list again while its next page is on its way.
+            store.lessons[query].refresh()
+            gate?.complete(Unit)
+            more.await()
+
+            assertEquals(listOf(1 to "2026-11-01", 2 to "2026-10-30"), store.shown())
+        }
+
+    @Test
+    fun aListReadAgainKeepsEveryLessonItShows() =
+        runTest(dispatcher) {
+            val first = (10..59).map { it to "2026-11-01" }
+            val all = first + (60 to "2026-10-30")
+            pages[null] = { many(first, nextCursor = "c1") }
+            pages["c1"] = { many(listOf(60 to "2026-10-30"), nextCursor = null) }
+            val store = store()
+            store.lessons[query].refresh()
+            store.more(query)
+            pages[null] = { many(all, nextCursor = null) }
+
+            store.lessons[query].refresh()
+
+            assertEquals(listOf(50L, 50L, 51L), limits)
+            assertEquals(
+                51,
+                store.lessons[query]
+                    .state.value.value
+                    ?.`data`
+                    ?.size,
+            )
+        }
+
+    private fun many(
+        lessons: List<Pair<Int, String>>,
+        nextCursor: String?,
+    ): CompletedLessonList =
+        ApiJson.decodeFromString(
+            CompletedLessonList.serializer(),
+            """{"data":[${lessons.joinToString(",") { (id, day) ->
+                """{"available":true,"chapterTitle":"Cells","finishedOn":"$day","group":null,"lessonId":"00000000-0000-4000-8000-0000000000$id","saved":false,"title":"Lesson $id"}"""
+            }}],"filter":null,"pagination":{"hasMore":${nextCursor != null},"nextCursor":${nextCursor?.let { "\"$it\"" } ?: "null"}}}""",
+        )
 
     @Test
     fun aPageThatDoesntLoadSaysSoAndKeepsTheList() =

@@ -71,6 +71,7 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
     opensInPlayer: true,
     planItemKey: null,
     position,
+    practiceNumber: null,
     preparing: false,
     refresh: false,
     reinforcement: false,

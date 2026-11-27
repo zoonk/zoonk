@@ -929,6 +929,10 @@
     --glyph-blank: 3;
   }
 
+  &:has(.lucide-bookmark) {
+    --glyph-blank: 4;
+  }
+
   &:has(.lucide-lightbulb) {
     --glyph-blank: 5;
   }

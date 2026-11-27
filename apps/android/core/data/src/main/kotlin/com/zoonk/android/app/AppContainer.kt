@@ -118,6 +118,8 @@ import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.reminders.FirebasePush
 import com.zoonk.android.feature.reminders.LiveStudyReminderApi
 import com.zoonk.android.feature.reminders.StudyReminderStore
+import com.zoonk.android.feature.savedlessons.LiveSavedLessonsApi
+import com.zoonk.android.feature.savedlessons.SavedLessonsStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.StudySessionStore
@@ -343,6 +345,7 @@ class AppContainer private constructor(
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val mistakesNotebook = MistakesNotebookStore(LiveNotebookApi(api), cache, sessions, timeZone)
     val completedLessons = CompletedLessonsStore(LiveCompletedLessonsApi(api), cache, sessions)
+    val savedLessons = SavedLessonsStore(LiveSavedLessonsApi(api), cache, completedLessons)
     val patterns = PatternStore(LivePatternApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
     val mockSchedule = MockScheduleStore(api, cache, timeZone)

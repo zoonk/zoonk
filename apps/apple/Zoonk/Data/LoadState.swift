@@ -26,6 +26,7 @@ enum DataDomain: Hashable, Sendable {
   case learnerModel
   case learningProfile
   case memory
+  case savedLessons
   case savedMindMaps
   case studyReminder
   case userProgress

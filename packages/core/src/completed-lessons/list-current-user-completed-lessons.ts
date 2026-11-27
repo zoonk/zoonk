@@ -1,8 +1,10 @@
 import "server-only";
 import { prisma, sql } from "@zoonk/db";
 import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getUserProgressCacheTag } from "../cache/tags";
+import { getGoalsCacheTag, getSavedLessonsCacheTag, getUserProgressCacheTag } from "../cache/tags";
+import { readSavedLessonIds } from "../learner/facts/saved-lessons";
 import { getOwnedGoal } from "../learner/get-owned-goal";
+import { startableLessonWhere } from "../lesson-player/_utils/lesson-rows";
 import { loadSkillGroups } from "../view-models/syllabus/_utils/load-syllabus";
 import { groupCompletedLessons } from "./_utils/completed-lesson-groups";
 import { completedLessonRuns } from "./_utils/completed-lesson-runs";
@@ -37,15 +39,21 @@ export async function listCurrentUserCompletedLessons(
     return owned;
   }
 
-  cacheTag(getUserProgressCacheTag(owned.userId), getGoalsCacheTag(owned.userId));
+  cacheTag(
+    getUserProgressCacheTag(owned.userId),
+    getGoalsCacheTag(owned.userId),
+    getSavedLessonsCacheTag(owned.userId),
+  );
 
   const runs = completedLessonRuns({
     goalId: sql`${owned.goal.id}::uuid`,
     userId: sql`${owned.userId}::uuid`,
   });
 
-  const [rows, groups] = await Promise.all([
-    prisma.$queryRaw<(Omit<CompletedLesson, "group"> & { skillIds: string[] })[]>`
+  const [rows, groups, savedLessonIds] = await Promise.all([
+    prisma.$queryRaw<
+      (Omit<CompletedLesson, "available" | "group" | "saved"> & { skillIds: string[] })[]
+    >`
       SELECT
         latest.lesson_id AS "lessonId",
         latest.title,
@@ -72,6 +80,7 @@ export async function listCurrentUserCompletedLessons(
       LEFT JOIN library_chapters chapter ON chapter.id = latest.home_chapter_id
       ORDER BY latest.ended_at DESC, latest.lesson_id`,
     loadSkillGroups(owned.goal),
+    readSavedLessonIds(owned.userId),
   ]);
 
   const { filter, keys } = groupCompletedLessons({
@@ -85,17 +94,32 @@ export async function listCurrentUserCompletedLessons(
     finishedOn,
     group: keys[index] ?? null,
     lessonId,
+    saved: savedLessonIds.has(lessonId),
     title,
   }));
 
   const wanted = filter?.groups.some((group) => group.key === input.group) ? input.group : null;
   const listed = wanted ? lessons.filter((lesson) => lesson.group === wanted) : lessons;
   const end = input.offset + input.limit;
+  const page = listed.slice(input.offset, end);
+
+  const startable =
+    page.length === 0
+      ? []
+      : await prisma.lesson.findMany({
+          select: { id: true },
+          where: {
+            ...startableLessonWhere(owned.userId),
+            id: { in: page.map((row) => row.lessonId) },
+          },
+        });
+
+  const available = new Set(startable.map((lesson) => lesson.id));
 
   return {
     filter,
     hasMore: listed.length > end,
-    lessons: listed.slice(input.offset, end),
+    lessons: page.map((lesson) => ({ ...lesson, available: available.has(lesson.lessonId) })),
     status: "ready",
   };
 }

@@ -18,6 +18,7 @@
 ## Glossary
 
 - “lesson”: “ders”
+- “bookmark” (the icon that saves a lesson or a map): “yer imi simgesi”, not “yer işareti”
 - “chapter”: “ünite”, not “bölüm” (a speaking task); a language plan's “unit”: “ünite”
 - “answer”: “cevap”; to answer: “cevaplamak”; never “yanıt”
 - “at your own pace”: “kendi temponda”

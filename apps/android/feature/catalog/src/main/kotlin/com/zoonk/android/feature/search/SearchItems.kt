@@ -252,6 +252,12 @@ private fun learnerGroups(
                 count = readyMistakes.takeIf { it > 0 },
             ),
             SearchItem(
+                "saved-lessons",
+                stringResource(R.string.navigation_saved_lessons),
+                SearchAction.Open(AppRoute.SavedLessons),
+                PlaceIcon.SavedLessons.icon,
+            ).takeIf { places?.savedLessons == true },
+            SearchItem(
                 "completed-lessons",
                 stringResource(R.string.navigation_completed_lessons),
                 SearchAction.Open(AppRoute.CompletedLessons),

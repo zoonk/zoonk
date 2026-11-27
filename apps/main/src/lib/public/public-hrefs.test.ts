@@ -12,8 +12,8 @@ describe(readLessonOrigin, () => {
     }
   });
 
-  it("reads exactly Today and Completed lessons as app places", () => {
-    for (const value of ["/today", "/completed-lessons"]) {
+  it("reads exactly Today, Completed lessons and Saved lessons as app places", () => {
+    for (const value of ["/today", "/completed-lessons", "/saved-lessons"]) {
       expect(readLessonOrigin(value)).toStrictEqual({ kind: "app", path: value });
     }
   });

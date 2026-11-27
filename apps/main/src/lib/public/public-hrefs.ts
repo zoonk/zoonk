@@ -76,7 +76,7 @@ export const ORIGIN_PARAM = "from";
 const CATALOG_PATH =
   /^\/b\/[^\s#/?]+\/c\/[^\s#/?]+(?:\/ch\/[^\s#/?]+(?:\/l\/[^\s#/?]+)?)?(?:#[\w-]+)?$/u;
 
-const APP_ORIGINS = ["/today", "/completed-lessons"] as const;
+const APP_ORIGINS = ["/today", "/completed-lessons", "/saved-lessons"] as const;
 
 type AppOrigin = (typeof APP_ORIGINS)[number];
 

@@ -99,6 +99,10 @@ export function getSavedMindMapsCacheTag(userId: string): string {
   return `saved-mind-maps:${userId}`;
 }
 
+export function getSavedLessonsCacheTag(userId: string): string {
+  return `saved-lessons:${userId}`;
+}
+
 export function getSourceCacheTag(sourceId: string): string {
   return `source:${sourceId}`;
 }

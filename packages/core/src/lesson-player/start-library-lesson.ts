@@ -197,9 +197,10 @@ async function readRun({
   userId: string;
   clockId: string | null;
 }): Promise<LibraryLessonRun | null> {
-  const [progress, replay] = await Promise.all([
+  const [progress, replay, saved] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
     hasFinishedLessonBefore(prisma, { lessonId, runId: run.id, userId }),
+    prisma.savedLesson.count({ where: { lessonId, userId } }),
   ]);
 
   return progress
@@ -208,6 +209,7 @@ async function readRun({
         clockId,
         replay,
         runId: run.id,
+        saved: Boolean(saved),
         sessionId: getRunStudySessionId(run),
         startedAt: run.startedAt.toISOString(),
       }

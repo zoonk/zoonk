@@ -69,6 +69,7 @@ function runStarted({
     hyperdrive: HYPERDRIVE,
     replay: false,
     runId: "run",
+    saved: false,
     startedAt: STARTED_AT,
     type: "runStarted",
   } as const;
@@ -410,6 +411,7 @@ describe(lessonPlayerReducer, () => {
         hyperdrive: { knownStepIds: [], streak: 0 },
         replay: false,
         runId: "run",
+        saved: false,
         startedAt: STARTED_AT,
         type: "runStarted",
       },
@@ -758,6 +760,7 @@ describe(lessonPlayerReducer, () => {
         hyperdrive: { knownStepIds: [], streak: 0 },
         replay: false,
         runId: "run",
+        saved: false,
         startedAt: STARTED_AT,
         type: "runStarted",
       },
@@ -786,6 +789,7 @@ describe(lessonPlayerReducer, () => {
         hyperdrive,
         replay: false,
         runId: "run",
+        saved: false,
         startedAt: STARTED_AT,
         type: "runStarted",
       },
@@ -807,6 +811,7 @@ describe(lessonPlayerReducer, () => {
         hyperdrive,
         replay: false,
         runId: "run",
+        saved: false,
         startedAt: STARTED_AT,
         type: "runStarted",
       },
@@ -1767,6 +1772,7 @@ describe(lessonPlayerReducer, () => {
           hyperdrive,
           replay: false,
           runId: "run-1",
+          saved: false,
           startedAt: STARTED_AT,
           type: "runStarted",
         },
@@ -1777,7 +1783,14 @@ describe(lessonPlayerReducer, () => {
     );
 
     expect([done.run, done.completion?.status, done.completion?.failures]).toStrictEqual([
-      { carriedStepIds: [], hyperdrive, replay: false, runId: "run-1", status: "started" },
+      {
+        carriedStepIds: [],
+        hyperdrive,
+        replay: false,
+        runId: "run-1",
+        saved: false,
+        status: "started",
+      },
       "saving",
       1,
     ]);

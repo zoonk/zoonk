@@ -1157,6 +1157,20 @@ struct TodayPracticeSection: View {
         }
       }
 
+      if places?.savedLessons == true {
+        PageLink(route: .savedLessons) {
+          ListRow(
+            Text(
+              "Saved lessons", tableName: "Today"),
+            description: Text(
+              "Lessons you want to do again", tableName: "Today",
+              comment: "The line under Saved lessons in Practice anytime.")
+          ) {
+            KindMark(kind: .lesson, symbol: AppTab.savedLessons.systemImage)
+          }
+        }
+      }
+
       if places?.completedLessons == true {
         PageLink(route: .completedLessons) {
           ListRow(
@@ -1167,7 +1181,7 @@ struct TodayPracticeSection: View {
               "Do a lesson again", tableName: "Today",
               comment: "The line under Completed lessons in Practice anytime.")
           ) {
-            KindMark(kind: .lesson)
+            KindMark(kind: .lesson, symbol: AppTab.completedLessons.systemImage)
           }
         }
       }

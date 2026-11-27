@@ -126,6 +126,7 @@ export function startRun(
     hyperdrive: action.hyperdrive,
     replay: action.replay,
     runId: action.runId,
+    saved: action.saved,
     status: "started" as const,
   };
 

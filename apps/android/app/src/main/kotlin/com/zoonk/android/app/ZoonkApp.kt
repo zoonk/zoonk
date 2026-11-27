@@ -518,7 +518,7 @@ private fun AppNavigationSuite(
                                 .semantics { heading() },
                     )
 
-                    StudyPlace.entries.filter { it.isListed(summary?.places) }.forEach { place ->
+                    StudyPlace.entries.filter { it.isListed(summary?.places, shownPlace) }.forEach { place ->
                         val isSelected = place == shownPlace
                         val badge = if (place == StudyPlace.Mistakes) summary?.places?.readyMistakes else null
 
@@ -620,9 +620,16 @@ private fun AppTab.title(summary: LearnerSummary?): String {
     return buddyName(buddy?.kind?.let { BuddyKind.of(it.value) } ?: BuddyKind.Zu, buddy?.name)
 }
 
-/** Exam, Speaking, Mind maps and Completed lessons are listed only for a goal that has them; Certificates once there's one. */
-private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =
+/**
+ * Exam, Speaking, Mind maps, Saved and Completed lessons are listed only for a goal that has them; Certificates once
+ * there's one. Saved lessons stays while it's [shown]: removing the last save there takes it away once the learner leaves.
+ */
+private fun StudyPlace.isListed(
+    places: LearnerSummaryPlaces?,
+    shown: StudyPlace?,
+): Boolean =
     when (this) {
+        StudyPlace.SavedLessons -> places?.savedLessons == true || shown == this
         StudyPlace.CompletedLessons -> places?.completedLessons == true
         StudyPlace.Certificates -> places?.certificates == true
         StudyPlace.Exam -> places?.exam == true

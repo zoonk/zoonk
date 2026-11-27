@@ -68,6 +68,7 @@ type SidebarMenu =
   | "mock"
   | "patterns"
   | "pricing"
+  | "savedLessons"
   | "score"
   | "speaking";
 

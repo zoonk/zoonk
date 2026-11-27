@@ -88,6 +88,7 @@
   "today_resume": "2978c8efa3ea9a28c95ac8b052432bc937b54fa4458611decaf15a6b22d55f27",
   "today_resume_effect": "8d04268c73ddd7daf1bcf31c9d7f70cadaafcd51eeedd42e006576e96555b224",
   "today_save_failed": "62afa501eeb9717c3f297c31bd8f498206e5352af6ff171b6fdccef8faaee2bc",
+  "today_saved_lessons_line": "92cc47ef7ddb5802a058189f3cc362fae1e5ea57a451328d110451f5757df514",
   "today_see_changes": "4b7d23d362269e8750ac37c6639175980d78ab24a8334589f3a2f3ab69b8bcf1",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
@@ -270,6 +271,8 @@
     <string name="today_practice_anytime">いつでも練習</string>
     <string name="today_mistakes_notebook">間違いノート</string>
     <string name="today_mistakes_redo">間違えた問題を解き直す</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">もう一度取り組みたいレッスン</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">レッスンをもう一度学ぶ</string>
     <string name="today_mistakes_return_tomorrow">今日間違えた問題は明日から練習できます</string>
