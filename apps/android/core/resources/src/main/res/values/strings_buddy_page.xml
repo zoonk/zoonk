@@ -4,7 +4,6 @@
     <string name="buddy_page_change">Change %1$s</string>
     <string name="buddy_page_choose">Choose your buddy</string>
     <string name="buddy_page_weekly_summary">Weekly summary</string>
-    <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s of %2$s</string>
     <string name="buddy_page_save_failed">That didn\'t save. Try again.</string>
 
@@ -38,7 +37,6 @@
         <item quantity="one">%1$d of %2$d mission</item>
         <item quantity="other">%1$d of %2$d missions</item>
     </plurals>
-    <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_fully_grown">Fully grown</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Grows when you reach %1$s</string>
@@ -47,30 +45,18 @@
     <string name="buddy_page_glasses_description">Pick a pair you\'ve earned.</string>
 
     <string name="buddy_page_first_steps">First steps</string>
-    <string name="buddy_page_first_steps_done">You\'ve tried everything your plan uses.</string>
+    <plurals name="buddy_page_first_steps_later">
+        <item quantity="one">%1$d more opens as you go</item>
+        <item quantity="other">%1$d more open as you go</item>
+    </plurals>
+    <string name="buddy_page_first_steps_done">You\'ve tried everything.</string>
     <string name="buddy_page_first_lesson">Finish your first lesson</string>
     <string name="buddy_page_first_review">Do your first review</string>
     <string name="buddy_page_first_mistake">Fix your first mistake</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
     <string name="buddy_page_first_pattern">Practice a pattern</string>
-    <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Ask %1$s something</string>
     <string name="buddy_page_first_essay">Write your first essay</string>
     <string name="buddy_page_first_call">Have your first call</string>
-    <string name="buddy_page_first_mock">Take your first mock</string>
-    <!-- The Trickster is the character the learner beats in a challenge. -->
-    <string name="buddy_page_first_challenge">Take on the Trickster</string>
-    <string name="buddy_page_first_today">One of today\'s missions</string>
-    <string name="buddy_page_first_anytime">Anytime</string>
-    <!-- %1$s is a date, like "Nov 2". -->
-    <string name="buddy_page_when_challenge_on">With your first challenge, %1$s</string>
-    <string name="buddy_page_when_challenge">With your first challenge</string>
-    <string name="buddy_page_when_essay">On your first essay day</string>
-    <string name="buddy_page_when_mistake">The day after your first mistake</string>
-    <string name="buddy_page_when_review">When your first review is due</string>
-    <string name="buddy_page_when_pattern">When your mistakes show a pattern</string>
-    <string name="buddy_page_when_call">When you have call time again</string>
-    <string name="buddy_page_when_buddy">When you can ask again</string>
-    <string name="buddy_page_when_lesson">On your next lesson day</string>
-    <string name="buddy_page_when_mock">When your plan has a mock</string>
+    <string name="buddy_page_first_mock">Take your first mock exam</string>
+    <string name="buddy_page_first_challenge">Beat the Trickster</string>
 </resources>

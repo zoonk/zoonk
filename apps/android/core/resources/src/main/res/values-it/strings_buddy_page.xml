@@ -5,24 +5,23 @@
   "buddy_page_choose": "55cf631b0706205ffb13988444f933db7bf319914f3e7ea23922aa9994489db5",
   "buddy_page_conversations": "d56a202e91f9e294c028868f4fe695ab0fc65855c41b84917172a969b1b5c252",
   "buddy_page_conversations_more_failed": "42f63cdb73de171e1f48c61ed38ad6baa61b37558d96632e2535f153ff36d543",
-  "buddy_page_count": "d16a2470fe510446be9904e8f75f42ca6523978301efa8984d8060662df94655",
+  "buddy_page_count": "f9362b7b47cdeed4688b032c5f4573e1f5ad81bae409712c2bd094dc03a72d01",
   "buddy_page_energy_named": "16b85af5e82f1c28154d186c6de838214a8467e19bb0f3e9deb0430219232941",
   "buddy_page_energy_napping": "2133a1854f2c795e24e34786d6c0d1db9f539702f0da3a685bb92dfe66412ef1",
   "buddy_page_energy_starts": "c0537afaf741d8d58a429b83aa349d8d0d47d98fe42975acbf838c5d3ff2e7b4",
   "buddy_page_energy_study": "bcce50405e783373ee44ae9a4adda9a105bd69e0d0bc40a11ae689c42dce95ef",
-  "buddy_page_first_anytime": "88974b296a484b111687696334683f557f06139ecd72f5707e10b27185ef51b1",
   "buddy_page_first_ask": "d19be3c3d16dc3a853db1ad1f73b8c1c1f11b4703d37968e33f53b6246832f8b",
   "buddy_page_first_call": "3b717fb80bf2a97b37a1817322a0b1dd137182ada45cc7bff07b24ef7f282177",
-  "buddy_page_first_challenge": "d6ac117bfded93f865dda231a519b111f1d159e81a7b33dda0aa81d4c7b202cd",
+  "buddy_page_first_challenge": "d1c879d04fd66330b77fd54ce211557259066060c670bd81e7c80ed1a096987e",
   "buddy_page_first_essay": "c3bfdab0e7821210f55a70e53b9ddfb14f7315df41dc0b2f49b6b6211e1d6349",
   "buddy_page_first_lesson": "bb2eb22b6fa953695896ae07307762f3ab6d3a86926505dffe52bef7039f296a",
   "buddy_page_first_mistake": "05bd085c62bb1fb74363ae28808fa8b1da9baf192d51fdd5ba94792e10c31126",
-  "buddy_page_first_mock": "907480fcebd603587f7b3ec1e7d4ab0b98fdb43e08ee6c4b159051123df8b69f",
+  "buddy_page_first_mock": "3873ba18f0f59423d6a95b585388742c241b02413b7ec18b730ac031e371f8a2",
   "buddy_page_first_pattern": "00cdc3bdebfe290a9fba8bf502cf956acea8bf15e2f2352ea8bea33c9e1a5186",
   "buddy_page_first_review": "e60c035bab6a20996dc705d2b848938817b71eeb04090734b3952a48781ea897",
   "buddy_page_first_steps": "17bccaeb6e5e5e29c97a8c4bdc93a2b722f35697a3ee622de3d6bf9902473a2b",
-  "buddy_page_first_steps_done": "86e906606c0aac537dad526161f021457142eebf88077ce76e0cb813e19699c9",
-  "buddy_page_first_today": "4b44cff37d6ea03d6980ddaf51cae952e73643d17c9bd41c4b1708b49e6d2a80",
+  "buddy_page_first_steps_done": "b859ecd27699f5e99099225aca193ddb94a96fb604ef0d750d349f2732fc91e8",
+  "buddy_page_first_steps_later": "e9419e8ebae82754d306a3d45572cece3f975b191fd458ce58284f3d9869cdc1",
   "buddy_page_fully_grown": "41611ef1ac28d2574eae15d718f207e60e79a0c475426e79ec02c1850fc1c0cf",
   "buddy_page_glasses_description": "bc91e045ba5e1964f51d08528be27508c8ec3eedd1ffdff028c62077751d0afd",
   "buddy_page_goal_greeting": "5f2454576532bda43989fc3067004c1a793cdc62d60a3d34325b3f1687669b67",
@@ -42,17 +41,7 @@
   "buddy_page_suggest_mistake": "5ebfae77be4a555d5f67d5d4bd0abff9e6f479582b21646c8d0b96c3473860a0",
   "buddy_page_suggest_plan_today": "986cc8f58ee37828b23424481a9971a890db297d382c4ea704ef2826456c6932",
   "buddy_page_today": "52c860f0637b0eec00532b65d82b53395e46227eae891721fcbba084c0519b92",
-  "buddy_page_weekly_summary": "a70e0b8a649bdadc5f6a49c9afa8b92f8779e6e73db8a9c0886a8e9c9d45be8a",
-  "buddy_page_when_buddy": "df4a5a0f9081809bbcf16b5b1aa609ea99200847cde962d6e37f1cbe60d58322",
-  "buddy_page_when_call": "84211e5ac3c8328cb89e1fad5383f29a68962a8b1c8d95e80a3288be5e966e83",
-  "buddy_page_when_challenge": "52d09538a6cf8a1725bc53ef991501347e4c833bc7255be9f4e271a9cf8c8f55",
-  "buddy_page_when_challenge_on": "4dab614d9fcd232585034a130954efd0b32b7e504dfba8818c7926fc50e5f823",
-  "buddy_page_when_essay": "5f866bbff6eb1074e3afaf073602f4ec370ba4bc97512bcc3137b51be62d17d2",
-  "buddy_page_when_lesson": "b00c65b0da19f0488204e0703f674e29c301556010379351e624bb3fd13219de",
-  "buddy_page_when_mistake": "c6e6c735b2fd98cb0bd6ce86bb94ae150edb17884b8aba1b265bbf7655280935",
-  "buddy_page_when_mock": "097df81633ee04078ae838288a1bdbc4b6da331af701d226d8cee25e051f3e7f",
-  "buddy_page_when_pattern": "26ec910564ad532ba012c12bf1fccc873a36a3ccae312e3aab7982d0567a9e55",
-  "buddy_page_when_review": "bd44fa1fb7b289730d19d9648b41e7a92ad82573cc46f24bcd77cb970f1093aa"
+  "buddy_page_weekly_summary": "a70e0b8a649bdadc5f6a49c9afa8b92f8779e6e73db8a9c0886a8e9c9d45be8a"
 }
 -->
 <resources>
@@ -60,8 +49,7 @@
     <string name="buddy_page_change">Cambia %1$s</string>
     <string name="buddy_page_choose">Scegli il tuo socio</string>
     <string name="buddy_page_weekly_summary">Riepilogo settimanale</string>
-    <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
-    <string name="buddy_page_count">%1$s di %2$s</string>
+    <string name="buddy_page_count">%1$s su %2$s</string>
     <string name="buddy_page_save_failed">Il salvataggio non è riuscito. Riprova.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="buddy_page_greeting">Ciao! Sono %1$s, il tuo socio di studio con l’IA. Chiedimi quello che vuoi o dimmi cosa cambiare nel tuo piano.</string>
@@ -92,7 +80,6 @@
         <item quantity="many">%1$d su %2$d missioni</item>
         <item quantity="other">%1$d su %2$d missioni</item>
     </plurals>
-    <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_fully_grown">Crescita completata</string>
     <!-- %1$s is a belt, like "Orange belt". -->
     <string name="buddy_page_grows">Cresce quando raggiungi la %1$s</string>
@@ -100,30 +87,19 @@
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
     <string name="buddy_page_glasses_description">Scegli un paio che hai conquistato.</string>
     <string name="buddy_page_first_steps">Primi passi</string>
-    <string name="buddy_page_first_steps_done">Hai provato tutte le attività previste dal tuo piano.</string>
+    <plurals name="buddy_page_first_steps_later">
+        <item quantity="one">%1$d si sblocca man mano che vai avanti</item>
+        <item quantity="many">%1$d si sbloccano man mano che vai avanti</item>
+        <item quantity="other">%1$d si sbloccano man mano che vai avanti</item>
+    </plurals>
+    <string name="buddy_page_first_steps_done">Hai provato tutto.</string>
     <string name="buddy_page_first_lesson">Completa la tua prima lezione</string>
     <string name="buddy_page_first_review">Fai il tuo primo ripasso</string>
     <string name="buddy_page_first_mistake">Correggi il tuo primo errore</string>
-    <!-- A first-steps mission: practice a kind of mistake the learner keeps making. -->
     <string name="buddy_page_first_pattern">Esercitati su un errore ricorrente</string>
-    <!-- A first-steps mission. %1$s is the learner's buddy's name. -->
     <string name="buddy_page_first_ask">Chiedi qualcosa a %1$s</string>
     <string name="buddy_page_first_essay">Scrivi il tuo primo tema</string>
     <string name="buddy_page_first_call">Fai la tua prima conversazione</string>
     <string name="buddy_page_first_mock">Fai la tua prima simulazione</string>
-    <!-- The Trickster is the character the learner beats in a challenge. -->
-    <string name="buddy_page_first_challenge">Affronta il Briccone</string>
-    <string name="buddy_page_first_today">Una delle missioni di oggi</string>
-    <string name="buddy_page_first_anytime">Quando vuoi</string>
-    <!-- %1$s is a date, like "Nov 2". -->
-    <string name="buddy_page_when_challenge_on">Con la tua prima sfida, il %1$s</string>
-    <string name="buddy_page_when_challenge">Con la tua prima sfida</string>
-    <string name="buddy_page_when_essay">Il giorno del tuo primo tema</string>
-    <string name="buddy_page_when_mistake">Il giorno dopo il tuo primo errore</string>
-    <string name="buddy_page_when_review">Quando sarà il momento del tuo primo ripasso</string>
-    <string name="buddy_page_when_pattern">Quando un errore inizierà a ripetersi</string>
-    <string name="buddy_page_when_call">Quando avrai di nuovo tempo per le conversazioni</string>
-    <string name="buddy_page_when_buddy">Quando potrai fare un’altra domanda</string>
-    <string name="buddy_page_when_lesson">Il giorno della tua prossima lezione</string>
-    <string name="buddy_page_when_mock">Quando il tuo piano prevede una simulazione</string>
+    <string name="buddy_page_first_challenge">Sconfiggi il Briccone</string>
 </resources>

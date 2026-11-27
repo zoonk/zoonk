@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -87,6 +86,8 @@ import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberExpandedBottomSheetState
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.BuddyStatus
@@ -526,13 +527,12 @@ private fun BuddyMenu(
 
 @Composable
 internal fun GlassesCount(status: BuddyStatus) {
-    val earned = status.glasses.count { it.earned }.toString()
-    val total = status.glasses.size.toString()
-    val spoken = stringResource(R.string.buddy_page_count, earned, total)
+    val locale = currentLocale()
+    val earned = formatNumber(status.glasses.count { it.earned }.toDouble(), locale)
+    val total = formatNumber(status.glasses.size.toDouble(), locale)
 
     Text(
-        "$earned/$total",
-        Modifier.semantics { contentDescription = spoken },
+        stringResource(R.string.buddy_page_count, earned, total),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.labelMedium,
     )
