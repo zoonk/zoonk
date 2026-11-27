@@ -206,14 +206,12 @@ private struct WritingNextStepSection: View {
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 10) {
+      VStack(alignment: .leading, spacing: 12) {
         switch step {
         case .done:
-          Text("Nothing left to work on", tableName: "Essay", comment: "Full marks")
-            .typeStyle(.stepHeading)
-          Text("Every criterion is complete.", tableName: "Essay")
-            .typeStyle(.body)
-            .foregroundStyle(.mutedForeground)
+          PageHeader(
+            Text("Nothing left to work on", tableName: "Essay", comment: "Full marks"),
+            supporting: Text("Every criterion is complete.", tableName: "Essay"))
         case .limit:
           card(title: limitTitle, text: limitText)
         case .short:
@@ -246,22 +244,23 @@ private struct WritingNextStepSection: View {
   private func card(title: String, text: String, quote: String? = nil, example: String? = nil)
     -> some View
   {
-    Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next"))
+    PageHeader(
+      Text(title),
+      chip: Chip(Text("Next step", tableName: "Essay", comment: "The one thing to work on next")))
 
-    Text(title)
-      .typeStyle(.stepHeading)
+    VStack(alignment: .leading, spacing: 20) {
+      if let quote {
+        QuotedPassage(quote, accent: .warning)
+      }
 
-    if let quote {
-      QuotedPassage(quote, accent: .warning)
-    }
+      Text(text)
+        .typeStyle(.reading)
 
-    Text(text)
-      .typeStyle(.reading)
-
-    if let example {
-      Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
-        .typeStyle(.body)
-        .foregroundStyle(.mutedForeground)
+      if let example {
+        Text("For example: \(example)", tableName: "Essay", comment: "A rewrite example")
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+      }
     }
   }
 
