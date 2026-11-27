@@ -28,12 +28,11 @@ function useRowFacts() {
       ? [skipped(test.result.lessonsSkipped), formatDate(test.result.finishedAt)]
       : [invitation, minutes ? facts.about(minutes) : null];
 
-  /** A test that's open says where it stands; otherwise its last result, or the invitation. */
   const course = (test: CourseRow) =>
     test.attempt
       ? [
           t("In progress"),
-          facts.question({ number: test.attempt.answered + 1, total: test.attempt.questions }),
+          facts.nextQuestion({ answered: test.attempt.answered, total: test.attempt.questions }),
         ]
       : result(test, t("Skip lessons you already know"), test.offer?.estimatedMinutes);
 
@@ -50,7 +49,7 @@ function useRowFacts() {
       t("In progress"),
       test.answered !== undefined &&
         test.total !== undefined &&
-        facts.question({ number: test.answered + 1, total: test.total }),
+        facts.nextQuestion({ answered: test.answered, total: test.total }),
     ];
   };
 }

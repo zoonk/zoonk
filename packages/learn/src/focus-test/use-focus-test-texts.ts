@@ -106,7 +106,7 @@ export function useFocusTestRowFacts() {
 
     return [
       t("In progress"),
-      sitting && facts.question({ number: sitting.answered + 1, total: sitting.questions }),
+      sitting && facts.nextQuestion({ answered: sitting.answered, total: sitting.questions }),
     ];
   };
 }
