@@ -161,6 +161,89 @@ test.describe("Testing what you know from the plan", () => {
     await page.screenshot({ path: testInfo.outputPath("placement-plan-wait.png") });
   });
 
+  test("a later part waits for its own question after the first part's wait", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }, testInfo) => {
+    const { goal, skills } = await languageGoalFixture({ userId: noProgressUser.id });
+    const [first, second] = skills;
+
+    if (!first || !second) {
+      throw new Error("Expected a topic in each part");
+    }
+
+    const id = crypto.randomUUID();
+    const now = new Date();
+    const skillIds = [first.id, second.id];
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          answered: [...ANSWERED, "placement"],
+          level: "A2",
+          placementTest: {
+            attempt: {
+              estimatedMinutes: 2,
+              id,
+              length: "wholeCourse",
+              lessonsSkipped: 0,
+              part: 1,
+              partComplete: false,
+              partPrepared: false,
+              partSkillIds: [first.id],
+              partStartedAt: now.toISOString(),
+              skillIds,
+            },
+            result: null,
+          },
+        },
+        planRevealedAt: now,
+      },
+      where: { id: goal.id },
+    });
+
+    const waiting = page.getByRole("heading", {
+      exact: true,
+      level: 1,
+      name: "Getting your test ready",
+    });
+
+    await page.goto("/placement-test");
+    await expect(waiting).toBeVisible();
+
+    const firstQuestion = "What would you say first?";
+    await itemFixture({ content: choiceItemContent(firstQuestion), skillId: first.id });
+    await expect(page.getByRole("heading", { name: firstQuestion })).toBeVisible();
+    await page.getByRole("button", { name: "I don't know yet" }).click();
+    await page.getByRole("button", { exact: true, name: "Keep going" }).click();
+
+    const secondQuestion = "What would you say next?";
+    await expect(waiting).toBeVisible();
+    await expect(page.getByRole("heading", { name: firstQuestion })).toBeHidden();
+
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
+    await page.getByRole("link", { name: /Level test/u }).click();
+    await expect(waiting).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath("placement-part-two-wait.png") });
+
+    const item = await itemFixture({
+      content: choiceItemContent(secondQuestion),
+      skillId: second.id,
+    });
+
+    await expect(page.getByRole("heading", { name: secondQuestion })).toBeVisible();
+    await expect(page.getByText("Part 2", { exact: true })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath("placement-part-two.png") });
+
+    await page.getByRole("radio", { name: "Right answer" }).click();
+    await confirm(page);
+
+    await expect
+      .poll(() => prisma.attempt.count({ where: { focusTestId: id, itemId: item.id } }))
+      .toBe(1);
+  });
+
   test("offers no B2 test-out while B2 has no lessons it could skip", async ({
     noProgressUser,
     userWithoutProgress: page,

@@ -5,6 +5,7 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onboarding-actions";
+import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
 
 export type QuestionPhase = {
   failures: number;
@@ -19,7 +20,7 @@ export type FocusTestPhase =
   /** `ended`: the open sitting asks nothing more and isn't closed yet. */
   | { kind: "ended" | "loadFailed" | "loading" | "unavailable" }
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
-  | { answered: boolean; kind: "waiting" }
+  | (PlacementQuestionWait & { answered: boolean; buildFailed?: boolean })
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
   /** `answered`: every answer the learner has saved, earlier sittings included. */
   | { answered: number; kind: "resume"; question: QuestionPhase }
@@ -60,7 +61,14 @@ export function toFocusTestPhase({
   if (outcome.status !== "ready") {
     const focusTest = outcome.status === "notReady" ? outcome.focusTest : null;
     const resting = opening && focusTest && !focusTest.sitting ? toRestingPhase(focusTest) : null;
-    return resting ?? { answered: Boolean(focusTest?.checkpoint), kind: "waiting" };
+
+    return (
+      resting ?? {
+        answered: Boolean(focusTest?.checkpoint),
+        ...(outcome.status === "generationFailed" && { buildFailed: true }),
+        kind: "waiting",
+      }
+    );
   }
 
   const { focusTest, next } = outcome;
