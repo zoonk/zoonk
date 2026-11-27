@@ -1,6 +1,10 @@
 import { t } from "../../_utils/localize";
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
+import { shareholderVoteItem } from "../../library/stock-market/stock-market-items";
 import { type SeedLearner } from "../types";
+
+const { content: shareholderVote } = shareholderVoteItem;
+const [correctVote, missedVote] = shareholderVote.options;
 
 export const pedroStocks: SeedLearner = {
   attempts: [
@@ -46,31 +50,23 @@ export const pedroStocks: SeedLearner = {
       answer: { selectedIndex: 1 },
       day: -3,
       isCorrect: false,
-      item: "paid-last",
-      key: "paid-last",
+      item: shareholderVoteItem.key,
+      key: shareholderVoteItem.key,
       mistake: {
         cause: "gap",
         snapshot: {
-          answer: t("The banks that lent money", "Os bancos que emprestaram dinheiro"),
-          correctAnswer: t("The shareholders", "Os acionistas"),
-          explanation: t(
-            "Lenders come before shareholders: a loan must be repaid first.",
-            "Credores vêm antes dos acionistas: o empréstimo precisa ser pago primeiro.",
-          ),
-          format: "multipleChoice",
-          misconception: t(
-            "Thinks lenders are paid after owners",
-            "Acha que credores recebem depois dos donos",
-          ),
-          question: t(
-            "A company goes bankrupt. Who is paid last?",
-            "Uma empresa vai à falência. Quem recebe por último?",
-          ),
+          answer: missedVote.text,
+          context: shareholderVote.context,
+          correctAnswer: correctVote.text,
+          explanation: missedVote.reason,
+          format: shareholderVoteItem.format,
+          misconception: missedVote.misconception,
+          question: shareholderVote.question,
         },
         status: "open",
       },
       seconds: 22,
-      skill: "shareholder-rights",
+      skill: shareholderVoteItem.skill,
     },
     {
       answer: { number: 0.05, values: { owned: 5000, total: 10_000_000 } },
