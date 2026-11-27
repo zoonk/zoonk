@@ -1,16 +1,26 @@
 "use client";
 
-import { type HelpLimit, HelpLimitNotice, useHelpLimitWords } from "@zoonk/learn/help-limit";
+import {
+  type HelpLimit,
+  HelpLimitNotice,
+  useHelpLimitWords,
+  useLiveLimit,
+} from "@zoonk/learn/help-limit";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { type LessonQuestionState } from "./lesson-question-state";
+import { getQuestionRefusal } from "./lesson-question-state-helpers";
 
 export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | null {
   if (error?.kind === "signUpRequired") {
     return { status: "signUpRequired" };
+  }
+
+  if (error?.kind === "slowDown") {
+    return { retryAfterSeconds: error.retryAfterSeconds, status: "slowDown" };
   }
 
   if (error?.kind === "usageLimit") {
@@ -28,11 +38,11 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   return null;
 }
 
-export function getQuestionLimit(
+/** The limit that stops asking while it holds; once it lifts, the learner can ask again. */
+export function useQuestionLimit(
   state: Pick<LessonQuestionState, "answerError" | "error" | "requestError">,
 ): HelpLimit | null {
-  const refusedQuestion = state.error === "create" ? toHelpLimit(state.requestError) : null;
-  return refusedQuestion ?? toHelpLimit(state.answerError?.reason ?? null);
+  return toHelpLimit(useLiveLimit(getQuestionRefusal(state)));
 }
 
 export function QuestionLimitNotice({
@@ -72,10 +82,6 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
 
   if (error?.kind === "invalid") {
     return <>{t("We couldn't send this question. Try again.")}</>;
-  }
-
-  if (error?.kind === "slowDown") {
-    return <>{t("Take a short break, then ask again.")}</>;
   }
 
   const limit = toHelpLimit(error);

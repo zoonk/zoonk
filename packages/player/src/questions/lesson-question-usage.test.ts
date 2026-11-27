@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { getRefusalError } from "./lesson-question-usage";
 
 function limitReachedBody(tier: string) {
@@ -16,13 +16,23 @@ function refusal({ body, status }: { body: unknown; status: number }) {
 }
 
 describe(getRefusalError, () => {
-  it("asks the learner to slow down with the wait the server gives", async () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("asks the learner to slow down until the wait the server gives has passed", async () => {
+    vi.useFakeTimers({ now: Date.parse("2026-08-21T12:00:00.000Z") });
+
     await expect(
       refusal({
         body: { error: { code: "SLOW_DOWN", details: { retryAfterSeconds: 30 }, message: "" } },
         status: 429,
       }),
-    ).resolves.toStrictEqual({ kind: "slowDown", retryAfterSeconds: 30 });
+    ).resolves.toStrictEqual({
+      availableAt: "2026-08-21T12:00:30.000Z",
+      kind: "slowDown",
+      retryAfterSeconds: 30,
+    });
   });
 
   it("reads which plan's tutor allowance ran out", async () => {

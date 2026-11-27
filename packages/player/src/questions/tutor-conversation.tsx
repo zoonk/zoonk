@@ -62,7 +62,7 @@ const COMPOSER_POSITION =
 function LoadError() {
   const controller = useLessonQuestionController();
   const error = controller.state.requestError;
-  const limit = useLiveLimit(toHelpLimit(error));
+  const limit = toHelpLimit(useLiveLimit(error));
 
   if (limit) {
     return <QuestionLimitNotice limit={limit} />;

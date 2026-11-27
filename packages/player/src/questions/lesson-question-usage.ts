@@ -7,6 +7,7 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 const HTTP_STATUS_PAYMENT_REQUIRED = 402;
 const HTTP_STATUS_FORBIDDEN = 403;
 const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
+const MS_PER_SECOND = 1000;
 
 const slowDownSchema = z.object({
   code: z.literal(LESSON_PLAYER_ERROR_CODES.slowDown),
@@ -34,7 +35,12 @@ const usageErrorSchema = z.object({
 
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
-  | { kind: "slowDown"; retryAfterSeconds: number }
+  | {
+      /** When asking opens again: the server's wait, counted from when this device received it. */
+      availableAt?: string;
+      kind: "slowDown";
+      retryAfterSeconds: number;
+    }
   | ({ kind: "usageLimit"; receivedAt?: number } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
@@ -69,6 +75,11 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
     return received(usage);
   }
 
+  if (usage?.kind === "slowDown") {
+    const opens = Date.now() + usage.retryAfterSeconds * MS_PER_SECOND;
+    return { ...usage, availableAt: new Date(opens).toISOString() };
+  }
+
   if (usage) {
     return usage;
   }
@@ -76,6 +87,15 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
   return response.status === HTTP_STATUS_PAYMENT_REQUIRED
     ? { kind: "subscription" }
     : { kind: "unknown" };
+}
+
+const USAGE_REFUSAL_KINDS = new Set(["signUpRequired", "slowDown", "usageLimit"]);
+
+/** A refusal that holds until the learner's allowance is back, an account is made or a short wait ends. */
+export function isUsageRefusal(
+  error: LessonQuestionApiError | null | undefined,
+): error is LessonQuestionUsageRefusal {
+  return Boolean(error && USAGE_REFUSAL_KINDS.has(error.kind));
 }
 
 export function isRefusal(response: Response): boolean {

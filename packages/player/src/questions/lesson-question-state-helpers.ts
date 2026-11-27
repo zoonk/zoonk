@@ -3,6 +3,7 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionState } from "./lesson-question-state";
+import { type LessonQuestionUsageRefusal, isUsageRefusal } from "./lesson-question-usage";
 
 function sortQuestions(questions: LessonQuestionResource[]) {
   return questions.toSorted(
@@ -116,6 +117,30 @@ export function endQuestionCreate({
   draft,
 }: Pick<LessonQuestionState, "creating" | "draft">) {
   return { creating: null, draft: draft || (creating?.draft ?? "") };
+}
+
+/** What stops asking: the refused question, or the refused answer of one saved before. */
+export function getQuestionRefusal({
+  answerError,
+  error,
+  requestError,
+}: Pick<
+  LessonQuestionState,
+  "answerError" | "error" | "requestError"
+>): LessonQuestionUsageRefusal | null {
+  if (error === "create" && isUsageRefusal(requestError)) {
+    return requestError;
+  }
+
+  const answerRefusal = answerError?.reason;
+  return isUsageRefusal(answerRefusal) ? answerRefusal : null;
+}
+
+/** Editing the draft clears a failed send's message, but a limit holds until it lifts. */
+export function clearSendError(state: Pick<LessonQuestionState, "error" | "requestError">) {
+  return isUsageRefusal(state.requestError)
+    ? { error: state.error, requestError: state.requestError }
+    : { error: null, requestError: null };
 }
 
 export function isSameDraftContext({

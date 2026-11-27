@@ -13,6 +13,7 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   answerPlanChange,
+  clearSendError,
   endQuestionCreate,
   isSameDraftContext,
   mergeCreatedQuestion,
@@ -192,13 +193,12 @@ export function lessonQuestionReducer(
     case "close":
       return { ...state, isOpen: false };
     case "draftChanged":
-      return { ...state, draft: action.draft, error: null, requestError: null };
+      return { ...state, ...clearSendError(state), draft: action.draft };
     case "suggestionChosen":
       return {
         ...state,
+        ...clearSendError(state),
         draft: action.suggestion.question,
-        error: null,
-        requestError: null,
         suggestion: action.suggestion,
       };
     case "questionCreateStarted":

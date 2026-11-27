@@ -7,7 +7,13 @@ import {
   getLessonQuestionSession,
   lessonQuestionSessionsReducer,
 } from "./lesson-question-sessions";
-import { INITIAL_LESSON_QUESTION_STATE, lessonQuestionReducer } from "./lesson-question-state";
+import {
+  INITIAL_LESSON_QUESTION_STATE,
+  type LessonQuestionState,
+  lessonQuestionReducer,
+} from "./lesson-question-state";
+import { getQuestionRefusal } from "./lesson-question-state-helpers";
+import { getComposerAvailability } from "./lesson-question-status";
 
 function questionResource(overrides?: Partial<LessonQuestionResource>): LessonQuestionResource {
   return {
@@ -601,6 +607,83 @@ describe(lessonQuestionReducer, () => {
     const kept = lessonQuestionReducer(typed, { type: "questionCreateConflicted" });
 
     expect(kept).toMatchObject({ creating: null, draft: "Why a cloud?", suggestion: null });
+  });
+});
+
+function canSend(state: LessonQuestionState, limited: boolean) {
+  return getComposerAvailability({ isResolvingPreviousQuestion: false, limited, state }).canSend;
+}
+
+describe("a question the tutor limit refuses", () => {
+  const DAY_LIMIT = {
+    kind: "usageLimit",
+    period: "day",
+    receivedAt: Date.parse("2026-08-21T12:00:00.000Z"),
+    tier: "free",
+  } as const;
+
+  const READY: LessonQuestionState = { ...INITIAL_LESSON_QUESTION_STATE, loadStatus: "ready" };
+
+  function refuse(state: LessonQuestionState, question: string, suggestion?: "simpler") {
+    const asked = lessonQuestionReducer(state, {
+      question,
+      suggestion,
+      type: "questionCreateStarted",
+    });
+
+    return lessonQuestionReducer(asked, { reason: DAY_LIMIT, type: "questionCreateFailed" });
+  }
+
+  it("keeps the typed question in the composer, with Send off until the limit lifts", () => {
+    const typed = lessonQuestionReducer(READY, {
+      draft: "Why is the sky blue?",
+      type: "draftChanged",
+    });
+
+    const refused = refuse(typed, "Why is the sky blue?");
+
+    expect(refused.draft).toBe("Why is the sky blue?");
+    expect(getQuestionRefusal(refused)).toStrictEqual(DAY_LIMIT);
+    expect(canSend(refused, true)).toBe(false);
+    expect(canSend(refused, false)).toBe(true);
+  });
+
+  it("keeps the limit while the learner edits the question it refused", () => {
+    const typed = lessonQuestionReducer(READY, {
+      draft: "Why is the sky blue?",
+      type: "draftChanged",
+    });
+
+    const edited = lessonQuestionReducer(refuse(typed, "Why is the sky blue?"), {
+      draft: "Why is the sky blue and not violet?",
+      type: "draftChanged",
+    });
+
+    expect(edited.draft).toBe("Why is the sky blue and not violet?");
+    expect(getQuestionRefusal(edited)).toStrictEqual(DAY_LIMIT);
+    expect(canSend(edited, true)).toBe(false);
+  });
+
+  it("leaves the composer empty when the limit refuses a tapped suggestion", () => {
+    const refused = refuse(READY, "Explain it more simply", "simpler");
+
+    expect(refused.draft).toBe("");
+    expect(getQuestionRefusal(refused)).toStrictEqual(DAY_LIMIT);
+  });
+
+  it("clears a send that failed for another reason once the learner edits the question", () => {
+    const typed = lessonQuestionReducer(READY, { draft: "Why?", type: "draftChanged" });
+    const asked = lessonQuestionReducer(typed, { question: "Why?", type: "questionCreateStarted" });
+
+    const failed = lessonQuestionReducer(asked, {
+      reason: { kind: "unknown" },
+      type: "questionCreateFailed",
+    });
+
+    const edited = lessonQuestionReducer(failed, { draft: "Why not?", type: "draftChanged" });
+
+    expect(getQuestionRefusal(failed)).toBeNull();
+    expect(edited).toMatchObject({ error: null, requestError: null });
   });
 });
 
