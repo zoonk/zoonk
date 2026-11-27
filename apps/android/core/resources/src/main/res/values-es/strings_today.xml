@@ -112,6 +112,7 @@
   "today_step_done": "45696908ee29ac94110f5b51a91683f83287ef9db7323d6f3da2ccc795fe71cb",
   "today_step_every_topic": "6675aa3d8a638f84437f0926ae5baf118b661007f16bd256eada78b2dfd2f4e7",
   "today_step_extra": "7959b289bdd1d2e39606ccd61510bd9b5a3abcfaf3534013e89041a41d8bd1bc",
+  "today_step_more_topics": "1cfada3ef98ffe55cd2a22d3ef1baa7bacde5274523d9544430e14b257ae7c35",
   "today_step_next": "72ccd4cf0ff18a254daa5494a789d1ad5f1c8c7a1dd5cb3e4f6f7d97f00a842f",
   "today_step_often_tested": "80a8db4c568b1d2e68eb0011c6fe7d91e2700cf438801abd2d3f574a262212c0",
   "today_step_open_failed": "71fc9d85c8cce0970111f797c170896883d0deac22f8e5b6e2572fe33654b89a",
@@ -388,6 +389,12 @@
     </plurals>
     <string name="today_add_to_today">Agregar para hoy</string>
     <string name="today_unfinished_setup">No terminaste de configurarlo.</string>
+    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
+    <plurals name="today_step_more_topics">
+        <item quantity="one">%d tema más</item>
+        <item quantity="many">%d temas más</item>
+        <item quantity="other">%d temas más</item>
+    </plurals>
     <string name="today_step_every_topic">Todos los temas</string>
     <string name="mock_schedule_title">Cambiar la fecha del simulacro</string>
     <string name="mock_schedule_change">Cambiar fecha</string>

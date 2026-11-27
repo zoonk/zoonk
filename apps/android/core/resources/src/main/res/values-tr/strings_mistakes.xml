@@ -10,11 +10,18 @@
   "mistakes_empty_open": "dd89bd9c81715cd3f9d13beadc0f2d44b4876298bdb3435e4bd8bdff7c358806",
   "mistakes_more_failed": "a9e4bd3bf2b9af6648c522be5b9f856b21be11c43ff54e92c1a19ef31da09a0a",
   "mistakes_notebook_title": "0b7cd0639fb2f102aa808eca7685e863ad69c4b2ef7e9786b3bf8e572c9bff62",
+  "mistakes_nothing_title": "156d684945c06535e59f3db82c9e81cb8de9ba0246842188977615df89065e6b",
   "mistakes_open_lesson": "d98824721b294f85a337001ef8da9631566542fef874db63b8e3b1160796be11",
   "mistakes_other_questions": "ed762989a059fc9e5724038dfe05c55a8170318804becae0ec6b0e396c194ce4",
   "mistakes_practice": "32e3b3b0a83cb4fa553b483f530f531e873dcf503aa5b5b55fb3a0ccb321312f",
+  "mistakes_practice_again": "d1982169e1d74c47f38241f0740d7e456ba27ef488f73be71e78699e76b1a094",
+  "mistakes_practice_already_fixed": "dcfdcb68489b6af9e0273184e00c614dc2d9c6608d572e00e52970f481be770d",
+  "mistakes_practice_done": "8961b9ae0086d7250a95689c09ebf28c52bcbaf9d0f2d7e4e5eae870a1b81008",
   "mistakes_practice_end": "568071e91bd37f4fbe0afc95392a3b371a204f0173b080dd017f36c276a6bfd7",
   "mistakes_practice_fixed": "3d26a89032cdd18b0d96996658c1d0f211c29a0d80b4a6a01deae1b2bc7d72fd",
+  "mistakes_practice_later_day": "5a6349a90cc6cd65d1ccf5ec0f818ebad230e470a2b082898c9f853c062b9bcc",
+  "mistakes_practice_not_marked": "0d04a61bcc85301cca2bf6e7830c245863556ed060bb3f5b205c465298a81418",
+  "mistakes_practice_not_saved": "e3191249f3b065bc7338d28ddafce9cbd3f842c5277fb9f2399108a63d1a59c9",
   "mistakes_practice_title": "37b0b4f3c940210dfec9f98fef3a3f9887a1f7412e62c74161f26edfb627835a",
   "mistakes_practice_topic": "e916e5c5a0eabdb2c99098456594e9a20a1cf8d047f14e63c29181f58d727da5",
   "mistakes_show_more": "1bbf067f3904e72e52deee339ed8cee6edb550ab76ac93bde1baed01175334b7",
@@ -30,6 +37,7 @@
         <item quantity="one">%d yanlış düzeltildi</item>
         <item quantity="other">%d yanlış düzeltildi</item>
     </plurals>
+    <string name="mistakes_nothing_title">Çalışılacak bir şey yok</string>
     <string name="mistakes_notebook_title">Yanlış defteri</string>
     <string name="mistakes_practice">Yanlışlarına çalış</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
@@ -50,7 +58,17 @@
     <string name="mistakes_cause_time">Süren yetmedi</string>
     <string name="mistakes_cause_guess">Tahmin ettin</string>
     <string name="mistakes_practice_topic">Bu konuda alıştırma yap</string>
-    <string name="mistakes_open_lesson">Dersi aç</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
+    <string name="mistakes_practice_later_day">Emin olmak için başka bir gün yeniden karşına çıkar.</string>
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
+    <string name="mistakes_practice_again">Tekrar çalış</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
+    <string name="mistakes_practice_done">Tamam</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">Yanlışlarını gözden geçirme çalışman henüz kaydedilmedi</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">Zaten düzeltildi</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">Tamamlandı olarak işaretleyemedik. Bağlantını kontrol et.</string>
+    <string name="mistakes_open_lesson">Dersi aç</string>
 </resources>

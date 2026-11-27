@@ -62,6 +62,7 @@
   "mock_result_pass_marks_language": "0c1a9a8b658f02ebe2b1d293551273c2ec6c8428211658edd438252feb706a93",
   "mock_result_pass_paper": "5ee08634409724028a082afda43e5b06662d3b697f08238d30a9098c2c370d54",
   "mock_result_pass_score": "c23a2c639f383d046913a86c19047b403fd4b5caef048aef9d09ea34882a340b",
+  "mock_result_plan_moved": "bccde19b9878446e2e1f1177b388892b8171739610e09c85f75fb48431789311",
   "mock_result_plan_not_saved": "82a54a7e566c0f45e5f24f8b64fb230157f0ceb1856a0d42637316caccb47a36",
   "mock_result_plan_unchanged": "45282d8667a9c7d7c99c0fd45a98f76f2be6c73275966078700e909fda73ef17",
   "mock_result_points": "cd2f59bb462ea1e0d9171e23ecebe517d2a7907a9135f0279eb7da79681b3ebb",
@@ -323,6 +324,8 @@
     <string name="mock_result_not_done">Tamamlanmadı</string>
     <string name="mock_result_your_preparation">Hazırlığın</string>
     <string name="mock_result_your_plan">Planın</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">Kaçırdığın konular artık daha erken karşına çıkıyor</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Zaten bildiğin %d dersi atlamak ister misin?</item>
         <item quantity="other">Zaten bildiğin %d dersi atlamak ister misin?</item>

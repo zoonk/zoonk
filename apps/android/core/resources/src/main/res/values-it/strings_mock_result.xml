@@ -62,6 +62,7 @@
   "mock_result_pass_marks_language": "62e8de9fec1f2679be28115726a71ba7a15601b4087626b9df9d4ff04115e43d",
   "mock_result_pass_paper": "83f72028248ece82a821bee6d5bebe69c5d232a59517a6aa0387459bf3126c28",
   "mock_result_pass_score": "2fc284bd64dc34e16dfbc0eb7cbb8dfafbfcdc1e330a52bddad2fb96c750a753",
+  "mock_result_plan_moved": "1be1751d1028a380e965acd5ffc59b8c104166d3dae6fe5f02de601070658e72",
   "mock_result_plan_not_saved": "36d9dcfe5889bd80f8cd5bb667dd9f96d89f3a3315c4e006a919757a5e1bd2df",
   "mock_result_plan_unchanged": "c3b946b53cfd7da14e8b3db55f70bb2cfb415ceae877b8512efca53d1d443caf",
   "mock_result_points": "286e37d5600a83e761ba8a7ab60330ba5e8e0ee5a608120d97c661adfc641e35",
@@ -339,6 +340,8 @@
     <string name="mock_result_not_done">Da completare</string>
     <string name="mock_result_your_preparation">La tua preparazione</string>
     <string name="mock_result_your_plan">Il tuo piano</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">Gli argomenti che ti erano sfuggiti arrivano prima</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Vuoi saltare %d lezione che conosci già?</item>
         <item quantity="many">Vuoi saltare %d lezioni che conosci già?</item>

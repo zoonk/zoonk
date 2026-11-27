@@ -62,6 +62,7 @@
   "mock_result_pass_marks_language": "dadda94117534229139cf334d468d23e236b4feffd04eb423235314d384995a7",
   "mock_result_pass_paper": "d0779d9cd9cd1da52a0aba7735f300ea7f3eb813c75a94c155858b8ae199d21e",
   "mock_result_pass_score": "fea42e1b3bd2eaff6de72a7ea73104e24fced79ea743367922d4a42ce870bbe2",
+  "mock_result_plan_moved": "bfe45549de02c7285fd61a7c39ec8cb1f22b846db5a9474930068b1523b9f4fc",
   "mock_result_plan_not_saved": "77d9bcc2fd235d3afec142cda20e16801eeb0073565c47648def2431de452eeb",
   "mock_result_plan_unchanged": "04708af19694f4b2395f2f60623fb3394b63d4cd5dacefbf1ab80f47c5b597da",
   "mock_result_points": "786f3dad25c11968cb9e45faca470da840dd667acb8e7bbc6f2c5d39d0a3afd3",
@@ -307,6 +308,8 @@
     <string name="mock_result_not_done">未完了</string>
     <string name="mock_result_your_preparation">準備状況</string>
     <string name="mock_result_your_plan">学習計画</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">間違えた内容が、より早く出てきます</string>
     <plurals name="mock_result_skip_title">
         <item quantity="other">すでに知っている%dレッスンをスキップしますか？</item>
     </plurals>

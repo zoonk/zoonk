@@ -62,6 +62,7 @@
   "mock_result_pass_marks_language": "9504ed553828fcb2bff70f9e60d42b848e50bc8a70bf79ae06f0ea8b170d0aa6",
   "mock_result_pass_paper": "baf6a0dfedfbdd29c400f462c2a38e5b3f4da121a9f9e6d4c6900eb08a84829a",
   "mock_result_pass_score": "ab6f17bba8667cd9017c2db3586a9bbdc0f0484af4f0b158232d87dc6b099cb5",
+  "mock_result_plan_moved": "cb5e2a21726ab392ff18123785d01a7820f5de8a823b83d21269847b2c1c7039",
   "mock_result_plan_not_saved": "7873a68edae7b1d718e96131332d03817ad05c8956601bb35898f9b088a6d614",
   "mock_result_plan_unchanged": "0d7104e0fa22e903279dabf1c97fe3fdbe85aeb35acf5eec89fff7a4edccac22",
   "mock_result_points": "b711c1048cded847429cfc977a6bdc7341f9abc9a439656b255136844c8e0711",
@@ -307,6 +308,8 @@
     <string name="mock_result_not_done">미완료</string>
     <string name="mock_result_your_preparation">내 준비도</string>
     <string name="mock_result_your_plan">내 계획</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">전에 놓친 주제가 이제 더 일찍 나와요</string>
     <plurals name="mock_result_skip_title">
         <item quantity="other">이미 아는 레슨 %d개를 건너뛸까요?</item>
     </plurals>

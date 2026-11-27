@@ -10,11 +10,18 @@
   "mistakes_empty_open": "1121b3cc055fbb5c1281b249e698e1e1953d70a24497067deff6e1282ea2d83b",
   "mistakes_more_failed": "621a9374f17d21a60fcf40df2787e7e76a9cff21d5b6cb04f6419dd4232aa8be",
   "mistakes_notebook_title": "9d522a70062774d41e060250e33422e848d799bae85ab764eb3128c93de3859d",
+  "mistakes_nothing_title": "1361ebbee63b7f8dcfb555f7a8e2abdb6aa5ef0144a36d9b9e2de5bd23d56ae5",
   "mistakes_open_lesson": "7500f6fd5e844e4358cdef27851426a5f1f5ae924bdd1b548033818cebe4a438",
   "mistakes_other_questions": "09b2530534e3ea6d8f3b40da5a2747cd5cd6fdcec39a28ee51560e60c412f46c",
   "mistakes_practice": "1cf31b1dc4f008b99b249d4dca2e62a392ecd5fe628c068eb6d05cb81b093f98",
+  "mistakes_practice_again": "a722afcb9b218a0959778109f50b316d568a6597c482943c438a5b8548a43ead",
+  "mistakes_practice_already_fixed": "7a26e6f31b9a6bf06e90c11abf8fff62c47fb7c8a211693cb70a90eea0630a5c",
+  "mistakes_practice_done": "55c432486e105f5a783c15071a656cf7bff745981f64b59ba89730b3c1d305c7",
   "mistakes_practice_end": "24a3f5d6c39c06e407df54201783bdb86328fc0bd13fe5c47af15107bac0511f",
   "mistakes_practice_fixed": "bf05209e7b8fd3c4f4cce6e5669cd386225dea8f3a459115e1b6e1f10cff025f",
+  "mistakes_practice_later_day": "4ac3a4b10a8ee563dd7634f0f516ae117231d7e5292bb483dcb757d119229941",
+  "mistakes_practice_not_marked": "7370541be33c9dc36774d0cd5785185de6c390e0f8490576552d92c3a5c5bec2",
+  "mistakes_practice_not_saved": "4e7967674b607da03a85d80bc6ed68642dd5a8bc6c7b160fa7787d008588d461",
   "mistakes_practice_title": "5d929cbdcc899aff49ee0fd727d49cdf76b16ab4516b58815b662071ce5879de",
   "mistakes_practice_topic": "12e912d8b70da950617f9fe2bcea105956f0338c0a93dc4d8f89e86f05777223",
   "mistakes_show_more": "fbdcddf3523e8bb73b50514112e00efbea9b4eb1c309ea23abf36451e29f5670",
@@ -30,6 +37,7 @@
         <item quantity="one">%d Fehler korrigiert</item>
         <item quantity="other">%d Fehler korrigiert</item>
     </plurals>
+    <string name="mistakes_nothing_title">Nichts zu üben</string>
     <string name="mistakes_notebook_title">Fehlerheft</string>
     <string name="mistakes_practice">Fehler üben</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
@@ -50,7 +58,17 @@
     <string name="mistakes_cause_time">Zeit abgelaufen</string>
     <string name="mistakes_cause_guess">Geraten</string>
     <string name="mistakes_practice_topic">Dieses Thema üben</string>
-    <string name="mistakes_open_lesson">Lektion öffnen</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
+    <string name="mistakes_practice_later_day">Die Frage kommt an einem anderen Tag noch einmal dran, um sicherzugehen.</string>
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
+    <string name="mistakes_practice_again">Noch einmal üben</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
+    <string name="mistakes_practice_done">Fertig</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">Deine Übung ist noch nicht gespeichert</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">Schon behoben</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">Wir konnten es nicht als erledigt markieren. Prüf deine Verbindung.</string>
+    <string name="mistakes_open_lesson">Lektion öffnen</string>
 </resources>

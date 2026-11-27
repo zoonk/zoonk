@@ -112,6 +112,7 @@
   "today_step_done": "5a4b1abee341260d4a954a2c58b91ec6f958ad4c6a482cb829ec30cd223ec254",
   "today_step_every_topic": "a2c68a6691d21c2e54d915bfa9368f68f9dddc3d0def15f8451044bf9d4102f9",
   "today_step_extra": "7b9a37ecbaa81bf26da98ee8ff120c44c37847793efed9076a2de6de51842939",
+  "today_step_more_topics": "cf1821f54516de2ac93f06b3371e21dce0947607cfdb9d73b2735cbf82b6cfa7",
   "today_step_next": "317052c506c42893e1b6bd18e50c9b8bdbdd8277d7a0130bcc6a9f0be8a9af89",
   "today_step_often_tested": "06cb37a99b9d43eff8b5d05cda3af07a25e25ec7a1d03f08eff51ff7116f2540",
   "today_step_open_failed": "aaaab4b249fef3513e8ac1aaab9468ab2dba6786adf6d2dbec8c8c46218fe01d",
@@ -366,6 +367,10 @@
     </plurals>
     <string name="today_add_to_today">오늘 학습에 추가하기</string>
     <string name="today_unfinished_setup">아직 목표 설정을 마치지 않았어요.</string>
+    <!-- Under a practice named after its first topic, such as "Practice: Fractions": how many other topics it has. -->
+    <plurals name="today_step_more_topics">
+        <item quantity="other">%d개 주제 더</item>
+    </plurals>
     <string name="today_step_every_topic">모든 주제</string>
     <string name="mock_schedule_title">모의고사 날짜 변경</string>
     <string name="mock_schedule_change">일정 변경</string>

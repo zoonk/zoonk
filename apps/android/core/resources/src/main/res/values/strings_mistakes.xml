@@ -30,8 +30,9 @@
     <string name="mistakes_practice_topic">Practice this topic</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
     <string name="mistakes_practice_later_day">It comes back another day to make sure.</string>
-    <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
     <string name="mistakes_practice_again">Practice again</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
     <string name="mistakes_practice_done">Done</string>
     <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
     <string name="mistakes_practice_not_saved">Your practice isn\'t saved yet</string>

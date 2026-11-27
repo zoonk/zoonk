@@ -10,11 +10,18 @@
   "mistakes_empty_open": "330be77707c66ff8c542cd73af3083057d471d677348ad73aaf0e83bbb8c2c37",
   "mistakes_more_failed": "d9129415e49a1c1c7597b010ef9078cb179607908ca12bb0e0e30bc31e7a5dba",
   "mistakes_notebook_title": "fa16b30c899b9d8f4851c469e13896feb34dfee57ee3409940748d9cc85e271f",
+  "mistakes_nothing_title": "254d19d77b8f2c6a67bafc045668e8fc41eb2aab72392e1deb35da6cbe255887",
   "mistakes_open_lesson": "53cf9444aa62cf5c7810f116c7e7eb91453a73aba9f9a9019a40cdca34e8be3d",
   "mistakes_other_questions": "d13642f084ee9afedda41da3929d0883c379aca7378d6f582a098b056e00ced6",
   "mistakes_practice": "7caec670c3a7730563c9054a631b5eafb8893a36611e664b9b17a777996b478c",
+  "mistakes_practice_again": "273e6fe399519ec329c50d94170b60a88a652b981f783b34501aea378cf26d99",
+  "mistakes_practice_already_fixed": "78831042e9132f8ed15dcd61c5d40cdeab86cd03fb94ac12bcbbc902b2bbe965",
+  "mistakes_practice_done": "eb4fc4930f9fd773f74f6f70342d677156eadcee0e73846d32b3c4572dbeec7f",
   "mistakes_practice_end": "7365a1b1d308541d44fc11a4751176c253f1843a8fb3509ba2c9ed6431118b16",
   "mistakes_practice_fixed": "359d4c4bfa5dff995bf2474902ee064caec8307572f048ce1f49b05cc10820d8",
+  "mistakes_practice_later_day": "7ee4698755b01f0b159555de4535ac4d37101d22b99332be31151b1bb6657cf3",
+  "mistakes_practice_not_marked": "fa1dc83fff71e6cce73a0c3669b57607a7ee2f4d09561f82a9a09e29ef360d4b",
+  "mistakes_practice_not_saved": "48dd5eaa09acf5f32a579fcfa5092a78ddc906357a994ca5a361089446a6334e",
   "mistakes_practice_title": "e3820f9cc6c6850516df19a3c19e4fa2f0550169d5a10dedf0c3782684a668f9",
   "mistakes_practice_topic": "67556347cae079fd13d5be277c3a3ef320897c7028b8b14679ba7e5b205c5611",
   "mistakes_show_more": "45b16433397b1e8928f987a566228052a9c5cdd47c916ecf81b9cf75c38dd4ff",
@@ -31,6 +38,7 @@
         <item quantity="many">%d errores corregidos</item>
         <item quantity="other">%d errores corregidos</item>
     </plurals>
+    <string name="mistakes_nothing_title">Nada que practicar</string>
     <string name="mistakes_notebook_title">Cuaderno de errores</string>
     <string name="mistakes_practice">Practicar errores</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
@@ -51,7 +59,17 @@
     <string name="mistakes_cause_time">Se te acabó el tiempo</string>
     <string name="mistakes_cause_guess">Hiciste una suposición</string>
     <string name="mistakes_practice_topic">Practicar este tema</string>
-    <string name="mistakes_open_lesson">Abrir la lección</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
+    <string name="mistakes_practice_later_day">Volverá a aparecer otro día para comprobarlo.</string>
+    <!-- Beside Done at the end of a practice of mistakes: starts another round right away. -->
+    <string name="mistakes_practice_again">Practicar de nuevo</string>
+    <!-- The button that leaves a finished practice of mistakes. -->
+    <string name="mistakes_practice_done">Listo</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">Tu práctica aún no se guardó</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">Ya corregidos</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">No pudimos marcarlo como completado. Revisa tu conexión.</string>
+    <string name="mistakes_open_lesson">Abrir la lección</string>
 </resources>

@@ -62,6 +62,7 @@
   "mock_result_pass_marks_language": "c4a4090d1342d103353736050246fa9cabb10b897c8ad0a52cd916d219e4abb1",
   "mock_result_pass_paper": "846c81000ca7eff20bfb4ec0ba284867a7005f3364c5a5262098202414d4d81e",
   "mock_result_pass_score": "ac3994c68dbc559b7923f1be8fd354ab7be8d64db86e7296d95f36e5d250ce38",
+  "mock_result_plan_moved": "99efa37e74c10a390109af15b376782d54e2242f2c05406f16fd2444266b6e93",
   "mock_result_plan_not_saved": "a27824d0d0d1ea9ebd497f2a314526985ba85b6c8c313f1878712dec83b0313a",
   "mock_result_plan_unchanged": "60b4d7e7a736db68be1211c6b02d68116bd6965608bb63c3c64a7576210604e7",
   "mock_result_points": "b6446445261276bc1c9e5719c63d5dce789b6c0aeff62570076a3b82531b65c4",
@@ -355,6 +356,8 @@
     <string name="mock_result_not_done">Nie ukończono</string>
     <string name="mock_result_your_preparation">Twoje przygotowanie</string>
     <string name="mock_result_your_plan">Twój plan</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">Zagadnienia, które ci umknęły, pojawią się wcześniej</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Pominąć %d lekcję z materiałem, który już znasz?</item>
         <item quantity="few">Pominąć %d lekcje z materiałem, który już znasz?</item>

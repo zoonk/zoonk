@@ -3,16 +3,23 @@
 {
   "session_belt_step": "a4e1b674be5e4a7ed1465e7dba6438afa34e0ad7ec724ba5b6c959fdc4e77be0",
   "session_block_call": "a91a102bc1eb670098fb8b94c867683d25e814f8e6bd99adb5eb214657265298",
+  "session_block_fix_mistakes": "b8af7de1ebc637caf93417ef6a9bc8a11158721e03322f2c5bdbc3cceb2b7728",
   "session_block_full_review_questions": "6211cc9ad8eca7337ef5dd10149fdcbec1ca2b8b24a903206d256ebf23dbd542",
+  "session_block_mistakes_line": "91e7d4c2be52d0ff40482d7f97fcd4d821af4058bc892382fba41fb8e2316664",
   "session_block_mixed_practice": "9db284b4c4d6d00b80b6b34f41e4b037ad1e8c1826c132787f3149aadab0fb2b",
   "session_block_mock_exam": "9684adb588ebbbf3bdac97ff83469d0f025756dda33575e55842552025e4ccac",
   "session_block_new_lesson": "ab93879b1a43a83f241fe77834f99f796136f8692586d02ebdfe0220638d747a",
+  "session_block_pattern_line": "6a0915df764ed098124e425ce87cf5365b857dd30a33bba17bbf9a61ef4e8f30",
   "session_block_practice_areas": "050eda8f10a1dfa8e221a79e5b226223ef7c07a69905a31dfa8c1de2f77cfa5c",
   "session_block_practice_mistakes": "8d9d6cc91f22c0e6446b8badcf2e4ff18f2dfd0a1a8cb85f9b7674171382496c",
+  "session_block_practice_pattern": "3903027a857c4b3a718a5e0db661566b321a104f721f06854cacb86927c8a56c",
   "session_block_practice_topic": "e4993ea4289f067831ded736ba8434f244d7b32f89734e129fe11356ee676e81",
   "session_block_questions": "fb864b360560886c0cc384e58bb75d6bb0e2718adb3506160cf2727427dc3bb7",
   "session_block_rematch": "5fc0576ee22a445630120ea2b63033062502932a737735e7f323ec5ce6aa6236",
   "session_block_rematch_lesson": "37fec8515171e0d34ecd25a0ea867cc8254c3d10f8d6ff71de84a09c4254bf56",
+  "session_block_returning_again": "883f442a181a0de5b806f908344145b584632c636cf510dfb4edc9a18f88e073",
+  "session_block_returning_another_way": "baf2295b7aa73081013add55c708fcf4d0d160323fc04ca803c0fc3b6ae06130",
+  "session_block_returning_missed": "bdfc14daf9c4320f9c469ca9b74b472a35bad2f4727cbfffceca97dfc3a8e09f",
   "session_block_review": "326b163974592612974c530ac098d60abfbb060cd4050ba8c93ebf25317ec6e2",
   "session_block_review_topics": "008569ddaa0b555e60fc2b8af145bb7c55bde65939a50789e7a500d0e2aa2053",
   "session_block_weakest": "07bb9fb1c155f04e04b7ac664059226fff7f37d43a6b41d685900f7140bb5c80",
@@ -105,6 +112,21 @@
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">Übung: %1$s</string>
     <string name="session_block_rematch_lesson">Kurze Lektion vor dem zweiten Versuch</string>
+    <plurals name="session_block_fix_mistakes">
+        <item quantity="one">%d Fehler korrigieren</item>
+        <item quantity="other">%d Fehler korrigieren</item>
+    </plurals>
+    <!-- Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong. -->
+    <string name="session_block_mistakes_line">Fragen, die du zuvor falsch beantwortet hast</string>
+    <!-- A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der". -->
+    <string name="session_block_practice_pattern">Übung: %1$s</string>
+    <string name="session_block_pattern_line">Ein Muster in deinen Fehlern</string>
+    <!-- Under a lesson the learner takes again because its idea has been hard for them. -->
+    <string name="session_block_returning_again">Noch einmal: Das war bisher knifflig</string>
+    <!-- Under a short lesson that explains, in a new way, an idea the learner keeps missing. -->
+    <string name="session_block_returning_another_way">Anders erklärt</string>
+    <!-- Under a short lesson written for an idea that has been hard for the learner. -->
+    <string name="session_block_returning_missed">Das war bisher knifflig</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d Frage</item>
         <item quantity="other">%d Fragen</item>
