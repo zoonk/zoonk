@@ -1,3 +1,5 @@
+import SwiftUI
+
 /// A list of saves for one visit: a row whose bookmark the learner tapped keeps its place until they
 /// leave the page, its bookmark empty once it's removed, so nothing moves under their thumb and a
 /// second tap saves it again where it was.
@@ -47,5 +49,30 @@ struct KeptRows<Row: Identifiable> {
   ) -> (open: [Row], gone: [Row]) {
     let shown = rows(read.filter(isSaved))
     return (shown.filter { $0[keyPath: available] }, shown.filter { !$0[keyPath: available] })
+  }
+}
+
+extension View {
+  /// Forgets the kept rows as the learner leaves the page, including for a task that covers it, such
+  /// as a lesson opened from it: the page under a task never disappears.
+  func forgetsKeptRows<Row: Identifiable>(_ kept: Binding<KeptRows<Row>>) -> some View {
+    modifier(ForgetsKeptRows(kept: kept))
+  }
+}
+
+private struct ForgetsKeptRows<Row: Identifiable>: ViewModifier {
+  @Environment(\.isCoveredByTask) private var isCovered
+  @Binding var kept: KeptRows<Row>
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: isCovered) {
+        if isCovered {
+          kept = KeptRows()
+        }
+      }
+      .onDisappear {
+        kept = KeptRows()
+      }
   }
 }

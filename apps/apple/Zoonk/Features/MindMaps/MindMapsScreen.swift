@@ -35,9 +35,7 @@ struct MindMapsScreen: View {
       )
       .loads(list)
       .mindMapSaveFailureAlert(goalId: goal.id)
-      .onDisappear {
-        keptSaves = KeptRows()
-      }
+      .forgetsKeptRows($keptSaves)
       // One follower for every map on its way, each at its own pace.
       .task(id: Following(goalId: goal.id, maps: list.value)) {
         await store.followList(goalId: goal.id)
@@ -516,7 +514,10 @@ private struct MindMapSavedTab: View {
         ForEach(gone) { save in
           UnavailableSaveRow(
             title: save.title,
-            remove: Text("Remove", tableName: "MindMaps", comment: "Removes a saved map")
+            remove: Text("Remove", tableName: "MindMaps", comment: "Removes a saved map"),
+            spoken: Text(
+              "Remove \(save.title) from saved maps", tableName: "MindMaps",
+              comment: "What screen readers say for Remove, naming the map.")
           ) {
             store.saves.set(
               false, SaveTarget(key: save.key, title: save.title, chapterId: nil), goalId: goalId)

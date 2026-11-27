@@ -36,9 +36,7 @@ private struct SavedLessonsList: View {
     content(lessons)
       .loads(lessons)
       .lessonSaveFailureAlert(goalId: goalId)
-      .onDisappear {
-        kept = KeptRows()
-      }
+      .forgetsKeptRows($kept)
   }
 
   @ViewBuilder
@@ -98,7 +96,10 @@ private struct SavedLessonsList: View {
                 UnavailableSaveRow(
                   title: lesson.title,
                   remove: Text(
-                    "Remove", tableName: "SavedLessons")
+                    "Remove", tableName: "SavedLessons"),
+                  spoken: Text(
+                    "Remove \(lesson.title) from saved lessons", tableName: "SavedLessons",
+                    comment: "What screen readers say for Remove, naming the lesson.")
                 ) {
                   store.saves.set(
                     false,
