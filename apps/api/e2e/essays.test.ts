@@ -106,7 +106,7 @@ async function createEssayBlock(userId: string) {
       ...prompt,
       aspects: [],
       assessedSkillIds: [skill.id],
-      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+      grading: { criteria: [], language: null, rounding: null, zeroing: [] },
     },
   };
 

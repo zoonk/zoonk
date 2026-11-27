@@ -42,6 +42,6 @@ export const essayViewResponseSchema = z
     writing: writingPromptSchema,
     writingTask: writingTaskSchema.optional(),
   })
-  .meta({ id: "Essay" }) satisfies z.ZodType<EssayView>;
+  .meta({ id: "Essay" }) satisfies z.ZodType<Omit<EssayView, "rubric"> & { rubric: string }>;
 
 export const writingAttemptPathParamsSchema = z.object({ attemptId: uuidSchema() });
