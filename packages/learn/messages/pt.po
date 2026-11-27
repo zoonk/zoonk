@@ -8249,7 +8249,6 @@ msgid "Show less"
 msgstr "Mostrar menos"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {Mais # tópico} other {Mais # tópicos}}"
@@ -12750,22 +12749,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nova aula"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "Prática: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "Prática: {subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "Prática: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "Prática {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "Prática variada"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "Prática"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13809,6 +13809,12 @@ msgstr "Planejado: {time}"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Não estudou"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, one {# tópico} other {# tópicos}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

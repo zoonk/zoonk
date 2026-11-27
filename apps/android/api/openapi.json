@@ -82488,7 +82488,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
           },
           "brainPower": {
             "type": "integer",
@@ -82646,6 +82646,13 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "practiceNumber": {
+            "nullable": true,
+            "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
           "preparing": {
             "type": "boolean",
             "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -82705,7 +82712,7 @@
             "items": {
               "type": "string"
             },
-            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+            "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
           },
           "waitReason": {
             "nullable": true,
@@ -82802,6 +82809,7 @@
           "planItemId",
           "planItemKey",
           "position",
+          "practiceNumber",
           "preparing",
           "questions",
           "refresh",
@@ -100297,7 +100305,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
                 },
                 "brainPower": {
                   "type": "integer",
@@ -100450,6 +100458,13 @@
                   "minimum": 0,
                   "maximum": 9007199254740991
                 },
+                "practiceNumber": {
+                  "nullable": true,
+                  "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
                 "preparing": {
                   "type": "boolean",
                   "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -100509,7 +100524,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+                  "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
                 },
                 "waitReason": {
                   "nullable": true,
@@ -100605,6 +100620,7 @@
                 "planItemId",
                 "planItemKey",
                 "position",
+                "practiceNumber",
                 "preparing",
                 "questions",
                 "refresh",

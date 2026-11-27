@@ -8249,7 +8249,6 @@ msgid "Show less"
 msgstr "접기"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, other {그 외 주제 #개}}"
@@ -12750,22 +12749,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "새 레슨"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "연습: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "{subject} 연습"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "연습: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "연습 {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "섞어서 연습하기"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "연습"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13809,6 +13809,12 @@ msgstr "{time} 학습 예정"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "학습 안 함"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, other {#개 주제}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
