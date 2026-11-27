@@ -43,10 +43,12 @@ struct TestStop: Equatable {
   let id: String
   /// Said over the ways out, such as the Focus test's after many "I don't know yet".
   var hint: LocalizedStringResource?
+  /// An answer is saving: stopping waits for it, while leaving doesn't.
+  var waits = false
   let action: () -> Void
 
   static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.id == rhs.id && lhs.hint == rhs.hint
+    lhs.id == rhs.id && lhs.hint == rhs.hint && lhs.waits == rhs.waits
   }
 }
 
@@ -107,6 +109,7 @@ struct TestClose: View {
         Button(action: stop.action) {
           Text(TestCopy.stopAndUseAnswers)
         }
+        .disabled(stop.waits)
       }
     }
     .onChange(of: question?.stop == nil) {

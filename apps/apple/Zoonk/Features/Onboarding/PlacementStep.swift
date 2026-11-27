@@ -312,9 +312,9 @@ struct PlacementQuestionScreen<Media: View>: View {
     TestQuestionTop(
       title: subject, answered: number - 1, total: total, groups: groups,
       leaving: context.map { .testLeft($0, questionNumber: number) },
-      stop: number > 1 && !isSaving
+      stop: number > 1
         ? onStop.map { onStop in
-          TestStop(id: question.itemId, hint: stopHint) {
+          TestStop(id: question.itemId, hint: stopHint, waits: isSaving) {
             submission = .stop
             onStop()
           }
