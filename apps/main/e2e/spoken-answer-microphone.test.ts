@@ -80,6 +80,14 @@ test.describe("A spoken answer", () => {
 
       expect(sent).toHaveLength(2);
       expect(request?.headers().authorization).toMatch(/^Bearer /u);
+
+      const attemptIds = sent.map(
+        (take) =>
+          take.postData()?.match(/name="attemptId"\r\n\r\n(?<id>[\da-f-]{36})/u)?.groups?.id,
+      );
+
+      expect(attemptIds).not.toContain(undefined);
+      expect(new Set(attemptIds).size).toBe(2);
       expect(body).toContain('name="audio"');
       expect(body).toContain('name="durationMs"');
       expect(body).toContain('name="timeZone"');

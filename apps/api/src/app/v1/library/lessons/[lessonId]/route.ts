@@ -5,6 +5,7 @@ import { withApiImageUrls } from "@/lib/file-urls";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { getPlayableLibraryLesson } from "@zoonk/core/lesson-player/get";
+import { getLessonVisit } from "@zoonk/core/lesson-player/progress";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { NextResponse } from "next/server";
 
@@ -24,13 +25,19 @@ async function getLibraryLessonRoute(
     return NextResponse.json(withApiImageUrls(result));
   }
 
-  const [tutorSuggestions, steps] = await Promise.all([
+  const [visit, tutorSuggestions, steps] = await Promise.all([
+    getLessonVisit({ lessonId: parsed.lessonId }),
     wordTutorSuggestions(result.lesson.language),
     toAppSteps(result.lesson.steps),
   ]);
 
   return NextResponse.json(
-    withApiImageUrls({ ...result, lesson: { ...result.lesson, steps }, tutorSuggestions }),
+    withApiImageUrls({
+      ...result,
+      lesson: { ...result.lesson, steps },
+      ...visit,
+      tutorSuggestions,
+    }),
   );
 }
 

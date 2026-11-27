@@ -257,6 +257,7 @@ class TodayDayScreenshots {
                         buddyName = "Zu",
                         snackbars = AppSnackbars(),
                         refreshIfChanged = { false },
+                        refreshIfLessonsMoved = {},
                         onboarding = onboarding,
                         schedule =
                             if (schedule) {

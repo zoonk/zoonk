@@ -3,14 +3,25 @@
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { Link, useRouter } from "@/i18n/navigation";
 import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-writing";
+import { readLessonReadiness } from "@/lib/session/read-lesson-readiness";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
+import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type LessonKind } from "@zoonk/learn/generation/kinds";
-import { type GenerationRun, hasStopped, toHeldRun } from "@zoonk/learn/generation/run";
+import { useReportStopped } from "@zoonk/learn/generation/report-stopped";
+import {
+  type GenerationRun,
+  UNNAMED_RUN,
+  hasStopped,
+  toAwaitedRun,
+  toHeldRun,
+} from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
+import { useLessonReadiness } from "@zoonk/learn/session/lesson-readiness";
+import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
@@ -24,6 +35,8 @@ import { LessonRouteFrame } from "./lesson-route-frame";
 import { StartLessonBar, WaitNote, type WaitState, useWaitWords } from "./lesson-wait-note";
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
+
+type SavedLesson = Extract<LessonWaitingResult, { status: "ready" }>["state"]["status"] | null;
 
 const OPEN_RETRY_MS = 2000;
 
@@ -97,12 +110,15 @@ function WritingWaitBar({
   );
 }
 
+type Readiness = ReturnType<typeof useLessonReadiness>;
+
 function WritingWait({
   alternative,
   asked,
   footer,
   frame,
   kind,
+  readiness,
   warmUp,
   writing,
 }: {
@@ -111,24 +127,27 @@ function WritingWait({
   footer?: React.ReactNode;
   frame: LessonFrame;
   kind: LessonKind;
+  readiness: Readiness;
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
   const since = useMountTime().getTime();
 
   const followed = useWorkflowRun({
-    generationId: writing.generationId,
+    generationId: readiness.generationId,
     kind,
+    onInterrupted: readiness.check,
     restart: writing.restart,
   });
 
-  const run: GenerationRun =
-    writing.request.status === "failed"
-      ? { failure: "notStarted", retry: writing.retry, status: "failed", steps: {} }
-      : followed;
+  useReportStopped({ onStopped: readiness.runStopped, run: followed });
 
-  const ready = run.status === "ready";
-  const hold = useReadyHold(ready);
+  const run: GenerationRun =
+    readiness.lesson === "failed"
+      ? { failure: "generation", retry: writing.retry, status: "failed", steps: {} }
+      : toAwaitedRun(readiness.generationId ? followed : UNNAMED_RUN);
+
+  const hold = useReadyHold(run.status === "ready" || readiness.written);
   const holding = hold.status === "hold";
   const progress = <WritingProgress holding={holding} kind={kind} run={run} since={since} />;
 
@@ -211,10 +230,22 @@ function waitState({
   return asked ? "gettingReady" : "notReady";
 }
 
-function isWriting(request: LessonRequest): boolean {
-  return (
-    request.status === "requesting" || request.status === "writing" || request.status === "failed"
-  );
+function getWaitedLesson({
+  request,
+  saved,
+}: {
+  request: LessonRequest;
+  saved: SavedLesson;
+}): NextStopLesson | null {
+  if (request.status === "writing") {
+    return "notStarted";
+  }
+
+  if (request.status === "failed" || (request.status === "idle" && saved === "failed")) {
+    return "failed";
+  }
+
+  return request.status === "idle" && saved === "generating" ? "writing" : null;
 }
 
 export function LessonWaiting({
@@ -224,6 +255,7 @@ export function LessonWaiting({
   initialRequest,
   kind,
   lesson,
+  saved,
   warmUp,
 }: {
   goalId: string | null;
@@ -232,13 +264,25 @@ export function LessonWaiting({
   initialRequest: LessonRequest;
   kind: LessonKind;
   lesson: LessonOutline;
+  saved: SavedLesson;
   warmUp: WarmUpDeck | null;
 }) {
+  const router = useRouter();
   const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
   const [starting, setStarting] = useState(false);
   const signUpHref = useSignUpHref();
   const frame = { exitHref, goalId, lesson };
+  const waited = getWaitedLesson({ request, saved });
+
+  const readiness = useLessonReadiness({
+    actions: { readLesson: readLessonReadiness, refresh: () => router.refresh() },
+    // A failed ask is the request's own answer: there's no run for readiness to confirm.
+    enabled: waited !== null && request.status !== "failed",
+    generationId: writing.generationId,
+    lesson: waited ?? "ready",
+    lessonId: lesson.id,
+  });
 
   useOpenWhenReady(request.status === "ready");
 
@@ -247,13 +291,17 @@ export function LessonWaiting({
     void writing.start();
   };
 
-  const showsStart = request.status === "idle" || (starting && request.status === "requesting");
+  const unclaimed = waited === "writing" && readiness.lesson === "ready" && !readiness.written;
+  const awaited = waited !== null && !unclaimed;
+
+  const showsStart =
+    (request.status === "idle" && !awaited) || (starting && request.status === "requesting");
 
   const footer = showsStart && (
     <StartLessonBar busy={request.status === "requesting"} kind={kind} onStart={start} />
   );
 
-  if (isWriting(request)) {
+  if (request.status === "requesting" || awaited) {
     return (
       <WritingWait
         alternative={alternative}
@@ -262,6 +310,7 @@ export function LessonWaiting({
         key={writing.attempt}
         asked={!showsStart}
         kind={kind}
+        readiness={readiness}
         warmUp={warmUp}
         writing={writing}
       />

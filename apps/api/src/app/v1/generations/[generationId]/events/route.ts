@@ -48,7 +48,11 @@ async function streamGenerationEvents(
 
   const query = readQueryParams(request, workflowEventsQuerySchema);
 
-  const { stalled, status } = await readRunState(path.generationId);
+  const { activity, stalled, status } = await readRunState(path.generationId);
+
+  if (activity === "unknown") {
+    return errors.serviceUnavailable();
+  }
 
   if (!status) {
     return errors.notFound("Generation not found");

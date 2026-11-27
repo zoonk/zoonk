@@ -24,7 +24,11 @@ describe("the free lessons gate", () => {
       .mockResolvedValueOnce(freeLessonsUsed(1500))
       .mockResolvedValue(freeLessonsUsed(MS_PER_DAY));
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson }),
+      lesson,
+      takeNavigationStart: () => true,
+    });
 
     await expect
       .element(page.getByRole("heading", { name: "You've used your free lessons" }))
@@ -50,7 +54,11 @@ describe("the free lessons gate", () => {
     const lesson = buildLesson([teachingStep("check")]);
     const startLesson = vi.fn().mockResolvedValue({ reason: "notFound" });
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { startLesson }), lesson });
+    renderLessonPlayer({
+      adapters: buildAdapters(lesson, { startLesson }),
+      lesson,
+      takeNavigationStart: () => true,
+    });
 
     await expect
       .element(page.getByRole("heading", { name: "This lesson isn't available" }))

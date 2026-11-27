@@ -1,6 +1,6 @@
 import { PATTERNS } from "@/design-system/patterns";
 import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
-import { KindMark, kindFillClass } from "@zoonk/learn/kind-tile";
+import { KindMark } from "@zoonk/learn/kind-tile";
 import {
   ListGroup,
   ListRow,
@@ -133,7 +133,7 @@ function ReadoutsSpecimen() {
         <MeterPart weight={5} />
         <MeterPart weight={3} />
         <MeterPart weight={4} />
-        <MeterPart className={kindFillClass("practice")} weight={6} />
+        <MeterPart weight={6} />
       </MeterParts>
     </div>
   );

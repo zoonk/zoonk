@@ -7,6 +7,7 @@ import { useEffectEvent, useLayoutEffect, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
 import { showAttemptInView } from "./_utils/lesson-attempts";
+import { revealGuess } from "./_utils/lesson-results";
 import { addHeldAnswers, resumeLesson } from "./_utils/lesson-resume";
 import {
   LessonPlayerConfigContext,
@@ -85,7 +86,19 @@ function createStartingState({
 
   const state = createInitialState(initial);
 
-  return lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
+  const selected = lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
+
+  const result =
+    answer.kind === "hook" ? revealGuess({ optionId: answer.optionId, step: first }) : null;
+
+  return result
+    ? lessonPlayerReducer(selected, {
+        counts: false,
+        result,
+        stepId: first.id,
+        type: "checkResolved",
+      })
+    : selected;
 }
 
 export type LessonPlayerProviderProps = {
@@ -99,12 +112,13 @@ export type LessonPlayerProviderProps = {
   linkComponent: PlayerLinkComponent;
   outline?: boolean;
   resume?: LessonRunAnswers;
+  saved?: boolean;
   routes: LessonPlayerRoutes;
   slots?: LessonPlayerSlots;
   soundsEnabled?: boolean;
   track?: TrackEvent;
   tutor?: LessonTutorConfig;
-  /** Null for a visitor, whose run starts on their first tap. */
+  takeNavigationStart?: () => boolean;
   viewer: { learnerId: string | null };
 };
 
@@ -125,9 +139,11 @@ export function LessonPlayerProvider({
   linkComponent,
   outline = false,
   resume = NO_ANSWERS,
+  saved = false,
   routes,
   slots = NO_SLOTS,
   soundsEnabled = false,
+  takeNavigationStart,
   track = noTracking,
   tutor,
   viewer,
@@ -162,21 +178,13 @@ export function LessonPlayerProvider({
       dispatch({ opening: true, type: "skipWriting" });
     }
 
-    const held = viewer.learnerId ? reopen(viewer.learnerId) : [];
-    const first = lesson.steps[0];
-    const answer = state.answers[first?.id ?? ""];
+    const held = viewer.learnerId && state.run.status === "idle" ? reopen(viewer.learnerId) : [];
 
-    if (first?.kind === "hook" && answer?.kind === "hook" && firstAnswer) {
-      actions.check();
-      return;
-    }
-
-    if (held.length > 0) {
+    if (held.length > 0 && !(firstAnswer && state.phase === "feedback")) {
       dispatch({ answers: addHeldAnswers(resume, held), type: "unsentPlaced" });
-      return;
     }
 
-    if (viewer.learnerId) {
+    if (takeNavigationStart?.() && viewer.learnerId) {
       actions.retryStart();
     }
   });
@@ -206,6 +214,7 @@ export function LessonPlayerProvider({
       linkComponent,
       outline,
       routes,
+      saved,
       slots,
       soundsEnabled,
       track,
@@ -218,6 +227,7 @@ export function LessonPlayerProvider({
       lesson,
       linkComponent,
       outline,
+      saved,
       routes,
       slots,
       soundsEnabled,

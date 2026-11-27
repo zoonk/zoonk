@@ -18,6 +18,7 @@ import {
 } from "node:fs";
 import { homedir, userInfo } from "node:os";
 import path from "node:path";
+import { shutDownIdleEmulators } from "../../apps/android/scripts/emulators.mts";
 import { READY_FILE, swiftPackagesDirectory } from "../../apps/apple/scripts/swift-packages.mts";
 import { trimSimulators } from "../../apps/apple/scripts/trim-simulators.mts";
 import { MS_PER_HOUR, MS_PER_WEEK } from "../../packages/utils/src/date.ts";
@@ -264,7 +265,8 @@ function removeUnusedSwiftPackages({
 /**
  * Deletes build output that tasks left behind and every build remakes: in worktrees nobody worked in
  * for `IDLE_MS`, in scratch and review folders, Swift packages no build used for a week, and
- * simulators' wallpaper snapshots. Never where a process is running.
+ * simulators' wallpaper snapshots. Never where a process is running. Also shuts down emulators
+ * nobody has used for hours.
  */
 export async function sweep({ dryRun = false }: { dryRun?: boolean } = {}): Promise<void> {
   const remove = dryRun ? (target: string) => report(`Would remove ${target}`) : moveToTrash;
@@ -314,6 +316,8 @@ export async function sweep({ dryRun = false }: { dryRun?: boolean } = {}): Prom
   if (process.platform === "darwin") {
     trimSimulators(remove);
   }
+
+  shutDownIdleEmulators({ dryRun, report });
 
   if (!dryRun) {
     rmSync(trashDirectory, { force: true, recursive: true });

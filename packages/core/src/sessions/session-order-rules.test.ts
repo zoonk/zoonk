@@ -7,7 +7,6 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { findAlternativeStudyBlock } from "./alternative-study-block";
 import { toBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 import { getStudySession } from "./get-study-session";
@@ -53,16 +52,14 @@ async function setup() {
 
 describe("session phase challenge ordering", () => {
   it("never suggests a waiting phase challenge while its earlier lesson is being written", async () => {
-    const { lesson, session } = await setup();
+    const { session } = await setup();
     const view = await getStudySession({ input: {}, sessionId: session.id });
 
     if (view.status !== "ready") {
       throw new Error(view.status);
     }
 
-    expect(
-      findAlternativeStudyBlock({ blockId: lesson.id, blocks: view.session.blocks }),
-    ).toBeNull();
+    expect(view.session.alternativePosition).toBeNull();
 
     const review = await studySessionBlockFixture({
       kind: "review",
@@ -76,9 +73,7 @@ describe("session phase challenge ordering", () => {
       throw new Error(refreshed.status);
     }
 
-    expect(
-      findAlternativeStudyBlock({ blockId: lesson.id, blocks: refreshed.session.blocks })?.id,
-    ).toBe(review.id);
+    expect(refreshed.session.alternativePosition).toBe(review.position);
   });
 
   it("refuses a phase challenge before earlier lessons without opening it or the session", async () => {

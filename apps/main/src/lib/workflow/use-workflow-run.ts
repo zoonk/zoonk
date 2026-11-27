@@ -5,11 +5,13 @@ import { type FollowedRunProps } from "@zoonk/learn/generation/follower";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
-import { useEffect, useEffectEvent, useReducer } from "react";
+import { useEffect, useEffectEvent, useReducer, useState } from "react";
 import {
   INITIAL_WORKFLOW_RUN_STATE,
+  type RunLookup,
   type RunStatus,
   getFollowedRunId,
+  getReplacedRunIds,
   getRunStatus,
   workflowRunReducer,
 } from "./_utils/workflow-run-state";
@@ -27,13 +29,22 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-async function readRunStatus(runId: string): Promise<RunStatus | null> {
+const LOOKUP_BY_RESPONSE_STATUS: Partial<Record<number, RunLookup>> = {
+  404: "missing",
+  503: "unavailable",
+};
+
+function toLookup(responseStatus: number | undefined): RunLookup | null {
+  return responseStatus === undefined ? null : (LOOKUP_BY_RESPONSE_STATUS[responseStatus] ?? null);
+}
+
+async function readRunStatus(runId: string): Promise<RunLookup | null> {
   const headers = await getWorkflowAuthHeaders();
   const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
   const { data: response } = await safeAsync(() => fetch(url, { headers }));
 
   if (!response?.ok) {
-    return null;
+    return toLookup(response?.status);
   }
 
   const { data } = await safeAsync<unknown>(() => response.json());
@@ -45,11 +56,23 @@ async function readRunStatus(runId: string): Promise<RunStatus | null> {
 export function useWorkflowRun({
   generationId,
   kind,
+  onInterrupted,
   onReady,
   readGenerationId,
   restart,
 }: Omit<FollowedRunProps, "children">): GenerationRun {
   const [state, dispatch] = useReducer(workflowRunReducer, INITIAL_WORKFLOW_RUN_STATE);
+  const [confirmed, setConfirmed] = useState(generationId);
+
+  if (generationId !== confirmed) {
+    setConfirmed(generationId);
+    const runIds = getReplacedRunIds({ confirmed: generationId, previous: confirmed, state });
+
+    if (runIds) {
+      dispatch({ runIds, type: "restart" });
+    }
+  }
+
   const runId = getFollowedRunId({ generationId, state });
   const status = getRunStatus({ runId, state });
   const isWaiting = status === "waiting";
@@ -93,12 +116,18 @@ export function useWorkflowRun({
     return () => clearTimeout(timer);
   }, [state.reconnectIn]);
 
-  async function checkRun(id: string) {
-    const runStatus = await readRunStatus(id);
-
+  function applyLookup(id: string, lookup: RunLookup | null) {
     dispatch(
-      runStatus ? { runId: id, status: runStatus, type: "runStatus" } : { type: "connectionLost" },
+      lookup ? { runId: id, status: lookup, type: "runStatus" } : { type: "connectionLost" },
     );
+
+    if (lookup !== "completed") {
+      onInterrupted?.();
+    }
+  }
+
+  async function checkRun(id: string) {
+    applyLookup(id, await readRunStatus(id));
   }
 
   const isConnected =
@@ -109,10 +138,10 @@ export function useWorkflowRun({
     state.reconnectIn === null;
 
   const checkStopped = useEffectEvent(async (id: string) => {
-    const runStatus = await readRunStatus(id);
+    const lookup = await readRunStatus(id);
 
-    if (runStatus === "failed" || runStatus === "cancelled") {
-      dispatch({ runId: id, status: runStatus, type: "runStatus" });
+    if (lookup === "failed" || lookup === "cancelled" || lookup === "missing") {
+      applyLookup(id, lookup);
     }
   });
 
@@ -129,7 +158,11 @@ export function useWorkflowRun({
     connection: state.connection,
     namespace: runId === state.polled ? state.namespace : null,
     onComplete: (id) => void checkRun(id),
-    onError: () => dispatch({ type: "connectionLost" }),
+    onError: (responseStatus) => {
+      if (runId) {
+        applyLookup(runId, toLookup(responseStatus));
+      }
+    },
     onMessage: (message) => dispatch({ kind, message, type: "event" }),
     onOpen: (response) => {
       const serverNow = Date.parse(response.headers.get("date") ?? "");

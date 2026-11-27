@@ -1119,92 +1119,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms the keyed sets: A and C for item 1; A, B, and D for item 2. However, item 2's worked distance calculation is incorrect. An antiderivative is t³ − 6t² + 9t, whose values at 0, 1, 3, and 4 s are 0, 4, 0, and 4 m. Thus distance is 12 m and displacement is 4 m. The factual error in one question triggers the cap of 7, even though its keyed option remains false.",
-          "score": 7,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Item 1 uses recognizable misconceptions about equal distances in equal times and confusing velocity growth with acceleration growth. Item 2's sole distractor does not match its stated misconception: failing to account for reversals produces net displacement of 4 m, not 10 m. Its explanation also teaches an incorrect total distance. The mismatch between the named mistake and its option triggers the cap of 7.",
-          "score": 7,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Both items have four independently evaluable options, at least one correct and one incorrect option, and fixedOrder set to false. Nevertheless, the set would look out of place among JEE Advanced one-or-more-correct problems: item 1 is introductory conceptual material, while multiple statements in item 2 are immediate derivative or quadratic observations. This violates the explicit multistep difficulty requirement and triggers the exam-fit cap of 7.",
-          "score": 6,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The items are in English and cover distinct one-dimensional motion situations, including free fall and direction reversals. However, item 1 mostly recognizes standard formulas rather than applying them in a combined problem. Item 2 emphasizes variable-acceleration calculus rather than the specified constant-acceleration equations or velocity–time graph reading. No graph-reading task is provided, and the missing third item further limits coverage and difficulty variety.",
-          "score": 7,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "2 of 3 parts passed. Item 2: A wrong option has no misconception.",
-          "score": 7,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2967,
-          "outputTokens": 1095,
-          "reasoningTokens": 348
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Only two of the requested three items are supplied. The required JEE Advanced difficulty is not met: item 1 consists of standard constant-acceleration facts, and several statements in item 2 follow directly from differentiation or reading a quadratic rather than combining multiple ideas. Item 2 also contains a factual error in its feedback: the interval displacements are 4, −4, and 4 m, so total distance is 12 m, not 13 m. Its distance distractor is mislabeled: calculating net displacement gives 4 m, not the offered 10 m.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Use a velocity–time graph with reversals or piecewise constant acceleration, requiring learners to combine graph interpretation with signed areas and distance calculations. Add a genuinely multistep third item, and construct numerical distractors by explicitly performing the misconception named in their feedback.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "For the displayed values, solving 5t² − 30t − 80 = 0 gives the unique physically admissible answer of 8 seconds. The symbolic solution and worked algebra are correct, and the populated expression fields use bare variable names. However, valid parameter combinations produce irrational answers—for example, height = 40, velocity = 20 and g = 10 give 2 + 2√3 seconds—violating the explicit requirement that every combination yield a non-negative whole number.",
           "score": 7,
           "label": "Correctness",
@@ -2360,6 +2274,101 @@
           "skill": {
             "description": "Compare and order negative numbers, such as temperatures below zero.",
             "name": "Ordering negative numbers"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "For the dropped stone, speed is gt and velocity is linear in time, so A and C alone hold. For the particle, v = 3(t−1)(t−3) changes sign twice and has its minimum at t = 2 s, where acceleration is zero. A, B and D are therefore correctly keyed. The incorrect final segment and total in C's explanation constitute a factual error in one item.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The stone distractors identify specific confusions about constant velocity versus constant acceleration. The particle's 10 m distractor does not follow from the named mistake: integrating signed velocity without splitting gives 4 m. Its feedback also conflates signed displacements with integrals of absolute velocity.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Both items have four independently judgeable options and fixedOrder is false. However, every stone option is a textbook property or a direct reading of the given acceleration. Even the harder particle item has a claim settled by one derivative evaluation. The set does not consistently demand the combined reasoning specified for JEE Advanced.",
+          "score": 6,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The particle item meaningfully uses velocity signs and distance versus displacement, but it uses a variable-acceleration formula rather than asking the learner to read a velocity–time graph. The free-fall item largely tests recognition. With the third item missing, the set offers little applied practice with constant acceleration beyond that recognition.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. Item 2: A wrong option has no misconception.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 2,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3488,
+          "inputTokens": 3491,
+          "outputTokens": 823,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "items[2]",
+          "keyedAnswer": "A, B and D; C is false because the total distance is said to be 13 m.",
+          "kind": "factualError",
+          "workedAnswer": "An antiderivative of v is F(t) = t³−6t²+9t. At 0, 1, 3 and 4 s its values are 0, 4, 0 and 4 m. Thus the distance is |4|+|−4|+|4| = 12 m. C is false as keyed, but its explanation is incorrect."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "Only two of the requested three items are present. The free-fall item tests direct consequences of constant acceleration rather than multi-step JEE Advanced reasoning. In the second item, the keyed set is correct, but the distance feedback teaches an incorrect result: the signed displacements are 4, −4 and 4 m, so the distance is 12 m, not 13 m. The stated net-displacement mistake gives 4 m, not the offered 10 m.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The second item's zero-acceleration and minimum-velocity options rely on nearly the same calculation. Both stems use the plural “statements … are correct,” hinting at multiple correct choices, and the city references serve no physical purpose.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use 4 m as the distance distractor so its value diagnoses the stated mistake. Rework the free-fall item around a delayed release or a measured interval, and add a third item with a piecewise-linear velocity–time graph that requires locating a reversal before comparing signed area with distance.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
           }
         }
       }

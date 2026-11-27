@@ -375,6 +375,63 @@ final class GenerationEventsTests: XCTestCase {
     XCTAssertEqual(lesson.status, .failed)
     XCTAssertTrue(lesson.setAside)
   }
+
+  func testOnlyReadinessSaysAFollowedLessonFailed() async throws {
+    let writing =
+      #"{"alternative":null,"generationId":"run-1","kind":"lesson","setAside":false,"status":"generating"}"#
+    let transport = LessonWritingTransport(
+      readiness: [
+        writing, writing, nil,
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":false,"status":"failed"}"#,
+      ],
+      events: #"data: {"status":"error","step":"workflowError"}"# + "\n\n", nil)
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport))
+
+    let lesson = try await api.followWriting(
+      id: "lesson-1", run: nil, token: "learner-token", tick: .milliseconds(1))
+
+    XCTAssertEqual(lesson.status, .failed)
+    let requests = await transport.requests
+    XCTAssertEqual(
+      requests,
+      [
+        "/v1/library/lessons/lesson-1/readiness",
+        "/v1/generations/run-1/events?startIndex=0",
+        "/v1/library/lessons/lesson-1/readiness",
+        "/v1/generations/run-1/events?startIndex=0",
+        "/v1/library/lessons/lesson-1/readiness",
+        "/v1/library/lessons/lesson-1/readiness",
+      ])
+  }
+
+  func testAFollowedLessonAnotherRunTakesOverIsFollowedToItsEnd() async throws {
+    let transport = LessonWritingTransport(
+      readiness: [
+        #"{"alternative":null,"generationId":"run-2","kind":"lesson","setAside":false,"status":"generating"}"#,
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":false,"status":"ready"}"#,
+      ],
+      events: nil,
+      #"data: {"entityId":"lesson-1","status":"completed","step":"lessonReady"}"# + "\n\n")
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: try XCTUnwrap(URL(string: "https://api.zoonk.test")), transport: transport))
+
+    let lesson = try await api.followWriting(
+      id: "lesson-1", run: "run-1", token: "learner-token", tick: .seconds(60))
+
+    XCTAssertEqual(lesson.status, .ready)
+    let requests = await transport.requests
+    XCTAssertEqual(
+      requests,
+      [
+        "/v1/generations/run-1/events?startIndex=0",
+        "/v1/library/lessons/lesson-1/readiness",
+        "/v1/generations/run-2/events?startIndex=0",
+        "/v1/library/lessons/lesson-1/readiness",
+      ])
+  }
 }
 
 /// A run's events stream that never ends, as a run that stopped without closing it (vercel/workflow#964).
@@ -509,12 +566,13 @@ private actor RunsTransport: ClientTransport {
   }
 }
 
+/// Answers in turn, the last one staying; `nil` is a 503 for readiness and a 404 for events.
 private actor LessonWritingTransport: ClientTransport {
-  private var readiness: [String]
-  private let events: String
+  private var readiness: [String?]
+  private var events: [String?]
   private(set) var requests: [String] = []
 
-  init(readiness: [String], events: String) {
+  init(readiness: [String?], events: String?...) {
     self.readiness = readiness
     self.events = events
   }
@@ -529,13 +587,31 @@ private actor LessonWritingTransport: ClientTransport {
     var headerFields = HTTPFields()
 
     if operationID == "streamGenerationEvents" {
+      let stream = events.count > 1 ? events.removeFirst() : events.first ?? nil
+
+      guard let stream else {
+        headerFields[.contentType] = "application/json"
+        return (
+          HTTPResponse(status: .notFound, headerFields: headerFields),
+          HTTPBody(#"{"error":{"code":"NOT_FOUND","message":"Not found"}}"#)
+        )
+      }
+
       headerFields[.contentType] = "text/event-stream"
-      return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(events))
+      return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(stream))
     }
 
+    XCTAssertEqual(operationID, "getLibraryLessonReadiness")
     headerFields[.contentType] = "application/json"
-    let body = HTTPBody(readiness.removeFirst())
-    return (HTTPResponse(status: .ok, headerFields: headerFields), body)
+
+    guard let readiness = readiness.removeFirst() else {
+      return (
+        HTTPResponse(status: .serviceUnavailable, headerFields: headerFields),
+        HTTPBody(#"{"error":{"code":"SERVICE_UNAVAILABLE","message":"Try again"}}"#)
+      )
+    }
+
+    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(readiness))
   }
 }
 

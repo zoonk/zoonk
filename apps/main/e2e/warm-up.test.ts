@@ -5,7 +5,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { warmUpFixture } from "@zoonk/testing/fixtures/warm-ups";
 import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
-import { type StreamEvent, followRun } from "./generation-run";
+import { type StreamEvent, confirmLessonWriter, followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
 import { createStudyDay, openAs, writeStudyLesson } from "./study-day";
 
@@ -87,11 +87,14 @@ async function addFirstLessonBeingWritten({ goalId, page }: { goalId: string; pa
 
   await planItemFixture({ lessonId: lesson.id, planId: plan.id });
 
-  await followRun({
-    events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
-    page,
-    runId,
-  });
+  await Promise.all([
+    followRun({
+      events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
+      page,
+      runId,
+    }),
+    confirmLessonWriter({ lessonId: lesson.id, page, runId }),
+  ]);
 
   return lesson;
 }
@@ -249,6 +252,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
 
   const page = await openAs(browser, user);
   await followRun({ events, page, runId });
+  await confirmLessonWriter({ lessonId: lesson.id, page, runId });
   await page.goto("/session");
 
   const card = page.getByRole("radiogroup", { name: FIRST_CARD });
@@ -286,6 +290,53 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
 
   await page.getByRole("main").getByRole("button", { exact: true, name: "Start" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+  await page.context().close();
+});
+
+test("a learner who guessed on the lesson page's wait stays once readiness finds the lesson written", async ({
+  browser,
+}) => {
+  const [{ goal, lesson, user }, deck] = await Promise.all([
+    createStudyDay({ reviewDone: true, writtenLesson: false }),
+    warmUpFixture(),
+  ]);
+
+  const runId = `e2e-warm-up-lesson-page-${randomUUID()}`;
+
+  await Promise.all([
+    prisma.goal.update({ data: { warmUpId: deck.id }, where: { id: goal.id } }),
+    prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running" },
+      where: { id: lesson.id },
+    }),
+  ]);
+
+  const page = await openAs(browser, user);
+
+  await followRun({
+    events: [{ entityId: lesson.id, status: "started", step: "planLesson" }],
+    page,
+    runId,
+  });
+
+  await confirmLessonWriter({ lessonId: lesson.id, page, runId });
+  await page.goto(`/learn/${lesson.id}`);
+
+  const card = page.getByRole("radiogroup", { name: FIRST_CARD });
+  await card.getByRole("radio", { name: /alarm scent/u }).click();
+  await expect(page.getByText("Good guess!")).toBeVisible();
+
+  await writeStudyLesson(lesson.id);
+  await page.unroute(`**/v1/library/lessons/${lesson.id}/readiness`);
+
+  await expect(page.getByRole("heading", { level: 1, name: "Your lesson is ready" })).toBeVisible({
+    timeout: NEXT_CHECK_TIMEOUT_MS,
+  });
+
+  await expect(page.getByText(/^Smoke masks the alarm scent/u)).toBeVisible();
+
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
   await page.context().close();
 });
 

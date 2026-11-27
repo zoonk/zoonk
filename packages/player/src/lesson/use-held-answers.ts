@@ -83,6 +83,7 @@ export function useHeldAnswers({
   keepPending,
   lesson,
   resendClock,
+  beforeStartRef,
 }: {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
@@ -92,6 +93,7 @@ export function useHeldAnswers({
   keepPending: <T>(request: Promise<T>) => Promise<T>;
   lesson: HeldLesson;
   resendClock: () => void;
+  beforeStartRef: RefObject<(() => Promise<boolean>) | null>;
 }) {
   const lessonId = lesson.id;
 
@@ -144,12 +146,13 @@ export function useHeldAnswers({
   );
 
   const resendScreen = useCallback(
-    (stepId: string): Promise<boolean> => {
+    (stepId: string, restoredOnly: boolean): Promise<boolean> => {
       const queue = getQueue(stepId);
 
       // Stops at the first answer that doesn't get through, so a miss never lands after its retry.
       const sendInOrder = async (): Promise<boolean> => {
-        const next = findNext(heldRef.current, stepId);
+        const first = findNext(heldRef.current, stepId);
+        const next = restoredOnly && !first?.fromDevice ? undefined : first;
         const saved = next ? await send(next) : true;
 
         if (next && saved) {
@@ -171,19 +174,26 @@ export function useHeldAnswers({
     [getQueue, heldRef, keepPending, send],
   );
 
-  const resendUnsaved = useCallback(async (): Promise<boolean> => {
-    resendClock();
-    const stepIds = new Set([...heldRef.current.values()].map((held) => held.check.stepId));
-    const sent = await Promise.all([...stepIds].map((stepId) => resendScreen(stepId)));
-    return sent.every(Boolean);
-  }, [heldRef, resendClock, resendScreen]);
+  const resendUnsaved = useCallback(
+    async (restoredOnly = false): Promise<boolean> => {
+      resendClock();
+      const stepIds = new Set([...heldRef.current.values()].map((held) => held.check.stepId));
+
+      const sent = await Promise.all(
+        [...stepIds].map((stepId) => resendScreen(stepId, restoredOnly)),
+      );
+
+      return sent.every(Boolean);
+    },
+    [heldRef, resendClock, resendScreen],
+  );
 
   const hold = useCallback(
     (check: HeldCheck) => {
       heldRef.current.set(check.attemptId, { check, fromDevice: false, run: null });
       void keepInRun(check);
 
-      void resendScreen(check.stepId).then((saved) => {
+      void resendScreen(check.stepId, false).then((saved) => {
         if (saved) {
           void resendUnsaved();
         }
@@ -217,12 +227,12 @@ export function useHeldAnswers({
       const kept = holdKept(learnerId);
 
       if (kept.length > 0) {
-        void resendUnsaved().then(() => ensureRun());
+        beforeStartRef.current = () => resendUnsaved(true);
       }
 
       return kept.map((check) => toRunAnswer({ check, lesson }));
     },
-    [ensureRun, holdKept, lesson, resendUnsaved],
+    [beforeStartRef, holdKept, lesson, resendUnsaved],
   );
 
   /** Before the run ends, so the server never turns away an answer another tab still holds. */
@@ -236,7 +246,13 @@ export function useHeldAnswers({
     return resendUnsaved();
   }, [ensureRun, holdKept, resendUnsaved]);
 
-  usePageLifecycle({ onBack: () => void resendUnsaved() });
+  usePageLifecycle({
+    onBack: () => {
+      if (!beforeStartRef.current) {
+        void resendUnsaved();
+      }
+    },
+  });
 
   return { hold, reopen, resendKept, resendUnsaved };
 }

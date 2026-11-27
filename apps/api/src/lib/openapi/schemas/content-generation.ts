@@ -1,3 +1,4 @@
+import { lessonGenerationStatusSchema } from "@zoonk/core/sessions/block-view-contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
@@ -29,11 +30,6 @@ const readyAlternativeSchema = z
   ])
   .meta({ id: "ReadyAlternative" });
 
-/** Its own component, so generated clients read a map of it (Today's `lessonStatus`) as a map. */
-export const lessonGenerationStatusSchema = z
-  .enum(["ready", "generating", "notStarted", "failed"])
-  .meta({ id: "LessonGenerationStatus" });
-
 export const lessonReadinessSchema = z
   .object({
     alternative: readyAlternativeSchema
@@ -42,7 +38,9 @@ export const lessonReadinessSchema = z
         description:
           "Something ready to do instead of waiting: the plan's next written lesson, or due reviews. Null when the lesson is ready or nothing else is",
       }),
-    generationId: generationIdSchema.nullable(),
+    generationId: generationIdSchema
+      .nullable()
+      .describe("The confirmed live writer, or null when no run is writing the lesson."),
     kind: z
       .enum(["challenge", "lesson"])
       .meta({
@@ -55,7 +53,7 @@ export const lessonReadinessSchema = z
         description: "A `failed` lesson its quality checks set aside: it's never written again",
       }),
     status: z
-      .enum(["ready", "generating", "notStarted", "failed"])
+      .enum(lessonGenerationStatusSchema.options)
       .meta({
         description:
           "`generating`: stream the run for live progress. `notStarted`, or `failed` and not `setAside`: POST /library/lessons/{lessonId}/generations to write it now",

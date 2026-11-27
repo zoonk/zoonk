@@ -54,6 +54,7 @@ import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.layoutNoWords
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -126,6 +127,7 @@ fun CoverageBar(
             .fillMaxWidth()
             .height(BAR_HEIGHT)
             .clip(RoundedCornerShape(BAR_CORNER))
+            .layoutNoWords()
             .clearAndSetSemantics {},
     ) {
         drawRect(track)

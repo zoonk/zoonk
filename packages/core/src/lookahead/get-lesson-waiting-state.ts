@@ -5,6 +5,7 @@ import { isChallengeIdentityKey } from "../library/challenges/challenge-lesson-s
 import {
   type LessonGenerationState,
   getLessonGenerationState,
+  releaseStaleLessonClaims,
 } from "../library/generation/lesson-generation-state";
 import { findFirstLessonWarmUp } from "./_utils/first-lesson-warm-up";
 import { findViewerLesson } from "./_utils/viewer-lesson";
@@ -30,7 +31,16 @@ type LessonWaitingState = {
 export type LessonWaitingResult =
   | { state: LessonWaitingState; status: "ready" }
   | { status: "notFound" }
-  | { status: "unauthorized" };
+  | { status: "unauthorized" }
+  | { runId: string; status: "ended" }
+  | { status: "unknown" };
+
+type WriterObservation = { runId: string; status: "alive" } | { status: "ended" | "unknown" };
+
+type ObserveWriter = (input: {
+  lessonId: string;
+  runId: string | null;
+}) => Promise<WriterObservation>;
 
 async function findNextReadyLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
   const item = await prisma.planItem.findFirst({
@@ -67,11 +77,13 @@ async function findReadyAlternative({
   return dueSkills > 0 ? { dueSkills, kind: "review" } : null;
 }
 
-/** Uncached polling read; missing generationId means the page must request generation after a learner action. */
+/** Without `observeWriter`, the state is the saved row's and names no run to follow. */
 export async function getLessonWaitingState({
   lessonId,
+  observeWriter,
 }: {
   lessonId: string;
+  observeWriter?: ObserveWriter;
 }): Promise<LessonWaitingResult> {
   const viewer = await findViewerLesson(lessonId);
 
@@ -104,6 +116,20 @@ export async function getLessonWaitingState({
     };
   }
 
+  const setAside = state.status === "failed" && state.setAside;
+  const owner = state.status === "generating" ? state.runId : null;
+
+  const writer =
+    observeWriter && !setAside ? await observeWriter({ lessonId, runId: owner }) : null;
+
+  if (writer?.status === "unknown") {
+    return { status: "unknown" };
+  }
+
+  if (writer?.status === "ended" && owner) {
+    return { runId: owner, status: "ended" };
+  }
+
   const [alternative, warmUpId] = await Promise.all([
     findReadyAlternative({ lessonId, userId: viewer.userId }),
     findFirstLessonWarmUp({ lessonId, userId: viewer.userId }),
@@ -112,12 +138,27 @@ export async function getLessonWaitingState({
   return {
     state: {
       alternative,
-      generationId: state.status === "generating" ? state.runId : null,
+      generationId: writer?.status === "alive" ? writer.runId : null,
       kind,
-      setAside: state.status === "failed" && state.setAside,
-      status: state.status,
+      setAside,
+      status: writer?.status === "alive" ? "generating" : state.status,
       warmUpId,
     },
     status: "ready",
   };
+}
+
+/** The API's live read: a claim whose writer has ended is released, then the lesson is read again. */
+export async function readLiveLessonWaitingState(input: {
+  lessonId: string;
+  observeWriter: ObserveWriter;
+}): Promise<LessonWaitingResult> {
+  const result = await getLessonWaitingState(input);
+
+  if (result.status !== "ended") {
+    return result;
+  }
+
+  await releaseStaleLessonClaims({ lessonId: input.lessonId, staleRunId: result.runId });
+  return getLessonWaitingState(input);
 }

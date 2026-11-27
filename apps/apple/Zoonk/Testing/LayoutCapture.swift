@@ -47,6 +47,7 @@
       var styles: [StyleRect] = []
       var role: LayoutRole?
       var text: Text?
+      var words = true
       var dynamicTypeSize: DynamicTypeSize = .large
       var legibility: LegibilityWeight?
       /// How much a transform above draws the view smaller or larger than it laid out, as a sheet
@@ -311,6 +312,7 @@
   struct LayoutPartReporter: ViewModifier {
     let part: LayoutPart
     let text: Text?
+    let words: Bool
 
     @Environment(\.layoutRowID) private var row
     @Environment(\.layoutSurfaceID) private var surface
@@ -377,6 +379,7 @@
         $0.surface = surface
         $0.inherited = inherited
         $0.text = text
+        $0.words = words
         $0.dynamicTypeSize = dynamicTypeSize
         $0.legibility = legibility
         change(&$0)
@@ -1181,17 +1184,11 @@
           return (row, ink[0] + ink[2])
         }, uniquingKeysWith: max)
 
-      let rowsWithNotes = Set(
-        out.filter { $0["part"] as? String == LayoutPart.note.rawValue }.compactMap {
-          $0["row"] as? String
-        })
-
       return out.map { element in
         guard element["part"] as? String == "row", let id = element["id"] as? String,
           element["group"] is String
         else { return element }
         var row = element
-        row["note"] = rowsWithNotes.contains(id)
         if let edge = systemEdges[id] {
           row["endEdge"] = edge
         }
@@ -1211,7 +1208,7 @@
         return element
       }
 
-      if part == .mark {
+      if part == .mark || !record.words {
         guard picture.shows(record.frame, host: record.host) else { return clipped(element) }
         element["ink"] = picture.ink(in: record.frame).map(Self.bounds) ?? NSNull()
         return element
