@@ -109,7 +109,8 @@ enum TutorAnswerEvent: Equatable, Sendable {
 enum TutorFailure: Error, Equatable, Sendable {
   /// A guest's help, or the day's budget all guests share, is used up.
   case signUpRequired
-  case slowDown
+  /// A short break, over at `until`.
+  case slowDown(until: Date)
   case limit(HelpLimit)
   case plusRequired
   case gone
@@ -119,20 +120,28 @@ enum TutorFailure: Error, Equatable, Sendable {
   case conflict
   case failed
 
-  var helpLimit: HelpLimit? {
-    if case .limit(let limit) = self {
-      return limit
-    }
-
-    return nil
-  }
-
+  /// Nothing can be asked while it holds: the composer keeps the learner's words, and its notice
+  /// says why.
   var isLimit: Bool {
     switch self {
-    case .signUpRequired, .limit:
+    case .signUpRequired, .slowDown, .limit:
       true
-    case .slowDown, .plusRequired, .gone, .invalid, .signedOut, .conflict, .failed:
+    case .plusRequired, .gone, .invalid, .signedOut, .conflict, .failed:
       false
     }
+  }
+
+  /// When asking is back without the server saying so: a short break's end, or a monthly cap's
+  /// day.
+  var liftsAt: Date? {
+    switch self {
+    case .slowDown(let until): until
+    case .limit(let limit): limit.availableAt
+    default: nil
+    }
+  }
+
+  func isLifted(at now: Date) -> Bool {
+    liftsAt.map { $0 <= now } ?? false
   }
 }

@@ -255,9 +255,9 @@ extension TutorFailure {
       .subscribe
     case .signedOut:
       .signIn
-    case .limit, .gone:
+    case .slowDown, .limit, .gone:
       .none
-    case .slowDown, .invalid, .conflict, .failed:
+    case .invalid, .conflict, .failed:
       .tryAgain
     }
   }
