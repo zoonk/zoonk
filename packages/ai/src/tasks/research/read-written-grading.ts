@@ -83,10 +83,6 @@ function toIntro({
   ].join("\n");
 }
 
-/**
- * How the documents say each written task's answers are marked, every rule with the passage that
- * states it; `tasks` comes from the reading (`listWrittenGradingInputs`).
- */
 export async function readWrittenGrading({
   analytics,
   documents,

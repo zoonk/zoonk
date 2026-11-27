@@ -5,7 +5,6 @@ import {
 } from "@zoonk/ai/tasks/research/read-written-grading";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
 
-/** How the documents say each written task's answers are marked; none without written tasks. */
 export async function readWrittenGradingStep({
   extraction,
   sourceIds,

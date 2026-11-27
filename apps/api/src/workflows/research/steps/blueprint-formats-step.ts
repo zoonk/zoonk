@@ -6,7 +6,6 @@ import {
 } from "@zoonk/ai/tasks/research/extract-question-formats";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
 
-/** Reads the question formats on their own, tied to the parts the reading found. */
 export async function readBlueprintFormatsStep({
   extraction,
   sourceIds,

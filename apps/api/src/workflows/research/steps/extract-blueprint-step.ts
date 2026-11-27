@@ -173,7 +173,6 @@ async function extractBlueprintDraftStep({
   };
 }
 
-/** Gives each written task the marking read for it beside the reading, then lists the facts to check. */
 async function prepareBlueprintChecksStep({
   documents,
   gradings,

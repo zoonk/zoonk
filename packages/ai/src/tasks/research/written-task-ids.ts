@@ -3,7 +3,6 @@ import { type BlueprintExtraction } from "./extract-exam-blueprint";
 type Section = NonNullable<BlueprintExtraction["mock"]>["sections"][number];
 type Task = Section["tasks"][number];
 
-/** Each written task with the id the reads after the reading name it by: its section's and its own position. */
 export function listWrittenTasks(extraction: BlueprintExtraction) {
   return (extraction.mock?.sections ?? []).flatMap((section, sectionIndex) =>
     section.kind === "written"

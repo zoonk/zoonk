@@ -103,7 +103,6 @@ function aspectAwards({ awards, points }: Item["aspects"][number]): readonly Awa
   );
 }
 
-/** A criterion is keyed when the board states no scale for it and every aspect under it has points. */
 export function isKeyedCriterion({ aspects, grading }: SheetBasis, id: string): boolean {
   const own = aspects.filter(({ criterionId }) => criterionId === id);
   const scaled = grading.criteria.some((criterion) => criterion.id === id && criterion.awards);
