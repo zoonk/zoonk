@@ -200,10 +200,12 @@ export const planPlacementTestSchema = z
     }),
     z.object({
       ...placementRowShape,
+      answered: z.int().nonnegative().optional(),
       attempt: placementAttemptViewSchema.nullable(),
       kind: z.literal("language"),
       nextTestOutLevel: levelTestOutLevelSchema.nullable(),
       result: levelTestResultSchema.nullable(),
+      total: z.int().positive().optional(),
     }),
   ])
   .meta({ id: "PlanPlacementTest" });
