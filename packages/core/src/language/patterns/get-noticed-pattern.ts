@@ -3,15 +3,16 @@ import {
   type LanguageViewGoalResult,
   resolveLanguageViewGoal,
 } from "../../view-models/language/_utils/language-view-goal";
-import { loadTodayPattern } from "../../view-models/language/_utils/today-pattern";
+import { findFreshMistakePattern } from "./find-fresh-pattern";
 
-type TodayPatternResult =
+type NoticedPatternResult =
   | Exclude<LanguageViewGoalResult, { status: "ready" }>
-  | { pattern: Awaited<ReturnType<typeof loadTodayPattern>>; status: "ready" };
+  | { pattern: Awaited<ReturnType<typeof findFreshMistakePattern>>; status: "ready" };
 
-export async function getTodayPattern(
+/** The notebook's newest pattern for a language goal, a finding of typos included. */
+export async function getNoticedPattern(
   input: { goalId?: string } = {},
-): Promise<TodayPatternResult> {
+): Promise<NoticedPatternResult> {
   "use cache: private";
 
   const loaded = await resolveLanguageViewGoal(input.goalId);
@@ -20,5 +21,13 @@ export async function getTodayPattern(
     return loaded;
   }
 
-  return { pattern: await loadTodayPattern(loaded.context), status: "ready" };
+  const { goal, userId } = loaded.context;
+
+  const pattern = await findFreshMistakePattern({
+    goalId: goal.id,
+    language: goal.targetLanguage,
+    userId,
+  });
+
+  return { pattern, status: "ready" };
 }
