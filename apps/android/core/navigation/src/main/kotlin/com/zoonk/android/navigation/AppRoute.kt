@@ -220,9 +220,12 @@ sealed interface AppRoute : NavKey {
         val opening: String? = null,
     ) : AppRoute
 
+    /** One scope at a time: the whole notebook, a skill's mistakes, a day's block ([blockId]) or a finished mock's ([mockId]). */
     @Serializable
     data class MistakePractice(
         val skillId: String? = null,
+        val blockId: String? = null,
+        val mockId: String? = null,
     ) : AppRoute
 
     @Serializable

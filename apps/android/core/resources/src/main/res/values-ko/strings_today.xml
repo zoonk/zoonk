@@ -50,8 +50,6 @@
   "today_mistakes_notebook": "d2c376cb8a5be242d3840ee75baac9e14695fef1b298e0ba88dad28f8c6d849d",
   "today_mistakes_ready": "3520e7f56211c25216502a6a7cebcd996a4271842465406c351a789de59dab04",
   "today_mistakes_redo": "a11a7728d5485a7832a4342036bfdf893b07d2a12fdd04a7d9349b4877c475d4",
-  "today_mistakes_return_tomorrow": "2e66f33731c108190031a0bf44cf53f4968802cf7da1df97d2ea554d2f056aa5",
-  "today_mistakes_tomorrow": "b1f7a0a0de78c2cbc4d95b5285e29b794e88c7626f68f367e61d0dba94aeaeda",
   "today_more_count": "99979bdbed01c43097017222d54077f505df3e3852c77d4dfbbb616fba9cb469",
   "today_more_lessons": "f3bad5704cec8e2a599d1aabd7893f3cef6005f93f9c44983087b11b2c934200",
   "today_more_time_a_day": "0fdbd00b8f2f6a6005c3f9eb717d9bb7b761a0e5a738cc149ce5edc4742cbd10",
@@ -272,12 +270,8 @@
     <string name="today_mistakes_redo">틀린 문제 다시 풀기</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">레슨 다시 하기</string>
-    <string name="today_mistakes_return_tomorrow">오늘 틀린 문제는 내일 다시 나와요</string>
     <plurals name="today_mistakes_ready">
         <item quantity="other">%d개 연습 가능</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="other">내일 %d개 연습 가능</item>
     </plurals>
     <string name="today_take_mock">모의고사 보기</string>
     <string name="today_take_mock_detail">언제든 하루치 시험 전체나 절반을 풀 수 있어요</string>

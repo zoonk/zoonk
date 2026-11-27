@@ -276,7 +276,7 @@ class TodayScreenshots {
                     refreshIfChanged = app.today::refreshIfChanged,
                     practice = {
                         TodayPracticeRows(
-                            MistakeListAvailability(ready = 3, tomorrow = 1),
+                            MistakeListAvailability(ready = 3),
                             MOCKS,
                             SPEAKING,
                             completedLessons = true,

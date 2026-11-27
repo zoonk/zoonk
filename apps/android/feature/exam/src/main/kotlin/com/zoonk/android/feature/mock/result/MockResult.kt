@@ -94,16 +94,18 @@ internal fun MockResult(
     // A question with several picks answered partly right missed some, so the notebook keeps it too.
     val mistakes =
         view.review.count { it.outcome == MockExamReviewInner.Outcome.WRONG || it.outcome == MockExamReviewInner.Outcome.PARTIAL }
+    val practice = view.mockId?.takeIf { mistakes > 0 && !placement }?.let { AppRoute.MistakePractice(mockId = it.toString()) }
     val essays = essaySteps(view)
     val speaking = view.speaking
     val preparation = result?.preparation?.takeIf { it.hasMoved() }
     val offered = planOffers(view.adapt)
+    val movedTopics = result?.movedTopics?.takeIf { it.isNotEmpty() }
     val has =
         buildSet {
             if (result != null && (result.total > 0 || (essays.isEmpty() && speaking == null))) add(MockResultPart.Score)
             if (essays.isNotEmpty()) add(MockResultPart.Essays)
             if (speaking != null) add(MockResultPart.Speaking)
-            if (preparation != null || offered.isNotEmpty()) add(MockResultPart.Plan)
+            if (preparation != null || offered.isNotEmpty() || movedTopics != null) add(MockResultPart.Plan)
         }
     val about = result?.let { mockAboutLines(view) }.orEmpty()
     // A result opened again was celebrated then; one just finished shows its milestone's ceremony before its steps.
@@ -207,7 +209,7 @@ internal fun MockResult(
                         MockResultPart.Plan -> {
                             listOf(
                                 ResultStep(PLAN, part.beside) {
-                                    PlanStep(view.adapt, preparation, offers)
+                                    PlanStep(view.adapt, preparation, movedTopics, offers)
                                 },
                             )
                         }
@@ -223,7 +225,7 @@ internal fun MockResult(
             val position = shown.indexOf(current).coerceAtLeast(0)
             // Beside the main action on a wide layout and above it on a phone or a book's page, as main's `MockResultSkip`.
             val secondaryBeside = isWideLayout()
-            val secondary = stringResource(R.string.mock_result_continue).takeUnless { placement || mistakes == 0 }
+            val secondary = stringResource(R.string.mock_result_continue).takeIf { practice != null }
             // Main's `MockPlanDecline` and `MockPlanAccept`: while the plan step asks, its answers are the bar's, in place of the way on.
             val asking =
                 view.adapt
@@ -277,7 +279,7 @@ internal fun MockResult(
                             ) { Text(copy.accept) }
                         } else {
                             if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
+                            MainAction(practice, navigator, onContinue, main)
                         }
                     }
                 }
@@ -327,9 +329,10 @@ internal fun MockResult(
                                         },
                                     preparation,
                                 ) {
-                                    if (offered.isNotEmpty()) {
-                                        view.adapt?.let { adapt ->
-                                            AsideSection(stringResource(R.string.mock_result_your_plan)) {
+                                    if (offered.isNotEmpty() || movedTopics != null) {
+                                        AsideSection(stringResource(R.string.mock_result_your_plan)) {
+                                            movedTopics?.let { MovedTopics(it) }
+                                            view.adapt?.takeIf { offered.isNotEmpty() }?.let { adapt ->
                                                 PlanChange(adapt, offers, true) { offer ->
                                                     InlinePlanAnswers(
                                                         adapt,
@@ -358,18 +361,18 @@ internal fun MockResult(
     }
 }
 
+/** [practice] is the run of this mock's mistakes, there when it missed some; otherwise the way on. */
 @Composable
 private fun MainAction(
-    placement: Boolean,
-    mistakes: Int,
-    onMistakes: () -> Unit,
+    practice: AppRoute.MistakePractice?,
+    navigator: AppNavigator,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (placement || mistakes == 0) {
+    if (practice == null) {
         Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
     } else {
-        Button(onClick = onMistakes, modifier) {
+        Button(onClick = { navigator.open(practice) }, modifier) {
             Text(stringResource(R.string.mistakes_practice))
         }
     }
@@ -377,7 +380,7 @@ private fun MainAction(
 
 /**
  * Main's `continueHref`: onboarding's plan after a placement mock, the session it was played in,
- * else Today. Practice brings mistakes back only from tomorrow, so they're reviewed in the notebook.
+ * else Today.
  */
 private fun AppNavigator.continueAfter(
     view: MockExam,

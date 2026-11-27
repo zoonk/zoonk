@@ -136,6 +136,10 @@ data class DayStep(
     val drill: Boolean = false,
     val preparing: Boolean = false,
     val mockPreparationReview: Boolean = false,
+    /** Why a lesson is back in the day: the learner keeps missing what it teaches. */
+    val returning: StudyBlock.Returning? = null,
+    /** The language pattern a [StudyBlock.Screen.PATTERN] step drills. */
+    val patternId: UUID? = null,
 ) {
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
@@ -341,6 +345,8 @@ fun StudyBlock.toDayStep(): DayStep =
         drill = writingUnit == StudyBlock.WritingUnit.DRILL,
         preparing = preparing,
         mockPreparationReview = mockPreparationReview == true,
+        returning = returning,
+        patternId = patternId,
     )
 
 private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
@@ -382,6 +388,8 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         drill = writingUnit == UnstartedStudyDayBlocksInner.WritingUnit.DRILL,
         preparing = preparing,
         mockPreparationReview = mockPreparationReview == true,
+        returning = returning?.let { shown -> StudyBlock.Returning.entries.first { it.value == shown.value } },
+        patternId = patternId,
     )
 
 fun StudyMission.toDayMission(): DayMission =

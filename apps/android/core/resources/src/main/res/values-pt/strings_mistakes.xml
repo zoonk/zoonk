@@ -10,20 +10,13 @@
   "mistakes_empty_open": "b238f88893b8a3519018ea28bbf8b2adfd4550ceb2bc9797bc265af67588a3de",
   "mistakes_more_failed": "d617022b97848c94193c1c4636b5cf4bff9e91710a9322e197a80e623f891e08",
   "mistakes_notebook_title": "5a3ceec9f80410d6253bb9af31e9cf6c268ff88192adb6d48df7a683efbb0f65",
-  "mistakes_nothing_description": "d1f510209794ed8db12784f57aab59a8a45c1ecca1ec83d4b19bd0bf06863719",
-  "mistakes_nothing_title": "7848741fa5472d906066f541068c18833d273f0b932ce5ef8a78d5cd6f9062fb",
   "mistakes_open_lesson": "0ff6b4cfadd5c3ccfe92683831deb9edcd433ee02400f0df1be7db529b403c81",
-  "mistakes_opens_tomorrow": "3b5eb190b03779f06ea04b75fdda4b73f2dac411d427bfa4df05c6d72bae2566",
   "mistakes_other_questions": "dbb0852cbb0f89007d3152f6716a810b6fd126620a3656aa21f4c711036bf0a1",
   "mistakes_practice": "927bfe45e6f7cf78231bbb910f1ad146102bbaa57fdfffae0ea35bd65acd206b",
-  "mistakes_practice_comes_back": "c1b8d358bb059122edc717e6c36735ac89d34f8df41a0a4c1e9c59cdb82e7cbb",
   "mistakes_practice_end": "f705feb7e422c7bdc618826a7c29c073b9aba3f76a25c4a4bf242cffa851db68",
   "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
-  "mistakes_practice_missed_and_unreached": "ec81cc6461925aa7b826e44f7e72c6c093145357f84b69e7cc3e0ac961c965f6",
   "mistakes_practice_title": "60f1ef08f941e8f315e16a9b276039352b7bd3bae28b76f4770a134a502a21bc",
-  "mistakes_practice_tomorrow": "33926b8027ce6dd5d49aa81ef5347197c7cb1e29ef8cc9fb597ef56373f90098",
   "mistakes_practice_topic": "6b7de4b80cfedbfca320bbf6c7873e34af012f4b1c482aedae1d86d36ba858da",
-  "mistakes_practice_unreached": "6d0f3cd68142618a8ac976942ebf727dd0fd5e3ef1293e2cc28892eca871d3bf",
   "mistakes_show_more": "b0f1eca7ad409b4c25eb7a2cd26c7f1c2df15fefe30084bb9b17e0a7cfb90c4f",
   "mistakes_tab_fixed": "d7c9bffc0405f05829624afa62d797b6ba6919107f83ae389ea6e5568ac84f19",
   "mistakes_tab_open": "4bdbd06309a824ba5abc287ce6f7cd2984ebe7425306146c2938d489eeb0b6ae"
@@ -33,20 +26,13 @@
     <string name="mistakes_practice_title">Corrigir erros</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Sair. O que você já respondeu conta.</string>
-    <string name="mistakes_practice_comes_back">O que você errou volta outro dia, quando fica mais fácil fixar.</string>
-    <string name="mistakes_practice_missed_and_unreached">O que você errou volta outro dia. O restante continua disponível para praticar.</string>
-    <string name="mistakes_practice_unreached">O restante continua disponível para praticar.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d erro corrigido</item>
         <item quantity="many">%d erros corrigidos</item>
         <item quantity="other">%d erros corrigidos</item>
     </plurals>
-    <string name="mistakes_nothing_title">Nada para praticar ainda</string>
-    <string name="mistakes_nothing_description">Os erros voltam para prática a partir do dia seguinte.</string>
     <string name="mistakes_notebook_title">Caderno de erros</string>
     <string name="mistakes_practice">Corrigir erros</string>
-    <!-- Under the notebook's title when no mistake is ready yet and some come back tomorrow. -->
-    <string name="mistakes_opens_tomorrow">A prática fica disponível amanhã</string>
     <!-- The notebook's tab of mistakes the learner hasn't fixed yet. -->
     <string name="mistakes_tab_open">Para corrigir</string>
     <!-- The notebook's tab of mistakes the learner fixed in practice. -->
@@ -64,7 +50,8 @@
     <string name="mistakes_cause_trap">Caiu em uma pegadinha</string>
     <string name="mistakes_cause_time">Faltou tempo</string>
     <string name="mistakes_cause_guess">Chutou</string>
-    <string name="mistakes_practice_tomorrow">Pratique amanhã</string>
     <string name="mistakes_practice_topic">Praticar este tópico</string>
     <string name="mistakes_open_lesson">Abrir a aula</string>
+    <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
+    <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
 </resources>

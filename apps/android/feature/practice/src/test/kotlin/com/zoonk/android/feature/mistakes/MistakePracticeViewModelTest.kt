@@ -60,7 +60,8 @@ class MistakePracticeViewModelTest {
         api: FakeMistakesApi,
         saved: SavedStateHandle = SavedStateHandle(),
         clock: () -> Long = { 0L },
-    ) = practiceViewModel(AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), api, clock, saved)
+        key: PracticeKey = PracticeKey(goalId = null),
+    ) = practiceViewModel(AppCache(session, CoroutineScope(SupervisorJob() + dispatcher)), api, clock, saved, key = key)
 
     private suspend fun TestScope.started(viewModel: MistakePracticeViewModel): PracticeState {
         viewModel.practice.load()
@@ -102,23 +103,81 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
-    fun theEndSaysMissesWaitAndUnreachedMistakesAreStillReady() =
+    fun practiceAgainReplaysWhatTheRunDidNotFix() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)
-            api.answer = { practiceFeedback(isCorrect = false) }
+            api.answer = {
+                val itemId = (it as BankInput).value.itemId.toString()
+                if (itemId == FIRST) practiceFeedback(fixed = true) else practiceFeedback()
+            }
             val viewModel = viewModel(api)
             val read = started(viewModel).read
-            assertEquals(PracticeEndNote.Unreached, viewModel.now.endNote)
 
             viewModel.answer()
             advanceUntilIdle()
-            assertEquals(PracticeEndNote.MissedAndUnreached, viewModel.now.endNote)
-
-            api.answer = { practiceFeedback() }
             viewModel.next(read.questions)
             viewModel.answer()
             advanceUntilIdle()
-            assertEquals(PracticeEndNote.Missed, viewModel.now.endNote)
+            viewModel.next(read.questions)
+            advanceUntilIdle()
+            viewModel.practiceAgain()
+
+            assertEquals(
+                listOf(SECOND),
+                viewModel.now.read.questions
+                    .map { it.itemId },
+            )
+            assertEquals(RunPhase.Answering, viewModel.now.run.phase)
+            assertEquals(emptyList<UUID>(), viewModel.now.answerIds)
+        }
+
+    @Test
+    fun aRunLeftEarlyDoesNotPracticeAgain() =
+        runTest(dispatcher) {
+            val viewModel = viewModel(FakeMistakesApi(twoMistakes))
+            started(viewModel)
+
+            viewModel.answer()
+            advanceUntilIdle()
+            viewModel.leave()
+            advanceUntilIdle()
+
+            assertEquals(emptyList<MistakePracticeTask>(), viewModel.now.toPracticeAgain)
+        }
+
+    @Test
+    fun aBlockRunCarriesItsBlockAndCompletesEvenWithNothingLeft() =
+        runTest(dispatcher) {
+            val blockId = UUID.randomUUID()
+            val api = FakeMistakesApi(practice())
+            val viewModel = viewModel(api, key = PracticeKey(goalId = null, blockId = blockId))
+
+            viewModel.beginEmpty()
+            advanceUntilIdle()
+
+            assertEquals(blockId, api.finishes.single().blockId)
+            assertEquals(emptyList<UUID>(), api.finishes.single().answerIds)
+            assertEquals(false, viewModel.practicesAgain)
+        }
+
+    @Test
+    fun aBlockRunSendsItsBlockWithEachAnswer() =
+        runTest(dispatcher) {
+            val blockId = UUID.randomUUID()
+            val api = FakeMistakesApi(twoMistakes)
+            val viewModel = viewModel(api, key = PracticeKey(goalId = null, blockId = blockId))
+            started(viewModel)
+
+            viewModel.answer()
+            advanceUntilIdle()
+
+            assertEquals(
+                blockId,
+                api.answers
+                    .single()
+                    .run
+                    ?.blockId,
+            )
         }
 
     @Test
@@ -173,7 +232,7 @@ class MistakePracticeViewModelTest {
             var clock = 0L
             val api = FakeMistakesApi(twoMistakes)
             api.answer = { throw ApiException(ApiError.Network) }
-            val viewModel = viewModel(api) { clock }
+            val viewModel = viewModel(api, clock = { clock })
             started(viewModel)
 
             clock = 30_000L
@@ -203,7 +262,7 @@ class MistakePracticeViewModelTest {
             var clock = 0L
             val api = FakeMistakesApi(twoMistakes)
             api.answer = { throw ApiException(ApiError.Network) }
-            val viewModel = viewModel(api) { clock }
+            val viewModel = viewModel(api, clock = { clock })
             started(viewModel)
 
             clock = 30_000L
