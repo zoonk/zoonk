@@ -1,32 +1,19 @@
-import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { parseEnv } from "node:util";
 import {
+  type DatabaseMode,
   getLocalDatabaseUrl,
   getUnpooledDatabaseUrl,
   isLocalDevelopmentDatabase,
+  worktreeDatabaseName,
 } from "../../packages/db/src/local-database.ts";
 import { getTestEnvironment } from "../../packages/db/src/test-environment.ts";
 
 const ENV_FILES = [".env", ".env.local", ".env.development.local", ".env.production.local"];
 /** The app's Vercel link, which the Blob SDK reads to fetch the project's OIDC token. */
 const VERCEL_LINK = join(".vercel", "project.json");
-const ID_LENGTH = 12;
 const DATABASE_ENVIRONMENT = join("packages", "db", ".env");
-
-export type DatabaseMode = "dev" | "test" | "e2e";
-
-export function worktreeDatabaseName({
-  mode,
-  worktree,
-}: {
-  mode: DatabaseMode;
-  worktree: string;
-}): string {
-  const identifier = createHash("sha256").update(worktree).digest("hex").slice(0, ID_LENGTH);
-  return `zoonk_wt_${identifier}_${mode}`;
-}
 
 function readEnvironment(path: string): NodeJS.Dict<string> {
   return existsSync(path) ? parseEnv(readFileSync(path, "utf8")) : {};
@@ -89,7 +76,7 @@ export function localSource(primary: string): URL | null {
     return null;
   }
 
-  source.pathname = new URL(getLocalDatabaseUrl()).pathname;
+  source.pathname = new URL(getLocalDatabaseUrl("dev", primary)).pathname;
   source.search = "";
   return source;
 }
@@ -115,7 +102,7 @@ function readsDatabase(directory: string): boolean {
   return Boolean(dependencies && typeof dependencies === "object" && "@zoonk/db" in dependencies);
 }
 
-/** Next.js reads only its own app's `.env`, and an app without a URL would use the primary checkout's `zoonk`. */
+/** Next.js reads only its own app's `.env`, so each database reader needs the configured server. */
 function databaseEnvironmentPaths(root: string): string[] {
   const apps = readdirSync(join(root, "apps"), { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && readsDatabase(join(root, "apps", entry.name)))

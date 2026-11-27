@@ -11,12 +11,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  copyEnvironment,
-  ownDevelopmentDatabaseUrl,
-  worktreeDatabaseName,
-  writeEnvironment,
-} from "./environment.mts";
+import { getLocalDatabaseUrl, worktreeDatabaseName } from "../../packages/db/src/local-database.ts";
+import { copyEnvironment, ownDevelopmentDatabaseUrl, writeEnvironment } from "./environment.mts";
 
 function checkout(root: string, name: string): string {
   const path = join(root, name);
@@ -65,6 +61,27 @@ afterEach(() => {
   for (const root of databaseCheckouts.splice(0)) {
     rmSync(root, { force: true, recursive: true });
   }
+});
+
+describe(getLocalDatabaseUrl, () => {
+  it("uses the same isolated names as setup for each database in a linked checkout", () => {
+    const worktree = databaseCheckout();
+    writeFileSync(join(worktree, ".git"), "gitdir: /checkout/.git/worktrees/example\n");
+
+    for (const mode of ["dev", "test", "e2e"] as const) {
+      const expected = worktreeDatabaseName({ mode, worktree });
+      expect(new URL(getLocalDatabaseUrl(mode, worktree)).pathname).toBe(`/${expected}`);
+    }
+  });
+
+  it("keeps the standard database names in a primary checkout", () => {
+    const primary = databaseCheckout();
+    mkdirSync(join(primary, ".git"));
+
+    expect(new URL(getLocalDatabaseUrl("dev", primary)).pathname).toBe("/zoonk");
+    expect(new URL(getLocalDatabaseUrl("test", primary)).pathname).toBe("/zoonk_test");
+    expect(new URL(getLocalDatabaseUrl("e2e", primary)).pathname).toBe("/zoonk_e2e");
+  });
 });
 
 describe(ownDevelopmentDatabaseUrl, () => {

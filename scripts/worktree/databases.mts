@@ -2,7 +2,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type DatabaseMode, ownDevelopmentDatabaseUrl } from "./environment.mts";
+import { type DatabaseMode } from "../../packages/db/src/local-database.ts";
+import { ownDevelopmentDatabaseUrl } from "./environment.mts";
 import { readLibrarySource } from "./library-source.mts";
 import {
   postgresEnvironment,
