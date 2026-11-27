@@ -8,8 +8,8 @@ import {
 export type PlacementLength = PlacementAttemptView["length"];
 
 /**
- * A finish that saved: `lessonsSkipped` is what this finish skipped and `partLessonsSkipped` what
- * its part has skipped so far. `attempt` is the test while it has parts left, `result` the test's
+ * A finish that saved: `partLessonsSkipped` is what this finish skipped, the count its checkpoint
+ * shows and its Undo restores. `attempt` is the test while it has parts left, `result` the test's
  * result so far. `stale` when another device already closed the part or started a newer test.
  */
 export type PlacementPartOutcome =
