@@ -507,6 +507,58 @@ private struct BuddyContent: View {
       .frame(width: 32, height: 32)
   }
 
+  private var energyButton: some View {
+    Button {
+      places.open(.energy)
+    } label: {
+      Label {
+        HStack(spacing: 4) {
+          Text(
+            "\(name)'s Energy", tableName: "Buddy",
+            comment: "The buddy's Energy; the argument is its name")
+          if let current = status.energy.current {
+            Text(
+              (current / 100).formatted(
+                .percent.precision(.fractionLength(0)).locale(.appLanguage)))
+          }
+        }
+      } icon: {
+        Image(systemName: "bolt.fill")
+          .foregroundStyle(.energy)
+      }
+      .frame(minHeight: 44)
+      .contentShape(.rect)
+    }
+  }
+
+  private var missionsButton: some View {
+    Button {
+      isDayShown = true
+    } label: {
+      if let today = status.today, !today.missions.isEmpty {
+        Label {
+          HStack(spacing: 4) {
+            Text("Today's missions", tableName: "Buddy")
+            Text(
+              "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
+              tableName: "Buddy", comment: "Glasses earned of all of them")
+          }
+        } icon: {
+          Image(systemName: "checklist")
+        }
+        .frame(minHeight: 44)
+        .contentShape(.rect)
+      } else {
+        Text(
+          "\(name) today", tableName: "Buddy",
+          comment: "Title of the buddy's day; the argument is its name"
+        )
+        .frame(minHeight: 44)
+        .contentShape(.rect)
+      }
+    }
+  }
+
   private var dayLine: some View {
     HStack(spacing: 16) {
       Button {
@@ -521,53 +573,14 @@ private struct BuddyContent: View {
           comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
       )
 
-      AccessibilityStack(spacing: 16, stackedSpacing: 4) {
-        Button {
-          places.open(.energy)
-        } label: {
-          Label {
-            HStack(spacing: 4) {
-              Text(
-                "\(name)'s Energy", tableName: "Buddy",
-                comment: "The buddy's Energy; the argument is its name")
-              if let current = status.energy.current {
-                Text(
-                  (current / 100).formatted(
-                    .percent.precision(.fractionLength(0)).locale(.appLanguage)))
-              }
-            }
-          } icon: {
-            Image(systemName: "bolt.fill")
-              .foregroundStyle(.energy)
-          }
-          .frame(minHeight: 44)
-          .contentShape(.rect)
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 16) {
+          energyButton
+          missionsButton
         }
-
-        Button {
-          isDayShown = true
-        } label: {
-          if let today = status.today, !today.missions.isEmpty {
-            Label {
-              HStack(spacing: 4) {
-                Text("Today's missions", tableName: "Buddy")
-                Text(
-                  "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
-                  tableName: "Buddy", comment: "Glasses earned of all of them")
-              }
-            } icon: {
-              Image(systemName: "checklist")
-            }
-            .frame(minHeight: 44)
-            .contentShape(.rect)
-          } else {
-            Text(
-              "\(name) today", tableName: "Buddy",
-              comment: "Title of the buddy's day; the argument is its name"
-            )
-            .frame(minHeight: 44)
-            .contentShape(.rect)
-          }
+        VStack(alignment: .leading, spacing: 4) {
+          energyButton
+          missionsButton
         }
       }
       .fixedSize(horizontal: false, vertical: true)
