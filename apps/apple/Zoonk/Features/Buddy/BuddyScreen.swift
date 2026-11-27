@@ -515,7 +515,7 @@ private struct BuddyContent: View {
       places.open(.energy)
     } label: {
       Label {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
           Text(
             "\(name)'s Energy", tableName: "Buddy",
             comment: "The buddy's Energy; the argument is its name")
@@ -541,7 +541,7 @@ private struct BuddyContent: View {
     } label: {
       if let today = status.today, !today.missions.isEmpty {
         Label {
-          HStack(spacing: 4) {
+          HStack(spacing: 6) {
             Text("Today's missions", tableName: "Buddy")
             Text(
               "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
