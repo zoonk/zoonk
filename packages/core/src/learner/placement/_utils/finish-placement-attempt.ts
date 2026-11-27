@@ -184,7 +184,7 @@ async function savePart({
       goal,
       now,
       plan,
-      skillIds: state.knownSkillIds.filter((id) => newTopics.has(id)),
+      skillIds: state.knownSkillIds,
       timeZone,
       today,
       tx,
@@ -204,7 +204,7 @@ async function savePart({
   const receipt = {
     ...held,
     finish,
-    knownSkillIds: [...confirmed],
+    knownSkillIds: [...confirmed].filter((id) => newTopics.has(id)),
     lessonsSkipped: partLessonsSkipped,
     part,
     testedOutPlanItemIds,
@@ -322,8 +322,7 @@ export async function finishPlacementAttempt({
     ...(saved.heldUntilTomorrow && { heldUntilTomorrow: saved.heldUntilTomorrow }),
     knownSkillIds: saved.knownSkillIds,
     lessonsSkipped: saved.lessonsSkipped,
-    partLessonsSkipped:
-      state.result?.part === part ? state.result.partLessonsSkipped : saved.lessonsSkipped,
+    partLessonsSkipped: saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
     testedOutPlanItemIds: saved.testedOutPlanItemIds,
