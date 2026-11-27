@@ -134,6 +134,11 @@ function getMockPassMarks({
     : null;
 }
 
+/** The sitting once the mock started; a mock still to take has none. */
+function getSittingId({ mock }: OwnedMock): string | null {
+  return mock?.id ?? null;
+}
+
 function describeOwner({
   conditions,
   owned,
@@ -161,6 +166,7 @@ function describeOwner({
     examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
     goalId: owned.goal?.id ?? null,
     leftOut: listSatMockLeftOut({ conditions, structure: owned.structure, typed }),
+    mockId: getSittingId(owned),
     passMarks: getMockPassMarks({ conditions, owned }),
     scoreNotes: getScoreNotes({
       blueprint: owned.blueprint,
