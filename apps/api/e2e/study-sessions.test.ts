@@ -349,9 +349,11 @@ test.describe("Study sessions API", () => {
 
     expect(today.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
 
-    expect(today.missions.map((mission) => mission.kind)).toEqual(
-      expect.arrayContaining(["review", "somethingNew"]),
-    );
+    expect(today.missions.map((mission) => mission.kind)).toStrictEqual([
+      "review",
+      "somethingNew",
+      "askBuddy",
+    ]);
 
     const { session: again } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}`),
@@ -387,12 +389,25 @@ test.describe("Study sessions API", () => {
 
     expect(lessonDone.sessionCompleted).toBe(false);
 
-    const practiceDone = await playBlock({ api, blockId: practice?.id ?? "", sessionId: today.id });
-    expect(practiceDone.sessionCompleted).toBe(true);
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId },
+    });
 
-    expect(
-      [reviewDone, lessonDone, practiceDone].filter(({ fullMeal }) => fullMeal.paid),
-    ).toHaveLength(1);
+    await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "lesson",
+        contextSnapshot: {},
+        goalId: goal.id,
+        question: "When would I compare ratios?",
+        requestFingerprint: randomUUID(),
+        requestId: randomUUID(),
+        threadId: thread.id,
+      },
+    });
+
+    const practiceDone = await playBlock({ api, blockId: practice?.id ?? "", sessionId: today.id });
+    expect(practiceDone).toMatchObject({ fullMeal: { paid: true }, sessionCompleted: true });
+    expect([reviewDone, lessonDone].some(({ fullMeal }) => fullMeal.paid)).toBe(false);
 
     const summary = await readBody({
       response: await api.get(`/v1/study-sessions/${today.id}/summary`),
