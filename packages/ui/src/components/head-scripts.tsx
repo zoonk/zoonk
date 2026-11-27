@@ -9,8 +9,14 @@ import { PENDING_LINK_SCRIPT } from "@zoonk/ui/patterns/links/pending";
  * page's RSC payload names each one instead of carrying its text again beside the HTML.
  */
 function HeadScript({ script }: { script: string }) {
-  // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
-  return <script dangerouslySetInnerHTML={{ __html: script }} />;
+  return (
+    <script
+      // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
+      dangerouslySetInnerHTML={{ __html: script }}
+      // The browser's build of a script is compiled apart from the server's; only the server's runs.
+      suppressHydrationWarning
+    />
+  );
 }
 
 export function HeldPressScript() {
