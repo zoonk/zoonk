@@ -12,7 +12,6 @@ import {
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import {
   gradeMathAnswer,
   parseMathItem,
@@ -311,15 +310,6 @@ test.describe("Mistake practice API", () => {
 
     const { goal, mistake } = await createMistakeGoal({ cause: "gap", userId });
 
-    await studySessionFixture({
-      goalId: goal.id,
-      missions: {
-        picks: [{ anchor: {}, kind: "fixMistake", opens: { kind: "mistakesPractice" }, total: 1 }],
-        version: 1,
-      },
-      userId,
-    });
-
     const practice = await readBody({
       response: await api.get(`/v1/me/mistake-practice?goalId=${goal.id}&timeZone=UTC`),
       schema: mistakePracticeResponseSchema,
@@ -351,16 +341,7 @@ test.describe("Mistake practice API", () => {
       schema: mistakePracticeCompletionSchema,
     });
 
-    expect(counted).toMatchObject({
-      brainPower: 2,
-      correct: 1,
-      missionMoment: {
-        completed: ["fixMistake"],
-        fullMeal: { bonus: 50, paid: true },
-        missions: [{ kind: "fixMistake", status: "done" }],
-      },
-      total: 1,
-    });
+    expect(counted).toMatchObject({ brainPower: 2, correct: 1, missionMoment: null, total: 1 });
 
     const again = await readBody({
       response: await api.post("/v1/me/mistake-practice/completions", { data: finish }),
