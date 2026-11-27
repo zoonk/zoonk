@@ -4,11 +4,11 @@ import { cn } from "@zoonk/ui/lib/utils";
  * A tab and its current look, the same in every app (craft X2): the navigation's `muted` fill.
  * A link in a row of section links marks itself with `aria-current`, a `TabsTrigger` with
  * `data-active`, a radio's label with its checked input. No client code here, so a server
- * component can draw the look too. A tab pressed before the page hydrates (`data-held`) takes the
- * look at once.
+ * component can draw the look too. A tab or a link pressed before the page hydrates (`data-held`)
+ * takes the look at once.
  */
 export const TAB_LIST_CLASS =
-  "flex gap-0.5 [&:has([data-held])_[data-active]]:bg-transparent [&:has([data-held])_[data-active]]:text-muted-foreground";
+  "flex gap-0.5 [&:has([data-held])_[data-active]]:bg-transparent [&:has([data-held])_[data-active]]:text-muted-foreground [&:has([data-held])_[aria-current=page]:not([data-held])]:bg-transparent [&:has([data-held])_[aria-current=page]:not([data-held])]:text-muted-foreground";
 
 export const TAB_CLASS = cn(
   "text-muted-foreground hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground data-active:bg-muted data-active:text-foreground data-held:bg-muted data-held:text-foreground has-checked:bg-muted has-checked:text-foreground focus-visible:ring-ring/50 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
