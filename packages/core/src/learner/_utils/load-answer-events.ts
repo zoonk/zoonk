@@ -1,6 +1,5 @@
 import "server-only";
 import { DbNull, type TransactionClient, prisma } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type ClaimEvent } from "./skill-claims";
 
@@ -35,9 +34,9 @@ export async function loadAnswerEvents({
         { answer: { equals: DbNull, path: ["practiceMistakeId"] } },
         { mockExamId: null },
       ],
+      fromLesson: false,
       itemId: { not: null },
       skillId: { in: [...skillIds] },
-      ...NOT_LESSON_ANSWER_FILTER,
       userId,
     },
   });

@@ -49,8 +49,6 @@ describe("lesson check bank migration", () => {
       mistakeFixture({ skillId: skill.id, stepId: base.id, userId: user.id }),
     ]);
 
-    expect(standaloneAttempt.fromLesson).toBeNull();
-
     const migration = readFileSync(
       new URL(
         "../../../../../db/src/prisma/migrations/20261125104708_bank_lesson_checks/migration.sql",
@@ -69,6 +67,8 @@ describe("lesson check bank migration", () => {
       await tx.$executeRaw`CREATE TEMP TABLE step_variants ON COMMIT DROP AS SELECT * FROM public.step_variants WHERE step_id = ${varied.id}::uuid`;
       await tx.$executeRaw`CREATE TEMP TABLE library_step_option_pictures ON COMMIT DROP AS SELECT * FROM public.library_step_option_pictures WHERE false`;
       await tx.$executeRaw`CREATE TEMP TABLE attempts ON COMMIT DROP AS SELECT * FROM public.attempts WHERE user_id = ${user.id}::uuid`;
+      // Answers written before the migration had no lesson origin yet.
+      await tx.$executeRaw`UPDATE attempts SET from_lesson = NULL`;
       await tx.$executeRaw`CREATE TEMP TABLE mistakes ON COMMIT DROP AS SELECT * FROM public.mistakes WHERE user_id = ${user.id}::uuid`;
       await tx.$executeRaw`CREATE TEMP TABLE items (LIKE public.items INCLUDING DEFAULTS) ON COMMIT DROP`;
 

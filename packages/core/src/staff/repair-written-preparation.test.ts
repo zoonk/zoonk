@@ -88,6 +88,7 @@ describe(repairWrittenGoal, () => {
         data: {
           answer: { think: "answer" },
           durationMs: 5000,
+          fromLesson: false,
           hour: 12,
           isCorrect: true,
           localDate: completed.localDate,

@@ -1,6 +1,5 @@
 import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { readRecordedAnswer } from "./session-items";
 
@@ -39,12 +38,7 @@ export async function getNetScore({
 }): Promise<number | null> {
   const attempts = await prisma.attempt.findMany({
     select: { answer: true, isCorrect: true },
-    where: {
-      ...NOT_LESSON_ANSWER_FILTER,
-      itemId: { in: itemIds },
-      studySessionId: sessionId,
-      userId,
-    },
+    where: { fromLesson: false, itemId: { in: itemIds }, studySessionId: sessionId, userId },
   });
 
   if (attempts.length === 0) {

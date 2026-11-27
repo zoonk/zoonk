@@ -159,6 +159,7 @@ test.describe("Mocks whenever the learner wants", () => {
           ),
         },
         durationMs: 60_000,
+        fromLesson: false,
         hour: 12,
         isCorrect: true,
         itemId: essay.id,
