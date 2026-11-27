@@ -40,7 +40,6 @@
   "focustest_speaking_not_checked": "17613384c33a6bc8356feb2e6fbce37c4551a369d193bfd40df914a1601bfbc1",
   "focustest_start": "981a3c1cfb728429a2883cf8ea0ae8cbc0b194368ed546ebb1eb7368c863039d",
   "focustest_starting_point_title": "88e45255614ab78e383e18ffc002fcbb3dee837502f495629222819a9c9ac13a",
-  "focustest_stop": "9d52a90f3845052736b5a9689e19ba88d07b4cb9df0d1835f7144bb9791fb203",
   "focustest_subject_right": "193baa5d3f097549be5f3f107c220d80beb34e17a8d92baad990d9b2dad5a198",
   "focustest_subjects": "619e5d1ec9e793e72f4ffaac23063ae386c68418cbd96d02420740ff8b44145e",
   "focustest_suggestion_body": "155d5eb222c628b1ebcdff4679a7af2da701d599cc7b703c0d97967303996592",
@@ -65,7 +64,6 @@
     <string name="focustest_continue">続ける</string>
     <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">結果を見る</string>
-    <string name="focustest_stop">ここで終えて回答を使う</string>
     <string name="focustest_many_unknown">まだ学んでいない内容がほとんどですか？大丈夫です。ここで終えて学習を始められます。</string>
     <string name="focustest_answers_saved_title">回答を保存しました</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->

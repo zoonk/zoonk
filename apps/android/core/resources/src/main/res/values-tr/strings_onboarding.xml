@@ -112,10 +112,8 @@
   "onboarding_join_waitlist": "6fcd5cf0822e5153a5f5b6c48ce19d946c4f799e5d853c21889645ea0555cc63",
   "onboarding_language_test_audio_on_its_way": "58f54848abc7b0b8534acb9c101b9fa0a2e3f1b37686568c08569907c5b1cfb3",
   "onboarding_language_test_cant_listen": "c34202fa1cbcc759522c38830d521b2cfd897878b7d2308abf92b0a220bef68d",
-  "onboarding_language_test_did_not_understand": "8a2c33c9bf6987cddaf836a592afb12fb5843d91c624a39f1adec2f89a979c23",
+  "onboarding_language_test_did_not_understand": "0c345840d39a264c7fbe668957c5e30ec399e81aa2562b59d042d040f852e9bd",
   "onboarding_language_test_listening": "51a8f4d5c09a3ae2bc1e7400f08c7de2675e5270168d48fdc941d068bcfc228e",
-  "onboarding_language_test_message": "c17994cf844fdf0ba88b914e325b3d5df386723ef11a8aed19d2765ac6dc0119",
-  "onboarding_language_test_message_loading": "8dfd88430a885ce1d526c5d94c005421b75ab728971e39c7d2caa6b932872c0c",
   "onboarding_language_test_play": "a5f557ba5a236ddae87c6e709ff753830d7c362ae7bd6eb1e216d149f86a7a59",
   "onboarding_language_test_play_again": "cab320e380d9f1ea91eda59247d91b8c831c905f4810cf15368df218af53e23e",
   "onboarding_language_test_reading": "7d5c4d036fd25eac8ec7a96ff29c8e9137edd163bba985fd899a3d0b5a7efc6b",
@@ -168,7 +166,6 @@
   "onboarding_placement_answer_failed": "2808bf12c12da45bea49f19931e82b8b3bcb0475d5e707e7fbbf09ff34f4c7ee",
   "onboarding_placement_confirm": "cfb698156ee7a9af3eb6e58e0257743a3f5a5b20f109be1ca0ac473a17bb902f",
   "onboarding_placement_dont_know": "58bbfe8d7ea000a82977cf708e10a6a678641224019e0b52ec728a2b13fbd377",
-  "onboarding_placement_progress": "0ede62889428674da1dcb5071327961525284e27850f5b594456f1309691b7f4",
   "onboarding_placement_ready": "cde26a55f41ce9f8ddadf3962e4072d710f834cc60803d909064e37da537905f",
   "onboarding_placement_stop": "dee28e807c746242c378454c59b01de776ef328dfc43a56c83f224edaedfe95e",
   "onboarding_placement_unavailable_title": "6a1d6ec8151f541c42941baa1e48267c48ba0bcf2736ab296b4dd216d3bd4f99",
@@ -566,22 +563,20 @@
     <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">Bu bir iki dakika sürer.</string>
     <string name="onboarding_placement_ready">Testin hazır</string>
-    <string name="onboarding_placement_progress">Cevaplanan sorular</string>
     <string name="onboarding_placement_dont_know">Henüz bilmiyorum</string>
     <string name="onboarding_placement_confirm">Onayla</string>
     <string name="onboarding_placement_stop">Durdur ve cevaplarımı kullan</string>
     <string name="onboarding_placement_answer_failed">Gönderilemedi. Cevapların saklanıyor.</string>
     <string name="onboarding_placement_unavailable_title">İlk birkaç gününde neler bildiğini göreceğiz</string>
     <string name="onboarding_language_test_use_app_in">Uygulamayı %1$s dilinde kullan</string>
-    <string name="onboarding_language_test_did_not_understand">Dinlediğimi anlamadım</string>
+    <!-- Button on a listening question, after the learner played the message: they heard it and didn't understand it. -->
+    <string name="onboarding_language_test_did_not_understand">Anlamadım</string>
     <string name="onboarding_language_test_skip_question">Bu soruyu atla</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">Şimdi dinleyemiyorum</string>
     <string name="onboarding_language_test_audio_on_its_way">Sesli mesajı hazırlıyoruz…</string>
     <string name="onboarding_language_test_play">Mesajı dinle</string>
     <string name="onboarding_language_test_play_again">Mesajı tekrar dinle</string>
-    <string name="onboarding_language_test_message_loading">Mesajı hazırlıyoruz. İlk seferde birkaç saniye sürebilir.</string>
-    <string name="onboarding_language_test_message">Sesli mesajın var. Dinle ve cevapla.</string>
     <string name="onboarding_language_test_reading">Okuma</string>
     <string name="onboarding_language_test_listening">Dinleme</string>
     <string name="onboarding_language_test_speaking">Konuşma</string>

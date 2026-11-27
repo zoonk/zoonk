@@ -58,14 +58,13 @@
     <string name="placementtest_not_tested">Not tested yet</string>
     <!-- The name of a course's placement test, on the card that offers it. -->
     <string name="placementtest_test">Test</string>
-    <!-- The chip over the chapter's name after a course's placement test: where the learner's lessons start. -->
+    <!-- Over the name of the chapter a course's placement test starts the learner in. -->
     <string name="placementtest_you_start_here">You start here</string>
-    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past. %1$d is how many were skipped, %2$d how many the course has. -->
+    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
     <plurals name="placementtest_course_skipped">
         <item quantity="one">%1$d of %2$d lessons skipped</item>
         <item quantity="other">%1$d of %2$d lessons skipped</item>
     </plurals>
-    <!-- Under a picture of a course, after a placement test that skipped nothing: how many lessons the course has. -->
     <plurals name="placementtest_course_lessons">
         <item quantity="one">%d lesson</item>
         <item quantity="other">%d lessons</item>

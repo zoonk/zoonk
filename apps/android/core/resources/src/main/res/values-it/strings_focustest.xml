@@ -40,7 +40,6 @@
   "focustest_speaking_not_checked": "214be0eca4eb33becfd8a42e8a5cfe95f51721f966d817013616b8816c152cc7",
   "focustest_start": "12f3b7e323e4efeeafaf355ab6a070b491cecef80d1d54d5a42b539b93c7212d",
   "focustest_starting_point_title": "c0eac9a34c450d4c54463e96f32558c5f42da1615c6102c794d1ebc1511b161e",
-  "focustest_stop": "ca70471e7fbe362bbbc2437c48f07b11abbbd0ae4213e8a8d991c5ca05384d1c",
   "focustest_subject_right": "93037b8f1fa4d4e763738d296d6dea8faa161e8edf18f8335c2eb7ffe484ae2c",
   "focustest_subjects": "ffd3c647e5ea88232ea8ad9d4a1934623bdf8fe381cda5829f9279fc492d6363",
   "focustest_suggestion_body": "3e22cef8a7255d32b7b076a437213e27d79c5d186fa95df85bf6ace0a1fa73b9",
@@ -65,7 +64,6 @@
     <string name="focustest_continue">Continua</string>
     <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Vedi il risultato</string>
-    <string name="focustest_stop">Interrompi e usa le mie risposte</string>
     <string name="focustest_many_unknown">Non hai ancora studiato gran parte di questi argomenti? Va bene così. Puoi fermarti qui e iniziare a imparare.</string>
     <string name="focustest_answers_saved_title">Abbiamo salvato le tue risposte</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
