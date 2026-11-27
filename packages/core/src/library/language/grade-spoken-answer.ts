@@ -1,8 +1,9 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { after } from "next/server";
+import { z } from "zod";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
-import { claimAssist } from "../../entitlements/claim-usage";
+import { claimUsage } from "../../entitlements/claim-usage";
 import {
   loadLanguageStepEvidence,
   writeLanguageStepEvidence,
@@ -11,74 +12,26 @@ import { schedulePronunciationReviews } from "../../language/pronunciation/sched
 import {
   type RecordedOutcome,
   type RefusedOutcome,
+  getAnswerAttemptId,
   recordAnswerOnce,
 } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { findClosingAnswer } from "../../lesson-player/_utils/answer-recording";
 import { findFixedScreenIds } from "../../lesson-player/_utils/fixed-screens";
-import { findPlayableStepRow, getAnswerSkillId } from "../../lesson-player/_utils/lesson-rows";
 import { findOpenLessonRun } from "../../lesson-player/_utils/lesson-runs";
-import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
 import { gradeSpokenMistake } from "../../mistakes/grade-spoken-mistake";
-import { type MistakeReplay } from "../../mistakes/mistake-replay";
 import { recordLessonWindowAnswer } from "../../sessions/_utils/record-lesson-window";
 import { getSession } from "../../users/get-session";
+import { type SpokenStep, findSpokenStep } from "./_utils/find-spoken-step";
 import { SPOKEN_EVIDENCE_SCORE, gradeSpokenRecording } from "./_utils/grade-spoken-recording";
 import { type SpokenAudio, isValidSpokenAudio } from "./_utils/hear-spoken-sentence";
 import {
   type GradeSpokenAnswerResult,
   type SpokenAnswerFields,
   type SpokenAnswerGrade,
+  spokenAnswerGradeSchema,
 } from "./spoken-answer-contract";
-
-async function findSpokenStep({ stepId, userId }: { stepId: string; userId: string }) {
-  const row = await findPlayableStepRow({ stepId, userId });
-
-  if (!row || row.kind !== "spokenAnswer") {
-    return null;
-  }
-
-  const [step] = await loadPlayableSteps({ lesson: row.lesson, rows: [row] });
-
-  if (step?.kind !== "spokenAnswer") {
-    return null;
-  }
-
-  const { content } = step;
-
-  const replay: MistakeReplay = {
-    kind: "lesson",
-    lesson: {
-      language: row.lesson.language,
-      lessonId: row.lessonId,
-      level: row.lesson.level,
-      step,
-      targetLanguage: row.lesson.targetLanguage,
-    },
-  };
-
-  return {
-    content,
-    id: step.id,
-    learnerLanguage: row.lesson.language,
-    lessonId: row.lessonId,
-    level: row.lesson.level,
-    replay,
-    retiredAt: row.retiredAt,
-    romanization: content.romanization,
-    sentenceId: row.sentenceId,
-    skillId: getAnswerSkillId({
-      lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
-      stepSkillId: step.skillId,
-    }),
-    storedContent: row.content,
-    targetLanguage: content.language,
-    targetText: content.targetText,
-    wordId: row.wordId,
-  };
-}
-
-type SpokenStep = NonNullable<Awaited<ReturnType<typeof findSpokenStep>>>;
 
 type RecordingGrade = NonNullable<Awaited<ReturnType<typeof gradeSpokenRecording>>>;
 
@@ -165,43 +118,117 @@ export async function gradeSpokenAnswer({
     return { status: "notFound" };
   }
 
-  const usage = await claimAssist();
+  const recordingId = fields.attemptId
+    ? getAnswerAttemptId({
+        key: fields.attemptId,
+        questionId: `lesson-recording:${stepId}`,
+        userId,
+      })
+    : crypto.randomUUID();
+
+  const usage = await claimUsage({ kind: "assist", targetId: recordingId });
 
   if (usage.status !== "allowed") {
     return usage;
   }
 
-  const [grade, studySessionId, run] = await Promise.all([
-    gradeSpokenRecording({ audio, step, userId }),
-    findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
+  const hear = async (): Promise<
+    | Extract<GradeSpokenAnswerResult, { status: "graded" | "noSpeech" }>
+    | (z.infer<typeof heardRecordingSchema> & { status: "heard" })
+  > => {
+    const [heard, studySessionId] = await Promise.all([
+      gradeSpokenRecording({ audio, step, userId }),
+      findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
+    ]);
+
+    if (!heard) {
+      return { status: "noSpeech" as const };
+    }
+
+    if (!heard.isCorrect && (await isFixedDuringRun({ step, userId }))) {
+      return { grade: notScored(heard), status: "graded" as const };
+    }
+
+    return {
+      durationMs: fields.durationMs,
+      grade: { ...heard, attemptId: recordingId },
+      receivedAt: receivedAt.toISOString(),
+      status: "heard" as const,
+      studySessionId,
+      timeZone: getAnswerTimeZone({ goal: null, timeZone: fields.timeZone }),
+    };
+  };
+
+  if (!fields.attemptId) {
+    const result = await hear();
+    return result.status === "heard" ? recordSpokenGrade({ ...result, step, userId }) : result;
+  }
+
+  const claim = {
+    attemptId: recordingId,
+    cacheWithoutModelClaim: true,
+    questionId: step.id,
+    userId,
+  };
+
+  let result = await runAnswerGrade({ ...claim, grade: hear });
+
+  if (result.status === "ready" && result.result.status === "heard") {
+    const heard = heardRecordingSchema.parse(result.result);
+
+    result = await runAnswerGrade({
+      ...claim,
+      acceptsSaved: (saved) => saved.status !== "heard",
+      grade: () => recordSpokenGrade({ ...heard, step, userId }),
+    });
+  }
+
+  if (result.status === "retryable") {
+    return { retryAfterSeconds: 1, status: "slowDown" };
+  }
+
+  return result.result.status === "noSpeech"
+    ? { status: "noSpeech" }
+    : { grade: spokenAnswerGradeSchema.parse(result.result.grade), status: "graded" };
+}
+
+const heardRecordingSchema = z.object({
+  durationMs: z.number(),
+  grade: spokenAnswerGradeSchema,
+  receivedAt: z.string(),
+  studySessionId: z.string().nullable(),
+  timeZone: z.string(),
+});
+
+async function recordSpokenGrade({
+  durationMs,
+  grade,
+  receivedAt,
+  step,
+  studySessionId,
+  timeZone,
+  userId,
+}: z.infer<typeof heardRecordingSchema> & { step: SpokenStep; userId: string }): Promise<
+  Extract<GradeSpokenAnswerResult, { status: "graded" }>
+> {
+  const question = `${step.content.prompt}\n${step.targetText}`;
+
+  const [evidence, run] = await Promise.all([
+    loadLanguageStepEvidence({
+      isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
+      lesson: { level: step.level, targetLanguage: step.targetLanguage },
+      step: { kind: "spokenAnswer", wordId: null },
+      userId,
+    }),
     findOpenLessonRun({ lessonId: step.lessonId, userId }),
   ]);
-
-  if (!grade) {
-    return { status: "noSpeech" };
-  }
-
-  // The learner may be reading the sentence as it was before a fix: an answer it no longer
-  // matches is neither scored nor saved.
-  if (!grade.isCorrect && (await isFixedDuringRun({ step, userId }))) {
-    return { grade: notScored(grade), status: "graded" };
-  }
-
-  const question = `${step.content.prompt}\n${step.targetText}`;
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: fields.timeZone });
-
-  const evidence = await loadLanguageStepEvidence({
-    isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
-    lesson: { level: step.level, targetLanguage: step.targetLanguage },
-    step: { kind: "spokenAnswer", wordId: null },
-    userId,
-  });
 
   const outcome = await recordAnswerOnce({
     answer: {
       answer: { kind: "spoken", transcript: grade.transcript },
-      answeredAt: receivedAt,
-      graded: { durationMs: fields.durationMs, isCorrect: grade.isCorrect, score: grade.score },
+      answeredAt: new Date(receivedAt),
+      attemptId: grade.attemptId,
+      graded: { durationMs, isCorrect: grade.isCorrect, score: grade.score },
       language: step.learnerLanguage,
       mistake: {
         questionText: question,
@@ -231,7 +258,7 @@ export async function gradeSpokenAnswer({
         isCorrect: grade.isCorrect,
         lessonId: step.lessonId,
         stepId: step.id,
-        until: receivedAt,
+        until: new Date(receivedAt),
         userId,
       }),
     withAnswer: async (transaction, attempt) => {

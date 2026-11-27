@@ -123,7 +123,7 @@ function SubjectRow({
         {progress.bar ? (
           <CoverageBar {...progress.bar} />
         ) : (
-          <span className="text-muted-foreground text-xs">{progress.label}</span>
+          <ListRowDescription>{progress.label}</ListRowDescription>
         )}
       </span>
 

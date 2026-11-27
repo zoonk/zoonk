@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type Bounds, type Capture } from "./alignment-capture.mts";
-import { LABEL_TYPE, element, fixtureCapture } from "./alignment-fixtures.mts";
+import { LABEL_TYPE, element, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /**
@@ -274,5 +274,63 @@ describe("line's tolerance", () => {
     assert.equal(line(atText(atTwoX("value", 1.1), 2))[0]?.level, "fail");
     assert.deepEqual(line(atText(atTwoX("mark", 1.2), 2)), []);
     assert.equal(line(atText(atTwoX("mark", 1.3), 2))[0]?.level, "fail");
+  });
+});
+
+/**
+ * The row with a progress bar, a note with no words, at `barTop` and `barLeft`; `ink: null` for an
+ * empty bar whose faint track a capture can't tell from the page.
+ */
+function barred(
+  capture: Capture,
+  barTop: number,
+  barLeft = 28,
+  ink: Bounds | null = [barLeft, barTop, 200, 6],
+): Capture {
+  const bounds: Bounds = [barLeft, barTop, 200, 6];
+
+  return {
+    ...capture,
+    elements: [...capture.elements, element({ bounds, id: "bar", ink, part: "note", row: "r0" })],
+  };
+}
+
+describe("a progress bar under a row's name", () => {
+  it("is the row's second line: its value and end glyph go on the row's center", () => {
+    assert.deepEqual(line(barred(lineRow("value", 30, 0), 28)), []);
+    assert.deepEqual(line(barred(lineRow("end", 30, 0), 28)), []);
+    assert.deepEqual(line(barred(lineRow("value", 30, 0), 28, 28, null)), []);
+
+    assert.match(
+      lineMiss(barred(lineRow("value", 15, 0), 28)),
+      /the value 15 above the row's center/u,
+    );
+  });
+
+  it("has no words, so it has no size or type to compare with the name's", () => {
+    const capture = barred(lineRow("value", 30, 0), 28);
+    const helpers = evaluateCapture(capture).filter((finding) => finding.rule === "helper");
+    const notes = type(capture).filter((finding) => finding.message.includes("note"));
+
+    assert.deepEqual(helpers, []);
+    assert.deepEqual(notes, []);
+  });
+
+  it("beside the name (a wide row) leaves the row one line", () => {
+    assert.deepEqual(line(barred(lineRow("value", 15, 0), 12, 200)), []);
+
+    assert.match(
+      lineMiss(barred(lineRow("value", 30, 0), 12, 200)),
+      /the value 15 below the label's middle/u,
+    );
+  });
+});
+
+describe("descriptions Android draws in one note", () => {
+  it("counts each description the note says it drew, so a mark beside three lines sits on the first", () => {
+    const capture = real("android reveal clipped note 239de6628e, phone");
+    const birds = line(capture).filter((finding) => finding.detail.includes("How birds use sound"));
+
+    assert.deepEqual(birds, []);
   });
 });

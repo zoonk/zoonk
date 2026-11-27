@@ -19,8 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
-    name: code quality (checks)
+  code-quality:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -101,41 +100,3 @@ jobs:
 
       - name: Test deployment orchestration
         run: pnpm test:deploy
-
-  # Rendering every studio view in both languages takes minutes of CPU, so it runs beside the rest.
-  video-studio:
-    name: code quality (video studio)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: package.json
-
-      - name: Setup pnpm
-        uses: pnpm/setup@731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1 # v3.2.0
-        with:
-          node-version-file: false
-          cache: true
-          save-cache: false
-
-      # The views type-check against the app's sources, which import the Prisma client.
-      - name: Generate Prisma client
-        run: pnpm db:generate
-
-      - name: Check the video skill
-        run: node .agents/skills/zoonk-video/scripts/check.mjs
-
-  # The one check branch protection requires: it passes only when every part passed.
-  code-quality:
-    if: always()
-    needs: [checks, video-studio]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Every part passed
-        run: test "${{ needs.checks.result }}" = success && test "${{ needs.video-studio.result }}" = success

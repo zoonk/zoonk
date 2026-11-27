@@ -19,6 +19,8 @@ struct VoiceAPI: Sendable {
   ) async throws -> Refusable<Components.Schemas.SpokenAnswerGrade> {
     try await clients.perform(token: token) { client in
       var parts: [Components.Schemas.SpokenAnswerRequest] = [
+        .attemptId(
+          .init(payload: .init(body: HTTPBody(mistake?.attemptId ?? recording.attemptId)))),
         .durationMs(.init(payload: .init(body: HTTPBody(String(recording.durationMs))))),
         .timeZone(.init(payload: .init(body: HTTPBody(TimeZone.current.identifier)))),
         .audio(.init(payload: .init(body: HTTPBody(recording.audio)), filename: "answer.m4a")),
@@ -30,7 +32,6 @@ struct VoiceAPI: Sendable {
 
       if let mistake {
         parts.append(.mistakeId(.init(payload: .init(body: HTTPBody(mistake.mistakeId)))))
-        parts.append(.attemptId(.init(payload: .init(body: HTTPBody(mistake.attemptId)))))
         parts.append(
           .answerIds(
             .init(payload: .init(body: HTTPBody(try JSONEncoder().encode(mistake.answerIds))))))

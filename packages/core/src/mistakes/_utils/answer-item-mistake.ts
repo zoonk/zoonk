@@ -2,6 +2,7 @@ import "server-only";
 import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { gradeTypedItemAnswer } from "../../learner/_utils/typed-grading";
 import { readRecordedAnswer } from "../../sessions/_utils/session-items";
 import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
@@ -11,7 +12,6 @@ import { type MistakeDrillKind } from "../mistake-drills";
 import { getAnsweredShowing, getPracticeAnswerKeys, gradeMistakeItem } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { cachedGradeDuration } from "./cached-grade-duration";
-import { runMistakeGrade } from "./mistake-grade";
 import { refuseClosedMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 
@@ -51,7 +51,7 @@ export async function answerItemMistake({
 
   const checked =
     model && item.format === "typed" && "text" in answer
-      ? await runMistakeGrade({
+      ? await runAnswerGrade({
           attemptId,
           grade: async () => ({
             durationMs: input.durationMs,

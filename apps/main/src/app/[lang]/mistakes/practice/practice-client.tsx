@@ -81,9 +81,10 @@ export function MistakePracticeClient({
           practiceDurationMs,
         }) => {
           const outcome = await requestSpokenGrade({
+            attemptId,
             audio,
             durationMs,
-            practice: { ...run, answerIds: runAnswerIds, attemptId, mistakeId, practiceDurationMs },
+            practice: { ...run, answerIds: runAnswerIds, mistakeId, practiceDurationMs },
             stepId,
             studySessionId: null,
           });
