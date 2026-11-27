@@ -537,15 +537,28 @@ describe("sheets stored before awards existed", () => {
     expect(reread(split.toReversed())).toBe(true);
     expect(reread(split.slice(0, 1))).toBe(false);
 
-    expect(
-      reread(grading.zeroing, {
-        citation,
-        mode: "nearest",
-        stage: "total",
-        step: 0.01,
-        text: "duas casas decimais",
-      }),
-    ).toBe(false);
+  });
+
+  it("keeps a question issued before rounding was read as numbers, whatever its rounding says", () => {
+    const task = sectionTaskSchema.parse(cguIssuedTask.task);
+    const grading = task.grading ?? writtenGradingSchema.parse(cguIssuedTask.task.grading);
+    const rule = { citation, text: "duas casas decimais" };
+
+    const matches = (saved: string, rounding: typeof grading.rounding) =>
+      matchesWritingTaskBasis({
+        prompt: { grading, lines: 30, points: 30, taskBasis: saved },
+        task: { grading: { ...grading, rounding }, lines: 30, points: 30 },
+      });
+
+    const guessed = cguIssuedTask.taskBasis.replace(
+      '"rounding":null',
+      '"rounding":{"mode":"nearest","places":2}',
+    );
+
+    expect(guessed).not.toBe(cguIssuedTask.taskBasis);
+    expect(matches(guessed, rule)).toBe(true);
+    expect(matches(guessed, { ...rule, mode: "nearest", stage: "total", step: 0.01 })).toBe(true);
+    expect(matches(cguIssuedTask.taskBasis.replace("[30,30,", "[30,70,"), rule)).toBe(false);
   });
 });
 

@@ -84,8 +84,11 @@ function hasPointedCriterion(facts: object): boolean {
   );
 }
 
-/** A basis issued while sheets carried a `kind` reads as the same sheet without it. */
-function withoutStoredKind(saved: string): string | null {
+/**
+ * A basis issued while sheets carried a `kind` reads as the same sheet without it. Its rounding
+ * was guessed from the rule's wording, in a shape no sheet has now, so it takes the task's.
+ */
+function withoutStoredKind(saved: string, rounding: unknown): string | null {
   const value = readTaskBasis(saved);
 
   if (!Array.isArray(value)) {
@@ -104,7 +107,7 @@ function withoutStoredKind(saved: string): string | null {
   return JSON.stringify([
     lines,
     points,
-    { ...facts, ...(suppressed && { totalSuppressed: true }) },
+    { ...facts, rounding, ...(suppressed && { totalSuppressed: true }) },
   ]);
 }
 
@@ -194,7 +197,13 @@ export function matchesWritingTaskBasis({
     return getWritingTaskBasis(prompt) === taskBasis;
   }
 
-  return [prompt.taskBasis, withoutStoredKind(prompt.taskBasis), legacyTaskBasis(prompt.taskBasis)]
+  const rounding = readsAsNumbers(task.grading.rounding);
+
+  return [
+    prompt.taskBasis,
+    withoutStoredKind(prompt.taskBasis, rounding),
+    legacyTaskBasis(prompt.taskBasis),
+  ]
     .map((saved) => withGroupedZeroTriggers(saved))
     .includes(taskBasis);
 }
