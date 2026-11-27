@@ -167,8 +167,28 @@ async function readAnswerInputs({
   return { contextSnapshot, priorTurns, shared, sharedKey, tutor };
 }
 
-/** True when the answer claim would serve the question an existing shared answer, which uses no allowance. */
-export async function isAnsweredFromSharedAnswer({
+function getSharedAnswerData(shared: TutorSharedAnswer) {
+  return {
+    answer: shared.answer,
+    finishReason: null,
+    generatedAt: shared.generatedAt,
+    generationRevision: { increment: 1 },
+    model: shared.model,
+    promptVersion: shared.promptVersion,
+    provider: null,
+    requestedModel: null,
+    runId: shared.runId,
+    sharedAnswerId: shared.id,
+    status: "completed" as const,
+  };
+}
+
+/**
+ * Completes a question just asked with the shared answer the answer claim would serve it, in the
+ * write that saves it, so it uses no allowance and nothing the learner changes later can fail it.
+ * Null when it has none.
+ */
+export async function completeFromSharedAnswer({
   question,
   transaction,
   userId,
@@ -176,13 +196,20 @@ export async function isAnsweredFromSharedAnswer({
   question: AnsweredQuestion;
   transaction: TransactionClient;
   userId: string;
-}): Promise<boolean> {
+}) {
   if (!getSharedAnswerKey({ hasPriorTurns: false, question })) {
-    return false;
+    return null;
   }
 
   const { shared } = await readAnswerInputs({ question, transaction, userId });
-  return shared !== null;
+
+  return shared
+    ? transaction.lessonQuestion.update({
+        data: getSharedAnswerData(shared),
+        omit: lessonQuestionResourceOmit,
+        where: { id: question.id },
+      })
+    : null;
 }
 
 function getClaimWhere({
@@ -205,37 +232,32 @@ function getClaimWhere({
   };
 }
 
+/** A question charged when it was asked gets its message back, since no answer is written for it. */
 async function completeWithSharedAnswer({
   question,
   shared,
   transaction,
+  userId,
   where,
 }: {
   question: { id: string };
   shared: TutorSharedAnswer;
   transaction: TransactionClient;
+  userId: string;
   where: ReturnType<typeof getClaimWhere>;
 }) {
   const completed = await transaction.lessonQuestion.updateMany({
-    data: {
-      answer: shared.answer,
-      finishReason: null,
-      generatedAt: shared.generatedAt,
-      generationRevision: { increment: 1 },
-      model: shared.model,
-      promptVersion: shared.promptVersion,
-      provider: null,
-      requestedModel: null,
-      runId: shared.runId,
-      sharedAnswerId: shared.id,
-      status: "completed",
-    },
+    data: getSharedAnswerData(shared),
     where,
   });
 
   if (completed.count === 0) {
     return { status: "conflict" as const };
   }
+
+  await transaction.usageRecord.deleteMany({
+    where: { kind: "tutorMessage", targetId: question.id, userId },
+  });
 
   return { answer: shared.answer, questionId: question.id, status: "shared" as const };
 }
@@ -284,7 +306,7 @@ export async function claimAnswerInTransaction({
   const claimWhere = getClaimWhere({ now, question, userId });
 
   if (shared) {
-    return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
+    return completeWithSharedAnswer({ question, shared, transaction, userId, where: claimWhere });
   }
 
   const shareAnswer = sharedKey !== null;
