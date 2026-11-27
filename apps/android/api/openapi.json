@@ -20419,22 +20419,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "lessonId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "saved": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "lessonId",
-                  "saved"
-                ],
-                "additionalProperties": false
+                "$ref": "#/components/schemas/SaveLessonInput"
               }
             }
           }
@@ -20445,22 +20430,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "lessonId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "saved": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "lessonId",
-                    "saved"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/SavedLessonState"
                 }
               }
             }
@@ -32806,6 +32776,25 @@
           "chapter",
           "lesson"
         ]
+      },
+      "SaveLessonInput": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "True saves the lesson, false removes it"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
       },
       "MistakePracticeFinishInput": {
         "type": "object",
@@ -95242,6 +95231,25 @@
           "chapterTitle",
           "lessonId",
           "title"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLessonState": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether the lesson is saved now"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
         ],
         "additionalProperties": false
       },

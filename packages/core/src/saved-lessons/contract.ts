@@ -1,9 +1,19 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 
-export const saveLessonSchema = z.object({ lessonId: uuidSchema(), saved: z.boolean() }).strict();
+export const saveLessonSchema = z
+  .object({
+    lessonId: uuidSchema(),
+    saved: z.boolean().meta({ description: "True saves the lesson, false removes it" }),
+  })
+  .strict()
+  .meta({ id: "SaveLessonInput" });
 
 export type SaveLessonInput = z.infer<typeof saveLessonSchema>;
+
+export const savedLessonStateSchema = saveLessonSchema
+  .extend({ saved: z.boolean().meta({ description: "Whether the lesson is saved now" }) })
+  .meta({ id: "SavedLessonState" });
 
 export const savedLessonSchema = z
   .object({

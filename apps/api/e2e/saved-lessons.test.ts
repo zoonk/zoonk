@@ -1,6 +1,6 @@
 import { request } from "@playwright/test";
 import { libraryLessonRunSchema } from "@zoonk/core/lesson-player/contract";
-import { saveLessonSchema, savedLessonListSchema } from "@zoonk/core/saved-lessons/contract";
+import { savedLessonListSchema, savedLessonStateSchema } from "@zoonk/core/saved-lessons/contract";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
@@ -46,7 +46,7 @@ test.describe("Saved lessons API", () => {
     const save = async (saved: boolean) =>
       readBody({
         response: await api.post(path, { data: { lessonId: lesson.id, saved } }),
-        schema: saveLessonSchema,
+        schema: savedLessonStateSchema,
       });
 
     const readSummary = async () =>
