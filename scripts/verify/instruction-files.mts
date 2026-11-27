@@ -7,6 +7,8 @@ const ROOT_BYTES = 26_000;
 
 const FILE_BYTES = 9000;
 
+const DESCRIPTION_BYTES = 250;
+
 const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/android-material-guidelines/SKILL.md": 16_000,
   ".agents/skills/android-material-guidelines/references/design-system.md": 46_000,
@@ -14,20 +16,24 @@ const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/apple-human-interface-guidelines/references/design-system.md": 58_000,
   ".agents/skills/apple-human-interface-guidelines/references/official-links.md": 22_000,
   ".agents/skills/verify/references/pages.md": 48_000,
-  ".agents/skills/zoonk-address-issue/SKILL.md": 18_000,
+  ".agents/skills/zoonk-address-issue/SKILL.md": 14_000,
   ".agents/skills/zoonk-design/SKILL.md": 30_000,
   ".agents/skills/zoonk-design/references/app-patterns.md": 82_000,
   ".agents/skills/zoonk-design/references/color.md": 14_000,
   ".agents/skills/zoonk-design/references/craft.md": 58_000,
   ".agents/skills/zoonk-design/references/foldables.md": 14_000,
-  ".agents/skills/zoonk-persona-walkthrough/references/personas.md": 14_000,
   "apps/android/AGENTS.md": 26_000,
   "apps/apple/AGENTS.md": 22_000,
 };
 
 const lockSchema = z.object({ skills: z.record(z.string(), z.unknown()).default({}) });
 
-type Options = { fileBytes?: number; overBudget?: Record<string, number>; rootBytes?: number };
+type Options = {
+  descriptionBytes?: number;
+  fileBytes?: number;
+  overBudget?: Record<string, number>;
+  rootBytes?: number;
+};
 
 function isDirectory(path: string): boolean {
   return statSync(path, { throwIfNoEntry: false })?.isDirectory() ?? false;
@@ -191,6 +197,55 @@ function sizeProblems(root: string, files: string[], options: Required<Options>)
   });
 }
 
+function description(skill: string): string | undefined {
+  const frontmatter = /^---\n(?<yaml>[^]*?)\n---$/mu.exec(skill)?.groups?.yaml ?? "";
+
+  return /^description:\s*(?<text>.+?)\s*$/mu.exec(frontmatter)?.groups?.text;
+}
+
+function descriptionProblems(root: string, limit: number): string[] {
+  return ownSkills(root).flatMap((name) => {
+    const path = `.agents/skills/${name}/SKILL.md`;
+
+    const text = isFile(join(root, path))
+      ? description(readFileSync(join(root, path), "utf8"))
+      : undefined;
+
+    if (text === undefined) {
+      return [`${path} has no description: add one that says when to use the skill.`];
+    }
+
+    const bytes = Buffer.byteLength(text);
+
+    return bytes > limit
+      ? [
+          `${path}'s description is ${bytes} bytes, over the ${limit} every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.`,
+        ]
+      : [];
+  });
+}
+
+function unlinkedProblems(root: string): string[] {
+  return ownSkills(root).flatMap((name) => {
+    const files = listMarkdown(join(root, ".agents/skills", name));
+
+    const linked = new Set(
+      files.flatMap((file) =>
+        linkTargets(readFileSync(file, "utf8")).map((target) =>
+          resolve(dirname(file), decodeURI(target.split("#")[0] ?? "")),
+        ),
+      ),
+    );
+
+    return files
+      .filter((file) => !file.endsWith("/SKILL.md") && !linked.has(file))
+      .map(
+        (file) =>
+          `${relative(root, file)} isn't linked from its skill, so no agent reads it: link it from the entry with when to read it, or delete it.`,
+      );
+  });
+}
+
 function symlinkProblems(root: string): string[] {
   return listDirectories(join(root, ".agents/skills")).flatMap((name) => {
     const link = join(root, ".claude/skills", name);
@@ -206,13 +261,15 @@ function symlinkProblems(root: string): string[] {
 
 /**
  * Holds the instruction files agents load to what keeps them cheap to read and safe to follow:
- * every file small, every link and anchor resolving, and every skill reachable from `.claude/skills`.
+ * every file small, every skill's description short, every reference linked from its skill, every link
+ * and anchor resolving, and every skill reachable from `.claude/skills`.
  * Skills installed from elsewhere (`skills-lock.json`) aren't ours to edit, so only their symlinks are checked.
  */
 export function instructionFileProblems(root: string, options: Options = {}): string[] {
   const files = instructionFiles(root);
 
   const settings = {
+    descriptionBytes: options.descriptionBytes ?? DESCRIPTION_BYTES,
     fileBytes: options.fileBytes ?? FILE_BYTES,
     overBudget: options.overBudget ?? OVER_BUDGET_UNTIL_SPLIT,
     rootBytes: options.rootBytes ?? ROOT_BYTES,
@@ -225,6 +282,8 @@ export function instructionFileProblems(root: string, options: Options = {}): st
   return [
     ...sizeProblems(root, files, settings),
     ...missing,
+    ...descriptionProblems(root, settings.descriptionBytes),
+    ...unlinkedProblems(root),
     ...linkProblems(root, files),
     ...symlinkProblems(root),
   ];

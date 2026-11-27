@@ -1,10 +1,10 @@
 ---
 name: zoonk-persona-walkthrough
-description: Use the running product as realistic learner personas, bad days included, before calling a change a learner can see or feel done. Covers picking personas, putting them in a realistic state without AI cost, walking with fresh eyes and reporting the evidence.
+description: Use before calling a change a learner can see or feel done, to walk the running product as realistic learner personas, bad days included.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Persona walkthrough
@@ -17,7 +17,6 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 
 - Start from the [persona catalog](references/personas.md). Pick two to four personas who differ on what the change touches: goal type, plan tier, daily time, device, language, history.
 - At least one must be off the happy path for this change: behind on the plan, free at a limit, back after a week away, changing their mind, on a small phone, using a screen reader.
-- When an issue or feature has no persona that fits it well, add one to the catalog with the same fields, so later walks reuse it.
 
 ## 2. Put each persona in a realistic state, cheaply
 
@@ -33,6 +32,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 - Start with zoonk-design's [first-glance test](../zoonk-design/references/checks.md#the-first-glance-test) on every new or changed screen, before the walk, so the walker's first read is still a first read.
 - Enter through the normal UI, reach the outcome, then come back: the next day, after a gap, on another device.
 - Cover the unhappy paths in [journeys](references/journeys.md) for every surface the change reaches, not only the screen you edited.
+- When the change touches how pages load or navigate, also walk [loads and navigation](references/loads.md).
 - At each screen, ask as the persona:
   - What do I think this is, and what do I do next?
   - What do I expect to happen when I tap it, and does it?
@@ -59,5 +59,3 @@ For each persona, report:
 - what remains unverified
 
 Passing tests are not a walkthrough. Simulated personas uncover friction, but they don't prove usability for real people, so say so where it matters.
-
-For loads and navigation, use a production build on a phone with CPU and network throttling. Walk hard loads, prefetched taps, an early tap before prefetch settles, an unprefetched link and a tap right after a cold load, before the page's code is ready (`verify:pages --nav --no-prefetch` and `--early` measure the last two). Skeletons are valid; judge whether meaningful shell UI responds immediately, the content arrives promptly, and anything blanks, freezes, flashes or shifts. Save before/after filmstrips and report response and content times separately, with your own read of how each feels. Keep private cached prefetches and never hide loading by holding paint.

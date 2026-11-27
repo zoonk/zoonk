@@ -41,7 +41,7 @@ test("passes small files whose links, anchors and skill symlinks resolve", () =>
     {
       ".agents/guides/checks.md": "# Checks\n\n## Before a commit\n\nRun them.\n",
       ".agents/skills/verify/SKILL.md":
-        "# Verify\n\nSee [checks](../../guides/checks.md#before-a-commit), [the top](#verify) and `[not a link](missing.md)`.\n\n```md\n[also not a link](missing.md)\n```\n",
+        "---\nname: verify\ndescription: Use when work is finished.\n---\n\n# Verify\n\nSee [checks](../../guides/checks.md#before-a-commit), [the top](#verify) and `[not a link](missing.md)`.\n\n```md\n[also not a link](missing.md)\n```\n",
       "AGENTS.md":
         "# Root\n\n[Checks](.agents/guides/checks.md) and [a site](https://example.com).\n",
     },
@@ -114,6 +114,47 @@ test("holds a file waiting to be split to its own ceiling, and asks to drop it o
     ".agents/guides/grown.md is 1010 bytes, over the 500 it may hold until it's split. Split it: move what not every task needs into its own file and link it, then lower this ceiling.",
     ".agents/guides/split.md is under the budget now: remove it from OVER_BUDGET_UNTIL_SPLIT.",
     ".agents/guides/removed.md is gone: remove it from OVER_BUDGET_UNTIL_SPLIT.",
+  ]);
+});
+
+test("holds each skill's description to its budget and asks for a missing one", () => {
+  const root = repository({
+    ".agents/skills/bare/SKILL.md": "# Bare\n",
+    ".agents/skills/brief/SKILL.md":
+      "---\nname: brief\ndescription: Use when asked.\n---\n\n# Brief\n",
+    ".agents/skills/installed/SKILL.md": `---\ndescription: ${"word ".repeat(MANY_WORDS)}\n---\n`,
+    ".agents/skills/long/SKILL.md": `---\nname: long\ndescription: ${"word ".repeat(60)}\n---\n\n# Long\n`,
+    "AGENTS.md": "# Root\n",
+    "skills-lock.json": JSON.stringify({ skills: { installed: {} }, version: 1 }),
+  });
+
+  const problems = instructionFileProblems(root, {
+    descriptionBytes: SMALL_BUDGET,
+    overBudget: {},
+  });
+
+  expect(problems.filter((problem) => !problem.startsWith(".claude/"))).toStrictEqual([
+    ".agents/skills/bare/SKILL.md has no description: add one that says when to use the skill.",
+    ".agents/skills/long/SKILL.md's description is 299 bytes, over the 200 every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.",
+  ]);
+});
+
+test("asks to link or delete a reference its skill never links", () => {
+  const root = repository({
+    ".agents/skills/brief/SKILL.md":
+      "---\ndescription: Use when asked.\n---\n\n# Brief\n\nSee [steps](references/steps.md#first).\n",
+    ".agents/skills/brief/references/forgotten.md": "# Forgotten\n",
+    ".agents/skills/brief/references/more.md": "# More\n",
+    ".agents/skills/brief/references/steps.md": "# Steps\n\n## First\n\nThen [more](more.md).\n",
+    "AGENTS.md": "# Root\n\n[forgotten](.agents/skills/brief/references/forgotten.md)\n",
+  });
+
+  expect(
+    instructionFileProblems(root, { overBudget: {} }).filter(
+      (problem) => !problem.startsWith(".claude/"),
+    ),
+  ).toStrictEqual([
+    ".agents/skills/brief/references/forgotten.md isn't linked from its skill, so no agent reads it: link it from the entry with when to read it, or delete it.",
   ]);
 });
 

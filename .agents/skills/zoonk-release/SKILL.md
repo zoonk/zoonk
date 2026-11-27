@@ -1,10 +1,10 @@
 ---
 name: zoonk-release
-description: Publish a Zoonk production release when the user asks for one. Pick the release commit and version, write release notes learners want to read (Highlights, Features, Enhancements, Bug Fixes), publish the GitHub release and watch the deployment it starts.
+description: Use when the user asks for a Zoonk production release, a hotfix release or release notes.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Releases

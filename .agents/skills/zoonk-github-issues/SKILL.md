@@ -1,10 +1,10 @@
 ---
 name: zoonk-github-issues
-description: Create or update problem-focused Zoonk GitHub issues, their type, priority and labels, and their links to related issues, and file a security hole as a private draft security advisory instead. Before filing, find the open issues about the same problem, including ones another agent filed minutes ago, and add to them instead of filing a slightly different one.
+description: Use when filing or updating a Zoonk GitHub issue (its type, priority, labels or links), including a find from another task or a security hole.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.7.0"
+  version: "2.8.0"
 ---
 
 # GitHub issues
