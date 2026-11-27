@@ -507,99 +507,54 @@ private struct BuddyContent: View {
       .frame(width: 32, height: 32)
   }
 
-  /// Both marks take one width, so the two labels start on one edge when the line stacks.
-  @ScaledMetric(relativeTo: .footnote) private var dayLineIconWidth: CGFloat = 18
-
-  private var energyButton: some View {
-    Button {
-      places.open(.energy)
-    } label: {
-      Label {
-        HStack(spacing: 6) {
-          Text(
-            "\(name)'s Energy", tableName: "Buddy",
-            comment: "The buddy's Energy; the argument is its name")
-          if let current = status.energy.current {
-            Text(
-              (current / 100).formatted(
-                .percent.precision(.fractionLength(0)).locale(.appLanguage)))
-          }
-        }
-      } icon: {
-        Image(systemName: "bolt.fill")
-          .foregroundStyle(.energy)
-          .frame(width: dayLineIconWidth)
-      }
-      .frame(minHeight: 44)
-      .contentShape(.rect)
-    }
+  private var energyTitle: Text {
+    Text(
+      "\(name)'s Energy", tableName: "Buddy",
+      comment: "The buddy's Energy; the argument is its name")
   }
 
-  private var missionsButton: some View {
-    Button {
-      isDayShown = true
-    } label: {
-      if let today = status.today, !today.missions.isEmpty {
-        Label {
-          HStack(spacing: 6) {
-            Text("Today's missions", tableName: "Buddy")
-            Text(
-              "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count)",
-              tableName: "Buddy", comment: "Glasses earned of all of them")
-          }
-        } icon: {
-          Image(systemName: "checklist")
-            .frame(width: dayLineIconWidth)
-        }
-        .frame(minHeight: 44)
-        .contentShape(.rect)
-      } else {
-        Text(
-          "\(name) today", tableName: "Buddy",
-          comment: "Title of the buddy's day; the argument is its name"
-        )
-        .frame(minHeight: 44)
-        .contentShape(.rect)
-      }
+  /// Main's Energy beside the buddy: its mark and value, opening the buddy's day.
+  private var energyValue: Text {
+    guard let current = status.energy.current else {
+      return Text(verbatim: "–")
     }
+
+    return Text((current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
   }
 
   private var dayLine: some View {
-    HStack(spacing: 16) {
-      Button {
-        isDayShown = true
-      } label: {
+    Button {
+      isDayShown = true
+    } label: {
+      HStack(spacing: 12) {
         face
-      }
-      .accessibilityLabel(Text(name))
-      .accessibilityHint(
-        Text(
-          "Shows \(name)'s day", tableName: "Buddy",
-          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-      )
 
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 16) {
-          energyButton
-          missionsButton
+        Label {
+          energyValue
+        } icon: {
+          Image(systemName: "bolt.fill")
+            .foregroundStyle(.energy)
         }
-        VStack(alignment: .leading, spacing: 0) {
-          energyButton
-          missionsButton
-        }
+        .labelStyle(.titleAndIcon)
+        .typeStyle(.note)
+        .monospacedDigit()
+        .foregroundStyle(.mutedForeground)
+
+        Spacer(minLength: 0)
+
+        DisclosureChevron()
       }
-      .fixedSize(horizontal: false, vertical: true)
-
-      Spacer(minLength: 0)
-
-      DisclosureChevron()
+      .contentShape(.rect)
     }
     .buttonStyle(.plain)
-    .labelStyle(.titleAndIcon)
-    .typeStyle(.note)
-    .monospacedDigit()
-    .foregroundStyle(.mutedForeground)
-    .contentShape(.rect)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(energyTitle)
+    .accessibilityValue(status.energy.current == nil ? Text(verbatim: "") : energyValue)
+    .accessibilityHint(
+      Text(
+        "Shows \(name)'s day", tableName: "Buddy",
+        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+    )
   }
 
   @ViewBuilder
