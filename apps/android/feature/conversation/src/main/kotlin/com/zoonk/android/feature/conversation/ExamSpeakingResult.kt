@@ -132,7 +132,7 @@ internal fun ExamSpeakingResult(
     actions: ResultActions,
     dayMoment: @Composable () -> Unit = {},
 ) {
-    val feedback = (conversation.result?.feedback as? LanguageConversationResultFeedback.ExamspeakingWrapper)?.value
+    val feedback = (conversation.result?.feedback as? LanguageConversationResultFeedback.ExamSpeakingFeedbackValue)?.value
     val language = conversation.targetLanguage
     val graded =
         feedback
@@ -178,12 +178,14 @@ internal fun ExamSpeakingResult(
                 graded.map { (criterion, grade) ->
                     CriterionDetail(
                         title =
-                            stringResource(
-                                R.string.conversation_criterion_line,
-                                criterionGloss(criterion.key, criterion.name),
-                                estimateText(grade.estimate),
-                                standingText(grade.standing, task.level.value),
-                            ),
+                            standingText(grade.standing, task.level)?.let { standing ->
+                                stringResource(
+                                    R.string.conversation_criterion_line,
+                                    criterionGloss(criterion.key, criterion.name),
+                                    estimateText(grade.estimate),
+                                    standing,
+                                )
+                            } ?: criterionGloss(criterion.key, criterion.name),
                         official = criterion.name,
                         evidence = grade.evidence,
                         tip = grade.tip,
@@ -209,7 +211,9 @@ private fun CriteriaStep(
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(inLanguage(task.task.name, language), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-        if (numbered && levelBand != null) Note(stringResource(R.string.conversation_level_line, levelBand.toString(), task.level.value))
+        if (numbered && levelBand != null && task.level != ExamSpeakingTask.Level.UNKNOWN_DEFAULT_OPEN_API) {
+            Note(stringResource(R.string.conversation_level_line, levelBand.toString(), task.level.value))
+        }
         if (!feedback.heard) Note(stringResource(R.string.conversation_typed_note))
         if (feedback.brief) Note(stringResource(R.string.conversation_brief_note))
     }
@@ -217,7 +221,7 @@ private fun CriteriaStep(
         task.criteria.forEachIndexed { index, criterion ->
             if (index > 0) HorizontalDivider()
             val grade = feedback.criteria.firstOrNull { it.criterion == criterion.key }
-            CriterionRow(criterion, grade, focus = criterion.key == feedback.focus, level = task.level.value, language = language)
+            CriterionRow(criterion, grade, focus = criterion.key == feedback.focus, level = task.level, language = language)
         }
     }
     Note(stringResource(R.string.conversation_estimate))
@@ -228,7 +232,7 @@ private fun CriterionRow(
     criterion: SpeakingCriterion,
     grade: ExamSpeakingFeedbackCriteriaInner?,
     focus: Boolean,
-    level: String,
+    level: ExamSpeakingTask.Level,
     language: String,
 ) {
     Row(
@@ -256,16 +260,18 @@ private fun CriterionRow(
                     estimateText(grade.estimate),
                     style = MaterialTheme.typography.titleSmall.copy(fontFamily = GeistMono),
                 )
-                Text(
-                    standingText(standing, level),
-                    color =
-                        if (standing == ExamSpeakingFeedbackCriteriaInner.Standing.AT) {
-                            MaterialTheme.colorScheme.tertiary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                standingText(standing, level)?.let { text ->
+                    Text(
+                        text,
+                        color =
+                            if (standing == ExamSpeakingFeedbackCriteriaInner.Standing.AT) {
+                                MaterialTheme.colorScheme.tertiary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
                 if (focus) Eyebrow(stringResource(R.string.conversation_focus))
             }
         }
@@ -420,9 +426,10 @@ internal fun SpeakingMockResult(
     dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback =
-        when (val mock = (conversation.result?.feedback as? LanguageConversationResultFeedback.SpeakingmockWrapper)?.value) {
-            is LanguageSpeakingMockFeedback.IeltsWrapper -> mock.value.recode<_, MockFeedback>()
-            is LanguageSpeakingMockFeedback.ToeflWrapper -> mock.value.recode<_, MockFeedback>()
+        when (val mock = (conversation.result?.feedback as? LanguageConversationResultFeedback.LanguageSpeakingMockFeedbackValue)?.value) {
+            is LanguageSpeakingMockFeedback.LanguageSpeakingMockFeedbackOneOfValue -> null
+            is LanguageSpeakingMockFeedback.LanguageIeltsSpeakingMockFeedbackValue -> mock.value.recode<_, MockFeedback>()
+            is LanguageSpeakingMockFeedback.LanguageToeflSpeakingMockFeedbackValue -> mock.value.recode<_, MockFeedback>()
             null -> null
         }
     val focus = feedback?.criteria?.firstOrNull { it.criterion == feedback.focus }

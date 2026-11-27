@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let matchPairs = ActivityRenderer(
     template: "matchPairs",
     grade: ActivityExpectedAnswer.grader(MatchPairsFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: MatchPairsFields.self) {
-      MatchPairsCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    MatchPairsCanvas(fields: fields, context: context)
   }
 }
 

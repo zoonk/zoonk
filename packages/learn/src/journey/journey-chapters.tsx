@@ -120,7 +120,7 @@ function ChapterRow({
           <button
             className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
             data-slot="path-row"
-            type="submit"
+            type="button"
           />
         }
       >

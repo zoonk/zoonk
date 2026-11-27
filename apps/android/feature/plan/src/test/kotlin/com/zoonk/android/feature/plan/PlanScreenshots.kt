@@ -331,8 +331,9 @@ class PlanScreenshots {
         val timeLeft = page.copy(plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"))
         val sheets: Map<String, @Composable ColumnScope.(PlanLinks) -> Unit> =
             mapOf(
-                "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
-                "plan-sheet-pace-time-left" to { links -> PaceDetails(timeLeft, timeLeft.plan.status!!.pace, links, onAdjust = {}) },
+                "plan-sheet-pace" to { links -> PaceDetails(page, requireNotNull(page.plan.status?.pace), links, onAdjust = {}) },
+                "plan-sheet-pace-time-left" to
+                    { links -> PaceDetails(timeLeft, requireNotNull(timeLeft.plan.status?.pace), links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
                 "plan-sheet-preparation-review" to

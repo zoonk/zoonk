@@ -9,8 +9,9 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf12FieldsStepsInn
  * `processIconNames`); Apple's `ProcessIcons.swift` maps the same names to SF Symbols.
  */
 @DrawableRes
-internal fun processIcon(icon: Icon): Int =
+internal fun processIcon(icon: Icon): Int? =
     when (icon) {
+        Icon.UNKNOWN_DEFAULT_OPEN_API -> null
         Icon.ACTIVITY -> R.drawable.ic_ecg
         Icon.APPLE -> R.drawable.ic_nutrition
         Icon.ARROW_RIGHT_LEFT -> R.drawable.ic_sync_alt

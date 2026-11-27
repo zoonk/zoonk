@@ -22,7 +22,7 @@
   "memory_save_failed": "2527ad064bc705744237c50baee045ec4be37b8b9bf3ab1f627d38846f194f1a",
   "memory_sensitive_note": "ce743725986539614eca057a3e58215d568cda207959866a168c60c095cd56cd",
   "memory_source_call": "5ea07bf0aca7b9c900e210d64f0300a1420c2fb58c90234fb0a1afb43c4c6fef",
-  "memory_source_chat": "6cd391c29c64ddd8264d288ab4e6a1e7dcb2013169aaecfcb7afbbf60d106460",
+  "memory_source_chat": "dc54baef04e4ce5fba23115c12660f37c639c1c6232a8772b1038a336deb9e39",
   "memory_source_noticed": "0baff256ae9981bf0671e473d83fe8760e067ee5cb7ecfa1768bafab25bfd361",
   "memory_source_session": "f7f8d3e36b7491363c9933dc511bd20ae3128f9048172f38fcb61893819dc9b0",
   "memory_source_you": "520611d4519b5b52245446c95949a9b1896934680ba8789efcb2ec68ab39dbd5",
@@ -51,7 +51,7 @@
     <string name="memory_source_you">Bize anlattın</string>
     <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
     <string name="memory_source_call">Sesli sohbetten</string>
-    <string name="memory_source_chat">Bir sohbetten</string>
+    <string name="memory_source_chat">Bir yazışmadan</string>
     <string name="memory_source_session">Derslerinden</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>

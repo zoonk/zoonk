@@ -306,6 +306,10 @@ private fun WritingNextStep(
 @Composable
 private fun zeroStep(kind: WritingResultOutputOneOf1.ZeroKind?): Pair<String, String>? =
     when (kind) {
+        WritingResultOutputOneOf1.ZeroKind.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         WritingResultOutputOneOf1.ZeroKind.BLANK -> {
             stringResource(R.string.essay_zero_blank_title) to stringResource(R.string.essay_zero_blank_text)
         }
@@ -347,19 +351,22 @@ private fun QuotedLine(
 }
 
 @Composable
-private fun levelName(level: WritingResultOutputOneOfCriteriaInner.Level): String =
-    stringResource(
+private fun levelName(level: WritingResultOutputOneOfCriteriaInner.Level): String {
+    return stringResource(
         when (level) {
+            WritingResultOutputOneOfCriteriaInner.Level.UNKNOWN_DEFAULT_OPEN_API -> return ""
             WritingResultOutputOneOfCriteriaInner.Level.COMPLETE -> R.string.essay_level_complete
             WritingResultOutputOneOfCriteriaInner.Level.STRONG -> R.string.essay_level_strong
             WritingResultOutputOneOfCriteriaInner.Level.PARTIAL -> R.string.essay_level_partial
             WritingResultOutputOneOfCriteriaInner.Level.MISSING -> R.string.essay_level_missing
         },
     )
+}
 
 private val WritingResultOutputOneOfCriteriaInner.Level.cells: Int
     get() =
         when (this) {
+            WritingResultOutputOneOfCriteriaInner.Level.UNKNOWN_DEFAULT_OPEN_API -> 0
             WritingResultOutputOneOfCriteriaInner.Level.COMPLETE -> 4
             WritingResultOutputOneOfCriteriaInner.Level.STRONG -> 3
             WritingResultOutputOneOfCriteriaInner.Level.PARTIAL -> 2

@@ -1,5 +1,5 @@
 import { type ComponentProps, useEffectEvent, useId, useLayoutEffect, useState } from "react";
-import { KEEP_TYPING_ATTRIBUTE } from "../lib/kept-typing-script";
+import { KEEP_TYPING_ATTRIBUTE, KEPT_PICK } from "../lib/kept-typing-script";
 
 type FieldValue = ComponentProps<"input">["value"];
 type KeptField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
@@ -30,14 +30,44 @@ function typeAgain(field: KeptField, own: string, typed: string) {
 }
 
 /**
- * Spread last on a text field or a select. With `KEEP_TYPING_SCRIPT` in the page's `<head>`, words
- * typed or an option picked before the field hydrated stay on screen as it does, then reach its
- * `onChange` as if typed or picked just then.
+ * Hydration keeps a radio picked before it, and its value tracker with it, so a click on it reads as
+ * no change. Unpicking it through the tracker first makes the click a pick, which it hands to the
+ * radio's `onChange`.
+ */
+function pickAgain(radio: HTMLInputElement) {
+  radio.checked = false;
+  Object.getOwnPropertyDescriptor(Object.getPrototypeOf(radio), "checked")?.set?.call(radio, true);
+  radio.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+}
+
+function handOverTo(
+  field: KeptField,
+  { checked, last, own }: { checked?: boolean; last: string; own: string },
+) {
+  if (field instanceof HTMLInputElement && field.type === "radio") {
+    if (last === KEPT_PICK && field.checked && !checked) {
+      pickAgain(field);
+    }
+
+    return;
+  }
+
+  if (last !== own) {
+    typeAgain(field, own, last);
+  }
+}
+
+/**
+ * Spread last on a text field, a select or a controlled radio (`checked`). With `KEEP_TYPING_SCRIPT`
+ * in the page's `<head>`, words typed or an option picked before the field hydrated stay on screen
+ * as it does, then reach its `onChange` as if typed or picked just then.
  */
 export function useKeptTyping({
+  checked,
   defaultValue,
   value,
 }: {
+  checked?: boolean;
   defaultValue?: FieldValue;
   value?: FieldValue;
 }) {
@@ -45,14 +75,12 @@ export function useKeptTyping({
   const [typed, setTyped] = useState(() => globalThis.zoonkKeptTyping?.typed.get(key));
 
   const handOver = useEffectEvent((last: string) => {
-    const own = String(value ?? defaultValue ?? "");
-
     const field = document.querySelector<KeptField>(
       `[${KEEP_TYPING_ATTRIBUTE}="${CSS.escape(key)}"]`,
     );
 
-    if (field && last !== own) {
-      typeAgain(field, own, last);
+    if (field) {
+      handOverTo(field, { checked, last, own: String(value ?? defaultValue ?? "") });
     }
 
     setTyped(undefined);
@@ -75,7 +103,10 @@ export function useKeptTyping({
     }
   }, [key]);
 
-  return { [KEEP_TYPING_ATTRIBUTE]: key, ...drawTyped({ typed, value }) };
+  return {
+    [KEEP_TYPING_ATTRIBUTE]: key,
+    ...(checked === undefined && drawTyped({ typed, value })),
+  };
 }
 
 /** Hydration puts a textarea or a select back to its server value, so the hydrating render draws the typed one. */

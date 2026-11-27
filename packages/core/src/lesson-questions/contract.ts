@@ -161,14 +161,32 @@ export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
 export type LessonScreenSuggestion = z.infer<typeof lessonTutorSuggestionSchema>["id"];
 export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
-/** One thread per learner and target; mocks are addressed by their session block. */
 export type TutorTarget =
   | { chapterId: string; kind: "chapter" }
-  | { goalId: string; kind: "plan" }
+  | { conversationId: string | null; goalId: string; kind: "plan" }
   | { goalId: string; kind: "subject"; subjectKey: string }
   | { itemId: string; kind: "item" }
   | { blockId: string; kind: "mock" }
   | { kind: "lesson"; lessonId: string };
+
+export const buddyConversationCursorSchema = z
+  .templateLiteral([z.iso.datetime({ precision: 3 }), "/", uuidSchema()])
+  .describe("The last activity time and conversation id at the end of a page.");
+
+export const buddyConversationsQuerySchema = z.object({
+  cursor: buddyConversationCursorSchema.optional(),
+});
+
+export const buddyConversationsSchema = z.object({
+  conversations: z.array(
+    z.object({ id: uuidSchema(), lastAskedAt: z.iso.datetime(), title: z.string() }),
+  ),
+  currentId: uuidSchema().nullable(),
+  nextCursor: buddyConversationCursorSchema.nullable(),
+});
+
+export type BuddyConversations = z.infer<typeof buddyConversationsSchema>;
+
 export const createdLessonQuestionSchema = lessonQuestionResourceSchema.extend({
   missionMoment: missionMomentSchema.nullable(),
 });

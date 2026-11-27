@@ -84,7 +84,7 @@ internal fun ConversationResult(
     onSubscribe: () -> Unit,
     dayMoment: @Composable () -> Unit = {},
 ) {
-    val feedback = (result.feedback as? LanguageConversationResultFeedback.CallWrapper)?.value
+    val feedback = (result.feedback as? LanguageConversationResultFeedback.LanguageCallFeedbackValue)?.value
     val language = conversation.targetLanguage
     val met = conversation.objectives.filter { it.met }
     val missed = conversation.objectives.filterNot { it.met }

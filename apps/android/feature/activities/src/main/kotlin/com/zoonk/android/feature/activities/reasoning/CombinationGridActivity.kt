@@ -84,7 +84,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLi
 val combinationGridRenderer =
     ActivityRenderer(
         badge = {
-            if (CombinationGrid.of((it as CombinationGridContent).value.fields).isFillable) {
+            if (CombinationGrid.of((it as CombinationGridContent).value.fields)?.isFillable == true) {
                 ActivityBadge(R.string.activities_reasoning_badge_fill_square, R.drawable.ic_window)
             } else {
                 ActivityBadge(R.string.activities_badge_read_chart, R.drawable.ic_show_chart)
@@ -96,7 +96,7 @@ val combinationGridRenderer =
 @Composable
 private fun CombinationGridActivity(props: ActivityProps) {
     val content = (props.content as CombinationGridContent).value
-    val grid = remember(content.fields) { CombinationGrid.of(content.fields) }
+    val grid = remember(content.fields) { CombinationGrid.of(content.fields) } ?: return
     val check = content.check
     val output = checkOutput(check, grid)
     val isReadOnly = props.isExploring || !grid.isFillable

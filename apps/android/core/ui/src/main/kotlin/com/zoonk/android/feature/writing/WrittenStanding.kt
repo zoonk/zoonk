@@ -73,7 +73,7 @@ fun WrittenStandingLine(
             StandingLine(stringResource(R.string.plan_written_cant_say, points), muted)
         }
 
-        null -> {}
+        WrittenPartPoints.Standing.UNKNOWN_DEFAULT_OPEN_API, null -> {}
     }
 }
 

@@ -20,6 +20,7 @@ struct QuestionStep: View {
   @ViewBuilder
   private var content: some View {
     switch step {
+    case .unrecognized: EmptyView()
     case .purpose:
       PurposeQuestion(subject: subject, onAnswer: onAnswer)
     case .role:
@@ -1023,6 +1024,7 @@ enum DateProblem: Equatable {
       self = .passed
     case .case2:
       self = .today
+    case .case4: return nil
     case .case3(let noSitting):
       self = .noSitting(month: noSitting.month, closest: noSitting.closest)
     case nil:

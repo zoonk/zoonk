@@ -366,7 +366,7 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   var id: String { itemId }
 }
 
-struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
+struct MockReviewItem: Hashable, OmittableAPIContent, Sendable, Identifiable {
   enum Outcome: String, Decodable, Sendable {
     case blank
     case partial
@@ -627,12 +627,12 @@ struct MockView: Hashable, Decodable, Sendable {
   }
 }
 
-enum ExamDocument: String, Decodable, Sendable {
+enum ExamDocument: String, OmittableAPIContent, Sendable {
   case guide
   case notice
 }
 
-struct MockOption: Hashable, Decodable, Sendable, Identifiable {
+struct MockOption: Hashable, OmittableAPIContent, Sendable, Identifiable {
   /// One test of an exam held as several, in the notice's words and order.
   struct Section: Hashable, Decodable, Sendable {
     enum Kind: String, Decodable, Sendable {

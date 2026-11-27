@@ -88,6 +88,7 @@ struct ReadDraftView: View {
 
   @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
+    case .case5: EmptyView()
     case .case1(let understood):
       UnderstoodCard(
         draft: draft, understood: understood, isCreating: isWaiting, error: creation.error,

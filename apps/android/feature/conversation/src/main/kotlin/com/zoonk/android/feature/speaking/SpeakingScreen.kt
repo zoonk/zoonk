@@ -429,6 +429,7 @@ private fun TaskRow(
         task.lastTry?.let {
             when {
                 it.rated == 0L -> stringResource(R.string.speaking_last_none)
+                paper.level == SpeakingPaper.Level.UNKNOWN_DEFAULT_OPEN_API -> null
                 it.atLevel > 0 -> stringResource(R.string.speaking_last_at, it.atLevel.toString(), it.rated.toString(), level)
                 it.nearLevel > 0 -> stringResource(R.string.speaking_last_near, it.nearLevel.toString(), it.rated.toString(), level)
                 else -> stringResource(R.string.speaking_last_below, level)

@@ -191,7 +191,7 @@ private struct SpeakingPaperView: View {
         .foregroundStyle(.mutedForeground)
       }
 
-      if let lastTry = task.lastTry {
+      if let lastTry = task.lastTry, lastTry.rated == 0 || paper.level != .unrecognized {
         Text(lastTryText(lastTry, level: paper.level.rawValue))
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)

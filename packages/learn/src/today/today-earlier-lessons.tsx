@@ -49,17 +49,15 @@ export function EarlierLessons() {
         </span>
       </p>
 
-      <form action={() => addToToday()} className="contents">
-        <Button
-          busy={isPending}
-          icon={<ListPlusIcon aria-hidden="true" />}
-          size="sm"
-          type="submit"
-          variant="outline"
-        >
-          {t("Add to today")}
-        </Button>
-      </form>
+      <Button
+        busy={isPending}
+        icon={<ListPlusIcon aria-hidden="true" />}
+        size="sm"
+        onClick={addToToday}
+        variant="outline"
+      >
+        {t("Add to today")}
+      </Button>
 
       {failed && <ChangeSaveError className="basis-full" />}
     </div>

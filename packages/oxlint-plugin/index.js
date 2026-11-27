@@ -1,4 +1,5 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
+import heldPressControl from "./rules/held-press-control.js";
 import noDynamicTranslationKey from "./rules/no-dynamic-translation-key.js";
 import noGetExtractedInPromise from "./rules/no-get-extracted-in-promise.js";
 import noHandMadeFold from "./rules/no-hand-made-fold.js";
@@ -22,6 +23,7 @@ import tailwindCanonicalClasses from "./rules/tailwind-canonical-classes.js";
 export default eslintCompatPlugin({
   meta: { name: "zoonk" },
   rules: {
+    "held-press-control": heldPressControl,
     "no-dynamic-translation-key": noDynamicTranslationKey,
     "no-get-extracted-in-promise": noGetExtractedInPromise,
     "no-hand-made-fold": noHandMadeFold,

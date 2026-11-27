@@ -1,26 +1,14 @@
 "use client";
 
+import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
-import { useLiveLimit } from "@zoonk/learn/help-limit";
-import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
-import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { QuestionComposer } from "./lesson-question-composer";
-import {
-  QuestionErrorAction,
-  QuestionLimitNotice,
-  RequestErrorMessage,
-  toHelpLimit,
-} from "./lesson-question-errors";
 import {
   LessonQuestionNavigationContext,
   useLessonQuestionNavigation,
@@ -29,54 +17,25 @@ import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "./lesson-question-provider";
-import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
-import { EarlierTurns, QuestionTurn, SENDING_TURN_ID, SendingTurn } from "./lesson-question-turn";
-import { ConversationSkeleton, FirstDay, TurnDay } from "./tutor-conversation-parts";
-import { ConversationMissionMoment, useConversationMissionMoment } from "./tutor-mission-moment";
+import { ConversationLog, type ConversationLogProps } from "./tutor-conversation-log";
+import { useConversationMissionMoment } from "./tutor-mission-moment";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
-import { WaitForFirstShow } from "./wait-for-first-show";
 
-type TutorConversationProps = TutorCards & {
+type TutorConversationProps = ConversationLogProps & {
   composerLabel: string;
   /** Only seeds the composer; the learner must send it explicitly. */
   draft?: string;
-  greeting: string;
-  greetingAction?: React.ReactNode;
-  identity: TutorIdentity;
   onAnswered?: () => void;
   onAsked?: () => void;
   placeholder: string;
   suggestions: readonly { id: string; label: string }[];
 };
 
-const GOAL_CONTEXT = { kind: "plan" } as const;
-
-const TURN_CLASS = "flex scroll-mt-4 flex-col gap-5";
-
 const COMPOSER_POSITION =
   "sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:bottom-0 z-10 -mx-4 bg-linear-to-t from-background from-75% to-transparent px-4 pt-6 pb-3 lg:pb-6";
-
-function LoadError() {
-  const controller = useLessonQuestionController();
-  const error = controller.state.requestError;
-  const limit = useLiveLimit(toHelpLimit(error));
-
-  if (limit) {
-    return <QuestionLimitNotice limit={limit} />;
-  }
-
-  return (
-    <div className="flex flex-col items-start gap-3">
-      <p className="text-muted-foreground text-sm">
-        <RequestErrorMessage error={error} />
-      </p>
-      <QuestionErrorAction error={error} onRetry={() => void controller.load()} />
-    </div>
-  );
-}
 
 function SignUpPrompt() {
   const t = useExtracted();
@@ -99,119 +58,6 @@ function SignUpPrompt() {
   );
 }
 
-/**
- * Follows a turn added at the end; a saved question taking its sent turn's place stays put. A
- * server-rendered page already opened at its latest turn, so hydrating it doesn't scroll.
- */
-function useFollowLatest({
-  count,
-  latestId,
-  ready,
-}: {
-  count: number;
-  latestId: string | null;
-  ready: boolean;
-}) {
-  const reducedMotion = useReducedMotion();
-  const mounted = useIsMounted();
-  const turns = useRef(new Map<string, HTMLElement>());
-
-  const shown = useRef<{ count: number; id: string | null } | null>(
-    mounted ? null : { count, id: latestId },
-  );
-
-  // Next.js keeps a page the learner left mounted but hidden, and scrolls to the top when they come
-  // back, so a hidden conversation forgets what it showed and opens at its latest turn again.
-  useLayoutEffect(
-    () => () => {
-      shown.current = null;
-    },
-    [],
-  );
-
-  useLayoutEffect(() => {
-    if (!ready) {
-      return;
-    }
-
-    const previous = shown.current;
-    shown.current = { count, id: latestId };
-
-    if (previous && (previous.id === latestId || count <= previous.count)) {
-      return;
-    }
-
-    const turn = latestId ? turns.current.get(latestId) : null;
-    const behavior = previous === null || reducedMotion ? "instant" : "smooth";
-
-    // Before the browser paints, but after Next.js scrolls a page it navigated to, which happens in
-    // a parent's layout effect later in this same commit.
-    queueMicrotask(() => turn?.scrollIntoView({ behavior, block: "start" }));
-  }, [count, latestId, ready, reducedMotion]);
-
-  return (id: string) => (element: HTMLElement | null) => {
-    if (element) {
-      turns.current.set(id, element);
-    } else {
-      turns.current.delete(id);
-    }
-  };
-}
-
-function ConversationTurns({
-  identity,
-  renderPlanChange,
-  renderToolOffer,
-}: Pick<TutorConversationProps, "identity" | "renderPlanChange" | "renderToolOffer">) {
-  const controller = useLessonQuestionController();
-  const { state } = controller;
-  const now = useMountTime();
-  const last = state.questions.at(-1);
-  const latestId = state.creating ? SENDING_TURN_ID : (last?.id ?? null);
-
-  const trackTurn = useFollowLatest({
-    count: state.questions.length + (state.creating ? 1 : 0),
-    latestId,
-    ready: state.loadStatus === "ready",
-  });
-
-  return (
-    <>
-      <EarlierTurns page />
-
-      {state.questions.map((question, index) => (
-        <div className={TURN_CLASS} key={question.id} ref={trackTurn(question.id)}>
-          <TurnDay
-            date={new Date(question.createdAt)}
-            previous={index > 0 ? new Date(state.questions[index - 1]?.createdAt ?? 0) : null}
-          />
-          <QuestionTurn
-            identity={identity}
-            page
-            planChange={
-              question.planChange &&
-              renderPlanChange({
-                change: question.planChange,
-                onAnswered: controller.answerPlanChange,
-              })
-            }
-            question={question}
-            toolOffer={question.toolOffer && renderToolOffer(question.toolOffer)}
-          />
-          {question.id === latestId && <OpenPageHere />}
-        </div>
-      ))}
-
-      {state.creating && (
-        <div className={TURN_CLASS} ref={trackTurn(SENDING_TURN_ID)}>
-          <TurnDay date={now} previous={last ? new Date(last.createdAt) : null} />
-          <SendingTurn identity={identity} page question={state.creating.question} />
-        </div>
-      )}
-    </>
-  );
-}
-
 function useBroughtQuestion({
   changeDraft,
   draft,
@@ -228,26 +74,32 @@ function useBroughtQuestion({
 
 function ConversationBody({
   composerLabel,
+  conversationId,
   draft,
   greeting,
   greetingAction,
   identity,
+  missionMoment,
   onAnswered,
   onAsked,
   placeholder,
   renderPlanChange,
-  missionMoment,
   renderToolOffer,
   suggestions,
-}: TutorConversationProps & { missionMoment: MissionMomentView | null }) {
+}: TutorConversationProps & { conversationId: string; missionMoment: MissionMomentView | null }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
-  const { canAskQuestions, state } = controller;
+  const { canAskQuestions, load, state } = controller;
   const ready = state.loadStatus === "ready" && state.error !== "load";
   const empty = ready && state.questions.length === 0;
   const offersSuggestions = useOffersSuggestions();
+  const waiting = canAskQuestions && state.loadStatus === "idle" && state.error !== "load";
 
-  const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
+  useEffect(() => {
+    if (waiting) {
+      void load();
+    }
+  }, [load, waiting]);
 
   useBroughtQuestion({ changeDraft: controller.changeDraft, draft });
   useTurnSignals({ onAnswered, onAsked });
@@ -257,32 +109,17 @@ function ConversationBody({
       aria-label={t("Conversation with {name}", { name: identity.name })}
       className="flex flex-1 flex-col"
     >
-      <div aria-busy={answering} className="flex flex-1 flex-col gap-5 pb-2" role="log">
-        <FirstDay />
+      <ConversationLog
+        greeting={greeting}
+        greetingAction={greetingAction}
+        identity={identity}
+        key={conversationId}
+        missionMoment={missionMoment}
+        renderPlanChange={renderPlanChange}
+        renderToolOffer={renderToolOffer}
+      />
 
-        <TutorMessage identity={identity} page>
-          <p>{greeting}</p>
-          {greetingAction && <div className="flex">{greetingAction}</div>}
-        </TutorMessage>
-
-        {canAskQuestions && state.loadStatus !== "ready" && <ConversationSkeleton />}
-
-        {state.error === "load" && <LoadError />}
-
-        {ready && (
-          <WaitForFirstShow questions={state.questions}>
-            <ConversationTurns
-              identity={identity}
-              renderPlanChange={renderPlanChange}
-              renderToolOffer={renderToolOffer}
-            />
-          </WaitForFirstShow>
-        )}
-
-        <ConversationMissionMoment moment={missionMoment} />
-      </div>
-
-      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>
+      <div className={cn(COMPOSER_POSITION, "flex flex-col gap-3")}>
         {empty && canAskQuestions && offersSuggestions && (
           <TutorSuggestions
             onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
@@ -305,32 +142,62 @@ function ConversationBody({
   );
 }
 
+/**
+ * One goal's conversations with the buddy, showing the one `conversationId` names. Each keeps its
+ * own turns, draft, answer on its way and unsent question, so opening another never moves them
+ * across, and coming back finds them. `thread` is what the page read of the open one: the first is
+ * there from the first paint, with nothing arriving after it.
+ */
 export function TutorConversation({
+  conversationId,
   goalId,
-  initialThread = null,
   onMissionMoment,
+  onQuestionSaved,
+  thread,
   tutor,
   ...props
 }: TutorConversationProps & {
+  conversationId: string;
   goalId: string;
-  initialThread?: LessonQuestionThreadPage | null;
   onMissionMoment?: (moment: MissionMomentView) => void;
+  onQuestionSaved?: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
+  thread: LessonQuestionThreadPage | null;
   tutor: LessonTutorConfig;
 }) {
-  const target = useMemo(() => ({ goalId, kind: "plan" as const }), [goalId]);
-  const missionMoment = useConversationMissionMoment({ goalId, onMoment: onMissionMoment });
+  const target = useMemo(
+    () => ({ conversationId, goalId, kind: "plan" as const }),
+    [conversationId, goalId],
+  );
+
+  const context = useMemo(() => ({ conversationId, kind: "plan" as const }), [conversationId]);
+  const missionMoment = useConversationMissionMoment({ conversationId, onMoment: onMissionMoment });
+  const onSaved = useRef(onQuestionSaved);
+
+  useEffect(() => {
+    onSaved.current = onQuestionSaved;
+  }, [onQuestionSaved]);
+
+  const reportSaved = useCallback<NonNullable<LessonQuestionHost["onQuestionSaved"]>>(
+    ({ context: asked, question }) => {
+      if (asked.kind === "plan") {
+        onSaved.current?.({ conversationId: asked.conversationId, question });
+      }
+    },
+    [],
+  );
 
   const host = useMemo<LessonQuestionHost>(
     () => ({
-      activeContext: GOAL_CONTEXT,
+      activeContext: context,
       canAskQuestions: tutor.canAsk,
-      initialThread,
+      initialThread: thread,
       lessonStepIds: [],
       onMissionMoment: missionMoment.receive,
+      onQuestionSaved: reportSaved,
       page: true,
-      preload: !initialThread,
+      preload: false,
     }),
-    [initialThread, missionMoment.receive, tutor.canAsk],
+    [context, missionMoment.receive, reportSaved, thread, tutor.canAsk],
   );
 
   return (
@@ -341,7 +208,11 @@ export function TutorConversation({
         key={goalId}
         target={target}
       >
-        <ConversationBody {...props} missionMoment={missionMoment.moment} />
+        <ConversationBody
+          {...props}
+          conversationId={conversationId}
+          missionMoment={missionMoment.moment}
+        />
       </LessonQuestionHostProvider>
     </LessonQuestionNavigationContext>
   );

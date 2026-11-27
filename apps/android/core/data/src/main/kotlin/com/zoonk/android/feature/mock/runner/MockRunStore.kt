@@ -17,9 +17,11 @@ import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.api.encodeWithKnownEnums
 import com.zoonk.api.models.MockAnswer
 import com.zoonk.api.models.MockAnswerInput
 import com.zoonk.api.models.MockExam
+import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockPlanOfferInput
 import com.zoonk.api.models.MockPlanOfferResult
 import com.zoonk.api.models.MockPlayInput
@@ -229,9 +231,21 @@ class MockRunStore(
     fun open(blockId: String): Resource<OpenedMock> =
         cache.resource(Audience.SignedIn) { session ->
             session ?: return@resource null
-            val view = api.mock(session, blockId) ?: return@resource null
+            val view = readMock(session, blockId) ?: return@resource null
             OpenedMock(view, unsent(session, blockId).value.first().orEmpty())
         }
+
+    private suspend fun readMock(
+        session: AuthenticatedSession,
+        blockId: String,
+    ): MockExam? {
+        val mock = api.mock(session, blockId) ?: return null
+        val current = mock.current
+        if (current != null && encodeWithKnownEnums(MockExamCurrent.serializer(), current) == null) {
+            throw ApiException(ApiError.Unavailable)
+        }
+        return mock
+    }
 
     fun unsent(
         session: AuthenticatedSession,
@@ -260,7 +274,7 @@ class MockRunStore(
     suspend fun startSpeaking(blockId: String): MutationResult<Written<MockExam?>> =
         cache.mutate { session ->
             api.startSpeaking(session, blockId)?.let { Written.Writing(it) }
-                ?: Written.Ready(api.mock(session, blockId))
+                ?: Written.Ready(readMock(session, blockId))
         }
 
     suspend fun finish(blockId: String): MutationResult<MockExam?> = step(blockId, FINISHING) { api.finish(it, blockId, timeZone()) }
@@ -269,7 +283,7 @@ class MockRunStore(
     suspend fun gradeEssays(blockId: String): MutationResult<MockExam?> =
         cache.mutate(invalidating = setOf(DataDomain.LearnerModel)) { session ->
             api.gradeEssays(session, blockId, timeZone())
-            api.mock(session, blockId)
+            readMock(session, blockId)
         }
 
     /** One of the result's plan offers, only on the learner's yes: it changes the plan as any plan edit does. */
@@ -286,7 +300,7 @@ class MockRunStore(
     ): MutationResult<MockExam?> =
         cache.mutate(invalidating) { session ->
             write(session)
-            api.mock(session, blockId)
+            readMock(session, blockId)
         }
 
     private companion object {

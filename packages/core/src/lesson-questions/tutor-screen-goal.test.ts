@@ -421,7 +421,7 @@ describe("the buddy on a screen inside a goal", () => {
 
     const created = await createLessonQuestion({
       input: { context: { kind: "plan" }, question: "Where was the bar?", requestId: randomUUID() },
-      target: { goalId: goal.id, kind: "plan" },
+      target: { conversationId: null, goalId: goal.id, kind: "plan" },
     });
 
     if (created.status !== "created") {

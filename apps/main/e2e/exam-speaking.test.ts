@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { CHARACTER_REPLY, answerLiveCalls } from "./live-peer";
@@ -75,7 +74,6 @@ test.describe("Exam speaking tasks", () => {
     await page.goto("/exam");
     const speaking = page.getByRole("region", { name: "Speaking" });
     const task = speaking.getByRole("button", { name: new RegExp(TASK_ONE, "u") });
-    await expectHydrated(task);
     await task.click();
     await speaking.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}\\?from=exam$`, "u"));

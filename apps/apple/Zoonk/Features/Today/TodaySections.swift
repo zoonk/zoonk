@@ -163,7 +163,7 @@ struct TodayMoreSection: View {
       view.session.extraTime.available || view.session.catchUp?.later.offered == true
     case .underway:
       view.session.catchUp?.later.offered == true
-    case .prepare, .rest, .waiting:
+    case .prepare, .rest, .waiting, .unrecognized:
       false
     }
   }

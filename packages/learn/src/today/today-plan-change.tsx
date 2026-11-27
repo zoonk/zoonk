@@ -79,7 +79,7 @@ function ChangeActions({
       main={
         change.canApply && (
           <SuggestionAction
-            action={() => onAnswer("applied")}
+            onClick={() => onAnswer("applied")}
             disabled={disabled}
             variant={mainVariant}
           >
@@ -88,7 +88,7 @@ function ChangeActions({
         )
       }
     >
-      <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
+      <SuggestionAction onClick={() => onAnswer("declined")} disabled={disabled} variant="outline">
         {keepsMine && !overridesNotice && t("Keep mine")}
         {overridesNotice && t("Keep official date")}
         {!keepsMine && !overridesNotice && t("Not now")}
@@ -179,7 +179,7 @@ function AfterAnswer({
   if (state.answer === "applied" && state.answered.canUndo) {
     return (
       <SuggestionAction
-        action={() => answer("undone")}
+        onClick={() => answer("undone")}
         busy={isPending}
         icon={<Undo2Icon aria-hidden="true" />}
         variant="outline"
@@ -237,7 +237,7 @@ function PlanChangeNotice({
             <SuggestionActions main={<SuggestionOpen>{t("See what changes")}</SuggestionOpen>}>
               {change.source !== NOTICE_SOURCE && change.source !== PHASE_DATES_SOURCE && (
                 <SuggestionAction
-                  action={() => answer("declined")}
+                  onClick={() => answer("declined")}
                   disabled={isPending}
                   variant="outline"
                 >

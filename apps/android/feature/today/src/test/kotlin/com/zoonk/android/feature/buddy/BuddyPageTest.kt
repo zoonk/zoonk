@@ -21,8 +21,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.tutor.TutorAccess
-import com.zoonk.android.feature.tutor.TutorThread
-import com.zoonk.android.feature.tutor.TutorThreadKey
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -122,11 +120,10 @@ class BuddyPageTest {
             remember {
                 AppContainer.preview(context).apply {
                     learnerSummary.summary.replace(learnerSummary())
-                    tutor.threads[TutorThreadKey.Plan(GOAL)].replace(TutorThread(emptyList(), hasMore = false, nextCursor = null))
                 }
             }
         val navigator = rememberAppNavigator()
-        ZoonkTheme { BuddyPage(STATUS, GOAL, ask = ASK, app, navigator, access = TutorAccess.Ask) }
+        ZoonkTheme { BuddyPage(STATUS, GOAL, AppRoute.Buddy(ask = ASK), app, navigator, access = TutorAccess.Ask) }
     }
 
     private fun hasDraft(text: String) = SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(text))

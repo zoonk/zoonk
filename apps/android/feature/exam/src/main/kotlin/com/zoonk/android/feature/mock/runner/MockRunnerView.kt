@@ -588,6 +588,13 @@ internal fun SheetSections(
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (titled) Text(stringResource(R.string.mock_sections), style = MaterialTheme.typography.titleSmall)
         run.view.sections.forEachIndexed { index, section ->
+            val mark =
+                when (section.status) {
+                    MockExamSectionsInner.Status.CURRENT -> MarkStatus.Next
+                    MockExamSectionsInner.Status.DONE -> MarkStatus.Done
+                    MockExamSectionsInner.Status.UPCOMING -> MarkStatus.Todo
+                    MockExamSectionsInner.Status.UNKNOWN_DEFAULT_OPEN_API -> return@forEachIndexed
+                }
             if (index > 0) HorizontalDivider()
             val current = section.status == MockExamSectionsInner.Status.CURRENT
             val total = if (current && run.view.current != null) counts.total.toLong() else section.questions + section.essays
@@ -596,13 +603,7 @@ internal fun SheetSections(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                StatusMark(
-                    when (section.status) {
-                        MockExamSectionsInner.Status.CURRENT -> MarkStatus.Next
-                        MockExamSectionsInner.Status.DONE -> MarkStatus.Done
-                        MockExamSectionsInner.Status.UPCOMING -> MarkStatus.Todo
-                    },
-                )
+                StatusMark(mark)
                 Text(
                     mockSectionTitle(section),
                     Modifier.weight(1f),

@@ -4,11 +4,13 @@ extension ActivityRenderer {
   static let codeRunner = ActivityRenderer(
     template: "codeRunner",
     grade: CodeRunnerFields.grade
-  ) { context in
-    if let fields = try? context.fields(as: CodeRunnerFields.self) {
-      CodeRunnerCanvas(context: context, fields: fields)
-    }
+  ) { context, fields in
+    CodeRunnerCanvas(context: context, fields: fields)
   }
+}
+
+enum CodeLanguage: String, Decodable, Sendable {
+  case javascript, python
 }
 
 struct CodeRunnerFields: Decodable, Sendable {

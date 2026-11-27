@@ -105,8 +105,12 @@ fun WritingGrade.nextStep(text: String): NextStep {
     )
 }
 
-fun WritingResultOutput.toGrade(): WritingGrade =
+fun WritingResultOutput.toGrade(): WritingGrade? =
     when (this) {
+        is WritingResultOutput.WritingResultOutputOneOf2Value -> {
+            null
+        }
+
         is WritingResultOutput.WritingResultOutputOneOfValue -> {
             WritingGrade(
                 value.criteria,

@@ -35,5 +35,9 @@ fun LessonCitation(citation: StepCitation) {
         is NotInMaterial -> {
             IconNote(R.drawable.ic_unknown_document, stringResource(R.string.player_citation_not_in_material))
         }
+
+        else -> {
+            return
+        }
     }
 }

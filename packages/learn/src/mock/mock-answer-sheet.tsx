@@ -90,7 +90,7 @@ function QuestionCell({
       aria-current={isCurrent ? "true" : undefined}
       aria-label={label}
       className={cn(
-        "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
+        "focus-visible:outline-ring/50 text-muted-foreground ring-border enabled:hover:bg-muted/60 held-pressed:bg-muted relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-3 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         isAnswered && CELL_FILLED_CLASS,
         unsure && isAnswered && CELL_UNSURE_CLASS,
         isCurrent && cn(CELL_CURRENT_CLASS, "text-foreground"),

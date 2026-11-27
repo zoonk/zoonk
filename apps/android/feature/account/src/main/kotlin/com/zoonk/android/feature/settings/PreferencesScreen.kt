@@ -234,6 +234,8 @@ internal fun BuddySection(
         BuddyEditor(
             look = look,
             name = profile.buddy.name.orEmpty(),
+            knownKind = kind.key == profile.buddy.kind.value,
+            knownGlasses = glasses.key == profile.buddy.glasses.value,
             earnedGlasses = profile.availableGlasses.map { BuddyGlasses.of(it.value) }.toSet() + BuddyGlasses.Round,
             isSaving = preferences.isSavingBuddy,
             saveFailed = preferences.buddySaveFailed,

@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "a36156cc16cfc9d8015d6b5a22cfa606355c909ce6935609547f517ef3711d74",
   "limit_sentence": "82f5312a98d72a91e84081dcf74f07f4169f4be75eb4d441eed65a99508c3900",
   "limit_sign_up_required": "4a624918c7a4e8f3524d791318f72e7ab8c6533a34adf2b69acf9c99d38a0abc",
-  "limit_slow_down": "038cbd949d680c6297ec7211913fcca159bf936a1593bc7b2a781b17a5e47a8d",
+  "limit_slow_down_minutes": "c183ba9098f30e5a92fab770b392c8c8aa3c76aa3c66fb22058c1b12d09cfb30",
+  "limit_slow_down_seconds": "484ed22eb295bfaa1614dd736e67519583814cbf05d5e7a7e505f6617ebe0ed4",
   "limit_still_review": "4a5b43a788000aa7424b599e6bb598d8027e56907331a69a03fd40411bbc641d",
   "limit_try_again_now": "3e4cad9c68532ab21609fecad7edf169941d2801c509b72f484a18932993a033",
   "limit_uploads_day": "3ff5f5ae27c566b19efb425d34ba234bf23899f67d306e3c18223db4ed61d88c",
@@ -49,7 +50,18 @@
 -->
 <resources>
     <string name="limit_create_account">Crea un account gratuito</string>
-    <string name="limit_slow_down">Fai una breve pausa, poi riprova.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Fai una breve pausa. Puoi riprovare tra %1$s secondo.</item>
+        <item quantity="many">Fai una breve pausa. Puoi riprovare tra %1$s secondi.</item>
+        <item quantity="other">Fai una breve pausa. Puoi riprovare tra %1$s secondi.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Fai una breve pausa. Puoi riprovare tra %1$s minuto.</item>
+        <item quantity="many">Fai una breve pausa. Puoi riprovare tra %1$s minuti.</item>
+        <item quantity="other">Fai una breve pausa. Puoi riprovare tra %1$s minuti.</item>
+    </plurals>
     <string name="limit_sign_up_required">Serve un account gratuito</string>
     <string name="limit_more_tomorrow">Altro domani.</string>
     <string name="limit_more_tomorrow_or_subscribe">Potrai continuare domani, oppure abbonati per farlo subito.</string>

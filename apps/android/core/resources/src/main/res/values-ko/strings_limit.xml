@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "0bfd2cb50c58900b78ce0de337431641c32a0486c22604850f021a985ce271b8",
   "limit_sentence": "d1f077669c7a7f752de86e3c9818c0adbbdadf0db60a5b339125522bf83343c7",
   "limit_sign_up_required": "3d824410080e0b53b06ac2bdcc65fd27f4ac04340e5b98b957ceac40518cae4b",
-  "limit_slow_down": "a6c85326a8e993a5760ab7d2ca8d58229d822ea2508489220dcaa30e86177864",
+  "limit_slow_down_minutes": "238fccb9c34e0458c2810664b76d07651b9d890aac840d5bbdcac16d24d86eb1",
+  "limit_slow_down_seconds": "55064f593096298a3909cd674c2c398591fbd14b2de1035c81f86b09e0ae55c3",
   "limit_still_review": "9f5c4a7e808f83fb04c3bf76cd61418c8f57636374905bf358b1cd1c76385ea3",
   "limit_try_again_now": "2c0ddc6cab1e3f0adff7381774daeeb9bcd50f393275b8b617fbfdc669fa5a18",
   "limit_uploads_day": "fbde84ea5c04ee3d5166c1d1a421162603fc52546bff5e05d43f42515f38087d",
@@ -49,7 +50,14 @@
 -->
 <resources>
     <string name="limit_create_account">무료 계정 만들기</string>
-    <string name="limit_slow_down">잠깐 쉬었다가 다시 시도해 보세요.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="other">잠깐 쉬어 보세요. %1$s초 후에 다시 시도해 보세요.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="other">잠깐 쉬어 보세요. %1$s분 후에 다시 시도해 보세요.</item>
+    </plurals>
     <string name="limit_sign_up_required">무료 계정이 필요해요</string>
     <string name="limit_more_tomorrow">내일 더 할 수 있어요.</string>
     <string name="limit_more_tomorrow_or_subscribe">내일 다시 이용할 수 있어요. 구독하면 지금 계속할 수 있어요.</string>

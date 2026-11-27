@@ -25,7 +25,7 @@ struct CompletedLessonGroup: Equatable, Identifiable, Sendable {
 /// What a goal's list narrows to: the plan's groups that have completed lessons, the one with the
 /// most first. The same whichever group is shown.
 struct CompletedLessonsFilter: Equatable, Sendable {
-  enum Kind: Sendable {
+  enum Kind: String, Sendable {
     case subjects, modules, phases
   }
 
@@ -183,7 +183,7 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
               finishedOn: lesson.finishedOn, available: lesson.available, saved: lesson.saved)
           },
           nextCursor: list.pagination.nextCursor,
-          filter: (list.filter?.value1).map(CompletedLessonsFilter.init))
+          filter: (list.filter?.value1).flatMap(CompletedLessonsFilter.init))
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
@@ -193,13 +193,8 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
 }
 
 extension CompletedLessonsFilter {
-  fileprivate init(_ filter: Components.Schemas.CompletedLessonFilter) {
-    let kind: Kind =
-      switch filter.kind {
-      case .subjects: .subjects
-      case .modules: .modules
-      case .phases: .phases
-      }
+  fileprivate init?(_ filter: Components.Schemas.CompletedLessonFilter) {
+    guard let kind = Kind(rawValue: filter.kind.rawValue) else { return nil }
 
     self.init(
       groups: filter.groups.map { group in
