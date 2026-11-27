@@ -21,7 +21,7 @@ import {
 } from "./schedule-units";
 import { splitStandIns } from "./stand-in-parts";
 import { arrangeStudyCycle } from "./study-cycle";
-import { type CadencedArea } from "./study-cycle-lanes";
+import { type CadencedArea, orderOwnPrerequisites } from "./study-cycle-lanes";
 import { splitIntoParts } from "./study-cycle-parts";
 import { rotateTopics } from "./topic-rotation";
 import { type ScoredTopic, getAskedScore } from "./topic-weights";
@@ -271,15 +271,23 @@ function prioritizeKeptMisses({
   const liftedOf = (unit: QueueUnit) => lifted.get(unit.key) ?? priorityOf(unit);
   const compareMisses = (a: QueueUnit, b: QueueUnit) => liftedOf(b) - liftedOf(a);
 
-  const units = splitIntoParts(kept).flatMap((part) =>
-    part.toSorted(
+  const units = splitIntoParts(kept).flatMap((part) => {
+    const ranked = part.toSorted(
       (a, b) =>
         Number(a.kind === "boss") - Number(b.kind === "boss") ||
         Number(Boolean(b.inProgress)) - Number(Boolean(a.inProgress)) ||
         a.phase - b.phase ||
         compareMisses(a, b),
-    ),
-  );
+    );
+
+    return input.queue.rates
+      ? ranked
+      : orderOwnPrerequisites({
+          keepSharedRuns: true,
+          prerequisites: input.queue.prerequisites,
+          units: ranked,
+        });
+  });
 
   const reordered = arrangeExamUnits({ cadenced, input, mockPriority: compareMisses, units });
   return reordered.dropped.length === 0 ? { ...schedule, units: reordered.units } : schedule;

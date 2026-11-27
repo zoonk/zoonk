@@ -166,6 +166,48 @@ describe("an exam plan after a mock", () => {
     ]);
   });
 
+  it.each([
+    { expected: ["ratios", "percentages", "equations", "fractions"], shared: false },
+    { expected: ["fractions", "ratios", "percentages", "equations"], shared: true },
+  ])(
+    "keeps a missed undated exam topic after its prerequisite (shared lessons: $shared)",
+    ({ expected, shared }) => {
+      const input = examInput();
+      const order = ["equations", "fractions", "ratios", "percentages"];
+      const sharedSkills = ["fractions", "ratios"];
+
+      const course = {
+        ...input,
+        goal: { ...input.goal, targetDate: null },
+        graph: {
+          ...input.graph,
+          skills: input.graph.skills.map((skill) => ({ ...skill, lessons: 1 })),
+        },
+        lessons: order.map((skillId, position) => {
+          const inRun = shared && sharedSkills.includes(skillId);
+
+          return {
+            chapterId: inRun ? "shared" : skillId,
+            courseOrder: { phase: 0, position },
+            lessonId: skillId,
+            minutes: 3,
+            skillIds: inRun ? sharedSkills : [skillId],
+            title: skillId,
+          };
+        }),
+        prerequisites: new Map([["percentages", ["ratios"]]]),
+      } satisfies BuildPlanInput;
+
+      const { baseline, reordered } = expectOnlyReordered({
+        input: course,
+        missed: ["percentages"],
+      });
+
+      expect(lessonsOf(baseline).map(({ lessonId }) => lessonId)).toStrictEqual(order);
+      expect(lessonsOf(reordered).map(({ lessonId }) => lessonId)).toStrictEqual(expected);
+    },
+  );
+
   it("puts a miss in a part under its minimum before any other miss", () => {
     const misses = new Map<string, MockMiss>([
       ["ratios", "missed"],

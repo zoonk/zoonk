@@ -89,15 +89,27 @@ function isOwnCore(unit: QueueUnit): boolean {
 }
 
 export function orderOwnPrerequisites({
+  keepSharedRuns = false,
   prerequisites,
   units,
 }: {
+  keepSharedRuns?: boolean;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   units: readonly QueueUnit[];
 }): QueueUnit[] {
   const cores = Map.groupBy(
     units.filter((unit) => isOwnCore(unit)),
     (unit) => unit.skillId ?? "",
+  );
+
+  const runs = keepSharedRuns
+    ? Map.groupBy(units, (unit) => unit.sharedRun)
+    : new Map<string | undefined, QueueUnit[]>();
+
+  const previousInRun = new Map(
+    [...runs].flatMap(([run, lessons]) =>
+      run ? lessons.slice(1).map((lesson, index) => [lesson, lessons[index]] as const) : [],
+    ),
   );
 
   const pending = new Set(units);
@@ -115,18 +127,20 @@ export function orderOwnPrerequisites({
   const place = (unit: QueueUnit): void => {
     const { skillId } = unit;
 
-    if (!pending.has(unit)) {
+    if (!pending.delete(unit)) {
       return;
+    }
+
+    const previous = previousInRun.get(unit);
+
+    if (previous) {
+      place(previous);
     }
 
     if (skillId && !visiting.has(skillId)) {
       visiting.add(skillId);
       (prerequisites.get(skillId) ?? []).forEach((id) => placeSkill(id));
       visiting.delete(skillId);
-    }
-
-    if (!pending.delete(unit)) {
-      return;
     }
 
     ordered.push(unit);
