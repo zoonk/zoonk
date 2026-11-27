@@ -13,6 +13,7 @@ type Input = {
   itemIds: readonly string[];
   now: Date;
   receipt: string;
+  startedPastSkillIds?: readonly string[];
   timeZone: string;
   tx: TransactionClient;
   userId: string;
@@ -22,12 +23,16 @@ type Input = {
 export async function recordTestOutChange(input: Input): Promise<void> {
   const { goalId, itemIds, now, receipt, timeZone, tx, userId } = input;
 
-  if (itemIds.length === 0) {
+  const starts = input.startedPastSkillIds;
+
+  if (itemIds.length === 0 && !starts?.length) {
     return;
   }
 
   const goals = await tx.goal.findMany({
-    where: { plan: { items: { some: { id: { in: [...itemIds] }, status: "testedOut" } } }, userId },
+    where: starts?.length
+      ? { id: goalId, userId }
+      : { plan: { items: { some: { id: { in: [...itemIds] }, status: "testedOut" } } }, userId },
   });
 
   const skipped = new Set(itemIds);
@@ -54,7 +59,7 @@ export async function recordTestOutChange(input: Input): Promise<void> {
 
       const topicsLeftOut = listChangeTopics({
         graph: context.state.graph,
-        skillIds: new Set(items.flatMap(({ skillId }) => skillId ?? [])),
+        skillIds: new Set(starts ?? items.flatMap(({ skillId }) => skillId ?? [])),
       });
 
       await tx.plan.update({ data: { version: versionAfter }, where: { id: context.plan.id } });
@@ -63,6 +68,7 @@ export async function recordTestOutChange(input: Input): Promise<void> {
 
       const change = await tx.planChange.create({
         data: {
+          createdAt: now,
           kind: "testedOut",
           payload: toPlanChangePayload({
             effect: {
@@ -75,11 +81,14 @@ export async function recordTestOutChange(input: Input): Promise<void> {
             lessonsSkipped,
             planItemIds: items.map(({ id }) => id),
             testReceipt: receipt,
+            ...(starts && { startedPastSkillIds: [...starts] }),
             todaySession: "unchanged",
             versionAfter,
           }),
           planId: context.plan.id,
-          reason: "Placement or a test-out skipped lessons the learner already knows.",
+          reason: starts
+            ? "Your placement test found your starting lesson."
+            : "Placement or a test-out skipped lessons the learner already knows.",
           status: "applied",
         },
       });

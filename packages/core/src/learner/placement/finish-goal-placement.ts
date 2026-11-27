@@ -10,11 +10,7 @@ import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { type PlacementCompletion, completePlacement } from "./_utils/complete-placement";
 import { loadCoursePlacementTopics } from "./_utils/course-placement-offer";
 import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
-import {
-  getAttemptParts,
-  getCourseOffer,
-  readPlacementAttempt,
-} from "./_utils/placement-attempt-record";
+import { getCourseOffer, readPlacementAttempt } from "./_utils/placement-attempt-record";
 import { type PlacementCompletionInput } from "./placement-contract";
 import { getScratchAreaStarts, getScratchPhaseStarts } from "./placement-steps";
 
@@ -51,7 +47,9 @@ async function declinePlacement(goal: Goal) {
 
   const { data: topics } = await safeAsync(() => loadCoursePlacementTopics(goal.id));
   const { attempt } = readPlacementAttempt(declined);
-  const offer = getCourseOffer(attempt?.partSkillIds?.length ?? topics?.length ?? 0);
+
+  const questions =
+    attempt?.search?.questions ?? getCourseOffer(topics?.length ?? 0)?.questions ?? null;
 
   trackTestEvents(declined, [
     {
@@ -60,8 +58,8 @@ async function declinePlacement(goal: Goal) {
         ...testEventContext(declined, {
           attemptId: attempt?.id,
           part: attempt?.part,
-          parts: attempt ? getAttemptParts(attempt).length : (offer?.wholeCourse?.parts ?? 1),
-          questions: offer?.questions ?? null,
+          parts: 1,
+          questions,
           test: "course",
         }),
         row: testSkipRow(declined, attempt?.id),

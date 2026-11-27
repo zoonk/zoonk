@@ -693,18 +693,12 @@ describe(sessionPreparationWorkflow, () => {
       [
         expect.objectContaining({
           serviceTier: "flex",
-          skills: [expect.objectContaining({ name: english.name, quickCount: 1, tapCount: 0 })],
-        }),
-      ],
-      [
-        expect.objectContaining({
-          serviceTier: "flex",
           skills: [expect.objectContaining({ name: english.name, quickCount: 0, tapCount: 3 })],
         }),
       ],
     ]);
 
-    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(4);
+    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(3);
 
     vi.mocked(generatePlacementItems).mockClear();
 

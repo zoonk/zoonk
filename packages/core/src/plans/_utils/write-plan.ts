@@ -6,6 +6,7 @@ import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
+import { applyStartsToNewLessons } from "./apply-starts-to-new-lessons";
 import { owePlanSuggestion } from "./owe-plan-suggestion";
 import {
   type StoredPlanChangePayload,
@@ -203,6 +204,11 @@ export async function writePlan({
   });
 
   const { goal } = context;
+
+  if (goal.kind === "learn") {
+    await applyStartsToNewLessons({ context, items: plan.items, tx });
+  }
+
   const firstPlan = context.state.graph.skills.length === 0 && plan.state.graph.skills.length > 0;
 
   if (

@@ -56,6 +56,7 @@ export async function loadGoalExam(goalId: string, tx: TransactionClient) {
     examBlueprintId: blueprint?.id ?? null,
     focusAreas: settings.focusAreas,
     goalCreatedAt: goal?.createdAt ?? null,
+    goalKind: goal?.kind,
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],
     placement: goal ? readPlacementAttempt(goal) : null,

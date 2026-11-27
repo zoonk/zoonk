@@ -28,17 +28,12 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
     const { goal, skills } = await learnerGoalFixture({
       challengesDone: true,
       itemsPerSkill: 1,
-      phases: [1],
+      phases: [2],
       userId: user.id,
     });
 
-    const [skill] = skills;
-
-    if (!skill) {
-      throw new Error("Expected a topic to confirm");
-    }
-
-    const taps = await lowGuessTapItems(skill.id);
+    const banks = await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
+    const taps = banks.flat();
     const answers = new Map(taps.map(({ item, answer }) => [item.id, answer] as const));
     const goalPath = `/v1/goals/${goal.id}`;
     const path = `${goalPath}/placement`;
@@ -51,8 +46,7 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
     expect(opened.attempt).toMatchObject({
       answered: 0,
       part: 1,
-      parts: 1,
-      partsRemoved: 0,
+      partComplete: false,
       questions: 4,
     });
 
@@ -97,9 +91,13 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
 
     expect(completed).toMatchObject({
       changeId: expect.any(String),
-      finish: { answered: 4, end: "question_cap", lessonsSkipped: 1, partsLeft: 0, unknowns: 0 },
+      finish: { answered: expect.any(Number), lessonsSkipped: 1, unknowns: 0 },
       lessonsSkipped: 1,
-      result: { changeId: expect.any(String), nextLesson: null, partsRemoved: 0 },
+      result: {
+        changeId: expect.any(String),
+        course: { lessons: 2 },
+        nextLesson: { title: expect.any(String) },
+      },
     });
 
     const { changeId } = completed;

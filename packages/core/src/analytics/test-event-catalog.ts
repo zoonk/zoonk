@@ -22,6 +22,7 @@ export type TestEnd =
   | "audio_deferred"
   | "check_missed"
   | "check_passed"
+  | "found"
   | "material_exhausted"
   | "nothing_to_check"
   | "question_cap"
@@ -66,6 +67,7 @@ export type TestEvents = {
     from_part: number;
     reason: "next_part" | "whole_course" | "more_focus";
   };
+  "Course Placement Topic Restored": { goal_id: string; skill_id: string };
   "Test Result Undone": TestEventContext & { change_id: string; lessons_restored: number };
   "Test Lesson Started": TestEventContext & { lesson_id: string };
 };

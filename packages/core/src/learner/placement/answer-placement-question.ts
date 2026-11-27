@@ -1,11 +1,12 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getAskedItemFilter } from "../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
-import { loadPlacementPlan } from "../_utils/goal-skill-graph";
+import { createLearnerAttempt } from "../_utils/create-learner-attempt";
+import { type loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import {
@@ -14,9 +15,10 @@ import {
   publishLearnerAnswer,
 } from "../record-learner-answer";
 import { loadWritingSkillIds } from "../writing-skills";
+import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
-import { type PlacementAttempt, readPlacementAttempt } from "./_utils/placement-attempt-record";
+import { matchesAttempt, readPlacementAttempt } from "./_utils/placement-attempt-record";
 import {
   type PlacementItem,
   gradePlacementAnswer,
@@ -64,11 +66,8 @@ async function readCourseQuestionState({
   input: LearnerAnswer;
   tx: Parameters<typeof loadPlacementPlan>[1];
 }) {
-  const plan = await loadPlacementPlan(goalId, tx);
-
   const { state } = await loadPlacementWithSummary({
     goalId,
-    plan,
     timeZone: input.timeZone,
     tx,
     userId: input.userId,
@@ -89,10 +88,10 @@ function answerEventContext({
   sittingAnswers: number;
 }) {
   if (course?.attempt) {
-    const { id, part, parts, questions } = course.attempt;
+    const { id, part, questions } = course.attempt;
 
     return {
-      ...testEventContext(goal, { attemptId: id, part, parts, questions, test: "course" }),
+      ...testEventContext(goal, { attemptId: id, part, parts: 1, questions, test: "course" }),
       question_number: course.answered + 1,
     };
   }
@@ -109,27 +108,38 @@ function answerEventContext({
     : null;
 }
 
-function matchesAttempt({
-  attempt,
-  attemptId,
-  part,
-}: {
-  attempt: PlacementAttempt | null;
-  attemptId?: string;
-  part?: number;
-}): boolean {
-  if (!attemptId) {
-    // Released Android starts onboarding's quick course test without a sitting.
-    return attempt === null;
-  }
-
-  return attempt?.id === attemptId && !attempt.partComplete && (part ?? 1) === attempt.part;
+function countSittingAnswers(
+  sitting: FocusTestRecord["sitting"] | undefined,
+  userId: string,
+  tx: TransactionClient,
+) {
+  return sitting
+    ? tx.attempt.count({ where: { ...SITTING_ANSWER_FILTER, focusTestId: sitting.id, userId } })
+    : 0;
 }
 
-/**
- * A question placement asked outside a session is answered once: a repeated send, such as a retry
- * after a lost response, records and counts nothing again.
- */
+function readStoredAnswer({
+  attemptId,
+  itemId,
+  userId,
+  tx,
+}: {
+  attemptId?: string;
+  itemId: string;
+  userId: string;
+  tx: TransactionClient;
+}) {
+  return tx.attempt.findFirst({
+    select: { isCorrect: true },
+    where: {
+      ...SITTING_ANSWER_FILTER,
+      ...(attemptId ? { focusTestId: attemptId } : {}),
+      itemId,
+      userId,
+    },
+  });
+}
+
 async function recordPlacementAnswer({
   attemptId,
   goalId,
@@ -138,40 +148,38 @@ async function recordPlacementAnswer({
 }: {
   attemptId?: string;
   goalId: string;
-  input: LearnerAnswer;
+  input: LearnerAnswer & { itemId: string };
   part?: number;
 }) {
   const { itemId, userId } = input;
 
   const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
-    const { attempt } = readPlacementAttempt(goal);
+    const { attempt, result } = readPlacementAttempt(goal);
     const sitting = readFocusTestRecord(goal)?.sitting;
     const focusTestId = sitting?.id ?? null;
 
-    if (!matchesAttempt({ attempt, attemptId, part })) {
+    if (goal.kind === "learn" && !attemptId) {
       return unchanged(null);
     }
 
-    const answered = await tx.attempt.findFirst({
-      select: { isCorrect: true },
-      where: {
-        ...SITTING_ANSWER_FILTER,
-        ...(attemptId ? { focusTestId: attemptId } : {}),
-        itemId,
-        userId,
-      },
-    });
+    const finished = result !== null && result.attemptId === attemptId;
+
+    if (!finished && !matchesAttempt({ attempt, attemptId, part })) {
+      return unchanged(null);
+    }
+
+    const answered = await readStoredAnswer({ attemptId, itemId, tx, userId });
 
     if (answered) {
       return unchanged({ analytics: null, events: null, isCorrect: answered.isCorrect });
     }
 
-    const sittingAnswers = sitting
-      ? await tx.attempt.count({
-          where: { ...SITTING_ANSWER_FILTER, focusTestId: sitting.id, userId },
-        })
-      : 0;
+    if (finished) {
+      return unchanged(null);
+    }
+
+    const sittingAnswers = await countSittingAnswers(sitting, userId, tx);
 
     if (sitting && sittingAnswers >= sitting.questions) {
       return unchanged(null);
@@ -184,6 +192,20 @@ async function recordPlacementAnswer({
     }
 
     const analytics = answerEventContext({ course, goal, sitting, sittingAnswers });
+
+    if (attempt?.search) {
+      await createLearnerAttempt({
+        answeredAt: new Date(),
+        input: {
+          ...input,
+          answer: { ...input.answer, courseSearch: true },
+          focusTestId: attempt.id,
+        },
+        transaction: tx,
+      });
+
+      return { analytics, events: [], isCorrect: input.graded.isCorrect };
+    }
 
     const { events } = await persistLearnerAnswer({
       input: {
@@ -220,14 +242,15 @@ export async function answerPlacementQuestion({
     return owned;
   }
 
-  const [plan, item, written] = await Promise.all([
-    owned.goal.kind === "exam" ? null : loadPlacementPlan(goalId),
+  const previous = readPlacementAttempt(owned.goal).attempt;
+
+  const [item, written] = await Promise.all([
     findGoalItem({
       examBlueprintId: owned.goal.examBlueprintId,
       itemId: input.itemId,
       userId: owned.userId,
     }),
-    loadWritingSkillIds(goalId),
+    previous?.search ? new Set<string>() : loadWritingSkillIds(goalId),
   ]);
 
   if (!item || written.has(item.skillId)) {
@@ -237,6 +260,23 @@ export async function answerPlacementQuestion({
   const graded = gradePlacementAnswer({ answer: input.answer, item });
   const { snapshot } = graded;
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
+
+  if (previous && !previous.search && previous.id === input.attemptId) {
+    await finishPlacementAttempt({
+      attemptId: previous.id,
+      goal: owned.goal,
+      part: previous.part,
+      timeZone,
+    });
+
+    const { state: placement } = await loadPlacementWithSummary({
+      goalId,
+      timeZone,
+      userId: owned.userId,
+    });
+
+    return { isCorrect: graded.isCorrect, placement, status: "ready" };
+  }
 
   const saved = await recordPlacementAnswer({
     attemptId: input.attemptId,
@@ -270,9 +310,8 @@ export async function answerPlacementQuestion({
     userId: owned.userId,
   };
 
-  const { state: placement } = plan
-    ? await loadPlacementWithSummary({ ...read, plan })
-    : await saveTestSummary(read);
+  const { state: placement } =
+    owned.goal.kind === "exam" ? await saveTestSummary(read) : await loadPlacementWithSummary(read);
 
   if (recorded) {
     const test = owned.goal.kind === "exam" ? "focus" : "course";

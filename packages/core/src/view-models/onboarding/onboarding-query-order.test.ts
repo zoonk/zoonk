@@ -1,16 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
-import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { observeDatabaseQueries } from "@zoonk/testing/statement-counter";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { getMockOptions } from "../../exams/mocks/get-mock-options";
+import { coursePlacementSitting } from "../../learner/_test-utils/course-placement-sitting";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
-import { placementItemBank } from "../../learner/_test-utils/placement-tap-items";
-import { answerPlacementQuestion } from "../../learner/placement/answer-placement-question";
 import { finishGoalPlacement } from "../../learner/placement/finish-goal-placement";
 import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { saveProposalPreviews } from "../../plans/_utils/write-plan";
@@ -60,22 +57,18 @@ describe("onboarding transaction queries", () => {
   it("records a placement answer without overlapping queries on one connection", async () => {
     const user = await userFixture();
     const { goal, skills } = await learnerGoalFixture({ phases: [2], userId: user.id });
-    const item = await itemFixture({ content: choiceItemContent(), skillId: skills[0]!.id });
     mockSession(user.id);
 
-    const answer = await pickInPlacement({ itemId: item.id });
-
-    const { overlaps, result } = await observeDatabaseQueries(() =>
-      answerPlacementQuestion({
-        goalId: goal.id,
-        input: { answer, durationMs: 3000, itemId: item.id },
-      }),
+    const start = await coursePlacementSitting(
+      goal.id,
+      skills.map(({ id }) => id),
     );
 
+    const { overlaps, result } = await observeDatabaseQueries(() => start.answerNext(start.first));
     expect(result).toMatchObject({ isCorrect: true, status: "ready" });
 
     await expect(
-      prisma.attempt.count({ where: { itemId: item.id, userId: user.id } }),
+      prisma.attempt.count({ where: { itemId: start.first, userId: user.id } }),
     ).resolves.toBe(1);
 
     expect(overlaps).toStrictEqual([]);
@@ -93,16 +86,12 @@ describe("onboarding transaction queries", () => {
     mockSession(user.id);
     const skill = skills[0]!;
 
-    const [bank] = await placementItemBank([skill.id]);
-
-    await Promise.all(
-      bank!.map(({ answer, item }) =>
-        answerPlacementQuestion({
-          goalId: goal.id,
-          input: { answer, durationMs: 3000, itemId: item.id },
-        }),
-      ),
+    const start = await coursePlacementSitting(
+      goal.id,
+      skills.map(({ id }) => id),
     );
+
+    await start.answerAll();
 
     const { overlaps, result } = await observeDatabaseQueries(async () => {
       const saved = await answerOnboardingQuestion({
@@ -110,13 +99,9 @@ describe("onboarding transaction queries", () => {
         input: { dailyMinutes: 20, question: "schedule", timeZone: "UTC" },
       });
 
-      await prisma.planItem.deleteMany({
-        where: { lesson: { skills: { some: { skillId: skill.id } } }, plan: { goalId: goal.id } },
-      });
-
       const placement = await finishGoalPlacement({
         goalId: goal.id,
-        input: { fromScratch: false },
+        input: { attemptId: start.attemptId },
       });
 
       return { placement, saved };

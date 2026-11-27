@@ -109,27 +109,27 @@ describe("a finished Focus test after later study", () => {
       },
     });
 
-    await taps.reduce<Promise<typeof first>>(
-      (previous) =>
-        previous.then((result) => {
-          if (result.status !== "ready" || !result.placement.next) {
-            throw new Error("Expected a confirmation question");
-          }
+    let placement = first.status === "ready" ? first.placement : null;
 
-          const itemId = result.placement.next.itemId;
-          const answer = tapAnswers.get(itemId);
+    for (let turn = 0; turn < 10 && placement && !placement.complete; turn += 1) {
+      // oxlint-disable-next-line no-await-in-loop -- Confirmation can start in a further sitting.
+      const asking = placement.next ? placement : await startSitting(goal.id);
 
-          if (!answer) {
-            throw new Error("Expected a low-guess tap");
-          }
+      if (!asking.next) {
+        break;
+      }
 
-          return answerPlacementQuestion({
-            goalId: goal.id,
-            input: { answer, durationMs: 10_000, itemId },
-          });
-        }),
-      Promise.resolve(first),
-    );
+      const { itemId } = asking.next;
+      // oxlint-disable-next-line no-await-in-loop -- Answer the server-selected question.
+      const answer = tapAnswers.get(itemId) ?? (await pickInPlacement({ itemId }));
+      // oxlint-disable-next-line no-await-in-loop -- The sitting advances once per answer.
+      const next = await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer, durationMs: 10_000, itemId },
+      });
+
+      placement = next.status === "ready" ? next.placement : null;
+    }
 
     await finishGoalPlacement({ goalId: goal.id, input: {} });
     const at = new Date(Date.now() + 60_000);

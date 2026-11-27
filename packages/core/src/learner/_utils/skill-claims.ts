@@ -16,7 +16,7 @@ type SkillEvidence = OwnAnswer | { undoneOn: Date };
 
 export type ClaimEvent = { at: Date; skillId: string } & (
   | { attemptId: string; claim: SkillClaim; kind: "writing" }
-  | { kind: "claim" | "passedOver" | "studied" | "undone"; localDate?: Date }
+  | { kind: "claim" | "passedOver" | "studied" | "undone"; provisional?: boolean; localDate?: Date }
   | ({ kind: "practice" | "test"; isCorrect: boolean; recheck?: boolean } & Partial<
       Omit<OwnAnswer, "isCorrect">
     >)
@@ -83,7 +83,7 @@ function readSkillConfirmation(answers: readonly SkillEvidence[], today?: Date) 
 type ClaimState = {
   answers: SkillEvidence[];
   claim: SkillClaim | undefined;
-  claimSource: "choice" | "test" | "writing" | null;
+  claimSource: "choice" | "courseStart" | "test" | "writing" | null;
   pendingRecheck: Date | null;
   studied: boolean;
 };
@@ -112,7 +112,12 @@ function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent 
     return nextAnswerClaimState({ current, event });
   }
 
-  const claimSource = event.kind === "claim" ? "test" : (current.claimSource ?? "choice");
+  const claimSource =
+    event.kind === "claim"
+      ? "test"
+      : (current.claimSource ??
+        ("provisional" in event && event.provisional ? "courseStart" : "choice"));
+
   const claimed = { ...current, claimSource };
 
   return studied || claim === "confirmed" ? claimed : { ...claimed, claim: "toConfirm" };
@@ -285,6 +290,9 @@ function isKnownClaim({ passedOver, state }: { passedOver: boolean; state: Claim
   const { claim } = state;
 
   return (
+    (state.claimSource !== "courseStart" ||
+      state.studied ||
+      isSkillConfirmed({ answers: state.answers })) &&
     claim !== undefined &&
     claim !== "gap" &&
     !(claim === "toConfirm" && passedOver) &&

@@ -188,7 +188,10 @@ export async function undoChange({
       });
     }
 
-    await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
+    if (!payload.startedPastSkillIds) {
+      await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
+    }
+
     const undone = await toUndone({ change, tx });
 
     await tx.planChange.update({

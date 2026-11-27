@@ -11,12 +11,11 @@ import {
   readLevelTestAttempts,
   readLevelTestDetails,
 } from "../../language/level-test/read-level-test-summary";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import {
-  getAttemptParts,
-  getCourseOffer,
-  readPlacementAttempt,
-} from "../../learner/placement/_utils/placement-attempt-record";
-import { readPlacementNextLesson } from "../../learner/placement/_utils/placement-result";
+  readPlacementCourse,
+  readPlacementNextLesson,
+} from "../../learner/placement/_utils/placement-result";
 import { levelTestOutReceipt, levelTestReceipt, placementPartReceipt } from "./test-out-receipt";
 
 function clearResult(result: LevelTestResult | undefined, receipt: string) {
@@ -87,12 +86,20 @@ async function restorePlacement({
         )
       : undefined;
 
+  const nextLesson =
+    result?.attemptId === receiptId ? await readPlacementNextLesson(goalId, tx) : null;
+
   const updatedResult =
     result && result.attemptId === receiptId
       ? {
           ...result,
           lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped),
-          nextLesson: await readPlacementNextLesson(goalId, tx),
+          ...(result.startedPastSkillIds && {
+            chapter: nextLesson?.chapter ?? result.chapter,
+            course: await readPlacementCourse(goalId, new Set(), tx),
+            startedPastSkillIds: [],
+          }),
+          nextLesson,
         }
       : result;
 
@@ -143,14 +150,14 @@ function testContextFromReceipt({
   }
 
   const { attempt } = readPlacementAttempt({ details });
-  const parts = attempt && attempt.id === kindOrId ? getAttemptParts(attempt) : null;
+  const courseAttempt = attempt?.id === kindOrId ? attempt : null;
   const part = Number(value) || 1;
 
   return testEventContext(goal, {
     attemptId: kindOrId,
     part,
-    parts: parts?.length ?? null,
-    questions: getCourseOffer(parts?.[part - 1]?.length ?? 0)?.questions ?? null,
+    parts: courseAttempt ? 1 : null,
+    questions: courseAttempt?.search?.questions ?? null,
     test: "course",
   });
 }

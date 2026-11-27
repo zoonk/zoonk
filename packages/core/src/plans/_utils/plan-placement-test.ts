@@ -3,11 +3,11 @@ import { withLevelTestChange } from "../../language/level-test/_utils/level-test
 import { LANGUAGE_LEVEL_TEST_OFFER } from "../../language/level-test/level-test-contract";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import { type GoalPlan, loadCoursePlacementPlan } from "../../learner/_utils/goal-skill-graph";
+import { readCourseProbes } from "../../learner/placement/_utils/course-placement-bank";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
   type PlacementRecord,
   getCourseOffer,
-  getTopicsAhead,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { readPlacementResult } from "../../learner/placement/_utils/placement-result";
@@ -62,7 +62,8 @@ async function readCourseRow({
     : null;
 
   const attemptView = attemptPlacement?.attempt ?? null;
-  const offer = attemptView ? null : getCourseOffer(getTopicsAhead(plan).length);
+  const probes = attemptView ? null : await readCourseProbes(goal, undefined, plan);
+  const offer = probes?.possible ? getCourseOffer(probes.ahead.length) : null;
 
   const result = attemptPlacement
     ? (attemptPlacement.result ?? null)
@@ -72,18 +73,11 @@ async function readCourseRow({
 
   return {
     attempt: attemptView,
-    estimatedMinutes:
-      attemptView?.remainingEstimatedMinutes ??
-      offer?.wholeCourse?.estimatedMinutes ??
-      offer?.estimatedMinutes ??
-      0,
+    estimatedMinutes: attemptView?.estimatedMinutes ?? offer?.estimatedMinutes ?? 0,
     kind: "learn",
     offer,
     result,
-    state:
-      attemptView && (!attemptView.partComplete || attemptView.partsLeft > 0)
-        ? "continue"
-        : idleState,
+    state: attemptView ? "continue" : idleState,
   };
 }
 

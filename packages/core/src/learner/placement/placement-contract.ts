@@ -24,72 +24,47 @@ export const placementAttemptViewSchema = z
   .object({
     answered: z.int().nonnegative(),
     chapter: z.string().nullable(),
-    estimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({ description: "Estimated minutes for the current part" }),
+    estimatedMinutes: z.int().positive(),
     id: uuidSchema(),
-    length: placementLengthSchema,
-    nextPart: z
-      .int()
-      .positive()
-      .nullable()
-      .meta({ description: "Number of the next part with topics remaining" }),
-    part: z.number().int().positive(),
-    partComplete: z.boolean(),
-    parts: z
-      .int()
-      .positive()
-      .meta({ description: "Total when the current part opened, updated when it closes" }),
-    partsLeft: z
-      .int()
-      .nonnegative()
-      .meta({
-        description: "Parts with questions remaining, including the current part if unfinished",
-      }),
-    partsRemoved: z
-      .int()
-      .nonnegative()
-      .meta({ description: "Parts removed during the current part, zero until it closes" }),
+    length: z.literal("quick"),
+    part: z.literal(1),
+    partComplete: z.literal(false),
     questions: z
       .int()
       .positive()
-      .meta({ description: "Fixed question ceiling for the current part" }),
-    remainingEstimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({
-        description:
-          "Estimated minutes for the unanswered questions in this attempt's remaining parts",
-      }),
-    resume: z.object({ part: z.int().positive(), question: z.int().positive() }).nullable(),
-    totalEstimatedMinutes: z
-      .int()
-      .nonnegative()
-      .meta({
-        description: "Estimated minutes for the current, completed and retained future parts",
-      }),
+      .meta({ description: "Question ceiling fixed when the test starts" }),
   })
   .meta({ id: "PlacementAttempt" });
 
 export const placementFinishSchema = z.object({
   answered: z.int().nonnegative(),
-  end: z.enum(["stopped", "question_cap", "material_exhausted", "unknown_streak"]),
+  end: z.enum(["stopped", "question_cap", "material_exhausted", "unknown_streak", "found"]),
   lessonsSkipped: z.int().nonnegative(),
-  partsLeft: z.int().nonnegative(),
   unknowns: z.int().nonnegative(),
 });
 
 export const coursePlacementOfferSchema = z.object({
   estimatedMinutes: z.int().positive(),
   questions: z.int().positive(),
-  wholeCourse: z.object({ estimatedMinutes: z.int().positive(), parts: z.int().min(2) }).nullable(),
 });
 
 export const placementResultSchema = z
   .object({
     attemptId: uuidSchema(),
     changeId: uuidSchema().nullable().optional(),
+    chapter: z.string().nullable(),
+    course: z
+      .object({
+        chapters: z.array(
+          z.object({
+            lessons: z.int().nonnegative(),
+            skipped: z.int().nonnegative(),
+            start: z.boolean(),
+          }),
+        ),
+        lessons: z.int().nonnegative(),
+      })
+      .nullable(),
     finish: placementFinishSchema.optional(),
     finishedAt: z.iso.datetime(),
     heldUntilTomorrow: z
@@ -100,14 +75,14 @@ export const placementResultSchema = z
           "Fresh answers met the skip rule on a topic whose skip was undone on the same local day",
       }),
     lessonsSkipped: z.number().int().nonnegative(),
-    nextLesson: z.object({ id: uuidSchema(), title: z.string() }).nullable().optional(),
-    part: z.int().positive().optional(),
-    partLessonsSkipped: z.int().nonnegative().optional(),
-    partsRemoved: z
-      .int()
-      .nonnegative()
-      .optional()
-      .meta({ description: "Parts removed during the part recorded by this result" }),
+    nextLesson: z
+      .object({
+        chapter: z.string().nullable(),
+        estimatedMinutes: z.int().positive(),
+        id: uuidSchema(),
+        title: z.string(),
+      })
+      .nullable(),
   })
   .meta({ id: "PlacementResult" });
 
@@ -131,7 +106,7 @@ export const placementStatusSchema = z
   .enum(["preparing", "asking", "waitingForQuestions", "done", "unavailable", "failed"])
   .meta({
     description:
-      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the part or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the plan build stopped before it had skills, or preparation stopped before an open course part had questions. Starting the sitting again retries its part.",
+      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the test or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the plan build stopped before it had skills, or preparation stopped before a course test had enough questions. Starting the sitting again retries preparation.",
     id: "PlacementStatus",
   });
 

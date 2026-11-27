@@ -30,6 +30,7 @@ import { analytics } from "../../_test-utils/test-boundaries";
 import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { examTestGoalFixture } from "../../learner/_test-utils/exam-test-goal";
+import { lowGuessTapItems } from "../../learner/_test-utils/placement-tap-items";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
@@ -387,12 +388,12 @@ describe("onboarding a new goal", () => {
       userId: user.id,
     });
 
-    const skill = await skillFixture();
+    const skills = await Promise.all([skillFixture(), skillFixture()]);
 
     await planFixture({
       goalId: goal.id,
-      graph: { skills: plannedSkills([skill]) },
-      items: [{ skillId: skill.id }],
+      graph: { skills: plannedSkills(skills) },
+      items: skills.map((skill) => ({ skillId: skill.id })),
     });
 
     await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
@@ -418,13 +419,13 @@ describe("onboarding a new goal", () => {
       input: { level: "basic", question: "level" },
     });
 
-    await itemFixture({ content: choiceItemContent(), skillId: skill.id });
+    await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
 
     await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
       onboarding: {
         placement: {
           mode: "offer",
-          test: { kind: "course", offer: { estimatedMinutes: 2, questions: 4, wholeCourse: null } },
+          test: { kind: "course", offer: { estimatedMinutes: 2, questions: 4 } },
         },
       },
     });
@@ -900,7 +901,7 @@ describe("onboarding a new goal", () => {
     });
 
     await expect(getOnboarding({ goalId: learn.id })).resolves.toMatchObject({
-      onboarding: { quickTestMinutes: 6 },
+      onboarding: { quickTestMinutes: 4 },
     });
   });
 

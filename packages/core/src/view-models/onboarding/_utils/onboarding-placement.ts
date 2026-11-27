@@ -94,9 +94,7 @@ async function readCourse({
     return { placement: { mode, test: { kind: "course", offer } } };
   }
 
-  return offer
-    ? { cold: { parts: offer.wholeCourse?.parts ?? 1, questions: offer.questions, test: "course" } }
-    : null;
+  return offer ? { cold: { parts: 1, questions: offer.questions, test: "course" } } : null;
 }
 
 const SUBJECT_QUESTIONS = new Set<OnboardingStep>(

@@ -27,7 +27,12 @@ export async function loadUndoneTestOuts(
   });
 
   const undone = changes.flatMap((change) => {
-    const { planItemIds, undoneAt } = parsePlanChangePayload(change.payload);
+    const { planItemIds, startedPastSkillIds, undoneAt } = parsePlanChangePayload(change.payload);
+
+    if (startedPastSkillIds) {
+      return [];
+    }
+
     const at = undoneAt ? new Date(undoneAt) : change.createdAt;
     const localDate = undoneAt ? getDateInTimeZone({ date: at, timeZone }) : undefined;
     return planItemIds.map((itemId) => ({ at, itemId, localDate }));
