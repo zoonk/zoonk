@@ -769,14 +769,25 @@ struct PlanChoiceLine: View {
   }
 }
 
-/// Phones list the study places nowhere else, so the Plan's "More" leads to the lessons already
-/// done and to the chapters' mind maps, drawn as its other places are.
+/// Phones list the study places nowhere else, so the Plan's "More" leads to the lessons saved and
+/// already done and to the chapters' mind maps, drawn as its other places are.
 struct PlanStudyPlaceRows: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   var body: some View {
     if tabBarPlacement?.listsStudyPlaces != true, let places = learner.summary.value?.places {
+      if places.savedLessons {
+        PageLink(route: .savedLessons) {
+          Label {
+            Text(
+              "Saved lessons", tableName: "Plan")
+          } icon: {
+            Image(systemName: AppTab.savedLessons.systemImage)
+          }
+        }
+      }
+
       if places.completedLessons {
         PageLink(route: .completedLessons) {
           Label {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "savedlessons_empty": "d414e518e55d812352de74548bc3dc1190668ffcbf8996eaff8132707464b711",
+  "savedlessons_no_longer_available": "f9733fe79e94340707f41deb54dfb5c91f899ea3b5f4edb3a0304f666eb5ec93",
+  "savedlessons_remove": "e69a0807ae45a15954f62bb7b8184c6d39c59fa8b1d7118fc259aab9e1d6568e",
+  "savedlessons_remove_failed": "9eb49b36f69f097d59a72d3f6dc8ae4b5defbfe5a08eac43c8b8f58d919e2b3f",
+  "savedlessons_remove_spoken": "ae8b843b833fe16713119620ae509fcabb435a806bd758838c8e8a3c38b626c5",
+  "savedlessons_save": "f8b34112ac440b37c75af1ffe1197de64979c35c2c7e8b737ed645fd26474bb7",
+  "savedlessons_save_failed": "aff31dfbf4148a3feff6327dc4aba86527b5a1df1e02405d68ea18205ade6b73",
+  "savedlessons_save_named": "764294ed28b1ab17eaeb380c924108454219a16a0ca1a49fc1fd853e132d2fa7",
+  "savedlessons_saved": "bed4cfd678ae9cc3d9b0789afafe630d95f46a6808ca9f9ca85c748b36547519",
+  "savedlessons_saved_named": "9c5485343d5257307822bd9fb856cb450eaf5858406a997661323f9d41eb30ab",
+  "savedlessons_show_more": "859c4c009d57319e80f3769e149fc958458bd8b0d1b759c6be40de9953102f44",
+  "savedlessons_unsave": "f119095bb73861c9b84a7f01e386eb4163aff3a66ce8a3f9eb759e06c3c25dbc"
+}
+-->
+<resources>
+    <string name="savedlessons_save">保存する</string>
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
+    <string name="savedlessons_saved">保存済み</string>
+    <string name="savedlessons_save_named">%1$sを保存</string>
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
+    <string name="savedlessons_saved_named">「%1$s」は保存済み</string>
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
+    <string name="savedlessons_unsave">保存済みから削除</string>
+    <string name="savedlessons_empty">まだ保存したレッスンはありません。レッスンのブックマークをタップすると、ここに保存できます。</string>
+    <string name="savedlessons_no_longer_available">利用できなくなりました</string>
+    <string name="savedlessons_remove">保存を解除する</string>
+    <!-- What screen readers say for Remove, naming the lesson. -->
+    <string name="savedlessons_remove_spoken">保存済みレッスンから%1$sを削除</string>
+    <string name="savedlessons_show_more">もっと見る</string>
+    <string name="savedlessons_save_failed">このレッスンを保存できませんでした。もう一度お試しください。</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
+    <string name="savedlessons_remove_failed">このレッスンを保存リストから削除できませんでした。もう一度お試しください。</string>
+</resources>

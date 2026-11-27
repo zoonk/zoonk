@@ -39,6 +39,7 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
       exam: false,
       mindMaps: false,
       readyMistakes: 0,
+      savedLessons: false,
       speaking: false,
     },
     readAt: now,

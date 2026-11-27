@@ -646,6 +646,7 @@
             .controlSize(.small)
         }
       }
+      .mindMapSaveVisit()
     }
 
     private static let refusals = [

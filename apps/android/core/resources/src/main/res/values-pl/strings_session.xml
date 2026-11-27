@@ -4,12 +4,12 @@
   "session_belt_step": "6f974d77a700ff8fff609cb639490b10d0281302f4e25ee3f4e27d8da21b53fc",
   "session_block_call": "6e152a6d3824a5bd56b5de2d45678984d6dc4e0fa11bf60a97c83889a3d402fe",
   "session_block_full_review_questions": "28d303f6ca828a20f92bc601e2016378ecb2c86dbab25f3d1cf28658526f426f",
-  "session_block_mixed_practice": "d8cfd022cc5e7c24b61bb8f20823991ee8718858a4817d713b073ae335c18534",
   "session_block_mock_exam": "8c21b51a8acb5b2b8553f19f3c9bee8148386aa568dca04d5edbaacb2f56fd92",
   "session_block_new_lesson": "e98fad686e778b680ed1dfe3bcab73579da2c9abee64255e4e1fc34de51af722",
-  "session_block_practice_areas": "d6b70943a1c01266ec0dd0b4d35897f981fc7aa4e9b4490686e0958f49cf8855",
+  "session_block_practice": "8c8228cdb65b89735f9ecf0e2bc4730b0098bf7deb9de2f3b2f1028bc6eb27bf",
   "session_block_practice_mistakes": "7aca9f3d121e4dbeaaa68fc8e1debda20af112cbf90e2701468360a60a6cee2e",
-  "session_block_practice_topic": "b114ba1097761a439079f741dd4d697e161bf66ae3a15d606a08fef3877a412c",
+  "session_block_practice_number": "7e01ef1e211e5cf1b654ddcd6bcfe62a225fdca09cffebb1506a853f7d3d5b29",
+  "session_block_practice_subject": "c4abba20eb11311922d6a39c0a89af65958b476aeacae22f465df7abc17477b8",
   "session_block_questions": "71ec008d07ddde547a36bc13ee31d3e21473f15e35f6e33b8b8e08b1a242cc2e",
   "session_block_rematch": "ae747a994ed66d69f11b4f6c41feb68c886e7d8a50615e5d39a889d9ad14f078",
   "session_block_rematch_lesson": "d9be79a0964e85d5245ae0c066ad68716e03ada77aefd81f94fc7f59af5c6d22",
@@ -83,7 +83,8 @@
   "session_summary_streak": "011c1c7f966134719a1fdeaabb73ae52dcc0328a3a77d1489936ef52b51d5d8e",
   "session_summary_tomorrow": "b752699625aa2c12b3eec620e42fe786e4661fdb21a6c96d4a29a1ca6aaa9111",
   "session_summary_up_from": "d4d255ac0275235ae5687fc753ee302b51d2da8a1d01de3c55c25d661b8fb58c",
-  "session_topics_and_more": "153dbdd7f95010889661766877e3f9bc9739d52c8e5a9d61cc3a0ba35fcd4036"
+  "session_topics_and_more": "153dbdd7f95010889661766877e3f9bc9739d52c8e5a9d61cc3a0ba35fcd4036",
+  "today_step_practice_topics": "570a56f8b0fea7efa797fde0544aa5d2324ef22444d2944088f995936193ec61"
 }
 -->
 <resources>
@@ -99,11 +100,12 @@
     <string name="session_block_new_lesson">Nowa lekcja</string>
     <string name="session_block_writing_draft_saved">Szkic został zapisany</string>
     <string name="session_block_practice_mistakes">Popraw błędy</string>
-    <string name="session_block_mixed_practice">Ćwiczenia z różnych tematów</string>
-    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_practice_areas">Ćwiczenia: %1$s</string>
-    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_practice_topic">Ćwiczenia: %1$s</string>
+    <!-- A block of the day's practice questions, when it's the day's only one -->
+    <string name="session_block_practice">Ćwiczenia</string>
+    <!-- One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2". -->
+    <string name="session_block_practice_number">Ćwiczenie %1$d</string>
+    <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
+    <string name="session_block_practice_subject">Ćwiczenie: %1$s</string>
     <string name="session_block_rematch_lesson">Krótka lekcja przed rewanżem</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pytanie</item>
@@ -132,6 +134,13 @@
         <item quantity="other">%d pytania ze wszystkich tematów</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
+    <!-- Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts". -->
+    <plurals name="today_step_practice_topics">
+        <item quantity="one">%1$d temat · %2$s</item>
+        <item quantity="few">%1$d tematy · %2$s</item>
+        <item quantity="many">%1$d tematów · %2$s</item>
+        <item quantity="other">%1$d tematu · %2$s</item>
+    </plurals>
     <plurals name="session_topics_and_more">
         <item quantity="one">%1$s i jeszcze %2$d temat</item>
         <item quantity="few">%1$s i jeszcze %2$d tematy</item>

@@ -50,7 +50,7 @@ export type WebPiece = {
 type Piece = { name: string; relations: Relation[]; web?: WebPiece };
 
 const LIST_PARTS = {
-  end: "svg.lucide-chevron-right, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
+  end: "svg.lucide-chevron-right, svg.lucide-bookmark, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
   label: "[data-slot=list-row-title]",
   lead: "[data-slot=list-row-lead]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
@@ -142,7 +142,7 @@ const PIECES: Piece[] = [
     web: {
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {
-        end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
+        end: "svg.lucide-chevron-right, svg.lucide-bookmark, [data-slot=fold-chevron]",
         label: "[data-slot=path-row-words] > :first-child",
         mark: "[data-slot=path-row-mark], [data-slot=status-mark]",
         note: "[data-slot=path-row-words] > :not(:first-child)",

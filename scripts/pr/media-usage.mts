@@ -34,9 +34,9 @@ Checks the pictures a PR body shows and the after captures collected for the PR.
   read     records a read on every after picture under <dir> that has none: clean, or the
            findings in the file, a JSON array of { "file", "text", "rule", "before", "misleads" }
            with files as READ.md lists them, sorted by the reader after its blind pass.
-  resolve  closes a finding: fixed in a commit; filed in an issue, when it was already on the
-           before picture or no rule names it, and it doesn't mislead a learner; not a fault, with
-           the rule, choice or capture fault that explains it; or an exception the user granted.
+  resolve  closes a finding: fixed in a commit; filed in an issue, when the before picture shows
+           it too, or no rule names it and it doesn't mislead a learner; not a fault, with the
+           rule, choice or capture fault that explains it; or an exception the user granted.
   closed   prints the PR body's list of the findings under <dir> closed without a fix.
   pending  records native after pictures with neither a capture nor a device record; they keep
            failing the check as pending.

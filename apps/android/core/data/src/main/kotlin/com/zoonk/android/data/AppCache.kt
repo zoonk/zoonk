@@ -11,7 +11,7 @@ import kotlin.time.TimeSource
 /** Call it on the main thread; [scope] is the app scope on `Dispatchers.Main.immediate`. */
 class AppCache(
     val session: SessionSource,
-    private val scope: CoroutineScope,
+    internal val scope: CoroutineScope,
     private val timeSource: TimeSource = TimeSource.Monotonic,
 ) {
     private val resources = mutableListOf<WeakReference<Resource<*>>>()
@@ -142,6 +142,14 @@ class KeyedResources<K, T : Any> internal constructor(
     /** Marks stale every kept read whose key [matches], as [Resource.invalidate] does, for a change to each of them. */
     fun invalidate(matches: (K) -> Boolean) {
         entries.filterKeys(matches).values.forEach { it.invalidate() }
+    }
+
+    /** Changes every kept read whose key [matches] in place, as [Resource.update] does. */
+    fun update(
+        matches: (K) -> Boolean,
+        transform: (T) -> T,
+    ) {
+        entries.filterKeys(matches).values.forEach { it.update(transform) }
     }
 
     internal fun releaseInactive() {

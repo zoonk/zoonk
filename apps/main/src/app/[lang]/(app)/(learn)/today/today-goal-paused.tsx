@@ -82,6 +82,7 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
           className="min-[72rem]:flex"
           completedLessonsHref={getMenu("completedLessons").url}
           mistakesHref={getMenu("mistakes").url}
+          savedLessonsHref={getMenu("savedLessons").url}
         />
       )}
 

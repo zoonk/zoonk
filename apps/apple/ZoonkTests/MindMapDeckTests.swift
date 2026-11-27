@@ -33,6 +33,28 @@ final class MindMapDeckTests: XCTestCase {
       [.chapter(chapterId: "c1"), .lesson(chapterId: "c1", lessonId: "l1")])
   }
 
+  func testASaveRemovedOnTheSavedTabOpensAtItselfInItsKindsDeck() {
+    let chapterSave = SavedMindMap(
+      available: true, chapterId: "c2", kind: .chapter, targetId: "c2", title: "2")
+    let lessonSave = SavedMindMap(
+      available: true, chapterId: "c2", kind: .lesson, targetId: "l3", title: "3")
+    // Read again once removed: the Saved deck no longer holds either.
+    let maps = Self.maps(
+      chapters: [Self.chapter("c1", .ready), Self.chapter("c2", .ready)],
+      groups: [LessonMapGroup(chapterId: "c2", count: 2, lessonIds: ["l2", "l3"])])
+
+    for save in [chapterSave, lessonSave] {
+      let tab = MindMapDeck.tab(opening: save, isSaved: false)
+      let cards = MindMapDeck.cards(tab: tab, maps: maps)
+
+      XCTAssertEqual(
+        MindMapDeck.start(in: cards, at: MindMapPosition(chapterId: "c2", key: save.key))?.mapKey,
+        save.key)
+    }
+
+    XCTAssertEqual(MindMapDeck.tab(opening: lessonSave, isSaved: true), .saved)
+  }
+
   func testADeckOpensAtTheMapThenItsChapterThenTheFirst() {
     let cards: [MindMapCard] = [
       .chapter(chapterId: "c1"), .lesson(chapterId: "c2", lessonId: "l1"),

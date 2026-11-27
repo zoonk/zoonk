@@ -5,7 +5,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -21,7 +21,9 @@ async function createLearnerWithHistory() {
     createE2EUser(getBaseURL()),
     Promise.all(
       Array.from({ length: LESSONS }, (_, index) =>
-        libraryLessonFixture({ title: `Lesson ${index + 1}` }),
+        playableLessonFixture({ lesson: { title: `Lesson ${index + 1}` }, steps: ["check"] }).then(
+          ({ lesson }) => lesson,
+        ),
       ),
     ),
   ]);

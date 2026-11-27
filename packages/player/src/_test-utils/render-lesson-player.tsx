@@ -92,6 +92,7 @@ export function startedRun({
   optionalStepIds,
   replay = false,
   runId = crypto.randomUUID(),
+  saved = false,
   startedAt = new Date().toISOString(),
 }: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
   return {
@@ -103,6 +104,7 @@ export function startedRun({
     reason: "started" as const,
     replay,
     runId,
+    saved,
     startedAt,
   };
 }
