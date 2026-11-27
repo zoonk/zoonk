@@ -2248,7 +2248,6 @@ msgid "Getting your mock exam ready"
 msgstr "Preparando seu simulado"
 
 #: src/challenge/challenge-intro-parts.tsx
-#: src/placement-test/use-test-facts.ts
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
@@ -6364,10 +6363,11 @@ msgctxt "qd8BIn"
 msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
 msgstr "{lessons, plural, one {# aula que você já conhece foi pulada.} other {# aulas que você já conhece foram puladas.}}"
 
+#. On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.
 #: src/language/level-test/level-test-results.tsx
-msgctxt "C__1Cb"
-msgid "You can test your listening later, from your plan."
-msgstr "Você pode fazer o teste de escuta mais tarde, pela sua trilha."
+msgctxt "8txltA"
+msgid "You can take the test again later, from your plan."
+msgstr "Você pode fazer a prova de novo mais tarde, pelo seu plano."
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10246,6 +10246,12 @@ msgstr "{count, plural, one {# parte restante} other {# partes restantes}}"
 msgctxt "HUvYmi"
 msgid "Question {number, number} of {total, number}"
 msgstr "Pergunta {number, number} de {total, number}"
+
+#. The most questions a test asks. It can end sooner.
+#: src/placement-test/use-test-facts.ts
+msgctxt "HYkp5w"
+msgid "Up to {count, plural, one {# question} other {# questions}}"
+msgstr "Até {count, plural, =0 {# questões} one {# questão} other {# questões}}"
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
