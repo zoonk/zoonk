@@ -87,6 +87,7 @@ import { planRoutineFitTask } from "./plan-routine-fit/task";
 import { questionGeneralityTask } from "./question-generality/task";
 import { quickExplanationTask } from "./quick-explanation/task";
 import { readProductPagesTask } from "./read-product-pages/task";
+import { readWrittenGradingTask } from "./read-written-grading/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
@@ -152,6 +153,7 @@ export const TASK_GROUPS: readonly { name: string; tasks: readonly RegisteredTas
       extractExamBlueprintTask,
       extractQuestionFormatsTask,
       findWrittenTaskSubjectsTask,
+      readWrittenGradingTask,
       checkCitedFactsTask,
       checkExamReadingTask,
       examIdentityDecisionTask,
