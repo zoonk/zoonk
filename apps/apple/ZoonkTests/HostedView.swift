@@ -278,10 +278,11 @@ func withTestContinuation<Value: Sendable>(
 ) async throws -> Value {
   let continuation = TestContinuation<Value>()
   register(continuation)
-  // Held responses model a sent request that still answers after its caller is canceled.
+  // Held responses model a sent request that still answers after its caller is canceled. A hold
+  // spans several of the test's steps, each with its own wait, so it only guards against a hang.
   let response = Task { @MainActor in
     try await waitForTestCondition(
-      "Fixture continuation was never resumed", file: file, line: line
+      "Fixture continuation was never resumed", timeout: .seconds(60), file: file, line: line
     ) { continuation.result != nil }
   }
   _ = try await response.value
