@@ -182,7 +182,7 @@ async function finishQuestionBlock(
       blockId: owned.block.id,
       checkpoint: settlement.checkpoint,
       itemIds: answeredItemIds,
-      keepsStoredOrder: payload.storedOptionOrder,
+      keepsStoredOrder: !payload.shufflesOptions,
       sessionId: owned.session.id,
       userId: owned.userId,
     }),

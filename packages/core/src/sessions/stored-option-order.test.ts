@@ -44,7 +44,7 @@ describe("a block made before blocks laid out their own option order", () => {
           timeLimitMinutes: null,
         },
         itemIds: [item.id],
-        storedOptionOrder: true,
+        shufflesOptions: undefined,
       }),
       sessionId: session.id,
       startedAt: new Date(),

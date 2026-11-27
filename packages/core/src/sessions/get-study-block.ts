@@ -203,7 +203,7 @@ export async function loadStudyBlock(
             ...toSessionQuestion({
               blockId,
               item,
-              keepsStoredOrder: payload.storedOptionOrder,
+              keepsStoredOrder: !payload.shufflesOptions,
               revealMatchKey: owned.block.kind === "review" && Boolean(capsule) && !placement,
             }),
             answered: answered.get(itemId) ?? null,

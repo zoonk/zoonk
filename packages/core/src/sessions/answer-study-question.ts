@@ -215,13 +215,13 @@ export async function answerStudyQuestion({
         answer: storedAnswer,
         blockId: block.id,
         item,
-        keepsStoredOrder: payload.storedOptionOrder,
+        keepsStoredOrder: !payload.shufflesOptions,
       })
     : await gradeStudyAnswer({
         answer: input.answer,
         blockId: block.id,
         item,
-        keepsStoredOrder: payload.storedOptionOrder,
+        keepsStoredOrder: !payload.shufflesOptions,
         session,
         userId,
       });

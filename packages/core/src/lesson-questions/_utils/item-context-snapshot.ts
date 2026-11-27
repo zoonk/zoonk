@@ -188,7 +188,7 @@ export async function buildItemContextSnapshot({
   }
 
   const blockId = block?.id ?? "";
-  const keepsStoredOrder = block ? readBlockPayload(block).storedOptionOrder : undefined;
+  const keepsStoredOrder = block ? !readBlockPayload(block).shufflesOptions : undefined;
 
   const attempt = context.answered
     ? await findLatestAnswer({ itemId, sessionId: block?.sessionId ?? null, userId })

@@ -125,7 +125,7 @@ function serveInBlock({ blockId, item }: { blockId: string; item: MathItem }) {
 
 /**
  * Each block shows its own option order, so a question that returns tests its options rather than
- * their places. A block made before that (`storedOptionOrder`) keeps the stored order.
+ * their places. A block made before that (no `shufflesOptions`) keeps the stored order.
  */
 export function showChoiceInBlock({
   blockId,
