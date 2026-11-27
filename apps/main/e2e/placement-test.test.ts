@@ -4,19 +4,20 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
+import { asPersona } from "./learn-personas";
 import {
   ANSWERED,
   ORDER_STEPS,
   addOrderQuestions,
+  answerSeededQuestion,
   createMappedGoal,
   questionOnScreen,
   solvePlacementEquation,
+  sortSteps,
   stopTest,
   testLeave,
   testQuestion,
 } from "./onboarding-fixtures";
-
-const STEPS = ORDER_STEPS;
 
 /** A learn goal past onboarding whose topics each have a quick question and three to put in order. */
 async function createLearnGoal(userId: string, { onboarding = false } = {}) {
@@ -36,26 +37,6 @@ async function createLearnGoal(userId: string, { onboarding = false } = {}) {
   return goal;
 }
 
-async function sortSteps(page: Page) {
-  const list = page.getByRole("list", { name: "Steps, in your order" });
-  const rows = list.getByRole("button");
-  await expect(rows).toHaveCount(STEPS.length);
-  await expect(rows.first()).toBeEnabled();
-
-  // Each move starts from the order left by the last one.
-  /* oxlint-disable no-await-in-loop */
-  for (const [target, step] of STEPS.entries()) {
-    const destination = rows.nth(target);
-
-    if ((await destination.textContent()) !== step) {
-      const row = list.getByRole("button", { exact: true, name: step });
-      await row.dragTo(destination, { steps: 12 });
-      await expect(destination).toHaveText(step);
-    }
-  }
-  /* oxlint-enable no-await-in-loop */
-}
-
 const atQuestion = (page: Page, number: number) => expect(testQuestion(page, number)).toBeVisible();
 
 async function answerRight(page: Page) {
@@ -66,7 +47,7 @@ async function answerRight(page: Page) {
   if (solution) {
     await page.getByRole("radio", { exact: true, name: solution }).click();
   } else {
-    await sortSteps(page);
+    await sortSteps(page, ORDER_STEPS);
   }
 
   // The drag sensor suppresses clicks for 50 ms after pointer release.
@@ -78,7 +59,7 @@ const skippedLessons = (goalId: string) =>
   prisma.planItem.count({ where: { plan: { goalId }, status: "testedOut" } });
 
 /** Answers every question right from the offer until the test ends at where the learner starts. */
-async function finishTest(page: Page) {
+async function finishTest(page: Page, answer: (page: Page) => Promise<void> = answerRight) {
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   const result = page.getByText("You start here", { exact: true });
   const confirm = page.getByRole("button", { exact: true, name: "Confirm" });
@@ -94,7 +75,7 @@ async function finishTest(page: Page) {
     }
 
     // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
-    await answerRight(page);
+    await answer(page);
   }
 
   await expect(result).toBeVisible();
@@ -410,6 +391,30 @@ test("onboarding's test ends on where the learner starts, which a reload keeps",
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
+});
+
+test("the seeded course's test goes from onboarding's offer to where the learner starts", async ({
+  browser,
+}, testInfo) => {
+  await asPersona(browser, { persona: "stocks", state: "placement" }, async ({ page, user }) => {
+    await page.goto(`/start/${user.goalId}`);
+
+    await expect(page.getByRole("radio", { name: /^Test/u })).toBeChecked();
+    await expect(page.getByText(/^Up to \d+ questions$/u)).toBeVisible();
+
+    await finishTest(page, answerSeededQuestion);
+
+    // The chapter the learner starts in is the title, over the course's line and the next lesson.
+    await expect(page.getByRole("heading", { level: 1 }).filter({ visible: true })).not.toBeEmpty();
+    await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
+    await expect(page.getByText("Up next", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
+    expect(await skippedLessons(user.goalId)).toBeGreaterThan(0);
+    await page.screenshot({ path: testInfo.outputPath("seeded-course-result.png") });
+
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
+  });
 });
 
 test("a saved retake result explains why it skipped nothing after Undo", async ({

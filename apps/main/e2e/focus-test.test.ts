@@ -57,7 +57,6 @@ async function mapExamGoal({
         weight: null,
       })),
     },
-    placementPreparedAt: written ? new Date() : null,
   });
 
   await Promise.all([
@@ -70,6 +69,12 @@ async function mapExamGoal({
       ),
     ),
   ]);
+
+  // Marked written only once the questions are there, as the writer does: a wait that checks
+  // between the two would read a finished writer with nothing to ask.
+  if (written) {
+    await prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { id: plan.id } });
+  }
 }
 
 /**
