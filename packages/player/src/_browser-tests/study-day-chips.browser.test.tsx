@@ -15,7 +15,7 @@ const fontUrl = new URL(
 
 function labelFits(button: HTMLButtonElement) {
   const range = document.createRange();
-  range.selectNodeContents(button.firstElementChild ?? button);
+  range.selectNodeContents(button.querySelector("[data-slot=weekday-label]") ?? button);
   const fragments = [...range.getClientRects()];
   const box = button.getBoundingClientRect();
 
