@@ -7,13 +7,13 @@
   "focustest_change_focus": "e51e3c863ce815bffe38b6ec0085f896e8c7dde0f2652f979959d82e7bb1a87e",
   "focustest_continue": "6bc438b4ec7185210692dfad54a4405461f3b4c345d668bd1292c6929337f215",
   "focustest_done": "3b2296a23999741bfb64e805ca5a95dc09dbc8618728b9a201995a8e3b68eccb",
-  "focustest_find_focus": "c637916e5ed4a9cbf659b262757caa921242490106dd83cb2be41c73f28dc7a0",
+  "focustest_find_focus": "b37e684e4c57934fc75f5581d8d5ae3f27072c55f568d79eecc8d42d2eda6155",
   "focustest_find_start": "cd3d593fe6d5d1d221cdc7461d68e4167ede2efefe330c98a1661ac849beec61",
   "focustest_from_basics": "9295bd71e03b50b5eb737fdcfa7656f43e84ba5a2310642af472ea998a41bea8",
   "focustest_in_progress": "ee2a6b9fa751dc24f5bb18b254df08bfc7c0750b494bf0b9812af8bed018d47e",
   "focustest_lessons_skipped": "812996985d310e4485d34db77cf4856c549a6779796a20874736574f96f87e6c",
   "focustest_listening_not_checked": "43bb0a2cc06fb426f6a672850a802f68e81b381f92cb0cd134d2efa268d5fc0b",
-  "focustest_many_unknown": "11f380a48f36f8211fe0f3a3115aa8b1068141143326ef183b4cb2de2cfd4884",
+  "focustest_many_unknown": "4d5f4a0f408a13cce0e70f1f1d56cf40a9cd59c9a2b5de8297db2dc3ffbc7118",
   "focustest_not_known_yet": "67e0bfc22973d70dc646853714c1d74f8af62af0ba47e07f23e3a0c50041accc",
   "focustest_not_now": "91fa0367de0893045fff508eb45d230f82a98817c00075bcfcf4cefc5e8b58fa",
   "focustest_not_today": "75a55e618cfe2b96dca8d2b83b713f44c923eb1839562770b4b6cdb9f3127e6b",
@@ -54,11 +54,8 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">重点診断</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">重点的に学ぶ科目を見つける</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
+    <string name="focustest_find_focus">重点的に学習する内容を見つける</string>
     <string name="focustest_find_start">すでに知っていることはありますか？</string>
     <string name="focustest_offer_sentence">テストで知っていることがわかるので、必要なことにもっと時間を使えます。</string>
     <string name="focustest_offer_line">このテストですでに知っている内容がわかるので、学習計画でその内容をスキップできます。</string>
@@ -66,10 +63,10 @@
     <string name="focustest_skip_note">あとで学習計画からテストを受けられます。</string>
     <string name="focustest_not_now">今はしない</string>
     <string name="focustest_continue">続ける</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">結果を見る</string>
     <string name="focustest_stop">ここで終えて回答を使う</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
-    <string name="focustest_many_unknown">まだ学んでいない内容が多いですか？大丈夫です。ここでテストを終えて、学習を始められます。</string>
+    <string name="focustest_many_unknown">まだ学んでいない内容がほとんどですか？大丈夫です。ここで終えて学習を始められます。</string>
     <string name="focustest_answers_saved_title">回答を保存しました</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">重点的に学ぶ科目はこちら</string>
@@ -88,14 +85,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">学習計画はそのままにしました。こちらは診断からの提案です。</string>
     <string name="focustest_change_focus">重点科目を変える</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">すべての科目を見る</string>
     <string name="focustest_subjects">科目</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">学習中に問題をもう少し出す</string>
     <string name="focustest_session_questions_when">最初の1週間だけ</string>
     <string name="focustest_done">完了</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">続けて問題に答える</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">これらの科目の学習時間を増やしますか？</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">回答と、試験で各科目がどれくらい出題されるかをもとに選びました。</string>
@@ -115,17 +114,15 @@
     <string name="focustest_listening_not_checked">リスニング：このテストの対象外</string>
     <string name="focustest_speaking_not_checked">スピーキング：このテストの対象外</string>
     <string name="focustest_practical_not_checked">実技：このテストの対象外</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">進行中</string>
     <string name="focustest_see_your_result">結果を見る</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">重点診断を受ける</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">重点診断で、重点的に学ぶ科目がわかります。</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">%1$sの重点診断テストで、すでに知っていることがわかるため、必要な内容により多くの時間を使えます。科目が削除されることはありません。</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">わかりました。テストは学習計画から受けられます。</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">今日はスキップする</string>
     <string name="focustest_not_today_failed">保存できませんでした。もう一度お試しください。</string>
 </resources>

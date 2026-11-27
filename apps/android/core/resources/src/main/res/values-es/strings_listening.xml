@@ -13,7 +13,7 @@
   "listening_play_again": "2d9abe7f1fb1fe341e1fcf53a0a063fc791404fc092837bfbfa125c4d4a74b9b",
   "listening_playing": "3b7c87fe8c2212b658bd8641b3ed730393fa6ba79cfca1cfc07d9bde51fd9dc4",
   "listening_playing_note": "442ec9c611226de85d33372b4fb3e82bea1ac836fe86288bba6792499d7c923c",
-  "listening_questions": "0375e0d33db4c342e928ac21fc17f0dbb04e981db49950768ddd83536860b558",
+  "listening_questions": "81bab3d002d1df36fbebf23a272d4ccf009ed127556b4bf1506b9ada48d29aaf",
   "listening_recording": "e18738eb0c5380f17ab217bf9f6f7d1044d9a0665a4b3225733ba210dc2b932b",
   "listening_stop": "d00519e6f3b9370995973fd2c5d5e011824001b44393c83cf35faaaec55e4804",
   "listening_transcript": "bcc5c6f37bc2c2f1369a1a98c45d02ef1c85539d43919f1afc07d07c0be113fd"
@@ -36,9 +36,9 @@
     <string name="listening_failed">La grabación no se cargó. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="listening_playing_note">Reproduciendo. No se puede pausar, como en el examen.</string>
     <plurals name="listening_questions">
-        <item quantity="one">Pregunta sobre esta grabación (%d)</item>
-        <item quantity="many">Preguntas sobre esta grabación (%d)</item>
-        <item quantity="other">Preguntas sobre esta grabación (%d)</item>
+        <item quantity="one">%d pregunta sobre esta grabación</item>
+        <item quantity="many">%d preguntas sobre esta grabación</item>
+        <item quantity="other">%d preguntas sobre esta grabación</item>
     </plurals>
     <string name="listening_transcript">Transcripción</string>
 </resources>

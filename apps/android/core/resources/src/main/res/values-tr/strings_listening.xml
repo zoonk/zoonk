@@ -13,7 +13,7 @@
   "listening_play_again": "445e11113f5187d9c0c67cff549015a0485d3fa7ab08124754c932ffc71f70da",
   "listening_playing": "ab4d9656e1a2ec8c794c6cd4f1663057a7f21cf0c42eedd189ec832203621ce1",
   "listening_playing_note": "3b45d905380d56a30bad154ae6a2372157385b88937a4bc14c846011ad1d32eb",
-  "listening_questions": "fc7234817a28d14e899fca1ac813a4c0daac6a78ff152d1ae024727462f8c52f",
+  "listening_questions": "63a3784248c7b47a984d183cd406c996f8259310781ea9872a22ff710487d05e",
   "listening_recording": "86db3cdfd170deb8fbb58f4622dc8aa35f172bc8936b7ce0735df8b9014cf985",
   "listening_stop": "62aa1a3c6db121b35bf44e72d6c55d1444735643f35d5b0abc9cf59f9c97dc79",
   "listening_transcript": "c9e9e7a1be37a7b8b80a221c9f95565616e53d1a653cf9581036adfbb8a5adc1"
@@ -36,8 +36,8 @@
     <string name="listening_failed">Kayıt yüklenemedi. Bağlantını kontrol edip tekrar dene.</string>
     <string name="listening_playing_note">Oynatılıyor. Sınavdaki gibi duraklatılamaz.</string>
     <plurals name="listening_questions">
-        <item quantity="one">Bu kayıtla ilgili soru (%d)</item>
-        <item quantity="other">Bu kayıtla ilgili sorular (%d)</item>
+        <item quantity="one">Bu kayıttaki %d soru</item>
+        <item quantity="other">Bu kayıttaki %d soru</item>
     </plurals>
     <string name="listening_transcript">Kayıt metni</string>
 </resources>

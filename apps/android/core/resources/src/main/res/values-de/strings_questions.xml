@@ -17,7 +17,7 @@
   "questions_drill_timed_out": "08b988ca858182b54a6d1e2fd60d369654a27ff21296482bc1235442fa84c024",
   "questions_drill_trap": "88c96f0974a860560d30231b5f3d0457c6f9e659ac36fa3478ff4a7865d69fe2",
   "questions_entry_decimals": "a4aaadf164b9ae8c45dd267bfad9f5a94fda06709511a005c276c2c32108df41",
-  "questions_entry_fraction": "76afae46f23d8ca0c2207101bf0ff283292f0dfab4d19821b44826705ec43461",
+  "questions_entry_fraction": "9bea14b615c076f678948cf20634b9ef061db3c840a2a0c6d732fd11b188fa99",
   "questions_entry_integer": "e908199333708bdf1dd370066dff6ee1b9acb1decea869623c03b031b9596511",
   "questions_entry_round_to_whole": "7940465a01325e2ac8562ebe5ffa09ecc76f296ff5954c6b88f0a40aa2e65629",
   "questions_false": "eb938ed0d62b29a3c82e4a3feeb478c117770ff20aa0856ae3fdbf735b3616ca",
@@ -26,7 +26,7 @@
   "questions_invalid_integer": "b42a572c1801ad65afb809cc934244670c9bcfe4f13defc5536eb012f1ed720d",
   "questions_invalid_number": "ef9e00e36bad32dc9c4e8336768a0842c25542588c044b6cae781f69e44080f0",
   "questions_leave_blank": "8caf0b627c60f65f64746d9331729f4b8c8310e98439cb7448866411277e0c68",
-  "questions_left_blank": "891dea070e8364abaf4b28020816b96ae78696ab2406798cb48b31cb61d07f39",
+  "questions_left_blank": "9c6f376df3e649b6899c7047735b5f6ace4d0098a9c3f59896fc8d7c7fb9af08",
   "questions_mark_correct": "acb7e5f06e9759c3dd7c8d98913dcd5b5e76eb0d221d653797f61e5ee953772e",
   "questions_mark_wrong": "7f46cd2b5e978c5f53985b5658fe95f55e02c1a2ca63b3529dd671fadb24f86c",
   "questions_match_first_tries": "65378d470bbf498cd145de244b0facf052a05be687097748a463c91d1ab19e50",
@@ -36,9 +36,9 @@
   "questions_matched_with": "97628d68b1cd118e24dc5a5560b6af67e432bb22d2a3ceaa86fef1931550cfb6",
   "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
   "questions_mistakes_fixed": "b94fa654949463d15703b017a7392de4f2d8b6c1669f270162c46f62bc640ecd",
-  "questions_not_quite": "c7540536989388360d68e20666aca5c6f93f1d228cc9f0edfb80e4cccc559fa5",
-  "questions_pick_all": "4ee5fbce9033f5f84f21c287b53b0af3bf4df9397843430108be7988cd9fd8b0",
-  "questions_pick_count": "3cf7409a0888124d693edbb19f055a81941a1f2ab52f056b900a377c3a87eb69",
+  "questions_not_quite": "30f56e8678e6522b0808f86ae39a8c224a69c8b7987f3a5a3ff3027bcdadfae6",
+  "questions_pick_all": "e6a9e8849803f03475f76638bac80d04562de14025a9f1e13950cf89c1665e9e",
+  "questions_pick_count": "820283360e9e21414e58aeaa0bf66385f5d7a7f0f3324846c50dcbb3e8d8f7d3",
   "questions_place_right": "340f7233ff2d4031ae9acaeb99bacf1cc48c565c0bb89a5c158c32c2a45d168d",
   "questions_place_wrong": "51e5cf95fb542a3db3665f88e0b8d883db56a0804c09c08be843c88382f600e9",
   "questions_placement_note": "8a1fd72bdc8e970a1d55728a32fb424f6098d27147a4e926459b873307b55912",
@@ -47,7 +47,7 @@
   "questions_result": "07e82c87677694881bd451fb8b6148182e2b0996b66cf4b07760c274d7ed6792",
   "questions_right": "9b10dbf6d9c437b0430f7fe9e067cbf5702484bdb818d4bf6aa5b2cd4ea44238",
   "questions_right_answer": "16e7a7cd7e1aa12f8bae9255abee742e86864d70d01a6bc7a3a2b59e3772b815",
-  "questions_saved": "3a35e84d13cbb25cd40e05a4766672026b05df67f3fae4c0c7a8d0cff7ce5cf4",
+  "questions_saved": "fd669137d45db761532b81624644287dc706dba2214b28783165fcdbe87c6158",
   "questions_set_place_audio": "aae4048a94645da7e7f4729036d0d358d93074290347a87163e715afd637b3c6",
   "questions_set_place_case": "8c91d0b034ac276cbcebae9933c71a8528348136fcc895f53c68077cd6a8cd25",
   "questions_set_place_chart": "4975c43ae9ad369e83aef9605253dc90516edf98e39954bc4781514c8a01db52",
@@ -60,10 +60,10 @@
 }
 -->
 <resources>
-    <string name="questions_pick_all">Wähle alle zutreffenden Antworten aus.</string>
+    <string name="questions_pick_all">Wähle alles Zutreffende aus.</string>
     <plurals name="questions_pick_count">
-        <item quantity="one">Wähle %d Antwort aus.</item>
-        <item quantity="other">Wähle %d Antworten aus.</item>
+        <item quantity="one">Wähle %d Option aus.</item>
+        <item quantity="other">Wähle %d Optionen aus.</item>
     </plurals>
     <string name="questions_true">Wahr</string>
     <string name="questions_false">Falsch</string>
@@ -71,12 +71,10 @@
     <string name="questions_right">Richtig</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Falsch</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Leer lassen</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">Platz %1$d, richtiger Platz</string>
     <string name="questions_place_wrong">Platz %1$d, falscher Platz</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, zugeordnet zu %2$s</string>
     <string name="questions_match_paired">%1$s mit %2$s verbunden. Zugeordnete Paare: %3$d von %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s und %2$s gehören nicht zusammen.</string>
@@ -91,18 +89,17 @@
         <item quantity="one">Runde auf %d Nachkommastelle.</item>
         <item quantity="other">Runde auf %d Nachkommastellen.</item>
     </plurals>
-    <string name="questions_entry_fraction">Ein Bruch wie 2/3 oder eine Dezimalzahl.</string>
+    <string name="questions_entry_fraction">Ein Bruch, zum Beispiel 2/3, oder eine Dezimalzahl.</string>
     <string name="questions_entry_integer">Eine ganze Zahl.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">Gib eine Zahl ein, zum Beispiel %1$s.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Gib einen Bruch wie 2/3 oder eine Zahl wie %1$s ein.</string>
     <string name="questions_invalid_integer">Gib eine ganze Zahl ein, zum Beispiel 12.</string>
     <string name="questions_feedback_label">Rückmeldung zur Antwort</string>
     <string name="questions_correct">Richtig!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Noch nicht richtig</string>
-    <string name="questions_left_blank">Nicht beantwortet</string>
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
+    <string name="questions_not_quite">Das stimmt so nicht</string>
+    <string name="questions_left_blank">Keine Antwort</string>
     <string name="questions_dont_know_yet">Das weiß ich noch nicht</string>
     <plurals name="questions_streak">
         <item quantity="one">%d richtig hintereinander</item>
@@ -117,7 +114,8 @@
         <item quantity="one">%d Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt.</item>
         <item quantity="other">%d Fehler korrigiert. Sie werden aus deinem Fehlerheft entfernt.</item>
     </plurals>
-    <string name="questions_saved">Im Fehlerheft gespeichert</string>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
+    <string name="questions_saved">In deinem Fehlerheft gespeichert</string>
     <string name="questions_show_less">Weniger anzeigen</string>
     <string name="questions_read_again">Alles noch einmal lesen</string>
     <string name="questions_set_place_audio">Frage %1$d von %2$d zu dieser Aufnahme</string>

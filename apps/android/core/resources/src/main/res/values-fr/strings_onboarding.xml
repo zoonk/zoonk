@@ -121,7 +121,7 @@
   "onboarding_language_test_reading": "db1071b1596bf52dddaf9fad28ef2bd643fb9e46a69396a5cbd071ef35cd23e6",
   "onboarding_language_test_skip_question": "0afb1cd286ff78fb94976faa65fd6771ea9b2ca0d6bd69d1b6afdd3e5d14fe33",
   "onboarding_language_test_speaking": "c22f997eb9cd1d4a560d9b4e35f94e2ed4dd30ed75e0544b36e14a79a5c37c26",
-  "onboarding_language_test_use_app_in": "192253f3ee1e0a2372a1a2bad9c580c3e9a71331bbafd8e1f1282094dd3d7454",
+  "onboarding_language_test_use_app_in": "65dd4268359e0344c537da2ce1d739465d87d08003bafe518a7c1d9ce3169521",
   "onboarding_language_test_writing": "dea74232637120d287c91724333a89b8fef1b89fd7e0b6a704c1a4879bf1daa1",
   "onboarding_level_advanced": "d43272b05349034e1b13c7eec8d273e4873b328515f48cdc4c02093584eebc47",
   "onboarding_level_advanced_description": "d81859d4e9174f9c43df6e356b16c13a6560d9f727cc5fe8ea3d411189e5cdcb",
@@ -173,7 +173,7 @@
   "onboarding_placement_stop": "827afd6644b168eead0a6d2d658a9f1f20bba442a632d85c4d819fb10e09ac5f",
   "onboarding_placement_unavailable_title": "44f46f3b3215c37f9a71ef85387a43273db48c7cd0ac3c4c83a9244ecd63a7f6",
   "onboarding_placement_waiting_material": "4d7cb5d1c9478c17ef0d25eecb96ef8364b80a9b79a5c4303e0f8d600facc5ec",
-  "onboarding_placement_waiting_time": "f6215f085d530f89c01ac3a8c1e0b9dc2fe5efaabeff7dd706b3317ef9e729a3",
+  "onboarding_placement_waiting_time": "abd23a4476c9ac8ed814d2eac43e334dfa95c065b27f4b8751e57bd0c5dd6a42",
   "onboarding_plan_answers_saved": "ff350bfc6d62fef652b807614e17a114fd87bb4548fbef520ac55c91228e4da7",
   "onboarding_plan_not_started": "9639c17f63a47cfa0a03213704b02184040660fde5bffe4dc128dd706e253660",
   "onboarding_plan_ready_goal": "4cdde6bf6e199f097695525ffe075f74ed9d97e7ea0b86615e5d1e754a85bca8",
@@ -564,10 +564,9 @@
     <string name="onboarding_question_failed">Nous n’avons pas pu répondre à ta question. Réessaie dans un instant.</string>
     <string name="onboarding_question_sign_in">Crée un compte pour poser des questions sur tes documents.</string>
     <string name="onboarding_question_slow_down">Tu poses des questions rapidement. Réessaie dans quelques minutes.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">La lecture de tes documents prend quelques minutes.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
-    <string name="onboarding_placement_waiting_time">Ça prend une minute ou deux.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
+    <string name="onboarding_placement_waiting_time">Ça prend une ou deux minutes.</string>
     <string name="onboarding_placement_ready">Ton test est prêt</string>
     <string name="onboarding_placement_progress">Questions répondues</string>
     <string name="onboarding_placement_dont_know">Je ne sais pas encore</string>
@@ -575,21 +574,16 @@
     <string name="onboarding_placement_stop">Arrêter et utiliser mes réponses</string>
     <string name="onboarding_placement_answer_failed">Ça n’a pas marché. Tes réponses sont conservées.</string>
     <string name="onboarding_placement_unavailable_title">On verra ce que tu sais pendant tes premiers jours</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
-    <string name="onboarding_language_test_use_app_in">Utiliser l’application en %1$s</string>
-    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_use_app_in">Utiliser l’app en %1$s</string>
     <string name="onboarding_language_test_did_not_understand">Je n’ai pas compris l’audio</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">Sauter cette question</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">Je ne peux pas écouter maintenant</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">Le message vocal arrive…</string>
     <string name="onboarding_language_test_play">Écouter le message</string>
     <string name="onboarding_language_test_play_again">Réécouter le message</string>
     <string name="onboarding_language_test_message_loading">Préparation du message. La première fois, cela peut prendre quelques secondes.</string>
     <string name="onboarding_language_test_message">Tu as reçu un message vocal. Écoute-le et réponds.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lecture</string>
     <string name="onboarding_language_test_listening">Écoute</string>
     <string name="onboarding_language_test_speaking">Expression orale</string>

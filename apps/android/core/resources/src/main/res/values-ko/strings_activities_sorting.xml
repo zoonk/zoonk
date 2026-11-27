@@ -99,7 +99,6 @@
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s은(는) %2$s에 속해요.</string>
     <string name="activities_sorting_badge_put_in_order">순서대로 놓기</string>
-    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
     <string name="activities_sorting_steps_in_your_order">내가 정한 단계 순서</string>
     <string name="activities_sorting_drag_steps">단계를 길게 눌러 순서대로 끌어 놓으세요.</string>
     <!-- Above a process's steps in their true order, once checked. -->

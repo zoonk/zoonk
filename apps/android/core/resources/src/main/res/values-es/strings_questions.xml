@@ -72,12 +72,10 @@
     <string name="questions_right">Correcto</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Incorrecto</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Dejar en blanco</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">Posición %1$d, correcta</string>
     <string name="questions_place_wrong">Posición %1$d, incorrecta</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, en pareja con %2$s</string>
     <string name="questions_match_paired">Se emparejó %1$s con %2$s. Parejas encontradas: %3$d de %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s y %2$s no forman pareja.</string>
@@ -95,14 +93,13 @@
     </plurals>
     <string name="questions_entry_fraction">Una fracción, como 2/3, o un decimal.</string>
     <string name="questions_entry_integer">Un número entero.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">Ingresa un número, como %1$s.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Ingresa una fracción, como 2/3, o un número, como %1$s.</string>
     <string name="questions_invalid_integer">Ingresa un número entero, como 12.</string>
     <string name="questions_feedback_label">Comentarios sobre la respuesta</string>
     <string name="questions_correct">¡Correcto!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
     <string name="questions_not_quite">No es correcto</string>
     <string name="questions_left_blank">En blanco</string>
     <string name="questions_dont_know_yet">Aún no lo sé</string>
@@ -121,6 +118,7 @@
         <item quantity="many">%d errores corregidos. Ya no están en tu cuaderno.</item>
         <item quantity="other">%d errores corregidos. Ya no están en tu cuaderno.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">Guardado en tu cuaderno de errores</string>
     <string name="questions_show_less">Mostrar menos</string>
     <string name="questions_read_again">Volver a leer todo</string>

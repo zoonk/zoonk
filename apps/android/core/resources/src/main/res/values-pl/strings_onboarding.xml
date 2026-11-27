@@ -173,7 +173,7 @@
   "onboarding_placement_stop": "ba3c832aa7401776b468b7094fb2f63543c23e96a6d61a6fea4f2e41f34ac225",
   "onboarding_placement_unavailable_title": "e081a2e6d1de796211f97d223912ff8655888ffa654424c9cf0408159fef7946",
   "onboarding_placement_waiting_material": "521b474f039387ed4517acdb64262f75e5dcd5ec999acf9e06ea8c05cb19aedf",
-  "onboarding_placement_waiting_time": "6ad927daebadf6eea83afb724fedbdb2e6109748ea33436bb7c3c7ab2c5b1ca0",
+  "onboarding_placement_waiting_time": "dc04c08763dc0bdb1e86296251ee6c25fb4a14b190b41b6f5d0f1a92778b7ae3",
   "onboarding_plan_answers_saved": "80d2470c670ea42423e2b1c705631026008f07043041a610c65150463fb5dd6b",
   "onboarding_plan_not_started": "e58e677724da223ea0cb468f5e4ce158c05f548b97bde6aa8a72fbda199d6eac",
   "onboarding_plan_ready_goal": "6a379d107e3783f90edcbc59546c3b4b0efe21958453969068bd9465a80b2fbe",
@@ -566,10 +566,9 @@
     <string name="onboarding_question_failed">Nie udało nam się odpowiedzieć. Spróbuj ponownie za chwilę.</string>
     <string name="onboarding_question_sign_in">Utwórz konto, aby zadawać pytania o swoje materiały.</string>
     <string name="onboarding_question_slow_down">Zadajesz pytania jedno po drugim. Spróbuj ponownie za kilka minut.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">Przeczytanie twoich materiałów zajmuje kilka minut.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
-    <string name="onboarding_placement_waiting_time">To potrwa minutę lub dwie.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
+    <string name="onboarding_placement_waiting_time">Zajmuje to minutę lub dwie.</string>
     <string name="onboarding_placement_ready">Twój test jest gotowy</string>
     <string name="onboarding_placement_progress">Udzielone odpowiedzi</string>
     <string name="onboarding_placement_dont_know">Jeszcze nie wiem</string>
@@ -577,21 +576,16 @@
     <string name="onboarding_placement_stop">Przerwij i użyj moich odpowiedzi</string>
     <string name="onboarding_placement_answer_failed">Nie udało się przesłać odpowiedzi. Nic nie przepadło.</string>
     <string name="onboarding_placement_unavailable_title">Sprawdzimy, co już wiesz, w ciągu kilku pierwszych dni</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">Ustaw język aplikacji: %1$s</string>
-    <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Nie rozumiem nagrania</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">Pomiń to pytanie</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">Nie mogę teraz słuchać</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">Wiadomość głosowa już w drodze…</string>
     <string name="onboarding_language_test_play">Odtwórz wiadomość</string>
     <string name="onboarding_language_test_play_again">Odtwórz wiadomość ponownie</string>
     <string name="onboarding_language_test_message_loading">Przygotowujemy wiadomość. Za pierwszym razem może to potrwać kilka sekund.</string>
     <string name="onboarding_language_test_message">Masz wiadomość głosową. Posłuchaj i odpowiedz.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Czytanie</string>
     <string name="onboarding_language_test_listening">Słuchanie</string>
     <string name="onboarding_language_test_speaking">Mówienie</string>
