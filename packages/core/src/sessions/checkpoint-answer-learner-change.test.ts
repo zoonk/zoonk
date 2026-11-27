@@ -7,6 +7,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { answerStudyQuestion } from "./answer-study-question";
 import { toBlockPayload } from "./block-payload";
@@ -46,7 +47,12 @@ async function setup() {
   const answer = () =>
     answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item }),
+        durationMs: 1000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       sessionId: session.id,
     });
 

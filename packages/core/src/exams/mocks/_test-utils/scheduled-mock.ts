@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { mockSession } from "../../../_test-utils/mock-session";
+import { pickItemInMock } from "../../../_test-utils/shown-choice";
 import { getTodayStudySession } from "../../../sessions/_test-utils/open-today";
 import {
   SESSION_TODAY,
@@ -101,11 +102,11 @@ export async function answerRight({ blockId, count }: { blockId: string; count: 
   const answered = (running.current?.questions ?? []).slice(0, count);
 
   await Promise.all(
-    answered.map((question) =>
+    answered.map(async (question) =>
       saveMockAnswer({
         blockId,
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
           durationMs: 30_000,
           flagged: false,
           itemId: question.itemId,

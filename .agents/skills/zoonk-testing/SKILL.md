@@ -42,6 +42,7 @@ A screen test in the Apple or Android app breaks whenever the screen's copy or l
 
 - Create unique records through existing `*Fixture()` helpers. Tests that mutate user state need a unique user per test; a fresh browser context does not isolate database state.
 - Keep shared seeded data read-only. It may serve as a guaranteed structural dependency or a route smoke test, but content assertions and mutations need test-owned records.
+- A date column holds a calendar day. Build relative target dates with `daysAfterLearnerToday` or use a fixed test clock and an explicit date. To reproduce a Core or API clock check from CI, set `ZOONK_TEST_NOW` to the instant printed by the check before running Vitest.
 - Parallelize independent fixture creation. Tests must work in any order; release contexts and other owned resources, and clean up test-owned state when isolation requires it.
 - Do not mock Prisma, `@zoonk/db`, repositories, or other persistence APIs for data behavior. Mock only an unavoidable external/platform boundary or a failure that cannot safely be produced with the real dependency, and explain why beside the mock.
 

@@ -9,6 +9,7 @@ import {
   type RecordedMistakeSnapshot as MistakeSnapshot,
   withMistakeStimulus,
 } from "../../mistakes/mistake-snapshot";
+import { showInOrder } from "../../sessions/_utils/shown-order";
 import { type ChoiceAnswer } from "../contract";
 
 export const GRADABLE_ITEM_FORMATS = [
@@ -56,6 +57,22 @@ export function parseChoiceItem(item: BankItem): ChoiceItem | null {
     logError(`Item ${item.id} has content that doesn't match its format.`, error);
     return null;
   }
+}
+
+/**
+ * The item as one showing lays it out: options in their own order for each block or sitting, so a
+ * question that comes back tests what the options say rather than where they were. Show, grade and
+ * read back an answer from the same showing's item.
+ */
+export function showChoiceItem({ item, seed }: { item: ChoiceItem; seed: string }): ChoiceItem {
+  if (item.format !== "multipleChoice" || item.content.quoted || item.content.fixedOrder) {
+    return item;
+  }
+
+  return {
+    ...item,
+    content: { ...item.content, options: showInOrder({ items: item.content.options, seed }) },
+  };
 }
 
 /** Omits correct answers and explanations. */
@@ -192,12 +209,24 @@ function gradeMultipleChoice({
   };
 }
 
-/** Invalid answer shapes, pick counts, and out-of-range options count as wrong. */
-export function gradeChoiceAnswer({ answer, item }: { answer: ChoiceAnswer; item: ChoiceItem }) {
+/**
+ * Invalid answer shapes, pick counts, and out-of-range options count as wrong. Grades against
+ * `shown`, the layout the learner answered, while a mistake's replay keeps the stored item, which
+ * its next showing lays out again.
+ */
+export function gradeChoiceAnswer({
+  answer,
+  item,
+  shown = item,
+}: {
+  answer: ChoiceAnswer;
+  item: ChoiceItem;
+  shown?: ChoiceItem;
+}) {
   const graded =
-    item.format === "trueFalse"
-      ? gradeTrueFalse({ answer, item })
-      : gradeMultipleChoice({ answer, item });
+    shown.format === "trueFalse"
+      ? gradeTrueFalse({ answer, item: shown })
+      : gradeMultipleChoice({ answer, item: shown });
 
   return {
     ...graded,

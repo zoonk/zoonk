@@ -121,14 +121,18 @@ function toApkKeyHashOrigin(fingerprint: string): string {
  */
 function getAndroidAppOrigins(): string[] {
   const apps = getAndroidApps();
+  const isProduction = getEnvironment() === "production";
 
-  const requiredApps =
-    getEnvironment() === "production"
-      ? apps.filter((app) => app.packageName === GOOGLE_PLAY_PACKAGE_NAME)
-      : apps;
+  const requiredApps = isProduction
+    ? apps.filter((app) => app.packageName === GOOGLE_PLAY_PACKAGE_NAME)
+    : apps;
 
   if (requiredApps.every((app) => app.fingerprints.length === 0)) {
-    throw new Error("Set ANDROID_RELEASE_CERT_FINGERPRINTS to accept restore keys");
+    const variable = isProduction
+      ? "ANDROID_RELEASE_CERT_FINGERPRINTS"
+      : "ANDROID_DEBUG_CERT_FINGERPRINTS";
+
+    throw new Error(`Set ${variable} to accept restore keys`);
   }
 
   return apps

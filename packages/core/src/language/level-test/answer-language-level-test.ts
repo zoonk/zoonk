@@ -1,5 +1,6 @@
 import "server-only";
 import { matchesExpectedAnswer } from "../../library/activities/templates/_utils/grade-interaction";
+import { toBankAnswer } from "./_utils/level-test-shown-order";
 import {
   canWriteLevelTest,
   isFixedDuringTest,
@@ -128,7 +129,12 @@ export async function answerLanguageLevelTest({
   const answer = await gradeCurrentQuestion({
     bankId,
     goal: owned.goal,
-    input,
+    input: toBankAnswer({
+      attemptId: progress.attemptId,
+      goalId: owned.goal.id,
+      input,
+      question: step.question,
+    }),
     progress,
     question: step.question,
   });

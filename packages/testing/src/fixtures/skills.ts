@@ -37,7 +37,7 @@ export async function skillPrerequisiteFixture(
   return prisma.skillPrerequisite.create({ data: attrs });
 }
 
-/** The right option comes first, so a test can answer right or wrong on purpose. */
+/** The right option is stored first, but each showing lays the options out in its own order: tap one by its text. */
 export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
   return {
     context: null,

@@ -29,6 +29,7 @@ import {
   mistakePracticeResponseSchema,
 } from "../src/lib/openapi/schemas/mistakes";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
@@ -330,7 +331,7 @@ test.describe("Mistake practice API", () => {
     const feedback = await readBody({
       response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(entry?.questions[0]?.options),
           durationMs: 12_000,
           itemId: entry?.questions[0]?.itemId,
           timeZone: "UTC",

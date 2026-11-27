@@ -213,8 +213,7 @@ function pickAnswer({
   return (
     listPicks(item).find(
       (answer) =>
-        gradeMockItem({ answer, item, mockId, partialCredit: conditions.partialCredit })
-          .isCorrect === isRight,
+        gradeMockItem({ answer, item, mock: { conditions, id: mockId } }).isCorrect === isRight,
     ) ?? null
   );
 }
@@ -243,12 +242,7 @@ async function answerMock({
     const isRight = isRightAt({ correct, index, total: questions.length });
     const answer = pickAnswer({ conditions, isRight, item, mockId: checkpoint.mockExamId });
 
-    const grade = gradeMockItem({
-      answer,
-      item,
-      mockId: checkpoint.mockExamId,
-      partialCredit: conditions.partialCredit,
-    });
+    const grade = gradeMockItem({ answer, item, mock: { conditions, id: checkpoint.mockExamId } });
 
     const result: GradedMockAnswer = {
       area: areas.get(item.skillId) ?? null,

@@ -74,16 +74,10 @@ export function ExamSubject({ lang, q }: { lang: Lang; q: URLSearchParams }) {
           adjust: "/plan",
           back: "/plan",
           chapter: (id: string) => `/content/chapters/${id}`,
+          essay: (id) => `/essay/${id}`,
         }}
         subject={subject}
-        syllabus={{
-          fromMaterial: false,
-          goal: examSyllabus(lang).goal,
-          kind: "notice",
-          questionsSource: null,
-          sharedExams: [],
-          writtenPractice: null,
-        }}
+        syllabus={examSyllabus(lang)}
       />
     </AppFrame>
   );

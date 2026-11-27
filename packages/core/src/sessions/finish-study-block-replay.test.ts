@@ -9,6 +9,7 @@ import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { trackServerEvent } from "../analytics/server";
 import * as sessionState from "./_utils/capture-snapshot";
 import { answerStudyQuestion } from "./answer-study-question";
@@ -62,7 +63,11 @@ async function setup(
   await expect(
     answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item }),
+        durationMs: 1000,
+        itemId: item.id,
+      },
       sessionId: session.id,
     }),
   ).resolves.toMatchObject({ status: "ready" });

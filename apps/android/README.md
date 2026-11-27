@@ -11,6 +11,8 @@ Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page
 
 The launcher detects the standard SDK location; set `ANDROID_HOME` for a custom installation. Use the committed Gradle wrapper rather than a separately installed Gradle.
 
+After the first Debug build creates your debug keystore, run `pnpm db:setup` to register its signing fingerprint with the local API and web app. This enables Android restore keys and App Links. Worktree setup also registers it when the keystore already exists.
+
 ## Commands
 
 Run from the repository root:
@@ -41,6 +43,8 @@ The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, us
 ## Local API
 
 `pnpm dev main api` (or `pnpm start main api` for a production build) starts only main, the API and the mailbox, and writes the API URL it serves for this checkout to `local-development.properties` (ignored by Git); the next Debug build calls it. Without that file, Debug builds call `http://localhost:4000` (`pnpm dev:direct main api`). On the emulator, `localhost` names resolve to the Mac at `10.0.2.2` and keep their name, so the local proxy still routes them. Android 17 counts the Mac as the local network, so Debug builds ask for `ACCESS_LOCAL_NETWORK`: `pnpm android:phone` and `pnpm android:tablet` grant it on install; after installing another way, run `adb shell pm grant com.zoonk.debug android.permission.ACCESS_LOCAL_NETWORK`. Release builds call `https://api.zoonk.com`.
+
+For a physical Android device, follow the [LAN setup](../../README.md#lan-setup), then rebuild the Debug app. The Debug app trusts user-installed CA certificates for the `.local` API address.
 
 To sign a Debug build in as a persona, get a session token from the local API with the persona's email (`pnpm dev:persona <name>` prints it) and hand it to the app:
 

@@ -35,12 +35,33 @@ describe("a render's database work", () => {
         statement(ITEM, { at: 2500 }),
       ];
 
-      writeFileSync(file, `${lines.map((line) => JSON.stringify(line)).join("\n")}\n`);
+      writeFileSync(
+        file,
+        `{"queryLog":"ready"}\n${lines.map((line) => JSON.stringify(line)).join("\n")}\n`,
+      );
 
       assert.deepEqual(
-        readStatements(file, { from: 1000, to: 2000 }).map((found) => found.at),
+        readStatements(file, { from: 1000, to: 2000 })?.map((found) => found.at),
         [INSIDE.at],
       );
+    } finally {
+      rmSync(directory, { force: true, recursive: true });
+    }
+  });
+
+  it("distinguishes empty or missing logs from a measured zero-query window", () => {
+    const directory = mkdtempSync(join(tmpdir(), "zoonk-queries-"));
+    const file = join(directory, "queries.jsonl");
+    const window = { from: 1000, to: 2000 };
+
+    try {
+      assert.equal(readStatements(file, window), null);
+      writeFileSync(file, "");
+      assert.equal(readStatements(file, window), null);
+      writeFileSync(file, `${JSON.stringify(statement(GOALS, { at: 900 }))}\n`);
+      assert.equal(readStatements(file, window), null);
+      writeFileSync(file, '{"queryLog":"ready"}\n');
+      assert.deepEqual(readStatements(file, window), []);
     } finally {
       rmSync(directory, { force: true, recursive: true });
     }

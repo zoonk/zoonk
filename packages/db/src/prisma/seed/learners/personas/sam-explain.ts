@@ -1,3 +1,4 @@
+import { t } from "../../_utils/localize";
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
 import { type SeedLearner } from "../types";
 
@@ -27,11 +28,11 @@ export const samExplain: SeedLearner = {
       items: [
         { day: 0, kind: "lesson", lesson: "market-up-two-percent", phase: 0, status: "todo" },
       ],
-      phases: [{ name: "Quick explanation" }],
+      phases: [{ name: t("Quick explanation", "Explicação rápida") }],
     },
     prompt: "what does it mean when the market is up 2%?",
     studyTime: "12:30",
-    title: "What does “the market is up 2%” mean?",
+    title: t("What does “the market is up 2%” mean?", "O que significa “a bolsa subiu 2%”?"),
   },
   history: { accuracy: 1, days: 0, energy: 12, minutesPerDay: 4, skipChance: 0 },
   key: "sam",

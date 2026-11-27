@@ -7,6 +7,7 @@ import {
   signInWithPassword,
 } from "../../../../auth/src/guests/_test-utils/guest-auth";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import * as levelState from "./_utils/level-test-state";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
@@ -67,7 +68,15 @@ async function createAnsweredTest(targetLanguage = "fr") {
   await expect(
     answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        durationMs: 40_000,
+        questionId: "reading-A2-0",
+      },
     }),
   ).resolves.toMatchObject({ status: "ready" });
 

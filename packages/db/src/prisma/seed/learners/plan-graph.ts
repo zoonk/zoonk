@@ -1,4 +1,5 @@
 import { type Prisma } from "../../../generated/prisma/client";
+import { localizeText } from "../_utils/localize";
 import { type SeedCourse } from "../library/types";
 import { type SeedGoal, type SeedGraphSkill, type SeedPlanItem } from "./types";
 import { type LearnerScope } from "./write-goal";
@@ -71,11 +72,11 @@ function toGraphSkills(scope: LearnerScope, graph: readonly SeedGraphSkill[]) {
 }
 
 export function buildPlanGraph(scope: LearnerScope, goal: SeedGoal): Prisma.InputJsonObject {
-  const { lookup } = scope;
+  const { learner, lookup } = scope;
 
-  const phases = goal.plan.phases.map((phase) => ({
-    milestone: phase.milestone ?? null,
-    name: phase.name,
+  const phases = goal.plan.phases.map(({ milestone, name }) => ({
+    milestone: milestone === undefined ? null : localizeText(milestone, learner.language),
+    name: localizeText(name, learner.language),
   }));
 
   if (goal.plan.graph) {

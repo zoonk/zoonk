@@ -6,7 +6,10 @@ import {
   applyWritingArithmetic,
   buildWritingFeedback,
 } from "@zoonk/core/exams/essays/writing-feedback";
-import { countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
+import {
+  WRITING_MAX_CHARACTERS_PER_LINE,
+  countWritingLines,
+} from "@zoonk/core/exams/essays/writing-lines";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { scoreWritingGrade } from "./scorer";
 import { TEST_CASES } from "./test-cases";
@@ -35,6 +38,7 @@ async function generate({
   const { estimatedLines, ignoredFrom } = countWritingLines({
     charactersPerLine: basis.charactersPerLine,
     limit: basis.lines,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
     text,
   });
 

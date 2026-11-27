@@ -75,6 +75,122 @@ describe(toSessionQuestion, () => {
   });
 });
 
+const OPTION_TEXTS = ["Right", "Wrong A", "Wrong B", "Wrong C", "Wrong D", "Wrong E"];
+
+const choiceItem = {
+  content: {
+    context: null,
+    fixedOrder: false,
+    image: null,
+    options: OPTION_TEXTS.map((text, index) => ({
+      isCorrect: index === 0,
+      misconception: index === 0 ? null : `Picks ${text}`,
+      reason: `${text} because.`,
+      text,
+    })),
+    question: "Which one is right?",
+    select: 1,
+    visual: null,
+  },
+  format: "multipleChoice" as const,
+  id: "0199a0b1-0000-7000-8000-000000000003",
+  language: "en",
+  skillId: "skill",
+};
+
+function parseChoice() {
+  const item = parseSessionItem(choiceItem);
+
+  if (item?.format !== "multipleChoice") {
+    throw new Error("The choice item should parse");
+  }
+
+  return item;
+}
+
+const otherBlockIds = Array.from(
+  { length: 5 },
+  (_, index) => `0199a0b1-0000-7000-8000-${String(index).padStart(12, "0")}`,
+);
+
+describe("multiple-choice options in a block", () => {
+  it("shows the same order on every read of a block, a new one in other blocks, never the stored order", () => {
+    const item = parseChoice();
+    const first = toSessionQuestion({ blockId, item }).options;
+
+    const others = otherBlockIds.map(
+      (other) => toSessionQuestion({ blockId: other, item }).options,
+    );
+
+    expect(toSessionQuestion({ blockId, item }).options).toStrictEqual(first);
+    expect(others.some((options) => options?.join(",") !== first?.join(","))).toBe(true);
+
+    for (const options of [first, ...others]) {
+      expect(options).not.toStrictEqual(OPTION_TEXTS);
+      expect(options?.toSorted()).toStrictEqual(OPTION_TEXTS.toSorted());
+    }
+  });
+
+  it("grades a tap by the option at that place in the block's order", () => {
+    const item = parseChoice();
+
+    for (const shownIn of [blockId, ...otherBlockIds]) {
+      const options = toSessionQuestion({ blockId: shownIn, item }).options ?? [];
+      const right = options.indexOf("Right");
+
+      const graded = options.map(
+        (_, selectedIndex) =>
+          gradeSessionAnswer({ answer: { selectedIndex }, blockId: shownIn, item }).isCorrect,
+      );
+
+      expect(graded).toStrictEqual(options.map((text) => text === "Right"));
+
+      expect(
+        gradeSessionAnswer({ answer: { selectedIndex: right }, blockId: shownIn, item }),
+      ).toMatchObject({ correctAnswer: { selectedIndex: right }, isCorrect: true });
+    }
+  });
+
+  it.each([
+    { content: { fixedOrder: true }, kind: "a set whose order means something" },
+    { content: { quoted: true }, kind: "a question quoted from a past paper" },
+  ])("keeps the written order for $kind", ({ content }) => {
+    const item = parseSessionItem({
+      ...choiceItem,
+      content: { ...choiceItem.content, ...content },
+    });
+
+    if (!item) {
+      throw new Error("The choice item should parse");
+    }
+
+    for (const shownIn of [blockId, ...otherBlockIds]) {
+      expect(toSessionQuestion({ blockId: shownIn, item }).options).toStrictEqual(OPTION_TEXTS);
+    }
+  });
+
+  it("keeps the written order in the replay a missed question saves", () => {
+    const item = parseChoice();
+    const options = toSessionQuestion({ blockId, item }).options ?? [];
+    const selectedIndex = options.findIndex((text) => text !== "Right");
+    const { snapshot } = gradeSessionAnswer({ answer: { selectedIndex }, blockId, item });
+
+    expect(snapshot.replay).toMatchObject({ item: { content: { options: item.content.options } } });
+  });
+
+  it("records a wrong tap as the option the learner saw there, with its misconception", () => {
+    const item = parseChoice();
+    const options = toSessionQuestion({ blockId, item }).options ?? [];
+    const selectedIndex = options.findIndex((text) => text !== "Right");
+    const picked = options[selectedIndex];
+
+    expect(gradeSessionAnswer({ answer: { selectedIndex }, blockId, item })).toMatchObject({
+      isCorrect: false,
+      snapshot: { answer: picked, correctAnswer: "Right", misconception: `Picks ${picked}` },
+    });
+  });
+});
+
 describe(gradeSessionAnswer, () => {
   it("records the wrong tries in shown order and grades a repaired board wrong", () => {
     const item = parseSessionItem(matchItem);
