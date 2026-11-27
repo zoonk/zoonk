@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../../users/get-session";
 import { writingAttemptSchema } from "./essay-contract";
-import { writtenAnswerSchema } from "./writing-contract";
+import { readWritingPrompt, writtenAnswerSchema } from "./writing-contract";
 
 export async function getWritingAttempt(attemptId: string) {
   const session = await getSession();
@@ -34,7 +34,7 @@ export async function getWritingAttempt(attemptId: string) {
     grade: answer.grade,
     submittedAt: attempt.answeredAt.toISOString(),
     text: answer.text,
-    writing: answer.writing,
+    writing: readWritingPrompt(answer.writing),
     ...(answer.writingTask && { writingTask: answer.writingTask }),
   });
 

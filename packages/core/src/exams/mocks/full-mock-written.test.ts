@@ -17,6 +17,7 @@ import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
 import { readEssayContent } from "../essays/_utils/essay-content";
 import { writingCalibration } from "../essays/_utils/writing-calibration";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
+import { getDenseCharactersPerLine } from "../essays/writing-lines";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
 import { loadExamHistory } from "../view/_utils/exam-history";
@@ -574,7 +575,7 @@ describe("written mock sittings", () => {
     await gradeMockEssays({ blockId: id, input: UTC });
 
     expect(gradeWritingEvidence).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ text: text.slice(0, 30 * 55) }),
+      expect.objectContaining({ text: text.slice(0, 30 * getDenseCharactersPerLine(55)) }),
     );
 
     await expect(view(id)).resolves.toMatchObject({
@@ -582,7 +583,7 @@ describe("written mock sittings", () => {
         {
           grade: {
             estimatedLines: 263,
-            ignoredFrom: 30 * 55,
+            ignoredFrom: 30 * getDenseCharactersPerLine(55),
             kind: "levels",
             nextStep: { kind: "limit", title: null },
           },
