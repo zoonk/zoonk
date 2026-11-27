@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  rowCalibrationFixture,
+  weightedResiduals,
+} from "../essays/_test-utils/writing-calibration";
+import {
   type CalibratedWritingGrade,
   calibratedWrittenStanding,
 } from "./calibrated-written-standing";
@@ -9,15 +13,15 @@ const BOTH = { above: true, below: true };
 
 /** Forty residuals rank a one-answer part at the 39th and a two-answer part at the 40th. */
 const RESIDUALS = {
-  over: [...Array.from({ length: 38 }, () => 0.01), 0.02, 0.04],
-  under: [...Array.from({ length: 38 }, () => 0.01), 0.03, 0.03],
+  over: weightedResiduals([...Array.from({ length: 38 }, () => 0.01), 0.02, 0.04]),
+  under: weightedResiduals([...Array.from({ length: 38 }, () => 0.01), 0.03, 0.03]),
 };
 
 const UNMEASURED = { over: [], under: [] };
 
 function grade(low: number, high: number, max = 100): CalibratedWritingGrade {
   return {
-    calibration: { residuals: RESIDUALS, verdicts: BOTH },
+    calibration: [rowCalibrationFixture({ residuals: RESIDUALS })],
     kind: "points",
     max,
     total: { high, low },
@@ -25,10 +29,18 @@ function grade(low: number, high: number, max = 100): CalibratedWritingGrade {
 }
 
 function switched(answer: CalibratedWritingGrade, verdicts: typeof BOTH) {
-  return { ...answer, calibration: { ...answer.calibration, verdicts } };
+  return { ...answer, calibration: answer.calibration.map((row) => ({ ...row, verdicts })) };
 }
 
 describe(calibratedWrittenStanding, () => {
+  it("sums the margins of both row kinds when calling a minimum for a mixed answer", () => {
+    const answer = grade(57, 57);
+    const mixed = { ...answer, calibration: [...answer.calibration, ...answer.calibration] };
+
+    expect(calibratedWrittenStanding({ grades: [answer], part: PART })).toBe("met");
+    expect(calibratedWrittenStanding({ grades: [mixed], part: PART })).toBe("overlaps");
+  });
+
   it.each([
     { first: grade(30, 30, 50), second: grade(23, 23, 50), standing: "overlaps" },
     { first: grade(30, 30, 50), second: grade(24, 24, 50), standing: "met" },
@@ -76,10 +88,14 @@ describe(calibratedWrittenStanding, () => {
 
     const limited = {
       ...answer,
-      calibration: {
-        residuals: { ...RESIDUALS, under: Array.from({ length: 9 }, () => 0.01) },
-        verdicts: BOTH,
-      },
+      calibration: [
+        rowCalibrationFixture({
+          residuals: {
+            ...RESIDUALS,
+            under: weightedResiduals(Array.from({ length: 9 }, () => 0.01)),
+          },
+        }),
+      ],
     };
 
     const three = [answer, answer, answer];
@@ -102,7 +118,12 @@ describe(calibratedWrittenStanding, () => {
     (zeroKind) => {
       const zero = {
         ...grade(0, 0),
-        calibration: { residuals: UNMEASURED, verdicts: { above: false, below: false } },
+        calibration: [
+          rowCalibrationFixture({
+            residuals: UNMEASURED,
+            verdicts: { above: false, below: false },
+          }),
+        ],
         zeroKind,
       };
 
@@ -115,7 +136,12 @@ describe(calibratedWrittenStanding, () => {
     "widens a %s zero, which a model judged, like any other grade",
     (zeroKind) => {
       const zero = { ...grade(0, 0), zeroKind };
-      const unmeasured = { ...zero, calibration: { residuals: UNMEASURED, verdicts: BOTH } };
+
+      const unmeasured = {
+        ...zero,
+        calibration: [rowCalibrationFixture({ residuals: UNMEASURED })],
+      };
+
       const strict = { max: 100, minimum: { unit: "points", value: 60 } } as const;
       const low = { max: 100, minimum: { unit: "points", value: 2 } } as const;
 

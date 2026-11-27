@@ -24,6 +24,11 @@ const schema = z.object({
       z.object({
         criterionId: z.string(),
         description: z.string(),
+        kind: z
+          .enum(["definitePoint", "judgedScale"])
+          .describe(
+            "A definite point has specific expected content; a judged scale rates how deeply or well the answer treats an item.",
+          ),
         points,
         steps: z
           .array(z.string())
@@ -59,7 +64,10 @@ export type WritingPromptInput = {
 
 /** @internal Calibration tracks the template shared across learner languages. */
 export function getWritingKeyWriter() {
-  return { model: defaultModel, promptVersion: getPromptVersion({ systemPrompt: taskPrompt }) };
+  return {
+    model: defaultModel,
+    promptVersion: getPromptVersion({ systemPrompt: taskPrompt, version: "row-kind" }),
+  };
 }
 
 export async function writeWritingPrompt({

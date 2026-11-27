@@ -1,17 +1,22 @@
 import { describe, expect, it } from "vitest";
+import {
+  rowCalibrationFixture,
+  weightedResiduals,
+} from "../essays/_test-utils/writing-calibration";
 import { CGU } from "./_test-utils/cgu-written";
 import { analyzeMock } from "./mock-analysis";
 import { type MockConditions } from "./mock-contract";
 import { type MockEssayView } from "./mock-view-contract";
 import { snapshotMockWriting, withMockWrittenPoints } from "./mock-written-points";
 
-const CALIBRATION = {
-  residuals: {
-    over: Array.from({ length: 40 }, () => 0.02),
-    under: Array.from({ length: 40 }, () => 0),
-  },
-  verdicts: { above: true, below: true },
-};
+const CALIBRATION = [
+  rowCalibrationFixture({
+    residuals: {
+      over: weightedResiduals(Array.from({ length: 40 }, () => 0.02)),
+      under: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+    },
+  }),
+];
 
 const ESSAYS = [
   { itemId: "short", taskKey: "short" },

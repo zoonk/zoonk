@@ -15,7 +15,7 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
 import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
-import { calibrationFixture } from "./_test-utils/writing-calibration";
+import { calibrationFixture, rowCalibrationFixture } from "./_test-utils/writing-calibration";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
@@ -466,7 +466,13 @@ describe("writing grades", () => {
     provider.mockResolvedValueOnce({ data: evidence, provenance });
     await expect(gradeWriting(input)).resolves.toMatchObject({ kind: "levels" });
 
-    calibration.current = calibrationFixture({ grader });
+    calibration.current = calibrationFixture({
+      grader,
+      rows: {
+        definitePoint: rowCalibrationFixture(),
+        judgedScale: rowCalibrationFixture({ points: false }),
+      },
+    });
 
     try {
       const unseen = {
@@ -493,6 +499,26 @@ describe("writing grades", () => {
         kind: "points",
         max: 10,
       });
+
+      provider.mockResolvedValueOnce({ data: evidence, provenance });
+
+      const mixed = {
+        ...writing,
+        aspects: writing.aspects.map((aspect, index) =>
+          index === 0 ? { ...aspect, kind: "judgedScale" as const } : aspect,
+        ),
+      };
+
+      await expect(
+        gradeWriting({ ...input, content: { ...content, writing: mixed } }),
+      ).resolves.toMatchObject({ kind: "levels" });
+
+      calibration.current = calibrationFixture({ grader });
+      provider.mockResolvedValueOnce({ data: evidence, provenance });
+
+      await expect(
+        gradeWriting({ ...input, content: { ...content, writing: mixed } }),
+      ).resolves.toMatchObject({ kind: "levels" });
 
       expect(isNumericWritingRubric(basis)).toBe(true);
       expect(isNumericWritingRubric({ ...basis, points: 1 })).toBe(false);

@@ -20,7 +20,7 @@ import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 import { getWritingAttemptId } from "./writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback";
-import { getWritingGraderSheet } from "./writing-sheet";
+import { getScoringRowKinds, getWritingGraderSheet } from "./writing-sheet";
 import { indexWritingTasks } from "./writing-task-positions";
 
 const GOOD_SHARE = 0.6;
@@ -233,6 +233,7 @@ export async function recordEssayGrade(
         writing: writtenAnswerSchema.shape.writing.parse({
           ...basis,
           part: basis.part ?? task.part,
+          ...(grade.kind === "points" && { rowKinds: getScoringRowKinds(basis) }),
         }),
         ...(task.writingTask && { writingTask: task.writingTask }),
       },

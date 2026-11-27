@@ -2,7 +2,7 @@ import { type WritingRow } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type WritingSheet } from "../../../library/exams/written-grading";
 import { addWritingPoints } from "../../scoring/written-points";
-import { type writtenItemSchema } from "../writing-contract";
+import { type WritingRowKind, type writtenItemSchema } from "../writing-contract";
 
 type Item = z.infer<typeof writtenItemSchema>;
 type Criterion = WritingSheet["criteria"][number];
@@ -156,4 +156,34 @@ export function getWritingGraderSheet(basis: SheetBasis) {
     rows: listWritingRows(basis).map(({ aspect: _aspect, kind: _kind, ...row }) => row),
     zeroing: zeroing.map(({ kinds, maxLines, text }) => ({ kinds, maxLines, text })),
   };
+}
+
+function criterionKinds(
+  criterion: Criterion,
+  aspects: SheetBasis["aspects"] | undefined,
+): WritingRowKind[] {
+  if (criterion.awards) {
+    return ["boardScale"];
+  }
+
+  if (!aspects) {
+    return ["definitePoint"];
+  }
+
+  const keyed = aspects.filter(({ criterionId }) => criterionId === criterion.id);
+
+  if (keyed.length === 0 || keyed.some(({ points }) => points === null)) {
+    return [];
+  }
+
+  return keyed.map(({ kind }) => kind ?? "definitePoint");
+}
+
+/** Feedback aspects under a board scale don't contribute to the numeric mark. */
+export function getScoringRowKinds({
+  aspects,
+  grading,
+}: Pick<SheetBasis, "grading"> & { aspects?: SheetBasis["aspects"] }): WritingRowKind[] {
+  const kinds = grading.criteria.map((criterion) => criterionKinds(criterion, aspects));
+  return kinds.some((rows) => rows.length === 0) ? [] : [...new Set(kinds.flat())];
 }

@@ -8,7 +8,7 @@ import { type EstimatedScore } from "../../preparation/estimated-score";
 import { namesMatch } from "../_utils/name-match";
 import { getWritingDecimals } from "../essays/_utils/writing-decimals";
 import { matchesWritingTaskBasis } from "../essays/_utils/writing-task-basis";
-import { isNumericWritingRubric } from "../essays/writing-rubric-policy";
+import { canCalibrateWritingTask } from "../essays/writing-rubric-policy";
 import { isWrittenSubject } from "../mocks/written-subject";
 import {
   type WritingRange,
@@ -71,7 +71,7 @@ export function projectWrittenParts({
   tasks?: ReturnType<typeof listWrittenTasks>;
 }) {
   const numeric = new Set(
-    tasks.filter((task) => isNumericWritingRubric(task)).map(({ key }) => key),
+    tasks.filter((task) => canCalibrateWritingTask(task)).map(({ key }) => key),
   );
 
   const bySection = Map.groupBy(tasks, ({ section }) => section);
@@ -309,7 +309,7 @@ export async function loadWrittenProjection({
 
   const [samples, mocks] = await Promise.all([
     readWrittenSamples({ goalId, userId }),
-    tasks.some((task) => isNumericWritingRubric(task))
+    tasks.some((task) => canCalibrateWritingTask(task))
       ? readLatestWrittenMocks({ goalId, userId })
       : [],
   ]);

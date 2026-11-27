@@ -65,6 +65,10 @@ export function readWritingPrompt(value: unknown): z.infer<typeof writingPromptS
   return { ...basis, denseCharactersPerLine: getDenseCharactersPerLine(basis.charactersPerLine) };
 }
 
+const keyedWritingRowKind = z.enum(["definitePoint", "judgedScale"]);
+export const writingRowKind = z.enum(["boardScale", ...keyedWritingRowKind.options]);
+export type WritingRowKind = z.infer<typeof writingRowKind>;
+
 const aspectAwardSchema = z.object({ points: z.number().nonnegative(), text: z.string().min(1) });
 
 const aspectSchema = z.object({
@@ -75,6 +79,7 @@ const aspectSchema = z.object({
     .describe("Its steps of credit, lowest first; absent when it is earned whole or not at all"),
   criterionId: z.string(),
   description: z.string(),
+  kind: keyedWritingRowKind.optional(),
   points,
 });
 
@@ -265,7 +270,10 @@ export const writtenAnswerSchema = z.object({
   text: z.string(),
   writing: writtenItemSchema
     .omit({ aspects: true, chosenSubjects: true, subject: true })
-    .extend({ part: z.string().min(1).nullable() }),
+    .extend({
+      part: z.string().min(1).nullable(),
+      rowKinds: z.array(writingRowKind).min(1).optional(),
+    }),
   writingTask: writingTaskSchema.optional(),
 });
 

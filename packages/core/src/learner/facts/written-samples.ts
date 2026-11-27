@@ -14,6 +14,7 @@ const samplePrompt = writtenAnswerSchema.shape.writing.pick({
   lines: true,
   part: true,
   points: true,
+  rowKinds: true,
   taskBasis: true,
   taskKey: true,
   title: true,
@@ -138,7 +139,7 @@ export async function loadWrittenSamples({
               grade: savedGrade,
               ...(savedGrader && { grader: savedGrader }),
             },
-            numericEligible: isNumericWritingRubric(savedPrompt),
+            numericEligible: isNumericWritingRubric(savedPrompt, savedGrader),
             prompt: savedPrompt,
           },
         ]

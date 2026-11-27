@@ -1,9 +1,15 @@
 import { type WrittenTask } from "../scoring/written-points";
-import { type WritingCalibration, writingCalibration } from "./_utils/writing-calibration";
-import { isComputableSheet } from "./_utils/writing-sheet";
+import {
+  type RowCalibration,
+  type WritingGrader,
+  writingCalibration,
+} from "./_utils/writing-calibration";
+import { type SheetBasis, getScoringRowKinds, isComputableSheet } from "./_utils/writing-sheet";
+import { type WritingRowKind } from "./writing-contract";
 
-type Basis = Pick<WrittenTask, "grading" | "points">;
-export type WritingGrader = WritingCalibration["grader"];
+type TaskBasis = Pick<WrittenTask, "grading" | "points">;
+type Basis = TaskBasis & { aspects?: SheetBasis["aspects"]; rowKinds?: WritingRowKind[] };
+export type { WritingGrader } from "./_utils/writing-calibration";
 
 export function getWritingCalibration({
   basis,
@@ -11,18 +17,39 @@ export function getWritingCalibration({
 }: {
   basis: Basis;
   observed?: WritingGrader;
-}): WritingCalibration | null {
+}): RowCalibration[] | null {
   const calibration = writingCalibration;
 
-  if (!calibration?.points || !isComputableSheet(basis)) {
+  if (
+    !calibration ||
+    !isComputableSheet(basis) ||
+    (observed &&
+      (observed.model !== calibration.grader.model ||
+        observed.promptVersion !== calibration.grader.promptVersion))
+  ) {
     return null;
   }
 
-  return !observed ||
-    (observed.model === calibration.grader.model &&
-      observed.promptVersion === calibration.grader.promptVersion)
-    ? calibration
-    : null;
+  const kinds = basis.rowKinds ?? getScoringRowKinds(basis);
+
+  const rows = kinds.flatMap((kind) => {
+    const row = calibration.rows[kind];
+    return row?.points ? [row] : [];
+  });
+
+  return rows.length > 0 && rows.length === kinds.length ? rows : null;
+}
+
+export function canCalibrateWritingTask(basis: TaskBasis): boolean {
+  const rows = writingCalibration?.rows;
+
+  return Boolean(
+    rows &&
+    isComputableSheet(basis) &&
+    basis.grading.criteria.every(({ awards }) =>
+      awards ? rows.boardScale?.points : rows.definitePoint?.points || rows.judgedScale?.points,
+    ),
+  );
 }
 
 /** Feeds the API's `rubric` fields until its clients read the sheet itself. */

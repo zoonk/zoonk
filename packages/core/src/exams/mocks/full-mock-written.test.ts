@@ -14,7 +14,11 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
 import { SESSION_NOW, SESSION_TODAY } from "../../sessions/_test-utils/session-goal";
 import { getSyllabusView } from "../../view-models/syllabus/get-syllabus-view";
-import { calibrationFixture } from "../essays/_test-utils/writing-calibration";
+import {
+  calibrationFixture,
+  rowCalibrationFixture,
+  weightedResiduals,
+} from "../essays/_test-utils/writing-calibration";
 import { readEssayContent } from "../essays/_utils/essay-content";
 import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
@@ -922,9 +926,13 @@ describe("written mock sittings", () => {
 
     calibration.current = calibrationFixture({
       grader: { model: provenance.model, promptVersion: provenance.promptVersion },
-      residuals: {
-        over: Array.from({ length: 40 }, () => 0),
-        under: Array.from({ length: 40 }, () => 0),
+      rows: {
+        definitePoint: rowCalibrationFixture({
+          residuals: {
+            over: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+            under: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+          },
+        }),
       },
     });
 
