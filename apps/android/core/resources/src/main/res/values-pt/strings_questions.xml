@@ -37,7 +37,7 @@
   "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
   "questions_mistakes_fixed": "5f606109f5b12ffc939e7e243493dfa22b6d7812a225e3cce0c9cefb2cea5f75",
   "questions_not_quite": "f1db16257f3131d0e5ec5e0e1a8b28fa0d8ff9c291ed92d3bf50762fbc0571c7",
-  "questions_pick_all": "741b5f7e7cbbbf1d77e4e21823a61d1aafa703d53f4058b96370cc09d4168959",
+  "questions_pick_all": "2de48cdc3e8d3e659bd7853c28b73dcded6d6ef2b822de3b12b161853f6fb361",
   "questions_pick_count": "863b0475d69fede971d2f0eee1c6fa84e088952d4b2ee41533dd77342980a50d",
   "questions_place_right": "71968d44b7cd4a7e0c1ac506921de3934f5a69af0cec5c09547c27e367cec01e",
   "questions_place_wrong": "20de412472a81696e160d0cef8b1833d22536ea5a2bcc2b7ea286f3990dbac59",
@@ -60,7 +60,7 @@
 }
 -->
 <resources>
-    <string name="questions_pick_all">Selecione todas as alternativas corretas.</string>
+    <string name="questions_pick_all">Selecione todas as alternativas que se aplicam.</string>
     <plurals name="questions_pick_count">
         <item quantity="one">Escolha %d alternativa.</item>
         <item quantity="many">Escolha %d alternativas.</item>
