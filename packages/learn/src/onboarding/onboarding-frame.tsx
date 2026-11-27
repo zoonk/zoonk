@@ -195,20 +195,21 @@ export function OnboardingSubject({
   position,
 }: {
   children: string;
-  /** Where the learner is, such as "Question 2 of 8" or the time left: at the row's end, not in the chip. */
-  position?: string | readonly string[];
+  /**
+   * Where the learner is, such as "Question 2 of 8": on its own line under the chip, so a topic's
+   * name never moves it from one question to the next.
+   */
+  position?: readonly string[];
 }) {
-  const facts = typeof position === "string" ? [position] : (position ?? []);
-
   return (
     <div
-      className="text-muted-foreground flex flex-wrap items-center justify-between gap-x-3 gap-y-2"
+      className="text-muted-foreground flex flex-col items-start gap-1"
       data-slot="onboarding-subject"
     >
-      <Eyebrow className="min-w-0 wrap-break-word">{children}</Eyebrow>
-      {facts.length > 0 && (
+      <Eyebrow className="wrap-break-word">{children}</Eyebrow>
+      {position && position.length > 0 && (
         <p className="font-mono text-xs tabular-nums">
-          <FactSegments facts={facts} />
+          <FactSegments facts={position} />
         </p>
       )}
     </div>

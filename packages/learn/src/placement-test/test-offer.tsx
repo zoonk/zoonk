@@ -127,7 +127,7 @@ export function TestOffer<Value extends string>({
   );
 }
 
-/** One test and nothing to pick: what it is, its facts beside its name, and the way in. */
+/** One test and nothing to pick: what it is, its facts under its name, and the way in. */
 export function TestInvitation({
   children,
   chip,

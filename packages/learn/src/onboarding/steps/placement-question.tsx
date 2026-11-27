@@ -136,7 +136,7 @@ export function PlacementQuestionScreen({
   onClose?: () => void;
   onStop: () => void;
   pending: boolean;
-  /** Where the question sits in the test, at the end of the chip's row. */
+  /** Where the question sits in the test, on its own line under the chip. */
   position: readonly string[];
   /** 0 to 1. */
   progress: number;
