@@ -21,9 +21,9 @@ final class PlacementTestRenderTests: XCTestCase {
         absent: number == 1 ? ["Stop and use my answers"] : []
       ) {
         PlacementQuestionScreen(
-          subject: "Fractions", number: number, progress: Double(number - 1) / 4,
-          question: question, labels: .trueFalse, isSaving: false, failures: 0,
-          onReport: {}, onAnswer: { _ in }, onStop: {})
+          subject: "Fractions", number: number, total: 4, question: question,
+          labels: .trueFalse, isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in },
+          onStop: {})
       }
     }
   }
@@ -68,32 +68,44 @@ final class PlacementTestRenderTests: XCTestCase {
     XCTAssertEqual(writes, [])
   }
 
-  func testLengthChoiceAndResult() async throws {
+  func testOfferAndResult() async throws {
+    let offer = CoursePlacementOffer(
+      estimatedMinutes: 6, questions: 12, wholeCourse: .init(estimatedMinutes: 85, parts: 14))
     try await capture(
-      "placement-length", title: "Skip what you already know",
-      detail: "Choose a test"
+      "placement-offer-onboarding", title: "Where would you like to start?",
+      detail: "14 parts, any day you like"
     ) {
-      PlacementLengthChoice(
-        wholeCourseMinutes: 25, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+      TestOffer(
+        rows: [TestCopy.firstLessonRow] + TestCopy.courseRows(offer),
+        title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
+        preselected: .quick,
+        context: .init(goalID: goalID, test: .course, surface: .onboarding), isSaving: false,
+        failed: false, onStart: { _ in })
     }
 
     try await capture(
-      "placement-length-quick-only", title: "Skip what you already know",
-      detail: "A quick test finds the lessons you can skip.",
-      absent: ["Choose a test"]
+      "placement-offer-plan-one-test", title: "Skip what you already know",
+      detail: "12 questions", absent: ["First lesson", "Full test"]
     ) {
-      PlacementLengthChoice(
-        wholeCourseMinutes: 0, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+      TestOffer(
+        rows: TestCopy.courseRows(.init(estimatedMinutes: 6, questions: 12, wholeCourse: nil)),
+        chip: "Test what you know", title: Text(TestCopy.skipWhatYouKnow),
+        description: Text(TestCopy.findsSkips), preselected: .quick,
+        context: .init(goalID: goalID, test: .course, surface: .plan), isSaving: false,
+        failed: false, onNotNow: {}, onStart: { _ in })
     }
 
     let request = VisitRequest<Bool>()
     let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
     let undo = PlacementResultUndo(
       goalId: goalID, changeId: goalID, lessons: 6, request: request, plans: store, disabled: false)
-    try await capture("placement-result", title: "6 lessons skipped", detail: "Fractions") {
+    try await capture("placement-result", title: "6 lessons skipped", detail: "Loops with for") {
       PlacementTestResultView(
-        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
-        undo: undo, onDone: {})
+        end: PlacementTestEnd(
+          lessonsSkipped: 6, changeId: goalID, undoLessons: 6,
+          nextLesson: .init(id: goalID, title: "Loops with for")),
+        onboarding: false, pressed: nil, failed: false, undo: undo, onTestTheRest: {},
+        onDone: {})
     }
   }
 
@@ -102,16 +114,16 @@ final class PlacementTestRenderTests: XCTestCase {
     let cache = AppCache(session: session)
     let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
     try await capture(
-      "placement-listening", title: "When does the train leave?", detail: "Play the message",
-      absent: ["Fine-tuning your plan", "Question 2"]
+      "placement-listening", title: "When does the train leave?", detail: "Can't listen now",
+      absent: ["Fine-tuning your plan"]
     ) {
       LevelTestQuestionScreen(
         question: .init(
           id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
           question: "When does the train leave?", skill: .listening, audio: nil, audioPending: false
         ),
-        number: 2, progress: 0.25, targetLanguage: "en", isSaving: false, failures: 0,
-        onReport: {}, onAnswer: { _, _ in }, onStop: {}
+        number: 6, total: 12, targetLanguage: "en", isSaving: false, failures: 0,
+        onReport: {}, onAnswer: { _, _ in }, onDeferAudio: {}, onStop: {}
       )
       .environment(VoiceServices(clients: clients, cache: cache))
     }
@@ -139,7 +151,7 @@ final class PlacementTestRenderTests: XCTestCase {
     try await readsWhatVoiceOverReads()
     let window = try show(
       PlacementQuestionScreen(
-        subject: "Cooking", number: 1, progress: 0, question: question, labels: .trueFalse,
+        subject: "Cooking", number: 1, total: 12, question: question, labels: .trueFalse,
         isSaving: false, failures: 0, onReport: {}, onAnswer: { submitted.append($0) }, onStop: {}
       )
       .environment(AppRouter())
@@ -201,8 +213,8 @@ final class PlacementTestRenderTests: XCTestCase {
       absent: ["Your plan stays as it is."]
     ) {
       PlacementTestResultView(
-        lessonsSkipped: 0, nextTopic: "Fractions", isSaving: false, failed: false,
-        heldUntilTomorrow: true, onDone: {})
+        end: PlacementTestEnd(lessonsSkipped: 0, heldUntilTomorrow: true), onboarding: false,
+        pressed: nil, failed: false, onTestTheRest: {}, onDone: {})
     }
   }
 
@@ -213,8 +225,8 @@ final class PlacementTestRenderTests: XCTestCase {
       absent: ["You undid these today. Answer again tomorrow to skip them."]
     ) {
       PlacementTestResultView(
-        lessonsSkipped: 23, nextTopic: "Fractions", isSaving: false,
-        failed: false, heldUntilTomorrow: true, onDone: {})
+        end: PlacementTestEnd(lessonsSkipped: 23, heldUntilTomorrow: true), onboarding: false,
+        pressed: nil, failed: false, onTestTheRest: {}, onDone: {})
     }
   }
 
@@ -253,8 +265,19 @@ final class PlacementTestRenderTests: XCTestCase {
       "language-result-ranges", title: "Your English level", detail: "Reading B1–B2"
     ) {
       LanguageTestResultView(
-        length: .quick, result: result, targetLanguage: "en", testOutLevel: "B2",
-        pressed: nil, failed: false, onContinue: {}, onTestOut: {})
+        result: result, targetLanguage: "en", testOutLevel: "B2", pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
+    }
+
+    var readingOnly = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    readingOnly.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
+    try await capture(
+      "language-result-listening-not-tested", title: "Not tested yet",
+      detail: "You can test your listening later, from your plan."
+    ) {
+      LanguageTestResultView(
+        result: readingOnly, targetLanguage: "en", testOutLevel: nil, pressed: nil,
+        failed: false, onboarding: true, onContinue: {}, onTestOut: {})
     }
   }
 
@@ -267,22 +290,27 @@ final class PlacementTestRenderTests: XCTestCase {
 
     try await capture("placement-undo", title: "No lessons skipped", detail: "back in your plan") {
       PlacementTestResultView(
-        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
-        undo: undo, onDone: {})
+        end: PlacementTestEnd(lessonsSkipped: 6, changeId: goalID, undoLessons: 6),
+        onboarding: false, pressed: nil, failed: false, undo: undo, onTestTheRest: {},
+        onDone: {})
     }
     try await capture(
-      "placement-part-undo", title: "No lessons skipped", detail: "back in your plan"
+      "placement-part-undo", title: "Part 3 of 14 done", detail: "back in your plan"
     ) {
-      PlacementBetweenParts(
-        lessonsSkipped: 6, minutesLeft: 25, pressed: nil, failed: false, onKeepGoing: {},
-        undo: undo,
-        onFinishForToday: {})
+      PlacementCheckpoint(
+        stop: PlacementPartStop(
+          attempt: PlacementAttempt(
+            answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
+            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, questions: 12,
+            resume: nil, totalEstimatedMinutes: 85, remainingEstimatedMinutes: 66),
+          partLessonsSkipped: 6, changeId: goalID, undoLessons: 6),
+        pressed: nil, failed: false, undo: undo, onKeepGoing: {}, onFinishLater: {})
     }
     try await capture(
       "placement-level-undo", title: "No lessons skipped", detail: "back in your plan"
     ) {
       LanguageTestResultView(
-        length: .quick, result: .init(finishedAt: .now, lessonsSkipped: 6), targetLanguage: "en",
+        result: .init(finishedAt: .now, lessonsSkipped: 6), targetLanguage: "en",
         testOutLevel: "B2", pressed: nil, failed: false, undo: undo, onContinue: {}, onTestOut: {})
     }
     try await capture(
@@ -385,14 +413,14 @@ private actor LevelTestBackServer: ClientTransport {
     switch operationID {
     case "getOnboarding":
       payload = #"""
-        {"profile":{"memoryEnabled":true,"questions":[]},"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":null,"goal":{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{"answered":["level","followUps"]},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"\#(goalID)","isActive":true,"kind":"language","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Learn English","regionChoices":[],"status":"active","studyDays":[],"studyTime":null,"suggested":[],"targetDate":null,"targetLanguage":"en","targetRegion":null,"timezone":null,"title":"Learn English","displayName":"Learn English"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":4,"recommendedMinutes":15,"startsOnRecommended":false,"steps":["placement","plan"],"timeChoices":[],"warmUp":null}
+        {"profile":{"memoryEnabled":true,"questions":[]},"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":null,"goal":{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{"answered":["level","followUps"]},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"\#(goalID)","isActive":true,"kind":"language","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Learn English","regionChoices":[],"status":"active","studyDays":[],"studyTime":null,"suggested":[],"targetDate":null,"targetLanguage":"en","targetRegion":null,"timezone":null,"title":"Learn English","displayName":"Learn English"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":4,"recommendedMinutes":15,"startsOnRecommended":false,"steps":["placement","plan"],"timeChoices":[],"warmUp":null,"placement":{"mode":"resume","test":{"kind":"language"}}}
         """#
     case "getGoalPlacement":
       payload =
         #"{"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],"next":null,"phases":[],"started":false,"status":"unavailable","trueFalseLabels":"trueFalse","focusTest":null}"#
     case "getLanguageLevelTest":
       payload = #"""
-        {"status":"ready","answered":4,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":4,"attemptId":"\#(goalID)","length":"quick","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
+        {"status":"ready","answered":4,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":12,"estimatedMinutes":6,"attemptId":"\#(goalID)","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
         """#
     default: return (HTTPResponse(status: .notFound), nil)
     }

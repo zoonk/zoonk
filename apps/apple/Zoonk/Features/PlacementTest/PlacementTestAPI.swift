@@ -1,10 +1,13 @@
 import Foundation
 
-/// A part of the test taken from the plan that closed: what it skipped, and either the next part
-/// waiting (`attempt`) or the test's `result`.
+/// A part of a course's test that closed: what it skipped, the test as it stands after it
+/// (`attempt`, nil once nothing is left) and its `result`.
 struct PlacementPartEnd: Equatable, Sendable {
   let attempt: PlacementAttempt?
+  /// What this close skipped, which its Undo gives back.
   let lessonsSkipped: Int
+  /// What the part skipped, every close of it together.
+  var partLessonsSkipped: Int
   var changeId: String?
   var heldUntilTomorrow = false
   let result: PlacementTestResult?
@@ -66,6 +69,7 @@ private struct PlacementPartCompletion: Decodable {
   let changeId: String?
   let heldUntilTomorrow: Bool?
   let lessonsSkipped: Int
+  let partLessonsSkipped: Int?
   let result: PlacementTestResult?
 }
 
@@ -78,8 +82,8 @@ private struct LevelTestOutAnswerBody: Encodable {
 }
 
 extension OnboardingAPI {
-  /// Opens a test of this length, or the next part of the open one; asked again, it answers with
-  /// the one already open.
+  /// Opens a test of this length, or goes on with the open one: its next part, or the full test
+  /// after a quick one. Asked again, it answers with the test already open.
   func startPlacementTest(goalID: String, length: PlacementLength, token: String) async throws
     -> GoalPlacement
   {
@@ -117,6 +121,7 @@ extension OnboardingAPI {
       return .finished(
         PlacementPartEnd(
           attempt: completion.attempt, lessonsSkipped: completion.lessonsSkipped,
+          partLessonsSkipped: completion.partLessonsSkipped ?? completion.lessonsSkipped,
           changeId: completion.changeId, heldUntilTomorrow: completion.heldUntilTomorrow == true,
           result: completion.result))
     case .conflict:
@@ -147,14 +152,10 @@ extension OnboardingAPI {
     }
   }
 
-  /// Opens a level test of this length taken from the plan; asked again, it answers with the open one.
-  func startLanguageTest(goalID: String, length: PlacementLength, token: String) async throws
-    -> LevelTest
-  {
+  /// Opens the level test; asked again, it answers with the open one.
+  func startLanguageTest(goalID: String, token: String) async throws -> LevelTest {
     let output = try await clients.perform(token: token) { client in
-      try await client.startLanguageLevelTest(
-        path: .init(goalId: goalID),
-        body: .json(.init(length: length == .quick ? .quick : .wholeCourse)))
+      try await client.startLanguageLevelTest(path: .init(goalId: goalID), body: .json(.init()))
     }
 
     switch output {

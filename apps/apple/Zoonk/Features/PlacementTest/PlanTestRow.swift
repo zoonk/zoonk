@@ -31,12 +31,9 @@ struct PlanTestRow: View {
     Button {
       switch test {
       case .focus: router.open(.focusTest(goalId: goalId))
-      // A language course's test starts with its level; only its whole-course walk through the
-      // course's topics is the course test.
       case .placement(let test):
         router.open(
-          test.kind == .language && test.attempt == nil
-            ? .levelTest(goalId: goalId) : .placementTest(goalId: goalId))
+          test.kind == .language ? .levelTest(goalId: goalId) : .placementTest(goalId: goalId))
       }
     } label: {
       ListRow(Text(name), descriptionFacts: facts)

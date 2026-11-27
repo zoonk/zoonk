@@ -1,379 +1,135 @@
 import SwiftUI
 
-/// "I don't know yet" is welcome and there's no score. It ends when every area has a starting point,
-/// when nothing more can be asked today, or whenever the learner stops, and goes straight on.
+/// Onboarding's test step, as core decides it: the offer of where to start (`offer`), the test the
+/// learner already asked for (`direct`) or the one they came back to (`resume`).
+struct OnboardingTestStep: Decodable, Equatable {
+  enum Mode: String, Decodable {
+    case offer, direct, resume
+  }
+
+  enum Kind: String, Decodable {
+    case course, focus, language
+  }
+
+  let mode: Mode
+  let kind: Kind
+  /// A course's quick test and, with more than one part, its full test.
+  let courseOffer: CoursePlacementOffer?
+  /// The Focus test's sitting.
+  let focusOffer: FocusTest.Offer?
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    mode = try container.decode(Mode.self, forKey: .mode)
+    let test = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .test)
+    kind = try test.decode(Kind.self, forKey: .kind)
+    courseOffer =
+      kind == .course ? try test.decodeIfPresent(CoursePlacementOffer.self, forKey: .offer) : nil
+    focusOffer =
+      kind == .focus ? try test.decodeIfPresent(FocusTest.Offer.self, forKey: .offer) : nil
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case mode, test, kind, offer
+  }
+}
+
+extension GoalOnboarding {
+  var testStep: OnboardingTestStep? {
+    placement.flatMap { try? PracticeJSON.recode($0, as: OnboardingTestStep.self) }
+  }
+}
+
+/// A course's test in onboarding: "First lesson" or a test, then the same test the plan opens.
+/// Main's course placement step.
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
   let onDone: (String?) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  @Environment(PlanStore.self) private var plans
-  @State private var topics: GoalPlacement?
-  @State private var opening: Resource<GoalPlacement>?
-  /// Where the learner's taps and the wait took the step; until then it shows the opening read.
-  @State private var reached: Phase?
-  @State private var shownAt = ContinuousClock.now
+  /// The test the learner picked on the offer.
+  @State private var chosen: PlacementLength?
   @State private var isSaving = false
-  @State private var isStarting = false
-  @State private var questionFailures = 0
-  @State private var finishFailed = false
-  @State private var showsSaveReport = false
-  @State private var failedAnswer: SentAnswer?
-  @State private var waitRound = 0
-  /// The goal's run while its questions are written, as the wait shows it.
-  @State private var run = GenerationWait(kind: .placement).started
-  /// Neither a question's number nor the bar ever goes back while the plan is still being written.
-  @State private var shown = (answered: 0, spent: 0.0)
-  /// The answers and the finish: a step left during one does nothing when it answers.
+  @State private var failed = false
   @State private var tasks = ScreenTasks()
 
-  enum Phase: Equatable {
-    case loading
-    case intro
-    case waiting(failure: GenerationFailure?)
-    case question(PracticeQuestion, labels: PracticeTrueFalseLabels)
-    /// Over and not saved yet: the learner came back to it, or its last save failed.
-    case done
-    case unavailable
-
-    var isWaiting: Bool {
-      if case .waiting = self {
-        return true
-      }
-
-      return false
-    }
-
-    init(_ placement: GoalPlacement) {
-      switch placement.status {
-      case .asking:
-        guard let next = placement.next,
-          let question = try? PracticeJSON.recode(next, as: PracticeQuestion.self)
-        else {
-          self = .unavailable
-          return
-        }
-
-        self = .question(
-          question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
-      case .done:
-        self = .done
-      case .unavailable, .failed:
-        self = .unavailable
-      case .preparing, .waitingForQuestions:
-        self = .waiting(failure: nil)
-      }
-    }
-
-    init(started placement: GoalPlacement?) {
-      self = placement.map(Phase.init) ?? .waiting(failure: .notStarted)
-    }
-  }
-
   var body: some View {
+    let step = view.testStep
+
     Group {
-      if let placement = topics ?? opening?.value, placement.resumesOnboardingTopics {
-        PlacementTestFlow(
-          goalID: view.goal.id, subject: subject,
-          wholeCourseMinutes: wholeCourseMinutes, nextTopic: { nil },
-          initialPlacement: placement, onOnboardingDone: { try await onDone($0) }
-        ) {
-          try await onDone(nil)
-        }
-      } else if let opening {
-        steps(opening)
-          .loads(opening, refreshable: false)
-      } else {
-        StepLoading()
-      }
-    }
-    .onAppear {
-      if opening == nil {
-        opening = onboarding.openingPlacement(goalID: view.goal.id)
-      }
-    }
-    .loads(plan, refreshable: false)
-    .onDisappear { tasks.cancel() }
-    .feedbackSheet(
-      isPresented: $showsSaveReport,
-      context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
-      isReport: true)
-  }
-
-  private var plan: Resource<PlanRead> { plans.plan(goalId: view.goal.id) }
-
-  private var wholeCourseMinutes: Int { plan.value?.plan.placementTest?.estimatedMinutes ?? 0 }
-
-  private var phase: Phase {
-    reached ?? opening?.value.map { $0.started ? Phase($0) : .intro } ?? .loading
-  }
-
-  private var progress: (answered: Int, spent: Double) {
-    let opened = opening?.value
-    return (
-      max(shown.answered, opened?.answered ?? 0), max(shown.spent, opened?.dayBudgetSpent ?? 0)
-    )
-  }
-
-  /// Questions that couldn't be written show at once, as on main: there's nothing to be ready for.
-  @ViewBuilder
-  private func steps(_ opening: Resource<GoalPlacement>) -> some View {
-    if reached == nil, case .failed(let error) = opening.state {
-      PracticeLoadFailureView(error: error) { Task { await opening.refresh() } }
-    } else if phase == .unavailable {
-      ready
-    } else {
-      WaitHold(
-        surface: .placementWait, isReady: !phase.isWaiting,
-        announcement: PlacementWaitScreen.questionsReady
-      ) { stage in
-        switch stage {
-        case .waiting(let holding): waiting(holding: holding)
-        case .ready: ready
-        }
-      }
-    }
-  }
-
-  @ViewBuilder
-  private var ready: some View {
-    switch phase {
-    case .loading:
-      StepLoading()
-    case .intro:
-      intro
-    case .waiting:
-      EmptyView()
-    case .question(let question, let labels):
-      PlacementQuestionScreen(
-        subject: subject, number: progress.answered + 1, progress: progress.spent,
-        question: question,
-        labels: labels, isSaving: isSaving, failures: questionFailures,
-        saveFailure: finishFailed ? testSaveFailure : nil,
-        onReport: { showsSaveReport = true },
-        onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
-      )
-      .id(question.itemId)
-      // A question held behind the warm-up's wait is timed from when it shows.
-      .onAppear { shownAt = .now }
-    case .done:
-      TestOutcome(
-        title: Text(
-          "Your answers are saved", tableName: "Onboarding",
-          comment: "Title once the short test is over and its answers wait to be saved"),
-        isSaving: isSaving, failed: finishFailed
-      ) {
-        finish(fromScratch: false)
-      }
-    case .unavailable:
-      PlacementUnavailable(isSaving: isSaving, failed: finishFailed) {
-        finish(fromScratch: false)
-      }
-    }
-  }
-
-  private var intro: some View {
-    PlacementLengthChoice(
-      wholeCourseMinutes: wholeCourseMinutes, isSaving: isStarting || isSaving,
-      failed: finishFailed, onSkip: { finish(fromScratch: true) },
-      onStart: { choice in
-        guard !isStarting, !isSaving, case .length(let length) = choice else { return }
-
-        if length == .quick {
-          tasks.run { await start() }
-        } else {
-          isStarting = true
-          finishFailed = false
-
-          tasks.run {
-            defer { isStarting = false }
-
-            do {
-              let placement = try await onboarding.startPlacementTest(
-                goalID: view.goal.id, length: length)
-              guard placement.resumesOnboardingTopics else { throw APIError.unavailable }
-              topics = placement
-            } catch is CancellationError {
-            } catch {
-              finishFailed = true
-            }
+      if let chosen {
+        flow(.start(chosen))
+      } else if step?.mode == .offer, let offer = step?.courseOffer {
+        TestOffer(
+          rows: [TestCopy.firstLessonRow] + TestCopy.courseRows(offer),
+          title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
+          preselected: .quick,
+          context: AnalyticsEvent.TestContext(
+            goalID: view.goal.id, test: .course, surface: .onboarding, part: 1,
+            parts: offer.wholeCourse?.parts ?? 1, questions: offer.questions),
+          isSaving: isSaving, failed: failed
+        ) { row in
+          switch row {
+          case .firstLesson: firstLesson()
+          case .wholeCourse: chosen = .wholeCourse
+          default: chosen = .quick
           }
         }
-      })
-  }
-
-  private func waiting(holding: WaitHolding?) -> some View {
-    let failure: GenerationFailure? = if case .waiting(let failure) = phase { failure } else { nil }
-
-    return PlacementWaitScreen(
-      onboarding: view, goalID: view.goal.id, run: run, failure: failure, holding: holding,
-      isActing: isStarting,
-      skip: .init(
-        label: Text(
-          "Skip", tableName: "Onboarding",
-          comment: "Skips placement while its questions are written"),
-        note: nil,
-        isBusy: isSaving, failed: finishFailed
-      ) {
-        finish(fromScratch: false)
-      },
-      onRetry: retry
-    )
-    .taskThroughPush(id: waitRound) { await waitForQuestions() }
-  }
-
-  /// Start reads first, so questions that already exist never flash the wait.
-  private func start() async {
-    guard !isSaving, !isStarting else {
-      return
+      } else if step?.mode == .direct {
+        flow(.start(.quick))
+      } else {
+        flow(.read)
+      }
     }
-
-    isStarting = true
-    defer { isStarting = false }
-
-    let placement = try? await onboarding.placement(goalID: view.goal.id)
-    show(Phase(started: placement), from: placement)
-    waitRound += 1
+    .onDisappear { tasks.cancel() }
   }
 
-  private func retry(_ failure: GenerationFailure) {
-    guard failure == .connection else {
-      Task { await start() }
-      return
-    }
-
-    reached = .waiting(failure: nil)
-    waitRound += 1
-  }
-
-  private func read() async {
-    guard let placement = try? await onboarding.placement(goalID: view.goal.id) else {
-      return
-    }
-
-    show(placement)
-  }
-
-  private func waitForQuestions() async {
-    guard case .waiting(failure: nil) = phase else {
-      return
-    }
-
-    let followed = await PlacementWaitScreen.follow(
-      generationID: view.generationId, store: onboarding, apply: { run.apply($0) },
-      isWaiting: {
-        guard case .waiting = phase else {
-          return false
-        }
-
-        await read()
-        return phase.isWaiting
-      })
-
-    if !followed, case .waiting = phase {
-      reached = .waiting(failure: .connection)
+  private func flow(_ opening: PlacementTestFlow.Opening) -> some View {
+    PlacementTestFlow(
+      goalID: view.goal.id, subject: subject, opening: opening, onboarding: view,
+      onOnboardingDone: onDone
+    ) {
+      try await onDone(nil)
     }
   }
 
-  private func show(_ placement: GoalPlacement) {
-    show(Phase(placement), from: placement)
-  }
-
-  private func show(_ next: Phase, from placement: GoalPlacement?) {
-    if let placement {
-      shown = (max(shown.answered, placement.answered), max(shown.spent, placement.dayBudgetSpent))
-    }
-
-    reached = next
-  }
-
-  private func submit(_ answer: PracticeAnswer, to question: PracticeQuestion) {
-    guard !isSaving else {
-      return
-    }
+  /// "First lesson": the plan starts at the level the learner gave, and setup goes on.
+  private func firstLesson() {
+    guard !isSaving else { return }
 
     isSaving = true
-    finishFailed = false
-    let sent = SentAnswer(
-      answer: answer, sender: answer.isDontKnow ? .notSure : .check,
-      measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
+    failed = false
 
     tasks.run {
       defer { isSaving = false }
 
       do {
-        let result = try await onboarding.answerPlacement(
-          goalID: view.goal.id, itemID: question.itemId, answer: answer,
-          duration: .milliseconds(sent.durationMs))
-        questionFailures = 0
-        failedAnswer = nil
-        shown.answered += 1
-        let next = Phase(result.placement)
-
-        guard next == .done else {
-          show(next, from: result.placement)
-          return
-        }
-
-        // The last answer goes straight on; only a finish that didn't save stops on a screen.
-        do {
-          try await finishAndGoOn(fromScratch: false)
-        } catch is CancellationError {
-        } catch {
-          finishFailed = true
-          reached = .done
-        }
+        try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: true)
+        try await goOnUnlessLeft { try await onDone(nil) }
       } catch is CancellationError {
       } catch {
-        failedAnswer = sent
-        questionFailures += 1
+        failed = true
       }
     }
-  }
-
-  private func finish(fromScratch: Bool) {
-    guard !isSaving else {
-      return
-    }
-
-    let fromQuestion = if case .question = phase { true } else { false }
-    isSaving = true
-    finishFailed = false
-
-    tasks.run {
-      defer { isSaving = false }
-
-      do {
-        try await finishAndGoOn(fromScratch: fromScratch)
-        if fromQuestion {
-          questionFailures = 0
-        }
-      } catch is CancellationError {
-      } catch {
-        if fromQuestion {
-          questionFailures += 1
-        } else {
-          finishFailed = true
-        }
-      }
-    }
-  }
-
-  /// Finishing is one save to the learner: it goes through once the step's save does too.
-  private func finishAndGoOn(fromScratch: Bool) async throws {
-    try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-    try await goOnUnlessLeft { try await onDone(nil) }
   }
 }
 
 /// Main's `TestOutcome`: the end of a test, what it found and the way on. A save that failed is said
 /// over the bar, and Continue tries again.
 struct TestOutcome<Lead: View>: View {
+  /// A way on beside the main one, such as "Finish later".
+  struct Secondary {
+    let label: Text
+    let action: () -> Void
+  }
+
   var subject: String?
   let title: Text
   var description: Text?
+  var facts: [String] = []
   var continueLabel: Text?
+  var secondary: Secondary?
   var undo: PlacementResultUndo?
   var failureMessage: LocalizedStringResource?
   let isSaving: Bool
@@ -383,16 +139,18 @@ struct TestOutcome<Lead: View>: View {
 
   var body: some View {
     ZoonkList {
-      StepHeader(subject: subject, title: title, description: description)
+      StepHeader(subject: subject, title: title, description: description, facts: facts)
 
       lead()
     }
     .bottomBar(
       note: undo?.failure
-        ?? (failed && !isSaving ? BarNote(failureMessage ?? testSaveFailure) : nil)
+        ?? (failed && !isSaving ? BarNote(failureMessage ?? TestCopy.saveFailure) : nil)
     ) {
       undo?.button
-      StepButtons(continueLabel: continueLabel, onContinue: onContinue)
+      StepButtons(
+        continueLabel: continueLabel, skipLabel: secondary?.label, onContinue: onContinue,
+        onSkip: secondary?.action)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isSaving)
@@ -401,13 +159,15 @@ struct TestOutcome<Lead: View>: View {
 
 extension TestOutcome where Lead == EmptyView {
   init(
-    subject: String? = nil, title: Text, description: Text? = nil, continueLabel: Text? = nil,
-    undo: PlacementResultUndo? = nil, failureMessage: LocalizedStringResource? = nil,
-    isSaving: Bool, failed: Bool, onContinue: @escaping () -> Void
+    subject: String? = nil, title: Text, description: Text? = nil, facts: [String] = [],
+    continueLabel: Text? = nil, secondary: Secondary? = nil, undo: PlacementResultUndo? = nil,
+    failureMessage: LocalizedStringResource? = nil, isSaving: Bool, failed: Bool,
+    onContinue: @escaping () -> Void
   ) {
     self.init(
-      subject: subject, title: title, description: description, continueLabel: continueLabel,
-      undo: undo, failureMessage: failureMessage, isSaving: isSaving, failed: failed,
+      subject: subject, title: title, description: description, facts: facts,
+      continueLabel: continueLabel, secondary: secondary, undo: undo,
+      failureMessage: failureMessage, isSaving: isSaving, failed: failed,
       onContinue: onContinue, lead: { EmptyView() })
   }
 }
@@ -415,6 +175,8 @@ extension TestOutcome where Lead == EmptyView {
 /// No test could be made for the goal, which is fine: the first days show what the learner knows.
 /// The short test's and the Focus test's.
 struct PlacementUnavailable: View {
+  /// Onboarding's Continue unless it's given.
+  var continueLabel: Text?
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -424,34 +186,45 @@ struct PlacementUnavailable: View {
       title: Text(
         "We'll see what you know in your first few days", tableName: "Onboarding",
         comment: "Title when no test could be made for a goal; nothing is wrong"),
-      isSaving: isSaving, failed: failed, onContinue: onContinue)
+      continueLabel: continueLabel, isSaving: isSaving, failed: failed, onContinue: onContinue)
   }
 }
 
-private let testSaveFailure = LocalizedStringResource(
-  "That didn't save. Try again.", table: "Onboarding", comment: "A change couldn't be saved")
+/// The ✕ of a test's screen during a sitting: what it reports as the learner leaves.
+struct TestLeaveKey: PreferenceKey {
+  static let defaultValue: AnalyticsEvent? = nil
 
-/// A new question gets a fresh view (`.id`), so nothing picked carries over.
+  static func reduce(value: inout AnalyticsEvent?, nextValue: () -> AnalyticsEvent?) {
+    value = nextValue() ?? value
+  }
+}
+
+/// A question of any test, under its chip and its place in the test: "Question 5 of 12", or "Part 3
+/// of 14 · Question 5 of 12" in a full test. A new question gets a fresh view (`.id`), so nothing
+/// picked carries over.
 struct PlacementQuestionScreen<Media: View>: View {
-  var subject: String?
+  /// What the question tests: its skill, chapter or subject.
+  let subject: String
   let number: Int
-  /// The count promised up front, when the test has one.
-  var total: Int?
-  /// Where the question sits, in place of its number, such as a whole-course test's part.
-  var position: Text?
-  /// From 0 to 1.
-  let progress: Double
+  /// The ceiling promised before the first question.
+  let total: Int
+  /// The full test's part and its count of parts.
+  var part: (number: Int, of: Int)?
   let question: PracticeQuestion
   var askedIn: String?
   var labels = PracticeTrueFalseLabels.trueFalse
   var dontKnowLabel = LocalizedStringResource(
     "I don't know yet", table: "Onboarding",
     comment: "Answers a placement question without guessing")
+  /// A listening question's "Can't listen now".
+  var defersAudio: (() -> Void)?
   let isSaving: Bool
   let failures: Int
   var saveFailure: LocalizedStringResource?
   /// Said right above Stop, when stopping is worth suggesting.
   var stopHint: LocalizedStringResource?
+  /// What ✕ reports while this question shows.
+  var context: AnalyticsEvent.TestContext?
   let onReport: () -> Void
   let onAnswer: (PracticeAnswer) -> Void
   let onStop: () -> Void
@@ -460,15 +233,26 @@ struct PlacementQuestionScreen<Media: View>: View {
   @State private var draft: PracticeAnswer?
   @State private var submission: Submission?
 
-  private enum Submission { case confirm, dontKnow, stop }
+  private enum Submission { case confirm, dontKnow, deferAudio, stop }
 
   var body: some View {
     PracticeTaskLayout {
-      if let subject {
-        ChipRow(chip: Chip(Text(verbatim: subject)), position: shownPosition)
-      }
+      ChipRow(chip: Chip(Text(verbatim: subject)), position: Text(verbatim: position))
 
       media()
+
+      // Under the voice message, where it's needed, as main's link.
+      if let defersAudio {
+        BusyButton(isBusy: isSaving && submission == .deferAudio) {
+          submission = .deferAudio
+          defersAudio()
+        } label: {
+          Text(TestCopy.cantListen)
+            .underline()
+        }
+        .buttonStyle(.borderless)
+        .disabled(isSaving && submission != .deferAudio)
+      }
 
       asked.stimulus
     } response: {
@@ -526,21 +310,19 @@ struct PlacementQuestionScreen<Media: View>: View {
         }
       }
     }
-    .preference(key: TestQuestionProgressKey.self, value: progress)
+    .preference(
+      key: TestQuestionProgressKey.self, value: Double(number - 1) / Double(max(1, total))
+    )
+    .preference(
+      key: TestLeaveKey.self, value: context.map { .testLeft($0, questionNumber: number) })
   }
 
-  private var shownPosition: Text {
-    if let position {
-      position
-    } else if let total {
-      Text(
-        "Question \(number) of \(total)", tableName: "Onboarding",
-        comment: "Which question of a test with a promised count this is")
-    } else {
-      Text(
-        "Question \(number)", tableName: "Onboarding",
-        comment: "Which placement question this is")
-    }
+  /// "Part 3 of 14 · Question 5 of 12": two facts, joined as facts are.
+  private var position: String {
+    let question = TestCopy.question(number, of: total)
+
+    guard let part else { return question }
+    return [TestCopy.part(part.number, of: part.of), question].joinedFacts()
   }
 
   private var asked: PracticeQuestionView {
@@ -557,11 +339,10 @@ struct PlacementQuestionScreen<Media: View>: View {
 
 extension PlacementQuestionScreen where Media == EmptyView {
   init(
-    subject: String?,
+    subject: String,
     number: Int,
-    total: Int? = nil,
-    position: Text? = nil,
-    progress: Double,
+    total: Int,
+    part: (number: Int, of: Int)? = nil,
     question: PracticeQuestion,
     askedIn: String? = nil,
     labels: PracticeTrueFalseLabels,
@@ -569,16 +350,16 @@ extension PlacementQuestionScreen where Media == EmptyView {
     failures: Int,
     saveFailure: LocalizedStringResource? = nil,
     stopHint: LocalizedStringResource? = nil,
+    context: AnalyticsEvent.TestContext? = nil,
     onReport: @escaping () -> Void,
     onAnswer: @escaping (PracticeAnswer) -> Void,
     onStop: @escaping () -> Void
   ) {
     self.init(
-      subject: subject, number: number, total: total, position: position, progress: progress,
-      question: question, askedIn: askedIn, labels: labels, isSaving: isSaving, failures: failures,
-      saveFailure: saveFailure,
-      stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
-      media: { EmptyView() }
+      subject: subject, number: number, total: total, part: part, question: question,
+      askedIn: askedIn, labels: labels, isSaving: isSaving, failures: failures,
+      saveFailure: saveFailure, stopHint: stopHint, context: context, onReport: onReport,
+      onAnswer: onAnswer, onStop: onStop, media: { EmptyView() }
     )
   }
 }

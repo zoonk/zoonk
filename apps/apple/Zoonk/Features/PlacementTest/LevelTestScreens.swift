@@ -1,13 +1,9 @@
 import SwiftUI
 
-private let saveFailure = LocalizedStringResource(
-  "That didn't save. Try again.", table: "Onboarding", comment: "A change couldn't be saved")
-
-/// Main's `LevelResult`: each assessed skill's range, what the test skipped, and the way on: the
-/// whole-course test's walk through the course's topics, or the plan with the next level's
-/// test-out beside it.
+/// Main's `LevelResult`: each skill's range, or "Not tested yet" for one the test didn't finish,
+/// what the test skipped and the lesson the plan goes on with. The plan's has the next level's
+/// test-out beside its way on.
 struct LanguageTestResultView: View {
-  let length: PlacementLength
   let result: PlacementTestResult?
   let targetLanguage: String
   let testOutLevel: String?
@@ -15,49 +11,44 @@ struct LanguageTestResultView: View {
   let failed: Bool
   var undo: PlacementResultUndo?
   var onboarding = false
+  /// Onboarding's: the learner's own language, which the app can switch to.
+  var appLanguage: String?
   let onContinue: () -> Void
   let onTestOut: () -> Void
 
   var body: some View {
-    let walks = length == .wholeCourse && result?.wholeCourseReady == true
+    let restored = undo?.restored != nil
 
     ZoonkList {
       StepHeader(
-        title: undo?.restored == nil
-          ? Text(
-            "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding")
-          : Text(PlacementTestCopy.lessonsSkipped(0)),
+        title: restored
+          ? Text(PlacementTestCopy.lessonsSkipped(0))
+          : Text(
+            "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
         description: undo?.restored ?? Text(lead))
 
-      if let result, !result.skillRanges.isEmpty {
-        Section {
-          Grid(horizontalSpacing: 16, verticalSpacing: 0) {
-            ForEach(Array(result.skillRanges.enumerated()), id: \.element.skill) { index, item in
-              if index > 0 {
-                Divider()
-              }
-              GridRow {
-                Text(verbatim: languageSkillName(item.skill.rawValue))
-                  .typeStyle(.meta.weight(.medium))
-                  .gridColumnAlignment(.leading)
-                  .frame(minHeight: 44)
-                  .accessibilityLabel(Text(PlacementTestCopy.skillRange(item.skill, item.range)))
-                LevelRangeBar(range: item.range)
-                  .frame(minWidth: 32, maxWidth: .infinity)
-                Text(verbatim: item.range.shown)
-                  .typeStyle(.note.weight(.medium))
-                  .monospacedDigit()
-                  .fixedSize()
-                  .gridColumnAlignment(.trailing)
-                  .accessibilityHidden(true)
-              }
+      Section {
+        Grid(horizontalSpacing: 16, verticalSpacing: 0) {
+          ForEach(Array(skills.enumerated()), id: \.element) { index, skill in
+            if index > 0 {
+              Divider()
             }
+
+            row(skill)
           }
         }
-        .listRowInsets(.vertical, 0)
+      }
+      .listRowInsets(.vertical, 0)
+
+      if let nextLesson = result?.nextLesson, !restored {
+        UpNextPanel(title: nextLesson.title)
       }
 
-      if let testOutLevel, !walks {
+      if let appLanguage, onboarding {
+        AppLanguageAction(language: appLanguage)
+      }
+
+      if let testOutLevel, !onboarding {
         BusyButton(isBusy: pressed == .other, action: onTestOut) {
           Text(verbatim: PlacementTestCopy.testOut(testOutLevel))
             .underline()
@@ -66,16 +57,16 @@ struct LanguageTestResultView: View {
         .disabled(pressed == .main || undo?.request.isRunning == true)
       }
     }
-    .bottomBar(note: undo?.failure ?? (failed && pressed == nil ? BarNote(saveFailure) : nil)) {
+    .bottomBar(
+      note: undo?.failure ?? (failed && pressed == nil ? BarNote(TestCopy.saveFailure) : nil)
+    ) {
       undo?.button
       StepButtons(
         canContinue: undo?.request.isRunning != true,
-        continueLabel: walks
-          ? Text(
-            "Keep going", tableName: "Onboarding",
-            comment: "Goes on from the whole-course level test to the course's topics")
-          : onboarding
-            ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
+        continueLabel: onboarding
+          ? nil
+          : result?.nextLesson == nil || restored
+            ? Text(TestCopy.done) : Text(TestCopy.startLesson),
         onContinue: onContinue)
     }
     .onboardingColumn()
@@ -83,39 +74,74 @@ struct LanguageTestResultView: View {
     .environment(\.isSavingAnswer, pressed != nil || undo?.request.isRunning == true)
   }
 
-  private var lead: String {
-    let skipped = result?.levelsSkipped ?? []
+  private let skills: [LevelTest.Skill] = [.reading, .listening]
 
-    guard !skipped.isEmpty else {
+  @ViewBuilder
+  private func row(_ skill: LevelTest.Skill) -> some View {
+    let range = result?.ranges?[skill.rawValue]
+
+    GridRow {
+      Text(verbatim: languageSkillName(skill.rawValue))
+        .typeStyle(.meta.weight(.medium))
+        .gridColumnAlignment(.leading)
+        .frame(minHeight: 44)
+        .accessibilityLabel(
+          range.map { Text(PlacementTestCopy.skillRange(skill, $0)) }
+            ?? Text(
+              verbatim: [languageSkillName(skill.rawValue), String(localized: TestCopy.notTested)]
+                .joinedFacts()))
+
+      LevelRangeBar(range: range)
+        .frame(minWidth: 32, maxWidth: .infinity)
+
+      if let range {
+        Text(verbatim: range.shown)
+          .typeStyle(.note.weight(.medium))
+          .monospacedDigit()
+          .fixedSize()
+          .gridColumnAlignment(.trailing)
+          .accessibilityHidden(true)
+      } else {
+        Text(TestCopy.notTested)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .fixedSize()
+          .gridColumnAlignment(.trailing)
+          .accessibilityHidden(true)
+      }
+    }
+  }
+
+  private var lead: String {
+    let lessons = result?.lessonsSkipped ?? 0
+
+    if lessons > 0 {
       return String(
-        localized: "Your lessons keep adjusting as you answer.", table: "Onboarding",
-        comment: "Under a level test's result that skipped no level")
+        localized: "Skipped \(lessons) lessons you already know.", table: "Onboarding",
+        locale: .appLanguage,
+        comment: "Under a level test's result: how many lessons it took out of the plan")
     }
 
-    let count = result?.lessonsSkipped ?? 0
-    let lessons = String(
-      localized: "\(count) lessons", table: "Onboarding",
-      locale: .appLanguage,
-      comment: "How many lessons a level test took out of the plan, such as \"12 lessons\"")
-    let levels = skipped.formatted(.list(type: .and))
+    if result?.ranges?[LevelTest.Skill.reading.rawValue] != nil, result?.listeningUntested == true {
+      return String(localized: TestCopy.listeningLater)
+    }
 
     return String(
-      localized: "We skipped \(levels): \(lessons).", table: "Onboarding",
-      comment:
-        "Under a level test's result: the language levels it skipped, such as \"A1 and A2\", then how many lessons the plan no longer has, such as \"12 lessons\""
-    )
+      localized: "Your lessons keep adjusting as you answer.", table: "Onboarding",
+      comment: "Under a level test's result that skipped no level")
   }
 }
 
-/// Main's `LevelBar` with a range: the six levels, A1 to C2, those the skill lies within filled.
+/// Main's `LevelBar` with a range: the six levels, A1 to C2, those the skill lies within filled;
+/// none for a skill not tested yet.
 private struct LevelRangeBar: View {
   private static let levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
-  let range: LevelRange
+  let range: LevelRange?
 
   var body: some View {
-    let low = Self.levels.firstIndex(of: range.low) ?? 0
-    let high = Self.levels.firstIndex(of: range.high) ?? low
+    let low = range.flatMap { Self.levels.firstIndex(of: $0.low) } ?? Self.levels.count
+    let high = range.flatMap { Self.levels.firstIndex(of: $0.high) } ?? low
 
     HStack(spacing: 3) {
       ForEach(Self.levels.indices, id: \.self) { band in

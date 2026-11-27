@@ -414,7 +414,7 @@ final class OnboardingStore {
     }
   }
 
-  /// The test taken from the plan: opens one of this length, or the next part of the open one.
+  /// A course's test: opens one of this length, or goes on with the open one.
   func startPlacementTest(goalID: String, length: PlacementLength) async throws -> GoalPlacement {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
       try await api.startPlacementTest(goalID: goalID, length: length, token: identity.bearerToken)
@@ -543,18 +543,21 @@ final class OnboardingStore {
     }
   }
 
-  /// `answerIndices` answers a confirmation, where every right option is picked.
+  /// `answerIndices` answers a confirmation, where every right option is picked. `audioDeferred`:
+  /// "Can't listen now", which ends the listening questions without scoring this one.
   func answerLevelTest(
     goalID: String,
     questionID: String,
     answerIndex: Int?,
     answerIndices: [Int]? = nil,
     skipped: Bool,
+    audioDeferred: Bool = false,
     duration: Duration,
     attemptID: String
   ) async throws -> LevelTest {
     let input = Components.Schemas.LanguageLevelTestAnswerInput(
       answerIndex: answerIndex, answerIndices: answerIndices, attemptId: attemptID,
+      audioDeferred: audioDeferred ? true : nil,
       durationMs: Int(duration.components.seconds * 1000), questionId: questionID,
       skipped: skipped ? true : nil)
 
@@ -571,10 +574,10 @@ final class OnboardingStore {
     return try await api.languageTest(goalID: goalID, attemptID: attemptID, token: token)
   }
 
-  /// The level test taken from the plan, which starts writing its questions when they don't exist.
-  func startLanguageTest(goalID: String, length: PlacementLength) async throws -> LevelTest {
+  /// The level test, which starts writing its questions when they don't exist.
+  func startLanguageTest(goalID: String) async throws -> LevelTest {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
-      try await api.startLanguageTest(goalID: goalID, length: length, token: identity.bearerToken)
+      try await api.startLanguageTest(goalID: goalID, token: identity.bearerToken)
     }
   }
 

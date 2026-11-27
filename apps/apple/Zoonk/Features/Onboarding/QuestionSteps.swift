@@ -171,6 +171,8 @@ struct StepHeader: View {
   var position: Text?
   let title: Text
   var description: Text?
+  /// Data under the description, such as a test's "12 questions · About 6 min".
+  var facts: [String] = []
   /// The plan's reveal ends setup: no step after it has a title to line up with.
   var linesUpWithSteps = true
 
@@ -190,7 +192,8 @@ struct StepHeader: View {
         chip: subject.map { Chip(Text(verbatim: $0)) },
         position: position,
         keepsChipRoom: keepsChipRoom,
-        supporting: description
+        supporting: description,
+        facts: facts
       )
       .listRowBackground(Color.clear)
     }
@@ -1237,8 +1240,15 @@ private struct LevelQuestion: View {
     }
   }
 
+  /// "Not sure, give me a short test" asks for the test, so onboarding opens it without offering it
+  /// again.
   private func answer(_ level: String) {
-    onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
+    guard let level = LevelChoices.answer(level) else {
+      onAnswer(["level": NSNull(), "question": "level", "requestPlacement": true])
+      return
+    }
+
+    onAnswer(["level": level, "question": "level"])
   }
 }
 

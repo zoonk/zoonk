@@ -68,6 +68,7 @@ struct FocusTest: Decodable, Equatable, Sendable {
   /// answer is still offered as it was promised.
   struct Offer: Decodable, Equatable, Sendable {
     let minutes: Int
+    let questions: Int
   }
 
   struct Checkpoint: Decodable, Equatable, Sendable {
@@ -134,9 +135,16 @@ struct FocusTestSummary: Decodable, Equatable, Sendable {
     let minutes: Int
   }
 
+  /// The open sitting's answers and its ceiling.
+  struct Sitting: Decodable, Equatable, Sendable {
+    let answered: Int
+    let questions: Int
+  }
+
   /// `notStarted`: the first sitting; `sitting`: what's left of it; `checked`: a further one.
   let offer: Size?
   let sessionQuestions: FocusTestSessionQuestions
+  var sitting: Sitting?
   let state: State
   /// As the test's own: the row says "where to focus" or "where to start".
   let suggestsFocus: Bool

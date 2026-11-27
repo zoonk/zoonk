@@ -316,32 +316,27 @@ struct LevelTest: Decodable, Equatable, Sendable {
     var audioPending: Bool
   }
 
-  struct Sentence: Decodable, Equatable, Sendable {
-    let sentence: String
-    let translation: String
-  }
-
   struct Next: Decodable, Equatable, Sendable {
     /// `question`; `confirmation`, a question at the level the answers propose, where every right
-    /// option is picked; `speaking`; or `done`.
+    /// option is picked; or `done`.
     let kind: String
     let question: Question?
-    let speaking: Sentence?
 
     var isQuestion: Bool { kind == "question" || kind == "confirmation" }
   }
 
-  /// The test taken from the plan; nil for onboarding's.
+  /// The open test; nil before one starts.
   var attemptId: String?
-  var length: PlacementLength?
-  /// The last finished test taken from the plan.
+  /// The last finished test.
   var result: PlacementTestResult?
   let status: Status
-  let showAlphabetNote: Bool
   /// Set while a run writes the pair's questions.
   let startedAt: Date?
   let answered: Int?
-  let total: Int?
+  /// The test's ceiling, its check included, fixed before the first question.
+  let total: Int
+  /// About how long its questions take.
+  let estimatedMinutes: Int
   let levels: [Level]?
   let next: Next?
 }

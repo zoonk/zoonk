@@ -1,6 +1,7 @@
 import Foundation
 
-/// The words of the test taken from the plan, shared by its row, its screens and the lesson's offer.
+/// The words of a course's and a language's tests, shared by the plan's row, their screens and the
+/// lesson's offer.
 enum PlacementTestCopy {
   static func knownLessons(_ count: Int) -> LocalizedStringResource {
     count == 1
@@ -20,7 +21,7 @@ enum PlacementTestCopy {
     "Test what you know", table: "Onboarding",
     comment: "The test of what the learner already knows in a course, taken from the plan")
   static let languageName = LocalizedStringResource(
-    "Level test", table: "Onboarding", comment: "Over the level test's result")
+    "Level test", table: "Onboarding", comment: "A language course's test of the learner's level")
 
   static func name(_ kind: PlanPlacementTest.Kind) -> LocalizedStringResource {
     kind == .language ? languageName : learnName
@@ -49,6 +50,44 @@ enum PlacementTestCopy {
         comment: "After a test of what the learner knows: how many lessons it took out of the plan")
   }
 
+  /// What a closed part skipped, or that its skips wait until tomorrow.
+  static func partLine(_ stop: PlacementPartStop) -> String {
+    stop.heldUntilTomorrow && stop.partLessonsSkipped == 0
+      ? String(localized: retakeTomorrow) : TestCopy.partSkipped(stop.partLessonsSkipped)
+  }
+
+  /// "11 parts left · About 6 min each": the full test still to do, part by part.
+  static func partsLeftFacts(_ attempt: PlacementAttempt) -> [String] {
+    let minutes = attempt.estimatedMinutes
+
+    return attempt.partsLeft == 1
+      ? [TestCopy.partsLeft(1), TestCopy.about(minutes: minutes)]
+      : [TestCopy.partsLeft(attempt.partsLeft), TestCopy.aboutEach(minutes: minutes)]
+  }
+
+  /// Where a full test with parts left stands: its next part and the time left, or the question a
+  /// part stopped midway goes on with.
+  static func standing(_ attempt: PlacementAttempt) -> [String] {
+    if let resume = attempt.resume {
+      return [
+        TestCopy.part(resume.part, of: attempt.parts),
+        TestCopy.question(resume.question, of: attempt.questions),
+      ]
+    }
+
+    guard attempt.partComplete else {
+      return [
+        TestCopy.part(attempt.part, of: attempt.parts),
+        TestCopy.question(attempt.answered + 1, of: attempt.questions),
+      ]
+    }
+
+    return [
+      TestCopy.part(attempt.nextPart ?? attempt.part, of: attempt.parts),
+      TestCopy.aboutLeft(minutes: attempt.remainingEstimatedMinutes),
+    ]
+  }
+
   static func skillRange(_ skill: LevelTest.Skill, _ range: LevelRange) -> String {
     switch skill {
     case .listening:
@@ -68,21 +107,31 @@ enum PlacementTestCopy {
       comment: "A short test of one language level, such as \"Test out of B2\"")
   }
 
-  /// The test's facts on the plan's row: what tapping it gives, how far an open one is, or what the
-  /// last one found and when.
+  static let inProgress = String(
+    localized: "In progress", table: "Onboarding",
+    comment: "The plan's test row while a test is open")
+
+  /// The test's facts on the plan's row: what tapping it gives, where an open one stands, or what
+  /// the last one found and when.
   static func planLine(_ test: PlanPlacementTest) -> [String] {
     if test.state == .continue {
-      return [
-        String(
-          localized: "In progress", table: "Onboarding",
-          comment: "The plan's test row while a test is open"),
-        String(
-          localized: "\(studyDuration(minutes: test.estimatedMinutes)) left", table: "Onboarding",
-          comment: "How long the rest of an open test takes, such as \"9 min left\""),
-      ]
+      if let attempt = test.attempt {
+        if attempt.quickTestEnded {
+          return resultLine(test.result)
+        }
+
+        return attempt.length == .wholeCourse
+          ? standing(attempt)
+          : [inProgress, TestCopy.question(attempt.answered + 1, of: attempt.questions)]
+      }
+
+      guard let answered = test.answered, let total = test.total else { return [inProgress] }
+      return [inProgress, TestCopy.question(answered + 1, of: total)]
     }
 
-    guard test.state == .result, let result = test.result else {
+    guard test.state == .result, test.result != nil else {
+      let minutes = test.offer?.estimatedMinutes ?? test.estimatedMinutes
+
       return [
         test.kind == .language
           ? String(
@@ -90,10 +139,16 @@ enum PlacementTestCopy {
             comment: "The level test's line on a language plan")
           : String(
             localized: "Skip lessons you already know", table: "Onboarding",
-            comment: "The test's line on a plan before it's taken")
+            comment: "The test's line on a plan before it's taken"),
+        TestCopy.about(minutes: minutes),
       ]
     }
 
+    return resultLine(test.result)
+  }
+
+  private static func resultLine(_ result: PlacementTestResult?) -> [String] {
+    guard let result else { return [] }
     return [lessonsSkipped(result.lessonsSkipped), PlanDate.moment(result.finishedAt)]
   }
 }

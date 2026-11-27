@@ -33,8 +33,8 @@ final class LevelTestAudioTests: XCTestCase {
 
   private func test(showing question: LevelTest.Question) -> LevelTest {
     LevelTest(
-      status: .ready, showAlphabetNote: false, startedAt: nil, answered: 2, total: 10, levels: [],
-      next: LevelTest.Next(kind: "question", question: question, speaking: nil))
+      status: .ready, startedAt: nil, answered: 2, total: 12, estimatedMinutes: 6, levels: [],
+      next: LevelTest.Next(kind: "question", question: question))
   }
 
   func testTheQuestionTakesItsClipOnceAReadHasIt() async throws {

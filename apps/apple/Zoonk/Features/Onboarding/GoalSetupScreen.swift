@@ -176,6 +176,8 @@ private struct GoalSteps: View {
   /// How far a test is while its question shows. Its answer is final, so the bar keeps only ✕,
   /// as main's `OnboardingTestQuestion` does, with this in the dashes' place.
   @State private var testProgress: Double?
+  /// What ✕ reports while a test question shows.
+  @State private var leavingTest: AnalyticsEvent?
 
   init(
     view: GoalOnboarding,
@@ -258,6 +260,7 @@ private struct GoalSteps: View {
     // The dashes or a test's progress take the title's place; without either, no title shows.
     .toolbar(removing: progress == nil && testProgress == nil ? .title : nil)
     .onPreferenceChange(TestQuestionProgressKey.self) { testProgress = $0 }
+    .onPreferenceChange(TestLeaveKey.self) { leavingTest = $0 }
     .taskOptions(
       isShown: step != .plan && testProgress == nil,
       label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
@@ -310,6 +313,7 @@ private struct GoalSteps: View {
       if previousStepIndex == nil || step == .plan || testProgress != nil {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
+            leavingTest.map(UsageAnalytics.track)
             router.dismissTask()
           }
         }
@@ -574,13 +578,18 @@ private struct StepScreen: View {
     case .placement:
       Group {
         if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
-          LevelTestStep(
-            goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
-            subject: subject,
-            onDone: onPlacementDone)
+          LevelTestFlow(
+            goalID: view.goal.id, targetLanguage: targetLanguage, testOutLevel: nil,
+            opening: view.testStep?.mode == .direct ? .start : .read,
+            appLanguage: view.goal.language, onFirstLesson: { try await onPlacementDone(nil) },
+            onOnboardingDone: onPlacementDone
+          ) {
+            try await onPlacementDone(nil)
+          }
         } else if view.goal.kind == .exam {
           FocusTestFlow(
             goalID: view.goal.id, subject: subject, host: .onboarding, onboarding: view,
+            startsTest: view.testStep?.mode == .direct,
             onDone: { try await onPlacementDone(nil) })
         } else {
           PlacementStep(view: view, subject: subject, onDone: onPlacementDone)

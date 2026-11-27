@@ -6,12 +6,6 @@ enum FocusTestCopy {
   static let name = LocalizedStringResource(
     "Focus test", table: "FocusTest", comment: "Title of an exam goal's Focus test")
 
-  static func timeLeft(minutes: Int) -> String {
-    String(
-      localized: "\(studyDuration(minutes: minutes)) left", table: "FocusTest",
-      comment: "How long the rest of an open Focus test takes, such as \"9 min left\"")
-  }
-
   /// One subject, or no date, leaves nothing to focus on: the test only finds what to skip.
   static func title(findsFocus: Bool) -> LocalizedStringResource {
     findsFocus
@@ -21,12 +15,11 @@ enum FocusTestCopy {
       : LocalizedStringResource("Already know some of this?", table: "FocusTest")
   }
 
-  /// What the test is and why, wherever it's offered with its time over it. "It never removes a
-  /// subject" is exact: focusing gives some subjects more time and takes none out.
+  /// What the test is and why, wherever it's offered.
   static func offerLine(findsFocus: Bool) -> LocalizedStringResource {
     findsFocus
       ? LocalizedStringResource(
-        "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+        "A test shows what you already know, so more of your time goes to what you need most.",
         table: "FocusTest",
         comment: "What the Focus test is and why, for an exam with a date and more than one subject"
       )
@@ -58,20 +51,20 @@ enum FocusTestCopy {
     "Take the Focus test", table: "FocusTest",
     comment: "Opens the Focus test for a learner whose time doesn't cover the exam")
 
-  /// The test's one line on the plan: what tapping its row gives.
+  /// The test's one line on the plan: what tapping its row gives, or where an open sitting is.
   static func planLine(_ summary: FocusTestSummary) -> [String] {
     switch summary.state {
     case .notStarted:
       return
         ([String(localized: title(findsFocus: summary.suggestsFocus))]
-        + (summary.offer.map { [studyDuration(minutes: $0.minutes)] } ?? []))
+        + (summary.offer.map { [TestCopy.about(minutes: $0.minutes)] } ?? []))
     case .sitting where summary.offer != nil:
-      return [
-        String(
-          localized: "In progress", table: "FocusTest",
-          comment: "The Focus test's line on the plan while a sitting is open"),
-        timeLeft(minutes: summary.offer?.minutes ?? 0),
-      ]
+      let inProgress = String(
+        localized: "In progress", table: "FocusTest",
+        comment: "The Focus test's line on the plan while a sitting is open")
+
+      guard let sitting = summary.sitting else { return [inProgress] }
+      return [inProgress, TestCopy.question(sitting.answered + 1, of: sitting.questions)]
     case .sitting, .checked:
       return [
         String(

@@ -1,250 +1,119 @@
 import SwiftUI
 
-private let saveFailure = LocalizedStringResource(
-  "That didn't save. Try again.", table: "Onboarding", comment: "A change couldn't be saved")
-
-/// How long the quick test takes, as the length choice says it.
-private let quickTestMinutes = 4
-
-/// What the learner can pick on the length choice: a length, or a language level's test-out.
-enum PlacementTestChoice: Hashable {
-  case length(PlacementLength)
-  case testOut
-}
-
-/// Main's `PlacementLengthChoice`: how much the test checks, quick by default. A language course
-/// also offers its next level's test-out.
-struct PlacementLengthChoice: View {
-  let wholeCourseMinutes: Int
-  /// A language course's next level the learner can test out of.
-  let testOutLevel: String?
-  let languageNotes: LevelTestLanguageNotes?
-  let isSaving: Bool
-  let failed: Bool
-  let onStart: (PlacementTestChoice) -> Void
-  let onSkip: (() -> Void)?
-
-  @State private var choice: PlacementTestChoice
-
-  init(
-    wholeCourseMinutes: Int, testOutLevel: String? = nil,
-    initialChoice: PlacementTestChoice = .length(.quick),
-    languageNotes: LevelTestLanguageNotes? = nil, isSaving: Bool, failed: Bool,
-    onSkip: (() -> Void)? = nil, onStart: @escaping (PlacementTestChoice) -> Void
-  ) {
-    self.wholeCourseMinutes = wholeCourseMinutes
-    self.testOutLevel = testOutLevel
-    self.languageNotes = languageNotes
-    self.isSaving = isSaving
-    self.failed = failed
-    self.onStart = onStart
-    self.onSkip = onSkip
-    _choice = State(initialValue: initialChoice)
-  }
-
-  var body: some View {
-    ZoonkList {
-      StepHeader(
-        title: Text("Skip what you already know", tableName: "Onboarding"),
-        description: choices.count > 1
-          ? Text("A test finds the lessons you can skip.", tableName: "Onboarding")
-          : quickOnlyDescription)
-
-      if choices.count > 1 {
-        ChoiceRows(
-          choices: choices, picked: choice,
-          header: Text("Choose a test", tableName: "Onboarding")
-        ) { choice = $0 }
-        .locksWhileSaving()
-      }
-
-      languageNotes
-    }
-    .bottomBar(note: failed && !isSaving ? BarNote(saveFailure) : nil) {
-      StepButtons(
-        continueLabel: Text(
-          "Start", tableName: "Onboarding", comment: "Starts the test of the chosen length"),
-        onContinue: { onStart(choice) }, onSkip: onSkip)
-    }
-    .onboardingColumn()
-    .environment(\.isSavingAnswer, isSaving)
-  }
-
-  private var quickOnlyDescription: Text {
-    let time = studyDuration(minutes: quickTestMinutes)
-
-    return Text(
-      "A quick test finds the lessons you can skip. It takes about \(time).",
-      tableName: "Onboarding",
-      comment: "When only the quick test is offered; the time is like \"4 min\"")
-  }
-
-  private var choices: [ChoiceRows<PlacementTestChoice>.Choice] {
-    var choices: [ChoiceRows<PlacementTestChoice>.Choice] = [
-      .init(
-        value: .length(.quick),
-        label: String(
-          localized: "Quick test", table: "Onboarding",
-          comment: "The short placement test: about four minutes of questions"),
-        detail: Text(
-          "About \(studyDuration(minutes: quickTestMinutes))", tableName: "Onboarding",
-          comment: "How long the quick test takes, such as \"4 min\""))
-    ]
-
-    if wholeCourseMinutes > 0 {
-      choices.append(
-        .init(
-          value: .length(.wholeCourse),
-          label: String(
-            localized: "Whole course", table: "Onboarding",
-            comment: "The long placement test: it checks every topic still ahead in the course"),
-          detail: Text(
-            "About \(studyDuration(minutes: wholeCourseMinutes)), in parts",
-            tableName: "Onboarding",
-            comment:
-              "How long the whole-course test takes, such as \"30 min\". It's split into parts the learner can take on different days."
-          )))
-    }
-
-    if let testOutLevel {
-      choices.append(
-        .init(
-          value: .testOut, label: PlacementTestCopy.testOut(testOutLevel),
-          detail: Text(
-            "Skip \(testOutLevel) if you already know it", tableName: "Onboarding",
-            comment:
-              "What a language level's test-out does, such as \"Skip B2 if you already know it\""
-          )))
-    }
-
-    return choices
-  }
-}
-
-/// Main's `PlacementBetweenParts`: a whole-course test between two parts, with what the last one
-/// skipped and the rest to do.
-struct PlacementBetweenParts: View {
-  /// Nil when the learner came back to a test whose part closed earlier.
-  let lessonsSkipped: Int?
-  let minutesLeft: Int
+/// Main's part checkpoint: a part of the full test is done, what it skipped and what's left.
+/// "Keep going" opens the next part; "Finish later" leaves the rest for the plan.
+struct PlacementCheckpoint: View {
+  let stop: PlacementPartStop
   let pressed: FocusTestPress?
   let failed: Bool
-  var heldUntilTomorrow = false
-  let onKeepGoing: () -> Void
   var undo: PlacementResultUndo?
-  var onboarding = false
-  var onFinishForToday: (() -> Void)?
+  let onKeepGoing: () -> Void
+  let onFinishLater: () -> Void
 
   var body: some View {
-    let shownLessons = undo?.restored == nil ? lessonsSkipped : 0
+    let attempt = stop.attempt
 
-    ZoonkList {
-      StepHeader(
-        title: shownLessons.map { Text(PlacementTestCopy.lessonsSkipped($0)) }
-          ?? Text(
-            "Continue your test", tableName: "Onboarding",
-            comment: "Title of a whole-course test the learner came back to between its parts"),
-        description: Text(
-          "About \(studyDuration(minutes: minutesLeft)) left. Your answers are saved.",
-          tableName: "Onboarding",
-          comment:
-            "Between the whole-course test's parts: how long the rest takes, such as \"15 min\""
-        ))
-
-      if heldUntilTomorrow, lessonsSkipped == 0 {
-        Text(PlacementTestCopy.retakeTomorrow)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-          .listRowBackground(Color.clear)
-      }
-
-      if let restored = undo?.restored {
-        Section {
-          restored
-            .typeStyle(.note)
-            .listRowBackground(Color.clear)
-        }
-      }
-
-      if onboarding {
-        Section {
-          Text("You can finish the test from Plan.", tableName: "Onboarding")
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-            .listRowBackground(Color.clear)
-        }
-      }
-    }
-    .bottomBar(note: undo?.failure ?? (failed && pressed == nil ? BarNote(saveFailure) : nil)) {
-      undo?.button
-      StepButtons(
-        continueLabel: onboarding
-          ? nil
-          : Text(
-            "Keep going", tableName: "Onboarding",
-            comment: "Starts the whole-course test's next part"),
-        skipLabel: Text(
-          "Finish for today", tableName: "Onboarding",
-          comment: "Leaves the whole-course test between its parts; the answers are saved"),
-        onContinue: onKeepGoing, onSkip: onFinishForToday)
-    }
-    .onboardingColumn()
+    TestOutcome(
+      title: Text(verbatim: TestCopy.partDone(attempt.part, of: attempt.parts)),
+      description: undo?.restored ?? Text(verbatim: PlacementTestCopy.partLine(stop)),
+      facts: PlacementTestCopy.partsLeftFacts(attempt),
+      continueLabel: Text(TestCopy.keepGoing),
+      secondary: .init(label: Text(TestCopy.finishLater), action: onFinishLater),
+      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
+      onContinue: onKeepGoing
+    )
     .announcesStatus(undo?.announcement)
-    .environment(\.isSavingAnswer, pressed != nil)
   }
 }
 
-/// Main's `PlacementResult`: what the test skipped, and where the plan goes on.
-struct PlacementTestResultView: View {
-  let lessonsSkipped: Int
-  /// The topic the plan goes on with; nil when none is left.
-  let nextTopic: String?
-  let isSaving: Bool
+/// Main's stopped part: the learner stopped the full test midway. Their answers count, and the
+/// test goes on later where they stopped.
+struct PlacementStopped: View {
+  let stop: PlacementPartStop
+  let onboarding: Bool
+  let pressed: FocusTestPress?
   let failed: Bool
-  var heldUntilTomorrow = false
   var undo: PlacementResultUndo?
-  var onboarding = false
   let onDone: () -> Void
 
   var body: some View {
     TestOutcome(
-      title: Text(PlacementTestCopy.lessonsSkipped(undo?.restored == nil ? lessonsSkipped : 0)),
+      title: Text(TestCopy.answersSaved),
+      description: undo?.restored ?? Text(verbatim: PlacementTestCopy.partLine(stop)),
+      facts: stop.attempt.resume.map { resume in
+        [TestCopy.nextTime(part: resume.part, of: stop.attempt.parts, question: resume.question)]
+      } ?? [],
+      continueLabel: onboarding ? nil : Text(TestCopy.done),
+      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
+      onContinue: onDone
+    )
+    .announcesStatus(undo?.announcement)
+  }
+}
+
+/// Main's `PlacementResult`: what the test skipped and the lesson the plan goes on with. A quick
+/// test with more of the course ahead says how much is left, and "Test the rest" goes on with it.
+struct PlacementTestResultView: View {
+  let end: PlacementTestEnd
+  let onboarding: Bool
+  let pressed: FocusTestPress?
+  let failed: Bool
+  var undo: PlacementResultUndo?
+  let onTestTheRest: () -> Void
+  let onDone: () -> Void
+
+  var body: some View {
+    let restored = undo?.restored != nil
+
+    TestOutcome(
+      title: Text(PlacementTestCopy.lessonsSkipped(restored ? 0 : end.lessonsSkipped)),
       description: undo?.restored ?? description,
+      facts: end.rest.map(PlacementTestCopy.partsLeftFacts) ?? [],
       continueLabel: onboarding
-        ? nil : Text("Done", tableName: "Onboarding", comment: "Leaves a test's result"),
-      undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
+        ? nil
+        : end.nextLesson == nil || restored ? Text(TestCopy.done) : Text(TestCopy.startLesson),
+      secondary: end.rest == nil
+        ? nil : .init(label: Text(TestCopy.testTheRest), action: onTestTheRest),
+      undo: undo, isSaving: pressed != nil || undo?.request.isRunning == true, failed: failed,
+      onContinue: onDone
     ) {
-      if let nextTopic, undo?.restored == nil {
-        VStack(alignment: .leading, spacing: 4) {
-          Chip(
-            Text(
-              "Up next", tableName: "Onboarding", comment: "Over the topic the plan goes on with"))
-
-          Text(verbatim: nextTopic)
-            .typeStyle(.rowTitle)
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .panel()
-        .listRowBackground(Color.clear)
+      if let nextLesson = end.nextLesson, !restored {
+        UpNextPanel(title: nextLesson.title)
       }
-
     }
     .announcesStatus(undo?.announcement)
   }
 
   private var description: Text {
-    if lessonsSkipped > 0 {
-      return Text(PlacementTestCopy.knownLessons(lessonsSkipped))
+    if end.lessonsSkipped > 0 {
+      return Text(PlacementTestCopy.knownLessons(end.lessonsSkipped))
     }
 
-    if heldUntilTomorrow {
+    if end.heldUntilTomorrow {
       return Text(PlacementTestCopy.retakeTomorrow)
     }
 
     return Text(
       "Your plan stays as it is.", tableName: "Onboarding",
       comment: "Under \"No lessons skipped\" after a test")
+  }
+}
+
+/// The lesson the plan goes on with, under a test's result.
+struct UpNextPanel: View {
+  let title: String
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Chip(Text(TestCopy.upNext))
+
+      Text(verbatim: title)
+        .typeStyle(.rowTitle)
+    }
+    .padding(16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .panel()
+    .listRowBackground(Color.clear)
   }
 }
 
@@ -280,7 +149,7 @@ struct PlacementResultUndo {
   var restored: Text? { announcement.map { Text(verbatim: $0) } }
 
   var failure: BarNote? {
-    request.outcome == false && !request.isRunning ? BarNote(saveFailure) : nil
+    request.outcome == false && !request.isRunning ? BarNote(TestCopy.saveFailure) : nil
   }
 
   @ViewBuilder var button: some View {

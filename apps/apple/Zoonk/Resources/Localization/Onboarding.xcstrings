@@ -1313,6 +1313,75 @@
         }
       }
     },
+    "%lld parts left" : {
+      "comment" : "How many parts of the full test are left",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld part left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld parts left"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld parts, any day you like" : {
+      "comment" : "How many parts the full test has; they can be taken on different days",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld part, any day you like"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld parts, any day you like"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld questions" : {
+      "comment" : "How many questions a test asks, such as \"12 questions\"",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld question"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld questions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "A course on this is ready now" : {
       "comment" : "Under a Library course offered while the learner's plan is built",
       "localizations" : {
@@ -1783,6 +1852,12 @@
           }
         }
       }
+    },
+    "About %@ each" : {
+      "comment" : "How long each part of the full test left takes, such as \"About 6 min each\""
+    },
+    "About %@ left" : {
+      "comment" : "How long the rest of a full test takes, such as \"About 1 hr 6 min left\""
     },
     "About %@ left. Your answers are saved." : {
       "comment" : "Between the whole-course test's parts: how long the rest takes, such as \"15 min\"",
@@ -3489,6 +3564,9 @@
           }
         }
       }
+    },
+    "Can't listen now" : {
+      "comment" : "Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test."
     },
     "Cancel" : {
       "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
@@ -8258,6 +8336,9 @@
         }
       }
     },
+    "First lesson" : {
+      "comment" : "Onboarding's offer: start with the first lesson instead of a test"
+    },
     "Fitting the plan into your days" : {
       "comment" : "A step of the wait while a plan is built",
       "localizations" : {
@@ -8493,6 +8574,9 @@
           }
         }
       }
+    },
+    "Full test" : {
+      "comment" : "The long test: it checks every topic still ahead, in parts."
     },
     "Get a plan with dates, and your first lesson" : {
       "comment" : "How it works, last step: the plan",
@@ -11620,6 +11704,17 @@
         }
       }
     },
+    "Next time: part %lld of %lld, question %lld" : {
+      "comment" : "Where a full test the learner stopped midway goes on, such as \"part 5 of 14, question 4\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next time: part %1$lld of %2$lld, question %3$lld"
+          }
+        }
+      }
+    },
     "Next, we'll show you what we understood." : {
       "localizations" : {
         "de" : {
@@ -11795,6 +11890,9 @@
           }
         }
       }
+    },
+    "No lessons skipped in this part." : {
+      "comment" : "After a part of the full test that skipped no lesson"
     },
     "No more material today. More tomorrow, or subscribe to keep going." : {
       "comment" : "A free learner added as much material as allowed today",
@@ -12445,6 +12543,9 @@
         }
       }
     },
+    "Not tested yet" : {
+      "comment" : "A language skill the level test didn't finish, in place of its level"
+    },
     "Nothing on it could be read" : {
       "comment" : "Read by screen readers after the name of an attached file, like a blurry photo of notes, where nothing could be read.",
       "localizations" : {
@@ -12795,6 +12896,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bölüm %lld"
+          }
+        }
+      }
+    },
+    "Part %lld of %lld" : {
+      "comment" : "Which part of the full test this is, such as \"Part 3 of 14\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Part %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Part %lld of %lld done" : {
+      "comment" : "Title after a part of the full test, such as \"Part 3 of 14 done\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Part %1$lld of %2$lld done"
           }
         }
       }
@@ -17168,6 +17291,29 @@
         }
       }
     },
+    "Skipped %lld lessons you already know." : {
+      "comment" : "Under a level test's result: how many lessons it took out of the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Skipped %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Skipped %lld lessons you already know."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Something else" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -18006,6 +18152,9 @@
         }
       }
     },
+    "Start lesson" : {
+      "comment" : "Opens the plan's next lesson from a test's result"
+    },
     "Start over" : {
       "comment" : "Clears this goal's answers and starts again",
       "localizations" : {
@@ -18188,6 +18337,9 @@
           }
         }
       }
+    },
+    "Starts at the level you gave" : {
+      "comment" : "Under \"First lesson\" on onboarding's offer: lessons start at the level the learner chose"
     },
     "Step %lld of %lld" : {
       "comment" : "Where the learner is among the goal's questions",
@@ -18902,6 +19054,9 @@
           }
         }
       }
+    },
+    "Test the rest" : {
+      "comment" : "Button after the short test: goes on to test the rest of the course, in parts."
     },
     "Test what you know" : {
       "comment" : "The test of what the learner already knows in a course, taken from the plan",
@@ -20507,6 +20662,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunun için ücretsiz bir hesap gerekiyor."
+          }
+        }
+      }
+    },
+    "This part skipped %lld lessons you already know." : {
+      "comment" : "After a part of the full test: how many lessons it took out of the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This part skipped %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This part skipped %lld lessons you already know."
+                }
+              }
+            }
           }
         }
       }
@@ -24425,6 +24603,9 @@
         }
       }
     },
+    "Where would you like to start?" : {
+      "comment" : "Title of onboarding's offer: the first lesson, or a short test first"
+    },
     "where you live" : {
       "comment" : "Marks the content country row as the country the learner said they live in, in Settings",
       "localizations" : {
@@ -26252,6 +26433,12 @@
           }
         }
       }
+    },
+    "You can take the test later, from your plan." : {
+      "comment" : "Under Skip while a test's questions are written"
+    },
+    "You can test your listening later, from your plan." : {
+      "comment" : "Under a level test's result when listening wasn't tested"
     },
     "You finish around %@." : {
       "comment" : "When a goal without a date finishes at the time picked; the argument is a month like 'May 2027'",

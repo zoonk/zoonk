@@ -14,8 +14,6 @@ enum FocusTestPhase: Equatable {
   /// `answered`: the learner has test answers, so leaving the wait uses them.
   case waiting(answered: Bool, failure: GenerationFailure?)
   case invitation(FocusTest)
-  /// `answered`: every answer the test has saved, in this sitting and before it.
-  case resume(FocusTestQuestion, answered: Int)
   case question(FocusTestQuestion)
   /// A sitting that's over and not closed yet: the learner came back to it, or closing it failed.
   case ended
@@ -31,14 +29,14 @@ enum FocusTestPhase: Equatable {
       focusTest: placement.focusTest.flatMap { try? PracticeJSON.recode($0, as: FocusTest.self) },
       next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
       labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
-      answered: placement.answered, opening: opening)
+      opening: opening)
   }
 
-  /// `opening` is the screen's first read, which never drops the learner into a question: a sitting
-  /// with answers shows its resume screen, and one without is offered again.
+  /// `opening` is the screen's first read: a sitting with answers goes on with its next question,
+  /// and one without is offered again.
   init(
     status: Components.Schemas.PlacementStatus, focusTest: FocusTest?, next: PracticeQuestion?,
-    labels: PracticeTrueFalseLabels, answered: Int, opening: Bool
+    labels: PracticeTrueFalseLabels, opening: Bool
   ) {
     switch status {
     case .unavailable, .failed:
@@ -64,10 +62,8 @@ enum FocusTestPhase: Equatable {
 
       let asked = FocusTestQuestion(question: next, labels: labels, sitting: sitting)
 
-      if !opening {
+      if !opening || sitting.answered > 0 {
         self = .question(asked)
-      } else if sitting.answered > 0 {
-        self = .resume(asked, answered: answered)
       } else {
         self = Self.resting(focusTest) ?? .question(asked)
       }

@@ -67,13 +67,15 @@ struct PageHeader<Trailing: View>: View {
           .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + titleCapHeight / 2 }
       }
 
+      if let supporting {
+        supporting
+          .typeStyle(supportingIsFacts ? .data : .body)
+          .foregroundStyle(.mutedForeground)
+      }
+
       if !facts.isEmpty {
         FactSegments(facts)
           .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-      } else if let supporting {
-        supporting
-          .typeStyle(supportingIsFacts ? .data : .body)
           .foregroundStyle(.mutedForeground)
       }
     }

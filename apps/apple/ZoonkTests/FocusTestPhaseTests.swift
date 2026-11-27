@@ -29,17 +29,14 @@ final class FocusTestPhaseTests: XCTestCase {
     XCTAssertEqual(asked.sitting.answered, 3)
   }
 
-  func testNeverOpensOnAQuestionASittingWithAnswersWaitsOnItsResumeScreen() throws {
+  func testALearnerWhoComesBackToASittingWithAnswersGoesOnAtItsNextQuestion() throws {
     let test = try focusTest(sitting: sitting(answered: 3))
 
-    guard
-      case .resume(_, let answered) = phase(
-        .asking, test, next: question, answered: 7, opening: true)
-    else {
-      return XCTFail("Expected the resume screen")
+    guard case .question(let asked) = phase(.asking, test, next: question, opening: true) else {
+      return XCTFail("Expected the next question")
     }
 
-    XCTAssertEqual(answered, 7, "Counts every test answer, not only this sitting's")
+    XCTAssertEqual(asked.sitting.answered + 1, 4)
   }
 
   func testInvitesAgainWhenASittingWasLeftBeforeItsFirstAnswer() throws {
@@ -78,14 +75,13 @@ final class FocusTestPhaseTests: XCTestCase {
 
   private func phase(
     _ status: Components.Schemas.PlacementStatus, _ focusTest: FocusTest?,
-    next: PracticeQuestion? = nil, answered: Int = 0, opening: Bool
+    next: PracticeQuestion? = nil, opening: Bool
   ) -> FocusTestPhase {
     FocusTestPhase(
-      status: status, focusTest: focusTest, next: next, labels: .trueFalse, answered: answered,
-      opening: opening)
+      status: status, focusTest: focusTest, next: next, labels: .trueFalse, opening: opening)
   }
 
-  private let offer = #"{"minutes":15}"#
+  private let offer = #"{"minutes":6,"questions":6}"#
   private let checkpoint = #"{"focus":null,"lessonsSkipped":4}"#
 
   private func sitting(answered: Int) -> String {
