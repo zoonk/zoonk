@@ -5,7 +5,7 @@ import {
   getMicrophoneProblem,
   stopTracks,
 } from "@zoonk/ui/hooks/voice-recorder";
-import { takeHeldMicrophone } from "@zoonk/ui/lib/held-press-script";
+import { takeHeldMicrophone } from "@zoonk/ui/lib/held-microphone";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type SpeechSample, sampleSpeech } from "./speech-activity";
 

@@ -1,3 +1,4 @@
+import { type HeldMicrophone } from "./held-microphone";
 import {
   HELD_ASK_ATTRIBUTE,
   HELD_PRESS_SELECTOR,
@@ -5,18 +6,6 @@ import {
 } from "./held-press-controls";
 
 export const HELD_ATTRIBUTE = "data-held";
-
-type HeldMicrophone = { context: AudioContext; stream: Promise<MediaStream> };
-
-type HeldPresses = {
-  /** Called once the root has committed: from then on a node carrying React's props is React's. */
-  commit: () => void;
-  microphone: HeldMicrophone | null;
-};
-
-declare global {
-  var zoonkHeldPresses: HeldPresses | undefined;
-}
 
 type Held = {
   asks: boolean;
@@ -181,7 +170,8 @@ function holdPressesBeforeReady({
     context.resume().catch(ignore);
     const stream = navigator.mediaDevices.getUserMedia({ audio: true });
     stream.catch(ignore);
-    state.microphone = { context, stream };
+    const asked: HeldMicrophone = { context, stream };
+    state.microphone = asked;
     return true;
   };
 
@@ -613,15 +603,3 @@ function holdPressesBeforeReady({
 }
 
 export const HELD_PRESS_SCRIPT = `(${holdPressesBeforeReady.toString()})(${JSON.stringify({ ask: HELD_ASK_ATTRIBUTE, held: HELD_ATTRIBUTE, opensPage: OPENS_PAGE_ATTRIBUTE, selector: HELD_PRESS_SELECTOR })})`;
-
-/** The microphone a held press asked for in its tap, taken once; null when none did. */
-export function takeHeldMicrophone(): HeldMicrophone | null {
-  const state = globalThis.zoonkHeldPresses;
-  const asked = state?.microphone ?? null;
-
-  if (state) {
-    state.microphone = null;
-  }
-
-  return asked;
-}
