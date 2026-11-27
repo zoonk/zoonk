@@ -245,11 +245,8 @@ export function PlacementTestFlow({
           poll={test.poll}
           questionsReady={test.questionsReady}
           readWarmUp={readWarmUp}
-          run={
-            phase.failedAttempt
-              ? { failure: "generation", retry: test.onRetryWait, status: "failed", steps: {} }
-              : run
-          }
+          retry={phase.retryLength ? test.onRetryWait : undefined}
+          run={run}
           skip={waitLeave}
           skipFailed={failed}
           skipping={pressed === "other"}

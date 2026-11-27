@@ -141,7 +141,7 @@ export function usePlacementTest({
       outcome.status === "generationFailed" || outcome.status === "unavailable"
         ? toPlacementTestPhase({ asked: true, outcome, surface })
         : wait,
-    paused: Boolean(waiting?.failedAttempt) || isRunStopped(build),
+    paused: Boolean(waiting?.retryLength) || isRunStopped(build),
     read: actions.get,
     setPhase,
     waiting,
@@ -175,10 +175,26 @@ export function usePlacementTest({
     continueWait: () => {
       const arrived = waiting?.arrived;
 
-      // Questions for a test that couldn't open yet: the start the learner asked for opens it now.
-      if (arrived) {
-        save(null, () => (arrived.attempt ? show(arrived, true) : start(wanted.current)()));
+      if (!arrived) {
+        return;
       }
+
+      if (arrived.attempt) {
+        save(null, () => show(arrived, true));
+        return;
+      }
+
+      // Questions for a test that couldn't open yet: the start the learner asked for opens it now,
+      // and one that doesn't go through waits for "Try again".
+      const length = wanted.current;
+
+      run(async () => {
+        if (!(await start(length)())) {
+          setPhase((current) =>
+            current === waiting ? { kind: "waiting", retryLength: length } : current,
+          );
+        }
+      });
     },
     failed,
     isPending,
@@ -195,8 +211,8 @@ export function usePlacementTest({
     onOpenLesson: (lessonId: string, openLesson?: (lessonId: string) => Promise<boolean>) =>
       save("main", () => (openLesson ? openLesson(lessonId) : onLeave()).catch(() => false)),
     onRetryWait: () => {
-      if (!isPending) {
-        save("main", start(waiting?.failedAttempt?.length ?? wanted.current));
+      if (!isPending && waiting?.retryLength) {
+        save("main", start(waiting.retryLength));
       }
     },
     onStart: (length: PlacementLength) => save("main", start(length)),

@@ -5,6 +5,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
 import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
+import { refuseStartAfterWait } from "./refused-start";
 
 /** The page gives a run 45 s to appear. */
 const RUN_START_LIMIT_MS = 46_000;
@@ -113,6 +114,44 @@ test.describe("Waiting for a test the learner asked for", () => {
     await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible({
       timeout: NEXT_CHECK_TIMEOUT_MS,
     });
+  });
+
+  test("a start that doesn't go through once questions arrive offers Try again", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const runId = `e2e-steps-${randomUUID()}`;
+
+    const goal = await createGoalBeingMapped({
+      askedForTest: true,
+      runId,
+      userId: noProgressUser.id,
+    });
+
+    await followRun({
+      events: [
+        { entityId: goal.id, status: "started", step: "understandGoal" },
+        { entityId: goal.id, status: "started", step: "buildSkillGraph" },
+        { entityId: goal.id, status: "completed", step: "buildSkillGraph" },
+        { entityId: goal.id, status: "started", step: "preparePlacement" },
+      ],
+      page,
+      runId,
+    });
+
+    await page.goto(`/start/${goal.id}`);
+    await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
+
+    const refused = await refuseStartAfterWait(page, goal.id);
+    await mapGoalSkills({ goalId: goal.id });
+    await expect.poll(refused, { timeout: NEXT_CHECK_TIMEOUT_MS }).toBe(true);
+
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
+    ).toBeVisible();
+
+    await page.getByRole("button", { exact: true, name: "Try again" }).click();
+    await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
   });
 });
 

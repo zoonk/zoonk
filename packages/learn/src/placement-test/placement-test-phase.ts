@@ -6,7 +6,7 @@ import {
   type PlacementResult,
 } from "../onboarding/onboarding-actions";
 import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
-import { type PlacementPartOutcome } from "./placement-test-actions";
+import { type PlacementLength, type PlacementPartOutcome } from "./placement-test-actions";
 
 export type PlacementQuestionPhase = {
   attempt: PlacementAttemptView;
@@ -34,10 +34,11 @@ export type PlacementResultPhase = Skips & {
 export type PlacementTestPhase =
   | PlacementQuestionPhase
   /**
-   * `failedAttempt`: this part's questions couldn't be written, so the wait offers "Try again".
+   * `retryLength`: the test couldn't start, or this part's questions couldn't be written, so the
+   * wait offers "Try again", which starts a test of this length.
    * `buildFailed`: the course itself is still being built and that stopped.
    */
-  | (PlacementQuestionWait & { buildFailed?: true; failedAttempt?: PlacementAttemptView })
+  | (PlacementQuestionWait & { buildFailed?: true; retryLength?: PlacementLength })
   | { kind: "loadFailed" | "loading" | "offer" | "unavailable" }
   /** This part asks nothing more and isn't closed yet: closing it is the next save. */
   | { attempt: PlacementAttemptView; kind: "partOver" }
@@ -179,7 +180,7 @@ export function toPlacementTestPhase({
   }
 
   if (outcome.status === "generationFailed") {
-    return { failedAttempt: attempt, kind: "waiting" };
+    return { kind: "waiting", retryLength: attempt.length };
   }
 
   if (outcome.status === "unavailable") {

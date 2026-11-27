@@ -204,6 +204,7 @@ export function PlacementWaiting({
   poll,
   questionsReady,
   readWarmUp,
+  retry,
   run,
   skip,
   skipFailed = false,
@@ -217,6 +218,8 @@ export function PlacementWaiting({
   poll: { restart: () => void; status: PollStatus };
   questionsReady: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
+  /** The test couldn't start, or its questions couldn't be written: the wait offers "Try again". */
+  retry?: () => void;
   run: GenerationRun | null;
   /** What leaving the wait is called, and the line beside it. */
   skip: WaitLeave;
@@ -227,7 +230,13 @@ export function PlacementWaiting({
   const hold = useReadyHold(questionsReady);
   const aside = useOnboardingHost()?.kind === "page";
   useOnboardingWait("placementWait", hold.status !== "go");
-  const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
+  const stopped = retry ? { ...FAILED_RUN, retry } : null;
+
+  const shown = getWaitRun({
+    poll,
+    run: stopped ?? run ?? (buildFailed ? FAILED_RUN : WAITING_RUN),
+  });
+
   const { coming, deck } = useDeck({ readDeck: readWarmUp, run: shown });
   const showQuestions = useEffectEvent(onQuestions);
   const holding = hold.status === "hold";

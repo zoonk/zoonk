@@ -155,8 +155,8 @@ describe(toPlacementTestPhase, () => {
     const outcome: PlacementOutcome = { attempt: QUICK, status: "generationFailed" };
 
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual({
-      failedAttempt: QUICK,
       kind: "waiting",
+      retryLength: "quick",
     });
   });
 

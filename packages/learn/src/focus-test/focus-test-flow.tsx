@@ -124,6 +124,7 @@ export function FocusTestFlow({
           poll={test.poll}
           questionsReady={test.questionsReady}
           readWarmUp={readWarmUp}
+          retry={phase.startFailed ? test.onRetryWait : undefined}
           run={run}
           skip={phase.answered ? { label: seeResult, note: null } : waitLeave}
           skipFailed={failed}

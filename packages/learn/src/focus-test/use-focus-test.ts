@@ -52,7 +52,7 @@ export function useFocusTest({
       outcome.status === "unavailable"
         ? { kind: "unavailable" }
         : { ...wait, buildFailed: outcome.status === "generationFailed" },
-    paused: isRunStopped(build),
+    paused: Boolean(waiting?.startFailed) || isRunStopped(build),
     read: actions.get,
     setPhase,
     waiting,
@@ -152,9 +152,24 @@ export function useFocusTest({
         return;
       }
 
-      // Questions for a test the learner asked for before it could open: their start opens it now.
       const offered = toFocusTestPhase({ opening: false, outcome: arrived }).kind === "invitation";
-      save(null, () => (asked && offered ? start() : show(arrived)));
+
+      if (!asked || !offered) {
+        save(null, () => show(arrived));
+        return;
+      }
+
+      // Questions for a test the learner asked for before it could open: their start opens it now,
+      // and one that doesn't go through waits for "Try again".
+      run(async () => {
+        if (!(await start())) {
+          setPhase((current) =>
+            current === waiting
+              ? { answered: waiting.answered, kind: "waiting", startFailed: true }
+              : current,
+          );
+        }
+      });
     },
     failed,
     isPending,
@@ -164,6 +179,11 @@ export function useFocusTest({
     /** A learner who never started has nothing to close on a plan that's already theirs. */
     onLeave: ({ button, closes }: { button: Exclude<TestPressed, null>; closes: boolean }) =>
       save(button, () => (closes ? close() : leave())),
+    onRetryWait: () => {
+      if (!isPending) {
+        save("main", start);
+      }
+    },
     onStart: () => save("main", start),
     phase,
     poll,

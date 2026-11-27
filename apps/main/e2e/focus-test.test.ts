@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
+import { refuseStartAfterWait } from "./refused-start";
 
 const CITATION = { passage: "passage", sourceId: "notice" };
 const SUBJECTS = ["Portuguese", "Administrative law", "Statistics"];
@@ -15,21 +16,77 @@ const MS_PER_DAY = 86_400_000;
 const SHORT_DAILY_MINUTES = 5;
 const LESSONS_PAST_THE_TIME = 60;
 
+/** The wait checks every 3 s, and a check in flight as the questions land leaves them to the next. */
+const NEXT_CHECK_TIMEOUT_MS = 10_000;
+
 const AT_THE_TEST = [...PROFILE_QUESTIONS, "target", "targetDate", "level", "buddy"];
+
+/**
+ * Maps an exam goal's subjects to a plan. `seen`: the learner has seen the plan and its time
+ * doesn't cover everything. `written`: the plan's test questions are written.
+ */
+async function mapExamGoal({
+  examBlueprintId,
+  goalId,
+  seen = false,
+  written = true,
+}: {
+  examBlueprintId: string;
+  goalId: string;
+  seen?: boolean;
+  written?: boolean;
+}) {
+  const suffix = randomUUID().slice(0, 6);
+
+  const skills = await Promise.all(
+    SUBJECTS.map((name) => skillFixture({ name: `${name} basics ${suffix}` })),
+  );
+
+  const plan = await planFixture({
+    coveredShare: seen ? 0.5 : null,
+    goalId,
+    graph: {
+      phases: [{ milestone: null, name: "Foundations" }],
+      skills: skills.map((skill, index) => ({
+        area: SUBJECTS[index] ?? "",
+        lessons: seen ? LESSONS_PAST_THE_TIME : 2,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+    placementPreparedAt: written ? new Date() : null,
+  });
+
+  await Promise.all([
+    ...skills.map((skill, position) =>
+      planItemFixture({ phase: 0, planId: plan.id, position, skillId: skill.id }),
+    ),
+    ...skills.flatMap((skill) =>
+      Array.from({ length: written ? QUESTIONS_PER_SUBJECT : 0 }, () =>
+        itemFixture({ content: choiceItemContent(), examBlueprintId, skillId: skill.id }),
+      ),
+    ),
+  ]);
+}
 
 /**
  * `seen`: past its setup, on a plan the learner has seen whose time doesn't cover everything, so
  * the test proposes its focus instead of setting it. `writingRunId`: its questions are still being
- * written by that run, and the learner asked for the test, so it opens on its wait.
+ * written by that run, and the learner asked for the test, so it opens on its wait. `mapped: false`:
+ * that run hasn't made the plan yet either.
  */
 async function createExamGoalAtFocusTest(
   userId: string,
-  { seen = false, writingRunId = null }: { seen?: boolean; writingRunId?: string | null } = {},
+  {
+    mapped = true,
+    seen = false,
+    writingRunId = null,
+  }: { mapped?: boolean; seen?: boolean; writingRunId?: string | null } = {},
 ) {
-  const suffix = randomUUID().slice(0, 6);
-
   const blueprint = await examBlueprintFixture({
-    name: `Analyst exam ${suffix}`,
+    name: `Analyst exam ${randomUUID().slice(0, 6)}`,
     structure: {
       formats: [
         { citation: CITATION, description: "Two options", kind: "multipleChoice", options: 2 },
@@ -46,59 +103,33 @@ async function createExamGoalAtFocusTest(
     },
   });
 
-  const [goal, skills] = await Promise.all([
-    goalFixture({
-      details: {
-        answered: seen ? [...AT_THE_TEST, "placement", "schedule"] : AT_THE_TEST,
-        examName: blueprint.name,
-        ...(writingRunId && { placementRequested: true }),
-      },
-      examBlueprintId: blueprint.id,
-      generationRunId: writingRunId,
-      kind: "exam",
-      planRevealedAt: seen ? new Date() : null,
-      targetDate: new Date(Date.now() + DAYS_TO_EXAM * MS_PER_DAY),
-      timezone: "UTC",
-      ...(seen && { dailyMinutes: SHORT_DAILY_MINUTES }),
-      title: blueprint.name,
-      userId,
-    }),
-    Promise.all(SUBJECTS.map((name) => skillFixture({ name: `${name} basics ${suffix}` }))),
-  ]);
-
-  const plan = await planFixture({
-    coveredShare: seen ? 0.5 : null,
-    goalId: goal.id,
-    graph: {
-      phases: [{ milestone: null, name: "Foundations" }],
-      skills: skills.map((skill, index) => ({
-        area: SUBJECTS[index] ?? "",
-        lessons: seen ? LESSONS_PAST_THE_TIME : 2,
-        name: skill.name,
-        phase: 0,
-        skillId: skill.id,
-        weight: null,
-      })),
+  const goal = await goalFixture({
+    details: {
+      answered: seen ? [...AT_THE_TEST, "placement", "schedule"] : AT_THE_TEST,
+      examName: blueprint.name,
+      ...(writingRunId && { placementRequested: true }),
     },
-    placementPreparedAt: writingRunId ? null : new Date(),
+    examBlueprintId: blueprint.id,
+    generationRunId: writingRunId,
+    kind: "exam",
+    planRevealedAt: seen ? new Date() : null,
+    targetDate: new Date(Date.now() + DAYS_TO_EXAM * MS_PER_DAY),
+    timezone: "UTC",
+    ...(seen && { dailyMinutes: SHORT_DAILY_MINUTES }),
+    title: blueprint.name,
+    userId,
   });
 
-  await Promise.all([
-    ...skills.map((skill, position) =>
-      planItemFixture({ phase: 0, planId: plan.id, position, skillId: skill.id }),
-    ),
-    ...skills.flatMap((skill) =>
-      Array.from({ length: writingRunId ? 0 : QUESTIONS_PER_SUBJECT }, () =>
-        itemFixture({
-          content: choiceItemContent(),
-          examBlueprintId: blueprint.id,
-          skillId: skill.id,
-        }),
-      ),
-    ),
-  ]);
+  if (mapped) {
+    await mapExamGoal({
+      examBlueprintId: blueprint.id,
+      goalId: goal.id,
+      seen,
+      written: !writingRunId,
+    });
+  }
 
-  return goal;
+  return { ...goal, examBlueprintId: blueprint.id };
 }
 
 async function readProposalStatus(goalId: string) {
@@ -252,6 +283,38 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await page.reload();
   await expect(page.getByText("Your plan stays as it is.")).toBeVisible();
   await expect(update).toBeHidden();
+});
+
+test("a start that doesn't go through once the questions are written offers Try again", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const runId = `e2e-focus-test-${randomUUID()}`;
+
+  const goal = await createExamGoalAtFocusTest(noProgressUser.id, {
+    mapped: false,
+    writingRunId: runId,
+  });
+
+  await followRun({
+    events: [{ entityId: goal.id, status: "started", step: "preparePlacement" }],
+    page,
+    runId,
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
+
+  const refused = await refuseStartAfterWait(page, goal.id);
+  await mapExamGoal({ examBlueprintId: goal.examBlueprintId, goalId: goal.id });
+  await expect.poll(refused, { timeout: NEXT_CHECK_TIMEOUT_MS }).toBe(true);
+
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { exact: true, name: "Try again" }).click();
+  await expect(question(page, 1)).toBeVisible();
 });
 
 test("a skip that doesn't save says so on the wait for questions, and the same button retries it", async ({
