@@ -52,6 +52,7 @@ async function readSeededDay(persona: SeedPersonaName) {
       returning: payload.returning,
       skillIds: block.lesson?.skills.map(({ skillId }) => skillId) ?? [],
       status: block.status,
+      timing: payload.timing,
     };
   });
 
@@ -86,16 +87,23 @@ describe("a persona's seeded day", () => {
     vi.useRealTimers();
   });
 
-  it.each<SeedPersonaName>(["exam", "stocks"])(
-    "%s: leads with its mistakes and brings back the finished lesson of the one skill it keeps missing",
-    async (persona) => {
+  it.each([
+    { persona: "exam", status: "active", timing: { activeAt: null, elapsedMs: 0 } },
+    { persona: "stocks", status: "pending", timing: null },
+  ] as const)(
+    "$persona: stops at its mistakes before the returning lesson",
+    async ({ persona, status, timing }) => {
       const { rows, stuck } = await readSeededDay(persona);
       const returning = rows.filter((row) => row.returning);
 
       expect(stuck).toHaveLength(1);
-      expect(rows[0]).toMatchObject({ status: "pending" });
+      expect(rows[0]).toMatchObject({ status, timing });
       expect(rows[0]?.mistakes).toBeGreaterThan(0);
-      expect(returning).toStrictEqual([expect.objectContaining({ returning: "again" })]);
+
+      expect(returning).toStrictEqual([
+        expect.objectContaining({ returning: "again", status: "pending" }),
+      ]);
+
       expect(returning[0]?.skillIds).toContain(stuck[0]);
     },
   );

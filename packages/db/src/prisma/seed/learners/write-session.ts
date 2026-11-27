@@ -84,15 +84,27 @@ function isMistakesRun(block: BuiltBlock): boolean {
   return Array.isArray(block.payload.mistakeIds) && block.payload.mistakeIds.length > 0;
 }
 
-/**
- * Rows open in any order, and the seed answers no notebook question, so the learner leaves the
- * mistakes run for last: its entries stay open and its row stays there to start.
- */
-function orderOfStudy(blocks: readonly BuiltBlock[]): BuiltBlock[] {
-  return [
-    ...blocks.filter((block) => !isMistakesRun(block)),
-    ...blocks.filter((block) => isMistakesRun(block)),
-  ];
+/** The learner stops at the mistakes run after their completed work, leaving its questions open. */
+function orderOfStudy({
+  blocks,
+  session,
+}: {
+  blocks: readonly BuiltBlock[];
+  session: SeedSession;
+}) {
+  const mistakes = blocks.filter((block) => isMistakesRun(block));
+
+  if (mistakes.length === 0) {
+    return { order: blocks, progress: session };
+  }
+
+  const ordinary = blocks.filter((block) => !isMistakesRun(block));
+  const finished = Math.min(session.finished, ordinary.length);
+
+  return {
+    order: [...ordinary.slice(0, finished), ...mistakes, ...ordinary.slice(finished)],
+    progress: { ...session, finished },
+  };
 }
 
 function getSessionStatus(session: SeedSession, blocks: readonly BuiltBlock[]): StudySessionStatus {
@@ -124,21 +136,18 @@ function toStartSnapshot(scope: LearnerScope, earnedToday: number): Prisma.Input
 
 function placeBlocks(
   scope: LearnerScope,
-  { blocks, session }: { blocks: readonly BuiltBlock[]; session: SeedSession },
+  { blocks, order, progress }: { blocks: readonly BuiltBlock[] } & ReturnType<typeof orderOfStudy>,
 ) {
-  const studied = orderOfStudy(blocks);
-
   const minutesBefore = (turn: number) =>
-    studied.slice(0, turn).reduce((sum, block) => sum + block.estimatedMinutes, 0);
+    order.slice(0, turn).reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
   return blocks.map((block, position) => {
-    const turn = studied.indexOf(block);
-    const status = getBlockStatus(session, turn);
+    const turn = order.indexOf(block);
+    const status = getBlockStatus(progress, turn);
     const isStarted = status !== "pending";
 
     return {
-      // Core counts an active block that has no focus clock from when it started, hours ago by the
-      // time anyone opens a seeded day. The learner left this one, so its clock is stopped.
+      // Seeded work resumes with a paused clock instead of counting the time since its start.
       block:
         status === "active"
           ? { ...block, payload: { ...block.payload, timing: { activeAt: null, elapsedMs: 0 } } }
@@ -207,8 +216,9 @@ async function writeDay(
 ): Promise<FinishedBlock[]> {
   const { learner, prisma, userId } = scope;
   const id = todaySessionId(learner);
-  const placed = placeBlocks(scope, { blocks: day.blocks, session });
-  const status = getSessionStatus(session, day.blocks);
+  const { order, progress: seedProgress } = orderOfStudy({ blocks: day.blocks, session });
+  const placed = placeBlocks(scope, { blocks: day.blocks, order, progress: seedProgress });
+  const status = getSessionStatus(seedProgress, day.blocks);
   const startedAt = status === "planned" ? null : studyMoment(scope, 0);
 
   const finished = placed.flatMap(({ block, completedAt, position, startedAt: blockStart }) =>
