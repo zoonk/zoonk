@@ -49,7 +49,7 @@ final class StudyAPITests: XCTestCase {
       let block = try JSONDecoder().decode(
         StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
 
-      XCTAssertEqual(block.label(document: .notice), expectedLine)
+      XCTAssertEqual(block.label, expectedLine)
       XCTAssertEqual(block.detail, expectedLine)
     }
   }
@@ -78,7 +78,7 @@ final class StudyAPITests: XCTestCase {
         StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
 
       XCTAssertEqual(block.displayTitle, title)
-      XCTAssertEqual(block.label(document: .notice), line)
+      XCTAssertEqual(block.label, line)
       XCTAssertEqual(block.detail, line)
       XCTAssertEqual(block.learnKind, block.kind == .learn ? .lesson : .mistakes)
     }
@@ -119,6 +119,34 @@ final class StudyAPITests: XCTestCase {
     XCTAssertEqual(flags[1]["returning"] as? String, "anotherWay")
     XCTAssertEqual(flags[2]["mistakesPractice"] as? Bool, true)
     XCTAssertEqual(refs[3]["patternId"] as? String, "p1")
+  }
+
+  /// A mock's run names only its mock, so it works after the learner switched goals, and its finish
+  /// names the run's scope and formats so the answer says whether more is left to practice.
+  func testAMockRunNamesOnlyItsMock() async throws {
+    let transport = StudyRecordingTransport()
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let mock = MistakePracticeScope.mock("6f0b5a52-63a8-4c1e-9a52-1d1d0c6c9e11")
+
+    _ = try? await api.answerMistake(
+      token: "token", mistakeId: "m1", itemId: "i1", answer: .choice(0), durationMs: 1000,
+      attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: mock)
+    _ = try? await api.finishMistakePractice(
+      token: "token", answerIds: ["a1"], goalId: "g1", scope: mock)
+    _ = try? await api.finishMistakePractice(
+      token: "token", answerIds: [], goalId: "g1", scope: .skill("s1"))
+
+    let sent = transport.sent.value.map(\.json)
+    let run = try XCTUnwrap(sent.first?["run"] as? NSDictionary)
+    XCTAssertEqual(run["mockId"] as? String, mock.mockId)
+    XCTAssertNil(run["goalId"])
+
+    XCTAssertEqual(sent[1]["mockId"] as? String, mock.mockId)
+    XCTAssertNil(sent[1]["goalId"])
+    XCTAssertEqual(sent[1]["ended"] as? Bool, true)
+    XCTAssertEqual(sent[2]["skillId"] as? String, "s1")
+    XCTAssertEqual(sent[2]["goalId"] as? String, "g1")
+    XCTAssertEqual(sent[2]["includeAllFormats"] as? Bool, true)
   }
 
   /// Core reads the shown block's missing values as `null` and refuses a body that leaves them out.

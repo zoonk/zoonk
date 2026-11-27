@@ -139,6 +139,7 @@ struct SpokenMistakeTarget: Sendable {
   let attemptId: String
   let goalId: String?
   var blockId: String? = nil
+  var mockId: String? = nil
   let answerIds: [String]
   let questionStartedAt: Date
   var practiceDurationMs: Int? = nil

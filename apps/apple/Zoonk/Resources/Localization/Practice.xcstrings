@@ -15345,6 +15345,9 @@
         }
       }
     },
+    "Your practice isn't saved yet" : {
+      "comment" : "Title when a run's end didn't reach the server; the learner can try again"
+    },
     "Your recent mistakes were typos, not a rule to learn." : {
       "localizations" : {
         "de" : {

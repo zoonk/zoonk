@@ -45,6 +45,9 @@ struct VoiceAPI: Sendable {
         if let blockId = mistake.blockId {
           parts.append(.blockId(.init(payload: .init(body: HTTPBody(blockId)))))
         }
+        if let mockId = mistake.mockId {
+          parts.append(.mockId(.init(payload: .init(body: HTTPBody(mockId)))))
+        }
       }
 
       let output = try await client.createSpokenAnswer(

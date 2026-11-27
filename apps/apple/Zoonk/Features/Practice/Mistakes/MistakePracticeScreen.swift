@@ -17,6 +17,9 @@ struct MistakePracticeScreen: View {
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
   @State private var showsSaveReport = false
+  /// A day block's completion that didn't get through: the run waits on it, with a retry.
+  @State private var finishFailures = 0
+  @State private var isFinishing = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
   @State private var pressedWithFocus: PracticeFocus?
@@ -39,7 +42,7 @@ struct MistakePracticeScreen: View {
           ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
         case .failed(let error):
           PracticeLoadFailureView(error: error) { Task { await read() } }
-        case .loaded(let set) where set.entries.isEmpty:
+        case .loaded(let set) where set.entries.isEmpty && state.phase != .ending:
           nothingToPractice
         case .loaded:
           run
@@ -92,12 +95,29 @@ struct MistakePracticeScreen: View {
   @ViewBuilder
   private var run: some View {
     switch state.phase {
+    case .ending where finishFailures > 0 && !isFinishing:
+      PracticeTaskLayout(isResult: true) {
+        PracticeResultTitle(
+          title: LocalizedStringResource(
+            "Your practice isn't saved yet", table: "Practice",
+            comment: "Title when a run's end didn't reach the server; the learner can try again"),
+          detail: nil)
+        SaveFailureNotice(failures: finishFailures) { showsSaveReport = true }
+      } actions: {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Try again", table: "Practice", comment: "Sends an answer that didn't save again.")
+        ) {
+          Task { await finish() }
+        }
+      }
     case .ending:
       ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
     case .ended(let summary):
       PracticeDoneView(
         summary: summary, fixed: state.fixedIds.count, reached: state.reached,
-        canPracticeAgain: scope.blockId == nil && !state.entriesToPracticeAgain.isEmpty,
+        canPracticeAgain: state.offersAgain(
+          scope: scope, hasMorePractice: summary?.hasMorePractice == true),
         again: practiceAgain
       ) {
         dismiss()
@@ -109,7 +129,7 @@ struct MistakePracticeScreen: View {
         if let lesson = step.entry.lesson {
           MistakeLessonQuestionView(
             replay: lesson, entry: step.entry, segments: state.segments, index: state.index,
-            goalId: goalId, blockId: scope.blockId, answerIds: state.answerIds,
+            goalId: goalId, scope: scope, answerIds: state.answerIds,
             checking: { state.checkingLesson() }, failed: { state.lessonFailed() },
             answered: { state.answeredLesson($0, mistakeId: step.entry.mistakeId) },
             next: next
@@ -373,8 +393,12 @@ struct MistakePracticeScreen: View {
       state = MistakePracticeState(entries: set.entries)
       shownAt = .now
       load = .loaded(set)
-      // A block whose mistakes can no longer be asked is done: the day never waits on it.
-      if set.entries.isEmpty, scope.blockId != nil { await finish() }
+      // A block whose mistakes can no longer be asked is done once its completion gets through:
+      // the day never waits on it.
+      if set.entries.isEmpty, scope.blockId != nil {
+        state.end()
+        await finish()
+      }
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
@@ -415,8 +439,7 @@ struct MistakePracticeScreen: View {
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
           itemId: question.itemId,
           answer: sent.answer, durationMs: sent.durationMs,
-          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId,
-          blockId: scope.blockId)
+          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId, scope: scope)
       })
     {
     case .done(let grade):
@@ -463,39 +486,46 @@ struct MistakePracticeScreen: View {
     await finish()
   }
 
-  /// Another run on what this one didn't fix. A day's block offers none: the day goes on from
-  /// Today.
+  /// A fresh batch from the server in the same scope: a run holds at most 50, so more can be open
+  /// than this one asked. A day's block offers none: the day goes on from Today.
   private func practiceAgain() {
     draft = nil
     attempt = nil
-    shownAt = .now
-    state = MistakePracticeState(entries: state.entriesToPracticeAgain)
+    load = .loading
+    state = MistakePracticeState(entries: [])
+    Task { await read() }
   }
 
   /// A block's run always tells the server it ended, so the block completes even with nothing
-  /// answered in it.
+  /// answered in it, and it isn't over until that gets through. Any other run's count is best
+  /// effort: each answer was counted as it came.
   private func finish() async {
-    let blockId = scope.blockId
-
-    guard !state.answerIds.isEmpty || blockId != nil else {
+    guard !state.answerIds.isEmpty || scope.blockId != nil else {
       state.ended(nil)
       return
     }
 
     let answerIds = state.answerIds
     let goalId = goalId
+    isFinishing = true
+    defer { isFinishing = false }
 
-    // A count that didn't get through still ends the run: each answer was counted as it came.
     switch await practice.write(
       .finished,
       { identity in
         try await practice.api.finishMistakePractice(
-          token: identity.bearerToken, answerIds: answerIds, ended: true, goalId: goalId,
-          blockId: blockId)
+          token: identity.bearerToken, answerIds: answerIds, goalId: goalId, scope: scope)
       })
     {
-    case .done(let summary): state.ended(summary)
-    case .refused, .failed: state.ended(nil)
+    case .done(let summary):
+      finishFailures = 0
+      state.ended(summary)
+    case .refused, .failed:
+      if scope.blockId == nil {
+        state.ended(nil)
+      } else {
+        finishFailures += 1
+      }
     case .obsolete: break
     }
   }

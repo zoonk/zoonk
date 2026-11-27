@@ -239,21 +239,10 @@ struct MockResultView: View {
     mainAction
   }
 
-  /// The questions answered wrong: the ones to fix. Blanks and right answers the learner wasn't
-  /// sure of are reviewed but aren't mistakes.
-  private var mistakes: Int {
-    view.review.filter { $0.outcome == .wrong || $0.outcome == .partial }.count
-  }
-
-  /// With mistakes to fix, practicing this mock's is the way on and leaving the other one, as on
-  /// main.
-  private var practiceMock: String? {
-    mistakes > 0 && view.purpose != .placement ? view.mockId : nil
-  }
-
   @ViewBuilder
   private var mainAction: some View {
-    if let mockId = practiceMock {
+    // With mistakes to fix, practicing this mock's is the way on and leaving the other one.
+    if let mockId = view.mistakesToPractice {
       Button {
         router.open(.mistakePractice(.mock(mockId)))
       } label: {
@@ -277,7 +266,7 @@ struct MockResultView: View {
 
   @ViewBuilder
   private var secondaryAction: some View {
-    if practiceMock != nil {
+    if view.mistakesToPractice != nil {
       Button {
         dismiss()
       } label: {
