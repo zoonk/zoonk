@@ -73,8 +73,9 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         "$TURBO_ROOT$/packages/db/.env.e2e.local",
-        "!**/*.test.ts",
-        "!**/*.test.tsx"
+        "$TURBO_ROOT$/scripts/dev/process.mts",
+        "$TURBO_ROOT$/scripts/dev/queue.mts",
+        "$TURBO_ROOT$/scripts/run-test-env.mts"
       ],
       "outputs": [
         ".next-e2e/**",
