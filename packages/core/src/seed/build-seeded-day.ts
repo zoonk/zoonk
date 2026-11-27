@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { type SeededToday } from "@zoonk/db/seed";
 import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { completeLessonPlanItems } from "../sessions/_utils/plan-items";
+import { getStudyAnswerEvidence } from "../sessions/_utils/record-study-answer";
 import { gradeSessionAnswer, parseSessionItem } from "../sessions/_utils/session-items";
 import { getBlockItemIds } from "../sessions/block-payload";
 import { loadDayMissionFacts } from "../sessions/missions/day-facts";
@@ -11,7 +12,15 @@ import { type PlannedBlock, buildSessionBlocks } from "../sessions/session-build
 
 type BankItem = Parameters<typeof parseSessionItem>[0];
 
-function toRightAnswer({ blockId, item }: { blockId: string; item: BankItem }) {
+function toRightAnswer({
+  blockId,
+  item,
+  placement,
+}: {
+  blockId: string;
+  item: BankItem;
+  placement: boolean;
+}) {
   const question = parseSessionItem(item);
 
   if (!question) {
@@ -24,7 +33,14 @@ function toRightAnswer({ blockId, item }: { blockId: string; item: BankItem }) {
     item: question,
   });
 
-  return [{ answer: correctAnswer, itemId: item.id, skillId: item.skillId }];
+  return [
+    {
+      answer: correctAnswer,
+      evidence: getStudyAnswerEvidence({ blank: false, placement }),
+      itemId: item.id,
+      skillId: item.skillId,
+    },
+  ];
 }
 
 async function loadRightAnswers({
@@ -43,7 +59,8 @@ async function loadRightAnswers({
       position,
       getBlockItemIds(block.payload).flatMap((itemId) => {
         const item = byId.get(itemId);
-        return item ? toRightAnswer({ blockId: today.blockId(position), item }) : [];
+        const placement = block.payload.placementItemIds.includes(itemId);
+        return item ? toRightAnswer({ blockId: today.blockId(position), item, placement }) : [];
       }),
     ]),
   );
