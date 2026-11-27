@@ -216,11 +216,7 @@ export function applyWritingArithmetic({
 
   const { content } = score;
 
-  const penalty = getLanguagePenalty({
-    basis,
-    errorCount: feedback.errors.length,
-    estimatedLines,
-  });
+  const penalty = getLanguagePenalty({ basis, errorCount: feedback.errors.length, estimatedLines });
 
   const deduction = {
     high: Math.min(content.high, penalty.high),

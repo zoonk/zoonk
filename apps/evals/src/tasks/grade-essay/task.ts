@@ -6,10 +6,7 @@ import {
   applyWritingArithmetic,
   buildWritingFeedback,
 } from "@zoonk/core/exams/essays/writing-feedback";
-import {
-  countWritingLines,
-  WRITING_LINE_WIDTHS,
-} from "@zoonk/core/exams/essays/writing-lines";
+import { WRITING_LINE_WIDTHS, countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { getWritingGraderSheet } from "@zoonk/core/exams/essays/writing-sheet";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { scoreWritingGrade } from "./scorer";

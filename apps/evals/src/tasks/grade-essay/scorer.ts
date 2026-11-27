@@ -1,10 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
-import {
-  countWritingLines,
-  WRITING_LINE_WIDTHS,
-} from "@zoonk/core/exams/essays/writing-lines";
+import { WRITING_LINE_WIDTHS, countWritingLines } from "@zoonk/core/exams/essays/writing-lines";
 import { markWritingRows } from "@zoonk/core/exams/essays/writing-marks";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
 import { type GradeWritingOutput } from "./task";

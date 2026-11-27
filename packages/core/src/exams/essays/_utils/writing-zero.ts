@@ -58,7 +58,6 @@ function shortEnough(text: string, maxLines: number | null | undefined) {
 }
 
 function matchesNominatedRule({
-  basis,
   context,
   maxLines,
   onTopicQuote,
@@ -66,7 +65,6 @@ function matchesNominatedRule({
   zeroKind,
   zeroQuote,
 }: {
-  basis: Basis;
   context: string | null;
   maxLines: Rule["maxLines"];
   onTopicQuote: string | null;
@@ -99,13 +97,11 @@ function matchesNominatedRule({
 }
 
 function matchesRule({
-  basis,
   context,
   evidence,
   rule,
   text,
 }: {
-  basis: Basis;
   context: string | null;
   evidence: WritingEvidence;
   rule: Rule;
@@ -128,7 +124,6 @@ function matchesRule({
   }
 
   const matches = matchesNominatedRule({
-    basis,
     context,
     maxLines,
     onTopicQuote,
@@ -152,7 +147,7 @@ export function verifiedWritingZero({
   evidence: WritingEvidence;
 }) {
   for (const rule of basis.grading.zeroing) {
-    const kind = matchesRule({ basis, context, evidence, rule, text: eligible });
+    const kind = matchesRule({ context, evidence, rule, text: eligible });
 
     if (kind) {
       return { kind, reason: rule.text };

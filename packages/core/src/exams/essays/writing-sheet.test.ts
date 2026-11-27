@@ -536,7 +536,6 @@ describe("sheets stored before awards existed", () => {
     expect(reread(split)).toBe(true);
     expect(reread(split.toReversed())).toBe(true);
     expect(reread(split.slice(0, 1))).toBe(false);
-
   });
 
   it("keeps a question issued before rounding was read as numbers, whatever its rounding says", () => {

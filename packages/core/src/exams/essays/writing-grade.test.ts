@@ -704,11 +704,7 @@ describe(countWritingLines, () => {
   // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
   it("keeps a full 70-line answer that the board graded in full", () => {
     expect(
-      countWritingLines({
-        ...WRITING_LINE_WIDTHS,
-        limit: 70,
-        text: cacd2024Essay,
-      }).ignoredFrom,
+      countWritingLines({ ...WRITING_LINE_WIDTHS, limit: 70, text: cacd2024Essay }).ignoredFrom,
     ).toBeNull();
   });
 
