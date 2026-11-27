@@ -29,8 +29,8 @@
     "db:seed": "prisma db seed",
     "db:seed:e2e": "node ../../scripts/run-test-env.mts e2e prisma db seed",
     "prisma:seed": "tsx src/prisma/seed.ts && pnpm --filter @zoonk/core seed",
-    "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate deploy",
-    "db:setup:test": "node ../../scripts/run-test-env.mts test prisma migrate deploy",
+    "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e --quiet-on-success prisma migrate deploy",
+    "db:setup:test": "node ../../scripts/run-test-env.mts test --quiet-on-success prisma migrate deploy",
     "db:studio": "prisma studio",
     "typecheck": "tsrs --noEmit"
   },
