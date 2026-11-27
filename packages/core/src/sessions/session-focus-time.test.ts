@@ -125,7 +125,7 @@ describe("session focus time", () => {
     const [stopped, untimed] = await Promise.all([
       studySessionBlockFixture({
         kind: "practice",
-        payload: { timing: { activeAt: null, clock: null, elapsedMs: 5 * MINUTE } },
+        payload: { timing: { activeAt: null, clock: null, elapsedMs: 5 * MS_PER_MINUTE } },
         position: 0,
         sessionId: earlier.id,
         startedAt: new Date("2026-10-01T09:00:00Z"),
@@ -135,7 +135,7 @@ describe("session focus time", () => {
         kind: "practice",
         position: 1,
         sessionId: earlier.id,
-        startedAt: new Date(NOW.getTime() - 3 * MINUTE),
+        startedAt: new Date(NOW.getTime() - 3 * MS_PER_MINUTE),
         status: "active",
       }),
     ]);
@@ -151,7 +151,7 @@ describe("session focus time", () => {
       readBlockPayload(
         await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: untimed.id } }),
       ).timing,
-    ).toMatchObject({ activeAt: null, elapsedMs: 7 * MINUTE });
+    ).toMatchObject({ activeAt: null, elapsedMs: 7 * MS_PER_MINUTE });
   });
 
   it("pauses the earlier clock across different owned sessions", async () => {
