@@ -119,6 +119,59 @@ describe(getPlayableLibraryLesson, () => {
     expect(sittings.some((order) => order.join(",") !== first.join(","))).toBe(true);
   });
 
+  it("lays out a challenge's choices, a choice check and a dialogue's replies for the sitting", async () => {
+    const challenge = playableStepContent.challenge;
+
+    const { lesson } = await setupPlayableLesson({
+      steps: [
+        { content: activityContentFixtures.areaModel, kind: "activity" },
+        { content: activityContentFixtures.dialogueSimulator, kind: "activity" },
+        { content: challenge, kind: "challenge" },
+        "summary",
+      ],
+    });
+
+    const readLists = async () => {
+      const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+      return steps.flatMap((step) => {
+        if (step.kind === "challenge") {
+          return step.content.nodes.map((node) => node.choices.map((choice) => choice.id));
+        }
+
+        if (step.kind !== "activity") {
+          return [];
+        }
+
+        const { check } = step.content;
+
+        return step.content.template === "dialogueSimulator"
+          ? [step.content.fields.replies.map((reply) => reply.id)]
+          : [check.kind === "choice" ? check.options.map((option) => option.id) : []];
+      });
+    };
+
+    const stored = [
+      activityContentFixtures.areaModel.check.options.map((option) => option.id),
+      activityContentFixtures.dialogueSimulator.fields.replies.map((reply) => reply.id),
+      ...challenge.nodes.map((node) => node.choices.map((choice) => choice.id)),
+    ];
+
+    const shown = await readLists();
+
+    expect(shown.map((ids) => ids.toSorted())).toStrictEqual(stored.map((ids) => ids.toSorted()));
+    await expect(readLists()).resolves.toStrictEqual(shown);
+
+    const longLists = shown.filter((ids) => ids.length > 2);
+
+    expect(longLists.length).toBeGreaterThan(2);
+
+    expect(
+      shown.filter((ids, index) => ids.length > 2 && ids.join(",") === stored[index]?.join(",")),
+    ).toStrictEqual([]);
+  });
+
   it("keeps a sitting's order when a review capsule on the lesson ends", async () => {
     const { lesson, user } = await setupPlayableLesson({
       steps: [{ content: FIVE_OPTION_CHECK, kind: "check" }, "summary"],

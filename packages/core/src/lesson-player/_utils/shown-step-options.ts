@@ -1,5 +1,9 @@
 import { showInOrder } from "../../sessions/_utils/shown-order";
-import { type PlayableLanguageStep, type PlayableLibraryStep } from "../playable-lesson";
+import {
+  type PlayableActivityStep,
+  type PlayableLanguageStep,
+  type PlayableLibraryStep,
+} from "../playable-lesson";
 
 type Exercise = PlayableLanguageStep["exercise"];
 
@@ -29,9 +33,57 @@ function showExercise({ exercise, seed }: { exercise: Exercise; seed: string }):
   };
 }
 
+function showActivity({
+  seed,
+  step,
+}: {
+  seed: string;
+  step: PlayableActivityStep;
+}): PlayableActivityStep {
+  const { check } = step.content;
+
+  const content =
+    check.kind === "choice"
+      ? {
+          ...step.content,
+          check: {
+            ...check,
+            options: showInOrder({ items: check.options, seed: `${seed}:check` }),
+          },
+        }
+      : step.content;
+
+  if (content.template !== "dialogueSimulator") {
+    return { ...step, content };
+  }
+
+  const replies = showInOrder({ items: content.fields.replies, seed: `${seed}:replies` });
+  return { ...step, content: { ...content, fields: { ...content.fields, replies } } };
+}
+
 function showScreen({ seed, step }: { seed: string; step: PlayableLibraryStep }) {
   if ("exercise" in step) {
     return { ...step, exercise: showExercise({ exercise: step.exercise, seed }) };
+  }
+
+  if (step.kind === "activity") {
+    return showActivity({ seed, step });
+  }
+
+  if (step.kind === "challenge") {
+    const nodes = step.content.nodes.map((node) => ({
+      ...node,
+      choices: showInOrder({ items: node.choices, seed: `${seed}:${node.id}` }),
+    }));
+
+    return { ...step, content: { ...step.content, nodes } };
+  }
+
+  if (step.kind === "spokenAnswer" && step.listening) {
+    return {
+      ...step,
+      listening: showExercise({ exercise: step.listening, seed: `${seed}:listening` }),
+    };
   }
 
   if (step.kind === "check") {
