@@ -64,6 +64,8 @@ class AppLinkTest {
             "/learn/lesson-1?session=session-1&answer=b" to AppRoute.Lesson("lesson-1", "session-1", "b"),
             "/mistakes/practice" to AppRoute.MistakePractice(),
             "/mistakes/practice?skill=skill-1" to AppRoute.MistakePractice("skill-1"),
+            "/mistakes/practice?blockId=block-1" to AppRoute.MistakePractice(blockId = "block-1"),
+            "/mistakes/practice?mockId=mock-1" to AppRoute.MistakePractice(mockId = "mock-1"),
             "/pattern/pattern-1" to AppRoute.Pattern("pattern-1"),
             "/test-out/chapter-1" to AppRoute.TestOut("chapter-1"),
             "/test-out/chapter-1?session=session-1" to AppRoute.TestOut("chapter-1", "session-1"),

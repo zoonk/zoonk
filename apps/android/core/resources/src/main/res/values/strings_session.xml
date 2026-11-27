@@ -18,6 +18,22 @@
     <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
     <string name="session_block_practice_topic">Practice: %1$s</string>
     <string name="session_block_rematch_lesson">Short lesson before the rematch</string>
+    <!-- A block of the day that asks again questions the learner got wrong on earlier days. %d counts the mistakes. -->
+    <plurals name="session_block_fix_mistakes">
+        <item quantity="one">Fix %d mistake</item>
+        <item quantity="other">Fix %d mistakes</item>
+    </plurals>
+    <!-- Under "Fix 3 mistakes" in the day's list. -->
+    <string name="session_block_mistakes_line">Questions you missed before</string>
+    <!-- A block of the day that drills one pattern in the learner's language mistakes. %1$s is the pattern's name, like "Gender of nouns". -->
+    <string name="session_block_practice_pattern">Practice: %1$s</string>
+    <string name="session_block_pattern_line">A pattern in your recent mistakes</string>
+    <!-- Under a lesson the learner already did, back in the day because they keep missing what it teaches. -->
+    <string name="session_block_returning_again">Again: you keep missing this</string>
+    <!-- Under a new lesson that explains, in a different way, something the learner keeps missing. -->
+    <string name="session_block_returning_another_way">Another way to see it</string>
+    <!-- Under a short lesson written for something the learner keeps missing. -->
+    <string name="session_block_returning_missed">You keep missing this</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d question</item>
         <item quantity="other">%d questions</item>
