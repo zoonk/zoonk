@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   suites:
-    name: vitest (${{ matrix.suite == 'clock' && format('affected at {0} UTC', matrix.test-clock) || matrix.part }})
+    name: vitest (${{ matrix.clock && format('{0} at {1} UTC', matrix.part, matrix.clock) || matrix.part }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # Runners of about the same length, each well under six minutes. Each has 4 vCPUs, which two
@@ -32,34 +32,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: ${{ fromJSON(github.event_name == 'pull_request' && '["standard", "clock"]' || '["standard"]') }}
-        part:
-          - core and api 1 of 4
-          - core and api 2 of 4
-          - core and api 3 of 4
-          - core and api 4 of 4
-          - player 1 of 2
-          - player 2 of 2
-          - the rest
-          - api workflows
-        exclude:
-          - { suite: clock, part: core and api 3 of 4 }
-          - { suite: clock, part: core and api 4 of 4 }
-          - { suite: clock, part: player 1 of 2 }
-          - { suite: clock, part: player 2 of 2 }
-          - { suite: clock, part: the rest }
-          - { suite: clock, part: api workflows }
+        clock: ${{ fromJSON(github.event_name == 'pull_request' && '["", "Wednesday 01:30", "Sunday 16:00"]' || '[""]') }}
+        part: [core and api 1 of 4, core and api 2 of 4, core and api 3 of 4, core and api 4 of 4]
         include:
           - part: core and api 1 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=1/4"
-            test-clock: "Wednesday 01:30"
           - part: core and api 2 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=2/4"
-            test-clock: "Sunday 16:00"
           - part: core and api 3 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
@@ -103,7 +86,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.ref || github.sha }}
-          fetch-depth: ${{ matrix.suite == 'clock' && 2 || 1 }}
+          fetch-depth: ${{ matrix.clock && 2 || 1 }}
 
       # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
       # whose slow downloads time jobs out.
@@ -134,20 +117,20 @@ jobs:
           exit 1
 
       - name: Run Vitest
-        if: matrix.suite == 'standard'
+        if: ${{ !matrix.clock }}
         run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
 
       # The first parent is the main commit the runner actually merged into, even if main has advanced.
-      - name: Run affected tests at ${{ matrix.test-clock }} UTC
-        if: matrix.suite == 'clock'
+      - name: Run affected tests at ${{ matrix.clock }} UTC
+        if: matrix.clock
         env:
-          TEST_CLOCK: ${{ matrix.test-clock }}
+          TEST_CLOCK: ${{ matrix.clock }}
         run: |
           ZOONK_TEST_NOW=$(date -u --date="next $TEST_CLOCK" +%FT%TZ)
           export ZOONK_TEST_NOW
           echo "Run with ZOONK_TEST_NOW=$ZOONK_TEST_NOW to reproduce this instant."
-          pnpm turbo run test --filter=@zoonk/core --filter=api --concurrency=2 \
-            --cache=local:,remote: -- --changed=HEAD^1 --passWithNoTests
+          pnpm turbo run test ${{ matrix.filter }} --concurrency=2 --cache=local:,remote: \
+            ${{ matrix.args }} --changed=HEAD^1 --passWithNoTests --maxWorkers=2
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
