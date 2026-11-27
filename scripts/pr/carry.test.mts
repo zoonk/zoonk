@@ -21,8 +21,8 @@ const READ: Read = {
   findings: [{ grantedBy: "the user", id: "f1", state: "exception", text: "the day bar is 40 px" }],
 };
 
-/** A white picture with a black bar at `left`; `effort` changes the bytes, never the pixels. */
-async function png({ effort = 7, left = 10 }: { effort?: number; left?: number } = {}) {
+/** A white picture with a black bar at `left`; `compression` changes the bytes, never the pixels. */
+async function png({ compression = 6, left = 10 }: { compression?: number; left?: number } = {}) {
   return sharp({ create: { background: "#fff", channels: 4, height: SIZE, width: SIZE } })
     .composite([
       {
@@ -31,7 +31,7 @@ async function png({ effort = 7, left = 10 }: { effort?: number; left?: number }
         top: 8,
       },
     ])
-    .png({ effort })
+    .png({ compressionLevel: compression })
     .toBuffer();
 }
 
@@ -108,7 +108,7 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
   });
 
   it("carries the read and its findings' states to the same pixels in different bytes", async () => {
-    const { read } = await recapture({ picture: await png({ effort: 1 }) });
+    const { read } = await recapture({ picture: await png({ compression: 0 }) });
 
     assert.deepEqual(read, { ...READ, carriedFrom: sha256(await png()) });
   });
@@ -146,6 +146,19 @@ describe("a re-capture keeps the read of pictures whose pixels didn't change", (
     });
 
     assert.deepEqual(read, { ...READ, carriedFrom: sha256(earlier) });
+  });
+
+  it("carries the read when a retake returns to the pixels last read in different bytes", async () => {
+    const picture = await png({ compression: 0, left: 2 });
+
+    const { carried } = await recapture({
+      before: { read: undefined, retakes: { file: RETAKEN, read: READ } },
+      now: { sha256: sha256(picture) },
+      picture,
+    });
+
+    assert.deepEqual(carried?.read, { ...READ, carriedFrom: sha256(await png({ left: 2 })) });
+    assert.equal(carried?.retakes, undefined);
   });
 
   it("never carries a read across a changed scenario, viewport, locale, scheme or scale", async () => {
