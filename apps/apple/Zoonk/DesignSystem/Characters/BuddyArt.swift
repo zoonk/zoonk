@@ -34,6 +34,7 @@ struct BuddyArt: CharacterArt {
   private static func ink(kind: BuddyKind, stage: BuddyStage) -> CGRect {
     let box: (Double, Double, Double, Double) =
       switch (kind, stage) {
+      case (.unrecognized, _): (0, 0, 120, 120)
       case (.beep, .adult): (7, -16, 108, 137.5)
       case (.beep, .young): (15, 3, 92.5, 118)
       case (.beep, .baby): (22, 23, 77.5, 97.5)
@@ -102,6 +103,7 @@ private struct BuddyBodyArt {
 
   func draw(_ painter: ArtPainter) {
     switch look.kind {
+    case .unrecognized: return
     case .zu: zu(painter)
     case .noodle: noodle(painter)
     case .beep: beep(painter)

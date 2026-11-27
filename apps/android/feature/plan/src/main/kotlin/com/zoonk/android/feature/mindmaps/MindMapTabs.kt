@@ -383,6 +383,10 @@ private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
     when (reason) {
+        MindMapAllowanceStop.Reason.UNKNOWN_DEFAULT_OPEN_API -> {
+            Limit.Reached(tier)
+        }
+
         MindMapAllowanceStop.Reason.SLOW_DOWN -> {
             Limit.SlowDown(SLOW_DOWN_SECONDS)
         }
@@ -395,6 +399,7 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
             Limit.Reached(
                 tier,
                 when (period) {
+                    MindMapAllowanceStop.Period.UNKNOWN_DEFAULT_OPEN_API -> null
                     MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day

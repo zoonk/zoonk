@@ -17,7 +17,8 @@ struct SuggestedGoal: Decodable, Equatable, Sendable {
 
 struct TodayView: Decodable, Equatable, Sendable {
   struct Goal: Decodable, Equatable, Sendable {
-    enum Kind: String, Decodable, Sendable {
+    enum Kind: String, UnknownAPIValue, Sendable {
+      case unrecognized
       case exam
       case explain
       case language

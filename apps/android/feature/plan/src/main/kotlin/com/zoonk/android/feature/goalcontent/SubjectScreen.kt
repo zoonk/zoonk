@@ -401,12 +401,12 @@ private val WrittenPracticeSubjectsInnerWriteActionsInner.status: String
         when (val availability = availability) {
             is WriteAvailability.StudyBlockWritingAvailabilityOneOfValue -> availability.value.status.value
             is WriteAvailability.StudyBlockWritingAvailabilityOneOf1Value -> availability.value.status.value
-            is WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue -> availability.value.status.value
+            is WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue -> availability.value.status.value
         }
 
 private val WrittenPracticeSubjectsInnerWriteActionsInner.choiceGroups: List<String>
     get() =
-        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerAvailabilityValue)
+        (availability as? WriteAvailability.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue)
             ?.value
             ?.choiceGroups
             .orEmpty()

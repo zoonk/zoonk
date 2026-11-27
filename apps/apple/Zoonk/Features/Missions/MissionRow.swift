@@ -45,11 +45,13 @@ struct StudyMission: Decodable, Hashable, Sendable {
   let kind: Kind
   let minutes: Double?
   let opens: Opens?
-  let status: String
+  enum Status: String, Decodable { case todo, done }
+
+  let status: Status
   let total: Int
   let waitReason: StudyBlock.WaitReason?
 
-  var isDone: Bool { status == "done" }
+  var isDone: Bool { status == .done }
 
   func opens(_ block: StudyBlock) -> Bool {
     guard let opens, opens.kind == "block" else {

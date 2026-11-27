@@ -117,14 +117,16 @@ fun examTaskTitle(task: ExamSpeakingTask) =
 internal fun standingText(
     standing: ExamSpeakingFeedbackCriteriaInner.Standing,
     level: String,
-) = stringResource(
-    when (standing) {
-        ExamSpeakingFeedbackCriteriaInner.Standing.AT -> R.string.conversation_at_level
-        ExamSpeakingFeedbackCriteriaInner.Standing.NEAR -> R.string.conversation_near_level
-        ExamSpeakingFeedbackCriteriaInner.Standing.BELOW -> R.string.conversation_below_level
-    },
-    level,
-)
+): String {
+    val label =
+        when (standing) {
+            ExamSpeakingFeedbackCriteriaInner.Standing.UNKNOWN_DEFAULT_OPEN_API -> return ""
+            ExamSpeakingFeedbackCriteriaInner.Standing.AT -> R.string.conversation_at_level
+            ExamSpeakingFeedbackCriteriaInner.Standing.NEAR -> R.string.conversation_near_level
+            ExamSpeakingFeedbackCriteriaInner.Standing.BELOW -> R.string.conversation_below_level
+        }
+    return stringResource(label, level)
+}
 
 /** Main's `useEstimateText`: Goethe's letters best first, else the range of the scale or of the task's points. */
 @Composable

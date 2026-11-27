@@ -129,6 +129,7 @@ sealed class AnalyticsEvent(
                         MemoryInsight.Kind.PLAN_CHANGE -> "plan_change"
                         MemoryInsight.Kind.SCHEDULE_IDEA -> "schedule"
                         MemoryInsight.Kind.TIP -> "tip"
+                        MemoryInsight.Kind.UNKNOWN_DEFAULT_OPEN_API -> "unknown"
                     },
             ),
         )
@@ -145,6 +146,7 @@ sealed class AnalyticsEvent(
                         Milestone.Kind.BUDDY_STAGE -> "buddy_stage"
                         Milestone.Kind.GLASSES -> "glasses"
                         Milestone.Kind.BADGE -> "badge"
+                        Milestone.Kind.UNKNOWN_DEFAULT_OPEN_API -> "unknown"
                     },
             ),
         )

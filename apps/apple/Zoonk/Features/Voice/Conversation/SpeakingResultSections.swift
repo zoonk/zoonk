@@ -155,6 +155,7 @@ struct ExamSpeakingSections: View {
         .monospacedDigit()
       Group {
         switch grade.standing {
+        case .unrecognized: EmptyView()
         case .at:
           Text("At \(task.level.rawValue)", tableName: "Voice", comment: "An estimate at the level")
             .foregroundStyle(.successText)
@@ -288,7 +289,7 @@ struct SpeakingMockSections: View {
           localized: "Estimated band, from 0 to 9", table: "Voice",
           comment: "The IELTS speaking mock's band scale"),
         Components.Schemas.LanguageIeltsSpeakingMockFeedback.CriteriaPayloadPayload
-          .CriterionPayload.allCases.map(\.rawValue),
+          .CriterionPayload.allCases.filter { $0 != .unrecognized }.map(\.rawValue),
         feedback.criteria.map {
           Grade(
             key: $0.criterion.rawValue, low: $0.bandLow, high: $0.bandHigh, evidence: $0.evidence,
@@ -303,7 +304,7 @@ struct SpeakingMockSections: View {
           localized: "Estimated band, from 1 to 6", table: "Voice",
           comment: "The TOEFL speaking mock's band scale"),
         Components.Schemas.LanguageToeflSpeakingMockFeedback.CriteriaPayloadPayload
-          .CriterionPayload.allCases.map(\.rawValue),
+          .CriterionPayload.allCases.filter { $0 != .unrecognized }.map(\.rawValue),
         feedback.criteria.map {
           Grade(
             key: $0.criterion.rawValue, low: $0.bandLow, high: $0.bandHigh, evidence: $0.evidence,

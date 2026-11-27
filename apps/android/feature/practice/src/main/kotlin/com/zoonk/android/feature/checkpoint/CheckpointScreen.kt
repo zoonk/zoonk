@@ -866,6 +866,8 @@ private fun NotWonDetails(
 ) {
     Section(stringResource(R.string.checkpoint_whats_next)) {
         when (rows.retry) {
+            Checkpoint.Retry.UNKNOWN_DEFAULT_OPEN_API -> {}
+
             Checkpoint.Retry.PASSED -> {
                 DetailRow(
                     R.drawable.ic_check,

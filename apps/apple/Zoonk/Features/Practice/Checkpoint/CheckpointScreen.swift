@@ -559,6 +559,7 @@ private enum CheckpointRetry {
     let lessons = state.reinforcementLessons
 
     switch state.completion == nil ? checkpoint.retry : .tomorrow {
+    case .unrecognized: return nil
     case .tomorrow: self = .tomorrow(lessons: lessons)
     case .open: self = .nextSession(lessons: lessons)
     case .passed: self = .won
@@ -673,6 +674,7 @@ private struct CheckpointReview: View {
 enum CheckpointCopy {
   static func title(_ checkpoint: Components.Schemas.Checkpoint) -> LocalizedStringResource {
     switch checkpoint.kind {
+    case .unrecognized: LocalizedStringResource("Challenge", table: "Practice")
     case .weekly:
       checkpoint.mock
         ? LocalizedStringResource(

@@ -34,14 +34,15 @@ sealed interface NoteTarget {
     }
 
     companion object {
-        fun of(field: PlayableLibraryStepAnyOfContentOneOf30FieldsStart): NoteTarget =
+        fun of(field: PlayableLibraryStepAnyOfContentOneOf30FieldsStart): NoteTarget? =
             when (field) {
-                is ChordTargetValue -> Chord(field.value.root, chordQuality(field.value.quality))
+                is ChordTargetValue -> chordQuality(field.value.quality)?.let { Chord(field.value.root, it) }
                 is NotesTargetValue -> Notes(field.value.notes)
             }
 
-        private fun chordQuality(quality: PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality): ChordQuality =
+        private fun chordQuality(quality: PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality): ChordQuality? =
             when (quality) {
+                PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.UNKNOWN_DEFAULT_OPEN_API -> null
                 PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.AUGMENTED -> ChordQuality.Augmented
                 PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.DIMINISHED -> ChordQuality.Diminished
                 PlayableLibraryStepAnyOfContentOneOf30FieldsStartOneOf.Quality.DOMINANT7 -> ChordQuality.Dominant7

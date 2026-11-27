@@ -120,7 +120,7 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let id: String
   var statement: String
   let category: Category
-  let source: Source
+  let source: Source?
   let createdAt: Date
   /// The About you question this fact answers, which is where it's changed.
   var profileQuestion: ProfileQuestion?
@@ -199,9 +199,10 @@ extension LearningPreferences {
 
 extension MemoryFact {
   init(_ fact: Components.Schemas.MemoryFact) {
-    let source: Source =
+    let source: Source? =
       switch (fact.origin, fact.source?.value1.kind) {
       case (.noticed, _): .noticed
+      case (.unrecognized, _), (_, .unrecognized): nil
       case (_, .call): .call
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding

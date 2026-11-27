@@ -613,7 +613,7 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
-    case .failed: screen = .waiting(outline, .failed)
+    case .failed, .unrecognized: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
     }
 
@@ -678,7 +678,7 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .ready where warmUp != nil: screen = .waiting(outline, .written)
     case .ready: await load(refresh: true)
-    case .failed, nil: screen = .waiting(outline, .failed)
+    case .failed, .unrecognized, nil: screen = .waiting(outline, .failed)
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
   }

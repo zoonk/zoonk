@@ -3,6 +3,8 @@ generate:
   - client
 accessModifier: public
 namingStrategy: idiomatic
+nameOverrides:
+  __unknown_api_value__: unrecognized
 # The lesson player decodes screens and answers into its own types: the generated unions of every
 # screen kind and activity template are index-named and far larger than what it reads.
 typeOverrides:

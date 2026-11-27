@@ -68,10 +68,15 @@ internal fun BuddyFirstStepsSection(
             )
         }
         Column {
-            firstSteps.steps.forEachIndexed { index, step ->
-                if (index > 0) HorizontalDivider()
-                FirstStepRow(step, look, name, taps)
-            }
+            firstSteps.steps
+                .filter { it.kind != Kind.UNKNOWN_DEFAULT_OPEN_API && it.status != Status.UNKNOWN_DEFAULT_OPEN_API }
+                .forEachIndexed {
+                    index,
+                    step,
+                    ->
+                    if (index > 0) HorizontalDivider()
+                    FirstStepRow(step, look, name, taps)
+                }
         }
         if (firstSteps.completedOn != null) {
             Text(
@@ -128,6 +133,7 @@ private fun firstStepName(
     buddyName: String,
 ): String =
     when (kind) {
+        Kind.UNKNOWN_DEFAULT_OPEN_API -> ""
         Kind.SOMETHING_NEW -> stringResource(R.string.buddy_page_first_lesson)
         Kind.REVIEW -> stringResource(R.string.buddy_page_first_review)
         Kind.FIX_MISTAKE -> stringResource(R.string.buddy_page_first_mistake)

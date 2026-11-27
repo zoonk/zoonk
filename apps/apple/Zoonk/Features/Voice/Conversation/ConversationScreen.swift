@@ -177,8 +177,9 @@ struct ConversationTitle {
   let conversation: LanguageConversation
 
   var text: Text {
-    if let exam = conversation.mockExam {
+    if let exam = conversation.mockExam, exam != .unrecognized {
       return switch exam {
+      case .unrecognized: Text(verbatim: "")
       case .ielts:
         Text("IELTS speaking mock", tableName: "Voice", comment: "A speaking mock's name")
       case .toefl:

@@ -33,6 +33,10 @@ fun focusTestOffer(plan: Plan): FocusTestOffer? =
 internal fun focusTestLine(summary: FocusTestSummary): String {
     val minutes = summary.offer?.minutes?.let { formatMinutes(it.toInt(), currentLocale()) }
     return when (summary.state) {
+        FocusTestSummary.State.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         FocusTestSummary.State.NOT_STARTED -> {
             factsLine(
                 stringResource(if (summary.suggestsFocus) R.string.focustest_find_focus else R.string.focustest_find_start),

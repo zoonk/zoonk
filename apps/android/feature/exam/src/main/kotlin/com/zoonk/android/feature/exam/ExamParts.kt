@@ -252,7 +252,7 @@ internal fun ExamResultSection(
 ) {
     val status = viewModel.report
     val locale = currentLocale()
-    val scale = exam.resultScale
+    val scale = exam.resultScale ?: return
     val field = scoreField(scale)
     val saved by viewModel.saved.collectAsStateWithLifecycle()
     val scoreField = rememberTextFieldState()
@@ -365,9 +365,10 @@ private fun ResultSaved(score: Double?) {
 }
 
 /** Main's `useScale`: the exam's own scale, else IRT or plain points. */
-private val ExamView.resultScale: ExamResult.Scale
+private val ExamView.resultScale: ExamResult.Scale?
     get() =
         when (scoring.scale) {
+            ExamViewScoring.Scale.UNKNOWN_DEFAULT_OPEN_API -> null
             ExamViewScoring.Scale.AP -> ExamResult.Scale.AP
             ExamViewScoring.Scale.SAT -> ExamResult.Scale.SAT
             ExamViewScoring.Scale.TOEFL -> ExamResult.Scale.TOEFL
@@ -396,7 +397,7 @@ private fun scoreField(scale: ExamResult.Scale): String =
             ExamResult.Scale.SAT -> R.string.exam_score_sat
             ExamResult.Scale.TOEFL -> R.string.exam_score_toefl
             ExamResult.Scale.IRT -> R.string.exam_score_irt
-            ExamResult.Scale.PERCENT, ExamResult.Scale.POINTS -> R.string.exam_score
+            ExamResult.Scale.UNKNOWN_DEFAULT_OPEN_API, ExamResult.Scale.PERCENT, ExamResult.Scale.POINTS -> R.string.exam_score
         },
     )
 

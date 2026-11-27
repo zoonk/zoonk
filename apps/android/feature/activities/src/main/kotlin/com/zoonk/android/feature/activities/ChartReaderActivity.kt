@@ -131,6 +131,7 @@ internal fun measureSpan(
     val start = fields.points.find { it.x == span.from }?.y ?: return null
     val end = fields.points.find { it.x == span.to }?.y ?: return null
     return when (fields.statistic) {
+        Statistic.UNKNOWN_DEFAULT_OPEN_API -> null
         Statistic.CHANGE -> end - start
         Statistic.RATE_PER_UNIT -> (end - start) / (span.to - span.from)
         Statistic.PERCENT_CHANGE -> if (start == 0.0) null else (end - start) / start * PERCENT
@@ -146,6 +147,7 @@ private fun formatMeasure(
     val signed = { unit: String? -> formatAmount(value, locale, unit, signed = true) }
     return when (fields.statistic) {
         Statistic.PERCENT_CHANGE -> signed("%")
+        Statistic.UNKNOWN_DEFAULT_OPEN_API -> ""
         Statistic.CHANGE -> signed(fields.yUnit)
         Statistic.RATE_PER_UNIT -> stringResource(R.string.activities_chart_rate, signed(fields.yUnit), fields.xLabel)
     }

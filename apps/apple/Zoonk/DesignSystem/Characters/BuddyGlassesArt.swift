@@ -9,6 +9,7 @@ struct BuddyGlassesArt {
 
   func draw(_ painter: ArtPainter) {
     switch glasses {
+    case .unrecognized: return
     case .round: round(painter)
     case .star: star(painter)
     case .aviator: aviator(painter)

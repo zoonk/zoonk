@@ -427,7 +427,7 @@ private struct MistakeEntryView: View {
     case .misread: "eye"
     case .time: "timer"
     case .trap: "exclamationmark.triangle"
-    case nil: "circle.dashed"
+    case .unrecognized, nil: "circle.dashed"
     }
   }
 
@@ -450,7 +450,7 @@ private struct MistakeEntryView: View {
         localized: "Ran out of time", table: "Practice", comment: "Mistake cause: ran out of time.")
     case .guess:
       String(localized: "Guessed", table: "Practice", comment: "Mistake cause: guessed.")
-    case nil:
+    case .unrecognized, nil:
       nil
     }
   }

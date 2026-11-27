@@ -24,7 +24,7 @@ struct BuddyEditor: View {
         BuddyPickerSections(kind: $choice.kind, name: $name, glasses: choice.glasses)
 
         Section {
-          ForEach(BuddyGlasses.allCases, id: \.self) { glasses in
+          ForEach(BuddyGlasses.allCases.filter { $0 != .unrecognized }, id: \.self) { glasses in
             glassesRow(glasses)
           }
         } header: {
@@ -206,7 +206,7 @@ struct BuddyGlassesPicker: View {
               comment: "Saving the buddy failed"))
         }
 
-        ForEach(status.glasses, id: \.glasses) { option in
+        ForEach(status.glasses.filter { $0.glasses != .unrecognized }, id: \.glasses) { option in
           let isWorn = store.status.value?.buddy.glasses == option.glasses.worn
 
           ChoiceRow(isPicked: isWorn, isLocked: !option.earned) {

@@ -367,6 +367,7 @@ private fun NumericCheckField(
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
+            ActivityExpectedFormulaTolerance.Kind.UNKNOWN_DEFAULT_OPEN_API -> 0.0
             ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }

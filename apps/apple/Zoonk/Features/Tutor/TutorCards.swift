@@ -86,6 +86,7 @@ struct TutorPlanChangeCard: View {
   @ViewBuilder
   private func actions(overridesNotice: Bool) -> some View {
     switch change.status {
+    case .unrecognized: EmptyView()
     case .proposed:
       // "Change my plan" takes the room "Not now" leaves.
       HStack(spacing: 8) {
@@ -132,6 +133,7 @@ struct TutorPlanChangeCard: View {
 
   private var statusLine: String? {
     switch change.status {
+    case .unrecognized: nil
     case .applied:
       PlanChangeWords.appliedLine(todaySession: change.todaySession?.rawValue)
     case .declined:

@@ -20,6 +20,7 @@ struct QuestionStep: View {
   @ViewBuilder
   private var content: some View {
     switch step {
+    case .unrecognized: EmptyView()
     case .purpose:
       PurposeQuestion(subject: subject, onAnswer: onAnswer)
     case .role:

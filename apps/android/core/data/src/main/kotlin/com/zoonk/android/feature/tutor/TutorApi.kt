@@ -417,7 +417,7 @@ private fun turn(
     id = id.toString(),
     question = question,
     answer = answer,
-    status = TutorTurn.Status.entries.first { it.name.equals(status, ignoreCase = true) },
+    status = TutorTurn.Status.entries.firstOrNull { it.name.equals(status, ignoreCase = true) } ?: TutorTurn.Status.Failed,
     createdAt = createdAt,
     about = about(context),
     topic = topic(context),

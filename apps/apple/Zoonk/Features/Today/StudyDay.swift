@@ -240,7 +240,8 @@ enum ComingLessons {
 }
 
 /// Core decides where the day stands.
-enum DayState: String, Decodable, Sendable {
+enum DayState: String, UnknownAPIValue, Sendable {
+  case unrecognized
   case ahead
   case done
   /// Its lessons wait for the learner to ask for them.
@@ -251,7 +252,7 @@ enum DayState: String, Decodable, Sendable {
 }
 
 struct StudyBlock: Decodable, Hashable, Sendable {
-  enum Kind: String, Codable, Sendable {
+  enum Kind: String, Decodable, Encodable, Sendable {
     case checkpoint
     case learn
     case practice
@@ -266,13 +267,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case skipped
   }
 
-  enum WaitReason: String, Decodable, Sendable {
+  enum WaitReason: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case challenge
     case lessons
   }
 
   /// Where a tap on the block opens it, as core decides.
-  enum Screen: String, Decodable, Sendable {
+  enum Screen: String, UnknownAPIValue, Sendable {
+    static var unrecognized: Self { .unknown }
     case challenge
     case essay
     case lesson

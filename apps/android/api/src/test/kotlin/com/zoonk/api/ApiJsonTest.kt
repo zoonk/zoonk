@@ -3,6 +3,7 @@ package com.zoonk.api
 import com.zoonk.api.models.AnytimeMockInput
 import com.zoonk.api.models.AnytimeMockInputShape
 import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
+import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.MatchAnswer
 import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
 import com.zoonk.api.models.StudyMissionOpens
@@ -22,6 +23,15 @@ class ApiJsonTest {
     fun aMissionStillOpensPronunciationWhenOtherKindsHaveTheSameShape() {
         val opens = ApiJson.decodeFromString<StudyMissionOpens>("""{"kind":"pronunciation"}""")
         assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf3Value)
+    }
+
+    @Test
+    fun aNewNumberOfListeningPlaysKeepsItsValue() {
+        val listening =
+            ApiJson.decodeFromString<ItemSetListening>(
+                """{"audio":null,"plays":3,"task":null,"title":null,"transcript":null}""",
+            )
+        assertEquals(3.0, listening.plays, 0.0)
     }
 
     @Test

@@ -235,6 +235,7 @@ internal fun valueDigits(
 
 private fun PlayableLibraryStepAnyOfContentOneOf8FieldsOneOfModelOneOfHit.matches(outcome: Int): Boolean =
     when (comparison) {
+        Comparison.UNKNOWN_DEFAULT_OPEN_API -> false
         Comparison.AT_LEAST -> outcome >= `value`
         Comparison.AT_MOST -> outcome <= `value`
         Comparison.EXACTLY -> outcome.toLong() == `value`
