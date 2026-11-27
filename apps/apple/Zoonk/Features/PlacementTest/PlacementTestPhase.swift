@@ -31,6 +31,8 @@ struct PlacementTestEnd: Equatable {
   var attemptId: String?
   /// A quick test's attempt while the rest of the course is left to test.
   var rest: PlacementAttempt?
+  /// The parts the last part removed, which "The test got shorter" explains.
+  var partsRemoved = 0
 }
 
 /// What a course's test shows, from a read of it or from a part that closed. Main's
@@ -149,7 +151,7 @@ enum PlacementTestPhase: Equatable {
           changeId: undo == total ? finished.changeId : nil, undoLessons: undo,
           heldUntilTomorrow: finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow,
           nextLesson: finished.result?.nextLesson, attemptId: attemptId,
-          rest: finished.attempt))
+          rest: finished.attempt, partsRemoved: finished.result?.partsRemoved ?? 0))
       return
     }
 
@@ -171,7 +173,8 @@ extension PlacementTestEnd {
     self.init(
       lessonsSkipped: total, changeId: part == total ? result?.changeId : nil, undoLessons: part,
       heldUntilTomorrow: result?.heldUntilTomorrow == true, nextLesson: result?.nextLesson,
-      attemptId: result?.attemptId ?? rest?.id, rest: (rest?.partsLeft ?? 0) > 0 ? rest : nil)
+      attemptId: result?.attemptId ?? rest?.id, rest: (rest?.partsLeft ?? 0) > 0 ? rest : nil,
+      partsRemoved: result?.partsRemoved ?? 0)
   }
 }
 

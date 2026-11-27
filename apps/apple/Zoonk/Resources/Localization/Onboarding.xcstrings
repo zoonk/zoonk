@@ -21167,6 +21167,65 @@
         }
       }
     },
+    "The test got shorter: topics that build on ones you don't know yet aren't tested." : {
+      "comment" : "After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test wurde verkürzt: Themen, die auf Themen aufbauen, die du noch nicht kennst, werden nicht geprüft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba se acortó: no se evalúan los temas que se basan en otros que aún no conoces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test est plus court : les sujets qui reposent sur des notions que tu ne connais pas encore ne sont pas évalués."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il test è più breve: non vengono verificati gli argomenti che si basano su quelli che ancora non conosci."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストが短くなりました。まだ知らないトピックを前提とするトピックは出題されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트가 짧아졌어요. 아직 모르는 주제를 바탕으로 하는 주제는 테스트하지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test jest krótszy: nie sprawdzamy tematów, które bazują na tych, których jeszcze nie znasz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teste ficou mais curto: tópicos que dependem de outros que você ainda não conhece não serão avaliados."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test kısaldı: Henüz bilmediğin konuların üzerine kurulu konular test edilmiyor."
+          }
+        }
+      }
+    },
     "The voice message is on its way…" : {
       "comment" : "While a level test listening question's recording is still being made",
       "localizations" : {

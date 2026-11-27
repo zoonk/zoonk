@@ -133,7 +133,8 @@ final class PlacementTestRenderTests: XCTestCase {
 
     let rest = PlacementAttempt(
       answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .quick, nextPart: 2,
-      part: 1, partComplete: true, parts: 3, partsLeft: 2, questions: 12, resume: nil,
+      part: 1, partComplete: true, parts: 3, partsLeft: 2, partsRemoved: 0, questions: 12,
+      resume: nil,
       totalEstimatedMinutes: 15, remainingEstimatedMinutes: 9)
     try await capture(
       "placement-result-quick-rest", title: "6 lessons skipped", detail: "Test the rest"
@@ -319,6 +320,40 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testACheckpointSaysItsAnswersAreSavedAndWhyTheTestGotShorter() async throws {
+    for removed in [0, 1] {
+      try await capture(
+        removed == 0 ? "placement-checkpoint" : "placement-checkpoint-got-shorter",
+        title: "Part 1 of 3 done",
+        detail: removed == 0
+          ? "No lessons skipped in this part. Your answers are saved."
+          : "The test got shorter: topics that build on ones you don't know yet aren't tested.",
+        absent: removed == 0 ? ["The test got shorter"] : []
+      ) {
+        PlacementCheckpoint(
+          stop: PlacementPartStop(
+            attempt: PlacementAttempt(
+              answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
+              nextPart: 2, part: 1, partComplete: true, parts: 3, partsLeft: 2,
+              partsRemoved: removed, questions: 12, resume: nil, totalEstimatedMinutes: 18,
+              remainingEstimatedMinutes: 12),
+            partLessonsSkipped: 0),
+          pressed: nil, failed: false, onKeepGoing: {}, onFinishLater: {})
+      }
+    }
+
+    try await capture(
+      "placement-result-got-shorter", title: "No lessons skipped",
+      detail: "The test got shorter: topics that build on ones you don't know yet aren't tested."
+    ) {
+      PlacementTestResultView(
+        end: PlacementTestEnd(
+          lessonsSkipped: 0, nextLesson: .init(id: goalID, title: "Where a price comes from"),
+          partsRemoved: 2),
+        onboarding: false, pressed: nil, failed: false, onTestTheRest: {}, onDone: {})
+    }
+  }
+
   func testACheckpointWithUndoKeepsItsThreeActionsWholeAtALargeTextSize() async throws {
     let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
     let undo = PlacementResultUndo(
@@ -332,7 +367,8 @@ final class PlacementTestRenderTests: XCTestCase {
         stop: PlacementPartStop(
           attempt: PlacementAttempt(
             answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
-            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, questions: 12,
+            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, partsRemoved: 0,
+            questions: 12,
             resume: nil, totalEstimatedMinutes: 85, remainingEstimatedMinutes: 66),
           partLessonsSkipped: 2, changeId: goalID, undoLessons: 2),
         pressed: nil, failed: false, undo: undo, onKeepGoing: {}, onFinishLater: {}
@@ -361,7 +397,8 @@ final class PlacementTestRenderTests: XCTestCase {
         stop: PlacementPartStop(
           attempt: PlacementAttempt(
             answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
-            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, questions: 12,
+            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, partsRemoved: 0,
+            questions: 12,
             resume: nil, totalEstimatedMinutes: 85, remainingEstimatedMinutes: 66),
           partLessonsSkipped: 6, changeId: goalID, undoLessons: 6),
         pressed: nil, failed: false, undo: undo, onKeepGoing: {}, onFinishLater: {})

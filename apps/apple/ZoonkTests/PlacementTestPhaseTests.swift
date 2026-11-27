@@ -133,6 +133,25 @@ final class PlacementTestPhaseTests: XCTestCase {
     XCTAssertEqual(end.changeId, "change-2")
   }
 
+  func testAResultSaysThePartsItsLastPartRemovedWhenItShowsAgainInOnboarding() {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.attemptId = "a1"
+    result.partsRemoved = 11
+
+    guard
+      case .result(let finished) = PlacementTestPhase(
+        finished: PlacementPartEnd(
+          attempt: nil, lessonsSkipped: 0, partLessonsSkipped: 0, result: result),
+        attemptId: "a1"),
+      case .result(let read) = phase(attempt: nil, .done, result: result, onboarding: true)
+    else {
+      return XCTFail("Expected the result")
+    }
+
+    XCTAssertEqual(finished.partsRemoved, 11, "No attempt is left to read them from")
+    XCTAssertEqual(read.partsRemoved, 11)
+  }
+
   func testAQuickTestsCloseShowsItsResultEvenWithTheCourseLeft() {
     let rest = attempt(length: .quick, partComplete: true, partsLeft: 13, remainingMinutes: 78)
 
@@ -245,7 +264,8 @@ final class PlacementTestPhaseTests: XCTestCase {
     PlacementAttempt(
       answered: answered, chapter: "Variables and types", estimatedMinutes: 6, id: "a1",
       length: length, nextPart: nextPart, part: part, partComplete: partComplete, parts: 14,
-      partsLeft: partsLeft, questions: 12, resume: resume, totalEstimatedMinutes: 85,
+      partsLeft: partsLeft, partsRemoved: 0, questions: 12, resume: resume,
+      totalEstimatedMinutes: 85,
       remainingEstimatedMinutes: remainingMinutes)
   }
 
