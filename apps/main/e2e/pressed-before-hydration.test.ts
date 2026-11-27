@@ -51,12 +51,12 @@ async function openOnboardingStep(userId: string, step: "buddy" | "schedule") {
 }
 
 test.describe("Presses made before the page hydrates", () => {
-  test("a help message sent twice goes out once, with the words it had at the first press", async ({
+  test("a help message sent twice goes out once, with the words it had at the first press, and keeps only the words typed after", async ({
     page,
   }) => {
     const email = `early-${randomUUID()}@zoonk.test`;
-    const sent = `The lesson froze on my phone ${randomUUID()}`;
-    const typedAfter = `${sent}, and then the app closed`;
+    const sent = `The lesson froze on my phone ${randomUUID()}.`;
+    const typedAfter = "Then the app closed.";
     const sends = count(page, isFeedbackSend);
     const release = await holdScripts(page);
 
@@ -69,7 +69,7 @@ test.describe("Presses made before the page hydrates", () => {
     await send.click();
     await expect(send).toHaveAttribute("aria-busy", "true");
 
-    await message.fill(typedAfter);
+    await message.fill(`${sent} ${typedAfter}`);
     await send.click();
     await release();
 
