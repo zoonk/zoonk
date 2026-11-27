@@ -43,7 +43,6 @@ const attemptSchema = z.object({
 const recordSchema = z.object({
   attempt: attemptSchema.nullable(),
   finishedParts: z.array(partReceiptSchema).default([]),
-  quickFollowUpSkillIds: z.array(uuidSchema()).optional(),
   result: placementResultSchema.nullable(),
 });
 

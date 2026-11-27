@@ -11,7 +11,6 @@ const OPTIONS = 4;
 const CONFIRMATION_OPTIONS = 5;
 
 const levelTestLengthSchema = z.enum(["quick", "wholeCourse"]);
-export type LevelTestLength = z.infer<typeof levelTestLengthSchema>;
 
 export const levelTestOutLevelSchema = z.enum(["B2", "C1", "C2"]);
 

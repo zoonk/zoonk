@@ -690,8 +690,8 @@ describe("a post-start level test", () => {
     const flush = runDeferredWork();
 
     const [started, resumed] = await Promise.all([
-      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
-      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
+      startLanguageLevelTest({ goalId: goal.id }),
+      startLanguageLevelTest({ goalId: goal.id }),
     ]);
 
     expect(started).toStrictEqual(resumed);
@@ -774,7 +774,7 @@ describe("a post-start level test", () => {
       },
     });
 
-    const retake = await startLanguageLevelTest({ goalId: goal.id, length: "wholeCourse" });
+    const retake = await startLanguageLevelTest({ goalId: goal.id });
 
     if (
       retake.status !== "ready" ||
@@ -825,9 +825,7 @@ describe("a post-start level test", () => {
       status: "ready",
     });
 
-    await expect(
-      startLanguageLevelTest({ goalId: goal.id, length: "quick" }),
-    ).resolves.toMatchObject({
+    await expect(startLanguageLevelTest({ goalId: goal.id })).resolves.toMatchObject({
       status: "ready",
       test: {
         attemptId: expect.not.stringMatching(nextAttemptId),
@@ -882,7 +880,7 @@ describe("a post-start level test", () => {
     mockSession(user.id);
 
     const start = async () => {
-      const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+      const started = await startLanguageLevelTest({ goalId: goal.id });
 
       if (started.status !== "ready" || !started.test.attemptId) {
         throw new Error("Expected a Quick test");
@@ -1034,7 +1032,7 @@ describe("a post-start level test", () => {
     );
 
     mockSession(user.id);
-    const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+    const started = await startLanguageLevelTest({ goalId: goal.id });
 
     if (started.status !== "ready" || !started.test.attemptId) {
       throw new Error("Expected a test attempt");
