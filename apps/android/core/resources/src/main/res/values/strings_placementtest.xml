@@ -66,6 +66,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">Part %1$d of %2$d done</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">No lessons skipped in this part.</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">The test got shorter: topics that build on ones you don\'t know yet aren\'t tested.</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="one">This part skipped %d lesson you already know.</item>

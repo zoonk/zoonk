@@ -27,6 +27,7 @@ import com.zoonk.android.feature.onboarding.setup.PlacementDone
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementWaiting
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
+import com.zoonk.android.feature.onboarding.setup.TestProgress
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Question
@@ -190,19 +191,19 @@ class PlacementTestScreenshots(
 
     @Test
     fun questionFullTest() =
-        shoot("course-question-full") {
+        shoot("course-question-full", progress = 4 / 12f) {
             Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
         }
 
     @Test
     fun questionOrder() =
-        shoot("question-order") {
+        shoot("question-order", progress = 4 / 12f) {
             Ask(QuestionFormat.Order, "Put a civil case's stages in order.", options = listOf("Complaint", "Answer", "Discovery", "Trial"))
         }
 
     @Test
     fun questionMatch() =
-        shoot("question-match") {
+        shoot("question-match", progress = 4 / 12f) {
             Ask(
                 QuestionFormat.MatchPairs,
                 "Match each term to what it means.",
@@ -213,7 +214,7 @@ class PlacementTestScreenshots(
 
     @Test
     fun questionSelectAll() =
-        shoot("question-select-all") {
+        shoot("question-select-all", progress = 4 / 12f) {
             Ask(
                 QuestionFormat.MultipleChoice,
                 "Which of these can end a contract?",
@@ -228,13 +229,45 @@ class PlacementTestScreenshots(
     @Test
     fun partDone() =
         shoot("course-checkpoint", captureUndo = true, undone = "Part 3 of 14 done") {
-            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesLeft = 66, null, false, {}, {}, undo())
+            PartDone(3, 14, 2, heldUntilTomorrow = false, partsLeft = 11, minutesLeft = 66, partsRemoved = 0, null, false, {}, {}, undo())
+        }
+
+    @Test
+    fun partDoneGotShorter() =
+        shoot("course-checkpoint-got-shorter") {
+            PartDone(
+                1,
+                3,
+                0,
+                heldUntilTomorrow = false,
+                partsLeft = 2,
+                minutesLeft = 12,
+                partsRemoved = 1,
+                null,
+                false,
+                {},
+                {},
+                undo = null,
+            )
         }
 
     @Test
     fun partDoneNothingSkipped() =
         shoot("course-checkpoint-none-skipped") {
-            PartDone(3, 14, 0, heldUntilTomorrow = false, partsLeft = 1, minutesLeft = 6, null, false, {}, {}, undo = null)
+            PartDone(
+                3,
+                14,
+                0,
+                heldUntilTomorrow = false,
+                partsLeft = 1,
+                minutesLeft = 6,
+                partsRemoved = 0,
+                null,
+                false,
+                {},
+                {},
+                undo = null,
+            )
         }
 
     @Test
@@ -261,6 +294,12 @@ class PlacementTestScreenshots(
     fun resultNothingSkipped() =
         shoot("course-result-none-skipped") {
             PlacementResult(lessonsSkipped = 0, nextLesson = "Loops with for", action = "Continue", onAction = {})
+        }
+
+    @Test
+    fun resultGotShorter() =
+        shoot("course-result-full-got-shorter") {
+            PlacementResult(lessonsSkipped = 4, nextLesson = "Loops with for", action = "Start lesson", onAction = {}, partsRemoved = 11)
         }
 
     @Test
@@ -425,11 +464,12 @@ class PlacementTestScreenshots(
         name: String,
         captureUndo: Boolean = false,
         undone: String = "No lessons skipped",
+        progress: Float? = null,
         content: @Composable ColumnScope.() -> Unit,
     ) {
         compose.setContent {
             ZoonkTheme(darkTheme = theme == "dark") {
-                TaskScaffold(onClose = {}) { padding ->
+                TaskScaffold(onClose = {}, title = { progress?.let { TestProgress(it) } }) { padding ->
                     Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) { SetupColumn(content = content) }
                 }
             }

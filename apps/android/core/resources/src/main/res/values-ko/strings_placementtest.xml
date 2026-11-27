@@ -11,6 +11,7 @@
   "placementtest_first_lesson": "d4156106f0259c9a764de6c24ffb06f84855eb83ea07ed715628bb74752692e3",
   "placementtest_first_lesson_line": "ea211484c07ea65de29a1e5f6fbcf18e1db8bc869c0cc3351f3284418c5123e4",
   "placementtest_full_test": "d4f18a6482509c9c01c53e0a5040b725837777988edefb9aa69e31daf81ca43f",
+  "placementtest_got_shorter": "c6d29c773950e3774c3dae20f20c9a242a34c8205056ae82725f2e47ce29ae86",
   "placementtest_in_progress": "705e21ca36788ca400c7c849d0bc270c4388184381d2d9f18f161f3ce25eee8e",
   "placementtest_keep_going": "b563e21656c4eabad2e1331f9209af0013341237a87bcdbbae1473a253a98c4c",
   "placementtest_keeps_adjusting": "fa2edc50a21e7290f2f1019292f73c8a0f1e775fc171a62316c4f02ed795963c",
@@ -116,6 +117,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">%2$d개 파트 중 %1$d개 완료</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">이 파트에서 건너뛴 레슨이 없어요.</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">테스트가 짧아졌어요. 아직 모르는 주제를 바탕으로 하는 주제는 테스트하지 않아요.</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="other">이 파트에서 이미 아는 레슨 %d개를 건너뛰었어요.</item>

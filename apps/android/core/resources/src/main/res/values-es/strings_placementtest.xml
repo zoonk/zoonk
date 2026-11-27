@@ -11,6 +11,7 @@
   "placementtest_first_lesson": "6f60a6966b007ca969da495c32ee738a665afecf0891b4314580f538e8186120",
   "placementtest_first_lesson_line": "12904300a8bf0ed04cbed3a61645399779ea80f03a07050e822b43e2d6d72d1c",
   "placementtest_full_test": "f117c621463fc0286c8339875b8d3dffc7ea0102fddc43759f669753ffa5017b",
+  "placementtest_got_shorter": "a0a1c148af16f6f0fa1f02682b396dc6e5f06d4d37ae5d07d997824e7015b058",
   "placementtest_in_progress": "b43d38bd3addfc32b7a1bb8e406a6b36b7a2f00d7b19c7e05a96392d236f9fad",
   "placementtest_keep_going": "274581289a4fd8c5e9a97d14444c4cfc35e0930f1247829078d01f2419c70da6",
   "placementtest_keeps_adjusting": "71735709dd78671949aeeffdddae77126992ee37a298f1591471c8b94b7d4821",
@@ -122,6 +123,8 @@
     <string name="placementtest_part_done" tools:ignore="PluralsCandidate">Parte %1$d de %2$d completada</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <string name="placementtest_part_skipped_none">No se saltaron lecciones en esta parte.</string>
+    <!-- After a part of a course's test, when later parts were removed because the learner didn't know topics they depend on. -->
+    <string name="placementtest_got_shorter">La prueba se acortó: no se evalúan los temas que se basan en otros que aún no conoces.</string>
     <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
     <plurals name="placementtest_part_skipped">
         <item quantity="one">Esta parte marcó como conocida %d lección que ya conocías.</item>
