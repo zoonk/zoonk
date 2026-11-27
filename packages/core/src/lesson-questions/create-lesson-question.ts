@@ -17,7 +17,7 @@ import { type MissionMomentView } from "../sessions/completion-contract";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
-import { isAnsweredFromSharedAnswer } from "./_utils/answer-claim";
+import { completeFromSharedAnswer } from "./_utils/answer-claim";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { mistakeQuestionWhere } from "./_utils/mistake-scope";
 import {
@@ -115,24 +115,41 @@ function findExistingLessonQuestion({
   });
 }
 
+type QuestionAdmission =
+  | { question: LessonQuestionResourceSource; status: "admitted" }
+  | { decision: Exclude<UsageDecision, { status: "allowed" }>; status: "usageRefused" };
+
 /**
- * Claims the question's answer from the tutor allowance in the write that saves it, so a refused
- * question is never saved. The answer's own claim, keyed by the same id, then replays this one.
+ * A question with a shared answer is completed with it as it's saved, using no allowance. Any
+ * other claims its answer from the tutor allowance in the write that saves it, so a refused question
+ * is never saved; the answer's own claim, keyed by the same id, then replays this one.
  */
 async function admitQuestion({
   question,
   transaction,
   viewer,
 }: {
-  question: Parameters<typeof isAnsweredFromSharedAnswer>[0]["question"];
+  question: Parameters<typeof completeFromSharedAnswer>[0]["question"] &
+    LessonQuestionResourceSource;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
-}): Promise<UsageDecision> {
-  if (await isAnsweredFromSharedAnswer({ question, transaction, userId: viewer.userId })) {
-    return { status: "allowed" };
+}): Promise<QuestionAdmission> {
+  const answered = await completeFromSharedAnswer({ question, transaction, userId: viewer.userId });
+
+  if (answered) {
+    return { question: answered, status: "admitted" };
   }
 
-  return claimUsageInWrite({ kind: "tutorMessage", targetId: question.id, transaction, viewer });
+  const usage = await claimUsageInWrite({
+    kind: "tutorMessage",
+    targetId: question.id,
+    transaction,
+    viewer,
+  });
+
+  return usage.status === "allowed"
+    ? { question, status: "admitted" }
+    : { decision: usage, status: "usageRefused" };
 }
 
 async function persistLessonQuestion({
@@ -223,20 +240,20 @@ async function persistLessonQuestion({
       }),
     ]);
 
-    const usage = await admitQuestion({
+    const admission = await admitQuestion({
       question: { ...created, contextSnapshot: questionSnapshot },
       transaction,
       viewer,
     });
 
-    if (usage.status !== "allowed") {
-      return unchanged({ decision: usage, status: "usageRefused" as const });
+    if (admission.status !== "admitted") {
+      return unchanged(admission);
     }
 
     const event = getTutorAskedEvent({ input, subject, suggestion: asked.suggestion });
     after(() => trackLearnerEvents({ events: [event], userId }));
 
-    return getCreateLessonQuestionOutcome({ question: created, requestFingerprint });
+    return getCreateLessonQuestionOutcome({ question: admission.question, requestFingerprint });
   });
 }
 
