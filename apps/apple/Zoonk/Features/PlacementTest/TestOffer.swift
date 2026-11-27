@@ -96,6 +96,7 @@ private struct TestOfferCardView: View {
       // The mark sits on the name's line, and the two are centered in the card as one.
       HStack(alignment: .firstTextBaseline, spacing: 16) {
         KindMark(kind: card.kind)
+          .markColumn()
 
         VStack(alignment: .leading, spacing: 2) {
           Text(verbatim: card.label)

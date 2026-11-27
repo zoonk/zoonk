@@ -270,15 +270,14 @@ private struct ListeningMessage: View {
       } icon: {
         if isWaiting || state == .loading {
           ProgressView()
+            .controlSize(.small)
         } else {
           Image(systemName: state == .playing ? "stop.fill" : "play.fill")
         }
       }
       .labelStyle(.iconOnly)
-      .frame(width: 28, height: 28)
     }
-    .buttonStyle(.mainAction)
-    .buttonBorderShape(.roundedRectangle(radius: Radius.lg))
+    .buttonStyle(.mainAction.icon)
     .controlSize(.large)
     .disabled(isWaiting)
   }

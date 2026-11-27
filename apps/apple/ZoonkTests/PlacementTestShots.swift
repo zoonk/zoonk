@@ -240,7 +240,7 @@ final class PlacementTestShots: XCTestCase {
         onStop: {}), scheme: .light)
     try await waitForLayout(in: window)
     try await Task.sleep(for: .milliseconds(600))
-    try await activate("Close", in: window)
+    try await pressBarButton("Close", in: window)
     try await Task.sleep(for: .milliseconds(1200))
     try snapshot(window, to: folder.appending(path: "16-ways-out.light.png"))
   }

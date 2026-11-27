@@ -35,7 +35,7 @@ final class PlacementTestRenderTests: XCTestCase {
         spoken(in: window).contains { $0.contains("Stop and use my answers") },
         "Stopping lives behind ✕, never under the options")
 
-      try await activate("Close", in: window)
+      try await pressBarButton("Close", in: window)
 
       if number == 1 {
         XCTAssertEqual(left, 1, "Before stopping gives a result, ✕ just leaves")
@@ -123,7 +123,7 @@ final class PlacementTestRenderTests: XCTestCase {
       try await waitForTestCondition("Missing the question: \(spoken(in: window))") {
         spoken(in: window).contains("Reading")
       }
-      try await activate("Close", in: window)
+      try await pressBarButton("Close", in: window)
 
       if canStop {
         try await waitForTestCondition("✕ didn't ask for the ways out") {
@@ -484,5 +484,25 @@ final class PlacementTestRenderTests: XCTestCase {
       add(attachment)
       window.isHidden = true
     }
+  }
+}
+
+extension XCTestCase {
+  /// Presses a bar button as a tap does: the bar's control under what VoiceOver reads as `label`.
+  @MainActor
+  func pressBarButton(_ label: String, in window: UIWindow) async throws {
+    var control: UIControl?
+    try await waitForTestCondition("No bar button reads \(label): \(spoken(in: window))") {
+      control =
+        requestViews(UIView.self, in: window)
+        .filter { $0.accessibilityLabel == label }
+        .lazy.compactMap { self.requestViews(UIControl.self, in: $0).first ?? ($0 as? UIControl) }
+        .first
+      return control != nil
+    }
+    let button = try XCTUnwrap(control)
+    button.sendActions(
+      for: button.allControlEvents.contains(.primaryActionTriggered)
+        ? .primaryActionTriggered : .touchUpInside)
   }
 }
