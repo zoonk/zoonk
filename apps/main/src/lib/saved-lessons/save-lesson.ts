@@ -1,7 +1,7 @@
 "use client";
 
 import { postFromBrowser } from "@/lib/api/browser-api";
-import { getLearnerSummaryState, readLearnerSummaryAgain } from "@/lib/learner/learner-store";
+import { readLearnerSummaryAgain } from "@/lib/learner/learner-store";
 import { type SaveLessonInput, saveLessonSchema } from "@zoonk/core/saved-lessons/contract";
 import { type SaveLesson } from "@zoonk/learn/saved-lessons/saves";
 
@@ -29,21 +29,16 @@ async function saveLesson({
   return saveLessonSchema.safeParse(json).data?.saved ?? null;
 }
 
-/** The first save adds Saved lessons to the frame's places, and the last removal takes it away. */
-function readPlacesAfterSave(saved: boolean): void {
-  const state = getLearnerSummaryState();
-
-  if (!saved || state.status !== "ready" || !state.summary.places.savedLessons) {
-    readLearnerSummaryAgain();
-  }
-}
-
+/**
+ * Any save can add or take away Saved lessons in the frame's places, even when they already list it:
+ * a read sent before this save, for a removal, may still be on its way.
+ */
 export function saveLessonIn(goalId: string): SaveLesson {
   return async (input) => {
     const saved = await saveLesson({ goalId, input });
 
     if (saved !== null) {
-      readPlacesAfterSave(saved);
+      readLearnerSummaryAgain();
     }
 
     return saved;
