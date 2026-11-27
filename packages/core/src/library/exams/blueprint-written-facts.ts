@@ -21,7 +21,7 @@ const ZERO_TRIGGERS: Record<ZeroRule["kinds"][number], string> = {
   offTopic: "an answer entirely off topic",
   other: "",
   tooFewLines: "too few lines",
-  wrongForm: "an answer in the wrong text type",
+  wrongForm: "an answer in the wrong kind of text or document",
 };
 
 const ROUNDING_MODES: Record<NonNullable<NonNullable<Grading["rounding"]>["mode"]>, string> = {
@@ -64,7 +64,9 @@ function storedZeroKinds({ kinds }: ZeroRule) {
 
 function describeCriterion({ points, weight }: Criterion): string {
   return [
-    points === null ? "is assessed" : `is assessed, worth at most ${describePoints(points)}`,
+    points === null
+      ? "is assessed"
+      : `is assessed, worth at most ${describePoints(points)} in one answer`,
     weight === null ? "" : `, with weight ${weight} in the weighted mean of the criteria's marks`,
   ].join("");
 }
@@ -208,10 +210,12 @@ export function writtenRuleFacts({
   id: string;
   task: Task;
 }) {
+  const part = `In the written task "${task.officialIdentifier ?? task.description}"`;
+
   return task.grading
     ? gradingClaims(task.grading).flatMap(({ key, rule, statement }) =>
         toFacts({
-          claims: [{ id: `${id}.grading.${key}`, statement: `${task.description}: ${statement}` }],
+          claims: [{ id: `${id}.grading.${key}`, statement: `${part}: ${statement}` }],
           documents,
           passages: [rule],
         }),
