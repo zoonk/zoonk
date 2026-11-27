@@ -103,6 +103,30 @@ function findTopic({ outline, value }: { outline: ExamOutline; value: string }):
   }, null);
 }
 
+function toComparable(text: string): string {
+  return normalizeString(text)
+    .replaceAll(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+/**
+ * A written task's line describes the task, its lines and points, so an area copied from it goes to
+ * the subject that is that written test. A task an ordinary subject lists keeps an area of its own,
+ * named by the model, since the plan schedules a written test by its area.
+ */
+function findWrittenTestByTask({ name, outline }: { name: string; outline: ExamOutline }): number {
+  const wanted = toComparable(name);
+
+  const listing = outline.subjects.flatMap((subject, index) =>
+    isWrittenTestSubject(subject) &&
+    (subject.writtenTasks ?? []).some((task) => toComparable(task) === wanted)
+      ? [index]
+      : [],
+  );
+
+  return listing.length === 1 ? (listing[0] ?? -1) : -1;
+}
+
 function findSubjectByName({ name, outline }: { name: string; outline: ExamOutline }) {
   const wanted = normalizeString(name);
 
@@ -123,6 +147,12 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
 
   if (short !== -1) {
     return short;
+  }
+
+  const writtenTest = findWrittenTestByTask({ name, outline });
+
+  if (writtenTest !== -1) {
+    return writtenTest;
   }
 
   const partial = names.flatMap((subject, index) =>

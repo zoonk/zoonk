@@ -195,6 +195,74 @@ describe(placeInExam, () => {
     ).toStrictEqual({ area: "Expresión e interacción escritas", topics: [] });
   });
 
+  it("places an area copied from a written task's line in the subject that is that written test", () => {
+    const task =
+      "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos de auditoria, a ser respondida em até 60 linhas, no valor de 70,00 pontos";
+
+    const notice: ExamOutline = {
+      name: "Concurso Exemplo",
+      notes: [],
+      subjects: [
+        { group: null, name: "Auditoria", questions: 90, topics: [], weight: null },
+        {
+          group: "Prova discursiva (P4)",
+          name: "Prova discursiva",
+          questions: 2,
+          topics: [task],
+          weight: null,
+          writtenTasks: [task],
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    for (const area of [task, ` ${task.toUpperCase()}.`]) {
+      expect(placeInExam({ area, outline: notice, topics: [] })).toStrictEqual({
+        area: "Prova discursiva",
+        topics: [],
+      });
+    }
+  });
+
+  it("keeps a written part's own area when an ordinary subject lists its task", () => {
+    const essay = "redação de 65 a 70 linhas, valendo 60 pontos";
+
+    const notice: ExamOutline = {
+      name: "CACD",
+      notes: [],
+      subjects: [
+        {
+          group: null,
+          name: "Língua Portuguesa",
+          questions: null,
+          topics: ["1 Compreensão de textos"],
+          weight: null,
+          writtenTasks: [essay],
+        },
+        {
+          choiceGroup: "Idioma",
+          group: null,
+          name: "Língua Inglesa",
+          questions: null,
+          topics: [],
+          weight: null,
+          writtenTasks: ["uma redação na língua inglesa."],
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    expect(placeInExam({ area: "Redação", outline: notice, topics: [] })).toStrictEqual({
+      area: "Redação",
+      topics: [],
+    });
+
+    expect(placeInExam({ area: "Inglesa.", outline: notice, topics: [] })).toStrictEqual({
+      area: "Língua Inglesa",
+      topics: [],
+    });
+  });
+
   it("keeps an area the notice has no subject for", () => {
     expect(placeInExam({ area: "Estratégia de prova", outline: OAB, topics: [] })).toStrictEqual({
       area: "Estratégia de prova",
