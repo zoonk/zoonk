@@ -4,42 +4,54 @@ import SwiftUI
 /// maps that open, then on Chapters the ones not made yet. Opened from a subject, it starts at that
 /// subject's maps in the tab it opens, unfolded.
 struct MindMapsScreen: View {
-  @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(MindMapsStore.self) private var store
 
   var subjectKey: String?
+
+  var body: some View {
+    if let goal = learner.summary.value?.shownGoal {
+      MindMapsPage(goal: goal, subjectKey: subjectKey)
+        .id(goal.id)
+    }
+  }
+}
+
+/// One goal's maps: switching goals starts the page over, its tab and kept rows included.
+private struct MindMapsPage: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(MindMapsStore.self) private var store
+
+  let goal: LearnerGoal
+  let subjectKey: String?
 
   @State private var tab: GoalMindMaps.Tab?
   @State private var keptSaves = KeptRows<SavedMindMap>()
 
   var body: some View {
-    if let goal = learner.summary.value?.shownGoal {
-      let list = store.list(goalId: goal.id)
-      let stop = store.shownStop(goalId: goal.id)
+    let list = store.list(goalId: goal.id)
+    let stop = store.shownStop(goalId: goal.id)
 
-      // The offer's stop holds until a read lifts it; its day, by this device's clock, only says
-      // when to read the offer again, whichever tab is shown and with no chapter listed.
-      OpeningClock(availableAt: stop?.availableAt) { now in
-        let isOver = stop?.isOver(at: now) ?? false
+    // The offer's stop holds until a read lifts it; its day, by this device's clock, only says
+    // when to read the offer again, whichever tab is shown and with no chapter listed.
+    OpeningClock(availableAt: stop?.availableAt) { now in
+      let isOver = stop?.isOver(at: now) ?? false
 
-        content(list: list, goal: goal)
-          .task(id: isOver) {
-            if isOver {
-              await store.readOfferAgain(goalId: goal.id, now: now)
-            }
+      content(list: list, goal: goal)
+        .task(id: isOver) {
+          if isOver {
+            await store.readOfferAgain(goalId: goal.id, now: now)
           }
-      }
-      .barTitleAfterHero(
-        String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
-      )
-      .loads(list)
-      .mindMapSaveVisit()
-      .forgetsKeptRows($keptSaves)
-      // One follower for every map on its way, each at its own pace.
-      .task(id: Following(goalId: goal.id, maps: list.value)) {
-        await store.followList(goalId: goal.id)
-      }
+        }
+    }
+    .barTitleAfterHero(
+      String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+    )
+    .loads(list)
+    .mindMapSaveVisit()
+    .forgetsKeptRows($keptSaves)
+    // One follower for every map on its way, each at its own pace.
+    .task(id: Following(goalId: goal.id, maps: list.value)) {
+      await store.followList(goalId: goal.id)
     }
   }
 
