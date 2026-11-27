@@ -9,7 +9,6 @@ import { readCourseStart } from "../../goals/course-start-details";
 import { getDaySplit } from "../../goals/daily-budget";
 import { readGoalOpening } from "../../goals/goal-opening";
 import { LANGUAGE_REASON_VIEWS, toLanguageAimView } from "../../language/aims/language-aims";
-import { getQuickTestMinutes } from "../../language/level-test/level-test-contract";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readLearningProfile } from "../../learner/facts/learning-profile";
 import { readProfileQuestionState } from "../../learner/facts/profile-questions";
@@ -28,9 +27,13 @@ import {
 import { findExamNotice } from "./_utils/onboarding-exam-notice";
 import { toOnboardingGoalView } from "./_utils/onboarding-goal-view";
 import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
+import {
+  hasSubjectQuestions,
+  readOnboardingPlacement,
+  readQuickTestMinutes,
+} from "./_utils/onboarding-placement";
 import { getGoalSize, getTimeQuestionDefaults } from "./_utils/recommended-minutes";
 import {
-  ONBOARDING_QUESTIONS,
   type OnboardingDateProblem,
   type OnboardingLibraryCourse,
   type OnboardingStep,
@@ -68,11 +71,6 @@ function getDateProblem({
   return noSitting ? { kind: "noSitting", ...noSitting } : null;
 }
 
-/** Daily time doesn't change what the goal is about, so the plan's wait before it can offer one. */
-const SUBJECT_QUESTIONS = new Set<OnboardingStep>(
-  ONBOARDING_QUESTIONS.filter((question) => question !== "schedule"),
-);
-
 const COURSE_KINDS = new Set(["exam", "learn"]);
 
 /** Match published courses in the learner's language again after answers may have narrowed the subject. */
@@ -85,7 +83,7 @@ async function findLibraryCourse({
   steps: OnboardingStep[];
   subject: string;
 }): Promise<OnboardingLibraryCourse | null> {
-  if (!COURSE_KINDS.has(goal.kind) || steps.some((step) => SUBJECT_QUESTIONS.has(step))) {
+  if (!COURSE_KINDS.has(goal.kind) || hasSubjectQuestions(steps)) {
     return null;
   }
 
@@ -165,7 +163,7 @@ export async function getOnboarding({
 
   const dateProblem = getDateProblem({ goalDate, noSitting: notice.noSitting, today });
 
-  const steps = getOnboardingSteps({
+  const plannedSteps = getOnboardingSteps({
     goal: {
       dateProblem: dateProblem?.kind ?? null,
       details,
@@ -178,6 +176,14 @@ export async function getOnboarding({
     profile: { hasBuddy: profile.buddy.picked, hasEarlierGoals: earlierGoals > 0 },
     profileSteps: getStateProfileSteps({ goal, state: profileState }),
   });
+
+  const placement = await readOnboardingPlacement({
+    goal,
+    requested: details.placementRequested === true,
+    steps: plannedSteps,
+  });
+
+  const steps = plannedSteps.filter((step) => step !== "placement" || placement !== null);
 
   const courseStart = readCourseStart(details);
 
@@ -231,10 +237,11 @@ export async function getOnboarding({
             }
           : null,
       libraryCourse,
+      placement,
       planReadiness: planReadiness ?? { readingNotice: false, ready: false },
       planRevealed: !isPlanRevealOwed(goal),
       profile: toProfileQuestionsView({ locale, state: profileState }),
-      quickTestMinutes: getQuickTestMinutes(goal.kind),
+      quickTestMinutes: readQuickTestMinutes({ kind: goal.kind, placement }),
       recommendedMinutes,
       startsOnRecommended,
       steps,

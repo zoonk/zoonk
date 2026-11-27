@@ -1,8 +1,16 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 
-export function readTestOutChange({ goalId, receipt }: { goalId: string; receipt: string }) {
-  return prisma.planChange.findFirst({
+export function readTestOutChange({
+  db = prisma,
+  goalId,
+  receipt,
+}: {
+  db?: TransactionClient;
+  goalId: string;
+  receipt: string;
+}) {
+  return db.planChange.findFirst({
     select: { id: true },
     where: {
       kind: "testedOut",

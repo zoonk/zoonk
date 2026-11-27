@@ -22,17 +22,59 @@ export const placementLengthSchema = z
 
 export const placementAttemptViewSchema = z
   .object({
-    estimatedMinutes: z.number().int().nonnegative(),
+    answered: z.int().nonnegative(),
+    chapter: z.string().nullable(),
+    estimatedMinutes: z
+      .int()
+      .nonnegative()
+      .meta({ description: "Estimated minutes for the current part" }),
     id: uuidSchema(),
     length: placementLengthSchema,
+    nextPart: z
+      .int()
+      .positive()
+      .nullable()
+      .meta({ description: "Number of the next part with topics remaining" }),
     part: z.number().int().positive(),
     partComplete: z.boolean(),
+    parts: z.int().positive(),
+    partsLeft: z
+      .int()
+      .nonnegative()
+      .meta({
+        description: "Parts with questions remaining, including the current part if unfinished",
+      }),
+    questions: z
+      .int()
+      .positive()
+      .meta({ description: "Fixed question ceiling for the current part" }),
+    resume: z.object({ part: z.int().positive(), question: z.int().positive() }).nullable(),
+    totalEstimatedMinutes: z
+      .int()
+      .nonnegative()
+      .meta({ description: "Estimated minutes for all parts at the start of the attempt" }),
   })
   .meta({ id: "PlacementAttempt" });
+
+export const placementFinishSchema = z.object({
+  answered: z.int().nonnegative(),
+  end: z.enum(["stopped", "question_cap", "material_exhausted", "unknown_streak"]),
+  lessonsSkipped: z.int().nonnegative(),
+  partsLeft: z.int().nonnegative(),
+  unknowns: z.int().nonnegative(),
+});
+
+export const coursePlacementOfferSchema = z.object({
+  estimatedMinutes: z.int().positive(),
+  questions: z.int().positive(),
+  wholeCourse: z.object({ estimatedMinutes: z.int().positive(), parts: z.int().min(2) }).nullable(),
+});
 
 export const placementResultSchema = z
   .object({
     attemptId: uuidSchema(),
+    changeId: uuidSchema().nullable().optional(),
+    finish: placementFinishSchema.optional(),
     finishedAt: z.iso.datetime(),
     heldUntilTomorrow: z
       .literal(true)
@@ -42,6 +84,9 @@ export const placementResultSchema = z
           "Fresh answers met the skip rule on a topic whose skip was undone on the same local day",
       }),
     lessonsSkipped: z.number().int().nonnegative(),
+    nextLesson: z.object({ id: uuidSchema(), title: z.string() }).nullable().optional(),
+    part: z.int().positive().optional(),
+    partLessonsSkipped: z.int().nonnegative().optional(),
   })
   .meta({ id: "PlacementResult" });
 
@@ -65,7 +110,7 @@ export const placementStatusSchema = z
   .enum(["preparing", "asking", "waitingForQuestions", "done", "unavailable", "failed"])
   .meta({
     description:
-      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because every start is confident (`complete`), today's few minutes are used (`dayBudgetUsed`), or no question exists for what's left, which lessons and reviews settle instead. `unavailable`: no placement question could be written and none was answered; finish placement and go on without it (the first week's sessions and lessons place the learner). `failed`: the run building the goal's plan gave up before it had skills; start it again with POST /goals/{goalId}/generations.",
+      "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the part or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the run building the goal's plan gave up before it had skills; start it again with POST /goals/{goalId}/generations.",
     id: "PlacementStatus",
   });
 
@@ -86,6 +131,7 @@ export type PlacementAnswerInput = z.infer<typeof placementAnswerInputSchema>;
 export const placementCompletionInputSchema = z
   .object({
     ...attemptFields,
+    answered: z.int().nonnegative().optional(),
     fromScratch: z
       .boolean()
       .optional()

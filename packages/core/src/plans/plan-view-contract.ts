@@ -11,6 +11,7 @@ import {
 } from "../language/level-test/level-test-contract";
 import { type FocusTestSummary } from "../learner/placement/focus-test-contract";
 import {
+  coursePlacementOfferSchema,
   placementAttemptViewSchema,
   placementResultSchema,
 } from "../learner/placement/placement-contract";
@@ -194,6 +195,7 @@ export const planPlacementTestSchema = z
       ...placementRowShape,
       attempt: placementAttemptViewSchema.nullable(),
       kind: z.literal("learn"),
+      offer: coursePlacementOfferSchema.nullable(),
       result: placementResultSchema.nullable(),
     }),
     z.object({

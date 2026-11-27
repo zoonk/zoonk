@@ -17,7 +17,7 @@ const QUESTION: PlacementQuestion = {
   visual: null,
 };
 
-const OFFER = { minutes: 15 };
+const OFFER = { minutes: 15, questions: 15 };
 
 function sittingWith(sitting: Partial<FocusTestSitting> = {}): FocusTestSitting {
   return {

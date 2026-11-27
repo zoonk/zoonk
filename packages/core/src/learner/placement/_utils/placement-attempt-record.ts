@@ -4,10 +4,11 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { LOW_GUESS_ANSWERS_TO_SKIP } from "../../_utils/placement-guess-rate";
-import { DAY_PLACEMENT_MINUTES } from "../placement-budget";
 import {
-  placementAttemptViewSchema,
-  type placementLengthSchema,
+  type coursePlacementOfferSchema,
+  type placementAttemptViewSchema,
+  placementFinishSchema,
+  placementLengthSchema,
   placementResultSchema,
 } from "../placement-contract";
 
@@ -16,6 +17,7 @@ export type PlacementLength = z.infer<typeof placementLengthSchema>;
 export type PlacementResult = z.infer<typeof placementResultSchema>;
 
 const partReceiptSchema = z.object({
+  finish: placementFinishSchema.optional(),
   heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
   knownSkillIds: z.array(uuidSchema()),
   lessonsSkipped: z.number().int().nonnegative(),
@@ -23,12 +25,17 @@ const partReceiptSchema = z.object({
   testedOutPlanItemIds: z.array(uuidSchema()),
 });
 
-const attemptSchema = placementAttemptViewSchema.extend({
+const attemptSchema = z.object({
+  id: uuidSchema(),
+  length: placementLengthSchema,
   lessonsSkipped: z.number().int().nonnegative(),
+  part: z.int().positive(),
+  partComplete: z.boolean(),
   partPrepared: z.boolean().optional(),
   partSkillIds: z.array(uuidSchema()).optional(),
   partStartedAt: z.iso.datetime(),
-  remainingSkillIds: z.array(uuidSchema()).optional(),
+  parts: z.array(z.array(uuidSchema())).optional(),
+  paused: z.boolean().optional(),
   skillIds: z.array(uuidSchema()),
 });
 
@@ -74,37 +81,54 @@ export function readPendingTopicWalkAssessmentId(
   return record.assessmentId === assessmentId ? null : assessmentId;
 }
 
-export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemptView {
-  const { estimatedMinutes, id, length, part, partComplete } = attempt;
-  return { estimatedMinutes, id, length, part, partComplete };
+const COURSE_ANSWER_SECONDS = 32;
+
+export const TOPICS_PER_PART = 3;
+export const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
+export const PART_QUESTIONS = TOPICS_PER_PART * QUESTIONS_PER_TOPIC;
+
+export function getCourseMinutes(questions: number): number {
+  return Math.round((questions * COURSE_ANSWER_SECONDS) / 60);
 }
 
-const MINUTE_MS = 60_000;
-const PART_MINUTES = 10;
-
-const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
-export const TOPICS_PER_PART = PART_MINUTES;
-
-export function getWholeCourseMinutes({
-  questions,
-  paceMs = MINUTE_MS / QUESTIONS_PER_TOPIC,
-}: {
-  questions: number;
-  paceMs?: number;
-}) {
-  return Math.ceil((questions * paceMs) / MINUTE_MS);
+export function splitPlacementParts(skillIds: readonly string[]): string[][] {
+  return Array.from({ length: Math.ceil(skillIds.length / TOPICS_PER_PART) }, (_, index) =>
+    skillIds.slice(index * TOPICS_PER_PART, (index + 1) * TOPICS_PER_PART),
+  );
 }
 
-export function getPlacementEstimate({
-  length,
-  topics,
-}: {
-  length: PlacementLength;
-  topics: number;
-}) {
-  return length === "quick"
-    ? DAY_PLACEMENT_MINUTES
-    : getWholeCourseMinutes({ questions: topics * QUESTIONS_PER_TOPIC });
+export function getAttemptParts(attempt: PlacementAttempt): string[][] {
+  if (attempt.parts) {
+    return attempt.parts;
+  }
+
+  // An already-open sitting retains its scope and uses the new twelve-question cap.
+  const current = attempt.partSkillIds ?? attempt.skillIds.slice(0, TOPICS_PER_PART);
+  const later = attempt.skillIds.filter((id) => !current.includes(id));
+
+  return [
+    ...Array.from({ length: attempt.part - 1 }, () => []),
+    current,
+    ...splitPlacementParts(later),
+  ];
+}
+
+export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOfferSchema> | null {
+  if (topics === 0) {
+    return null;
+  }
+
+  const questions = Math.min(PART_QUESTIONS, topics * QUESTIONS_PER_TOPIC);
+  const parts = Math.ceil(topics / TOPICS_PER_PART);
+
+  return {
+    estimatedMinutes: getCourseMinutes(questions),
+    questions,
+    wholeCourse:
+      parts > 1
+        ? { estimatedMinutes: getCourseMinutes(topics * QUESTIONS_PER_TOPIC), parts }
+        : null,
+  };
 }
 
 /** A topic is still ahead while one of its lessons is to do, or before it has any. */

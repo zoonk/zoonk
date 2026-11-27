@@ -70,7 +70,7 @@ describe("whole-course language placement counts", () => {
     { lessonsPerTopic: 511, source: "estimated topics" },
     { lessonsPerTopic: 1, source: "existing course outline" },
   ])(
-    "counts the saved work for $source once across parts and restores it through Undo",
+    "counts the saved work for $source once across a stop and restores it through Undo",
     async ({ lessonsPerTopic, source }) => {
       const { course, goal, plan, skills, user } = await languageGoalFixture();
       const [first, second] = skills;
@@ -105,6 +105,15 @@ describe("whole-course language placement counts", () => {
           source === "existing course outline"
             ? toCoursePlanGraph({ chapters: outline, course, startChapterId: null })
             : parsePlanGraph(plan.graph),
+      });
+
+      await prisma.planItem.updateMany({
+        data: { completedAt: new Date(), status: "done" },
+        where: {
+          kind: "lesson",
+          planId: plan.id,
+          skillId: { in: skills.slice(2).map((skill) => skill.id) },
+        },
       });
 
       const readWork = () =>
@@ -152,7 +161,10 @@ describe("whole-course language placement counts", () => {
       await expect(
         finishGoalPlacement({ goalId: goal.id, input: partOne.input }),
       ).resolves.toMatchObject({
-        completion: { attempt: { partComplete: true }, partLessonsSkipped: firstCount },
+        completion: {
+          attempt: { partComplete: false, resume: { part: 1, question: 5 } },
+          partLessonsSkipped: firstCount,
+        },
       });
 
       await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
@@ -178,7 +190,8 @@ describe("whole-course language placement counts", () => {
       expect(finished).toMatchObject({
         completion: {
           attempt: null,
-          partLessonsSkipped: secondCount,
+          lessonsSkipped: secondCount,
+          partLessonsSkipped: firstCount + secondCount,
           result: { lessonsSkipped: firstCount + secondCount },
           testedOutPlanItemIds: expect.arrayContaining(secondWork.map(({ id }) => id)),
         },

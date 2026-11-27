@@ -82,65 +82,64 @@ describe("placement's day budget", () => {
 
   it.each([
     { durationMs: 5000, spent: 1 / 12 },
-    { durationMs: 40_000, spent: 1 / 6 },
-  ])(
-    "reports the further along fraction after a $durationMs ms answer",
-    async ({ durationMs, spent }) => {
-      const { goal, items } = await setup();
+    { durationMs: 40_000, spent: 1 / 12 },
+  ])("reports the fraction after a $durationMs ms answer", async ({ durationMs, spent }) => {
+    const { goal, items } = await setup();
 
-      const result = await answer({ durationMs, goalId: goal.id, itemId: items[0]?.id ?? "" });
+    const result = await answer({ durationMs, goalId: goal.id, itemId: items[0]?.id ?? "" });
 
-      expect(result).toMatchObject({
+    expect(result).toMatchObject({
+      placement: {
+        dayBudgetSpent: spent,
+        dayBudgetUsed: false,
+        next: expect.anything(),
+        status: "asking",
+      },
+      status: "ready",
+    });
+
+    await expect(getGoalPlacement({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      placement: { dayBudgetSpent: spent, dayBudgetUsed: false },
+      status: "ready",
+    });
+  });
+
+  it.each([{ count: 11, durationMs: 1000, limit: "answer count", spent: 11 / 12 }])(
+    "stops exactly at the $limit cap",
+    async ({ count, durationMs, spent }) => {
+      const { goal, items, user } = await setup();
+      const item = items[0]!;
+      await previousAnswers({ count, durationMs, item, userId: user.id });
+
+      await expect(getGoalPlacement({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
         placement: {
+          complete: false,
           dayBudgetSpent: spent,
           dayBudgetUsed: false,
           next: expect.anything(),
-          status: "asking",
         },
         status: "ready",
       });
 
+      await expect(answer({ durationMs, goalId: goal.id, itemId: item.id })).resolves.toMatchObject(
+        {
+          placement: {
+            complete: false,
+            dayBudgetSpent: 1,
+            dayBudgetUsed: true,
+            next: null,
+            status: "done",
+          },
+          status: "ready",
+        },
+      );
+
       await expect(getGoalPlacement({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
-        placement: { dayBudgetSpent: spent, dayBudgetUsed: false },
+        placement: { dayBudgetSpent: 1, dayBudgetUsed: true, next: null, status: "done" },
         status: "ready",
       });
     },
   );
-
-  it.each([
-    { count: 11, durationMs: 1000, limit: "answer count", spent: 11 / 12 },
-    { count: 3, durationMs: 60_000, limit: "answering time", spent: 3 / 4 },
-  ])("stops exactly at the $limit cap", async ({ count, durationMs, spent }) => {
-    const { goal, items, user } = await setup();
-    const item = items[0]!;
-    await previousAnswers({ count, durationMs, item, userId: user.id });
-
-    await expect(getGoalPlacement({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
-      placement: {
-        complete: false,
-        dayBudgetSpent: spent,
-        dayBudgetUsed: false,
-        next: expect.anything(),
-      },
-      status: "ready",
-    });
-
-    await expect(answer({ durationMs, goalId: goal.id, itemId: item.id })).resolves.toMatchObject({
-      placement: {
-        complete: false,
-        dayBudgetSpent: 1,
-        dayBudgetUsed: true,
-        next: null,
-        status: "done",
-      },
-      status: "ready",
-    });
-
-    await expect(getGoalPlacement({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
-      placement: { dayBudgetSpent: 1, dayBudgetUsed: true, next: null, status: "done" },
-      status: "ready",
-    });
-  });
 
   it("counts today's placement on shared skills from another goal, including before this goal existed", async () => {
     const { goal: otherGoal, items, skills, user } = await setup();
@@ -172,7 +171,7 @@ describe("placement's day budget", () => {
     const { goal, items, user } = await setup();
 
     for (const item of items.slice(0, 4)) {
-      // oxlint-disable-next-line no-await-in-loop -- Each answer advances the day's time budget.
+      // oxlint-disable-next-line no-await-in-loop -- Each answer advances the question count.
       await answer({ durationMs: 60_000, goalId: goal.id, itemId: item.id, timeZone });
     }
 
@@ -188,7 +187,7 @@ describe("placement's day budget", () => {
     ).toBe(true);
 
     await expect(getGoalPlacement({ goalId: goal.id, timeZone })).resolves.toMatchObject({
-      placement: { dayBudgetSpent: 1, dayBudgetUsed: true, next: null },
+      placement: { dayBudgetSpent: 1 / 3, dayBudgetUsed: false, next: expect.anything() },
       status: "ready",
     });
 

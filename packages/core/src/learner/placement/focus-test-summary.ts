@@ -5,7 +5,12 @@ import {
   type SessionQuestions,
   type TodayFocusTest,
 } from "./focus-test-contract";
-import { getPaceMs, getSessionQuestions, getSittingMinutes } from "./focus-test-rules";
+import {
+  FIRST_FOCUS_QUESTIONS,
+  START_PACE_MS,
+  getSessionQuestions,
+  getSittingMinutes,
+} from "./focus-test-rules";
 import { isFocusTestStarted, readFocusTestRecord } from "./focus-test-state";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 import { getGoalDay } from "./placement-day";
@@ -33,7 +38,7 @@ export function readSessionQuestions({ goal, localDate, timeZone }: TestDay): Se
 }
 
 function toOffer({ paceMs, questions }: { paceMs: number; questions: number | null }) {
-  return questions ? { minutes: getSittingMinutes({ paceMs, questions }) } : null;
+  return questions ? { minutes: getSittingMinutes({ paceMs, questions }), questions } : null;
 }
 
 /**
@@ -54,6 +59,27 @@ export function isSameFocus(a: readonly string[], b: readonly string[]): boolean
   return a.length === b.length && a.every((area) => b.includes(area));
 }
 
+function getSavedOfferQuestions(record: ReturnType<typeof readFocusTestRecord>): number | null {
+  const { summary } = record ?? {};
+  const questions = summary?.offerQuestions;
+
+  if (!questions) {
+    return null;
+  }
+
+  return summary.asked > 0 ? questions : Math.min(questions, FIRST_FOCUS_QUESTIONS);
+}
+
+function getOfferPace(record: ReturnType<typeof readFocusTestRecord>): number {
+  const { sitting, summary } = record ?? {};
+
+  if (sitting?.kind === "first" || (!sitting && !summary?.asked)) {
+    return START_PACE_MS;
+  }
+
+  return summary?.paceMs ?? START_PACE_MS;
+}
+
 /**
  * The test as the plan's row shows it, read off the goal row. Null for a goal that isn't an exam.
  * A goal placed before the test kept a summary has no numbers until its next test answer.
@@ -70,12 +96,12 @@ export function readFocusTestSummary({
   const summary = record?.summary ?? null;
   const sitting = record?.sitting ?? null;
   const left = sitting ? sitting.questions - sitting.answered : 0;
-  const paceMs = summary?.paceMs ?? getPaceMs({ answers: 0, durationMs: 0 });
+  const paceMs = getOfferPace(record);
   const answered = summary ? summary.asked > 0 : isFocusTestStarted(goal);
   const rested = answered ? "checked" : "notStarted";
 
   return {
-    offer: toOffer({ paceMs, questions: left > 0 ? left : (summary?.offerQuestions ?? null) }),
+    offer: toOffer({ paceMs, questions: left > 0 ? left : getSavedOfferQuestions(record) }),
     sessionQuestions: readSessionQuestions({ goal, ...day }),
     state: left > 0 ? "sitting" : rested,
     suggestsFocus: suggestsFocus({
@@ -110,7 +136,11 @@ export function readTodayFocusTest({
     !isFocusTestStarted(goal) &&
     getGoalDay({ createdAt: goal.createdAt, localDate, timeZone }) < PLACEMENT_WEEK_DAYS;
 
-  return suggests ? toOffer({ paceMs: summary.paceMs, questions: summary.offerQuestions }) : null;
+  const offer = suggests
+    ? toOffer({ paceMs: getOfferPace(record), questions: getSavedOfferQuestions(record) })
+    : null;
+
+  return offer && { minutes: offer.minutes };
 }
 
 /** The subjects a short plan would focus, once the learner has a test answer to go by. */

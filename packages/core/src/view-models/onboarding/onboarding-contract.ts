@@ -28,7 +28,10 @@ import { learningProfileUpdateSchema } from "../../profile/learning-profile-cont
 import { profileOnboardingAnswerSchemas } from "../../profile/questions/profile-onboarding-contract";
 import { type ProfileQuestionsView } from "../../profile/questions/profile-question-contract";
 import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
+import { type OnboardingPlacement } from "./onboarding-placement-contract";
 import { scheduleAnswerSchema, timeZoneSchema } from "./schedule-answer-schema";
+
+export { onboardingPlacementSchema } from "./onboarding-placement-contract";
 
 const MAX_KNOWN_SUBJECTS = 40;
 const MAX_EXAM_CHOICES = 5;
@@ -239,6 +242,7 @@ export type OnboardingView = {
   /** The learner pressed the reveal's action. Until then resume brings the reveal back, and a reveal an action opened plays its moment. */
   planRevealed: boolean;
   /** How long the level question's quick test takes: a language goal's is its level test. */
+  placement: OnboardingPlacement | null;
   quickTestMinutes: number;
   /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
@@ -328,6 +332,7 @@ export const onboardingAnswerInputSchema = z
           }),
         level: ownLevelSchema.nullable().default(null),
         question: z.literal("level"),
+        requestPlacement: z.literal(true).optional(),
       })
       .strict(),
     scheduleAnswerSchema,

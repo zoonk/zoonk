@@ -82,7 +82,7 @@ describe(updateFocusTest, () => {
     await startSitting(goal.id);
 
     await expect(control(goal.id, { suggestion: "dismissed" })).resolves.toStrictEqual({
-      offer: { minutes: 12 },
+      offer: { minutes: 6, questions: 6 },
       sessionQuestions: "on",
       state: "sitting",
       suggestsFocus: true,

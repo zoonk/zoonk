@@ -45,7 +45,11 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
   });
 
   expect(initial).toMatchObject({
-    focusTest: { sitting: null, subjects: [{ asked: 0 }, { asked: 0 }] },
+    focusTest: {
+      offer: { minutes: 6, questions: 6 },
+      sitting: null,
+      subjects: [{ asked: 0 }, { asked: 0 }],
+    },
     next: null,
   });
 
@@ -54,7 +58,7 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
     schema: placementResponseSchema,
   });
 
-  expect(opened.focusTest?.sitting).toMatchObject({ answered: 0, questions: 8 });
+  expect(opened.focusTest?.sitting).toMatchObject({ answered: 0, questions: 6 });
 
   const input = { answer: { dontKnow: true }, durationMs: 10_000, itemId: opened.next?.itemId };
 
@@ -78,7 +82,7 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
     schema: placementResponseSchema,
   });
 
-  expect(resumed.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 7, questions: 8 });
+  expect(resumed.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 5, questions: 6 });
 
   const completion = await readBody({
     response: await api.post(`${path}/completion`, { data: {} }),
@@ -86,6 +90,7 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
   });
 
   expect(completion.focusTest).toMatchObject({ checkpoint: { lessonsSkipped: 0 }, sitting: null });
+  expect(completion.finish).toMatchObject({ answered: 1, end: "stopped", unknowns: 1 });
   expect(completion).not.toHaveProperty("celebration");
 
   const continued = await readBody({

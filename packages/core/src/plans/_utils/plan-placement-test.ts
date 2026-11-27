@@ -2,35 +2,124 @@ import { availableLevelTestOut } from "../../language/level-test/_utils/level-te
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
+import { readCoursePlacementOffer } from "../../learner/placement/_utils/course-placement-offer";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
   type PlacementAttempt,
-  getPlacementEstimate,
+  type PlacementAttemptView,
+  type PlacementRecord,
+  getCourseOffer,
   isTopicAhead,
-  placementAttemptView,
   readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
+import { readPlacementResult } from "../../learner/placement/_utils/placement-result";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
 
-async function readAttemptView(
+async function readAttemptPlacement(
   { goal, timeZone, today }: PlanContext,
   attempt: PlacementAttempt | null,
 ) {
-  if (attempt?.length !== "wholeCourse") {
-    return attempt && placementAttemptView(attempt);
+  if (!attempt) {
+    return null;
   }
 
-  const placement = await loadPlacementState({
+  return loadPlacementState({
     goalId: goal.id,
     plan: await loadPlacementPlan(goal.id),
     timeZone,
     today,
     userId: goal.userId,
   });
+}
 
-  return placement.attempt ?? null;
+async function readLanguageRow({
+  attemptView,
+  context,
+  now,
+  placement,
+}: {
+  attemptView: PlacementAttemptView | null;
+  context: PlanContext;
+  now: Date;
+  placement: PlacementRecord;
+}): Promise<PlanView["placementTest"]> {
+  const { goal } = context;
+  const summary = readLevelTestSummary(goal);
+  const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
+  const continuing = attemptView || summary.attempt || waitingForTopicWalk;
+  const idleState = summary.result ? "result" : "start";
+  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
+
+  const ahead = context.state.graph.skills.filter((skill) =>
+    isTopicAhead(lessonsBySkill.get(skill.skillId)),
+  );
+
+  const offer = getCourseOffer(ahead.length);
+
+  const estimatedMinutes =
+    attemptView?.totalEstimatedMinutes ??
+    offer?.wholeCourse?.estimatedMinutes ??
+    offer?.estimatedMinutes ??
+    0;
+
+  const [nextTestOutLevel, levelResult] = await Promise.all([
+    summary.openTestOutLevel ??
+      availableLevelTestOut({
+        goalId: goal.id,
+        levels: summary.eligibleTestOutLevels,
+        now,
+        timeZone: context.timeZone,
+        userId: goal.userId,
+      }),
+    summary.result ? withLevelTestChange(goal.id, summary.result) : null,
+  ]);
+
+  return {
+    attempt: attemptView,
+    estimatedMinutes,
+    kind: "language",
+    nextTestOutLevel,
+    result: levelResult,
+    state: continuing ? "continue" : idleState,
+  };
+}
+
+async function readCourseRow({
+  attemptPlacement,
+  context: { goal },
+  placement,
+}: {
+  attemptPlacement: Awaited<ReturnType<typeof readAttemptPlacement>>;
+  context: PlanContext;
+  placement: PlacementRecord;
+}): Promise<PlanView["placementTest"]> {
+  const attemptView = attemptPlacement?.attempt ?? null;
+  const course = attemptView ? null : await readCoursePlacementOffer({ goal });
+  const offer = course?.offer ?? null;
+
+  const result = attemptPlacement
+    ? (attemptPlacement.result ?? null)
+    : await readPlacementResult({ goalId: goal.id, placement });
+
+  const idleState = result ? "result" : "start";
+
+  return {
+    attempt: attemptView,
+    estimatedMinutes:
+      attemptView?.totalEstimatedMinutes ??
+      offer?.wholeCourse?.estimatedMinutes ??
+      offer?.estimatedMinutes ??
+      0,
+    kind: "learn",
+    offer,
+    result,
+    state:
+      attemptView && (!attemptView.partComplete || attemptView.partsLeft > 0)
+        ? "continue"
+        : idleState,
+  };
 }
 
 export async function readPlanPlacementTest(
@@ -44,55 +133,14 @@ export async function readPlanPlacementTest(
   }
 
   const placement = readPlacementAttempt(goal);
-  const { attempt, result } = placement;
+  const { attempt } = placement;
 
-  const attemptView = await readAttemptView(context, attempt);
-
-  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
-
-  const ahead = context.state.graph.skills.filter((skill) =>
-    isTopicAhead(lessonsBySkill.get(skill.skillId)),
-  );
-
-  const estimatedMinutes =
-    attemptView?.estimatedMinutes ??
-    getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
+  const attemptPlacement = await readAttemptPlacement(context, attempt);
+  const attemptView = attemptPlacement?.attempt ?? null;
 
   if (goal.kind === "language") {
-    const summary = readLevelTestSummary(goal);
-    const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
-    const continuing = attemptView || summary.attempt || waitingForTopicWalk;
-    const idleState = summary.result ? "result" : "start";
-
-    const [nextTestOutLevel, levelResult] = await Promise.all([
-      summary.openTestOutLevel ??
-        availableLevelTestOut({
-          goalId: goal.id,
-          levels: summary.eligibleTestOutLevels,
-          now,
-          timeZone: context.timeZone,
-          userId: goal.userId,
-        }),
-      summary.result ? withLevelTestChange(goal.id, summary.result) : null,
-    ]);
-
-    return {
-      attempt: attemptView,
-      estimatedMinutes,
-      kind: "language",
-      nextTestOutLevel,
-      result: levelResult,
-      state: continuing ? "continue" : idleState,
-    };
+    return readLanguageRow({ attemptView, context, now, placement });
   }
 
-  const idleState = result ? "result" : "start";
-
-  return {
-    attempt: attemptView,
-    estimatedMinutes,
-    kind: "learn",
-    result,
-    state: attemptView ? "continue" : idleState,
-  };
+  return readCourseRow({ attemptPlacement, context, placement });
 }

@@ -96,7 +96,7 @@ class TopicWalkRecreationTest {
     private companion object {
         const val WALKING =
             """{"kind":"language","state":"continue","estimatedMinutes":25,"result":null,
-             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":2,"partComplete":false,"estimatedMinutes":25}}"""
+             "attempt":{"id":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","length":"wholeCourse","part":2,"partComplete":false,"estimatedMinutes":25,"answered":0,"chapter":null,"nextPart":null,"parts":2,"partsLeft":1,"questions":12,"resume":null,"totalEstimatedMinutes":25}}"""
 
         const val FINISHED =
             """{"kind":"language","state":"result","estimatedMinutes":30,"attempt":null,"nextTestOutLevel":"B2",

@@ -7,11 +7,19 @@ import {
 import { toFinishedPhase, toPlacementTestPhase } from "./placement-test-phase";
 
 const ATTEMPT: PlacementAttemptView = {
+  answered: 0,
+  chapter: null,
   estimatedMinutes: 20,
   id: "0198a6c4-2f6e-7c1a-9b1e-3f2d4c5b6a71",
   length: "wholeCourse",
+  nextPart: 2,
   part: 1,
   partComplete: false,
+  parts: 2,
+  partsLeft: 2,
+  questions: 12,
+  resume: null,
+  totalEstimatedMinutes: 20,
 };
 
 const QUESTION: PlacementQuestion = {

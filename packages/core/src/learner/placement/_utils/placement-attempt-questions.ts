@@ -1,84 +1,46 @@
-import { isJsonObject } from "@zoonk/utils/json";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import {
-  LOW_GUESS_ANSWERS_TO_SKIP,
-  isLowGuessTap,
-  isQuickChoice,
-} from "../../_utils/placement-guess-rate";
+import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { type PlacementEvidence } from "../placement-beliefs";
-import { getPlacementBudgetSpent } from "../placement-budget";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
-import { listKnownSkillIds } from "../placement-known";
 import { readWholeCourseWalk } from "../whole-course-walk";
-import { getWholeCourseMinutes, type readPlacementAttempt } from "./placement-attempt-record";
+import {
+  PART_QUESTIONS,
+  type PlacementAttempt,
+  QUESTIONS_PER_TOPIC,
+  getAttemptParts,
+  getCourseMinutes,
+  getTopicsAhead,
+} from "./placement-attempt-record";
 import { type loadEvidence, toPlacementEvidence } from "./placement-evidence";
 import { type loadPlanBuild } from "./placement-plan-build";
 
-const MINUTE_MS = 60_000;
-const PART_MS = 10 * MINUTE_MS;
-const PART_ANSWERS = 30;
-const MIN_PACED_ANSWERS = 5;
+function pickTopicQuestion({
+  answers,
+  items,
+  skillId,
+}: {
+  answers: readonly PlacementEvidence[];
+  items: readonly PlacementItemCandidate[];
+  skillId: string;
+}) {
+  const confirming = answers.some((answer) => isQuickChoice(answer));
+  const suitable = items.filter((item) => (confirming ? isLowGuessTap(item) : isQuickChoice(item)));
 
-type Attempt = NonNullable<ReturnType<typeof readPlacementAttempt>["attempt"]>;
-
-function toScope(ids: string[] | undefined) {
-  return ids ? new Set(ids) : null;
+  return pickPlacementItem({ confirming, items: suitable, skillId });
 }
 
-function estimateRemaining({
-  attempt,
-  given,
-  questions,
+function getEnd({
+  capped,
+  complete,
 }: {
-  attempt: Attempt;
-  given: readonly { answer: unknown; durationMs: number }[];
-  questions: number;
-}) {
-  if (attempt.length === "quick") {
-    return attempt.estimatedMinutes;
+  capped: boolean;
+  complete: boolean;
+}): "question_cap" | "material_exhausted" | "stopped" {
+  if (capped) {
+    return "question_cap";
   }
 
-  const timed = given.filter(({ answer, durationMs }) => durationMs > 0 && !isDontKnow(answer));
-
-  const elapsed = timed.reduce(
-    (total, answer) => total + Math.min(answer.durationMs, MINUTE_MS),
-    0,
-  );
-
-  return getWholeCourseMinutes({
-    paceMs: timed.length >= MIN_PACED_ANSWERS ? elapsed / timed.length : undefined,
-    questions,
-  });
-}
-
-function isDontKnow(answer: unknown) {
-  return isJsonObject(answer) && answer.dontKnow === true;
-}
-
-function answersSinceMiss(answers: readonly PlacementEvidence[]) {
-  return answers.slice(answers.findLastIndex((answer) => answer.outcome !== "correct") + 1);
-}
-
-function questionsRemaining(answers: readonly PlacementEvidence[]) {
-  const hasQuick = answers.some((answer) => isQuickChoice(answer));
-  const lowGuess = answers.filter((answer) => isLowGuessTap(answer)).length;
-  return Number(!hasQuick) + Math.max(0, LOW_GUESS_ANSWERS_TO_SKIP - lowGuess);
-}
-
-function listQuickFollowUps({
-  bySkill,
-  known,
-}: {
-  bySkill: ReadonlyMap<string, readonly PlacementEvidence[]>;
-  known: ReadonlySet<string>;
-}): string[] {
-  return [...bySkill].flatMap(([skillId, answers]) =>
-    !known.has(skillId) &&
-    answers.every((answer) => answer.outcome === "correct") &&
-    answers.some((answer) => isQuickChoice(answer))
-      ? [skillId]
-      : [],
-  );
+  return complete ? "material_exhausted" : "stopped";
 }
 
 export function readAttemptQuestions({
@@ -87,116 +49,82 @@ export function readAttemptQuestions({
   build,
   items,
   plan,
-  today,
 }: {
-  attempt: Attempt;
+  attempt: PlacementAttempt;
   attempts: Awaited<ReturnType<typeof loadEvidence>>["attempts"];
   build: Pick<Awaited<ReturnType<typeof loadPlanBuild>>, "preparingSkillIds">;
   items: readonly PlacementItemCandidate[];
   plan: GoalPlan;
-  today: Date | null;
 }) {
   const given = attempts.filter((answer) => answer.focusTestId === attempt.id);
 
-  const part = given.filter(
-    (answer) => answer.answeredAt.getTime() >= Date.parse(attempt.partStartedAt),
-  );
-
-  const answers = given.flatMap((attemptRow) => toPlacementEvidence(attemptRow) ?? []);
-
-  const skillIds = new Set(
-    attempt.skillIds.length > 0 ? attempt.skillIds : plan.skills.map((skill) => skill.id),
-  );
-
-  const skills = plan.skills.filter((skill) => skillIds.has(skill.id) && !skill.removed);
-  const whole = attempt.length === "wholeCourse";
-
-  const elapsed = part.reduce((total, answer) => total + Math.min(answer.durationMs, MINUTE_MS), 0);
-
-  const spent = whole
-    ? Math.min(1, Math.max(elapsed / PART_MS, part.length / PART_ANSWERS))
-    : getPlacementBudgetSpent(
-        given.filter((answer) => !today || answer.localDate.getTime() === today.getTime()),
-      );
-
-  const partAnsweredItemIds = new Set(part.flatMap((answer) => answer.itemId ?? []));
-  const walk = whole ? readWholeCourseWalk({ answers, partAnsweredItemIds, skills }) : null;
-
-  const knownSkillIds = walk
-    ? [...walk.confirmed]
-    : listKnownSkillIds({ answers, evidence: answers, skillIds: [...skillIds] });
-
-  const known = new Set(knownSkillIds);
+  const answers = given.flatMap((row) => toPlacementEvidence(row) ?? []);
   const bySkill = Map.groupBy(answers, (answer) => answer.skillId);
-  const unanswered = (walk ? walk.ready : skills).filter((skill) => !known.has(skill.id));
+  const parts = getAttemptParts(attempt);
+  const current = attempt.partSkillIds ?? parts[attempt.part - 1] ?? [];
+  const currentTopics = new Set(current);
+
+  const partAnswers = attempt.parts
+    ? given.filter((answer) => answer.skillId !== null && currentTopics.has(answer.skillId))
+    : given.filter((answer) => answer.answeredAt.getTime() >= Date.parse(attempt.partStartedAt));
+
+  const walk = readWholeCourseWalk({ answers, skills: plan.skills });
+  const ahead = new Set(getTopicsAhead(plan).map((skill) => skill.id));
+
+  const remaining = new Set(
+    walk.remaining.filter((skill) => ahead.has(skill.id)).map((skill) => skill.id),
+  );
 
   const candidates = Map.groupBy(
     items.filter((item) => !item.seen),
     (item) => item.skillId,
   );
 
-  const nextIn = (skillId: string) => {
-    const tried = answersSinceMiss(bySkill.get(skillId) ?? []);
-    const hasQuick = tried.some((answer) => isQuickChoice(answer));
+  const questions = attempt.parts
+    ? Math.min(PART_QUESTIONS, current.length * QUESTIONS_PER_TOPIC)
+    : PART_QUESTIONS;
 
-    const suitable = (candidates.get(skillId) ?? []).filter((item) =>
-      hasQuick ? isLowGuessTap(item) : isQuickChoice(item),
+  const nextSkillId = current.find((id) => remaining.has(id));
+
+  const item = nextSkillId
+    ? pickTopicQuestion({
+        answers: bySkill.get(nextSkillId) ?? [],
+        items: candidates.get(nextSkillId) ?? [],
+        skillId: nextSkillId,
+      })
+    : null;
+
+  const capped = partAnswers.length >= questions;
+  const complete = capped || !nextSkillId;
+  const blocked = Boolean(nextSkillId && !item && !complete);
+
+  const remainingParts = parts
+    .map((ids, index) => ({ ids: ids.filter((id) => remaining.has(id)), part: index + 1 }))
+    .filter(
+      ({ ids, part }) =>
+        ids.length > 0 &&
+        (part > attempt.part || (part === attempt.part && !complete && !attempt.partComplete)),
     );
 
-    return pickPlacementItem({ confirming: hasQuick, items: suitable, skillId });
-  };
-
-  const ready = whole
-    ? unanswered
-    : unanswered
-        .filter(
-          (skill) => !(bySkill.get(skill.id) ?? []).some((answer) => answer.outcome !== "correct"),
-        )
-        .toSorted((a, b) => Number(bySkill.has(b.id)) - Number(bySkill.has(a.id)));
-
-  const partScope = toScope(attempt.partSkillIds);
-  const inPart = (skill: { id: string }) => !partScope || partScope.has(skill.id);
-  const stillInWalk = toScope(attempt.remainingSkillIds);
-  const isRemaining = (skill: { id: string }) => !stillInWalk || stillInWalk.has(skill.id);
-
-  const next = ready
-    .filter((skill) => inPart(skill) && isRemaining(skill))
-    .map((skill) => ({ item: nextIn(skill.id), waiting: build.preparingSkillIds.has(skill.id) }))
-    .find((skill) => skill.item || skill.waiting);
-
-  const deferred = new Set(
-    walk?.remaining.filter((skill) => !walk.ready.includes(skill)).map((skill) => skill.id),
-  );
-
-  const remainingSkillIds =
-    walk?.remaining
-      .filter((skill) => isRemaining(skill))
-      .filter(
-        (skill) =>
-          !inPart(skill) ||
-          deferred.has(skill.id) ||
-          nextIn(skill.id) ||
-          build.preparingSkillIds.has(skill.id),
-      )
-      .map((skill) => skill.id) ?? [];
-
-  const questions = remainingSkillIds.reduce(
-    (total, skillId) => total + questionsRemaining(answersSinceMiss(bySkill.get(skillId) ?? [])),
-    0,
-  );
-
-  const estimatedMinutes = estimateRemaining({ attempt, given, questions });
+  const nextPart = remainingParts.find(({ part }) => part > attempt.part);
 
   return {
-    answered: part.length,
-    complete: !next,
-    estimatedMinutes,
-    followUpSkillIds: whole ? [] : listQuickFollowUps({ bySkill, known }),
-    hasMore: whole ? remainingSkillIds.length > 0 : Boolean(next),
-    item: attempt.partComplete || spent >= 1 ? null : (next?.item ?? null),
-    knownSkillIds,
-    remainingSkillIds,
-    spent,
-    waiting: Boolean(next?.waiting && !next.item),
+    answered: partAnswers.length,
+    chapter: item
+      ? (plan.skills.find((skill) => skill.id === item.skillId)?.areaTitle ?? null)
+      : null,
+    complete,
+    end: getEnd({ capped, complete }),
+    estimatedMinutes: getCourseMinutes(questions),
+    item: attempt.partComplete || attempt.paused || complete ? null : item,
+    knownSkillIds: [...walk.confirmed],
+    nextPart,
+    partAnswers: partAnswers.map((row) => row.skillId),
+    parts: parts.length,
+    partsLeft: remainingParts.length,
+    questions,
+    totalEstimatedMinutes: getCourseMinutes(parts.flat().length * QUESTIONS_PER_TOPIC),
+    unknowns: partAnswers.filter((row) => toPlacementEvidence(row)?.outcome === "dontKnow").length,
+    waiting: blocked && nextSkillId !== undefined && build.preparingSkillIds.has(nextSkillId),
   };
 }

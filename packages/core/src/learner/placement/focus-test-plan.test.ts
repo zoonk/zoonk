@@ -124,7 +124,7 @@ describe("the Focus test on a plan whose time is short", () => {
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: {
         focusTest: {
-          offer: { minutes: 15 },
+          offer: { minutes: 6, questions: 6 },
           sessionQuestions: "off",
           state: "notStarted",
           suggestsFocus: true,

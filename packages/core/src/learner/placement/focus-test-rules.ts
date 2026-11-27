@@ -4,7 +4,7 @@ import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 const MS_PER_MINUTE = 60_000;
 
 /** What an answer takes before the learner has a pace of their own, in either quick format. */
-const START_PACE_MS = MS_PER_MINUTE;
+export const START_PACE_MS = MS_PER_MINUTE;
 
 const SITTING_MINUTES = 15;
 
@@ -14,8 +14,7 @@ const MIN_PACE_MS = 20_000;
 /** A break in the middle of a question isn't the learner's pace. */
 export const MAX_PACED_ANSWER_MS = 3 * MS_PER_MINUTE;
 
-const MIN_FIRST_QUESTIONS = 20;
-const MAX_FIRST_QUESTIONS = 30;
+export const FIRST_FOCUS_QUESTIONS = 6;
 const CONTINUATION_QUESTIONS = 10;
 
 export const MAX_SUBJECT_QUESTIONS = 4;
@@ -30,7 +29,7 @@ const MIN_FOCUS_CHOICES = 2;
 /** Small differences in answer evidence must not reverse a system-owned focus. */
 const FOCUS_CHANGE_MARGIN = 0.1;
 
-export const UNKNOWN_STREAK = 5;
+export const UNKNOWN_STREAK = 3;
 
 export type SittingKind = "continuation" | "first";
 
@@ -44,7 +43,6 @@ export function getPaceMs({
   return answers < MIN_PACE_ANSWERS ? START_PACE_MS : Math.max(MIN_PACE_MS, durationMs / answers);
 }
 
-/** The most questions a sitting promises: what fits about fifteen minutes at the learner's pace. */
 export function getSittingQuestions({
   kind,
   paceMs,
@@ -54,15 +52,14 @@ export function getSittingQuestions({
   paceMs: number;
   quickSubjects: number;
 }): number {
-  const fit = Math.max(1, Math.floor((SITTING_MINUTES * MS_PER_MINUTE) / paceMs));
   const depth = MAX_SUBJECT_QUESTIONS * quickSubjects;
 
-  const breadth =
-    kind === "first"
-      ? Math.min(MAX_FIRST_QUESTIONS, Math.max(MIN_FIRST_QUESTIONS, quickSubjects))
-      : CONTINUATION_QUESTIONS;
+  if (kind === "first") {
+    return Math.min(FIRST_FOCUS_QUESTIONS, depth);
+  }
 
-  return Math.min(breadth, depth, fit);
+  const fit = Math.max(1, Math.floor((SITTING_MINUTES * MS_PER_MINUTE) / paceMs));
+  return Math.min(CONTINUATION_QUESTIONS, depth, fit);
 }
 
 export function getSittingMinutes({

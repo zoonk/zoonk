@@ -55,6 +55,28 @@ async function findGoalItem({
   return item ? parsePlacementItem(item) : null;
 }
 
+async function canAnswerCourseQuestion({
+  goalId,
+  input,
+  tx,
+}: {
+  goalId: string;
+  input: LearnerAnswer;
+  tx: Parameters<typeof loadPlacementPlan>[1];
+}) {
+  const plan = await loadPlacementPlan(goalId, tx);
+
+  const { state } = await loadPlacementWithSummary({
+    goalId,
+    plan,
+    timeZone: input.timeZone,
+    tx,
+    userId: input.userId,
+  });
+
+  return state.next?.itemId === input.itemId;
+}
+
 /**
  * A question placement asked outside a session is answered once: a repeated send, such as a retry
  * after a lost response, records and counts nothing again.
@@ -75,7 +97,8 @@ async function recordPlacementAnswer({
   const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
     const { attempt } = readPlacementAttempt(goal);
-    const focusTestId = readFocusTestRecord(goal)?.sitting?.id ?? null;
+    const sitting = readFocusTestRecord(goal)?.sitting;
+    const focusTestId = sitting?.id ?? null;
 
     if (
       attemptId &&
@@ -98,21 +121,18 @@ async function recordPlacementAnswer({
       return unchanged({ events: null, isCorrect: answered.isCorrect });
     }
 
-    if (attemptId) {
-      const plan = await loadPlacementPlan(goalId, tx);
-
-      const state = await loadPlacementWithSummary({
-        goalId,
-        plan,
-        timeZone: input.timeZone,
-        today: getDateInTimeZone({ date: new Date(), timeZone: input.timeZone }),
-        tx,
-        userId,
+    if (sitting) {
+      const total = await tx.attempt.count({
+        where: { ...SITTING_ANSWER_FILTER, focusTestId: sitting.id, userId },
       });
 
-      if (state.state.next?.itemId !== itemId) {
+      if (total >= sitting.questions) {
         return unchanged(null);
       }
+    }
+
+    if (attempt && (!attemptId || !(await canAnswerCourseQuestion({ goalId, input, tx })))) {
+      return unchanged(null);
     }
 
     const { events } = await persistLearnerAnswer({

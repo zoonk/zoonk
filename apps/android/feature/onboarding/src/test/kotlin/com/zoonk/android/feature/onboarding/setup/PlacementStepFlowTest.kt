@@ -192,7 +192,21 @@ class PlacementStepFlowTest {
     @Test
     fun wholeCourseContinuesSetupWithTheFinishedPartsAttempt() {
         val id = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
-        val part = PlacementAttempt(estimatedMinutes = 20, id = id, length = PlacementLength.WHOLE_COURSE, part = 1, partComplete = false)
+        val part = PlacementAttempt(
+            answered = 0,
+            chapter = null,
+            estimatedMinutes = 20,
+            id = id,
+            length = PlacementLength.WHOLE_COURSE,
+            nextPart = 2,
+            part = 1,
+            partComplete = false,
+            parts = 2,
+            partsLeft = 2,
+            questions = 12,
+            resume = null,
+            totalEstimatedMinutes = 20,
+        )
         api.setup = { setupView(steps = listOf("placement", "plan")) }
         api.reply = { _, _ -> setupView(steps = listOf("plan")) }
         api.sitting = { placementOf(next = orderQuestion()).copy(attempt = part) }

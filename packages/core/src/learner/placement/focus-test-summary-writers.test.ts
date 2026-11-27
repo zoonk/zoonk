@@ -385,7 +385,7 @@ describe("the saved Focus test summary", () => {
     ).resolves.toBe(true);
 
     const linked = await readSummary(goal.id);
-    expect(linked).toMatchObject({ offerQuestions: 15, quick: 5, total: 6, unasked: 5 });
+    expect(linked).toMatchObject({ offerQuestions: 6, quick: 5, total: 6, unasked: 5 });
     expect(linked).toStrictEqual(await computeSummary(goal));
 
     await unlinkGoalFromSharedExam(goal.id);
@@ -572,7 +572,7 @@ describe("the saved Focus test summary", () => {
   it("keeps general questions after exam research finds an option count", async () => {
     const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
     const examBlueprintId = goal.examBlueprintId ?? "";
-    await expect(readSummary(goal.id)).resolves.toMatchObject({ offerQuestions: 15 });
+    await expect(readSummary(goal.id)).resolves.toMatchObject({ offerQuestions: 6 });
     await expect(findChoiceOptionsLookup({ examBlueprintId })).resolves.not.toBeNull();
 
     await recordChoiceOptions({
@@ -586,7 +586,7 @@ describe("the saved Focus test summary", () => {
     await refreshFollowerSummaries(examBlueprintId);
 
     const summary = await readSummary(goal.id);
-    expect(summary).toMatchObject({ offerQuestions: 15 });
+    expect(summary).toMatchObject({ offerQuestions: 6 });
     expect(summary).toStrictEqual(await computeSummary(goal));
   });
 

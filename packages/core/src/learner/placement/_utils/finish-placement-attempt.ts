@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
@@ -8,7 +8,7 @@ import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../../plans/record-test-out-change";
-import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
+import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
 import { testOutKnownPlanItems } from "../../_utils/test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
@@ -16,14 +16,247 @@ import { type PlacementCompletion } from "./complete-placement";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import { SITTING_ANSWER_SQL } from "./placement-answers";
 import { savePlacementAttempt } from "./placement-attempt";
-import { readPlacementAttempt } from "./placement-attempt-record";
+import {
+  type PlacementAttempt,
+  type PlacementRecord,
+  readPlacementAttempt,
+} from "./placement-attempt-record";
+import { readPlacementNextLesson } from "./placement-result";
+
+async function applyPartAnswers({
+  attempt,
+  goal,
+  now,
+  plan,
+  skillIds,
+  timeZone,
+  today,
+  tx,
+}: {
+  attempt: PlacementAttempt;
+  goal: Goal;
+  now: Date;
+  plan: GoalPlan;
+  skillIds: string[];
+  timeZone: string;
+  today: Date;
+  tx: TransactionClient;
+}) {
+  const { id: goalId, userId } = goal;
+  const { id: attemptId } = attempt;
+
+  await tx.$executeRaw`
+    UPDATE attempts SET answer = answer - 'placementPending'
+    WHERE user_id = ${userId}::uuid AND focus_test_id = ${attemptId}::uuid AND ${SITTING_ANSWER_SQL}
+      AND answer @> '{"placementPending":true}'::jsonb
+  `;
+
+  const { confirmed, heldUntilTomorrow } = await loadSkillConfirmations({
+    goalId,
+    skillIds,
+    timeZone,
+    today,
+    tx,
+    userId,
+  });
+
+  const changed = await testOutKnownPlanItems(tx, {
+    goalId,
+    items: plan.items,
+    knownSkillIds: confirmed,
+    placedSkills: plan.skills.filter((skill) => attempt.skillIds.includes(skill.id)),
+    testedOutAt: now,
+    timeZone,
+  });
+
+  const testedOutPlanItemIds = [...changed.itemIds, ...changed.standInIds];
+
+  const partLessonsSkipped = countLessons(
+    testedOutPlanItemIds.length > 0
+      ? await tx.planItem.findMany({
+          select: { chapterId: true, kind: true, lessonId: true, lessons: true, skillId: true },
+          where: { id: { in: testedOutPlanItemIds } },
+        })
+      : [],
+  );
+
+  return {
+    confirmed,
+    heldUntilTomorrow,
+    partLessonsSkipped,
+    sharedItemIds: changed.sharedItemIds,
+    testedOutPlanItemIds,
+  };
+}
+
+function findAppliedReceipt({
+  answered,
+  complete,
+  receipts,
+}: {
+  answered: number;
+  complete: boolean;
+  receipts: PlacementRecord["finishedParts"];
+}) {
+  return receipts.findLast(
+    (receipt) =>
+      receipt.finish?.answered === answered && (receipt.finish.end !== "stopped" || !complete),
+  );
+}
+
+async function savePart({
+  answered,
+  attemptId,
+  goal,
+  now,
+  part,
+  timeZone,
+  today,
+  tx,
+}: {
+  answered?: number;
+  attemptId: string;
+  goal: Goal;
+  now: Date;
+  part: number;
+  timeZone: string;
+  today: Date;
+  tx: TransactionClient;
+}) {
+  const { id: goalId, userId } = goal;
+  const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+  const record = readPlacementAttempt(current);
+  const { attempt, finishedParts, result } = record;
+
+  if ((attempt?.id ?? result?.attemptId) !== attemptId) {
+    return unchanged(null);
+  }
+
+  const receipts = finishedParts.filter((finished) => finished.part === part);
+  const last = receipts.at(-1);
+
+  if (attempt?.part !== part || attempt.partComplete) {
+    return unchanged(last ?? null);
+  }
+
+  const plan = await loadPlacementPlan(goalId, tx);
+
+  const { attemptQuestions, state } = await loadPlacementWithSummary({
+    goalId,
+    plan,
+    timeZone,
+    today,
+    tx,
+    userId,
+  });
+
+  if (!attemptQuestions) {
+    return unchanged(null);
+  }
+
+  const previous = findAppliedReceipt({
+    answered: answered ?? attemptQuestions.answered,
+    complete: attemptQuestions.complete,
+    receipts,
+  });
+
+  if (previous) {
+    return unchanged(previous);
+  }
+
+  if (answered !== undefined && answered !== attemptQuestions.answered) {
+    return unchanged(null);
+  }
+
+  const receiptKey = placementPartReceipt(
+    attemptId,
+    part,
+    attemptQuestions.complete ? undefined : attemptQuestions.answered,
+  );
+
+  const newTopics = new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered ?? 0));
+
+  const { confirmed, heldUntilTomorrow, partLessonsSkipped, testedOutPlanItemIds, sharedItemIds } =
+    await applyPartAnswers({
+      attempt,
+      goal,
+      now,
+      plan,
+      skillIds: state.knownSkillIds.filter((id) => newTopics.has(id)),
+      timeZone,
+      today,
+      tx,
+    });
+
+  const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
+  const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
+
+  const finish = {
+    answered: attemptQuestions.answered,
+    end: attemptQuestions.end,
+    lessonsSkipped: partLessonsSkipped,
+    partsLeft: attemptQuestions.partsLeft,
+    unknowns: attemptQuestions.unknowns,
+  };
+
+  const receipt = {
+    ...held,
+    finish,
+    knownSkillIds: [...confirmed],
+    lessonsSkipped: partLessonsSkipped,
+    part,
+    testedOutPlanItemIds,
+  };
+
+  await savePlacementAttempt({
+    goal: current,
+    record: {
+      ...record,
+      attempt:
+        attemptQuestions.partsLeft > 0
+          ? {
+              ...attempt,
+              lessonsSkipped,
+              partComplete: attemptQuestions.complete,
+              paused: !attemptQuestions.complete,
+            }
+          : null,
+      finishedParts: [...finishedParts, receipt],
+      result: {
+        ...held,
+        attemptId,
+        finish,
+        finishedAt: now.toISOString(),
+        lessonsSkipped,
+        nextLesson: await readPlacementNextLesson(goalId, tx),
+      },
+    },
+    tx,
+  });
+
+  await recordTestOutChange({
+    goalId,
+    itemIds: [...testedOutPlanItemIds, ...sharedItemIds],
+    now,
+    receipt: receiptKey,
+    timeZone,
+    tx,
+    userId,
+  });
+
+  await owePlanStartLessons({ db: tx, goalId, userId });
+
+  return receipt;
+}
 
 export async function finishPlacementAttempt({
+  answered,
   attemptId,
   goal,
   part = 1,
   timeZone,
 }: {
+  answered?: number;
   attemptId: string;
   goal: Goal;
   part?: number;
@@ -33,119 +266,21 @@ export async function finishPlacementAttempt({
   const now = new Date();
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const receiptKey = placementPartReceipt(attemptId, part);
-
-  const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
-    const record = readPlacementAttempt(current);
-    const { attempt, finishedParts, result } = record;
-
-    if ((attempt?.id ?? result?.attemptId) !== attemptId) {
-      return unchanged(null);
-    }
-
-    const finishedPart = finishedParts.find((finished) => finished.part === part);
-
-    if (finishedPart) {
-      return unchanged(finishedPart);
-    }
-
-    if (attempt?.id !== attemptId || attempt.part !== part || attempt.partComplete) {
-      return unchanged(null);
-    }
-
-    const plan = await loadPlacementPlan(goalId, tx);
-
-    const { attemptFollowUps, attemptHasMore, attemptRemainingSkillIds, state } =
-      await loadPlacementWithSummary({ goalId, plan, timeZone, today, tx, userId });
-
-    await tx.$executeRaw`
-      UPDATE attempts SET answer = answer - 'placementPending'
-      WHERE user_id = ${userId}::uuid AND focus_test_id = ${attemptId}::uuid AND ${SITTING_ANSWER_SQL}
-    `;
-
-    const { confirmed, heldUntilTomorrow } = await loadSkillConfirmations({
-      goalId,
-      skillIds: state.knownSkillIds,
-      timeZone,
-      today,
-      tx,
-      userId,
-    });
-
-    const changed = await testOutKnownPlanItems(tx, {
-      goalId,
-      items: plan.items,
-      knownSkillIds: confirmed,
-      placedSkills: plan.skills.filter((skill) => attempt.skillIds.includes(skill.id)),
-      testedOutAt: now,
-      timeZone,
-    });
-
-    const testedOutPlanItemIds = [...changed.itemIds, ...changed.standInIds];
-
-    const partLessonsSkipped = countLessons(
-      testedOutPlanItemIds.length > 0
-        ? await tx.planItem.findMany({
-            select: { chapterId: true, kind: true, lessonId: true, lessons: true, skillId: true },
-            where: { id: { in: testedOutPlanItemIds } },
-          })
-        : [],
-    );
-
-    const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
-    const finishedAt = now.toISOString();
-    const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
-
-    const receipt = {
-      ...held,
-      knownSkillIds: [...confirmed],
-      lessonsSkipped: partLessonsSkipped,
-      part,
-      testedOutPlanItemIds,
-    };
-
-    const canContinue = attempt.length === "wholeCourse" && attemptHasMore;
-
-    await savePlacementAttempt({
-      goal: current,
-      record: {
-        ...record,
-        attempt: canContinue
-          ? {
-              ...attempt,
-              lessonsSkipped,
-              partComplete: true,
-              remainingSkillIds: attemptRemainingSkillIds,
-            }
-          : null,
-        finishedParts: [...finishedParts, receipt],
-        ...(attempt.length === "quick" && { quickFollowUpSkillIds: attemptFollowUps ?? [] }),
-        result: canContinue ? record.result : { ...held, attemptId, finishedAt, lessonsSkipped },
-      },
-      tx,
-    });
-
-    await recordTestOutChange({
-      goalId,
-      itemIds: [...testedOutPlanItemIds, ...changed.sharedItemIds],
-      now,
-      receipt: receiptKey,
-      timeZone,
-      tx,
-      userId,
-    });
-
-    await owePlanStartLessons({ db: tx, goalId, userId });
-
-    return receipt;
-  });
+  const saved = await writeLearnerChange({ planInputs: true, userId }, (tx) =>
+    savePart({ answered, attemptId, goal, now, part, timeZone, today, tx }),
+  );
 
   if (!saved) {
     return null;
   }
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
+
+  const receiptKey = placementPartReceipt(
+    attemptId,
+    part,
+    saved.finish?.end === "stopped" ? saved.finish.answered : undefined,
+  );
 
   const [change, plan] = await Promise.all([
     saved.testedOutPlanItemIds.length > 0
@@ -161,11 +296,13 @@ export async function finishPlacementAttempt({
     attempt: state.attempt,
     changeId: change?.id ?? null,
     complete: !state.attempt,
+    finish: saved.finish,
     focusTest: null,
     ...(saved.heldUntilTomorrow && { heldUntilTomorrow: saved.heldUntilTomorrow }),
     knownSkillIds: saved.knownSkillIds,
     lessonsSkipped: saved.lessonsSkipped,
-    partLessonsSkipped: saved.lessonsSkipped,
+    partLessonsSkipped:
+      state.result?.part === part ? state.result.partLessonsSkipped : saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
     testedOutPlanItemIds: saved.testedOutPlanItemIds,

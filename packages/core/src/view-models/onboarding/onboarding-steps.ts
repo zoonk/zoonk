@@ -223,11 +223,14 @@ export function getOnboardingSteps({
   const answered = new Set(getAnsweredQuestions(goal.details));
   const questions = getMissingQuestions(goal);
 
+  const offersPlacement =
+    !goal.planRevealed && goal.details.placementPassed !== true && isPlacementAhead(goal.details);
+
   return [
     ...questions.filter((question) => question !== "schedule"),
     ...profileSteps,
     ...(picksBuddy({ answered, profile }) ? (["buddy"] as const) : []),
-    ...(isPlacementAhead(goal.details) ? (["placement"] as const) : []),
+    ...(offersPlacement ? (["placement"] as const) : []),
     ...questions.filter((question) => question === "schedule"),
     "plan",
   ];

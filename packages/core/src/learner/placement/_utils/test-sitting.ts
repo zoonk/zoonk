@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type z } from "zod";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -18,7 +19,7 @@ import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type SittingKind } from "../focus-test-rules";
 import { readFocusTestRecord } from "../focus-test-state";
 import { type SittingOffer } from "../focus-test-view";
-import { isPlacementSkipped } from "../placement-contract";
+import { isPlacementSkipped, type placementFinishSchema } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
 import { summaryInputsKey } from "./focus-test-setup";
@@ -83,9 +84,30 @@ export type ClosedSitting = {
   answered: number;
   dontKnow: number;
   durationMs: number;
+  end: z.infer<typeof placementFinishSchema>["end"];
   kind: SittingKind;
   questions: number;
 };
+
+function getSittingEnd({
+  answered,
+  focusTest,
+  questions,
+}: {
+  answered: number;
+  focusTest: Awaited<ReturnType<typeof loadPlacementWithSummary>>["focusTest"];
+  questions: number;
+}): ClosedSitting["end"] {
+  if (answered >= questions) {
+    return "question_cap";
+  }
+
+  if (focusTest?.sittingOver) {
+    return "material_exhausted";
+  }
+
+  return focusTest?.view.sitting?.hint === "manyUnknown" ? "unknown_streak" : "stopped";
+}
 
 /**
  * Closes only the observed sitting, once: on a plan the learner has seen, its time and Energy count in the
@@ -102,7 +124,21 @@ export async function closeTestSitting({
 }): Promise<ClosedSitting | null> {
   const { id: goalId, userId } = goal;
 
-  const closed = await writeLearnerChange({ userId }, async (tx) => {
+  const closed = await writeLearnerChange<ClosedSitting | null>({ userId }, async (tx) => {
+    const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    if (!sittingId || readFocusTestRecord(current)?.sitting?.id !== sittingId) {
+      return null;
+    }
+
+    const { focusTest } = await loadPlacementWithSummary({
+      goalId,
+      plan: await loadPlacementPlan(goalId, tx),
+      timeZone,
+      tx,
+      userId,
+    });
+
     const { before } = await changeFocusTestRecord({
       change: (record) =>
         record.sitting?.id === sittingId ? { ...record, sitting: null } : record,
@@ -137,6 +173,11 @@ export async function closeTestSitting({
         (given) => isJsonObject(given.answer) && given.answer.dontKnow === true,
       ).length,
       durationMs: answers.reduce((total, given) => total + given.durationMs, 0),
+      end: getSittingEnd({
+        answered: answers.length,
+        focusTest,
+        questions: before.sitting.questions,
+      }),
       kind: before.sitting.kind,
       questions: before.sitting.questions,
     };

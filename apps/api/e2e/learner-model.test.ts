@@ -233,25 +233,26 @@ test.describe("Learner model API", () => {
     await guestApi.dispose();
   });
 
-  test("completes onboarding at the end of the first whole-course part", async () => {
+  test("shows an onboarding result after stopping a quick course test", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
-      prefix: "whole-course-onboarding",
+      prefix: "quick-course-onboarding",
     });
 
     const { goal } = await createGoal(user.id);
+
+    await prisma.goal.update({ data: { planRevealedAt: null }, where: { id: goal.id } });
+
     const path = `/v1/goals/${goal.id}`;
+    const begin = () => apiContext.post(`${path}/placement/sittings`, { data: {} });
 
-    const begin = () =>
-      apiContext.post(`${path}/placement/sittings`, { data: { length: "wholeCourse" } });
-
-    const { attempt } = await readBody({
+    const { attempt, next } = await readBody({
       response: await begin(),
       schema: placementResponseSchema,
     });
 
-    if (!attempt) {
-      throw new Error("Expected a saved whole-course attempt");
+    if (!attempt || !next) {
+      throw new Error("Expected a saved quick attempt");
     }
 
     const complete = () =>
@@ -262,22 +263,34 @@ test.describe("Learner model API", () => {
     const premature = await complete();
     expect(premature.status()).toBe(422);
 
+    await readBody({
+      response: await apiContext.post(`${path}/placement/answers`, {
+        data: {
+          answer: { selectedIndex: 0 },
+          attemptId: attempt.id,
+          durationMs: 1000,
+          itemId: next.itemId,
+        },
+      }),
+      schema: placementAnswerResponseSchema,
+    });
+
     const finished = await readBody({
       response: await apiContext.post(`${path}/placement/completion`, {
-        data: { attemptId: attempt.id, part: 1 },
+        data: { answered: 1, attemptId: attempt.id, part: 1 },
       }),
       schema: placementCompletionResponseSchema,
     });
 
     expect(finished).toMatchObject({
-      attempt: { id: attempt.id, partComplete: true },
-      changeId: null,
-      lessonsSkipped: 0,
+      attempt: { id: attempt.id, partComplete: false, resume: { part: 1, question: 2 } },
+      finish: { answered: 1, end: "stopped", lessonsSkipped: 0 },
+      result: { lessonsSkipped: 0 },
     });
 
     await readBody({ response: await complete(), schema: onboardingResponseSchema });
     const resumed = await readBody({ response: await begin(), schema: placementResponseSchema });
-    expect(resumed.attempt).toMatchObject({ id: attempt.id, part: 2 });
+    expect(resumed.attempt).toMatchObject({ answered: 1, id: attempt.id, part: 1, questions: 12 });
 
     await apiContext.dispose();
   });

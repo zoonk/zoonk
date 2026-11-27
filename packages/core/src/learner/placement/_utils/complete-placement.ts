@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
+import { type z } from "zod";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
 import { replanAfterPlacement } from "../../../plans/replan-after-placement";
@@ -9,6 +10,7 @@ import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
 import { readFocusTestRecord } from "../focus-test-state";
 import { type SittingOffer } from "../focus-test-view";
+import { type placementFinishSchema } from "../placement-contract";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
 import { type PlacementState } from "./load-placement-state";
@@ -23,6 +25,7 @@ export type PlacementCompletion = {
   /** False when the plan has no skills. */
   complete: boolean;
   /** An exam goal's test after this finish, with its result; null for other goals. */
+  finish?: z.infer<typeof placementFinishSchema>;
   focusTest: FocusTestView | null;
   heldUntilTomorrow?: true;
   knownSkillIds: string[];
@@ -82,9 +85,8 @@ export async function completePlacement({
   const now = new Date();
   const tested = goal.kind === "exam";
 
-  if (tested) {
-    trackSittingFinished({ closed: await closeTestSitting({ goal, sittingId, timeZone }), goal });
-  }
+  const closed = tested ? await closeTestSitting({ goal, sittingId, timeZone }) : null;
+  trackSittingFinished({ closed, goal });
 
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });
 
@@ -108,6 +110,15 @@ export async function completePlacement({
       areas: state.areas,
       changeId: applied.changeId,
       complete: state.complete,
+      ...(closed && {
+        finish: {
+          answered: closed.answered,
+          end: closed.end,
+          lessonsSkipped: applied.lessonsSkipped,
+          partsLeft: 0,
+          unknowns: closed.dontKnow,
+        },
+      }),
       focusTest: state.focusTest,
       knownSkillIds: state.knownSkillIds,
       lessonsSkipped: applied.lessonsSkipped,

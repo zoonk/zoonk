@@ -78,9 +78,10 @@ const offerShape = {
   minutes: countSchema.meta({
     description: "About how long its questions take at the learner's pace",
   }),
+  questions: countSchema,
 };
 
-const focusTestOfferSchema = z.object(offerShape).meta({ id: "FocusTestOffer" });
+export const focusTestOfferSchema = z.object(offerShape).meta({ id: "FocusTestOffer" });
 
 export type FocusTestOffer = z.infer<typeof focusTestOfferSchema>;
 
@@ -227,6 +228,8 @@ export const focusTestControlsInputSchema = z
 
 export type FocusTestControlsInput = z.infer<typeof focusTestControlsInputSchema>;
 
-export const todayFocusTestSchema = z.object(offerShape).meta({ id: "TodayFocusTest" });
+export const todayFocusTestSchema = z
+  .object({ minutes: offerShape.minutes })
+  .meta({ id: "TodayFocusTest" });
 
 export type TodayFocusTest = z.infer<typeof todayFocusTestSchema>;

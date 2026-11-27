@@ -6,6 +6,7 @@ import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
+  onboardingPlacementSchema,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
@@ -143,6 +144,7 @@ export const onboardingResponseSchema = z
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
       }),
+    placement: onboardingPlacementSchema.nullable(),
     planReadiness: planReadinessSchema.meta({
       description:
         "Whether the plan can answer the time question yet, as the time answers (`POST /goals/{goalId}/plan/time-to-cover` and `time-advice`) say it: the `schedule` screen opens on the plan's wait while `ready` is false (the notice reading's while `readingNotice` is true) and on the question once it's true, so it never switches screens before the plan's first answer. Those answers say when it changes",

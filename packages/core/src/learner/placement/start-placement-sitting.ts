@@ -35,7 +35,7 @@ export async function startPlacementSitting({
 
   const { goal, userId } = owned;
 
-  const length = input.length;
+  const length = input.length ?? (goal.kind === "learn" ? "quick" : undefined);
 
   if (goal.kind !== "exam" && length === undefined) {
     return { status: "unavailable" };
@@ -48,7 +48,7 @@ export async function startPlacementSitting({
   if (goal.kind !== "exam" && length !== undefined) {
     const opened = await openPlacementAttempt({ goalId, length, userId });
 
-    if (!opened) {
+    if (!opened && goal.kind !== "learn") {
       return { status: "unavailable" };
     }
 

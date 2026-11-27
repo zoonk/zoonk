@@ -7,6 +7,7 @@ import {
   readLevelTestDetails,
 } from "../../language/level-test/read-level-test-summary";
 import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
+import { readPlacementNextLesson } from "../../learner/placement/_utils/placement-result";
 import { levelTestOutReceipt, levelTestReceipt, placementPartReceipt } from "./test-out-receipt";
 
 function clearResult(result: LevelTestResult | undefined, receipt: string) {
@@ -48,19 +49,42 @@ function restoreLevelTest(details: Goal["details"], receipt: string) {
   };
 }
 
-function restorePlacement(details: unknown, receipt: string, lessonsSkipped: number) {
+async function restorePlacement({
+  details,
+  goalId,
+  lessonsSkipped,
+  receipt,
+  tx,
+}: {
+  details: unknown;
+  goalId: string;
+  lessonsSkipped: number;
+  receipt: string;
+  tx: TransactionClient;
+}) {
   const { attempt, finishedParts, result, ...rest } = readPlacementAttempt({ details });
   const attemptId = attempt?.id ?? result?.attemptId;
   const [receiptId] = receipt.split(":");
 
   const part =
     attemptId && attemptId === receiptId
-      ? finishedParts.find((finished) => placementPartReceipt(attemptId, finished.part) === receipt)
+      ? finishedParts.find(
+          (finished) =>
+            placementPartReceipt(
+              attemptId,
+              finished.part,
+              finished.finish?.end === "stopped" ? finished.finish.answered : undefined,
+            ) === receipt,
+        )
       : undefined;
 
   const updatedResult =
     result && result.attemptId === receiptId
-      ? { ...result, lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped) }
+      ? {
+          ...result,
+          lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped),
+          nextLesson: await readPlacementNextLesson(goalId, tx),
+        }
       : result;
 
   if (!part && updatedResult === result) {
@@ -104,7 +128,7 @@ export async function undoTestOutResult({
 
   const result = languageReceipt
     ? restoreLevelTest(details, receipt)
-    : restorePlacement(details, receipt, lessonsSkipped);
+    : await restorePlacement({ details, goalId, lessonsSkipped, receipt, tx });
 
   if (result) {
     await tx.goal.update({
