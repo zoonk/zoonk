@@ -1,6 +1,6 @@
 # Marketing pages
 
-The landing page, the catalog, public course, chapter and lesson pages, pricing, shared links and the blog are read by someone who doesn't use Zoonk yet, and by search engines. That person is deciding whether to try it, not operating it, so the [Words](../SKILL.md#words) budget doesn't apply. This does:
+The landing page, the catalog, public course, chapter and lesson pages, pricing, shared links and the blog are read by someone who doesn't use Zoonk yet, and by search engines. That person is deciding whether to try it, not operating it, so the [Words](words.md) budget doesn't apply. This does:
 
 - **One decision: "is this for me, and is it worth starting?"** In this order: what this is, in the visitor's words; what they get; why to believe it; what it costs them; how to start. A section that answers none of those goes.
 - **Enough, in order.** More text is fine when each section answers a question a visitor really has and the page can be scanned: a headline that carries the point alone, one line under it, then the detail for those who read on. One point per section.
@@ -15,4 +15,4 @@ Write and edit this copy with [copywriting](../../copywriting/SKILL.md) and [cop
 
 ## The first-glance test
 
-The [first-glance test](../SKILL.md#the-first-glance-test) changes its reader for a marketing page: the agent is someone who has never heard of Zoonk and arrived from a search or a link, it gets the whole page at phone size, and the questions are: what is this, is it for you, what would you do next, and what would make you leave?
+The [first-glance test](checks.md#the-first-glance-test) changes its reader for a marketing page: the agent is someone who has never heard of Zoonk and arrived from a search or a link, it gets the whole page at phone size, and the questions are: what is this, is it for you, what would you do next, and what would make you leave?

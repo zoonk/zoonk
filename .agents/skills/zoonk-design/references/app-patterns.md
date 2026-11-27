@@ -144,5 +144,5 @@ Every page is one of these, built from the kit in `packages/learn/src/_component
 
 ## Copy
 
-- English source strings; Brazilian Portuguese is the main market. No em dashes, no promises of a pass, score or job. An app screen is written to [Words](../SKILL.md#words) and a public page to [Marketing pages](marketing-pages.md). Both follow the [shared](../../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../../packages/i18n/.eloqnt/styleguide.en.md) style guides (the English one lists the learner's words and where each is taught) and the translations' glossaries.
+- English source strings; Brazilian Portuguese is the main market. No em dashes, no promises of a pass, score or job. An app screen is written to [Words](words.md) and a public page to [Marketing pages](marketing-pages.md). Both follow the [shared](../../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../../packages/i18n/.eloqnt/styleguide.en.md) style guides (the English one lists the learner's words and where each is taught) and the translations' glossaries.
 - "Plan", never "Journey", and "buddy", never "tutor", in everything learners see, aria labels included.
