@@ -15,7 +15,7 @@ import { TUTOR_ANSWER, stubTutorApi, tutorAnswerStream } from "../_test-utils/tu
 import { buildTutor } from "../_test-utils/tutor-config";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
-import { TutorConversation } from "../questions/tutor-conversation";
+import { TutorConversationHost, TutorConversationLog } from "../questions/tutor-conversation";
 import { type LessonQuestionThreadPage } from "../questions/use-lesson-question-sessions";
 
 const FIRST_POLL_MS = 1200;
@@ -58,6 +58,12 @@ const OFFERED_CALL: TutorToolOffer = {
   unitTitle: "Talking about your projects",
 };
 
+const GOAL_ID = "01a11014-0000-7000-8000-00000000000a";
+
+const CONVERSATION_ID = "01a11014-0000-7000-8000-0000000000c1";
+
+const ZU = { avatar: null, figure: null, name: "Zu" };
+
 function renderConversation({
   around = (conversation) => conversation,
   beside,
@@ -76,21 +82,27 @@ function renderConversation({
   openBlock?: (blockId: string) => Promise<boolean | "changed">;
 } = {}) {
   const conversation = (
-    <TutorConversation
+    <TutorConversationHost
       composerLabel="Message Zu"
+      conversation={{ blank: false, id: CONVERSATION_ID }}
       draft={draft}
-      goalId="01a11014-0000-7000-8000-00000000000a"
-      greeting="Hi! I'm Zu."
-      identity={{ avatar: null, figure: null, name: "Zu" }}
-      initialThread={initialThread}
+      goalId={GOAL_ID}
+      identity={ZU}
       onAnswered={onAnswered}
       onAsked={onAsked}
       placeholder="Message Zu"
-      renderPlanChange={({ change }) => <p data-status={change.status}>Card: {change.reason}</p>}
-      renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
       suggestions={[]}
       tutor={buildTutor(openBlock ? { appLinks: { openBlock } } : {})}
-    />
+    >
+      <TutorConversationLog
+        conversationId={CONVERSATION_ID}
+        greeting="Hi! I'm Zu."
+        identity={ZU}
+        renderPlanChange={({ change }) => <p data-status={change.status}>Card: {change.reason}</p>}
+        renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
+        thread={initialThread ?? null}
+      />
+    </TutorConversationHost>
   );
 
   render(around(conversation));

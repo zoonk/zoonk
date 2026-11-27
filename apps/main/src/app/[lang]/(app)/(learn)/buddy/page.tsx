@@ -1,149 +1,28 @@
-import { AuthGatePage } from "@/components/auth-gate";
-import { getReadAt } from "@/lib/learn/read-at";
-import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
-import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
-import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
-import { countCurrentUserMemory } from "@zoonk/core/memory/count";
-import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
-import { countGoalMistakes } from "@zoonk/core/mistakes/count-goal";
-import { getSession } from "@zoonk/core/users/session";
-import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
-import { PageWithAside } from "@zoonk/learn/shell";
-import { TutorComposerSkeleton } from "@zoonk/learn/tutor-composer";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { type Metadata } from "next";
-import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
-import { BuddyGoalStartClient } from "./buddy-goal-start-client";
-import { BuddyPageClient } from "./buddy-page-client";
+import { listBuddyConversations } from "@zoonk/core/lesson-questions/list-buddy-conversations";
+import { canAskBuddy, findBuddyGoal, readBuddyConversation } from "./buddy-goal";
+import { BuddyLog } from "./buddy-log";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getExtracted();
-  return { title: t("Your buddy") };
-}
+/** Today's conversation when the learner already asked something today, and a blank one otherwise. */
+async function readCurrentConversation() {
+  const [goal, canAsk] = await Promise.all([findBuddyGoal(), canAskBuddy()]);
 
-async function findTutoredGoal() {
-  const goalId = await getActiveGoalId();
-
-  if (!goalId) {
+  if (!goal || !canAsk) {
     return null;
   }
 
-  const owned = await getOwnedGoal(goalId);
+  const list = await listBuddyConversations({ goalId: goal.id });
 
-  if (owned.status !== "ready") {
+  if (list.status !== "ready" || !list.currentId) {
     return null;
   }
 
-  const { goal } = owned;
-  return goal.status !== "archived" && goal.kind !== "explain" ? goal : null;
-}
+  const thread = await readBuddyConversation({ conversationId: list.currentId, goalId: goal.id });
 
-const NO_MESSAGES = { hasMore: false, nextCursor: null, questions: [] };
-
-async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string }) {
-  if (!canAsk) {
-    return null;
-  }
-
-  const result = await getLessonQuestionThread({
-    target: { conversationId: null, goalId, kind: "plan" },
-  });
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  return result.thread ?? NO_MESSAGES;
-}
-
-async function hasGoalMistake(goalId: string): Promise<boolean> {
-  const result = await countGoalMistakes({ goalId });
-  return result.status === "ready" && result.open + result.fixed > 0;
-}
-
-async function BuddyContent() {
-  const [readAt, result, goal, session, memoryCount] = await Promise.all([
-    getReadAt(),
-    getBuddyStatus({}),
-    findTutoredGoal(),
-    getSession(),
-    countCurrentUserMemory(),
-  ]);
-
-  if (result.status !== "ready" || !session) {
-    const t = await getExtracted();
-
-    return (
-      <AuthGatePage
-        description={t("Your buddy answers your questions and adjusts your plan.")}
-        next="/buddy"
-        title={t("Your buddy")}
-      />
-    );
-  }
-
-  if (!goal) {
-    return <BuddyGoalStartClient status={result.buddy} />;
-  }
-
-  const canAsk = !session.user.isAnonymous;
-
-  const [hasMistake, thread] = await Promise.all([
-    hasGoalMistake(goal.id),
-    loadThread({ canAsk, goalId: goal.id }),
-  ]);
-
-  return (
-    <BuddyPageClient
-      canAsk={canAsk}
-      goalId={goal.id}
-      initialThread={thread}
-      memoryCount={memoryCount ?? 0}
-      readAt={readAt}
-      situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
-      status={result.buddy}
-      viewerId={session.user.id}
-    />
-  );
-}
-
-function BuddySkeleton({ dayLabel }: { dayLabel: string }) {
-  return (
-    <PageWithAside
-      aside={<BuddyDaySkeleton />}
-      asideClassName="hidden"
-      asideLabel={dayLabel}
-      className="flex-1"
-    >
-      <div className={BUDDY_COLUMN_CLASS}>
-        <div className="flex items-center gap-2.5">
-          <Skeleton className="size-8 rounded-full" />
-          <div className="flex flex-1 flex-col gap-1.5">
-            <Skeleton className="h-3.5 w-20" />
-            <Skeleton className="h-3 w-32" />
-          </div>
-          <Skeleton className="h-7 w-24 rounded-md min-[72rem]:hidden" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-4/5" />
-        </div>
-        <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
-          <Skeleton className="h-6.5 w-4/5 rounded-md" />
-          <TutorComposerSkeleton />
-        </div>
-      </div>
-    </PageWithAside>
-  );
+  return { id: list.currentId, thread };
 }
 
 export default async function BuddyPage() {
-  const t = await getExtracted();
+  const current = await readCurrentConversation();
 
-  return (
-    <Suspense fallback={<BuddySkeleton dayLabel={t("Your day")} />}>
-      <BuddyContent />
-    </Suspense>
-  );
+  return current ? <BuddyLog conversationId={current.id} thread={current.thread} /> : <BuddyLog />;
 }

@@ -9,6 +9,10 @@ export function getLessonQuestionScope(context: LessonQuestionContext) {
     return `item:${context.itemId}`;
   }
 
+  if (context.kind === "plan") {
+    return `conversation:${context.conversationId}`;
+  }
+
   return context.kind === "step" || context.kind === "answer" ? context.step.id : context.kind;
 }
 

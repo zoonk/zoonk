@@ -13,7 +13,14 @@ import {
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, PencilIcon, SmileIcon } from "lucide-react";
+import {
+  BrainCircuitIcon,
+  CalendarDaysIcon,
+  EllipsisIcon,
+  GlassesIcon,
+  PencilIcon,
+  SmileIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   createContext,
@@ -37,15 +44,19 @@ import { type TutorToolActions } from "../conversation/tutor-tool-offer";
 import { LearnLink } from "../learn-link";
 import { type MissionLinks } from "../missions/mission-links";
 import { PageWithAside } from "../shell/learn-shell";
-import { BuddyDay, type BuddyDayHrefs } from "./buddy-day";
+import {
+  type BuddyConversationList,
+  BuddyConversations,
+  BuddyConversationsSheet,
+} from "./buddy-conversations";
 import { BuddyGlassesSheet } from "./buddy-glasses-sheet";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 import { BuddyToday } from "./buddy-today";
 import { type LearnBuddy } from "./use-buddy-name";
 
-export { type BuddyDayHrefs, BuddyDaySkeleton } from "./buddy-day";
-export { BUDDY_COLUMN_CLASS } from "./buddy-header";
+export { type BuddyConversation, type BuddyConversationList } from "./buddy-conversations";
+export { BuddyScreenSkeleton } from "./buddy-screen-skeleton";
 export { BuddyGoalStart } from "./buddy-goal-start";
 export type { MissionLinks } from "../missions/mission-links";
 export type { BuddyStatusView } from "./buddy-status-view";
@@ -65,6 +76,8 @@ export function useBuddyTutor(): TutorConversationContent {
 
   return content;
 }
+
+export type BuddyHrefs = { energy: string; logbook: string; memory: string };
 
 type BuddyScreenActions = {
   decidePlanChange: DecideTutorPlanChange;
@@ -126,7 +139,7 @@ function BuddyMenu({
 }: {
   buddy: ResolvedBuddy;
   glassesCount: string;
-  hrefs: BuddyDayHrefs;
+  hrefs: BuddyHrefs;
   name: string;
   onEdit: () => void;
   onGlasses: () => void;
@@ -157,6 +170,11 @@ function BuddyMenu({
             })}
           </span>
           <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem render={<LearnLink href={hrefs.memory} />}>
+          <BrainCircuitIcon aria-hidden="true" />
+          {t("What {buddy} remembers", { buddy: name })}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -205,15 +223,16 @@ function useGlassesCount(status: BuddyStatusView): string {
 export function BuddyScreen({
   actions,
   children,
+  conversations,
   hrefs,
-  memoryCount,
   situation,
   status,
 }: {
   actions: BuddyScreenActions;
   children: React.ReactNode;
-  hrefs: BuddyDayHrefs;
-  memoryCount?: number;
+  /** Null for a guest, who can't ask and so has none. */
+  conversations: BuddyConversationList | null;
+  hrefs: BuddyHrefs;
   situation: TutorSituation;
   status: BuddyStatusView;
 }) {
@@ -256,19 +275,9 @@ export function BuddyScreen({
 
   return (
     <PageWithAside
-      aside={
-        <BuddyDay
-          buddy={buddy}
-          hrefs={hrefs}
-          memoryCount={memoryCount}
-          missionLinks={missionLinks}
-          name={name}
-          onGlasses={() => setWearing(true)}
-          status={status}
-        />
-      }
+      aside={conversations && <BuddyConversations list={conversations} />}
       asideClassName="hidden"
-      asideLabel={t("{buddy} today", { buddy: name })}
+      asideLabel={t("Conversations")}
       className="flex-1"
     >
       <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-screen" ref={columnRef}>
@@ -276,20 +285,24 @@ export function BuddyScreen({
           buddy={buddy}
           faceRef={chatFace.face}
           menu={
-            <BuddyMenu
-              buddy={current}
-              glassesCount={glassesCount}
-              hrefs={hrefs}
-              name={name}
-              onEdit={() => setEditing(true)}
-              onGlasses={() => setWearing(true)}
-            />
+            <div className="flex items-center gap-2">
+              {conversations && (
+                <BuddyConversationsSheet className="min-[72rem]:hidden" list={conversations} />
+              )}
+              <BuddyMenu
+                buddy={current}
+                glassesCount={glassesCount}
+                hrefs={hrefs}
+                name={name}
+                onEdit={() => setEditing(true)}
+                onGlasses={() => setWearing(true)}
+              />
+            </div>
           }
           name={name}
         >
           <BuddyToday
             buddy={buddy}
-            className="min-[72rem]:hidden"
             energyHref={hrefs.energy}
             missionLinks={missionLinks}
             name={name}

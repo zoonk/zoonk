@@ -2,6 +2,7 @@
 
 import {
   type CreateLessonQuestionInput,
+  type LessonQuestionResource,
   type LessonScreenSuggestion,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
@@ -60,6 +61,7 @@ export function useSendLessonQuestion({
   target,
   lessonStepIds,
   onMissionMoment,
+  onQuestionSaved,
   reconcileThread,
   state,
   streamAnswer,
@@ -71,6 +73,10 @@ export function useSendLessonQuestion({
   target: TutorTarget;
   lessonStepIds: readonly string[];
   onMissionMoment?: (moment: MissionMomentView | null) => void;
+  onQuestionSaved?: (saved: {
+    context: LessonQuestionContext;
+    question: LessonQuestionResource;
+  }) => void;
   reconcileThread: (context: LessonQuestionContext) => Promise<boolean>;
   state: LessonQuestionState;
   streamAnswer: (input: { context: LessonQuestionContext; questionId: string }) => Promise<void>;
@@ -153,6 +159,7 @@ export function useSendLessonQuestion({
 
       dispatch({ question: result.data, type: "questionCreated" });
 
+      onQuestionSaved?.({ context, question: result.data });
       onMissionMoment?.(result.data.missionMoment);
 
       if (shouldGenerateAnswer(result.data.status)) {
@@ -167,6 +174,7 @@ export function useSendLessonQuestion({
       target,
       lessonStepIds,
       onMissionMoment,
+      onQuestionSaved,
       pendingRequests,
       reconcileThread,
       streamAnswer,

@@ -7,30 +7,38 @@ import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { useMissionLinks } from "@/lib/session/use-mission-links";
-import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
-  type BuddyDayHrefs,
+  type BuddyConversations,
+  type LessonQuestionResource,
+} from "@zoonk/core/lesson-questions/contract";
+import {
+  type BuddyHrefs,
   BuddyScreen,
   type BuddyStatusView,
   type TutorSituation,
   useBuddyTutor,
 } from "@zoonk/learn/buddy";
-import { TutorConversation } from "@zoonk/player/tutor/conversation";
+import { TutorConversationHost } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
+import { useBuddyConversations } from "./use-buddy-conversations";
 
-const HREFS: BuddyDayHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
+const HREFS: BuddyHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
 
-type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
+type OpenConversation = { blank: boolean; id: string };
 
 /** A question from search (`?ask=`) waits in the composer: only the learner's own send asks it. */
 function BuddyConversation({
   canAsk,
+  children,
+  conversation,
   goalId,
-  initialThread,
+  onQuestionSaved,
 }: {
   canAsk: boolean;
+  children: React.ReactNode;
+  conversation: OpenConversation;
   goalId: string;
-  initialThread: ThreadPage | null;
+  onQuestionSaved: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
 }) {
   const content = useBuddyTutor();
   const router = useRouter();
@@ -41,31 +49,40 @@ function BuddyConversation({
   const question = useSearchParams().get("ask") ?? undefined;
 
   return (
-    <TutorConversation
+    <TutorConversationHost
+      composerLabel={content.composerLabel}
+      conversation={conversation}
       draft={question}
       goalId={goalId}
-      initialThread={initialThread}
+      identity={content.identity}
+      onAnswered={content.onAnswered}
+      onAsked={content.onAsked}
       onMissionMoment={() => router.refresh()}
+      onQuestionSaved={onQuestionSaved}
+      placeholder={content.placeholder}
+      suggestions={content.suggestions}
       tutor={tutor}
-      {...content}
-    />
+    >
+      {children}
+    </TutorConversationHost>
   );
 }
 
-export function BuddyPageClient({
+export function BuddyClient({
   canAsk,
+  children,
+  conversations,
   goalId,
-  initialThread,
-  memoryCount,
   readAt,
   situation,
   status,
   viewerId,
 }: {
   canAsk: boolean;
+  children: React.ReactNode;
+  /** Null for a guest, who can't ask and so has none. */
+  conversations: BuddyConversations | null;
   goalId: string;
-  initialThread: ThreadPage | null;
-  memoryCount: number;
   readAt: number;
   situation: TutorSituation;
   status: BuddyStatusView;
@@ -74,6 +91,12 @@ export function BuddyPageClient({
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId, { learner: viewerId });
+
+  const { list, open, questionSaved } = useBuddyConversations({
+    goalId,
+    read: conversations,
+    readAt,
+  });
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },
@@ -98,12 +121,19 @@ export function BuddyPageClient({
         },
         tools,
       }}
+      conversations={list}
       hrefs={HREFS}
-      memoryCount={memoryCount}
       situation={situation}
       status={status}
     >
-      <BuddyConversation canAsk={canAsk} goalId={goalId} initialThread={initialThread} />
+      <BuddyConversation
+        canAsk={canAsk}
+        conversation={open}
+        goalId={goalId}
+        onQuestionSaved={questionSaved}
+      >
+        {children}
+      </BuddyConversation>
     </BuddyScreen>
   );
 }

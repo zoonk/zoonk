@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type LessonQuestionResource,
   type LessonScreenSuggestion,
   type LessonTutorSuggestion,
   type TutorTarget,
@@ -26,9 +27,13 @@ import { useSendLessonQuestion } from "./use-send-lesson-question";
 export type LessonQuestionHost = {
   activeContext: LessonQuestionContext;
   canAskQuestions: boolean;
-  initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
   onMissionMoment?: (moment: MissionMomentView | null) => void;
+  /** The server saved a question the learner sent in `context`. */
+  onQuestionSaved?: (saved: {
+    context: LessonQuestionContext;
+    question: LessonQuestionResource;
+  }) => void;
   page?: boolean;
   preload?: boolean;
   suggestions?: readonly LessonTutorSuggestion[];
@@ -61,6 +66,8 @@ export type LessonQuestionController = {
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
   sendSuggestion: (suggestion: OfferedSuggestion) => Promise<void>;
+  /** Shows a thread the page already read, in place of loading it. */
+  showThread: (thread: LessonQuestionThreadPage) => void;
   state: LessonQuestionState;
   suggestions: readonly LessonTutorSuggestion[];
   unresolvedQuestion: string | null;
@@ -70,9 +77,9 @@ export function useLessonQuestions({
   activeContext,
   canAskQuestions,
   connection,
-  initialThread = null,
   lessonStepIds,
   onMissionMoment,
+  onQuestionSaved,
   page = false,
   preload = true,
   suggestions = NO_SUGGESTIONS,
@@ -80,7 +87,6 @@ export function useLessonQuestions({
 }: UseLessonQuestionsInput): LessonQuestionController {
   const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions({
     activeContext,
-    initialThread,
   });
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({
@@ -151,6 +157,11 @@ export function useLessonQuestions({
     [dispatch],
   );
 
+  const showThread = useCallback(
+    (thread: LessonQuestionThreadPage) => dispatch({ ...thread, type: "threadLoaded" }),
+    [dispatch],
+  );
+
   const { checkAnswer, retryAnswer, streamAnswer } = useLessonQuestionAnswers({
     canAskQuestions,
     connection,
@@ -172,6 +183,7 @@ export function useLessonQuestions({
     getState,
     lessonStepIds,
     onMissionMoment,
+    onQuestionSaved,
     reconcileThread: reconcileLatestThread,
     state,
     streamAnswer,
@@ -200,6 +212,7 @@ export function useLessonQuestions({
     retryAnswer,
     send,
     sendSuggestion,
+    showThread,
     state,
     suggestions,
     unresolvedQuestion,

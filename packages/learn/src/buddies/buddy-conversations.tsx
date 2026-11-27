@@ -1,0 +1,184 @@
+"use client";
+
+import { Button } from "@zoonk/ui/components/button";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
+import { addIsoDays } from "@zoonk/utils/calendar-day";
+import { MessagesSquareIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useId, useState } from "react";
+import {
+  ListGroup,
+  ListRowContent,
+  ListRowDescription,
+  ListRowLink,
+  ListRowTitle,
+} from "../_components/list-group";
+import {
+  PAGE_SECTION_TITLE_CLASS,
+  PageSection,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "../_components/page";
+import { SheetHeader } from "../_components/sheet-header";
+import { useFormatMomentDate, useFormatMomentTime, useMomentDays } from "../_utils/iso-date";
+
+export type BuddyConversation = { id: string; lastAskedAt: string; title: string };
+
+export type BuddyConversationList = {
+  conversationHref: (id: string) => string;
+  conversations: readonly BuddyConversation[];
+  /** Null once every conversation is listed. */
+  more: { busy: boolean; failed: boolean; show: () => void } | null;
+  newHref: string;
+  /** Null while the open conversation has no question yet. */
+  openId: string | null;
+};
+
+/** Today's rows say when, earlier ones which day. A day said in words keeps the text face. */
+function LastAsked({ moment }: { moment: string }) {
+  const t = useExtracted();
+  const formatDate = useFormatMomentDate();
+  const formatTime = useFormatMomentTime();
+  const { dayOf, today } = useMomentDays();
+  const day = dayOf(moment);
+
+  if (day === addIsoDays({ day: today, days: -1 })) {
+    return <ListRowDescription>{t("Yesterday")}</ListRowDescription>;
+  }
+
+  return (
+    <ListRowDescription className="font-mono tabular-nums">
+      {day === today ? formatTime(moment) : formatDate(moment)}
+    </ListRowDescription>
+  );
+}
+
+function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpen?: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <>
+      <ListGroup>
+        <ListRowLink current={list.openId === null} href={list.newHref} onClick={onOpen}>
+          <ListRowContent>
+            <ListRowTitle>{t("New conversation")}</ListRowTitle>
+          </ListRowContent>
+        </ListRowLink>
+
+        {list.conversations.map((conversation) => (
+          <ListRowLink
+            current={conversation.id === list.openId}
+            href={list.conversationHref(conversation.id)}
+            key={conversation.id}
+            onClick={onOpen}
+            prefetch="intent"
+          >
+            <ListRowContent>
+              <ListRowTitle className="truncate text-nowrap">{conversation.title}</ListRowTitle>
+              <LastAsked moment={conversation.lastAskedAt} />
+            </ListRowContent>
+          </ListRowLink>
+        ))}
+      </ListGroup>
+
+      {list.more && (
+        <div className="flex flex-col items-start gap-2">
+          {list.more.failed && (
+            <p className="text-muted-foreground text-sm" role="alert">
+              {t("Couldn't load more conversations. Try again.")}
+            </p>
+          )}
+          <Button busy={list.more.busy} onClick={list.more.show} size="sm" variant="outline">
+            {t("Show more")}
+          </Button>
+        </div>
+      )}
+    </>
+  );
+}
+
+/** The aside's block from 72rem. */
+export function BuddyConversations({ list }: { list: BuddyConversationList }) {
+  const t = useExtracted();
+  const titleId = useId();
+
+  return (
+    <PageSection aria-labelledby={titleId} data-slot="buddy-conversations">
+      <PageSectionHeader>
+        <PageSectionTitle id={titleId}>{t("Conversations")}</PageSectionTitle>
+      </PageSectionHeader>
+      <ConversationRows list={list} />
+    </PageSection>
+  );
+}
+
+/**
+ * The same list under 72rem, behind one button in the title row. The button keeps its room before
+ * the goal has a conversation, so the first one's arrival moves nothing in the row.
+ */
+export function BuddyConversationsSheet({
+  className,
+  list,
+}: {
+  className?: string;
+  list: BuddyConversationList;
+}) {
+  const t = useExtracted();
+  const [open, setOpen] = useState(false);
+
+  if (list.conversations.length === 0) {
+    return <span aria-hidden="true" className={cn("size-7.5 shrink-0", className)} />;
+  }
+
+  return (
+    <>
+      <Button
+        aria-haspopup="dialog"
+        className={className}
+        onClick={() => setOpen(true)}
+        size="icon-sm"
+        variant="ghost"
+      >
+        <MessagesSquareIcon aria-hidden="true" />
+        <span className="sr-only">{t("Conversations")}</span>
+      </Button>
+
+      <Drawer onOpenChange={setOpen} open={open}>
+        <DrawerPopup>
+          <SheetHeader>
+            <DrawerTitle>{t("Conversations")}</DrawerTitle>
+          </SheetHeader>
+
+          <DrawerContent className="flex flex-col gap-3 pt-2">
+            <ConversationRows list={list} onOpen={() => setOpen(false)} />
+          </DrawerContent>
+        </DrawerPopup>
+      </Drawer>
+    </>
+  );
+}
+
+export function BuddyConversationsSkeleton() {
+  const t = useExtracted();
+
+  return (
+    <PageSection>
+      <PageSectionHeader>
+        <span className={PAGE_SECTION_TITLE_CLASS}>{t("Conversations")}</span>
+      </PageSectionHeader>
+      <div className="flex flex-col">
+        {["w-3/5", "w-4/5", "w-2/3"].map((width) => (
+          <div
+            className="min-h-control flex flex-col justify-center gap-1.5 py-(--row-pad)"
+            key={width}
+          >
+            <Skeleton className={`h-3.5 ${width}`} />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        ))}
+      </div>
+    </PageSection>
+  );
+}

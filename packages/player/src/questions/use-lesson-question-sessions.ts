@@ -16,39 +16,14 @@ export type LessonQuestionThreadPage = Pick<
   "hasMore" | "nextCursor" | "questions"
 >;
 
-function getInitialSessions({
-  activeContext,
-  initialThread,
-}: {
-  activeContext: LessonQuestionContext;
-  initialThread: LessonQuestionThreadPage | null;
-}) {
-  if (!initialThread) {
-    return INITIAL_LESSON_QUESTION_SESSIONS;
-  }
-
-  return lessonQuestionSessionsReducer(INITIAL_LESSON_QUESTION_SESSIONS, {
-    action: {
-      hasMore: initialThread.hasMore,
-      nextCursor: initialThread.nextCursor,
-      questions: initialThread.questions,
-      type: "threadLoaded",
-    },
-    context: activeContext,
-  });
-}
-
 export function useLessonQuestionSessions({
   activeContext,
-  initialThread,
 }: {
   activeContext: LessonQuestionContext;
-  initialThread: LessonQuestionThreadPage | null;
 }) {
   const [sessions, dispatchToContext] = useReducer(
     lessonQuestionSessionsReducer,
-    { activeContext, initialThread },
-    getInitialSessions,
+    INITIAL_LESSON_QUESTION_SESSIONS,
   );
 
   const currentSessions = useRef(sessions);

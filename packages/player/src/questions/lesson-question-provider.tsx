@@ -35,6 +35,17 @@ export function LessonQuestionHostProvider({
   );
 }
 
+/** Draws `children` from `controller` in place of the host's own. */
+export function LessonQuestionControllerProvider({
+  children,
+  controller,
+}: {
+  children: ReactNode;
+  controller: LessonQuestionController;
+}) {
+  return <LessonQuestionContext value={controller}>{children}</LessonQuestionContext>;
+}
+
 export function useLessonQuestionController(): LessonQuestionController {
   const controller = useContext(LessonQuestionContext);
 
