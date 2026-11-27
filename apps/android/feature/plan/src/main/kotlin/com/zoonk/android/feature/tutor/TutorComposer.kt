@@ -57,17 +57,6 @@ internal fun TutorComposer(
     val lifted = limitLifted(limit)
     if (lifted) LaunchedEffect(limit) { vm.limitLifted() }
 
-    if (limit != null && !lifted) {
-        LimitNotice(
-            limit = limit,
-            subject = LimitSubject.Messages,
-            onCreateAccount = routes.createAccount,
-            onSubscribe = routes.subscribe,
-            modifier = modifier.fillMaxWidth(),
-        )
-        return
-    }
-
     val failure = state.askFailure
     // Main keeps the composer shut until the learner signs in again, sees Plus, or leaves a gone lesson.
     val blocked = failure == TutorFailure.SignedOut || failure == TutorFailure.PlusRequired || failure == TutorFailure.Gone
@@ -78,6 +67,17 @@ internal fun TutorComposer(
     val sendByKey = { if (canAsk && (vm.draft.text.isNotBlank() || resending)) vm.send() }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Above the question the learner wrote, which waits there until the limit lifts.
+        if (limit != null && !lifted) {
+            LimitNotice(
+                limit = limit,
+                subject = LimitSubject.Messages,
+                onCreateAccount = routes.createAccount,
+                onSubscribe = routes.subscribe,
+                modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+            )
+        }
+
         OutlinedTextField(
             state = vm.draft,
             modifier =
@@ -108,7 +108,7 @@ internal fun TutorComposer(
             onKeyboardAction = { sendByKey() },
         )
 
-        if (failure != null) {
+        if (failure != null && failure !is TutorFailure.Refused) {
             Text(
                 text =
                     if (failure == TutorFailure.Failed &&
