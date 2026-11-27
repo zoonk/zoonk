@@ -191,23 +191,53 @@ describe("navigation static route and artifact derivation", () => {
   });
 
   it.each([
-    { artifact: "metadata body", source: "/[lang]/opengraph-image" },
-    { artifact: "HTML", source: "/[lang]" },
-  ])("$source must be prerendered in every locale", async ({ artifact, source }) => {
+    {
+      artifact: "metadata body",
+      dropped: ["/en/opengraph-image", "/pt/opengraph-image"],
+      source: "/[lang]/opengraph-image",
+    },
+    { artifact: "HTML", dropped: ["/en", "/pt"], source: "/[lang]" },
+    {
+      artifact: "metadata body",
+      dropped: ["/sitemaps/library-chapters/sitemap/7.xml"],
+      source: "/sitemaps/library-chapters/sitemap/[__metadata_id__]",
+    },
+  ])("$source must prerender every path it generates", async ({ artifact, dropped, source }) => {
     const data = await fixture();
 
     try {
-      const dropped = new Set(["en", "pt"].map((locale) => source.replace("[lang]", locale)));
-
       data.manifest.routes = Object.fromEntries(
-        Object.entries(data.manifest.routes).filter(([path]) => !dropped.has(path)),
+        Object.entries(data.manifest.routes).filter(([path]) => !dropped.includes(path)),
       );
 
       await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
 
       await assert.rejects(check(data), {
         code: 1,
-        stderr: `${source}: not prerendered: ${source.replace("[lang]", "en")}, ${source.replace("[lang]", "pt")} (${artifact})\n`,
+        stderr: `${source}: not prerendered: ${dropped.join(", ")} (${artifact})\n`,
+      });
+    } finally {
+      await rm(data.root, { recursive: true });
+    }
+  });
+
+  it("names every missing locale when a route lost all of them", async () => {
+    const data = await fixture();
+    const source = "/[lang]/opengraph-image";
+
+    try {
+      data.manifest.routes = Object.fromEntries(
+        Object.entries(data.manifest.routes).filter(
+          ([, entry]) => !("srcRoute" in entry) || entry.srcRoute !== source,
+        ),
+      );
+
+      await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
+      const paths = SUPPORTED_LOCALES.map((locale) => `/${locale}/opengraph-image`).join(", ");
+
+      await assert.rejects(check(data), {
+        code: 1,
+        stderr: `${source}: no static metadata artifact (metadata body)\n${source}: not prerendered: ${paths} (metadata body)\n`,
       });
     } finally {
       await rm(data.root, { recursive: true });

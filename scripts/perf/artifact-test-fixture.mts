@@ -4,6 +4,10 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import UNLISTED_ROUTE from "../../apps/main/src/data/catalog/catalog-placeholder.json" with { type: "json" };
+import {
+  type SitemapResource,
+  getSitemapPageIds,
+} from "../../apps/main/src/data/sitemaps/sitemap-page-ids.ts";
 import { SUPPORTED_LOCALES } from "../../packages/utils/src/locale.ts";
 
 const run = promisify(execFile);
@@ -30,19 +34,22 @@ export async function fixture() {
     ]),
   ]);
 
-  const metadata = [
-    "/robots.txt",
-    "/sitemap.xml",
-    "/sitemaps/courses/sitemap/[__metadata_id__]",
-    "/sitemaps/library-chapters/sitemap/[__metadata_id__]",
-    "/sitemaps/library-lessons/sitemap/[__metadata_id__]",
-    "/[lang]/opengraph-image",
+  const sitemaps: SitemapResource[] = ["courses", "library-chapters", "library-lessons"];
+
+  const metadata: [source: string, paths: string[]][] = [
+    ["/robots.txt", ["/robots.txt"]],
+    ["/sitemap.xml", ["/sitemap.xml"]],
+    ...sitemaps.map((resource): [string, string[]] => [
+      `/sitemaps/${resource}/sitemap/[__metadata_id__]`,
+      getSitemapPageIds(resource).map((id) => `/sitemaps/${resource}/sitemap/${id}.xml`),
+    ]),
+    ["/[lang]/opengraph-image", SUPPORTED_LOCALES.map((locale) => `/${locale}/opengraph-image`)],
   ];
 
   const routes = Object.fromEntries(
-    metadata.flatMap((source) =>
-      SUPPORTED_LOCALES.map((locale) => [
-        source.replace("[lang]", locale).replace("[__metadata_id__]", "0.xml"),
+    metadata.flatMap(([source, paths]) =>
+      paths.map((path) => [
+        path,
         {
           compute: "static",
           renderingMode: "STATIC",
