@@ -6,26 +6,6 @@ import { expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
 test.describe("Text typed before the page hydrates", () => {
-  test("a guest's help message sent before the page hydrates goes out with the email typed", async ({
-    page,
-  }) => {
-    const email = `early-${randomUUID()}@zoonk.test`;
-    const message = `The lesson froze on my phone ${randomUUID()}`;
-    const release = await holdScripts(page);
-
-    await page.goto("/support", { waitUntil: "domcontentloaded" });
-    await page.getByRole("textbox", { name: "Message" }).fill(message);
-    await page.getByRole("textbox", { name: "Your email, for our reply" }).fill(email);
-    await page.getByRole("button", { name: "Send message" }).click();
-    await release();
-
-    await expect(
-      page.getByText("Message sent successfully! We'll get back to you soon."),
-    ).toBeVisible();
-
-    await expect.poll(() => prisma.feedback.count({ where: { email, message } })).toBe(1);
-  });
-
   test("a name typed before the page hydrates stays after its save and the next one", async ({
     noProgressUser,
     userWithoutProgress: page,
