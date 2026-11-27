@@ -4,12 +4,12 @@
   "session_belt_step": "b7622ed4301f16d58327f9cf5d3e5263adc103a2aece94ccff62320a8c64922b",
   "session_block_call": "4edb29a68b2ef9977480d273bc6b0c2bfd59bac670afa9b1754698e0b2aea0c5",
   "session_block_full_review_questions": "92ffd8c66a06c635e4e0e9e6261c99d000dd3ccfac2b8028d7b100bec6bf830b",
-  "session_block_mixed_practice": "fd994e90957f22c66da46ecf9839017704aeddd2624fbb59bee4592c8394aa24",
   "session_block_mock_exam": "a7305e4b85a2194479b2ccc0d0da13fb8dad0e7bb2249a9d40b525cbc4921796",
   "session_block_new_lesson": "b14746ab8e54f38aacf56a70c0e0a7c72842c1757d04a6b16201e7d3eed76a1d",
-  "session_block_practice_areas": "86791144af067b0ce40c7b92125e7ba5e62b07aafef064f59ebec6dbf515b95c",
+  "session_block_practice": "7422a24693fc166f156dd0d31f8561524361a960accabe89dc6a07b2adaabb95",
   "session_block_practice_mistakes": "e31585899753b211464d78f06ea5180ed3aff00eaf9c3567e99b0898f117454a",
-  "session_block_practice_topic": "cf0e44d65362d1db97a12fa6813ceb14bd1fb6d1fef9d5cbff5bbc63a2ac55b2",
+  "session_block_practice_number": "c9431819a1bacce22afaee934d941734ad364b2e93c79a8e1527d8fa6fe799c3",
+  "session_block_practice_subject": "e8a447af0d8f982a5fbf713c86ecc8fffec02bed8dfd05cfb4f80c06297a3bb5",
   "session_block_questions": "fdf53fb6be8173b4342f526c391e97ea33bd0b17837dc703948736562fcaa6f4",
   "session_block_rematch": "c93fe08384f4c2c71eb5ae54e3f14abd76d8f6c90b6d7e94c2b98650b7a03fc4",
   "session_block_rematch_lesson": "efc4952f5215fd31d91a92b57ee37edef7c989d400c8d77651e757e69cfecc22",
@@ -99,11 +99,12 @@
     <string name="session_block_new_lesson">Nueva lección</string>
     <string name="session_block_writing_draft_saved">Tu borrador está guardado</string>
     <string name="session_block_practice_mistakes">Practicar errores</string>
-    <string name="session_block_mixed_practice">Práctica variada</string>
-    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_practice_areas">Práctica: %1$s</string>
-    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_practice_topic">Práctica: %1$s</string>
+    <!-- A block of the day's practice questions, when it's the day's only one -->
+    <string name="session_block_practice">Práctica</string>
+    <!-- One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2". -->
+    <string name="session_block_practice_number">Práctica %1$d</string>
+    <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
+    <string name="session_block_practice_subject">Práctica: %1$s</string>
     <string name="session_block_rematch_lesson">Lección breve antes de volver a intentarlo</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d pregunta</item>

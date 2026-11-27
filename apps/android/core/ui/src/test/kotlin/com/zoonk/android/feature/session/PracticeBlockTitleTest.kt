@@ -19,42 +19,25 @@ class PracticeBlockTitleTest {
     private val practice =
         decodeFixture<StudyBlock>("study-block").copy(
             kind = StudyBlock.Kind.PRACTICE,
-            areas = listOf("Math", "Languages"),
+            topics = listOf("Calculating discounts", "Reading graphs"),
         )
 
     @Test
-    fun extraPracticeKeepsItsTitleAndUsesTheFirstTopic() {
-        val blocks =
-            listOf(false, true).flatMap { extra ->
-                listOf("Calculating discounts", "Comparing fractions").map { lead ->
-                    practice.copy(extra = extra, topics = listOf(lead, "Reading graphs"))
-                }
-            }
+    fun aPracticeIsNeverNamedAfterOneOfItsTopics() {
+        assertTitles(listOf(practice, practice.copy(extra = true)), listOf("Practice", "Practice"))
+    }
 
+    @Test
+    fun aDayWithSeveralPracticesNumbersThem() {
         assertTitles(
-            blocks,
-            listOf(
-                "Practice: Calculating discounts",
-                "Practice: Comparing fractions",
-                "Practice: Calculating discounts",
-                "Practice: Comparing fractions",
-            ),
+            listOf(practice.copy(practiceNumber = 1), practice.copy(practiceNumber = 2, extra = true)),
+            listOf("Practice 1", "Practice 2"),
         )
     }
 
     @Test
-    fun extraPracticeWithoutTopicsKeepsItsTitleAndUsesTheAreas() {
-        assertTitles(
-            listOf(practice, practice.copy(extra = true)),
-            listOf("Practice: Math and Languages", "Practice: Math and Languages"),
-        )
-    }
-
-    @Test
-    fun extraPracticeWithoutTopicsOrAreasIsMixedPractice() {
-        val mixed = practice.copy(areas = emptyList(), topics = emptyList())
-
-        assertTitles(listOf(mixed, mixed.copy(extra = true)), listOf("Mixed practice", "Mixed practice"))
+    fun aSubjectsPracticeIsNamedAfterTheSubject() {
+        assertTitles(listOf(practice.copy(title = "Percentages", extra = true)), listOf("Practice: Percentages"))
     }
 
     private fun assertTitles(

@@ -103,16 +103,17 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_practice_mistakes)
         }
 
-        step.topics.isNotEmpty() -> {
-            stringResource(R.string.session_block_practice_topic, step.topics.first())
+        // A subject's practice asks only about it; any other practice mixes topics, so none names it.
+        step.kind == StudyBlock.Kind.PRACTICE && step.title != null -> {
+            stringResource(R.string.session_block_practice_subject, step.title)
         }
 
-        step.areas.isNotEmpty() -> {
-            stringResource(R.string.session_block_practice_areas, formatList(step.areas, currentLocale()))
+        step.practiceNumber != null -> {
+            stringResource(R.string.session_block_practice_number, step.practiceNumber)
         }
 
         else -> {
-            stringResource(R.string.session_block_mixed_practice)
+            stringResource(R.string.session_block_practice)
         }
     }
 }

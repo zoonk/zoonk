@@ -4,12 +4,12 @@
   "session_belt_step": "f7061e056d62bc43e52b27b8e5fc0fe94bfa9cab37fbce7c206a127fc7833b8f",
   "session_block_call": "4b42cc87234c734491ce5db302371c242c03e70156efe6dee734701b0238df9d",
   "session_block_full_review_questions": "1bd0397878fa4b173b9bdf1c51410b6119373931861041f8b4b72a6d121c39b5",
-  "session_block_mixed_practice": "5c827997dc2b82b6f9396abb4e5ac9e0edbcad345eff42233a991e79b8d43a4a",
   "session_block_mock_exam": "b488d0a5eeebd53e67b9e93d0062260d474fee969ef8f40bef03343d462f9f46",
   "session_block_new_lesson": "58856249e2f03d803085ca9a23d02f3f05e4b72185dc2edb18e5b9b5a9580f9a",
-  "session_block_practice_areas": "b215ac12082ee9d235a1c685ae859623bc1b1a498b932481723e297a073c1d2d",
+  "session_block_practice": "a89e2ed969584e0bf299e50039b9854a06c692f7ef7c98ee05aefad884303300",
   "session_block_practice_mistakes": "6524d90127d8cada2fb7c902691a7d971884b4552e52f746181f5103d2878bb7",
-  "session_block_practice_topic": "113ff1e426310b4e57ddb704c5796114ab583fead87b42776e5f5938c6c5a2c1",
+  "session_block_practice_number": "4402b2f707a5122e71465faba4c008d4751ec596dfcd9a295fd08821bc4ec267",
+  "session_block_practice_subject": "19b3ea8e889c556d6cdf1f3d1b723cd2ed1f66cd37381385d0613481a711331d",
   "session_block_questions": "5e6e40a7b318dbddd4629890da4baa6ecfdbe565509edb62acd2a5ab711a3169",
   "session_block_rematch": "d186ec0e0805bf56fc3a3f06a3c6d8f43351f436188ed05ff2ecb5eec9b7df20",
   "session_block_rematch_lesson": "e45c1a45a7c5a8470bc6b96ca18b174375a34113039178cf5f7726558ea9a439",
@@ -99,11 +99,12 @@
     <string name="session_block_new_lesson">Yeni ders</string>
     <string name="session_block_writing_draft_saved">Taslağın kaydedildi</string>
     <string name="session_block_practice_mistakes">Yanlışlarına çalış</string>
-    <string name="session_block_mixed_practice">Karma alıştırma</string>
-    <!-- A block of the day's practice. %1$s names the one or two subjects most of its questions are on, like "Math and Languages". -->
-    <string name="session_block_practice_areas">Alıştırma: %1$s</string>
-    <!-- A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts". -->
-    <string name="session_block_practice_topic">Alıştırma: %1$s</string>
+    <!-- A block of the day's practice questions, when it's the day's only one -->
+    <string name="session_block_practice">Alıştırma</string>
+    <!-- One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2". -->
+    <string name="session_block_practice_number">Alıştırma %1$d</string>
+    <!-- A block practising one subject the learner chose. {subject} names it, like "Percentages". -->
+    <string name="session_block_practice_subject">Alıştırma: %1$s</string>
     <string name="session_block_rematch_lesson">Tekrar denemeden önce kısa bir ders</string>
     <plurals name="session_block_questions">
         <item quantity="one">%d soru</item>

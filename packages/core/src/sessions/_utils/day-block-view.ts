@@ -8,6 +8,7 @@ import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
 import { getBlockScreen } from "../day-block";
 import { type DayBlockView } from "../day-view";
+import { getPracticeNumber } from "./practice-number";
 
 /** Planned blocks lack database ids until persistence. */
 export type DayBlockInput = Pick<
@@ -175,6 +176,7 @@ export function toDayBlockView({
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
+    practiceNumber: getPracticeNumber({ block, blocks }),
     preparing,
     questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
     refresh: payload.refresh,

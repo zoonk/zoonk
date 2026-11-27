@@ -5,7 +5,6 @@ import Foundation
 /// What names a study block (main's `BlockCopyInput`), so Today's row and the block's own page
 /// read one name.
 protocol NamedBlock {
-  var areas: [String] { get }
   var challenge: BlockChallenge? { get }
   var fullReview: Bool { get }
   /// A review's questions come in capsules, except the first week's warm-up, which is placement's
@@ -13,6 +12,8 @@ protocol NamedBlock {
   var hasCapsules: Bool { get }
   var kind: StudyBlock.Kind { get }
   var mistakesOnly: Bool { get }
+  /// Which of the day's practices this is, when it has more than one; nil from older servers.
+  var practiceNumber: Int? { get }
   var questions: Int { get }
   var title: String? { get }
   var topics: [String] { get }
@@ -89,8 +90,8 @@ extension NamedBlock {
     }
   }
 
-  /// Named after the topic most of its questions are on, so two practices on one subject in a day
-  /// never share a name; after its subjects when it has no topics (main's `getPracticeFocus`).
+  /// A subject's practice asks only about it; any other practice mixes topics, so none names it:
+  /// a day with several numbers them (main's `useBlockTitle`).
   private var practiceTitle: String {
     if fullReview {
       return String(localized: "Review", table: "Today", comment: "A review block")
@@ -101,25 +102,25 @@ extension NamedBlock {
         localized: "Practice mistakes", table: "Today", comment: "A block fixing mistakes")
     }
 
-    if let topic = topics.first {
+    if kind == .practice, let title {
       return String(
-        localized: "practiceTopic", defaultValue: "Practice: \(topic)", table: "Today",
+        localized: "practiceSubject", defaultValue: "Practice: \(title)", table: "Today",
         comment:
-          "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
+          "A block practising one subject the learner chose. {subject} names it, like \"Percentages\"."
       )
     }
 
-    if !areas.isEmpty {
-      let areas = areas.formatted(.list(type: .and))
-
+    if let practiceNumber {
       return String(
-        localized: "Practice: \(areas)", table: "Today",
+        localized: "Practice \(practiceNumber)", table: "Today",
         comment:
-          "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+          "One of the day's practice blocks, numbered in the order the day lists them, like \"Practice 2\"."
       )
     }
 
-    return String(localized: "Mixed practice", table: "Today", comment: "A practice block")
+    return String(
+      localized: "practiceBlock", defaultValue: "Practice", table: "Today",
+      comment: "A block of the day's practice questions, when it's the day's only one")
   }
 }
 
@@ -232,10 +233,9 @@ extension StudyBlock {
         comment: "A challenge that opens once the lessons before it are done")
     }
 
-    // The title names a practice's first topic, so the line counts the others.
-    if practisesTopics && topics.count > 1 {
-      return String(
-        localized: "\(topics.count - 1) more topics", table: "Today", locale: .appLanguage)
+    // A practice's name doesn't say what it's on, so the line does, most asked first.
+    if practisesTopics {
+      return shortList(topics, named: 1)
     }
 
     if fullReview {
