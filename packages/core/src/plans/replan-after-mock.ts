@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { loadSkillsToRelearn } from "../learner/_utils/load-skill-claims";
 import { readBlockPayload } from "../sessions/block-payload";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
@@ -106,6 +107,41 @@ async function listMovedTopics({
   return moved.flatMap(([skillId]) => names.get(skillId) ?? []).slice(0, MOVED_TOPICS_NAMED);
 }
 
+/**
+ * The topics the mock didn't get right that the learner was taken to know without studying them.
+ * Claims never read mock answers, so this reads the same once the mock is graded as before it.
+ */
+async function loadMockRelearnSkillIds({
+  context,
+  mockId,
+}: {
+  context: PlanContext;
+  mockId: string;
+}): Promise<string[]> {
+  const attempts = await prisma.attempt.findMany({
+    select: { isCorrect: true, skillId: true },
+    where: { mockExamId: mockId },
+  });
+
+  const skillIds = (right?: boolean) => [
+    ...new Set(
+      attempts.flatMap((attempt) =>
+        attempt.skillId && (right === undefined || attempt.isCorrect === right)
+          ? [attempt.skillId]
+          : [],
+      ),
+    ),
+  ];
+
+  const toRelearn = await loadSkillsToRelearn({
+    goalId: context.goal.id,
+    skillIds: skillIds(),
+    userId: context.goal.userId,
+  });
+
+  return skillIds(false).filter((skillId) => toRelearn.has(skillId));
+}
+
 /** The plan items of the day the learner opened, so the re-plan starts from the next one. */
 async function loadOpenedKeys(context: PlanContext): Promise<string[] | undefined> {
   const opened = await prisma.studySession.findUnique({
@@ -179,7 +215,7 @@ async function commitReplan({
 }
 
 /**
- * Re-plans from today when a mock finishes, in one plan write: the lessons of topics taken as
+ * Re-plans from the next day when a mock finishes, in one plan write: the lessons of topics taken as
  * known that it missed come back (relearn), and the topics it missed that the plan hasn't taught
  * yet move earlier, but only while coverage and the phase dates hold. A refused move is tried
  * once more at the next day the learner opens (`catchUp`), which records the mock either way.
@@ -190,14 +226,12 @@ export async function replanAfterMock({
   goalId,
   mockId,
   now,
-  relearnSkillIds = [],
   timeZone,
 }: {
   catchUp?: boolean;
   goalId: string;
   mockId: string;
   now: Date;
-  relearnSkillIds?: readonly string[];
   timeZone: string;
 }): Promise<string[]> {
   return withPlanRetry(async () => {
@@ -207,7 +241,10 @@ export async function replanAfterMock({
       return [];
     }
 
-    const missed = withoutSkippedAreas({ skillIds: relearnSkillIds, state: context.state });
+    const missed = withoutSkippedAreas({
+      skillIds: await loadMockRelearnSkillIds({ context, mockId }),
+      state: context.state,
+    });
 
     const [ids, misses, openedKeys] = await Promise.all([
       findTestedOutItemIds({ context, skillIds: new Set(missed) }),

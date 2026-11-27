@@ -250,6 +250,41 @@ function lastTopic(fixture: Setup, area: (typeof AREAS)[number]): Skill {
   return fixture.library.skills[index]!;
 }
 
+/** A topic tested out by the plan and missed in a finished mock, and another missed one not taught yet. */
+async function relearnSetup() {
+  const fixture = await setup();
+  const known = fixture.library.skills[0]!;
+  const missed = lastTopic(fixture, "Português");
+  const taught = await prisma.lessonSkill.findMany({ where: { skillId: known.id } });
+
+  await prisma.planItem.updateMany({
+    data: { completedAt: new Date(), status: "testedOut" },
+    where: { lessonId: { in: taught.map((row) => row.lessonId) }, planId: fixture.plan.id },
+  });
+
+  const mock = await finishedMock({
+    answers: [
+      { outcome: "wrong", skill: known },
+      { outcome: "wrong", skill: missed },
+    ],
+    fixture,
+  });
+
+  return { fixture, known, missed, mock, taught };
+}
+
+function relearnedStatuses({
+  after,
+  taught,
+}: {
+  after: Awaited<ReturnType<typeof readPlan>>;
+  taught: { lessonId: string }[];
+}) {
+  return after.items
+    .filter((item) => taught.some((row) => row.lessonId === item.lessonId))
+    .map((item) => item.status);
+}
+
 describe(replanAfterMock, () => {
   it("moves a topic the mock missed, not yet taught, earlier with the same phase dates and coverage, and leaves an aced one where it was", async () => {
     const fixture = await setup();
@@ -304,31 +339,13 @@ describe(replanAfterMock, () => {
   });
 
   it("brings back a topic taken as known in the same plan write that moves the missed one", async () => {
-    const fixture = await setup();
-    const known = fixture.library.skills[0]!;
-    const missed = lastTopic(fixture, "Português");
-    const taught = await prisma.lessonSkill.findMany({ where: { skillId: known.id } });
-
-    await prisma.planItem.updateMany({
-      data: { completedAt: new Date(), status: "testedOut" },
-      where: { lessonId: { in: taught.map((row) => row.lessonId) }, planId: fixture.plan.id },
-    });
-
+    const { fixture, missed, mock, taught } = await relearnSetup();
     const before = await readPlan(fixture.plan.id);
-
-    const mock = await finishedMock({
-      answers: [
-        { outcome: "wrong", skill: known },
-        { outcome: "wrong", skill: missed },
-      ],
-      fixture,
-    });
 
     const moved = await replanAfterMock({
       goalId: fixture.goal.id,
       mockId: mock.id,
       now: new Date(),
-      relearnSkillIds: [known.id],
       timeZone: UTC,
     });
 
@@ -341,12 +358,7 @@ describe(replanAfterMock, () => {
       "relearn",
     ]);
 
-    expect(
-      after.items
-        .filter((item) => taught.some((row) => row.lessonId === item.lessonId))
-        .map((item) => item.status),
-    ).toStrictEqual(["todo", "todo"]);
-
+    expect(relearnedStatuses({ after, taught })).toStrictEqual(["todo", "todo"]);
     expect(after.firstDay(missed)).toBeLessThan(before.firstDay(missed));
   });
 
@@ -409,6 +421,26 @@ describe(replanAfterMock, () => {
 });
 
 describe(catchUpMockReplan, () => {
+  it("applies the relearn and the reorder of a mock marked finished whose re-plan never ran when the learner opens a new day, once", async () => {
+    const { fixture, missed, taught } = await relearnSetup();
+    const before = await readPlan(fixture.plan.id);
+
+    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+
+    const opened = await readPlan(fixture.plan.id);
+    const added = opened.changes.slice(before.changes.length).map((change) => change.kind);
+
+    expect(added.filter((kind) => kind === "relearn" || kind === "mockReordered")).toStrictEqual([
+      "relearn",
+    ]);
+
+    expect(relearnedStatuses({ after: opened, taught })).toStrictEqual(["todo", "todo"]);
+    expect(opened.firstDay(missed)).toBeLessThan(before.firstDay(missed));
+
+    await catchUpMockReplan({ goal: fixture.goal, now: new Date(), timeZone: UTC });
+    await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: opened.version });
+  });
+
   it("applies a mock finished before plans followed mocks when the learner opens a new day, once, and never on a read", async () => {
     const fixture = await setup();
     const missed = lastTopic(fixture, "Direito");

@@ -45,8 +45,9 @@ async function measureGoalPreparation({
   return measurePreparation({ ...inputs, asOf: now }).value;
 }
 
+/** Only a placement mock reads these here; any other mock's re-plan reads its own (`replanAfterMock`). */
 async function loadMockSkillsToRelearn(mock: MockSitting): Promise<Set<string>> {
-  if (!mock.goalId) {
+  if (!mock.goalId || mock.conditions.purpose !== "placement") {
     return new Set();
   }
 
@@ -195,16 +196,20 @@ async function replanForMock({
 
   const now = new Date();
 
-  const relearnSkillIds = graded.flatMap((answer) =>
-    answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
-  );
-
-  if (mock.conditions.purpose === "placement") {
-    await bringBackMissedLessons({ goalId: mock.goalId, now, skillIds: relearnSkillIds, timeZone });
-    return [];
+  if (mock.conditions.purpose !== "placement") {
+    return replanAfterMock({ goalId: mock.goalId, mockId: mock.id, now, timeZone });
   }
 
-  return replanAfterMock({ goalId: mock.goalId, mockId: mock.id, now, relearnSkillIds, timeZone });
+  await bringBackMissedLessons({
+    goalId: mock.goalId,
+    now,
+    skillIds: graded.flatMap((answer) =>
+      answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
+    ),
+    timeZone,
+  });
+
+  return [];
 }
 
 export async function completeMock({
