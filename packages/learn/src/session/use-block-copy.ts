@@ -17,8 +17,11 @@ type BlockCopyInput = Pick<
   | "hasWritingDraft"
   | "kind"
   | "mistakesOnly"
+  | "patternId"
   | "questions"
   | "reinforcement"
+  | "returning"
+  | "screen"
   | "title"
   | "topics"
   | "weakest"
@@ -69,6 +72,43 @@ export function practisesTopics(
   );
 }
 
+/**
+ * Why a block the plan added for the learner's mistakes is on the day. It never counts: a count can
+ * be false by the time it's read.
+ */
+export function useRemedialLine() {
+  const t = useExtracted();
+
+  return function remedialLine(
+    block: Pick<BlockCopyInput, "patternId" | "returning" | "screen">,
+  ): string | null {
+    if (block.screen === "mistakesPractice") {
+      return t("Questions you missed before");
+    }
+
+    if (block.patternId) {
+      return t("A pattern in your recent mistakes");
+    }
+
+    if (block.returning === "again") {
+      return t({
+        description: "Under a lesson the learner takes again because they keep missing its idea.",
+        message: "Again: you keep missing this",
+      });
+    }
+
+    if (block.returning === "anotherWay") {
+      return t({
+        description:
+          "Under a short lesson that explains, in a new way, an idea the learner keeps missing.",
+        message: "Another way to see it",
+      });
+    }
+
+    return block.returning === "missed" ? t("You keep missing this") : null;
+  };
+}
+
 export function useBlockTitle() {
   const t = useExtracted();
   const format = useFormatter();
@@ -92,6 +132,21 @@ export function useBlockTitle() {
 
     if (block.kind === "learn") {
       return block.title ?? t("New lesson");
+    }
+
+    if (block.screen === "mistakesPractice") {
+      return t("{count, plural, one {Fix # mistake} other {Fix # mistakes}}", {
+        count: block.questions,
+      });
+    }
+
+    if (block.patternId && block.title) {
+      return t({
+        description:
+          'A study step that drills one rule the learner keeps getting wrong. {pattern} names the rule, like "Adjective endings after der".',
+        message: "Practice: {pattern}",
+        values: { pattern: block.title },
+      });
     }
 
     if (block.kind === "produce") {
@@ -128,6 +183,7 @@ export function useBlockTitle() {
 
 export function useBlockDetail() {
   const t = useExtracted();
+  const remedialLine = useRemedialLine();
   const shortList = useShortList();
   const writingLine = useWritingLine();
 
@@ -140,6 +196,12 @@ export function useBlockDetail() {
   }
 
   function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo" | "subject">): string | null {
+    const remedial = remedialLine(block);
+
+    if (remedial) {
+      return remedial;
+    }
+
     if (hasCapsules(block) && block.weakest) {
       return t(
         "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}",

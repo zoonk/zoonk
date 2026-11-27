@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { getBlockKind } from "./block-kind";
 import { type StudyBlock } from "./session-types";
 
-type BlockFields = Pick<StudyBlock, "checkpoint" | "kind" | "mistakesOnly">;
+type BlockFields = Pick<
+  StudyBlock,
+  "checkpoint" | "kind" | "mistakesOnly" | "patternId" | "screen"
+>;
 
 function checkpoint(mock: boolean): NonNullable<StudyBlock["checkpoint"]> {
   return {
@@ -18,7 +21,14 @@ function checkpoint(mock: boolean): NonNullable<StudyBlock["checkpoint"]> {
 }
 
 function block(fields: Partial<BlockFields>): BlockFields {
-  return { checkpoint: null, kind: "practice", mistakesOnly: false, ...fields };
+  return {
+    checkpoint: null,
+    kind: "practice",
+    mistakesOnly: false,
+    patternId: null,
+    screen: "session",
+    ...fields,
+  };
 }
 
 describe(getBlockKind, () => {
@@ -29,8 +39,13 @@ describe(getBlockKind, () => {
     expect(getBlockKind(block({ kind: "produce" }))).toBe("essay");
   });
 
-  it("marks practice that only fixes mistakes as the notebook's, like the mission it counts for", () => {
+  it("marks practice that only works on mistakes as the notebook's", () => {
     expect(getBlockKind(block({ kind: "practice", mistakesOnly: true }))).toBe("mistakes");
+    expect(getBlockKind(block({ screen: "mistakesPractice" }))).toBe("mistakes");
+
+    expect(getBlockKind(block({ patternId: "0195c1f0-0000-7000-8000-000000000001" }))).toBe(
+      "mistakes",
+    );
   });
 
   it("marks the week's checkpoint as a challenge, or as a mock exam on an exam goal", () => {
