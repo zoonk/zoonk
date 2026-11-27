@@ -261,7 +261,6 @@ function buildToday({
     ),
     mockFunding: null,
     notice,
-    pattern: null,
     planChange,
     progress: {
       lessons: { done: lessonsDone, today: blocks.length - done.length, total: 170 },

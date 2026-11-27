@@ -407,7 +407,6 @@ export function todayView(learner: SampleLearner): TodayView {
     ),
     mockFunding: null,
     notice: null,
-    pattern: null,
     planChange: null,
     progress: {
       lessons: { done: 0, today: session.blocks.length, total: 160 },

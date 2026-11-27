@@ -74,12 +74,12 @@ export function buddyStatus({
         ? [
             { done: 1, kind: "somethingNew", status: "done", total: 1 },
             { done: 0, kind: "review", minutes: 5, status: "todo", total: 1 },
-            { done: 0, kind: "fixMistake", minutes: 4, status: "todo", total: 1 },
+            { done: 0, kind: "practice", minutes: 4, status: "todo", total: 1 },
           ]
         : [
             { done: 0, kind: "somethingNew", minutes: 8, status: "todo", total: 1 },
             { done: 0, kind: "review", minutes: 5, status: "todo", total: 1 },
-            { done: 0, kind: "fixMistake", minutes: 4, status: "todo", total: 1 },
+            { done: 0, kind: "practice", minutes: 4, status: "todo", total: 1 },
           ],
     },
   };
