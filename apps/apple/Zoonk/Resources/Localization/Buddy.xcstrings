@@ -245,13 +245,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mit deinem Fortschritt wird %lld weitere Unterhaltung freigeschaltet"
+                  "value" : "Beim Lernen schaltest du %lld weitere Aufgabe frei"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mit deinem Fortschritt werden %lld weitere Unterhaltungen freigeschaltet"
+                  "value" : "Beim Lernen schaltest du %lld weitere Aufgaben frei"
                 }
               }
             }
@@ -281,13 +281,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A medida que avanzas, se desbloquea %lld más"
+                  "value" : "Se desbloquea %lld más a medida que avanzas"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A medida que avanzas, se desbloquean %lld más"
+                  "value" : "Se desbloquean %lld más a medida que avanzas"
                 }
               }
             }
@@ -299,13 +299,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld s’ouvre au fil de ta progression"
+                  "value" : "%lld autre se débloque au fil de tes progrès"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld s’ouvrent au fil de ta progression"
+                  "value" : "%lld autres se débloquent au fil de tes progrès"
                 }
               }
             }
@@ -317,13 +317,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld in più si sblocca man mano che procedi"
+                  "value" : "Proseguendo sblocchi %lld altra missione"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld in più si sbloccano man mano che procedi"
+                  "value" : "Proseguendo sblocchi %lld altre missioni"
                 }
               }
             }
@@ -335,7 +335,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "進むにつれて、さらに%lld個が開放されます"
+                  "value" : "学習を進めると、さらに%lld個のミッションに挑戦できます"
                 }
               }
             }
@@ -347,7 +347,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "진행할수록 %lld개 더 열려요"
+                  "value" : "학습을 이어 가면 %lld개가 더 열려요"
                 }
               }
             }
@@ -359,13 +359,25 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld odblokuje się w miarę postępów"
+                  "value" : "W miarę postępów odblokujesz jeszcze %lld misję"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W miarę postępów odblokujesz jeszcze %lld misje"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W miarę postępów odblokujesz jeszcze %lld misji"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "W miarę postępów będzie można odblokować jeszcze %lld"
+                  "value" : "W miarę postępów odblokujesz jeszcze %lld misji"
                 }
               }
             }
@@ -377,13 +389,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld a mais fica disponível conforme você avança"
+                  "value" : "Mais %lld fica disponível conforme você avança"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld a mais ficam disponíveis conforme você avança"
+                  "value" : "Mais %lld ficam disponíveis conforme você avança"
                 }
               }
             }
@@ -395,13 +407,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sohbet daha ilerledikçe açılır"
+                  "value" : "İlerledikçe %lld görev daha açılır"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "İlerledikçe %lld sohbet daha kullanıma açılır"
+                  "value" : "İlerledikçe %lld görev daha açılır"
                 }
               }
             }
