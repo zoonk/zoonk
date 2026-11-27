@@ -1,4 +1,5 @@
 import {
+  type AttemptEvidence,
   type MasteryState,
   Prisma,
   type StudyBlockKind,
@@ -32,7 +33,12 @@ export type BuiltBlock = {
   };
 };
 
-export type BlockAnswer = { answer: Prisma.InputJsonObject; itemId: string; skillId: string };
+export type BlockAnswer = {
+  answer: Prisma.InputJsonObject;
+  evidence: AttemptEvidence | null;
+  itemId: string;
+  skillId: string;
+};
 
 export type BuiltDay = {
   /** By the block's position. */
@@ -158,13 +164,14 @@ function toBlockAttempts(
   return blocks.flatMap(({ answers, completedAt, startedAt }) => {
     const step = (completedAt.getTime() - startedAt.getTime()) / (answers.length + 1);
 
-    return answers.map(({ answer, itemId, skillId }, index) => {
+    return answers.map(({ answer, evidence, itemId, skillId }, index) => {
       const answeredAt = new Date(startedAt.getTime() + step * (index + 1));
 
       return {
         answer,
         answeredAt,
         durationMs: Math.round(step),
+        evidence,
         isCorrect: true,
         itemId,
         skillId,

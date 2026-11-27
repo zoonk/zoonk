@@ -1,4 +1,5 @@
 import { MS_PER_SECOND } from "@zoonk/utils/date";
+import { type AttemptEvidence } from "../../../generated/prisma/client";
 import { atLocalHour, localTimeFields, minutesBefore } from "../_utils/dates";
 import { localizeObject } from "../_utils/localize";
 import { seedId } from "../_utils/seed-id";
@@ -44,6 +45,38 @@ export async function writeLearnerSkills(scope: LearnerScope): Promise<void> {
   );
 }
 
+/** True when an earlier miss of the same bank question is still in the notebook at `attempt`. */
+function asksNotebookQuestion(attempts: readonly SeedAttempt[], attempt: SeedAttempt): boolean {
+  return attempts.some(
+    (earlier) =>
+      earlier !== attempt &&
+      earlier.item === attempt.item &&
+      earlier.mistake !== undefined &&
+      earlier.day < attempt.day &&
+      (earlier.mistake.status === "open" || (earlier.mistake.fixedDay ?? -1) >= attempt.day),
+  );
+}
+
+/**
+ * The evidence core's answer writer gives the same answer: `getAttemptEvidence` and
+ * `writeAttemptAttribution` in `core/src/learner`, and `getStudyAnswerEvidence` for review and
+ * practice. `core/src/seed/seeded-mistake-signal.test.ts` holds the two together.
+ */
+export function getSeedAnswerEvidence(
+  attempts: readonly SeedAttempt[],
+  attempt: SeedAttempt,
+): AttemptEvidence | null {
+  if (attempt.placement) {
+    return null;
+  }
+
+  if (!attempt.item) {
+    return "guided";
+  }
+
+  return asksNotebookQuestion(attempts, attempt) ? "replay" : "independent";
+}
+
 async function writeAttempt(
   scope: LearnerScope,
   attempt: SeedAttempt,
@@ -59,7 +92,9 @@ async function writeAttempt(
   const data = {
     answer: attempt.answer,
     answeredAt,
+    cause: attempt.isCorrect ? null : (attempt.mistake?.cause ?? null),
     durationMs: attempt.seconds * MS_PER_SECOND,
+    evidence: getSeedAnswerEvidence(learner.attempts, attempt),
     isCorrect: attempt.isCorrect,
     itemId,
     skillId,
