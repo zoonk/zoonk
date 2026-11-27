@@ -6,6 +6,7 @@ import {
   type WorkflowRunAction,
   type WorkflowRunState,
   getFollowedRunId,
+  getReplacedRunIds,
   getRunStatus,
   workflowRunReducer,
 } from "./workflow-run-state";
@@ -360,4 +361,38 @@ describe(getRunStatus, () => {
       });
     },
   );
+});
+
+describe(getReplacedRunIds, () => {
+  const failed = run([
+    { runId: "old-run", type: "polled" },
+    { runId: "old-run", status: "failed", type: "runStatus" },
+  ]);
+
+  it("starts over on a newly confirmed run, so the old run's failure doesn't hold it", () => {
+    const replaced = getReplacedRunIds({ confirmed: "new-run", previous: null, state: failed });
+    expect(replaced).toStrictEqual(["old-run"]);
+
+    const next = run([{ runIds: replaced ?? [], type: "restart" }], failed);
+    expect(getFollowedRunId({ generationId: "new-run", state: next })).toBe("new-run");
+    expect(getRunStatus({ runId: "new-run", state: next })).toBe("following");
+  });
+
+  it("keeps following when the confirmed run is the one already followed", () => {
+    const joined = run([{ runId: "run-doing-the-work", type: "polled" }]);
+
+    expect(
+      getReplacedRunIds({ confirmed: "run-doing-the-work", previous: null, state: joined }),
+    ).toBeNull();
+  });
+
+  it("ignores a run it already replaced and a run that's no longer named", () => {
+    const restarted = run([{ runIds: ["old-run"], type: "restart" }], failed);
+
+    expect(
+      getReplacedRunIds({ confirmed: "old-run", previous: null, state: restarted }),
+    ).toBeNull();
+
+    expect(getReplacedRunIds({ confirmed: null, previous: "old-run", state: failed })).toBeNull();
+  });
 });

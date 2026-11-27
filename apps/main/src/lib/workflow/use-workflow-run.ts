@@ -5,12 +5,13 @@ import { type FollowedRunProps } from "@zoonk/learn/generation/follower";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
-import { useEffect, useEffectEvent, useReducer } from "react";
+import { useEffect, useEffectEvent, useReducer, useState } from "react";
 import {
   INITIAL_WORKFLOW_RUN_STATE,
   type RunLookup,
   type RunStatus,
   getFollowedRunId,
+  getReplacedRunIds,
   getRunStatus,
   workflowRunReducer,
 } from "./_utils/workflow-run-state";
@@ -61,6 +62,17 @@ export function useWorkflowRun({
   restart,
 }: Omit<FollowedRunProps, "children">): GenerationRun {
   const [state, dispatch] = useReducer(workflowRunReducer, INITIAL_WORKFLOW_RUN_STATE);
+  const [confirmed, setConfirmed] = useState(generationId);
+
+  if (generationId !== confirmed) {
+    setConfirmed(generationId);
+    const runIds = getReplacedRunIds({ confirmed: generationId, previous: confirmed, state });
+
+    if (runIds) {
+      dispatch({ runIds, type: "restart" });
+    }
+  }
+
   const runId = getFollowedRunId({ generationId, state });
   const status = getRunStatus({ runId, state });
   const isWaiting = status === "waiting";

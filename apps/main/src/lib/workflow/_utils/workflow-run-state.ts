@@ -279,6 +279,25 @@ export function getFollowedRunId({
   return known && !state.replaced.includes(known) ? known : null;
 }
 
+/** A newly confirmed writer replaces the run followed so far, whose state no longer applies. */
+export function getReplacedRunIds({
+  confirmed,
+  previous,
+  state,
+}: {
+  confirmed: string | null;
+  previous: string | null;
+  state: WorkflowRunState;
+}): string[] | null {
+  const followed = getFollowedRunId({ generationId: previous, state });
+
+  if (!confirmed || confirmed === followed || state.replaced.includes(confirmed)) {
+    return null;
+  }
+
+  return followed ? [followed] : [];
+}
+
 export function getRunStatus({
   runId,
   state,
