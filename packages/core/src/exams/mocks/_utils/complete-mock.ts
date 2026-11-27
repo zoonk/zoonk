@@ -7,6 +7,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
+import { replanAfterMock } from "../../../plans/replan-after-mock";
 import { loadPreparationInputs } from "../../../preparation/_utils/load-preparation-inputs";
 import { measurePreparation } from "../../../preparation/section-preparation";
 import { readBlockPayload } from "../../../sessions/block-payload";
@@ -176,6 +177,36 @@ async function trackCompletion({
   });
 }
 
+/** After the mock counts as finished, so the plan reads it as the latest one. */
+async function replanForMock({
+  graded,
+  mock,
+  timeZone,
+  toRelearn,
+}: {
+  graded: readonly GradedMockAnswer[];
+  mock: MockSitting;
+  timeZone: string;
+  toRelearn: ReadonlySet<string>;
+}): Promise<string[]> {
+  if (!mock.goalId) {
+    return [];
+  }
+
+  const now = new Date();
+
+  const relearnSkillIds = graded.flatMap((answer) =>
+    answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
+  );
+
+  if (mock.conditions.purpose === "placement") {
+    await bringBackMissedLessons({ goalId: mock.goalId, now, skillIds: relearnSkillIds, timeZone });
+    return [];
+  }
+
+  return replanAfterMock({ goalId: mock.goalId, mockId: mock.id, now, relearnSkillIds, timeZone });
+}
+
 export async function completeMock({
   mock,
   owned,
@@ -202,18 +233,6 @@ export async function completeMock({
   });
 
   const reached = await settleMock({ graded, mock, owned, timeZone });
-
-  if (mock.goalId) {
-    await bringBackMissedLessons({
-      goalId: mock.goalId,
-      now: new Date(),
-      skillIds: graded.flatMap((answer) =>
-        answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
-      ),
-      timeZone,
-    });
-  }
-
   const after = await measureGoalPreparation({ goalId: mock.goalId, userId: mock.userId });
   const spentMs = graded.reduce((sum, answer) => sum + answer.durationMs, 0);
 
@@ -254,10 +273,22 @@ export async function completeMock({
     return count > 0 ? count : unchanged(count);
   });
 
-  if (finished > 0) {
-    revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
-    await trackCompletion({ graded, mock, result });
+  if (finished === 0) {
+    return result;
   }
 
-  return result;
+  const movedTopics = await replanForMock({ graded, mock, timeZone, toRelearn });
+  const shown = movedTopics.length > 0 ? { ...result, movedTopics } : result;
+
+  if (movedTopics.length > 0) {
+    await prisma.mockExam.update({
+      data: { result: { ...shown, reached } },
+      where: { id: mock.id },
+    });
+  }
+
+  revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
+  await trackCompletion({ graded, mock, result });
+
+  return shown;
 }

@@ -1,5 +1,6 @@
 import "server-only";
 import { refreshGoalTestSummary } from "../../learner/placement/_utils/test-sitting";
+import { catchUpMockReplan } from "../../plans/replan-after-mock";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
@@ -33,6 +34,8 @@ export async function openPlannedDay(
     await refreshGoalTestSummary(goal);
     return { created: false, session, status: "opened" };
   }
+
+  await catchUpMockReplan({ goal, now, timeZone });
 
   const planDay = (selection: SelectedDayPlan) => planStudyDay({ ...context, selection });
   const selection = await selectDayPlan({ goal, now, planDay, timeZone });

@@ -65,6 +65,7 @@ const input: Required<BuildPlanInput> = {
   missedSkillIds: new Set(["ratios"]),
   mockClocks: [{ day: 1, fullMinutes: 300, minutes: 150 }],
   mockMinutes: 150,
+  mockMisses: new Map([["ratios", "missed"]]),
   mode: "forced",
   movesPhaseEnds: true,
   noticeAreas: new Set(["Math"]),
@@ -111,7 +112,7 @@ const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
   it("keeps the bytes of the keys plans were saved with", () => {
-    const { extras: _extras, writing: _writing, ...legacy } = input;
+    const { extras: _extras, mockMisses: _mockMisses, writing: _writing, ...legacy } = input;
 
     expect(getPlanInputsKey({ input: legacy, items: [{ ...item, status: "done" }] })).toBe(
       "480b724851fbb20e785a4edd241df195d98f8fb65562bb682227ba8b5e8f7189",

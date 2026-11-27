@@ -69,12 +69,7 @@ async function resolveExistingPlanChange({
   return { change: await loadPlanChangeView(change.id), status: "applied" };
 }
 
-type PlanChangeRequest = {
-  goalId: string;
-  input: PlanChangeInput;
-  source?: "learner" | "mock";
-  trackAnalytics?: boolean;
-};
+type PlanChangeRequest = { goalId: string; input: PlanChangeInput; trackAnalytics?: boolean };
 
 /** `conflict`: other plan writes won both tries, such as a new plan filling in, and nothing saved. */
 export async function changeGoalPlan(request: PlanChangeRequest): Promise<PlanChangeResult> {
@@ -84,7 +79,6 @@ export async function changeGoalPlan(request: PlanChangeRequest): Promise<PlanCh
 async function applyGoalPlanChange({
   goalId,
   input,
-  source = "learner",
   trackAnalytics = true,
 }: PlanChangeRequest): Promise<PlanChangeResult> {
   return withPlanRetry(async () => {
@@ -125,7 +119,7 @@ async function applyGoalPlanChange({
       followToday: !input.operations.every((operation) => isChallengeMove(operation)),
       operations: input.operations,
       reason: LEARNER_CHANGE_NOTE,
-      source,
+      source: "learner",
     } as const;
 
     const steers = input.operations.every((op) => isSteering(op));

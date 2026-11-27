@@ -130,13 +130,8 @@ export const mockSizeSourceSchema = z
 
 export const mockAdaptSchema = z
   .object({
-    focus: z
-      .object({ area: z.string(), correct: z.number(), total: z.number().int() })
-      .nullable()
-      .meta({ description: "The area that went worst, to give more of the plan's time" }),
     skip: z
       .object({ lessons: z.number().int().min(1), topics: z.array(z.string()) })
-      .nullable()
       .meta({
         description:
           "The lessons of the topics the mock showed the learner knows (every question right), to skip",
@@ -145,7 +140,7 @@ export const mockAdaptSchema = z
   .nullable()
   .meta({
     description:
-      "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
+      "What the finished mock offers to change in the plan, applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null when it offers nothing, before it's over and for a placement mock",
     id: "MockAdapt",
   });
 
