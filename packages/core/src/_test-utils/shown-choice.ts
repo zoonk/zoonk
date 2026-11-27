@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { type MockShowing, showMockChoice } from "../exams/mocks/_utils/mock-items";
 import { mockConditionsSchema } from "../exams/mocks/mock-contract";
+import { showLevelTestOptions } from "../language/level-test/_utils/level-test-shown-order";
 import { type ChoiceItem, parseChoiceItem } from "../learner/_utils/choice-items";
 import { getPlacementBlockId } from "../learner/placement/_utils/placement-items";
 import { getMistakeShowing } from "../mistakes/mistake-item";
@@ -132,4 +133,25 @@ export async function pickInPlacement({
 }): Promise<{ selectedIndex: number }> {
   const item = parseMultipleChoice(await prisma.item.findUniqueOrThrow({ where: { id: itemId } }));
   return pickIn(showChoiceInBlock({ blockId: getPlacementBlockId(item), item }), right);
+}
+
+const LEVEL_TEST_OPTIONS = 4;
+
+/** Where a level test attempt (or a goal's first test, without one) shows the bank option at `answerIndex`. */
+export function tapInLevelTest({
+  answerIndex,
+  attemptId,
+  count = LEVEL_TEST_OPTIONS,
+  goalId,
+  questionId,
+}: {
+  answerIndex: number;
+  attemptId?: string;
+  count?: number;
+  goalId: string;
+  questionId: string;
+}): number {
+  const options = Array.from({ length: count }, (_, index) => String(index));
+  const question = { id: questionId, options };
+  return showLevelTestOptions({ attemptId, goalId, question }).indexOf(String(answerIndex));
 }
