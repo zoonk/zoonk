@@ -3,9 +3,8 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CHOICE_ROW_CLASS } from "../onboarding/choice-list";
+import { CHOICE_GROUP_CLASS, CHOICE_ROW_CLASS } from "../onboarding/choice-list";
 import {
-  LIST_GROUP_CLASS,
   ListRowBody,
   ListRowContent,
   ListRowDescription,
@@ -75,7 +74,7 @@ export function ChoiceRows<Value extends string>({
   return (
     <RadioGroup
       aria-label={label}
-      className={cn(LIST_GROUP_CLASS, "gap-0")}
+      className={cn(CHOICE_GROUP_CLASS, "gap-0")}
       onValueChange={(next) => pickAt(choices.findIndex((choice) => choice.value === next))}
       readOnly={readOnly}
       value={value}

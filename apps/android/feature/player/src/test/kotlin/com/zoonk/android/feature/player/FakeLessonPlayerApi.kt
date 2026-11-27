@@ -169,7 +169,7 @@ class FakeLessonPlayerApi(
                 {"clockId":${clockId?.let {
                     "\"$it\""
                 } ?: "null"},"sessionId":null,"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
-                 "replay":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
+                 "replay":false,"saved":false,"startedAt":"2026-10-28T10:00:00Z","support":$support}
                 """.trimIndent(),
             ),
         )

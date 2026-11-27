@@ -1,5 +1,6 @@
 import "server-only";
 import { hasCompletedLessons } from "@/lib/learn/has-completed-lessons";
+import { hasSavedLessons } from "@/lib/learn/has-saved-lessons";
 import { type LearnerBuddy, getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -33,6 +34,7 @@ export type TodayScreenData = {
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
   planEnd: string | null;
+  savedLessons: boolean;
   steps: TodayStep[];
   today: TodayView;
 };
@@ -86,12 +88,13 @@ async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
 }
 
 export async function loadTodayPractice(goalId: string) {
-  const [completedLessons, mistakes] = await Promise.all([
+  const [completedLessons, mistakes, savedLessons] = await Promise.all([
     hasCompletedLessons(goalId),
     countOpenMistakes(goalId),
+    hasSavedLessons(goalId),
   ]);
 
-  return { completedLessons, mistakes };
+  return { completedLessons, mistakes, savedLessons };
 }
 
 /** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */

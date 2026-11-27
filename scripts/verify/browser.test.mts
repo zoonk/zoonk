@@ -73,7 +73,7 @@ test("leaves out the parts of Today's day bar and only them", () => {
   assert.deepEqual(findSmallTargets([dayBarPart]), []);
 
   assert.deepEqual(findSmallTargets([{ ...dayBarPart, slot: "today-day-progress" }]), [
-    '<button data-slot="today-day-progress"> "Day" is 90×38 px',
+    'Zoonk tap target (44 px): <button data-slot="today-day-progress"> "Day" is 90×38 px',
   ]);
 });
 
@@ -83,10 +83,10 @@ test("lets a control be 36 px with a mouse, never on touch", () => {
   assert.deepEqual(findSmallTargets([field]), []);
 
   assert.deepEqual(findSmallTargets([{ ...field, height: 30 }]), [
-    '<input data-slot="input"> "Day" is 90×30 px',
+    'Zoonk tap target (36 px): <input data-slot="input"> "Day" is 90×30 px',
   ]);
 
   assert.deepEqual(findSmallTargets([{ ...field, finePointer: false }]), [
-    '<input data-slot="input"> "Day" is 90×36 px',
+    'Zoonk tap target (44 px): <input data-slot="input"> "Day" is 90×36 px',
   ]);
 });

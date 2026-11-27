@@ -10,19 +10,19 @@ Which checks to run before a commit and before a PR is marked ready. CI is the f
 
 Run commands from the repository root with the Node.js and pnpm versions in `.tool-versions` (with mise, prefix `mise x --` when your shell doesn't activate it).
 
-| Change                            | Checks                                                                                                                                 |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Markdown or instruction files     | `pnpm exec oxfmt --check <files>`, `pnpm agent-rules:check` (sizes, links and anchors), `git diff --check`                             |
-| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm format <files>` then `pnpm lint <files>` |
-| Module boundaries or dependencies | `pnpm knip` and `pnpm knip --production`                                                                                               |
-| App runtime or build integration  | `pnpm build --filter=<app>`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                 |
-| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                      |
-| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                             |
-| Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers the local Mac units and iPhone checks for device-specific changes |
-| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                       |
-| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                     |
-| Next.js or Turborepo version      | `pnpm agent-rules:sync`, which updates the blocks they write into `AGENTS.md`                                                          |
-| Translated copy                   | Affected app's `i18n` and `i18n:lint` ([translations](translations.md)); `pnpm i18n:extract` when web strings only moved               |
+| Change                            | Checks                                                                                                                                                                                |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Markdown or instruction files     | `pnpm exec oxfmt <files>` (formats them), `pnpm agent-rules:check` (sizes, links and anchors), `git diff --check`                                                                     |
+| TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm exec oxfmt <files>` (formats them; `pnpm format` only checks), then `pnpm lint <files>` |
+| Module boundaries or dependencies | `pnpm knip` and `pnpm knip --production`                                                                                                                                              |
+| App runtime or build integration  | `pnpm build --filter=<app>`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                                                                |
+| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>` for the flows you changed                                                                                                     |
+| Android app                       | `pnpm android:check` and `make -C apps/android lint build`                                                                                                                            |
+| Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers the local Mac units and iPhone checks for device-specific changes                                                |
+| Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                                                                      |
+| Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                                                                    |
+| Next.js or Turborepo version      | `pnpm agent-rules:sync`, which updates the blocks they write into `AGENTS.md`                                                                                                         |
+| Translated copy                   | Affected app's `i18n` and `i18n:lint` ([translations](translations.md)); `pnpm i18n:extract` when web strings only moved                                                              |
 
 Android's lint and release build run after merge or on demand (`gh workflow run android.yml --ref <branch>`), so run the Android row before its PR is marked ready.
 

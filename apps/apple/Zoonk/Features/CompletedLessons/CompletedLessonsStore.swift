@@ -7,6 +7,8 @@ struct CompletedLesson: Equatable, Identifiable, Sendable {
   let chapterTitle: String?
   /// The learner's calendar day of its latest finish, `YYYY-MM-DD`.
   let finishedOn: String
+  let available: Bool
+  var saved: Bool
 
   var id: String { lessonId }
 }
@@ -49,6 +51,9 @@ struct CompletedLessonsQuery: Hashable, Sendable {
 @MainActor
 @Observable
 final class CompletedLessonsStore {
+  static let pageSize = 50
+  static let maxPageSize = 1000
+
   private(set) var loadMoreFailures: [CompletedLessonsQuery: APIError] = [:]
 
   @ObservationIgnored private let api: any CompletedLessonsAPIClient
@@ -67,18 +72,49 @@ final class CompletedLessonsStore {
     }
 
     let api = api
+    // Main's tags for the list: a save reads it again too, since a read out as it lands predates it.
     let list: Resource<CompletedLessonsPage> = cache.resource(
-      audience: .signedIn, domains: [.userProgress], isEmpty: \.lessons.isEmpty
-    ) { session in
+      audience: .signedIn, domains: [.goals, .savedLessons, .userProgress],
+      isEmpty: \.lessons.isEmpty
+    ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      return try await api.list(token: session.bearerToken, query: query, cursor: nil)
+      // Read again, it keeps every page shown, so no row leaves from under the learner's thumb.
+      let shown = self?.lists[query]?.value?.lessons.count ?? 0
+
+      return try await api.list(
+        token: session.bearerToken, query: query, cursor: nil,
+        limit: min(max(shown, Self.pageSize), Self.maxPageSize))
     }
 
     lists[query] = list
     return list
+  }
+
+  /// A save the server took, in every page read so far.
+  func show(saved: Bool, lessonId: String) {
+    for list in lists.values {
+      guard
+        list.value?.lessons.contains(where: { $0.lessonId == lessonId && $0.saved != saved })
+          == true
+      else {
+        continue
+      }
+
+      list.update { page in
+        var page = page
+        page.lessons = page.lessons.map { lesson in
+          var lesson = lesson
+          if lesson.lessonId == lessonId {
+            lesson.saved = saved
+          }
+          return lesson
+        }
+        return page
+      }
+    }
   }
 
   /// A replay moves its lesson to the top and shifts the pages after it, so a lesson already shown
@@ -96,7 +132,8 @@ final class CompletedLessonsStore {
     loadMoreFailures[query] = nil
 
     do {
-      let next = try await api.list(token: session.bearerToken, query: query, cursor: cursor)
+      let next = try await api.list(
+        token: session.bearerToken, query: query, cursor: cursor, limit: Self.pageSize)
 
       guard resource.revision == revision else {
         return
@@ -122,19 +159,19 @@ final class CompletedLessonsStore {
 }
 
 protocol CompletedLessonsAPIClient: Sendable {
-  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?, limit: Int) async throws
     -> CompletedLessonsPage
 }
 
 struct CompletedLessonsAPI: CompletedLessonsAPIClient {
   let clients: APIClientFactory
 
-  func list(token: String, query: CompletedLessonsQuery, cursor: String?) async throws
+  func list(token: String, query: CompletedLessonsQuery, cursor: String?, limit: Int) async throws
     -> CompletedLessonsPage
   {
     try await clients.perform(token: token) { client in
       switch try await client.listCurrentUserCompletedLessons(
-        query: .init(goalId: query.goalId, group: query.group, cursor: cursor))
+        query: .init(goalId: query.goalId, group: query.group, limit: limit, cursor: cursor))
       {
       case .ok(let response):
         let list = try response.body.json
@@ -143,7 +180,7 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
           lessons: list.data.map { lesson in
             CompletedLesson(
               lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle,
-              finishedOn: lesson.finishedOn)
+              finishedOn: lesson.finishedOn, available: lesson.available, saved: lesson.saved)
           },
           nextCursor: list.pagination.nextCursor,
           filter: (list.filter?.value1).map(CompletedLessonsFilter.init))

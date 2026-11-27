@@ -7,6 +7,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { thirdsMath, thirdsQuestion } from "../library/items/_test-utils/math-problems";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { type SavedItemFacts } from "../plans/_utils/selected-item-contract";
@@ -53,11 +54,11 @@ async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
 async function playCheckpoint({
   count,
   goalId,
-  optionIndex,
+  right,
 }: {
   count?: number;
   goalId: string;
-  optionIndex: number;
+  right: boolean;
 }) {
   const today = await getTodayStudySession({ goalId });
 
@@ -77,7 +78,7 @@ async function playCheckpoint({
   const feedback = await answerBlockInOrder({
     blockId: block.id,
     count,
-    optionIndex,
+    right,
     sessionId: today.session.id,
   });
 
@@ -105,7 +106,7 @@ describe("phase checkpoint (boss)", () => {
 
     const { block, detail, feedback, result, session } = await playCheckpoint({
       goalId: goal.id,
-      optionIndex: 0,
+      right: true,
     });
 
     expect(session.blocks.map((candidate) => candidate.kind)).toStrictEqual([
@@ -132,8 +133,10 @@ describe("phase checkpoint (boss)", () => {
       total: 6,
     });
 
-    expect(result.completion.checkpoint?.answers[0]).toMatchObject({
-      correctAnswer: { selectedIndex: 0 },
+    const first = result.completion.checkpoint?.answers[0];
+
+    expect(first).toMatchObject({
+      correctAnswer: await pickItemInBlock({ blockId: block.id, itemId: first?.itemId ?? "" }),
     });
 
     expect(result.completion.brainPower).toBeGreaterThanOrEqual(BRAIN_POWER_BONUS.phaseBoss);
@@ -158,7 +161,7 @@ describe("phase checkpoint (boss)", () => {
 
   it("ends once the shield breaks: won with questions left, it finishes at the duel's pass mark", async () => {
     const { boss, goal } = await bossSetup();
-    const { block, result } = await playCheckpoint({ count: 5, goalId: goal.id, optionIndex: 0 });
+    const { block, result } = await playCheckpoint({ count: 5, goalId: goal.id, right: true });
 
     expect(block.checkpoint).toMatchObject({ passMark: 5 });
     expect(block.questions).toBe(6);
@@ -211,10 +214,14 @@ describe("phase checkpoint (boss)", () => {
     await Promise.all(
       questions
         .slice(4)
-        .map((rest) =>
+        .map(async (rest) =>
           answerStudyQuestion({
             ...ref,
-            input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: rest.itemId },
+            input: {
+              answer: await pickItemInBlock({ ...ref, itemId: rest.itemId, right: false }),
+              durationMs: 4000,
+              itemId: rest.itemId,
+            },
           }),
         ),
     );
@@ -231,7 +238,7 @@ describe("phase checkpoint (boss)", () => {
 
   it("asks every question while the shield holds", async () => {
     const { boss, goal } = await bossSetup();
-    const { result } = await playCheckpoint({ count: 4, goalId: goal.id, optionIndex: 0 });
+    const { result } = await playCheckpoint({ count: 4, goalId: goal.id, right: true });
 
     expect(result).toStrictEqual({ status: "unanswered" });
 
@@ -246,7 +253,7 @@ describe("phase checkpoint (boss)", () => {
     const { block, detail, result, session } = await playCheckpoint({
       count: 1,
       goalId: goal.id,
-      optionIndex: 1,
+      right: false,
     });
 
     expect(block.checkpoint).toMatchObject({ passMark: 5 });
@@ -256,9 +263,15 @@ describe("phase checkpoint (boss)", () => {
     const ref = { blockId: block.id, sessionId: session.id };
     const second = detail.status === "ready" ? detail.detail.questions[1] : undefined;
 
+    const secondId = second?.itemId ?? "";
+
     await answerStudyQuestion({
       ...ref,
-      input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: second?.itemId ?? "" },
+      input: {
+        answer: await pickItemInBlock({ ...ref, itemId: secondId, right: false }),
+        durationMs: 4000,
+        itemId: secondId,
+      },
     });
 
     const lost = await finishStudyBlock({ ...ref, input: {} });
@@ -333,20 +346,24 @@ describe("phase checkpoint (boss)", () => {
       challenge: { passMark: 4, questions: 5 },
     });
 
-    const answer = (itemId: string | undefined, selectedIndex: number) =>
+    const missQuestion = async (itemId = "") =>
       answerStudyQuestion({
         ...ref,
-        input: { answer: { selectedIndex }, durationMs: 4000, itemId: itemId ?? "" },
+        input: {
+          answer: await pickItemInBlock({ ...ref, itemId, right: false }),
+          durationMs: 4000,
+          itemId,
+        },
       });
 
     await answerBlockInOrder({ ...ref, count: 3 });
-    await answer(asked[3]?.itemId, 1);
+    await missQuestion(asked[3]?.itemId);
 
     await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toStrictEqual({
       status: "unanswered",
     });
 
-    await answer(asked[4]?.itemId, 1);
+    await missQuestion(asked[4]?.itemId);
     const lost = await finishStudyBlock({ ...ref, input: {} });
 
     expect(lost).toMatchObject({
@@ -392,10 +409,14 @@ describe("phase checkpoint (boss)", () => {
     await Promise.all(
       questions
         .slice(3, 5)
-        .map((question) =>
+        .map(async (question) =>
           answerStudyQuestion({
             ...ref,
-            input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: question.itemId },
+            input: {
+              answer: await pickItemInBlock({ ...ref, itemId: question.itemId, right: false }),
+              durationMs: 4000,
+              itemId: question.itemId,
+            },
           }),
         ),
     );
@@ -416,7 +437,7 @@ describe("phase checkpoint (boss)", () => {
 
   it("costs nothing when lost: a rematch the next day after two short lessons on what it missed", async () => {
     const { boss, goal, lessons } = await bossSetup();
-    const lost = await playCheckpoint({ goalId: goal.id, optionIndex: 1 });
+    const lost = await playCheckpoint({ goalId: goal.id, right: false });
 
     expect(lost.result).toMatchObject({
       completion: { checkpoint: { passed: false } },

@@ -1,8 +1,12 @@
 import { passkey } from "@better-auth/passkey";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
-import { isLocalhostSupported } from "@zoonk/utils/environment";
-import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
+import {
+  getAllowedHosts,
+  getAppProtocol,
+  getBaseUrl,
+  getDevelopmentTrustedOrigins,
+} from "@zoonk/utils/origin";
 import { getIP } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import {
@@ -55,11 +59,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   advanced: AUTH_ADVANCED_OPTIONS,
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
-  baseURL: {
-    allowedHosts: getAllowedHosts(),
-    fallback: getBaseUrl(),
-    protocol: isLocalhostSupported() ? "http" : "https",
-  },
+  baseURL: { allowedHosts: getAllowedHosts(), fallback: getBaseUrl(), protocol: getAppProtocol() },
   database: prismaAdapter(authDatabase, { provider: "postgresql" }),
   databaseHooks: {
     session: {

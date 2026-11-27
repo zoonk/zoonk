@@ -41,6 +41,7 @@ export type TodayActions = {
   adjustTimeHref: string;
   chooseFocusHref: string;
   completedLessonsHref: string;
+  savedLessonsHref: string;
   studyEverythingHref: string;
   /**
    * A link for a step whose page opens it without writing (a language call); null for every other

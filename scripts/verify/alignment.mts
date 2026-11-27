@@ -169,13 +169,17 @@ function filledLeads(context: Context): AlignmentFinding[] {
     }
 
     return [
-      finding(context, {
-        detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
-        level: "fail",
-        message: "more than one filled action on one surface",
-        piece: "action",
-        rule: "one-filled",
-      }),
+      finding(
+        { ...context, unit: "actions" },
+        {
+          detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
+          level: "fail",
+          measured: actions.length,
+          message: "more than one filled action on one surface",
+          piece: "action",
+          rule: "one-filled",
+        },
+      ),
     ];
   });
 }
@@ -310,7 +314,10 @@ function excepted(item: AlignmentFinding, exceptions: AlignmentException[]) {
       exception.relation === item.rule &&
       exception.piece === item.piece &&
       exception.scenario === (item.scenario ?? item.screen) &&
-      exception.configuration === item.configuration,
+      exception.configuration === item.configuration &&
+      (item.measured === undefined
+        ? exception.maxMeasured === null
+        : exception.maxMeasured !== null && Math.abs(item.measured) <= exception.maxMeasured),
   );
 }
 

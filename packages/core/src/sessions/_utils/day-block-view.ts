@@ -8,6 +8,7 @@ import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
 import { getBlockScreen } from "../day-block";
 import { type DayBlockView } from "../day-view";
+import { getPracticeNumber } from "./practice-number";
 
 /** Planned blocks lack database ids until persistence. */
 export type DayBlockInput = Pick<
@@ -114,7 +115,7 @@ export function toDayBlockView({
   answeredAttemptIds,
   answeredItemIds,
   block,
-  blocks = [block],
+  blocks,
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   savedWritingTasks,
@@ -126,7 +127,8 @@ export function toDayBlockView({
   answeredAttemptIds?: ReadonlySet<string>;
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
-  blocks?: readonly DayBlockInput[];
+  /** The whole day, which a block's wait and a practice's number depend on. */
+  blocks: readonly DayBlockInput[];
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
@@ -176,6 +178,7 @@ export function toDayBlockView({
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
+    practiceNumber: getPracticeNumber({ block, blocks }),
     preparing,
     questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
     refresh: payload.refresh,

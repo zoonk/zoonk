@@ -83,7 +83,11 @@ async function addToLockedSession({
 
   if (reused) {
     return {
-      block: toStudyBlockView({ answeredItemIds: new Set(), block: reused }),
+      block: toStudyBlockView({
+        answeredItemIds: new Set(),
+        block: reused,
+        blocks: session.blocks,
+      }),
       sessionId: session.id,
       status: "ready",
     };

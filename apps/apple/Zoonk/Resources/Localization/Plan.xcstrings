@@ -379,299 +379,6 @@
         }
       }
     },
-    "%@ a day covers as much as any time can." : {
-      "comment" : "When no daily time covers the whole goal: {time} is the daily time past which more time covers nothing more.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ pro Tag deckt so viel ab, wie es mit täglicher Lernzeit überhaupt möglich ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día abarcas todo lo que se puede abarcar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec %@ par jour, tu couvres autant que possible."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al giorno copri tutto il possibile."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@学習すると、これ以上時間を増やしても進める範囲は変わりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@이면 가능한 범위를 모두 다룰 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie obejmuje tyle, ile można objąć przy dowolnym czasie nauki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia abrange tudo o que é possível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak, mümkün olan en fazla kısmı kapsar."
-          }
-        }
-      }
-    },
-    "%@ a day covers everything" : {
-      "comment" : "The time a day that covers the whole goal; the argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ pro Tag deckt alles ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día abarcas todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre tout"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al giorno copre tutto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で全範囲を学習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@이면 전체 범위를 다룰 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie obejmuje całość"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia dá conta de tudo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak her şeyi kapsar"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of every exam topic" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ pro Tag deckt die ersten Lektionen zu jedem Prüfungsthema ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día abarcas las primeras lecciones de cada tema del examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre les premières leçons de chaque sujet de ton examen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al giorno copre le prime lezioni su ogni argomento dell’esame"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、試験のすべてのトピックの最初のレッスンまで進めます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@이면 시험의 모든 주제에서 초반 레슨을 다룰 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie obejmuje pierwsze lekcje z każdego tematu egzaminacyjnego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia inclui as primeiras aulas de cada tópico da sua prova"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak, her sınav konusunun ilk derslerini kapsar"
-          }
-        }
-      }
-    },
-    "%@ a day covers the first lessons of every part of your goal" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ pro Tag deckt die ersten Lektionen zu jedem Teil deines Ziels ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con %@ al día abarcas las primeras lecciones de cada parte de tu objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour couvre les premières leçons de chaque partie de ton objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al giorno copre le prime lezioni su ogni parte del tuo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@で、目標のすべての項目の最初のレッスンまで進めます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@이면 목표의 모든 부분에서 초반 레슨을 다룰 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie obejmuje pierwsze lekcje z każdej części celu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia inclui as primeiras aulas de cada parte do seu objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak, hedefinin her bölümünün ilk derslerini kapsar"
-          }
-        }
-      }
-    },
-    "%@ a day isn't enough time to cover your goal." : {
-      "comment" : "The time a day covers next to nothing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ pro Tag reicht nicht aus, um dein Ziel abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día no es suficiente para abarcar tu objetivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour ne suffit pas pour couvrir ton objectif."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al giorno non basta per coprire il tuo obiettivo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@では目標全体を学習するには足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@으로는 목표를 다루기에 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie to za mało, by objąć cały cel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia não é tempo suficiente para abranger seu objetivo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@ çalışmak hedefini kapsamak için yeterli değil."
-          }
-        }
-      }
-    },
     "%@ added to your plan." : {
       "comment" : "Says one topic or subject joined the plan",
       "localizations" : {
@@ -1377,7 +1084,7 @@
       }
     },
     "%@ back in your lessons." : {
-      "comment" : "Says a practice activity is back in the lessons",
+      "comment" : "Says practice activities are back in the lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3301,7 +3008,7 @@
       }
     },
     "%@: %@ a day." : {
-      "comment" : "Says a weekday became a study day with its time",
+      "comment" : "Says weekdays' time changed; the first argument lists weekdays",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3431,7 +3138,7 @@
       }
     },
     "%@: rest day." : {
-      "comment" : "Says a weekday became a rest day",
+      "comment" : "Says weekdays became rest days; the argument lists weekdays",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4812,7 +4519,7 @@
       }
     },
     "%lld days ahead" : {
-      "comment" : "How many days ahead of the plan the learner is",
+      "comment" : "State of a plan the learner is ahead of, in days",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -4979,7 +4686,7 @@
       }
     },
     "%lld days behind" : {
-      "comment" : "How many days behind the plan the learner is",
+      "comment" : "State of a plan the learner is behind, in days",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -5450,7 +5157,7 @@
       }
     },
     "%lld lessons" : {
-      "comment" : "How many lessons a chapter has",
+      "comment" : "A row of a plan change's details: how many lessons\nHow many lessons a chapter has",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -6169,7 +5876,7 @@
       }
     },
     "%lld lessons · starts in %@" : {
-      "comment" : "A topic not ready yet: its lessons and the month they start, like January",
+      "comment" : "A topic not ready yet: its lessons and the month they start, like 'January'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6621,7 +6328,7 @@
       }
     },
     "%lld lessons left" : {
-      "comment" : "Lessons left in a plan whose date came",
+      "comment" : "Lessons left in a plan whose date passed",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -7676,7 +7383,7 @@
       }
     },
     "%lld more" : {
-      "comment" : "A row of a plan change's details: lessons more; also the button that brings up the next of the Plan's suggestions",
+      "comment" : "A row of a plan change's details: lessons more\nBrings up the next of the Plan's suggestions; the number is how many others there are",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -8152,7 +7859,7 @@
       }
     },
     "%lld of %lld" : {
-      "comment" : "Chapters done of the subject's chapters\nLessons done of the chapter's lessons\nLessons done of the exam's optional study, which the exam doesn't test\nThe learner's phase number of the plan's phases, under the roadmap\nThe suggestion shown of the Plan's suggestions",
+      "comment" : "A subject's first answers to unseen questions that were right, of all of them\nLessons done of the chapter's lessons\nLessons studied or already known, of the plan's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10799,7 +10506,7 @@
       }
     },
     "%lld questions" : {
-      "comment" : "The number of questions in an exam or a mock exam.",
+      "comment" : "A written part's questions\nThe number of questions in an exam or a mock exam.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -11544,7 +11251,7 @@
       }
     },
     "%lld topics" : {
-      "comment" : "How many topics a subject has",
+      "comment" : "How many topics a plan change brought back, such as \"5 topics\"\nHow many topics a subject has",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -12466,179 +12173,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld tanesi yalnızca ilk dersleriyle"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld words" : {
-      "comment" : "Section of a unit's words, with how many it teaches",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Wort"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Wörter"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld word"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld words"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld palabra"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld palabras"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld mot"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld mots"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld parola"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld parole"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld語"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "단어 %lld개"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld słów"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld słowo"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld słowa"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld palavra"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld palavras"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld kelime"
                 }
               }
             }
@@ -15902,7 +15436,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Cancels a change",
+      "comment" : "Cancels a change\nKeeps the goal's country as it is",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -16386,7 +15920,7 @@
       }
     },
     "Chapter summary" : {
-      "comment" : "Folds a chapter's skills and summaries",
+      "comment" : "Folds a chapter's topics and summaries",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -17408,7 +16942,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Opens the chapter's next lesson\nOpens the goal's setup questions\nOpens the subject's next chapter\nOpens the unit's next lesson",
+      "comment" : "Continues a written answer's saved draft\nOpens the chapter's next lesson\nOpens the goal's setup questions\nOpens the subject's next chapter\nOpens the unit's next lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -18116,7 +17650,7 @@
       }
     },
     "Country" : {
-      "comment" : "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language",
+      "comment" : "Setting: the country a goal's lessons and examples are about, such as Portugal\nTitle of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -18490,65 +18024,6 @@
         }
       }
     },
-    "Covering everything takes about %@ a day." : {
-      "comment" : "The time a day that would cover everything; the argument is a duration",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um alles abzudecken, brauchst du etwa %@ pro Tag."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para abarcarlo todo, necesitas aproximadamente %@ al día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il faut environ %@ par jour pour tout couvrir."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per coprire tutto servono circa %@ al giorno."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全範囲を学習するには、1日%@ほどかかります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전체 범위를 다루려면 하루에 약 %@이 필요해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objęcie całości wymaga około %@ dziennie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para dar conta de tudo, você precisa de cerca de %@ por dia."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi kapsamak için günde yaklaşık %@ çalışmak gerekir."
-          }
-        }
-      }
-    },
     "Daily study time" : {
       "localizations" : {
         "de" : {
@@ -18608,7 +18083,7 @@
       }
     },
     "Date moved to %@." : {
-      "comment" : "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'",
+      "comment" : "Says the goal's date changed; the argument is a day like \"May 5\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -18721,65 +18196,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedef tarih geçti"
-          }
-        }
-      }
-    },
-    "Date to be confirmed" : {
-      "comment" : "An exam whose day isn't known yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datum noch offen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fecha por confirmar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date à confirmer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data da confermare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日程未定"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "날짜 미정"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termin do potwierdzenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data a confirmar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarih henüz kesinleşmedi"
           }
         }
       }
@@ -20682,65 +20098,6 @@
         }
       }
     },
-    "Everything" : {
-      "comment" : "A language plan practices every activity: new words, listening, writing, speaking",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alles"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모두"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wszystko"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tudo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hepsi"
-          }
-        }
-      }
-    },
     "Exam country" : {
       "comment" : "Row with the country an exam belongs to, such as Argentina",
       "localizations" : {
@@ -20801,7 +20158,7 @@
       }
     },
     "Exam date" : {
-      "comment" : "Setting: the exam's date",
+      "comment" : "A row of a plan change's details: the exam's date\nSetting: the exam's date",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -21329,67 +20686,8 @@
         }
       }
     },
-    "Finding the time that covers everything…" : {
-      "comment" : "While the time a day that covers everything is worked out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir ermitteln, wie viel Lernzeit pro Tag alles abdeckt…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando cuánto tiempo se necesita para abarcarlo todo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche de la durée quotidienne qui permet de tout couvrir…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo calcolando quanto tempo serve per coprire tutto…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全範囲を学習できる時間を計算しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전체 범위를 다룰 수 있는 시간을 찾고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustalamy, ile czasu potrzeba, by objąć całość…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o tempo necessário para dar conta de tudo…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi kapsayacak çalışma süresini buluyoruz…"
-          }
-        }
-      }
-    },
     "Finished" : {
-      "comment" : "Pace of a finished plan",
+      "comment" : "State of a finished plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22037,7 +21335,7 @@
       }
     },
     "Get your certificate" : {
-      "comment" : "Writes the certificate of the finished plan's course and shows it",
+      "comment" : "Writes the certificate of the plan's finished course or level and shows it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22625,65 +21923,6 @@
         }
       }
     },
-    "How will you use it?" : {
-      "comment" : "Title of the tool choice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie wirst du es nutzen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Cómo lo usarás?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comment vas-tu l’utiliser ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Come lo userai?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どう使いますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "어떻게 사용할 건가요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jak będziesz z tego korzystać?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como você vai usar?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nasıl kullanacaksın?"
-          }
-        }
-      }
-    },
     "I can already read it" : {
       "comment" : "Skips the alphabet lesson; \"it\" is the language's alphabet",
       "localizations" : {
@@ -22972,65 +22211,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kuracağım"
-          }
-        }
-      }
-    },
-    "In your next session" : {
-      "comment" : "When the phase's challenge comes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In deiner nächsten Lerneinheit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En tu próxima sesión"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lors de ta prochaine séance"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nella prossima sessione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の学習で"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 학습에서"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W kolejnym dniu nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na sua próxima sessão"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sonraki çalışmanda"
           }
         }
       }
@@ -24165,7 +23345,7 @@
       }
     },
     "Lessons" : {
-      "comment" : "Section of a chapter's lessons",
+      "comment" : "A row of a plan change's details: the net change in its lessons\nRow of the plan's lessons done\nSection of a chapter's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24283,7 +23463,7 @@
       }
     },
     "Lessons at the usual difficulty from now on." : {
-      "comment" : "Says the difficulty went back to the default",
+      "comment" : "Says the lessons are back at the usual difficulty",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24753,7 +23933,7 @@
       }
     },
     "Mind maps" : {
-      "comment" : "Opens the goal's mind maps",
+      "comment" : "Opens the goal's mind maps\nOpens the subject's mind maps",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -25345,7 +24525,7 @@
       }
     },
     "More explanation from now on." : {
-      "comment" : "Says the steering changed",
+      "comment" : "Says the lessons have more explanation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -25580,65 +24760,6 @@
         }
       }
     },
-    "More lessons than days left" : {
-      "comment" : "Title of the Plan's notice when the plan has more lessons than days left",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr Lektionen als verbleibende Tage"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Más lecciones que días disponibles"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus de leçons que de jours restants"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Più lezioni che giorni rimasti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残り日数よりレッスン数が多い"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "남은 날짜보다 레슨이 많음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej lekcji niż pozostałych dni"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mais aulas do que dias restantes"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalan gün sayısından fazla ders var"
-          }
-        }
-      }
-    },
     "More on an earlier topic" : {
       "comment" : "A chapter that goes further into an earlier one",
       "localizations" : {
@@ -25699,7 +24820,7 @@
       }
     },
     "More practice from now on." : {
-      "comment" : "Says the steering changed",
+      "comment" : "Says the lessons have more practice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27326,65 +26447,6 @@
         }
       }
     },
-    "No date" : {
-      "comment" : "A goal without a date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kein Datum"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin fecha"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sans date"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senza data"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日付なし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "날짜 없음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bez terminu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem data"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarih yok"
-          }
-        }
-      }
-    },
     "No date fits all your lessons." : {
       "comment" : "No later end date fits the lessons left",
       "localizations" : {
@@ -27679,65 +26741,6 @@
         }
       }
     },
-    "Not enough time" : {
-      "comment" : "State of a plan with more lessons than days left",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht genug Zeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas assez de temps"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo insufficiente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間が足りません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간 부족"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za mało czasu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo insuficiente"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeterli zaman yok"
-          }
-        }
-      }
-    },
     "Not in the official guide" : {
       "comment" : "Labels a language certificate's optional study, such as its strategy, which its official guide doesn't list",
       "localizations" : {
@@ -27798,7 +26801,7 @@
       }
     },
     "Not in your plan" : {
-      "comment" : "A phase the plan holds nothing of",
+      "comment" : "A phase the plan holds nothing of\nA row of a plan change's details: what leaves the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -28264,65 +27267,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Henüz test edilmedi"
-          }
-        }
-      }
-    },
-    "Not yet" : {
-      "comment" : "A language level not measured yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas encore"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ancora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未測定"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 측정 전"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jeszcze nie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz ölçülmedi"
           }
         }
       }
@@ -29041,7 +27985,7 @@
       }
     },
     "Paused" : {
-      "comment" : "Pace of a paused goal",
+      "comment" : "State of a paused goal's plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -30601,7 +29545,7 @@
       }
     },
     "Questions on this phase, with no hints" : {
-      "comment" : "What a phase challenge is, under its row",
+      "comment" : "What the Trickster is, under its row",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31190,7 +30134,7 @@
       }
     },
     "Report a problem" : {
-      "comment" : "Opens the feedback form about the plan",
+      "comment" : "Opens the feedback form about the chapter page\nOpens the feedback form about the plan\nOpens the feedback form about the subject page\nOpens the feedback form about the unit page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31660,7 +30604,7 @@
       }
     },
     "Save" : {
-      "comment" : "Saves the goal's date\nSaves the options picked for an exam's choice\nSaves the tool choice",
+      "comment" : "Saves the goal's date\nSaves the goal's new name\nSaves the options picked for an exam's choice\nSaves the prerequisites' choices\nSaves the subjects to focus on\nSaves the tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31714,6 +30658,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet"
+          }
+        }
+      }
+    },
+    "Saved lessons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones guardadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons enregistrées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni salvate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisane lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas salvas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilen dersler"
           }
         }
       }
@@ -32428,7 +31430,7 @@
       }
     },
     "Skip" : {
-      "comment" : "Prerequisite choice: leave it out",
+      "comment" : "Prerequisite option: leave it out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -33141,7 +32143,7 @@
       }
     },
     "Start" : {
-      "comment" : "Opens the chapter's first lesson\nOpens the unit's first lesson",
+      "comment" : "Opens the chapter's first lesson\nOpens the subject's first chapter\nOpens the unit's first lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -34833,65 +33835,6 @@
         }
       }
     },
-    "Talk to %@" : {
-      "comment" : "Opens the buddy's conversation, where questions about the plan go",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprich mit %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hablar con %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parler à %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parla con %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@と話す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에게 말 걸기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Napisz do: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Converse com %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ile konuş"
-          }
-        }
-      }
-    },
     "That change doesn't fit your plan." : {
       "comment" : "Says the API refused a plan change",
       "localizations" : {
@@ -35010,7 +33953,7 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "A plan suggestion's change or its Undo didn't save; trying again may work\nThe tool choice didn't save; Save tries again",
+      "comment" : "A change couldn't be saved\nA plan suggestion's change or its Undo didn't save; trying again may work\nResuming the paused goal didn't save\nStarting the new plan again failed\nThe tool choice didn't save; Save tries again",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -35069,7 +34012,7 @@
       }
     },
     "That didn't work. Try again in a moment." : {
-      "comment" : "Says skipping the alphabet failed\nSays the next level didn't start\nSays the practice didn't start",
+      "comment" : "Says skipping the alphabet failed\nSays the practice didn't start\nSays the subject didn't come back into the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -36069,124 +35012,6 @@
         }
       }
     },
-    "There isn't enough time to cover everything by %@." : {
-      "comment" : "No time a day covers the whole goal by its date; the argument is a day like \"May 5\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es ist nicht genug Zeit, um bis %@ alles abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente para abarcarlo todo para el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il n’y a pas assez de temps pour tout couvrir d’ici au %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è abbastanza tempo per coprire tutto entro il %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@までに全範囲を学習するには時間が足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@까지 전체 범위를 다루기에는 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie ma dość czasu, by objąć całość do %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não há tempo suficiente para dar conta de tudo até %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi %@ tarihine kadar kapsamak için yeterli zaman yok."
-          }
-        }
-      }
-    },
-    "There isn't enough time to cover everything." : {
-      "comment" : "Under a sentence that already names the goal's date: the same words as \"There isn't enough time to cover everything by {date}.\" without the date.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es ist nicht genug Zeit, um alles abzudecken."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay tiempo suficiente para abarcarlo todo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il n’y a pas assez de temps pour tout couvrir."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è abbastanza tempo per coprire tutto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全範囲を学習するには時間が足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전체 범위를 다루기에는 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie ma dość czasu, by objąć całość."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não há tempo suficiente para dar conta de tudo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi kapsamak için yeterli zaman yok."
-          }
-        }
-      }
-    },
     "These lessons aren't ready yet. Try again later." : {
       "comment" : "A topic whose lessons can't be made ready now",
       "localizations" : {
@@ -36718,64 +35543,6 @@
         }
       }
     },
-    "This subject isn't in your plan: not enough time." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Fach ist nicht in deinem Plan: nicht genug Zeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta materia no está en tu plan porque no hay tiempo suficiente."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette matière n’est pas dans ton plan : pas assez de temps."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa materia non è nel tuo piano: non c’è abbastanza tempo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間が足りないため、この科目は学習計画に含まれていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간이 부족해 이 과목은 계획에 포함되지 않았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tego przedmiotu nie ma w planie: za mało czasu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta matéria não está no seu plano: falta tempo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu konu planında yok: yeterli zaman yok."
-          }
-        }
-      }
-    },
     "This subject isn't in your plan. Other subjects come first." : {
       "comment" : "Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.",
       "localizations" : {
@@ -37130,65 +35897,6 @@
         }
       }
     },
-    "Time a day" : {
-      "comment" : "Setting: study time a day",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tägliche Lernzeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo diario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Durée quotidienne"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo al giorno"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日の学習時間"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 학습 시간"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzienny czas nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tempo diário"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günlük çalışma süresi"
-          }
-        }
-      }
-    },
     "To be confirmed" : {
       "localizations" : {
         "de" : {
@@ -37248,7 +35956,7 @@
       }
     },
     "Today" : {
-      "comment" : "When the learner's current phase starts\nOpens Today, which puts what's behind first",
+      "comment" : "Opens Today, which puts the lessons from earlier days first\nWhen the phase's challenge comes",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -37728,7 +36436,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Asks for a far topic's lessons again\nRetries loading the plan\nStarts building the plan again",
+      "comment" : "Asks again after it failed\nAsks for a far topic's lessons again\nLoads the list of countries again\nStarts building the plan again\nStarts preparing the new plan again",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38448,7 +37156,7 @@
       }
     },
     "View certificate" : {
-      "comment" : "Opens the certificate of the finished plan's course",
+      "comment" : "Opens the certificate of the finished plan's course or level",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -38741,65 +37449,6 @@
         }
       }
     },
-    "We couldn't work out the time needed." : {
-      "comment" : "The time a day that covers everything couldn't be worked out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten die benötigte Lernzeit nicht ermitteln."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos calcular cuánto tiempo se necesita."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de déterminer la durée quotidienne nécessaire."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a calcolare il tempo necessario."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要な学習時間を計算できませんでした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 시간을 계산하지 못했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się ustalić, ile czasu potrzeba."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos calcular o tempo necessário."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerekli süreyi hesaplayamadık."
-          }
-        }
-      }
-    },
     "We noticed a pattern" : {
       "comment" : "A rule the learner keeps getting wrong, noticed in the unit's mistakes",
       "localizations" : {
@@ -39037,7 +37686,7 @@
       }
     },
     "We suggest %@ a day" : {
-      "comment" : "The time a day worth most, when none covers everything; the argument is a duration",
+      "comment" : "The title of a suggestion to change the daily study time. {time} is like \"4 h\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -39983,65 +38632,6 @@
         }
       }
     },
-    "Working out what your time covers…" : {
-      "comment" : "While a change to the plan saves, in place of what the time a day covers",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir ermitteln, was deine Lernzeit abdeckt…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando qué abarca tu tiempo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calcul de ce que ta durée quotidienne permet de couvrir…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo calcolando cosa copre il tuo tempo…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習時間でどこまで進めるか計算しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 시간으로 어디까지 다룰 수 있는지 계산하고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustalamy, co obejmuje twój czas nauki…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculando o que seu tempo abrange…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma sürenin neleri kapsadığını hesaplıyoruz…"
-          }
-        }
-      }
-    },
     "Working out when you'd finish…" : {
       "comment" : "While a change to the time saves, in place of when the plan finishes",
       "localizations" : {
@@ -40918,65 +39508,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sende var"
-          }
-        }
-      }
-    },
-    "You have more lessons than days left. Study longer each day or pick a later date." : {
-      "comment" : "A plan with more lessons than days left before its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast mehr Lektionen als verbleibende Tage. Lerne jeden Tag länger oder wähle ein späteres Datum."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tienes más lecciones que días disponibles. Estudia más tiempo al día o elige una fecha posterior."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te reste plus de leçons que de jours. Étudie plus longtemps chaque jour ou choisis une date plus tardive."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai più lezioni che giorni a disposizione. Studia più a lungo ogni giorno o scegli una data successiva."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残り日数よりレッスン数が多くなっています。1日の学習時間を増やすか、期日を遅らせてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "남은 날짜보다 레슨이 많아요. 하루 학습 시간을 늘리거나 날짜를 늦춰 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz więcej lekcji niż pozostałych dni. Ucz się dłużej każdego dnia albo wybierz późniejszą datę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você tem mais aulas do que dias restantes. Estude por mais tempo a cada dia ou escolha uma data mais distante."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalan gün sayısından fazla dersin var. Her gün daha uzun çalış ya da daha ileri bir tarih seç."
           }
         }
       }
@@ -42780,65 +41311,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanacakların"
-          }
-        }
-      }
-    },
-    "Your %@ goal is paused" : {
-      "comment" : "Title of the Plan's notice for a paused goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Ziel „%@“ ist pausiert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu objetivo de %@ está en pausa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton objectif %@ est en pause"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo obiettivo %@ è in pausa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標「%@」は一時停止中です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 목표가 일시 중지됐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój cel jest wstrzymany: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu objetivo de %@ está pausado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hedefin duraklatıldı"
           }
         }
       }
@@ -45191,7 +43663,7 @@
       }
     },
     "Your plan stays as it is." : {
-      "comment" : "A preview with no change",
+      "comment" : "A plan change that would change nothing anymore\nA preview with no change",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -45551,7 +44023,7 @@
       }
     },
     "Your progress" : {
-      "comment" : "Title of the goal progress sheet",
+      "comment" : "How written answers move\nTitle of the goal progress sheet",
       "localizations" : {
         "de" : {
           "stringUnit" : {

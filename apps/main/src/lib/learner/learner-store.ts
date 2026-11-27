@@ -159,6 +159,16 @@ export function mergeLearnerSummary({
   }
 }
 
+/**
+ * A write sent from the browser changed what the frame shows, such as its places: the summary is read
+ * again, the page left as it is. A read already out was sent before the write, so another follows it,
+ * which later writes join.
+ */
+export function readLearnerSummaryAgain(): void {
+  install();
+  void (store.inFlight?.promise ?? Promise.resolve()).then(() => readLearnerSummary());
+}
+
 export function getLearnerSummaryState(): LearnerSummaryState {
   return store.state;
 }

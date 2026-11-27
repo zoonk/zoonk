@@ -201,6 +201,24 @@
         "typescript/no-unsafe-type-assertion": "off"
       }
     },
+    {
+      "files": ["packages/ai/src/**/*.ts"],
+      "rules": {
+        "eslint/no-restricted-properties": [
+          "error",
+          {
+            "object": "z",
+            "property": "uuid",
+            "message": "Use uuidSchema from @zoonk/utils/uuid-schema: it reads a capitalized id lowercase, as the database returns ids and core compares them."
+          },
+          {
+            "object": "z",
+            "property": "discriminatedUnion",
+            "message": "Use z.union: a discriminated union becomes JSON Schema oneOf, which OpenAI's structured outputs reject, so the call fails on our key and the gateway bills its own."
+          }
+        ]
+      }
+    },
     { "files": ["apps/admin/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
     { "files": ["apps/playground/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
     {
@@ -390,7 +408,7 @@
     "dist",
     "build",
     "**/generated/**",
-    "**/messages/**",
+    "**/messages/*.po",
     ".turbo",
     "pnpm-lock.yaml",
     ".agents",

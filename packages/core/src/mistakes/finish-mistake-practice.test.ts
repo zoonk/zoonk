@@ -8,13 +8,12 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake } from "../_test-utils/shown-choice";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
 /** From the test clock, which some tests freeze at a fixed day. */
 const yesterday = () => new Date(Date.now() - 86_400_000);
-const RIGHT = { selectedIndex: 0 };
-const WRONG = { selectedIndex: 1 };
 
 async function setup() {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
@@ -38,16 +37,16 @@ async function setup() {
 }
 
 async function answer({
-  answer: choice,
   attemptId,
   itemId,
   mistakeId,
+  right = true,
   run,
 }: {
-  answer: { selectedIndex: number };
   attemptId?: string;
   itemId: string;
   mistakeId: string;
+  right?: boolean;
   run?: { answerIds: string[]; goalId?: string };
 }): Promise<string> {
   const originalMistake = await prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } });
@@ -61,6 +60,8 @@ async function answer({
           skillId: originalMistake.skillId,
           userId: originalMistake.userId,
         });
+
+  const choice = await pickInMistake({ mistakeId: target.id, right });
 
   const result = await answerMistakePractice({
     input: { answer: choice, attemptId, durationMs: 20_000, itemId, run, timeZone: "UTC" },
@@ -89,8 +90,8 @@ describe(finishMistakePractice, () => {
     const { extra, mistake, original, user } = await setup();
 
     const answerIds = [
-      await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id }),
-      await answer({ answer: WRONG, itemId: extra.id, mistakeId: mistake.id }),
+      await answer({ itemId: original.id, mistakeId: mistake.id }),
+      await answer({ itemId: extra.id, mistakeId: mistake.id, right: false }),
     ];
 
     const result = await finishMistakePractice({ answerIds, timeZone: "UTC" });
@@ -136,8 +137,8 @@ describe(finishMistakePractice, () => {
 
     const { extra, mistake, original, user } = await setup();
 
-    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
-    const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
+    const first = await answer({ itemId: original.id, mistakeId: mistake.id });
+    const second = await answer({ itemId: extra.id, mistakeId: mistake.id });
     const input = { answerIds: [first, second], timeZone: "UTC" };
 
     const [once, twice] = await Promise.all([
@@ -161,7 +162,7 @@ describe(finishMistakePractice, () => {
 
     const { extra, mistake, original, user } = await setup();
 
-    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
+    const first = await answer({ itemId: original.id, mistakeId: mistake.id });
 
     await expect(
       finishMistakePractice({ answerIds: [first], timeZone: "UTC" }),
@@ -169,7 +170,7 @@ describe(finishMistakePractice, () => {
 
     await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
 
-    const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
+    const second = await answer({ itemId: extra.id, mistakeId: mistake.id });
 
     await expect(
       finishMistakePractice({ answerIds: [first, second], ended: true, timeZone: "UTC" }),
@@ -198,11 +199,11 @@ describe(finishMistakePractice, () => {
     vi.setSystemTime(new Date("2026-11-10T23:59:00Z"));
 
     const { extra, mistake, original, user } = await setup();
-    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
+    const first = await answer({ itemId: original.id, mistakeId: mistake.id });
     await finishMistakePractice({ answerIds: [first], timeZone: "UTC" });
 
     vi.setSystemTime(new Date("2026-11-11T00:01:00Z"));
-    const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
+    const second = await answer({ itemId: extra.id, mistakeId: mistake.id });
     await finishMistakePractice({ answerIds: [first, second], ended: true, timeZone: "UTC" });
 
     await expect(loadRuns(user.id)).resolves.toMatchObject([
@@ -215,13 +216,12 @@ describe(finishMistakePractice, () => {
 
     const { extra, mistake, original, user } = await setup();
     const run = { answerIds: [] };
-    const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id, run });
+    const first = await answer({ itemId: original.id, mistakeId: mistake.id, run });
 
     await expect(loadRuns(user.id)).resolves.toMatchObject([{ brainPower: 2, correctAnswers: 1 }]);
     await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
 
     const second = await answer({
-      answer: RIGHT,
       itemId: extra.id,
       mistakeId: mistake.id,
       run: { answerIds: [first] },
@@ -256,7 +256,7 @@ describe(finishMistakePractice, () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: RIGHT,
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 20_000,
         itemId: original.id,
         run: { answerIds: [] },
@@ -283,7 +283,7 @@ describe(finishMistakePractice, () => {
 
     const { mistake, original, user } = await setup();
     const attemptId = randomUUID();
-    const sent = { answer: RIGHT, attemptId, itemId: original.id, mistakeId: mistake.id };
+    const sent = { attemptId, itemId: original.id, mistakeId: mistake.id };
 
     const first = await answer({ ...sent, run: { answerIds: [] } });
     const again = await answer({ ...sent, run: { answerIds: [] } });
@@ -308,7 +308,6 @@ describe(finishMistakePractice, () => {
     const theirs = await goalFixture({ userId: other.id });
 
     await answer({
-      answer: RIGHT,
       itemId: original.id,
       mistakeId: mistake.id,
       run: { answerIds: [], goalId: theirs.id },
@@ -320,7 +319,7 @@ describe(finishMistakePractice, () => {
 
   it("won't count another learner's answers", async () => {
     const { mistake, original } = await setup();
-    const answerId = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
+    const answerId = await answer({ itemId: original.id, mistakeId: mistake.id });
     const stranger = await userFixture();
 
     mockSession(stranger.id);
@@ -354,7 +353,7 @@ describe(finishMistakePractice, () => {
 
   it("files the run under the learner's own goal only", async () => {
     const { mistake, original, user } = await setup();
-    const answerId = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
+    const answerId = await answer({ itemId: original.id, mistakeId: mistake.id });
 
     const [goal, strangersGoal] = await Promise.all([
       goalFixture({ userId: user.id }),

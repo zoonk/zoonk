@@ -322,5 +322,9 @@ export async function appendExtraBlocks({
     throw new Error("The first bonus block wasn't saved.");
   }
 
-  return toStudyBlockView({ answeredItemIds: new Set(), block: first });
+  return toStudyBlockView({
+    answeredItemIds: new Set(),
+    block: first,
+    blocks: [...session.blocks, ...blocks],
+  });
 }

@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import {
   CURRENT_ROW_CLASS,
-  LIST_GROUP_CLASS,
+  ListGroup,
   ListRowBody,
   ListRowContent,
   ListRowLeading,
@@ -95,7 +95,7 @@ export function LessonList({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ol className={LIST_GROUP_CLASS}>
+      <ListGroup as="ol">
         {lessons.map((lesson, index) => (
           <li
             aria-current={upNext && lesson.state === "next" ? "step" : undefined}
@@ -110,7 +110,7 @@ export function LessonList({
             />
           </li>
         ))}
-      </ol>
+      </ListGroup>
     </PageSection>
   );
 }

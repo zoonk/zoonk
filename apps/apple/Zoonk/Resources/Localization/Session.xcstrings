@@ -293,7 +293,7 @@
       }
     },
     "%@ comes after level %lld" : {
-      "comment" : "Under the learner's level: the next belt and the last level before it, such as \"Yellow belt comes after level 10\"",
+      "comment" : "Under a new level: the next belt and the level it comes after, such as \"Yellow belt comes after level 10\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -471,64 +471,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@, Beyin Gücün sayesinde büyümesini tamamladı."
-          }
-        }
-      }
-    },
-    "%@ more than the week before!" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ mehr als in der Vorwoche!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡%@ más que la semana anterior!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ de plus que la semaine précédente !"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ in più rispetto alla settimana precedente!"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前の週より%@増えました！"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전주보다 %@ 늘었어요!"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O %@ więcej niż tydzień wcześniej!"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ a mais que na semana anterior!"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önceki haftaya göre %@ daha fazla!"
           }
         }
       }
@@ -1109,7 +1051,7 @@
       }
     },
     "%lld missions done!" : {
-      "comment" : "Missions this result completed",
+      "comment" : "Missions this work completed, when it completed more than one",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -1556,65 +1498,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%lld more questions than the week before!" : {
-      "comment" : "More questions than last week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Fragen mehr als in der Vorwoche!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡%lld preguntas más que la semana anterior!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld questions de plus que la semaine précédente !"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld domande in più rispetto alla settimana precedente!"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前の週より%lld問増えました！"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "전주보다 문제를 %lld개 더 풀었어요!"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O %lld więcej pytań niż tydzień wcześniej!"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld perguntas a mais que na semana anterior!"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önceki haftaya göre %lld daha fazla soru!"
           }
         }
       }
@@ -2102,7 +1985,7 @@
       }
     },
     "+%lld Brain Power" : {
-      "comment" : "Earned",
+      "comment" : "Spoken: the Brain Power a task earned",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2984,7 +2867,7 @@
       }
     },
     "Brain Power" : {
-      "comment" : "Brain Power earned",
+      "comment" : "Beside the Brain Power a task earned\nBrain Power earned\nUnder the missions' bonus",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3161,7 +3044,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Closes a milestone's ceremony\nOpens the session's next block",
+      "comment" : "Closes a milestone's ceremony\nGoes on with today's list after stopping\nMoves on from the block that completed today's session to its summary\nOpens the session's next block",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3220,7 +3103,7 @@
       }
     },
     "Done" : {
-      "comment" : "A block just finished, before its name loads",
+      "comment" : "A block just finished, before its kind loads\nCloses the weekly summary and opens Today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7325,7 +7208,7 @@
       }
     },
     "Up next" : {
-      "comment" : "The session's next block",
+      "comment" : "Over the session's next block\nWhat the next study day starts with",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7384,7 +7267,7 @@
       }
     },
     "We couldn't open the next step. Try again." : {
-      "comment" : "Keep going failed\nOpening or stopping failed",
+      "comment" : "Going on with a stopped day failed\nOpening the next step failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {

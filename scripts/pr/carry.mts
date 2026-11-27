@@ -1,7 +1,7 @@
 /* oxlint-disable no-await-in-loop -- One pair at a time: a full-page shot decodes to tens of megabytes. */
 import { existsSync } from "node:fs";
 import { copyFile, mkdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { compareShots } from "./compare.mts";
 import { type CaptureItem, type Retake } from "./media.mts";
 import { sha256File } from "./provenance.mts";
@@ -24,43 +24,66 @@ async function samePixels(earlier: string, now: string): Promise<boolean> {
   return box === undefined;
 }
 
-/** The picture read is still on disk only while its file holds the bytes its record names. */
-async function intact(previousFolder: string, earlier: CaptureItem): Promise<boolean> {
-  const path = join(previousFolder, earlier.file);
-  return existsSync(path) && (await sha256File(path)) === earlier.sha256;
+async function readPicture(earlier: CaptureItem, folder: string) {
+  const read = earlier.read ?? earlier.retakes?.read;
+  const file = earlier.read ? earlier.file : earlier.retakes?.file;
+
+  if (!read) {
+    return;
+  }
+
+  const recordedHash = earlier.read ? earlier.sha256 : earlier.retakes?.sha256;
+  const path = file === undefined ? undefined : resolve(folder, file);
+  const actualHash = path && existsSync(path) ? await sha256File(path) : undefined;
+
+  if (!file || !path || !actualHash || (recordedHash && recordedHash !== actualHash)) {
+    return { read, sha256: recordedHash };
+  }
+
+  return { file: earlier.read ? `earlier/${file}` : file, path, read, sha256: actualHash };
 }
 
-/**
- * What a retake of `earlier` checks its fixes against: `earlier`'s read and picture, or, when
- * nobody read `earlier`, the read it retook. The picture is copied into `keep`; one overwritten
- * already keeps only the read, so the retake gets a whole read.
- */
-async function retakeOf({
+async function carryRead({
   earlier,
+  item,
   keep,
-  kept,
+  picture,
   previousFolder,
 }: {
   earlier: CaptureItem;
+  item: CaptureItem;
   keep: string;
-  kept: boolean;
+  picture: string;
   previousFolder: string;
-}): Promise<Retake | undefined> {
-  if (earlier.read && !kept) {
-    return { read: earlier.read };
+}): Promise<CaptureItem> {
+  const kept = await readPicture(earlier, previousFolder);
+
+  if (!kept) {
+    return item;
   }
 
-  const retake = earlier.read
-    ? { file: `earlier/${earlier.file}`, read: earlier.read }
-    : earlier.retakes;
+  const { file, path, read, sha256 } = kept;
 
-  if (retake?.file) {
-    await mkdir(dirname(join(keep, retake.file)), { recursive: true });
-    const from = join(previousFolder, earlier.read ? earlier.file : retake.file);
-    await copyFile(from, join(keep, retake.file));
+  if (
+    sha256 &&
+    (sha256 === item.sha256 || (item.kind === "shot" && path && (await samePixels(path, picture))))
+  ) {
+    return { ...item, read: { ...read, carriedFrom: read.carriedFrom ?? sha256 } };
   }
 
-  return retake;
+  if (!file || !path) {
+    return { ...item, retakes: { read } };
+  }
+
+  const to = resolve(keep, file);
+
+  if (path !== to) {
+    await mkdir(dirname(to), { recursive: true });
+    await copyFile(path, to);
+  }
+
+  const retakes: Retake = { file, read, sha256 };
+  return { ...item, retakes };
 }
 
 /**
@@ -92,22 +115,10 @@ export async function carryReads({
 
   for (const item of items) {
     const earlier = earlierOf.get(configuration(item));
-    const kept = earlier !== undefined && (await intact(previousFolder, earlier));
 
-    const same =
-      earlier?.read &&
-      (earlier.sha256 === item.sha256 ||
-        (item.kind === "shot" &&
-          kept &&
-          (await samePixels(join(previousFolder, earlier.file), now(item)))));
-
-    if (same && earlier.read) {
-      const carriedFrom = earlier.read.carriedFrom ?? earlier.sha256;
-      carried.push({ ...item, read: { ...earlier.read, carriedFrom } });
-    } else {
-      const retakes = earlier && (await retakeOf({ earlier, keep, kept, previousFolder }));
-      carried.push(retakes ? { ...item, retakes } : item);
-    }
+    carried.push(
+      earlier ? await carryRead({ earlier, item, keep, picture: now(item), previousFolder }) : item,
+    );
   }
 
   return carried;

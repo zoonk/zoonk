@@ -42,6 +42,7 @@ const DETAIL: Detail = {
     planItemId: null,
     planItemKey: null,
     position: 0,
+    practiceNumber: null,
     preparing: false,
     questions: 1,
     refresh: false,

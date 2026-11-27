@@ -58,11 +58,12 @@ export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
   };
 }
 
-export function countTabs(page: MindMapsPage): Record<MindMapTab, number> {
+/** `saved`: the saves still kept, which the page knows better than the copy it was served. */
+export function countTabs(page: MindMapsPage, saved: number): Record<MindMapTab, number> {
   return {
     chapters: countChapterMaps(page.chapters).ready,
     lessons: page.lessonGroups.reduce((total, group) => total + group.count, 0),
-    saved: page.saved.length,
+    saved,
   };
 }
 

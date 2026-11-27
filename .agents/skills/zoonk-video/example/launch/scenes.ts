@@ -325,7 +325,7 @@ const clip: Scene = async (stage) => {
     [
       ...(firstReadout ? ([...firstReadout.children].slice(1) as HTMLElement[]) : []),
       ...readouts.slice(1).flatMap((readout) => [...readout.children] as HTMLElement[]),
-      ...[coverage, ...rest].flatMap((line) => [...line.children] as HTMLElement[]),
+      ...rest.flatMap((line) => [...line.children] as HTMLElement[]),
     ],
     B.swap - 0.2,
     0.25,

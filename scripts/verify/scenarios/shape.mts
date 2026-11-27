@@ -40,6 +40,8 @@ export type Scenario = {
   reach: Step[] | null;
   /** Words on the screen that prove this state is showing. */
   proof: string;
+  /** The state's own region when its exact proof text also appears elsewhere on the page. */
+  proofWithin?: string;
   /** Its steps change what the learner has (a skip that saves), so each size gets its own learner. */
   writes?: boolean;
   /**

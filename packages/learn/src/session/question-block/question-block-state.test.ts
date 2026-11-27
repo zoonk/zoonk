@@ -58,6 +58,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   planItemId: null,
   planItemKey: null,
   position: 0,
+  practiceNumber: null,
   preparing: false,
   questions: 2,
   refresh: false,

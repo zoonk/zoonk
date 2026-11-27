@@ -50,7 +50,9 @@ function WentWellStep({
           <ResultRows>
             {phrases.map((phrase) => (
               <ResultRow className="font-medium" key={phrase}>
-                <q lang={language}>{phrase}</q>
+                <q data-slot="list-row-title" lang={language}>
+                  {phrase}
+                </q>
               </ResultRow>
             ))}
           </ResultRows>
@@ -71,12 +73,12 @@ function PronunciationTip({
     <ResultRow>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span>
-          <span className="font-medium" lang={language}>
+          <span className="font-medium" data-slot="list-row-title" lang={language}>
             {item.word}
           </span>{" "}
           <span className="text-muted-foreground font-mono text-xs">{item.respelling}</span>
         </span>
-        <span className="text-muted-foreground">
+        <span className="text-muted-foreground" data-slot="list-row-description">
           <ItemLine text={item.tip} />
         </span>
       </span>

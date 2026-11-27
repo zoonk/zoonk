@@ -19,8 +19,8 @@ final class LearnerSummaryStore {
       audience: .signedIn,
       // Every `DataDomain`, so the frame follows every write.
       domains: [
-        .allowance, .goals, .learnerModel, .learningProfile, .memory, .userProgress, .userSession,
-        .userSubscription,
+        .allowance, .goals, .learnerModel, .learningProfile, .memory, .savedLessons, .userProgress,
+        .userSession, .userSubscription,
       ],
       maxAge: .seconds(60)
     ) { session in

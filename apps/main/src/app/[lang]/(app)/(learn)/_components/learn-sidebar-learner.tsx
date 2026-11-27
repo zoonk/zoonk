@@ -9,10 +9,12 @@ import { useStatsPages } from "@/app/[lang]/(app)/(stats)/_components/stats-page
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
+import { useListedPlaces } from "@/lib/saved-lessons/saved-lessons-place";
 import {
   type LearnerSummary,
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
+import { BeltLevel } from "@zoonk/learn/level-link";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
 import {
   SIDEBAR_ACCOUNT_CLASS,
@@ -24,11 +26,10 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
-import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
-function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
+function StudyLinksList({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
 
   return (
@@ -42,10 +43,24 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
       {places.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
       {places.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
       {places.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
+      {places.savedLessons && <LearnSidebarLink label={t("Saved lessons")} menu="savedLessons" />}
       {places.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
     </>
+  );
+}
+
+function ListedStudyLinks({ places }: { places: LearnerSummaryPlaces }) {
+  return <StudyLinksList places={useListedPlaces(places)} />;
+}
+
+/** The page shown can add its own row, and a dynamic route's path is known only at request time. */
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
+  return (
+    <Suspense fallback={<StudyLinksList places={places} />}>
+      <ListedStudyLinks places={places} />
+    </Suspense>
   );
 }
 

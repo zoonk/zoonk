@@ -1,7 +1,9 @@
 import { resolve } from "node:path";
+import { type BodyImage } from "./body.mts";
 import { manifestsAbove } from "./locate.mts";
 import { type CaptureItem, deviceLine, isRecorded, readManifest } from "./media.mts";
 import { sha256File } from "./provenance.mts";
+import { type Problem } from "./report.mts";
 
 /**
  * The heading over the device pictures, so whoever reads the PR sees nothing measured their
@@ -43,7 +45,7 @@ export function unwritablePath(path: string): string | null {
 }
 
 /** The first of each picture, by the path it resolves to, in order. */
-export function firstOfEach<Shown extends { path: string }>(shown: Shown[]): Shown[] {
+function firstOfEach<Shown extends { path: string }>(shown: Shown[]): Shown[] {
   return shown.filter((item, index) => shown.findIndex(({ path }) => path === item.path) === index);
 }
 
@@ -99,7 +101,7 @@ export function deviceSection(shots: DeviceShot[]): string {
  * Where the body holds `section` as whole lines between blank lines (or the body's ends): its
  * start, or null unless it does so exactly once.
  */
-export function sectionStart(markdown: string, section: string): number | null {
+function sectionStart(markdown: string, section: string): number | null {
   const padded = `\n\n${markdown}\n\n`;
   const fenced = `\n\n${section}\n\n`;
   const first = padded.indexOf(fenced);
@@ -136,4 +138,43 @@ export async function readDeviceShots(links: string[]): Promise<DeviceShot[]> {
       return { item, link };
     }),
   );
+}
+
+export type Body = { images: (BodyImage & { path: string })[]; markdown: string };
+
+/**
+ * Device pictures appear only in the section `deviceSection` writes from their records, in the
+ * order they first appear, and the body holds that text exactly once between blank lines. The
+ * check compares text: what an author writes around the section is theirs to answer for.
+ */
+export function sectionProblems(
+  body: Body | undefined,
+  devices: Map<string, CaptureItem>,
+): Problem[] {
+  if (devices.size === 0) {
+    return [];
+  }
+
+  const shown = body?.images.filter(({ path }) => devices.has(path)) ?? [];
+
+  if (body && shown.length === 0) {
+    return [];
+  }
+
+  const firsts = firstOfEach(shown);
+
+  const shots = body
+    ? firsts.flatMap(({ link, path }) => {
+        const item = devices.get(path);
+        return item ? [{ item, link }] : [];
+      })
+    : [...devices].map(([path, item]) => ({ item, link: path }));
+
+  const section = deviceSection(shots);
+  const at = body ? sectionStart(body.markdown, section) : null;
+
+  const inside =
+    at !== null && shown.every(({ end, start }) => start >= at && end <= at + section.length);
+
+  return inside ? [] : [{ detail: section, kind: "device-section" }];
 }

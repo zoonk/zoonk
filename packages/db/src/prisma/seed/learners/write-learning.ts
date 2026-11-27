@@ -1,4 +1,5 @@
 import { atLocalHour, localTimeFields, minutesBefore } from "../_utils/dates";
+import { localizeObject } from "../_utils/localize";
 import { seedId } from "../_utils/seed-id";
 import { answeredStepId } from "./answered-step";
 import { toLearnerSkillMemory } from "./memory-presets";
@@ -88,7 +89,7 @@ async function writeAttempt(
     itemId,
     missedAt: answeredAt,
     skillId,
-    snapshot: attempt.mistake.snapshot,
+    snapshot: localizeObject(attempt.mistake.snapshot, learner.language),
     status: attempt.mistake.status,
     stepId,
     userId,

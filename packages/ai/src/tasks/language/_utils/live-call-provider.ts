@@ -1,10 +1,10 @@
 import { blockTestProviderFetch } from "../../../_utils/block-test-provider-fetch";
 import { isTestEnvironment } from "../../../_utils/is-test-environment";
+import { blockAiSpendFetch, isAiSpendDisabled } from "../../../_utils/no-ai-spend";
 import { directOpenAI } from "../../../direct-providers";
 
-/** Admission can safely pause before reserving money when the OpenAI key is absent. */
 export function isLiveCallAvailable(): boolean {
-  return Boolean(process.env.OPENAI_API_KEY?.trim());
+  return !isAiSpendDisabled() && Boolean(process.env.OPENAI_API_KEY?.trim());
 }
 
 /**
@@ -15,5 +15,12 @@ export function getLiveCallModel() {
   return directOpenAI.experimental_realtime("gpt-live-1");
 }
 
-/** Like the model's own requests, a hangup fails before it leaves the process during tests. */
-export const liveCallFetch: typeof fetch = isTestEnvironment() ? blockTestProviderFetch : fetch;
+function getLiveCallFetch(): typeof fetch {
+  if (isAiSpendDisabled()) {
+    return blockAiSpendFetch;
+  }
+
+  return isTestEnvironment() ? blockTestProviderFetch : fetch;
+}
+
+export const liveCallFetch = getLiveCallFetch();

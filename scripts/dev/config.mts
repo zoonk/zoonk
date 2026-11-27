@@ -90,9 +90,9 @@ export function getPortlessEnvironment({
 }: {
   homeDirectory: string;
   lanMode: boolean;
-}): NodeJS.ProcessEnv {
+}) {
   return {
-    PORTLESS_HTTPS: "0",
+    PORTLESS_HTTPS: lanMode ? "1" : "0",
     PORTLESS_LAN: lanMode ? "1" : "0",
     PORTLESS_PORT: lanMode ? "1356" : "1355",
     PORTLESS_STATE_DIR: join(homeDirectory, lanMode ? ".portless-zoonk-lan" : ".portless-zoonk"),

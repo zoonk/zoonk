@@ -53,6 +53,10 @@ class EssayScreenshots {
 
     private val longAnswer = (ANSWER_TEXT + "\n\n").repeat(5).trim()
 
+    private val shortParagraph =
+        "Internal control is carried out by each branch over its own acts, " +
+            "and the external one is exercised by Congress with the help of the TCU."
+
     private fun show(
         name: String,
         read: com.zoonk.api.models.Essay = essay(),
@@ -74,7 +78,7 @@ class EssayScreenshots {
         rule.mainClock.advanceTimeBy(1_000)
         if (fold) rule.unfoldBook(folds)
         rule.waitForIdle()
-        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender().asAndroidBitmap())
+        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender(scenario = name).asAndroidBitmap())
     }
 
     private fun question(
@@ -123,6 +127,10 @@ class EssayScreenshots {
     @Test
     @Config(qualifiers = "w390dp-h844dp-xxhdpi")
     fun writingPastTheLimit() = writing("04-writing-over-limit", (longAnswer + "\n\n").repeat(3))
+
+    @Test
+    @Config(qualifiers = "w390dp-h844dp-xxhdpi")
+    fun writingPastATypicalHand() = writing("04-writing-may-not-fit", longAnswer + "\n\n$shortParagraph".repeat(8))
 
     @Test
     @Config(qualifiers = "w320dp-h568dp-xhdpi")

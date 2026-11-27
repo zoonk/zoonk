@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "savedlessons_empty": "06b153d28d792eb2725df9b768046529ca60e92b423566103e32a2969fd1fbf4",
+  "savedlessons_no_longer_available": "55a37d8ed3971159d7c0dc1cdeab003965b0aa8013c6b1a1bb36c0824ecb9b6d",
+  "savedlessons_remove": "8dbb0ace44b4ff7d78d01bc262e4f576321cf447f0c822d4526367af34e3312f",
+  "savedlessons_remove_failed": "262141b99c90c294953d482ee6eccdc5d272e89fb2c73f1f7eef6d697c3a1c0c",
+  "savedlessons_remove_spoken": "5cad4b3f10df43b505185d610eed1e2c92ae36673fb20e67d365fe6063152ac6",
+  "savedlessons_save": "089fa2402d59f2d96af97942a3d79700a4546cc9ccd00482424b2587df1a79b7",
+  "savedlessons_save_failed": "90ef14b945c73e4e5c97e12cf7d5af784e5e44e52a44e4bf946c5ea4044b8606",
+  "savedlessons_save_named": "6e864106d0230971c9675d71f719f4aba7291b7878960a328bcccd77363f69c3",
+  "savedlessons_saved": "b5a01d4905acc1af09226c83e77775ac78204b8a71e5bd2e442799d14d00d090",
+  "savedlessons_saved_named": "5154145fb1de1c74e00f90941a138698f43fa2a7648c405862fd496133502d2e",
+  "savedlessons_show_more": "ecdd61024f8b337e2f5399219a29f8d40ebb53e703a371f5ecb5803eec71cf79",
+  "savedlessons_unsave": "b9426ab0448193e70bd58d94d263f2d1a4a31a78217c6b46f7e8eacd1744e02e"
+}
+-->
+<resources>
+    <string name="savedlessons_save">저장</string>
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
+    <string name="savedlessons_saved">저장됨</string>
+    <string name="savedlessons_save_named">%1$s 저장</string>
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
+    <string name="savedlessons_saved_named">%1$s 저장됨</string>
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
+    <string name="savedlessons_unsave">저장 목록에서 삭제</string>
+    <string name="savedlessons_empty">아직 저장한 레슨이 없어요. 레슨의 북마크를 눌러 여기에 저장해 보세요.</string>
+    <string name="savedlessons_no_longer_available">더 이상 볼 수 없음</string>
+    <string name="savedlessons_remove">삭제</string>
+    <!-- What screen readers say for Remove, naming the lesson. -->
+    <string name="savedlessons_remove_spoken">저장한 레슨에서 %1$s 삭제</string>
+    <string name="savedlessons_show_more">더 보기</string>
+    <string name="savedlessons_save_failed">이 레슨을 저장할 수 없어요. 다시 시도해 보세요.</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
+    <string name="savedlessons_remove_failed">이 레슨을 저장 목록에서 제거할 수 없어요. 다시 시도해 보세요.</string>
+</resources>

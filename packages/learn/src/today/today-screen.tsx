@@ -87,6 +87,7 @@ export function TodayScreen({
   notices = NO_TODAY_HOST_NOTICES,
   planEnd = null,
   readAt,
+  savedLessons = false,
   speakingEntry = null,
   today,
   unfinishedGoal = null,
@@ -104,6 +105,7 @@ export function TodayScreen({
   planEnd?: string | null;
   /** Each new read waits a full window again, for whatever it shows waiting. */
   readAt: number;
+  savedLessons?: boolean;
   speakingEntry?: React.ReactNode;
   today: TodayView;
   /** A goal the learner typed and hasn't confirmed, offered with the day's notice. */
@@ -150,6 +152,8 @@ export function TodayScreen({
                 mistakes={mistakes}
                 mistakesHref={actions.mistakesHref}
                 mockEntry={mockEntry}
+                savedLessons={savedLessons}
+                savedLessonsHref={actions.savedLessonsHref}
                 speakingEntry={speakingEntry}
               />
             </>
