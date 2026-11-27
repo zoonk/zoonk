@@ -255,7 +255,7 @@ describe(checkFreshness, () => {
     await linkSourceToGoal(source.id);
 
     await prisma.source.update({
-      data: { validUntil: new Date(Date.now() - DAY_MS) },
+      data: { validUntil: new Date(Date.now() - MS_PER_DAY) },
       where: { id: source.id },
     });
 
