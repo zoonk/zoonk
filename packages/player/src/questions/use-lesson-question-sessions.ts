@@ -48,17 +48,18 @@ export function useLessonQuestionSessions({
   );
 
   const scope = getLessonQuestionScope(activeContext);
-  const [previousPage, setPreviousPage] = useState({ scope, thread: initialThread });
 
-  if (previousPage.scope !== scope || previousPage.thread !== initialThread) {
-    setPreviousPage({ scope, thread: initialThread });
+  const [receivedPages, setReceivedPages] = useState(
+    () => new Map(initialThread ? [[scope, initialThread]] : []),
+  );
 
-    if (initialThread) {
-      dispatchToContext({
-        action: { ...initialThread, fromPage: true, type: "threadLoaded" },
-        context: activeContext,
-      });
-    }
+  if (initialThread && receivedPages.get(scope) !== initialThread) {
+    setReceivedPages(new Map(receivedPages).set(scope, initialThread));
+
+    dispatchToContext({
+      action: { ...initialThread, fromPage: true, type: "threadLoaded" },
+      context: activeContext,
+    });
   }
 
   const currentSessions = useRef(sessions);
