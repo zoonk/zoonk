@@ -184,7 +184,7 @@ msgstr "오늘의 학습 이어가기"
 #: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
 msgctxt "BwmLVN"
 msgid "Saved lessons"
-msgstr ""
+msgstr "저장한 레슨"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -920,7 +920,7 @@ msgstr "내 계획 한눈에 보기"
 #: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
 msgctxt "FH8mtx"
 msgid "The lessons you save, ready to do again anytime."
-msgstr ""
+msgstr "저장한 레슨은 언제든 다시 할 수 있어요."
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"

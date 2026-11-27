@@ -184,7 +184,7 @@ msgstr "Continuer la séance du jour"
 #: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
 msgctxt "BwmLVN"
 msgid "Saved lessons"
-msgstr ""
+msgstr "Leçons enregistrées"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -920,7 +920,7 @@ msgstr "Ton plan en un coup d’œil"
 #: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
 msgctxt "FH8mtx"
 msgid "The lessons you save, ready to do again anytime."
-msgstr ""
+msgstr "Les leçons que tu enregistres, prêtes à refaire quand tu veux."
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"
