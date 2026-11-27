@@ -1,30 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-/** Puts each kept row back where it was, after the rows still listed before it. */
-function keep<Row>({
-  isKept,
-  keyOf,
-  next,
-  previous,
-}: {
-  isKept: (row: Row) => boolean;
-  keyOf: (row: Row) => string;
-  next: readonly Row[];
-  previous: readonly Row[];
-}): Row[] {
-  const listed = new Set(next.map((row) => keyOf(row)));
-  const merged = [...next];
-
-  for (const [index, row] of previous.entries()) {
-    if (!listed.has(keyOf(row)) && isKept(row)) {
-      merged.splice(Math.min(index, merged.length), 0, row);
-    }
-  }
-
-  return merged;
-}
+import { keepRows } from "./_utils/keep-rows";
 
 /**
  * A list of saves keeps the rows the learner removed on this page, where they were, until they
@@ -45,7 +22,7 @@ export function useKeptRows<Row>({
 
   if (served !== rows) {
     setServed(rows);
-    setShown(keep({ isKept, keyOf, next: rows, previous: shown }));
+    setShown(keepRows({ isKept, keyOf, next: rows, previous: shown }));
   }
 
   return shown;
