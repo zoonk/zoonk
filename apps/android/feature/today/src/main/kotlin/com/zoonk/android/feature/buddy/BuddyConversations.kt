@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.buddy
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +35,9 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.tutor.BuddyConversation
 import com.zoonk.android.feature.tutor.BuddyConversationList
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowPlus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
@@ -43,7 +46,6 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatTimeOfDay
-import com.zoonk.android.ui.theme.zoonkType
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.time.Instant
@@ -149,10 +151,15 @@ private fun LazyListScope.conversationRows(
             modifier = Modifier.semantics { if (rows.openId == null) selected = true },
             onClick = taps.startNew,
             highlighted = rows.openId == null,
+            trailing = { ListRowPlus() },
         )
     }
-    items(rows.list.conversations, key = { it.id }, contentType = { "conversation" }) { conversation ->
-        ConversationRow(conversation, open = conversation.id == rows.openId) { taps.open(conversation.id) }
+    itemsIndexed(rows.list.conversations, key = { _, row -> row.id }, contentType = { _, _ -> "conversation" }) { index, conversation ->
+        val open = conversation.id == rows.openId
+        Column {
+            if (index > 0) ListDivider(besideHighlight = open || rows.list.conversations[index - 1].id == rows.openId)
+            ConversationRow(conversation, open) { taps.open(conversation.id) }
+        }
     }
     if (rows.list.nextCursor != null) {
         item(key = "more", contentType = "more") {
@@ -186,17 +193,11 @@ private fun ConversationRow(
         modifier = Modifier.semantics { if (open) selected = true },
         onClick = onOpen,
         highlighted = open,
-        supporting = {
-            Text(
-                lastAsked(conversation.lastAskedAt),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.data,
-            )
-        },
+        meta = { Text(lastAsked(conversation.lastAskedAt), maxLines = 1) },
     )
 }
 
-/** Today's rows say when, yesterday's say so, and earlier ones which day. */
+/** Today's rows say when, earlier ones which day, as main's rows do. */
 @Composable
 private fun lastAsked(moment: Instant): String {
     val zone = ZoneId.systemDefault()
@@ -207,24 +208,10 @@ private fun lastAsked(moment: Instant): String {
     val today = LocalDate.now(zone)
     val locale = currentLocale()
 
-    return when (at.toLocalDate()) {
-        today -> {
-            formatTimeOfDay(
-                at.toLocalTime(),
-                locale,
-                android.text.format.DateFormat
-                    .is24HourFormat(LocalContext.current),
-            )
-        }
-
-        today.minusDays(1) -> {
-            stringResource(R.string.tutor_yesterday)
-        }
-
-        else -> {
-            formatDate(at.toLocalDate(), locale, DateStyle.Day, today)
-        }
+    if (at.toLocalDate() == today) {
+        return formatTimeOfDay(at.toLocalTime(), locale, DateFormat.is24HourFormat(LocalContext.current))
     }
+    return formatDate(at.toLocalDate(), locale, DateStyle.Day, today)
 }
 
 /** A highlighted row's corners keep this far from the pane's or sheet's edge, so its words start 24dp in, as the page's other sheets do. */

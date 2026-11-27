@@ -265,6 +265,12 @@ fun ListRowChevron() {
     EndGlyph(R.drawable.ic_row_chevron, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
 }
 
+/** Main's plus at a row's end: the row starts something new where its neighbors open a page, in the chevron's slot and ink. */
+@Composable
+fun ListRowPlus() {
+    EndGlyph(R.drawable.ic_row_plus, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+}
+
 /** Main's `ListRowChevronSpace`: the chevron's empty slot, so a header's words end where the rows' values do. */
 @Composable
 fun ListRowChevronSpace() {
