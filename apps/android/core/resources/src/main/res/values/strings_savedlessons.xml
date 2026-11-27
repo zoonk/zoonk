@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Saves a lesson to do again later: the bookmark's name before it's saved. -->
     <string name="savedlessons_save">Save</string>
-    <!-- A lesson the learner saved: the bookmark's name once it's saved; tapping it again removes it. -->
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
     <string name="savedlessons_saved">Saved</string>
-    <!-- What screen readers say for a lesson row's bookmark before it's saved. %1$s is the lesson's title. -->
     <string name="savedlessons_save_named">Save %1$s</string>
-    <!-- What screen readers say for a lesson row's bookmark once it's saved. %1$s is the lesson's title. -->
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
     <string name="savedlessons_saved_named">Saved %1$s</string>
-    <!-- Removes a lesson from the saved ones, from a row's menu or swipe. -->
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
     <string name="savedlessons_unsave">Remove from saved</string>
     <string name="savedlessons_empty">Nothing saved yet. Tap the bookmark on a lesson to keep it here.</string>
-    <!-- Over saved lessons that can't open anymore, such as one that left the plan. -->
     <string name="savedlessons_no_longer_available">No longer available</string>
-    <!-- Removes a saved lesson that can't open anymore. -->
     <string name="savedlessons_remove">Remove</string>
     <!-- What screen readers say for Remove, naming the lesson. -->
     <string name="savedlessons_remove_spoken">Remove %1$s from saved lessons</string>
-    <!-- Shows the rest of a long list of saved lessons. -->
     <string name="savedlessons_show_more">Show more</string>
     <string name="savedlessons_save_failed">Couldn\'t save this lesson. Try again.</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
     <string name="savedlessons_remove_failed">Couldn\'t remove this lesson. Try again.</string>
 </resources>

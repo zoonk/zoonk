@@ -43,6 +43,7 @@
   "mindmaps_previous": "7ea41e66412b1f448090f075e39282689498a9c381600d68511b5289c7696941",
   "mindmaps_ready": "dffdd162f0144d7998be93acfd953a7a72a597211a0b792a4ea508e3a80244e9",
   "mindmaps_remove": "128dc00cde1dbfca579da4fbec5845ddaa405edb4c77d123d51e4adaea76ddf7",
+  "mindmaps_remove_map_failed": "1fee5b127d17042442187e6dd0368c4d2f6af03479ddafbc6a7eac4e185408ca",
   "mindmaps_remove_spoken": "f5b3ab142863422f8fd552e2c406094aa87bd87ed9bf47b6482d64a116f5b022",
   "mindmaps_row_description": "25529b780bc3479bb62b203f86b3b2f38e696d7fcfc27f11f3a1e750a1548c71",
   "mindmaps_row_description_finish": "0897dc2d122fba2df44ca5dc966adef4f68b54d8d80e393deb5c124900534cf3",
@@ -193,6 +194,7 @@
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">저장 해제</string>
     <string name="mindmaps_save_map_failed">이 마인드맵을 저장하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="mindmaps_remove_map_failed">이 마인드맵을 저장 목록에서 삭제하지 못했어요. 다시 시도해 보세요.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">더보기</string>
     <string name="mindmaps_previous">이전</string>

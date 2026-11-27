@@ -43,6 +43,7 @@
   "mindmaps_previous": "812d68b1afc486ff9d9cc735cd9e2429105d841e70afa7f6c53913a380c7f36a",
   "mindmaps_ready": "88fb4e4bd0bba729e35b82c768aa9116163f3d283a4ea03908a382e149e01572",
   "mindmaps_remove": "c3b1320ec9351aa22f182ff61b9f17fce1f3420d9adcf32b5d2d1e97382c10b9",
+  "mindmaps_remove_map_failed": "f5fc9cfbe20ab5ae280a10288a2816d9358c2e0d5fec72ff3b4e3cf856b1f4c6",
   "mindmaps_remove_spoken": "4b111d559dc7db25def6d41710ab8550ea69174815564c0c5c23ce6b7fff89ba",
   "mindmaps_row_description": "e3c607c82363399cd060ffdb01bdee16cf4898a97fec2c487172fae896a6ddee",
   "mindmaps_row_description_finish": "4d8c4cf1c19e2c31df19efc886890ed434a6c37d9f7db267de81e5a3f923e295",
@@ -209,6 +210,7 @@
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Remover dos salvos</string>
     <string name="mindmaps_save_map_failed">Não deu para salvar este mapa. Tente de novo.</string>
+    <string name="mindmaps_remove_map_failed">Não deu para remover esse mapa. Tente de novo.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">Mais opções</string>
     <string name="mindmaps_previous">Anterior</string>

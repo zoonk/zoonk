@@ -58,6 +58,7 @@
   "navigation_mind_maps": "ca89053c18576263f8fec099b9c721a321c747dba693bef2def021350d6f5f44",
   "navigation_mistakes": "0cb1429a887e4e45bec18784d627a52a628ae9aec121991494eeaa7acf1e3132",
   "navigation_plan": "7e27aa8c14623a171f0bb20eb9299a714d9d1728847b4ce033bd1afdf34f3029",
+  "navigation_saved_lessons": "d0beb92dddfb831ea8b8db04bcc4b173b27fa1a77d9a1d892f756a86a062e929",
   "navigation_speaking": "e078aa755b40a278b1695cce43c9d912b067a23b286236ea2d893957c9b84c10",
   "navigation_statistics": "7099f681d8ce3a0d1d23b1ddc88fb7e58360ae568bb4c51e16b0459673189f77",
   "navigation_study": "a369767c09f53138fe65da365c206faaaf42767c679c95bb52388b645ac7e08e",
@@ -86,6 +87,7 @@
     <string name="navigation_buddy">Kumpel</string>
     <string name="navigation_study">Nauka</string>
     <string name="navigation_mistakes">Zeszyt błędów</string>
+    <string name="navigation_saved_lessons">Zapisane lekcje</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Ukończone lekcje</string>
     <string name="navigation_exam">Twój egzamin</string>

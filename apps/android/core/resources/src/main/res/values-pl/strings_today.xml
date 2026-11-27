@@ -88,6 +88,7 @@
   "today_resume": "86777ddd59b4426bc804091d67466763e3fdbf6ebf7aeb7d1f802f31e1f84e16",
   "today_resume_effect": "695a467ed129fea4c7a7b75fa3990c05ee5bae54a678799539083b5ac007607d",
   "today_save_failed": "9ca8b48792f3149522121de8fda9dd639a8d815c70f66f616169ee00673289fb",
+  "today_saved_lessons_line": "53898ec9a1badedb1c37240bca5b7f0524b29aa25685f7f2b1f48f3e42ecc55b",
   "today_see_changes": "f201e31f4fb2aca94779627d8b90268a617f64d8a57e7ebf11b0be7d01bfc22b",
   "today_see_day_challenge": "32beea04a06e0f816c0d0a47eab66fc1502d20a7cfe6c837f9bc65a59761bdbb",
   "today_see_day_mock": "3f12ffb6d7b913d261ddbd983f46a7b6dffd208d12c37e628bd1c9468d1de1c4",
@@ -288,6 +289,8 @@
     <string name="today_practice_anytime">Ćwicz, kiedy chcesz</string>
     <string name="today_mistakes_notebook">Zeszyt błędów</string>
     <string name="today_mistakes_redo">Popraw błędne odpowiedzi</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Lekcje, do których chcesz wrócić</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Zrób lekcję jeszcze raz</string>
     <string name="today_mistakes_return_tomorrow">Dzisiejsze błędy wrócą jutro</string>

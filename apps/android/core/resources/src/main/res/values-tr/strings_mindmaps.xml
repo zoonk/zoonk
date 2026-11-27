@@ -43,6 +43,7 @@
   "mindmaps_previous": "30004dfa1f9fe9ebc3a6853b2106605ef441d040f4be3838ebdd4dcbaa51b54b",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
   "mindmaps_remove": "9d85b1552e2be2eecbab1dfee4d1f260aaaf4485abe734084081006be37f6956",
+  "mindmaps_remove_map_failed": "bd885d9191be0be131cb7eeaa70d97284d8517c95ca8c9ab99ff1d671ac8b3f4",
   "mindmaps_remove_spoken": "32ef42f7fdc03b64f0a365cff21dd3d7cbe44d0c02d7be0bf1f73474e165951e",
   "mindmaps_row_description": "1a17dd7ecf16e28c7b84a140b687fd8fa171bb72b9753a8e3c85f4667422002f",
   "mindmaps_row_description_finish": "33bba190b67b3bec6061869bb3e51752874de4fddbb1ce4d618a2d10e8d6c87e",
@@ -201,6 +202,7 @@
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Kaydedilenlerden kaldır</string>
     <string name="mindmaps_save_map_failed">Bu harita kaydedilemedi. Tekrar dene.</string>
+    <string name="mindmaps_remove_map_failed">Bu harita kaldırılamadı. Tekrar dene.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">Diğer seçenekler</string>
     <string name="mindmaps_previous">Öncekine git</string>
