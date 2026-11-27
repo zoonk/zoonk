@@ -38,11 +38,13 @@ From the repository root, add `-C apps/apple`, for example `make -C apps/apple c
 
 To check a Release build, run `make build CONFIGURATION=Release`.
 
-`make test` and `make ui-test` lease one of Xcode's own iPhone simulators for each run, trying iPhone 17 last since `pnpm iphone` prefers it: they boot a shut-down one, or reuse one a killed run left booted, and shut it down when the run ends, so several checkouts can test at once. They wait while three simulators are booted, or six while the Mac is quiet. `pnpm iphone` and `pnpm ipad` lease a simulator the same way until the app launches, then leave it booted. Before you drive one of those iPhones by hand, such as in a walk, hold it with `pnpm iphone:hold "iPhone 17e"` (a name or udid) for as long as you use it, so a test run can't take it: the hold boots the simulator if it's shut down, waits while something else has it, and leaves it booted when it stops. To test on a simulator you choose, such as one you keep booted, pass its destination:
+`make test` and `make ui-test` take a simulator lease. To test on a specific simulator, close its agent-device session or release its manual hold first, then pass its UDID:
 
 ```sh
 make test TEST_DESTINATION='platform=iOS Simulator,id=<udid>'
 ```
+
+For a manual walk, wait until `pnpm iphone:hold "iPhone 17"` prints `Holding` before using the simulator. See the [simulator guidance](AGENTS.md#simulators) for lease timeouts and signed builds.
 
 Run one test or test class by passing an Xcode test identifier:
 
@@ -97,7 +99,7 @@ LocalizedStringResource(
   comment: "Navigation title for the app's primary home section.")
 ```
 
-Build the app after adding or changing copy so Xcode extracts the source strings into the matching `.xcstrings` catalog. Then run `pnpm --filter apple i18n` from the repository root to add the strings a command-line build found and translate missing Apple strings, and `pnpm --filter apple i18n:lint` to validate every catalog. The root `pnpm i18n` and `pnpm i18n:lint` commands include the Apple app when running the same workflows for the full repository.
+Build the Debug app after changing Swift copy so Xcode extracts the source strings. Run `pnpm --filter apple i18n` from the repository root to sync the catalogs and translate missing strings, then run `pnpm --filter apple i18n:lint`. Use `pnpm --filter apple i18n:sync` to sync source entries and comments without running translation.
 
 Keep catalogs together in `Zoonk/Resources/Localization`, named by feature or app surface, and use the generic `pt` locale. Xcode resolves each catalog from its table basename, while Eloqnt automatically discovers every catalog in this directory. Fix translations through the [translation rules](../../.agents/guides/translations.md), and don't add manual extraction state for ordinary source-driven strings.
 
