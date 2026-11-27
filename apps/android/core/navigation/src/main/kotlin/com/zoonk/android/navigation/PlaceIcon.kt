@@ -20,6 +20,9 @@ enum class PlaceIcon(
     /** lucide NotebookPen, SF square.and.pencil. */
     Mistakes(R.drawable.ic_edit_square, R.drawable.ic_edit_square_filled),
 
+    /** lucide Bookmark, SF bookmark. */
+    SavedLessons(R.drawable.ic_bookmark, R.drawable.ic_bookmark_filled),
+
     /** lucide History, SF clock.arrow.circlepath; Material's filled history is the same drawing. */
     CompletedLessons(R.drawable.ic_history, R.drawable.ic_history),
 

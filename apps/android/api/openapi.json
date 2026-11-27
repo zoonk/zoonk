@@ -2802,7 +2802,7 @@
     },
     "/me/completed-lessons": {
       "get": {
-        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
+        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. `available` indicates whether the lesson can be replayed and saved. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
         "operationId": "listCurrentUserCompletedLessons",
         "security": [
           {
@@ -20302,6 +20302,182 @@
         }
       }
     },
+    "/goals/{goalId}/saved-lessons": {
+      "get": {
+        "description": "The learner's saves made from this goal or for a lesson in its plan, newest save first. Unavailable lessons retain their saved titles.",
+        "operationId": "listSavedLessons",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List saved lessons",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The goal's saved lessons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Sets the learner's desired saved state for a lesson. Saving requires a lesson available to start and keeps the first save time on repeats. Removing needs only the learner's own save, from any goal.",
+        "operationId": "saveLesson",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Save or remove a lesson",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLessonInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The lesson's saved state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/skills/{skillId}/outline": {
       "get": {
         "description": "A topic of the goal's plan as its lesson plan stands. The plan writes each topic's lessons ahead for the next two weeks; a topic further away shows what the plan knows (its lesson count and first day on the Journey and the syllabus) until its course is outlined. `ready` lists the chapters that teach it; `writing` means the learner asked for it and it's being written; `available` means nothing is written yet, and POST `/goals/{goalId}/skills/{skillId}/outline/generations` writes it now. A skill outside the goal's plan isn't found.",
@@ -32601,6 +32777,25 @@
           "lesson"
         ]
       },
+      "SaveLessonInput": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "True saves the lesson, false removes it"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
+      },
       "MistakePracticeFinishInput": {
         "type": "object",
         "properties": {
@@ -41993,6 +42188,10 @@
       "CompletedLesson": {
         "type": "object",
         "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "The lesson is available to start again"
+          },
           "chapterTitle": {
             "nullable": true,
             "description": "The title of the lesson's chapter (a unit, for a language goal), or null",
@@ -42014,16 +42213,22 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved the lesson"
+          },
           "title": {
             "type": "string",
             "description": "The lesson's current title"
           }
         },
         "required": [
+          "available",
           "chapterTitle",
           "finishedOn",
           "group",
           "lessonId",
+          "saved",
           "title"
         ],
         "additionalProperties": false
@@ -51360,6 +51565,10 @@
                 "maximum": 9007199254740991,
                 "description": "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made"
               },
+              "savedLessons": {
+                "type": "boolean",
+                "description": "The active goal has a saved lesson to list"
+              },
               "speaking": {
                 "type": "boolean"
               }
@@ -51370,6 +51579,7 @@
               "exam",
               "mindMaps",
               "readyMistakes",
+              "savedLessons",
               "speaking"
             ],
             "additionalProperties": false,
@@ -82478,7 +82688,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
           },
           "brainPower": {
             "type": "integer",
@@ -82636,6 +82846,13 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "practiceNumber": {
+            "nullable": true,
+            "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
           "preparing": {
             "type": "boolean",
             "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -82695,7 +82912,7 @@
             "items": {
               "type": "string"
             },
-            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+            "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
           },
           "waitReason": {
             "nullable": true,
@@ -82792,6 +83009,7 @@
           "planItemId",
           "planItemKey",
           "position",
+          "practiceNumber",
           "preparing",
           "questions",
           "refresh",
@@ -83702,6 +83920,10 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
             "description": "Send it with every answer and with the completion"
           },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved the lesson"
+          },
           "sessionId": {
             "nullable": true,
             "description": "The run's canonical study session, or null for standalone work",
@@ -83720,6 +83942,7 @@
           "hyperdrive",
           "replay",
           "runId",
+          "saved",
           "sessionId",
           "startedAt"
         ],
@@ -94986,6 +95209,69 @@
         ],
         "additionalProperties": false
       },
+      "SavedLessonList": {
+        "type": "object",
+        "properties": {
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedLesson"
+            }
+          }
+        },
+        "required": [
+          "lessons"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLesson": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "The lesson is available to start"
+          },
+          "chapterTitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "description": "The current title if available, or the title at save"
+          }
+        },
+        "required": [
+          "available",
+          "chapterTitle",
+          "lessonId",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLessonState": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether the lesson is saved now"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
+      },
       "SkillOutline": {
         "type": "object",
         "properties": {
@@ -100273,7 +100559,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
                 },
                 "brainPower": {
                   "type": "integer",
@@ -100426,6 +100712,13 @@
                   "minimum": 0,
                   "maximum": 9007199254740991
                 },
+                "practiceNumber": {
+                  "nullable": true,
+                  "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
                 "preparing": {
                   "type": "boolean",
                   "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -100485,7 +100778,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+                  "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
                 },
                 "waitReason": {
                   "nullable": true,
@@ -100581,6 +100874,7 @@
                 "planItemId",
                 "planItemKey",
                 "position",
+                "practiceNumber",
                 "preparing",
                 "questions",
                 "refresh",

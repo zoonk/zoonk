@@ -12,16 +12,21 @@ import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * The learner waits on the grade. At high reasoning on 18 essays run twice (11 Nov 2026), Muse
- * Ember put all 36 totals in their band at 6 s p50 for $1.70/1k, and Haiku 5.5 put 31 (it marks
- * English IELTS essays too low) at 21 s p50 for $2.75/1k. A blind GPT-6.1 Sol read preferred
- * Ember's grading on 11 essays and Haiku's on 3: Haiku docked points for flaws the essays didn't
- * have. Gemini 3.8 Flash at high kept all 11 totals in band on 8 Nov 2026, at $16.59/1k; at
- * default reasoning, Haiku and Flash each missed one.
+ * The learner waits on the grade, so a fallback must be quick too. On the 108-case eval (25 Nov
+ * 2026), Muse Ember at high made all 62 pass/fail calls right at 10 s p50 for $2.98/1k. Gemini
+ * 3.8 Flash at low did too in two runs, at 10 s p50 (23 s p95) for $8.75/1k; at high it took
+ * 108 s p50 (767 s slowest) for $60/1k. Haiku 5.5 at high made them all at 37 s p50 (82 s p95)
+ * for $6.10/1k, and a blind GPT-6.1 Sol read preferred Ember's grading to Haiku's (11 Nov 2026).
+ * Gemini 3.5 Flash-Lite and GPT-6 Luna at high scored an off-topic essay instead of giving it the
+ * zero it gets.
  */
 const defaultModel = "meta/muse-ember";
 const defaultReasoning: Reasoning = "high";
-const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.8-flash"] as const;
+
+const fallbackModels = [
+  { model: "google/gemini-3.8-flash", reasoning: "low" },
+  "anthropic/claude-haiku-5.5",
+] as const;
 
 const writingEvidenceSchema = z.object({
   awards: z.array(
@@ -137,7 +142,7 @@ export async function gradeWritingEvidence(params: WritingEvidenceParams) {
     }),
   ].join("\n\n");
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, reasoning, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

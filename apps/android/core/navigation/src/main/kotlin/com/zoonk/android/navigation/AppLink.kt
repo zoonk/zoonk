@@ -156,6 +156,10 @@ object AppLink {
                         AppRoute.Mistakes
                     }
 
+                    "saved-lessons" -> {
+                        AppRoute.SavedLessons
+                    }
+
                     "completed-lessons" -> {
                         AppRoute.CompletedLessons
                     }

@@ -24,6 +24,17 @@ final class SidebarPlaceTests: XCTestCase {
     XCTAssertEqual(router.selectedTab, .stats(.level))
   }
 
+  /// Removing the last save on Saved lessons keeps the learner there, its row listed, to save it
+  /// again; the place goes once they leave.
+  func testSavedLessonsStaysListedWhileItShowsOnceItsLastSaveIsRemoved() {
+    let places = LearnerPlaces(
+      certificates: false, completedLessons: true, exam: false, mindMaps: false, readyMistakes: 0,
+      savedLessons: false, speaking: false)
+
+    XCTAssertTrue(AppTab.listedStudy(for: places, showing: .savedLessons).contains(.savedLessons))
+    XCTAssertFalse(AppTab.listedStudy(for: places, showing: .today).contains(.savedLessons))
+  }
+
   /// Narrowing the window and widening it again keeps what the learner started open.
   func testAResizeKeepsAPracticeStartedFromASidebarPlace() {
     let router = AppRouter()

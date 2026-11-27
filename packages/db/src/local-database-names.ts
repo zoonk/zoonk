@@ -12,6 +12,16 @@ export function isLinkedWorktree(checkout: string): boolean {
   return statSync(join(checkout, ".git"), { throwIfNoEntry: false })?.isFile() ?? false;
 }
 
+/** Every database a worktree owns starts with this, its test runs' copies included. */
+export function worktreeDatabasePrefix(worktree: string): string {
+  const identifier = createHash("sha256")
+    .update(worktree)
+    .digest("hex")
+    .slice(0, WORKTREE_ID_LENGTH);
+
+  return `zoonk_wt_${identifier}_`;
+}
+
 export function worktreeDatabaseName({
   mode,
   worktree,
@@ -19,10 +29,5 @@ export function worktreeDatabaseName({
   mode: DatabaseMode;
   worktree: string;
 }): string {
-  const identifier = createHash("sha256")
-    .update(worktree)
-    .digest("hex")
-    .slice(0, WORKTREE_ID_LENGTH);
-
-  return `zoonk_wt_${identifier}_${mode}`;
+  return `${worktreeDatabasePrefix(worktree)}${mode}`;
 }

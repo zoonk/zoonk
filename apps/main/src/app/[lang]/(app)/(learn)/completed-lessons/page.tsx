@@ -62,7 +62,9 @@ async function CompletedLessonsBody() {
     );
   }
 
-  return <CompletedLessonsClient filter={result.filter} lessons={result.lessons} />;
+  return (
+    <CompletedLessonsClient filter={result.filter} goalId={goal.id} lessons={result.lessons} />
+  );
 }
 
 async function CompletedLessonsSkeleton() {

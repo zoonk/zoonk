@@ -182,6 +182,9 @@ const learnerSummarySchema = z
             description:
               "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made",
           }),
+        savedLessons: z
+          .boolean()
+          .meta({ description: "The active goal has a saved lesson to list" }),
         speaking: z.boolean(),
       })
       .meta({

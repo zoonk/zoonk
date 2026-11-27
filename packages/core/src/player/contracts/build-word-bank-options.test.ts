@@ -1,5 +1,4 @@
-import { shuffle } from "@zoonk/utils/shuffle";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { anyOrder } from "../../_test-utils/any-order";
 import {
   buildFillBlankOptions,
@@ -13,10 +12,6 @@ import { type DistractorWord } from "./translation-options";
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
 const LANGUAGES = { language: "pt", targetLanguage: "de" };
-
-function keepOrder() {
-  vi.mocked(shuffle).mockImplementation((items) => [...items]);
-}
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -75,8 +70,6 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildWordBankOptions, () => {
-  beforeEach(keepOrder);
-
   it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
@@ -201,30 +194,6 @@ describe(buildWordBankOptions, () => {
     );
   });
 
-  it("shuffles reading distractors before applying the visible cap", () => {
-    vi.mocked(shuffle)
-      .mockImplementationOnce((items: readonly unknown[]) => [...items].toReversed())
-      .mockImplementationOnce((items: readonly unknown[]) => [...items]);
-
-    const options = buildWordBankOptions(
-      makeStep(
-        "reading",
-        makeSentence({
-          distractors: ["uno", "dos", "tres", "cuatro", "cinco"],
-          sentence: "Hola mundo",
-        }),
-      ),
-      [],
-      [],
-      new Map(),
-      LANGUAGES,
-    );
-
-    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
-      anyOrder(["Hola", "mundo", "cinco", "cuatro", "tres", "dos"]),
-    );
-  });
-
   it("keeps a listening distractor's capital when its spelling or the sentence start needs it", () => {
     const options = buildWordBankOptions(
       makeStep(
@@ -340,8 +309,6 @@ describe(buildWordBankOptions, () => {
 });
 
 describe(buildSentenceWordOptions, () => {
-  beforeEach(keepOrder);
-
   it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions({
       distractorWords: [],
@@ -504,7 +471,6 @@ describe(listTargetBankWords, () => {
   ])(
     "gives each $language reading tile the audio saved for its own word",
     ({ distractors, language, sentence }) => {
-      keepOrder();
       const read = makeSentence({ distractors, sentence });
       const step = makeStep("reading", read);
 
@@ -530,8 +496,6 @@ describe(listTargetBankWords, () => {
 });
 
 describe(buildFillBlankOptions, () => {
-  beforeEach(keepOrder);
-
   it("gives each tile its word's audio, and the step's own romanization first", () => {
     const step: SerializedStep = {
       ...makeStep("reading", makeSentence()),

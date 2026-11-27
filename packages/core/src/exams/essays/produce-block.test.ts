@@ -7,7 +7,7 @@ describe(toProduceBlock, () => {
     const produce = toProduceBlock({ minutes: 8, taskKey: "argument", title: "Argument", unit });
     const block = { ...produce, brainPower: 0, position: 0, status: "pending" as const };
 
-    expect(toDayBlockView({ answeredItemIds: new Set(), block })).toMatchObject({
+    expect(toDayBlockView({ answeredItemIds: new Set(), block, blocks: [block] })).toMatchObject({
       title: "Argument",
       writingAvailability: { status: "available" },
       writingUnit: unit,

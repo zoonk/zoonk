@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "savedlessons_empty": "78081db3e7e7489309a3df5b70437bd6036a69ca74d5e29ac2f765046e49e1a2",
+  "savedlessons_no_longer_available": "e5f0b485fa6d6a88f967d393b0cba02d24f69c295c7978f24db024ecda634c24",
+  "savedlessons_remove": "1790cd37205753f0b83dbd5955e994264b59e492733c23d8d5accede352dc1e1",
+  "savedlessons_remove_failed": "153beb80e69f3caed98c434f4c999f30d46ffd4080e978515616a70c8b62dad2",
+  "savedlessons_remove_spoken": "5f31e0e063364645597d661bebb03a92985b81cfb6b775facad36124623706bc",
+  "savedlessons_save": "6bb9553ffbde90d28f5bf90c45f3027a516344c33065c7534371345cbf8dcd5c",
+  "savedlessons_save_failed": "13bc7bd0ad58fc08f91c8c731c165269b69736946b873507b77304c2f9ced15d",
+  "savedlessons_save_named": "ed1e470ff2b698b55fa41a38c1cae8abff50dbbc103123fdf2819c81548c62a7",
+  "savedlessons_saved": "e3a7cfe3790a733267be53e48e1094fb8fa12d83c232393b223a9373bc7703e1",
+  "savedlessons_saved_named": "4853748abd3789ddd62dda5e00ae711913d10096123f22e87f2edab9776c72a7",
+  "savedlessons_show_more": "3dfde1514895a0b40969cf33eaa0e6dd69d576e34f8522f0f527d763dd33f674",
+  "savedlessons_unsave": "e9886d0abfa8d30350e52111c8c69916fdb7d7808be92d1be6e4f0544c780bc3"
+}
+-->
+<resources>
+    <string name="savedlessons_save">Salva</string>
+    <!-- Says the lesson is saved to do again later: the bookmark's state. -->
+    <string name="savedlessons_saved">Salvata</string>
+    <string name="savedlessons_save_named">Salva %1$s</string>
+    <!-- Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved. -->
+    <string name="savedlessons_saved_named">Salvata %1$s</string>
+    <!-- Takes a lesson out of the saved lessons, from its row's menu or swipe -->
+    <string name="savedlessons_unsave">Rimuovi dai salvati</string>
+    <string name="savedlessons_empty">Non hai ancora salvato nulla. Tocca il segnalibro su una lezione per ritrovarla qui.</string>
+    <string name="savedlessons_no_longer_available">Non più disponibile</string>
+    <string name="savedlessons_remove">Rimuovi</string>
+    <!-- What screen readers say for Remove, naming the lesson. -->
+    <string name="savedlessons_remove_spoken">Rimuovi %1$s dalle lezioni salvate</string>
+    <string name="savedlessons_show_more">Mostra altro</string>
+    <string name="savedlessons_save_failed">Non è stato possibile salvare questa lezione. Riprova.</string>
+    <!-- Taking the lesson out of the saved lessons didn't work, so it's still saved. -->
+    <string name="savedlessons_remove_failed">Non è stato possibile rimuovere questa lezione. Riprova.</string>
+</resources>

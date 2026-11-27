@@ -65,6 +65,7 @@ val everyPlace: LearnerSummary =
                 exam = true,
                 mindMaps = true,
                 readyMistakes = 0,
+                savedLessons = true,
                 speaking = true,
             ),
     )

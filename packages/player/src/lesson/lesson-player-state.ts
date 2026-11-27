@@ -23,6 +23,7 @@ type LessonPlayerRun =
       hyperdrive: LessonRunHyperdrive;
       replay: boolean;
       runId: string;
+      saved: boolean;
       status: "started";
     }
   | { status: "idle" }
@@ -105,6 +106,7 @@ export type LessonPlayerAction =
       hyperdrive: LessonRunHyperdrive;
       replay: boolean;
       runId: string;
+      saved: boolean;
       startedAt: string;
       optionalStepIds?: string[];
       type: "runStarted";
