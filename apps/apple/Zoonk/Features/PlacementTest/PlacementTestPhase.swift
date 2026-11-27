@@ -46,7 +46,8 @@ enum PlacementTestPhase: Equatable {
   /// The open part's questions, or the course a test was asked for, are still being written.
   case waiting
   /// The open part's questions couldn't be written: "Try again" starts the same part again. With
-  /// no attempt, the course the test was asked for couldn't be built, and "Try again" asks again.
+  /// no attempt, the course the test was asked for couldn't be built, or its start failed once its
+  /// questions came, and "Try again" asks again.
   case preparationFailed(PlacementAttempt?)
   /// The wait stopped hearing back: "Try again" reads again.
   case connectionLost

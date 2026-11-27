@@ -225,7 +225,7 @@ struct FocusTestFlow: View {
 
     return PlacementWaitScreen(
       onboarding: onboarding, goalID: goalID, run: waitRun, failure: failure, holding: holding,
-      isActing: false,
+      isActing: pressed == .main,
       skip: .init(
         label: answered
           ? Text(FocusTestCopy.seeResult)
@@ -235,7 +235,7 @@ struct FocusTestFlow: View {
             : Text(FocusTestCopy.notNow),
         note: !answered && host == .onboarding
           ? Text(PlacementWaitScreen.laterNote) : nil,
-        isBusy: pressed != nil, failed: failed
+        isBusy: pressed == .other, failed: failed
       ) {
         save(.other) { try await leave(closing: answered || host == .onboarding) }
       },
@@ -249,7 +249,7 @@ struct FocusTestFlow: View {
         }
       }
     )
-    .taskThroughPush(id: waitRound) { await waitForQuestions() }
+    .taskThroughPush(id: failure == nil ? waitRound : nil) { await waitForQuestions() }
   }
 
   // MARK: - Saves
@@ -407,7 +407,7 @@ struct FocusTestFlow: View {
         run = updated
       },
       isWaiting: {
-        guard phase.isWaiting else {
+        guard phase.readsForQuestions else {
           return false
         }
 
@@ -416,15 +416,33 @@ struct FocusTestFlow: View {
           return true
         }
 
-        if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
-          try? await show(placement)
+        if let placement = try? await store.placement(goalID: goalID), phase.readsForQuestions {
+          await arrive(at: placement, answered: answered)
         }
 
-        return phase.isWaiting
+        return phase.readsForQuestions
       })
 
-    if !followed, phase.isWaiting {
+    if !followed, phase.readsForQuestions {
       reached = .waiting(answered: answered, failure: .connection)
+    }
+  }
+
+  /// What the wait read. Questions for a test the learner asked for start it, and a start that
+  /// fails waits for Try again instead of starting again on its own.
+  private func arrive(at placement: GoalPlacement, answered: Bool) async {
+    guard startsTest, case .invitation = FocusTestPhase(placement, opening: false) else {
+      try? await show(placement)
+      return
+    }
+
+    do {
+      try await start()
+    } catch is CancellationError {
+    } catch {
+      if phase.readsForQuestions {
+        reached = .waiting(answered: answered, failure: .generation)
+      }
     }
   }
 }

@@ -82,7 +82,9 @@ struct PlacementWaitScreen: View {
             ))
 
       Section {
-        GenerationTimeline(wait: shown, failure: failure)
+        GenerationTimeline(
+          wait: shown, failure: failure, isActing: isActing || skip.isBusy,
+          act: failure.map { failure in { onRetry(failure) } })
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)

@@ -450,12 +450,15 @@ struct PlacementTestFlow: View {
         }
 
         if let placement = try? await store.placement(goalID: goalID), phase == .waiting {
-          // The questions of a test that couldn't open yet are written: the start the learner
-          // asked for opens it now.
           let arrived =
             placement.activeTestAttempt == nil
             && (placement.status == .asking || placement.status == .done)
-          try? await (arrived ? start(wanted, arrived: true) : show(placement))
+
+          if arrived {
+            await startArrived()
+          } else {
+            try? await show(placement)
+          }
         }
 
         return phase == .waiting
@@ -463,6 +466,19 @@ struct PlacementTestFlow: View {
 
     if !followed, phase == .waiting {
       reached = .connectionLost
+    }
+  }
+
+  /// The questions of a test that couldn't open yet are written: the start the learner asked for
+  /// opens it now. One that fails waits for Try again instead of starting again on its own.
+  private func startArrived() async {
+    do {
+      try await start(wanted, arrived: true)
+    } catch is CancellationError {
+    } catch {
+      if phase == .waiting {
+        reached = .preparationFailed(nil)
+      }
     }
   }
 }

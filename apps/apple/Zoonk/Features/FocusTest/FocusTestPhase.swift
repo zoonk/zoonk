@@ -23,6 +23,11 @@ enum FocusTestPhase: Equatable {
     if case .waiting = self { true } else { false }
   }
 
+  /// A wait nothing went wrong in, which reads until its questions come.
+  var readsForQuestions: Bool {
+    if case .waiting(_, failure: nil) = self { true } else { false }
+  }
+
   init(_ placement: GoalPlacement, opening: Bool) {
     self.init(
       status: placement.status,
