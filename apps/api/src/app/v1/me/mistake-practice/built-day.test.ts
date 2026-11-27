@@ -123,7 +123,8 @@ describe("mistake practice from a built study day", () => {
 
     await prisma.item.update({ data: { retiredAt: NOW }, where: { id: retired.itemId } });
 
-    const { practice: left } = mistakePracticeResponseSchema.parse(await (await get()).json());
+    const afterRetirement = await get();
+    const { practice: left } = mistakePracticeResponseSchema.parse(await afterRetirement.json());
     expect(left.map(({ mistakeId }) => mistakeId)).toStrictEqual([first.id, last.id]);
 
     const answer = async (mistake: typeof first, answerIds: string[]) => {
