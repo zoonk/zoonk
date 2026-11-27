@@ -37,11 +37,18 @@ function openPage(body: string) {
   document.body.append(frame);
   const page = frame.contentWindow as Page;
   const frames: FrameRequestCallback[] = [];
+  const clock = { now: 0, timers: [] as { at: number; callback: () => void }[] };
   const reached: MouseEvent[] = [];
   const submits: SubmitEvent[] = [];
   const submitted: SubmitEvent[] = [];
 
   page.requestAnimationFrame = (callback) => frames.push(callback);
+
+  Object.assign(page, {
+    setTimeout: (callback: () => void, delay = 0) =>
+      clock.timers.push({ at: clock.now + delay, callback }),
+  });
+
   // Before the script, so it sees every submit the browser would send.
   page.addEventListener("submit", (event) => submits.push(event as SubmitEvent), { capture: true });
   listenLikeReactsReplayScript(page);
@@ -64,6 +71,16 @@ function openPage(body: string) {
   const runFrame = () => {
     for (const callback of frames.splice(0)) {
       callback(0);
+    }
+  };
+
+  const wait = (ms = 0) => {
+    clock.now += ms;
+    const due = clock.timers.filter((timer) => timer.at <= clock.now);
+    clock.timers = clock.timers.filter((timer) => timer.at > clock.now);
+
+    for (const timer of due) {
+      timer.callback();
     }
   };
 
@@ -94,6 +111,7 @@ function openPage(body: string) {
       (page.document as Document & { $$reactFormReplay?: unknown[] }).$$reactFormReplay,
     submits,
     submitted,
+    wait,
   };
 }
 
@@ -521,5 +539,131 @@ describe("the keeper of presses made before React owns a control", () => {
     press(find("button"));
 
     expect(heard).not.toHaveBeenCalled();
+  });
+
+  it("lets the microphone and its press go when the page hasn't taken them 90 seconds after the tap", async () => {
+    const { commit, find, frame, page, press, reached, wait } = openPage(
+      '<button data-held-ask="microphone">Start call</button>',
+    );
+
+    const { contexts, getUserMedia, grant, track } = fakeMicrophone(page);
+    const start = find("button");
+
+    press(start);
+    wait(89_000);
+    expect(contexts[0]?.close).not.toHaveBeenCalled();
+    expect(start.dataset.held).toBe("");
+
+    wait(1000);
+    expect(contexts[0]?.close).toHaveBeenCalledOnce();
+    expect(page.zoonkHeldPresses?.microphone).toBeNull();
+    expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+
+    grant();
+    await vi.waitFor(() => expect(track.stop).toHaveBeenCalledOnce());
+
+    press(start);
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    expect(start.dataset.held).toBe("");
+
+    commit();
+    own(start);
+    frame(2);
+    expect(reached).toHaveLength(1);
+  });
+
+  it("keeps only the latest pick in a radio group, by its group or its name", () => {
+    const { commit, find, frame, page, press, reached } = openPage(
+      '<div role="radiogroup"><span role="radio" aria-checked="false" id="a">A</span><span role="radio" aria-checked="false" id="b">B</span><span role="radio" aria-checked="true" id="c">C</span></div>' +
+        '<span role="radio" aria-checked="false" id="daily"></span><input aria-hidden="true" name="often" type="radio">' +
+        '<span role="radio" aria-checked="false" id="weekly"></span><input aria-hidden="true" name="often" type="radio">',
+    );
+
+    const radios = ["#a", "#b", "#c", "#daily", "#weekly"].map((id) => find(id));
+
+    for (const id of ["#a", "#b", "#a", "#weekly", "#daily"]) {
+      press(find(id));
+    }
+
+    expect(
+      [...page.document.querySelectorAll("[data-held]")].map((radio) => radio.id),
+    ).toStrictEqual(["a", "daily"]);
+
+    commit();
+    own(...radios);
+    frame(8);
+
+    expect(reached.map((event) => (event.target as Element).id)).toStrictEqual(["a", "daily"]);
+  });
+
+  it("swallows a repeat on a form that opens a page only right after its press, then lets a retry go", () => {
+    const { find, page, press, wait } = openPage(
+      '<form action="/learn/lesson" data-opens-page method="get"><button name="answer" value="cloud">A cloud</button><button name="answer" value="planet">A planet</button></form>',
+    );
+
+    const opened: string[] = [];
+
+    page.addEventListener("submit", (event) => {
+      if (!event.defaultPrevented) {
+        opened.push(((event as SubmitEvent).submitter as HTMLButtonElement).value);
+      }
+
+      event.preventDefault();
+    });
+
+    const cloud = find("[value=cloud]");
+    const planet = find("[value=planet]");
+
+    press(cloud);
+    wait(1500);
+    press(planet);
+    expect(opened).toStrictEqual(["cloud"]);
+
+    wait(1000);
+    press(planet);
+    press(planet);
+
+    expect(opened).toStrictEqual(["cloud", "planet"]);
+    expect("held" in cloud.dataset).toBe(false);
+    expect(cloud.hasAttribute("aria-busy")).toBe(false);
+    expect(planet.dataset.held).toBe("");
+  });
+
+  it("marks a plain press on a link that leaves the page before React owns it, and lets the browser follow it", () => {
+    const { find, page, press, wait } = openPage(
+      '<a href="https://zoonk.test/plan" id="plan"><span>Plan</span></a>' +
+        '<a href="https://zoonk.test/help" id="tab" target="_blank">Help</a>' +
+        '<a download href="https://zoonk.test/data.json" id="file">Your data</a>' +
+        '<a href="mailto:hello@zoonk.com" id="mail">Email us</a>',
+    );
+
+    expect(press(find("#plan span"))).toBe(true);
+    expect(press(find("#plan"), { metaKey: true })).toBe(true);
+
+    for (const id of ["#tab", "#file", "#mail"]) {
+      expect(press(find(id))).toBe(true);
+    }
+
+    wait();
+    const marked = [...page.document.querySelectorAll("[data-held]")].map((link) => link.id);
+    expect(marked).toStrictEqual(["plan"]);
+
+    page.dispatchEvent(new page.PageTransitionEvent("pageshow", { persisted: true }));
+    expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+  });
+
+  it("leaves unmarked a link whose press the page takes over, as a client-side link does", () => {
+    const { commit, find, page, press, wait } = openPage(
+      '<a href="https://zoonk.test/plan" id="owned">Plan</a><a href="https://zoonk.test/today" id="hydrating">Today</a>',
+    );
+
+    page.document.addEventListener("click", (event) => event.preventDefault());
+    press(find("#hydrating"));
+    commit();
+    own(find("#owned"));
+    press(find("#owned"));
+    wait();
+
+    expect(page.document.querySelectorAll("[data-held]")).toHaveLength(0);
   });
 });

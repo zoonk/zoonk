@@ -36,7 +36,7 @@ type Held = {
 /**
  * Runs inline in the page's `<head>`. A press made before React owns its control is held: the
  * control shows at once that it's on its way, a repeat is swallowed, and the press reaches the
- * control once React owns it. A form whose action is a client function is replayed by React's own
+ * control once React owns it. A link pressed then shows it's on its way while the browser follows it. A form whose action is a client function is replayed by React's own
  * script with the values it had at the press; this marks its button and stops a second send.
  * Serialized with `toString`, so it may use only its argument and globals.
  */
@@ -56,6 +56,14 @@ function holdPressesBeforeReady({
   const TOGGLES = "[role=switch], [role=checkbox], [role=radio], [aria-pressed]";
   const OFF = ':disabled, [aria-disabled="true"]';
 
+  // Slow 3G hydrates in about 40 seconds: a page that hasn't taken the press by twice that never
+  // will, and the microphone mustn't stay on for it.
+  const MICROPHONE_HOLD_MS = 90_000;
+
+  // A second press this soon on a form that opens a page is a double tap; a later one is a retry of a
+  // load the browser stopped.
+  const DOUBLE_TAP_MS = 2000;
+
   // React's form-replay script (react-dom-server) queues a submit only when the form's or its
   // button's action is this, and skips a submit something already prevented.
   // oxlint-disable-next-line no-script-url -- React's own placeholder action, compared, never run.
@@ -63,6 +71,7 @@ function holdPressesBeforeReady({
 
   const presses: Held[] = [];
   const heldForms = new Set<HTMLFormElement>();
+  const openingForms = new Map<HTMLFormElement, { repeats: boolean; submitter: Element | null }>();
   const addedBusy = new Set<Element>();
 
   const page = {
@@ -342,12 +351,60 @@ function holdPressesBeforeReady({
     tick();
   };
 
-  const hold = (press: Omit<Held, "seen" | "settled">) => {
-    if (press.control) {
-      mark(press.control);
+  const radioName = (radio: Element) => {
+    const input = radio.nextElementSibling;
+    const name = input instanceof HTMLInputElement && input.type === "radio" ? input.name : "";
+    return radio.getAttribute("name") ?? name;
+  };
+
+  const isSameRadioGroup = (radio: Element, other: Element) => {
+    const group = radio.closest("[role=radiogroup]");
+
+    if (group) {
+      return group === other.closest("[role=radiogroup]");
     }
 
-    presses.push({ ...press, seen: false, settled: -1 });
+    const name = radioName(radio);
+    const sameForm = radio.closest("form") === other.closest("form");
+    return name !== "" && name === radioName(other) && sameForm;
+  };
+
+  /** A later pick in the same radio group replaces a waiting one, so only the last is drawn and sent. */
+  const replacedPick = (control: Element) => (press: Held) =>
+    control.matches("[role=radio]") &&
+    press.settled < 0 &&
+    press.control !== null &&
+    press.control !== control &&
+    press.control.matches("[role=radio]") &&
+    isSameRadioGroup(control, press.control);
+
+  const discard = (press: Held) => {
+    const index = presses.indexOf(press);
+
+    if (index !== -1 && press.settled < 0) {
+      presses.splice(index, 1);
+      drop(press);
+    }
+  };
+
+  const hold = (press: Omit<Held, "seen" | "settled">) => {
+    const { control } = press;
+
+    if (control) {
+      for (const replaced of presses.filter(replacedPick(control))) {
+        discard(replaced);
+      }
+
+      mark(control);
+    }
+
+    const waiting = { ...press, seen: false, settled: -1 };
+    presses.push(waiting);
+
+    if (waiting.asks) {
+      setTimeout(() => discard(waiting), MICROPHONE_HOLD_MS);
+    }
+
     tick();
   };
 
@@ -363,9 +420,40 @@ function holdPressesBeforeReady({
 
     // A label forwards its tap to the hidden input Base UI keeps beside a switch, checkbox or radio.
     const beside = target.matches("input[aria-hidden=true]") ? target.previousElementSibling : null;
-    const pressed = target.closest(CONTROLS) ?? (beside?.matches(TOGGLES) ? beside : null);
+    return target.closest(CONTROLS) ?? (beside?.matches(TOGGLES) ? beside : null);
+  };
 
-    return pressed && !pressed.matches("a[href]") ? pressed : null;
+  /** A link the browser follows in this tab, away from this page. */
+  const leavesPage = (link: Element): link is HTMLAnchorElement =>
+    link instanceof HTMLAnchorElement &&
+    (link.target === "" || link.target === "_self") &&
+    !link.hasAttribute("download") &&
+    (link.protocol === "https:" || link.protocol === "http:") &&
+    !(
+      link.hash !== "" &&
+      `${link.origin}${link.pathname}${link.search}` ===
+        `${location.origin}${location.pathname}${location.search}`
+    );
+
+  /**
+   * The browser follows a link pressed before React owns it, and the page shows nothing until the
+   * next one paints, so the link shows it's on its way. A link the page takes over, as a client-side
+   * link does, cancels the click; once React owns the link, a press is its own and clears the mark a
+   * stopped load left.
+   */
+  const pressLink = (event: MouseEvent, link: Element) => {
+    if (isReacts(link)) {
+      unmark(link);
+      return;
+    }
+
+    if (leavesPage(link)) {
+      setTimeout(() => {
+        if (!event.defaultPrevented) {
+          mark(link);
+        }
+      }, 0);
+    }
   };
 
   const isFormSubmitter = (control: Element) =>
@@ -393,6 +481,11 @@ function holdPressesBeforeReady({
       const control = pressedControl(event);
 
       if (!control) {
+        return;
+      }
+
+      if (control.matches("a[href]")) {
+        pressLink(event, control);
         return;
       }
 
@@ -433,20 +526,33 @@ function holdPressesBeforeReady({
         return;
       }
 
-      if (heldForms.has(form)) {
-        stop(event);
-        return;
-      }
-
       const { submitter } = event;
 
       if (form.hasAttribute(opensPage)) {
-        heldForms.add(form);
+        const last = openingForms.get(form);
+
+        if (last?.repeats) {
+          stop(event);
+          return;
+        }
+
+        unmark(last?.submitter ?? null);
+        const opening = { repeats: true, submitter };
+        openingForms.set(form, opening);
+
+        setTimeout(() => {
+          opening.repeats = false;
+        }, DOUBLE_TAP_MS);
 
         if (submitter) {
           mark(submitter);
         }
 
+        return;
+      }
+
+      if (heldForms.has(form)) {
+        stop(event);
         return;
       }
 
@@ -489,6 +595,7 @@ function holdPressesBeforeReady({
     }
 
     heldForms.clear();
+    openingForms.clear();
     replayQueue()?.splice(0);
     releaseMicrophone();
   });
