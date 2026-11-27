@@ -335,6 +335,50 @@ test.describe("Saved lessons", () => {
     }
   });
 
+  test("a lesson saved on Completed lessons is on Saved lessons when the learner goes Back to it", async ({
+    browser,
+  }) => {
+    const { finished, goal, unfinished, user } = await createLearner();
+
+    await prisma.savedLesson.create({
+      data: { goalId: goal.id, lessonId: unfinished.id, title: unfinished.title, userId: user.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    const list = page.getByRole("list", { name: "Saved lessons" });
+    const row = (title: string) => list.getByRole("link", { name: new RegExp(title, "u") });
+
+    try {
+      await page.goto("/saved-lessons");
+      await expectHydrated(list.getByRole("button", { name: `Saved ${unfinished.title}` }));
+      await expect(row(finished.title)).toHaveCount(0);
+
+      await page
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Completed lessons" })
+        .click();
+
+      const save = page.getByRole("button", { name: `Save ${finished.title}` });
+      await expectHydrated(save);
+      await save.click();
+      await expect.poll(() => savedCount(user.id)).toBe(2);
+
+      await page.goBack();
+      await expect(page).toHaveURL(/\/saved-lessons$/u);
+
+      await expect(list.getByRole("button", { name: `Saved ${finished.title}` })).toBeVisible();
+
+      await expect(list.getByRole("listitem")).toHaveText([
+        new RegExp(finished.title, "u"),
+        new RegExp(unfinished.title, "u"),
+      ]);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("switching goals on Saved lessons lists only the new goal's saves", async ({ browser }) => {
     const { finished, goal, user } = await createLearner();
 
