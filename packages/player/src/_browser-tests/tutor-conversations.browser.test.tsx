@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { Activity, type ReactNode, useEffect, useState } from "react";
 import { describe, expect, it } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { render } from "../_test-utils/render";
@@ -47,20 +47,36 @@ function Host({ children, conversation }: { children: ReactNode; conversation: O
   );
 }
 
-/** Stands for the buddy's page: the list opens a conversation, and each has its own page. */
+/**
+ * Stands for the buddy's page: the list opens a conversation, and each has its own page, which the
+ * app's router keeps mounted but hidden once the learner leaves it.
+ */
 function TwoConversations() {
   const [open, setOpen] = useState<Open>({ blank: true, id: NEW_ID });
+  const [openedEarlier, setOpenedEarlier] = useState(false);
+
+  const openEarlier = () => {
+    setOpen({ blank: false, id: EARLIER_ID });
+    setOpenedEarlier(true);
+  };
 
   return (
     <>
       <button onClick={() => setOpen({ blank: true, id: NEW_ID })} type="button">
         Open the new one
       </button>
-      <button onClick={() => setOpen({ blank: false, id: EARLIER_ID })} type="button">
+      <button onClick={openEarlier} type="button">
         Open the earlier one
       </button>
       <Host conversation={open}>
-        {open.blank ? <Log key="new" /> : <Log conversationId={open.id} key={open.id} />}
+        <Activity mode={open.blank ? "visible" : "hidden"}>
+          <Log />
+        </Activity>
+        {openedEarlier && (
+          <Activity mode={open.blank ? "hidden" : "visible"}>
+            <Log conversationId={EARLIER_ID} />
+          </Activity>
+        )}
       </Host>
     </>
   );
@@ -129,6 +145,9 @@ describe("the buddy's conversations", () => {
     await page.getByRole("button", { name: "Open the new one" }).click();
     await expect.element(page.getByText("Sunlight scatters off the air.")).toBeVisible();
     await expect.element(page.getByText("What is a rainbow?")).not.toBeInTheDocument();
+
+    // The page left hidden draws no second copy of the open conversation.
+    expect(page.getByText("Sunlight scatters off the air.").elements()).toHaveLength(1);
 
     expect(api.requests.thread).toBe(0);
   });

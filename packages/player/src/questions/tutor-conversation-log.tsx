@@ -5,6 +5,7 @@ import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { useIsPageShown } from "@zoonk/ui/hooks/is-page-shown";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
@@ -223,6 +224,7 @@ export function TutorConversationLog({
 }) {
   const controller = useLessonQuestionController();
   const host = useConversationHost();
+  const isPageShown = useIsPageShown();
   const { canAskQuestions, load, showThread, state } = controller;
   const isOpen = conversationId === null ? host.blank : conversationId === host.id;
   const read = isOpen ? thread : null;
@@ -247,6 +249,12 @@ export function TutorConversationLog({
         : controller,
     [controller, read, state, waiting],
   );
+
+  // Every page the router keeps hidden is inside the one host: only the page in view draws the
+  // open conversation, or each kept page would draw its own copy of the turns.
+  if (!isPageShown) {
+    return null;
+  }
 
   return (
     <LessonQuestionControllerProvider controller={shown}>
