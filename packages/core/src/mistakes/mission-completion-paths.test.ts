@@ -186,7 +186,7 @@ describe("missions completed outside a study block", () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 5000,
         itemId: item.id,
         timeZone: "UTC",

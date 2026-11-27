@@ -66,7 +66,7 @@ describe("notebook practice mission moments", () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 5000,
         itemId: item.id,
         timeZone: "UTC",
@@ -139,7 +139,7 @@ describe("notebook practice mission moments", () => {
 
     const later = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: laterMistake.id, timeZone: "UTC" }),
+        answer: await pickInMistake({ mistakeId: laterMistake.id }),
         durationMs: 5000,
         itemId: item.id,
         timeZone: "UTC",
@@ -232,7 +232,7 @@ describe("notebook practice mission moments", () => {
         input: {
           answer: dontKnow
             ? { dontKnow: true }
-            : await pickInMistake({ mistakeId: practiceMistake.id, right: false, timeZone: "UTC" }),
+            : await pickInMistake({ mistakeId: practiceMistake.id, right: false }),
           durationMs: 5000,
           itemId: practiceItem.id,
           timeZone: "UTC",

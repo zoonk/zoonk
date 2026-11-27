@@ -105,7 +105,7 @@ async function playLesson({
 async function playNotebook({ mistakeId, itemId }: { mistakeId: string; itemId: string }) {
   const answer = await answerMistakePractice({
     input: {
-      answer: await pickInMistake({ mistakeId, timeZone: "UTC" }),
+      answer: await pickInMistake({ mistakeId }),
       durationMs: 2000,
       itemId,
       timeZone: "UTC",

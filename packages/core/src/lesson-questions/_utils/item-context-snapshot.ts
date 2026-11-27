@@ -1,11 +1,10 @@
 import "server-only";
 import { type ItemScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
-import { prisma } from "@zoonk/db";
-import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
+import { type Attempt, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
 import {
-  getMistakeShowing,
+  getAnsweredShowing,
   gradeMistakeItem,
   toMistakeQuestion,
 } from "../../mistakes/mistake-item";
@@ -55,32 +54,38 @@ function describeQuestion(question: SessionQuestion): ItemScopeContext["question
   return { format: question.format, options, text };
 }
 
-async function describeLatestAnswer({
-  blockId,
-  item,
+function findLatestAnswer({
+  itemId,
   mistakeId,
-  replay,
   sessionId,
   userId,
 }: {
-  blockId: string;
-  item: SessionItem;
+  itemId: string;
   mistakeId?: string;
-  replay?: Extract<MistakeReplay, { kind: "item" }>;
   sessionId: string | null;
   userId: string;
-}): Promise<ItemScopeContext["answer"]> {
-  const attempt = await prisma.attempt.findFirst({
+}) {
+  return prisma.attempt.findFirst({
     orderBy: { answeredAt: "desc" },
     where: {
       userId,
-      ...(mistakeId
-        ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } }
-        : { itemId: item.id }),
+      ...(mistakeId ? { answer: { equals: mistakeId, path: ["practiceMistakeId"] } } : { itemId }),
       ...(sessionId ? { studySessionId: sessionId } : {}),
     },
   });
+}
 
+function describeAnswer({
+  attempt,
+  blockId,
+  item,
+  replay,
+}: {
+  attempt: Attempt | null;
+  blockId: string;
+  item: SessionItem;
+  replay?: Extract<MistakeReplay, { kind: "item" }>;
+}): ItemScopeContext["answer"] {
   const answer = attempt ? readRecordedAnswer(attempt.answer) : null;
 
   if (!attempt || !answer) {
@@ -123,27 +128,15 @@ async function buildMistakeItemContext({
 
   const { item } = replay;
 
-  const showing = getMistakeShowing({
-    date: new Date(),
-    mistakeId: mistake.id,
-    timeZone: await getLearnerTimeZone({ userId }),
-  });
-
-  const question = toMistakeQuestion({ replay, showing });
-
-  const answer = context.answered
-    ? await describeLatestAnswer({
-        blockId: showing,
-        item,
-        mistakeId: mistake.id,
-        replay,
-        sessionId: null,
-        userId,
-      })
+  const attempt = context.answered
+    ? await findLatestAnswer({ itemId, mistakeId: mistake.id, sessionId: null, userId })
     : null;
 
+  const showing = getAnsweredShowing({ answer: attempt?.answer, mistake });
+  const question = toMistakeQuestion({ replay, showing });
+
   return {
-    answer,
+    answer: describeAnswer({ attempt, blockId: showing, item, replay }),
     language: item.language,
     question: describeQuestion(question),
     scope: { kind: "item" },
@@ -194,12 +187,12 @@ export async function buildItemContextSnapshot({
 
   const blockId = block?.id ?? "";
 
-  const answer = context.answered
-    ? await describeLatestAnswer({ blockId, item, sessionId: block?.sessionId ?? null, userId })
+  const attempt = context.answered
+    ? await findLatestAnswer({ itemId, sessionId: block?.sessionId ?? null, userId })
     : null;
 
   return {
-    answer,
+    answer: describeAnswer({ attempt, blockId, item }),
     language: row.language,
     question: describeQuestion(toSessionQuestion({ blockId, item })),
     scope: { kind: "item" },

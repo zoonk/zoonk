@@ -211,7 +211,7 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     const answered = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: TIME_ZONE }),
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 5000,
         itemId: mistake.itemId ?? "",
         run: { answerIds: [], goalId: goal.id },

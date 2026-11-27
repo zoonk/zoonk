@@ -62,7 +62,7 @@ describe("a day with only original mistakes to practice", () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 5000,
         itemId: item.id,
         run: { answerIds: [], goalId: goal.id },

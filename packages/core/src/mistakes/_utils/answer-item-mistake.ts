@@ -8,7 +8,7 @@ import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
 import { type MistakePracticeAnswerInput } from "../contract";
 import { applyDrillRules } from "../drill-answer";
 import { type MistakeDrillKind } from "../mistake-drills";
-import { getMistakeShowing, gradeMistakeItem } from "../mistake-item";
+import { getAnsweredShowing, getPracticeAnswerKeys, gradeMistakeItem } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { cachedGradeDuration } from "./cached-grade-duration";
 import { runMistakeGrade } from "./mistake-grade";
@@ -16,23 +16,6 @@ import { refuseAnsweredMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 
 const typedVerdictSchema = z.object({ feedback: z.string().nullable(), isCorrect: z.boolean() });
-
-/** A retry reads the order its first answer saw, even after midnight. */
-function getAnsweredShowing({
-  mistake,
-  saved,
-  timeZone,
-}: {
-  mistake: Mistake;
-  saved: Attempt | null;
-  timeZone: string;
-}): string {
-  return getMistakeShowing({
-    date: saved?.answeredAt ?? new Date(),
-    mistakeId: mistake.id,
-    timeZone,
-  });
-}
 
 export async function answerItemMistake({
   input,
@@ -58,7 +41,7 @@ export async function answerItemMistake({
   const { item } = replay;
   const answer = saved ? (readRecordedAnswer(saved.answer) ?? input.answer) : input.answer;
 
-  const showing = getAnsweredShowing({ mistake, saved, timeZone });
+  const showing = getAnsweredShowing({ answer: saved?.answer, mistake });
   const graded = gradeMistakeItem({ answer, replay, showing });
   const model = item.format === "typed" && "text" in answer && !graded.isCorrect;
 
@@ -121,7 +104,7 @@ export async function answerItemMistake({
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonical.recorded, practiceMistakeId: mistake.id },
+          answer: { ...canonical.recorded, ...getPracticeAnswerKeys({ mistake, showing }) },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect },
           itemId: mistake.itemId,

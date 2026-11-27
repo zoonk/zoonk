@@ -265,6 +265,7 @@ export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
           ([key]) =>
             key !== "fixedMistakeIds" &&
             key !== "practiceMistakeId" &&
+            key !== "practiceShowing" &&
             key !== "placementRecheck" &&
             key !== "passedOverMiss",
         ),

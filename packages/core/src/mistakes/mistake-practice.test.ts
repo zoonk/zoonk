@@ -18,7 +18,7 @@ import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake, shownMistakeOptions } from "../_test-utils/shown-choice";
+import { pickInMistake, shownMistakeOptions, shownOptionTexts } from "../_test-utils/shown-choice";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
@@ -27,6 +27,7 @@ import { answerMistakePractice } from "./answer-mistake-practice";
 import { MAX_PRACTICE_ANSWERS } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { loadMistakePracticeAvailability } from "./mistake-availability";
+import { getMistakeShowing } from "./mistake-item";
 import { resolveMistakeCause } from "./resolve-mistake-cause";
 
 const deferred: Promise<unknown>[] = [];
@@ -392,9 +393,10 @@ describe(getMistakePractice, () => {
     });
   });
 
-  it("shows a mistake's options in a new order each local day it comes back, and grades a tap where it showed", async () => {
+  it("keeps a mistake's options in one order until its next miss, grades a retry in that order, and shows a new one after the miss", async () => {
     freezeClock();
-    const timeZone = "America/Sao_Paulo";
+    vi.setSystemTime(new Date("2026-11-12T13:00:00Z"));
+    const timeZone = "UTC";
     const { skill, user } = await setup();
     const content = choiceItemContent();
 
@@ -417,24 +419,65 @@ describe(getMistakePractice, () => {
       userId: user.id,
     });
 
-    const shownAt = async (time: string) => {
-      vi.setSystemTime(new Date(time));
+    const layout = (missedAt: Date) =>
+      shownOptionTexts({ blockId: getMistakeShowing({ id: mistake.id, missedAt }), item });
+
+    const shownNow = async () => {
       const result = await getMistakePractice({ timeZone });
       return result.status === "ready" ? (result.practice[0]?.questions[0]?.options ?? []) : [];
     };
 
-    const morning = await shownAt("2026-11-12T13:00:00Z");
-    const lateEvening = await shownAt("2026-11-13T01:00:00Z");
-    const nextDay = await shownAt("2026-11-13T13:00:00Z");
+    const before = layout(mistake.missedAt);
 
-    expect(morning).toHaveLength(stored.length);
-    expect(morning).toStrictEqual(expect.arrayContaining(stored));
-    expect(morning).not.toStrictEqual(stored);
-    expect(lateEvening).toStrictEqual(morning);
-    expect(nextDay).toHaveLength(stored.length);
-    expect(nextDay).toStrictEqual(expect.arrayContaining(stored));
-    expect(nextDay).not.toStrictEqual(morning);
-    expect(nextDay).not.toStrictEqual(stored);
+    expect(before).toStrictEqual(expect.arrayContaining(stored));
+    expect(before).not.toStrictEqual(stored);
+    await expect(shownNow()).resolves.toStrictEqual(before);
+    await expect(shownNow()).resolves.toStrictEqual(before);
+
+    // The miss's time decides the next order, so answer at a time whose order moves the right answer.
+    const missedAt = Array.from(
+      { length: 60 },
+      (_, minute) => new Date(Date.UTC(2026, 10, 12, 14, minute)),
+    ).find((time) => layout(time).indexOf("Right answer") !== before.indexOf("Right answer"));
+
+    if (!missedAt) {
+      throw new Error("Expected a miss time that moves the right answer");
+    }
+
+    vi.setSystemTime(missedAt);
+    const attemptId = crypto.randomUUID();
+    const rightBefore = { selectedIndex: before.indexOf("Right answer") };
+
+    const wrongTap = {
+      answer: { selectedIndex: before.indexOf("Wrong answer") },
+      attemptId,
+      durationMs: 9000,
+      itemId: item.id,
+      timeZone,
+    };
+
+    const missed = await answerMistakePractice({ input: wrongTap, mistakeId: mistake.id });
+    const moved = await prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } });
+
+    expect(missed).toMatchObject({
+      feedback: { correctAnswer: rightBefore, isCorrect: false },
+      status: "ready",
+    });
+
+    expect(moved.missedAt).toStrictEqual(missedAt);
+
+    await expect(
+      answerMistakePractice({ input: wrongTap, mistakeId: mistake.id }),
+    ).resolves.toMatchObject({
+      feedback: { correctAnswer: rightBefore, isCorrect: false },
+      status: "ready",
+    });
+
+    vi.setSystemTime(new Date("2026-11-13T13:00:00Z"));
+    const nextDay = await shownNow();
+
+    expect(nextDay).toStrictEqual(layout(missedAt));
+    expect(nextDay).not.toStrictEqual(before);
 
     const right = { selectedIndex: nextDay.indexOf("Right answer") };
 
@@ -625,7 +668,7 @@ describe(answerMistakePractice, () => {
     await expect(
       answerMistakePractice({
         input: {
-          answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+          answer: await pickInMistake({ mistakeId: mistake.id }),
           durationMs: 9000,
           itemId: original.id,
           timeZone: "UTC",
@@ -701,7 +744,7 @@ describe(answerMistakePractice, () => {
       userId: user.id,
     });
 
-    const right = await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" });
+    const right = await pickInMistake({ mistakeId: mistake.id });
 
     const result = await answerMistakePractice({
       input: { answer: right, durationMs: 9000, itemId: original.id, timeZone: "UTC" },

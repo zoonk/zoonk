@@ -69,8 +69,7 @@ export async function getMistakePractice(
 
   // Next's io boundary keeps the live practice day out of prerendering.
   await io();
-  const now = new Date();
-  const today = getDateInTimeZone({ date: now, timeZone });
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
 
   const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId: input.skillId });
 
@@ -115,7 +114,7 @@ export async function getMistakePractice(
     }
 
     const kind = getDrillKind(mistake.cause);
-    const showing = getMistakeShowing({ date: now, mistakeId: mistake.id, timeZone });
+    const showing = getMistakeShowing(mistake);
 
     return [
       {

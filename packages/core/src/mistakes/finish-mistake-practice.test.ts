@@ -61,7 +61,7 @@ async function answer({
           userId: originalMistake.userId,
         });
 
-  const choice = await pickInMistake({ mistakeId: target.id, right, timeZone: "UTC" });
+  const choice = await pickInMistake({ mistakeId: target.id, right });
 
   const result = await answerMistakePractice({
     input: { answer: choice, attemptId, durationMs: 20_000, itemId, run, timeZone: "UTC" },
@@ -256,7 +256,7 @@ describe(finishMistakePractice, () => {
 
     const answered = await answerMistakePractice({
       input: {
-        answer: await pickInMistake({ mistakeId: mistake.id, timeZone: "UTC" }),
+        answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 20_000,
         itemId: original.id,
         run: { answerIds: [] },

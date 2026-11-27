@@ -2,7 +2,6 @@ import { prisma } from "@zoonk/db";
 import { type MockShowing, showMockChoice } from "../exams/mocks/_utils/mock-items";
 import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { type ChoiceItem, parseChoiceItem } from "../learner/_utils/choice-items";
-import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { getPlacementBlockId } from "../learner/placement/_utils/placement-items";
 import { getMistakeShowing } from "../mistakes/mistake-item";
 import { loadMistakeReplay } from "../mistakes/mistake-replay";
@@ -93,31 +92,20 @@ export async function pickItemInMock({
   return pickInMock({ item, mock: { conditions, id: sitting.id }, right });
 }
 
-type MistakeShowingInput = {
-  /** When the learner sees it; defaults to now. */
-  date?: Date;
-  mistakeId: string;
-  /** The zone the learner answers in; defaults to their active goal's, as practice reads it. */
-  timeZone?: string;
-};
+type MistakeShowingInput = { mistakeId: string };
 
-async function showMistakeChoice({ date = new Date(), mistakeId, timeZone }: MistakeShowingInput) {
+async function showMistakeChoice({ mistakeId }: MistakeShowingInput) {
   const mistake = await prisma.mistake.findUniqueOrThrow({ where: { id: mistakeId } });
-
-  const [replay, zone] = await Promise.all([
-    loadMistakeReplay({ mistake, userId: mistake.userId }),
-    getLearnerTimeZone({ timeZone, userId: mistake.userId }),
-  ]);
+  const replay = await loadMistakeReplay({ mistake, userId: mistake.userId });
 
   if (replay?.kind !== "item" || replay.item.format !== "multipleChoice") {
     throw new Error(`Mistake ${mistakeId} doesn't replay a multiple-choice question`);
   }
 
-  const showing = getMistakeShowing({ date, mistakeId, timeZone: zone });
-  return showChoiceInBlock({ blockId: showing, item: replay.item });
+  return showChoiceInBlock({ blockId: getMistakeShowing(mistake), item: replay.item });
 }
 
-/** Where each option of a mistake's replay sits on the learner's day, as they see them. */
+/** Where each option of a mistake's replay sits until its next miss, as the learner sees them. */
 export async function shownMistakeOptions(input: MistakeShowingInput): Promise<string[]> {
   const shown = await showMistakeChoice(input);
 
@@ -126,7 +114,7 @@ export async function shownMistakeOptions(input: MistakeShowingInput): Promise<s
     : [];
 }
 
-/** The answer a learner gives a mistake's replay by tapping the right option, or a wrong one, on that day. */
+/** The answer a learner gives a mistake's replay by tapping the right option, or a wrong one, as it's shown now. */
 export async function pickInMistake({
   right = true,
   ...input
