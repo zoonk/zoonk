@@ -177,6 +177,7 @@ function simulate(count: number, bank: number, profile: Profile, position: numbe
     longest: Math.max(...rows.map((row) => row.longest)),
     missedAll: stat("missedAll").mean,
     short: stat("short").mean,
+    shortMargin: stat("short").margin,
   };
 
   process.stdout.write(`${JSON.stringify({ bank, count, position, profile, ...result })}\n`);
@@ -216,15 +217,15 @@ describe("course search on a frozen bank", () => {
   );
 
   it.each([8, 16])("ends at lesson one for novices with a %i-topic bank", (bank) => {
-    expect(simulate(40, bank, "novice", 0.75).short).toBeGreaterThanOrEqual(0.85);
+    const measured = simulate(40, bank, "novice", 0.75);
+    expect(measured.short - measured.shortMargin).toBeGreaterThanOrEqual(0.85);
   });
 
   it.each(["cue", "guessable", "overclaim", "islands"] as const)(
     "protects a %s learner",
     (profile) => {
-      expect(
-        simulate(40, 16, profile, profile === "overclaim" ? 0.75 : 0.5).high,
-      ).toBeLessThanOrEqual(0.08);
+      const measured = simulate(40, 16, profile, profile === "overclaim" ? 0.75 : 0.5);
+      expect(measured.high + measured.highMargin).toBeLessThanOrEqual(0.08);
     },
   );
 });
