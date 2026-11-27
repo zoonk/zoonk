@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import {
   type DatabaseMode,
   LOCAL_DATABASE_NAMES,
+  isLinkedWorktree,
   worktreeDatabaseName,
 } from "#local-database-names";
 
@@ -31,10 +32,6 @@ function findCheckout(directory: string): string {
   }
 
   return findCheckout(parent);
-}
-
-export function isLinkedWorktree(checkout: string): boolean {
-  return statSync(join(checkout, ".git"), { throwIfNoEntry: false })?.isFile() ?? false;
 }
 
 /** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
