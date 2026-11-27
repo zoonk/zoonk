@@ -256,17 +256,30 @@ enum WritingLabels {
       return (String(localized: "0 of \(limit) lines", table: "Essay"), false)
     }
 
-    let used = WritingLines.count(
-      text, charactersPerLine: writing.charactersPerLine, limit: limit
-    ).estimatedLines
+    let count = WritingLines.count(
+      text, charactersPerLine: writing.charactersPerLine,
+      maxCharactersPerLine: writing.maxCharactersPerLine, limit: limit)
+    let used = count.estimatedLines
+
+    if count.ignoredFrom != nil {
+      return (
+        String(
+          localized: "about \(used) of \(limit) lines · the end won't be read",
+          table: "Essay",
+          comment:
+            "The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end."
+        ),
+        true
+      )
+    }
 
     return used > limit
       ? (
         String(
-          localized: "about \(used) of \(limit) lines · \(used - limit) won't be read",
+          localized: "about \(used) of \(limit) lines · may not fit on paper",
           table: "Essay",
           comment:
-            "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read."
+            "The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it."
         ),
         true
       )

@@ -84,12 +84,7 @@ async function gradeAsked({
 }): Promise<GradedQuestion> {
   const { item } = asked;
 
-  const grade = gradeMockItem({
-    answer: asked.answer,
-    item,
-    mockId: mock.id,
-    partialCredit: mock.conditions.partialCredit,
-  });
+  const grade = gradeMockItem({ answer: asked.answer, item, mock });
 
   if (item.format !== "typed" || !grade.answered || grade.isCorrect) {
     return { ...asked, grade };

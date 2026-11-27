@@ -22,6 +22,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { pressAnswerKey } from "./answer-key";
 
 const DAYS_TO_EXAM = 32;
 const TIME_MACHINE_DAYS_AGO = 4;
@@ -76,7 +77,6 @@ async function createContent({ writtenLesson }: { writtenLesson: boolean }) {
 
 type StudyDayOptions = { reviewDone?: boolean; writtenLesson?: boolean };
 
-/** The right option is always the first. */
 export async function createStudyDay({
   reviewDone = false,
   writtenLesson = true,
@@ -281,7 +281,9 @@ export async function pressUntil(
 
 export async function answerRight(page: Page, question: RegExp | string) {
   await expect(page.getByRole("heading", { name: question })).toBeVisible();
-  await page.keyboard.press("1");
+  const right = page.getByRole("radio", { exact: true, name: "Right answer" });
+  await pressAnswerKey(page, right);
+  await expect(right).toBeChecked();
   await checkWithEnter(page);
   await continueWithEnter(page);
 }

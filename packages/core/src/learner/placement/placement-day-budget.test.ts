@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -30,7 +31,7 @@ async function answer({
 }) {
   return answerPlacementQuestion({
     goalId,
-    input: { answer: { selectedIndex: 0 }, durationMs, itemId, timeZone },
+    input: { answer: await pickInPlacement({ itemId }), durationMs, itemId, timeZone },
   });
 }
 

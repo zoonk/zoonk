@@ -15,6 +15,7 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { creditWrittenSkills } from "../../learner/written-evidence";
 import cacd2024Essay from "./_test-utils/cacd-2024-essay.json";
+import cacd2025HistoryQ4 from "./_test-utils/cacd-2025-history-q4.json";
 import lineFixtures from "./_test-utils/writing-lines.json";
 import { loadEssayDrafts } from "./_utils/essay-drafts";
 import { gradeWriting, recordEssayGrade } from "./_utils/grade-essay-answer";
@@ -38,7 +39,11 @@ import {
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import { WRITING_CHARACTERS_PER_LINE, countWritingLines } from "./writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_MAX_CHARACTERS_PER_LINE,
+  countWritingLines,
+} from "./writing-lines";
 import {
   type WritingArithmetic,
   getWritingArithmetic,
@@ -726,21 +731,36 @@ describe(getWritingRubricFingerprint, () => {
   });
 });
 
+function count(text: string, limit: number) {
+  return countWritingLines({
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+    limit,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+    text,
+  });
+}
+
 describe(countWritingLines, () => {
   // CACD 2024 Portuguese essay, 69.5/70 on 70 handwritten lines, guide pp. 34–36:
   // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
   it("keeps a full 70-line answer that the board graded in full", () => {
-    expect(
-      countWritingLines({
-        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
-        limit: 70,
-        text: cacd2024Essay,
-      }).ignoredFrom,
-    ).toBeNull();
+    expect(count(cacd2024Essay, 70)).toStrictEqual({ estimatedLines: 55, ignoredFrom: null });
+  });
 
-    expect(
-      countWritingLines({ charactersPerLine: 55, limit: 70, text: cacd2024Essay }).ignoredFrom,
-    ).toBeGreaterThan(0);
+  // CACD 2025 history Q4, 20/20 on 40 handwritten lines, the densest hand in the guides:
+  // https://drive.google.com/file/d/1iyvblAfecpqH2SSnKNP1NzOc2vntNiWK/view
+  it("grades in full an answer a dense hand fit, though a typical hand would run over", () => {
+    const { estimatedLines, ignoredFrom } = count(cacd2025HistoryQ4, 40);
+
+    expect(estimatedLines).toBeGreaterThan(40);
+    expect(ignoredFrom).toBeNull();
+  });
+
+  it("stops reading where no published hand could fit the text", () => {
+    const { ignoredFrom } = count(`${cacd2025HistoryQ4}\n${cacd2025HistoryQ4}`, 40);
+
+    expect(ignoredFrom).toBeGreaterThan(cacd2025HistoryQ4.length);
+    expect(ignoredFrom).toBeLessThan(cacd2025HistoryQ4.length * 2);
   });
 
   it.each(lineFixtures)(

@@ -18,6 +18,7 @@ import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInMistake, shownMistakeOptions, shownOptionTexts } from "../_test-utils/shown-choice";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
@@ -26,6 +27,7 @@ import { answerMistakePractice } from "./answer-mistake-practice";
 import { MAX_PRACTICE_ANSWERS } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { loadMistakePracticeAvailability } from "./mistake-availability";
+import { getMistakeShowing } from "./mistake-item";
 import { resolveMistakeCause } from "./resolve-mistake-cause";
 
 const deferred: Promise<unknown>[] = [];
@@ -390,6 +392,105 @@ describe(getMistakePractice, () => {
       timeLimitSeconds: 45,
     });
   });
+
+  it("keeps a mistake's options in one order until its next miss, grades a retry in that order, and shows a new one after the miss", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-12T13:00:00Z"));
+    const timeZone = "UTC";
+    const { skill, user } = await setup();
+    const content = choiceItemContent();
+
+    const extras = ["Fifth", "Sixth", "Seventh", "Eighth"].map((text) => ({
+      isCorrect: false,
+      misconception: null,
+      reason: `${text} isn't it.`,
+      text,
+    }));
+
+    const options = [...content.options, ...extras];
+    const stored = options.map((option) => option.text);
+    const item = await itemFixture({ content: { ...content, options }, skillId: skill.id });
+
+    const mistake = await mistakeFixture({
+      cause: "gap",
+      createdAt: new Date("2026-11-11T12:00:00Z"),
+      itemId: item.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const layout = (missedAt: Date) =>
+      shownOptionTexts({ blockId: getMistakeShowing({ id: mistake.id, missedAt }), item });
+
+    const shownNow = async () => {
+      const result = await getMistakePractice({ timeZone });
+      return result.status === "ready" ? (result.practice[0]?.questions[0]?.options ?? []) : [];
+    };
+
+    const before = layout(mistake.missedAt);
+
+    expect(before).toStrictEqual(expect.arrayContaining(stored));
+    expect(before).not.toStrictEqual(stored);
+    await expect(shownNow()).resolves.toStrictEqual(before);
+    await expect(shownNow()).resolves.toStrictEqual(before);
+
+    // The miss's time decides the next order, so answer at a time whose order moves the right answer.
+    const missedAt = Array.from(
+      { length: 60 },
+      (_, minute) => new Date(Date.UTC(2026, 10, 12, 14, minute)),
+    ).find((time) => layout(time).indexOf("Right answer") !== before.indexOf("Right answer"));
+
+    if (!missedAt) {
+      throw new Error("Expected a miss time that moves the right answer");
+    }
+
+    vi.setSystemTime(missedAt);
+    const attemptId = crypto.randomUUID();
+    const rightBefore = { selectedIndex: before.indexOf("Right answer") };
+
+    const wrongTap = {
+      answer: { selectedIndex: before.indexOf("Wrong answer") },
+      attemptId,
+      durationMs: 9000,
+      itemId: item.id,
+      timeZone,
+    };
+
+    const missed = await answerMistakePractice({ input: wrongTap, mistakeId: mistake.id });
+    const moved = await prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } });
+
+    expect(missed).toMatchObject({
+      feedback: { correctAnswer: rightBefore, isCorrect: false },
+      status: "ready",
+    });
+
+    expect(moved.missedAt).toStrictEqual(missedAt);
+
+    await expect(
+      answerMistakePractice({ input: wrongTap, mistakeId: mistake.id }),
+    ).resolves.toMatchObject({
+      feedback: { correctAnswer: rightBefore, isCorrect: false },
+      status: "ready",
+    });
+
+    vi.setSystemTime(new Date("2026-11-13T13:00:00Z"));
+    const nextDay = await shownNow();
+
+    expect(nextDay).toStrictEqual(layout(missedAt));
+    expect(nextDay).not.toStrictEqual(before);
+
+    const right = { selectedIndex: nextDay.indexOf("Right answer") };
+
+    await expect(
+      answerMistakePractice({
+        input: { answer: right, durationMs: 9000, itemId: item.id, timeZone },
+        mistakeId: mistake.id,
+      }),
+    ).resolves.toMatchObject({
+      feedback: { correctAnswer: right, fixed: true, isCorrect: true },
+      status: "ready",
+    });
+  });
 });
 
 describe(answerMistakePractice, () => {
@@ -442,12 +543,20 @@ describe(answerMistakePractice, () => {
     });
 
     const first = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id }),
+        durationMs: 9000,
+        itemId: extra.id,
+      },
       mistakeId: mistake.id,
     });
 
     const next = await answerMistakePractice({
-      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: extra.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id, right: false }),
+        durationMs: 9000,
+        itemId: extra.id,
+      },
       mistakeId: mistake.id,
     });
 
@@ -502,7 +611,11 @@ describe(answerMistakePractice, () => {
     });
 
     const missed = await answerMistakePractice({
-      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: original.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id, right: false }),
+        durationMs: 9000,
+        itemId: original.id,
+      },
       mistakeId: mistake.id,
     });
 
@@ -520,7 +633,11 @@ describe(answerMistakePractice, () => {
     ).resolves.toMatchObject({ availability: { ready: 0, tomorrow: 1 } });
 
     const repeated = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id }),
+        durationMs: 9000,
+        itemId: original.id,
+      },
       mistakeId: mistake.id,
     });
 
@@ -551,7 +668,7 @@ describe(answerMistakePractice, () => {
     await expect(
       answerMistakePractice({
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInMistake({ mistakeId: mistake.id }),
           durationMs: 9000,
           itemId: original.id,
           timeZone: "UTC",
@@ -627,20 +744,17 @@ describe(answerMistakePractice, () => {
       userId: user.id,
     });
 
+    const right = await pickInMistake({ mistakeId: mistake.id });
+
     const result = await answerMistakePractice({
-      input: {
-        answer: { selectedIndex: 0 },
-        durationMs: 9000,
-        itemId: original.id,
-        timeZone: "UTC",
-      },
+      input: { answer: right, durationMs: 9000, itemId: original.id, timeZone: "UTC" },
       mistakeId: mistake.id,
     });
 
     expect(result).toStrictEqual({
       feedback: {
         answerId: expect.any(String),
-        correctAnswer: { selectedIndex: 0 },
+        correctAnswer: right,
         explanation: "It follows the rule.",
         fixed: true,
         fixedMistakeIds: [mistake.id],
@@ -764,7 +878,11 @@ describe(answerMistakePractice, () => {
     });
 
     const late = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 45_000, itemId: extra.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: mistake.id }),
+        durationMs: 45_000,
+        itemId: extra.id,
+      },
       mistakeId: mistake.id,
     });
 
@@ -801,12 +919,22 @@ describe(answerMistakePractice, () => {
     ]);
 
     const right = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+      input: {
+        answer: await pickInMistake({ mistakeId: rightMistake.id }),
+        durationMs: 9000,
+        itemId: extra.id,
+      },
       mistakeId: rightMistake.id,
     });
 
+    const shown = await shownMistakeOptions({ mistakeId: wrongMistake.id });
+
     const wrong = await answerMistakePractice({
-      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: original.id },
+      input: {
+        answer: { selectedIndex: shown.indexOf("Wrong answer") },
+        durationMs: 9000,
+        itemId: original.id,
+      },
       mistakeId: wrongMistake.id,
     });
 
@@ -837,9 +965,11 @@ describe(answerMistakePractice, () => {
       userId: user.id,
     });
 
+    const shown = await shownMistakeOptions({ mistakeId: mistake.id });
+
     const result = await answerMistakePractice({
       input: {
-        answer: { selectedIndex: content.options.length },
+        answer: { selectedIndex: shown.indexOf("Other") },
         durationMs: 100,
         itemId: unmatched.id,
       },

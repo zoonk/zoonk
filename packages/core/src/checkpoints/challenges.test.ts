@@ -88,7 +88,7 @@ async function challengeOf(planItemId: string) {
   return result.challenge;
 }
 
-async function playBoss({ optionIndex, planItemId }: { optionIndex: number; planItemId: string }) {
+async function playBoss({ planItemId, right }: { planItemId: string; right: boolean }) {
   const started = await startChallenge({ input: {}, planItemId });
 
   if (started.status !== "ready") {
@@ -96,7 +96,7 @@ async function playBoss({ optionIndex, planItemId }: { optionIndex: number; plan
   }
 
   const { blockId, sessionId } = started.destination;
-  await answerBlockInOrder({ blockId, optionIndex, sessionId });
+  await answerBlockInOrder({ blockId, right, sessionId });
   await finishStudyBlock({ blockId, input: {}, sessionId });
 
   return started.destination;
@@ -196,7 +196,7 @@ describe("a phase checkpoint's challenge", () => {
 
   it("not passed, it tries again tomorrow, then is back in the plan, as the result says", async () => {
     const { boss, goal, user } = await bossSetup();
-    const lost = await playBoss({ optionIndex: 1, planItemId: boss.id });
+    const lost = await playBoss({ planItemId: boss.id, right: false });
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       blockId: lost.blockId,
@@ -246,7 +246,7 @@ describe("a phase checkpoint's challenge", () => {
       ).resolves.toMatchObject({ status: "ready" });
     }, Promise.resolve());
 
-    const won = await playBoss({ optionIndex: 0, planItemId: boss.id });
+    const won = await playBoss({ planItemId: boss.id, right: true });
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       blockId: won.blockId,

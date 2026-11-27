@@ -131,6 +131,7 @@ export function toPlannedConditions({
     scoring: getMockScoring({ blueprint, goal, structure }),
     sections: plan.sections,
     shape: written ? { area: null, day: plan.day, kind: "written" } : null,
+    shufflesOptions: true,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],

@@ -8,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import * as milestones from "../milestones/award-milestones";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -59,7 +60,12 @@ async function finishPractice({
 
   await answerStudyQuestion({
     blockId: block.id,
-    input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId, timeZone: "UTC" },
+    input: {
+      answer: await pickItemInBlock({ blockId: block.id, itemId }),
+      durationMs: 1000,
+      itemId,
+      timeZone: "UTC",
+    },
     sessionId: session.id,
   });
 

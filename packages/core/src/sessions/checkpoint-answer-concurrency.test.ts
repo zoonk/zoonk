@@ -8,6 +8,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { persistLearnerAnswer } from "../learner/record-learner-answer";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
@@ -62,10 +63,14 @@ async function setup(kind: "checkpoint" | "practice" = "checkpoint") {
 
   mockSession(user.id);
 
-  const submit = (selectedIndex: number) =>
+  const submit = (right: boolean) =>
     answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex }, durationMs: 1000, itemId: item.id },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item, right }),
+        durationMs: 1000,
+        itemId: item.id,
+      },
       sessionId: session.id,
     });
 
@@ -153,7 +158,7 @@ describe("checkpoint answer recording", () => {
     const held = Promise.allSettled([holding]);
     void holding.catch(ready.reject);
     const holderPid = await ready.promise;
-    const first = Promise.allSettled([submit(0)]);
+    const first = Promise.allSettled([submit(true)]);
     const replay = Promise.withResolvers<Awaited<ReturnType<typeof submit>>>();
 
     try {
@@ -168,7 +173,7 @@ describe("checkpoint answer recording", () => {
         )
         .toHaveLength(1);
 
-      void submit(1).then(replay.resolve, replay.reject);
+      void submit(false).then(replay.resolve, replay.reject);
 
       await expect
         .poll(() => readOwnWaiters(holderPid), { interval: 10, timeout: 4000 })
@@ -230,7 +235,7 @@ describe("checkpoint answer recording", () => {
       ),
     );
 
-    await expect(submit(1)).resolves.toMatchObject({
+    await expect(submit(false)).resolves.toMatchObject({
       feedback: { isCorrect: false },
       status: "ready",
     });
@@ -299,11 +304,15 @@ describe("checkpoint answer recording", () => {
       const startSubmissions = Promise.withResolvers<null>();
 
       const submissions = Promise.allSettled([
-        startSubmissions.promise.then(() => submit(0)),
+        startSubmissions.promise.then(() => submit(true)),
         startSubmissions.promise.then(() =>
           answerStudyQuestion({
             blockId: otherBlock.id,
-            input: { answer: { selectedIndex: 1 }, durationMs: 1000, itemId: item.id },
+            input: {
+              answer: pickInBlock({ blockId: otherBlock.id, item, right: false }),
+              durationMs: 1000,
+              itemId: item.id,
+            },
             sessionId: session.id,
           }),
         ),
@@ -371,7 +380,7 @@ describe("checkpoint answer recording", () => {
   it("returns an existing checkpoint answer on a later retry, without another memory review", async () => {
     const { block, session, submit, user } = await setup();
 
-    await expect(submit(1)).resolves.toMatchObject({
+    await expect(submit(false)).resolves.toMatchObject({
       feedback: { isCorrect: false },
       status: "ready",
     });
@@ -381,7 +390,7 @@ describe("checkpoint answer recording", () => {
       where: { id: block.id },
     });
 
-    await expect(submit(0)).resolves.toMatchObject({
+    await expect(submit(true)).resolves.toMatchObject({
       feedback: { isCorrect: false },
       status: "ready",
     });
@@ -430,7 +439,7 @@ describe("checkpoint answer recording", () => {
       const held = Promise.allSettled([holding]);
       void holding.catch(ready.reject);
       const holderPid = await ready.promise;
-      const answering = Promise.allSettled([submit(0)]);
+      const answering = Promise.allSettled([submit(true)]);
 
       try {
         await expect
@@ -468,7 +477,7 @@ describe("checkpoint answer recording", () => {
 
   it("still records the same practice item again in a later session", async () => {
     const { block, item, submit, user } = await setup("practice");
-    await expect(submit(1)).resolves.toMatchObject({ status: "ready" });
+    await expect(submit(false)).resolves.toMatchObject({ status: "ready" });
 
     const retrySession = await studySessionFixture({
       localDate: new Date("2030-01-02"),
@@ -488,7 +497,11 @@ describe("checkpoint answer recording", () => {
     await expect(
       answerStudyQuestion({
         blockId: retryBlock.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id },
+        input: {
+          answer: pickInBlock({ blockId: retryBlock.id, item }),
+          durationMs: 1000,
+          itemId: item.id,
+        },
         sessionId: retrySession.id,
       }),
     ).resolves.toMatchObject({ feedback: { isCorrect: true }, status: "ready" });

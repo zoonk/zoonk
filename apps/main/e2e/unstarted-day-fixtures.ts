@@ -20,10 +20,7 @@ function daysAgo(days: number): Date {
   return new Date(Date.now() - days * MS_PER_DAY);
 }
 
-/**
- * Titles and questions carry a tag of their own, so each test finds only its own learner's words.
- * The right option is always the first.
- */
+/** Titles and questions carry a tag of their own, so each test finds only its own learner's words. */
 export async function createUnstartedDay() {
   // A letter first: rich text groups a long number's digits ("775,202"), which no title search finds.
   const tag = `t${randomUUID().slice(0, SHORT_ID_LENGTH)}`;

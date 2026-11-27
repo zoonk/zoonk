@@ -1,4 +1,3 @@
-import { type PartialCreditRule } from "@zoonk/ai/tasks/research/partial-credit";
 import { type JsonObject } from "@zoonk/utils/json";
 import { type ChoiceItem, gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
 import { gradeMathAnswer, readRecordedMath } from "../../../learner/_utils/math-items";
@@ -7,7 +6,13 @@ import { gradeOptionPicks } from "../../../library/items/option-picks";
 import { type MistakeSnapshot, withMistakeStimulus } from "../../../mistakes/mistake-snapshot";
 import { getPickCredit } from "../../scoring/partial-credit";
 import { type MockAnswer, mockAnswerSchema, mockChoiceSchema } from "../mock-answer-contract";
-import { type MockItem, serveMockMath, toMockQuestionView } from "./mock-items";
+import {
+  type MockItem,
+  type MockShowing,
+  serveMockMath,
+  showMockChoice,
+  toMockQuestionView,
+} from "./mock-items";
 
 const BLANK = { dontKnow: true } as const;
 
@@ -22,23 +27,24 @@ export type MockItemGrade = {
 function gradeChoice({
   answer,
   item,
-  partialCredit,
+  mock,
 }: {
   answer: MockAnswer | null;
   item: ChoiceItem;
-  partialCredit: PartialCreditRule;
+  mock: MockShowing;
 }): MockItemGrade {
   const choice = mockChoiceSchema.safeParse(answer).data ?? null;
-  const graded = gradeChoiceAnswer({ answer: choice ?? BLANK, item });
-  const several = item.format === "multipleChoice" && choice && "selectedIndexes" in choice;
+  const shown = showMockChoice({ item, mock });
+  const graded = gradeChoiceAnswer({ answer: choice ?? BLANK, item, shown });
+  const several = shown.format === "multipleChoice" && choice && "selectedIndexes" in choice;
 
   const credit = several
     ? getPickCredit({
         picks: {
-          ...gradeOptionPicks({ options: item.content.options, picked: choice.selectedIndexes }),
-          options: item.content.options.length,
+          ...gradeOptionPicks({ options: shown.content.options, picked: choice.selectedIndexes }),
+          options: shown.content.options.length,
         },
-        rule: partialCredit,
+        rule: mock.conditions.partialCredit,
       })
     : Number(graded.isCorrect);
 
@@ -54,17 +60,15 @@ function gradeChoice({
 function gradeMockAnswer({
   answer,
   item,
-  mockId,
-  partialCredit,
+  mock,
 }: {
   answer: MockAnswer | null;
   item: MockItem;
-  mockId: string;
-  partialCredit: PartialCreditRule;
+  mock: MockShowing;
 }): MockItemGrade {
   if (item.format === "numeric") {
     const number = answer && "number" in answer ? answer.number : null;
-    const version = serveMockMath({ item, mockId });
+    const version = serveMockMath({ item, mockId: mock.id });
     const graded = gradeMathAnswer({ answer: number, item, version });
 
     return {
@@ -89,12 +93,12 @@ function gradeMockAnswer({
     };
   }
 
-  return gradeChoice({ answer, item, partialCredit });
+  return gradeChoice({ answer, item, mock });
 }
 
 export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): MockItemGrade {
   const graded = gradeMockAnswer(input);
-  const question = toMockQuestionView({ item: input.item, mockId: input.mockId });
+  const question = toMockQuestionView({ item: input.item, mock: input.mock });
 
   return {
     ...graded,
