@@ -57,6 +57,7 @@ import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.util.UUID
 import kotlin.time.toJavaInstant
 
@@ -372,7 +373,7 @@ private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
     when (reason) {
         MindMapAllowanceStop.Reason.SLOW_DOWN -> {
-            Limit.SlowDown(SLOW_DOWN_SECONDS, until = availableAt?.toJavaInstant())
+            Limit.SlowDown(SLOW_DOWN_SECONDS, availableAt?.toJavaInstant() ?: Instant.now().plusSeconds(SLOW_DOWN_SECONDS.toLong()))
         }
 
         MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED -> {

@@ -5,8 +5,8 @@ import com.zoonk.android.data.MutationResult
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import java.time.Instant
 
 enum class LimitTier { Guest, Free, Plus }
@@ -18,10 +18,10 @@ enum class LimitPeriod { Day, Rolling30Days, Total }
 enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, Uploads, Questions }
 
 sealed interface Limit {
-    /** A short break, over at [until], or [retryAfterSeconds] after its notice first shows when nothing said when it ends. */
+    /** A short break of [retryAfterSeconds], over at [until]: the wait counted from when this device received it. */
     data class SlowDown(
         val retryAfterSeconds: Int,
-        val until: Instant? = null,
+        val until: Instant,
     ) : Limit
 
     /** Help without a `period` was the day's; [availableAt] is when the next one opens, where the API says. */
@@ -60,11 +60,14 @@ sealed interface Limit {
                 }
 
                 "SLOW_DOWN" -> {
+                    // Any whole number the API sends is a wait, held to what an Int counts.
                     val seconds =
                         details
                             ?.field("retryAfterSeconds")
                             ?.jsonPrimitive
-                            ?.int ?: DEFAULT_RETRY_SECONDS
+                            ?.longOrNull
+                            ?.coerceIn(0, Int.MAX_VALUE.toLong())
+                            ?.toInt() ?: DEFAULT_RETRY_SECONDS
                     SlowDown(seconds, receivedAt.plusSeconds(seconds.toLong()))
                 }
 

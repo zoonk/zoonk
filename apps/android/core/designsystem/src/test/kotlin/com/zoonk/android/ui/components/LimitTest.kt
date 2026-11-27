@@ -33,6 +33,16 @@ class LimitTest {
     }
 
     @Test
+    fun aWaitLongerThanAnIntCountsIsHeldToTheLongestOne() {
+        val longest = Int.MAX_VALUE
+        assertEquals(
+            Limit.SlowDown(longest, received.plusSeconds(longest.toLong())),
+            refused("SLOW_DOWN", """{"retryAfterSeconds":9007199254740991}""", 429),
+        )
+        assertEquals(Limit.SlowDown(0, received), refused("SLOW_DOWN", """{"retryAfterSeconds":-5}""", 429))
+    }
+
+    @Test
     fun aFreeLessonRefusalSaysWhenTheNextOneOpens() {
         assertEquals(
             Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-02T09:15:00Z")),

@@ -294,7 +294,21 @@ class LessonPlayerScreenshots {
                 )
             },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
-            "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
+            "slow-down" to
+                {
+                    at(
+                        LessonAction.RunRefused(
+                            LessonRefusal.Limited(
+                                Limit.SlowDown(
+                                    30,
+                                    java.time.Instant
+                                        .now()
+                                        .plusSeconds(30),
+                                ),
+                            ),
+                        ),
+                    )
+                },
             "not-found" to { at(LessonAction.RunRefused(LessonRefusal.NotFound)) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
             "completed" to { completed(COMPLETION) },

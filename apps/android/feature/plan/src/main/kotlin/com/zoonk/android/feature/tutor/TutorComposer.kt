@@ -17,7 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -31,7 +34,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.ui.components.FilledIconButton
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -57,6 +62,16 @@ internal fun TutorComposer(
     val lifted = limitLifted(limit)
     if (lifted) LaunchedEffect(limit) { vm.limitLifted() }
 
+    // The notice leaves as a short break ends, so the composer, which stays, says that sending is back.
+    var shortBreak by remember { mutableStateOf(false) }
+    LaunchedEffect(limit, state.asking) {
+        if (limit is Limit.SlowDown) {
+            shortBreak = true
+        } else if (limit != null || state.asking) {
+            shortBreak = false
+        }
+    }
+
     val failure = state.askFailure
     // Main keeps the composer shut until the learner signs in again, sees Plus, or leaves a gone lesson.
     val blocked = failure == TutorFailure.SignedOut || failure == TutorFailure.PlusRequired || failure == TutorFailure.Gone
@@ -67,6 +82,8 @@ internal fun TutorComposer(
     val sendByKey = { if (canAsk && (vm.draft.text.isNotBlank() || resending)) vm.send() }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (shortBreak) ActivityAnnouncement(if (limit == null) stringResource(R.string.limit_try_again_now) else "")
+
         // Above the question the learner wrote, which waits there until the limit lifts.
         if (limit != null && !lifted) {
             LimitNotice(

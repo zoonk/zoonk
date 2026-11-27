@@ -3,7 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -19,7 +19,6 @@ import com.zoonk.android.ui.format.formatNumber
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.Instant
-import kotlin.math.ceil
 
 /**
  * What ran out as the title, and when it comes back as the one line under it. [opened]: the cap's day has
@@ -196,57 +195,61 @@ fun limitWords(
 /**
  * Main's `useSlowDownWords`: the line names the wait and counts it down, in seconds under a minute and in
  * minutes above, until it says the learner can try again. TalkBack hears the wait it was first given once
- * ([LimitWords.said]), and again only when the wait is over. A break nothing timed counts from when it first shows.
+ * ([LimitWords.said]), and again only when the wait is over.
  */
 @Composable
 private fun slowDownWords(limit: Limit.SlowDown): LimitWords {
-    val clock = LocalClock.current
-    val end = remember(limit) { limit.until ?: clock.instant().plusSeconds(limit.retryAfterSeconds.toLong()) }
-    val seconds = secondsLeft(end)
+    val seconds = rememberSecondsLeft(limit.until)
     val line = waitLine(seconds)
-    val first = remember(end) { line }
+    val first = remember(limit.until) { line }
     return LimitWords(title = null, line = line, said = if (seconds > 0) first else line)
 }
 
-/** Whole seconds left before [end], read again at each whole second until it comes. */
+/**
+ * Whole seconds left before a short break's [end]. The clock is read once, as it first shows; then it counts
+ * by the same monotonic delays as the wait that lifts the refusal, so a clock changed meanwhile moves neither.
+ */
 @Composable
-private fun secondsLeft(end: Instant): Int {
+fun rememberSecondsLeft(end: Instant): Long {
     val clock = LocalClock.current
-    val left = remember(end) { mutableIntStateOf(wholeSecondsLeft(end, clock.instant())) }
+    val left = remember(end) { mutableLongStateOf(wholeSecondsLeft(Duration.between(clock.instant(), end).toMillis())) }
     LaunchedEffect(end) {
-        while (left.intValue > 0) {
-            val millis = Duration.between(clock.instant(), end).toMillis()
-            delay((millis % MILLIS_PER_SECOND).let { if (it <= 0) MILLIS_PER_SECOND else it })
-            left.intValue = wholeSecondsLeft(end, clock.instant())
+        var millis = Duration.between(clock.instant(), end).toMillis()
+        while (millis > 0) {
+            val step = (millis % MILLIS_PER_SECOND).takeIf { it > 0 } ?: MILLIS_PER_SECOND
+            delay(step)
+            millis -= step
+            left.longValue = wholeSecondsLeft(millis)
         }
     }
-    return left.intValue
+    return left.longValue
 }
 
-internal fun wholeSecondsLeft(
-    end: Instant,
-    now: Instant,
-): Int = ceil(Duration.between(now, end).toMillis() / MILLIS_PER_SECOND.toDouble()).toInt().coerceAtLeast(0)
+private fun wholeSecondsLeft(millis: Long): Long = ((millis + MILLIS_PER_SECOND - 1) / MILLIS_PER_SECOND).coerceAtLeast(0)
 
 @Composable
-private fun waitLine(seconds: Int): String =
+private fun waitLine(seconds: Long): String =
     when {
         seconds <= 0 -> {
             stringResource(R.string.limit_try_again_now)
         }
 
         seconds < SECONDS_PER_MINUTE -> {
-            pluralStringResource(R.plurals.limit_slow_down_seconds, seconds, formatNumber(seconds.toDouble(), currentLocale()))
+            pluralStringResource(R.plurals.limit_slow_down_seconds, seconds.toInt(), formatNumber(seconds.toDouble(), currentLocale()))
         }
 
         else -> {
             val minutes = (seconds + SECONDS_PER_MINUTE - 1) / SECONDS_PER_MINUTE
-            pluralStringResource(R.plurals.limit_slow_down_minutes, minutes, formatNumber(minutes.toDouble(), currentLocale()))
+            pluralStringResource(
+                R.plurals.limit_slow_down_minutes,
+                minutes.coerceAtMost(Int.MAX_VALUE.toLong()).toInt(),
+                formatNumber(minutes.toDouble(), currentLocale()),
+            )
         }
     }
 
 private const val MILLIS_PER_SECOND = 1000L
-private const val SECONDS_PER_MINUTE = 60
+private const val SECONDS_PER_MINUTE = 60L
 
 /**
  * Main's `useMapLessonsWords`: a map writes its lessons first, so a free learner's map waits until all of
