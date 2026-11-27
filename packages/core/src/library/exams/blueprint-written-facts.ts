@@ -1,6 +1,6 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import { type Citation } from "./blueprint-contract";
-import { toFacts } from "./blueprint-fact-claims";
+import { describePoints, toFacts } from "./blueprint-fact-claims";
 import { type KeptFacts } from "./blueprint-kept";
 import { type ExtractionDocument, type Passage } from "./blueprint-passages";
 import { writtenGradingSchema } from "./written-grading";
@@ -29,10 +29,6 @@ const ROUNDING_MODES: Record<NonNullable<NonNullable<Grading["rounding"]>["mode"
   nearest: "rounded to the nearest step",
   up: "rounded up",
 };
-
-function describePoints(value: number): string {
-  return `${value} ${value === 1 ? "point" : "points"}`;
-}
 
 function isMark(value: number | null): boolean {
   return value === null || (Number.isFinite(value) && value >= 0);
@@ -189,7 +185,6 @@ function gradingClaims(grading: Grading): Claim[] {
   ];
 }
 
-/** Every rule the reading returned can be stored as a mark's input; one that can't hides the total. */
 function isReadableSheet(grading: Grading): boolean {
   return (
     grading.combination?.method !== "other" &&
