@@ -178,7 +178,7 @@ export function UpNextLesson({ title }: { title: string }) {
   return (
     <Surface className="flex flex-col gap-1 p-4">
       <Eyebrow className="self-start">{t("Up next")}</Eyebrow>
-      <p className="font-medium">{title}</p>
+      <p className="font-medium [text-box:trim-end_cap_text]">{title}</p>
     </Surface>
   );
 }
