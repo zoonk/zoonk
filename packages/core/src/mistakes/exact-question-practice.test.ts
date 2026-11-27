@@ -1,11 +1,9 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, plannedSkills } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -13,7 +11,6 @@ import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-ite
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
 import { answerMistakePractice } from "./answer-mistake-practice";
-import { finishMistakePractice } from "./finish-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
 
 const YESTERDAY = new Date(Date.now() - 86_400_000);
@@ -485,45 +482,6 @@ describe("exact-question practice", () => {
         mistakeId: recorded.mistake.id,
       }),
     ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });
-  });
-
-  it("settles the notebook mission from an exact lesson correction", async () => {
-    const { mistake, skill, step, user } = await setup();
-    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
-    await planFixture({ goalId: goal.id, graph: { skills: plannedSkills([skill]) } });
-
-    await studySessionFixture({
-      goalId: goal.id,
-      localDate: new Date(new Date().toISOString().slice(0, 10)),
-      missions: { picks: [{ anchor: {}, kind: "fixMistake", total: 1 }], version: 1 },
-      userId: user.id,
-    });
-
-    const answered = await answerMistakePractice({
-      input: {
-        answer: { kind: "check", optionId: "right" },
-        attemptId: crypto.randomUUID(),
-        durationMs: 2000,
-        stepId: step.id,
-        timeZone: "UTC",
-      },
-      mistakeId: mistake.id,
-    });
-
-    if (answered.status !== "ready" || !answered.feedback.answerId) {
-      throw new Error("The exact answer must be recorded");
-    }
-
-    await expect(
-      finishMistakePractice({
-        answerIds: [answered.feedback.answerId],
-        ended: true,
-        timeZone: "UTC",
-      }),
-    ).resolves.toMatchObject({
-      result: { missionMoment: { completed: ["fixMistake"] } },
-      status: "ready",
-    });
   });
 
   it("gives a later wrong answer to a fixed original the answer that fixed it, recording nothing new", async () => {

@@ -1,8 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -31,18 +30,6 @@ async function day(dailyMinutes: number, durations: number[], extra = false) {
 
   const plan = await planFixture({ goalId: goal.id });
   const item = await planItemFixture({ lessonId: lesson.id, planId: plan.id, skillId: skill.id });
-  const material = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-
-  await Promise.all(
-    Array.from({ length: 5 }, () =>
-      mistakeFixture({
-        createdAt: new Date("2026-10-01"),
-        itemId: material.id,
-        skillId: skill.id,
-        userId: user.id,
-      }),
-    ),
-  );
 
   await studySessionFixture({
     goalId: goal.id,
@@ -110,7 +97,7 @@ describe("daily missions fit the learner's planned time", () => {
 
   it("keeps a fitting outside drill when a short day has no planned mission candidate", async () => {
     const { missions } = await day(10, [1], true);
-    expect(missions).toMatchObject([{ kind: "fixMistake", minutes: 2, total: 1 }]);
+    expect(missions).toMatchObject([{ kind: "askBuddy", minutes: 2, total: 1 }]);
     expect(missions).toHaveLength(1);
   });
 
@@ -131,13 +118,5 @@ describe("daily missions fit the learner's planned time", () => {
     await expect(
       settleMissions({ sessionId: session.id, timeZone: "UTC", userId: session.userId }),
     ).resolves.toMatchObject({ fullMealPaid: false });
-  });
-
-  it("sizes fixes to the four minutes left on a 30-minute day", async () => {
-    const { missions, picks, plannedMinutes } = await day(30, [4, 22]);
-    expect(picks.find((pick) => pick.kind === "fixMistake")).toMatchObject({ total: 2 });
-    const fixes = missions.find((mission) => mission.kind === "fixMistake");
-    expect(fixes).toMatchObject({ minutes: 4, total: 2 });
-    expect(plannedMinutes + (fixes?.minutes ?? 0)).toBe(30);
   });
 });

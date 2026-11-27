@@ -305,7 +305,7 @@ describe("mistake patterns", () => {
     await expect(prisma.mistakePattern.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
-  it("drills a pattern once for full Brain Power and takes it off Today", async () => {
+  it("drills a pattern once for full Brain Power and marks it practiced", async () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 
@@ -390,7 +390,7 @@ describe("mistake patterns", () => {
     });
   });
 
-  it("takes a typos note off Today once dismissed", async () => {
+  it("dismisses a typos note, once and only for its learner", async () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 

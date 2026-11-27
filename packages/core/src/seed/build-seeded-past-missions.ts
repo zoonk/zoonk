@@ -35,10 +35,7 @@ export async function buildSeededPastMissions(goalId: string) {
         dailyMinutes,
         firstSteps: null,
         localDate: session.localDate,
-        oldestReadyMistakeAt: null,
-        patternExpiresTomorrow: false,
         plannedMinutes: session.plannedMinutes,
-        readyMistakeCount: 0,
         recentPicks: [],
       };
 

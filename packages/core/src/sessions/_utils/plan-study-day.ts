@@ -1,6 +1,5 @@
 import "server-only";
 import { type UsageTotals } from "../../entitlements/_utils/usage-counts";
-import { type PracticeMistake } from "../../mistakes/mistake-practice-eligibility";
 import { type loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { type MissionDocument } from "../missions/catalog";
 import { loadDayMissionFacts } from "../missions/day-facts";
@@ -34,7 +33,6 @@ export async function planDayBlocks(
 /** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
   context: SessionDayContext & {
-    readMistakes?: () => Promise<PracticeMistake[]>;
     readPreparation?: () => ReturnType<typeof loadPreparationInputs>;
     readUsage?: () => Promise<UsageTotals>;
     plannedDay?: Omit<PlannedStudyDay, "missions" | "preparing">;

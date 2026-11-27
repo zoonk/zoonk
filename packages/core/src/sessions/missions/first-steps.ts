@@ -13,7 +13,7 @@ type FirstStep = {
   waitReason?: "challenge" | "lessons";
   when?:
     | { kind: "challenge" | "essay"; date?: string }
-    | { kind: "mistake" | "review" | "pattern" | "call" | "buddy" | "lesson" | "mock" };
+    | { kind: "review" | "call" | "buddy" | "lesson" | "mock" };
 };
 
 export type FirstSteps = {
@@ -64,7 +64,6 @@ function firstStepKinds({
   return [
     "somethingNew",
     "review",
-    goal.kind === "language" ? "pattern" : "fixMistake",
     tier !== "guest" && "askBuddy",
     goal.kind === "exam" && hasEssays && "essay",
     goal.kind === "language" && tier !== "guest" && "call",
@@ -124,10 +123,6 @@ function unavailableStepWhen({
         ? { date: firstChallenge.scheduledFor.toISOString().slice(0, 10) }
         : {}),
     };
-  }
-
-  if (kind === "fixMistake") {
-    return { kind: "mistake" };
   }
 
   if (kind === "somethingNew") {

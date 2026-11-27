@@ -65,7 +65,6 @@ async function savedDay({ goalId, userId }: { goalId: string; userId: string }) 
       picks: [
         { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
         { anchor: { blockKind: "review" }, kind: "review", total: 2 },
-        { anchor: {}, kind: "fixMistake", total: 2 },
       ],
       version: 1,
     },
@@ -252,7 +251,7 @@ describe(getLearnerSummary, () => {
       activeGoalId: goal.id,
       day: { goalId: goal.id, localDate: TODAY.toISOString().slice(0, 10) },
       goals: [{ id: goal.id, isActive: true, kind: "learn", status: "active", title: goal.title }],
-      missions: { done: 1, total: 3 },
+      missions: { done: 1, total: 2 },
       timeZone: "UTC",
       today: { blocksLeft: 1, next: { minutes: 6, sessionId: day.id, title: "Simple interest" } },
     });
@@ -672,7 +671,6 @@ describe(getLearnerSummary, () => {
           { anchor: {}, kind: "askBuddy", total: 1 },
           { anchor: {}, kind: "call", total: 1 },
           { anchor: {}, kind: "pronunciation", total: 1 },
-          { anchor: {}, kind: "fixMistake", total: 2 },
         ],
         version: 1,
       },
@@ -684,7 +682,7 @@ describe(getLearnerSummary, () => {
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
     expect(counts.result).toMatchObject({
-      missions: { done: 0, total: 4 },
+      missions: { done: 0, total: 3 },
       places: { speaking: true },
     });
 
