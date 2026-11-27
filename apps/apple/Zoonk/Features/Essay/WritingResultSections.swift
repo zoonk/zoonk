@@ -373,6 +373,7 @@ private struct WritingCriteriaSection: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
+      .listRowSeparator(.hidden)
       .sheet(isPresented: $showsComments) {
         NavigationStack {
           ZoonkList {
