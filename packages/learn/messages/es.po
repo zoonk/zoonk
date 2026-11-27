@@ -12986,11 +12986,6 @@ msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Buscar"
 
-#: src/shell/level-link.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "Nivel {level}"
-
 #. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
 #: src/shell/level-link.tsx
 msgctxt "xjYKLD"
