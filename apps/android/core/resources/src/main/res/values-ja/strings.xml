@@ -58,6 +58,7 @@
   "navigation_mind_maps": "c8c9ccd06be93091cebcc5b964a1c5e639b9f454c370ca9307d8e9b5aa108e5f",
   "navigation_mistakes": "91fd88ad5426ea1caf4ecf33fdd6995705ce1a19928cf630bdb9c7183cd8180f",
   "navigation_plan": "cdf97c8c2c55c0b7d1f1fd4e39b92e1825db7cc4f1f425bd09b24dd89e5feac1",
+  "navigation_saved_lessons": "3cd19b5ac9124e4218af385f30e5406f01a10e222d13f8380854b81f63181e32",
   "navigation_speaking": "1e7943be7d905ba758c88934b1bec528e0e2a1c4615ea13594b9cf19b564a273",
   "navigation_statistics": "d313af2d8331ff11200e2fa5da758ddbb26707bb68e96a469bf22adade44a7d8",
   "navigation_study": "5e75a64e962171437eab603c2124ee4a1e91d9396b3734cc7073332c743bb5eb",
@@ -86,6 +87,7 @@
     <string name="navigation_buddy">相棒</string>
     <string name="navigation_study">学習</string>
     <string name="navigation_mistakes">間違いノート</string>
+    <string name="navigation_saved_lessons">保存したレッスン</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">完了したレッスン</string>
     <string name="navigation_exam">試験</string>

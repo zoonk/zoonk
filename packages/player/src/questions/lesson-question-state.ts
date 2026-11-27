@@ -58,6 +58,7 @@ export type LessonQuestionAction =
   | { type: "close" }
   | { type: "threadLoadStarted" }
   | {
+      fromPage?: true;
       hasMore: boolean;
       nextCursor: string | null;
       questions: LessonQuestionResource[];

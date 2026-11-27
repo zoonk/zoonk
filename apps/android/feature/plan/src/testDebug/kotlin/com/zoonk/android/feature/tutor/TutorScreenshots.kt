@@ -270,7 +270,7 @@ class TutorScreenshots {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
         return TutorViewModel(
-            TutorScope.Plan("goal"),
+            TutorScope.Plan("goal", "conversation"),
             TutorStore(api, cache, session, {
                 MutationResult.Done(Unit)
             }, { _, _ ->

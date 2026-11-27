@@ -8,6 +8,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -43,7 +44,12 @@ async function setup() {
   await expect(
     answerStudyQuestion({
       blockId: block.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id, timeZone: "UTC" },
+      input: {
+        answer: pickInBlock({ blockId: block.id, item }),
+        durationMs: 1000,
+        itemId: item.id,
+        timeZone: "UTC",
+      },
       sessionId: session.id,
     }),
   ).resolves.toMatchObject({ status: "ready" });

@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "{name} ile bu deneme sınavı hakkında konuş"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "{name} ile planın hakkında konuş"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "Bu modül hakkında {name} ile konuş"

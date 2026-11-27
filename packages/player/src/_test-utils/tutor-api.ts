@@ -159,6 +159,9 @@ export function stubTutorApi({
 
   const createdByRequestId = new Map<string, { input: string; questionId: string }>();
 
+  /** A question the test seeded has no thread of its own: every thread's read returns it. */
+  const threadPathByQuestionId = new Map<string, string>();
+
   const api = {
     complete(questionId: string, answer = TUTOR_ANSWER) {
       api.questions = api.questions.map((question) =>
@@ -216,10 +219,14 @@ export function stubTutorApi({
   };
 
   function serveThread(url: URL) {
-    const page = getThreadPage({ pageSize, questions: api.questions, url });
+    const questions = api.questions.filter(
+      (question) => (threadPathByQuestionId.get(question.id) ?? url.pathname) === url.pathname,
+    );
+
+    const page = getThreadPage({ pageSize, questions, url });
 
     return Response.json(
-      api.questions.length === 0 ? null : { id: threadId, lessonId: lesson?.id ?? null, ...page },
+      questions.length === 0 ? null : { id: threadId, lessonId: lesson?.id ?? null, ...page },
     );
   }
 
@@ -244,6 +251,7 @@ export function stubTutorApi({
       questionId: question.id,
     });
 
+    threadPathByQuestionId.set(question.id, new URL(request.url).pathname);
     api.questions = [...api.questions, question];
     return Response.json({ ...question, missionMoment: null }, { status: 201 });
   }

@@ -52,6 +52,7 @@ private struct CompletedLessonsList: View {
       content(lessons, query: query, chips: isBeside ? nil : filter)
     }
     .loads(lessons)
+    .lessonSaveVisit()
   }
 
   private var title: Text {
@@ -119,7 +120,7 @@ private struct CompletedLessonsList: View {
       ForEach(months(page.lessons)) { month in
         Section {
           ForEach(month.lessons) { lesson in
-            CompletedLessonRow(lesson: lesson, today: today)
+            CompletedLessonRow(lesson: lesson, goalId: goalId, today: today)
           }
         } header: {
           SectionTitle(Text(month.title))
@@ -255,34 +256,51 @@ private struct CompletedLessonGroupsSection: View {
   }
 }
 
+/// Opens the lesson to do again; its bookmark saves it without opening it.
 private struct CompletedLessonRow: View {
   @Environment(AppRouter.self) private var router
 
   let lesson: CompletedLesson
+  let goalId: String
   let today: String
 
   var body: some View {
-    Button {
-      router.open(.lesson(lessonId: lesson.lessonId))
-    } label: {
-      HStack(spacing: 12) {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(lesson.title)
-            .foregroundStyle(.primary)
-
-          if let chapterTitle = lesson.chapterTitle {
-            Text(chapterTitle)
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-        Text(PlanDate.format(lesson.finishedOn, today: today))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+    if lesson.available {
+      Button {
+        router.open(.lesson(lessonId: lesson.lessonId))
+      } label: {
+        row
       }
-      .disclosureChevron()
+      .savesLesson(
+        LessonSaveTarget(
+          lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
+        goalId: goalId, server: lesson.saved)
+    } else {
+      HStack(spacing: RowSaveToggle.gap) {
+        row
+        RowSaveSpace()
+      }
+      .accessibilityElement(children: .combine)
+    }
+  }
+
+  private var row: some View {
+    HStack(spacing: 12) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(lesson.title)
+          .foregroundStyle(.primary)
+
+        if let chapterTitle = lesson.chapterTitle {
+          Text(chapterTitle)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      Text(PlanDate.format(lesson.finishedOn, today: today))
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }

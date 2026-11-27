@@ -47,7 +47,7 @@ let learnerSummaryUITestJSON = """
     "missions": null,
     "nextChangeAt": 4102444800000,
     "places": {
-      "certificates": false, "completedLessons": false, "exam": true, "mindMaps": true, "readyMistakes": 2,
+      "certificates": false, "completedLessons": false, "exam": true, "mindMaps": true, "readyMistakes": 2, "savedLessons": false,
       "speaking": true
     },
     "readAt": 1767225600000,

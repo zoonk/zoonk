@@ -12,6 +12,7 @@
 ## Glossary
 
 - “lesson”: “aula”, not “lição”
+- “bookmark” (the icon that saves a lesson or a map): “ícone de salvar”, not “marcador”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
 - “topic”: “tópico”, not “assunto” or “tema”
@@ -58,6 +59,7 @@
 - “Buddy”: “Colega”, like a classmate you study with; “your buddy”: “seu colega”; “study buddy”: “colega de estudos”; “AI study buddy”: “colega de estudos com IA”. It takes the masculine whatever the buddy, next to its name too (“Escolha seu colega”, “Oi! Sou {name}, seu colega de estudos com IA”). Never “parceiro” or “companheiro”, which read as a romantic partner
 - Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
+- a “conversation” with the buddy (a written chat on the buddy page): “chat” (“Novo chat”, “Chats”), never “conversa”, which is the call
 - “Mistakes notebook”: “Caderno de erros”
 - “Saved to your mistakes”: “Salvo no seu caderno de erros”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”

@@ -70,7 +70,7 @@ describe("finished challenge score recovery", () => {
       status: "ready",
     });
 
-    await answerBlockInOrder({ ...ref, count: 2, optionIndex: 1 });
+    await answerBlockInOrder({ ...ref, count: 2, right: false });
     const answered = await getStudyBlock(ref);
 
     if (answered.status !== "ready") {
@@ -113,12 +113,12 @@ describe("finished challenge score recovery", () => {
   });
 
   it.each([
-    { count: 5, kind: "boss" as const, mock: false, optionIndex: 0, passed: true },
-    { count: 2, kind: "finalBoss" as const, mock: false, optionIndex: 1, passed: false },
-    { count: 6, kind: "weekly" as const, mock: false, optionIndex: 0, passed: true },
+    { count: 5, kind: "boss" as const, mock: false, passed: true, right: true },
+    { count: 2, kind: "finalBoss" as const, mock: false, passed: false, right: false },
+    { count: 6, kind: "weekly" as const, mock: false, passed: true, right: true },
   ])(
     "keeps $kind's saved score after every question is deleted (mock: $mock)",
-    async ({ count, kind, mock, optionIndex, passed }) => {
+    async ({ count, kind, mock, passed, right }) => {
       const user = await userFixture();
       const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
       const { items } = fixture;
@@ -143,9 +143,9 @@ describe("finished challenge score recovery", () => {
         status: "ready",
       });
 
-      await answerBlockInOrder({ ...ref, count, optionIndex });
+      await answerBlockInOrder({ ...ref, count, right });
 
-      const expected = { correct: optionIndex === 0 ? count : 0, passed, total: count };
+      const expected = { correct: right ? count : 0, passed, total: count };
 
       await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
         completion: { checkpoint: expected },

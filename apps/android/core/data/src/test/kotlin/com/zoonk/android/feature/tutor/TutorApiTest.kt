@@ -46,11 +46,47 @@ class TutorApiTest {
         runTest {
             server.enqueue(json("null"))
 
-            assertNull(api.thread(TutorThreadKey.Plan(GOAL), cursor = null, ana))
+            assertNull(api.thread(TutorThreadKey.Plan(GOAL, CONVERSATION), cursor = null, ana))
             val read = server.takeRequest()
-            assertEquals("/v1/goals/$GOAL/plan/questions", read.url.encodedPath)
+            assertEquals("/v1/goals/$GOAL/buddy/conversations/$CONVERSATION/questions", read.url.encodedPath)
             assertEquals("plan", read.url.queryParameter("contextKind"))
             assertEquals("Bearer token-a", read.headers["Authorization"])
+        }
+
+    @Test
+    fun readsAGoalsConversationsPageByPage() =
+        runTest {
+            server.enqueue(
+                json(
+                    """{"conversations":[{"id":"$CONVERSATION","title":"Why cells?","lastAskedAt":"2026-11-26T09:30:00.000Z"}],"currentId":null,"nextCursor":"$CONVERSATION"}""",
+                ),
+            )
+
+            val page = api.conversations(GOAL, cursor = CONVERSATION, ana)
+
+            val read = server.takeRequest()
+            assertEquals("/v1/goals/$GOAL/buddy/conversations", read.url.encodedPath)
+            assertEquals(CONVERSATION, read.url.queryParameter("cursor"))
+            assertEquals(
+                BuddyConversationList(
+                    listOf(BuddyConversation(CONVERSATION, "Why cells?", kotlin.time.Instant.parse("2026-11-26T09:30:00Z"))),
+                    currentId = null,
+                    nextCursor = CONVERSATION,
+                ),
+                page,
+            )
+        }
+
+    @Test
+    fun asksInTheConversationTheAppNamed() =
+        runTest {
+            server.enqueue(json(question(status = "pending", context = """{"kind":"plan"}""", created = true)))
+
+            api.ask(TutorScope.Plan(GOAL, CONVERSATION), "Why?", suggestion = null, REQUEST, ana)
+
+            val sent = server.takeRequest()
+            assertEquals("POST", sent.method)
+            assertEquals("/v1/goals/$GOAL/buddy/conversations/$CONVERSATION/questions", sent.url.encodedPath)
         }
 
     @Test
@@ -208,6 +244,7 @@ class TutorApiTest {
 
     private companion object {
         const val GOAL = "6f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val CONVERSATION = "2e3d4c5b-6a7f-4b8c-9dae-1f2a3b4c5d6e"
         const val ITEM = "3f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val LESSON = "1f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val STEP = "2f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"

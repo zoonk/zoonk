@@ -5,6 +5,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInPlacement } from "../_test-utils/shown-choice";
 import { findCourseWeightsLookup, recordCourseWeights } from "../goals/course-weights-research";
 import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-out";
 import { holdBackLessonDraft } from "../library/generation/hold-back-lesson";
@@ -115,11 +116,13 @@ describe("saved input writers", () => {
       chapterId: library.chapters[0]!.id,
       goalId: goal.id,
       input: {
-        answers: questions.map((item, index) => ({
-          answer: { selectedIndex: index },
-          durationMs: 10_000,
-          itemId: item.id,
-        })),
+        answers: await Promise.all(
+          questions.map(async (item, index) => ({
+            answer: await pickInPlacement({ itemId: item.id, right: index === 0 }),
+            durationMs: 10_000,
+            itemId: item.id,
+          })),
+        ),
         requestId: randomUUID(),
         timeZone: "UTC",
       },

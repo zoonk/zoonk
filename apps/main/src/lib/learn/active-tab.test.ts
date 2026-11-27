@@ -23,6 +23,7 @@ describe(getActiveTab, () => {
       "/exam",
       "/speaking",
       "/completed-lessons",
+      "/saved-lessons",
       "/certificates",
       "/level",
       "/settings",

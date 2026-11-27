@@ -4757,7 +4757,6 @@
       }
     },
     "Subscription" : {
-      "comment" : "Account option for subscription",
       "localizations" : {
         "de" : {
           "stringUnit" : {

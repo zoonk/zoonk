@@ -12,7 +12,7 @@ Films show the app's own components, rendered with sample learner data in either
 - **Translations:** the Vite config runs next-intl's own extraction and catalog loaders, the ones Main's build uses, and `main.tsx` merges the player, learn and Main catalogs as Main does. Screens show the app's exact wording in each language, namespaces included, and pick up catalog changes on reload.
 - **Shims:** `next/image` and `web-haptics` use the player's browser-test shims.
 - **Errors stay local:** a module that stops compiling against the app only loses its own views (`main.tsx` loads each one separately). The page's console shows the error.
-- **Type check:** `npm run typecheck` checks every view against the app's contracts. Type view models with the core types and no `any`: a cast hides a field the app added or renamed, and the screen then renders wrong or crashes. Actions are behavior, not data, so a typed no-op proxy stands in for them (`actions()` in `learners/index.tsx`).
+- **Type check:** `npm run typecheck` checks every view against the app's contracts. Type view models with the core types and no `any`: a cast hides a field the app added or renamed, and the screen then renders wrong or crashes. Actions are behavior, not data, so a typed no-op proxy stands in for them (`actions()` in `learn/common.tsx`).
 
 ## Building a view
 

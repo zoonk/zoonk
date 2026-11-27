@@ -19,6 +19,7 @@
 
 - “lesson”: “レッスン”, not “授業”; lessons are counted “#レッスン”, not with “件”, “回” or “つ”
 - “idea” (one of the main points on a lesson's map): “ポイント”, never “アイデア”
+- “bookmark” (the icon that saves a lesson or a map): “ブックマーク”, not “しおり”
 - “certificate” (what a finished course or level earns) and the Certificates page: “証明書”, never “修了証” or “認定証”; “Certificate of completion”: “修了証明書”
 - the language “placement test” or “level test”: “レベル診断テスト”
 - “goal” (the learner's goal): “目標”
@@ -70,6 +71,7 @@
 - “BP” (Brain Power's short form after an amount, “+50 BP”): “脳力” (the name is already short, so it stays whole)
 - “mission”: “ミッション”
 - “call” (speaking practice): “会話”, not “電話”; the verb: “会話練習をする”
+- a “conversation” with the buddy (a written chat on the buddy page): “チャット” (“新しいチャット”), never “会話”, which is the call
 - “Mistakes notebook”: “間違いノート”
 - “Saved to your mistakes”: “間違いノートに保存しました”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “未克服” / “克服済み”

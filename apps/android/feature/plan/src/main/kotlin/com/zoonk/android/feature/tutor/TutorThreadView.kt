@@ -40,10 +40,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -260,17 +263,21 @@ private fun DayLabel(
     day: LocalDate,
     today: LocalDate,
 ) {
+    val locale = currentLocale()
+    val label =
+        when (day) {
+            today -> stringResource(R.string.tutor_today)
+            today.minusDays(1) -> stringResource(R.string.tutor_yesterday)
+            else -> formatDate(day, locale, DateStyle.WeekdayDay, today)
+        }
+
+    // Main's `text-label`: uppercase for the eye, as written for TalkBack.
     Text(
-        text =
-            when (day) {
-                today -> stringResource(R.string.tutor_today)
-                today.minusDays(1) -> stringResource(R.string.tutor_yesterday)
-                else -> formatDate(day, currentLocale(), DateStyle.WeekdayDay, today)
-            },
-        modifier = Modifier.fillMaxWidth(),
+        text = label.uppercase(locale),
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { text = AnnotatedString(label) },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.zoonkType.label,
     )
 }
 

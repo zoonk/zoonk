@@ -37,3 +37,17 @@ apps/android/gradle/wrapper/gradle-wrapper.jar linguist-generated=true
 .claude/skills/** linguist-generated=true
 .claude/skills/zoonk-* linguist-generated=false
 .claude/skills/zoonk-*/** linguist-generated=false
+
+# Files that never reach a screen: the PR picture check ignores changes to them when it decides
+# whether a picture's build is outdated. Test code that draws pictures stays unmarked: Android
+# screenshot tests under src/test, Apple captures in ZoonkTests, @zoonk/testing fixtures Playground shows.
+apps/*/e2e/** never-on-screen
+packages/e2e/** never-on-screen
+*.test.* never-on-screen
+**/_test-utils/** never-on-screen
+**/_browser-tests/** never-on-screen
+**/__mocks__/** never-on-screen
+vitest.config.* never-on-screen
+playwright.config.* never-on-screen
+setup-tests.* never-on-screen
+apps/android/**/src/androidTest/** never-on-screen

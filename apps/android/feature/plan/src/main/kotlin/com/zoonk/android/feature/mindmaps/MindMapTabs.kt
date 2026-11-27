@@ -33,7 +33,12 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.isSaved
+import com.zoonk.android.data.saveSections
 import com.zoonk.android.feature.plan.MoreChaptersRow
+import com.zoonk.android.feature.saves.SaveMenu
+import com.zoonk.android.feature.saves.SaveSwipe
+import com.zoonk.android.feature.saves.UnavailableSaveRow
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
@@ -131,9 +136,9 @@ private fun ChapterRow(
     val shown = shownMindMap(map.status.shown, local)
     val ready = shown == MindMapShown.Ready
     val saved = ready && actions.saved(target, map.saved)
-    val toggle = { actions.page.save(target, map.chapterId, !saved) }
+    val toggle = { actions.page.save(target, !saved) }
 
-    SaveSwipe(saved, onToggle = toggle.takeIf { ready }) {
+    SaveSwipe(saved, mapSaveWords(), onToggle = toggle.takeIf { ready }) {
         MindMapRow(
             map = map.facts,
             place = MindMapPlace.Library,
@@ -204,13 +209,20 @@ internal fun notMadeOrder(
     return NotMadeOrder(next, groups)
 }
 
-/** What each tab counts, as main's `countTabs`: the ready chapter maps, every lesson map, and every saved map it lists. */
+/**
+ * What each tab counts, as main's `countTabs`: the ready chapter maps, every lesson map, and every saved map it lists,
+ * leaving out one removed on this visit whose row is kept.
+ */
 internal fun GoalMindMaps.tabCounts(saves: Map<MindMapTarget, Boolean>): Map<StudyTab, Int> =
     mapOf(
         StudyTab.Chapters to chapters.count { it.status == GoalMindMap.Status.READY },
         StudyTab.Lessons to lessonGroups.sumOf { it.count.toInt() },
-        StudyTab.Saved to saved.count { saves[it.target] ?: true },
+        StudyTab.Saved to listedSaves(saves).saved.size,
     )
+
+/** The maps as read, their saved ones only those still saved after this visit's taps: what the Saved tab counts and studies. */
+internal fun GoalMindMaps.listedSaves(saves: Map<MindMapTarget, Boolean>): GoalMindMaps =
+    copy(saved = saved.filter { saves.isSaved(it.target, true) })
 
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
 private fun GoalMindMap.canMakeNow(): Boolean =
@@ -447,14 +459,19 @@ private fun LessonGroupRow(
     )
 }
 
-/** Saved: the maps that open, in syllabus order, then the ones that can't anymore, each with Remove. */
+/**
+ * Saved: the maps that open, in syllabus order, then the ones that can't anymore, each with Remove. A map removed on
+ * this visit keeps its row, its bookmark outlined, until the learner leaves, so a tap saves it again; one that can't
+ * open leaves at once.
+ */
 internal fun LazyListScope.savedTab(
     mindMaps: GoalMindMaps,
     shown: IndexState,
     actions: TabActions,
 ) {
-    val kept = mindMaps.saved.filter { actions.saved(it.target, true) }
-    if (kept.isEmpty()) {
+    val (opens, gone) =
+        (actions.state.savedShown ?: mindMaps.saved).saveSections({ it.available }) { actions.saved(it.target, true) }
+    if (opens.isEmpty() && gone.isEmpty()) {
         item(key = "saved-empty", contentType = "empty") {
             TabEmpty(R.string.mindmaps_saved_empty)
         }
@@ -462,8 +479,6 @@ internal fun LazyListScope.savedTab(
     }
 
     val chapters = mindMaps.chapters.associateBy { it.chapterId }
-    val opens = kept.filter { it.available }
-    val gone = kept.filterNot { it.available }
 
     index(
         StudyTab.Saved,
@@ -479,7 +494,16 @@ internal fun LazyListScope.savedTab(
             SectionHeader(stringResource(R.string.mindmaps_no_longer_available), Modifier.padding(top = 24.dp, bottom = 8.dp))
         }
         items(gone, key = { "gone-${it.key}" }, contentType = { "gone" }) { entry ->
-            Divided(entry != gone.first()) { GoneRow(entry, actions) }
+            Divided(entry != gone.first()) {
+                UnavailableSaveRow(
+                    title = entry.title,
+                    detail = entry.kindLabel(),
+                    remove = stringResource(R.string.mindmaps_remove),
+                    spoken = stringResource(R.string.mindmaps_remove_spoken, entry.title),
+                    onRemove = { actions.page.save(entry.target, false) },
+                    leading = { MapMark(null, MindMapShown.Unavailable) },
+                )
+            }
         }
     }
 }
@@ -493,6 +517,7 @@ private val SavedMindMap.key: String get() = "${kind.value}-$targetId"
 private fun SavedMindMap.kindLabel(): String =
     stringResource(if (kind == SavedMindMapKind.LESSON) R.string.mindmaps_lesson_map else R.string.mindmaps_chapter_map)
 
+/** A saved map's row, opening it in the Saved deck, its bookmark at its end: filled, which removes it, then outlined. */
 @Composable
 private fun SavedRow(
     entry: SavedMindMap,
@@ -500,88 +525,24 @@ private fun SavedRow(
     actions: TabActions,
 ) {
     val lesson = entry.kind == SavedMindMapKind.LESSON
-    val remove = { actions.page.save(entry.target, entry.chapterId, false) }
+    val saved = actions.saved(entry.target, true)
+    val toggle = { actions.page.save(entry.target, !saved) }
+    val words = mapSaveWords()
     var menu by remember { mutableStateOf(false) }
     val place = MapPlace(entry.chapterId.toString(), entry.targetId.toString().takeIf { lesson })
 
-    SaveSwipe(saved = true, onToggle = remove) {
+    SaveSwipe(saved, words, onToggle = toggle) {
         Box {
             ListRow(
                 headline = { Text(entry.title) },
-                onClick = { actions.page.study(StudyTab.Saved, place) },
-                onLongClickLabel = stringResource(R.string.mindmaps_unsave),
+                onClick = { actions.page.study(entry.deckTab(saved), place) },
+                onLongClickLabel = if (saved) words.unsave else words.save,
                 onLongClick = { menu = true },
                 leading = { MapMark(chapter?.image?.thumbnailUrl?.takeUnless { lesson }, MindMapShown.Ready) },
                 supporting = { Text(entry.kindLabel()) },
+                trailing = { MapRowBookmark(entry.title, saved, toggle) },
             )
-            SaveMenu(menu, saved = true, onDismiss = { menu = false }, onToggle = remove)
+            SaveMenu(menu, saved, words, onDismiss = { menu = false }, onToggle = toggle)
         }
-    }
-}
-
-@Composable
-private fun GoneRow(
-    entry: SavedMindMap,
-    actions: TabActions,
-) {
-    val spoken = stringResource(R.string.mindmaps_remove_spoken, entry.title)
-    ListRow(
-        headline = { Text(entry.title) },
-        leading = { MapMark(null, MindMapShown.Unavailable) },
-        supporting = { Text(entry.kindLabel()) },
-        trailing = {
-            OutlinedButton(
-                onClick = { actions.page.save(entry.target, entry.chapterId, false) },
-                modifier = Modifier.semantics { contentDescription = spoken },
-                size = ButtonSize.Small,
-            ) { Text(stringResource(R.string.mindmaps_remove)) }
-        },
-    )
-}
-
-/**
- * Swiping a row either way saves its map, or removes it when saved, then the row slides back: the
- * same as its long-press menu. Nothing to swipe without [onToggle].
- */
-@Composable
-internal fun SaveSwipe(
-    saved: Boolean,
-    onToggle: (() -> Unit)?,
-    content: @Composable () -> Unit,
-) {
-    if (onToggle == null) {
-        content()
-        return
-    }
-    val state = rememberSwipeToDismissBoxState()
-    val scope = rememberCoroutineScope()
-
-    SwipeToDismissBox(
-        state = state,
-        backgroundContent = {
-            val start = state.dismissDirection == SwipeToDismissBoxValue.StartToEnd
-            Row(
-                Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerHigh).padding(horizontal = LIST_ITEM_INSET),
-                horizontalArrangement = if (start) Arrangement.Start else Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painterResource(if (saved) R.drawable.ic_bookmark else R.drawable.ic_bookmark_filled),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(
-                    stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save),
-                    Modifier.padding(horizontal = 8.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
-        },
-        onDismiss = {
-            onToggle()
-            scope.launch { state.reset() }
-        },
-    ) {
-        Column(Modifier.background(MaterialTheme.colorScheme.surface)) { content() }
     }
 }

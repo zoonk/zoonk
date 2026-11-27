@@ -36,6 +36,7 @@ struct MindMapScreen: View {
             }
           }
         }
+        .mindMapSaveVisit()
     }
   }
 
@@ -67,7 +68,6 @@ struct MindMapScreen: View {
           .lonePage()
         }
       }
-      .mindMapSaveFailureAlert(goalId: goalId)
       .toolbar {
         if value.status == .ready {
           ToolbarItem(placement: .primaryAction) {

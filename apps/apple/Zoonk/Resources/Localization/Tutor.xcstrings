@@ -2775,7 +2775,7 @@
       }
     },
     "Choose" : {
-      "comment" : "Opens choosing a mock exam\nOpens choosing the plan's focus",
+      "comment" : "Opens choosing a mock exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4368,7 +4368,7 @@
       }
     },
     "Open" : {
-      "comment" : "Opens the app place the buddy offered",
+      "comment" : "Opens choosing the plan's focus\nOpens the app place the buddy offered",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6012,7 +6012,7 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "Applying the country the buddy offered failed",
+      "comment" : "Answering a plan change the buddy proposed failed\nApplying the country the buddy offered failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {

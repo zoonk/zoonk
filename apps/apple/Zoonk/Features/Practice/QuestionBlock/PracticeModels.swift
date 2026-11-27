@@ -359,7 +359,6 @@ struct PracticeBlockCheckpoint: Hashable, Sendable, Decodable {
 struct PracticeBlock: Hashable, Sendable, Decodable {
   typealias Kind = StudyBlock.Kind
 
-  let areas: [String]
   let capsules: [PracticeCapsule]
   let checkpoint: PracticeBlockCheckpoint?
   let estimatedMinutes: Int
@@ -368,6 +367,7 @@ struct PracticeBlock: Hashable, Sendable, Decodable {
   let kind: Kind
   let mistakesOnly: Bool
   let netScored: Bool
+  let practiceNumber: Int?
   let questions: Int
   let status: Status
   let title: String?

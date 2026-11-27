@@ -9,6 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInPlacement } from "../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { markSkillsKnown } from "../learner/_utils/known-skills";
 import * as requestClock from "../learner/facts/request-instant";
@@ -482,7 +483,11 @@ describe(getGoalPreparation, () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: itemOf(3)?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: itemOf(3)?.id ?? "" }),
+        durationMs: 4000,
+        itemId: itemOf(3)?.id ?? "",
+      },
     });
 
     mockClock(new Date());
@@ -538,7 +543,11 @@ describe(getGoalPreparation, () => {
     await Promise.all([
       answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: missed?.id ?? "" },
+        input: {
+          answer: await pickInPlacement({ itemId: missed?.id ?? "", right: false }),
+          durationMs: 4000,
+          itemId: missed?.id ?? "",
+        },
       }),
       attemptFixture({ itemId: leftOutItem.id, skillId: leftOut.id, userId: user.id }),
     ]);

@@ -191,9 +191,10 @@ private func readThread(
   _ scope: TutorScope, cursor: String?, client: Client
 ) async throws -> Components.Schemas.LessonQuestionThread? {
   switch scope {
-  case .plan(let goalId):
-    let output = try await client.getPlanQuestionThread(
-      path: .init(goalId: goalId), query: .init(contextKind: .plan, cursor: cursor))
+  case .plan(let goalId, let conversationId):
+    let output = try await client.getBuddyConversationQuestionThread(
+      path: .init(goalId: goalId, conversationId: conversationId),
+      query: .init(contextKind: .plan, cursor: cursor))
 
     switch output {
     case .ok(let response): return try response.body.json?.value1
@@ -263,9 +264,10 @@ private func createQuestion(
   _ scope: TutorScope, request: Components.Schemas.CreateLessonQuestionRequest, client: Client
 ) async throws -> Components.Schemas.CreatedLessonQuestion {
   switch scope {
-  case .plan(let goalId):
+  case .plan(let goalId, let conversationId):
     return try createdQuestion(
-      try await client.createPlanQuestion(path: .init(goalId: goalId), body: .json(request)))
+      try await client.createBuddyConversationQuestion(
+        path: .init(goalId: goalId, conversationId: conversationId), body: .json(request)))
   case .subject(let goalId, let subjectKey, _):
     return try createdQuestion(
       try await client.createSubjectQuestion(
@@ -306,7 +308,7 @@ private func createFailure(status: Int) -> Error {
   }
 }
 
-extension Operations.CreatePlanQuestion.Output: CreatedQuestionOutput {
+extension Operations.CreateBuddyConversationQuestion.Output: CreatedQuestionOutput {
   var createdQuestion: Components.Schemas.CreatedLessonQuestion {
     get throws {
       switch self {

@@ -6,6 +6,8 @@ struct TutorComposerBar: View {
   let buddyName: String
   let suggestions: [TutorSuggestion]
   let placeholder: Text
+  /// Each raise puts the cursor here.
+  var focusRequest = 0
 
   @FocusState private var isFocused: Bool
 
@@ -62,6 +64,7 @@ struct TutorComposerBar: View {
       )
       .lineLimit(1...6)
       .focused($isFocused)
+      .onChange(of: focusRequest) { isFocused = true }
       .onKeyPress(.return, phases: .down) { press in
         guard TutorComposerKeys.returnSends(modifiers: press.modifiers) else {
           return .ignored

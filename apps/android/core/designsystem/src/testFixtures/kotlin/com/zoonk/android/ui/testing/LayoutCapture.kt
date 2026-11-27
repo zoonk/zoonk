@@ -438,7 +438,7 @@ internal object LayoutCapture {
                         rowFields(fields, box)
                     }
 
-                    LayoutPart.Part.Label, LayoutPart.Part.Note, LayoutPart.Part.Value -> {
+                    LayoutPart.Part.Lead, LayoutPart.Part.Label, LayoutPart.Part.Note, LayoutPart.Part.Value -> {
                         textFields(fields)
                     }
 
@@ -494,8 +494,6 @@ internal object LayoutCapture {
                 fields["endEdge"] =
                     if (inset != null && box != null) (if (rtl) box[0] + inset else box[0] + box[2] - inset) else NOT_MEASURED
                 fields["note"] = written.any { it.row === this && it.part.part == LayoutPart.Part.Note }
-                // A row with a text lead is top-aligned as a whole: its end goes with the first line.
-                if (part.firstLine) fields["aligned"] = "first-line"
             }
 
             private fun textFields(fields: MutableMap<String, Any?>) {

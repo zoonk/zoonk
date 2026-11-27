@@ -6,6 +6,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -372,10 +373,15 @@ describe("a selected review day", () => {
     });
 
     const answers = await Promise.all(
-      payload.itemIds.map((itemId) =>
+      payload.itemIds.map(async (itemId) =>
         answerStudyQuestion({
           ...ref,
-          input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId, timeZone: "UTC" },
+          input: {
+            answer: await pickItemInBlock({ blockId: ref.blockId, itemId }),
+            durationMs: 1000,
+            itemId,
+            timeZone: "UTC",
+          },
         }),
       ),
     );

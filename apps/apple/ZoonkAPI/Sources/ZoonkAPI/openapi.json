@@ -2802,7 +2802,7 @@
     },
     "/me/completed-lessons": {
       "get": {
-        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
+        "description": "The goal's completed lessons, one per lesson, newest first by the last time the learner finished it, so a replay moves a lesson to the top. A lesson counts for the goal when the learner finished it and it's in the goal's plan (finishing a lesson checks it off in every plan) or the learner studied it while the goal was active. Review capsules, skipped and tested-out lessons, practice and unfinished runs are left out. `available` indicates whether the lesson can be replayed and saved. Group the rows by `finishedOn`. `group` narrows the list to one of the plan's groups, which `filter` lists with how many completed lessons each has. A replay can shift later pages by one: skip a lesson already shown.",
         "operationId": "listCurrentUserCompletedLessons",
         "security": [
           {
@@ -11124,9 +11124,407 @@
         }
       }
     },
+    "/goals/{goalId}/buddy/conversations": {
+      "get": {
+        "description": "The learner's Buddy conversations for the goal, most recently asked in first, up to 30 per page. Each title is the conversation's first question with whitespace collapsed. The current id is the most recent conversation if its last question was asked on the goal's local date today, or null.",
+        "operationId": "listBuddyConversations",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List Buddy conversations for a goal",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}(?:Z))\\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The last activity time and conversation id at the end of a page."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of Buddy conversations, with the current id and next-page cursor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuddyConversations"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/buddy/conversations/{conversationId}/questions": {
+      "get": {
+        "description": "The current learner's private questions about a Buddy conversation for one of the learner's goals.",
+        "operationId": "getBuddyConversationQuestionThread",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the current learner's question thread about a Buddy conversation for one of the learner's goals",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "path",
+            "name": "conversationId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Buddy conversation ID, generated by the client before the first question"
+            },
+            "required": true,
+            "description": "Buddy conversation ID, generated by the client before the first question"
+          },
+          {
+            "in": "query",
+            "name": "contextKind",
+            "schema": {
+              "description": "Filter by context kind; use lesson for the completion conversation",
+              "type": "string",
+              "enum": [
+                "lesson",
+                "step",
+                "answer",
+                "item",
+                "chapter",
+                "plan",
+                "mock",
+                "subject"
+              ]
+            },
+            "description": "Filter by context kind; use lesson for the completion conversation"
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "description": "Opaque cursor returned in nextCursor",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "Opaque cursor returned in nextCursor"
+          },
+          {
+            "in": "query",
+            "name": "mistakeId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "stepId",
+            "schema": {
+              "description": "Return questions and answer explanations for this step only; pagination uses the same filter",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "Return questions and answer explanations for this step only; pagination uses the same filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Up to 50 questions ordered chronologically within the page; omitting the cursor returns the newest page, or null before the first question",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/LessonQuestionThread"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Asks the tutor about a Buddy conversation for one of the learner's goals. The first send creates a conversation at the supplied ID. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "operationId": "createBuddyConversationQuestion",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Ask a question about a Buddy conversation for one of the learner's goals",
+        "tags": [
+          "Plans"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "path",
+            "name": "conversationId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Buddy conversation ID, generated by the client before the first question"
+            },
+            "required": true,
+            "description": "Buddy conversation ID, generated by the client before the first question"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLessonQuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Durable pending question, with the day's missions it completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedLessonQuestion"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Subscription required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/plan/questions": {
       "get": {
-        "description": "The current learner's private questions about one of the learner's goals: the conversation with their buddy, their tutor for the goal.",
+        "description": "The current learner's private questions about the earliest conversation for one of the learner's goals.",
         "operationId": "getPlanQuestionThread",
         "security": [
           {
@@ -11136,7 +11534,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Get the current learner's question thread about one of the learner's goals: the conversation with their buddy, their tutor for the goal",
+        "summary": "Get the current learner's question thread about the earliest conversation for one of the learner's goals",
         "tags": [
           "Plans"
         ],
@@ -11263,7 +11661,7 @@
         }
       },
       "post": {
-        "description": "Asks the tutor about one of the learner's goals: the conversation with their buddy, their tutor for the goal. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
+        "description": "Asks the tutor about the earliest conversation for one of the learner's goals. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
         "operationId": "createPlanQuestion",
         "security": [
           {
@@ -11273,7 +11671,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Ask a question about one of the learner's goals: the conversation with their buddy, their tutor for the goal",
+        "summary": "Ask a question about the earliest conversation for one of the learner's goals",
         "tags": [
           "Plans"
         ],
@@ -20375,6 +20773,182 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SavedMindMapState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goals/{goalId}/saved-lessons": {
+      "get": {
+        "description": "The learner's saves made from this goal or for a lesson in its plan, newest save first. Unavailable lessons retain their saved titles.",
+        "operationId": "listSavedLessons",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "List saved lessons",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The goal's saved lessons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Sets the learner's desired saved state for a lesson. Saving requires a lesson available to start and keeps the first save time on repeats. Removing needs only the learner's own save, from any goal.",
+        "operationId": "saveLesson",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Save or remove a lesson",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLessonInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The lesson's saved state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedLessonState"
                 }
               }
             }
@@ -32721,6 +33295,25 @@
           "lesson"
         ]
       },
+      "SaveLessonInput": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "True saves the lesson, false removes it"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
+      },
       "MistakePracticeFinishInput": {
         "type": "object",
         "properties": {
@@ -34933,6 +35526,14 @@
           },
           "lines": {
             "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "maxCharactersPerLine": {
+            "default": 160,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
@@ -42104,6 +42705,10 @@
       "CompletedLesson": {
         "type": "object",
         "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "The lesson is available to start again"
+          },
           "chapterTitle": {
             "nullable": true,
             "description": "The title of the lesson's chapter (a unit, for a language goal), or null",
@@ -42125,16 +42730,22 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved the lesson"
+          },
           "title": {
             "type": "string",
             "description": "The lesson's current title"
           }
         },
         "required": [
+          "available",
           "chapterTitle",
           "finishedOn",
           "group",
           "lessonId",
+          "saved",
           "title"
         ],
         "additionalProperties": false
@@ -51482,6 +52093,10 @@
                 "maximum": 9007199254740991,
                 "description": "How many of the active goal's notebook mistakes are ready to practice: a mistake becomes ready at the local midnight after it was made"
               },
+              "savedLessons": {
+                "type": "boolean",
+                "description": "The active goal has a saved lesson to list"
+              },
               "speaking": {
                 "type": "boolean"
               }
@@ -51492,6 +52107,7 @@
               "exam",
               "mindMaps",
               "readyMistakes",
+              "savedLessons",
               "speaking"
             ],
             "additionalProperties": false,
@@ -82600,7 +83216,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
           },
           "brainPower": {
             "type": "integer",
@@ -82758,6 +83374,13 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "practiceNumber": {
+            "nullable": true,
+            "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
           "preparing": {
             "type": "boolean",
             "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -82817,7 +83440,7 @@
             "items": {
               "type": "string"
             },
-            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+            "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
           },
           "waitReason": {
             "nullable": true,
@@ -82914,6 +83537,7 @@
           "planItemId",
           "planItemKey",
           "position",
+          "practiceNumber",
           "preparing",
           "questions",
           "refresh",
@@ -83824,6 +84448,10 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
             "description": "Send it with every answer and with the completion"
           },
+          "saved": {
+            "type": "boolean",
+            "description": "The learner saved the lesson"
+          },
           "sessionId": {
             "nullable": true,
             "description": "The run's canonical study session, or null for standalone work",
@@ -83842,6 +84470,7 @@
           "hyperdrive",
           "replay",
           "runId",
+          "saved",
           "sessionId",
           "startedAt"
         ],
@@ -84919,6 +85548,56 @@
           "toolOffer",
           "updatedAt",
           "missionMoment"
+        ],
+        "additionalProperties": false
+      },
+      "BuddyConversations": {
+        "type": "object",
+        "properties": {
+          "conversations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "lastAskedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "lastAskedAt",
+                "title"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "currentId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "nextCursor": {
+            "nullable": true,
+            "type": "string",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}(?:Z))\\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The last activity time and conversation id at the end of a page."
+          }
+        },
+        "required": [
+          "conversations",
+          "currentId",
+          "nextCursor"
         ],
         "additionalProperties": false
       },
@@ -95108,6 +95787,69 @@
         ],
         "additionalProperties": false
       },
+      "SavedLessonList": {
+        "type": "object",
+        "properties": {
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedLesson"
+            }
+          }
+        },
+        "required": [
+          "lessons"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLesson": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean",
+            "description": "The lesson is available to start"
+          },
+          "chapterTitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "description": "The current title if available, or the title at save"
+          }
+        },
+        "required": [
+          "available",
+          "chapterTitle",
+          "lessonId",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "SavedLessonState": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "saved": {
+            "type": "boolean",
+            "description": "Whether the lesson is saved now"
+          }
+        },
+        "required": [
+          "lessonId",
+          "saved"
+        ],
+        "additionalProperties": false
+      },
       "SkillOutline": {
         "type": "object",
         "properties": {
@@ -100409,7 +101151,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them. Empty for other blocks"
                 },
                 "brainPower": {
                   "type": "integer",
@@ -100562,6 +101304,13 @@
                   "minimum": 0,
                   "maximum": 9007199254740991
                 },
+                "practiceNumber": {
+                  "nullable": true,
+                  "description": "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
                 "preparing": {
                   "type": "boolean",
                   "description": "True when a scheduled mock cannot start because some questions are unavailable."
@@ -100621,7 +101370,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
+                  "description": "A practice block's topics as the plan names them, most asked first. A practice mixes them, so none of them names it. Empty for other blocks"
                 },
                 "waitReason": {
                   "nullable": true,
@@ -100717,6 +101466,7 @@
                 "planItemId",
                 "planItemKey",
                 "position",
+                "practiceNumber",
                 "preparing",
                 "questions",
                 "refresh",
@@ -105735,6 +106485,14 @@
             "exclusiveMinimum": true,
             "maximum": 9007199254740991
           },
+          "maxCharactersPerLine": {
+            "default": 160,
+            "description": "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
           "minimumWords": {
             "type": "integer",
             "minimum": 0,
@@ -105806,6 +106564,7 @@
           "criteria",
           "keySource",
           "lines",
+          "maxCharactersPerLine",
           "minimumWords",
           "points",
           "taskKey",

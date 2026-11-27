@@ -110,7 +110,7 @@ function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
         {rows.map(({ graded, key }) => (
           <ResultRow key={key}>
             <span className="flex min-w-0 items-center gap-2 font-medium">
-              {criterionName(key)}
+              <span data-slot="list-row-title">{criterionName(key)}</span>
               {key === feedback.focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
             </span>
             {graded ? (

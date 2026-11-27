@@ -5,6 +5,7 @@ import { listeningContent, listeningSetFixture } from "@zoonk/testing/fixtures/l
 import { choiceItemContent, itemSetFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { thirdsMath, thirdsQuestion } from "../../library/items/_test-utils/math-problems";
 import { mistakeListInputSchema } from "../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
@@ -87,7 +88,15 @@ function stimulusQuestion(format: SnapshotFormat) {
   return { ...choiceItemContent(question), ...support };
 }
 
-function wrongSnapshotAnswer(format: SnapshotFormat): MockAnswer {
+async function wrongSnapshotAnswer({
+  format,
+  itemId,
+  mockId,
+}: {
+  format: SnapshotFormat;
+  itemId: string;
+  mockId: string;
+}): Promise<MockAnswer> {
   if (format === "numeric") {
     return { number: 0 };
   }
@@ -96,7 +105,9 @@ function wrongSnapshotAnswer(format: SnapshotFormat): MockAnswer {
     return { text: "12 m" };
   }
 
-  return format === "multipleChoice" ? { selectedIndex: 1 } : { isTrue: false };
+  return format === "multipleChoice"
+    ? pickItemInMock({ itemId, mockId, right: false })
+    : { isTrue: false };
 }
 
 describe("a mock mistake's saved stimulus", () => {
@@ -142,7 +153,12 @@ describe("a mock mistake's saved stimulus", () => {
 
       await saveMockAnswer({
         blockId,
-        input: { answer: wrongSnapshotAnswer(format), durationMs: 30_000, flagged: false, itemId },
+        input: {
+          answer: await wrongSnapshotAnswer({ format, itemId, mockId: blockId }),
+          durationMs: 30_000,
+          flagged: false,
+          itemId,
+        },
       });
 
       await expect(finishMock({ blockId, input: { timeZone: "UTC" } })).resolves.toStrictEqual({
@@ -226,7 +242,12 @@ describe("a mock mistake's saved stimulus", () => {
 
       await saveMockAnswer({
         blockId,
-        input: { answer: wrongSnapshotAnswer(format), durationMs: 30_000, flagged: false, itemId },
+        input: {
+          answer: await wrongSnapshotAnswer({ format, itemId, mockId: blockId }),
+          durationMs: 30_000,
+          flagged: false,
+          itemId,
+        },
       });
 
       await finishMock({ blockId, input: { timeZone: "UTC" } });

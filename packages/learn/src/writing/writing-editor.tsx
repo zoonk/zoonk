@@ -32,28 +32,38 @@ export function WritingLineCount({
     );
   }
 
-  const { estimatedLines } = countWritingLines({
+  const { estimatedLines, ignoredFrom } = countWritingLines({
     charactersPerLine: writing.charactersPerLine,
     limit: writing.lines,
+    maxCharactersPerLine: writing.maxCharactersPerLine,
     text,
   });
 
-  const over = estimatedLines - writing.lines;
-  const lines = String(writing.lines);
+  const over = estimatedLines > writing.lines;
+  const values = { lines: String(writing.lines), used: String(estimatedLines) };
 
   const countLine = () => {
     if (!text.trim()) {
-      return t("0 of {lines} lines", { lines });
+      return t("0 of {lines} lines", { lines: values.lines });
     }
 
-    return over > 0
+    if (ignoredFrom !== null) {
+      return t({
+        description:
+          "The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.",
+        message: "about {used} of {lines} lines · the end won't be read",
+        values,
+      });
+    }
+
+    return over
       ? t({
           description:
-            "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.",
-          message: "about {used} of {lines} lines · {over} won't be read",
-          values: { lines, over: String(over), used: String(estimatedLines) },
+            "The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.",
+          message: "about {used} of {lines} lines · may not fit on paper",
+          values,
         })
-      : t("about {used} of {lines} lines", { lines, used: String(estimatedLines) });
+      : t("about {used} of {lines} lines", values);
   };
 
   return (
@@ -61,7 +71,7 @@ export function WritingLineCount({
       aria-live="polite"
       className={cn(
         "font-mono text-xs tabular-nums",
-        over > 0 ? "text-warning-text" : "text-muted-foreground",
+        over ? "text-warning-text" : "text-muted-foreground",
       )}
       id={id}
     >

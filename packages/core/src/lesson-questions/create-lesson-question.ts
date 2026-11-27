@@ -1,15 +1,14 @@
 import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getAllowanceCacheTag } from "../cache/tags";
+import { getAllowanceCacheTag, getBuddyConversationsCacheTag } from "../cache/tags";
 import {
   type EntitlementViewer,
   getEntitlementViewer,
 } from "../entitlements/_utils/entitlement-viewer";
-import { claimUsageInWrite } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -17,8 +16,9 @@ import { type MissionMomentView } from "../sessions/completion-contract";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
-import { completeFromSharedAnswer } from "./_utils/answer-claim";
+import { admitQuestion } from "./_utils/admit-question";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
+import { ensureTutorThread } from "./_utils/ensure-tutor-thread";
 import { mistakeQuestionWhere } from "./_utils/mistake-scope";
 import {
   type LessonQuestionResourceSource,
@@ -34,6 +34,7 @@ import { getTutorAskedEvent } from "./_utils/tutor-events";
 import {
   type TutorSubject,
   findTutorSubject,
+  findTutorThread,
   getSubjectThreadColumn,
 } from "./_utils/tutor-subject";
 import {
@@ -67,15 +68,23 @@ type PersistedQuestionOutcome =
   | Awaited<ReturnType<typeof getCreateLessonQuestionOutcome>>
   | { decision: Exclude<UsageDecision, { status: "allowed" }>; status: "usageRefused" };
 
+type QuestionWriteOutcome = PersistedQuestionOutcome | { status: "notFound" };
+
 async function finishCreatedQuestion({
   outcome,
+  subject,
   userId,
 }: {
-  outcome: PersistedQuestionOutcome;
+  outcome: QuestionWriteOutcome;
+  subject: TutorSubject;
   userId: string;
 }) {
   if (outcome.status !== "created") {
     return outcome;
+  }
+
+  if (subject.kind === "plan") {
+    revalidateCacheTags([getBuddyConversationsCacheTag(userId, subject.goal.id)]);
   }
 
   const [question, missionMoment] = await Promise.all([
@@ -103,53 +112,21 @@ async function getCreateLessonQuestionOutcome({
 function findExistingLessonQuestion({
   requestId,
   subject,
+  threadId,
   userId,
 }: {
   requestId: string;
   subject: TutorSubject;
+  threadId?: string;
   userId: string;
 }) {
   return prisma.lessonQuestion.findFirst({
     ...lessonQuestionResourceQuery,
-    where: { requestId, thread: { ...getSubjectThreadColumn(subject), userId } },
+    where: {
+      requestId,
+      thread: { ...getSubjectThreadColumn(subject), ...(threadId && { id: threadId }), userId },
+    },
   });
-}
-
-type QuestionAdmission =
-  | { question: LessonQuestionResourceSource; status: "admitted" }
-  | { decision: Exclude<UsageDecision, { status: "allowed" }>; status: "usageRefused" };
-
-/**
- * A question with a shared answer is completed with it as it's saved, using no allowance. Any
- * other claims its answer from the tutor allowance in the write that saves it, so a refused question
- * is never saved; the answer's own claim, keyed by the same id, then replays this one.
- */
-async function admitQuestion({
-  question,
-  transaction,
-  viewer,
-}: {
-  question: Parameters<typeof completeFromSharedAnswer>[0]["question"] &
-    LessonQuestionResourceSource;
-  transaction: TransactionClient;
-  viewer: EntitlementViewer;
-}): Promise<QuestionAdmission> {
-  const answered = await completeFromSharedAnswer({ question, transaction, userId: viewer.userId });
-
-  if (answered) {
-    return { question: answered, status: "admitted" };
-  }
-
-  const usage = await claimUsageInWrite({
-    kind: "tutorMessage",
-    targetId: question.id,
-    transaction,
-    viewer,
-  });
-
-  return usage.status === "allowed"
-    ? { question, status: "admitted" }
-    : { decision: usage, status: "usageRefused" };
 }
 
 async function persistLessonQuestion({
@@ -175,16 +152,14 @@ async function persistLessonQuestion({
   viewer: EntitlementViewer;
 }) {
   const { userId } = viewer;
-  const threadWhere = { ...getSubjectThreadColumn(subject), userId };
   const mistakeId = "mistakeId" in input.context ? input.context.mistakeId : undefined;
 
-  return writeLearnerChange<PersistedQuestionOutcome>({ userId }, async (transaction) => {
-    await transaction.lessonQuestionThread.createMany({
-      data: [{ ...threadWhere, kind: subject.kind }],
-      skipDuplicates: true,
-    });
+  return writeLearnerChange<QuestionWriteOutcome>({ userId }, async (transaction) => {
+    const thread = await ensureTutorThread({ subject, transaction, userId });
 
-    const thread = await transaction.lessonQuestionThread.findFirstOrThrow({ where: threadWhere });
+    if (!thread) {
+      return unchanged({ status: "notFound" });
+    }
 
     await lockLessonQuestionThread({ threadId: thread.id, transaction });
 
@@ -213,6 +188,8 @@ async function persistLessonQuestion({
       return unchanged({ status: "conflict" });
     }
 
+    const askedAt = new Date();
+
     const questionSnapshot = {
       ...toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
       ...(mistakeId && { mistakeId }),
@@ -223,6 +200,7 @@ async function persistLessonQuestion({
         data: {
           contextKind: input.context.kind,
           contextSnapshot: questionSnapshot,
+          ...(subject.kind === "plan" && { createdAt: askedAt }),
           goalId,
           libraryStepId: stepId,
           question: asked.question,
@@ -235,7 +213,7 @@ async function persistLessonQuestion({
         omit: lessonQuestionResourceOmit,
       }),
       transaction.lessonQuestionThread.update({
-        data: { updatedAt: new Date() },
+        data: { updatedAt: askedAt },
         where: { id: thread.id },
       }),
     ]);
@@ -304,11 +282,21 @@ export async function createLessonQuestion({
   const { subject } = access;
   const requestFingerprint = getLessonQuestionRequestFingerprint(input);
 
-  const existingQuestion = await findExistingLessonQuestion({
-    requestId: input.requestId,
-    subject,
-    userId,
-  });
+  const knownThread = subject.kind === "plan" ? await findTutorThread({ subject, userId }) : null;
+
+  if (knownThread?.status === "notFound") {
+    return knownThread;
+  }
+
+  const existingQuestion =
+    !knownThread || knownThread.thread
+      ? await findExistingLessonQuestion({
+          requestId: input.requestId,
+          subject,
+          threadId: knownThread?.thread?.id,
+          userId,
+        })
+      : null;
 
   if (existingQuestion) {
     return finishCreatedQuestion({
@@ -316,6 +304,7 @@ export async function createLessonQuestion({
         question: existingQuestion,
         requestFingerprint,
       }),
+      subject,
       userId,
     });
   }
@@ -348,5 +337,5 @@ export async function createLessonQuestion({
     revalidateCacheTags([getAllowanceCacheTag(userId)]);
   }
 
-  return finishCreatedQuestion({ outcome, userId });
+  return finishCreatedQuestion({ outcome, subject, userId });
 }

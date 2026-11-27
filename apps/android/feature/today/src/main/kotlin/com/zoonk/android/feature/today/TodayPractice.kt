@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.today
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider
@@ -17,6 +18,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -42,6 +44,7 @@ internal fun TodayPractice(
     isExam: Boolean,
     isLanguage: Boolean,
     completedLessons: Boolean,
+    savedLessons: Boolean = false,
     navigate: (AppRoute) -> Unit,
 ) {
     val mistakes by store.mistakes[goalId].collectShown()
@@ -63,7 +66,7 @@ internal fun TodayPractice(
             null
         }
 
-    TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, navigate)
+    TodayPracticeRows(mistakes.value?.availability, mocks, speaking, completedLessons, savedLessons, navigate)
 }
 
 @Composable
@@ -72,22 +75,34 @@ fun TodayPracticeRows(
     mocks: MockOptions?,
     speaking: LanguageTodaySpeaking?,
     completedLessons: Boolean,
+    savedLessons: Boolean = false,
     navigate: (AppRoute) -> Unit,
 ) {
     val mock = mocks?.takeIf { it.running != null || it.options.isNotEmpty() }
     val ready = mistakes?.ready?.toInt() ?: 0
     val tomorrow = mistakes?.tomorrow?.toInt() ?: 0
-    if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons) return
+    if (mock == null && speaking == null && ready + tomorrow == 0 && !completedLessons && !savedLessons) return
 
     val rows =
         buildList<@Composable () -> Unit> {
             mock?.let { add { MockRow(it, navigate) } }
             speaking?.let { add { SpeakingRow(it, navigate) } }
             if (ready + tomorrow > 0) add { MistakesRow(ready, tomorrow, navigate) }
+            if (savedLessons) {
+                add {
+                    PracticeRow(
+                        kind = LearnKind.Lesson,
+                        icon = PlaceIcon.SavedLessons.icon,
+                        title = stringResource(R.string.navigation_saved_lessons),
+                        description = stringResource(R.string.today_saved_lessons_line),
+                    ) { navigate(AppRoute.SavedLessons) }
+                }
+            }
             if (completedLessons) {
                 add {
                     PracticeRow(
                         kind = LearnKind.Lesson,
+                        icon = PlaceIcon.CompletedLessons.icon,
                         title = stringResource(R.string.navigation_completed_lessons),
                         description = stringResource(R.string.today_completed_lessons_line),
                     ) { navigate(AppRoute.CompletedLessons) }
@@ -190,6 +205,7 @@ private fun MistakesRow(
 private fun PracticeRow(
     kind: LearnKind,
     title: String,
+    @DrawableRes icon: Int = kind.icon,
     description: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
@@ -198,7 +214,7 @@ private fun PracticeRow(
         headline = { Text(title) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
-        leading = { KindMark(kind) },
+        leading = { KindMark(kind, icon = icon) },
         supporting = listRowDescription(description),
         meta = trailing,
     )

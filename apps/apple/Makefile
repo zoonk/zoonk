@@ -12,7 +12,7 @@ XCODEBUILD_ARGUMENTS ?=
 XCODEBUILD_COMMAND := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts node scripts/swift-packages.mts) $(XCODEBUILD_COMMAND)
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
-TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
+TEST_ON_DESTINATION := node scripts/with-simulator.mts $(if $(TEST_DESTINATION),--destination "$(TEST_DESTINATION)") $(XCODEBUILD_COMMAND)
 
 .PHONY: build build-ios test test-mac build-mac-tests ui-test format format-check strings-check formatting-check check
 

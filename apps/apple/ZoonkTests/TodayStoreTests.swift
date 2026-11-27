@@ -1167,8 +1167,9 @@ final class BuddyMissionTapTests: XCTestCase {
     let tap = BuddyMissionTap()
     var opened = 0
     let places = TutorPlaces { _ in opened += 1 }
+    let row = BuddyMissionTap.Row(blockID: "b1", isFirstStep: false)
 
-    tap.open("b1", today: today, places: places) {}
+    tap.open(row, today: today, places: places) {}
     try await api.waitForHeldCall()
     tap.cancel()
     let cleared = tap.opening == nil
@@ -1178,13 +1179,13 @@ final class BuddyMissionTapTests: XCTestCase {
       return
     }
 
-    tap.open("b1", today: today, places: places) {}
+    tap.open(row, today: today, places: places) {}
     try await api.waitForHeldCall(count: 2)
     await api.releaseHeldCall()
     try await waitForTestCondition("The first opening did not finish") {
       await api.completedOpenings == 1 && consumed.isInvalidated
     }
-    XCTAssertEqual(tap.opening, "b1", "The next visit's tap is still opening")
+    XCTAssertEqual(tap.opening, row, "The next visit's tap is still opening")
     XCTAssertEqual(opened, 0, "The first visit's tap opens nothing")
 
     await api.releaseHeldCall()

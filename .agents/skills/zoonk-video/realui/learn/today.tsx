@@ -71,6 +71,8 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
     opensInPlayer: true,
     planItemKey: null,
     position,
+    practiceNumber: null,
+    preparing: false,
     refresh: false,
     reinforcement: false,
     status: spec.status,
@@ -121,12 +123,15 @@ type WeekPlan = {
   date: string;
   kind: "beforeStart" | "study" | "rest";
   minutes: number;
+  completed?: number;
+  total?: number;
   studied?: boolean;
   hitGoal?: boolean;
 }[];
 
 function toWeek({ days, today }: { days: WeekPlan; today: string }): SessionWeek {
   const weekDays = days.map((day) => ({
+    completed: day.completed ?? 0,
     date: utc(day.date),
     goalMinutes: day.kind === "study" ? 60 : 0,
     hitGoal: day.hitGoal ?? false,
@@ -134,6 +139,7 @@ function toWeek({ days, today }: { days: WeekPlan; today: string }): SessionWeek
     kind: day.kind,
     minutes: day.minutes,
     studied: day.studied ?? day.minutes > 0,
+    total: day.total ?? 0,
   }));
 
   return {
@@ -244,6 +250,7 @@ function buildToday({
       dateEstimated: false,
       daysLeft,
       displayName: career.title,
+      examDocument: "notice",
       id: CAREER_GOAL_ID,
       kind: "learn",
       targetDate: target,
@@ -413,7 +420,7 @@ function Screen({
         id: CAREER_GOAL_ID,
         kind: "learn",
         targetDate: career.date,
-        title: career.title,
+        displayName: career.title,
       }}
       missions={{ done: missionsDone, total: dayMissions.length }}
       tab="today"
@@ -452,8 +459,10 @@ function TodayView({ lang, q }: ViewProps) {
     week: [
       { date: "2026-11-02", kind: "beforeStart", minutes: 0 },
       {
+        completed: done,
         date: "2026-11-03",
         kind: "study",
+        total: 4,
         minutes: lessons.slice(0, done).reduce((sum, lesson) => sum + lesson.minutes, 0),
       },
       { date: "2026-11-04", kind: "study", minutes: 0 },
@@ -535,7 +544,7 @@ function TodayChangedView({ lang, q }: ViewProps) {
     sourceChange: source,
     week: [
       { date: "2026-11-02", kind: "beforeStart", minutes: 0 },
-      { date: "2026-11-03", kind: "study", minutes: 44 },
+      { completed: 3, date: "2026-11-03", kind: "study", minutes: 44, total: 4 },
       { date: "2026-11-04", kind: "study", minutes: 0 },
       { date: "2026-11-05", kind: "study", minutes: 0 },
       { date: "2026-11-06", kind: "study", minutes: 0 },

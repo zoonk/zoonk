@@ -4,14 +4,13 @@ import { listeningGoalFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { askPlacement } from "../_test-utils/exam-test-goal";
 import { loadGoalPlan } from "../_utils/goal-skill-graph";
 import { pickSessionChecks } from "./_utils/session-placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
-
-const RIGHT = { selectedIndex: 0 };
 
 const MAX_QUESTIONS = 8;
 
@@ -49,7 +48,11 @@ async function answerEveryQuestion({
 
   await answerPlacementQuestion({
     goalId,
-    input: { answer: RIGHT, durationMs: 5000, itemId: next.itemId },
+    input: {
+      answer: await pickInPlacement({ itemId: next.itemId }),
+      durationMs: 5000,
+      itemId: next.itemId,
+    },
   });
 
   return answerEveryQuestion({ asked: [...asked, next.skillId], goalId });

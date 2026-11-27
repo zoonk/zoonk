@@ -109,7 +109,7 @@ async function setup() {
 async function askBuddy({ goalId, question }: { goalId: string; question: string }) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {
@@ -132,7 +132,7 @@ async function askBuddy({ goalId, question }: { goalId: string; question: string
 async function readThread(goalId: string) {
   const result = await getLessonQuestionThread({
     contextKind: "plan",
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   return result.status === "ready" ? (result.thread?.questions ?? []) : [];

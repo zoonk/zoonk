@@ -1291,6 +1291,9 @@ importers:
       pg:
         specifier: 8.23.1
         version: 8.23.1
+      pg-connection-string:
+        specifier: 2.14.1
+        version: 2.14.1
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
@@ -1350,9 +1353,6 @@ importers:
       '@eloqnt/cli':
         specifier: 'catalog:'
         version: 0.8.0(@swc/helpers@0.5.24)(ai@7.0.179(zod@4.6.7))
-      '@eloqnt/format-apple-xcstrings':
-        specifier: 'catalog:'
-        version: 0.0.10
       '@eloqnt/format-po':
         specifier: 0.1.2
         version: 0.1.2

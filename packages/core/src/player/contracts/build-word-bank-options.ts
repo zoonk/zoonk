@@ -1,5 +1,4 @@
 import { sanitizeDistractors } from "@zoonk/utils/distractors";
-import { shuffle } from "@zoonk/utils/shuffle";
 import {
   segmentLearnerWords,
   segmentWords,
@@ -17,6 +16,7 @@ import {
   type SerializedWord,
   type WordBankOption,
 } from "./prepare-lesson-data";
+import { stableOrder } from "./stable-order";
 import { type DistractorWord } from "./translation-options";
 
 type WordDataInput = {
@@ -280,12 +280,13 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const distractors = shuffle(removeCanonicalWordCollisions(config)).slice(
-    0,
-    WORD_BANK_DISTRACTOR_LIMIT,
-  );
+  const distractors = removeCanonicalWordCollisions(config).slice(0, WORD_BANK_DISTRACTOR_LIMIT);
 
-  const words = shuffle([...config.correctWords, ...distractors]);
+  const words = stableOrder({
+    items: [...config.correctWords, ...distractors],
+    key: `${step.id}:wordBank`,
+    text: (word) => word,
+  });
 
   const buildOption = config.usesTargetLanguageMetadata
     ? createWordOptionBuilder({
@@ -311,7 +312,13 @@ export function buildFillBlankOptions({
   const content = parseStepContent("fillBlank", step.content);
   const buildOption = createWordOptionBuilder(sources);
 
-  return shuffle(getFillBlankWords(content)).map((word) => {
+  const words = stableOrder({
+    items: getFillBlankWords(content),
+    key: `${step.id}:fillBlank`,
+    text: (word) => word,
+  });
+
+  return words.map((word) => {
     const option = buildOption(word);
     const romanization = content.romanizations?.[word];
 

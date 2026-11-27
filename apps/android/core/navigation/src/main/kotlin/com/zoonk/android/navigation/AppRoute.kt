@@ -21,10 +21,16 @@ sealed interface AppRoute : NavKey {
         val focus: String? = null,
     ) : AppRoute
 
-    /** `ask` waits in the composer, as search leaves it: only the learner's own send asks it. */
+    /**
+     * The buddy's conversation [conversationId] (main's `/buddy/{id}`), a new one ([startsNew], main's
+     * `/buddy/new`), or the one a visit opens. [ask] waits in a new conversation's composer, as search
+     * leaves it: only the learner's own send asks it.
+     */
     @Serializable
     data class Buddy(
         val ask: String? = null,
+        val conversationId: String? = null,
+        val startsNew: Boolean = false,
     ) : AppRoute
 
     @Serializable
@@ -56,6 +62,9 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object Mistakes : AppRoute
+
+    @Serializable
+    data object SavedLessons : AppRoute
 
     @Serializable
     data object CompletedLessons : AppRoute
@@ -414,8 +423,8 @@ val AppRoute.presentation: Presentation
             is AppRoute.Buddy -> Presentation.Tab(AppTab.Buddy)
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
-            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking,
-            AppRoute.EarlierQuestions, AppRoute.Certificates, is AppRoute.Certificate,
+            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.SavedLessons, AppRoute.CompletedLessons,
+            is AppRoute.Speaking, AppRoute.EarlierQuestions, AppRoute.Certificates, is AppRoute.Certificate,
             -> Presentation.Push
 
             AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile, AppRoute.AboutYou,
@@ -450,8 +459,8 @@ val AppRoute.requirement: Requirement
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
             AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap, is AppRoute.MindMapStudy,
-            AppRoute.Mistakes, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
-            is AppRoute.PlacementTest, is AppRoute.LevelTest,
+            AppRoute.Mistakes, AppRoute.SavedLessons, AppRoute.CompletedLessons, is AppRoute.Speaking, is AppRoute.TestOut,
+            is AppRoute.FocusTest, is AppRoute.PlacementTest, is AppRoute.LevelTest,
             -> Requirement.Goal
 
             is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.PrivacySettings, AppRoute.Reminders, AppRoute.Profile,

@@ -39,6 +39,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.saves.SaveMenu
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
@@ -292,7 +293,7 @@ internal fun MindMapRow(
                     },
                 chevron = rowClick != null,
             )
-            if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
+            if (toggleSave != null) SaveMenu(menu, saved, mapSaveWords(), onDismiss = { menu = false }, onToggle = toggleSave)
         }
 
         if (failed) {
@@ -539,29 +540,4 @@ internal fun SavedMark() {
         Modifier.size(16.dp),
         tint = MaterialTheme.colorScheme.onSurface,
     )
-}
-
-/** A row's long-press menu: Save, or Remove from saved. */
-@Composable
-internal fun SaveMenu(
-    expanded: Boolean,
-    saved: Boolean,
-    onDismiss: () -> Unit,
-    onToggle: () -> Unit,
-) {
-    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
-        DropdownMenuItem(
-            text = { Text(stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save)) },
-            leadingIcon = {
-                Icon(
-                    painterResource(if (saved) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark),
-                    contentDescription = null,
-                )
-            },
-            onClick = {
-                onDismiss()
-                onToggle()
-            },
-        )
-    }
 }

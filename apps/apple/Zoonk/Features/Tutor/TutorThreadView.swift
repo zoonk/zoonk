@@ -14,6 +14,8 @@ struct TutorThreadView<Header: View>: View {
   var draft: TutorDraft?
   /// The page's own conversation (the Buddy tab): no "About…" above each question.
   var isPage = false
+  /// Raised to put the cursor in the composer, as the day's "Ask" mission does.
+  var composerFocus = 0
   @ViewBuilder var header: Header
 
   var body: some View {
@@ -27,6 +29,7 @@ struct TutorThreadView<Header: View>: View {
       placeholder: placeholder ?? Text("Ask \(summary.buddyDisplayName)", tableName: "Tutor"),
       draft: draft,
       isPage: isPage,
+      composerFocus: composerFocus,
       header: header)
   }
 }
@@ -45,6 +48,7 @@ private struct TutorConversationView<Header: View>: View {
   let placeholder: Text
   let draft: TutorDraft?
   let isPage: Bool
+  let composerFocus: Int
   let header: Header
 
   @State private var position = ScrollPosition(idType: String.self)
@@ -75,7 +79,7 @@ private struct TutorConversationView<Header: View>: View {
     .safeAreaBar(edge: .bottom) {
       TutorComposerBar(
         conversation: conversation, canTalk: canTalk, buddyName: buddyName,
-        suggestions: suggestions, placeholder: placeholder)
+        suggestions: suggestions, placeholder: placeholder, focusRequest: composerFocus)
     }
     .modifier(LoadsThread(thread: conversation.thread, isActive: canTalk))
     // An offer is its step's: once the learner moves on, the draft goes or changes, and an offer

@@ -4,6 +4,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { getGoalPlacement } from "../learner/placement/get-goal-placement";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -82,12 +83,14 @@ describe("one in-session multiple-choice test answer", () => {
     const questions = block.status === "ready" ? block.detail.questions : [];
     const asked = questions.find((question) => "placement" in question && question.placement);
 
+    const askedId = asked && "itemId" in asked ? (asked.itemId ?? "") : "";
+
     const result = await answerStudyQuestion({
       blockId: review.id,
       input: {
-        answer: { selectedIndex: 0 },
+        answer: await pickItemInBlock({ blockId: review.id, itemId: askedId }),
         durationMs: 3000,
-        itemId: asked && "itemId" in asked ? (asked.itemId ?? "") : "",
+        itemId: askedId,
         timeZone: TIME_ZONE,
       },
       sessionId: session!.id,

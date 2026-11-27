@@ -6,8 +6,10 @@ import com.zoonk.api.models.LessonStepAnswer
 /** What the learner asks about: the next question is about it, in its conversation ([thread]). */
 @Immutable
 sealed interface TutorScope {
+    /** One of the goal's buddy conversations, named by the app before its first question creates it. */
     data class Plan(
         val goalId: String,
+        val conversationId: String,
     ) : TutorScope
 
     /** A [module] is a part of a plan that isn't an exam, which its pages and the buddy call a module, not a subject. */
@@ -105,6 +107,7 @@ internal fun itemTopic(answered: Boolean) = "Item:$answered"
 sealed interface TutorThreadKey {
     data class Plan(
         val goalId: String,
+        val conversationId: String,
     ) : TutorThreadKey
 
     data class Subject(
@@ -139,7 +142,7 @@ sealed interface TutorThreadKey {
 val TutorScope.thread: TutorThreadKey
     get() =
         when (this) {
-            is TutorScope.Plan -> TutorThreadKey.Plan(goalId)
+            is TutorScope.Plan -> TutorThreadKey.Plan(goalId, conversationId)
             is TutorScope.Subject -> TutorThreadKey.Subject(goalId, subjectKey)
             is TutorScope.Chapter -> TutorThreadKey.Chapter(chapterId)
             is TutorScope.Mock -> TutorThreadKey.Mock(blockId)

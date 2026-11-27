@@ -11,7 +11,7 @@ export const BUDDY_NAME_CLASS = cn(
  * Who the learner is talking to, drawn the same wherever the buddy's chat opens: its page and the
  * sheet over a lesson. `title` is the host's own heading wearing `BUDDY_NAME_CLASS`; `children` sit
  * beside the name while they fit; `description` goes under the name, the pair centered on the face;
- * `menu` stays at the end.
+ * `menu` stays at the end, level with the name's line.
  */
 export function BuddyIdentityRow({
   children,
@@ -40,7 +40,7 @@ export function BuddyIdentityRow({
         </div>
         {description}
       </div>
-      {menu}
+      {menu && <div className="flex h-8 shrink-0 items-center">{menu}</div>}
     </div>
   );
 }

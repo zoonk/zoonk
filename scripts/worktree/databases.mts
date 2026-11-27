@@ -2,7 +2,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type DatabaseMode, ownDevelopmentDatabaseUrl } from "./environment.mts";
+import { type DatabaseMode, isLinkedWorktree } from "../../packages/db/src/local-database-names.ts";
+import { localSource, ownDevelopmentDatabaseUrl } from "./environment.mts";
 import { readLibrarySource } from "./library-source.mts";
 import {
   postgresEnvironment,
@@ -16,7 +17,7 @@ import {
 /** A fresh database is marked ready only once it's migrated and has its content. */
 export type CheckoutDatabase = { fresh: boolean; mode: DatabaseMode; seed: boolean; url: URL };
 
-export function prisma({
+function prisma({
   args,
   env = process.env,
   worktree,
@@ -28,6 +29,12 @@ export function prisma({
   const directory = join(worktree, "packages/db");
   const cli = createRequire(join(directory, "package.json")).resolve("prisma/build/index.js");
   return run({ args: [cli, ...args], command: process.execPath, cwd: directory, env });
+}
+
+/** Generation connects to no database, so a shell's URL for another checkout mustn't stop it. */
+export function generatePrisma(worktree: string): Promise<string> {
+  const { DATABASE_URL: _url, DATABASE_URL_UNPOOLED: _unpooled, ...env } = process.env;
+  return prisma({ args: ["generate"], env, worktree });
 }
 
 function runDatabaseScript({
@@ -101,13 +108,11 @@ async function updateLibrary({ url, worktree }: { url: URL; worktree: string }):
  * lock.
  */
 export async function updateDevelopmentDatabase(worktree: string): Promise<void> {
-  const own = ownDevelopmentDatabaseUrl(worktree);
+  const url = await requireDevelopmentDatabase(worktree);
 
-  if (!own) {
+  if (!url) {
     return;
   }
-
-  const url = new URL(own);
 
   await withDatabaseLock({
     action: async () => {
@@ -117,6 +122,23 @@ export async function updateDevelopmentDatabase(worktree: string): Promise<void>
     source: url,
     worktree,
   });
+}
+
+export async function requireDevelopmentDatabase(worktree: string): Promise<URL | null> {
+  if (!isLinkedWorktree(worktree) || !localSource(worktree)) {
+    return null;
+  }
+
+  const configured = ownDevelopmentDatabaseUrl(worktree);
+  const url = configured ? new URL(configured) : null;
+
+  if (!url || !(await hasDatabase(url))) {
+    throw new Error(
+      "This worktree is missing its development database. Run pnpm worktree:setup from its root and try again.",
+    );
+  }
+
+  return url;
 }
 
 /** Each database is managed on its own server; `source` names the primary checkout's database for cleanup. */
@@ -197,7 +219,7 @@ async function prepareDatabase({
   return { ...database, fresh: true, seed: true };
 }
 
-async function hasSourceDatabase(source: URL): Promise<boolean> {
+async function hasDatabase(source: URL): Promise<boolean> {
   const name = sqlLiteral(decodeURIComponent(source.pathname.slice(1)));
   return Boolean(await query({ source, sql: `SELECT 1 FROM pg_database WHERE datname = ${name}` }));
 }
@@ -276,7 +298,7 @@ export async function prepareDatabases({
 
   const development = databases.find((database) => database.mode === "dev");
 
-  if (!development?.fresh || !isolated || !(await hasSourceDatabase(source))) {
+  if (!development?.fresh || !isolated || !(await hasDatabase(source))) {
     return databases;
   }
 
