@@ -1355,11 +1355,6 @@ msgid "App language"
 msgstr "アプリの言語"
 
 #: src/buddies/buddy-conversations.tsx
-msgctxt "6dIxDP"
-msgid "Yesterday"
-msgstr ""
-
-#: src/buddies/buddy-conversations.tsx
 msgctxt "PQ8A3I"
 msgid "New conversation"
 msgstr ""

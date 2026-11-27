@@ -5,16 +5,16 @@ import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/compo
 import { RowPlus } from "@zoonk/ui/components/row-chevron";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { addIsoDays } from "@zoonk/utils/calendar-day";
 import { MessagesSquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
   ListGroup,
+  ListRowBody,
   ListRowContent,
-  ListRowDescription,
   ListRowLink,
   ListRowTitle,
+  ListRowTrailing,
 } from "../_components/list-group";
 import {
   PAGE_SECTION_TITLE_CLASS,
@@ -37,25 +37,14 @@ export type BuddyConversationList = {
   openId: string | null;
 };
 
-/**
- * Today's rows say when, earlier ones which day. It's the row's line, in the text face like any
- * row's: a time or a date in mono beside "Yesterday" in words read as two kinds of line.
- */
+/** Today's rows say when, earlier ones which day. */
 function useLastAsked() {
-  const t = useExtracted();
   const formatDate = useFormatMomentDate();
   const formatTime = useFormatMomentTime();
   const { dayOf, today } = useMomentDays();
 
-  return (moment: string): string => {
-    const day = dayOf(moment);
-
-    if (day === today) {
-      return formatTime(moment);
-    }
-
-    return day === addIsoDays({ day: today, days: -1 }) ? t("Yesterday") : formatDate(moment);
-  };
+  return (moment: string): string =>
+    dayOf(moment) === today ? formatTime(moment) : formatDate(moment);
 }
 
 function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpen?: () => void }) {
@@ -84,12 +73,12 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
             onClick={onOpen}
             prefetch="intent"
           >
-            <ListRowContent>
-              <ListRowTitle className="truncate text-nowrap">{conversation.title}</ListRowTitle>
-              <ListRowDescription className="tabular-nums">
-                {lastAsked(conversation.lastAskedAt)}
-              </ListRowDescription>
-            </ListRowContent>
+            <ListRowBody>
+              <ListRowContent>
+                <ListRowTitle className="truncate text-nowrap">{conversation.title}</ListRowTitle>
+              </ListRowContent>
+              <ListRowTrailing>{lastAsked(conversation.lastAskedAt)}</ListRowTrailing>
+            </ListRowBody>
           </ListRowLink>
         ))}
       </ListGroup>
@@ -187,12 +176,9 @@ export function BuddyConversationsSkeleton() {
       </PageSectionHeader>
       <div className="flex flex-col">
         {["w-3/5", "w-4/5", "w-2/3"].map((width) => (
-          <div
-            className="min-h-control flex flex-col justify-center gap-1.5 py-(--row-pad)"
-            key={width}
-          >
+          <div className="min-h-control flex items-center justify-between gap-3" key={width}>
             <Skeleton className={`h-3.5 ${width}`} />
-            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-10" />
           </div>
         ))}
       </div>
