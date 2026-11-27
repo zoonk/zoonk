@@ -7,7 +7,7 @@ import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contrac
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -17,11 +17,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
-import {
-  mistakePracticeCompletionSchema,
-  mistakePracticeFeedbackSchema,
-  mistakePracticeResponseSchema,
-} from "../src/lib/openapi/schemas/mistakes";
+import { mistakePracticeResponseSchema } from "../src/lib/openapi/schemas/mistakes";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import {
@@ -126,7 +122,7 @@ async function createGoal(userId: string) {
     ]),
   ]);
 
-  const [items] = await Promise.all([
+  await Promise.all([
     Promise.all(
       skills.flatMap((skill) =>
         Array.from({ length: QUESTIONS_PER_SKILL }, () =>
@@ -148,26 +144,18 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  const [, mistake] = await Promise.all([
-    learnerSkillFixture({
-      difficulty: 5,
-      due: new Date(Date.now() - DAY_MS),
-      lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
-      reps: 2,
-      skillId: skills[0]?.id ?? "",
-      stability: 3,
-      state: "learning",
-      userId,
-    }),
-    mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
-      itemId: items[0]?.id,
-      skillId: skills[0]?.id,
-      userId,
-    }),
-  ]);
+  await learnerSkillFixture({
+    difficulty: 5,
+    due: new Date(Date.now() - DAY_MS),
+    lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
+    reps: 2,
+    skillId: skills[0]?.id ?? "",
+    stability: 3,
+    state: "learning",
+    userId,
+  });
 
-  return { goal, lessons, mistake, skills };
+  return { goal, lessons, skills };
 }
 
 async function playBlock({
@@ -355,7 +343,7 @@ test.describe("Study sessions API", () => {
 
   test("plays today's session from capsules to the summary", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-session" });
-    const { goal, lessons, mistake, skills } = await createGoal(userId);
+    const { goal, lessons, skills } = await createGoal(userId);
 
     const today = await openStudyDay({ api, goalId: goal.id });
 
@@ -364,33 +352,23 @@ test.describe("Study sessions API", () => {
     expect(today.missions.map((mission) => mission.kind)).toStrictEqual([
       "review",
       "somethingNew",
-      "fixMistake",
+      "askBuddy",
     ]);
 
-    const correction = await readBody({
-      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
-        data: {
-          answer: { selectedIndex: 0 },
-          attemptId: randomUUID(),
-          durationMs: 2000,
-          itemId: mistake.itemId,
-          timeZone: "UTC",
-        },
-      }),
-      schema: mistakePracticeFeedbackSchema,
+    const thread = await prisma.lessonQuestionThread.create({
+      data: { goalId: goal.id, kind: "plan", userId },
     });
 
-    expect(correction).toMatchObject({ fixed: true, fixedMistakeIds: [mistake.id] });
-
-    const notebookDone = await readBody({
-      response: await api.post("/v1/me/mistake-practice/completions", {
-        data: { answerIds: [correction.answerId], ended: true, goalId: goal.id, timeZone: "UTC" },
-      }),
-      schema: mistakePracticeCompletionSchema,
-    });
-
-    expect(notebookDone).toMatchObject({
-      missionMoment: { completed: ["fixMistake"], fullMeal: { paid: false } },
+    await prisma.lessonQuestion.create({
+      data: {
+        contextKind: "plan",
+        contextSnapshot: {},
+        goalId: goal.id,
+        question: "What should I study first?",
+        requestFingerprint: randomUUID(),
+        requestId: randomUUID(),
+        threadId: thread.id,
+      },
     });
 
     const { session: again } = await readBody({
