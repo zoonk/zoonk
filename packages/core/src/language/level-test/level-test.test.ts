@@ -172,7 +172,7 @@ describe("language level test", () => {
       levelTest: { lastResult: { end: "stopped", ranges: { reading: expect.any(Object) } } },
     });
 
-    expect(saved.details).not.toHaveProperty("languagePlanningStart");
+    expect(saved.details).not.toHaveProperty("levelTest.planningStart");
     expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
