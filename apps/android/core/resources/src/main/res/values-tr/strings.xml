@@ -58,6 +58,7 @@
   "navigation_mind_maps": "e4844f2b2b3bade305fd95c3cdd2638d3d66964f39aa199f215bbb30d393429d",
   "navigation_mistakes": "5a73fbd5fb16fd8e67067e20d8ab90721659a22811b07bfe5427ff6635af91ee",
   "navigation_plan": "e760a9bfe3a2ddad53377116cb3c6c9737c7a8393d9e8a381d93f0a094b8006c",
+  "navigation_saved_lessons": "9dbcffe620ff7de02982c898e663d40a0b43d0ab37a4ebab6f75190cff0b28d8",
   "navigation_speaking": "c23422fcd72be37fb75d08ef7bc9b6db5d5270ef58645d7ea4f19649bc16d902",
   "navigation_statistics": "3e72169c11f2deec20ea2e5e3582f3d72edc76276bfcaf6d7c9fa2226f5c1cbc",
   "navigation_study": "bdb55f11c01616829212baf83367ae917d1e74b8fd28f4f3739467f449c4d691",
@@ -86,6 +87,7 @@
     <string name="navigation_buddy">Arkadaş</string>
     <string name="navigation_study">Çalış</string>
     <string name="navigation_mistakes">Yanlış defteri</string>
+    <string name="navigation_saved_lessons">Kaydedilen dersler</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Tamamlanan dersler</string>
     <string name="navigation_exam">Sınavın</string>

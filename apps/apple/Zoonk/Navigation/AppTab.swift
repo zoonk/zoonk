@@ -6,6 +6,7 @@ enum AppTab: Hashable {
   case buddy
   case search
   case mistakes
+  case savedLessons
   case completedLessons
   case certificates
   case exam
@@ -19,7 +20,7 @@ enum AppTab: Hashable {
   /// The sidebar's Study group, in its order. Certificates and the statistics overview aren't in
   /// the sidebar: the account menu, the belt mark and search open them.
   static let study: [AppTab] = [
-    .mistakes, .mindMaps, .mockExam, .exam, .speaking, .completedLessons,
+    .mistakes, .mindMaps, .mockExam, .exam, .speaking, .savedLessons, .completedLessons,
   ]
 
   /// The sidebar's Stats group, in its order.
@@ -29,9 +30,26 @@ enum AppTab: Hashable {
 
   static let sidebarPlaces = study + stats
 
+  /// The Study tabs the learner's goal has. Saved lessons stays while it shows: removing the last
+  /// save there takes the place away once the learner leaves, as main's sidebar does.
+  static func listedStudy(for places: LearnerPlaces?, showing selected: AppTab) -> [AppTab] {
+    study.filter { tab in
+      switch tab {
+      case .exam, .mockExam: places?.exam == true
+      case .speaking: places?.speaking == true
+      case .mindMaps: places?.mindMaps == true
+      case .savedLessons: places?.savedLessons == true || selected == .savedLessons
+      case .completedLessons: places?.completedLessons == true
+      case .certificates: places?.certificates == true
+      default: true
+      }
+    }
+  }
+
   var studyRoute: AppRoute? {
     switch self {
     case .mistakes: .mistakes
+    case .savedLessons: .savedLessons
     case .completedLessons: .completedLessons
     case .certificates: .certificates
     case .exam: .exam
@@ -63,6 +81,9 @@ enum AppTab: Hashable {
       LocalizedStringResource(
         "Mistakes notebook", table: "Navigation",
         comment: "Study place listing the questions the learner got wrong")
+    case .savedLessons:
+      LocalizedStringResource(
+        "Saved lessons", table: "Navigation")
     case .completedLessons:
       LocalizedStringResource(
         "Completed lessons", table: "Navigation",
@@ -101,6 +122,7 @@ enum AppTab: Hashable {
     case .buddy: "face.smiling"
     case .search: "magnifyingglass"
     case .mistakes: "square.and.pencil"
+    case .savedLessons: "bookmark"
     case .completedLessons: "clock.arrow.circlepath"
     case .certificates: "rosette"
     case .exam: "graduationcap"

@@ -63,16 +63,20 @@ val LearnKind.color: Color
             LearnKind.MindMap -> MaterialTheme.zoonk.kindMindMap
         }
 
-/** Only where kinds sit side by side; a list of one kind shows each row's `StatusMark`. */
+/**
+ * Only where kinds sit side by side; a list of one kind shows each row's `StatusMark`. A row that opens a place
+ * passes that place's [icon] in the kind's color.
+ */
 @Composable
 fun KindMark(
     kind: LearnKind,
     modifier: Modifier = Modifier,
+    @DrawableRes icon: Int = kind.icon,
 ) {
     Icon(
-        painter = painterResource(kind.icon),
+        painter = painterResource(icon),
         contentDescription = null,
-        modifier = modifier.centerGlyphInk(kind.icon).size(markSize() * ICON_SHARE),
+        modifier = modifier.centerGlyphInk(icon).size(markSize() * ICON_SHARE),
         tint = kind.color,
     )
 }

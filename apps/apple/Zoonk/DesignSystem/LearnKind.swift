@@ -46,8 +46,10 @@ enum LearnKind {
   }
 }
 
+/// A row that opens a place passes that place's `symbol` in the kind's color.
 struct KindMark: View {
   let kind: LearnKind
+  var symbol: String?
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.legibilityWeight) private var legibility
@@ -59,7 +61,7 @@ struct KindMark: View {
     // A symbol wider than the rows' mark column (practice's dumbbell, a call's bubbles) shrinks
     // to it, so its row's title starts where the others' do.
     if size.width > column {
-      Image(systemName: kind.systemImage)
+      Image(systemName: systemImage)
         .resizable()
         .scaledToFit()
         .typeStyle(.rowTitle)
@@ -67,7 +69,7 @@ struct KindMark: View {
         .foregroundStyle(kind.color)
         .accessibilityHidden(true)
     } else {
-      Image(systemName: kind.systemImage)
+      Image(systemName: systemImage)
         .typeStyle(.rowTitle)
         .imageScale(.medium)
         .foregroundStyle(kind.color)
@@ -75,10 +77,14 @@ struct KindMark: View {
     }
   }
 
+  private var systemImage: String {
+    symbol ?? kind.systemImage
+  }
+
   private var symbolSize: CGSize {
     let font = TypeStyle.rowTitle.uiFont(dynamicTypeSize, legibility: legibility)
     let configuration = UIImage.SymbolConfiguration(font: font, scale: .medium)
-    return UIImage(systemName: kind.systemImage, withConfiguration: configuration)?.size ?? .zero
+    return UIImage(systemName: systemImage, withConfiguration: configuration)?.size ?? .zero
   }
 }
 

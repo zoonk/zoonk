@@ -62,6 +62,7 @@ export function useLessonRun({
           optionalStepIds: outcome.optionalStepIds,
           replay: outcome.replay,
           runId: outcome.runId,
+          saved: outcome.saved,
           startedAt: outcome.startedAt,
           type: "runStarted",
         });

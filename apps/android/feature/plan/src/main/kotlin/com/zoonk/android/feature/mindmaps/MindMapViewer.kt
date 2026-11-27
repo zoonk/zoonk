@@ -148,7 +148,7 @@ fun MindMapScreen(
                     viewed.map.copy(saved = saved),
                     onClose = close,
                     onSave = viewed.map.image?.let { rememberSavePicture(maps, it, viewed.map.title) },
-                    onBookmark = { maps.save(target, chapterId, !saved) },
+                    onBookmark = { maps.save(target, !saved) },
                 )
             }
         }

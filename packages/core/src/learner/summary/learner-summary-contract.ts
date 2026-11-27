@@ -88,6 +88,7 @@ export type LearnerSummaryPlaces = {
   exam: boolean;
   mindMaps: boolean;
   readyMistakes: number;
+  savedLessons: boolean;
   speaking: boolean;
 };
 

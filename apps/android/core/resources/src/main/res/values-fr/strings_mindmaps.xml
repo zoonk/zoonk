@@ -43,6 +43,7 @@
   "mindmaps_previous": "9d0fba823ff9721db1c9e0af6353d1371bee8a5afd6024c53c996c4135accc18",
   "mindmaps_ready": "f66e6e7bed92ff6ce91621b5e7a6507bbe43e857b76dec41f90226f50b9f241e",
   "mindmaps_remove": "2d28f831d0be6253041c12f977e9e3c7b5437d28a377e3cd9cd78996ccf8793c",
+  "mindmaps_remove_map_failed": "6e9b97ad8cd7967f06b7a3f6bf2ab71dc94895152dd426d8e51ba4bd2f3b9e72",
   "mindmaps_remove_spoken": "11706463dadcc5ae1dc97eaee57485276f502c8b6f44315dd1a2a6ae6c50bb56",
   "mindmaps_row_description": "443d623d0605411026499d81dce5bdd697ba69bf13f1550d27e2e641c54d54f3",
   "mindmaps_row_description_finish": "729a2ad945578edcaa26ddea344723e9c14993fdac0f75082c984b8ab8ff5eab",
@@ -50,8 +51,10 @@
   "mindmaps_save": "4abdff6818189cf654674ff11057a0d6d4a0f68cf5afe20a1ffed5fe2a30bc27",
   "mindmaps_save_failed": "bd3abe0f108ef4f213e0a32d48c58914657a1212879b84d411bbb7a08fb02532",
   "mindmaps_save_map_failed": "1ea138c43a82fb312daf92dc8e229672df07f63d4eddb8a299484bbf5f69b169",
+  "mindmaps_save_named": "32044cca90644a2d6a73e5aa4cbcffbf46f4230873204fba72d8280c8ec2656e",
   "mindmaps_saved": "3fb1b0719b06d6ce11db29ad441d6ca5ce2d80e2a7d35f916bce8627367232da",
   "mindmaps_saved_empty": "e881ff27e0fdceb643b1a7dbf3a27c60fbbb991790617a95412b0a5e8a1ed050",
+  "mindmaps_saved_named": "d43588eb3cfca50c5365a50b4b810df74b9702bfbe7863c3846effb53d4a11f3",
   "mindmaps_saved_state": "09200c9c85102e569963a393e29c29a4981100752bd6955a89891d5ab2d9d76c",
   "mindmaps_show_all": "a85512e49fe7f0a37e772fb2256801be4d6806ac9b272fbc4df38a93cae41947",
   "mindmaps_shown_as": "541a63961fc1332af5f2e302e29af7ded84157a3d3e6b793629800dd0bba88e8",
@@ -206,9 +209,13 @@
     <string name="mindmaps_save">Enregistrer</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Enregistrée</string>
+    <string name="mindmaps_save_named">Enregistrer %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">Enregistrée : %1$s</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Retirer des cartes enregistrées</string>
     <string name="mindmaps_save_map_failed">Impossible d’enregistrer cette carte mentale. Réessaie.</string>
+    <string name="mindmaps_remove_map_failed">Impossible de retirer cette carte mentale. Réessaie.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">Plus d’options</string>
     <string name="mindmaps_previous">Précédent</string>

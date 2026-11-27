@@ -24,8 +24,8 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.WritingRow
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
+import com.zoonk.android.feature.session.practiceTopicsLine
 import com.zoonk.android.feature.session.practisesTopics
-import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -143,7 +143,7 @@ private fun StepLines(
             // A written task says when it waits for tomorrow, that its draft is kept, or what a drill is for, over its subject.
             step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
 
-            step.practisesTopics -> shortTopicList(step.topics, named = 1)
+            step.practisesTopics -> practiceTopicsLine(step.topics)
 
             step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
 

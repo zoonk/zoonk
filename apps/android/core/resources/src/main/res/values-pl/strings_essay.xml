@@ -48,8 +48,8 @@
   "essay_limit_title": "2571a425c5dbaa4f97b1599e21eb89519daf3c61299eaca7e757b1eb9acb79bc",
   "essay_limit_title_any": "1b2b6de4a5a819d9985aedeb36b1480a5e6beca2f5f63c6878c610f456012d80",
   "essay_lines_empty": "631dd6c383c0f5f6a0e74934110bc1ff518627024377f5857d17d2e979e0645d",
-  "essay_lines_end_unread": "4759cda35984cf756d51d2fb4fe76f2bc73baa69e230d994ff5abbb8a6be8ffd",
-  "essay_lines_may_not_fit": "ede57bdaa30ba5062d55a6bb2dd71e1d621fc4f3a793f9de9a4f4f8f9e13d40d",
+  "essay_lines_end_unread": "cd361438bdbb31c5050ff81c7836509112607562d36303e04ae1c7cf2486c967",
+  "essay_lines_may_not_fit": "3b6147ec207af4fe1708b0b94a7c1949415d66540426543f22df31279a61bb07",
   "essay_lines_question": "f6f288292018f21e45d461b20db249318d7e5d3644eee993065427be5e58d6ee",
   "essay_lines_used": "d63055ff5b916a05a7e560622d35a61e1d0407a172086c0f4f0597cb055c27bc",
   "essay_minus": "9d608b1ea4ff2ea5f72c30961f555d5156dc695052f4e835bd4b022063ad03f1",
@@ -207,9 +207,19 @@
         <item quantity="other">0 z %1$d linii</item>
     </plurals>
     <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
-    <string name="essay_lines_may_not_fit">około %1$d z %2$d wierszy · może się nie zmieścić na papierze</string>
+    <plurals name="essay_lines_may_not_fit">
+        <item quantity="one">około %1$d z %2$d wiersza · może się nie zmieścić na papierze</item>
+        <item quantity="few">około %1$d z %2$d wierszy · może się nie zmieścić na papierze</item>
+        <item quantity="many">około %1$d z %2$d wierszy · może się nie zmieścić na papierze</item>
+        <item quantity="other">około %1$d z %2$d wiersza · może się nie zmieścić na papierze</item>
+    </plurals>
     <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
-    <string name="essay_lines_end_unread">około %1$d z %2$d wierszy · końcówka nie będzie sprawdzana</string>
+    <plurals name="essay_lines_end_unread">
+        <item quantity="one">około %1$d z %2$d wiersza · końcówka nie będzie sprawdzana</item>
+        <item quantity="few">około %1$d z %2$d wierszy · końcówka nie będzie sprawdzana</item>
+        <item quantity="many">około %1$d z %2$d wierszy · końcówka nie będzie sprawdzana</item>
+        <item quantity="other">około %1$d z %2$d wiersza · końcówka nie będzie sprawdzana</item>
+    </plurals>
     <string name="essay_conflict_title">Ta odpowiedź została zmieniona na innym urządzeniu</string>
     <string name="essay_conflict_body">Zachowaj wersję, którą piszesz tutaj, albo przełącz się na tę drugą.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
