@@ -14,6 +14,7 @@ import {
   SOURCE_QUESTIONS,
   type SourceQuestion,
 } from "@/tasks/grade-essay-blind-key/source-questions";
+import { SAF_KEY_SOURCES } from "@/tasks/grade-essay/cases/saf";
 import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import {
@@ -27,7 +28,11 @@ function print(line = "") {
 }
 
 /** The writer sees only the notice's task and grading, never a candidate's answer or the board's standard, aspects or marks. */
-async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey> {
+async function writeKey(
+  source: Pick<SourceQuestion, "context" | "id" | "question" | "writerInput">,
+  draw: number,
+  calibration: boolean,
+): Promise<BlindKey> {
   const input: WritingPromptInput & { givenContext: string | null; givenQuestion: string } = {
     ...source.writerInput,
     givenContext: source.context,
@@ -38,6 +43,7 @@ async function writeKey(source: SourceQuestion, draw: number): Promise<BlindKey>
     appendedInstructions: BLIND_KEY_INSTRUCTIONS,
     input,
     shared: true,
+    useFallback: !calibration,
     wait: "soon",
   });
 
@@ -61,15 +67,17 @@ async function readSaved(target: string): Promise<BlindKeyFile | null> {
   }
 }
 
-const questionOrder = (id: string) => SOURCE_QUESTIONS.findIndex((source) => source.id === id);
-
 async function main() {
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
   meterModelCalls();
 
   const { positionals, values } = parseArgs({
     allowPositionals: true,
-    options: { draw: { default: "1", type: "string" } },
+    options: {
+      calibration: { default: false, type: "boolean" },
+      draw: { default: "1", type: "string" },
+      output: { default: BLIND_KEYS_FILE, type: "string" },
+    },
   });
 
   const draw = Number(values.draw);
@@ -78,14 +86,20 @@ async function main() {
     throw new Error(`--draw takes a whole number from 1: ${values.draw}`);
   }
 
-  const sources = SOURCE_QUESTIONS.filter(
+  const available = values.calibration
+    ? [...SOURCE_QUESTIONS, ...SAF_KEY_SOURCES]
+    : SOURCE_QUESTIONS;
+
+  const sources = available.filter(
     ({ id }) => positionals.length === 0 || positionals.includes(id),
   );
+
+  const questionOrder = (id: string) => available.findIndex((source) => source.id === id);
 
   const settled = await settleWithConcurrency({
     concurrency: 6,
     items: sources,
-    run: (source) => writeKey(source, draw),
+    run: (source) => writeKey(source, draw, values.calibration),
   });
 
   const keys = settled.flatMap((result, index) => {
@@ -98,7 +112,7 @@ async function main() {
   });
 
   const spent = getCallsCost({ calls: getMeteredCalls(), prices: GATEWAY_PRICES });
-  const target = path.join(process.cwd(), BLIND_KEYS_FILE);
+  const target = path.resolve(values.output);
   const saved = await readSaved(target);
   const written = new Set(keys.map(({ questionId }) => questionId));
 

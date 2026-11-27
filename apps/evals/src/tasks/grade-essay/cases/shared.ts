@@ -54,7 +54,7 @@ export type GradeWritingExpected = {
     scoreReference?: string;
   };
   zeroKind?: ZeroKind;
-  feedbackLanguage: "en" | "pt";
+  feedbackLanguage: "de" | "en" | "pt";
 };
 
 const ANCHOR_SKILL = "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90";

@@ -3,6 +3,8 @@ import { cguWritingGrading } from "../_fixtures/cgu-writing-grading";
 import { CEBRASPE_PUBLISHED_CASES } from "./cases/cebraspe-published";
 import { ENEM_PUBLISHED_CASES } from "./cases/enem-published";
 import { FGV_PUBLISHED_CASES } from "./cases/fgv-published";
+import { ELLIPSE_CASES } from "./cases/published-scales";
+import { SAF_CASES } from "./cases/saf";
 import {
   type Basis,
   type GradeWritingExpected,
@@ -1040,4 +1042,6 @@ export const TEST_CASES: WritingCase[] = [
   ...CEBRASPE_PUBLISHED_CASES,
   ...FGV_PUBLISHED_CASES,
   ...ENEM_PUBLISHED_CASES,
+  ...ELLIPSE_CASES,
+  ...SAF_CASES,
 ];
