@@ -329,9 +329,12 @@ final class WritingResultDecodingTests: XCTestCase {
       "A scale the server sends no decimals for is whole points")
   }
 
-  func testAZeroReadsZeroAndADeductionNeverReadsMinusZero() {
-    XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0 of 9.5")
-    XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0")
+  func testAZeroKeepsItsScalesDecimalsAndADeductionNeverReadsMinusZero() {
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0.0 of 9.5",
+      "A zero mark keeps its scale's decimals, as web and Android write it")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0.0")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 30, decimals: 0), "0 of 30")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.3)), "−0.3 to −0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.6)), "−0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0.0 to −0.6")

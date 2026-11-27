@@ -45,14 +45,12 @@ enum WritingLabels {
   /// A range of points with exactly the scale's `decimals` (whole points when the server sends
   /// none), one number when both ends read alike ("29.8", never "29.79–29.8"), joined by an en
   /// dash. Each end rounds to the nearest; a `headline` rounds its low end down and its high end
-  /// up, so it never claims more than its parts. Nothing at all reads "0", never "0.0".
+  /// up, so it never claims more than its parts.
   static func range(_ range: WritingRange, decimals: Int? = nil, headline: Bool = false) -> String {
     let decimals = decimals ?? 0
     let shown = headline ? roundedOutward(range, decimals: decimals) : range
     let low = points(shown.low, decimals: decimals)
     let high = points(shown.high, decimals: decimals)
-
-    if [low, high].allSatisfy(isZero) { return points(0, decimals: 0) }
 
     return low == high
       ? low
