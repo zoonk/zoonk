@@ -54,17 +54,25 @@ async function findRunGoalId({
  * Claims inside the run's own write, so a start waits for the learner's lock once for both and is
  * charged only when its run opens.
  */
-async function claimStart({ claim, tx }: { claim: StartClaim; tx: TransactionClient }) {
+async function claimStart({
+  claim,
+  tx,
+}: {
+  claim: StartClaim;
+  tx: TransactionClient;
+}): Promise<RefusedStart | { recorded: boolean }> {
   if (!claim) {
-    return { decision: { status: "allowed" as const }, recorded: false };
+    return { recorded: false };
   }
 
-  return claimUsageInWrite({
+  const { decision, recorded } = await claimUsageInWrite({
     kind: "lessonStart",
     targetId: claim.lessonId,
     transaction: tx,
     viewer: claim.viewer,
   });
+
+  return decision.status === "allowed" ? { recorded } : { refused: decision };
 }
 
 export async function reopenRunClock({
@@ -85,8 +93,8 @@ export async function reopenRunClock({
   return writeLearnerChange<ReopenedRun | RefusedStart>({ userId }, async (tx) => {
     const usage = await claimStart({ claim, tx });
 
-    if (usage.decision.status !== "allowed") {
-      return unchanged({ refused: usage.decision });
+    if ("refused" in usage) {
+      return unchanged(usage);
     }
 
     const current = await tx.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
@@ -125,8 +133,8 @@ async function openRun({
   return writeLearnerChange<OpenedRun | RefusedStart>({ planInputs: true, userId }, async (tx) => {
     const usage = await claimStart({ claim, tx });
 
-    if (usage.decision.status !== "allowed") {
-      return unchanged({ refused: usage.decision });
+    if ("refused" in usage) {
+      return unchanged(usage);
     }
 
     const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });

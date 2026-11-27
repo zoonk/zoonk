@@ -94,7 +94,10 @@ export async function claimUsageInWrite({
   });
 }
 
-/** Claims a small AI call inside the caller's learner write; see `claimUsageInWrite`. */
+/**
+ * Claims a small AI call inside the caller's learner write; the caller expires the allowance tag
+ * once it commits.
+ */
 export async function claimAssistInWrite({
   transaction,
   viewer,
