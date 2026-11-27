@@ -298,16 +298,16 @@ test.describe("Testing what you know from the plan", () => {
     await page.getByRole("link", { exact: true, name: "Leave" }).click();
     await expect(page).toHaveURL(/\/plan$/u);
 
-    const read = await holdActionAnswer(page, "/placement-test");
-    await page.getByRole("link", { name: /Test what you know.*Part 2 of 2/u }).click();
-    await read.held;
+    await holdActionAnswer(page, "/placement-test", {
+      start: () => page.getByRole("link", { name: /Test what you know.*Part 2 of 2/u }).click(),
+      whileHeld: async () => {
+        // The question kept from the last visit stays on screen, but it can't be answered until
+        // this visit has read where the test is.
+        await expect(page.getByRole("heading", { name: firstQuestion })).toBeVisible();
+        await expect(page.getByRole("button", { name: "I don't know yet" })).toBeDisabled();
+      },
+    });
 
-    // The question kept from the last visit stays on screen, but it can't be answered until this
-    // visit has read where the test is.
-    await expect(page.getByRole("heading", { name: firstQuestion })).toBeVisible();
-    await expect(page.getByRole("button", { name: "I don't know yet" })).toBeDisabled();
-
-    await read.release();
     await expect(page.getByRole("heading", { name: secondQuestion })).toBeVisible();
     await expect(page.getByText("Part 2 of 2").filter({ visible: true })).toBeVisible();
     await page.getByRole("button", { name: "I don't know yet" }).click();

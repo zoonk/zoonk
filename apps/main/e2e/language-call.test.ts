@@ -486,15 +486,16 @@ test.describe("Language practice in the plan", () => {
     }
 
     await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
-    const stopping = await holdActionAnswer(page, `/start/${goal.id}`);
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
-    await stopping.held;
 
-    await expect(page.getByRole("button", { name: "Stop and use my answers" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "Can't listen now" })).toBeDisabled();
-    await expect(page.getByRole("radio", { name: /^Right [ABC][12]$/u })).toBeDisabled();
+    await holdActionAnswer(page, `/start/${goal.id}`, {
+      start: () => page.getByRole("button", { name: "Stop and use my answers" }).click(),
+      whileHeld: async () => {
+        await expect(page.getByRole("button", { name: "Stop and use my answers" })).toBeDisabled();
+        await expect(page.getByRole("button", { name: "Can't listen now" })).toBeDisabled();
+        await expect(page.getByRole("radio", { name: /^Right [ABC][12]$/u })).toBeDisabled();
+      },
+    });
 
-    await stopping.release();
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
   });
 });

@@ -139,18 +139,18 @@ test.describe("A checkpoint from today's session", () => {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
 
-    const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: /^See result/u }).click();
-    await finish.held;
+    await holdActionAnswer(page, `/checkpoint/${block.id}`, {
+      start: () => page.getByRole("button", { name: /^See result/u }).click(),
+      whileHeld: async () => {
+        await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+        await expect(page.getByRole("radio", { name: "Right answer" })).toBeVisible();
 
-    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
-    await expect(page.getByRole("radio", { name: "Right answer" })).toBeVisible();
+        await expect(
+          page.getByRole("progressbar", { name: question(CHECKPOINT_PASS_MARK) }),
+        ).toBeAttached();
+      },
+    });
 
-    await expect(
-      page.getByRole("progressbar", { name: question(CHECKPOINT_PASS_MARK) }),
-    ).toBeAttached();
-
-    await finish.release(/\/session/u);
     // The plan's last challenge finishes the course, so its certificate plays first.
     await expect(page.getByRole("dialog", { name: "Course complete!" })).toBeVisible();
 
@@ -163,14 +163,17 @@ test.describe("A checkpoint from today's session", () => {
     const { boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
     await page.goto(`/challenge/${boss.id}`);
-    const start = await holdActionAnswer(page, `/challenge/${boss.id}`);
 
-    await page.getByRole("button", { name: "Start" }).click();
-    await start.held;
-    await page.getByRole("link", { name: "Leave" }).click();
-    await expect(page).toHaveURL(/\/today$/u);
+    const followed = await holdActionAnswer(page, `/challenge/${boss.id}`, {
+      away: /\/checkpoint\//u,
+      start: () => page.getByRole("button", { name: "Start" }).click(),
+      whileHeld: async () => {
+        await page.getByRole("link", { name: "Leave" }).click();
+        await expect(page).toHaveURL(/\/today$/u);
+      },
+    });
 
-    expect(await start.release(/\/checkpoint\//u)).toBe(false);
+    expect(followed).toBe(false);
     await expect(page).toHaveURL(/\/today$/u);
 
     await page.context().close();
