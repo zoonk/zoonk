@@ -79,11 +79,13 @@ function describeAnswer({
   attempt,
   blockId,
   item,
+  keepsStoredOrder,
   replay,
 }: {
   attempt: Attempt | null;
   blockId: string;
   item: SessionItem;
+  keepsStoredOrder?: boolean;
   replay?: Extract<MistakeReplay, { kind: "item" }>;
 }): ItemScopeContext["answer"] {
   const answer = attempt ? readRecordedAnswer(attempt.answer) : null;
@@ -94,7 +96,7 @@ function describeAnswer({
 
   const { snapshot } = replay
     ? gradeMistakeItem({ answer, replay, showing: blockId })
-    : gradeSessionAnswer({ answer, blockId, item });
+    : gradeSessionAnswer({ answer, blockId, item, keepsStoredOrder });
 
   const unshown = !blockId && !replay && readsAnswerInBlockOrder(item);
 
@@ -186,15 +188,16 @@ export async function buildItemContextSnapshot({
   }
 
   const blockId = block?.id ?? "";
+  const keepsStoredOrder = block ? readBlockPayload(block).storedOptionOrder : undefined;
 
   const attempt = context.answered
     ? await findLatestAnswer({ itemId, sessionId: block?.sessionId ?? null, userId })
     : null;
 
   return {
-    answer: describeAnswer({ attempt, blockId, item }),
+    answer: describeAnswer({ attempt, blockId, item, keepsStoredOrder }),
     language: row.language,
-    question: describeQuestion(toSessionQuestion({ blockId, item })),
+    question: describeQuestion(toSessionQuestion({ blockId, item, keepsStoredOrder })),
     scope: { kind: "item" },
     set: toItemSetView({ item: row })?.text ?? null,
     skill: row.skill.name,

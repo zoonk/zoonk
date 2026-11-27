@@ -123,9 +123,20 @@ function serveInBlock({ blockId, item }: { blockId: string; item: MathItem }) {
   return serveMath({ item, seed: `${blockId}:${item.id}` });
 }
 
-/** Each block shows its own option order, so a question that returns tests its options rather than their places. */
-export function showChoiceInBlock({ blockId, item }: { blockId: string; item: ChoiceItem }) {
-  return showChoiceItem({ item, seed: `${blockId}:${item.id}` });
+/**
+ * Each block shows its own option order, so a question that returns tests its options rather than
+ * their places. A block made before that (`storedOptionOrder`) keeps the stored order.
+ */
+export function showChoiceInBlock({
+  blockId,
+  item,
+  keepsStoredOrder = false,
+}: {
+  blockId: string;
+  item: ChoiceItem;
+  keepsStoredOrder?: boolean;
+}) {
+  return keepsStoredOrder ? item : showChoiceItem({ item, seed: `${blockId}:${item.id}` });
 }
 
 const NO_EXTRAS = { entry: null, key: null, left: null, right: null, select: null, unit: null };
@@ -133,10 +144,12 @@ const NO_EXTRAS = { entry: null, key: null, left: null, right: null, select: nul
 export function toSessionQuestion({
   blockId,
   item,
+  keepsStoredOrder,
   revealMatchKey = false,
 }: {
   blockId: string;
   item: SessionItem;
+  keepsStoredOrder?: boolean;
   revealMatchKey?: boolean;
 }) {
   switch (item.format) {
@@ -156,7 +169,10 @@ export function toSessionQuestion({
       return { ...NO_EXTRAS, ...toTypedQuestionView(item) };
     case "multipleChoice":
     case "trueFalse":
-      return { ...NO_EXTRAS, ...toQuestionView(showChoiceInBlock({ blockId, item })) };
+      return {
+        ...NO_EXTRAS,
+        ...toQuestionView(showChoiceInBlock({ blockId, item, keepsStoredOrder })),
+      };
     default:
       throw new Error("Unknown session item format.");
   }
@@ -185,13 +201,15 @@ function gradeChoice({
   answer,
   blockId,
   item,
+  keepsStoredOrder,
 }: {
   answer: QuestionAnswer;
   blockId: string;
   item: ChoiceItem;
+  keepsStoredOrder?: boolean;
 }): GradedSessionAnswer {
   const choice = choiceAnswerSchema.safeParse(answer).data ?? { dontKnow: true as const };
-  const shown = showChoiceInBlock({ blockId, item });
+  const shown = showChoiceInBlock({ blockId, item, keepsStoredOrder });
   const graded = gradeChoiceAnswer({ answer: choice, item, shown });
 
   return {
@@ -230,10 +248,12 @@ export function gradeSessionAnswer({
   answer,
   blockId,
   item,
+  keepsStoredOrder,
 }: {
   answer: QuestionAnswer;
   blockId: string;
   item: SessionItem;
+  keepsStoredOrder?: boolean;
 }): GradedSessionAnswer {
   switch (item.format) {
     case "matchPairs":
@@ -250,7 +270,7 @@ export function gradeSessionAnswer({
       return gradeTypedByCode({ answer, item });
     case "multipleChoice":
     case "trueFalse":
-      return gradeChoice({ answer, blockId, item });
+      return gradeChoice({ answer, blockId, item, keepsStoredOrder });
     default:
       throw new Error("Unknown session item format.");
   }
