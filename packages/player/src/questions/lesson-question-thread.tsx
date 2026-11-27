@@ -80,7 +80,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-export function TutorIntro({
+function TutorIntro({
   guest = false,
   identity,
 }: {
