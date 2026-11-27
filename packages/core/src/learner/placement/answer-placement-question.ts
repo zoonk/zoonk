@@ -119,7 +119,8 @@ function matchesAttempt({
   part?: number;
 }): boolean {
   if (!attemptId) {
-    return true;
+    // Released Android starts onboarding's quick course test without a sitting.
+    return attempt === null;
   }
 
   return attempt?.id === attemptId && !attempt.partComplete && (part ?? 1) === attempt.part;
@@ -263,7 +264,6 @@ export async function answerPlacementQuestion({
 
   const read = {
     goalId,
-    ignoreAttempt: !input.attemptId,
     ownLevel: getOwnLevel({ goal: owned.goal, level: input.level }),
     timeZone,
     today: getDateInTimeZone({ date: new Date(), timeZone }),
