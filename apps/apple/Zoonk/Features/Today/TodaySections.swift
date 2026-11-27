@@ -677,12 +677,6 @@ struct TodayMissionsSection: View {
       if let block = view.session.blocks.first(where: { mission.opens($0) }) {
         open(block)
       }
-    case "mistakesPractice":
-      router.open(.mistakePractice())
-    case "pattern":
-      if let patternID = opens.patternId {
-        router.open(.pattern(patternId: patternID))
-      }
     case "pronunciation":
       router.open(.pronunciation(goalId: view.goal.id))
     case "call":
@@ -1179,8 +1173,7 @@ struct TodayPracticeSection: View {
   }
 }
 
-/// Main's `LanguagePracticeRow`: words to say again first, else the pattern noticed in recent
-/// mistakes.
+/// Main's `LanguagePracticeRow`: the words to say again.
 struct TodayLanguagePracticeSection: View {
   @Environment(AppRouter.self) private var router
 
@@ -1199,14 +1192,6 @@ struct TodayLanguagePracticeSection: View {
           comment: "Opens the words to say aloud again; \"them\" is the words")
       ) {
         router.open(.pronunciation(goalId: view.goal.id))
-      }
-    } else if let pattern = view.pattern {
-      notice(
-        summary: Text("We noticed a pattern: \(pattern.title)", tableName: "Today"),
-        mark: .sparkle,
-        action: Text("Practice it", tableName: "Today", comment: "Opens the noticed pattern")
-      ) {
-        router.open(.pattern(patternId: pattern.id))
       }
     }
   }

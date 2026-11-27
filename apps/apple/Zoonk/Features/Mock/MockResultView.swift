@@ -99,8 +99,8 @@ struct MockResultView: View {
         reviewSections
       }
       .bottomBar {
-        if let offer = choices.plan.asking(view.adapt) {
-          MockPlanAnswerButtons(run: run, offer: offer, inBar: true, answers: $choices.plan)
+        if choices.plan.isAsking(view.adapt) {
+          MockPlanAnswerButtons(run: run, inBar: true, answers: $choices.plan)
         } else {
           actions
         }
@@ -210,12 +210,16 @@ struct MockResultView: View {
 
   @ViewBuilder
   private func planSections(answersInBar: Bool) -> some View {
-    if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
-      MockPlanSection(
-        run: run, adapt: adapt, preparation: view.result?.preparation,
-        answersInBar: answersInBar, answers: $choices.plan)
-    } else if let preparation = view.result?.preparation, preparation.after != preparation.before {
-      MockPreparationSection(preparation: preparation)
+    let preparation = view.result?.preparation.flatMap { $0.after != $0.before ? $0 : nil }
+    let moved = view.result?.movedTopics.flatMap { $0.isEmpty ? nil : $0 }
+
+    if preparation != nil || moved != nil {
+      MockPlanMoves(preparation: preparation, movedTopics: moved)
+    }
+
+    if let adapt = view.adapt {
+      MockSkipSection(
+        run: run, adapt: adapt, answersInBar: answersInBar, answers: $choices.plan)
     }
   }
 
@@ -241,14 +245,17 @@ struct MockResultView: View {
     view.review.filter { $0.outcome == .wrong || $0.outcome == .partial }.count
   }
 
-  /// With mistakes to fix, reviewing them is the way on and leaving the other one, as on main.
-  private var reviewsMistakes: Bool { mistakes > 0 && view.purpose != .placement }
+  /// With mistakes to fix, practicing this mock's is the way on and leaving the other one, as on
+  /// main.
+  private var practiceMock: String? {
+    mistakes > 0 && view.purpose != .placement ? view.mockId : nil
+  }
 
   @ViewBuilder
   private var mainAction: some View {
-    if reviewsMistakes {
+    if let mockId = practiceMock {
       Button {
-        router.open(.mistakes)
+        router.open(.mistakePractice(.mock(mockId)))
       } label: {
         Text(
           LocalizedStringResource(
@@ -270,7 +277,7 @@ struct MockResultView: View {
 
   @ViewBuilder
   private var secondaryAction: some View {
-    if reviewsMistakes {
+    if practiceMock != nil {
       Button {
         dismiss()
       } label: {
@@ -993,14 +1000,35 @@ private struct MockSpeakingSection: View {
   }
 }
 
-private struct MockPreparationSection: View {
-  let preparation: MockResult.Preparation
+/// What the mock already changed: the preparation it measured and the topics the plan moved
+/// earlier, which ask nothing of the learner.
+private struct MockPlanMoves: View {
+  let preparation: MockResult.Preparation?
+  let movedTopics: [String]?
 
   var body: some View {
     Section {
-      MockPreparationRow(preparation: preparation)
+      if let preparation {
+        MockPreparationRow(preparation: preparation)
+      }
+
+      if let movedTopics {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "Your plan now starts with what you missed", tableName: "Mock",
+            comment: "After a mock, the plan moved the topics it missed earlier"
+          )
+          .typeStyle(.body.weight(.semibold))
+          Text(verbatim: movedTopics.prefix(3).formatted(.list(type: .and).locale(.appLanguage)))
+            .foregroundStyle(.mutedForeground)
+        }
+        .accessibilityElement(children: .combine)
+      }
     } header: {
-      SectionTitle(Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
+      SectionTitle(
+        preparation == nil
+          ? Text("Your plan", tableName: "Mock", comment: "What a mock changed in the plan")
+          : Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
     }
   }
 }
@@ -1033,6 +1061,7 @@ private struct MockPreparationRow: View {
   }
 }
 
+/// The learner's answer to skipping the lessons the mock showed they know.
 private struct MockPlanAnswers {
   enum Answer: Equatable {
     case declined
@@ -1040,40 +1069,28 @@ private struct MockPlanAnswers {
     case outcome(MockPlanOfferOutcome)
   }
 
-  var byOffer: [MockPlanOffer: Answer] = [:]
+  var answer: Answer?
   var applying = false
 
-  static func offers(_ adapt: MockAdapt?) -> [MockPlanOffer] {
-    [adapt?.skip != nil ? .skip : nil, adapt?.focus != nil ? .focus : nil].compactMap { $0 }
-  }
-
-  /// The first question nobody answered; the second appears once the first is answered.
-  func asking(_ adapt: MockAdapt?) -> MockPlanOffer? {
-    Self.offers(adapt).first { offer in
-      switch byOffer[offer] {
-      case nil, .failed: true
-      default: false
-      }
-    }
+  /// Open until answered; a failed yes asks again.
+  func isAsking(_ adapt: MockAdapt?) -> Bool {
+    adapt != nil && (answer == nil || answer == .failed)
   }
 }
 
-/// A plan question's two answers: in the step on a wide screen, the bottom bar's on a phone (the no
+/// The question's two answers: in the step on a wide screen, the bottom bar's on a phone (the no
 /// outlined, the yes the main action), so the bar never offers a way on while a question is open.
 private struct MockPlanAnswerButtons: View {
   @Environment(ExamStore.self) private var exam
   let run: MockRun
-  let offer: MockPlanOffer
   let inBar: Bool
   @Binding var answers: MockPlanAnswers
 
   var body: some View {
     Button {
-      answers.byOffer[offer] = .declined
+      answers.answer = .declined
     } label: {
-      offer == .skip
-        ? Text("Keep them", tableName: "Mock", comment: "Keeps the known lessons")
-        : Text("Not now", tableName: "Mock", comment: "Declines giving a subject more time")
+      Text("Keep them", tableName: "Mock", comment: "Keeps the known lessons")
     }
     .buttonStyle(.outline)
     .disabled(answers.applying)
@@ -1081,9 +1098,7 @@ private struct MockPlanAnswerButtons: View {
     BusyButton(isBusy: answers.applying) {
       run.start { await apply() }
     } label: {
-      offer == .skip
-        ? Text("Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")
-        : Text("Change my plan", tableName: "Mock", comment: "Gives a subject more time")
+      Text("Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")
     }
     .modifier(MockPlanYesStyle(inBar: inBar))
   }
@@ -1094,12 +1109,12 @@ private struct MockPlanAnswerButtons: View {
 
     let blockId = run.mock.value?.blockId ?? ""
     let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
-      try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
+      try await api.skipKnownLessons(token: token, blockId: blockId)
     }
 
     switch result {
-    case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
-    case .failed: answers.byOffer[offer] = .failed
+    case .done(let outcome): answers.answer = .outcome(outcome)
+    case .failed: answers.answer = .failed
     case .obsolete: return
     }
   }
@@ -1117,37 +1132,29 @@ private struct MockPlanYesStyle: ViewModifier {
   }
 }
 
-private struct MockPlanSection: View {
-  @Environment(ExamStore.self) private var exam
+private struct MockSkipSection: View {
   let run: MockRun
   let adapt: MockAdapt
-  let preparation: MockResult.Preparation?
   let answersInBar: Bool
   @Binding var answers: MockPlanAnswers
 
-  private var offers: [MockPlanOffer] { MockPlanAnswers.offers(adapt) }
-
-  private var asking: MockPlanOffer? { answers.asking(adapt) }
-
   var body: some View {
-    if let preparation, preparation.after != preparation.before {
-      Section {
-        MockPreparationRow(preparation: preparation)
-      } header: {
-        SectionTitle(Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
-      }
-    }
-
     Section {
-      if let offer = asking {
+      if answers.isAsking(adapt) {
         VStack(alignment: .leading, spacing: 4) {
-          question(offer)
-            .typeStyle(.body.weight(.semibold))
-          line(offer)
-            .foregroundStyle(.mutedForeground)
+          Text(
+            "Skip \(adapt.skip.lessons) lessons you already know?", tableName: "Mock",
+            comment: "Offer to take lessons the mock exam showed the learner knows off the plan"
+          )
+          .typeStyle(.body.weight(.semibold))
+          Text(
+            "You got everything right in \(topicNames).", tableName: "Mock",
+            comment: "Why the mock exam offers to skip lessons; the argument names the topics"
+          )
+          .foregroundStyle(.mutedForeground)
         }
 
-        if answers.byOffer[offer] == .failed {
+        if answers.answer == .failed {
           FailureLine(
             message: LocalizedStringResource(
               "That didn't go through. Try again in a moment.", table: "Mock",
@@ -1156,78 +1163,45 @@ private struct MockPlanSection: View {
 
         if !answersInBar {
           ButtonRow {
-            MockPlanAnswerButtons(run: run, offer: offer, inBar: false, answers: $answers)
+            MockPlanAnswerButtons(run: run, inBar: false, answers: $answers)
           }
         }
       }
 
-      ForEach(statusLines, id: \.self) { line in
-        Text(line).foregroundStyle(.mutedForeground)
+      if let statusLine {
+        Text(statusLine).foregroundStyle(.mutedForeground)
       }
     }
-    .announcesStatus(statusLines.isEmpty ? nil : statusLines.joinedSentences())
+    .announcesStatus(statusLine)
   }
 
-  private func question(_ offer: MockPlanOffer) -> Text {
-    switch offer {
-    case .skip:
-      Text(
-        "Skip \(adapt.skip?.lessons ?? 0) lessons you already know?", tableName: "Mock",
-        comment: "Offer to take lessons the mock exam showed the learner knows off the plan")
-    case .focus:
-      Text(
-        "Focus more on \(adapt.focus?.area ?? "")?", tableName: "Mock",
-        comment: "Offer to focus an area")
-    }
+  private var topicNames: String {
+    let topics = adapt.skip.topics
+
+    return topics.count > 3
+      ? String(
+        localized:
+          "\(topics.prefix(3).formatted(.list(type: .and))) and \(topics.count - 3) more topics",
+        table: "Mock", locale: .appLanguage, comment: "Three topics' names and how many more")
+      : topics.formatted(.list(type: .and))
   }
 
-  private func line(_ offer: MockPlanOffer) -> Text {
-    switch offer {
-    case .skip:
-      let topics = adapt.skip?.topics ?? []
-      let names =
-        topics.count > 3
-        ? String(
-          localized:
-            "\(topics.prefix(3).formatted(.list(type: .and))) and \(topics.count - 3) more topics",
-          table: "Mock", locale: .appLanguage, comment: "Three topics' names and how many more")
-        : topics.formatted(.list(type: .and))
-      return Text(
-        "You got everything right in \(names).", tableName: "Mock",
-        comment: "Why the mock exam offers to skip lessons; the argument names the topics")
-    case .focus:
-      return Text(
-        "You got \(MockLabels.number(adapt.focus?.correct ?? 0)) of \(adapt.focus?.total ?? 0) right there.",
-        tableName: "Mock", comment: "Why the mock exam offers more time for a subject")
-    }
-  }
-
-  /// After a yes, what changed; after one no, nothing, but a no to every question says so, since
-  /// a no saves nothing and the step would still read as an open question.
-  private var statusLines: [String] {
-    if offers.allSatisfy({ answers.byOffer[$0] == .declined }) {
-      return [
-        String(localized: "Your plan stays as it is.", table: "Mock")
-      ]
-    }
-
-    return offers.compactMap { offer -> String? in
-      switch answers.byOffer[offer] {
-      case .outcome(.applied(let skipped)):
-        offer == .skip
-          ? String(
-            localized: "\(skipped) lessons skipped.", table: "Mock", locale: .appLanguage,
-            comment: "Lessons skipped")
-          : String(
-            localized: "Your plan gives \(adapt.focus?.area ?? "") more time.", table: "Mock",
-            comment: "Focus applied")
-      case .outcome(.unchanged):
-        String(
-          localized: "Your plan didn't need to change.", table: "Mock",
-          comment: "A plan change the plan already had")
-      case .declined, .failed, nil:
-        nil
-      }
+  /// After a yes, what changed; a no says the plan stays, since it saves nothing and the step would
+  /// still read as an open question.
+  private var statusLine: String? {
+    switch answers.answer {
+    case .declined:
+      String(localized: "Your plan stays as it is.", table: "Mock")
+    case .outcome(.applied(let skipped)):
+      String(
+        localized: "\(skipped) lessons skipped.", table: "Mock", locale: .appLanguage,
+        comment: "Lessons skipped")
+    case .outcome(.unchanged):
+      String(
+        localized: "Your plan didn't need to change.", table: "Mock",
+        comment: "A plan change the plan already had")
+    case .failed, nil:
+      nil
     }
   }
 }

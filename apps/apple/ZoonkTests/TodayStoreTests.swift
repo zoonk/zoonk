@@ -1080,7 +1080,7 @@ private func today(
     earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
-    insight: nil, lessonStatus: lessonStatus, mockFunding: nil, notice: nil, pattern: nil,
+    insight: nil, lessonStatus: lessonStatus, mockFunding: nil, notice: nil,
     planChange: planChange, progress: nil, session: session, sourceChange: nil,
     studiedToday: false, suggestedGoal: nil, uploadRequest: nil, weeklyChallenge: nil)
 }

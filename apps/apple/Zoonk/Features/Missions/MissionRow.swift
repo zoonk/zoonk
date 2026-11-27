@@ -7,9 +7,7 @@ struct StudyMission: Decodable, Hashable, Sendable {
     case challenge
     case essay
     case finishChapter
-    case fixMistake
     case mock
-    case pattern
     case practice
     case pronunciation
     case review
@@ -21,7 +19,6 @@ struct StudyMission: Decodable, Hashable, Sendable {
   struct Detail: Decodable, Hashable, Sendable {
     let areaTitle: String?
     let chapterTitle: String?
-    let patternTitle: String?
     let rematch: Bool?
     let title: String?
   }
@@ -36,7 +33,6 @@ struct StudyMission: Decodable, Hashable, Sendable {
     let areaId: String?
     let blockId: String?
     let chapterId: String?
-    let patternId: String?
     let ref: Ref?
   }
 
@@ -100,12 +96,6 @@ extension StudyMission {
       String(localized: "Practice writing", table: "Today", comment: "Mission: write an essay")
     case .practice:
       String(localized: "Practice", table: "Today", comment: "Mission: practice")
-    case .fixMistake:
-      String(
-        localized: "Fix \(total) mistakes", table: "Today", locale: .appLanguage,
-        comment: "Mission: fix mistakes")
-    case .pattern:
-      String(localized: "Practice a pattern", table: "Today", comment: "Mission: a pattern")
     case .pronunciation:
       String(
         localized: "Practice pronunciation", table: "Today", comment: "Mission: pronunciation")
@@ -228,7 +218,6 @@ extension StudyMission.Kind {
     case .challenge, .weeklyChallenge: .challenge
     case .essay: .essay
     case .finishChapter, .somethingNew, .askBuddy: .lesson
-    case .fixMistake, .pattern: .mistakes
     case .mock: .mock
     case .practice, .weakSpot: .practice
     case .pronunciation, .review: .review
