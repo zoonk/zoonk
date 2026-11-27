@@ -48,7 +48,6 @@
   "essay_limit_title": "2571a425c5dbaa4f97b1599e21eb89519daf3c61299eaca7e757b1eb9acb79bc",
   "essay_limit_title_any": "1b2b6de4a5a819d9985aedeb36b1480a5e6beca2f5f63c6878c610f456012d80",
   "essay_lines_empty": "631dd6c383c0f5f6a0e74934110bc1ff518627024377f5857d17d2e979e0645d",
-  "essay_lines_over": "bb0d6ce839d2ee2a1524076f8fa7e66319a403b68074602a7bf78a245033eb9d",
   "essay_lines_question": "f6f288292018f21e45d461b20db249318d7e5d3644eee993065427be5e58d6ee",
   "essay_lines_used": "d63055ff5b916a05a7e560622d35a61e1d0407a172086c0f4f0597cb055c27bc",
   "essay_minus": "9d608b1ea4ff2ea5f72c30961f555d5156dc695052f4e835bd4b022063ad03f1",
@@ -204,13 +203,6 @@
         <item quantity="few">0 z %1$d linii</item>
         <item quantity="many">0 z %1$d linii</item>
         <item quantity="other">0 z %1$d linii</item>
-    </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">około %1$d z %2$d wiersza · %3$d nie zostanie sprawdzone</item>
-        <item quantity="few">około %1$d z %2$d wierszy · %3$d nie zostanie sprawdzone</item>
-        <item quantity="many">około %1$d z %2$d wierszy · %3$d nie zostanie sprawdzone</item>
-        <item quantity="other">około %1$d z %2$d wiersza · %3$d nie zostanie sprawdzone</item>
     </plurals>
     <string name="essay_conflict_title">Ta odpowiedź została zmieniona na innym urządzeniu</string>
     <string name="essay_conflict_body">Zachowaj wersję, którą piszesz tutaj, albo przełącz się na tę drugą.</string>

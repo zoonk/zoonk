@@ -48,7 +48,6 @@
   "essay_limit_title": "3ed1a7a77e5e4b78adfc6c330bd1262e3293b34738fb74224d0fbbf6de8278f9",
   "essay_limit_title_any": "fa351c498b8c790d25063d9880897e518fb2674fac1a861115d8edf894f65ae3",
   "essay_lines_empty": "87410a6c629ece0f066c5a8acdda4aafc312658668cc00b59ad84d6a7b3d1025",
-  "essay_lines_over": "fd967c698fc0812420811ff50df41c6d5bd5512ab0793358c9f4f9b57fc19eaa",
   "essay_lines_question": "26d71cd1b73d5a041fdf6f5f5cc3f7e641a1951cff42250f03f98d3d127275c8",
   "essay_lines_used": "6bc63abed7ffecde19714c655f03c59a99c8d701e0e2116b41511e4e427b9902",
   "essay_minus": "70b808a757a569e2092594073a442dd5c999a911882927fe6b945c172b7e7df9",
@@ -200,12 +199,6 @@
         <item quantity="one">0 de %1$d línea</item>
         <item quantity="many">0 de %1$d líneas</item>
         <item quantity="other">0 de %1$d líneas</item>
-    </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">aproximadamente %1$d de %2$d línea · %3$d no se leerán</item>
-        <item quantity="many">aproximadamente %1$d de %2$d líneas · %3$d no se leerán</item>
-        <item quantity="other">aproximadamente %1$d de %2$d líneas · %3$d no se leerán</item>
     </plurals>
     <string name="essay_conflict_title">Esta respuesta cambió en otro dispositivo</string>
     <string name="essay_conflict_body">Conserva la versión que estás escribiendo aquí o cambia a la otra.</string>

@@ -48,7 +48,6 @@
   "essay_limit_title": "2a0e5c9d922d4f95b3b67fcf26a598a5a6cad8604a8634625d6795a6b2be8932",
   "essay_limit_title_any": "1dde54ba2386b7214f2bf6a861df4e2832ba604530cef373261c8c3643f0a2e8",
   "essay_lines_empty": "60f90685c6d00aaaa4047d21cb259500faefb9a4d37aff681921c568a93f8334",
-  "essay_lines_over": "dd5394c651c17efb3823da90ff639f957f7cd70f72f1ed0a817e3aeff02b8136",
   "essay_lines_question": "2c8c00c22365a3c83a983ef467c755bb93e4dff749ac62bacfcf39848cff2ce2",
   "essay_lines_used": "b6d15f7ecd63042025cb983e85e99ad47b4d800a7c2f1d2df8d9cef87d03c514",
   "essay_minus": "d551e510e48abe7a5435c62240c7b2a3a38b7a1f2de36d91d4934a0282d592d2",
@@ -196,11 +195,6 @@
     <plurals name="essay_lines_empty">
         <item quantity="one">0 / %1$d satır</item>
         <item quantity="other">0 / %1$d satır</item>
-    </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
-        <item quantity="other">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
     </plurals>
     <string name="essay_conflict_title">Bu cevap başka bir cihazda değişti</string>
     <string name="essay_conflict_body">Burada yazdığın sürümü koru ya da diğerine geç.</string>

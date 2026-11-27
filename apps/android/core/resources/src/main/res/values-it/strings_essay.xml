@@ -48,7 +48,6 @@
   "essay_limit_title": "c4ca36b956fa32312142cfbb71865e9b94bb7221d05db55b467dc8d63d700a9a",
   "essay_limit_title_any": "2724c2f244ee09893458b84f4c2c33f3f7964561a29c8d3b48e1e87d5bbb65ef",
   "essay_lines_empty": "454440efcb3c81646ef5a7586f244f70c530a1ff1568a729960d3edbc25260b4",
-  "essay_lines_over": "3db09fd7ccbe6f8672f2a88dec9c3515c529469634cc97779556f1e8598bce8d",
   "essay_lines_question": "ede5cea0fbdfb6284f8ae6de74dc019e259915dc346250abceb80938f2765b0f",
   "essay_lines_used": "c7d0fa2ca7b84200ab3603b038b5b2c53fad236c7568c2f3fef4625ac22665dc",
   "essay_minus": "cee8b1e9f5b28b4f0e936a86edc9e45b59d649e67f6360afd7535961bfdc9caa",
@@ -200,12 +199,6 @@
         <item quantity="one">0 righe su %1$d riga</item>
         <item quantity="many">0 righe su %1$d righe</item>
         <item quantity="other">0 righe su %1$d righe</item>
-    </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">circa %1$d riga su %2$d · %3$d non verrà letta</item>
-        <item quantity="many">circa %1$d righe su %2$d · %3$d non verranno lette</item>
-        <item quantity="other">circa %1$d righe su %2$d · %3$d non verranno lette</item>
     </plurals>
     <string name="essay_conflict_title">Questa risposta è cambiata su un altro dispositivo</string>
     <string name="essay_conflict_body">Mantieni la versione che stai scrivendo qui oppure passa all’altra.</string>

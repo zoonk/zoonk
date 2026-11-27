@@ -114,7 +114,7 @@ private fun PointsHeader(
     text: String,
 ) {
     val errorCount = grade.errors.size
-    val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
+    val lines = grade.estimatedLines ?: estimateWritingLines(text, prompt.charactersPerLine.toInt())
     val part = prompt.partMinimum
     val partMax = part?.max
     val percent = part?.minimum?.unit?.value == "percent"
