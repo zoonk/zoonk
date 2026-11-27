@@ -12,14 +12,14 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { FREE_LESSON_LIMIT } from "../entitlements/limits";
+import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { answerMistakePractice } from "../mistakes/answer-mistake-practice";
 import { readPlanSummary } from "../plans/_utils/plan-summary";
-import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -208,6 +208,7 @@ describe("adaptive study days", () => {
           durationMs: 4000,
           itemId: first.id,
           run: { answerIds: [], goalId: goal.id },
+          showing: await mistakeShowing(mistake.id),
           timeZone: "UTC",
         },
         mistakeId: mistake.id,
@@ -318,7 +319,9 @@ describe("adaptive study days", () => {
     await expect(
       loadDayRemediation({ context, plan: await loadDayPlan(context) }),
     ).resolves.toMatchObject({
-      teaching: [{ lessonId: lesson.id, payload: { returning: "anotherWay", skillIds: [skill.id] } }],
+      teaching: [
+        { lessonId: lesson.id, payload: { returning: "anotherWay", skillIds: [skill.id] } },
+      ],
     });
   });
 

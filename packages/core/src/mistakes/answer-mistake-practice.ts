@@ -10,6 +10,7 @@ import { finishPracticeAnswer, readPracticeFeedback } from "./_utils/practice-fe
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakePracticeAnswerInput } from "./contract";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
+import { isMistakeShowing } from "./mistake-item";
 import { type MistakeReplay, loadMistakeReplay } from "./mistake-replay";
 import { type MistakePracticeFeedback } from "./practice-feedback";
 
@@ -19,17 +20,21 @@ export type MistakePracticeAnswerResult =
 
 function matchesQuestion({
   input,
+  mistakeId,
   replay,
 }: {
   input: MistakePracticeAnswerInput;
+  mistakeId: string;
   replay: MistakeReplay;
 }) {
   return replay.kind === "item"
-    ? "itemId" in input && input.itemId === replay.item.id
+    ? "itemId" in input &&
+        input.itemId === replay.item.id &&
+        isMistakeShowing({ mistakeId, showing: input.showing })
     : "stepId" in input && input.stepId === replay.lesson.step.id;
 }
 
-/** A new answer must target the exact saved source of an open entry. */
+/** A new answer must target the exact saved source of an open entry, in an order that entry showed. */
 export function answerMistakePractice(input: {
   input: Extract<MistakePracticeAnswerInput, { itemId: string }>;
   mistakeId: string;
@@ -102,7 +107,7 @@ export async function answerMistakePractice({
 
   const replay = await loadMistakeReplay({ mistake, userId });
 
-  if (!replay || !matchesQuestion({ input, replay })) {
+  if (!replay || !matchesQuestion({ input, mistakeId: mistake.id, replay })) {
     return { status: "invalidItem" };
   }
 

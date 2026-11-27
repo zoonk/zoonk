@@ -17,7 +17,12 @@ import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake, shownMistakeOptions, shownOptionTexts } from "../_test-utils/shown-choice";
+import {
+  mistakeShowing,
+  pickInMistake,
+  shownMistakeOptions,
+  shownOptionTexts,
+} from "../_test-utils/shown-choice";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
@@ -454,6 +459,7 @@ describe(getMistakePractice, () => {
       attemptId,
       durationMs: 9000,
       itemId: item.id,
+      showing: getMistakeShowing(mistake),
       timeZone,
     };
 
@@ -484,7 +490,13 @@ describe(getMistakePractice, () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: right, durationMs: 9000, itemId: item.id, timeZone },
+        input: {
+          answer: right,
+          durationMs: 9000,
+          itemId: item.id,
+          showing: await mistakeShowing(mistake.id),
+          timeZone,
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toMatchObject({
@@ -517,7 +529,13 @@ describe(answerMistakePractice, () => {
     await learnerSkillFixture({ skillId: skill.id, state: "solid", userId: user.id });
 
     const result = await answerMistakePractice({
-      input: { answer: { dontKnow: true }, durationMs: 100, itemId: original.id, timeZone: "UTC" },
+      input: {
+        answer: { dontKnow: true },
+        durationMs: 100,
+        itemId: original.id,
+        showing: await mistakeShowing(mistake.id),
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -550,12 +568,18 @@ describe(answerMistakePractice, () => {
       pickInMistake({ mistakeId: mistake.id, right: false }),
     ]);
 
-    const input = { answer: right, attemptId, durationMs: 9000, itemId: extra.id };
+    const input = {
+      answer: right,
+      attemptId,
+      durationMs: 9000,
+      itemId: extra.id,
+      showing: await mistakeShowing(mistake.id),
+    };
 
     const first = await answerMistakePractice({ input, mistakeId: mistake.id });
 
     const retry = await answerMistakePractice({
-      input: { ...input, answer: wrong },
+      input: { ...input, answer: wrong, showing: await mistakeShowing(mistake.id) },
       mistakeId: mistake.id,
     });
 
@@ -564,7 +588,11 @@ describe(answerMistakePractice, () => {
 
     await expect(
       answerMistakePractice({
-        input: { ...input, attemptId: crypto.randomUUID() },
+        input: {
+          ...input,
+          attemptId: crypto.randomUUID(),
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
@@ -586,6 +614,8 @@ describe(answerMistakePractice, () => {
       pickInMistake({ mistakeId: mistake.id, right: false }),
     ]);
 
+    const showing = await mistakeShowing(mistake.id);
+
     const results = await Promise.all(
       [right, wrong, right].map((answer) =>
         answerMistakePractice({
@@ -595,6 +625,7 @@ describe(answerMistakePractice, () => {
             durationMs: 9000,
             itemId: extra.id,
             run: { answerIds: [] },
+            showing,
             timeZone: "UTC",
           },
           mistakeId: mistake.id,
@@ -657,6 +688,7 @@ describe(answerMistakePractice, () => {
             attemptId: crypto.randomUUID(),
             durationMs: 9000,
             itemId: original.id,
+            showing: await mistakeShowing(mistake.id),
             timeZone: "UTC",
           },
           mistakeId: mistake.id,
@@ -706,6 +738,7 @@ describe(answerMistakePractice, () => {
         answer: await pickInMistake({ mistakeId: mistake.id, right: false }),
         durationMs: 9000,
         itemId: original.id,
+        showing: await mistakeShowing(mistake.id),
       },
       mistakeId: mistake.id,
     });
@@ -720,6 +753,7 @@ describe(answerMistakePractice, () => {
         answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 9000,
         itemId: original.id,
+        showing: await mistakeShowing(mistake.id),
       },
       mistakeId: mistake.id,
     });
@@ -753,6 +787,7 @@ describe(answerMistakePractice, () => {
       answer: await pickInMistake({ mistakeId: mistake.id }),
       durationMs: 9000,
       itemId: original.id,
+      showing: await mistakeShowing(mistake.id),
       timeZone: "UTC",
     };
 
@@ -835,7 +870,13 @@ describe(answerMistakePractice, () => {
     const right = await pickInMistake({ mistakeId: mistake.id });
 
     const result = await answerMistakePractice({
-      input: { answer: right, durationMs: 9000, itemId: original.id, timeZone: "UTC" },
+      input: {
+        answer: right,
+        durationMs: 9000,
+        itemId: original.id,
+        showing: await mistakeShowing(mistake.id),
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -971,6 +1012,7 @@ describe(answerMistakePractice, () => {
         answer: await pickInMistake({ mistakeId: mistake.id }),
         durationMs: 45_000,
         itemId: extra.id,
+        showing: await mistakeShowing(mistake.id),
       },
       mistakeId: mistake.id,
     });
@@ -981,7 +1023,12 @@ describe(answerMistakePractice, () => {
     });
 
     await answerMistakePractice({
-      input: { answer: { dontKnow: true }, durationMs: 45_000, itemId: extra.id },
+      input: {
+        answer: { dontKnow: true },
+        durationMs: 45_000,
+        itemId: extra.id,
+        showing: await mistakeShowing(mistake.id),
+      },
       mistakeId: mistake.id,
     });
 
@@ -1012,6 +1059,7 @@ describe(answerMistakePractice, () => {
         answer: await pickInMistake({ mistakeId: rightMistake.id }),
         durationMs: 9000,
         itemId: extra.id,
+        showing: await mistakeShowing(rightMistake.id),
       },
       mistakeId: rightMistake.id,
     });
@@ -1023,6 +1071,7 @@ describe(answerMistakePractice, () => {
         answer: { selectedIndex: shown.indexOf("Wrong answer") },
         durationMs: 9000,
         itemId: original.id,
+        showing: await mistakeShowing(wrongMistake.id),
       },
       mistakeId: wrongMistake.id,
     });
@@ -1061,6 +1110,7 @@ describe(answerMistakePractice, () => {
         answer: { selectedIndex: shown.indexOf("Other") },
         durationMs: 100,
         itemId: unmatched.id,
+        showing: await mistakeShowing(mistake.id),
       },
       mistakeId: mistake.id,
     });
@@ -1085,7 +1135,12 @@ describe(answerMistakePractice, () => {
     const otherItem = await itemFixture({ content: choiceItemContent(), skillId: otherSkill.id });
 
     const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: otherItem.id },
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 9000,
+        itemId: otherItem.id,
+        showing: await mistakeShowing(mistake.id),
+      },
       mistakeId: mistake.id,
     });
 
@@ -1103,7 +1158,12 @@ describe(answerMistakePractice, () => {
     });
 
     const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 9000,
+        itemId: original.id,
+        showing: await mistakeShowing(mistake.id),
+      },
       mistakeId: mistake.id,
     });
 

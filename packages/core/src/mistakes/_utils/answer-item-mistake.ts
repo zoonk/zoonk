@@ -41,7 +41,7 @@ export async function answerItemMistake({
   const { item } = replay;
   const answer = saved ? (readRecordedAnswer(saved.answer) ?? input.answer) : input.answer;
 
-  const showing = getAnsweredShowing({ answer: saved?.answer, mistake });
+  const showing = saved ? getAnsweredShowing({ answer: saved.answer, mistake }) : input.showing;
   const graded = gradeMistakeItem({ answer, replay, showing });
   const model = item.format === "typed" && "text" in answer && !graded.isCorrect;
 

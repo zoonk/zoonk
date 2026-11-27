@@ -11,7 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake, shownOptionTexts } from "../_test-utils/shown-choice";
 import { getMock } from "../exams/mocks/get-mock";
 import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
@@ -21,6 +21,7 @@ import { getStudySession } from "../sessions/get-study-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
+import { getMistakeShowing } from "./mistake-item";
 
 async function questions(userId: string) {
   const skill = await skillFixture();
@@ -32,6 +33,111 @@ async function questions(userId: string) {
       return { item, mistake };
     }),
   );
+}
+
+/** A run whose question another tab already missed: the miss reorders the options it showed. */
+async function staleTabRun(scope: "block" | "mock" | "notebook") {
+  freezeClock();
+  vi.setSystemTime(new Date("2026-11-12T13:00:00Z"));
+
+  const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+  const content = choiceItemContent();
+
+  const extras = ["Fifth", "Sixth", "Seventh", "Eighth"].map((text) => ({
+    isCorrect: false,
+    misconception: null,
+    reason: `${text} isn't it.`,
+    text,
+  }));
+
+  const item = await itemFixture({
+    content: { ...content, options: [...content.options, ...extras] },
+    skillId: skill.id,
+  });
+
+  const mistake = await mistakeFixture({
+    cause: "gap",
+    createdAt: new Date("2026-11-11T12:00:00Z"),
+    itemId: item.id,
+    skillId: skill.id,
+    userId: user.id,
+  });
+
+  const runs = {
+    block: async () => ({
+      blockId: await practiceBlock({ mistakeId: mistake.id, userId: user.id }),
+    }),
+    mock: async () => ({
+      mockId: await finishedMock({ item, mistakeId: mistake.id, userId: user.id }),
+    }),
+    notebook: async () => ({}),
+  };
+
+  const run = await runs[scope]();
+
+  mockSession(user.id);
+
+  const layout = (missedAt: Date) =>
+    shownOptionTexts({ blockId: getMistakeShowing({ id: mistake.id, missedAt }), item });
+
+  const before = layout(mistake.missedAt);
+
+  // The miss's time decides the next order, so miss at a time whose order moves the right answer.
+  const missedAt = Array.from(
+    { length: 60 },
+    (_, minute) => new Date(Date.UTC(2026, 10, 12, 14, minute)),
+  ).find((time) => layout(time).indexOf("Right answer") !== before.indexOf("Right answer"));
+
+  if (!missedAt) {
+    throw new Error("Expected a miss time that moves the right answer");
+  }
+
+  return { item, missedAt, mistake, run };
+}
+
+async function practiceBlock({ mistakeId, userId }: { mistakeId: string; userId: string }) {
+  const session = await studySessionFixture({ startedAt: new Date(), status: "active", userId });
+
+  const block = await studySessionBlockFixture({
+    kind: "review",
+    payload: { mistakeIds: [mistakeId] },
+    sessionId: session.id,
+    status: "pending",
+  });
+
+  return block.id;
+}
+
+async function finishedMock({
+  item,
+  mistakeId,
+  userId,
+}: {
+  item: { id: string };
+  mistakeId: string;
+  userId: string;
+}) {
+  const mock = await prisma.mockExam.create({
+    data: {
+      conditions: {},
+      finishedAt: new Date(),
+      sectionStartedAt: new Date(),
+      status: "finished",
+      userId,
+    },
+  });
+
+  const attempt = await attemptFixture({
+    answer: { selectedIndex: 1 },
+    answeredAt: new Date("2026-11-11T12:00:00Z"),
+    isCorrect: false,
+    itemId: item.id,
+    mockExamId: mock.id,
+    userId,
+  });
+
+  await prisma.mistake.update({ data: { attemptId: attempt.id }, where: { id: mistakeId } });
+  return mock.id;
 }
 
 describe("Scoped mistake practice", () => {
@@ -76,6 +182,7 @@ describe("Scoped mistake practice", () => {
           durationMs: 4000,
           itemId: item.id,
           run: { answerIds: [], blockId: block.id },
+          showing: await mistakeShowing(mistake.id),
           timeZone: "UTC",
         },
         mistakeId: mistake.id,
@@ -137,6 +244,7 @@ describe("Scoped mistake practice", () => {
           answer: await pickInMistake({ mistakeId: mistake.id }),
           durationMs: 4000,
           itemId: item.id,
+          showing: await mistakeShowing(mistake.id),
           timeZone: "UTC",
         },
         mistakeId: mistake.id,
@@ -296,6 +404,7 @@ describe("Scoped mistake practice", () => {
         durationMs: 4000,
         itemId: item.id,
         run: { answerIds: [], mockId: mock.id },
+        showing: await mistakeShowing(earlier.mistake!.id),
         timeZone: "UTC",
       },
       mistakeId: earlier.mistake!.id,
@@ -351,6 +460,7 @@ describe("Scoped mistake practice", () => {
           answer: await pickInMistake({ mistakeId: first!.mistake.id }),
           durationMs: 4000,
           itemId: first!.item.id,
+          showing: await mistakeShowing(first!.mistake.id),
           timeZone: "UTC",
         },
         mistakeId: first!.mistake.id,
@@ -426,6 +536,60 @@ describe("Scoped mistake practice", () => {
     });
   });
 
+  it.each(["notebook", "block", "mock"] as const)(
+    "grades each tab of a %s run in the order that tab showed",
+    async (scope) => {
+      const { item, missedAt, mistake, run } = await staleTabRun(scope);
+      const practice = await getMistakePractice({ ...run, timeZone: "UTC" });
+
+      if (practice.status !== "ready" || !practice.practice[0]) {
+        throw new Error(`The ${scope} run didn't load its mistake`);
+      }
+
+      const [{ questions: shown, showing }] = practice.practice;
+      const options = shown[0]?.options ?? [];
+      const pick = (text: string) => ({ selectedIndex: options.indexOf(text) });
+
+      const send = (answer: { selectedIndex: number }, attemptId: string, sent = showing) =>
+        answerMistakePractice({
+          input: {
+            answer,
+            attemptId,
+            durationMs: 4000,
+            itemId: item.id,
+            run: { ...run, answerIds: [] },
+            showing: sent,
+            timeZone: "UTC",
+          },
+          mistakeId: mistake.id,
+        });
+
+      const firstTab = randomUUID();
+      vi.setSystemTime(missedAt);
+
+      const missed = await send(pick("Wrong answer"), firstTab);
+      expect(missed).toMatchObject({ feedback: { isCorrect: false }, status: "ready" });
+
+      const moved = await mistakeShowing(mistake.id);
+      expect(moved).not.toBe(showing);
+
+      await expect(send(pick("Right answer"), randomUUID())).resolves.toMatchObject({
+        feedback: { correctAnswer: pick("Right answer"), isCorrect: true },
+        status: "ready",
+      });
+
+      await expect(send(pick("Right answer"), firstTab, moved)).resolves.toStrictEqual(missed);
+
+      await expect(
+        send(
+          pick("Right answer"),
+          randomUUID(),
+          getMistakeShowing({ ...mistake, id: randomUUID() }),
+        ),
+      ).resolves.toStrictEqual({ status: "invalidItem" });
+    },
+  );
+
   it("grades a day's replay in its own option order and fixes the notebook entry it missed", async () => {
     freezeClock();
     vi.setSystemTime(new Date("2026-11-11T12:00:00Z"));
@@ -499,6 +663,7 @@ describe("Scoped mistake practice", () => {
       durationMs: 4000,
       itemId: item.id,
       run: { answerIds: [], blockId: block.id },
+      showing: await mistakeShowing(mistake.id),
       timeZone: "UTC",
     };
 
@@ -511,7 +676,11 @@ describe("Scoped mistake practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { ...input, answer: { selectedIndex: shown?.indexOf("Wrong answer") ?? -1 } },
+        input: {
+          ...input,
+          answer: { selectedIndex: shown?.indexOf("Wrong answer") ?? -1 },
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual(first);

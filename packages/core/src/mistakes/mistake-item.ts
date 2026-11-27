@@ -22,6 +22,17 @@ export function getMistakeShowing(mistake: Pick<Mistake, "id" | "missedAt">): st
   return `mistake:${mistake.id}:${mistake.missedAt.getTime()}`;
 }
 
+/** A tab keeps the order it was given after a miss elsewhere reorders the mistake, so an answer is graded in the showing it names. */
+export function isMistakeShowing({
+  mistakeId,
+  showing,
+}: {
+  mistakeId: string;
+  showing: string;
+}): boolean {
+  return showing.startsWith(`mistake:${mistakeId}:`);
+}
+
 /** The showing a practice answer was given in, saved with it as `practiceShowing`; the current one for answers saved before it was. */
 export function getAnsweredShowing({
   answer,

@@ -97,9 +97,23 @@ const mistakePracticeAnswerCommon = z
   })
   .strict();
 
+const MAX_SHOWING_LENGTH = 128;
+
 export const mistakePracticeAnswerInputSchema = z
   .union([
-    studyAnswerInputSchema.extend(mistakePracticeAnswerCommon.shape).strict(),
+    studyAnswerInputSchema
+      .extend({
+        ...mistakePracticeAnswerCommon.shape,
+        showing: z
+          .string()
+          .min(1)
+          .max(MAX_SHOWING_LENGTH)
+          .meta({
+            description:
+              "The practice entry's `showing`, sent back as it came: the answer is graded in the order that entry showed",
+          }),
+      })
+      .strict(),
     itemAnswerInputSchema
       .omit({ answer: true, itemId: true })
       .extend({

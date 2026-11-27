@@ -123,6 +123,12 @@ export const mistakePracticeResponseSchema = z
         questions: z
           .array(mistakeQuestionSchema)
           .meta({ description: "The question to answer: the mistake's own while it can be asked" }),
+        showing: z
+          .string()
+          .meta({
+            description:
+              "The order this entry laid out its options in. Send it back unchanged with an answer to its question",
+          }),
         snapshot: mistakeSnapshotSchema,
         tutorAvailable: z.boolean(),
       }),

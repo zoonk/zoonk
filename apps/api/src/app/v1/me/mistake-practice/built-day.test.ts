@@ -128,7 +128,8 @@ describe("mistake practice from a built study day", () => {
     expect(left.map(({ mistakeId }) => mistakeId)).toStrictEqual([first.id, last.id]);
 
     const answer = async (mistake: typeof first, answerIds: string[]) => {
-      const shown = left.find(({ mistakeId }) => mistakeId === mistake.id)?.questions[0]?.options;
+      const entry = left.find(({ mistakeId }) => mistakeId === mistake.id);
+      const shown = entry?.questions[0]?.options;
 
       const reply = await answerMistake(
         post(`/me/mistakes/${mistake.id}/answers`, {
@@ -137,6 +138,7 @@ describe("mistake practice from a built study day", () => {
           durationMs: 4000,
           itemId: mistake.itemId,
           run: { answerIds, blockId: block.id },
+          showing: entry?.showing,
           timeZone: "UTC",
         }),
         { params: Promise.resolve({ mistakeId: mistake.id }) },

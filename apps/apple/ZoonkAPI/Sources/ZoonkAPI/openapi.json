@@ -33413,12 +33413,19 @@
                   "answerIds"
                 ],
                 "additionalProperties": false
+              },
+              "showing": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "description": "The practice entry's `showing`, sent back as it came: the answer is graded in the order that entry showed"
               }
             },
             "required": [
               "answer",
               "durationMs",
-              "itemId"
+              "itemId",
+              "showing"
             ],
             "additionalProperties": false
           },
@@ -96206,6 +96213,10 @@
                   },
                   "description": "The question to answer: the mistake's own while it can be asked"
                 },
+                "showing": {
+                  "type": "string",
+                  "description": "The order this entry laid out its options in. Send it back unchanged with an answer to its question"
+                },
                 "snapshot": {
                   "$ref": "#/components/schemas/MistakeSnapshot"
                 },
@@ -96219,6 +96230,7 @@
                 "lesson",
                 "mistakeId",
                 "questions",
+                "showing",
                 "snapshot",
                 "tutorAvailable"
               ],

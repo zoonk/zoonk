@@ -179,6 +179,7 @@ test.describe("Mistake practice API", () => {
 
       expect(scoped.practice.map((entry) => entry.mistakeId)).toStrictEqual([today.id]);
       const shown = scoped.practice[0]?.questions[0]?.options;
+      const showing = scoped.practice[0]?.showing;
 
       const completion = { answerIds: [], blockId: block.id, ended: true, timeZone: "UTC" };
       const foreignCompletion = await stranger.api.post(completionPath, { data: completion });
@@ -197,6 +198,7 @@ test.describe("Mistake practice API", () => {
         durationMs: 4000,
         itemId: today.itemId,
         run: { answerIds: [], blockId: block.id },
+        showing,
         timeZone: "UTC",
       };
 
@@ -528,6 +530,7 @@ test.describe("Mistake practice API", () => {
       attemptId: randomUUID(),
       durationMs: 2000,
       itemId: item.id,
+      showing: practice.practice.find((entry) => entry.mistakeId === original.id)?.showing,
       timeZone: "UTC",
     };
 
@@ -567,6 +570,7 @@ test.describe("Mistake practice API", () => {
           answer: tapOption(entry?.questions[0]?.options),
           durationMs: 12_000,
           itemId: entry?.questions[0]?.itemId,
+          showing: entry?.showing,
           timeZone: "UTC",
         },
       }),

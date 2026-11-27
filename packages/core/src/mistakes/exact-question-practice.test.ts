@@ -7,7 +7,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { typedGrade } from "../lesson-player/_test-utils/typed-grade";
@@ -117,7 +117,13 @@ describe("exact-question practice", () => {
     });
 
     const result = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id, timeZone: "UTC" },
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 2000,
+        itemId: bank.id,
+        showing: await mistakeShowing(mistake.id),
+        timeZone: "UTC",
+      },
       mistakeId: mistake.id,
     });
 
@@ -214,7 +220,12 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
@@ -322,7 +333,12 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(mistake.id),
+        },
         mistakeId: mistake.id,
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
@@ -485,7 +501,12 @@ describe("exact-question practice", () => {
 
     await expect(
       answerMistakePractice({
-        input: { answer: right, durationMs: 2000, itemId: bank.id },
+        input: {
+          answer: right,
+          durationMs: 2000,
+          itemId: bank.id,
+          showing: await mistakeShowing(recorded.mistake.id),
+        },
         mistakeId: recorded.mistake.id,
       }),
     ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });

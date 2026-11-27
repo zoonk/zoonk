@@ -31,6 +31,8 @@ type MistakePracticeEntry = {
   drill: DrillView;
   lesson: MistakeLessonReplay | null;
   mistakeId: string;
+  /** The order this entry laid out its options in; an item answer sends it back. */
+  showing: string;
   tutorAvailable: boolean;
   /** Stimulus sets must be displayed with their questions. */
   questions: (SessionQuestion & { set: ItemSetView | null })[];
@@ -96,6 +98,7 @@ export async function getMistakePractice(
           : null,
       mistakeId: mistake.id,
       questions: replay.kind === "item" ? [toMistakeQuestion({ replay, showing })] : [],
+      showing,
       snapshot: readMistakeSnapshot(mistake.snapshot),
       tutorAvailable: replay.tutorAvailable,
     };

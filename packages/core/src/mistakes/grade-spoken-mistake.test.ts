@@ -13,7 +13,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { pickInMistake } from "../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../_test-utils/shown-choice";
 import { getUsageRule } from "../entitlements/limits";
 import { gradeSpokenAnswer } from "../library/language/grade-spoken-answer";
 import { answerMistakePractice } from "./answer-mistake-practice";
@@ -284,6 +284,7 @@ describe("Original notebook questions", () => {
           durationMs: 2000,
           itemId: item.id,
           run: { answerIds: [], blockId: block.id },
+          showing: await mistakeShowing(choice.id),
           timeZone: "UTC",
         },
         mistakeId: choice.id,
