@@ -65,6 +65,7 @@ function essayView(q: URLSearchParams): Props["essay"] {
       criteria: rows.map(({ id, max: points }, index) => ({ id, name: `C${index + 1}`, points })),
       keySource: "publishedStandard",
       lines: 30,
+      maxCharactersPerLine: 160,
       minimumWords: 0,
       points: max,
       taskKey: "essay",
