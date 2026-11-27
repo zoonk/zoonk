@@ -133,6 +133,10 @@ class TodayDayScreenshots {
     fun remedialLanguagePhone() = render("today-remedial-language-phone", remedial(language = true))
 
     @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun remedialOneSubjectPhone() = render("today-remedial-one-subject-phone", remedial(oneSubject = true))
+
+    @Test
     @Config(qualifiers = "w411dp-h1100dp-xxhdpi")
     fun doneKeepLearningPhone() = render("today-done-phone", done())
 
@@ -436,34 +440,43 @@ class TodayDayScreenshots {
         )
 
     /** A day that works on the learner's mistakes: their missed questions lead, then lessons that come back, then new ones. */
-    private fun remedial(language: Boolean = false) =
-        Day(
-            day(
-                "underway",
-                listOfNotNull(
-                    block(0, "practice", "screen" to "mistakesPractice", "estimatedMinutes" to 3, "questions" to 3),
-                    block(1, "review", "estimatedMinutes" to 4, "questions" to 6, "subject" to "Biology".takeUnless { language }),
-                    if (language) {
-                        block(
-                            2,
-                            "practice",
-                            "screen" to "pattern",
-                            "patternId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d09",
-                            "title" to "Gender of nouns",
-                            "estimatedMinutes" to 3,
-                        )
-                    } else {
-                        lesson(2, "Photosynthesis step by step", "subject" to "Biology", "returning" to "again")
-                    },
-                    lesson(3, "Why cells divide", "returning" to "anotherWay").takeUnless { language },
-                    lesson(4, "Genes and proteins", "subject" to "Genetics".takeUnless { language }),
-                ),
-                next = 0,
-                left = 22,
-                done = 0,
-                dailyGoal = 22,
+    private fun remedial(
+        language: Boolean = false,
+        oneSubject: Boolean = false,
+    ) = Day(
+        day(
+            "underway",
+            listOfNotNull(
+                block(0, "practice", "screen" to "mistakesPractice", "estimatedMinutes" to 3, "questions" to 3),
+                block(1, "review", "estimatedMinutes" to 4, "questions" to 6, "subject" to "Biology".takeUnless { language }),
+                block(
+                    5,
+                    "practice",
+                    "estimatedMinutes" to 5,
+                    "subject" to "Biology",
+                    "topics" to JsonArray(listOf("Cell membranes", "Mitosis", "Osmosis").map(::JsonPrimitive)),
+                ).takeUnless { language },
+                if (language) {
+                    block(
+                        2,
+                        "practice",
+                        "screen" to "pattern",
+                        "patternId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d09",
+                        "title" to "Gender of nouns",
+                        "estimatedMinutes" to 3,
+                    )
+                } else {
+                    lesson(2, "Photosynthesis step by step", "subject" to "Biology", "returning" to "again")
+                },
+                lesson(3, "Why cells divide", "returning" to "anotherWay").takeUnless { language },
+                lesson(4, "Genes and proteins", "subject" to (if (oneSubject) "Biology" else "Genetics").takeUnless { language }),
             ),
-        )
+            next = 0,
+            left = 22,
+            done = 0,
+            dailyGoal = 22,
+        ),
+    )
 
     /** An exam day with a lesson of the exam strategy the learner added, which the notice doesn't list. */
     private fun strategy(document: String = "notice") =
