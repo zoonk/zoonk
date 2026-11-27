@@ -125,7 +125,11 @@ function analyze({
 
   return {
     asked: asked.length,
-    complete: scored.length >= LEVEL_TEST_BLOCK_SIZE || unknownStreak,
+    complete:
+      unknownStreak ||
+      (asked.length >= LEVEL_TEST_BLOCK_SIZE &&
+        scored.length >= LEVEL_TEST_BLOCK_SIZE - 1 &&
+        !asked.some((answer) => answer.audioDeferred)),
     posterior: getPosterior({ answers: scored, start }),
     scored,
     unknownStreak,

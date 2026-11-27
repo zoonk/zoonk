@@ -82,10 +82,14 @@ function runTest({
   responds,
   stopAfter = Infinity,
   defer,
+  skipClip,
+  deferAt,
 }: {
   start: number;
   firstBand?: number;
   stopAfter?: number;
+  deferAt?: number;
+  skipClip?: boolean;
   defer?: "question" | "confirmation";
   responds: (band: number, confirmation: boolean, skill: Skill) => boolean;
 }) {
@@ -110,7 +114,9 @@ function runTest({
       skills.push(skill);
     }
 
-    if (defer === step.kind && skill === "listening") {
+    if (skipClip && answers.length === 5) {
+      answers.push({ answerIndex: null, durationMs: 0, id, skipped: true });
+    } else if ((defer === step.kind || answers.length === deferAt) && skill === "listening") {
       answers.push({ answerIndex: null, audioDeferred: true, durationMs: 0, id, skipped: true });
     } else {
       const correct = responds(getBand(level), step.kind === "confirmation", skill);
@@ -153,9 +159,20 @@ describe("matched-model level test", () => {
       ranges: {},
     });
 
+    expect(runTest({ ...learner, deferAt: 7 })).toMatchObject({
+      planningStart: null,
+      ranges: { reading: expect.anything() },
+    });
+
     const partial = runTest({ ...learner, defer: "question" });
     expect(Object.keys(partial.ranges)).toStrictEqual(["reading"]);
     expect(partial).toMatchObject({ confirmed: null, end: "audio_deferred", planningStart: null });
+  });
+
+  it("keeps both levels and the full check after one skipped clip", () => {
+    const result = runTest({ responds: () => true, skipClip: true, start: 4 });
+    expect(result).toMatchObject({ answered: 12, end: "check_passed" });
+    expect(Object.keys(result.ranges)).toStrictEqual(["reading", "listening"]);
   });
 
   it("keeps both levels on a missed or deferred check and grants no skip", () => {
