@@ -10,10 +10,16 @@ import {
   findWrittenTaskSubjects,
   listTaskSubjectInputs,
 } from "./find-written-task-subjects";
+import {
+  applyWrittenGrading,
+  listWrittenGradingInputs,
+  readWrittenGrading,
+} from "./read-written-grading";
 
 /**
  * The reads after the blueprint reading, tied to what it found: the question formats, which lead
- * the reading's, then the subjects each written task is on. Either failing leaves the reading as it is.
+ * the reading's, then the subjects each written task is on and how its answers are marked. Any of
+ * them failing leaves the reading as it is.
  */
 export async function readFollowUps({
   extraction,
@@ -38,16 +44,34 @@ export async function readFollowUps({
 
   const withFormats = applyQuestionFormats({ extraction, found: formats.data?.data ?? [] });
 
-  const subjects = await safeAsync(() =>
-    findWrittenTaskSubjects({
-      ...listTaskSubjectInputs(withFormats),
-      analytics,
-      documents,
-      exam,
-      serviceTier,
-      useFallback,
-    }),
-  );
+  const [subjects, grading] = await Promise.all([
+    safeAsync(() =>
+      findWrittenTaskSubjects({
+        ...listTaskSubjectInputs(withFormats),
+        analytics,
+        documents,
+        exam,
+        serviceTier,
+        useFallback,
+      }),
+    ),
+    safeAsync(() =>
+      readWrittenGrading({
+        analytics,
+        documents,
+        exam,
+        serviceTier,
+        tasks: listWrittenGradingInputs(withFormats),
+        useFallback,
+      }),
+    ),
+  ]);
 
-  return applyWrittenTaskSubjects({ extraction: withFormats, found: subjects.data?.data ?? [] });
+  return applyWrittenGrading({
+    extraction: applyWrittenTaskSubjects({
+      extraction: withFormats,
+      found: subjects.data?.data ?? [],
+    }),
+    found: grading.data?.data ?? [],
+  });
 }

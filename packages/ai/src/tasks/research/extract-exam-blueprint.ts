@@ -9,7 +9,7 @@ import { streamTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { readFollowUps } from "./blueprint-follow-ups";
 import { pointsScoringShape } from "./blueprint-points-schema";
-import { writtenTaskSchema } from "./blueprint-written-schema";
+import { type ReadGrading, writtenTaskSchema } from "./blueprint-written-schema";
 import { cited, citedMany } from "./cited-passages";
 import readingAgainPrompt from "./extract-exam-blueprint-reading-again.prompt.md";
 import systemPrompt from "./extract-exam-blueprint.prompt.md";
@@ -166,7 +166,7 @@ type Extraction = z.infer<typeof extractionSchema>;
 type Mock = NonNullable<Extraction["mock"]>;
 type Section = Mock["sections"][number];
 type Task = Section["tasks"][number];
-type WrittenFields = "grading" | "handwritten" | "lines" | "officialIdentifier" | "points";
+type WrittenFields = "handwritten" | "lines" | "officialIdentifier" | "points";
 
 export type BlueprintExtraction = Omit<Extraction, "mock"> & {
   mock:
@@ -175,6 +175,8 @@ export type BlueprintExtraction = Omit<Extraction, "mock"> & {
           session?: Section["session"];
           tasks: (Omit<Task, WrittenFields> &
             Partial<Pick<Task, WrittenFields>> & {
+              /** How its answers are marked, read after the reading. */
+              grading?: ReadGrading | null;
               /** The subjects, groups or choices its questions are on, read after the reading. */
               subjects?: string[];
             })[];

@@ -1048,6 +1048,7 @@ describe("keeping written facts from a checked notice", () => {
                 weight: null,
               },
             ],
+            deductions: [],
             language: null,
             limits: [],
             rounding: null,

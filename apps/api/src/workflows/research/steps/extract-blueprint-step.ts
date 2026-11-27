@@ -1,15 +1,14 @@
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/research/check-cited-facts";
 import { checkExamReading } from "@zoonk/ai/tasks/research/check-exam-reading";
-import { listExamParts } from "@zoonk/ai/tasks/research/exam-parts";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
 import {
-  applyQuestionFormats,
-  extractQuestionFormats,
-} from "@zoonk/ai/tasks/research/extract-question-formats";
+  type WrittenTaskGrading,
+  applyWrittenGrading,
+} from "@zoonk/ai/tasks/research/read-written-grading";
 import { translatePassMarks } from "@zoonk/ai/tasks/research/translate-pass-marks";
 import {
   isUsableBlueprint,
@@ -35,6 +34,8 @@ import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { logError } from "@zoonk/utils/logger";
 import { FatalError } from "workflow";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
+import { readBlueprintFormatsStep } from "./blueprint-formats-step";
+import { readWrittenGradingStep } from "./written-grading-step";
 import { readWrittenTaskSubjectsStep } from "./written-task-subjects-step";
 
 export type BlueprintReading = {
@@ -172,41 +173,26 @@ async function extractBlueprintDraftStep({
   };
 }
 
-async function readBlueprintFormatsStep({
-  extraction,
-  sourceIds,
-  ...input
-}: Omit<Parameters<typeof extractQuestionFormats>[0], "documents" | "parts"> & {
-  sourceIds: string[];
-  extraction: BlueprintExtraction;
-}) {
-  "use step";
-  const documents = await loadSourceDocuments(sourceIds);
-
-  const { data } = await extractQuestionFormats({
-    ...input,
-    documents,
-    parts: listExamParts(extraction),
-  });
-
-  return applyQuestionFormats({ extraction, found: data });
-}
-
+/** Gives each written task the marking read for it beside the reading, then lists the facts to check. */
 async function prepareBlueprintChecksStep({
   documents,
-  extraction,
+  gradings,
+  reading,
 }: {
   documents: BlueprintTextDocument[];
-  extraction: BlueprintExtraction;
+  gradings: WrittenTaskGrading[];
+  reading: BlueprintExtraction;
 }) {
   "use step";
+
+  const extraction = applyWrittenGrading({ extraction: reading, found: gradings });
 
   const facts = listBlueprintFacts({
     documents: documents.map((document) => ({ sourceId: document.id, text: document.text })),
     extraction,
   });
 
-  return { batches: toCheckBatches(toCitedFacts(facts)), facts };
+  return { batches: toCheckBatches(toCitedFacts(facts)), extraction, facts };
 }
 
 async function checkCitedFactsStep(input: Parameters<typeof checkCitedFacts>[0]) {
@@ -242,11 +228,16 @@ export async function extractBlueprint({
     () => draft.data,
   );
 
-  const extraction = await readWrittenTaskSubjectsStep({ ...reads, extraction: withFormats }).catch(
-    () => withFormats,
-  );
+  const [withSubjects, gradings] = await Promise.all([
+    readWrittenTaskSubjectsStep({ ...reads, extraction: withFormats }).catch(() => withFormats),
+    readWrittenGradingStep({ ...reads, extraction: withFormats }).catch(() => []),
+  ]);
 
-  const { batches, facts } = await prepareBlueprintChecksStep({ documents, extraction });
+  const { batches, extraction, facts } = await prepareBlueprintChecksStep({
+    documents,
+    gradings,
+    reading: withSubjects,
+  });
 
   const [checks, findings, passMarks] = await Promise.all([
     Promise.all(
