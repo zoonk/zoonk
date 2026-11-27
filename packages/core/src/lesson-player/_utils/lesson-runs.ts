@@ -188,7 +188,7 @@ export async function findLastLessonFinish({
   const finished = await client.learningEvent.findFirst({
     orderBy: { endedAt: "desc" },
     select: { endedAt: true },
-    where: { ...lessonRunsWhere({ lessonId, userId }), endedAt: { not: null } },
+    where: { ...lessonRunsWhere({ lessonId, userId }), ...NOT_A_CAPSULE, endedAt: { not: null } },
   });
 
   return finished?.endedAt ?? null;

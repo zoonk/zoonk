@@ -24,6 +24,8 @@ import { MAX_SENTENCE_ORDERS_ATTEMPTS } from "../library/language/sentence-order
 import { readSavedLessonMap } from "../library/lessons/lesson-map";
 import { readSavedStepMarks } from "../library/marks/step-marks";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
+import { CAPSULE_LEDGER_KIND } from "../milestones/award-milestones";
+import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
 import { completeLibraryLesson } from "./complete-library-lesson";
@@ -115,6 +117,24 @@ describe(getPlayableLibraryLesson, () => {
     }
 
     expect(sittings.some((order) => order.join(",") !== first.join(","))).toBe(true);
+  });
+
+  it("keeps a sitting's order when a review capsule on the lesson ends", async () => {
+    const { lesson, user } = await setupPlayableLesson({
+      steps: [{ content: FIVE_OPTION_CHECK, kind: "check" }, "summary"],
+    });
+
+    const first = await shownCheckOrder(lesson.id);
+
+    await lessonRunFixture({
+      endedAt: new Date(),
+      kind: "review",
+      lessonId: lesson.id,
+      lessonKind: CAPSULE_LEDGER_KIND,
+      userId: user.id,
+    });
+
+    await expect(shownCheckOrder(lesson.id)).resolves.toStrictEqual(first);
   });
 
   it("serves every screen in order with its parsed content and image", async () => {

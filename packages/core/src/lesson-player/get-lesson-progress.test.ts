@@ -5,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { CAPSULE_LEDGER_KIND } from "../milestones/award-milestones";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { typedGrade } from "./_test-utils/typed-grade";
@@ -58,6 +59,33 @@ describe(getLessonProgress, () => {
         stepId: typed.id,
       },
     ]);
+  });
+
+  it("keeps an unfinished sitting's answers when a review capsule on the lesson ends", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+    const sitting = new Date(Date.now() - MS_PER_DAY);
+
+    await Promise.all([
+      lessonRunFixture({ lessonId: lesson.id, startedAt: sitting, userId: user.id }),
+      lessonRunFixture({
+        endedAt: new Date(),
+        kind: "review",
+        lessonId: lesson.id,
+        lessonKind: CAPSULE_LEDGER_KIND,
+        startedAt: new Date(Date.now() - 60_000),
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: new Date(sitting.getTime() + 1000),
+        stepId: check.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const progress = await getLessonProgress({ lessonId: lesson.id });
+
+    expect(progress.map(({ stepId }) => stepId)).toStrictEqual([check.id]);
   });
 
   it("brings back each answer with the same answer and result as starting the lesson does", async () => {
