@@ -13,6 +13,8 @@ protocol NamedBlock {
   var hasCapsules: Bool { get }
   var kind: StudyBlock.Kind { get }
   var mistakesOnly: Bool { get }
+  /// A day's mistakes run or pattern drill, named by what it fixes; nil for anything else.
+  var remedialTitle: String? { get }
   var questions: Int { get }
   var title: String? { get }
   var topics: [String] { get }
@@ -45,6 +47,10 @@ extension NamedBlock {
   /// One name per block (main's `use-block-copy.ts`): "The Trickster", "Rematch", "Weekly
   /// challenge", "Mock exam", "Call", "Review", or a practice's topic.
   var displayTitle: String {
+    if let remedialTitle {
+      return remedialTitle
+    }
+
     if let challenge {
       if challenge.mock {
         return String(localized: "Mock exam", table: "Today", comment: "A mock exam block")
@@ -124,6 +130,54 @@ extension NamedBlock {
 }
 
 extension StudyBlock: NamedBlock {
+  var remedialTitle: String? {
+    switch screen {
+    case .mistakesPractice:
+      String(
+        localized: "Fix \(questions) mistakes", table: "Today", locale: .appLanguage,
+        comment: "Mistakes to fix: a step of the day, or how many the notebook has ready")
+    case .pattern:
+      title.map {
+        String(
+          localized: "practicePattern", defaultValue: "Practice: \($0)", table: "Today",
+          comment:
+            "A study step that drills one rule the learner keeps getting wrong. {pattern} names the rule, like \"Adjective endings after der\"."
+        )
+      }
+    case .challenge, .essay, .lesson, .session, .unknown:
+      nil
+    }
+  }
+
+  /// Why work the plan added for the learner's mistakes is in the day. It never counts: a count can
+  /// be false by the time it's read.
+  var remedialLine: String? {
+    switch screen {
+    case .mistakesPractice:
+      return String(localized: "Questions you missed before", table: "Today")
+    case .pattern:
+      return String(localized: "A pattern in your recent mistakes", table: "Today")
+    case .challenge, .essay, .lesson, .session, .unknown:
+      break
+    }
+
+    switch returning {
+    case .again:
+      return String(
+        localized: "Again: you keep missing this", table: "Today",
+        comment: "Under a lesson the learner takes again because they keep missing its idea.")
+    case .anotherWay:
+      return String(
+        localized: "Another way to see it", table: "Today",
+        comment:
+          "Under a short lesson that explains, in a new way, an idea the learner keeps missing.")
+    case .missed:
+      return String(localized: "You keep missing this", table: "Today")
+    case nil:
+      return nil
+    }
+  }
+
   var challenge: BlockChallenge? {
     checkpoint.map { BlockChallenge(mock: $0.mock, rematch: $0.rematch, weekly: $0.isWeekly) }
   }
@@ -172,6 +226,10 @@ extension StudyBlock {
 
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
+    if let remedialLine {
+      return remedialLine
+    }
+
     if hasCapsules && weakest {
       return String(
         localized: "\(questions) questions on what's been hardest for you", table: "Today",
@@ -230,6 +288,10 @@ extension StudyBlock {
       return String(
         localized: "After today's lessons", table: "Today",
         comment: "A challenge that opens once the lessons before it are done")
+    }
+
+    if let remedialLine {
+      return remedialLine
     }
 
     // The title names a practice's first topic, so the line counts the others.

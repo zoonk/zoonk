@@ -2954,7 +2954,7 @@
       }
     },
     "Back" : {
-      "comment" : "Leaves a finished run.\nLeaves an empty practice.",
+      "comment" : "Leaves an empty practice.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4607,6 +4607,9 @@
         }
       }
     },
+    "Get it right again another day to fix it." : {
+      "comment" : "After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day."
+    },
     "Getting your challenge ready" : {
       "comment" : "While a challenge's questions are written.",
       "localizations" : {
@@ -6137,65 +6140,6 @@
         }
       }
     },
-    "Mistakes come back for practice from the day after you make them." : {
-      "comment" : "Why no mistake is ready to practice yet.\nWhy today's mistakes can't be practiced yet.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst Fehler ab dem nächsten Tag üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus errores vuelven para que practiques a partir del día siguiente a cometerlos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux réviser tes erreurs dès le lendemain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi esercitarti sugli errori a partire dal giorno dopo averli fatti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は、翌日から練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 다음 날부터 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Błędy można przećwiczyć najwcześniej następnego dnia po ich popełnieniu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os erros ficam disponíveis para praticar a partir do dia seguinte."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlışların ertesi günden itibaren alıştırmalarda tekrar karşına çıkar."
-          }
-        }
-      }
-    },
     "Mistakes notebook" : {
       "comment" : "Title of the mistakes notebook.",
       "localizations" : {
@@ -7022,64 +6966,8 @@
         }
       }
     },
-    "Nothing to practice yet" : {
-      "comment" : "Title when no mistake is ready to practice.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nichts zum Üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay nada para practicar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien à réviser pour le moment"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora nulla su cui esercitarti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "まだ練習する問題はありません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 연습할 문제가 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na razie nie ma nic do przećwiczenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada para praticar ainda"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz üzerinde çalışacak bir şey yok"
-          }
-        }
-      }
+    "Nothing to practice" : {
+      "comment" : "Title when no mistake is ready to practice."
     },
     "Nothing to skip" : {
       "comment" : "A chapter test-out with no lessons left to skip.",
@@ -8133,6 +8021,9 @@
         }
       }
     },
+    "Practice again" : {
+      "comment" : "Starts another mistakes practice run after one ends."
+    },
     "Practice done" : {
       "comment" : "End of a practice run.",
       "localizations" : {
@@ -8251,65 +8142,6 @@
         }
       }
     },
-    "Practice opens tomorrow" : {
-      "comment" : "Under the notebook's title, when no mistake is ready today and some are tomorrow",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ab morgen kannst du üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás practicar mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras réviser tes erreurs demain"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai esercitarti domani"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日から練習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일부터 연습할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ćwiczenia będą dostępne jutro"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática disponível amanhã"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alıştırmalar yarın açılacak"
-          }
-        }
-      }
-    },
     "Practice this topic" : {
       "comment" : "Practices only this topic's mistakes.",
       "localizations" : {
@@ -8365,65 +8197,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu konuda alıştırma yap"
-          }
-        }
-      }
-    },
-    "Practice tomorrow" : {
-      "comment" : "A mistake from today, ready to practice tomorrow.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Morgen üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para practicar mañana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À réviser demain"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi esercitarti domani"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日練習できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일 연습 가능"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do przećwiczenia jutro"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar amanhã"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarın alıştırmaya hazır"
           }
         }
       }
@@ -11558,124 +11331,6 @@
         }
       }
     },
-    "The ones you missed come back another day, when they stick better." : {
-      "comment" : "End of a mistakes practice run with a miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les questions que tu as ratées reviennent un autre jour, pour que tu les retiennes mieux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quello che sbagli torna un altro giorno, così ti resta più impresso."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te, przy których pojawił się błąd, wrócą innego dnia, żeby łatwiej było je zapamiętać."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você errou volta outro dia, quando fica mais fácil fixar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
-          }
-        }
-      }
-    },
-    "The ones you missed come back another day. The rest are still ready to practice." : {
-      "comment" : "End of a mistakes practice run stopped early after a miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu retrouveras un autre jour les erreurs que tu n’as pas corrigées. Tu peux toujours réviser les autres."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Te z błędną odpowiedzią wrócą innego dnia. Pozostałe nadal możesz przećwiczyć."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você errou volta outro dia. O restante continua disponível para praticar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
-          }
-        }
-      }
-    },
     "The questions were removed" : {
       "comment" : "A checkpoint ended without questions.",
       "localizations" : {
@@ -11790,65 +11445,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ses kaydı yüklenemedi. Bağlantını kontrol edip tekrar dene."
-          }
-        }
-      }
-    },
-    "The rest are still ready to practice." : {
-      "comment" : "End of a mistakes practice run stopped early, with no miss.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den Rest kannst du weiterhin üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El resto aún está disponible para practicar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux toujours réviser les autres."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi ancora esercitarti sul resto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残りの問題は引き続き練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나머지 문제는 언제든 연습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pozostałe nadal możesz przećwiczyć."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O restante continua disponível para praticar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalanlarla hâlâ alıştırma yapabilirsin."
           }
         }
       }

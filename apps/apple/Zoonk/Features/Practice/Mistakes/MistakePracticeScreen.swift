@@ -1,9 +1,9 @@
 import SwiftUI
 
 /// A mistake answered right on a later day is fixed, and the run counts toward today as it goes,
-/// stopped early included.
+/// stopped early included. A day block's run completes its block once its mistakes are served.
 struct MistakePracticeScreen: View {
-  var skillId: String?
+  let scope: MistakePracticeScope
 
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
@@ -27,8 +27,8 @@ struct MistakePracticeScreen: View {
     PracticeFocusState(keyboard: $focus, voiceOver: $voiceOverFocus)
   }
 
-  init(skillId: String? = nil) {
-    self.skillId = skillId
+  init(scope: MistakePracticeScope = .notebook) {
+    self.scope = scope
   }
 
   var body: some View {
@@ -96,7 +96,9 @@ struct MistakePracticeScreen: View {
       ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
     case .ended(let summary):
       PracticeDoneView(
-        summary: summary, fixed: state.fixedIds.count, note: state.endNote, reached: state.reached
+        summary: summary, fixed: state.fixedIds.count, reached: state.reached,
+        canPracticeAgain: scope.blockId == nil && !state.entriesToPracticeAgain.isEmpty,
+        again: practiceAgain
       ) {
         dismiss()
       }
@@ -107,7 +109,7 @@ struct MistakePracticeScreen: View {
         if let lesson = step.entry.lesson {
           MistakeLessonQuestionView(
             replay: lesson, entry: step.entry, segments: state.segments, index: state.index,
-            goalId: goalId, answerIds: state.answerIds,
+            goalId: goalId, blockId: scope.blockId, answerIds: state.answerIds,
             checking: { state.checkingLesson() }, failed: { state.lessonFailed() },
             answered: { state.answeredLesson($0, mistakeId: step.entry.mistakeId) },
             next: next
@@ -175,7 +177,7 @@ struct MistakePracticeScreen: View {
             drill: drill, notSure: graded.answer.isDontKnow, timedOut: graded.sender == .timer,
             trap: graded.grade.trap)
 
-          FixedMistakesNote(count: graded.grade.fixedMistakeIds.count)
+          FixedMistakesNote(grade: graded.grade)
         }
       }
     }
@@ -343,15 +345,11 @@ struct MistakePracticeScreen: View {
     StateMessage {
       Label {
         Text(
-          "Nothing to practice yet", tableName: "Practice",
+          "Nothing to practice", tableName: "Practice",
           comment: "Title when no mistake is ready to practice.")
       } icon: {
         Image(systemName: "checkmark.circle")
       }
-    } description: {
-      Text(
-        "Mistakes come back for practice from the day after you make them.", tableName: "Practice",
-        comment: "Why no mistake is ready to practice yet.")
     } actions: {
       Button {
         dismiss()
@@ -369,12 +367,14 @@ struct MistakePracticeScreen: View {
 
     do {
       let set = try await practice.api.mistakePractice(
-        token: identity.bearerToken, goalId: goalId, skillId: skillId)
+        token: identity.bearerToken, goalId: goalId, scope: scope)
       guard session.authenticatedSession == identity else { return }
       labels = set.trueFalseLabels
       state = MistakePracticeState(entries: set.entries)
       shownAt = .now
       load = .loaded(set)
+      // A block whose mistakes can no longer be asked is done: the day never waits on it.
+      if set.entries.isEmpty, scope.blockId != nil { await finish() }
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
@@ -415,7 +415,8 @@ struct MistakePracticeScreen: View {
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
           itemId: question.itemId,
           answer: sent.answer, durationMs: sent.durationMs,
-          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId)
+          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId,
+          blockId: scope.blockId)
       })
     {
     case .done(let grade):
@@ -462,8 +463,21 @@ struct MistakePracticeScreen: View {
     await finish()
   }
 
+  /// Another run on what this one didn't fix. A day's block offers none: the day goes on from
+  /// Today.
+  private func practiceAgain() {
+    draft = nil
+    attempt = nil
+    shownAt = .now
+    state = MistakePracticeState(entries: state.entriesToPracticeAgain)
+  }
+
+  /// A block's run always tells the server it ended, so the block completes even with nothing
+  /// answered in it.
   private func finish() async {
-    guard !state.answerIds.isEmpty else {
+    let blockId = scope.blockId
+
+    guard !state.answerIds.isEmpty || blockId != nil else {
       state.ended(nil)
       return
     }
@@ -476,7 +490,8 @@ struct MistakePracticeScreen: View {
       .finished,
       { identity in
         try await practice.api.finishMistakePractice(
-          token: identity.bearerToken, answerIds: answerIds, ended: true, goalId: goalId)
+          token: identity.bearerToken, answerIds: answerIds, ended: true, goalId: goalId,
+          blockId: blockId)
       })
     {
     case .done(let summary): state.ended(summary)
@@ -487,12 +502,13 @@ struct MistakePracticeScreen: View {
 
 }
 
-/// A run with a miss says those come back, so a hard day reads as "not yet".
+/// A run ends on what it earned, and offers to go again on what it didn't fix.
 private struct PracticeDoneView: View {
   let summary: Components.Schemas.MistakePracticeCompletion?
   let fixed: Int
-  let note: PracticeEndNote?
   let reached: PracticeReached
+  let canPracticeAgain: Bool
+  let again: () -> Void
   let close: () -> Void
 
   var body: some View {
@@ -500,7 +516,7 @@ private struct PracticeDoneView: View {
       PracticeResultTitle(
         title: LocalizedStringResource(
           "Practice done", table: "Practice", comment: "End of a practice run."),
-        detail: detail)
+        detail: nil)
       PracticeResultNumbers(
         correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
         facts: fixed > 0
@@ -511,9 +527,17 @@ private struct PracticeDoneView: View {
           ] : [],
         day: day)
     } actions: {
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Back", table: "Practice", comment: "Leaves a finished run."), action: close)
+      if canPracticeAgain {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Practice again", table: "Practice",
+            comment: "Starts another mistakes practice run after one ends."),
+          action: again)
+      } else {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Done", table: "Practice", comment: "Leaves a finished screen."), action: close)
+      }
     }
   }
 
@@ -526,24 +550,5 @@ private struct PracticeDoneView: View {
       reached: DayResult.Reached(
         energy: reached.energy,
         level: reached.level.map { DayResult.Reached.Level(color: $0.color, level: $0.level) }))
-  }
-
-  private var detail: LocalizedStringResource? {
-    switch note {
-    case .missed:
-      LocalizedStringResource(
-        "The ones you missed come back another day, when they stick better.", table: "Practice",
-        comment: "End of a mistakes practice run with a miss.")
-    case .missedAndUnreached:
-      LocalizedStringResource(
-        "The ones you missed come back another day. The rest are still ready to practice.",
-        table: "Practice",
-        comment: "End of a mistakes practice run stopped early after a miss.")
-    case .unreached:
-      LocalizedStringResource(
-        "The rest are still ready to practice.", table: "Practice",
-        comment: "End of a mistakes practice run stopped early, with no miss.")
-    case nil: nil
-    }
   }
 }

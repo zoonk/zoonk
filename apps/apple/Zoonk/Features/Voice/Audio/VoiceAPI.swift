@@ -42,6 +42,9 @@ struct VoiceAPI: Sendable {
         if let goalId = mistake.goalId {
           parts.append(.goalId(.init(payload: .init(body: HTTPBody(goalId)))))
         }
+        if let blockId = mistake.blockId {
+          parts.append(.blockId(.init(payload: .init(body: HTTPBody(blockId)))))
+        }
       }
 
       let output = try await client.createSpokenAnswer(

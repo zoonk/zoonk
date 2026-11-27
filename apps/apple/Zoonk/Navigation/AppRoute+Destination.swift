@@ -123,8 +123,8 @@ extension AppRoute {
         activated: activated)
     case .questionBlock(let sessionId, let blockId):
       QuestionBlockScreen(sessionId: sessionId, blockId: blockId)
-    case .mistakePractice(let skillId):
-      MistakePracticeScreen(skillId: skillId)
+    case .mistakePractice(let scope):
+      MistakePracticeScreen(scope: scope)
     case .pattern(let patternId):
       PatternScreen(patternId: patternId)
     case .testOut(let chapterId, let resultId):
