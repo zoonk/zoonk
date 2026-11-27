@@ -1,5 +1,5 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { languagePlanningBand } from "../../levels/skill-level-rules";
+import { languagePlanningBand } from "../../aims/language-aims";
 import { getBand, getLevelTestAssessment } from "../level-test-rules";
 import { getMean } from "./level-test-posterior";
 
@@ -20,9 +20,17 @@ export function getLevelTestPlanningStart(
     ...assessment.map(({ posterior, unknownStreak }) => (unknownStreak ? 0 : getMean(posterior))),
   );
 
-  return Math.max(
-    languagePlanningBand(mean),
-    Math.min(languagePlanningBand(stated), languagePlanningBand(mean + HALF_STEP)),
-    skipped ? languagePlanningBand(getBand(skipped) + 1) : 0,
+  const statedLevel = Math.floor(stated);
+
+  const corroborated = assessment.every(
+    ({ scored }) =>
+      scored.some(({ band, correct }) => band >= statedLevel && correct === true) &&
+      scored.every(({ band, correct }) => band > statedLevel || correct === true),
   );
+
+  // The posterior estimates the level being studied. A supported statement names a level reached.
+  const reached = Math.max(0, mean - 1);
+  const claimed = corroborated ? stated : Math.min(stated - 1, reached + HALF_STEP);
+
+  return languagePlanningBand(Math.max(reached, claimed, skipped ? getBand(skipped) : 0));
 }
