@@ -58,9 +58,9 @@ function highestCountedAward({
 }
 
 /**
- * A key's aspect above its lowest award without a passage found in the answer earns the lowest.
- * A row of the board's scale with no such passage stays unverified, since its lowest award would
- * be a mark the grader never gave. The level a learner sees reads the reported award either way.
+ * A key's aspect above its lowest award needs a passage found in the answer, or earns the lowest.
+ * A scale row's award judges the whole answer, so its passage only illustrates it. A row reported
+ * missing or twice stays unverified.
  */
 export function markWritingRows({
   basis,
@@ -84,8 +84,8 @@ export function markWritingRows({
       return { reported: 0, row, verified: unsupported };
     }
 
-    if (report.award > 0 && !lookup.locate(report.quote)) {
-      return { reported: report.award, row, verified: unsupported };
+    if (report.award > 0 && row.kind === "aspect" && !lookup.locate(report.quote)) {
+      return { reported: report.award, row, verified: 0 };
     }
 
     const count = countElements({ elements: elements.get(index) ?? [], lookup, row });

@@ -142,7 +142,7 @@ describe("a banded essay with counted elements and caps", () => {
     expect(capped.kind === "points" && capped.rows.at(-1)).toMatchObject({ earned: 80, max: 200 });
   });
 
-  it("stays on levels when a band above the lowest has no passage in the answer", () => {
+  it("keeps a band whose passage the grader miscopied, since the band judges the whole answer", () => {
     const [, ...rest] = bands;
 
     const grade = mark({
@@ -151,7 +151,7 @@ describe("a banded essay with counted elements and caps", () => {
       text: ESSAY,
     });
 
-    expect(grade.kind).toBe("levels");
+    expect(grade).toMatchObject({ content: { high: 800, low: 800 }, kind: "points" });
 
     expect(grade.criteria.map(({ level }) => level)).toStrictEqual([
       "complete",
