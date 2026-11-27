@@ -84,7 +84,7 @@ Production and sandbox synchronization require `APPLE_IAP_APP_ID`, `APPLE_IAP_IS
 
 ## Local authentication
 
-Start the repository with `pnpm dev`. The development launcher writes the printed clone-specific API URL to an ignored Xcode configuration file, so the next Debug build connects to the correct local API automatically. For a physical Apple device, run `pnpm dev:lan` instead so the generated configuration uses the reachable `.local` API URL. Open the printed Mailbox URL after requesting an email code to read the local OTP. Debug builds fall back to `http://localhost:4000` when no generated configuration exists, which matches `pnpm dev:direct`; `ZOONK_API_BASE_URL` remains available as a one-off Xcode scheme override.
+Start the repository with `pnpm dev`. The development launcher writes the printed clone-specific API URL to an ignored Xcode configuration file, so the next Debug build connects to the correct local API automatically. For a physical Apple device, follow the [LAN setup](../../README.md#lan-setup) to trust the local certificate and build with the HTTPS API URL. Open the printed Mailbox URL after requesting an email code to read the local OTP. Debug builds fall back to `http://localhost:4000` when no generated configuration exists, which matches `pnpm dev:direct`; `ZOONK_API_BASE_URL` remains available as a one-off Xcode scheme override.
 
 ## Localization
 

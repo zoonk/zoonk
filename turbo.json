@@ -61,6 +61,7 @@
         ".next/**",
         "!.next/cache/**",
         "!.next/dev/**",
+        "!.next/workflow-data/**",
         "next-env.d.ts",
         "src/app/.well-known/workflow/**"
       ]

@@ -6,7 +6,7 @@ Nothing needs an environment variable. Read the section for what you're starting
 
 - **`pnpm start` is what you verify, review and walk personas on.** It builds every app, or only the ones you name (`pnpm start api` for a native app's walk), and serves the production builds, which is what learners get: a dev server compiles on demand and shows loading states they never see. Sign-in and the mailbox work as in `pnpm dev`.
 - **`pnpm dev` is for hot reload while you change UI.** It starts the apps and the mailbox; name apps to start only those (`pnpm dev main api`). Stop it before `pnpm start`, since both register the same routes, then check the result on `pnpm start`.
-- Use the URLs the command prints: both serve through clone- and worktree-scoped Portless routes. `pnpm dev:lan` serves another device, `pnpm dev:direct` uses direct ports, and `pnpm dev:prune` stops orphaned servers. A stack's services stop within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed.
+- Use the URLs the command prints: both serve through clone- and worktree-scoped Portless routes. `pnpm dev:lan` serves another device over HTTPS after [one-time certificate setup](../../README.md#lan-setup), `pnpm dev:direct` uses direct ports, and `pnpm dev:prune` stops orphaned servers. A stack's services stop within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed.
 - Each app's `start:app` is the bare `next start`, which E2E servers run on their own ports. Outside `pnpm start` and E2E, a production build counts as a deployment, so local sign-in refuses it.
 
 ## Sign-in
