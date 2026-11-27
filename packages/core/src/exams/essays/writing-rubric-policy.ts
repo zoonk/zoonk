@@ -32,10 +32,7 @@ export function getWritingCalibration({
 
   const kinds = basis.rowKinds ?? getScoringRowKinds(basis);
 
-  const rows = kinds.flatMap((kind) => {
-    const row = calibration.rows[kind];
-    return row?.points ? [row] : [];
-  });
+  const rows = kinds.flatMap((kind) => calibration.rows[kind] ?? []);
 
   return rows.length > 0 && rows.length === kinds.length ? rows : null;
 }
@@ -47,7 +44,7 @@ export function canCalibrateWritingTask(basis: TaskBasis): boolean {
     rows &&
     isComputableSheet(basis) &&
     basis.grading.criteria.every(({ awards }) =>
-      awards ? rows.boardScale?.points : rows.definitePoint?.points || rows.judgedScale?.points,
+      awards ? rows.boardScale : rows.definitePoint || rows.judgedScale,
     ),
   );
 }

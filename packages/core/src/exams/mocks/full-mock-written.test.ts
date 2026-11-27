@@ -930,8 +930,8 @@ describe("written mock sittings", () => {
       rows: {
         definitePoint: rowCalibrationFixture({
           residuals: {
-            over: weightedResiduals(Array.from({ length: 40 }, () => 0)),
-            under: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+            over: weightedResiduals([0, 0, 0, 0]),
+            under: weightedResiduals([0, 0, 0, 0]),
           },
         }),
       },

@@ -228,7 +228,7 @@ describe(projectWritten, () => {
     });
   });
 
-  it("reports levels for written tasks without a passed evaluation", () => {
+  it("reports levels for written tasks without measured row kinds", () => {
     calibration.current = null;
 
     const samples = [
@@ -288,8 +288,8 @@ describe("a verdict from the latest mock exam beside an estimate from practice",
       rows: {
         definitePoint: rowCalibrationFixture({
           residuals: {
-            over: weightedResiduals(Array.from({ length: 40 }, () => 0.02)),
-            under: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+            over: weightedResiduals([0.02, 0.02, 0.02, 0.02]),
+            under: weightedResiduals([0, 0, 0, 0]),
           },
         }),
       },

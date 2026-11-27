@@ -3,7 +3,6 @@
   "keysRevision": "153c3c05354ec26b0139a3bc899ca2dde7c45f5a8e58ae5c1d4c84ac6c5335d3",
   "rows": {
     "boardScale": {
-      "points": false,
       "residuals": {
         "over": [
           { "share": 0, "weight": 0.008274231678486997 },
@@ -289,11 +288,9 @@
           { "share": 0.5, "weight": 0.008274231678486997 },
           { "share": 0.58, "weight": 0.008274231678486997 }
         ]
-      },
-      "verdicts": { "above": false, "below": false }
+      }
     },
     "definitePoint": {
-      "points": false,
       "residuals": {
         "over": [
           { "share": 0, "weight": 0.0061842105263157894 },
@@ -487,11 +484,9 @@
           { "share": 0.75, "weight": 0.0061842105263157894 },
           { "share": 0.75, "weight": 0.0061842105263157894 }
         ]
-      },
-      "verdicts": { "above": false, "below": false }
+      }
     },
     "judgedScale": {
-      "points": false,
       "residuals": {
         "over": [
           { "share": 0, "weight": 0.0234375 },
@@ -623,8 +618,7 @@
           { "share": 0.4665, "weight": 0.011314655172413793 },
           { "share": 0.5, "weight": 0.011314655172413793 }
         ]
-      },
-      "verdicts": { "above": false, "below": false }
+      }
     }
   },
   "writer": { "model": "openai/gpt-6.1-terra", "promptVersion": "row-kind-b6eec5420641" }
