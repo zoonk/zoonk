@@ -210,6 +210,9 @@ export function readAttemptQuestions({
     remaining,
   });
 
+  const partsAtOpen = attempt.partsAtOpen ?? progress.parts;
+  const partsAfterFinish = complete ? progress.parts : partsAtOpen;
+
   return {
     ...progress,
     answered: partAnswers.length,
@@ -223,6 +226,9 @@ export function readAttemptQuestions({
     item: partOver || attempt.paused ? null : item,
     knownSkillIds: [...walk.confirmed],
     partAnswers: partAnswers.map((row) => row.skillId),
+    partsAfterFinish,
+    partsAtOpen,
+    partsRemovedOnFinish: partsAtOpen - partsAfterFinish,
     preparationFailed,
     questions,
     remainingTopics,

@@ -47,7 +47,13 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       schema: placementResponseSchema,
     });
 
-    expect(opened.attempt).toMatchObject({ answered: 0, part: 1, parts: 1, questions: 4 });
+    expect(opened.attempt).toMatchObject({
+      answered: 0,
+      part: 1,
+      parts: 1,
+      partsRemoved: 0,
+      questions: 4,
+    });
 
     const attemptId = opened.attempt?.id;
 
@@ -90,7 +96,7 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       changeId: expect.any(String),
       finish: { answered: 4, end: "question_cap", lessonsSkipped: 1, partsLeft: 0, unknowns: 0 },
       lessonsSkipped: 1,
-      result: { changeId: expect.any(String), nextLesson: null },
+      result: { changeId: expect.any(String), nextLesson: null, partsRemoved: 0 },
     });
 
     const { changeId } = completed;

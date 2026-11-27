@@ -1279,6 +1279,7 @@ class OnboardingScreenshots {
                 partComplete = false,
                 parts = 14,
                 partsLeft = 14,
+                partsRemoved = 0,
                 questions = 12,
                 remainingEstimatedMinutes = 85,
                 resume = null,
