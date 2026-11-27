@@ -29,7 +29,8 @@
       "!VERCEL_PLUGIN_*",
       "PORTLESS_*",
       "PRIVATE_BLOB_*",
-      "ZOONK_DEV_PROJECT"
+      "ZOONK_DEV_PROJECT",
+      "ZOONK_NO_AI_SPEND"
     ],
     "ui": "tui",
     "passThroughEnv": [

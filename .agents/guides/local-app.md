@@ -27,3 +27,4 @@ AI Gateway (everything that generates) and Vercel Blob (learners' uploads, gener
 - In the primary checkout, run `vercel link` once in `apps/main` (project `zoonk`), `apps/api` (`zoonk-api`) and `apps/evals` (`zoonk`, since evals has no project of its own) and stay signed in to the Vercel CLI. `pnpm worktree:setup` copies the links into worktrees.
 - For Blob, also set the store ids each app's `.env.example` lists in its `.env` (scripts read only that file).
 - Leave `AI_GATEWAY_API_KEY` unset on these machines, since a key wins over the login. Without access to Zoonk's Vercel team, set your own `AI_GATEWAY_API_KEY` in each app's `.env` instead; cloud agents use the development key ([cloud agents](cloud-agents.md)).
+- For a walk, capture, or measurement without paid AI, start with `ZOONK_NO_AI_SPEND=1 pnpm start main api`. This blocks AI Gateway and direct OpenAI requests even with credentials configured. Live calls are unavailable before a reservation is made.
