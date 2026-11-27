@@ -2,6 +2,7 @@ import { type readLatestWrittenMocks } from "../../learner/facts/written-mocks";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { mockWrittenStanding } from "../mocks/mock-written-points";
 import { getCalibratedWritingGrade } from "../scoring/calibrated-written-standing";
+import { writtenStanding } from "../scoring/written-points";
 import { type WrittenProjection } from "../scoring/written-points-contract";
 
 export function withMockStanding({
@@ -45,12 +46,17 @@ export function withMockStanding({
       }),
     );
 
-    return {
-      ...part,
-      standing: mockWrittenStanding({
-        grades,
-        part: { ...latest.part, max: part.max, minimum: part.minimum },
-      }),
-    };
+    const sitting = mockWrittenStanding({
+      grades,
+      part: { ...latest.part, max: part.max, minimum: part.minimum },
+    });
+
+    // The estimate beside this verdict averages practice answers too, so the two can disagree.
+    const practice = writtenStanding(part);
+
+    const contradicted =
+      (sitting === "met" && practice === "below") || (sitting === "below" && practice === "met");
+
+    return { ...part, standing: contradicted ? "unmeasured" : sitting };
   });
 }

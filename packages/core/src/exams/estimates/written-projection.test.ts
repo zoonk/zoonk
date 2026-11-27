@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type WrittenSample } from "../../learner/facts/written-samples";
 import { type EstimatedScore } from "../../preparation/estimated-score";
-import { calibrationFixture } from "../essays/_test-utils/writing-calibration";
+import {
+  calibrationFixture,
+  rowCalibrationFixture,
+  weightedResiduals,
+} from "../essays/_test-utils/writing-calibration";
 import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { CGU as CGU_NOTICE, CGU_WRITTEN_GRADING } from "../mocks/_test-utils/cgu-written";
+import { snapshotMockWriting } from "../mocks/mock-written-points";
 import { projectWritten } from "./written-projection";
 
 const calibration = vi.hoisted(() => ({ current: null as WritingCalibration | null }));
@@ -243,5 +248,67 @@ describe(projectWritten, () => {
         },
       ],
     });
+  });
+});
+
+describe("a verdict from the latest mock exam beside an estimate from practice", () => {
+  const GRADER = { model: "fixture/model", promptVersion: "fixture-revision" };
+
+  const [part] =
+    snapshotMockWriting({
+      day: null,
+      essays: [
+        { itemId: "mock-short", taskKey: "short" },
+        { itemId: "mock-long", taskKey: "long" },
+      ],
+      structure: CGU,
+    }).writtenParts ?? [];
+
+  function sat(answer: Parameters<typeof sample>[0]): WrittenSample {
+    const taken = sample({ ...answer, id: `mock-${answer.key}` });
+    return { ...taken, answer: { ...taken.answer, grader: GRADER }, mockExamId: "mock" };
+  }
+
+  const sitting = [
+    sat({ high: 28, key: "short", low: 28 }),
+    sat({ high: 62, key: "long", low: 62 }),
+  ];
+
+  function standing(samples: WrittenSample[]) {
+    return projectWritten({
+      mocks: part ? [{ id: "mock", part }] : [],
+      objective: OBJECTIVE,
+      samples,
+      structure: CGU,
+    })?.parts[0];
+  }
+
+  beforeEach(() => {
+    calibration.current = calibrationFixture({
+      rows: {
+        definitePoint: rowCalibrationFixture({
+          residuals: {
+            over: weightedResiduals(Array.from({ length: 40 }, () => 0.02)),
+            under: weightedResiduals(Array.from({ length: 40 }, () => 0)),
+          },
+        }),
+      },
+    });
+  });
+
+  it("shows the mock's verdict while the estimate agrees or straddles the minimum", () => {
+    expect(standing(sitting)).toMatchObject({ range: { low: 90 }, standing: "met" });
+  });
+
+  it("gives no verdict when later practice puts the whole estimate on the other side", () => {
+    const later = Array.from({ length: 6 }, (_, index) => [
+      sample({ high: 6, id: `short-${index}`, key: "short", low: 6 }),
+      sample({ high: 12, id: `long-${index}`, key: "long", low: 12 }),
+    ]).flat();
+
+    const projected = standing([...sitting, ...later]);
+
+    expect(projected?.range?.high).toBeLessThan(50);
+    expect(projected?.standing).toBe("unmeasured");
   });
 });
