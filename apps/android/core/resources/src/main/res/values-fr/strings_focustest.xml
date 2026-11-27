@@ -3,7 +3,6 @@
 {
   "focustest_also_skips": "3ac8a42baf470db4c99d46cb2dc9e4bd2db701b22c2d76bdba4b09d9a3532823",
   "focustest_answer_more": "60b3a4f40d83d7c39d83652a4eb7ee19b85963322c4cf862688c3300845b2e9a",
-  "focustest_answers_saved_line": "8d67786a348190589a7720eee76c548767369c49137eaecb28d0b55665099b8e",
   "focustest_answers_saved_title": "1998147f2e85ea68f73af5255873a58221fe61ce848acd1126b241a7fe0db8d2",
   "focustest_change_focus": "e1deb3cb4f492ed68894571504c386e7459b2b428c85a5f853daf2bd574128a1",
   "focustest_continue": "bfff87e95340357255b5b4f7609b4f2e8eab9dc8dd0399574f8b1c59a2273453",
@@ -20,20 +19,18 @@
   "focustest_not_today": "6e72371923c2de4a1dc880af9e56b16c9affe46f8703b6aa6a0f25609e3dac47",
   "focustest_not_today_failed": "f38b25c0abdb6c645cb59d680203e53e4ab2b77d0276408014f8658963290f11",
   "focustest_offer_line": "db73b1778ef74ee49547ca5ccca62296b175c4968e37fc71bcd3097e55de8a9a",
-  "focustest_offer_line_focus": "cbf5e09db9e83368a99f4f6711908e3a4c8f7a8a3f9f0a9571237db5f798dd6b",
+  "focustest_offer_sentence": "449b8b3daa184abaf5be74a097c477970cbdfbe9151d5011a43d75729440cd1e",
   "focustest_practical_not_checked": "685b7b5c581a3bfc9b96bc732864030e7b9bedb6d846f671b6e9411d3fa5d297",
   "focustest_proposal_applied": "e14a6843e5228c9923ede90cce64a6520fbe0a0e34e321a2a1e5b0932639c208",
   "focustest_proposal_declined": "03ff9a84105ebbedc7e2bdc214ac05a79e8ee66cb7806d8f29c5f419452cebfa",
   "focustest_proposal_picked": "aa968d434ec77fe78e7c3215a30423f8c62f40bae3360a6c1e9cae539589c0e7",
   "focustest_proposal_title": "ec0b1ceb0626b251a255201b495b6d45ec621aaed575c81bb1fff96d38c50b49",
   "focustest_proposal_undone": "f53007133078310c4edd00e230739667d4650912b40f73aeb4bad843c30a87a5",
-  "focustest_question_number": "140a5a52be6c36fbd184ba03695eb9b4bb046d6dbfe9d690820d5fe425c46d3d",
   "focustest_result_current": "b9eec0534a19faee081eaf5e741ce755ba2ebc3070197b99aa475bc32f21b69a",
   "focustest_result_declined": "dc67aefc71bfc45881f440dd41d5ca27ac667a076abf6378b5a90247082ac2d2",
   "focustest_result_description": "a05e5c9d7e96f2798137aac9e7ad24ed6f9f6886122d473d6666aa35c72815d1",
   "focustest_result_hand_picked": "f78a9864808b4aa6922d0bcfeac3478a0b2bc5ddf09453fd3d822e8a69564e30",
   "focustest_result_title": "c9a6266094e8221bafce0b35911d5cebd6ee45e2819e984573c30d6245abe01b",
-  "focustest_resume_title": "ff7103eb04da7373250ed9ef8d865e795544b0330e8c76e30ce9e798462c5816",
   "focustest_see_all_subjects": "5b15a72673541ae74facf6137006f7390c46ba129d5f4383e8b793f1df10f5f6",
   "focustest_see_my_result": "b9ea16fbd5ecbcf11be5969803383196f9d955282cb9a61cc161b33843a0eefa",
   "focustest_see_your_result": "1e4434001aa4df70ded1408c3b9b622f70b8b966be50d7320a0caa101232fba3",
@@ -50,7 +47,6 @@
   "focustest_suggestion_dismissed": "0a12e09df9bac437591d29e0c52d4e18c8834a7242ce302a58ccbd439230aa80",
   "focustest_suggestion_line": "626a1142a5092fe31bd1916b4a85f7e3a6a61a1888680c05e9713c2c1d85634a",
   "focustest_take_test": "cc38c6dacaed5e3bf05b6cf70fe9751b272563d2b37bcb44522aa1af7cbe0cd2",
-  "focustest_time_left": "7eb8dcbe76fced8887045ddc57b47e1e779dc8ee020b85ef7436b3aa72b5a388",
   "focustest_title": "ee5b69aacf00887fbd98e1b7a9e0bfc79e98429ee63bbd7e70cf6a8da77fe798",
   "focustest_undo": "bd2dc11bd7bd0b207dbc2fd68707531ccddc728ffac85317e31fc7404632e80d",
   "focustest_update_plan": "fff25cadbd54a43074b4baf28166f5d0bab6dd1924a63e18ff337f8dfdac6ad3",
@@ -60,27 +56,17 @@
 <resources>
     <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Test de priorités</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">Il reste %1$s</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Découvre les matières à travailler en priorité</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Tu connais déjà une partie du contenu ?</string>
-    <string name="focustest_offer_line_focus">Ce test repère ce que tu connais déjà pour que tu consacres plus de temps à ce que tu dois travailler en priorité. Il ne supprime jamais de matière.</string>
+    <string name="focustest_offer_sentence">Un test montre ce que tu connais déjà, pour consacrer plus de temps à ce dont tu as le plus besoin.</string>
     <string name="focustest_offer_line">Ce test repère ce que tu connais déjà pour que ton plan puisse le sauter.</string>
     <string name="focustest_start">Commencer le test</string>
     <string name="focustest_skip_note">Tu peux faire le test plus tard, depuis ton plan.</string>
     <string name="focustest_not_now">Pas maintenant</string>
-    <string name="focustest_resume_title">Continuer ton test</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="one">Tu as %d réponse enregistrée.</item>
-        <item quantity="many">Tu as %d réponses enregistrées.</item>
-        <item quantity="other">Tu as %d réponses enregistrées.</item>
-    </plurals>
     <string name="focustest_continue">Continuer</string>
     <string name="focustest_see_my_result">Voir mon résultat</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">Question %1$d sur %2$d</string>
     <string name="focustest_stop">Arrêter et utiliser mes réponses</string>
     <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Tu n’as pas encore étudié la plupart de ces notions ? Ce n’est pas grave. Tu peux t’arrêter ici et commencer à apprendre.</string>

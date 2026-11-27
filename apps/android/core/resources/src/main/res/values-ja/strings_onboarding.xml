@@ -111,18 +111,14 @@
   "onboarding_intent_understand_description": "d0658b9505575d7ed7a6b5ddddf4d1d54a4f0e18e19c058ed961c2c7cc6edd39",
   "onboarding_join_waitlist": "427d4bcc193d9062760081e6eb3d31ada31ce547cb31ee0d665a3fc967944ac6",
   "onboarding_language_test_audio_on_its_way": "b4eeccf5b74e1903105a0c160c9141ec35e3a2e3742218c0abb4c8578569bb9f",
+  "onboarding_language_test_cant_listen": "175110d5871dfa816f77c2dfff99032d5fafa336ea8bc0c382770af345b7f85f",
   "onboarding_language_test_did_not_understand": "27686bbd068a76d3dc07b74c8e956355b05f5eeb3a9e1e142cf3086da6cf30f7",
   "onboarding_language_test_listening": "62ba1538409aff6d399727b81025097843bfc91714c4f805d2e5e146fc4613a0",
   "onboarding_language_test_message": "407ae315822109d1ba28db9a818358f92dd3a4daee1e00641bc091f354045fc5",
   "onboarding_language_test_message_loading": "cde5d7a0c2e2f6ebeb6b2525a84d1dd35b4e44e5a72da4d6fc0fa46ad79b6f21",
-  "onboarding_language_test_new_alphabet": "76d6f5cdddfb9af6dd9a2fa3eec96f9d7f2a2e6ff621445106c31873b634f24a",
   "onboarding_language_test_play": "0626814a40b4dea1c59c24357a81ee9c8eb4c2e5bbe1ccfc89e3deddc1530eec",
   "onboarding_language_test_play_again": "638ab7bcde3e0b8abeb971bf46b3505b96c6ddcac7e40ba92c8f613149d5dfea",
-  "onboarding_language_test_preparing_description": "e24d91d3487021b2358f7ddd4dbcd6f76335d94851042eb091fd770d4b923347",
-  "onboarding_language_test_preparing_title": "c811f5cbdde4e7b4c453e728e5e30d43ebf7e8fd149842ac5e065d4b69b30fe4",
   "onboarding_language_test_reading": "591f0cb9521fb34d33d3f20376144e67cc67743375ce4d78f7423a201a49dcc1",
-  "onboarding_language_test_skip": "43e6a3d93103d0068b50bbbcfb81f7877b1408649517e3cafb8c2f6cf2deda3e",
-  "onboarding_language_test_skip_note": "d32c83d3a7f2bca2bd3f67a729716ed8eb399535b20d9292131ca603fcfc081a",
   "onboarding_language_test_skip_question": "bedc6eaa6d0ab7fc89b69bdeffe3873c3d1b99e9c2985bd49ba806b84b2dc6da",
   "onboarding_language_test_speaking": "980e97a0070948f80cbdaa97fab027ac1aaac4861e08960a14063b029ea38e0a",
   "onboarding_language_test_use_app_in": "7814c2246b30f2ba01b657dc684eea74e6eb6d1ea8cdaacfece234422d6e0b42",
@@ -173,7 +169,6 @@
   "onboarding_placement_confirm": "4358b2bb592ae544460bef70bbcf0cad3e58143691093a7b0316bb87a4c01e48",
   "onboarding_placement_dont_know": "c12a57eaabe66a48fa20792d0692bff7ac791b25532fcdb16b0f8ec92c3d7ee0",
   "onboarding_placement_progress": "dec6421572e5a92a42b74628801f8f0ab7c999a4383ef240c18eda9d03505a45",
-  "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
   "onboarding_placement_stop": "923084fb6166a1b4f3f1aea8cdbcbe5fef486b8d3057c426b4f47cd3cffc6ad9",
   "onboarding_placement_unavailable_title": "a895c6a92640cf07d2def3082a9ce67511a9a5a61974f2f9fc3f8a246bd1223d",
@@ -570,27 +565,20 @@
     <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
     <string name="onboarding_placement_waiting_time">1〜2分ほどかかります。</string>
     <string name="onboarding_placement_ready">テストの準備ができました</string>
-    <!-- Beside the subject, above a placement question. %1$d is its number. -->
-    <string name="onboarding_placement_question_number">第%1$d問</string>
     <string name="onboarding_placement_progress">回答済みの問題数</string>
     <string name="onboarding_placement_dont_know">まだわからない</string>
     <string name="onboarding_placement_confirm">確定する</string>
     <string name="onboarding_placement_stop">ここで終えて回答を使う</string>
     <string name="onboarding_placement_answer_failed">送信できませんでした。回答はそのまま残っています。</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
-    <!-- The level test: a language goal's placement, in reading and listening. -->
-    <string name="onboarding_language_test_new_alphabet">この言語の文字は初めてですか？テストはスキップしてください。最初のレッスンで読み方を学べます。</string>
-    <string name="onboarding_language_test_skip">テストをスキップする</string>
     <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">アプリを%1$sで使う</string>
-    <string name="onboarding_language_test_preparing_title">レベルテストを準備しています</string>
-    <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">%1$sのテストの準備には1〜2分かかります。準備が必要なのは今回だけです。</string>
-    <string name="onboarding_language_test_skip_note">学習計画は入力したレベルから始まり、最初の数日で細かく調整されます。</string>
     <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">音声の内容がわからない</string>
     <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">この問題をスキップ</string>
+    <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
+    <string name="onboarding_language_test_cant_listen">今は音声を聞けない</string>
     <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">音声メッセージを準備しています…</string>
     <string name="onboarding_language_test_play">メッセージを再生する</string>

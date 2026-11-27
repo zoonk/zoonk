@@ -2,50 +2,59 @@
 <!-- eloqnt-fingerprints-v1
 {
   "placementtest_about": "a33def34a986cc523a5a18bd27a69e8075b3b3c92998075adaba2e1147a189c7",
-  "placementtest_about_in_parts": "2cbeeb803ffbd7a39c858367d52b1e84db3cbebc6d0ee712601f95b7074a0a55",
+  "placementtest_about_left": "c6a530da3125515db144065ec6bcdfabfe493c7fd62cea507023b28fbee98754",
   "placementtest_choose_description": "20d54ad0d6ebf608311e7fd3d3316f9cd90ce885bedded26fd514f8d995a2e24",
-  "placementtest_choose_title": "52208acb16494eea3c4e1da51f6e19eef404d897ae9a0f1eca5dfab8f970bc59",
-  "placementtest_continue_from_plan": "9b367e2313e5cce5a3f9c613389ba3e96ef23ac7d2a8216c2b2d888728e82f0f",
   "placementtest_continue_title": "9a54694baeaae0b5e87aa8f1553c27c5a7f197bbef67a6a86bad696978f5bf20",
   "placementtest_done": "b8c7e209251b4d4d15676213ebe0143a4e86ebf78d78bd6f43c2fe88e279ca97",
   "placementtest_find_level": "00a6d14e43cd380b3125a8ef9cc478c85be8b4fb4bb81944a43a56c50ebdb7ef",
-  "placementtest_finish_for_today": "222bbdc4d240f14975dcb7227ff49cd0e3a21e87f1596f76a4867b8cb4bcc3d8",
+  "placementtest_finish_later": "f7d0b542cd65478d3fc0b8103fd4a70beb7c9a2d1e0f56b31e0afff5166f1d48",
+  "placementtest_first_lesson": "d4156106f0259c9a764de6c24ffb06f84855eb83ea07ed715628bb74752692e3",
+  "placementtest_first_lesson_line": "ea211484c07ea65de29a1e5f6fbcf18e1db8bc869c0cc3351f3284418c5123e4",
+  "placementtest_full_test": "d4f18a6482509c9c01c53e0a5040b725837777988edefb9aa69e31daf81ca43f",
   "placementtest_in_progress": "705e21ca36788ca400c7c849d0bc270c4388184381d2d9f18f161f3ce25eee8e",
   "placementtest_keep_going": "b563e21656c4eabad2e1331f9209af0013341237a87bcdbbae1473a253a98c4c",
   "placementtest_keeps_adjusting": "fa2edc50a21e7290f2f1019292f73c8a0f1e775fc171a62316c4f02ed795963c",
   "placementtest_known_one": "3d421501c2ff31a8f782fe27952ffe0484c272dbf7f0be61980181aa02b2bdcc",
   "placementtest_known_other": "a776ce044be84d9e85c247df574b8184c8ad839c6f1dbd4d36b649b98a892165",
-  "placementtest_left_saved": "c3a3a7708afb68e6c24dc38021803481ff43455fea28237dda1c774b8dc59f6c",
   "placementtest_lessons_skipped": "37faf6fd5ef2a4052aa1045567a6136c8565e249b5a67064ca6ba4a1fcda04de",
+  "placementtest_lessons_you_know": "c027711996af2f80d9ab6bb0428d7044f0b12bc275d5aad928c6cb6b1d0f0f83",
   "placementtest_level_stays": "1b7f731c944e205bd2d38f4b7ac63e26afee8d321656091f238b39afa298b615",
   "placementtest_level_title": "cced61830ce132471ccd60df6c3836839a22b48288283e23c2a62478a42afcd4",
-  "placementtest_levels_skipped": "3b2d6117f5ebe514972c9a4b46d3b551235ecac95bb2fd5dc345221781e43cd0",
+  "placementtest_listening_later": "c7b519c43ec8a23cdd6f7aaeb1e53dde13a79dd596e2dc44d4a5f97c6c94e9f0",
   "placementtest_listening_range": "e387ab2d8e77671783585a709edf4b59d81a9f97094f8e9ca3d0da605498afd8",
+  "placementtest_next_time": "60ff4243ccec5eb6d31c4b16b739e32e6438927c2558793fbc56ed4c22f750b2",
   "placementtest_no_lessons_skipped": "d5fea4ebcdb3c1d2a37f8a3cbd88288b3399623485d7718dce75550e17a3e9d8",
   "placementtest_not_now": "e6007862850450d4476f6d1e371073cbbf2c8f16ed7a8204f8d02e15d7466263",
+  "placementtest_not_tested": "cd32e73191c230e5c25975e34122ca7b5ba94ee8d1e948a136a688b2c3a55524",
   "placementtest_offer_level": "f6911ff1a8cb0a021ad1a3f6ddcf87e829af281620ef01513993090fa03d395c",
   "placementtest_offer_quick": "b4915f9f0d852c5fd4145b005e38e903b214de4bc09f5e343ac15de310ecbf57",
   "placementtest_offer_title": "2ecb11749872fd9e6b3f361006853663e4cc1036fa9322faa5a491207735bc71",
-  "placementtest_part": "a9aa252ba5b4ce0acbbaffafcfbab109734ffe3bb5a15d9cee5d6323ff3531e5",
+  "placementtest_part_done": "69cc8179f56f01b03f9d9d7537740b4910d4957b58fdfec29ff84eeb228fe775",
+  "placementtest_part_of": "8afb2d4c1a93cddbdef3ff036a61f1110d11c079142acf41727ad04e87fe93a2",
+  "placementtest_part_skipped": "daaee055a16e9e67684f92bf0a980596b23ec3980cbdec58bd9c7c340f372037",
+  "placementtest_part_skipped_none": "57366494b164af15273ce942a4813f46cc1c554f06caca61a9d192a2371a8cce",
+  "placementtest_parts_any_day": "ca1c5b7da98fe2fbd66594de9c033124d56f41499bb40ab7aa24dac9959a934c",
+  "placementtest_parts_left": "b17b07b78ab9cb559917e38343f19833d2f9c224cfcefabeab614af25d0243dc",
   "placementtest_plan_stays": "fd46adbf5da9537784cb773d76714906a3912f5d3acfe47cb5c921758af01834",
+  "placementtest_questions": "473f3a5ed62a1066f2efe5c3d2cea0926684c0d0a259da6e4a2969de1ba59f5b",
   "placementtest_quick": "51240a10e2dec683d19592d18ade3e726d67c3ed614b241277ab8aecb048a5ee",
-  "placementtest_quick_only_description": "207820e4319f34c4219120ceb2298c2a25ff541b715d31a6831a9cf232b1f07b",
   "placementtest_reading_range": "5a945afbf7993dff4ccec6cc2867be8ba0566b2bd45251b2f186caf7de056a7f",
   "placementtest_retake_tomorrow": "c3ef339a399424fff9247a0afaa62ee6edf7990a97fb43c5dc99b2dbdc760b34",
   "placementtest_skip_lessons": "8a3b218982b8595902330f291f877f87ff733e16b04e955eb660e5084b36c5b1",
   "placementtest_start": "b036a3b90ca49331f9b254c8f0d6af76b4fb5dcaf6625f144b813f9ef17760f1",
+  "placementtest_start_lesson": "27601afaf2b94bf5de3f2a4d569927ce0f13417cc11b0285b264a55e85da8e03",
   "placementtest_start_title": "80f0d546e2586db0e7b7f04ea7d2ebf2ac77c05adb0c2b95285b4863bbcd593a",
   "placementtest_test_out": "af198f4465b7e60ae4aa7db1fb2710ceb491cdd461822592d511725ab837aba3",
   "placementtest_test_out_description": "225152815c136c9b23b953ad394ff6cd45ae93bf20b0965a977e72192e8da4bc",
   "placementtest_test_out_unavailable": "c7784dc86eb8fbf7f040ba51aa8b4cc26d988c626368ca398fe1d49eea7f209f",
-  "placementtest_time_left": "b7ae21d6c2ed99e6c59a84a58bee4f538bae200639d4d3103a2c473b5aeb4bc7",
+  "placementtest_test_the_rest": "67abd1ea13fc645cb1d17f7c858bd4a011586cc8140cc01cfbc1ab44a880e91a",
   "placementtest_title": "a1c5e9421a2e3f1c2f6ff33c8a77af1f6723187f25e403b277c535dfc1e14696",
   "placementtest_up_next": "c249ae7caff5de81cb524425af4b8cf8988b140bba06e6d0a1f6b48490c52aa8",
-  "placementtest_whole_course": "b8a5b89b5ddc65db346ddf61f7d1ef53713ccae894a687b002e5ccbecb8c7e04",
+  "placementtest_where_to_start": "10e4d3de2311f0818547c99882d5ed308b84697228a372df2de25af4eac36f40",
   "placementtest_your_level": "7c9abe45c4d7ecd3e9f95ee20b64fa01aa71cbf2b4e57e9d688ee941b363835b"
 }
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
     <string name="placementtest_title">아는 내용 확인하기</string>
     <string name="placementtest_skip_lessons">이미 아는 레슨 건너뛰기</string>
@@ -53,8 +62,6 @@
     <string name="placementtest_level_title">레벨 테스트</string>
     <string name="placementtest_find_level">레벨을 확인하고 아는 내용 건너뛰기</string>
     <string name="placementtest_in_progress">진행 중</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="placementtest_time_left">%1$s 남음</string>
     <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
     <string name="placementtest_no_lessons_skipped">건너뛴 레슨 없음</string>
     <plurals name="placementtest_lessons_skipped">
@@ -66,28 +73,16 @@
     <string name="placementtest_listening_range">듣기 %1$s</string>
     <string name="placementtest_start_title">이미 아는 내용 건너뛰기</string>
     <string name="placementtest_choose_description">테스트로 건너뛸 수 있는 레슨을 찾아요.</string>
-    <string name="placementtest_quick_only_description">짧은 테스트로 건너뛸 수 있는 레슨을 찾아요. 약 %1$s 걸려요.</string>
-    <string name="placementtest_choose_title">테스트 선택</string>
-    <!-- The short placement test: about four minutes of questions. -->
+    <!-- The short test: about six minutes of questions. -->
     <string name="placementtest_quick">간단한 테스트</string>
     <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">약 %1$s</string>
-    <!-- The long placement test: it checks every topic still ahead in the course. -->
-    <string name="placementtest_whole_course">코스 전체</string>
-    <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
-    <string name="placementtest_about_in_parts">약 %1$s, 여러 파트로 진행</string>
     <!-- A short test of one language level, such as "Test out of B2". -->
     <string name="placementtest_test_out">%1$s 건너뛰기 테스트</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">이미 아는 %1$s 건너뛰기</string>
     <string name="placementtest_start">시작하기</string>
-    <!-- A whole-course test is split into parts; %1$d is the part's number. -->
-    <string name="placementtest_part">%1$d파트</string>
     <string name="placementtest_continue_title">테스트 이어서 풀기</string>
-    <!-- %1$s is a duration with its unit, such as "15 min". -->
-    <string name="placementtest_left_saved">약 %1$s 남았어요. 답변은 저장돼요.</string>
-    <string name="placementtest_continue_from_plan">계획에서 테스트를 마칠 수 있어요.</string>
-    <string name="placementtest_finish_for_today">오늘은 여기까지</string>
     <string name="placementtest_keep_going">계속하기</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_one">이미 알고 있는 레슨들이에요. 계속 복습에 포함돼요.</string>
@@ -101,10 +96,6 @@
     <string name="placementtest_not_now">나중에</string>
     <!-- %1$s is a language's name, such as "Italian". -->
     <string name="placementtest_your_level">내 %1$s 레벨</string>
-    <!-- %2$s is a list of language levels, such as "A1, A2". The plan no longer has their lessons. -->
-    <plurals name="placementtest_levels_skipped">
-        <item quantity="other">%2$s: 레슨 %1$d개 건너뜀</item>
-    </plurals>
     <string name="placementtest_keeps_adjusting">답변에 따라 레슨이 계속 조정돼요.</string>
     <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
     <string name="placementtest_level_stays">%1$s은 계획에 남아요</string>
@@ -115,4 +106,42 @@
     <string name="placementtest_offer_quick">간단한 테스트로 이미 아는 레슨을 건너뛸 수 있어요.</string>
     <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">이미 아는 %1$s은 짧은 테스트로 건너뛸 수 있어요.</string>
+    <string name="placementtest_where_to_start">어디서 시작할까요?</string>
+    <string name="placementtest_first_lesson">첫 레슨</string>
+    <string name="placementtest_first_lesson_line">입력한 레벨부터 시작</string>
+    <!-- The long test: it checks every topic still ahead, in parts. -->
+    <string name="placementtest_full_test">전체 테스트</string>
+    <!-- How many parts the long test has. The learner can take each part on a different day. -->
+    <plurals name="placementtest_parts_any_day">
+        <item quantity="other">%d개 파트, 원하는 날에 응시</item>
+    </plurals>
+    <plurals name="placementtest_questions">
+        <item quantity="other">문제 %d개</item>
+    </plurals>
+    <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
+    <string name="placementtest_part_of">%2$d개 중 %1$d번째 파트</string>
+    <!-- The title after one part of a test split into parts, such as “Part 3 of 14 done”. -->
+    <string name="placementtest_part_done" tools:ignore="PluralsCandidate">%2$d개 중 %1$d번째 파트 완료</string>
+    <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
+    <string name="placementtest_part_skipped_none">이 파트에서 건너뛴 레슨이 없어요.</string>
+    <!-- After one part of a test: how many lessons that part took out of the learner's plan. -->
+    <plurals name="placementtest_part_skipped">
+        <item quantity="other">이 파트에서 이미 알고 있던 레슨 %d개를 건너뛰었어요.</item>
+    </plurals>
+    <!-- How many parts of a test the learner still has to take. -->
+    <plurals name="placementtest_parts_left">
+        <item quantity="other">남은 파트 %d개</item>
+    </plurals>
+    <string name="placementtest_finish_later">나중에 마무리하기</string>
+    <!-- Where a learner who stopped a test picks it up: the part of the test and the question in it. -->
+    <string name="placementtest_next_time">다음에 이어서 할 곳: %2$d개 중 %1$d번째 파트의 문제 %3$d번</string>
+    <string name="placementtest_start_lesson">레슨 시작하기</string>
+    <!-- Button after the short test: goes on to test the rest of the course, in parts. -->
+    <string name="placementtest_test_the_rest">나머지 테스트하기</string>
+    <plurals name="placementtest_lessons_you_know">
+        <item quantity="other">이미 알고 있던 레슨 %d개를 건너뛰었어요.</item>
+    </plurals>
+    <string name="placementtest_listening_later">계획에서 나중에 듣기 테스트를 볼 수 있어요.</string>
+    <string name="placementtest_not_tested">아직 테스트 전</string>
+    <string name="placementtest_about_left">약 %1$s 남음</string>
 </resources>
