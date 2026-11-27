@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import UNLISTED_ROUTE from "../../apps/main/src/data/catalog/catalog-placeholder.json" with { type: "json" };
+import { SUPPORTED_LOCALES } from "../../packages/utils/src/locale.ts";
 
 const run = promisify(execFile);
 const script = resolve(import.meta.dirname, "check-static-routes.mts");
@@ -14,14 +15,19 @@ export async function fixture() {
   const app = join(root, "app");
 
   await Promise.all([
-    mkdir(join(dist, "server/app/en"), { recursive: true }),
+    mkdir(join(dist, "server/app"), { recursive: true }),
     mkdir(join(app, "[lang]/(public)"), { recursive: true }),
   ]);
 
   await Promise.all([
     writeFile(join(app, "[lang]/(public)/page.tsx"), "export const ensureStatic = 'navigation';"),
-    writeFile(join(dist, "server/app/en.html"), "<h1>Title</h1>"),
-    writeFile(join(dist, "server/app/en.meta"), JSON.stringify({ headers: {}, status: 200 })),
+    ...SUPPORTED_LOCALES.flatMap((locale) => [
+      writeFile(join(dist, `server/app/${locale}.html`), "<h1>Title</h1>"),
+      writeFile(
+        join(dist, `server/app/${locale}.meta`),
+        JSON.stringify({ headers: {}, status: 200 }),
+      ),
+    ]),
   ]);
 
   const metadata = [
@@ -34,16 +40,18 @@ export async function fixture() {
   ];
 
   const routes = Object.fromEntries(
-    metadata.map((source) => [
-      source.replace("[lang]", "en").replace("[__metadata_id__]", "0.xml"),
-      {
-        compute: "static",
-        renderingMode: "STATIC",
-        response: "complete",
-        routeType: "route",
-        srcRoute: source,
-      },
-    ]),
+    metadata.flatMap((source) =>
+      SUPPORTED_LOCALES.map((locale) => [
+        source.replace("[lang]", locale).replace("[__metadata_id__]", "0.xml"),
+        {
+          compute: "static",
+          renderingMode: "STATIC",
+          response: "complete",
+          routeType: "route",
+          srcRoute: source,
+        },
+      ]),
+    ),
   );
 
   await Promise.all(
@@ -63,13 +71,18 @@ export async function fixture() {
     dynamicRoutes: {},
     routes: {
       ...routes,
-      "/en": {
-        compute: "static",
-        renderingMode: "STATIC",
-        response: "complete",
-        routeType: "page",
-        srcRoute: "/[lang]",
-      },
+      ...Object.fromEntries(
+        SUPPORTED_LOCALES.map((locale) => [
+          `/${locale}`,
+          {
+            compute: "static",
+            renderingMode: "STATIC",
+            response: "complete",
+            routeType: "page",
+            srcRoute: "/[lang]",
+          },
+        ]),
+      ),
     },
   };
 

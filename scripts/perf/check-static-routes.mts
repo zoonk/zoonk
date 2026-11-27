@@ -2,6 +2,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { SUPPORTED_LOCALES } from "../../packages/utils/src/locale.ts";
 import { htmlMarkers } from "./html-markers.mts";
 import { getCatalogPlaceholderMatcher, getNavigationRoutes } from "./navigation-routes.mts";
 import { type PageMeta, getRedirectProblems, hasSetCookie } from "./redirect-artifacts.mts";
@@ -185,6 +186,22 @@ async function metadataArtifact({
   return { artifact: "metadata body", problems, route: path };
 }
 
+/**
+ * Next silently renders a path on each request when its prerender fails, so a route whose only
+ * dynamic segment is the language must be prerendered in every locale, not just in some.
+ */
+function missingLocalePaths(source: string, prerendered: Set<string>): string[] {
+  const segments = source.match(/\[[^\]]+\]/gu) ?? [];
+
+  if (segments.length !== 1 || segments[0] !== "[lang]") {
+    return [];
+  }
+
+  return SUPPORTED_LOCALES.map((locale) => source.replace("[lang]", locale)).filter(
+    (path) => !prerendered.has(path),
+  );
+}
+
 async function routeArtifacts({
   manifest,
   metadata,
@@ -200,15 +217,19 @@ async function routeArtifacts({
     ([path, entry]) => (entry.srcRoute ?? path) === source,
   );
 
+  const artifact = metadata ? "metadata body" : "HTML";
+
   if (entries.length === 0) {
     return [
       {
-        artifact: metadata ? "metadata body" : "HTML",
+        artifact,
         problems: [metadata ? "no static metadata artifact" : "no prerendered page"],
         route: source,
       },
     ];
   }
+
+  const missing = missingLocalePaths(source, new Set(entries.map(([path]) => path)));
 
   const artifacts = await Promise.all(
     entries.map(([path, entry]) =>
@@ -224,6 +245,9 @@ async function routeArtifacts({
 
   return [
     ...artifacts,
+    ...(missing.length > 0
+      ? [{ artifact, problems: [`not prerendered: ${missing.join(", ")}`], route: source }]
+      : []),
     ...(fallback && fallback !== "STATIC" && navigationStatic !== true
       ? [{ artifact: "fallback", problems: [`dynamic fallback is ${fallback}`], route: source }]
       : []),
