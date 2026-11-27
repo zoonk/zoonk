@@ -15,6 +15,10 @@ export const FORMAT_WORDS: Record<BlueprintExtraction["formats"][number]["kind"]
   trueFalse: "items judged true or false (right or wrong)",
 };
 
+export function describePoints(points: number): string {
+  return `${points} ${points === 1 ? "point" : "points"}`;
+}
+
 export type FactEntry = { citations: Citation[]; found: boolean; id: string; statement: string };
 
 type Claim = { id: string; statement: string };
