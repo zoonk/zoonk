@@ -756,16 +756,28 @@ class LessonStartTest {
 
     @Test fun standaloneLessonWaitsForInputBeforeStarting() =
         runTest(dispatcher) {
+            lesson = playable(listOf(checkStep(ONE)))
+            api.load = LessonLoad.Ready(lesson)
+            api.startGate = CompletableDeferred()
             val vm = player(null, tapped = false)
             vm.open(lesson)
             runCurrent()
             assertNotNull(vm.state.value?.currentStep)
+            vm.restoreAnswer(LessonAnswer.Check("right"))
+            runCurrent()
             assertTrue(api.startOpenings.isEmpty())
             vm.act()
             vm.act()
-            advanceUntilIdle()
+            runCurrent()
             assertEquals(1, api.startOpenings.size)
-            assertTrue(vm.state.value?.run is LessonRun.Started)
+            api.startGate!!.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(
+                vm.state.value
+                    ?.run
+                    .toString(),
+                vm.state.value?.run is LessonRun.Started,
+            )
         }
 
     @Test fun restoredStartWaitsAndOpenedReturnsToToday() =

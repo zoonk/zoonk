@@ -265,6 +265,8 @@ fun LessonPlayer(
             object : StepActions {
                 override fun select(answer: LessonAnswer?) = viewModel.select(answer)
 
+                override fun restoreAnswer(answer: LessonAnswer) = viewModel.restoreAnswer(answer)
+
                 override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = stepKeys.takePicks(pick)
 
                 override fun takeNumberKeys(keys: ((Int) -> Boolean)?) = stepKeys.takeNumbers(keys)
@@ -457,7 +459,7 @@ fun LessonPlayer(
                 },
             note = state?.takeIf { screen?.primary != null }?.let { lessonBarNote(screen?.step, it, actions) },
         ) { padding ->
-            Column(Modifier.fillMaxSize().padding(padding)) {
+            Column(Modifier.fillMaxSize().padding(padding).onLessonInput(viewModel::act)) {
                 if (state == null || screen == null) {
                     PageLoading()
                 } else {

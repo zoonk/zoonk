@@ -358,7 +358,8 @@ class LessonPlayerViewModel(
         // Written content is usable while admission runs; server work still waits for its run.
         openedAt = now()
         mutableState.value =
-            LessonPlayerState.initial(lesson.id, lesson.playedSteps, now = openedAt)
+            LessonPlayerState
+                .initial(lesson.id, lesson.playedSteps, now = openedAt)
                 .resume(lesson.resume.map(LibraryLessonRunAnswer::toRunAnswer), openedAt)
                 .withFirstAnswer(openedAt)
         work.launch {
@@ -366,10 +367,6 @@ class LessonPlayerViewModel(
             leaveOutUnheardDictations()
         }
         if (activated) startRun()
-    }
-
-    override fun onCleared() {
-        if (admittedRunId != null && !hosted) store.lesson(lessonId).invalidate()
     }
 
     fun resume() {
@@ -492,7 +489,6 @@ class LessonPlayerViewModel(
         }
     }
 
-    /** The learner tapped or typed in the lesson, seen once at the player's root ([LearnerInput]). */
     fun act() {
         mutableState.value
             ?.currentStep
@@ -506,8 +502,10 @@ class LessonPlayerViewModel(
     fun dispatch(action: LessonAction) {
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
-            LessonAction.RestoreWriting, is LessonAction.SelectAnswer, is LessonAction.DontKnow, is LessonAction.SkipWriting,
-            -> activate()
+            LessonAction.RestoreWriting, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            -> act()
+
+            is LessonAction.SelectAnswer -> activate()
 
             else -> Unit
         }
@@ -550,6 +548,13 @@ class LessonPlayerViewModel(
     ): String? {
         encodedAnswers[stepId]?.takeIf { it.first === answer }?.let { return it.second }
         return savedJson(ApiJson, LessonAnswer.serializer(), answer).also { encodedAnswers[stepId] = answer to it }
+    }
+
+    fun restoreAnswer(answer: LessonAnswer) {
+        mutableState.update { state ->
+            val step = state?.currentStep ?: return@update state
+            reduce(state, LessonAction.SelectAnswer(step.id, answer), now())
+        }
     }
 
     fun select(answer: LessonAnswer?) {

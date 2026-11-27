@@ -87,7 +87,7 @@ class LessonActivationTest {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LearnerInput(viewModel::act, Modifier.testTag("activation")) {
+                    androidx.compose.foundation.layout.Box(Modifier.testTag("activation")) {
                         LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
                     }
                 }
@@ -113,10 +113,7 @@ class LessonActivationTest {
     @Test fun aTapStartsTheRunOnce() {
         show()
         rule.onNodeWithTag("activation").performTouchInput {
-            click(
-                androidx.compose.ui.geometry
-                    .Offset(200f, 30f),
-            )
+            click(center)
         }
         rule.waitForIdle()
         org.junit.Assert.assertEquals(1, api.startOpenings.size)

@@ -281,7 +281,7 @@ final class LessonPlayerStore {
 
     do {
       let revision = lessonResource.revision
-      if refresh {
+      if refresh || !activated {
         await lessonResource.refresh()
       } else {
         await lessonResource.load()
@@ -341,9 +341,6 @@ final class LessonPlayerStore {
 
   func leave() {
     starting?.cancel()
-    if state?.runId != nil {
-      lessonResource.invalidate(rereadsWhileShown: false)
-    }
   }
 
   @discardableResult
@@ -441,7 +438,6 @@ final class LessonPlayerStore {
     beginStart()
   }
 
-  /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
   func act() {
     if let step = state?.currentStep, step.kind == .activity { workedHere.insert(step.id) }
     acted = true
@@ -742,7 +738,7 @@ final class LessonPlayerStore {
   }
 
   func continueLesson() {
-    activate()
+    act()
     writeExampleLinesOnce()
     sendUnsaved()
     state?.continueLesson()
@@ -750,23 +746,25 @@ final class LessonPlayerStore {
   }
 
   func goBack() {
+    act()
     state?.goBack()
   }
 
   func explainFirst() {
     if let stepId = state?.currentStep?.id { workedHere.insert(stepId) }
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
   func knowThis() {
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
   func dontKnow() {
+    act()
     guard let stepId = state?.currentStep?.id else { return }
     state?.dontKnow(stepId)
   }
@@ -814,7 +812,7 @@ final class LessonPlayerStore {
       return
     }
 
-    activate()
+    act()
     writeExampleLinesOnce()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 

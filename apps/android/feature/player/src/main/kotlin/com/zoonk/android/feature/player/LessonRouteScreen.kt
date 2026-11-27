@@ -1,8 +1,5 @@
 package com.zoonk.android.feature.player
 
-import android.view.View
-import android.view.ViewGroup
-import android.view.accessibility.AccessibilityEvent
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -21,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +28,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -94,6 +91,7 @@ fun LessonRouteScreen(
     navigator: AppNavigator,
 ) {
     val resource = remember(route.lessonId) { app.lessonPlayer.lesson(route.lessonId) }
+    val cachedOnEntry = remember(resource) { resource.state.value.value is LessonLoad.Ready }
     val load by resource.collectShown()
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session is SessionState.SignedIn
@@ -142,7 +140,7 @@ fun LessonRouteScreen(
         is LoadState.Loaded -> {
             when (val lesson = state.value) {
                 is LessonLoad.Ready -> {
-                    PlayingLesson(route, app, lesson, navigator, exits)
+                    PlayingLesson(route, app, lesson, navigator, exits, refreshOnOpen = cachedOnEntry)
                 }
 
                 is LessonLoad.SessionRequired -> {
@@ -175,6 +173,7 @@ internal fun PlayingLesson(
     navigator: AppNavigator,
     exits: LessonPlayerExits,
     endSlot: LessonEndSlot? = null,
+    refreshOnOpen: Boolean = false,
 ) {
     val viewModel =
         viewModel(key = "lesson:${route.lessonId}") {
@@ -231,11 +230,20 @@ internal fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) {
         val current = if (endSlot == null) app.lessonPlayer.lesson(route.lessonId) else null
-        current?.load()
+        if (refreshOnOpen) current?.refresh() else current?.load()
         viewModel.open((current?.state?.value?.value as? LessonLoad.Ready)?.lesson ?: load.lesson)
     }
 
-    val bookmark = lessonBookmark(app, summary.value?.activeGoalId, route.lessonId, (viewModel.lessonSaved ?: load.lesson.saved).takeUnless { endSlot != null })
+    val bookmark =
+        lessonBookmark(
+            app,
+            summary.value?.activeGoalId,
+            route.lessonId,
+            (viewModel.lessonSaved ?: load.lesson.saved).takeUnless {
+                endSlot !=
+                    null
+            },
+        )
 
     val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
     val team =
@@ -248,33 +256,31 @@ internal fun PlayingLesson(
             null
         }
 
-    LearnerInput(viewModel::act) {
-        CompositionLocalProvider(
-            LocalLessonSpeech provides app.speech,
-            LocalCodeSandbox provides app.codeSandbox,
-            LocalChallengeTeam provides team,
-        ) {
-            val saveReport = rememberSaveFailureReport(app, "lesson-end")
-            LessonPlayer(
-                load.lesson,
-                state,
-                ending,
-                viewModel,
-                exits,
-                navigator,
-                endSlot,
-                buddy = summary.value?.buddy,
-                onReportSaveFailure = saveReport::open,
-                ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
-                tutor = tutor,
-                certificatesMoment = { awarded, onClose ->
-                    CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
-                },
-                finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
-                bookmark = bookmark,
-            )
-            LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
-        }
+    CompositionLocalProvider(
+        LocalLessonSpeech provides app.speech,
+        LocalCodeSandbox provides app.codeSandbox,
+        LocalChallengeTeam provides team,
+    ) {
+        val saveReport = rememberSaveFailureReport(app, "lesson-end")
+        LessonPlayer(
+            load.lesson,
+            state,
+            ending,
+            viewModel,
+            exits,
+            navigator,
+            endSlot,
+            buddy = summary.value?.buddy,
+            onReportSaveFailure = saveReport::open,
+            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+            tutor = tutor,
+            certificatesMoment = { awarded, onClose ->
+                CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
+            },
+            finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
+            bookmark = bookmark,
+        )
+        LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
 }
 
@@ -298,50 +304,19 @@ private fun lessonBookmark(
     return { LessonBookmark(saved) { saves.set(id, !saved) } }
 }
 
-/**
- * Calls [onInput] for each of the learner's own inputs in [content], without taking any: a tap (lifted within touch slop of
- * where it went down, from any pointer), a key press, or a click from TalkBack or Switch Access. Scrolls and drags don't count.
- */
 @Composable
-internal fun LearnerInput(
-    onInput: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
+internal fun Modifier.onLessonInput(onInput: () -> Unit): Modifier {
     val currentOnInput by rememberUpdatedState(onInput)
-    val host = LocalView.current.parent as? ViewGroup
-
-    // Accessibility services click through the screen's semantics, which no pointer input sees; Compose reports each of
-    // those clicks to the view's parent.
-    DisposableEffect(host) {
-        host?.accessibilityDelegate =
-            object : View.AccessibilityDelegate() {
-                override fun onRequestSendAccessibilityEvent(
-                    host: ViewGroup,
-                    child: View,
-                    event: AccessibilityEvent,
-                ): Boolean {
-                    if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) currentOnInput()
-                    return super.onRequestSendAccessibilityEvent(host, child, event)
-                }
-            }
-        onDispose { host?.accessibilityDelegate = null }
+    return pointerInput(Unit) {
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+            val up = waitForUpOrCancellation(PointerEventPass.Initial)
+            if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) currentOnInput()
+        }
+    }.onPreviewKeyEvent {
+        if (it.type == KeyEventType.KeyDown && it.key != Key.Tab && it.key != Key.Escape) currentOnInput()
+        false
     }
-
-    Box(
-        modifier
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    // Before the screen's own controls take the touch.
-                    val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                    val up = waitForUpOrCancellation(PointerEventPass.Initial)
-                    if (up != null && (up.position - down.position).getDistance() <= viewConfiguration.touchSlop) currentOnInput()
-                }
-            }.onPreviewKeyEvent {
-                if (it.type == KeyEventType.KeyDown) currentOnInput()
-                false
-            },
-    ) { content() }
 }
 
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */

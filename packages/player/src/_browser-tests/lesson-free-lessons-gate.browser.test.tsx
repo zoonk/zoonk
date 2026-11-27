@@ -27,7 +27,7 @@ describe("the free lessons gate", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson }),
       lesson,
-      startOnNavigation: true,
+      takeNavigationStart: () => true,
     });
 
     await expect
@@ -57,7 +57,7 @@ describe("the free lessons gate", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson }),
       lesson,
-      startOnNavigation: true,
+      takeNavigationStart: () => true,
     });
 
     await expect

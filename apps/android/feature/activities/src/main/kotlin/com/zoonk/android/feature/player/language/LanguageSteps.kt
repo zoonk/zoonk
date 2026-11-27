@@ -121,6 +121,7 @@ fun LanguageStepView(
     val speech = language.speech
     val exercise = remember(content.exercise) { content.exercise.toExercise() }
     val select = { answer: LessonAnswer? -> if (!locked) actions.select(answer) }
+    val restore = { answer: LessonAnswer -> if (!locked) actions.restoreAnswer(answer) }
     val sound: (@Composable () -> Unit)? =
         prompt?.let {
             promptAudioUrl(content, actions.cantListen)?.let { url ->
@@ -183,6 +184,7 @@ fun LanguageStepView(
                         language = languages.target,
                         speech = speech,
                         onAnswer = select,
+                        onRestore = restore,
                         prompt = question,
                     )
                 }
@@ -237,6 +239,7 @@ fun LanguageStepView(
                         language = languages.learner,
                         speech = speech,
                         onAnswer = select,
+                        onRestore = restore,
                         prompt = question,
                     )
                 }
@@ -247,7 +250,7 @@ fun LanguageStepView(
             (exercise.content as? ExerciseContent.MatchColumns)?.let { pairs ->
                 val instruction = stripWrappingQuotes(pairs.question ?: stringResource(R.string.player_language_match_the_pairs))
                 QuestionWithTurn(part, { QuestionText(instruction) }) { question ->
-                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, select, { done ->
+                    MatchColumnsView(pairs, exercise.matchColumnsRightItems, answer, result != null, locked, restore, { done ->
                         select(done)
                         if (!locked) actions.runPrimary()
                     }, actions::takeNumberKeys, question)

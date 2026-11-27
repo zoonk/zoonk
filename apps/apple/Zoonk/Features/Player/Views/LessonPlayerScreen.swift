@@ -124,6 +124,11 @@ private struct LessonPlayerContent: View {
   var body: some View {
     NavigationStack {
       content
+        .simultaneousGesture(TapGesture().onEnded { store.act() })
+        .onKeyPress(phases: .down) { press in
+          if press.key != .tab && press.key != .escape { store.act() }
+          return .ignored
+        }
         // Main's task header: the title in the bar, the lesson's segments under it.
         .taskSegmentsBar(
           segments.map {
@@ -159,12 +164,6 @@ private struct LessonPlayerContent: View {
             screenMenuItems(state)
           }
         }
-    }
-    // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
-    .simultaneousGesture(TapGesture().onEnded { store.act() })
-    .onKeyPress(phases: .down) { _ in
-      store.act()
-      return .ignored
     }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)

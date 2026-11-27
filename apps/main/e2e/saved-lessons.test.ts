@@ -104,13 +104,13 @@ test.describe("Saved lessons", () => {
       const save = page.getByRole("button", { exact: true, name: "Save" });
       await expect(save).toHaveAttribute("aria-pressed", "false");
       await save.click();
-      await started;
 
       const saved = page.getByRole("button", { exact: true, name: "Saved" });
       await expect(saved).toHaveAttribute("aria-pressed", "true");
       await expect.poll(() => savedCount(user.id)).toBe(1);
 
       await page.getByRole("button", { name: /^Continue/u }).click();
+      await started;
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
       await expect(saved).toHaveAttribute("aria-pressed", "true");
 
@@ -201,17 +201,24 @@ test.describe("Saved lessons", () => {
       await save.click();
       await expect.poll(() => savedCount(user.id)).toBe(1);
 
-      const started = waitForLessonStart(page, finished.id);
+      const starts: string[] = [];
+
+      page.on("request", (request) => {
+        if (new URL(request.url()).pathname === `/api/library/lessons/${finished.id}/starts`) {
+          starts.push(request.url());
+        }
+      });
+
       await page.getByRole("main").getByRole("link", { name: finished.title }).click();
 
       const saved = page.getByRole("button", { exact: true, name: "Saved" });
       await expect(saved).toHaveAttribute("aria-pressed", "true");
       await saved.click();
-      await started;
       await expect.poll(() => savedCount(user.id)).toBe(0);
 
       await page.getByRole("link", { name: "Leave" }).click();
       await expect(page).toHaveURL(/\/completed-lessons$/u);
+      expect(starts).toHaveLength(0);
 
       await expect(save).toHaveAttribute("aria-pressed", "false");
       await save.click();

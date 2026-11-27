@@ -118,7 +118,7 @@ export type LessonPlayerProviderProps = {
   soundsEnabled?: boolean;
   track?: TrackEvent;
   tutor?: LessonTutorConfig;
-  startOnNavigation?: boolean;
+  takeNavigationStart?: () => boolean;
   viewer: { learnerId: string | null };
 };
 
@@ -143,7 +143,7 @@ export function LessonPlayerProvider({
   routes,
   slots = NO_SLOTS,
   soundsEnabled = false,
-  startOnNavigation = false,
+  takeNavigationStart,
   track = noTracking,
   tutor,
   viewer,
@@ -178,13 +178,17 @@ export function LessonPlayerProvider({
       dispatch({ opening: true, type: "skipWriting" });
     }
 
-    const held = viewer.learnerId ? reopen(viewer.learnerId) : [];
+    const held = viewer.learnerId && state.run.status === "idle" ? reopen(viewer.learnerId) : [];
+
+    if (held.length > 0) {
+      dispatch({ type: "saveFailed" });
+    }
 
     if (held.length > 0 && !(firstAnswer && state.phase === "feedback")) {
       dispatch({ answers: addHeldAnswers(resume, held), type: "unsentPlaced" });
     }
 
-    if (startOnNavigation && viewer.learnerId) {
+    if (takeNavigationStart?.() && viewer.learnerId) {
       actions.retryStart();
     }
   });

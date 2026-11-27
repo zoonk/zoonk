@@ -20,47 +20,29 @@ async function readProgressAttempts({
   return first ? loadProgressAnswers({ lessonId: id, since: first.startedAt, userId }) : [];
 }
 
-/** Empty without an unfinished lesson or session; start returns fresh answers to supersede a stale prefetch. */
-export async function getLessonProgress({
+export async function getLessonVisit({
   lessonId,
 }: {
   lessonId: string;
-}): Promise<LibraryLessonRun["answers"]> {
+}): Promise<{ resume: LibraryLessonRun["answers"]; saved: boolean }> {
   "use cache: private";
 
-  if (!isUuid(lessonId)) {
-    return [];
-  }
-
-  const session = await getSession();
-
-  if (!session) {
-    return [];
-  }
-
-  const userId = session.user.id;
-
-  const [attempts, played] = await Promise.all([
-    readProgressAttempts({ lessonId, userId }),
-    getPlayableLibraryLesson({ lessonId }),
-  ]);
-
-  const lesson = played?.status === "ready" ? played.lesson : null;
-  return restoreRunAnswers({ attempts, lesson, userId });
-}
-
-export async function getLessonVisit({ lessonId }: { lessonId: string }) {
-  const session = await getSession();
+  const session = isUuid(lessonId) ? await getSession() : null;
 
   if (!session) {
     return { resume: [], saved: false };
   }
 
-  const [resume, saved] = await Promise.all([
-    getLessonProgress({ lessonId }),
-    readSavedLessonIds(session.user.id),
+  const userId = session.user.id;
+
+  const [attempts, played, saved] = await Promise.all([
+    readProgressAttempts({ lessonId, userId }),
+    getPlayableLibraryLesson({ lessonId }),
+    readSavedLessonIds(userId),
   ]);
 
+  const lesson = played?.status === "ready" ? played.lesson : null;
+  const resume = await restoreRunAnswers({ attempts, lesson, userId });
   return { resume, saved: saved.has(lessonId.toLowerCase()) };
 }
 

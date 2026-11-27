@@ -363,6 +363,12 @@ final class LessonPlayerLoadingTests: XCTestCase {
     lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
     let ready = lesson
     let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(ready) }
+    await content.load()
+    content.update { _ in
+      var earlier = ready
+      earlier.resume = []
+      return .ready(earlier)
+    }
     let store = player(cache: cache, content: content, transport: transport, activated: false)
     await store.load()
     XCTAssertEqual(store.state?.currentStep?.id, "two")

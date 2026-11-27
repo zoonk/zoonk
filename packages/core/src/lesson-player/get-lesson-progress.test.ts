@@ -11,10 +11,10 @@ import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-s
 import { typedGrade } from "./_test-utils/typed-grade";
 import { checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
-import { getLessonProgress, hasStartedLesson } from "./get-lesson-progress";
+import { getLessonVisit, hasStartedLesson } from "./get-lesson-progress";
 import { startLibraryLesson } from "./start-library-lesson";
 
-describe(getLessonProgress, () => {
+describe(getLessonVisit, () => {
   it("reads the answers of the sittings the learner left unfinished this week, oldest first", async () => {
     const { lesson, steps, user } = await setupPlayableLesson();
     const check = stepOfKind(steps, "check");
@@ -43,7 +43,7 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
-    const progress = await getLessonProgress({ lessonId: lesson.id });
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
 
     expect(
       progress.map(({ answeredAt, isCorrect, stepId }) => ({ answeredAt, isCorrect, stepId })),
@@ -83,7 +83,7 @@ describe(getLessonProgress, () => {
       }),
     ]);
 
-    const progress = await getLessonProgress({ lessonId: lesson.id });
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
 
     expect(progress.map(({ stepId }) => stepId)).toStrictEqual([check.id]);
   });
@@ -127,7 +127,7 @@ describe(getLessonProgress, () => {
       userId: user.id,
     });
 
-    const progress = await getLessonProgress({ lessonId: lesson.id });
+    const { resume: progress } = await getLessonVisit({ lessonId: lesson.id });
 
     const started = await startLibraryLesson({
       input: { runId: run.id, timeZone: "UTC" },
@@ -162,12 +162,22 @@ describe(getLessonProgress, () => {
 
     await attemptFixture({ stepId: check.id, userId: user.id });
 
-    await expect(getLessonProgress({ lessonId: lesson.id })).resolves.toStrictEqual([]);
-    await expect(getLessonProgress({ lessonId: randomUUID() })).resolves.toStrictEqual([]);
+    await expect(getLessonVisit({ lessonId: lesson.id })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
+
+    await expect(getLessonVisit({ lessonId: randomUUID() })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
 
     mockSession(null);
 
-    await expect(getLessonProgress({ lessonId: lesson.id })).resolves.toStrictEqual([]);
+    await expect(getLessonVisit({ lessonId: lesson.id })).resolves.toStrictEqual({
+      resume: [],
+      saved: false,
+    });
   });
 });
 

@@ -210,8 +210,6 @@ function LessonPlayerFrame() {
       data-aside={asideRoot?.["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
-      onClickCapture={actions.engage}
-      onKeyDownCapture={actions.engage}
     >
       <LessonHeader />
       <LessonSounds />
@@ -223,6 +221,12 @@ function LessonPlayerFrame() {
           dotPaper && "dot-paper",
         )}
         id={LESSON_CONTENT_ID}
+        onClickCapture={actions.engage}
+        onKeyDownCapture={(event) => {
+          if (event.key !== "Tab" && event.key !== "Escape") {
+            actions.engage();
+          }
+        }}
         ref={mainRef}
         tabIndex={-1}
       >

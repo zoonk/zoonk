@@ -405,7 +405,7 @@ describe("coming back to a lesson", () => {
           ),
       }),
       lesson,
-      startOnNavigation: true,
+      takeNavigationStart: () => true,
     });
 
     await expect.element(page.getByText("Reading it")).toBeVisible();

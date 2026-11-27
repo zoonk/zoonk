@@ -66,6 +66,8 @@ val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 interface StepActions {
     fun select(answer: LessonAnswer?)
 
+    fun restoreAnswer(answer: LessonAnswer) = select(answer)
+
     /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
     fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
 

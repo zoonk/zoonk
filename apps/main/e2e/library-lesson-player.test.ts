@@ -281,6 +281,8 @@ test.describe("Library lesson player", () => {
     await page.reload();
 
     await expect(page.getByText("Reading it")).toBeVisible();
+    await expect(notSaved).toBeVisible();
+    await primary(page, /^Continue/u).click();
     await expect(notSaved).toBeHidden();
 
     await expect
@@ -384,6 +386,9 @@ test.describe("Library lesson player", () => {
 
     await page.goto(`/learn/${lesson.id}`);
 
+    const explanation = page.getByText("A cloud, not a little ball");
+    await expectHydrated(primary(page, /^Continue/u));
+    await explanation.click();
     await expect(page.getByRole("heading", { name: "We couldn't open this lesson" })).toBeVisible();
     expect(guestSignIns).toStrictEqual([]);
 

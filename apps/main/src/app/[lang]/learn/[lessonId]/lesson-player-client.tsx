@@ -18,7 +18,7 @@ import {
   requestExampleLine,
 } from "@/lib/lessons/lesson-help-requests";
 import { checkLessonStep } from "@/lib/lessons/lesson-step-check";
-import { hasUserActivation } from "@/lib/lessons/wait-for-user-activation";
+import { takeStudyNavigation } from "@/lib/lessons/wait-for-user-activation";
 import { getLevelCheckHref } from "@/lib/placement-test/level-check-href";
 import { saveLessonIn } from "@/lib/saved-lessons/save-lesson";
 import { type LessonOpening } from "@/lib/session/lesson-opening";
@@ -251,7 +251,7 @@ function LessonPlayerVisit({
       routes={routes}
       slots={slots}
       soundsEnabled={soundsEnabled}
-      startOnNavigation={Boolean(opening) && hasUserActivation()}
+      takeNavigationStart={opening ? takeStudyNavigation : undefined}
       track={trackEvent}
       tutor={tutor}
       viewer={{ learnerId }}

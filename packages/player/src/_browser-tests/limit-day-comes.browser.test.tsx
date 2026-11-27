@@ -218,7 +218,7 @@ describe("a limit whose day has come", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson }),
       lesson,
-      startOnNavigation: true,
+      takeNavigationStart: () => true,
     });
 
     await expect
@@ -254,7 +254,7 @@ describe("a limit whose day has come", () => {
     renderLessonPlayer({
       adapters: buildAdapters(lesson, { startLesson }),
       lesson,
-      startOnNavigation: true,
+      takeNavigationStart: () => true,
     });
 
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
