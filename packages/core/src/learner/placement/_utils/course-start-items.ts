@@ -17,37 +17,41 @@ export async function applyCourseStart({
 }) {
   const ids = [...startedPastSkillIds];
 
-  const items = ids.length > 0
-    ? await tx.planItem.updateManyAndReturn({
-        data: { completedAt: now, status: "testedOut" },
-        select: {
-          chapterId: true,
-          id: true,
-          kind: true,
-          lessonId: true,
-          lessons: true,
-          skillId: true,
-        },
-        where: {
-          kind: "lesson",
-          plan: { goalId },
-          status: "todo",
-          ...(exceptIds.length && { id: { notIn: [...exceptIds] } }),
-          AND: [
-            { OR: [{ skillId: null }, { skillId: { in: ids } }] },
-            {
-              OR: [
-                { skillId: { in: ids } },
-                { lesson: { skills: { some: { skillId: { in: ids } } } } },
-              ],
-            },
-            {
-              OR: [{ lessonId: null }, { lesson: { skills: { every: { skillId: { in: ids } } } } }],
-            },
-          ],
-        },
-      })
-    : [];
+  const items =
+    ids.length > 0
+      ? await tx.planItem.updateManyAndReturn({
+          data: { completedAt: now, status: "testedOut" },
+          select: {
+            chapterId: true,
+            id: true,
+            kind: true,
+            lessonId: true,
+            lessons: true,
+            skillId: true,
+          },
+          where: {
+            kind: "lesson",
+            plan: { goalId },
+            status: "todo",
+            ...(exceptIds.length > 0 && { id: { notIn: [...exceptIds] } }),
+            AND: [
+              { OR: [{ skillId: null }, { skillId: { in: ids } }] },
+              {
+                OR: [
+                  { skillId: { in: ids } },
+                  { lesson: { skills: { some: { skillId: { in: ids } } } } },
+                ],
+              },
+              {
+                OR: [
+                  { lessonId: null },
+                  { lesson: { skills: { every: { skillId: { in: ids } } } } },
+                ],
+              },
+            ],
+          },
+        })
+      : [];
 
   return {
     confirmed: new Set<string>(),

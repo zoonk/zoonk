@@ -62,7 +62,7 @@ export async function requestClaimQuestionsFor({
   const ordered = [
     ...new Set([
       ...nearest.filter((id) => toConfirm.has(id)),
-      ...[...toConfirm].filter((id) => starts.has(id)).reverse(),
+      ...[...toConfirm].filter((id) => starts.has(id)).toReversed(),
       ...toConfirm,
     ]),
   ];
@@ -82,12 +82,14 @@ export async function requestClaimQuestionsFor({
 
   const courseMissing = missing.filter((id) => starts.has(id));
 
-  if (courseMissing.length > 0)
-    {return {
+  if (courseMissing.length > 0) {
+    return {
       analytics: { distinctId: userId, goalId, platform: null },
       skillIds: courseMissing,
       status: "start",
-    };}
+    };
+  }
+
   const decision = await claimUsageFor({ kind: "assist", targetId: randomUUID(), userId });
 
   if (decision.status === "unauthorized") {

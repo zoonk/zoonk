@@ -148,6 +148,7 @@ export async function loadPlanClaimEvents({
   const courseClaims = [...starts].map(([skillId, start]): ClaimEvent => ({
     at: start.at,
     kind: "passedOver",
+    provisional: true,
     skillId,
   }));
 
@@ -156,7 +157,13 @@ export async function loadPlanClaimEvents({
       event.kind !== "claim" || starts.get(event.skillId)?.at.getTime() !== event.at.getTime(),
   );
 
-  return [...otherClaims, ...courseClaims, ...passedOver, ...undone];
+  const restored = undone.map((event) =>
+    event.kind === "claim" && starts.has(event.skillId)
+      ? { ...event, kind: "passedOver" as const, provisional: true }
+      : event,
+  );
+
+  return [...otherClaims, ...courseClaims, ...passedOver, ...restored];
 }
 
 export async function loadClaimEvents({

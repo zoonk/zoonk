@@ -11,11 +11,7 @@ import {
   readLevelTestAttempts,
   readLevelTestDetails,
 } from "../../language/level-test/read-level-test-summary";
-import {
-  getAttemptParts,
-  getCourseOffer,
-  readPlacementAttempt,
-} from "../../learner/placement/_utils/placement-attempt-record";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import {
   readPlacementCourse,
   readPlacementNextLesson,
@@ -154,14 +150,14 @@ function testContextFromReceipt({
   }
 
   const { attempt } = readPlacementAttempt({ details });
-  const parts = attempt && attempt.id === kindOrId ? getAttemptParts(attempt) : null;
+  const courseAttempt = attempt?.id === kindOrId ? attempt : null;
   const part = Number(value) || 1;
 
   return testEventContext(goal, {
     attemptId: kindOrId,
     part,
-    parts: parts?.length ?? null,
-    questions: getCourseOffer(parts?.[part - 1]?.length ?? 0)?.questions ?? null,
+    parts: courseAttempt ? 1 : null,
+    questions: courseAttempt?.search?.questions ?? null,
     test: "course",
   });
 }

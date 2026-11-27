@@ -16,7 +16,7 @@ import { loadSkillCourseLevels } from "./skill-course-levels";
 
 export type UnitGoal = Pick<
   Goal,
-  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
+  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "timezone" | "userId"
 >;
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
@@ -256,27 +256,30 @@ export async function loadCertificateUnits(
     const { confirmed } = await loadSkillConfirmations({
       goalId: goal.id,
       skillIds: [...unproven],
-      timeZone: "UTC",
+      timeZone: goal.timezone ?? "UTC",
       tx: db,
       userId: goal.userId,
     });
 
-    for (const skillId of confirmed) {unproven.delete(skillId);}
+    for (const skillId of confirmed) {
+      unproven.delete(skillId);
+    }
   }
 
-  const pendingLessons = unproven.size > 0
-    ? await db.lessonSkill.findMany({
-        select: { lessonId: true },
-        where: {
-          lessonId: {
-            in: plan.items.flatMap((item) =>
-              item.status === "testedOut" && item.lessonId ? [item.lessonId] : [],
-            ),
+  const pendingLessons =
+    unproven.size > 0
+      ? await db.lessonSkill.findMany({
+          select: { lessonId: true },
+          where: {
+            lessonId: {
+              in: plan.items.flatMap((item) =>
+                item.status === "testedOut" && item.lessonId ? [item.lessonId] : [],
+              ),
+            },
+            skillId: { in: [...unproven] },
           },
-          skillId: { in: [...unproven] },
-        },
-      })
-    : [];
+        })
+      : [];
 
   const pendingIds = new Set(pendingLessons.map((row) => row.lessonId));
 

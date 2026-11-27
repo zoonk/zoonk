@@ -33,19 +33,23 @@ export const NO_PRACTICE_CLAIMS: PracticeClaims = {
 /** Exclude today's own session so rebuilding today cannot rotate a different question into its queue. */
 async function loadLastAsked({
   goalId,
+  starts,
   today,
 }: {
   goalId: string;
+  starts: ReadonlyMap<string, { at: Date }>;
   today: Date;
 }): Promise<Map<string, number>> {
+  const since = Math.min(
+    today.getTime() - ASKED_WINDOW_DAYS * DAY_MS,
+    ...[...starts.values()].map((start) => start.at.getTime() - DAY_MS),
+  );
+
   const blocks = await prisma.studySessionBlock.findMany({
     select: { id: true, payload: true, session: { select: { localDate: true } } },
     where: {
       kind: { in: ["practice", "review"] },
-      session: {
-        goalId,
-        localDate: { gte: new Date(today.getTime() - ASKED_WINDOW_DAYS * DAY_MS), lt: today },
-      },
+      session: { goalId, localDate: { gte: new Date(since), lt: today } },
     },
   });
 
@@ -89,13 +93,22 @@ export async function loadPracticeClaims({
     return NO_PRACTICE_CLAIMS;
   }
 
-  const [facts, lastAsked, starts] = await Promise.all([
+  const [facts, starts] = await Promise.all([
     loadExamFacts({ goal, graph }),
-    loadLastAsked({ goalId: goal.id, today }),
-    goal.kind === "learn" ? loadCourseStarts(goal.id) : new Map(),
+    goal.kind === "learn"
+      ? loadCourseStarts(goal.id)
+      : new Map<string, { at: Date; changeId: string }>(),
   ]);
 
-  const needed = new Set(await priorityCourseStarts(goal.id, starts));
+  const [lastAsked, prerequisites] = await Promise.all([
+    loadLastAsked({ goalId: goal.id, starts, today }),
+    priorityCourseStarts(goal.id, starts),
+  ]);
+
+  const needed = new Set(prerequisites);
+
+  const askedSinceStart = (id: string) =>
+    (lastAsked.get(id) ?? 0) >= (starts.get(id)?.at.getTime() ?? 0) - DAY_MS;
 
   const priority = new Set([
     ...needed,
@@ -111,7 +124,11 @@ export async function loadPracticeClaims({
   return {
     courseStarts: toConfirmIds
       .filter((id) => starts.has(id))
-      .toSorted((a, b) => Number(needed.has(b)) - Number(needed.has(a))),
+      .toSorted(
+        (a, b) =>
+          Number(askedSinceStart(a)) - Number(askedSinceStart(b)) ||
+          Number(needed.has(b)) - Number(needed.has(a)),
+      ),
     first: new Set(toConfirmIds.filter((skillId) => priority.has(skillId))),
     last: new Set(toConfirmIds.filter((skillId) => !priority.has(skillId))),
     lastAsked,

@@ -1,3 +1,4 @@
+import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { anyPlanOperationSchema } from "../plan-contract";
 import { type PlanEffect } from "../planner/plan-effect";
@@ -119,7 +120,7 @@ const planChangePayloadSchema = z.object({
   replannedSince: z.literal(true).optional(),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
-  startedPastSkillIds: z.array(z.uuid()).optional(),
+  startedPastSkillIds: z.array(uuidSchema()).optional(),
   /** The test's own reschedule is part of its undo, unlike a refresh that lands new lessons. */
   testOutRescheduled: z.literal(true).optional(),
   testReceipt: z.string().optional(),

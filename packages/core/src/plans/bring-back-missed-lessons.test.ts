@@ -18,8 +18,11 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { analytics } from "../_test-utils/test-boundaries";
 import { unplannedGoalFixture } from "./_test-utils/plan-library";
+import { loadCourseStarts } from "./_utils/course-starts";
 import { announceTestedOutItems } from "./announce-tested-out-items";
 import { bringBackMissedLessons } from "./bring-back-missed-lessons";
 import { createGoalPlan } from "./create-goal-plan";
@@ -140,6 +143,58 @@ describe(bringBackMissedLessons, () => {
     expect(positions.map((item) => item.position)).toStrictEqual(
       positions.map((_, index) => index),
     );
+  });
+
+  it("returns a started-past topic on its first miss, once, with Undo", async () => {
+    const { goal, known, missed, plan } = await setup();
+
+    await prisma.planChange.create({
+      data: {
+        createdAt: new Date(NOW.getTime() - 60_000),
+        kind: "testedOut",
+        payload: { startedPastSkillIds: [known.id, missed.id] },
+        planId: plan.id,
+        reason: "Course placement",
+        status: "applied",
+      },
+    });
+
+    const flush = runDeferredWork();
+
+    const restore = () =>
+      bringBackMissedLessons({
+        goalId: goal.id,
+        livingPlanDay: "2026-10-12",
+        now: NOW,
+        skillIds: [missed.id],
+        timeZone: "UTC",
+      });
+
+    const event = expect.objectContaining({
+      name: "Course Placement Topic Restored",
+      properties: { goal_id: goal.id, skill_id: missed.id },
+    });
+
+    await restore();
+    await flush();
+    expect(analytics.trackServerEvent).toHaveBeenCalledWith(event);
+    analytics.trackServerEvent.mockClear();
+    await restore();
+    await flush();
+    expect(analytics.trackServerEvent).not.toHaveBeenCalledWith(event);
+    const starts = await loadCourseStarts(goal.id);
+    expect([...starts.keys()]).toStrictEqual([known.id]);
+
+    const change = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "relearn", planId: plan.id },
+    });
+
+    await expect(
+      decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "undone" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const undone = await loadCourseStarts(goal.id);
+    expect(undone.has(missed.id)).toBe(true);
   });
 
   it("batches failed re-checks for the shown day and undoes them without changing its queue", async () => {

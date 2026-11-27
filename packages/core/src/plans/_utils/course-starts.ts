@@ -15,10 +15,13 @@ export async function loadCourseStarts(goalId: string, tx: TransactionClient = p
     const payload = parsePlanChangePayload(change.payload);
 
     if (change.kind === "relearn") {
-      for (const id of payload.recheckedSkillIds) {starts.delete(id);}
+      for (const id of payload.recheckedSkillIds) {
+        starts.delete(id);
+      }
     } else {
-      for (const id of payload.startedPastSkillIds ?? [])
-        {starts.set(id, { at: change.createdAt, changeId: change.id });}
+      for (const id of payload.startedPastSkillIds ?? []) {
+        starts.set(id, { at: change.createdAt, changeId: change.id });
+      }
     }
   }
 
@@ -30,14 +33,20 @@ export async function priorityCourseStarts(
   starts: ReadonlyMap<string, { at: Date }>,
   tx: TransactionClient = prisma,
 ) {
-  if (starts.size === 0) {return [];}
+  if (starts.size === 0) {
+    return [];
+  }
+
   const next = await tx.planItem.findFirst({
     orderBy: { position: "asc" },
     select: { id: true, scheduledFor: true },
     where: { kind: "lesson", plan: { goalId }, status: "todo" },
   });
 
-  if (!next) {return [];}
+  if (!next) {
+    return [];
+  }
+
   const lessons = await tx.planItem.findMany({
     select: { lesson: { select: { skills: { select: { skillId: true } } } }, skillId: true },
     where: {
