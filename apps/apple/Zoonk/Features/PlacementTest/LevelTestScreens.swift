@@ -54,6 +54,7 @@ struct LanguageTestResultView: View {
             .underline()
         }
         .buttonStyle(.borderless)
+        .listRowSeparator(.hidden)
         .disabled(pressed == .main || undo?.request.isRunning == true)
       }
     }
