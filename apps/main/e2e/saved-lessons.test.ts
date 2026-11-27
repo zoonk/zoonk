@@ -191,7 +191,10 @@ test.describe("Saved lessons", () => {
 
     try {
       await page.goto("/plan");
-      await page.getByRole("region", { name: "More" }).getByRole("link", { name: "Saved lessons" }).click();
+      await page
+        .getByRole("region", { name: "More" })
+        .getByRole("link", { name: "Saved lessons" })
+        .click();
       await expect(page).toHaveURL(/\/saved-lessons$/u);
 
       await page.goto("/today");
