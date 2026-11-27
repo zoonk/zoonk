@@ -78,16 +78,16 @@ describe(toStudyBlockView, () => {
 
     const answeredItemIds = new Set<string>();
 
-    expect(toStudyBlockView({ answeredItemIds, block: practiceBlock({ drills }) })).toMatchObject({
-      mistakesOnly: true,
-    });
+    const onlyMistakes = practiceBlock({ drills });
+    const mixed = practiceBlock({ drills, itemIds: [crypto.randomUUID()] });
 
     expect(
-      toStudyBlockView({
-        answeredItemIds,
-        block: practiceBlock({ drills, itemIds: [crypto.randomUUID()] }),
-      }),
-    ).toMatchObject({ mistakesOnly: false });
+      toStudyBlockView({ answeredItemIds, block: onlyMistakes, blocks: [onlyMistakes] }),
+    ).toMatchObject({ mistakesOnly: true });
+
+    expect(toStudyBlockView({ answeredItemIds, block: mixed, blocks: [mixed] })).toMatchObject({
+      mistakesOnly: false,
+    });
   });
 });
 

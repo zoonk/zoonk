@@ -115,7 +115,7 @@ export function toDayBlockView({
   answeredAttemptIds,
   answeredItemIds,
   block,
-  blocks = [block],
+  blocks,
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
   savedWritingTasks,
@@ -127,7 +127,8 @@ export function toDayBlockView({
   answeredAttemptIds?: ReadonlySet<string>;
   answeredItemIds: ReadonlySet<string>;
   block: DayBlockInput;
-  blocks?: readonly DayBlockInput[];
+  /** The whole day, which a block's wait and a practice's number depend on. */
+  blocks: readonly DayBlockInput[];
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;

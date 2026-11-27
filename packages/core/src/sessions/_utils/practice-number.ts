@@ -1,25 +1,21 @@
 import { readBlockPayload } from "../block-payload";
 import { type DayBlockInput } from "./day-block-view";
-import { inDayOrder } from "./day-order";
 
-type NumberedBlock = Pick<DayBlockInput, "kind" | "payload" | "position" | "status">;
+type NumberedBlock = Pick<DayBlockInput, "kind" | "payload" | "position">;
 
 /** Mistakes, a full review and a subject's practice have names of their own. */
 function isPlainPractice(block: NumberedBlock): boolean {
   const payload = readBlockPayload(block);
 
   return (
-    block.kind === "practice" &&
-    block.status !== "skipped" &&
-    payload.itemIds.length > 0 &&
-    !payload.fullReview &&
-    !payload.title
+    block.kind === "practice" && payload.itemIds.length > 0 && !payload.fullReview && !payload.title
   );
 }
 
 /**
- * A practice mixes several topics, so no topic can name it: a day with more than one is numbered in
- * the order it lists them, so each row has a name of its own. Null when it's the day's only one.
+ * A practice mixes several topics, so no topic can name it: a day with more than one numbers them
+ * by where they were planned, so opening, finishing or skipping one never renames another. Null
+ * when it's the day's only one.
  */
 export function getPracticeNumber({
   block,
@@ -32,12 +28,10 @@ export function getPracticeNumber({
     return null;
   }
 
-  const practices = inDayOrder(blocks).filter((candidate) => isPlainPractice(candidate));
+  const positions = blocks
+    .filter((candidate) => isPlainPractice(candidate))
+    .map((candidate) => candidate.position)
+    .toSorted((a, b) => a - b);
 
-  if (practices.length < 2) {
-    return null;
-  }
-
-  const index = practices.findIndex((candidate) => candidate.position === block.position);
-  return index === -1 ? null : index + 1;
+  return positions.length < 2 ? null : positions.indexOf(block.position) + 1 || null;
 }

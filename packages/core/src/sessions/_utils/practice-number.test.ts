@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getPracticeNumber } from "./practice-number";
 
-type Block = Parameters<typeof getPracticeNumber>[0]["block"];
+type Block = Parameters<typeof getPracticeNumber>[0]["block"] & {
+  status: "active" | "completed" | "pending" | "skipped";
+};
 
 function practice(position: number, payload: Record<string, unknown> = {}): Block {
   return {
@@ -32,25 +34,30 @@ describe(getPracticeNumber, () => {
     ]);
   });
 
-  it("counts a finished practice before the ones still to do", () => {
-    const later = practice(1);
-    const finished = { ...practice(2), status: "completed" as const };
-    const blocks = [lesson, later, finished];
+  it("keeps each practice's number whatever the learner opens, finishes or skips first", () => {
+    const first = practice(1);
+    const second = practice(2);
+    const blocks = [lesson, first, second];
 
-    expect(getPracticeNumber({ block: finished, blocks })).toBe(1);
-    expect(getPracticeNumber({ block: later, blocks })).toBe(2);
+    const opened = [
+      lesson,
+      { ...first, status: "skipped" as const },
+      { ...second, status: "active" as const },
+    ];
+
+    expect(blocks.map((block) => getPracticeNumber({ block, blocks }))).toStrictEqual(
+      opened.map((block) => getPracticeNumber({ block, blocks: opened })),
+    );
   });
 
-  it("leaves out practices that have names of their own and skipped ones", () => {
+  it("leaves out practices that have names of their own", () => {
     const mistakes = practice(1, { itemIds: [] });
     const everyTopic = practice(2, { fullReview: true });
     const subject = practice(3, { title: "Chapter 2" });
-    const skipped = { ...practice(4), status: "skipped" as const };
-    const plain = practice(5);
-    const blocks = [mistakes, everyTopic, subject, skipped, plain];
+    const plain = practice(4);
+    const blocks = [mistakes, everyTopic, subject, plain];
 
     expect(blocks.map((block) => getPracticeNumber({ block, blocks }))).toStrictEqual([
-      null,
       null,
       null,
       null,

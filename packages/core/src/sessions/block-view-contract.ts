@@ -107,7 +107,7 @@ export const studyBlockSchema = z
       .nullable()
       .meta({
         description:
-          "Which of the day's practice blocks this is, counting from 1 in the day's order, so each one's name differs (\"Practice 2\"). Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
+          "Which of the day's practice blocks this is, counting from 1 in the order they were planned, so each one's name differs (\"Practice 2\") and stays the same once opened, finished or skipped. Null when it's the day's only practice, and for a practice of mistakes, of every topic or of one chosen subject (`title`), which have names of their own",
       }),
     preparing: z
       .boolean()

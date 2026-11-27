@@ -103,18 +103,22 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_practice_mistakes)
         }
 
-        // A subject's practice asks only about it; any other practice mixes topics, so none names it.
-        step.kind == StudyBlock.Kind.PRACTICE && step.title != null -> {
-            stringResource(R.string.session_block_practice_subject, step.title)
-        }
-
-        step.practiceNumber != null -> {
-            stringResource(R.string.session_block_practice_number, step.practiceNumber)
-        }
-
         else -> {
-            stringResource(R.string.session_block_practice)
+            practiceTitle(step)
         }
+    }
+}
+
+/** A subject's practice asks only about it; any other practice mixes topics, so none names it. */
+@Composable
+private fun practiceTitle(step: DayStep): String {
+    val subject = step.title.takeIf { step.kind == StudyBlock.Kind.PRACTICE }
+    val number = step.practiceNumber
+
+    return when {
+        subject != null -> stringResource(R.string.session_block_practice_subject, subject)
+        number != null -> stringResource(R.string.session_block_practice_number, number)
+        else -> stringResource(R.string.session_block_practice)
     }
 }
 
