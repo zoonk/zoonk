@@ -59,6 +59,8 @@ struct MistakePracticeEntry: Equatable, Identifiable {
   var drill: PracticeDrill
   var mistakeId: String
   var questions: [PracticeQuestion]
+  /// The order this entry laid out its options in, sent back with an answer to its question.
+  var showing: String
   var lesson: MistakeLessonReplay? = nil
   var tutorAvailable = true
 
@@ -237,6 +239,7 @@ struct PracticeAPI: Sendable {
               drill: try PracticeJSON.recode(entry.drill),
               mistakeId: entry.mistakeId,
               questions: try entry.questions.map { try PracticeJSON.recode($0) },
+              showing: entry.showing,
               lesson: try entry.lesson.map { try PracticeJSON.recode($0) },
               tutorAvailable: entry.tutorAvailable)
           },
@@ -248,13 +251,14 @@ struct PracticeAPI: Sendable {
   }
 
   func answerMistake(
-    token: String, mistakeId: String, itemId: String, answer: PracticeAnswer, durationMs: Int,
-    attemptId: String, runAnswerIds: [String], goalId: String?, scope: MistakePracticeScope
+    token: String, mistakeId: String, itemId: String, showing: String, answer: PracticeAnswer,
+    durationMs: Int, attemptId: String, runAnswerIds: [String], goalId: String?,
+    scope: MistakePracticeScope
   ) async throws -> MistakePracticeGrade {
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(
       MistakeAnswerRequest(
         answer: answer, durationMs: min(durationMs, 3_600_000), itemId: itemId,
-        stepId: nil, attemptId: attemptId,
+        showing: showing, stepId: nil, attemptId: attemptId,
         run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone))
 
     return try await perform(token) { client in
@@ -277,7 +281,7 @@ struct PracticeAPI: Sendable {
   ) async throws -> MistakePracticeGrade {
     let request = MistakeAnswerRequest(
       answer: LessonMistakeAnswer(answer), durationMs: min(durationMs, 3_600_000),
-      itemId: nil, stepId: stepId, attemptId: attemptId,
+      itemId: nil, showing: nil, stepId: stepId, attemptId: attemptId,
       run: .init(answerIds: runAnswerIds, scope: scope, goalId: goalId), timeZone: timeZone)
     let body: Components.Schemas.MistakePracticeAnswerInput = try PracticeJSON.recode(request)
     return try await perform(token) { client in
@@ -673,6 +677,8 @@ private struct MistakeAnswerRequest<Answer: Encodable>: Encodable {
   let answer: Answer
   let durationMs: Int
   let itemId: String?
+  /// The question's entry's order, so the answer is graded as it was shown; a lesson screen has none.
+  let showing: String?
   let stepId: String?
   let attemptId: String
   let run: Run

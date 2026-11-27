@@ -157,8 +157,8 @@ final class StudyAPITests: XCTestCase {
     let mock = MistakePracticeScope.mock("6f0b5a52-63a8-4c1e-9a52-1d1d0c6c9e11")
 
     _ = try? await api.answerMistake(
-      token: "token", mistakeId: "m1", itemId: "i1", answer: .choice(0), durationMs: 1000,
-      attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: mock)
+      token: "token", mistakeId: "m1", itemId: "i1", showing: "mistake:m1:1", answer: .choice(0),
+      durationMs: 1000, attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: mock)
     _ = try? await api.finishMistakePractice(
       token: "token", answerIds: ["a1"], goalId: "g1", scope: mock)
     _ = try? await api.finishMistakePractice(
@@ -175,6 +175,26 @@ final class StudyAPITests: XCTestCase {
     XCTAssertEqual(sent[2]["skillId"] as? String, "s1")
     XCTAssertEqual(sent[2]["goalId"] as? String, "g1")
     XCTAssertEqual(sent[2]["includeAllFormats"] as? Bool, true)
+  }
+
+  /// A question's answer names the order its entry showed, so a tab left open after a miss elsewhere
+  /// is graded in that order; a lesson screen's answer names its option instead.
+  func testAMistakeAnswerSendsTheOrderItsEntryShowed() async throws {
+    let transport = StudyRecordingTransport()
+    let api = PracticeAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    _ = try? await api.answerMistake(
+      token: "token", mistakeId: "m1", itemId: "i1", showing: "mistake:m1:1", answer: .choice(0),
+      durationMs: 1000, attemptId: "a1", runAnswerIds: [], goalId: "g1", scope: .notebook)
+    _ = try? await api.answerLessonMistake(
+      token: "token", mistakeId: "m1", stepId: "s1", answer: nil, durationMs: 1000,
+      attemptId: "a2", runAnswerIds: [], goalId: "g1", scope: .notebook)
+
+    let sent = transport.sent.value.map(\.json)
+    XCTAssertEqual(sent.first?["showing"] as? String, "mistake:m1:1")
+    XCTAssertEqual(sent.first?["itemId"] as? String, "i1")
+    XCTAssertNil(sent.last?["showing"])
+    XCTAssertEqual(sent.last?["stepId"] as? String, "s1")
   }
 
   /// Core reads the shown block's missing values as `null` and refuses a body that leaves them out.

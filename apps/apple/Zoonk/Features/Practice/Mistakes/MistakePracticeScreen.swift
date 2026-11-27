@@ -493,7 +493,7 @@ struct MistakePracticeScreen: View {
       { identity in
         try await practice.api.answerMistake(
           token: identity.bearerToken, mistakeId: step.entry.mistakeId,
-          itemId: question.itemId,
+          itemId: question.itemId, showing: step.entry.showing,
           answer: sent.answer, durationMs: sent.durationMs,
           attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId, scope: scope)
       })

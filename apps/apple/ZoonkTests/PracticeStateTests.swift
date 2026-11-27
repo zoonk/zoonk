@@ -199,7 +199,8 @@ private func makeEntry(
     cause: nil, drill: drill, mistakeId: mistakeId,
     questions: questions.map {
       PracticeQuestion(itemId: $0, format: .multipleChoice, question: $0, options: ["x", "y"])
-    })
+    },
+    showing: "mistake:\(mistakeId):1")
 }
 
 private func makeGrade(
