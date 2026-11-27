@@ -32,18 +32,21 @@ enum FocusTestPhase: Equatable {
       opening: opening)
   }
 
-  /// `opening` is the screen's first read: a sitting with answers goes on with its next question,
-  /// and one without is offered again.
+  /// `opening` is the screen's first read: with no sitting open, it offers the test or shows its
+  /// result while questions are written; an open sitting goes on with its next question.
   init(
     status: Components.Schemas.PlacementStatus, focusTest: FocusTest?, next: PracticeQuestion?,
     labels: PracticeTrueFalseLabels, opening: Bool
   ) {
     switch status {
-    case .unavailable, .failed:
+    case .unavailable:
       self = .unavailable
-    case .preparing, .waitingForQuestions:
+    case .preparing, .waitingForQuestions, .failed:
       let resting = opening && focusTest?.sitting == nil ? focusTest.flatMap(Self.resting) : nil
-      self = resting ?? .waiting(answered: focusTest?.checkpoint != nil, failure: nil)
+      self =
+        resting
+        ?? .waiting(
+          answered: focusTest?.checkpoint != nil, failure: status == .failed ? .generation : nil)
     case .asking, .done:
       guard let focusTest else {
         self = .unavailable
@@ -62,11 +65,7 @@ enum FocusTestPhase: Equatable {
 
       let asked = FocusTestQuestion(question: next, labels: labels, sitting: sitting)
 
-      if !opening || sitting.answered > 0 {
-        self = .question(asked)
-      } else {
-        self = Self.resting(focusTest) ?? .question(asked)
-      }
+      self = .question(asked)
     }
   }
 

@@ -69,7 +69,8 @@ final class PlacementTestContractTests: XCTestCase {
     let attempt = try XCTUnwrap(test.attempt)
     XCTAssertTrue(test.continuesInParts)
     XCTAssertEqual(attempt.resume, .init(part: 5, question: 4))
-    XCTAssertEqual(plainFacts(PlacementTestCopy.planLine(test)), ["Part 5 of 14", "Question 4 of 12"])
+    XCTAssertEqual(
+      plainFacts(PlacementTestCopy.planLine(test)), ["Part 5 of 14", "Question 4 of 12"])
   }
 
   func testAnOnboardingTestStepReadsItsModeAndItsOffer() throws {

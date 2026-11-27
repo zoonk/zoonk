@@ -242,9 +242,14 @@ struct FocusTestFlow: View {
       ) {
         save(.other) { try await leave(closing: answered || host == .onboarding) }
       },
-      onRetry: { _ in
-        reached = .waiting(answered: answered, failure: nil)
-        waitRound += 1
+      onRetry: { failure in
+        // A writer that failed starts again from the sitting's start; a lost connection reads again.
+        if failure == .generation {
+          save(.main, start)
+        } else {
+          reached = .waiting(answered: answered, failure: nil)
+          waitRound += 1
+        }
       }
     )
     .taskThroughPush(id: waitRound) { await waitForQuestions() }

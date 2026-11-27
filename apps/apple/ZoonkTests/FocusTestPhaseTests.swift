@@ -39,10 +39,12 @@ final class FocusTestPhaseTests: XCTestCase {
     XCTAssertEqual(asked.sitting.answered + 1, 4)
   }
 
-  func testInvitesAgainWhenASittingWasLeftBeforeItsFirstAnswer() throws {
+  func testASittingLeftBeforeItsFirstAnswerGoesOnAtItsQuestion() throws {
     let test = try focusTest(sitting: sitting(answered: 0), offer: offer)
 
-    XCTAssertEqual(phase(.asking, test, next: question, opening: true), .invitation(test))
+    guard case .question = phase(.asking, test, next: question, opening: true) else {
+      return XCTFail("Expected the question")
+    }
   }
 
   func testEndsASittingThatHasNothingMoreToAsk() throws {
@@ -70,7 +72,9 @@ final class FocusTestPhaseTests: XCTestCase {
   func testHasNothingToShowForAGoalWithNoTestOrATestWithNothingToAsk() throws {
     XCTAssertEqual(phase(.done, nil, opening: true), .unavailable)
     XCTAssertEqual(phase(.done, try focusTest(), opening: true), .unavailable)
-    XCTAssertEqual(phase(.failed, try focusTest(offer: offer), opening: true), .unavailable)
+    XCTAssertEqual(
+      phase(.failed, try focusTest(sitting: sitting(answered: 0)), opening: false),
+      .waiting(answered: false, failure: .generation), "A writer that failed offers Try again")
   }
 
   private func phase(
