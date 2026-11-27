@@ -99,8 +99,14 @@ function ConversationRows({ list, onOpen }: { list: BuddyConversationList; onOpe
   );
 }
 
-/** The aside's block from 72rem. */
-export function BuddyConversations({ list }: { list: BuddyConversationList }) {
+/** The aside's block from 72rem. `onOpen` runs as a row is pressed, before its conversation shows. */
+export function BuddyConversations({
+  list,
+  onOpen,
+}: {
+  list: BuddyConversationList;
+  onOpen?: () => void;
+}) {
   const t = useExtracted();
   const titleId = useId();
 
@@ -109,7 +115,7 @@ export function BuddyConversations({ list }: { list: BuddyConversationList }) {
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{t("Conversations")}</PageSectionTitle>
       </PageSectionHeader>
-      <ConversationRows list={list} />
+      <ConversationRows list={list} onOpen={onOpen} />
     </PageSection>
   );
 }
