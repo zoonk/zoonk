@@ -375,29 +375,22 @@ private struct WritingCriteriaSection: View {
       .controlSize(.small)
       .listRowSeparator(.hidden)
       .sheet(isPresented: $showsComments) {
-        NavigationStack {
-          ZoonkList {
-            ForEach(grade.criteria) { criterion in
-              VStack(alignment: .leading, spacing: 6) {
-                Text(criterion.name)
-                  .typeStyle(.rowTitle)
-                if let quote = criterion.quote {
-                  QuotedPassage(quote)
-                    .foregroundStyle(.mutedForeground)
-                }
-                Text(criterion.comment)
-                  .typeStyle(.reading)
+        DetailsSheet(
+          title: Text("Comments", tableName: "Essay", comment: "The criteria comments sheet")
+        ) {
+          ForEach(grade.criteria) { criterion in
+            VStack(alignment: .leading, spacing: 6) {
+              Text(criterion.name)
+                .typeStyle(.rowTitle)
+              if let quote = criterion.quote {
+                QuotedPassage(quote)
+                  .foregroundStyle(.mutedForeground)
               }
+              Text(criterion.comment)
+                .typeStyle(.reading)
             }
           }
-          .navigationTitle(
-            String(localized: "Comments", table: "Essay", comment: "The criteria comments sheet")
-          )
-          .navigationBarTitleDisplayMode(.inline)
-          .sheetClose { showsComments = false }
         }
-        .presentationDetents([.medium, .large])
-        .zoonkSheet()
       }
     } header: {
       SectionTitle(Text("Criteria", tableName: "Essay"))

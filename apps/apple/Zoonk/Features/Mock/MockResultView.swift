@@ -173,22 +173,16 @@ struct MockResultView: View {
   /// Main's `Details` drawer: each test, what it takes to pass, what stood out and every caveat,
   /// said once.
   private var details: some View {
-    NavigationStack {
-      ZoonkList {
-        if let result = view.result {
-          MockScoreSections(view: view, result: result, part: .details)
-          MockInsightsSection(result: result)
-        }
-
-        MockNotesSection(view: view)
+    DetailsSheet(
+      title: Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
+    ) {
+      if let result = view.result {
+        MockScoreSections(view: view, result: result, part: .details)
+        MockInsightsSection(result: result)
       }
-      .navigationTitle(
-        Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
-      )
-      .toolbarTitleDisplayMode(.inline)
-      .sheetClose { choices.showsDetails = false }
+
+      MockNotesSection(view: view)
     }
-    .zoonkSheet()
   }
 
   @ViewBuilder
