@@ -7,7 +7,7 @@ import {
   TASK_GUTTER_CLASS,
 } from "@zoonk/learn/task-layout";
 import { BOTTOM_BAR_ROOM_CLASS } from "@zoonk/ui/components/bottom-bar";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyIcon, Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
@@ -241,7 +241,9 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         {buddy.identity.avatar}
       </span>
       {t("{count, plural, one {# question} other {# questions}}", { count })}
-      <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+      <BusyIcon>
+        <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+      </BusyIcon>
     </button>
   );
 }

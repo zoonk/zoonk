@@ -86,11 +86,9 @@ function StartButton({
   const ref = useTapFocus(focus);
 
   return (
-    <form action={() => onStart()} className="contents">
-      <EnterButton busy={busy} enter="host" ref={ref} type="submit">
-        {step.status === "active" ? t("Continue") : t("Start")}
-      </EnterButton>
-    </form>
+    <EnterButton busy={busy} enter="host" ref={ref} onClick={onStart}>
+      {step.status === "active" ? t("Continue") : t("Start")}
+    </EnterButton>
   );
 }
 
@@ -174,17 +172,15 @@ function NextStopActionBar({
     <TaskActionBar note={note}>
       <TaskActions>
         {canStop && (
-          <form action={() => void stop.run()} className="contents">
-            <Button
-              busy={stop.isPending}
-              icon={<CircleStopIcon aria-hidden="true" />}
-              size="xl"
-              type="submit"
-              variant="outline"
-            >
-              {t("Stop for today")}
-            </Button>
-          </form>
+          <Button
+            busy={stop.isPending}
+            icon={<CircleStopIcon aria-hidden="true" />}
+            size="xl"
+            onClick={stop.run}
+            variant="outline"
+          >
+            {t("Stop for today")}
+          </Button>
         )}
 
         {isReady && (

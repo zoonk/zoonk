@@ -18,7 +18,7 @@ export function UserAvatarMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={t("User menu")}
-        className="focus-visible:border-ring focus-visible:ring-ring/50 hit-area relative size-7 shrink-0 rounded-full focus-visible:ring-[3px]"
+        className="focus-visible:border-ring focus-visible:ring-ring/50 held-pressed:ring-muted hit-area held-pressed:ring-4 relative size-7 shrink-0 rounded-full focus-visible:ring-[3px]"
       >
         <LearnerAvatar />
       </DropdownMenuTrigger>

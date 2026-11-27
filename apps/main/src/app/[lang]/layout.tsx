@@ -3,6 +3,12 @@ import { MainSpeechProvider } from "@/components/speech/main-speech-provider";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { routing } from "@/i18n/routing";
 import { RefreshStalePages } from "@/lib/http/refresh-stale-pages";
+import {
+  HeldPressScript,
+  KeepTypingScript,
+  PendingLinkScript,
+} from "@zoonk/ui/components/head-scripts";
+import { HeldPressCommit } from "@zoonk/ui/components/held-press-commit";
 import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { FONT_VARIABLES } from "@zoonk/ui/fonts";
@@ -16,10 +22,8 @@ import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import { AppKeyboardShortcuts } from "./app-keyboard-shortcuts";
 import { AuthChangeReload } from "./auth-change-reload";
-import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
 import { PaletteRequestReset } from "./palette-request-reset";
-import { PendingLinkScript } from "./pending-link-script";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import { UsageNoticeScript } from "./usage-notice-script";
 import "../globals.css";
@@ -59,6 +63,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <SidebarStateScript />
         <KeepTypingScript />
         <PendingLinkScript />
+        <HeldPressScript />
       </head>
       <body className="font-sans antialiased">
         {/* First, so the toast region listens before any page's first effects add a toast (the
@@ -74,6 +79,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           </ClientMessagesProvider>
         </NuqsAdapter>
         <AuthChangeReload />
+        <HeldPressCommit />
         <Suspense fallback={null}>
           <LearnerSummarySync />
           <RefreshStalePages />

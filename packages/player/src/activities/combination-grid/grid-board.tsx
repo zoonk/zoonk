@@ -2,7 +2,11 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
+import {
+  ACTIVITY_BOX_CLASS,
+  ACTIVITY_HELD_CLASS,
+  ACTIVITY_LINE_CLASS,
+} from "../_components/activity-canvas";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { type GridCell, type GridFill, sameCell } from "./grid-model";
 import { CellValue, GridHeader, type GridTraits, Trait } from "./grid-parts";
@@ -86,6 +90,7 @@ function CellButton({
       className={cn(
         ACTIVITY_BOX_CLASS,
         "focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
+        ACTIVITY_HELD_CLASS,
         isCompact ? "min-h-11 rounded-lg" : "min-h-18",
         !value && !isActive && "border-dashed",
         isActive && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft"),

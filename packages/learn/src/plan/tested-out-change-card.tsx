@@ -56,7 +56,7 @@ export function TestedOutChangeCard({
             {change.canUndo && (
               <SuggestionActions>
                 <SuggestionAction
-                  action={undo}
+                  onClick={undo}
                   busy={pending}
                   icon={<Undo2Icon aria-hidden="true" />}
                   variant="outline"

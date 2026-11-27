@@ -335,7 +335,6 @@ test.describe("Buddy tab", () => {
 
       await page.goto("/buddy");
       const menu = page.getByRole("button", { name: "More about Zu" });
-      await expectHydrated(menu);
       await menu.click();
       await page.getByRole("menuitem", { name: "Change Zu" }).click();
 

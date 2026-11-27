@@ -183,7 +183,6 @@ test("requires a selected subject to continue and lets beginners skip", async ({
   const subjects = page.getByRole("group", { name: "Subjects you know well" });
   const algebra = subjects.getByRole("checkbox", { name: "Algebra" });
   const next = page.getByRole("button", { exact: true, name: "Continue" });
-  await expectHydrated(algebra);
   await expect(next).toBeDisabled();
   await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeEnabled();
 

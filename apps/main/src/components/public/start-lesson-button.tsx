@@ -82,7 +82,6 @@ function StartFailure() {
   );
 }
 
-/** A form, so React keeps a press made before the page hydrates and starts the lesson once it does. */
 export function StartLessonButton({
   children,
   className,
@@ -98,12 +97,12 @@ export function StartLessonButton({
   const { failed, pending, start } = useLessonStart({ lessonId, origin });
 
   return (
-    <form action={() => void start()} className="flex flex-col gap-3 sm:items-start">
+    <div className="flex flex-col gap-3 sm:items-start">
       <Button
         busy={pending}
         className={getStartControlClassName(className)}
         size="lg"
-        type="submit"
+        onClick={start}
       >
         {children}
       </Button>
@@ -115,6 +114,6 @@ export function StartLessonButton({
       )}
 
       {failed && <StartFailure />}
-    </form>
+    </div>
   );
 }

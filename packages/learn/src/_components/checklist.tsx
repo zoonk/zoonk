@@ -7,15 +7,24 @@ import { useId, useState } from "react";
 import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
 import { DoneMark } from "./status-mark";
 
+/** Both marks are drawn, so a press made before the page hydrates shows the state it asks for. */
 function CheckMark({ checked }: { checked: boolean }) {
   return (
     <LineMarker aria-hidden="true">
       <span className="flex size-4 items-center justify-center">
-        {checked ? (
-          <DoneMark />
-        ) : (
-          <span className="ring-foreground/30 size-2.5 rounded-full ring-[1.5px] ring-inset" />
-        )}
+        <DoneMark
+          className={cn(
+            !checked && "hidden",
+            "in-data-[held=checked]:block in-data-[held=unchecked]:hidden",
+          )}
+        />
+        <span
+          className={cn(
+            "ring-foreground/30 size-2.5 rounded-full ring-[1.5px] ring-inset",
+            checked && "hidden",
+            "in-data-[held=checked]:hidden in-data-[held=unchecked]:block",
+          )}
+        />
       </span>
     </LineMarker>
   );
@@ -69,7 +78,7 @@ export function Checklist<Item extends string>({
               <button
                 aria-pressed={checked}
                 className={cn(
-                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg focus-visible:ring-[3px]",
+                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 data-[held=checked]:text-muted-foreground data-[held=unchecked]:text-foreground relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg focus-visible:ring-[3px]",
                   checked && "text-muted-foreground",
                 )}
                 onClick={() => toggle(item)}

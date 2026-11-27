@@ -42,7 +42,7 @@ function PromptWord({
         )}
       >
         {before}
-        <span className="decoration-foreground/30 group-hover:decoration-foreground/70 underline decoration-dotted underline-offset-4 transition-colors">
+        <span className="decoration-foreground/30 group-hover:decoration-foreground/70 group-data-held:decoration-foreground underline decoration-dotted underline-offset-4 transition-colors">
           {word}
         </span>
         {after}

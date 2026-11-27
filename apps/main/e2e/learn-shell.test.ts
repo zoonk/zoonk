@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
@@ -38,7 +37,6 @@ test.describe("Learning tabs frame", () => {
     await page.goto("/today");
 
     const switchGoal = page.getByRole("button", { name: /^Bake sourdough bread.*Switch goal$/u });
-    await expectHydrated(switchGoal);
     await switchGoal.click();
     await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
 
@@ -66,7 +64,6 @@ test("on a phone the mistakes notebook leaves by the tab bar, with no way back o
     .getByRole("complementary", { name: "Sidebar" })
     .getByRole("link", { name: "Mistakes notebook" });
 
-  await expectHydrated(notebook);
   await notebook.click();
   await expect(page.getByText(/^Nothing to fix right now/u)).toBeVisible();
 

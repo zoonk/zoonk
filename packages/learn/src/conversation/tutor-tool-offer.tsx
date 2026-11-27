@@ -89,11 +89,9 @@ function ChapterTestOffer({
       }
       title={t("Test: {chapter}", { chapter: offer.chapterTitle })}
     >
-      <form action={test.start} className="contents">
-        <OfferButton busy={test.opening} icon={<PlayIcon aria-hidden="true" />} type="submit">
-          {t("Take the test")}
-        </OfferButton>
-      </form>
+      <OfferButton busy={test.opening} icon={<PlayIcon aria-hidden="true" />} onClick={test.start}>
+        {t("Take the test")}
+      </OfferButton>
       <TestOutStartStatus isPending={test.isPending} result={test.result} />
     </OfferCard>
   );

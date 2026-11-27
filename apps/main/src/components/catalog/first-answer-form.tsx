@@ -3,6 +3,7 @@
 import { ORIGIN_PARAM } from "@/lib/public/public-hrefs";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { OPENS_PAGE_ATTRIBUTE } from "@zoonk/ui/lib/held-press-controls";
 import { type ReactNode, useRef } from "react";
 
 /**
@@ -35,6 +36,7 @@ export function FirstAnswerForm({
 
   return (
     <form
+      {...{ [OPENS_PAGE_ATTRIBUTE]: "" }}
       action={action}
       aria-label={label}
       method="get"

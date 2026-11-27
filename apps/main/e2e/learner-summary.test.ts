@@ -3,7 +3,6 @@ import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "@zoonk/core/auth/ott/state";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { mockCentralSignOut } from "./auth-transport";
@@ -107,7 +106,6 @@ async function logOutInAnotherTab(context: BrowserContext) {
   await other.goto("/settings");
 
   const userMenu = sidebar(other).getByRole("button", { name: /User menu$/u });
-  await expectHydrated(userMenu);
   await userMenu.click();
 
   await Promise.all([

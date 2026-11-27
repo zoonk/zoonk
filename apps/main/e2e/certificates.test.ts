@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -84,7 +83,6 @@ async function finishLastLesson(page: Page, lessonId: string) {
   await page.goto(`/learn/${lessonId}`);
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
   const next = page.getByRole("button", { name: /^Continue/u });
-  await expectHydrated(next);
   await next.click();
 
   const moment = page.getByRole("dialog", { name: "Beginner complete!" });
@@ -206,7 +204,6 @@ test.describe("Course certificates", () => {
     await expect(line.locator('[data-slot="done-mark"]')).toBeVisible();
 
     const claim = line.getByRole("button", { name: "Get your certificate" });
-    await expectHydrated(claim);
     await claim.click();
 
     await expect(line.getByRole("alert")).toHaveText("That didn't save. Try again.");

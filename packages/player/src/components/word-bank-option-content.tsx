@@ -50,7 +50,7 @@ function getWordBankButtonStateClass({
     return "opacity-50";
   }
 
-  return "hover:bg-muted/60";
+  return "hover:bg-muted/60 held-pressed:bg-muted held-pressed:ring-transparent";
 }
 
 export const WORD_CHIP_CLASS = cn(

@@ -12,7 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { ExternalLinkIcon } from "lucide-react";
@@ -60,19 +60,9 @@ function ExternalLinkConfirmation({ isOpen, onClose, onConfirm, url }: LinkSafet
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
-          <a
-            className={buttonVariants()}
-            href={url}
-            onClick={(event) => {
-              event.preventDefault();
-              openLink();
-            }}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <ExternalLinkIcon aria-hidden="true" />
+          <Button icon={<ExternalLinkIcon aria-hidden="true" />} onClick={openLink}>
             {t("Open link")}
-          </a>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
