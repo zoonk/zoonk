@@ -3,6 +3,7 @@
 import { realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { getPnpmCommand } from "../dev/process.mts";
+import { configureAndroidDebugSigning } from "./android-debug-signing.mts";
 import {
   listRemovedWorktrees,
   pruneDatabases,
@@ -132,6 +133,7 @@ async function main(): Promise<void> {
 
   const primary = realpathSync(dirname(commonDirectory));
   copyEnvironment({ primary, worktree });
+  configureAndroidDebugSigning(worktree);
   const source = process.env.CI ? null : localSource(primary);
 
   const problem = source && (await findPostgresProblem(source));

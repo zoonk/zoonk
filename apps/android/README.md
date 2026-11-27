@@ -11,6 +11,8 @@ Native Kotlin/Jetpack Compose app for phones, tablets, and foldables. Every page
 
 The launcher detects the standard SDK location; set `ANDROID_HOME` for a custom installation. Use the committed Gradle wrapper rather than a separately installed Gradle.
 
+After the first Debug build creates your debug keystore, run `pnpm db:setup` to register its signing fingerprint with the local API and web app. This enables Android restore keys and App Links. Worktree setup also registers it when the keystore already exists.
+
 ## Commands
 
 Run from the repository root:
