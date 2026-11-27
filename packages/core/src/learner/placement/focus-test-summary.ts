@@ -103,6 +103,7 @@ export function readFocusTestSummary({
   return {
     offer: toOffer({ paceMs, questions: left > 0 ? left : getSavedOfferQuestions(record) }),
     sessionQuestions: readSessionQuestions({ goal, ...day }),
+    sitting: sitting && { answered: sitting.answered, questions: sitting.questions },
     state: left > 0 ? "sitting" : rested,
     suggestsFocus: suggestsFocus({
       dated: goal.targetDate !== null,

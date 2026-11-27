@@ -33,6 +33,14 @@ export const researchUploadAnswerSchema = z.object({
   sourceIds: z.array(uuidSchema()).min(1),
 });
 
+const placementPartPreparationSchema = z.object({
+  attemptId: uuidSchema(),
+  part: z.int().positive(),
+  requestedAt: z.iso.datetime().optional(),
+});
+
+export type PlacementPartPreparation = z.infer<typeof placementPartPreparationSchema>;
+
 export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({ input: z.object({ fixId: uuidSchema() }), kind: z.literal("prepareContentFixMedia") }),
   z.object({ input: z.object({ fixId: uuidSchema() }), kind: z.literal("voiceContentFix") }),
@@ -101,7 +109,7 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({
       goalId: uuidSchema(),
-      placementPart: z.object({ attemptId: uuidSchema(), part: z.int().positive() }).optional(),
+      placementPart: placementPartPreparationSchema.optional(),
       skillIds: z.array(uuidSchema()).optional(),
       waitsForNotice: z.boolean(),
     }),

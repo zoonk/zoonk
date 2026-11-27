@@ -174,7 +174,7 @@ export async function saveLevelTestProgress({
 
 export async function loadLevelTestContext(
   goalId: string,
-  attemptId?: string,
+  attempt?: string | { latest: true },
 ): Promise<LevelTestContext> {
   const owned = await findOwnedGoal(goalId);
 
@@ -188,6 +188,9 @@ export async function loadLevelTestContext(
   if (goal.kind !== "language" || !targetLanguage) {
     return { status: "notLanguage" };
   }
+
+  const attemptId =
+    typeof attempt === "object" ? readLevelTestAttempts(goal).attempt?.attemptId : attempt;
 
   const progress = readLevelTestProgress(goal, attemptId);
 

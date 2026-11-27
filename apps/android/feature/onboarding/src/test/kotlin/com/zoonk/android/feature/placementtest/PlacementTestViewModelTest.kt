@@ -199,7 +199,7 @@ class PlacementTestViewModelTest {
             length: String,
             part: Int,
             complete: Boolean,
-        ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":20,"answered":0,"chapter":null,"nextPart":null,"parts":2,"partsLeft":1,"questions":12,"resume":null,"totalEstimatedMinutes":25}"""
+        ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":20,"answered":0,"chapter":null,"nextPart":null,"parts":2,"partsLeft":1,"questions":12,"remainingEstimatedMinutes":6,"resume":null,"totalEstimatedMinutes":25}"""
 
         val PART_ONE = attemptOf("wholeCourse", 1, complete = false)
         val PART_ONE_CLOSED = attemptOf("wholeCourse", 1, complete = true)

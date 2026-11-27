@@ -29,7 +29,11 @@ export function readLevelTestAttempts(goal: Pick<Goal, "details">) {
 
 function readOpenAttempt({ attempt, testOut }: ReturnType<typeof readLevelTestAttempts>) {
   if (attempt?.attemptId && !attempt.result) {
-    return { id: attempt.attemptId, testOutLevel: attempt.testOutLevel };
+    return {
+      answered: attempt.answers.length,
+      id: attempt.attemptId,
+      testOutLevel: attempt.testOutLevel,
+    };
   }
 
   return testOut && !testOut.result && (testOut.preparingUntil || testOut.questions.length > 0)

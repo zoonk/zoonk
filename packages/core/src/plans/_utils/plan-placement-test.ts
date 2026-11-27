@@ -52,6 +52,10 @@ async function readLanguageRow(
   ]);
 
   return {
+    ...(summary.attempt?.answered !== undefined && {
+      answered: summary.attempt.answered,
+      total: LANGUAGE_LEVEL_TEST_OFFER.total,
+    }),
     attempt: null,
     estimatedMinutes: LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes,
     kind: "language",

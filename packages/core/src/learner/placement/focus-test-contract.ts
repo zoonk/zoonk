@@ -186,6 +186,10 @@ export const focusTestSummarySchema = z
           "`notStarted`: the first sitting. `sitting`: what's left of the open one. `checked`: a further sitting. Null when nothing is left to ask",
       }),
     sessionQuestions: sessionQuestionsSchema,
+    sitting: z
+      .object({ answered: countSchema, questions: countSchema })
+      .nullable()
+      .meta({ description: "Accepted answers and the fixed question ceiling of the open sitting" }),
     state: z
       .enum(["notStarted", "sitting", "checked"])
       .meta({
