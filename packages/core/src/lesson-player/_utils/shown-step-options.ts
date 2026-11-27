@@ -21,10 +21,6 @@ function showExercise({ exercise, seed }: { exercise: Exercise; seed: string }):
       items: exercise.matchColumnsRightItems,
       seed: `${seed}:matchColumns`,
     }),
-    sentenceWordOptions: showInOrder({
-      items: exercise.sentenceWordOptions,
-      seed: `${seed}:sentenceWords`,
-    }),
     translationOptions: showInOrder({
       items: exercise.translationOptions,
       seed: `${seed}:translation`,
