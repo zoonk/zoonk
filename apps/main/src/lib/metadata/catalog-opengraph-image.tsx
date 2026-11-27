@@ -1,7 +1,7 @@
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
+import { FONT_WEIGHTS, shareCardFonts } from "@/lib/certificates/certificate-fonts";
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
@@ -41,18 +41,14 @@ type CatalogImageSource =
   | { kind: "root" };
 
 export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageParams) {
-  const [imageSrc, logoSrc, fonts] = await Promise.all([
-    getRenderableImageSrc({
-      fallbackImagePath: params.fallbackImagePath,
-      imageUrl: params.imageUrl,
-    }),
-    getOpenGraphLogo("light"),
-    getShareCardFonts(),
-  ]);
+  const imageSrc = await getRenderableImageSrc({
+    fallbackImagePath: params.fallbackImagePath,
+    imageUrl: params.imageUrl,
+  });
 
   return new ImageResponse(
-    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={logoSrc} {...params} />,
-    { ...catalogOpenGraphImageSize, fonts },
+    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={getOpenGraphLogo("light")} {...params} />,
+    { ...catalogOpenGraphImageSize, fonts: shareCardFonts },
   );
 }
 
