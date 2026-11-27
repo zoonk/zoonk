@@ -32,7 +32,11 @@ import {
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import { WRITING_CHARACTERS_PER_LINE, countWritingLines } from "./writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  countWritingLines,
+  getDenseCharactersPerLine,
+} from "./writing-lines";
 import { isNumericWritingRubric } from "./writing-rubric-policy";
 
 vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) => ({
@@ -657,6 +661,21 @@ describe(getWritingTaskBasis, () => {
   });
 });
 
+/** Answers of `characters` a line in equal paragraphs, filling `lines` lines of the sheet. */
+function handwrittenAnswer({
+  characters,
+  lines,
+  paragraphs,
+}: {
+  characters: number;
+  lines: number;
+  paragraphs: number;
+}) {
+  const length = Math.floor((characters * lines) / paragraphs);
+  const paragraph = "Uma frase da resposta. ".repeat(length).slice(0, length).trim();
+  return Array.from({ length: paragraphs }, () => paragraph).join("\n\n");
+}
+
 describe(countWritingLines, () => {
   // CACD 2024 Portuguese essay, 69.5/70 on 70 handwritten lines, guide pp. 34–36:
   // https://guiasirbr.wordpress.com/wp-content/uploads/2025/06/guia_da_sarue_malabarista.pdf
@@ -664,14 +683,66 @@ describe(countWritingLines, () => {
     expect(
       countWritingLines({
         charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+        denseCharactersPerLine: getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE),
         limit: 70,
         text: cacd2024Essay,
       }).ignoredFrom,
     ).toBeNull();
+  });
 
-    expect(
-      countWritingLines({ charactersPerLine: 55, limit: 70, text: cacd2024Essay }).ignoredFrom,
-    ).toBeGreaterThan(0);
+  // Widths the same guide records: each transcription's characters over the lines its writer
+  // filled ("nº de linhas escritas"), every answer read in full by Cebraspe.
+  it.each([
+    { characters: 127, lines: 40, paragraphs: 4, source: "history Q4, 20 of 20" },
+    {
+      characters: 133,
+      lines: 40,
+      paragraphs: 1,
+      source: "international politics Q4, written small",
+    },
+    { characters: 111, lines: 60, paragraphs: 3, source: "history Q2" },
+    { characters: 62, lines: 30, paragraphs: 4, source: "translation" },
+  ])(
+    "grades in full a published answer of $characters characters a line ($source)",
+    async (answer) => {
+      mockEvidence();
+      const text = handwrittenAnswer(answer);
+
+      const writing = {
+        ...basis,
+        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+        lines: answer.lines,
+      };
+
+      const grade = await gradeWriting({
+        content: { ...content, writing },
+        language: "pt",
+        previousNextSteps: [],
+        text,
+      });
+
+      expect(grade.ignoredFrom).toBeNull();
+      expect(vi.mocked(gradeWritingEvidence).mock.lastCall?.[0].text).toBe(text);
+    },
+  );
+
+  it("stops where even the densest measured handwriting runs past the sheet", () => {
+    const text = handwrittenAnswer({ characters: 150, lines: 40, paragraphs: 4 });
+
+    const { estimatedLines, ignoredFrom } = countWritingLines({
+      charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+      denseCharactersPerLine: getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE),
+      limit: 40,
+      text,
+    });
+
+    expect(estimatedLines).toBeGreaterThan(60);
+    expect(ignoredFrom).toBeGreaterThan(text.length * 0.8);
+  });
+
+  it("keeps each issued task's typical width and scales the dense one from it", () => {
+    expect(getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE)).toBe(135);
+    expect(getDenseCharactersPerLine(55)).toBe(85);
   });
 
   it.each(lineFixtures)(

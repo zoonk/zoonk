@@ -18,7 +18,7 @@ struct WritingResultSections: View {
     WritingProgressSection(grade: grade)
     WritingNextStepSection(step: WritingNextStep(grade: grade, text: text), lines: prompt.lines)
     WritingCriteriaSection(grade: grade, prompt: prompt)
-    WritingMarkedTextSection(grade: grade, lines: prompt.lines, text: text)
+    WritingMarkedTextSection(grade: grade, prompt: prompt, text: text)
   }
 }
 
@@ -116,9 +116,7 @@ private struct WritingPointsSection: View {
   private var lineCount: String {
     let lines =
       self.lines
-      ?? WritingLines.count(
-        text, charactersPerLine: prompt.charactersPerLine, limit: prompt.lines
-      ).estimatedLines
+      ?? WritingLines.estimate(text, charactersPerLine: prompt.charactersPerLine)
 
     guard let limit = prompt.lines else {
       return String(
@@ -275,10 +273,13 @@ private struct WritingNextStepSection: View {
   private var limitText: String {
     lines.map {
       String(
-        localized: "Graders stop at line \(String($0)), so the rest isn't read.", table: "Essay")
+        localized:
+          "Even in small handwriting, it runs past line \(String($0)), where graders stop.",
+        table: "Essay")
     }
       ?? String(
-        localized: "Graders stop at the line limit, so the rest isn't read.", table: "Essay")
+        localized: "Even in small handwriting, it runs past the line limit, where graders stop.",
+        table: "Essay")
   }
 
   /// A zeroed answer's step, by the rule it broke. The notice's rule shows above it, so this says

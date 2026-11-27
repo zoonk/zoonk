@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, type Item, prisma } from "@zoonk/db";
 import { type EssayContent, readEssayContent } from "../../essays/_utils/essay-content";
-import { writingPromptSchema, writtenAnswerSchema } from "../../essays/writing-contract";
+import { readWritingPrompt, writtenAnswerSchema } from "../../essays/writing-contract";
 import { isNumericWritingRubric } from "../../essays/writing-rubric-policy";
 import { loadUnseenWritingPrompts } from "../../essays/writing-supply";
 import {
@@ -109,7 +109,7 @@ export async function loadMockEssayViews({
           status: "graded",
           text: saved.text,
           unsure: draft?.flagged ?? false,
-          writing: writingPromptSchema.parse(saved.writing),
+          writing: readWritingPrompt(saved.writing),
         },
       ];
     }
@@ -122,7 +122,7 @@ export async function loadMockEssayViews({
 
     const text = readMockEssayText(draft?.answer);
     const basis = essay.content.writing;
-    const writing = writingPromptSchema.parse(basis);
+    const writing = readWritingPrompt(basis);
 
     if (!text && isNumericWritingRubric(basis)) {
       numericBlankItems.add(itemId);

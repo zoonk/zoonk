@@ -10,7 +10,7 @@ import { findOwnedEssay } from "./_utils/owned-essay";
 import { getWritingAttemptId } from "./_utils/writing-attempt-id";
 import { type EssayView } from "./essay-contract";
 import { countWritingExtrasLeft } from "./writing-admission";
-import { writingPromptSchema } from "./writing-contract";
+import { readWritingPrompt } from "./writing-contract";
 import { getWritingRubric } from "./writing-rubric-policy";
 
 export type EssayViewResult =
@@ -64,7 +64,7 @@ export async function getEssay({
       rubric: getWritingRubric(content.writing),
       sessionId,
       status: block.status,
-      writing: writingPromptSchema.parse(content.writing),
+      writing: readWritingPrompt(content.writing),
       ...(writingTask && { writingTask }),
     },
     status: "ready",

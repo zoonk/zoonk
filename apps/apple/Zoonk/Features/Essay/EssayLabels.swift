@@ -242,9 +242,11 @@ enum WritingLabels {
     return facts
   }
 
-  /// "about 23 of 30 lines" ("0 of 30 lines" while empty), or the words written where the question has no line limit.
+  /// "about 23 of 30 lines" ("0 of 30 lines" while empty), or the words written where the question
+  /// has no line limit. Past the limit it says whether the text fits if written small or
+  /// its end won't be read; `isOver` is the latter.
   static func lineCount(_ text: String, writing: WritingPrompt) -> (words: String, isOver: Bool) {
-    guard let limit = writing.lines else {
+    guard let limit = writing.lines, let measured = WritingLines.fit(text, writing: writing) else {
       let words = WordCount.count(text)
       return (
         String(localized: "\(words) words", table: "Essay", comment: "An answer's word count"),
@@ -256,24 +258,33 @@ enum WritingLabels {
       return (String(localized: "0 of \(limit) lines", table: "Essay"), false)
     }
 
-    let used = WritingLines.count(
-      text, charactersPerLine: writing.charactersPerLine, limit: limit
-    ).estimatedLines
+    let used = measured.count.estimatedLines
 
-    return used > limit
-      ? (
+    switch measured.fit {
+    case .fits:
+      return (String(localized: "about \(used) of \(limit) lines", table: "Essay"), false)
+    case .smallHandwriting:
+      return (smallHandwriting(used: used, limit: limit), false)
+    case .over:
+      return (
         String(
-          localized: "about \(used) of \(limit) lines · \(used - limit) won't be read",
+          localized: "about \(used) of \(limit) lines · the end won't be read",
           table: "Essay",
           comment:
-            "The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read."
+            "The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line."
         ),
         true
       )
-      : (
-        String(
-          localized: "about \(used) of \(limit) lines", table: "Essay"),
-        false
-      )
+    }
   }
+
+  static func smallHandwriting(used: Int, limit: Int) -> String {
+    String(
+      localized: "about \(used) of \(limit) lines · fits if written small",
+      table: "Essay",
+      comment:
+        "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small."
+    )
+  }
+
 }

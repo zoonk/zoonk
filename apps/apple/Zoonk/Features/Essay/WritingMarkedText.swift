@@ -4,7 +4,7 @@ import SwiftUI
 /// underlined, and what graders wouldn't read set apart (main's `WritingMarkedText`).
 struct WritingMarkedTextSection: View {
   let grade: WritingResult
-  let lines: Int?
+  let prompt: WritingPrompt
   let text: String
 
   @Environment(\.self) private var environment
@@ -13,12 +13,21 @@ struct WritingMarkedTextSection: View {
     Section {
       Text(
         WritingMarks.attributed(
-          grade: grade, lines: lines, text: text,
+          grade: grade, lines: prompt.lines, text: text,
           noteFont: TypeStyle.data.font(in: environment),
           numberFont: TypeStyle.small.font(in: environment))
       )
       .typeStyle(.reading)
       .textSelection(.enabled)
+
+      // Graded in full, but it fits the sheet only written small.
+      if grade.ignoredFrom == nil, let limit = prompt.lines,
+        let measured = WritingLines.fit(text, writing: prompt), measured.fit == .smallHandwriting
+      {
+        Text(WritingLabels.smallHandwriting(used: measured.count.estimatedLines, limit: limit))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
 
       ForEach(Array(grade.errors.enumerated()), id: \.offset) { index, error in
         ListRow(
@@ -152,9 +161,11 @@ enum WritingMarks {
           "\n"
             + (lines.map {
               String(
-                localized: "Past line \(String($0)): graders stop reading here", table: "Essay")
+                localized: "Past line \(String($0)) even in small handwriting: not read",
+                table: "Essay")
             }
-              ?? String(localized: "Past the limit: graders stop reading here", table: "Essay"))
+              ?? String(
+                localized: "Past the limit even in small handwriting: not read", table: "Essay"))
             + "\n")
         note.foregroundColor = .warningText
         note.font = noteFont

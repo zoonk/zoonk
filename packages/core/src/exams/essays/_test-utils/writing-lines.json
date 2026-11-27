@@ -1,13 +1,15 @@
 [
   {
     "charactersPerLine": 2,
-    "estimatedLines": 4,
-    "ignoredFrom": 8,
+    "denseCharactersPerLine": 2,
+    "estimatedLines": 3,
+    "ignoredFrom": 10,
     "limit": 2,
-    "text": "é🙂\r\n\r\nnext"
+    "text": "e\u0301🙂\r\n\r\nnext"
   },
   {
     "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
     "estimatedLines": 1,
     "ignoredFrom": null,
     "limit": 1,
@@ -15,6 +17,7 @@
   },
   {
     "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
     "estimatedLines": 1,
     "ignoredFrom": null,
     "limit": 1,
@@ -22,6 +25,7 @@
   },
   {
     "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
     "estimatedLines": 1,
     "ignoredFrom": null,
     "limit": 1,
@@ -29,6 +33,7 @@
   },
   {
     "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
     "estimatedLines": 1,
     "ignoredFrom": null,
     "limit": 1,
@@ -36,6 +41,7 @@
   },
   {
     "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
     "estimatedLines": 1,
     "ignoredFrom": null,
     "limit": 1,
@@ -43,10 +49,74 @@
   },
   {
     "charactersPerLine": 10,
-    "estimatedLines": 2,
-    "ignoredFrom": 12,
+    "denseCharactersPerLine": 10,
+    "estimatedLines": 1,
+    "ignoredFrom": null,
     "limit": 1,
     "text": "aaaaaaaaaa\r\n\r\n"
   },
-  { "charactersPerLine": 10, "estimatedLines": 0, "ignoredFrom": null, "limit": 1, "text": "" }
+  {
+    "charactersPerLine": 5,
+    "denseCharactersPerLine": 5,
+    "estimatedLines": 2,
+    "ignoredFrom": 4,
+    "limit": 1,
+    "text": "ab\n\ncd"
+  },
+  {
+    "charactersPerLine": 5,
+    "denseCharactersPerLine": 5,
+    "estimatedLines": 2,
+    "ignoredFrom": null,
+    "limit": 2,
+    "text": "\n\nab\n \t\u00a0\r\n\u2029cd\n\n"
+  },
+  {
+    "charactersPerLine": 4,
+    "denseCharactersPerLine": 6,
+    "estimatedLines": 2,
+    "ignoredFrom": null,
+    "limit": 2,
+    "text": "abcdefgh"
+  },
+  {
+    "charactersPerLine": 4,
+    "denseCharactersPerLine": 6,
+    "estimatedLines": 3,
+    "ignoredFrom": null,
+    "limit": 2,
+    "text": "abcdefghij"
+  },
+  {
+    "charactersPerLine": 4,
+    "denseCharactersPerLine": 6,
+    "estimatedLines": 4,
+    "ignoredFrom": 12,
+    "limit": 2,
+    "text": "abcdefghijklm"
+  },
+  {
+    "charactersPerLine": 4,
+    "denseCharactersPerLine": 6,
+    "estimatedLines": 4,
+    "ignoredFrom": null,
+    "limit": null,
+    "text": "abcdefghijklm"
+  },
+  {
+    "charactersPerLine": 2,
+    "denseCharactersPerLine": 2,
+    "estimatedLines": 2,
+    "ignoredFrom": 12,
+    "limit": 1,
+    "text": "👍🏽👨\u200d👩\u200d👧e\u0301x"
+  },
+  {
+    "charactersPerLine": 10,
+    "denseCharactersPerLine": 10,
+    "estimatedLines": 0,
+    "ignoredFrom": null,
+    "limit": 1,
+    "text": ""
+  }
 ]
