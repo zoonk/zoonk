@@ -18,12 +18,22 @@ struct BuddyConversationList: View {
     ZoonkList {
       Section {
         Button(action: startNew) {
-          Text(
-            "New conversation", tableName: "Buddy",
-            comment: "Starts a new conversation with the buddy"
-          )
-          .foregroundStyle(.primary)
-          .frame(maxWidth: .infinity, alignment: .leading)
+          HStack(spacing: 12) {
+            Text(
+              "New conversation", tableName: "Buddy",
+              comment: "Starts a new conversation with the buddy"
+            )
+            .foregroundStyle(.primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Where the other rows' chevrons are, as main's row ends with its plus.
+            Image(systemName: "plus")
+              .font(.body.weight(.semibold))
+              .imageScale(.small)
+              .foregroundStyle(Color(.tertiaryLabel))
+              .accessibilityHidden(true)
+          }
+          .contentShape(.rect)
         }
         .currentRow(isOpenNew)
         .accessibilityAddTraits(isOpenNew ? .isSelected : [])
@@ -121,39 +131,24 @@ struct BuddyConversationList: View {
     return Button {
       select(conversation.id)
     } label: {
-      VStack(alignment: .leading, spacing: 2) {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
         Text(conversation.title)
           .foregroundStyle(.primary)
           .lineLimit(1)
+          .frame(maxWidth: .infinity, alignment: .leading)
 
-        BuddyConversationDay(date: conversation.lastAskedAt)
-          .foregroundStyle(.mutedForeground)
+        Text(
+          Calendar.current.isDateInToday(conversation.lastAskedAt)
+            ? PlanDate.timeOfDay(conversation.lastAskedAt)
+            : PlanDate.momentDay(conversation.lastAskedAt)
+        )
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
+      .disclosureChevron()
     }
     .currentRow(isOpen)
     .accessibilityAddTraits(isOpen ? .isSelected : [])
-  }
-}
-
-/// Today's rows say when, earlier ones which day; a day said in words keeps the text's face.
-private struct BuddyConversationDay: View {
-  let date: Date
-
-  var body: some View {
-    let calendar = Calendar.current
-
-    if let yesterday = calendar.date(byAdding: .day, value: -1, to: .now),
-      calendar.isDate(date, inSameDayAs: yesterday)
-    {
-      Text("Yesterday", tableName: "Buddy", comment: "When a buddy conversation was last asked in")
-        .typeStyle(.note)
-    } else {
-      Text(
-        calendar.isDateInToday(date) ? PlanDate.timeOfDay(date) : PlanDate.momentDay(date)
-      )
-      .typeStyle(.data)
-    }
   }
 }
 

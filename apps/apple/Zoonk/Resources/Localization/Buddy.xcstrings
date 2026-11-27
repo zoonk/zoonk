@@ -4777,9 +4777,6 @@
         }
       }
     },
-    "Yesterday" : {
-      "comment" : "When a buddy conversation was last asked in"
-    },
     "Young" : {
       "comment" : "The buddy's second stage",
       "localizations" : {
