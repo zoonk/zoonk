@@ -87,7 +87,7 @@ export function useRemedialLine() {
     }
 
     if (block.patternId) {
-      return t("A pattern in your recent mistakes");
+      return t("A pattern in your mistakes");
     }
 
     if (block.returning === "again") {
