@@ -596,18 +596,38 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(store.state?.currentStep?.id, "three")
   }
 
-  /// A canvas or field answering on its own, with no touch or key from the learner, isn't the learner acting.
-  func testAnAnswerSetWithoutTheLearnerDoesNotKeepTheScreen() async throws {
+  func testRestoredProgressDoesNotKeepTheScreenWhenAdmissionHasNewerAnswers() async throws {
     let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one", "two"]))
-    let store = try openingPlayer(checkLesson(["one", "two", "three"]), transport: transport)
+    var lesson = try checkLesson(["one", "two", "three"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    let store = openingPlayer(lesson, transport: transport)
     let loading = Task { await store.load() }
     await startRequested(transport)
 
-    store.select(.check(optionId: "wrong"))
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
     await transport.release()
     await loading.value
 
     XCTAssertEqual(store.state?.currentStep?.id, "three")
+  }
+
+  func testActivityAnswerOnAResumedScreenSurvivesAdmissionWithoutATap() async throws {
+    let transport = OpeningStartTransport(holds: true, runAnswers: runAnswers(["one"]))
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    var lesson = try checkLesson(["one", "two"], code: ["two"])
+    lesson.resume = [heldAnswer("one", attemptId: UUID().uuidString, isCorrect: true).runAnswer]
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    let store = player(cache: cache, content: content, transport: transport, activated: false)
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+    let answer = LessonAnswer.activity(.output("1"))
+    store.select(answer)
+    await startRequested(transport)
+    await transport.release()
+    let started = await store.ensureRun()
+    XCTAssertTrue(started)
+    XCTAssertEqual(store.state?.currentStep?.id, "two")
+    XCTAssertEqual(store.state?.currentAnswer, answer)
   }
 
   /// A first miss on a match board or a take still recording changes no answer; the tap that

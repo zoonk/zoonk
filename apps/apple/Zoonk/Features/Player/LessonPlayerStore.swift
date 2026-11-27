@@ -741,8 +741,8 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
-    activate()
     guard let stepId = state?.currentStep?.id else { return }
+    act()
     workedHere.insert(stepId)
     state?.select(answer, for: stepId)
   }
