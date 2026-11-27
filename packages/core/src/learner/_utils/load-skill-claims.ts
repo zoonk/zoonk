@@ -142,7 +142,7 @@ export async function loadPlanClaimEvents({
   /** A fresh read for these skills only skips history no asked skill needs; GETs share every skill's. */
   skillIds?: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
-  const [{ itemIds, starts }, passedOver, undone] = await Promise.all([
+  const [{ itemLines, starts }, passedOver, undone] = await Promise.all([
     loadCourseStartFacts(goalId),
     loadPassedOverClaims({ goalId, known: plan, skillIds }),
     loadUndoneTestOuts(goalId),
@@ -155,7 +155,11 @@ export async function loadPlanClaimEvents({
     skillId,
   }));
 
-  const otherClaims = await loadPlanEvents({ courseItems: itemIds, goalId, known: plan });
+  const otherClaims = await loadPlanEvents({
+    courseItems: new Set(itemLines.keys()),
+    goalId,
+    known: plan,
+  });
 
   const restored = undone.map((event) =>
     event.kind === "claim" && starts.has(event.skillId)

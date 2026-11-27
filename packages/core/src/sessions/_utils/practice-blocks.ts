@@ -117,10 +117,19 @@ export function buildPracticeBlocks({
   topics: ReadonlyMap<string, PracticeTopic>;
 }): PlannedBlock[] {
   const room = Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION);
-  const items = takePracticeQuestions({ practice, room: Math.max(0, room) });
+  const courseReview = room === 1 && practice.some((item) => item.singleCourseReview !== undefined);
+
+  const items = takePracticeQuestions({
+    practice: courseReview ? practice.filter((item) => item.singleCourseReview) : practice,
+    room: Math.max(0, room),
+  });
+
   const questions = items.length;
 
-  if (questions === 0 || questions * PRACTICE_MINUTES_PER_QUESTION < MIN_BLOCK_MINUTES) {
+  if (
+    questions === 0 ||
+    (!courseReview && questions * PRACTICE_MINUTES_PER_QUESTION < MIN_BLOCK_MINUTES)
+  ) {
     return [];
   }
 

@@ -12,6 +12,7 @@ import { readBlockPayload } from "../block-payload";
 /** first must receive questions even on short days; last is optional. Rotate claims by lastAsked rather than studying order. */
 export type PracticeClaims = {
   first: ReadonlySet<string>;
+  prerequisites?: ReadonlySet<string>;
   courseStarts?: readonly string[];
   last: ReadonlySet<string>;
   /** When an earlier day's session last asked each skill, as a timestamp; never asked, absent. */
@@ -100,9 +101,16 @@ export async function loadPracticeClaims({
       : new Map<string, { at: Date; changeId: string }>(),
   ]);
 
+  const pending = new Map(
+    toConfirm.flatMap(([id]) => {
+      const start = starts.get(id);
+      return start ? [[id, start] as const] : [];
+    }),
+  );
+
   const [lastAsked, prerequisites] = await Promise.all([
-    loadLastAsked({ goalId: goal.id, starts, today }),
-    priorityCourseStarts(goal.id, starts),
+    loadLastAsked({ goalId: goal.id, starts: pending, today }),
+    priorityCourseStarts(goal.id, pending),
   ]);
 
   const needed = new Set(prerequisites);
@@ -132,5 +140,6 @@ export async function loadPracticeClaims({
     first: new Set(toConfirmIds.filter((skillId) => priority.has(skillId))),
     last: new Set(toConfirmIds.filter((skillId) => !priority.has(skillId))),
     lastAsked,
+    prerequisites: needed,
   };
 }

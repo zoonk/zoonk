@@ -11,7 +11,7 @@ export async function loadCourseStartFacts(goalId: string, tx: TransactionClient
 
   const starts = new Map<string, { at: Date; changeId: string }>();
 
-  const itemIds = new Set<string>();
+  const itemLines = new Map<string, ReadonlySet<string>>();
 
   for (const change of changes) {
     const payload = parsePlanChangePayload(change.payload);
@@ -21,8 +21,10 @@ export async function loadCourseStartFacts(goalId: string, tx: TransactionClient
         starts.delete(id);
       }
     } else if (payload.startedPastSkillIds) {
+      const line = new Set(payload.lineSkillIds ?? payload.startedPastSkillIds);
+
       for (const id of payload.planItemIds) {
-        itemIds.add(id);
+        itemLines.set(id, line);
       }
 
       for (const id of payload.startedPastSkillIds ?? []) {
@@ -31,7 +33,7 @@ export async function loadCourseStartFacts(goalId: string, tx: TransactionClient
     }
   }
 
-  return { itemIds, starts };
+  return { itemLines, starts };
 }
 
 export async function loadCourseStarts(goalId: string, tx: TransactionClient = prisma) {

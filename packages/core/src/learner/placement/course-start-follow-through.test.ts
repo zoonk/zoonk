@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -9,13 +9,29 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInBlock } from "../../_test-utils/shown-choice";
+import {
+  UNIT_PLAN_SELECT,
+  loadCertificateUnits,
+} from "../../certificates/_utils/load-certificate-units";
+import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
+import { finishChallengesFixture } from "../../plans/_test-utils/finish-challenges";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { dueSkillFixture } from "../../sessions/_test-utils/session-goal";
+import { planSignals } from "../../sessions/_utils/living-plan-session";
+import { completeLessonPlanItems } from "../../sessions/_utils/plan-items";
+import { loadPracticeClaims } from "../../sessions/_utils/practice-claims";
 import { answerStudyQuestion } from "../../sessions/answer-study-question";
+import { readBlockPayload } from "../../sessions/block-payload";
+import { openStudyDay } from "../../sessions/open-study-day";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { coursePlacementSitting } from "../_test-utils/course-placement-sitting";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { loadClaimEvents } from "../_utils/load-skill-claims";
 import { listKnownSkills } from "../_utils/skill-claims";
 import { finishGoalPlacement } from "./finish-goal-placement";
+import { getGoalPlacement } from "./get-goal-placement";
 
 async function setup() {
   const user = await userFixture();
@@ -40,9 +56,47 @@ async function setup() {
   return { ...fixture, finish, goalId, user };
 }
 
+async function prepareCoursePractice(dailyMinutes: number) {
+  const { finish, goalId, plan, skills, user } = await setup();
+  await finish();
+  const studied = skills[4]!.id;
+  const needed = skills[3]!.id;
+  await layOutPlanFixture(plan.id);
+  await finishChallengesFixture(plan.id);
+  await prisma.goal.update({ data: { dailyMinutes, timezone: "UTC" }, where: { id: goalId } });
+  await dueSkillFixture({ skillId: studied, userId: user.id });
+
+  await Promise.all(
+    skills.flatMap(({ id }) => Array.from({ length: 4 }, () => itemFixture({ skillId: id }))),
+  );
+
+  const first = new Date();
+  first.setUTCDate(first.getUTCDate() + ((3 - first.getUTCDay() + 7) % 7));
+
+  const practice = async (week: number) => {
+    const now = new Date(first.getTime() + week * 7 * 86_400_000);
+    const shownDate = now.toISOString().slice(0, 10);
+    const opened = await openStudyDay({ goalId, shownDate, timeZone: "UTC" }, now);
+
+    if (opened.status !== "opened") {
+      throw new Error(`Expected the study day to open, received ${opened.status}`);
+    }
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { kind: "practice", sessionId: opened.sessionId },
+    });
+
+    expect(opened.session.minutes.planned).toBeLessThanOrEqual(dailyMinutes);
+    expect(blocks).toHaveLength(1);
+    return readBlockPayload(blocks[0]!);
+  };
+
+  return { goalId, needed, practice, skills, studied };
+}
+
 describe("course placement after completion", () => {
   it("returns the lessons on the first practice miss", async () => {
-    const { finish, goalId, plan, skills, user } = await setup();
+    const { finish, goalId, plan, planItems, skills, user } = await setup();
     await finish();
     const skillId = skills[0]!.id;
     const where = { kind: "lesson" as const, planId: plan.id, skillId };
@@ -70,6 +124,16 @@ describe("course placement after completion", () => {
 
     await expect(prisma.planItem.findFirstOrThrow({ where })).resolves.toMatchObject({
       status: "todo",
+    });
+
+    await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({
+      placement: {
+        result: {
+          course: { chapters: [{ skipped: 3, start: true }] },
+          lessonsSkipped: 3,
+          nextLesson: { id: planItems[0]!.lessonId },
+        },
+      },
     });
   });
 
@@ -123,5 +187,150 @@ describe("course placement after completion", () => {
     await finish();
     const after = await known();
     expect(after.has(first)).toBe(false);
+  });
+
+  it("withholds credit after one right practice answer and releases it after studying the lesson", async () => {
+    const { finish, goal, goalId, plan, planItems, skills, user } = await setup();
+    await finish();
+    const skillId = skills[0]!.id;
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: new Date(), status: "done" },
+      where: { planId: plan.id, skillId: { not: skillId } },
+    });
+
+    const units = async () => {
+      const saved = await prisma.plan.findUniqueOrThrow({
+        select: UNIT_PLAN_SELECT,
+        where: { id: plan.id },
+      });
+
+      return loadCertificateUnits({ goal, plan: saved });
+    };
+
+    const item = await itemFixture({ content: choiceItemContent(), skillId });
+    const session = await studySessionFixture({ goalId, userId: user.id });
+
+    const block = await studySessionBlockFixture({
+      kind: "practice",
+      payload: { itemIds: [item.id], skillIds: [skillId] },
+      sessionId: session.id,
+    });
+
+    await startStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
+    const answer = await pickItemInBlock({ blockId: block.id, itemId: item.id });
+
+    await answerStudyQuestion({
+      blockId: block.id,
+      input: { answer, durationMs: 4000, itemId: item.id },
+      sessionId: session.id,
+    });
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { itemId: item.id, userId: user.id } }),
+    ).resolves.toMatchObject({ isCorrect: true });
+
+    const afterAnswer = await units();
+    expect(afterAnswer.units.some((unit) => !unit.finished)).toBe(true);
+
+    await prisma.$transaction((tx) =>
+      completeLessonPlanItems(tx, {
+        lessonId: planItems[0]!.lessonId!,
+        now: new Date(),
+        userId: user.id,
+      }),
+    );
+
+    const afterStudy = await units();
+    expect(afterStudy.units.every((unit) => unit.finished)).toBe(true);
+  });
+
+  it("builds practice from the next prerequisites and rotates unasked starts across sessions", async () => {
+    const { goalId, needed, practice, skills, studied } = await prepareCoursePractice(9);
+
+    const signals = planSignals({
+      plan: await loadPlacementPlan(goalId),
+      prerequisites: await loadSkillPrerequisites(skills.map((skill) => skill.id)),
+      windows: [
+        { at: new Date().toISOString(), missedSkillIds: [studied], result: "hard", streak: 1 },
+      ],
+    });
+
+    expect(signals.hardRecheckSkillIds).toStrictEqual([needed]);
+    const seen = new Set<string>();
+
+    const takeWeek = async (week: number) => {
+      const payload = await practice(week);
+      expect(payload.itemIds).toHaveLength(2);
+      expect(payload.skillIds).toContain(studied);
+      const skipped = payload.skillIds.find((id) => id !== studied)!;
+      expect(seen.has(skipped)).toBe(false);
+      seen.add(skipped);
+    };
+
+    await takeWeek(0);
+    await takeWeek(1);
+    expect(seen.has(needed)).toBe(true);
+    await takeWeek(2);
+    await takeWeek(3);
+    expect(seen.size).toBe(4);
+  });
+
+  it.each([true, false])(
+    "opens a single practice question when the next lesson needs a started-past topic: %s",
+    async (requiresStart) => {
+      const { needed, practice, studied } = await prepareCoursePractice(8);
+
+      if (!requiresStart) {
+        await prisma.skillPrerequisite.deleteMany({ where: { skillId: studied } });
+      }
+
+      const payload = await practice(0);
+      expect(payload.itemIds).toHaveLength(1);
+      expect(payload.skillIds).toStrictEqual([requiresStart ? needed : studied]);
+    },
+  );
+
+  it("bounds practice history after an old start is studied", async () => {
+    const { finish, goal, goalId, plan, planItems, skills, user } = await setup();
+    await finish();
+    const old = new Date(Date.now() - 180 * 86_400_000);
+    const studied = skills.at(-1)!.id;
+
+    await prisma.planChange.create({
+      data: {
+        createdAt: old,
+        kind: "testedOut",
+        payload: { startedPastSkillIds: [studied] },
+        planId: plan.id,
+        reason: "Earlier start",
+        status: "applied",
+      },
+    });
+
+    await prisma.planItem.update({
+      data: { completedAt: new Date(), status: "done" },
+      where: { id: planItems.at(-1)!.id },
+    });
+
+    const previous = await studySessionFixture({ goalId, localDate: old, userId: user.id });
+
+    await studySessionBlockFixture({
+      kind: "practice",
+      payload: { skillIds: [studied] },
+      sessionId: previous.id,
+    });
+
+    const claims = await loadPracticeClaims({
+      goal,
+      graph: parsePlanGraph(plan.graph),
+      now: new Date(),
+      skillIds: skills.map((skill) => skill.id),
+      today: new Date(),
+      userId: user.id,
+    });
+
+    expect(claims.courseStarts?.length).toBeGreaterThan(0);
+    expect(claims.lastAsked.has(studied)).toBe(false);
   });
 });
