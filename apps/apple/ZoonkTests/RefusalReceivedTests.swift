@@ -55,6 +55,41 @@ final class RefusalReceivedTests: XCTestCase {
       .limit(.usedUp(tier: .free, availableAt: opens)))
   }
 
+  /// A short break ends its wait after this device received it, and its line counts the wait down,
+  /// in minutes over a minute and in seconds under one, until it can be tried again.
+  func testAShortBreakCountsItsWaitDownFromWhenItArrived() throws {
+    let slowDown = try XCTUnwrap(
+      VoiceRefusal(
+        status: 429, code: "SLOW_DOWN",
+        details: try JSONDecoder().decode(
+          OpenAPIValueContainer.self, from: Data(#"{"retryAfterSeconds":90}"#.utf8)),
+        receivedAt: opens
+      ).limit)
+
+    XCTAssertEqual(slowDown.breakEnd, opens.addingTimeInterval(90))
+
+    func line(after seconds: TimeInterval) -> String {
+      slowDown.words(.messages, now: opens.addingTimeInterval(seconds)).said
+    }
+
+    XCTAssertEqual(line(after: 0), "Take a short break. You can try again in 2 minutes.")
+    XCTAssertEqual(line(after: 30), "Take a short break. You can try again in 1 minute.")
+    XCTAssertEqual(line(after: 31), "Take a short break. You can try again in 59 seconds.")
+    XCTAssertEqual(line(after: 89.5), "Take a short break. You can try again in 1 second.")
+    XCTAssertEqual(line(after: 90), "You can try again now.")
+  }
+
+  /// A short break nothing timed counts from when its notice first shows.
+  func testAShortBreakNothingTimedCountsFromWhenItShows() {
+    let shown = HelpLimit.slowDown(retryAfterSeconds: 30).started(at: opens)
+
+    XCTAssertEqual(shown.breakEnd, opens.addingTimeInterval(30))
+    XCTAssertEqual(
+      shown.words(now: opens.addingTimeInterval(20)).said,
+      "Take a short break. You can try again in 10 seconds.")
+    XCTAssertEqual(shown.started(at: opens.addingTimeInterval(5)), shown)
+  }
+
   private func refusal(_ status: Int, _ code: String, receivedAt: Date) -> VoiceRefusal {
     VoiceRefusal(
       status: status, code: code,

@@ -150,7 +150,9 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
       switch reason {
       case .signUpRequired: .signUpRequired
       case .slowDown:
-        .slowDown(retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))))
+        .slowDown(
+          retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))),
+          until: availableAt)
       // A day already past here can't be told: the stop shows no day until a read lifts it.
       case .limitReached:
         .reached(

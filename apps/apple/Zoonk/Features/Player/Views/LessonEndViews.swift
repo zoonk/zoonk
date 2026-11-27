@@ -500,13 +500,16 @@ struct LessonUnavailableView: View {
   let retry: () -> Void
 
   var body: some View {
-    OpeningClock(availableAt: refusal.limit?.availableAt) { now in
-      LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
+    LimitClock(limit: refusal.limit) { limit, now in
+      LessonUnavailableBody(
+        refusal: refusal, limit: limit, isNotice: isNotice, now: now, retry: retry)
     }
   }
 
   var said: String {
-    LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: .now, retry: retry).said
+    LessonUnavailableBody(
+      refusal: refusal, limit: refusal.limit, isNotice: isNotice, now: .now, retry: retry
+    ).said
   }
 }
 
@@ -517,6 +520,8 @@ private struct LessonUnavailableBody: View {
   @Environment(\.dismiss) private var dismiss
 
   let refusal: LessonRunRefusal
+  /// The refusal's limit, a short break timed from when it first showed.
+  let limit: HelpLimit?
   let isNotice: Bool
   let now: Date
   let retry: () -> Void
@@ -634,7 +639,7 @@ private struct LessonUnavailableBody: View {
       LocalizedStringResource(
         "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
     case .limitReached:
-      refusal.limit?.words(.lessons, now: now).title
+      limit?.words(.lessons, now: now).title
         ?? LocalizedStringResource(
           "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
@@ -642,7 +647,7 @@ private struct LessonUnavailableBody: View {
 
   /// In place, a limit's line says only when lessons come back.
   private var noticeLine: LocalizedStringResource? {
-    refusal.limit?.words(.lessons, now: now).line
+    limit?.words(.lessons, now: now).line
   }
 
   private var screenLine: String? {
@@ -650,9 +655,10 @@ private struct LessonUnavailableBody: View {
     case .failed, .notFound:
       return nil
     case .slowDown(let seconds):
+      let left = limit?.breakEnd.map { max(Int($0.timeIntervalSince(now).rounded(.up)), 0) }
       return String(
         localized:
-          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(seconds)).",
+          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(left ?? seconds)).",
         table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
       )
     case .limitReached where isReady:

@@ -153,15 +153,18 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    OpeningClock(availableAt: failure.liftsAt) { now in
+    LimitClock(limit: failure.helpLimit) { _, now in
       notice(failure.words(now: now))
+    }
+    // Said once as it shows, not again each time a short break's wait counts down.
+    .onChange(of: failure, initial: true) {
+      AccessibilityNotification.Announcement(failure.words().said).post()
     }
   }
 
   private func notice(_ words: LimitWords) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
-        .announcesAlert(words.said)
 
       TutorRemedyButton(failure: failure, retry: {})
         .controlSize(.small)

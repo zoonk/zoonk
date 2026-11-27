@@ -19,8 +19,10 @@ struct GateWords: View {
       }
 
       if let line {
+        // A short break's wait counts down here without the line changing width.
         line
           .typeStyle(.body)
+          .monospacedDigit()
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -117,12 +119,13 @@ struct LimitWords: Equatable {
 /// subscribes, and a subscriber or a short break has only the words.
 struct LimitNotice: View {
   let limit: HelpLimit
-  /// Read at the gate's clock, so words about a day follow it while the notice is open.
-  let words: (Date) -> LimitWords
+  /// Read at the gate's clock, so words about a day or a short break's wait follow it while the
+  /// notice is open.
+  private let words: (HelpLimit, Date) -> LimitWords
 
   init(limit: HelpLimit, words: @escaping (Date) -> LimitWords) {
     self.limit = limit
-    self.words = words
+    self.words = { _, now in words(now) }
   }
 
   init(limit: HelpLimit, words: LimitWords) {
@@ -130,12 +133,13 @@ struct LimitNotice: View {
   }
 
   init(limit: HelpLimit, kind: HelpLimit.Kind? = nil) {
-    self.init(limit: limit) { now in limit.words(kind, now: now) }
+    self.limit = limit
+    self.words = { limit, now in limit.words(kind, now: now) }
   }
 
   var body: some View {
-    OpeningClock(availableAt: limit.availableAt) { now in
-      notice(words(now), isOpen: limit.isOpen(at: now))
+    LimitClock(limit: limit) { timed, now in
+      notice(words(timed ?? limit, now), isOpen: limit.isOpen(at: now))
     }
   }
 
@@ -204,11 +208,10 @@ extension HelpLimit {
   /// cap's day comes from `availableAt`, read at `now` in the learner's own time zone.
   func words(_ kind: Kind? = nil, now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     switch self {
-    case .slowDown:
+    case .slowDown(let seconds, let until):
       LimitWords(
-        line: LocalizedStringResource(
-          "Take a short break, then try again.", table: "Subscriptions",
-          comment: "Fair use asks the learner to wait a moment before trying again"))
+        line: Self.waitLine(
+          seconds: until.map { Int($0.timeIntervalSince(now).rounded(.up)) } ?? seconds))
     case .signUpRequired:
       LimitWords(
         title: LocalizedStringResource(
@@ -255,6 +258,30 @@ extension HelpLimit {
     comment:
       "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
   )
+
+  /// Main's slow-down line: the wait left, in seconds under a minute and in minutes above, and
+  /// once it's over that the learner can try again.
+  static func waitLine(seconds: Int) -> LocalizedStringResource {
+    if seconds <= 0 {
+      return tryAgainNow
+    }
+
+    if seconds < 60 {
+      return LocalizedStringResource(
+        "Take a short break. You can try again in \(seconds) seconds.", table: "Subscriptions",
+        comment:
+          "The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again."
+      )
+    }
+
+    let minutes = (seconds + 59) / 60
+
+    return LocalizedStringResource(
+      "Take a short break. You can try again in \(minutes) minutes.", table: "Subscriptions",
+      comment:
+        "The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again."
+    )
+  }
 
   private static func usedUpTitle(_ kind: Kind?) -> LocalizedStringResource {
     switch kind {
@@ -490,6 +517,36 @@ extension HelpLimit {
     }
   }
 
+}
+
+/// Draws a limit at each whole second of a short break, so its wait counts down, and any other at
+/// the opening clock. A short break nothing timed counts from when this first shows, and `content`
+/// gets it with that end.
+struct LimitClock<Content: View>: View {
+  @State private var shownAt = Date.now
+
+  let limit: HelpLimit?
+  @ViewBuilder let content: (HelpLimit?, Date) -> Content
+
+  var body: some View {
+    let timed = limit?.started(at: shownAt)
+
+    if let end = timed?.breakEnd, end > .now {
+      TimelineView(.explicit(Self.seconds(until: end, from: .now))) { context in
+        content(timed, context.date)
+      }
+    } else {
+      OpeningClock(availableAt: timed?.availableAt) { now in
+        content(timed, now)
+      }
+    }
+  }
+
+  /// Each whole second left before `end`, the first at or before `now`.
+  static func seconds(until end: Date, from now: Date) -> [Date] {
+    let left = Int(end.timeIntervalSince(now).rounded(.up))
+    return (0...max(left, 0)).reversed().map { end.addingTimeInterval(-TimeInterval($0)) }
+  }
 }
 
 /// Main's `useOpeningDay`: the time a monthly cap's opening is read at. It moves at the learner's

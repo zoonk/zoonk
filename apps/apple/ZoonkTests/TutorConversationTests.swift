@@ -90,6 +90,9 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(conversation.turns.isEmpty)
     XCTAssertEqual(conversation.draft, "Why does it fall?")
     XCTAssertEqual(conversation.limit, slowDown)
+    XCTAssertEqual(
+      slowDown.words(now: over.addingTimeInterval(-30)).said,
+      "Take a short break. You can try again in 30 seconds.")
     XCTAssertFalse(conversation.canSendDraft)
 
     conversation.now = { over }

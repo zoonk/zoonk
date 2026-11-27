@@ -141,6 +141,16 @@ enum TutorFailure: Error, Equatable, Sendable {
     }
   }
 
+  /// The limit its notice reads, timed as every other limit notice's.
+  var helpLimit: HelpLimit? {
+    switch self {
+    case .signUpRequired: .signUpRequired
+    case .slowDown(let until): .slowDown(retryAfterSeconds: 0, until: until)
+    case .limit(let limit): limit
+    default: nil
+    }
+  }
+
   func isLifted(at now: Date) -> Bool {
     liftsAt.map { $0 <= now } ?? false
   }
