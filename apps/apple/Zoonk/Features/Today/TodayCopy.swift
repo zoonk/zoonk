@@ -131,7 +131,11 @@ extension NamedBlock {
 
 extension StudyBlock: NamedBlock {
   var remedialTitle: String? {
-    switch screen {
+    if isAlreadyFixed {
+      return String(localized: MistakePracticeScope.alreadyFixed)
+    }
+
+    return switch screen {
     case .mistakesPractice:
       String(
         localized: "Fix \(questions) mistakes", table: "Today", locale: .appLanguage,
@@ -152,6 +156,10 @@ extension StudyBlock: NamedBlock {
   /// Why work the plan added for the learner's mistakes is in the day. It never counts: a count can
   /// be false by the time it's read.
   var remedialLine: String? {
+    if isAlreadyFixed {
+      return nil
+    }
+
     switch screen {
     case .mistakesPractice:
       return String(
@@ -234,6 +242,10 @@ extension StudyBlock {
 
   /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
+    if isAlreadyFixed {
+      return nil
+    }
+
     if let remedialLine {
       return remedialLine
     }

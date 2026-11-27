@@ -373,6 +373,12 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     status == .completed || status == .skipped
   }
 
+  /// A day's mistakes whose every question was fixed elsewhere since the day opened: still to open,
+  /// which marks it done. A finished row keeps the count it recorded.
+  var isAlreadyFixed: Bool {
+    screen == .mistakesPractice && questions == 0 && !isFinished
+  }
+
   /// Core's `isDayBlock`, not skipped: what the day's count, meter and time left are made of. Extra
   /// work never lowers them.
   var countsTowardDay: Bool {

@@ -38,6 +38,14 @@ enum MistakePracticeScope: Hashable, Sendable {
     blockId == nil && hasMorePractice == true
   }
 
+  /// A day's practice whose mistakes were all fixed elsewhere: its run's title and its row's on
+  /// Today.
+  static let alreadyFixed = LocalizedStringResource(
+    "Already fixed", table: "Practice",
+    comment:
+      "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere."
+  )
+
   /// The goal the run names: a mock's run takes it from the finished sitting, so it still works
   /// after the learner switched goals.
   func goal(_ activeGoalId: String?) -> String? {

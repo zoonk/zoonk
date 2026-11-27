@@ -515,10 +515,12 @@ struct BlockRow: View {
                 comment: "A block that moves today's missions"))
         }
 
-        Text(studyDuration(minutes: block.estimatedMinutes))
-          .layoutPart(.value)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+        if !block.isAlreadyFixed {
+          Text(studyDuration(minutes: block.estimatedMinutes))
+            .layoutPart(.value)
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        }
       }
       .coveredBySpinner(isBusy, alignment: .trailing)
     }

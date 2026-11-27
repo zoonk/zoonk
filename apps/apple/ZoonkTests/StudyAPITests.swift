@@ -87,6 +87,31 @@ final class StudyAPITests: XCTestCase {
     }
   }
 
+  /// A day's mistakes all fixed elsewhere since it opened: the row says so, with no line, until
+  /// opening it marks it done; a finished row keeps the count it recorded.
+  func testAMistakesRowWithNothingLeftReadsAlreadyFixed() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    func row(status: String) throws -> StudyBlock {
+      let fixture = base.merging([
+        "kind": "practice", "screen": "mistakesPractice", "questions": 0, "title": NSNull(),
+        "status": status,
+      ]) { $1 }
+      return try JSONDecoder().decode(
+        StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
+    }
+
+    let pending = try row(status: "pending")
+    XCTAssertTrue(pending.isAlreadyFixed)
+    XCTAssertEqual(pending.displayTitle, "Already fixed")
+    XCTAssertNil(pending.label)
+    XCTAssertNil(pending.detail)
+
+    let done = try row(status: "completed")
+    XCTAssertFalse(done.isAlreadyFixed)
+    XCTAssertNotEqual(done.displayTitle, "Already fixed")
+  }
+
   /// Opening a preview row names the same remedial work core showed, and leaves out what it isn't.
   func testOpeningARemedialRowEchoesWhatItIs() async throws {
     let base = try XCTUnwrap(

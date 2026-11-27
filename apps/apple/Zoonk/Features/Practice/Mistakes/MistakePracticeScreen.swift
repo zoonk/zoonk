@@ -373,7 +373,7 @@ struct MistakePracticeScreen: View {
   /// into the day like any finished step.
   private var alreadyFixed: some View {
     PracticeTaskLayout(isResult: true) {
-      PracticeResultTitle(title: Self.alreadyFixedTitle, detail: nil)
+      PracticeResultTitle(title: MistakePracticeScope.alreadyFixed, detail: nil)
     } actions: {
       PracticeMainButton(
         title: LocalizedStringResource(
@@ -383,12 +383,6 @@ struct MistakePracticeScreen: View {
       }
     }
   }
-
-  private static let alreadyFixedTitle = LocalizedStringResource(
-    "Already fixed", table: "Practice",
-    comment:
-      "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere."
-  )
 
   private var nothingToPractice: some View {
     StateMessage {
@@ -413,7 +407,7 @@ struct MistakePracticeScreen: View {
   @ViewBuilder
   private var unsavedEnd: some View {
     if state.answerIds.isEmpty {
-      PracticeResultTitle(title: Self.alreadyFixedTitle, detail: nil)
+      PracticeResultTitle(title: MistakePracticeScope.alreadyFixed, detail: nil)
       SaveFailureNotice(
         failures: finishFailures,
         firstMessage: LocalizedStringResource(
