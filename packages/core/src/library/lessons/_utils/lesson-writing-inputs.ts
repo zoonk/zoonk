@@ -102,6 +102,7 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       loadLessonShortAnswers(goalsOf),
       loadUsedSituations({
         includeMockReserve: true,
+        lessonId: lesson.id,
         publicOnly: true,
         skillIds: lesson.skills.map((entry) => entry.skillId),
       }),

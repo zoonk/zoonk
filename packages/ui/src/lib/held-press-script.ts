@@ -425,25 +425,106 @@ function holdPressesBeforeReady({
         `${location.origin}${location.pathname}${location.search}`
     );
 
+  const linksTo = (href: string, nodes: Node[]) =>
+    nodes
+      .flatMap((node) =>
+        node instanceof Element ? [node, ...node.querySelectorAll("a[href]")] : [],
+      )
+      .filter((node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement)
+      .filter((node) => node.href === href);
+
+  /**
+   * A part of the page that streams in replaces what stood in its place, the same links included, in
+   * one parent and the same order.
+   */
+  const replacementOf = (link: HTMLAnchorElement, records: MutationRecord[]) => {
+    const removal = records.find((record) =>
+      [...record.removedNodes].some((node) => node.contains(link)),
+    );
+
+    if (!removal) {
+      return null;
+    }
+
+    const swap = records.filter((record) => record.target === removal.target);
+    const removed = swap.flatMap((record) => [...record.removedNodes]);
+    const added = swap.flatMap((record) => [...record.addedNodes]);
+    const before = linksTo(link.href, removed);
+    const after = linksTo(link.href, added);
+
+    return after.filter((node) => node.isConnected)[before.indexOf(link)] ?? null;
+  };
+
+  let following: { link: HTMLAnchorElement; marked: boolean } | null = null;
+
+  const observer = new MutationObserver((records) => {
+    if (!following || following.link.isConnected) {
+      return;
+    }
+
+    const replacement = replacementOf(following.link, records);
+
+    if (!replacement) {
+      return;
+    }
+
+    if (following.marked) {
+      unmark(following.link);
+      mark(replacement);
+    }
+
+    following.link = replacement;
+  });
+
+  /** The browser follows only the last link pressed, and its mark goes with it. */
+  const follow = (link: HTMLAnchorElement | null) => {
+    if (following?.marked) {
+      unmark(following.link);
+    }
+
+    following = link ? { link, marked: false } : null;
+
+    if (following) {
+      observer.observe(document, { childList: true, subtree: true });
+    } else {
+      observer.disconnect();
+    }
+
+    return following;
+  };
+
   /**
    * The browser follows a link pressed before React owns it, and the page shows nothing until the
    * next one paints, so the link shows it's on its way. A link the page takes over, as a client-side
    * link does, cancels the click; once React owns the link, a press is its own and clears the mark a
-   * stopped load left.
+   * stopped load left, on whichever link it was.
    */
   const pressLink = (event: MouseEvent, link: Element) => {
     if (isReacts(link)) {
+      follow(null);
       unmark(link);
       return;
     }
 
-    if (leavesPage(link)) {
-      setTimeout(() => {
-        if (!event.defaultPrevented) {
-          mark(link);
-        }
-      }, 0);
+    if (!leavesPage(link)) {
+      return;
     }
+
+    const press = follow(link);
+
+    setTimeout(() => {
+      if (!press || following !== press) {
+        return;
+      }
+
+      if (event.defaultPrevented) {
+        follow(null);
+        return;
+      }
+
+      mark(press.link);
+      press.marked = true;
+    }, 0);
   };
 
   const isFormSubmitter = (control: Element) =>
@@ -595,6 +676,8 @@ function holdPressesBeforeReady({
     if (!event.persisted) {
       return;
     }
+
+    follow(null);
 
     for (const control of document.querySelectorAll(`[${held}]`)) {
       unmark(control);

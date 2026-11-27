@@ -1,13 +1,9 @@
 import { prisma, sql } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { SITEMAP_PAGES, type SitemapResource } from "./sitemap-page-ids";
 
 /** Search engines read at most this many URLs from one sitemap. */
 const SITEMAP_URL_LIMIT = 50_000;
-
-/** Fixed so a row's page never changes. Raising one moves rows between pages once, until search engines reread robots.txt. */
-const SITEMAP_PAGES = { courses: 1, "library-chapters": 8, "library-lessons": 32 } as const;
-
-export type SitemapResource = keyof typeof SITEMAP_PAGES;
 
 export function warnIfSitemapPageIsFull({
   page,
@@ -21,14 +17,6 @@ export function warnIfSitemapPageIsFull({
   if (rows > SITEMAP_URL_LIMIT) {
     logError("A sitemap page holds more URLs than search engines read", { page, resource, rows });
   }
-}
-
-export function getSitemapPageIds(resource: SitemapResource): number[] {
-  return Array.from({ length: SITEMAP_PAGES[resource] }, (_, index) => index);
-}
-
-export function isSitemapPage({ page, resource }: { page: number; resource: SitemapResource }) {
-  return Number.isInteger(page) && page >= 0 && page < SITEMAP_PAGES[resource];
 }
 
 const SITEMAP_TABLES = {

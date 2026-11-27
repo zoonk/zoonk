@@ -2838,6 +2838,128 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [],
+          "placements": [
+            {
+              "area": "Prova discursiva",
+              "key": "resposta-curta",
+              "topics": []
+            },
+            {
+              "area": "Prova discursiva",
+              "key": "situacao-problema",
+              "topics": []
+            }
+          ]
+        },
+        "id": "pt-written-task-practice-in-its-subject-1",
+        "userInput": {
+          "courses": [
+            {
+              "key": "etica",
+              "title": "Ética no Serviço Público"
+            },
+            {
+              "key": "redacao",
+              "title": "Redação Discursiva"
+            }
+          ],
+          "examOutline": {
+            "name": "Concurso da CGU, Auditor Federal de Finanças e Controle",
+            "notes": [],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "2 Conflitos de interesses"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Prova discursiva (P4)",
+                "name": "Prova discursiva",
+                "questions": 2,
+                "topics": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar fundamentos da ética pública.",
+              "key": "fundamentos",
+              "name": "Interpretar fundamentos da ética pública",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "1 Fundamentos da ética pública"
+              ]
+            },
+            {
+              "description": "Identificar conflitos de interesses.",
+              "key": "conflitos",
+              "name": "Identificar conflitos de interesses",
+              "examWeight": 3,
+              "area": "Ética Pública e Responsabilidade Profissional",
+              "topics": [
+                "2 Conflitos de interesses"
+              ]
+            },
+            {
+              "description": "Responder questão discursiva em 30 linhas.",
+              "key": "resposta-curta",
+              "name": "Responder questão discursiva em 30 linhas",
+              "examWeight": 4,
+              "area": "Redação discursiva",
+              "topics": []
+            },
+            {
+              "description": "Resolver situação-problema em 60 linhas.",
+              "key": "situacao-problema",
+              "name": "Resolver situação-problema em 60 linhas",
+              "examWeight": 5,
+              "area": "Redação discursiva",
+              "topics": []
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "coverage-check"

@@ -3,7 +3,8 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FONT_WEIGHTS } from "@/lib/certificates/certificate-fonts";
 
-const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
+/** Read while the module loads, as `shareCardFonts` are. */
+const ICON = await readFile(join(process.cwd(), "src/app/icon.svg"), "utf8");
 
 const BRAND_NAME = "Zoonk";
 const NAME_SCALE = 0.8;
@@ -16,16 +17,13 @@ const TONES = {
 
 type Tone = keyof typeof TONES;
 
-/** Cached, so the file read doesn't keep a card from being generated at build time. */
-export async function getOpenGraphLogo(tone: Tone): Promise<string> {
-  "use cache";
-
-  const icon = await readFile(LOGO_PATH, "utf8");
+export function getOpenGraphLogo(tone: Tone): string {
   const { ink, paper } = TONES[tone];
 
-  const logo = icon
-    .replace('fill="#171717"', `fill="${ink}"`)
-    .replace('fill="#fff"', `fill="${paper}"`);
+  const logo = ICON.replace('fill="#171717"', `fill="${ink}"`).replace(
+    'fill="#fff"',
+    `fill="${paper}"`,
+  );
 
   return `data:image/svg+xml;base64,${Buffer.from(logo).toString("base64")}`;
 }

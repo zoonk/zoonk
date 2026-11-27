@@ -38,6 +38,70 @@ function count(page: Page, matches: (request: Request) => boolean) {
   return sent;
 }
 
+const REPLACED = "The link tapped was replaced";
+
+/**
+ * Taps the first visible link matching `selector` while the page loads, once React holds the part
+ * of the page that replaces it and waits a frame to show it. The page can't be read while the
+ * tapped page is on its way, so it says when the link is replaced, which `replaced` waits for.
+ */
+async function tapBeforeItsReplaced(page: Page, selector: string) {
+  await page.addInitScript(
+    ({ match, replaced }) => {
+      // oxlint-disable-next-line unicorn/consistent-function-scoping -- Serialized to run in the page.
+      const isFallbackOf = (boundary: Node, node: Node) => {
+        let depth = 0;
+
+        for (let next = boundary.nextSibling; next; next = next.nextSibling) {
+          if (next instanceof Comment && next.data === "/$") {
+            if (depth === 0) {
+              return false;
+            }
+
+            depth -= 1;
+          } else if (next instanceof Comment && next.data.startsWith("$")) {
+            depth += 1;
+          } else if (next.contains(node)) {
+            return true;
+          }
+        }
+
+        return false;
+      };
+
+      // React's inline script marks a boundary `$~` once its content is in and its reveal is queued.
+      const observer = new MutationObserver((records) => {
+        const link = [...document.querySelectorAll(match)].find((node) => node.checkVisibility());
+
+        const revealing = records.some(
+          ({ target }) =>
+            target instanceof Comment && target.data === "$~" && link && isFallbackOf(target, link),
+        );
+
+        if (!(link instanceof HTMLElement) || !revealing) {
+          return;
+        }
+
+        observer.disconnect();
+        link.click();
+
+        new MutationObserver((_, watcher) => {
+          if (!link.isConnected) {
+            watcher.disconnect();
+            // oxlint-disable-next-line no-console -- How the page tells the test, which can't read it now.
+            console.info(replaced);
+          }
+        }).observe(document, { childList: true, subtree: true });
+      });
+
+      observer.observe(document, { characterData: true, subtree: true });
+    },
+    { match: selector, replaced: REPLACED },
+  );
+
+  return { replaced: page.waitForEvent("console", (message) => message.text() === REPLACED) };
+}
+
 async function openOnboardingStep(userId: string, step: "buddy" | "schedule") {
   const goal = await createMappedGoal(userId);
   const answered = [...ANSWERED.filter((question) => question !== step), "placement"];
@@ -265,6 +329,34 @@ test.describe("Presses made before the page hydrates", () => {
     await today.click();
     await expect(page).toHaveURL(/\/today$/u);
     await expect(today).not.toHaveAttribute("data-held");
+  });
+
+  test("a tab tapped just before the tabs that stream in replace it shows it's on its way on the tab that replaces it", async ({
+    userWithoutProgress: page,
+  }) => {
+    const opening: Route[] = [];
+    await holdScripts(page);
+
+    await page.route("**/plan", (route) => {
+      opening.push(route);
+    });
+
+    const { replaced } = await tapBeforeItsReplaced(
+      page,
+      '[data-slot=learn-side-navigation] a[href$="/plan"]',
+    );
+
+    await page.goto("/today", { waitUntil: "commit" });
+    await expect.poll(() => opening.length).toBe(1);
+    await replaced;
+    await opening[0]?.abort("aborted");
+
+    const plan = page
+      .getByRole("navigation", { name: "Learning tabs" })
+      .getByRole("link", { name: "Plan" });
+
+    await expect(plan).toHaveAttribute("data-held", "");
+    await expect(plan).toHaveAttribute("aria-busy", "true");
   });
 
   test("an early memory switch press shows the new setting and saves it once", async ({

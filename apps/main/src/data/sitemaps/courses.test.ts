@@ -2,7 +2,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, it } from "vitest";
 import { listSitemapCourses } from "./courses";
-import { getSitemapPageIds } from "./sitemap-pages";
+import { getSitemapPageIds } from "./sitemap-page-ids";
 
 async function listAllSitemapCourses() {
   const pages = getSitemapPageIds("courses");

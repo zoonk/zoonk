@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
-import { CGU_BLUEPRINT } from "./cgu-blueprint";
+import { CGU_BLUEPRINT, CGU_WRITTEN_TASKS } from "./cgu-blueprint";
 import { DISCIPLINE_ALIAS_CASES } from "./discipline-alias-cases";
 import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
@@ -600,6 +600,84 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
     userInput: {
       examBlueprint: CGU_BLUEPRINT,
       goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The notice lists its discursive test as the subject "Prova discursiva", whose two topics and two written tasks are the notice's sentences describing each question (lines and points). Every skill that practices those questions, or the written Portuguese the test grades, is an outcome skill in the area "Prova discursiva", word for word
+      - No area and no skill name copies a task's sentence ("uma questão envolvendo situação-problema, …, no valor de 70,00 pontos"): a learner reads area names as the plan's subjects
+      - Every topic id of every subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cgu-discursive-test-subject",
+    userInput: {
+      examBlueprint: {
+        ...CGU_BLUEPRINT,
+        subjects: [
+          ...CGU_BLUEPRINT.subjects.filter((subject) =>
+            ["Ética Pública e Responsabilidade Profissional"].includes(subject.name),
+          ),
+          {
+            group: "Prova discursiva (P4)",
+            name: "Prova discursiva",
+            questions: 2,
+            topics: CGU_WRITTEN_TASKS,
+            weight: null,
+            writtenTasks: CGU_WRITTEN_TASKS,
+          },
+        ],
+      },
+      goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Língua Portuguesa and História do Brasil are subjects with a syllabus, and each also lists written tasks (an essay and a summary; discursive questions). Their syllabus topics are skills in the subject's own area
+      - The practice for each written task is outcome skills, and no area or skill name copies a task's line with its lines and points. The essay and the summary each get an area of their own with a short name a learner knows, in the notice's words (such as "Redação" or "Resumo"); history's discursive questions may be practiced in that area or in "História do Brasil"
+      - Every topic id of every subject is taught by some skill
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cacd-written-tasks-in-content-subjects",
+    userInput: {
+      examBlueprint: {
+        name: "Concurso de Admissão à Carreira de Diplomata (CACD)",
+        notes: [],
+        subjects: [
+          {
+            group: null,
+            name: "Língua Portuguesa",
+            questions: null,
+            topics: [
+              "1 Compreensão e interpretação de textos",
+              "2 Coesão e coerência textuais",
+              "3 Sintaxe da oração e do período",
+            ],
+            weight: null,
+            writtenTasks: [
+              "redação de 65 a 70 linhas, valendo 60 pontos",
+              "resumo de um texto em até 25 linhas, valendo 20 pontos",
+            ],
+          },
+          {
+            group: null,
+            name: "História do Brasil",
+            questions: null,
+            topics: ["1 O processo de independência", "2 A política externa do Império"],
+            weight: null,
+            writtenTasks: ["quatro questões discursivas de até 60 linhas, valendo 25 pontos cada"],
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Passar no CACD",
       goalKind: "exam",
       language: "pt",
     },

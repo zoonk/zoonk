@@ -2,7 +2,8 @@ import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { describe, expect, it } from "vitest";
-import { getSitemapPageIds, getSitemapPageRowIds, isSitemapPage } from "./sitemap-pages";
+import { getSitemapPageIds, isSitemapPage } from "./sitemap-page-ids";
+import { getSitemapPageRowIds } from "./sitemap-pages";
 
 describe(getSitemapPageIds, () => {
   it("lists each sitemap's fixed pages", () => {
