@@ -24,8 +24,8 @@ import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.WritingRow
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
-import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.practiceTopicsLine
+import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
