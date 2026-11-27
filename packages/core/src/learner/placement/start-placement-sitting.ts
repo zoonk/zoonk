@@ -47,17 +47,15 @@ export async function startPlacementSitting({
 
   if (goal.kind === "learn") {
     const previous = readPlacementAttempt(goal).attempt;
+
     if (previous && !previous.search) {
-      await finishPlacementAttempt({ attemptId: previous.id, part: previous.part, goal, timeZone });
+      await finishPlacementAttempt({ attemptId: previous.id, goal, part: previous.part, timeZone });
     } else {
       await openPlacementAttempt({ goalId, userId });
     }
 
-    const plan = await loadPlacementPlan(goalId);
-
     const { state: placement } = await loadPlacementWithSummary({
       goalId,
-      plan,
       timeZone,
       today,
       userId,

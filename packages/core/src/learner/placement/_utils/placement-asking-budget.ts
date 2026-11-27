@@ -1,8 +1,5 @@
 import "server-only";
-import { getPlacementBudgetSpent } from "../placement-budget";
 import { type TestTurn } from "./focus-test-setup";
-import { isPlacementAnswerOn } from "./placement-answers";
-import { type loadEvidence } from "./placement-evidence";
 
 type Budget = {
   /** Questions may be asked now. */
@@ -13,15 +10,7 @@ type Budget = {
 };
 
 /** An exam goal's sitting replaces the day's few minutes: it asks until its promised count. */
-export function getAskingBudget({
-  attempts,
-  today,
-  turn,
-}: {
-  attempts: Awaited<ReturnType<typeof loadEvidence>>["attempts"];
-  today: Date | null;
-  turn: TestTurn | null;
-}): Budget {
+export function getAskingBudget(turn: TestTurn | null): Budget {
   if (turn) {
     const { sitting } = turn.progress;
 
@@ -32,12 +21,5 @@ export function getAskingBudget({
     };
   }
 
-  const spent =
-    today === null
-      ? 0
-      : getPlacementBudgetSpent(
-          attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
-        );
-
-  return { open: spent < 1, spent, used: spent >= 1 };
+  return { open: true, spent: 0, used: false };
 }

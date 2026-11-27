@@ -81,7 +81,7 @@ describe(getTodayView, () => {
     const { goal, skills } = await learnerGoalFixture({
       challengesDone: true,
       itemsPerSkill: 0,
-      phases: [1],
+      phases: [2],
       userId: user.id,
     });
 
@@ -93,7 +93,7 @@ describe(getTodayView, () => {
 
     const [memory, bank] = await Promise.all([
       dueSkillFixture({ skillId: skill.id, userId: user.id }),
-      placementItemBank([skill.id]),
+      placementItemBank(skills.map((topic) => topic.id)),
     ]);
 
     const answers = new Map(bank.flat().map(({ answer, item }) => [item.id, answer]));

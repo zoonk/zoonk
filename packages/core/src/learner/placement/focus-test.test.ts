@@ -591,7 +591,7 @@ describe("an exam goal's Focus test", () => {
     expect(hinted.next).not.toBeNull();
 
     await expect(finish(goal.id)).resolves.toMatchObject({
-      finish: { answered: 3, end: "unknown_streak", partsLeft: 0, unknowns: 3 },
+      finish: { answered: 3, end: "unknown_streak", unknowns: 3 },
     });
   });
 

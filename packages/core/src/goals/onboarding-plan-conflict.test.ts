@@ -3,8 +3,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
-import { placementItemBank } from "../learner/_test-utils/placement-tap-items";
-import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
+import { coursePlacementSitting } from "../learner/_test-utils/course-placement-sitting";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { lockPlanSourceWrite, writePlanInputs } from "../library/_utils/plan-input-write";
 import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
@@ -238,21 +237,20 @@ describe.each([true, false])("background re-plan bursts (guest: %s)", (isAnonymo
       },
     });
 
-    const [bank] = await placementItemBank([skills[0]!.id]);
-
-    await Promise.all(
-      bank!.map(({ answer, item }) =>
-        answerPlacementQuestion({
-          goalId: goal.id,
-          input: { answer, durationMs: 9000, itemId: item.id },
-        }),
-      ),
+    const start = await coursePlacementSitting(
+      goal.id,
+      skills.map((skill) => skill.id),
     );
+
+    await start.answerAll();
 
     await expect(
       duringReplans(goal.id, lessons[0]!.id, () =>
-        finishGoalPlacement({ goalId: goal.id, input: {} }),
+        finishGoalPlacement({ goalId: goal.id, input: { attemptId: start.attemptId } }),
       ),
-    ).resolves.toMatchObject({ completion: { knownSkillIds: [skills[0]!.id] }, status: "ready" });
+    ).resolves.toMatchObject({
+      completion: { knownSkillIds: [], lessonsSkipped: expect.any(Number) },
+      status: "ready",
+    });
   });
 });

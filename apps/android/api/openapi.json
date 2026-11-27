@@ -88808,6 +88808,53 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "chapter": {
+            "nullable": true,
+            "type": "string"
+          },
+          "course": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "chapters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lessons": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "skipped": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "start": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "lessons",
+                    "skipped",
+                    "start"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "lessons": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "chapters",
+              "lessons"
+            ],
+            "additionalProperties": false
+          },
           "finish": {
             "type": "object",
             "properties": {
@@ -88862,63 +88909,12 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "chapter": {
-            "nullable": true,
-            "type": "string"
-          },
-          "course": {
-            "nullable": true,
-            "type": "object",
-            "properties": {
-              "lessons": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "chapters": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "lessons": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "skipped": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "start": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "lessons",
-                    "skipped",
-                    "start"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            },
-            "required": [
-              "lessons",
-              "chapters"
-            ],
-            "additionalProperties": false
-          },
           "nextLesson": {
             "nullable": true,
             "type": "object",
             "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "title": {
+              "chapter": {
+                "nullable": true,
                 "type": "string"
               },
               "estimatedMinutes": {
@@ -88927,26 +88923,30 @@
                 "exclusiveMinimum": true,
                 "maximum": 9007199254740991
               },
-              "chapter": {
-                "nullable": true,
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "title": {
                 "type": "string"
               }
             },
             "required": [
-              "id",
-              "title",
+              "chapter",
               "estimatedMinutes",
-              "chapter"
+              "id",
+              "title"
             ],
             "additionalProperties": false
           }
         },
         "required": [
           "attemptId",
-          "finishedAt",
-          "lessonsSkipped",
           "chapter",
           "course",
+          "finishedAt",
+          "lessonsSkipped",
           "nextLesson"
         ],
         "additionalProperties": false
@@ -88961,7 +88961,7 @@
           "unavailable",
           "failed"
         ],
-        "description": "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the part or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the plan build stopped before it had skills, or preparation stopped before an open course part had questions. Starting the sitting again retries its part."
+        "description": "What to do next. `preparing`: the goal's skill map isn't ready, so there's nothing to place yet; ask again soon. `asking`: `next` is the question to ask. `waitingForQuestions`: the questions placement needs next (`needsItems`) are still being written; ask again soon, or finish placement with what's known. `done`: nothing more to ask now, because the test or sitting has ended or is paused. `unavailable`: the next question is unavailable and no writer is known to be preparing it. `failed`: the plan build stopped before it had skills, or preparation stopped before a course test had enough questions. Starting the sitting again retries preparation."
       },
       "FocusTestSummary": {
         "type": "object",

@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
-import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { loadWritingSkillIds } from "../../writing-skills";
 import { type FocusTestView } from "../focus-test-contract";
 import { type PlacementStatus } from "../placement-contract";
@@ -19,14 +19,14 @@ import {
 } from "../placement-steps";
 import { countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
 import { loadFocusTest } from "./load-focus-test";
-import { loadAttemptState } from "./load-placement-attempt-state";
+import { loadAttemptState, readIdleCourse } from "./load-placement-attempt-state";
 import { findNextQuestion } from "./next-placement-skill";
 import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
 import { type readAttemptQuestions } from "./placement-attempt-questions";
 import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { loadPlacementItems } from "./placement-bank-items";
-import { loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
+import { loadCourseAnswers, loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
 import { loadGoalExam } from "./placement-goal-exam";
 import { type PlacementQuestionView } from "./placement-items";
 import { loadPlanBuild } from "./placement-plan-build";
@@ -71,7 +71,7 @@ type PlacementRead = {
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
-  plan: GoalPlan;
+  plan?: GoalPlan;
   today?: Date | null;
   timeZone?: string;
   userId: string;
@@ -79,19 +79,20 @@ type PlacementRead = {
 };
 
 async function loadPlacementFacts({
+  exam,
   goalId,
   requestedLevel,
   skillIds,
   tx,
   userId,
 }: {
+  exam: Awaited<ReturnType<typeof loadGoalExam>>;
   goalId: string;
   requestedLevel: OwnLevel | null | undefined;
   skillIds: string[];
   tx: TransactionClient;
   userId: string;
 }) {
-  const exam = await loadGoalExam(goalId, tx);
   const ownLevel = requestedLevel ?? exam.goalLevel;
 
   const [answersRead, build, bankItems] = await readDatabaseFacts(
@@ -106,18 +107,12 @@ async function loadPlacementFacts({
       }),
     () =>
       loadPlanBuild({
-        askedAt: exam.placement?.attempt
-          ? new Date(exam.placement.attempt.partRequestedAt ?? exam.placement.attempt.partStartedAt)
-          : getTestStart(exam.test),
+        askedAt: getTestStart(exam.test),
         everySkill: exam.answeredOnly,
         focusAreas: exam.focusAreas,
         goalId,
         knownAreas: exam.knownAreas,
         ownLevel,
-        partSettled:
-          exam.placement?.attempt?.partPreparationFailed || exam.placement?.attempt?.partPrepared,
-        requestedSkillIds:
-          exam.placement?.attempt?.partSkillIds ?? exam.placement?.attempt?.skillIds,
         tx,
       }),
     () => loadPlacementItems({ examBlueprintId: exam.examBlueprintId, skillIds, tx }),
@@ -151,39 +146,36 @@ export async function loadPlacementWithSummary({
   userId,
   tx = prisma,
 }: PlacementRead): Promise<PlacementLoad> {
-  const written = await loadWritingSkillIds(goalId, tx);
-  const plan = { ...goalPlan, skills: goalPlan.skills.filter((skill) => !written.has(skill.id)) };
-  const skillIds = plan.skills.map((skill) => skill.id);
-  const facts = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
-  const attempt = facts.exam.placement?.attempt;
+  const exam = await loadGoalExam(goalId, tx);
+  const attempt = exam.placement?.attempt;
 
   if (attempt && !ignoreAttempt) {
-    return loadAttemptState({ attempt, facts, goalId, plan, tx });
+    const attempts = await loadCourseAnswers(attempt.id, userId, tx);
+
+    return loadAttemptState({
+      attempt,
+      attempts,
+      goalId,
+      plan: attempt.search ? undefined : (goalPlan ?? (await loadPlacementPlan(goalId, tx))),
+      trueFalseLabels: exam.trueFalseLabels,
+      tx,
+    });
   }
 
-  if (!ignoreAttempt && facts.exam.goalKind === "learn") {
-    return {
-      focusTest: null,
-      state: {
-        answered: 0,
-        areas: [],
-        attempt: null,
-        complete: false,
-        dayBudgetSpent: 0,
-        dayBudgetUsed: false,
-        focusTest: null,
-        knownSkillIds: [],
-        needsItems: [],
-        next: null,
-        phases: [],
-        result: await readPlacementResult({ goalId, placement: facts.exam.placement, tx }),
-        started: false,
-        status: "unavailable",
-        trueFalseLabels: facts.exam.trueFalseLabels,
-      },
-    };
+  if (!ignoreAttempt && exam.goalKind === "learn") {
+    return readIdleCourse({
+      goalId,
+      placement: exam.placement,
+      trueFalseLabels: exam.trueFalseLabels,
+      tx,
+    });
   }
 
+  const livePlan = goalPlan ?? (await loadPlacementPlan(goalId, tx));
+  const written = await loadWritingSkillIds(goalId, tx);
+  const plan = { ...livePlan, skills: livePlan.skills.filter((skill) => !written.has(skill.id)) };
+  const skillIds = plan.skills.map((skill) => skill.id);
+  const facts = await loadPlacementFacts({ exam, goalId, requestedLevel, skillIds, tx, userId });
   const read = await loadLegacyPlacement({ checkReadiness, facts, plan, timeZone, today, tx });
   read.state.result = await readPlacementResult({ goalId, placement: facts.exam.placement, tx });
   return read;
@@ -235,7 +227,7 @@ async function loadLegacyPlacement({
     ? startTestTurn({ setup: exam.test, sittingOutcomes, skills, testSkills })
     : null;
 
-  const budget = getAskingBudget({ attempts, today, turn });
+  const budget = getAskingBudget(turn);
 
   const { questionStatuses, statuses } = readStatuses({
     answeredOnly,

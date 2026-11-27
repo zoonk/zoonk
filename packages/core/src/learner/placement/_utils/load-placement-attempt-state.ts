@@ -1,25 +1,35 @@
 import { type TransactionClient } from "@zoonk/db";
+import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { type PlacementFacts, type PlacementLoad } from "./load-placement-state";
+import { type PlacementLoad } from "./load-placement-state";
 import { readAttemptQuestions } from "./placement-attempt-questions";
-import { type PlacementAttempt } from "./placement-attempt-record";
+import { type PlacementAttempt, type PlacementRecord } from "./placement-attempt-record";
+import { type loadCourseAnswers } from "./placement-evidence";
+import { coursePreparationFailed } from "./placement-plan-build";
+import { readPlacementResult } from "./placement-result";
 import { loadQuestion } from "./placement-state-view";
 
 export async function loadAttemptState({
   attempt,
-  facts,
+  attempts,
+  trueFalseLabels,
   plan,
   tx,
 }: {
   attempt: PlacementAttempt;
-  facts: PlacementFacts;
+  attempts: Awaited<ReturnType<typeof loadCourseAnswers>>;
+  trueFalseLabels: TrueFalseLabels;
   goalId: string;
-  plan: GoalPlan;
+  plan?: GoalPlan;
   tx: TransactionClient;
 }): Promise<PlacementLoad> {
-  const questions = readAttemptQuestions({ attempt, attempts: facts.attempts, plan });
+  const questions = readAttemptQuestions({ attempt, attempts, plan });
   const next = await loadQuestion(questions.itemId ?? undefined, tx);
-  const status = questions.waiting ? "waitingForQuestions" : next ? "asking" : "done";
+
+  const idle = next ? "asking" : "done";
+  const pending = coursePreparationFailed(attempt) ? "failed" : "waitingForQuestions";
+  const status = questions.waiting ? pending : idle;
+
   return {
     attemptQuestions: questions,
     focusTest: null,
@@ -47,7 +57,40 @@ export async function loadAttemptState({
       result: null,
       started: true,
       status,
-      trueFalseLabels: facts.exam.trueFalseLabels,
+      trueFalseLabels,
+    },
+  };
+}
+
+export async function readIdleCourse({
+  goalId,
+  placement,
+  trueFalseLabels,
+  tx,
+}: {
+  goalId: string;
+  placement: PlacementRecord | null;
+  trueFalseLabels: TrueFalseLabels;
+  tx: TransactionClient;
+}): Promise<PlacementLoad> {
+  return {
+    focusTest: null,
+    state: {
+      answered: 0,
+      areas: [],
+      attempt: null,
+      complete: false,
+      dayBudgetSpent: 0,
+      dayBudgetUsed: false,
+      focusTest: null,
+      knownSkillIds: [],
+      needsItems: [],
+      next: null,
+      phases: [],
+      result: await readPlacementResult({ goalId, placement, tx }),
+      started: false,
+      status: "unavailable",
+      trueFalseLabels,
     },
   };
 }
