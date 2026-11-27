@@ -33,7 +33,7 @@ function scoreBlindKeyGrade({
 export const gradeEssayBlindKeyTask: Task<GradeWritingInput, GradeWritingOutput, BlindKeyExpected> =
   {
     description:
-      "Grade real board-marked FGV OAB and CACD history answers, and ablated full-credit FGV answers, against keys the production writer wrote blind to the board's standard: how far the grade lands from the board's mark",
+      "Grade board-marked FGV OAB and CACD answers, and ablated full-credit FGV answers, against keys the production writer wrote blind to the board's standard",
     generate: gradeEssayTask.generate,
     id: "grade-essay-blind-key",
     name: "Grade essay against blind keys",

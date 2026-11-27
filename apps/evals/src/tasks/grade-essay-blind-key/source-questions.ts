@@ -1,5 +1,6 @@
 import { type WritingPromptInput } from "@zoonk/ai/tasks/items/write-writing-prompt";
 import { CEBRASPE_PUBLISHED_CASES } from "../grade-essay/cases/cebraspe-published";
+import { type CacdTechnicalSubject } from "../grade-essay/cases/cebraspe-technical";
 import { FGV_PUBLISHED_CASES } from "../grade-essay/cases/fgv-published";
 import { type Grading, type WritingCase } from "../grade-essay/cases/shared";
 
@@ -7,7 +8,7 @@ import { type Grading, type WritingCase } from "../grade-essay/cases/shared";
 export type SourceQuestion = {
   id: string;
   board: "FGV/OAB" | "Cebraspe";
-  stratum: "fgv-oab" | "cacd-history";
+  stratum: "fgv-oab" | "cacd-history" | `cacd-${CacdTechnicalSubject}`;
   cutoffShare: number;
   cutoffSource: string;
   question: string;
@@ -38,6 +39,8 @@ const OAB_CUTOFF = { share: 0.6, source: "FGV OAB notice: 6.00 of 10.00 in the p
 
 const CACD_CUTOFF = { share: 0.6, source: "CACD notice 6.8.10: 480.00 of 800.00 in the phase" };
 
+const CACD_SUBJECTS = { economics: "Economia", history: "História do Brasil", law: "Direito" };
+
 /** The grading the writer and the grader see cite the notice, never the board's standard. */
 function noticeGrading(grading: Grading, notice: string, passage: string): Grading {
   return {
@@ -50,7 +53,7 @@ function noticeGrading(grading: Grading, notice: string, passage: string): Gradi
 }
 
 /**
- * The 2024 notice grades ten quesitos per History question, 3 points each in questions 1 and 2
+ * The 2024 notice grades ten quesitos per question, 3 points each in questions 1 and 2
  * and 2 in questions 3 and 4; the 2025 notice grades one "domínio do conteúdo" per question.
  * The question itself lists what each quesito or point covers, as candidates saw it.
  */
@@ -163,6 +166,8 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
   const id = first.id.replace(/-\d+-pt$/u, "");
   const parts = id.split("-");
   const year = parts[2] ?? "";
+  const subjectId = first.expected?.cacd?.subject ?? "history";
+  const subject = CACD_SUBJECTS[subjectId];
 
   const criteria = cacdNoticeCriteria({
     notice,
@@ -182,7 +187,7 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
     grading,
     id,
     question,
-    stratum: "cacd-history",
+    stratum: `cacd-${subjectId}`,
     writerInput: {
       board: "Cebraspe",
       choices: [],
@@ -190,17 +195,17 @@ function cacdQuestion(cases: WritingCase[]): SourceQuestion {
       exam: `Concurso de Admissão à Carreira de Diplomata (CACD) ${year}, Segunda Fase`,
       language: "pt",
       skills: [SKILL],
-      subject: { name: "História do Brasil", topics: [] },
+      subject: { name: subject, topics: [] },
       task: {
         count: 4,
-        description: `prova escrita de História do Brasil com quatro questões discursivas que valem 100,00 pontos no total; esta questão vale ${basis.points} pontos, em até ${basis.lines} linhas`,
+        description: `prova escrita de ${subject} com quatro questões discursivas que valem 100,00 pontos no total; esta questão vale ${basis.points} pontos, em até ${basis.lines} linhas`,
         grading,
         handwritten: true,
-        key: `cacd-${year}-history`,
+        key: `cacd-${year}-${subjectId}`,
         lines: basis.lines,
         minutes: 300,
         points: basis.points,
-        section: "Prova escrita de História do Brasil",
+        section: `Prova escrita de ${subject}`,
         session: null,
       },
       unit: "answer",
@@ -214,7 +219,9 @@ export const SOURCE_QUESTIONS: SourceQuestion[] = [
     .values()
     .map((cases) => oabQuestion(cases)),
   ...Map.groupBy(
-    CEBRASPE_PUBLISHED_CASES.filter(({ id }) => id.includes("-history-")),
+    CEBRASPE_PUBLISHED_CASES.filter(
+      ({ expected, id }) => expected?.cacd || id.includes("-history-"),
+    ),
     ({ id }) => id.replace(/-\d+-pt$/u, ""),
   )
     .values()

@@ -36,6 +36,15 @@ export type GradeWritingExpected = {
   officialTotal?: number;
   officialContent?: number;
   officialCompetences?: Record<string, number>;
+  cacd?: {
+    comparative: boolean;
+    /** Null when the guide gives only the total. An empty list means every item earned full credit. */
+    itemsBelowMaximum: number[] | null;
+    questionReference: string;
+    subject: "economics" | "law";
+    writtenLines: number | null;
+    year: number;
+  };
   passBoundary?: { sectionMinimum: number; otherAnswers: number };
   source?: {
     board: string;
