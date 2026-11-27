@@ -5,8 +5,10 @@ import { after } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
+import { listCurrentUserCompletedLessons } from "../completed-lessons/list-current-user-completed-lessons";
 import { getTargetLevel, loadLanguageSkillLevels } from "../language/levels/language-skill-levels";
 import { getOwnLevel } from "../learner/placement/placement-contract";
+import { getPlayableLibraryLesson } from "../lesson-player/get-playable-library-lesson";
 import { filterMistakesWithPracticeMaterial } from "../mistakes/mistake-practice-eligibility";
 import { readMistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
@@ -209,13 +211,37 @@ describe("a persona's copy", () => {
 
 describe("a persona's copy, opened later", () => {
   it.each(SEED_PERSONA_NAMES)(
-    "%s: its open mistakes can be practiced and its open block's clock is stopped",
+    "%s: finished lessons replay, open mistakes can be practiced, and the open block’s clock is stopped",
     async (persona) => {
       const copy = await seedPersonaCopy({
         copyKey: `later-${persona}`,
         email: `seed-later-${persona}@zoonk.test`,
         persona,
       });
+
+      sessionBoundary.getSession.mockResolvedValue({ user: { id: copy.userId } });
+
+      const completed = await listCurrentUserCompletedLessons({
+        goalId: copy.goalId,
+        limit: 50,
+        offset: 0,
+      });
+
+      if (completed.status !== "ready") {
+        throw new Error(`Could not list completed lessons for ${persona}`);
+      }
+
+      expect(completed.hasMore).toBe(false);
+      expect(completed.lessons.length).toBeGreaterThan(0);
+
+      const unavailable = await Promise.all(
+        completed.lessons.map(async ({ lessonId, title }) => {
+          const replay = await getPlayableLibraryLesson({ lessonId });
+          return replay?.status === "ready" ? [] : [title];
+        }),
+      );
+
+      expect(unavailable.flat()).toStrictEqual([]);
 
       const [mistakes, blocks] = await Promise.all([
         prisma.mistake.findMany({ where: { status: "open", userId: copy.userId } }),
