@@ -21,6 +21,13 @@ import systemPrompt from "./lesson-spec.prompt.md";
 import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
+import {
+  SECOND_TAKE_SCREENS,
+  type SecondTakeInput,
+  formatSecondTake,
+  getSecondTakeIssues,
+} from "./second-take-rules";
+import secondTakePrompt from "./second-take.prompt.md";
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
@@ -67,6 +74,11 @@ const lessonSchema = z.object({
 
 const schema = z.object({ lessons: z.array(lessonSchema) });
 
+/* oxlint-disable-next-line eslint/sort-keys -- Structured output follows property order: the plan picks its wrong answer before it plans around it. */
+const secondTakeSchema = z.object({
+  lessons: z.array(z.object({ opensOn: z.number().int(), ...lessonSchema.shape })),
+});
+
 type ActivityTemplateOption = { id: string; description: string; explore: boolean };
 
 export type LessonSpecParams = {
@@ -94,6 +106,8 @@ export type LessonSpecParams = {
   shortAnswers?: boolean;
   /** One short lesson summing up a skill's core ideas, which is never split. */
   quick?: boolean;
+  /** The skill taught again another way, for learners who keep missing it after its lesson. */
+  secondTake?: SecondTakeInput;
   model?: string;
   fallbackModels?: readonly string[];
   serviceTier?: ServiceTier;
@@ -102,7 +116,7 @@ export type LessonSpecParams = {
   analytics?: AiGenerationContext;
 };
 
-/** Several when the planner split a lesson that didn't fit; a quick one never is. */
+/** Several when the planner split a lesson that didn't fit; a quick one or a second take never is. */
 type LessonSpecResult = { lessons: LessonSpec[] };
 
 function formatList(items: readonly string[]): string {
@@ -125,6 +139,11 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       sources: Boolean(params.sources),
     },
   });
+
+  if (params.secondTake) {
+    const screens = `${SECOND_TAKE_SCREENS.min} to ${SECOND_TAKE_SCREENS.max}`;
+    return `${prompt}\n${secondTakePrompt.replaceAll("{{SECOND_TAKE_SCREENS}}", screens)}`;
+  }
 
   return params.quick ? `${prompt}\n${quickLessonPrompt}` : prompt;
 }
@@ -151,7 +170,7 @@ ${formatLocalContext({ country: params.country, language: params.language })}
     OUTLINE_SKILLS: ${formatList(params.skills ?? [])}
     CHAPTER_LESSONS: ${formatChapterLessons(params.chapterLessons)}
     ACTIVITY_TEMPLATES: ${formatList(templates)}
-${formatLessonDocuments({ material: params.material, sources: params.sources })}  `;
+${formatLessonDocuments({ material: params.material, sources: params.sources })}${params.secondTake ? formatSecondTake(params.secondTake) : ""}  `;
 }
 
 async function planLesson(params: LessonSpecParams) {
@@ -179,7 +198,7 @@ async function planLesson(params: LessonSpecParams) {
       generateText({
         instructions,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: params.secondTake ? secondTakeSchema : schema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -193,8 +212,8 @@ async function planLesson(params: LessonSpecParams) {
     normalizeLessonSpec({ exploreIds, raw, templateIds }),
   );
 
-  // A quick lesson is the one short lesson a learner chose instead of the skill's lessons.
-  const lessons = params.quick ? specs.slice(0, 1) : specs;
+  // A quick lesson or a second take is a single short lesson, so a plan split in two keeps the first.
+  const lessons = params.quick || params.secondTake ? specs.slice(0, 1) : specs;
 
   const data: LessonSpecResult = { lessons };
 
@@ -209,7 +228,11 @@ async function planLesson(params: LessonSpecParams) {
  */
 export async function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({
-    countProblems: ({ data }) => data.lessons.flatMap((spec) => getLessonSpecIssues(spec)).length,
+    countProblems: ({ data }) =>
+      data.lessons.flatMap((spec) => [
+        ...getLessonSpecIssues(spec),
+        ...(params.secondTake ? getSecondTakeIssues({ secondTake: params.secondTake, spec }) : []),
+      ]).length,
     draft: () => planLesson(params),
   });
 }

@@ -254,6 +254,7 @@ export async function hasFinishedLessonBefore(
   const earlier = await tx.learningEvent.findFirst({
     select: { id: true },
     where: {
+      ...NOT_A_CAPSULE,
       contentIds: { equals: lessonId, path: ["lessonId"] },
       endedAt: { not: null },
       id: { not: runId },

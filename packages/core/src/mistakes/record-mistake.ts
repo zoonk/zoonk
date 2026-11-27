@@ -2,6 +2,7 @@ import { type MistakeCauseInput } from "@zoonk/ai/tasks/mistakes/cause";
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { z } from "zod";
 import { oweFollowUps } from "../follow-ups/owe-follow-ups";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
 import {
   type MistakeReplay,
@@ -18,7 +19,7 @@ import { matchesMistakeSource } from "./mistake-source-snapshot";
 
 type MistakeTarget = { itemId: string | null; stepId: string | null };
 
-async function findOpenMistake({
+async function findMatchingMistake({
   itemId,
   stepId,
   replay,
@@ -49,19 +50,20 @@ async function findOpenMistake({
     return null;
   }
 
-  const open = await transaction.mistake.findMany({
-    where: { OR: targets, status: "open", userId },
+  const matches = await transaction.mistake.findMany({
+    orderBy: { status: "asc" },
+    where: { AND: [visibleMistakeWhere, { OR: targets }], userId },
   });
 
   const legacyNumeric =
     replay?.kind === "item" && replay.item.format === "numeric"
-      ? open.filter((mistake) => !readMistakeReplay(mistake.snapshot))
+      ? matches.filter((mistake) => !readMistakeReplay(mistake.snapshot))
       : [];
 
   const restored = await loadMistakeReplays({ mistakes: legacyNumeric, userId });
 
   return (
-    open.find((mistake) => {
+    matches.find((mistake) => {
       const saved = readMistakeReplay(mistake.snapshot) ?? restored.get(mistake.id);
 
       if (replay) {
@@ -122,10 +124,10 @@ export async function recordMistake(
     userId: string;
   },
   transaction: TransactionClient = prisma,
-): Promise<Mistake> {
+): Promise<{ cause: Mistake["cause"]; mistake: Mistake; replayed: boolean }> {
   /** Writing corrections establish the error, not whether the learner misread, guessed or forgot. */
-  const isLanguageWriting = Boolean(targetLanguage) && snapshot.format === "typedAnswer";
-  const cause = isLanguageWriting ? null : inferMistakeCause(signals);
+  const writingLanguage = snapshot.format === "typedAnswer" ? targetLanguage : null;
+  const cause = writingLanguage ? null : inferMistakeCause(signals);
   const unknownGap = signals.dontKnow && cause === "gap";
 
   const target = practicedMistakeId
@@ -139,9 +141,10 @@ export async function recordMistake(
     (await loadMistakeReplay({ mistake: { attemptId, itemId, snapshot, stepId }, userId }));
 
   const existing =
-    target ?? (await findOpenMistake({ itemId, replay, snapshot, stepId, transaction, userId }));
+    target ??
+    (await findMatchingMistake({ itemId, replay, snapshot, stepId, transaction, userId }));
 
-  if (existing) {
+  if (existing?.status === "open") {
     const original = readMistakeSnapshot(existing.snapshot);
 
     const preserve =
@@ -152,7 +155,7 @@ export async function recordMistake(
     const originalJson = JSON.stringify({ ...original, ...(preserve ? { replay } : {}) });
     const originalSnapshot: unknown = JSON.parse(originalJson);
 
-    return transaction.mistake.update({
+    const mistake = await transaction.mistake.update({
       data: {
         missedAt: new Date(Math.max(missedAt.getTime(), existing.missedAt.getTime())),
         ...(unknownGap ? { cause: "gap", fixedAt: null, status: "open" } : {}),
@@ -160,6 +163,20 @@ export async function recordMistake(
       },
       where: { id: existing.id },
     });
+
+    const pattern = writingLanguage
+      ? await transaction.mistakePattern.findFirst({
+          select: { id: true },
+          where: {
+            kind: { not: "typos" },
+            language: writingLanguage,
+            mistakeIds: { has: existing.id },
+            userId,
+          },
+        })
+      : null;
+
+    return { cause: pattern ? "gap" : cause, mistake, replayed: true };
   }
 
   const serialized = JSON.stringify(replay ? { ...snapshot, replay } : snapshot);
@@ -178,7 +195,7 @@ export async function recordMistake(
     },
   });
 
-  if (!cause && !isLanguageWriting) {
+  if (!cause && !writingLanguage) {
     await oweFollowUps({
       db: transaction,
       followUps: [
@@ -191,5 +208,5 @@ export async function recordMistake(
     });
   }
 
-  return mistake;
+  return { cause, mistake, replayed: existing !== null };
 }

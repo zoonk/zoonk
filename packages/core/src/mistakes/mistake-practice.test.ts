@@ -20,6 +20,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
+import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { MAX_PRACTICE_ANSWERS } from "./contract";
@@ -461,7 +462,9 @@ describe(answerMistakePractice, () => {
       }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
 
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+    await expect(prisma.attempt.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { cause: null, evidence: "replay", isCorrect: true },
+    ]);
   });
 
   it("gives concurrent same-day submissions their own verdicts and credit only once", async () => {
@@ -521,6 +524,62 @@ describe(answerMistakePractice, () => {
     expect(skillStates).toMatchObject([{ reps: 1 }]);
     expect(runs.map((run) => run.correctAnswers + run.incorrectAnswers)).toStrictEqual([1]);
     expect(saved).toMatchObject({ fixedAt: null, status: "open" });
+  });
+
+  it("uses only the first of three wrong rehearsals in the day's skill signal", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-12T11:59:00Z"));
+
+    const { original, skill, user } = await setup();
+
+    const mistake = await mistakeFixture({
+      itemId: original.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const rehearse = (minute: number) => {
+      vi.setSystemTime(new Date(Date.UTC(2026, 10, 12, 12, minute)));
+
+      return expect(
+        answerMistakePractice({
+          input: {
+            answer: { selectedIndex: 1 },
+            attemptId: crypto.randomUUID(),
+            durationMs: 9000,
+            itemId: original.id,
+            timeZone: "UTC",
+          },
+          mistakeId: mistake.id,
+        }),
+      ).resolves.toMatchObject({ feedback: { isCorrect: false }, status: "ready" });
+    };
+
+    await rehearse(0);
+    await rehearse(1);
+    await rehearse(2);
+
+    const attempts = await prisma.attempt.findMany({
+      orderBy: { answeredAt: "asc" },
+      where: { userId: user.id },
+    });
+
+    expect(attempts).toMatchObject([
+      { cause: "gap", evidence: "replay", isCorrect: false },
+      { cause: null, evidence: null, isCorrect: false },
+      { cause: null, evidence: null, isCorrect: false },
+    ]);
+
+    const signals = await readSkillMistakeSignals({
+      now: new Date(),
+      skillIds: [skill.id],
+      userId: user.id,
+    });
+
+    expect(signals.get(skill.id)).toMatchObject({
+      latestMiss: { id: attempts[0]?.id },
+      stuck: false,
+    });
   });
 
   it("keeps a mistake missed in practice for another day, so it can't be fixed by repeating the answer just shown", async () => {

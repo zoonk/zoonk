@@ -334,6 +334,7 @@ describe(gradeSpokenAnswer, () => {
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", transcript: "How much is the rent" },
       durationMs: 2400,
+      evidence: "guided",
       isCorrect: true,
       skillId: step.skillId,
       stepId: step.id,

@@ -6,6 +6,7 @@ import {
   type LessonSpec,
   getLessonSpecIssues,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
+import { getSecondTakeIssues } from "@zoonk/ai/tasks/lesson-spec/second-take";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
 import { type LessonSpecExpected } from "./visual-test-cases";
@@ -117,11 +118,14 @@ function checkLessonSpecs({
 }): CodeCheckResult {
   const lessons = parseLessons(output);
 
+  const secondTake = expected?.secondTake;
+
   const results = lessons.map((lesson, index) => ({
     lesson,
-    problems: getLessonSpecIssues(lesson).map(
-      (issue) => `Lesson ${index + 1} ("${lesson.title}"): ${issue.detail}`,
-    ),
+    problems: [
+      ...getLessonSpecIssues(lesson),
+      ...(secondTake ? getSecondTakeIssues({ secondTake, spec: lesson }) : []),
+    ].map((issue) => `Lesson ${index + 1} ("${lesson.title}"): ${issue.detail}`),
   }));
 
   const passing = results.filter((result) => result.problems.length === 0);

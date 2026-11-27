@@ -1,6 +1,7 @@
 import "server-only";
 import {
   type Attempt,
+  type AttemptEvidence,
   DbNull,
   type LearnerSkill,
   type Mistake,
@@ -17,7 +18,8 @@ import { hasPracticeCredit } from "../mistakes/_utils/practice-claim";
 import { fixMistakesAnsweredRight } from "../mistakes/fix-mistakes";
 import { type RecordedMistakeSnapshot as MistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { recordMistake } from "../mistakes/record-mistake";
-import { createLearnerAttempt, saveAnswerAttribution } from "./_utils/create-learner-attempt";
+import { createLearnerAttempt, writeAttemptAttribution } from "./_utils/create-learner-attempt";
+import { type LessonAnswerRun, getAttemptEvidence } from "./_utils/lesson-answer-evidence";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
 import { type SkillReview, getAnswerEvents } from "./answer-events";
@@ -34,6 +36,8 @@ export type LearnerAnswer = {
   answeredAt?: Date;
   /** Reuse the client attempt id across retries to prevent recording the same answer twice. */
   attemptId?: string;
+  evidence?: AttemptEvidence | null;
+  lessonRun?: LessonAnswerRun;
   focusTestId?: string | null;
   graded: GradedAnswer;
   /** Placement remains diagnostic evidence even when asked inside a session. */
@@ -151,7 +155,7 @@ async function updateMemory({
 
 function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }: AnswerContext) {
   if (!input.graded.isCorrect || input.answer.dontKnow === true) {
-    return [];
+    return { fixed: [], replayed: false };
   }
 
   return fixMistakesAnsweredRight(
@@ -170,11 +174,33 @@ function fixAnsweredMistakes({ answeredAt, input, itemId, stepId, transaction }:
   );
 }
 
-function addToNotebook({ attemptId, context }: { attemptId: string; context: AnswerContext }) {
+async function saveNotebookMiss({
+  attemptId,
+  context,
+  practiceCredit,
+}: {
+  attemptId: string;
+  context: AnswerContext;
+  practiceCredit: boolean;
+}) {
   const { answeredAt, before, input, itemId, recent, skillId, stepId, transaction } = context;
   const entry = input.mistake;
 
   if (input.graded.isCorrect || input.purpose !== "learning" || !entry) {
+    return null;
+  }
+
+  if (!practiceCredit && input.practicedMistakeId) {
+    await transaction.mistake.updateMany({
+      data: { missedAt: answeredAt },
+      where: {
+        id: input.practicedMistakeId,
+        missedAt: { lt: answeredAt },
+        status: "open",
+        userId: input.userId,
+      },
+    });
+
     return null;
   }
 
@@ -255,43 +281,26 @@ export async function persistLearnerAnswer({
   };
 
   const answer = practiceCredit ? input.answer : { ...input.answer, practiceCredit: false };
+  const evidence = practiceCredit ? await getAttemptEvidence(context) : null;
 
   const attempt = await createLearnerAttempt({
     answeredAt: context.answeredAt,
-    input: { ...input, answer, itemId: context.itemId, skillId, stepId: context.stepId },
+    input: { ...input, answer, evidence, itemId: context.itemId, skillId, stepId: context.stepId },
     transaction,
   });
 
   const review = practiceCredit ? await updateAnswerMemory(context) : null;
-  const fixedMistakes = await fixAnsweredMistakes(context);
+  const { fixed: fixedMistakes, replayed } = await fixAnsweredMistakes(context);
 
-  const notebookEntry = practiceCredit
-    ? await addToNotebook({ attemptId: attempt.id, context })
-    : null;
+  const notebook = await saveNotebookMiss({ attemptId: attempt.id, context, practiceCredit });
+  const fixedMistakeIds = fixedMistakes.map(({ id }) => id);
 
-  if (!practiceCredit && input.practicedMistakeId && !input.graded.isCorrect) {
-    await transaction.mistake.updateMany({
-      data: { missedAt: answeredAt },
-      where: {
-        id: input.practicedMistakeId,
-        missedAt: { lt: answeredAt },
-        status: "open",
-        userId: input.userId,
-      },
-    });
-  }
-
-  // Attribution comes from the answer transaction, including a mock miss that reused a notebook row.
-  const fixedMistakeIds = fixedMistakes.map((mistake) => mistake.id);
-
-  const mockMistakeId =
-    input.mockExamId && notebookEntry?.attemptId !== attempt.id ? notebookEntry?.id : undefined;
-
-  const recordedAttempt = await saveAnswerAttribution({
-    answer,
+  const recordedAttempt = await writeAttemptAttribution({
     attempt,
+    cause: notebook?.cause ?? null,
     fixedMistakeIds,
-    mockMistakeId,
+    notebookMistake: notebook?.mistake,
+    replayed: replayed || notebook?.replayed === true,
     transaction,
   });
 
@@ -307,7 +316,7 @@ export async function persistLearnerAnswer({
     attempt: recordedAttempt,
     fixedMistakeIds,
     learnerSkill: review?.after ?? context.before,
-    mistake: notebookEntry,
+    mistake: notebook?.mistake ?? null,
   };
 
   return { events, recorded: result };

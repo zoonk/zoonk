@@ -1,6 +1,7 @@
 import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getStartOfLocalDay } from "../learner/_utils/local-time";
+import { visibleMistakeWhere } from "./_utils/visible-mistake";
+import { listReadyMistakes } from "./mistake-availability";
 import { type MistakeReplay, loadMistakeReplays, readMistakeReplay } from "./mistake-replay";
 import { isSameMistakeQuestion } from "./mistake-replay-identity";
 import { readMistakeSnapshot } from "./mistake-snapshot";
@@ -29,7 +30,7 @@ export async function fixMistakesAnsweredRight(
     userId: string;
   },
   transaction: TransactionClient = prisma,
-): Promise<Pick<Mistake, "cause" | "id" | "skillId">[]> {
+): Promise<{ fixed: Pick<Mistake, "cause" | "id" | "skillId">[]; replayed: boolean }> {
   const targets = [
     itemId ? { itemId } : null,
     stepId ? { stepId } : null,
@@ -48,20 +49,13 @@ export async function fixMistakesAnsweredRight(
   ].filter((target) => target !== null);
 
   if (targets.length === 0) {
-    return [];
+    return { fixed: [], replayed: false };
   }
 
   const candidates = await transaction.mistake.findMany({
     where: {
+      AND: [visibleMistakeWhere, { OR: targets }],
       ...(practicedMistakeId ? { id: practicedMistakeId } : {}),
-      OR: targets,
-      missedAt: {
-        lt: getStartOfLocalDay({
-          localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
-          timeZone,
-        }),
-      },
-      status: "open",
       userId,
     },
   });
@@ -73,7 +67,7 @@ export async function fixMistakesAnsweredRight(
 
   const restored = await loadMistakeReplays({ mistakes: legacyNumeric, userId });
 
-  const exactIds = candidates.flatMap((mistake) => {
+  const exact = candidates.filter((mistake) => {
     const saved = readMistakeReplay(mistake.snapshot) ?? restored.get(mistake.id);
 
     const matches =
@@ -82,12 +76,24 @@ export async function fixMistakesAnsweredRight(
         ? replay && isSameMistakeQuestion({ answered: replay, saved })
         : !questionText || readMistakeSnapshot(mistake.snapshot).question === questionText);
 
-    return matches ? [mistake.id] : [];
+    return Boolean(matches);
   });
 
-  return transaction.mistake.updateManyAndReturn({
+  const ready = listReadyMistakes({
+    localDate: getDateInTimeZone({ date: answeredAt, timeZone }),
+    mistakes: exact.filter(({ status }) => status === "open"),
+    timeZone,
+  });
+
+  if (ready.length === 0) {
+    return { fixed: [], replayed: exact.length > 0 };
+  }
+
+  const fixed = await transaction.mistake.updateManyAndReturn({
     data: { fixedAt: answeredAt, status: "fixed" },
     select: { cause: true, id: true, skillId: true },
-    where: { id: { in: exactIds }, status: "open", userId },
+    where: { id: { in: ready.map(({ id }) => id) }, status: "open", userId },
   });
+
+  return { fixed, replayed: true };
 }

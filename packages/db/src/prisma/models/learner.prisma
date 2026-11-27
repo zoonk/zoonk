@@ -5,6 +5,12 @@ enum MasteryState {
   mastered
 }
 
+enum AttemptEvidence {
+  independent
+  guided
+  replay
+}
+
 enum MistakeCause {
   gap
   misread
@@ -31,6 +37,7 @@ model LearnerSkill {
   difficulty     Float        @default(0)
   due            DateTime?
   lastReviewedAt DateTime?    @map("last_reviewed_at")
+  helpedAt       DateTime?    @map("helped_at")
   reps           Int          @default(0)
   lapses         Int          @default(0)
   recallDays     Int          @default(0) @map("recall_days")
@@ -69,6 +76,8 @@ model Attempt {
   /// Lesson origin survives deletion of the step. Older writes can still be identified by stepId.
   /// Required once released.
   fromLesson     Boolean?      @map("from_lesson")
+  evidence       AttemptEvidence?
+  cause          MistakeCause?
   isPlacement    Boolean       @default(false) @map("is_placement")
   score          Float?
   durationMs     Int           @map("duration_ms")
