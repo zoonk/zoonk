@@ -60,6 +60,7 @@ function readWrittenTest({
                     weight: null,
                   },
                 ],
+                deductions: [],
                 language: {
                   document: 1,
                   factor: 2,
