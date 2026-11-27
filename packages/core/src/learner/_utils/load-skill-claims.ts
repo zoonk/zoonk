@@ -1,6 +1,7 @@
 import "server-only";
 import { type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
+import { loadCourseStarts } from "../../plans/_utils/course-starts";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
@@ -137,13 +138,25 @@ export async function loadPlanClaimEvents({
   /** A fresh read for these skills only skips history no asked skill needs; GETs share every skill's. */
   skillIds?: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
-  const [planEvents, passedOver, undone] = await Promise.all([
+  const [planEvents, passedOver, undone, starts] = await Promise.all([
     loadPlanEvents({ goalId, known: plan }),
     loadPassedOverClaims({ goalId, known: plan, skillIds }),
     loadUndoneTestOuts(goalId),
+    loadCourseStarts(goalId),
   ]);
 
-  return [...planEvents, ...passedOver, ...undone];
+  const courseClaims = [...starts].map(([skillId, start]): ClaimEvent => ({
+    at: start.at,
+    kind: "passedOver",
+    skillId,
+  }));
+
+  const otherClaims = planEvents.filter(
+    (event) =>
+      event.kind !== "claim" || starts.get(event.skillId)?.at.getTime() !== event.at.getTime(),
+  );
+
+  return [...otherClaims, ...courseClaims, ...passedOver, ...undone];
 }
 
 export async function loadClaimEvents({

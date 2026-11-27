@@ -16,7 +16,10 @@ import {
   getCourseOffer,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
-import { readPlacementNextLesson } from "../../learner/placement/_utils/placement-result";
+import {
+  readPlacementCourse,
+  readPlacementNextLesson,
+} from "../../learner/placement/_utils/placement-result";
 import { levelTestOutReceipt, levelTestReceipt, placementPartReceipt } from "./test-out-receipt";
 
 function clearResult(result: LevelTestResult | undefined, receipt: string) {
@@ -87,12 +90,20 @@ async function restorePlacement({
         )
       : undefined;
 
+  const nextLesson =
+    result?.attemptId === receiptId ? await readPlacementNextLesson(goalId, tx) : null;
+
   const updatedResult =
     result && result.attemptId === receiptId
       ? {
           ...result,
           lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped),
-          nextLesson: await readPlacementNextLesson(goalId, tx),
+          ...(result.startedPastSkillIds && {
+            chapter: nextLesson?.chapter ?? result.chapter,
+            course: await readPlacementCourse(goalId, new Set(), tx),
+            startedPastSkillIds: [],
+          }),
+          nextLesson,
         }
       : result;
 

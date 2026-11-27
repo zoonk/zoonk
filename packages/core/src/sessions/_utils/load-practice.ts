@@ -9,6 +9,7 @@ import { type AreaShare } from "../../plans/_utils/exam-subject-shares";
 import { type DifficultyBias } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION } from "../block-minutes";
 import { type PracticeItem } from "../session-builder";
+import { mixCourseStartPractice } from "./course-start-practice";
 import { loadLastAnswers, loadRightAnswers } from "./load-review-capsules";
 import { NO_PRACTICE_CLAIMS, type PracticeClaims } from "./practice-claims";
 import { listAskedSets, takePracticeQuestions, toSetUnits } from "./practice-sets";
@@ -353,8 +354,14 @@ export async function loadPracticeItems({
     })),
   );
 
+  const practice = mixCourseStartPractice({
+    courseStarts: claims.courseStarts ?? [],
+    studied: new Set(studiedBySkill.keys()),
+    units,
+  });
+
   return takePracticeQuestions({
-    practice: units.flatMap((unit) => unit.questions),
+    practice,
     room: Math.max(
       Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
       everySkill ? FULL_REVIEW_QUESTIONS : 0,

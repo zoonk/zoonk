@@ -8,22 +8,23 @@ import { type PlacementRecord } from "./placement-attempt-record";
 
 export async function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
   const lessonId = await findPlanFirstLessonId({ db: tx, goalId });
-  if (!lessonId) return null;
+  if (!lessonId) {return null;}
   const lesson = await tx.lesson.findUnique({
     select: {
-      id: true,
-      title: true,
       estimatedMinutes: true,
       homeChapter: { select: { title: true } },
+      id: true,
+      title: true,
     },
     where: { id: lessonId },
   });
+
   return (
     lesson && {
+      chapter: lesson.homeChapter?.title ?? null,
+      estimatedMinutes: lesson.estimatedMinutes,
       id: lesson.id,
       title: lesson.title,
-      estimatedMinutes: lesson.estimatedMinutes,
-      chapter: lesson.homeChapter?.title ?? null,
     }
   );
 }
@@ -36,20 +37,22 @@ export async function readPlacementCourse(
   const rows = await tx.planItem.findMany({
     orderBy: [{ position: "asc" }, { id: "asc" }],
     select: {
-      id: true,
-      position: true,
-      status: true,
-      kind: true,
       chapterId: true,
+      id: true,
+      kind: true,
+      lesson: { select: { homeChapterId: true } },
       lessonId: true,
       lessons: true,
+      position: true,
       skillId: true,
-      lesson: { select: { homeChapterId: true } },
+      status: true,
     },
     where: { kind: "lesson", plan: { goalId } },
   });
-  if (!rows.length) return null;
+
+  if (rows.length === 0) {return null;}
   const next = rows.find((row) => row.status === "todo");
+
   const chapters = [
     ...Map.groupBy(
       rows,
@@ -63,6 +66,7 @@ export async function readPlacementCourse(
     ),
     start: next !== undefined && group.includes(next),
   }));
+
   return { chapters, lessons: chapters.reduce((total, chapter) => total + chapter.lessons, 0) };
 }
 
@@ -77,16 +81,18 @@ export async function readPlacementResult({
 }) {
   const result = placement?.result ?? null;
   const latest = placement?.finishedParts.at(-1);
-  if (!result) return null;
+  if (!result) {return null;}
   const saved = result.nextLesson;
-  const nextLesson =
-    saved && saved.estimatedMinutes !== undefined
+
+  const nextLesson = result.startedPastSkillIds && !result.course ? null :
+    (saved && saved.estimatedMinutes !== undefined
       ? { ...saved, estimatedMinutes: saved.estimatedMinutes, chapter: saved.chapter ?? null }
-      : await readPlacementNextLesson(goalId, tx ?? prisma);
+      : await readPlacementNextLesson(goalId, tx ?? prisma));
+
   const view = {
     attemptId: result.attemptId,
-    chapter: result.chapter,
     changeId: result.changeId,
+    chapter: result.chapter,
     course: result.course,
     finish: result.finish,
     finishedAt: result.finishedAt,
@@ -94,10 +100,15 @@ export async function readPlacementResult({
     lessonsSkipped: result.lessonsSkipped,
     nextLesson,
   };
-  if (!latest) return view;
+
+  if (!latest) {return view;}
   const stoppedAt = latest.finish?.end === "stopped" ? latest.finish.answered : undefined;
   const receipt = placementPartReceipt(result.attemptId, latest.part, stoppedAt);
+
   const change =
-    result.lessonsSkipped > 0 ? await readTestOutChange({ db: tx, goalId, receipt }) : null;
+    result.lessonsSkipped > 0 || result.startedPastSkillIds?.length
+      ? await readTestOutChange({ db: tx, goalId, receipt })
+      : null;
+
   return { ...view, changeId: change?.id ?? null };
 }

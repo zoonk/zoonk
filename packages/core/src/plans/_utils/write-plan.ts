@@ -2,10 +2,13 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { findActiveSubscriptionForUser } from "../../auth/subscription";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { applyCourseStart } from "../../learner/placement/_utils/course-start-items";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
+import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
+import { loadCourseStarts } from "./course-starts";
 import { owePlanSuggestion } from "./owe-plan-suggestion";
 import {
   type StoredPlanChangePayload,
@@ -203,6 +206,28 @@ export async function writePlan({
   });
 
   const { goal } = context;
+
+  if (
+    goal.kind === "learn" &&
+    readPlacementAttempt(goal).result?.startedPastSkillIds &&
+    plan.items.some((item) => item.kind === "lesson" && item.status === "todo" && !item.id)
+  ) {
+    const starts = await loadCourseStarts(goal.id, tx);
+    const groups = Map.groupBy([...starts], ([, start]) => start.changeId);
+
+    for (const entries of groups.values()) {
+      const start = entries[0]?.[1];
+      if (!start) {continue;}
+      await applyCourseStart({
+        exceptIds: context.items.map((item) => item.id),
+        goalId: goal.id,
+        now: start.at,
+        startedPastSkillIds: entries.map(([skillId]) => skillId),
+        tx,
+      });
+    }
+  }
+
   const firstPlan = context.state.graph.skills.length === 0 && plan.state.graph.skills.length > 0;
 
   if (

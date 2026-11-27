@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
+import { loadCourseStarts, priorityCourseStarts } from "../../plans/_utils/course-starts";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
 import { findAnnouncedSkillIds } from "../../plans/planner/announced-lessons";
 import { type PlanGraph } from "../../plans/planner/plan-state";
@@ -11,6 +12,7 @@ import { readBlockPayload } from "../block-payload";
 /** first must receive questions even on short days; last is optional. Rotate claims by lastAsked rather than studying order. */
 export type PracticeClaims = {
   first: ReadonlySet<string>;
+  courseStarts?: readonly string[];
   last: ReadonlySet<string>;
   /** When an earlier day's session last asked each skill, as a timestamp; never asked, absent. */
   lastAsked: ReadonlyMap<string, number>;
@@ -87,12 +89,16 @@ export async function loadPracticeClaims({
     return NO_PRACTICE_CLAIMS;
   }
 
-  const [facts, lastAsked] = await Promise.all([
+  const [facts, lastAsked, starts] = await Promise.all([
     loadExamFacts({ goal, graph }),
     loadLastAsked({ goalId: goal.id, today }),
+    goal.kind === "learn" ? loadCourseStarts(goal.id) : new Map(),
   ]);
 
+  const needed = new Set(await priorityCourseStarts(goal.id, starts));
+
   const priority = new Set([
+    ...needed,
     ...findFrequentSkillIds({ graph, levels: facts.topicLevels }),
     ...findAnnouncedSkillIds({ announcements: facts.announcements, skills: graph.skills }),
     ...toConfirm.flatMap(([skillId, { since }]) => (since.getTime() <= dueBefore ? [skillId] : [])),
@@ -103,6 +109,9 @@ export async function loadPracticeClaims({
     .toSorted((a, b) => (lastAsked.get(a) ?? 0) - (lastAsked.get(b) ?? 0));
 
   return {
+    courseStarts: toConfirmIds
+      .filter((id) => starts.has(id))
+      .toSorted((a, b) => Number(needed.has(b)) - Number(needed.has(a))),
     first: new Set(toConfirmIds.filter((skillId) => priority.has(skillId))),
     last: new Set(toConfirmIds.filter((skillId) => !priority.has(skillId))),
     lastAsked,

@@ -183,7 +183,6 @@ async function savePart({
       ? await applyCourseStart({
           goalId,
           now,
-          plan,
           startedPastSkillIds: attemptQuestions.startedPastSkillIds,
           tx,
         })
@@ -219,9 +218,11 @@ async function savePart({
 
   const nextLesson = await readPlacementNextLesson(goalId, tx);
   const course = await readPlacementCourse(goalId, new Set(testedOutPlanItemIds), tx);
+
   const first = attempt.search?.topics?.find(
     (topic) => !attemptQuestions.startedPastSkillIds.includes(topic.id),
   );
+
   await savePlacementAttempt({
     goal: current,
     record: {
@@ -231,12 +232,12 @@ async function savePart({
       result: {
         ...held,
         attemptId,
+        chapter: nextLesson?.chapter ?? first?.chapter ?? null,
+        course,
         finish,
         finishedAt: now.toISOString(),
         lessonsSkipped,
         nextLesson,
-        course,
-        chapter: nextLesson?.chapter ?? first?.chapter ?? null,
         ...(attempt.search && { startedPastSkillIds: attemptQuestions.startedPastSkillIds }),
       },
     },
@@ -248,6 +249,7 @@ async function savePart({
     itemIds: [...testedOutPlanItemIds, ...sharedItemIds],
     now,
     receipt: receiptKey,
+    ...(attempt.search && { startedPastSkillIds: attemptQuestions.startedPastSkillIds }),
     timeZone,
     tx,
     userId,
@@ -319,9 +321,7 @@ export async function finishPlacementAttempt({
   );
 
   const [change, plan] = await Promise.all([
-    saved.testedOutPlanItemIds.length > 0
-      ? readTestOutChange({ goalId, receipt: receiptKey })
-      : null,
+    readTestOutChange({ goalId, receipt: receiptKey }),
     loadPlacementPlan(goalId),
   ]);
 

@@ -1,44 +1,54 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
-import { type GoalPlan } from "../../_utils/goal-skill-graph";
 
 export async function applyCourseStart({
   goalId,
   now,
-  plan,
   startedPastSkillIds,
   tx,
+  exceptIds = [],
 }: {
   goalId: string;
   now: Date;
-  plan: GoalPlan;
   startedPastSkillIds: readonly string[];
   tx: TransactionClient;
+  exceptIds?: readonly string[];
 }) {
-  const skipped = new Set(startedPastSkillIds);
-  const ids = plan.items
-    .filter(
-      (item) =>
-        item.status === "todo" &&
-        item.skillIds.length > 0 &&
-        item.skillIds.every((id) => skipped.has(id)),
-    )
-    .map((item) => item.id);
-  const items = ids.length
+  const ids = [...startedPastSkillIds];
+
+  const items = ids.length > 0
     ? await tx.planItem.updateManyAndReturn({
-        data: { status: "testedOut", completedAt: now },
-        where: { id: { in: ids }, plan: { goalId }, kind: "lesson", status: "todo" },
+        data: { completedAt: now, status: "testedOut" },
         select: {
-          id: true,
           chapterId: true,
+          id: true,
           kind: true,
           lessonId: true,
           lessons: true,
           skillId: true,
         },
+        where: {
+          kind: "lesson",
+          plan: { goalId },
+          status: "todo",
+          ...(exceptIds.length && { id: { notIn: [...exceptIds] } }),
+          AND: [
+            { OR: [{ skillId: null }, { skillId: { in: ids } }] },
+            {
+              OR: [
+                { skillId: { in: ids } },
+                { lesson: { skills: { some: { skillId: { in: ids } } } } },
+              ],
+            },
+            {
+              OR: [{ lessonId: null }, { lesson: { skills: { every: { skillId: { in: ids } } } } }],
+            },
+          ],
+        },
       })
     : [];
+
   return {
     confirmed: new Set<string>(),
     heldUntilTomorrow: false,

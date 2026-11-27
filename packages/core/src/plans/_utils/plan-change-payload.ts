@@ -119,6 +119,7 @@ const planChangePayloadSchema = z.object({
   replannedSince: z.literal(true).optional(),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
+  startedPastSkillIds: z.array(z.uuid()).optional(),
   /** The test's own reschedule is part of its undo, unlike a refresh that lands new lessons. */
   testOutRescheduled: z.literal(true).optional(),
   testReceipt: z.string().optional(),
