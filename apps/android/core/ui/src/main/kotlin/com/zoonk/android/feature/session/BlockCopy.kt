@@ -46,7 +46,7 @@ val DayStep.learnKind: LearnKind
                 when (kind) {
                     StudyBlock.Kind.CHECKPOINT -> LearnKind.Challenge
                     StudyBlock.Kind.LEARN -> LearnKind.Lesson
-                    StudyBlock.Kind.PRACTICE -> LearnKind.Practice
+                    StudyBlock.Kind.PRACTICE, StudyBlock.Kind.UNKNOWN_DEFAULT_OPEN_API -> LearnKind.Practice
                     StudyBlock.Kind.PRODUCE -> LearnKind.Essay
                     StudyBlock.Kind.REVIEW -> LearnKind.Review
                 }

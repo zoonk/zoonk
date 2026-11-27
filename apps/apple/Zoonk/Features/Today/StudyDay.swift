@@ -1,20 +1,21 @@
 import SwiftUI
 
 struct StudyDay: Decodable, Equatable, Sendable {
-  enum Status: String, Decodable, Sendable {
+  enum Status: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case active
     case completed
     case planned
     case unstarted
   }
 
-  enum EmptyDay: String, Decodable, Sendable {
+  enum EmptyDay: String, OmittableAPIContent, Sendable {
     case lessonsComing
     case lessonsToPrepare
     case nothingNew
   }
 
-  enum FreshStart: String, Decodable, Sendable {
+  enum FreshStart: String, OmittableAPIContent, Sendable {
     case newPhase
     case newWeek
     case welcomeBack
@@ -245,7 +246,8 @@ enum ComingLessons {
 }
 
 /// Core decides where the day stands.
-enum DayState: String, Decodable, Sendable {
+enum DayState: String, UnknownAPIValue, Sendable {
+  case unrecognized
   case ahead
   case done
   /// Its lessons wait for the learner to ask for them.
@@ -255,8 +257,8 @@ enum DayState: String, Decodable, Sendable {
   case waiting
 }
 
-struct StudyBlock: Decodable, Hashable, Sendable {
-  enum Kind: String, Codable, Sendable {
+struct StudyBlock: OmittableAPIContent, Hashable, Sendable {
+  enum Kind: String, Decodable, Encodable, Sendable {
     case checkpoint
     case learn
     case practice
@@ -271,13 +273,15 @@ struct StudyBlock: Decodable, Hashable, Sendable {
     case skipped
   }
 
-  enum WaitReason: String, Decodable, Sendable {
+  enum WaitReason: String, UnknownAPIValue, Sendable {
+    case unrecognized
     case challenge
     case lessons
   }
 
   /// Where a tap on the block opens it, as core decides.
-  enum Screen: String, Decodable, Sendable {
+  enum Screen: String, UnknownAPIValue, Sendable {
+    static var unrecognized: Self { .unknown }
     case challenge
     case essay
     case lesson
@@ -298,7 +302,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 
   /// Whether the exam that leaves the optional study out has an official guide.
-  enum SubjectExtra: String, Decodable, Hashable, Sendable {
+  enum SubjectExtra: String, OmittableAPIContent, Hashable, Sendable {
     case notice
     case optional
   }
@@ -424,7 +428,7 @@ struct StudyBlock: Decodable, Hashable, Sendable {
   }
 }
 
-enum WritingAvailability: Decodable, Hashable, Sendable {
+enum WritingAvailability: OmittableAPIContent, Hashable, Sendable {
   case available
   case `continue`
   case tomorrow(returnsOn: String)
@@ -457,7 +461,7 @@ enum WritingAvailability: Decodable, Hashable, Sendable {
 
 struct StudyWeek: Decodable, Equatable, Sendable {
   /// Core's `StudyWeekDay`, which Today's week and the Plan's draw with `WeekDayRing`.
-  struct Day: Decodable, Equatable, Sendable {
+  struct Day: OmittableAPIContent, Equatable, Sendable {
     /// Day blocks done and not skipped; extra work isn't counted.
     let completed: Int
     let date: String

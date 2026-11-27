@@ -112,7 +112,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     val focus = remember { FocusRequester() }
     val query = rememberTextFieldState(if (props.isExploring) fields.solution else "")
     var run by rememberSaveable(stateSaver = RunSaver) { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
-    val expected = (props.expected.interaction as? ActivityExpectedAnswer.RowsWrapper)?.value
+    val expected = (props.expected.interaction as? ActivityExpectedAnswer.ActivityExpectedRowsValue)?.value
     val result = (run as? QueryRun.Done)?.result
 
     fun runQuery() {

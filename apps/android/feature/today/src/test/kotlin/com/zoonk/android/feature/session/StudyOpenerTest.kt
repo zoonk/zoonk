@@ -120,7 +120,8 @@ class StudyOpenerTest {
 
             api.writeError = ApiException(ApiError.Unavailable, "SLOW_DOWN", status = 429)
             assertEquals(step, opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL))
-            assertEquals(LessonWriting.Refused(LessonRefusal.Limited(Limit.SlowDown(60))), opener.notWritten(blockId(0)))
+            val slowed = (opener.notWritten(blockId(0)) as LessonWriting.Refused).refusal as LessonRefusal.Limited
+            assertEquals(60, (slowed.limit as Limit.SlowDown).retryAfterSeconds)
 
             api.writeError = null
             opener.open(day(listOf(lesson)), lesson, next = false, goalId = GOAL)

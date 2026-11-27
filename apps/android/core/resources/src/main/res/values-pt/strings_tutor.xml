@@ -33,13 +33,11 @@
   "tutor_description_step": "dd2eb7c2471ac94a3b2b7bfee70948fec2c791d161c589896571980e3ddf3b96",
   "tutor_description_subject": "8a2b2159f8c271841a4216b360e1e9dc9d03f60af3a58fe0b64587c039cd32d2",
   "tutor_empty_ai": "d3b26536084e6cb856d8ffc86b7f3ee687d141bf55f60e66b672fdf626b0222b",
-  "tutor_empty_title": "7ed81b95c40a88b322a3411f6bfec787762c4b775a4eb9fb5e5cf52e79783fa6",
   "tutor_error_failed": "6870befb7403ff851546bdd4c758ca2aeb245057725597fe1431c362b5fc9d51",
   "tutor_error_gone": "42dec4324d42b09c1ed8714858925c621c902f83d9dcf4b7a496f033b59cc25b",
   "tutor_error_invalid": "1c0bb795f2e6d5361f9246313df9bd27f55dd184d40215e02788acf4b409e0c2",
   "tutor_error_last_question": "c2293722837a14ffa5004a9a966f804e7ef16339aa3398220a51cce062cabe2b",
   "tutor_error_session": "2d0b98b613118f34fb521e406ed2a5c5a1367f5f2b18227f369edfc4412f7bdb",
-  "tutor_error_slow_down": "742e3f30b874215c4842c06a6f6b65d53730df2753f25c6adca4a69dc25ad9fb",
   "tutor_error_subscription": "056a21984e8848d7975129bef704f578e4b1dc8abdd18d0436bdd0c856742cfa",
   "tutor_get_answer": "87ca2d1e134772e44e675a7442eb75d19153f7872ecfa8fe834fc9802d27eba1",
   "tutor_guest_title": "a63f5bd2bf69ebd91092d590089d75590e4efe4914c5ed4de6f7118a4592dd06",
@@ -157,7 +155,6 @@
     <string name="tutor_about_subject">Sobre esta matéria</string>
     <string name="tutor_about_module">Sobre este módulo</string>
     <string name="tutor_about_question">Sobre esta questão</string>
-    <string name="tutor_empty_title">Com o que você precisa de ajuda?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s é seu colega de estudos com IA e pode cometer erros.</string>
     <string name="tutor_guest_title">Crie uma conta grátis para fazer perguntas</string>
@@ -175,7 +172,6 @@
     <string name="tutor_error_subscription">Para fazer perguntas, é preciso assinar</string>
     <string name="tutor_error_gone">Esta aula não está mais disponível.</string>
     <string name="tutor_error_invalid">A gente não conseguiu enviar esta pergunta. Tente de novo.</string>
-    <string name="tutor_error_slow_down">Faça uma pausa e depois pergunte de novo.</string>
     <string name="tutor_error_failed">Algo deu errado. Tente de novo.</string>
     <string name="tutor_error_last_question">A gente não conseguiu enviar sua última pergunta. Tente de novo.</string>
     <string name="tutor_sign_in">Entrar</string>

@@ -821,7 +821,12 @@ private fun LimitNotices() {
                     .plusSeconds(9 * 86_400L),
             ) to LimitSubject.Help,
             Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
-            Limit.SlowDown(30) to LimitSubject.Lessons,
+            Limit.SlowDown(
+                30,
+                java.time.Instant
+                    .now()
+                    .plusSeconds(30),
+            ) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,
         ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {}) }
     }

@@ -500,6 +500,7 @@ private fun movedText(
             R.string.activities_geometry_line_unmoved_line
         } else {
             when (LineCrossingModel.direction(offset, axis)) {
+                Direction.UNKNOWN_DEFAULT_OPEN_API -> R.string.activities_geometry_line_unmoved_line
                 Direction.RIGHT -> R.string.activities_geometry_line_moved_right
                 Direction.LEFT -> R.string.activities_geometry_line_moved_left
                 Direction.UP -> R.string.activities_geometry_line_moved_up

@@ -214,8 +214,8 @@ class StudyOpener(
         opening: StudyBlockOpening,
     ): AppRoute? =
         when (opening) {
-            is StudyBlockOpening.UnwrittenlessonWrapper -> unwritten(session, opening.value)
-            is StudyBlockOpening.EssayWrapper -> api.startWriting(session, opening.value.blockId)
+            is StudyBlockOpening.StudyBlockOpeningUnwrittenLessonValue -> unwritten(session, opening.value)
+            is StudyBlockOpening.StudyBlockOpeningEssayValue -> api.startWriting(session, opening.value.blockId)
             else -> opening.route()
         }
 
@@ -274,52 +274,56 @@ private fun blockTarget(blockId: UUID) =
 
 fun StudyBlockOpening.route(): AppRoute? =
     when (this) {
-        is StudyBlockOpening.LessonWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningOneOfValue -> {
+            null
+        }
+
+        is StudyBlockOpening.StudyBlockOpeningLessonValue -> {
             AppRoute.Lesson(value.lessonId.toString(), value.sessionId.toString())
         }
 
-        is StudyBlockOpening.UnwrittenlessonWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningUnwrittenLessonValue -> {
             AppRoute.Session(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
-        is StudyBlockOpening.PreparinglessonWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningPreparingLessonValue -> {
             AppRoute.Session(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
-        is StudyBlockOpening.EssayWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningEssayValue -> {
             AppRoute.Essay(value.blockId.toString())
         }
 
-        is StudyBlockOpening.CheckpointWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningCheckpointValue -> {
             AppRoute.Checkpoint(value.blockId.toString(), value.sessionId.toString())
         }
 
-        is StudyBlockOpening.MockWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningMockValue -> {
             AppRoute.Mock(value.blockId.toString(), value.sessionId.toString())
         }
 
-        is StudyBlockOpening.ChallengeWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningChallengeValue -> {
             AppRoute.Challenge(value.planItemId.toString(), value.sessionId.toString())
         }
 
-        is StudyBlockOpening.SessionWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningSessionValue -> {
             value.blockId?.let { AppRoute.QuestionBlock(value.sessionId.toString(), it.toString()) }
                 ?: AppRoute.Session(sessionId = value.sessionId.toString())
         }
 
-        is StudyBlockOpening.MistakespracticeWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningMistakesPracticeValue -> {
             AppRoute.MistakePractice(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
-        is StudyBlockOpening.PatternWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningPatternValue -> {
             AppRoute.Pattern(value.patternId.toString(), value.sessionId.toString())
         }
 
-        is StudyBlockOpening.TodayWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningTodayValue -> {
             AppRoute.Today
         }
 
-        is StudyBlockOpening.ChangedWrapper -> {
+        is StudyBlockOpening.StudyBlockOpeningChangedValue -> {
             null
         }
     }

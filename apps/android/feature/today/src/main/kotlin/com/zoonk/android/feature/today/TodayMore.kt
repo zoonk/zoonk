@@ -70,7 +70,7 @@ internal fun TodayMore(
             }
         }
 
-        StudySession.State.PREPARE, StudySession.State.WAITING -> {}
+        StudySession.State.PREPARE, StudySession.State.WAITING, StudySession.State.UNKNOWN_DEFAULT_OPEN_API -> {}
     }
 }
 

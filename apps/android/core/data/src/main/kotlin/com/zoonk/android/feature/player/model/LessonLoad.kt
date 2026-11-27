@@ -1,8 +1,11 @@
 package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.recode
 import com.zoonk.api.ApiJson
+import com.zoonk.api.encodeWithKnownEnums
 import com.zoonk.api.models.ActivityBaseMap
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ExplanationLesson
@@ -17,6 +20,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf4Content
 import com.zoonk.api.models.PlayableLibraryStepAnyOf5Listening
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf30Fields.Instruments
 import com.zoonk.api.models.PlayableLibraryStepAnyOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfOptionPicturesValue
 import com.zoonk.api.models.ScreenPicture
@@ -27,6 +31,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf30Value as KeyboardContent
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** What `/learn/{lessonId}` opens to: its screens, its outline waiting to be written, or a visitor's gate. */
 @Immutable
@@ -69,6 +76,10 @@ data class PlayableLesson(
 
 fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
     when (this) {
+        is PlayableLibraryLessonResponse.PlayableLibraryLessonResponseOneOf3Value -> {
+            throw ApiException(ApiError.Unavailable)
+        }
+
         is PlayableLibraryLessonResponse.PlayableLibraryLessonResponseOneOfValue -> {
             val lesson = value.lesson
             LessonLoad.Ready(
@@ -116,14 +127,27 @@ private fun LessonMap?.withIdeas() = this?.takeIf { it.ideas.isNotEmpty() }
 private fun PlayableLibraryLessonResponseOneOf1Lesson.toOutline() =
     LessonOutline(id = id.toString(), title = title, description = description, estimatedMinutes = estimatedMinutes)
 
-fun PlayableLibraryStep.toLessonStep(): LessonStep =
+fun PlayableLibraryStep.toLessonStep(): LessonStep = supportedStep() ?: throw ApiException(ApiError.Unavailable)
+
+private fun PlayableLibraryStep.supportedStep(): LessonStep? =
     when (this) {
+        is PlayableLibraryStep.PlayableLibraryStepAnyOf10Value -> {
+            null
+        }
+
         is PlayableLibraryStep.PlayableLibraryStepAnyOfValue -> {
             with(value) {
                 teaching(
                     id = id.toString(),
                     skillId = skillId?.toString(),
-                    content = StepContent.Activity(content, activityFrame(content), baseMap, roundedAnswer, minTolerance),
+                    content =
+                        StepContent.Activity(
+                            content,
+                            activityFrame(content) ?: return@with null,
+                            baseMap,
+                            roundedAnswer,
+                            minTolerance,
+                        ),
                     image = image,
                     imagePending = imagePending,
                     pictureWaitStartedAt = pictureWaitStartedAt,
@@ -194,6 +218,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
             with(value) {
                 val hook =
                     when (val hook = content) {
+                        is PlayableLibraryStepAnyOf4Content.PlayableLibraryStepAnyOf4ContentOneOf2Value -> return@with null
                         is PlayableLibraryStepAnyOf4Content.PlayableLibraryStepAnyOf4ContentOneOfValue -> StepContent.Guess(hook.value)
                         is PlayableLibraryStepAnyOf4Content.PlayableLibraryStepAnyOf4ContentOneOf1Value -> StepContent.Fact(hook.value)
                     }
@@ -287,6 +312,7 @@ fun PlayableLibraryStep.toLessonStep(): LessonStep =
 
         is PlayableLibraryStep.PlayableLibraryStepAnyOf9Value -> {
             with(value) {
+                if (exercise is PlayableLibraryStepAnyOf9Exercise.PlayableLibraryStepAnyOf5ListeningOneOf8Value) return@with null
                 LessonStep(
                     id = id.toString(),
                     skillId = skillId?.toString(),
@@ -332,12 +358,12 @@ private fun exploredActivity(
     explore: PlayableLibraryStepAnyOf3ContentExplore,
     expected: PlayableLibraryStepAnyOf3ExploreExpected?,
     baseMap: ActivityBaseMap?,
-): ExploredActivity {
+): ExploredActivity? {
     val written = ApiJson.encodeToJsonElement(PlayableLibraryStepAnyOf3ContentExplore.serializer(), explore).jsonObject
     val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), JsonObject(written + NOTHING_TO_ASK))
     return ExploredActivity(
         content,
-        activityFrame(content),
+        activityFrame(content)?.takeIf { it.hasSupportedCanvas } ?: return null,
         expected?.recode<PlayableLibraryStepAnyOf3ExploreExpected, ActivityExpected>(),
         baseMap,
     )
@@ -354,11 +380,25 @@ private val NOTHING_TO_ASK =
         "prompt" to JsonPrimitive(""),
     )
 
-private fun activityFrame(content: ActivityStepContent): ActivityFrame =
-    ApiJson.decodeFromJsonElement(
-        ActivityFrame.serializer(),
-        ApiJson.encodeToJsonElement(ActivityStepContent.serializer(), content),
-    )
+private fun activityFrame(content: ActivityStepContent): ActivityFrame? {
+    val serializer = ActivityStepContent.serializer()
+    val supported = encodeWithKnownEnums(serializer, content.withPlayableInstruments())
+    if (supported != null) return ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), supported)
+
+    val payload = ApiJson.encodeToJsonElement(serializer, content).jsonObject
+    if ("check" !in payload) return null
+    val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), payload)
+    if (frame.check !is ChoiceCheckValue && frame.check !is NumericCheckValue) return null
+    if (canvasOwnsAnswer(frame.template) || encodeWithKnownEnums(ActivityCheck.serializer(), frame.check) == null) return null
+    return frame.copy(hasSupportedCanvas = false)
+}
+
+private fun ActivityStepContent.withPlayableInstruments(): ActivityStepContent {
+    if (this !is KeyboardContent || Instruments.UNKNOWN_DEFAULT_OPEN_API !in value.fields.instruments) return this
+    val supported = value.fields.instruments.filter { it != Instruments.UNKNOWN_DEFAULT_OPEN_API }
+    if (supported.isEmpty()) return this
+    return KeyboardContent(value.copy(fields = value.fields.copy(instruments = supported)))
+}
 
 private fun PlayableLibraryStepAnyOf9.Kind.toStepKind() =
     when (this) {
@@ -373,8 +413,12 @@ private fun PlayableLibraryStepAnyOf9.Kind.toStepKind() =
     }
 
 /** The spoken screen's fallback and a language screen's exercise are one schema, generated twice. */
-private fun PlayableLibraryStepAnyOf5Listening.toExercise(): LanguageExercise =
+private fun PlayableLibraryStepAnyOf5Listening.toExercise(): LanguageExercise? =
     when (this) {
+        is PlayableLibraryStepAnyOf5Listening.PlayableLibraryStepAnyOf5ListeningOneOf8Value -> {
+            null
+        }
+
         is PlayableLibraryStepAnyOf5Listening.PlayableLibraryStepAnyOf5ListeningOneOfValue -> {
             PlayableLibraryStepAnyOf9Exercise.PlayableLibraryStepAnyOf5ListeningOneOfValue(value)
         }

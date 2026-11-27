@@ -738,9 +738,10 @@ private fun CauseLabel(
 }
 
 @Composable
-private fun causeLabel(cause: MistakeCause): String =
-    stringResource(
+private fun causeLabel(cause: MistakeCause): String {
+    return stringResource(
         when (cause) {
+            MistakeCause.UNKNOWN_DEFAULT_OPEN_API -> return ""
             MistakeCause.GAP -> R.string.mistakes_cause_gap
             MistakeCause.MISREAD -> R.string.mistakes_cause_misread
             MistakeCause.TRAP -> R.string.mistakes_cause_trap
@@ -748,11 +749,13 @@ private fun causeLabel(cause: MistakeCause): String =
             MistakeCause.GUESS -> R.string.mistakes_cause_guess
         },
     )
+}
 
 @get:DrawableRes
 private val MistakeCause.icon: Int
     get() =
         when (this) {
+            MistakeCause.UNKNOWN_DEFAULT_OPEN_API -> R.drawable.ic_lightbulb
             MistakeCause.GAP -> R.drawable.ic_lightbulb
             MistakeCause.MISREAD -> R.drawable.ic_visibility
             MistakeCause.TRAP -> R.drawable.ic_warning

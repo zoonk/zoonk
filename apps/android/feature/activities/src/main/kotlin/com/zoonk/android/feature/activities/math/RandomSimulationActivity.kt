@@ -116,6 +116,7 @@ private fun RandomSimulationActivity(props: ActivityProps) {
     when (val fields = content.fields) {
         is ChanceMode -> ChanceSimulation(content, fields.value, seedText, props)
         is SamplingMode -> SamplingSimulation(fields.value, seedText, props)
+        else -> return
     }
 }
 

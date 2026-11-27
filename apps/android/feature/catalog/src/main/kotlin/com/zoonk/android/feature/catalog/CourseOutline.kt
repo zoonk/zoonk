@@ -46,7 +46,7 @@ import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 
 @Composable
-internal fun CourseChapter.Level.label(): String = courseLevelName(value)
+internal fun CourseChapter.Level.label(): String? = courseLevelName(value)
 
 /** Main's `LibraryCourseOutline`: every chapter by level, or by exam area for a dated plan, as names and counts. */
 @Composable
@@ -107,16 +107,17 @@ internal fun CourseOutline(
                 val covered = levels.map { it.level.value }.toSet()
 
                 CourseChapter.Level.entries.filter { it in written || it.value in covered }.forEach { level ->
+                    val label = level.label() ?: return@forEach
                     val levelChapters = written[level].orEmpty()
                     val here: (@Composable () -> Unit)? = if (level.value == hereLevel) ({ HereMark() }) else null
 
                     if (levelChapters.isEmpty()) {
-                        UnwrittenLevel(level.label(), here)
+                        UnwrittenLevel(label, here)
                         return@forEach
                     }
 
                     ChapterGroup(
-                        title = level.label(),
+                        title = label,
                         titleMark = here,
                         chapters = levelChapters,
                         openByDefault = level == openLevel,

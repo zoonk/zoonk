@@ -43,6 +43,7 @@ import java.util.UUID
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 @Immutable
@@ -73,11 +74,14 @@ data class TutorConversationState(
     /** Suggestions wait for the first question, which counts from the moment it's sent. */
     fun isEmpty(thread: TutorThread): Boolean = sending == null && thread.turns.isEmpty() && !thread.hasMore
 
-    /** Nothing can be asked until it resets, so it takes the composer's place. */
-    fun limit(turns: List<TutorTurn>): Limit? = askFailure?.helpLimit ?: turns.lastOrNull()?.let { answerFailures[it.id]?.helpLimit }
+    /**
+     * Nothing can be asked until it lifts (a help limit when it resets, a slow-down when its wait is over), so
+     * its notice sits above the composer, which keeps the refused question for then.
+     */
+    fun limit(turns: List<TutorTurn>): Limit? = askFailure?.refusal ?: turns.lastOrNull()?.let { answerFailures[it.id]?.refusal }
 
     /** A lost question is sent again before anything new, so a suggestion would only resend it. */
-    fun offersSuggestions(turns: List<TutorTurn>): Boolean = limit(turns) == null && unresolvedQuestion == null
+    val offersSuggestions: Boolean get() = unresolvedQuestion == null
 
     /** Every earlier question needs its answer first; a failed one is retried first, as on main. */
     fun canAsk(turns: List<TutorTurn>): Boolean =
@@ -251,20 +255,26 @@ class TutorViewModel internal constructor(
         saved[OFFERED_ID] = suggestion.id
     }
 
-    /** The day the messages cap gave has come: the composer is back, and a refused question stays unanswered with its retry. */
-    fun limitLifted() {
+    /** The day the messages cap gave has come. */
+    fun limitLifted() = lift { it.refusal.let { limit -> limit != null && limit !is Limit.SlowDown } }
+
+    /** A slow-down lifts once its wait is over, unless something else was asked or refused meanwhile. */
+    private fun waitOut(failure: TutorFailure) {
+        val slowDown = failure.refusal as? Limit.SlowDown ?: return
+        viewModelScope.launch {
+            delay(slowDown.retryAfterSeconds.seconds)
+            lift { it === failure }
+        }
+    }
+
+    /** The composer is back, and a question the limit refused stays unanswered with its retry. */
+    private fun lift(lifts: (TutorFailure) -> Boolean) {
         mutableState.update { state ->
             state.copy(
-                askFailure = state.askFailure?.takeIf { it.helpLimit == null },
+                askFailure = state.askFailure?.takeUnless(lifts),
                 answerFailures =
                     state.answerFailures.mapValues { (_, failure) ->
-                        if (failure.helpLimit !=
-                            null
-                        ) {
-                            TutorFailure.Unanswered
-                        } else {
-                            failure
-                        }
+                        if (lifts(failure)) TutorFailure.Unanswered else failure
                     },
             )
         }
@@ -509,6 +519,7 @@ class TutorViewModel internal constructor(
                     // The question may have been saved: only then is it sent again with the same request.
                     if (failure != TutorFailure.Failed) unresolved = null
                     mutableState.update { it.copy(askFailure = failure, unresolvedQuestion = unresolved?.question) }
+                    waitOut(failure)
                 }
 
                 MutationResult.Obsolete -> {
@@ -648,6 +659,7 @@ class TutorViewModel internal constructor(
     ) {
         update(id) { it.copy(status = TutorTurn.Status.Failed) }
         mutableState.update { it.copy(answerFailures = it.answerFailures + (id to reason)) }
+        waitOut(reason)
     }
 
     /** The server's own copy of a turn: its answer is the saved one, whose links were checked. */

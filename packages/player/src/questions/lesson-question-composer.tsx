@@ -1,7 +1,7 @@
 "use client";
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
-import { type HelpLimit, useLiveLimit } from "@zoonk/learn/help-limit";
+import { type HelpLimit, WaitOverStatus } from "@zoonk/learn/help-limit";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -13,16 +13,18 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type KeyboardEvent, type Ref, useId, useLayoutEffect, useRef } from "react";
+import { type KeyboardEvent, type Ref, useId } from "react";
 import { EnterHint } from "../components/enter-hint";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
   QuestionLimitNotice,
   RequestErrorMessage,
-  getQuestionLimit,
+  useQuestionLimit,
 } from "./lesson-question-errors";
-import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
+import { getQuestionRefusal } from "./lesson-question-state-helpers";
+import { getComposerAvailability } from "./lesson-question-status";
+import { isUsageRefusal } from "./lesson-question-usage";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function ComposerError({
@@ -49,8 +51,6 @@ function SubmitIcon({ isResolvingPreviousQuestion }: { isResolvingPreviousQuesti
   return <ArrowUpIcon aria-hidden="true" />;
 }
 
-const CREATE_NAVIGATION_ERROR_KINDS = new Set(["authentication", "subscription", "unavailable"]);
-
 type ComposerVariant = "compact" | "page";
 
 const FOCUS_CLASS =
@@ -71,52 +71,9 @@ const TEXTAREA_CLASS = cn(
   ONE_LINE_PLACEHOLDER_CLASS,
 );
 
-function getComposerAvailability({
-  isResolvingPreviousQuestion,
-  state,
-}: {
-  isResolvingPreviousQuestion: boolean;
-  state: LessonQuestionController["state"];
-}) {
-  const isBusy =
-    state.activeQuestionId !== null ||
-    state.creating !== null ||
-    state.isRefreshing ||
-    state.questions.some(doesLessonQuestionBlockNewQuestion);
-
-  const createNavigationError =
-    state.error === "create" &&
-    Boolean(state.requestError && CREATE_NAVIGATION_ERROR_KINDS.has(state.requestError.kind));
-
-  const isReady = state.loadStatus === "ready";
-  const hasQuestionToSend = Boolean(state.draft.trim()) || isResolvingPreviousQuestion;
-
-  return {
-    canSend: isReady && !isBusy && !createNavigationError && hasQuestionToSend,
-    createNavigationError,
-  };
-}
-
 function ComposerLimit({ limit }: { limit: HelpLimit }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  // A layout effect: it runs before the sheet's popup takes focus for the removed composer, and
-  // after that the popup leaves focus where it is.
-  useLayoutEffect(() => {
-    if (document.activeElement === document.body) {
-      ref.current?.focus({ preventScroll: true });
-    }
-  }, []);
-
   return (
-    // Focused only so a screen reader reads it where the composer was: no key reaches it, so no ring.
-    <div
-      className="outline-none"
-      data-slot="question-composer-limit"
-      ref={ref}
-      role="alert"
-      tabIndex={-1}
-    >
+    <div className="mb-4" data-slot="question-composer-limit" role="alert">
       <QuestionLimitNotice limit={limit} />
     </div>
   );
@@ -145,33 +102,34 @@ export function QuestionComposer({
   const { state } = controller;
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
 
+  const limit = useQuestionLimit(state);
+  const isShortBreak = getQuestionRefusal(state)?.kind === "slowDown";
+
   const { canSend, createNavigationError } = getComposerAvailability({
     isResolvingPreviousQuestion,
+    limited: limit !== null,
     state,
   });
 
-  const limit = useLiveLimit(getQuestionLimit(state));
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
       return;
     }
 
     event.preventDefault();
-    void controller.send();
-  };
 
-  if (limit) {
-    return (
-      <div className={className}>
-        <ComposerLimit limit={limit} />
-      </div>
-    );
-  }
+    if (canSend) {
+      void controller.send();
+    }
+  };
 
   return (
     <div className={className}>
+      {limit && <ComposerLimit limit={limit} />}
+      {isShortBreak && <WaitOverStatus over={limit === null} />}
+
       <label className="sr-only" htmlFor={inputId}>
         {label ?? t("Ask a question")}
       </label>
@@ -212,7 +170,7 @@ export function QuestionComposer({
         </InputGroupAddon>
       </InputGroup>
 
-      {state.error === "create" && (
+      {state.error === "create" && !isUsageRefusal(state.requestError) && (
         <p className="text-destructive-text mt-2 text-sm" role="alert">
           <ComposerError
             isResolvingPreviousQuestion={isResolvingPreviousQuestion}

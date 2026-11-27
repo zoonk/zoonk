@@ -389,11 +389,6 @@ msgid "You finish around {month}."
 msgstr "Terminas aproximadamente en {month}."
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "Descansa un momento y vuelve a intentarlo."
-
-#: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
 #: src/writing/writing-start.tsx
 msgctxt "8vWw5H"
@@ -744,6 +739,18 @@ msgstr "Cerrar"
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Por repasar"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "Tómate un breve descanso. Puedes volver a intentarlo en {seconds, plural, one {# segundo} other {# segundos}}."
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Tómate un breve descanso. Puedes volver a intentarlo en {minutes, plural, one {# minuto} other {# minutos}}."
 
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"

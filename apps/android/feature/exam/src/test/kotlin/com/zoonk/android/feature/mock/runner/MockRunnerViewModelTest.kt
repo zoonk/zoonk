@@ -76,6 +76,20 @@ class MockRunnerViewModelTest {
     private suspend fun MockRunStore.kept() = unsent(ana, RUN_BLOCK).value.first().orEmpty()
 
     @Test
+    fun aMockWithAnUnsupportedRequiredQuestionCannotOpen() =
+        runTest(dispatcher) {
+            val questions =
+                listOf(
+                    question(ITEM_ONE, 1, "Choose a number"),
+                    question(ITEM_TWO, 2, "Choose a symbol", format = "futureFormat"),
+                )
+            api.mock = runningMock(current = currentSection(questions = questions.joinToString(",")))
+            val read = store().open(RUN_BLOCK)
+            read.load()
+            assertEquals(LoadState.Failed(ApiError.Unavailable), read.state.value)
+        }
+
+    @Test
     fun answersLeftOnTheDeviceGoOutFirstWhenTheMockOpensAgain() =
         runTest(dispatcher) {
             api.mock = navigatedMock(FORWARD_ONLY)

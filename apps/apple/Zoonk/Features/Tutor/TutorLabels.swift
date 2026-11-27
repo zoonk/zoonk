@@ -200,8 +200,8 @@ extension TutorFailure {
     switch self {
     case .signUpRequired:
       return HelpLimit.signUpRequired.words(.messages)
-    case .slowDown:
-      return HelpLimit.slowDown(retryAfterSeconds: 0).words(.messages)
+    case .slowDown(let until):
+      return HelpLimit.slowDown(until: until).words(.messages, now: now)
     case .limit(let limit):
       return limit.words(.messages, now: now)
     case .plusRequired:
@@ -255,9 +255,9 @@ extension TutorFailure {
       .subscribe
     case .signedOut:
       .signIn
-    case .limit, .gone:
+    case .slowDown, .limit, .gone:
       .none
-    case .slowDown, .invalid, .conflict, .failed:
+    case .invalid, .conflict, .failed:
       .tryAgain
     }
   }

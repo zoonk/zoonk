@@ -55,9 +55,9 @@ import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.WritingTask
 import com.zoonk.api.models.WrittenPracticeSubjectsInner
 import com.zoonk.api.models.WrittenPracticeSubjectsInnerAnswersInnerCriteria
-import com.zoonk.api.models.WrittenPracticeSubjectsInnerAvailability
 import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInner
 import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInnerAvailability
+import com.zoonk.api.models.WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -261,12 +261,13 @@ class GoalContentScreenshots {
                             taskKey = "short",
                         ),
                         WrittenPracticeSubjectsInnerWriteActionsInner(
-                            WrittenPracticeSubjectsInnerWriteActionsInnerAvailability.WrittenPracticeSubjectsInnerAvailabilityValue(
-                                WrittenPracticeSubjectsInnerAvailability(
-                                    listOf("Specialty"),
-                                    WrittenPracticeSubjectsInnerAvailability.Status.NEEDS_CHOICE,
+                            WrittenPracticeSubjectsInnerWriteActionsInnerAvailability
+                                .WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOfValue(
+                                    WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOf(
+                                        listOf("Specialty"),
+                                        WrittenPracticeSubjectsInnerWriteActionsInnerAvailabilityOneOf.Status.NEEDS_CHOICE,
+                                    ),
                                 ),
-                            ),
                             taskKey = "long",
                             writingTask = WritingTask(lines = 60L, points = 70.0, distinctLines = true, number = 2L, total = 2L),
                         ),

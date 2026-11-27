@@ -33,7 +33,7 @@ const TURN_CLASS = "flex scroll-mt-4 flex-col gap-5";
 function LoadError() {
   const controller = useLessonQuestionController();
   const error = controller.state.requestError;
-  const limit = useLiveLimit(toHelpLimit(error));
+  const limit = toHelpLimit(useLiveLimit(error));
 
   if (limit) {
     return <QuestionLimitNotice limit={limit} />;

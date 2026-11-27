@@ -51,7 +51,7 @@ class TodayStoreTest {
             ).toDayView()
         val unopened =
             StudyDay
-                .UnstartedWrapper(
+                .UnstartedStudyDayValue(
                     decodeFixture<UnstartedStudyDay>(
                         "unstarted-study-day",
                         "minutes" to minutes,
