@@ -6934,7 +6934,7 @@ msgstr "Bize anlattın"
 #: src/memory/memory-labels.tsx
 msgctxt "KX7Rbl"
 msgid "From a chat"
-msgstr "Bir sohbetten"
+msgstr "Bir yazışmadan"
 
 #: src/memory/memory-labels.tsx
 msgctxt "5yxABH"
