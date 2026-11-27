@@ -420,7 +420,7 @@ private actor LevelTestBackServer: ClientTransport {
         #"{"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],"next":null,"phases":[],"started":false,"status":"unavailable","trueFalseLabels":"trueFalse","focusTest":null}"#
     case "getLanguageLevelTest":
       payload = #"""
-        {"status":"ready","answered":4,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":12,"estimatedMinutes":6,"attemptId":"\#(goalID)","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
+        {"status":"ready","answered":4,"canStop":false,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":12,"estimatedMinutes":6,"attemptId":"\#(goalID)","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
         """#
     default: return (HTTPResponse(status: .notFound), nil)
     }

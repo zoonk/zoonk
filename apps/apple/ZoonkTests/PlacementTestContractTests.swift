@@ -165,7 +165,7 @@ private actor LevelTestAnswerServer: ClientTransport {
     return (
       response,
       HTTPBody(
-        #"{"status":"ready","answered":6,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"es","total":12,"estimatedMinutes":6,"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba"}"#
+        #"{"status":"ready","answered":6,"canStop":false,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"es","total":12,"estimatedMinutes":6,"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba"}"#
       )
     )
   }

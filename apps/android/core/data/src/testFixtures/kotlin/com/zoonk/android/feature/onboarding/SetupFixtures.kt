@@ -306,7 +306,7 @@ fun levelTestOf(
 ): LanguageLevelTest =
     ApiJson.decodeFromString(
         """
-        {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
+        {"answered":$answered,"canStop":false,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
          "showAlphabetNote":false,"targetLanguage":"it","total":$total,"estimatedMinutes":6${attemptJson(attemptId)}}
         """.trimIndent(),
     )

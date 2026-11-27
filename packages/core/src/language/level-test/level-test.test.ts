@@ -47,30 +47,33 @@ const BANK: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "Diga" })),
 };
 
-async function saveBank(targetLanguage = "en") {
+async function saveBank({
+  bank = BANK,
+  targetLanguage = "en",
+}: { bank?: LevelTestBank; targetLanguage?: string } = {}) {
   await prisma.languageLevelTest.upsert({
     create: {
-      content: BANK,
+      content: bank,
       language: "pt",
       model: "test",
       promptVersion: "test",
       runId: "test",
       targetLanguage,
     },
-    update: { content: BANK },
+    update: { content: bank },
     where: { languagePair: { language: "pt", targetLanguage } },
   });
 }
 
-async function answerNextQuestion(goalId: string): Promise<string> {
-  const view = await getLanguageLevelTest(goalId);
+async function answerNextQuestion(goalId: string, attemptId?: string): Promise<string> {
+  const view = await getLanguageLevelTest(goalId, attemptId);
 
   const questionId =
     view.status === "ready" && view.test.status === "ready" && view.test.next.kind === "question"
       ? view.test.next.question.id
       : "";
 
-  await answerLanguageLevelTest({ goalId, input: { answerIndex: 1, questionId } });
+  await answerLanguageLevelTest({ goalId, input: { answerIndex: 1, attemptId, questionId } });
   return questionId;
 }
 
@@ -100,7 +103,7 @@ describe("language level test", () => {
         test: { showAlphabetNote, status: "preparing" },
       });
 
-      await saveBank(targetLanguage);
+      await saveBank({ targetLanguage });
 
       await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
         status: "ready",
@@ -124,6 +127,7 @@ describe("language level test", () => {
       status: "ready",
       test: {
         answered: 0,
+        canStop: false,
         next: { kind: "question", question: { level: "A2", skill: "reading" } },
       },
     });
@@ -143,7 +147,10 @@ describe("language level test", () => {
       input: { answerIndex: 1, questionId: "reading-A2-0" },
     });
 
-    expect(answered).toMatchObject({ status: "ready", test: { answered: 1, lastCorrect: true } });
+    expect(answered).toMatchObject({
+      status: "ready",
+      test: { answered: 1, canStop: false, lastCorrect: true },
+    });
 
     const answeredLevels =
       answered.status === "ready" && answered.test.status === "ready"
@@ -151,9 +158,27 @@ describe("language level test", () => {
         : [];
 
     expect(answeredLevels).toStrictEqual([]);
+
     await answerNextQuestion(goal.id);
+
+    await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 2, canStop: false, next: { question: { skill: "reading" } } },
+    });
+
     await answerNextQuestion(goal.id);
+
+    await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 3, canStop: false, next: { question: { skill: "reading" } } },
+    });
+
     await answerNextQuestion(goal.id);
+
+    await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 4, canStop: true, next: { question: { skill: "listening" } } },
+    });
 
     const finished = await finishLanguageLevelTest(goal.id);
 
@@ -178,6 +203,89 @@ describe("language level test", () => {
     expect(saved.details).toHaveProperty("level", "A2");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
     expect(saved.details).not.toHaveProperty("skillLevels.writing");
+  });
+
+  it("can stop when two unknown answers at A1 end reading", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+    await prisma.goal.update({ data: { details: { level: "A1" } }, where: { id: goal.id } });
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: null, questionId: "reading-A1-0" },
+      }),
+    ).resolves.toMatchObject({ status: "ready", test: { answered: 1, canStop: false } });
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: null, questionId: "reading-A1-1" },
+      }),
+    ).resolves.toMatchObject({
+      status: "ready",
+      test: {
+        answered: 2,
+        canStop: true,
+        levels: [{ label: "A1", skill: "reading" }],
+        next: { question: { skill: "listening" } },
+      },
+    });
+  });
+
+  it("accepts a legacy stop before reading is complete without saving a level", async () => {
+    await saveBank({ bank: { ...BANK, confirmations: [] } });
+    const { goal, plan, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const started = await startLanguageLevelTest({ goalId: goal.id });
+
+    if (started.status !== "ready" || !started.test.attemptId) {
+      throw new Error("Expected a started test");
+    }
+
+    const { attemptId } = started.test;
+
+    await answerNextQuestion(goal.id, attemptId);
+    await answerNextQuestion(goal.id, attemptId);
+    await answerNextQuestion(goal.id, attemptId);
+
+    await expect(getLanguageLevelTest(goal.id, attemptId)).resolves.toMatchObject({
+      status: "ready",
+      test: { answered: 3, canStop: false },
+    });
+
+    const readPlanItems = () =>
+      prisma.planItem.findMany({ orderBy: { id: "asc" }, where: { planId: plan.id } });
+
+    const before = await readPlanItems();
+    const finished = await finishLanguageLevelTest(goal.id, attemptId);
+
+    expect(finished).toMatchObject({
+      levels: [],
+      result: { attemptId, end: "stopped", lessonsSkipped: 0 },
+      status: "ready",
+    });
+
+    expect(finished.status === "ready" && finished.result?.ranges).toStrictEqual({});
+
+    await expect(getLanguageLevelTest(goal.id, attemptId)).resolves.toMatchObject({
+      status: "ready",
+      test: { canStop: false, next: { kind: "done" }, result: { attemptId } },
+    });
+
+    const [saved, levels, planItems] = await Promise.all([
+      prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      prisma.languageSkillLevel.findMany({ where: { language: "en", userId: user.id } }),
+      readPlanItems(),
+    ]);
+
+    expect(saved.details).toHaveProperty("level", "A2");
+    expect(saved.details).not.toHaveProperty("skillLevels");
+    expect(saved.details).not.toHaveProperty("levelTest.planningStart");
+    expect(levels).toStrictEqual([]);
+    expect(planItems).toStrictEqual(before);
   });
 
   it("shows an answer on the read right after it, whatever the goal's private cache still holds", async () => {
@@ -531,7 +639,7 @@ describe("language level test", () => {
 
 describe("level test on a non-Latin script", () => {
   it("saves the reading level with the result, which a repeat keeps", async () => {
-    await saveBank("ja");
+    await saveBank({ targetLanguage: "ja" });
     const { goal, user, plan } = await languageGoalFixture();
     await prisma.goal.update({ data: { targetLanguage: "ja" }, where: { id: goal.id } });
     mockSession(user.id);
@@ -788,7 +896,9 @@ describe("a post-start level test", () => {
 
     await completeTapTest({
       ...first,
-      confirm: ({ id }) => {
+      confirm: ({ id }, test) => {
+        expect(test).toMatchObject({ canStop: true });
+
         if (missed.length === 0) {
           missed.push(id);
           return [];
@@ -1004,7 +1114,7 @@ async function completeTapTest({
   test,
 }: {
   attemptId?: string;
-  confirm?: (question: { id: string }) => number[];
+  confirm?: (question: { id: string }, test: LanguageLevelTestView) => number[];
   goalId: string;
   test: LanguageLevelTestView;
 }): Promise<void> {
@@ -1018,7 +1128,7 @@ async function completeTapTest({
 
   const input =
     test.next.kind === "confirmation"
-      ? { answerIndex: null, answerIndices: confirm(test.next.question) }
+      ? { answerIndex: null, answerIndices: confirm(test.next.question, test) }
       : { answerIndex: 1 };
 
   const next = await answerLanguageLevelTest({

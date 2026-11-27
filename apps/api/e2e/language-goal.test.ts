@@ -422,6 +422,7 @@ test.describe("Language goal API", () => {
     const first = await firstResponse.json();
 
     expect(first).toMatchObject({
+      canStop: false,
       next: { kind: "question", question: { level: "A2", skill: "reading" } },
       status: "ready",
     });
@@ -432,7 +433,7 @@ test.describe("Language goal API", () => {
       data: { answerIndex: 0, questionId: first.next.question.id },
     });
 
-    expect(await answered.json()).toMatchObject({ answered: 1, lastCorrect: true });
+    expect(await answered.json()).toMatchObject({ answered: 1, canStop: false, lastCorrect: true });
 
     const stale = await apiContext.post(`${path}/answers`, {
       data: { answerIndex: 0, questionId: first.next.question.id },
@@ -452,7 +453,7 @@ test.describe("Language goal API", () => {
       view = await response.json();
     }
 
-    expect(view.next.question.skill).toBe("listening");
+    expect(view).toMatchObject({ canStop: true, next: { question: { skill: "listening" } } });
 
     const deferred = await apiContext.post(`${path}/answers`, {
       data: { audioDeferred: true, questionId: view.next.question.id },
@@ -486,6 +487,7 @@ test.describe("Language goal API", () => {
     expect(open).toMatchObject({
       answered: 0,
       attemptId: expect.any(String),
+      canStop: false,
       estimatedMinutes: 6,
       result: { attemptId: null, ranges: { reading: expect.any(Object) } },
       status: "ready",

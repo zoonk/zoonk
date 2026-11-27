@@ -47510,6 +47510,10 @@
                 "minimum": 0,
                 "maximum": 9007199254740991
               },
+              "canStop": {
+                "type": "boolean",
+                "description": "Whether this unfinished attempt has completed at least one skill's assessment block"
+              },
               "lastCorrect": {
                 "nullable": true,
                 "type": "boolean"
@@ -47835,6 +47839,7 @@
               "estimatedMinutes",
               "total",
               "answered",
+              "canStop",
               "lastCorrect",
               "levels",
               "next",

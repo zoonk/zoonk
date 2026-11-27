@@ -286,6 +286,12 @@ export const languageLevelTestViewSchema = z
     z.object({
       ...attemptViewFields,
       answered: z.int().min(0),
+      canStop: z
+        .boolean()
+        .meta({
+          description:
+            "Whether this unfinished attempt has completed at least one skill's assessment block",
+        }),
       lastCorrect: z.boolean().nullable(),
       levels: z
         .array(levelResultSchema)

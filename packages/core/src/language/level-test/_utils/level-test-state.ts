@@ -307,6 +307,10 @@ export async function toLevelTestView({
     ...attempt,
     ...LANGUAGE_LEVEL_TEST_OFFER,
     answered: progress.answers.length + (progress.speaking ? 1 : 0),
+    canStop:
+      !progress.result &&
+      !progress.placement &&
+      (scores.reading !== undefined || scores.listening !== undefined),
     lastCorrect,
     levels: listLevelTestLevels(scores),
     next,

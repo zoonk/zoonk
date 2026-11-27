@@ -27,6 +27,7 @@ function ready(view: Partial<Ready> = {}): Ready {
   return {
     ...OFFER,
     answered: 4,
+    canStop: true,
     lastCorrect: null,
     levels: [],
     next: {
