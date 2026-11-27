@@ -1,7 +1,7 @@
 "use client";
 
 import { type NoGlyph } from "@zoonk/ui/components/enter-button";
-import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-script";
+import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-controls";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useRef } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";

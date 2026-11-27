@@ -1,9 +1,10 @@
-import { HELD_PRESS_SELECTOR } from "./held-press-controls";
+import {
+  HELD_ASK_ATTRIBUTE,
+  HELD_PRESS_SELECTOR,
+  OPENS_PAGE_ATTRIBUTE,
+} from "./held-press-controls";
 
 export const HELD_ATTRIBUTE = "data-held";
-
-/** `data-held-ask="microphone"` on a control whose press asks for the microphone. */
-export const HELD_ASK_ATTRIBUTE = "data-held-ask";
 
 type HeldMicrophone = { context: AudioContext; stream: Promise<MediaStream> };
 
@@ -42,10 +43,12 @@ type Held = {
 function holdPressesBeforeReady({
   ask,
   held,
+  opensPage,
   selector,
 }: {
   ask: string;
   held: string;
+  opensPage: string;
   selector: string;
 }) {
   const CONTROLS = `a[href], ${selector}`;
@@ -437,6 +440,16 @@ function holdPressesBeforeReady({
 
       const { submitter } = event;
 
+      if (form.hasAttribute(opensPage)) {
+        heldForms.add(form);
+
+        if (submitter) {
+          mark(submitter);
+        }
+
+        return;
+      }
+
       if (isReacts(form)) {
         return;
       }
@@ -479,9 +492,20 @@ function holdPressesBeforeReady({
     replayQueue()?.splice(0);
     releaseMicrophone();
   });
+
+  // The first `pageshow` comes at `load`, when the page a form opens may still be on its way.
+  globalThis.addEventListener("pageshow", (event) => {
+    if (!event.persisted) {
+      return;
+    }
+
+    for (const control of document.querySelectorAll(`[${held}]`)) {
+      unmark(control);
+    }
+  });
 }
 
-export const HELD_PRESS_SCRIPT = `(${holdPressesBeforeReady.toString()})(${JSON.stringify({ ask: HELD_ASK_ATTRIBUTE, held: HELD_ATTRIBUTE, selector: HELD_PRESS_SELECTOR })})`;
+export const HELD_PRESS_SCRIPT = `(${holdPressesBeforeReady.toString()})(${JSON.stringify({ ask: HELD_ASK_ATTRIBUTE, held: HELD_ATTRIBUTE, opensPage: OPENS_PAGE_ATTRIBUTE, selector: HELD_PRESS_SELECTOR })})`;
 
 /** The microphone a held press asked for in its tap, taken once; null when none did. */
 export function takeHeldMicrophone(): HeldMicrophone | null {

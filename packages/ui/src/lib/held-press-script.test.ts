@@ -363,6 +363,42 @@ describe("the keeper of presses made before React owns a control", () => {
     expect(submitted[0]?.submitter).toBe(continueButton);
   });
 
+  it("lets the browser send a form that opens a page, once, its button held until a restore shows the page again", () => {
+    const { find, leave, page, press } = openPage(
+      '<form action="/learn/lesson" data-opens-page method="get"><button name="answer" value="cloud">A cloud</button><button name="answer" value="planet">A planet</button></form>',
+    );
+
+    const opened: string[] = [];
+
+    // Last to hear a submit, as the browser is: it loads the form's URL unless something prevented it.
+    page.addEventListener("submit", (event) => {
+      if (!event.defaultPrevented) {
+        opened.push(((event as SubmitEvent).submitter as HTMLButtonElement).value);
+      }
+
+      event.preventDefault();
+    });
+
+    const cloud = find("[value=cloud]");
+    const planet = find("[value=planet]");
+
+    press(cloud);
+    press(planet);
+    page.dispatchEvent(new page.PageTransitionEvent("pageshow"));
+
+    expect(opened).toStrictEqual(["cloud"]);
+    expect(cloud.dataset.held).toBe("");
+    expect(cloud.getAttribute("aria-busy")).toBe("true");
+    expect("held" in planet.dataset).toBe(false);
+
+    leave();
+    page.dispatchEvent(new page.PageTransitionEvent("pageshow", { persisted: true }));
+    expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+
+    press(planet);
+    expect(opened).toStrictEqual(["cloud", "planet"]);
+  });
+
   it("replays a submit with no tap as a key press, and one with no button through the form", () => {
     const { commit, find, frame, reached, submitted } = openPage(
       '<form id="named" action="/x"><input name="buddy"><button>Continue</button></form><form id="bare" action="/y"><input name="goal"></form>',

@@ -4,7 +4,7 @@ import { type LanguageConversationIntro } from "@zoonk/core/language/conversatio
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
-import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-script";
+import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-controls";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";

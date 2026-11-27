@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { holdScripts } from "@zoonk/e2e/hydration";
@@ -222,6 +223,35 @@ test.describe("public Library lesson page", () => {
     await pressAnswerKey(page, cloud);
 
     await expect(page).toHaveURL(new RegExp(`/learn/${written.id}\\?.*answer=cloud`, "u"));
+  });
+
+  test("opens the player from an answer tapped before the page hydrates, with that answer only", async ({
+    page,
+  }) => {
+    const { lessonPath, written } = await createLibraryCourse();
+    const player = new RegExp(`/learn/${written.id}\\?`, "u");
+    const opening: Route[] = [];
+
+    await holdScripts(page);
+
+    // Held, so the second tap lands while the first answer's page is still on its way.
+    await page.route(player, (route) => {
+      opening.push(route);
+    });
+
+    await page.goto(lessonPath, { waitUntil: "domcontentloaded" });
+
+    const cloud = page.getByRole("button", { name: "No, it's more like a cloud" });
+    await cloud.click();
+    await expect(cloud).toHaveAttribute("aria-busy", "true");
+    await expect.poll(() => opening.length).toBe(1);
+
+    await page.getByRole("button", { name: "Yes, like a tiny planet" }).click();
+    await page.unroute(player);
+    await opening[0]?.fallback();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${written.id}\\?.*answer=cloud`, "u"));
+    expect(opening).toHaveLength(1);
   });
 
   test("starts the lesson from a Start pressed before the page hydrates, once it does", async ({
