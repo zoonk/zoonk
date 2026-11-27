@@ -394,6 +394,23 @@ describe("writing grades", () => {
     expect(result(no)).toMatchObject({ kind: "points", zeroReason: null });
   });
 
+  it("gives a blank answer the blank rule when a line-count rule comes first", () => {
+    const rubric = {
+      ...basis,
+      grading: {
+        ...basis.grading,
+        zeroing: [
+          { citation, kinds: ["tooFewLines" as const], maxLines: 7, text: "At most 7 lines" },
+          { citation, kinds: ["blank" as const], text: "Blank" },
+        ],
+      },
+    };
+
+    expect(
+      assess({ ...evidence, awards: [], zeroKind: null }, { rubric, text: " \n" }),
+    ).toMatchObject({ zeroKind: "blank", zeroReason: "Blank" });
+  });
+
   it("does not zero an off-topic nomination when the answer quotes relevant material", () => {
     expect(
       assess({
