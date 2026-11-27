@@ -77,7 +77,7 @@
     <string name="buddy_page_conversations">Chats</string>
     <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
     <string name="buddy_page_new_conversation">Nuevo chat</string>
-    <!-- Loads the next page of older conversations. -->
+    <!-- A button under a list that loads more of its rows. -->
     <string name="buddy_page_show_more">Mostrar más</string>
     <string name="buddy_page_conversations_more_failed">No se pudieron cargar más chats. Inténtalo de nuevo.</string>
     <string name="buddy_page_today">%1$s hoy</string>

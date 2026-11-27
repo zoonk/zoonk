@@ -23,7 +23,7 @@
     <string name="buddy_page_conversations">Conversations</string>
     <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
     <string name="buddy_page_new_conversation">New conversation</string>
-    <!-- Loads the next page of older conversations. -->
+    <!-- A button under a list that loads more of its rows. -->
     <string name="buddy_page_show_more">Show more</string>
     <string name="buddy_page_conversations_more_failed">Couldn\'t load more conversations. Try again.</string>
 

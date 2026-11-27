@@ -77,7 +77,7 @@
     <string name="buddy_page_conversations">Yazışmalar</string>
     <!-- The first row of the conversations list: starts a conversation with no questions yet. -->
     <string name="buddy_page_new_conversation">Yeni yazışma</string>
-    <!-- Loads the next page of older conversations. -->
+    <!-- A button under a list that loads more of its rows. -->
     <string name="buddy_page_show_more">Daha fazla göster</string>
     <string name="buddy_page_conversations_more_failed">Daha fazla yazışma yüklenemedi. Tekrar dene.</string>
     <string name="buddy_page_today">Bugün %1$s ile</string>
