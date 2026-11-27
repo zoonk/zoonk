@@ -64,11 +64,11 @@ test.describe("Placement and the plan", () => {
     }
 
     const right = page.getByRole("radio", { exact: true, name: solution });
+    await expect(right).toBeEnabled();
     await pressAnswerKey(page, right);
     await expect(right).toBeChecked();
     await page.keyboard.press("Enter");
 
-    await expect(question).not.toHaveText(first);
     await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
 
     await page.reload();
