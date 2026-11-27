@@ -18,7 +18,9 @@ export type BlindKey = {
   copiedQuestion: boolean;
   costUsd: number | null;
   latencyMs: number;
-  data: WritingPromptOutput;
+  data: Omit<WritingPromptOutput, "aspects"> & {
+    aspects: Parameters<typeof keyAspects>[0]["aspects"];
+  };
 };
 
 export type BlindKeyFile = {
@@ -40,7 +42,7 @@ export function blindKeyInput({
   userInput,
 }: {
   key: BlindKey;
-  source: SourceQuestion;
+  source: Pick<SourceQuestion, "context" | "grading" | "id" | "question">;
   text: string;
   userInput: GradeWritingInput;
 }): GradeWritingInput {

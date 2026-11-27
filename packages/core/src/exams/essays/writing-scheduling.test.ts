@@ -122,7 +122,13 @@ describe("writing with an empty prompt bank", () => {
       writer.mockImplementationOnce(async ({ input }) => ({
         data: {
           aspects: [
-            { criterionId: "answer", description: "Explain one cause", points: null, steps: null },
+            {
+              criterionId: "answer",
+              description: "Explain one cause",
+              kind: "definitePoint",
+              points: null,
+              steps: null,
+            },
           ],
           assessedSkillIds: input.skills.map(({ id }) => id),
           context: null,

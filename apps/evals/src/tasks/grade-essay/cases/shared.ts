@@ -56,7 +56,7 @@ export type GradeWritingExpected = {
   zeroKind?: ZeroKind;
   /** Why a published answer is left out of calibration, such as a transcription that can't be what the board read. */
   doubtful?: string;
-  feedbackLanguage: "en" | "pt";
+  feedbackLanguage: "de" | "en" | "pt";
 };
 
 const ANCHOR_SKILL = "0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90";

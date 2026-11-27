@@ -80,7 +80,7 @@ async function generate({
   return { ...graded, data: { estimatedLines, evidence, result } };
 }
 
-export const gradeEssayTask: Task<GradeWritingInput, GradeWritingOutput, GradeWritingExpected> = {
+export const gradeEssayTask = {
   description:
     "Grade written answers as evidence (one award per row of the scoring sheet, limits, counted parts, exact-quoted language errors) on CGU, Enem, OAB and no-scale sheets; code-scored for false deductions, false zeroes, credit and pass-side decisions",
   generate,
@@ -96,4 +96,4 @@ export const gradeEssayTask: Task<GradeWritingInput, GradeWritingOutput, GradeWr
   },
   score: scoreWritingGrade,
   testCases: TEST_CASES,
-};
+} satisfies Task<GradeWritingInput, GradeWritingOutput, GradeWritingExpected>;

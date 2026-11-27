@@ -114,7 +114,13 @@ function useModelFixtures(skillId: string) {
   vi.mocked(writeWritingPrompt, { partial: true }).mockResolvedValue({
     data: {
       aspects: [
-        { criterionId: "case", description: "Supports the recommendation", points: 1, steps: null },
+        {
+          criterionId: "case",
+          description: "Supports the recommendation",
+          kind: "definitePoint",
+          points: 1,
+          steps: null,
+        },
       ],
       assessedSkillIds: [skillId],
       context: null,

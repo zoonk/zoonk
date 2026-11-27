@@ -63,7 +63,8 @@ export function keyAspects({
   aspects,
   grading,
 }: {
-  aspects: WritingPromptOutput["aspects"];
+  aspects: readonly (Omit<WritingPromptOutput["aspects"][number], "kind" | "steps"> &
+    Partial<Pick<WritingPromptOutput["aspects"][number], "kind" | "steps">>)[];
   grading: Pick<WritingSheet, "criteria">;
 }) {
   const scaled = new Set(grading.criteria.flatMap(({ awards, id }) => (awards ? [id] : [])));

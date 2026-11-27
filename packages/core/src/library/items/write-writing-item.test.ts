@@ -10,7 +10,12 @@ function item(steps: string[] | null) {
 describe(keyAspects, () => {
   it("splits a pointed aspect's points evenly across its steps, ending at its points", () => {
     const [aspect] = keyAspects({
-      aspects: [item(["Missing", "Mentioned", "Partly treated", "Fully treated"])],
+      aspects: [
+        {
+          ...item(["Missing", "Mentioned", "Partly treated", "Fully treated"]),
+          kind: "judgedScale",
+        },
+      ],
       grading: { criteria: [{ citation, id: "q1", points: 2, text: "Item 1" }] },
     });
 
@@ -23,6 +28,7 @@ describe(keyAspects, () => {
       ],
       criterionId: "q1",
       description: "Relates the oil shock to the plan",
+      kind: "judgedScale",
       points: 2,
     });
   });

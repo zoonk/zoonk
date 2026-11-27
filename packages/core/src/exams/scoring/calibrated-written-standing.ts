@@ -1,10 +1,13 @@
-import { type WritingCalibration } from "../essays/_utils/writing-calibration";
+import {
+  type RowCalibration,
+  WRITING_PART_ERROR_RATE,
+  rankWritingResiduals,
+} from "../essays/_utils/writing-calibration";
 import { isTextVerifiedWritingZero } from "../essays/_utils/writing-zero";
 import { type WritingResult } from "../essays/writing-contract";
 import { getWritingCalibration } from "../essays/writing-rubric-policy";
 import { type WritingRange, writtenStanding } from "./written-points";
 
-const PART_ERROR_RATE = 0.1;
 const TAILS = 2;
 
 type NumericGrade = Extract<WritingResult, { kind: "points" }>;
@@ -13,9 +16,7 @@ type PointGrade = Pick<NumericGrade, "kind" | "max" | "total"> & {
   zeroKind?: NumericGrade["zeroKind"] | null;
 };
 
-export type CalibratedWritingGrade = PointGrade & {
-  calibration: Pick<WritingCalibration, "residuals" | "verdicts">;
-};
+export type CalibratedWritingGrade = PointGrade & { calibration: readonly RowCalibration[] };
 
 export function getCalibratedWritingGrade({
   basis,
@@ -33,21 +34,17 @@ export function getCalibratedWritingGrade({
   return calibration ? { calibration, kind, max, total, zeroKind } : null;
 }
 
-function margin(residuals: readonly number[], level: number): number | null {
-  return residuals[Math.ceil((residuals.length + 1) * level) - 1] ?? null;
-}
-
 function isVerifiedZero({ total, zeroKind }: CalibratedWritingGrade) {
   return isTextVerifiedWritingZero(zeroKind) && total.low === 0 && total.high === 0;
 }
 
 function bound({
   grade,
-  level,
+  tailErrorRate,
   side,
 }: {
   grade: CalibratedWritingGrade | null;
-  level: number;
+  tailErrorRate: number;
   side: "above" | "below";
 }): number | null {
   if (!grade) {
@@ -58,21 +55,23 @@ function bound({
     return 0;
   }
 
-  const { residuals, verdicts } = grade.calibration;
+  const ranks = grade.calibration.map(({ residuals, verdicts }) =>
+    verdicts[side]
+      ? rankWritingResiduals(
+          side === "above" ? residuals.over : residuals.under,
+          1 - tailErrorRate / grade.calibration.length,
+        )
+      : null,
+  );
 
-  if (!verdicts[side]) {
-    return null;
-  }
-
-  const ranked = margin(side === "above" ? residuals.over : residuals.under, level);
+  const ranked = sumBounds(ranks);
 
   if (ranked === null) {
     return null;
   }
 
-  return side === "above"
-    ? grade.total.low - ranked * grade.max
-    : grade.total.high + ranked * grade.max;
+  const margin = Math.min(1, ranked) * grade.max;
+  return side === "above" ? grade.total.low - margin : grade.total.high + margin;
 }
 
 function sumBounds(bounds: readonly (number | null)[]): number | null {
@@ -94,9 +93,9 @@ export function calibratedWrittenStanding({
   grades: readonly (CalibratedWritingGrade | null)[];
   part: PartMinimum;
 }) {
-  const level = 1 - PART_ERROR_RATE / (TAILS * grades.length);
-  const low = sumBounds(grades.map((grade) => bound({ grade, level, side: "above" })));
-  const high = sumBounds(grades.map((grade) => bound({ grade, level, side: "below" })));
+  const tailErrorRate = WRITING_PART_ERROR_RATE / (TAILS * grades.length);
+  const low = sumBounds(grades.map((grade) => bound({ grade, side: "above", tailErrorRate })));
+  const high = sumBounds(grades.map((grade) => bound({ grade, side: "below", tailErrorRate })));
 
   if (low === null && high === null) {
     return writtenStanding({ ...part, range: null });
