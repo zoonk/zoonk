@@ -168,6 +168,25 @@ final class PlacementTestRenderTests: XCTestCase {
         failed: false, onNotNow: {}, onStart: { _ in })
     }
 
+    let between = PlacementAttempt(
+      answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
+      nextPart: 2, part: 1, partComplete: true, parts: 3, partsLeft: 2, partsRemoved: 0,
+      questions: 12, resume: nil, totalEstimatedMinutes: 18, remainingEstimatedMinutes: 6)
+    try await capture(
+      "placement-offer-continue", title: "Continue your test", detail: "Part 2 of 3"
+    ) {
+      TestOffer(
+        rows: [
+          TestOfferRow(
+            id: .continue, label: String(localized: TestCopy.continueTest),
+            facts: PlacementTestCopy.standing(between))
+        ],
+        chip: "Test what you know", title: Text(TestCopy.continueTest), preselected: .continue,
+        context: .init(goalID: goalID, test: .course, surface: .plan),
+        notNowLabel: TestCopy.finishLater, isSaving: false, failed: false, onNotNow: {},
+        onStart: { _ in })
+    }
+
     let request = VisitRequest<Bool>()
     let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
     let undo = PlacementResultUndo(

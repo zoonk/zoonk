@@ -8,7 +8,7 @@ import SwiftUI
 struct PageHeader<Trailing: View>: View {
   let title: Text
   var chip: Chip?
-  /// Where the learner is, at the chip's row's end: a test's time.
+  /// Where the learner is, on its own line under the chip: a test's time.
   var position: Text?
   /// A step keeps its chip's room without one, so every step's title sits at one height.
   var keepsChipRoom = false
