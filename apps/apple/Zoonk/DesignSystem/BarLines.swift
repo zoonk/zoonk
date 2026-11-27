@@ -56,18 +56,22 @@ struct BarLinesLayout: Layout {
     let heights = lineHeights(lines, subviews)
     var y = bounds.minY
 
-    for (line, height) in zip(lines, heights) {
+    for (placed, height) in zip(lines, heights) {
+      var line = placed
+
+      // On a wide bar the way back keeps the bar's start, away from the actions at its end.
+      if isWide, line.count > 1, let back = line.first,
+        subviews[back.0].containerValues.isBarWayBack
+      {
+        place(
+          subviews[back.0], x: Self.onGrid(bounds.minX, scale: scale), y: y + height / 2, back.1)
+        line.removeFirst()
+      }
+
       let used = line.reduce(0) { $0 + $1.1 } + spacing * CGFloat(line.count - 1)
       var x = Self.onGrid(isWide ? bounds.maxX - used : bounds.minX, scale: scale)
 
-      for (position, (index, width)) in line.enumerated() {
-        // On a wide bar the way back keeps the bar's start, away from the actions at its end.
-        if isWide, position == 0, line.count > 1, subviews[index].containerValues.isBarWayBack {
-          place(
-            subviews[index], x: Self.onGrid(bounds.minX, scale: scale), y: y + height / 2, width)
-          continue
-        }
-
+      for (index, width) in line {
         place(subviews[index], x: x, y: y + height / 2, width)
         x += width + spacing
       }
