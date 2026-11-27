@@ -270,9 +270,8 @@
   "plan_finished_title": "683e031a676874792ce1fbb61516c3e562c70c623a43cebc52d3b45c5ab4c0c4",
   "plan_fit_time_left": "29c79b9f8e09eaec251531dee5c2cdabecafeb33b34657c99186184ffacc4415",
   "plan_focus_already_in": "d83f5e01cb119dfd4d88f14e75e3f813c6c5060fdfb9599d2a31022e8c71f608",
-  "plan_focus_cant_move": "ab3f510505ebfda02965a04a5c6595491d6f08a691eaf54bd1809fcaec5f716a",
+  "plan_focus_cant_move": "753b2fdab987884e9bdf0f8c7f38289860f8b2d12322446bcb156c943991b60b",
   "plan_focus_includes": "75fadde81d0b4240b92fbffedcb506de212f39ecf7e96e026bfed5812eb0aea3",
-  "plan_focus_on_these": "42b4ed2739886017c797421da262e537f3626fd49ee2acde7c8cbe4967ece08d",
   "plan_focus_only": "021973b613c87e47147675868a8b71c7e9d5ac259745cefa58c40eaf33ddbb70",
   "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
   "plan_full_course": "3aeb35c1aaff06d5659736c71cc09e08b4ce82dc96316ff41e006c7c5c0ffcb5",
@@ -501,7 +500,7 @@
   "plan_what_you_practice": "b48053cf02e54c10370cf9e9325e7f850ec39b499e5c5b7079345ca85219a528",
   "plan_when_to_practice_writing": "2af7b1ecb42b3083a5e9b03a4ea000bf75c0dc581f3ddcb304be5bd733aa8f7b",
   "plan_where_to_focus": "644f9f3b38103f6ed871e2c1a78d36a556c169120b7bc6aafd41090b3a90f86b",
-  "plan_where_to_focus_description": "1f031aef9a4eabbe2c47433e16629e40c3f4dbeafb094f8675d5af420fd16d2e",
+  "plan_where_to_focus_description": "10a72bb1e9303b0f00bca9cc653c865d2906f9b6b1b34435e5d4b703bf8ab806",
   "plan_why_phase_dates_later": "6812f1dc23b34cc3f7142eadeb26fbb475f833c8999fd9d50c3108b413c87991",
   "plan_why_phase_end_later": "c89d5afd200e585cb8daee1092de648d7d22123225860b90e55f99b0cd32f16f",
   "plan_why_phase_end_off_rest": "d1b7c316bc2e2b587f32107546bc4b3740b0d3759cf6f76dcab4a47915a1d7e4",
@@ -1130,14 +1129,12 @@
     <string name="plan_choose_focus">Schwerpunkte wählen</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Dein Schwerpunkt</string>
-    <string name="plan_where_to_focus_description">Die Themen, die du auswählst, kommen zuerst und werden vertieft.</string>
+    <string name="plan_where_to_focus_description">Für die ausgewählten Fächer sieht dein Plan mehr Lernzeit vor.</string>
     <string name="plan_choose_focus_yourself">Oder wähle sie selbst aus</string>
     <string name="plan_focus_includes">Enthält %1$s</string>
     <string name="plan_focus_only">Nur %1$s</string>
     <string name="plan_focus_already_in">Nichts geändert. Alle Lektionen zu %1$s sind bereits in deinem Plan.</string>
-    <string name="plan_focus_cant_move">Nichts geändert: %1$s beginnen bereits so früh, wie es die nötigen Grundlagen erlauben. In deiner verfügbaren Zeit ist kein Platz für weitere Lektionen dazu. Mit mehr Zeit pro Tag passen mehr hinein.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">Darauf konzentrieren</string>
+    <string name="plan_focus_cant_move">Nichts geändert. Damit mehr zu %1$s in deinen Plan passt, lerne täglich länger.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">Schwerpunkt entfernen</string>
     <string name="plan_couldnt_check_changes">Wir konnten nicht prüfen, was sich ändert.</string>

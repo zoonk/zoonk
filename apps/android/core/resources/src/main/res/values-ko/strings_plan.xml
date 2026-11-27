@@ -270,9 +270,8 @@
   "plan_finished_title": "39c164fa1470f204865d448b351438e65d30b18f21feadbe8c316be5ffa493a6",
   "plan_fit_time_left": "d61814d06d5ef7faf52d2b030ed2910d9c49240769e68d134b2a91b19850856e",
   "plan_focus_already_in": "d167a5502b0e5d4f3b9f6a6658b1904b82ce7e4ad5da37562bc6a3f4b85fe587",
-  "plan_focus_cant_move": "70fa40056f1758b4847b3b195693bf4dc66b01c7178abe50fa15ef4b6e111e1d",
+  "plan_focus_cant_move": "e0816ec249b51972276386281320f24326811e448b5643ec918a1fcff7816bc6",
   "plan_focus_includes": "0f6abf754838dc8a7a41be5ca8e79c7353af4c8532339640ec4d9d9dfd217b57",
-  "plan_focus_on_these": "5a8d31d149b227f0543fe11aaa3d4d3391bd0432b721f0054442f7e9bdb274a6",
   "plan_focus_only": "80abbba76eb392d599f81283cca6d15a36c739e87e7b9e8be5ca5c91a98bb8a8",
   "plan_fridays": "e3bc455ed02d257b3456cb9258d30e5198c827495069c11bd916e7521702f21f",
   "plan_full_course": "07d9f9670334a535868a19cd1170f8c7a86232758359f827b792c939a0055274",
@@ -501,7 +500,7 @@
   "plan_what_you_practice": "5046589509720517cc427b6da26d5adf77cf6c65620549e72c3252eb6ce1a9f1",
   "plan_when_to_practice_writing": "91ded6171426b7469c444b3a83197a69b0fea8643796346843027051f9561c03",
   "plan_where_to_focus": "8f1168f2a4b5bafec66e2c5acee9d4f2d93d47aa2cd8ffb502f90d50774d5d09",
-  "plan_where_to_focus_description": "47cebf3c7540e9481e0047be3cb8215ba2b677804227dd73f9cf8158996d29ed",
+  "plan_where_to_focus_description": "626c19da7b64e5d35820c87a26fe6ea21f7e06e6369496b0f03de84cee356070",
   "plan_why_phase_dates_later": "09624ad55bb08dc4d83735f6dab347c8331579d88bfac6cb2432187121600a81",
   "plan_why_phase_end_later": "ccb81acaa07a6d0fe394789827312220f1a54ea1906b1239c1016835a4931cdf",
   "plan_why_phase_end_off_rest": "f349025f7db0c125e64bf56cb625fc8eabb7d1dd19261d24c11f33e8f4bcebdc",
@@ -1078,14 +1077,12 @@
     <string name="plan_choose_focus">집중할 과목 선택하기</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">집중할 과목 선택</string>
-    <string name="plan_where_to_focus_description">선택한 과목부터 더 깊이 배워요.</string>
+    <string name="plan_where_to_focus_description">선택한 과목에 학습 시간을 더 배정해요.</string>
     <string name="plan_choose_focus_yourself">또는 직접 선택하기</string>
     <string name="plan_focus_includes">%1$s 포함</string>
     <string name="plan_focus_only">%1$s만</string>
     <string name="plan_focus_already_in">변경된 내용이 없어요. %1$s 레슨은 모두 이미 계획에 있어요.</string>
-    <string name="plan_focus_cant_move">바뀐 내용이 없어요. %1$s의 레슨은 사전 지식을 익히는 대로 시작하도록 이미 배치되어 있고, 지금 학습 시간으로는 더 넣을 수 없어요. 하루 학습 시간을 늘리면 더 넣을 수 있어요.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">선택한 과목에 집중하기</string>
+    <string name="plan_focus_cant_move">변경된 내용이 없어요. %1$s를 더 포함하려면 매일 더 오래 공부하세요.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">집중 과목 해제하기</string>
     <string name="plan_couldnt_check_changes">변경 사항을 확인하지 못했어요.</string>

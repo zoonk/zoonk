@@ -135,8 +135,8 @@ internal fun ColumnScope.ChooseFocusBody(
                     AreaChoice(
                         choice = choice,
                         checked = name in chosen,
+                        enabled = !pending,
                         onCheckedChange = { checked ->
-                            if (pending) return@AreaChoice
                             saved = null
                             chosen = if (checked) chosen + name else chosen - name
                         },
@@ -150,7 +150,7 @@ internal fun ColumnScope.ChooseFocusBody(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.toSet() != current.toSet() && !unchanged,
-            ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_focus_on_these)) }
+            ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_save)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
     )
@@ -209,6 +209,7 @@ private fun FocusTestLink(
 private fun AreaChoice(
     choice: FocusChoice,
     checked: Boolean,
+    enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -217,6 +218,7 @@ private fun AreaChoice(
         checked = checked,
         onCheckedChange = onCheckedChange,
         modifier = Modifier.fillMaxWidth().semantics { role = Role.Checkbox },
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         color = if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent,
         border = if (checked) pickedBorder() else BorderStroke(1.dp, colors.outline),
@@ -242,7 +244,7 @@ private fun AreaChoice(
                     )
                 }
             }
-            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk())
+            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk(), enabled = enabled)
         }
     }
 }
