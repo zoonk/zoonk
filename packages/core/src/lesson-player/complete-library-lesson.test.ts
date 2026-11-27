@@ -23,6 +23,7 @@ import { trackServerEvent } from "../analytics/server";
 import { markPlanRevealed } from "../goals/mark-plan-revealed";
 import { readSkillMistakeSignals } from "../learner/read-skill-mistake-signals";
 import { ensureSecondTake } from "../library/second-takes/ensure-second-take";
+import { getSecondTakeIdentityKey } from "../library/second-takes/second-take-identity";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
@@ -213,6 +214,62 @@ describe(completeLibraryLesson, () => {
 
     await expect(signal()).resolves.toMatchObject({
       helpedAt: secondTakeAt,
+      replayedAt,
+      secondTakeAt,
+      stage: "secondTake",
+    });
+  });
+
+  it("never uses a second take's review as a replay of the original lesson", async () => {
+    freezeClock();
+    const first = new Date("2026-11-20T12:00:00Z");
+    vi.setSystemTime(first);
+
+    const { lesson, skill, user } = await setupPlayableLesson({
+      steps: ["explanation", "summary"],
+    });
+
+    await finishStaticLesson(lesson.id);
+
+    const secondTake = await playableLessonFixture({
+      lesson: { identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: skill.id }) },
+      steps: ["explanation", "summary"],
+    });
+
+    await lessonSkillFixture({ lessonId: secondTake.lesson.id, skillId: skill.id });
+
+    const signal = async () => {
+      const signals = await readSkillMistakeSignals({
+        now: new Date(),
+        skillIds: [skill.id],
+        userId: user.id,
+      });
+
+      return signals.get(skill.id);
+    };
+
+    await expect(signal()).resolves.toMatchObject({
+      replayedAt: null,
+      secondTakeAt: null,
+      stage: "none",
+    });
+
+    const secondTakeAt = new Date(first.getTime() + MS_PER_DAY);
+    vi.setSystemTime(secondTakeAt);
+
+    const runId = await startRun(secondTake.lesson.id);
+
+    await expect(complete({ lessonId: secondTake.lesson.id, runId })).resolves.toMatchObject({
+      status: "completed",
+    });
+
+    await expect(
+      prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } }),
+    ).resolves.toMatchObject({ endedAt: secondTakeAt, kind: "review" });
+
+    await expect(signal()).resolves.toMatchObject({
+      helpedAt: secondTakeAt,
+      replayedAt: null,
       secondTakeAt,
       stage: "secondTake",
     });
