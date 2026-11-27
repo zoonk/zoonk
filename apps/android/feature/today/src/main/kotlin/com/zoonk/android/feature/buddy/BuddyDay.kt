@@ -105,18 +105,18 @@ internal fun BuddyTodayLine(
             Icon(painterResource(R.drawable.ic_bolt), null, Modifier.size(icon), tint = MaterialTheme.zoonk.energy)
             Text(
                 stringResource(R.string.buddy_page_energy_named, name),
-                Modifier.padding(start = ENERGY_GAP),
+                Modifier.padding(start = LINE_GAP),
                 color = muted,
                 style = number,
             )
-            Text(energy ?: DASH, Modifier.padding(start = ENERGY_GAP), color = muted, style = number)
+            Text(energy ?: DASH, Modifier.padding(start = LINE_GAP), color = muted, style = number)
         }
         TextButton(onClick = { onOpenChange(true) }, contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING)) {
             if (today != null && today.missions.isNotEmpty()) {
                 val locale = currentLocale()
                 val total = today.missions.size
                 MissionsRing(done, total, Modifier.size(icon), strokeWidth = RING_STROKE)
-                Spacer(Modifier.width(MISSIONS_GAP))
+                Spacer(Modifier.width(LINE_GAP))
                 val count =
                     stringResource(
                         R.string.buddy_page_count,
@@ -269,6 +269,5 @@ private val LINE_ICON = 14.sp
 /** The day's line is a quiet button: its words sit this far inside its box. */
 internal val DAY_LINE_PADDING = 8.dp
 
-/** Main's `gap-1` and `gap-1.5` between the line's mark and words. */
-private val ENERGY_GAP = 4.dp
-private val MISSIONS_GAP = 6.dp
+/** Main's `gap-1.5` between the line's mark, words and value. */
+private val LINE_GAP = 6.dp
