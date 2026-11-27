@@ -88,6 +88,7 @@
   "today_resume": "df7f5f0f92ed913b449eb85c6880f3d62421b6ec39392b250e9ab750e81ac252",
   "today_resume_effect": "92b65f1aeeee8a7e0851e2da1eee18123eea10ef6e9ed139cd0857de835bd545",
   "today_save_failed": "37e499941cee082212c7a0a7fd24899fe044f01af142ced59ddb037506928c86",
+  "today_saved_lessons_line": "6508c4c8a4ddc04340fbdff3486f8581a1780acee812971299bc2c896a7767e3",
   "today_see_changes": "efdaa7d06d4b8bf7ce0f7b6367a89a14e32739d311b66dd7d991909c1f32fafd",
   "today_see_day_challenge": "8f41dbc027aef2eaf209bf24564467cdfb61a8fe176c0d796d24a842befac6ed",
   "today_see_day_mock": "f5b5692724379a747d92e3db1ad0cc7da0c1cb4c529f42df8596c1587ed1d5c1",
@@ -282,6 +283,8 @@
     <string name="today_practice_anytime">Esercitati quando vuoi</string>
     <string name="today_mistakes_notebook">Quaderno degli errori</string>
     <string name="today_mistakes_redo">Rifai le domande che hai sbagliato</string>
+    <!-- The line under Saved lessons in Practice anytime. -->
+    <string name="today_saved_lessons_line">Lezioni da rifare</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Rifai una lezione</string>
     <string name="today_mistakes_return_tomorrow">Gli errori di oggi tornano domani</string>

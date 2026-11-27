@@ -39,6 +39,7 @@ import {
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
 import { NotMadeYet, useShownStop } from "./not-made-yet";
+import { toSavedMapKey } from "./use-mind-map-saves";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -136,17 +137,16 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
 function SavedTab({ hrefs, library }: TabProps) {
   const t = useExtracted();
   const unavailableId = useId();
-  const { chapters, saved } = library.page;
+  const { chapters } = library.page;
+  const { rows } = library.saved;
 
-  const shown = saved.filter((entry) => library.saves.isSaved({ saved: true, target: entry }));
+  const open = rows.filter((entry) => entry.available);
+  const gone = rows.filter((entry) => !entry.available);
 
-  const open = shown.filter((entry) => entry.available);
-  const gone = shown.filter((entry) => !entry.available);
-
-  const remove = (entry: (typeof saved)[number]) =>
+  const toggle = (entry: (typeof rows)[number]) =>
     library.saves.toggle({ saved: true, target: entry });
 
-  if (shown.length === 0) {
+  if (rows.length === 0) {
     return (
       <EmptyTab>{t("Nothing saved yet. Tap the bookmark on a map to keep it here.")}</EmptyTab>
     );
@@ -157,9 +157,9 @@ function SavedTab({ hrefs, library }: TabProps) {
       {open.length > 0 && (
         <ListGroup as="ul" aria-label={t("Saved maps")}>
           {open.map((entry) => (
-            <li key={`${entry.kind}:${entry.targetId}`}>
+            <li key={toSavedMapKey(entry)}>
               <SavedMapRow
-                onRemove={() => remove(entry)}
+                onToggle={() => toggle(entry)}
                 saved={{
                   ...entry,
                   thumbnailUrl:
@@ -167,6 +167,7 @@ function SavedTab({ hrefs, library }: TabProps) {
                       ?.thumbnailUrl ?? null,
                 }}
                 study={hrefs.study}
+                isSaved={library.saves.isSaved({ saved: true, target: entry })}
               />
             </li>
           ))}
@@ -180,8 +181,8 @@ function SavedTab({ hrefs, library }: TabProps) {
           </PageSectionHeader>
           <ListGroup as="ul">
             {gone.map((entry) => (
-              <li key={`${entry.kind}:${entry.targetId}`}>
-                <UnavailableMapRow onRemove={() => remove(entry)} saved={entry} />
+              <li key={toSavedMapKey(entry)}>
+                <UnavailableMapRow onRemove={() => toggle(entry)} saved={entry} />
               </li>
             ))}
           </ListGroup>
@@ -219,13 +220,6 @@ function showTab(tab: MindMapTab) {
   globalThis.history.pushState(null, "", buildMindMapsHref({ page: "", tab }));
 }
 
-/** How many maps a tab's deck holds: a saved map that can no longer open isn't in it. */
-function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): number {
-  return tab === "saved"
-    ? page.saved.filter((entry) => entry.available).length
-    : countTabs(page)[tab];
-}
-
 export function MindMapsScreen({
   actions,
   hrefs,
@@ -254,13 +248,13 @@ export function MindMapsScreen({
   const library = useMindMapsLibrary({ actions, served: mindMaps });
   const { page } = library;
   const current = tab ?? page.firstTab;
-  const counts = countTabs(page);
+  const counts = countTabs(page, library.saved.listed);
 
   const { notMade } = splitChapters(page.chapters);
 
-  const study = countDeck({ page, tab: current }) > 0 && (
-    <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
-  );
+  const deck = current === "saved" ? library.saved.deck : counts[current];
+
+  const study = deck > 0 && <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />;
 
   return (
     <DetailLayout

@@ -14,6 +14,7 @@ function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
     reason: "started",
     replay: false,
     runId: crypto.randomUUID(),
+    saved: false,
     startedAt: new Date().toISOString(),
   };
 }

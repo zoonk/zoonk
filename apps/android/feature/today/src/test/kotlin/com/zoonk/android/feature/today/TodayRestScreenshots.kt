@@ -1,15 +1,19 @@
 package com.zoonk.android.feature.today
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
 import com.zoonk.android.data.AppCache
@@ -144,6 +148,14 @@ class TodayRestScreenshots {
         val suggestion = decodeFixture<SuggestedGoal>("suggested-goal", "title" to "Spanish for travel")
         render("today-suggested-goal-phone") { WelcomeBack(suggestion, viewModel, PaddingValues()) }
     }
+
+    @Test
+    fun practiceAnytime() =
+        render("today-practice-anytime-phone") {
+            Box(Modifier.padding(16.dp)) {
+                TodayPracticeRows(null, null, null, completedLessons = true, savedLessons = true, navigate = {})
+            }
+        }
 
     private fun render(
         name: String,
