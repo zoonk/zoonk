@@ -39,4 +39,13 @@ struct KeptRows<Row: Identifiable> {
 
     return rows
   }
+
+  /// The saves read in their two sections, those that open and those that can't anymore. The kept
+  /// rows join the read first, so each one's newest copy decides its section and none shows in both.
+  func sections(
+    _ read: [Row], available: KeyPath<Row, Bool>, isSaved: (Row) -> Bool
+  ) -> (open: [Row], gone: [Row]) {
+    let shown = rows(read.filter(isSaved))
+    return (shown.filter { $0[keyPath: available] }, shown.filter { !$0[keyPath: available] })
+  }
 }
