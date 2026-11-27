@@ -105,7 +105,8 @@ final class StudyAPITests: XCTestCase {
       token: "token", target: .next(.init(expectedBlockId: "b1", kind: .next, sessionId: "s1")),
       timeZone: "America/Sao_Paulo")
 
-    XCTAssertEqual(opening, .lesson(.init(kind: .lesson, lessonId: "l1", sessionId: "s1")))
+    XCTAssertEqual(
+      opening, .StudyBlockOpeningLesson(.init(kind: .lesson, lessonId: "l1", sessionId: "s1")))
     XCTAssertEqual(transport.sent.value.count, 2, "once more, in a request of its own")
     let target = try XCTUnwrap(transport.sent.value.first?.json["target"] as? NSDictionary)
     XCTAssertEqual(target["kind"] as? String, "next")

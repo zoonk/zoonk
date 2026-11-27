@@ -1,4 +1,5 @@
 import { type Subscription } from "@zoonk/db";
+import { MS_PER_DAY, MS_PER_HOUR } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { acknowledgeGooglePlaySubscription, getGooglePlaySubscription } from "./google-play-api";
 import { GooglePlayError } from "./google-play-error";
@@ -18,8 +19,6 @@ import { StoreSubscriptionChangedError } from "./store-subscription-changed-erro
 
 /** A save that keeps racing other writes gives up after this many reads, for its caller to retry. */
 const MAX_READS = 3;
-const HOUR_MS = 3_600_000;
-const DAY_MS = 86_400_000;
 
 type ReconcileGooglePlaySubscriptionInput = {
   eventId: string | null;
@@ -246,13 +245,13 @@ export function getGooglePlayRenewalCheckAt(subscription: Subscription | null, n
   const { periodEnd } = subscription;
 
   if (!subscription.providerAcknowledged) {
-    return new Date(now.getTime() + HOUR_MS);
+    return new Date(now.getTime() + MS_PER_HOUR);
   }
 
   if (periodEnd > now) {
     return periodEnd;
   }
 
-  const days = Math.floor((now.getTime() - periodEnd.getTime()) / DAY_MS) + 1;
-  return new Date(periodEnd.getTime() + days * DAY_MS);
+  const days = Math.floor((now.getTime() - periodEnd.getTime()) / MS_PER_DAY) + 1;
+  return new Date(periodEnd.getTime() + days * MS_PER_DAY);
 }

@@ -5,6 +5,7 @@ import {
   unnoticedSourceChangeFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { getSession } from "../../users/get-session";
 import {
@@ -12,8 +13,6 @@ import {
   scheduleFreshnessChecks,
   stopFreshnessChecks,
 } from "./freshness-checks";
-
-const HOUR_MS = 3_600_000;
 
 const SWEEP_AT = new Date("1990-06-01T06:00:00.000Z");
 
@@ -25,7 +24,7 @@ function mockSessionWithRole({ role, userId }: { role: "admin" | "user"; userId:
 }
 
 function hoursFromSweep(hours: number): Date {
-  return new Date(SWEEP_AT.getTime() + hours * HOUR_MS);
+  return new Date(SWEEP_AT.getTime() + hours * MS_PER_HOUR);
 }
 
 describe(listDueFreshnessTargets, () => {
@@ -94,7 +93,7 @@ describe(listDueFreshnessTargets, () => {
 describe(scheduleFreshnessChecks, () => {
   it("makes unscheduled exams and sources due at the next sweep and keeps existing schedules", async () => {
     const now = new Date();
-    const scheduled = new Date(now.getTime() + 72 * HOUR_MS);
+    const scheduled = new Date(now.getTime() + 72 * MS_PER_HOUR);
 
     const [exam, source, scheduledSource] = await Promise.all([
       examBlueprintFixture({ nextCheckAt: null }),
@@ -127,7 +126,7 @@ describe(scheduleFreshnessChecks, () => {
 
 describe(stopFreshnessChecks, () => {
   it("clears an exam's or a source's next check, for admins only", async () => {
-    const nextCheckAt = new Date(Date.now() + HOUR_MS);
+    const nextCheckAt = new Date(Date.now() + MS_PER_HOUR);
 
     const [admin, learner, exam, source] = await Promise.all([
       userFixture({ role: "admin" }),

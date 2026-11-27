@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 import sharp from "sharp";
 import { z } from "zod";
+import { MS_PER_SECOND } from "../../packages/utils/src/date.ts";
 import { carryReads } from "./carry.mts";
 import { REFERENCE, captionWords, unwritablePath } from "./device-section.mts";
 import {
@@ -15,10 +16,9 @@ import {
   readManifest,
   registerItems,
 } from "./media.mts";
-import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
+import { readCheckoutBuild, screenSources, sha256File, sha256Text } from "./provenance.mts";
 
 const run = promisify(execFile);
-const MS_PER_SECOND = 1000;
 
 /**
  * The installed app's build as the device can report it: a Debug simulator build carries its
@@ -214,8 +214,7 @@ async function refusal({
       "--format=%ct",
       "HEAD",
       "--",
-      "apps/android",
-      "packages",
+      ...screenSources("android"),
     ])) || (await git(repository, ["log", "-1", "--format=%ct", "HEAD"]));
 
   const since = new Date(Number(changed) * MS_PER_SECOND);

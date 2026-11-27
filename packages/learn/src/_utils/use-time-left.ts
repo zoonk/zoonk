@@ -1,8 +1,7 @@
 "use client";
 
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-
-const MS_PER_SECOND = 1000;
 
 /** Never below 0 (`Infinity` without a deadline); `onTimeUp` runs once per deadline. */
 export function useTimeLeft({

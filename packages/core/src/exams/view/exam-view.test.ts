@@ -2,11 +2,11 @@ import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -338,13 +338,13 @@ describe("exam screen", () => {
         kind: "mock",
         planId: plan.id,
         position: 10,
-        scheduledFor: new Date(SESSION_TODAY.getTime() - 2 * DAY_MS),
+        scheduledFor: new Date(SESSION_TODAY.getTime() - 2 * MS_PER_DAY),
       }),
       checkpointItemFixture({
         kind: "mock",
         planId: plan.id,
         position: 11,
-        scheduledFor: new Date(SESSION_TODAY.getTime() + 5 * DAY_MS),
+        scheduledFor: new Date(SESSION_TODAY.getTime() + 5 * MS_PER_DAY),
       }),
     ]);
 

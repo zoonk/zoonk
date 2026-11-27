@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import "server-only";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
@@ -24,8 +25,6 @@ import { loadSkillAreas } from "./mock-candidates";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting, type OwnedMock } from "./owned-mock";
 import { settleAnytimeMock } from "./settle-anytime-mock";
-
-const MS_PER_MINUTE = 60_000;
 
 async function measureGoalPreparation({
   goalId,

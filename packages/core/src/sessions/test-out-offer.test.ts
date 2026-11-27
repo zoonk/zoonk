@@ -5,10 +5,9 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { findTestOutOffer } from "./_utils/test-out-offer";
-
-const MINUTE_MS = 60_000;
 
 async function setup() {
   const [user, chapter, skill] = await Promise.all([
@@ -53,7 +52,7 @@ async function finish({
     learningEventFixture({
       contentIds: { lessonId: lessons[index]?.id },
       correctAnswers: 4 - wrong,
-      endedAt: new Date(Date.now() - (10 - index) * MINUTE_MS),
+      endedAt: new Date(Date.now() - (10 - index) * MS_PER_MINUTE),
       incorrectAnswers: wrong,
       userId: user.id,
     }),

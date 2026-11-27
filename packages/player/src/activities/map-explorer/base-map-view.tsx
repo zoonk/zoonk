@@ -284,7 +284,7 @@ export function BaseMapView({
         >
           <span
             className={cn(
-              "border-viz-accent flex size-[32px] items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums shadow-md motion-safe:transition-colors",
+              "border-viz-accent in-data-held:bg-viz-accent in-data-held:text-background in-data-held:ring-viz-accent/30 flex size-[32px] items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums shadow-md in-data-held:ring-4 motion-safe:transition-colors",
               pin.isSelected && "bg-viz-accent text-background ring-viz-accent/30 ring-4",
               !pin.isSelected && pin.isVisited && "bg-viz-accent-soft text-viz-accent",
               !pin.isSelected && !pin.isVisited && "bg-background text-viz-accent",

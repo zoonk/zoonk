@@ -32,14 +32,12 @@
   "tutor_description_plan": "1be5c57840c3a731b4809741660651ae9075c94241e550ad37cb70e9cdcacec3",
   "tutor_description_step": "502ff1bc753f914058e34416f48f87c9fea09a4db2a1415720da6a38b685cad7",
   "tutor_description_subject": "3b1d4ef5eebdcacd2f71183fd71555c7480dce2c4267e4997d32bd5163897b52",
-  "tutor_empty_ai": "080cf9328c49bd05df390343e511921801bfd8cb294802b16aae4cf2dfeb5da2",
-  "tutor_empty_title": "0ee73d5a31fb4b57b9345db04a3de8f940a0e7e0a953be936b053dd2cde2c2a2",
+  "tutor_empty_ai": "4782d7e561ecf5c1e153d5b952024ff6303e59923c8b32a1918581ced245c1a3",
   "tutor_error_failed": "5aa6475d4f3df9ba6ab84639d7f12e9e92ae80ae26361c83dba6b09602abf2d7",
   "tutor_error_gone": "2ac0312325802e50d364c2ccdb9b46f31b4cc2476f3fbde57bf1472b57463676",
   "tutor_error_invalid": "6cab6dd1dda35f18437ee2743fee49c73a8f61ab52bbf41c95573f21d953f28f",
   "tutor_error_last_question": "f6c720caa42474d725bfa12c2be6a69611a930d48cc48b5010ca1a1be857c5ac",
   "tutor_error_session": "d35e010b2802321a8490056ee6a85d5e20432c0d26cc999a9e42c2a7019d6026",
-  "tutor_error_slow_down": "ef9fd12050c97e60344364a73a22392e6ad8d01bd8c7f8eac2abfec62e76ab92",
   "tutor_error_subscription": "76fac3d20fbc0bd8157f52dd9fe9ed62b7107aed78e39e6510462e443484805f",
   "tutor_get_answer": "f8f53be312863b2df8c92ee2171f8d24b9529216490ae3863d138b517e36c9d7",
   "tutor_guest_title": "ac6c59f83be624779d88098597b03ce2f4f7d2ddb032af76aa154ef7ef436e78",
@@ -157,9 +155,8 @@
     <string name="tutor_about_subject">この科目について</string>
     <string name="tutor_about_module">このモジュールについて</string>
     <string name="tutor_about_question">この問題について</string>
-    <string name="tutor_empty_title">どんなことをお手伝いしましょうか？</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="tutor_empty_ai">学習の相棒の%1$sはAIです。間違えることもあります。</string>
+    <string name="tutor_empty_ai">%1$sは学習の相棒となるAIです。間違えることもあります。</string>
     <string name="tutor_guest_title">無料アカウントを作成して質問する</string>
     <!-- Loading the written chat with the learner's buddy. Not a speaking call. -->
     <string name="tutor_loading">チャットを読み込んでいます…</string>
@@ -175,7 +172,6 @@
     <string name="tutor_error_subscription">質問するにはサブスクリプションへの登録が必要です</string>
     <string name="tutor_error_gone">このレッスンは利用できなくなりました。</string>
     <string name="tutor_error_invalid">この質問を送信できませんでした。もう一度お試しください。</string>
-    <string name="tutor_error_slow_down">少し時間をおいてから、もう一度質問してください。</string>
     <string name="tutor_error_failed">問題が発生しました。もう一度お試しください。</string>
     <string name="tutor_error_last_question">前の質問を送信できませんでした。もう一度お試しください。</string>
     <string name="tutor_sign_in">ログイン</string>

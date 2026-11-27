@@ -1,6 +1,6 @@
 import { formatCount } from "@/lib/format";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 
-const MS_PER_SECOND = 1000;
 const DURATION_DIGITS = 1;
 
 /** A picture's pixels or a clip's length; nothing when the asset stores neither. */

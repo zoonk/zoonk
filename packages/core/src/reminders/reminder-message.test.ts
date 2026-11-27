@@ -1,8 +1,8 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { getReminderWindow } from "./_utils/reminder-window";
 import { pickReminderMessage } from "./reminder-message";
 
-const MS_PER_DAY = 86_400_000;
 const MONDAY = new Date("2026-10-05T00:00:00Z");
 
 function goal(overrides: Partial<Parameters<typeof pickReminderMessage>[0]["goals"][0]> = {}) {

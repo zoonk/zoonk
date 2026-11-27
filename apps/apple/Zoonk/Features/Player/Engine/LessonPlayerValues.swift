@@ -96,7 +96,8 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
   /// The plan's lessons are used up: a guest signs up, a free learner upgrades, Plus comes back later.
   case limitReached(tier: Tier, period: Period)
   case notFound
-  case slowDown(retryAfterSeconds: Int)
+  /// Over at `until`: the server's wait, counted from when this device received it.
+  case slowDown(until: Date)
 }
 
 struct LessonCompletionSummary: Hashable, Sendable {

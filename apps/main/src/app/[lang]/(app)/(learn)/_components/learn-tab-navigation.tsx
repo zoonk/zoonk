@@ -211,9 +211,10 @@ export function LearnBottomTabs() {
   );
 }
 
+/** The buddy's tab is every conversation's page too, each at its own address under it. */
 export function useIsTabRoot(): boolean {
   const [, first = "", ...rest] = usePathname().split("/");
-  return rest.length === 0 && TAB_ROOTS.has(first);
+  return TAB_ROOTS.has(first) && (rest.length === 0 || first === "buddy");
 }
 
 function TabRootContent({ children }: { children: React.ReactNode }) {

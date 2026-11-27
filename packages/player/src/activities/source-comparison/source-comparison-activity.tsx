@@ -67,7 +67,7 @@ function Passage({
       aria-checked={isChecked}
       aria-disabled={disabled || undefined}
       className={cn(
-        "focus-visible:ring-ring/50 rounded-sm [box-decoration-break:clone] py-0.5 outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
+        "focus-visible:ring-ring/50 data-[held=checked]:bg-selected-tint data-[held=checked]:text-foreground rounded-sm [box-decoration-break:clone] py-0.5 outline-none focus-visible:ring-[3px] data-[held=unchecked]:bg-transparent! motion-safe:transition-colors",
         !disabled && "cursor-pointer",
         PASSAGE_CLASS[state],
       )}

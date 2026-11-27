@@ -1,7 +1,6 @@
 import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type LiveCallScript } from "./live-call-script";
-
-const MS_PER_SECOND = 1000;
 
 /**
  * On this device's clock, from when the server's answer arrived: the time it said was left, so a

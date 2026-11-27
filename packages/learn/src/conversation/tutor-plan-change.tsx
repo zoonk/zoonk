@@ -101,15 +101,14 @@ function ChangeActions({
 
   if (status === "proposed") {
     return (
-      <form className="flex gap-2">
+      <div className="flex gap-2">
         {canApply && (
           <Button
             className="min-w-0 flex-1"
             disabled={isPending}
             focusableWhenDisabled
-            formAction={() => answer("applied")}
+            onClick={() => answer("applied")}
             size="sm"
-            type="submit"
           >
             <span className="truncate">
               {overridesNotice ? t("Use my date") : t("Change my plan")}
@@ -120,32 +119,31 @@ function ChangeActions({
           className="min-w-0"
           disabled={isPending}
           focusableWhenDisabled
-          formAction={() => answer("declined")}
+          onClick={() => answer("declined")}
           size="sm"
-          type="submit"
           variant="outline"
         >
           <span className="truncate">
             {overridesNotice ? t("Keep official date") : t("Not now")}
           </span>
         </Button>
-      </form>
+      </div>
     );
   }
 
   if (status === "applied" && canUndo) {
     return (
-      <form action={() => answer("undone")} className="self-start">
+      <div className="self-start">
         <Button
           busy={isPending}
           icon={<Undo2Icon aria-hidden="true" />}
           size="sm"
-          type="submit"
+          onClick={() => answer("undone")}
           variant="outline"
         >
           {t("Undo")}
         </Button>
-      </form>
+      </div>
     );
   }
 

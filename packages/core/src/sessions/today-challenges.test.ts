@@ -8,6 +8,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { isPhaseChallenge } from "../checkpoints/_utils/challenge-reach";
@@ -16,7 +17,6 @@ import { getChallenge } from "../checkpoints/get-challenge";
 import { getAlphabetIdentityKey } from "../library/language/alphabet/alphabet-identity";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -30,7 +30,7 @@ import { getStoredBlockWait } from "./block-wait";
 import { ensureStudySession } from "./ensure-study-session";
 import { buildSessionBlocks } from "./session-builder";
 
-const YESTERDAY = new Date(SESSION_TODAY.getTime() - DAY_MS);
+const YESTERDAY = new Date(SESSION_TODAY.getTime() - MS_PER_DAY);
 
 async function sizeChallenge({
   id,
@@ -105,7 +105,7 @@ async function lostDuelFixture({
   position: number;
   sessionId: string;
 }) {
-  const endedAt = new Date(SESSION_NOW.getTime() - DAY_MS);
+  const endedAt = new Date(SESSION_NOW.getTime() - MS_PER_DAY);
 
   const duel = await heldChallengeFixture({
     itemIds: asked.map((item) => item.id),
@@ -263,7 +263,7 @@ describe("the Plan and the challenge screen read today from Today", () => {
           minutes: 15,
           phase: 1,
           position: { increment: 2 },
-          scheduledFor: new Date(SESSION_TODAY.getTime() + 2 * DAY_MS),
+          scheduledFor: new Date(SESSION_TODAY.getTime() + 2 * MS_PER_DAY),
         },
         where: { id: { in: planItems.slice(1).map((item) => item.id) } },
       }),
@@ -449,7 +449,7 @@ describe("the Plan and the challenge screen read today from Today", () => {
     });
 
     // Yesterday's real build: the first three lessons and the later challenge fit, the 15-minute one doesn't.
-    const yesterdayNow = new Date(SESSION_NOW.getTime() - DAY_MS);
+    const yesterdayNow = new Date(SESSION_NOW.getTime() - MS_PER_DAY);
     vi.setSystemTime(yesterdayNow);
 
     const yesterdayBlocks = buildSessionBlocks(
@@ -491,7 +491,7 @@ describe("the Plan and the challenge screen read today from Today", () => {
 
   it("promises a challenge that spare time reaches through a lesson planned for a later day", async () => {
     const user = await userFixture();
-    const tomorrow = new Date(SESSION_TODAY.getTime() + DAY_MS);
+    const tomorrow = new Date(SESSION_TODAY.getTime() + MS_PER_DAY);
 
     const { goal, plan, planItems, skills } = await sessionGoalFixture({
       goal: { dailyMinutes: 30 },
@@ -571,7 +571,7 @@ describe("the Plan and the challenge screen read today from Today", () => {
       goal: {
         dailyMinutes: 45,
         kind: "exam",
-        targetDate: new Date(SESSION_TODAY.getTime() + DAY_MS),
+        targetDate: new Date(SESSION_TODAY.getTime() + MS_PER_DAY),
       },
       itemsPerSkill: 10,
       userId: user.id,

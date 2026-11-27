@@ -1,10 +1,10 @@
 import { type Subscription } from "@zoonk/db";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { getNextChangeAt } from "./summary-progress";
 
 const NOW = new Date("2026-03-10T12:00:00.000Z");
-const HOUR_MS = 60 * 60 * 1000;
 
 function appleSubscription({
   periodEnd,
@@ -21,7 +21,7 @@ function appleSubscription({
     endedAt: null,
     id: "subscription",
     periodEnd,
-    periodStart: new Date(periodEnd.getTime() - 30 * 24 * HOUR_MS),
+    periodStart: new Date(periodEnd.getTime() - 30 * 24 * MS_PER_HOUR),
     plan: "plus",
     provider: "apple",
     providerAcknowledged: null,
@@ -59,7 +59,7 @@ function nextChange({
       carriedUntil,
       localDate: getDateInTimeZone({ date: now, timeZone }),
       now,
-      sessionExpiresAt: new Date(now.getTime() + 30 * 24 * HOUR_MS),
+      sessionExpiresAt: new Date(now.getTime() + 30 * 24 * MS_PER_HOUR),
       subscription,
       timeZone,
     }),
@@ -82,7 +82,7 @@ describe(getNextChangeAt, () => {
   });
 
   it("reads again when an App Store period ends before either midnight", () => {
-    const periodEnd = new Date(NOW.getTime() + HOUR_MS);
+    const periodEnd = new Date(NOW.getTime() + MS_PER_HOUR);
 
     expect(nextChange({ subscription: appleSubscription({ periodEnd }), timeZone: "UTC" })).toBe(
       periodEnd.toISOString(),
@@ -91,13 +91,13 @@ describe(getNextChangeAt, () => {
 
   it("never waits for a moment already past", () => {
     const subscription = appleSubscription({
-      periodEnd: new Date(NOW.getTime() + 40 * 24 * HOUR_MS),
-      trialEnd: new Date(NOW.getTime() - HOUR_MS),
+      periodEnd: new Date(NOW.getTime() + 40 * 24 * MS_PER_HOUR),
+      trialEnd: new Date(NOW.getTime() - MS_PER_HOUR),
     });
 
     expect(
       nextChange({
-        carriedUntil: new Date(NOW.getTime() - HOUR_MS),
+        carriedUntil: new Date(NOW.getTime() - MS_PER_HOUR),
         subscription,
         timeZone: "America/Sao_Paulo",
       }),
@@ -105,7 +105,7 @@ describe(getNextChangeAt, () => {
   });
 
   it("reads again at the earliest change, a carried day's end before every midnight", () => {
-    const carriedUntil = new Date(NOW.getTime() + 2 * HOUR_MS);
+    const carriedUntil = new Date(NOW.getTime() + 2 * MS_PER_HOUR);
 
     expect(nextChange({ carriedUntil, timeZone: "America/Sao_Paulo" })).toBe(
       carriedUntil.toISOString(),

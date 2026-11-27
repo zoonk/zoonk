@@ -43,18 +43,16 @@ export function DownloadRow({
 
   return (
     <SettingRow label={label}>
-      <form action={() => download()} className="contents">
-        <Button
-          aria-label={actionLabel}
-          busy={isPending}
-          icon={<DownloadIcon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-          variant="outline"
-        >
-          {t("Download")}
-        </Button>
-      </form>
+      <Button
+        aria-label={actionLabel}
+        busy={isPending}
+        icon={<DownloadIcon aria-hidden="true" />}
+        size="lg"
+        onClick={download}
+        variant="outline"
+      >
+        {t("Download")}
+      </Button>
     </SettingRow>
   );
 }

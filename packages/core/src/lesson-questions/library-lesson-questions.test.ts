@@ -437,14 +437,21 @@ describe("questions about a Library lesson", () => {
     ).resolves.toBe(1);
   });
 
-  it("asks a guest to sign up and a free learner to wait once their allowance is used", async () => {
+  it("asks a guest to sign up and a free learner to wait once their allowance is used, saving nothing", async () => {
     freezeClock();
 
     const guest = await setupPlayableLesson({ guest: true });
-    const guestQuestion = await ask({ context: { kind: "lesson" }, lessonId: guest.lesson.id });
+    const step = stepOfKind(guest.steps, "explanation");
 
     await expect(
-      claimLessonQuestionAnswer({ questionId: guestQuestion.id }),
+      createLessonQuestion({
+        input: {
+          context: { kind: "step", stepId: step.id, stepNumber: 1 },
+          question: "Why a cloud?",
+          requestId: randomUUID(),
+        },
+        target: { kind: "lesson", lessonId: guest.lesson.id },
+      }),
     ).resolves.toMatchObject({
       decision: { limit: { resource: "tutorMessage", tier: "guest" }, status: "limitReached" },
       status: "usageRefused",
@@ -452,16 +459,85 @@ describe("questions about a Library lesson", () => {
 
     const learner = await setupPlayableLesson();
     await usageRecordsFixture({ count: 10, kind: "tutorMessage", userId: learner.user.id });
-    const question = await ask({ context: { kind: "lesson" }, lessonId: learner.lesson.id });
 
-    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toMatchObject({
+    await expect(
+      createLessonQuestion({
+        input: { context: { kind: "lesson" }, question: "Why a cloud?", requestId: randomUUID() },
+        target: { kind: "lesson", lessonId: learner.lesson.id },
+      }),
+    ).resolves.toMatchObject({
       decision: { limit: { period: "day", resource: "tutorMessage" }, status: "limitReached" },
       status: "usageRefused",
     });
 
+    const userIds = [guest.user.id, learner.user.id];
+
     await expect(
-      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
-    ).resolves.toMatchObject({ status: "failed" });
+      Promise.all([
+        prisma.lessonQuestion.count({ where: { thread: { userId: { in: userIds } } } }),
+        prisma.lessonQuestionThread.count({ where: { userId: { in: userIds } } }),
+        prisma.usageRecord.count({ where: { kind: "tutorMessage", userId: guest.user.id } }),
+      ]),
+    ).resolves.toStrictEqual([0, 0, 0]);
+  });
+
+  it("counts an asked question once, when it's asked, so its answer replays the claim", async () => {
+    const { lesson, user } = await setupPlayableLesson();
+    const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
+
+    await expect(
+      prisma.usageRecord.findMany({ where: { kind: "tutorMessage", userId: user.id } }),
+    ).resolves.toMatchObject([{ targetId: question.id }]);
+
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    await expect(
+      prisma.usageRecord.findMany({ where: { kind: "tutorMessage", userId: user.id } }),
+    ).resolves.toMatchObject([{ targetId: question.id }]);
+  });
+
+  it("admits only one of two questions asked at once with one message left", async () => {
+    freezeClock();
+
+    const { lesson, steps, user } = await setupPlayableLesson();
+    await usageRecordsFixture({ count: 9, kind: "tutorMessage", userId: user.id });
+
+    const outcomes = await Promise.all(
+      [stepOfKind(steps, "explanation"), stepOfKind(steps, "check")].map((step) =>
+        createLessonQuestion({
+          input: {
+            context: { kind: "step", stepId: step.id, stepNumber: 1 },
+            question: "Why a cloud?",
+            requestId: randomUUID(),
+          },
+          target: { kind: "lesson", lessonId: lesson.id },
+        }),
+      ),
+    );
+
+    expect(outcomes.map((outcome) => outcome.status).toSorted()).toStrictEqual([
+      "created",
+      "usageRefused",
+    ]);
+
+    await expect(
+      prisma.lessonQuestion.count({ where: { thread: { userId: user.id } } }),
+    ).resolves.toBe(1);
+  });
+
+  it("answers a question asked before the limit filled, even once the day's allowance is used", async () => {
+    freezeClock();
+
+    const { lesson, user } = await setupPlayableLesson();
+    await usageRecordsFixture({ count: 9, kind: "tutorMessage", userId: user.id });
+
+    const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
+
+    await expect(claimLessonQuestionAnswer({ questionId: question.id })).resolves.toMatchObject({
+      status: "ready",
+    });
   });
 
   it("releases the claimed answer when the allowance check fails, so a retry can claim it", async () => {

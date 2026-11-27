@@ -1,22 +1,14 @@
 import "server-only";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { type Skill, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { ITEM_WRITING_SKILL_SELECT, type ItemWritingSkill } from "./item-writing-skill";
 import { loadUsedSituations } from "./used-situations";
 
 export const FIELD_ITEMS_PER_SKILL = 4;
 
 const MAX_FIELD_SKILLS = 8;
 
-type FieldItemSkill = {
-  country: string | null;
-  description: string;
-  example: string | null;
-  id: string;
-  language: string;
-  level: CourseLevel | null;
-  name: string;
-  ownerId: string | null;
-};
+type FieldItemSkill = Omit<ItemWritingSkill, "targetLanguage"> & Pick<Skill, "example">;
 
 export type FieldItemTarget = { field: string; skill: FieldItemSkill; usedSituations: string[] };
 
@@ -31,17 +23,7 @@ async function findSkillsWithoutFieldItems({
 
   const [skills, fieldItemCounts] = await Promise.all([
     prisma.skill.findMany({
-      select: {
-        country: true,
-        description: true,
-        example: true,
-        id: true,
-        language: true,
-        level: true,
-        name: true,
-        ownerId: true,
-        targetLanguage: true,
-      },
+      select: { ...ITEM_WRITING_SKILL_SELECT, example: true },
       where: { id: { in: uniqueSkillIds }, mergedIntoId: null },
     }),
     prisma.item.groupBy({

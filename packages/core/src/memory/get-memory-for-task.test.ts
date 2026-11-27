@@ -3,10 +3,9 @@ import { type MemoryCategory, prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getMemoryForTask } from "./get-memory-for-task";
-
-const MINUTE_MS = 60_000;
 
 async function learnerWithFacts(facts: { category: MemoryCategory; statement: string }[]) {
   const user = await userFixture();
@@ -15,7 +14,7 @@ async function learnerWithFacts(facts: { category: MemoryCategory; statement: st
     facts.map((fact, index) =>
       memoryFactFixture({
         ...fact,
-        createdAt: new Date(Date.now() - (facts.length - index) * MINUTE_MS),
+        createdAt: new Date(Date.now() - (facts.length - index) * MS_PER_MINUTE),
         userId: user.id,
       }),
     ),

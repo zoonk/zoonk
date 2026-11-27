@@ -26,26 +26,42 @@ jobs:
     name: vitest (${{ matrix.clock && format('{0} at {1} UTC', matrix.part, matrix.clock) || matrix.part }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy; more
-    # at once only slowed every test down. The API's workflow runs mostly wait on durable retries and
-    # sleeps, so they get a runner of their own.
+    # Runners of about the same length, each well under six minutes. Each has 4 vCPUs, which two
+    # suites at once keep busy; more at once only slowed every test down. The API's workflow runs
+    # mostly wait on durable retries and sleeps, so they get a runner of their own.
     strategy:
       fail-fast: false
       matrix:
         clock: ${{ fromJSON(github.event_name == 'pull_request' && '["", "Wednesday 01:30", "Sunday 16:00"]' || '[""]') }}
-        part: [core and api 1 of 2, core and api 2 of 2]
+        part: [core and api 1 of 4, core and api 2 of 4, core and api 3 of 4, core and api 4 of 4]
         include:
-          - part: core and api 1 of 2
+          - part: core and api 1 of 4
             task: test
             filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=1/4"
+          - part: core and api 2 of 4
+            task: test
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=2/4"
+          - part: core and api 3 of 4
+            task: test
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=3/4"
+          - part: core and api 4 of 4
+            task: test
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=4/4"
+          - part: player 1 of 2
+            task: test
+            filter: "--filter=@zoonk/player"
             args: "-- --shard=1/2"
-          - part: core and api 2 of 2
+          - part: player 2 of 2
             task: test
-            filter: "--filter=@zoonk/core --filter=api"
+            filter: "--filter=@zoonk/player"
             args: "-- --shard=2/2"
-          - part: player and the rest
+          - part: the rest
             task: test
-            filter: "--filter=!@zoonk/core --filter=!api"
+            filter: "--filter=!@zoonk/core --filter=!api --filter=!@zoonk/player"
             args: ""
           - part: api workflows
             task: test:workflow

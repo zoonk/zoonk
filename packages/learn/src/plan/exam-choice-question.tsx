@@ -49,7 +49,7 @@ export function ExamChoiceAnswers({
         <SuggestionChoices>
           {choice.options.map((option) => (
             <SuggestionAction
-              action={() => onPick({ group: choice.group, subjects: [option.name] })}
+              onClick={() => onPick({ group: choice.group, subjects: [option.name] })}
               disabled={pending}
               key={option.name}
               variant="outline"

@@ -25,15 +25,17 @@ struct ConversationResultView: View {
         header(result)
 
         switch result.feedback {
-        case .call(let feedback):
+        case .LanguageCallFeedback(let feedback):
           CallFeedbackSections(conversation: conversation, feedback: feedback)
-        case .examSpeaking(let feedback):
+        case .ExamSpeakingFeedback(let feedback):
           if let task = conversation.speakingTask {
             ExamSpeakingSections(
               task: task, feedback: feedback, language: conversation.targetLanguage)
           }
-        case .speakingMock(let feedback):
+        case .LanguageSpeakingMockFeedback(let feedback):
           SpeakingMockSections(feedback: feedback)
+        case .case4:
+          EmptyView()
         case nil:
           if conversation.kind == .speakingMock {
             SpeakingMockSections(feedback: nil)

@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "./claim-usage";
@@ -14,7 +15,6 @@ import {
 
 const NOW = new Date("2026-09-15T12:00:00Z");
 const EARLIER_THIS_MONTH = new Date("2026-09-03T09:00:00Z");
-const MINUTE_MS = 60_000;
 
 async function useLearner({ plus = false }: { plus?: boolean } = {}) {
   const user = await userFixture();
@@ -125,7 +125,7 @@ describe(claimUsage, () => {
 
   it("gives Plus unlimited lessons but spaces them out above 200 a day", async () => {
     const user = await useLearner({ plus: true });
-    const lastStart = new Date(NOW.getTime() - MINUTE_MS);
+    const lastStart = new Date(NOW.getTime() - MS_PER_MINUTE);
 
     await usageRecordsFixture({ count: 200, createdAt: lastStart, userId: user.id });
 
@@ -134,7 +134,7 @@ describe(claimUsage, () => {
       status: "slowDown",
     });
 
-    vi.setSystemTime(new Date(NOW.getTime() + 4 * MINUTE_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + 4 * MS_PER_MINUTE));
 
     await expect(startLesson()).resolves.toStrictEqual({ status: "allowed" });
   });
@@ -155,7 +155,7 @@ describe(claimUsage, () => {
       userId: user.id,
     });
 
-    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MS_PER_MINUTE));
 
     await expect(makeMindMap()).resolves.toStrictEqual({
       limit: {
@@ -206,7 +206,7 @@ describe(claimUsage, () => {
       status: "limitReached",
     });
 
-    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MS_PER_MINUTE));
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
@@ -228,7 +228,7 @@ describe(claimUsage, () => {
       claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
     ).resolves.toStrictEqual({ status: "allowed" });
 
-    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MS_PER_MINUTE));
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
@@ -330,7 +330,7 @@ describe(claimUsage, () => {
 
   it("keeps fair use for Plus's small AI help and quick explanations, spacing them out instead of blocking", async () => {
     const user = await useLearner({ plus: true });
-    const lastUse = new Date(NOW.getTime() - MINUTE_MS);
+    const lastUse = new Date(NOW.getTime() - MS_PER_MINUTE);
 
     await Promise.all([
       usageRecordsFixture({ count: 1000, createdAt: lastUse, kind: "assist", userId: user.id }),

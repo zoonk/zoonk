@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { finishMock } from "./finish-mock";
@@ -9,7 +10,6 @@ import { saveMockAnswer } from "./save-mock-answer";
 import { submitMockSection } from "./submit-mock-section";
 
 const NOW = new Date("2026-10-13T12:00:00.000Z");
-const MINUTE_MS = 60_000;
 
 async function textSitting(format: "typed" | "essay") {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
@@ -107,7 +107,7 @@ describe("cleared text in an abandoned mock", () => {
 
       expect(draft.answer).toStrictEqual({ text });
 
-      vi.setSystemTime(new Date(NOW.getTime() + 12 * MINUTE_MS));
+      vi.setSystemTime(new Date(NOW.getTime() + 12 * MS_PER_MINUTE));
       await expect(getMock(mock.id)).resolves.toMatchObject({ mock: { status: "expired" } });
 
       await expect(
@@ -132,7 +132,7 @@ describe("cleared text in an abandoned mock", () => {
     async (format) => {
       const { mock, save } = await textSitting(format);
       await expect(save("  A real answer.  ")).resolves.toStrictEqual({ status: "saved" });
-      vi.setSystemTime(new Date(NOW.getTime() + 12 * MINUTE_MS));
+      vi.setSystemTime(new Date(NOW.getTime() + 12 * MS_PER_MINUTE));
       await expect(getMock(mock.id)).resolves.toMatchObject({ mock: { status: "running" } });
     },
   );

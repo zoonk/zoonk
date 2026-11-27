@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getPlanTabView } from "../../view-models/plan/get-plan-view";
 import { loadPaceSamples } from "../_utils/pace-samples";
@@ -13,8 +14,6 @@ import { createSetUpGoalPlan } from "./set-up-plan";
 
 /** A Tuesday in 2020, before the learning events other tests write, which estimates read. */
 export const AHEAD_START = new Date("2020-09-29T12:00:00Z");
-
-const DAY_MS = 86_400_000;
 
 const PHASES = 4;
 const SKILLS_PER_PHASE = 3;
@@ -91,7 +90,7 @@ export async function aheadPlanFixture({
     details: { placementDeclined: true },
     kind: "learn",
     settings: { startDate: "2020-09-29" },
-    targetDate: new Date(Date.parse("2020-09-29T00:00:00Z") + days * DAY_MS),
+    targetDate: new Date(Date.parse("2020-09-29T00:00:00Z") + days * MS_PER_DAY),
     timezone: "UTC",
     userId: user.id,
   });

@@ -809,21 +809,16 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "サイドバーを展開する"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "相棒"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
 msgstr "相棒が質問に答え、学習計画を調整します。"
-
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
-msgctxt "BV0cQk"
-msgid "Your day"
-msgstr "今日の学習"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"

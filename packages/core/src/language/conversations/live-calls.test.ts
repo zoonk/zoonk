@@ -9,6 +9,7 @@ import {
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -33,7 +34,6 @@ import { endLiveCall } from "./end-live-call";
 import { redeemLiveCallSdp } from "./redeem-live-call-sdp";
 import { startLanguageConversation } from "./start-language-conversation";
 
-const SECOND_MS = 1000;
 const TWO_MINUTES = 120;
 const WRAP_UP = LIVE_CALL_WRAP_UP_SECONDS;
 const DAY_SECONDS = 24 * 60 * 60;
@@ -41,7 +41,7 @@ const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
 const UNCONFIRMED_CLEANUP_SECONDS = 30;
 
 function advance(seconds: number) {
-  vi.setSystemTime(new Date(Date.now() + seconds * SECOND_MS));
+  vi.setSystemTime(new Date(Date.now() + seconds * MS_PER_SECOND));
 }
 
 async function learner(options: Parameters<typeof liveCallFixture>[0] = {}) {
@@ -208,7 +208,7 @@ describe("live calls", () => {
     expect(row.heldSeconds).toBe(TWO_MINUTES);
 
     expect(row.deadlineAt.getTime() - row.createdAt.getTime()).toBe(
-      (TWO_MINUTES + WRAP_UP) * SECOND_MS,
+      (TWO_MINUTES + WRAP_UP) * MS_PER_SECOND,
     );
 
     await expect(
@@ -925,7 +925,10 @@ describe("live calls", () => {
     advance(300);
 
     const { startedAt } = await connection(setup.connectionId);
-    const clock = getLiveCallCostMicros(Math.ceil((Date.now() - Number(startedAt)) / SECOND_MS));
+
+    const clock = getLiveCallCostMicros(
+      Math.ceil((Date.now() - Number(startedAt)) / MS_PER_SECOND),
+    );
 
     expect(clock).toBeGreaterThan(getLiveCallReservationMicros(TWO_MINUTES));
 

@@ -1,13 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-
-const DAY_MS = 86_400_000;
 
 const SKILL_SIZE = 30;
 const WRITTEN = 3;
@@ -26,7 +25,7 @@ describe("a topic whose lessons aren't written yet", () => {
 
     const { goal, plan } = await unplannedGoalFixture({
       dailyMinutes: 5,
-      targetDate: new Date(Date.now() + 60 * DAY_MS),
+      targetDate: new Date(Date.now() + 60 * MS_PER_DAY),
       timezone: "UTC",
       userId: user.id,
     });

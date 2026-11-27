@@ -1,6 +1,7 @@
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { secureUrl } from "./api-origin.ts";
 import { type StoredLogin, isPlainToken } from "./credentials.ts";
-import { type HttpResult, RequestError, isRecord, postForm, unexpectedResponse } from "./http.ts";
+import { type HttpResult, RequestError, postForm, unexpectedResponse } from "./http.ts";
 
 const CLIENT_ID = "zoonk-cli";
 const SCOPE = "staff:read staff:propose offline_access";
@@ -43,12 +44,12 @@ type RefreshResult = TokenResult | "unconfirmed";
 const FIRST_SERVER_ERROR = 500;
 
 function oauthError(result: HttpResult): string | null {
-  const error = isRecord(result.body) ? result.body.error : null;
+  const error = isJsonObject(result.body) ? result.body.error : null;
   return typeof error === "string" && OAUTH_ERROR_PATTERN.test(error) ? error : null;
 }
 
 function isAlreadyRevoked(result: HttpResult): boolean {
-  const body = isRecord(result.body) ? result.body : {};
+  const body = isJsonObject(result.body) ? result.body : {};
 
   return (
     body.error === "invalid_request" &&
@@ -59,7 +60,7 @@ function isAlreadyRevoked(result: HttpResult): boolean {
 
 function parseLogin(body: unknown): StoredLogin | null {
   if (
-    !isRecord(body) ||
+    !isJsonObject(body) ||
     !isPlainToken(body.access_token) ||
     !isPlainToken(body.refresh_token) ||
     typeof body.expires_in !== "number"
@@ -90,7 +91,7 @@ export async function requestDeviceCode(
     scope: writingRepair ? `${SCOPE} staff:repair-writing` : SCOPE,
   });
 
-  const body = isRecord(result.body) ? result.body : {};
+  const body = isJsonObject(result.body) ? result.body : {};
   const verificationUri = secureUrl(body.verification_uri);
   const verificationUriComplete = secureUrl(body.verification_uri_complete);
 

@@ -302,6 +302,7 @@ extension APIClientFactory {
       case .pending, .running: return .working
       case .completed: return .completed
       case .failed, .cancelled: return .stopped
+      case .unrecognized: throw APIError.unavailable
       }
     case .notFound:
       throw APIError.notFound

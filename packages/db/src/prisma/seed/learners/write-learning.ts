@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { atLocalHour, localTimeFields, minutesBefore } from "../_utils/dates";
 import { localizeObject } from "../_utils/localize";
 import { seedId } from "../_utils/seed-id";
@@ -5,8 +6,6 @@ import { answeredStepId } from "./answered-step";
 import { toLearnerSkillMemory } from "./memory-presets";
 import { type SeedAttempt } from "./types";
 import { type LearnerScope } from "./write-goal";
-
-const MS_PER_SECOND = 1000;
 
 function studyHour(scope: Pick<LearnerScope, "learner">): number {
   return Number(scope.learner.goal.studyTime.split(":")[0]);

@@ -3,11 +3,11 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { loadAnswerPerItem } from "./answer-per-item";
 
 const ANSWERS_PER_ITEM = 6;
-const MINUTE = 60_000;
 
 describe(loadAnswerPerItem, () => {
   it.each(["first", "last"] as const)(
@@ -20,13 +20,13 @@ describe(loadAnswerPerItem, () => {
         itemFixture({ skillId: skill.id }),
       ]);
 
-      const start = Date.now() - ANSWERS_PER_ITEM * MINUTE;
+      const start = Date.now() - ANSWERS_PER_ITEM * MS_PER_MINUTE;
 
       await Promise.all(
         items.flatMap((item) =>
           Array.from({ length: ANSWERS_PER_ITEM }, (_, index) =>
             attemptFixture({
-              answeredAt: new Date(start + index * MINUTE),
+              answeredAt: new Date(start + index * MS_PER_MINUTE),
               isCorrect: index === 0,
               itemId: item.id,
               skillId: skill.id,

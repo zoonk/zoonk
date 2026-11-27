@@ -75,6 +75,10 @@ export function getMemoryCacheTag(userId: string): string {
   return `memory:${userId}`;
 }
 
+export function getBuddyConversationsCacheTag(userId: string, goalId: string): string {
+  return `buddy-conversations:${userId}:${goalId}`;
+}
+
 export function getGoalsCacheTag(userId: string): string {
   return `goals:${userId}`;
 }

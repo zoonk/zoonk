@@ -6,11 +6,9 @@ extension ActivityRenderer {
     badge: .by { content in
       (try? content.fields(as: KeyboardFretboardFields.self))?.isByEar == true
         ? .earTraining : nil
-    }, grade: KeyboardFretboard.grade
-  ) { context in
-    if let fields = try? context.fields(as: KeyboardFretboardFields.self) {
-      KeyboardFretboardCanvas(fields: fields, context: context)
-    }
+    }, grade: KeyboardFretboard.grade, canAnswer: \.hasPlayableInstrument
+  ) { context, fields in
+    KeyboardFretboardCanvas(fields: fields, context: context)
   }
 }
 

@@ -27,6 +27,7 @@ function PreviewLink({
       aria-keyshortcuts={keyShortcuts}
       className={className}
       href={href}
+      // oxlint-disable-next-line zoonk/held-press-control -- The client-rendered preview keeps link semantics while suppressing navigation.
       onClick={(event) => {
         onClick?.(event);
         event.preventDefault();

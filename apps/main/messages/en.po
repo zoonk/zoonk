@@ -809,21 +809,16 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "Your buddy"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
 msgstr "Your buddy answers your questions and adjusts your plan."
-
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
-msgctxt "BV0cQk"
-msgid "Your day"
-msgstr "Your day"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"

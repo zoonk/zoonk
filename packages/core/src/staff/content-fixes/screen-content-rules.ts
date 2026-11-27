@@ -1,4 +1,5 @@
 import { type StepKind } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { isAnswerableStep } from "../../lesson-player/lesson-run";
 import { isExerciseKind } from "../../player/contracts/exercise-content";
 
@@ -86,10 +87,6 @@ export type ScreenContentVerdict =
 
 type Diff = { changed: Path[] } | { problem: string };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function describePath(path: Path): string {
   return path.length === 0 ? "the content" : path.join(".");
 }
@@ -157,7 +154,7 @@ function diffValues(before: unknown, after: unknown, path: Path): Diff {
     return diffArrays({ after, before, path });
   }
 
-  if (isRecord(before) && isRecord(after)) {
+  if (isJsonObject(before) && isJsonObject(after)) {
     return diffRecords({ after, before, path });
   }
 
@@ -205,7 +202,7 @@ function classify({
 function isAnswered({ content, kind }: { content: unknown; kind: StepKind }): boolean {
   return (
     isAnswerableStep({ kind }) ||
-    (kind === "hook" && isRecord(content) && content.variant === "guess")
+    (kind === "hook" && isJsonObject(content) && content.variant === "guess")
   );
 }
 
@@ -297,12 +294,12 @@ function valueAt(value: unknown, path: Path): unknown {
       return current[Number(segment)];
     }
 
-    return isRecord(current) ? current[segment] : undefined;
+    return isJsonObject(current) ? current[segment] : undefined;
   }, value);
 }
 
 function isNested(value: unknown): boolean {
-  return Array.isArray(value) || isRecord(value);
+  return Array.isArray(value) || isJsonObject(value);
 }
 
 function childKeys(before: unknown, after: unknown): Path {
@@ -315,7 +312,7 @@ function childKeys(before: unknown, after: unknown): Path {
     return Array.from({ length }, (_, index) => index);
   }
 
-  const keys = [before, after].flatMap((value) => (isRecord(value) ? Object.keys(value) : []));
+  const keys = [before, after].flatMap((value) => (isJsonObject(value) ? Object.keys(value) : []));
   return [...new Set(keys)].toSorted();
 }
 

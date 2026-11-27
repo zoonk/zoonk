@@ -83,7 +83,7 @@ async function proposeFocusInAnswer({ areas, goalId }: { areas: string[]; goalId
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   const questionId = created.status === "created" ? created.question.id : "";

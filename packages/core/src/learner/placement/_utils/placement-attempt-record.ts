@@ -1,3 +1,4 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -79,7 +80,6 @@ export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemp
   return { estimatedMinutes, id, length, part, partComplete };
 }
 
-const MINUTE_MS = 60_000;
 const PART_MINUTES = 10;
 
 const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
@@ -87,12 +87,12 @@ export const TOPICS_PER_PART = PART_MINUTES;
 
 export function getWholeCourseMinutes({
   questions,
-  paceMs = MINUTE_MS / QUESTIONS_PER_TOPIC,
+  paceMs = MS_PER_MINUTE / QUESTIONS_PER_TOPIC,
 }: {
   questions: number;
   paceMs?: number;
 }) {
-  return Math.ceil((questions * paceMs) / MINUTE_MS);
+  return Math.ceil((questions * paceMs) / MS_PER_MINUTE);
 }
 
 export function getPlacementEstimate({

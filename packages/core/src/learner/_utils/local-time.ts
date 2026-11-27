@@ -1,15 +1,11 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND } from "@zoonk/utils/date";
 import { getDateInTimeZone, getHourInTimeZone, getTimeZoneOffsetMs } from "@zoonk/utils/time-zone";
 
-export function getLocalAnswerTime({ date, timeZone }: { date: Date; timeZone: string }) {
+export function getLearnerLocalTime({ date, timeZone }: { date: Date; timeZone: string }) {
   const localDate = getDateInTimeZone({ date, timeZone });
 
   return { hour: getHourInTimeZone({ date, timeZone }), localDate, weekday: localDate.getUTCDay() };
 }
-
-const MS_PER_SECOND = 1000;
-const MS_PER_MINUTE = 60 * MS_PER_SECOND;
-const MS_PER_HOUR = 60 * MS_PER_MINUTE;
 
 /** The window must exceed every UTC offset, including UTC+14. */
 const MAX_OFFSET_HOURS = 15;

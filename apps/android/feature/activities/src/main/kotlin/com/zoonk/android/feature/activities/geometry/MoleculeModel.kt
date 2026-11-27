@@ -54,8 +54,11 @@ internal val ActivityAnswer?.molecule: MoleculeBuild?
 
 internal val ActivityExpected?.moleculeElements: Map<String, Int>?
     get() =
-        ((this as? ActivityExpected.InteractionWrapper)?.value?.answer as? ActivityExpectedAnswer.MoleculeWrapper)
-            ?.value
+        (
+            (this as? ActivityExpected.ActivityExpectedInteractionValue)
+                ?.value
+                ?.answer as? ActivityExpectedAnswer.ActivityExpectedMoleculeValue
+        )?.value
             ?.elements
             ?.mapValues { it.value.toInt() }
 

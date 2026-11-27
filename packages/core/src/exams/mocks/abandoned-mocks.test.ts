@@ -1,13 +1,9 @@
 import { prisma } from "@zoonk/db";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getChallenge } from "../../checkpoints/get-challenge";
-import { DAY_MS, SESSION_NOW } from "../../sessions/_test-utils/session-goal";
-import {
-  MINUTE_MS,
-  answerRight,
-  runningMock,
-  scheduledMockSetup,
-} from "./_test-utils/scheduled-mock";
+import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
+import { answerRight, runningMock, scheduledMockSetup } from "./_test-utils/scheduled-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { getMockOptions } from "./get-mock-options";
@@ -19,7 +15,7 @@ import { submitMockSection } from "./submit-mock-section";
 const UTC = "UTC";
 
 function afterTheClock({ minutes, running }: { minutes: number; running: { minutes: number } }) {
-  return new Date(SESSION_NOW.getTime() + (running.minutes + minutes) * MINUTE_MS);
+  return new Date(SESSION_NOW.getTime() + (running.minutes + minutes) * MS_PER_MINUTE);
 }
 
 async function startAnytime(goalId: string) {
@@ -57,7 +53,7 @@ describe("a mock whose time ran out while the learner was away", () => {
     const running = await answerRight({ blockId, count: 1 });
     expect(running.current?.questions.length).toBeGreaterThan(1);
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * MS_PER_DAY));
 
     await expect(getMock(blockId)).resolves.toMatchObject({
       mock: { current: null, mistakes: [], result: null, review: [], status: "expired" },
@@ -108,7 +104,7 @@ describe("a mock whose time ran out while the learner was away", () => {
     await startMock({ blockId, input: {} });
     const running = await answerRight({ blockId, count: 6 });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + 3 * MS_PER_DAY));
 
     await expect(getMock(blockId)).resolves.toMatchObject({ mock: { status: "running" } });
 
@@ -153,7 +149,7 @@ describe("a mock whose time ran out while the learner was away", () => {
     await prisma.planItem.update({ data: { status: "done" }, where: { id: mockItem.id } });
     const first = await startAnytime(goal.id);
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
       view: { running: null },
@@ -175,7 +171,7 @@ describe("a mock whose time ran out while the learner was away", () => {
     const conditions = { ...mockConditionsSchema.parse(sitting.conditions), purpose: "placement" };
     await prisma.mockExam.update({ data: { conditions }, where: { id } });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
+    vi.setSystemTime(new Date(SESSION_NOW.getTime() + MS_PER_DAY));
 
     await expect(getMock(id)).resolves.toMatchObject({ mock: { status: "running" } });
 

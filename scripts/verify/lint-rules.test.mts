@@ -25,6 +25,29 @@ type Fixture = {
 const FIXTURES: Fixture[] = [
   {
     bad: [
+      "export const A = <span onClick={handle} />;",
+      "export const B = <div onPointerDown={handle} />;",
+      "export const C = <input type='text' onMouseDown={handle} />;",
+      "export const D = <a href='/today' onPointerUp={handle} />;",
+      "export const E = <div role='menuitemradio' onClick={handle} />;",
+      "export const F = <div role={role} onClick={handle} />;",
+      "export const G = <a href='/today' role='button' onClick={handle} />;",
+    ],
+    good: [
+      "export const A = <button onClick={handle} />;",
+      "export const B = <input type='submit' onPointerDown={handle} />;",
+      "export const C = <input type={'SUBMIT'} onPointerUp={handle} />;",
+      "export const D = <div role={'button'} onMouseDown={handle} />;",
+      "export const E = <><div role='switch' onClick={handle} /><div role='checkbox' onClick={handle} /><div role='radio' onClick={handle} /><div role='tab' onClick={handle} /><div role='menuitem' onClick={handle} /><div role='option' onClick={handle} /></>;",
+      "export const F = <Link onClick={handle} />;",
+      "export const G = <UI.Button onClick={handle} />;",
+      "export const H = <a href='/today' />;",
+      "export const I = <div onPointerMove={handle} />;",
+    ],
+    rule: "held-press-control",
+  },
+  {
+    bad: [
       'export const A = <div role="dialog" />;',
       'export const B = <section role={"alertdialog"} />;',
     ],

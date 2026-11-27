@@ -233,6 +233,10 @@ class MindMapStore(
         saved: Boolean,
     ) {
         when (target.kind) {
+            SavedMindMapKind.UNKNOWN_DEFAULT_OPEN_API -> {
+                return
+            }
+
             SavedMindMapKind.CHAPTER -> {
                 list[goalId].update { maps ->
                     maps.copy(chapters = maps.chapters.map { if (it.chapterId == target.id) it.copy(saved = saved) else it })

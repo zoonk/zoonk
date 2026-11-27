@@ -41,6 +41,11 @@ enum class Belt(
     Red(R.string.belt_red),
     Gray(R.string.belt_gray),
     Black(R.string.belt_black),
+    ;
+
+    companion object {
+        fun fromKey(key: String): Belt? = entries.firstOrNull { it.name.equals(key, ignoreCase = true) }
+    }
 }
 
 /** Full strength in every scheme: a belt is the learner's identity, not a meaning. */

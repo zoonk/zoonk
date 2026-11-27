@@ -4,6 +4,7 @@ import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture, unnoticedSourceChangeFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { assert, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { taskResult } from "../_test-utils/recorded-outputs";
@@ -18,8 +19,6 @@ vi.mock("@zoonk/ai/tasks/items/solve", async (importOriginal) => {
   const { solveLikeTheKeys } = await import("../_test-utils/solved-items");
   return { ...(await importOriginal<object>()), solveItems: vi.fn(solveLikeTheKeys) };
 });
-
-const DAY_MS = 86_400_000;
 
 const DRILLS = {
   drills: [
@@ -56,7 +55,7 @@ async function flaggedDrill() {
 
   await itemFixture({
     format: "trueFalse",
-    generatedAt: new Date(Date.now() - DAY_MS),
+    generatedAt: new Date(Date.now() - MS_PER_DAY),
     language: "pt",
     skillId: skill.id,
     sourceCitation: "Lei nº 8.112, Art. 13",

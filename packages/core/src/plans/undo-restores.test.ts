@@ -5,6 +5,7 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
@@ -19,8 +20,6 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { parsePlanSettings } from "./planner/plan-state";
-
-const DAY = 86_400_000;
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -74,7 +73,7 @@ async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
   await finishChallengesFixture(plan.id);
 
   const mistake = await mistakeFixture({
-    createdAt: new Date(NOW.getTime() - DAY),
+    createdAt: new Date(NOW.getTime() - MS_PER_DAY),
     itemId: items[0]?.id,
     skillId,
     userId: user.id,

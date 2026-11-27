@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
@@ -12,8 +13,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
-
-const HOUR = 60 * 60 * 1000;
 
 async function setupPlan() {
   const user = await userFixture();
@@ -127,7 +126,7 @@ describe("lessons skipped one answer at a time", () => {
     const first = await skipSkill({ goalId: goal.id, skillId: skillIds[0] ?? "" });
 
     await prisma.planChange.update({
-      data: { createdAt: new Date(NOW.getTime() - 25 * HOUR) },
+      data: { createdAt: new Date(NOW.getTime() - 25 * MS_PER_HOUR) },
       where: { id: first.changeId ?? "" },
     });
 

@@ -5,6 +5,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   LEARNER_LOCK,
@@ -447,7 +448,6 @@ describe("mock writes under the learner's lock", () => {
   });
 
   describe("with the clock moving while a hand-in waits for the lock", () => {
-    const MINUTE_MS = 60_000;
     const START = new Date("2031-03-04T12:00:00Z");
 
     afterEach(() => {
@@ -478,7 +478,7 @@ describe("mock writes under the learner's lock", () => {
       vi.useFakeTimers({ toFake: ["Date"] });
       vi.setSystemTime(START);
       const { mock, user } = await sittingFixture([{ questions: 1 }, { questions: 1 }]);
-      const expiresAfter = 30 * MINUTE_MS;
+      const expiresAfter = 30 * MS_PER_MINUTE;
 
       await expect(
         handInAcross(user.id, {
@@ -493,7 +493,7 @@ describe("mock writes under the learner's lock", () => {
       vi.useFakeTimers({ toFake: ["Date"] });
       vi.setSystemTime(START);
       const { mock, user } = await sittingFixture([{}]);
-      const deadline = 20 * MINUTE_MS;
+      const deadline = 20 * MS_PER_MINUTE;
 
       await handInAcross(user.id, {
         after: deadline + 1,

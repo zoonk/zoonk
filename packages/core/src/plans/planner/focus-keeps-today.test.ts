@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { checkSteeringKeepsToday } from "../_test-utils/rules/steering-rules";
 import { checkChapterInProgressKept } from "../_test-utils/rules/work-rules";
@@ -9,7 +10,6 @@ import { applyPlanOperations } from "./plan-operations";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 const graph: PlanGraph = {
   phases: [
@@ -62,7 +62,7 @@ function steer({
   operations: PlanOperation[];
   unwritten?: string[];
 }) {
-  const targetDate = new Date(TODAY.getTime() + 35 * DAY_MS);
+  const targetDate = new Date(TODAY.getTime() + 35 * MS_PER_DAY);
   const settings = parsePlanSettings({ startDate: toIsoDate(TODAY) });
 
   const input: BuildPlanInput = {
@@ -149,8 +149,8 @@ describe("a change of focus while today is shown", () => {
 });
 
 function reduceMidChapter() {
-  const yesterday = new Date(TODAY.getTime() - DAY_MS);
-  const targetDate = new Date(TODAY.getTime() + 35 * DAY_MS);
+  const yesterday = new Date(TODAY.getTime() - MS_PER_DAY);
+  const targetDate = new Date(TODAY.getTime() + 35 * MS_PER_DAY);
   const settings = parsePlanSettings({ startDate: toIsoDate(yesterday) });
   const operations: PlanOperation[] = [{ areas: ["Redação"], kind: "reduceAreas" }];
 

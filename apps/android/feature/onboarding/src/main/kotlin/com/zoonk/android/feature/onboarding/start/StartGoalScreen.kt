@@ -394,6 +394,10 @@ private fun ColumnScope.DraftContent(
     val limit = vm.draftLimit?.takeUnless { it.lifted() }
 
     when (val understanding = draft.understanding) {
+        is GoalUnderstanding.GoalUnderstandingOneOf4Value -> {
+            return
+        }
+
         null -> {
             when {
                 limit != null -> {

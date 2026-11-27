@@ -87,6 +87,7 @@ export function BoardCorner({
         disabled ? "cursor-default" : "cursor-grab active:cursor-grabbing",
       )}
       onKeyDown={handleKeyDown}
+      // oxlint-disable-next-line zoonk/held-press-control -- The slider captures the live pointer to drag. A replayed click cannot capture it.
       onPointerDown={(event) => {
         if (!disabled) {
           event.currentTarget.setPointerCapture(event.pointerId);

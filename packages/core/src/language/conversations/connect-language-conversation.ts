@@ -2,6 +2,7 @@ import "server-only";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { type LiveCallConnection, prisma } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
@@ -19,8 +20,6 @@ import {
 import { endLiveCall } from "./end-live-call";
 import { findOwnedConversation } from "./get-language-conversation";
 import { type LiveCallDeadlineScheduler, type LiveCallRefusal } from "./live-call-contract";
-
-const MS_PER_SECOND = 1000;
 
 function getCallTimes(
   connection: Pick<LiveCallConnection, "createdAt" | "deadlineAt" | "heldSeconds">,

@@ -13,6 +13,7 @@ import {
   useMessageScroller,
 } from "@zoonk/ui/components/message-scroller";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { ArrowDownIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -29,7 +30,6 @@ import { CallEndedStatus } from "./call-problem";
 import { CharacterRow } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 const PERCENT = 100;
 const NO_BREAK_SPACE = "\u00A0";
