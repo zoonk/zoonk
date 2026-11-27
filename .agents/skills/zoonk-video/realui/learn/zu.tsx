@@ -183,7 +183,7 @@ function ZuTab({ lang, q, state }: ViewProps) {
         id: CAREER_GOAL_ID,
         kind: "learn",
         targetDate: career.date,
-        title: career.title,
+        displayName: career.title,
       }}
       missions={{ done: 1, total: 3 }}
       tab="buddy"

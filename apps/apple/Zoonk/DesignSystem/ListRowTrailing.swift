@@ -74,14 +74,20 @@ struct ListRowTrailing: ViewModifier {
 
   func body(content: Content) -> some View {
     let inset = isStacked ? 0 : alignment.inset(for: row)
+    let hasChevron = customChevron || nativeChevron == .visible
 
     content
       .padding(.trailing, inset)
       .overlay(alignment: .trailing) {
-        if isRow, inset > 0 {
-          DisclosureChevron()
-            .opacity(0)
-        }
+        #if DEBUG
+          if isRow, !hasChevron, inset > 0, LayoutCapture.isOn {
+            Color.clear
+              .frame(width: inset)
+              .allowsHitTesting(false)
+              .accessibilityHidden(true)
+              .layoutPart(.holder)
+          }
+        #endif
       }
       .background {
         if let group, !isStacked {
@@ -95,7 +101,7 @@ struct ListRowTrailing: ViewModifier {
                   // On the pixel grid: an edge a hair off its sibling's took a hair of inset,
                   // which moved it half a hair, and the rows re-measured each other forever.
                   group: group, edge: (edge * displayScale).rounded() / displayScale,
-                  hasChevron: customChevron || nativeChevron == .visible,
+                  hasChevron: hasChevron,
                   isRTL: direction == .rightToLeft)
               ])
           }

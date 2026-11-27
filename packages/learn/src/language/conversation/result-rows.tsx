@@ -1,12 +1,13 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { LIST_GROUP_CLASS } from "../../_components/list-group";
+import { ListGroup } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
 
 export function ResultRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
-    <ul
-      className={cn(LIST_GROUP_CLASS, "w-full text-left", className)}
-      data-slot="result-rows"
+    <ListGroup
+      as="ul"
+      className={cn("w-full text-left", className)}
+
       {...props}
     />
   );

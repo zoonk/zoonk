@@ -70,12 +70,24 @@ function buildWeek({
     const date = addDays(WEEK_START, offset);
     const weekend = offset >= 5;
     const studies = date >= TODAY && (weekends || !weekend);
+    const isToday = date === TODAY;
     return {
       date,
       items: [],
       minutes: studies ? minutes : 0,
       mockFunding: null,
-      state: date === TODAY ? "today" : studies ? "upcoming" : "rest",
+      state: isToday ? "today" : studies ? "upcoming" : "rest",
+      study: {
+        completed: 0,
+        date,
+        goalMinutes: studies ? minutes : 0,
+        hitGoal: false,
+        isToday,
+        kind: studies ? "study" : date < TODAY ? "beforeStart" : "rest",
+        minutes: 0,
+        studied: false,
+        total: 0,
+      },
     };
   });
 
@@ -166,6 +178,7 @@ function basePlan(input: {
     planId: `plan-${input.goalId}`,
     ready: true,
     shortPlan: null,
+    suggestedTime: null,
     schedule: {
       dailyMinutes: input.minutes,
       dailyTimes: [15, 30, 45, 60, 90, 120],
@@ -392,6 +405,7 @@ export const ACTIONS = {
   decide: async () => true,
   findTimeToCover: async () => null,
   preview: async () => null,
+  readPlanAgain: () => {},
 };
 
 const LINKS: JourneyLinks = {
@@ -401,8 +415,10 @@ const LINKS: JourneyLinks = {
   course: () => "/courses",
   exam: null,
   focusTest: "/focus-test",
+  levelTest: "/level-test",
   logbook: "/logbook",
   mindMaps: null,
+  placementTest: "/placement-test",
   subject: (key) => `/plan/${key}`,
 };
 
@@ -548,7 +564,12 @@ function CareerModulePage({ lang }: { lang: "en" | "pt" }) {
         <SubjectScreen
           actions={{ restore: async () => true, setWrittenCadence: async () => true }}
           ask={<AskTutorEntry size="bar" />}
-          hrefs={{ adjust: "/plan", back: "/plan", chapter: (id) => `/content/chapters/${id}` }}
+          hrefs={{
+            adjust: "/plan",
+            back: "/plan",
+            chapter: (id) => `/content/chapters/${id}`,
+            essay: (id) => `/essay/${id}`,
+          }}
           subject={subject}
           syllabus={syllabus}
         />
@@ -574,7 +595,7 @@ function CareerPlan({
         id: CAREER_GOAL_ID,
         kind: "learn",
         targetDate: career.date,
-        title: career.title,
+        displayName: career.title,
       }}
       tab="journey"
     >
@@ -618,7 +639,7 @@ function PlanLearnView({ lang, q, state }: ViewProps) {
         id: LEARN_GOAL_ID,
         kind: "learn",
         targetDate: null,
-        title: learn.title,
+        displayName: learn.title,
       }}
       tab="journey"
     >

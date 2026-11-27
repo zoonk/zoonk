@@ -48,6 +48,7 @@ import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
 const DAY_MS = 86_400_000;
+const MINUTE_MS = 60_000;
 const LEARNERS_TO_RECALIBRATE = 20;
 
 function scheduledRun() {
@@ -65,7 +66,12 @@ async function missedQuestionFixture() {
   const item = await itemFixture({ difficulty: 0, skillId: skill.id });
 
   await Promise.all([
-    attemptFixture({ isCorrect: false, itemId: item.id, userId: learner.id }),
+    attemptFixture({
+      answeredAt: new Date(Date.now() - MINUTE_MS),
+      isCorrect: false,
+      itemId: item.id,
+      userId: learner.id,
+    }),
     prisma.anonymousFirstAnswer.createMany({
       data: Array.from({ length: LEARNERS_TO_RECALIBRATE - 1 }, () => ({
         isCorrect: false,

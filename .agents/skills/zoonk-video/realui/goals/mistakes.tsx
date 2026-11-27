@@ -109,6 +109,7 @@ export function Mistakes({ lang, q }: { lang: Lang; q: URLSearchParams }) {
           practice: "/mistakes/practice",
         }}
         notebook={notebook(lang)}
+        openLesson={async () => false}
         pattern={null}
       />
     </AppFrame>

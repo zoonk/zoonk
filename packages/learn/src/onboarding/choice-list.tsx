@@ -9,7 +9,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
@@ -28,6 +27,8 @@ export type Choice<Value extends string> = {
   trailing?: React.ReactNode;
   value: Value;
 };
+
+export const CHOICE_GROUP_CLASS = "divided-rows flex flex-col";
 
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
@@ -150,7 +151,7 @@ export function ChoiceList<Value extends string>({
     <>
       <RadioGroup
         aria-label={label}
-        className={cn(LIST_GROUP_CLASS, "gap-0")}
+        className={cn(CHOICE_GROUP_CLASS, "gap-0")}
         onKeyDown={(event) => {
           pointerPick.current = null;
           const highlighted = choices.find((choice) => choice.value === value);
@@ -240,7 +241,7 @@ export function CheckList<Value extends string>({
   });
 
   return (
-    <div aria-label={label} className={LIST_GROUP_CLASS} data-slot="choice-list" role="group">
+    <div aria-label={label} className={CHOICE_GROUP_CLASS} data-slot="choice-list" role="group">
       {choices.map((choice, index) => {
         const isPicked = value.includes(choice.value);
         const isDisabled = isOff(choice);

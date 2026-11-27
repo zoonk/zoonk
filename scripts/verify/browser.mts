@@ -9,13 +9,13 @@ import {
   type Page,
 } from "@playwright/test";
 import {
+  WCAG_TARGET_SIZE_RULE,
   describeViolations,
   resumeAnimations,
   settleAnimations,
   stillAnimations,
 } from "../../packages/testing/src/accessibility/scan.ts";
 import {
-  MIN_TARGET_PX,
   TARGET_SELECTOR,
   findSmallTargets,
   sampleTargets,
@@ -164,6 +164,18 @@ export async function openPage({
 
   await context.addInitScript(installProbe);
   await context.addInitScript(installPageHelpers);
+  // A caret blink produces screencast frames even when the caret is transparent.
+  await context.addInitScript(() => {
+    const style = new CSSStyleSheet();
+
+    style.replaceSync(`
+      * { caret-animation: manual !important; }
+      [data-slot=input-otp-slot] .animate-caret-blink { animation: none !important; }
+    `);
+
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, style];
+  });
+
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   // Thread time counts only the main thread's own work, so a busy machine barely moves it.
@@ -217,7 +229,7 @@ async function scanAccessibility(page: Page, where: string) {
   await page.emulateMedia({ contrast: "more" });
 
   const violations: Violations = await page.evaluate(
-    `axe.run({ exclude: [${JSON.stringify(SANDBOXED_FRAME)}] }, { resultTypes: ['violations'] }).then((results) => results.violations)`,
+    `axe.run({ exclude: [${JSON.stringify(SANDBOXED_FRAME)}] }, { resultTypes: ['violations'], rules: ${JSON.stringify(WCAG_TARGET_SIZE_RULE)} }).then((results) => results.violations)`,
   );
 
   // Excluding a frame also excludes its element; check its own rules without entering it.
@@ -235,7 +247,7 @@ async function scanAccessibility(page: Page, where: string) {
   return {
     failing: [
       ...describeViolations([...violations, ...frameViolations], where).failing,
-      ...targets.map((target) => `Zoonk tap target (${MIN_TARGET_PX} px): ${target}`),
+      ...targets,
     ],
     regular: describeViolations(neutralTextOnly(regular), where).failing,
   };

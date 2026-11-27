@@ -6,6 +6,9 @@ const LISTED_TARGETS = 5;
 
 const HTML_LENGTH = 120;
 
+/** axe keeps WCAG 2.2 criterion 2.5.8 off by default. */
+export const WCAG_TARGET_SIZE_RULE = { "target-size": { enabled: true } };
+
 function describeNode(node: NodeResult) {
   const target = `${node.target.join(" ")} \`${node.html.slice(0, HTML_LENGTH)}\``;
   const data: unknown = node.any[0]?.data;

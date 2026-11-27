@@ -138,7 +138,7 @@ private fun FocusRows(rows: List<FocusTestFocusRow>) {
             if (index > 0) ListDivider()
             ListRow(
                 headline = { Text(row.subject.name) },
-                leading = {
+                lead = {
                     Text(
                         "${index + 1}",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

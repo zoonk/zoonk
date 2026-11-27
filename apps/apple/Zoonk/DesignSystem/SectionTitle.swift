@@ -59,6 +59,7 @@ struct SectionLabel: View {
       .foregroundStyle(.mutedForeground)
       .textCase(nil)
       .accessibilityAddTraits(.isHeader)
+      .layoutSectionText()
   }
 }
 
@@ -79,5 +80,6 @@ struct SectionFooter<Content: View>: View {
       .foregroundStyle(.mutedForeground)
       // A plain list draws a footer like a row, between hairlines main doesn't have.
       .listRowSeparator(.hidden)
+      .layoutSectionText()
   }
 }

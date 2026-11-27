@@ -20,6 +20,7 @@ export function createBaseConfig(options: {
   assertBrowserLaunchAllowed();
 
   return defineConfig({
+    captureGitInfo: { commit: false, diff: false },
     forbidOnly: Boolean(process.env.CI),
     fullyParallel: true,
     globalSetup: options.globalSetup,

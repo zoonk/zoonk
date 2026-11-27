@@ -5,7 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { Disclosure } from "../_components/disclosure";
-import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -18,11 +18,11 @@ type Row = { key: string; node: React.ReactNode };
 
 function Rows({ label, rows }: { label?: string; rows: readonly Row[] }) {
   return (
-    <ul aria-label={label} className={LIST_GROUP_CLASS}>
+    <ListGroup as="ul" aria-label={label}>
       {rows.map((row) => (
         <li key={row.key}>{row.node}</li>
       ))}
-    </ul>
+    </ListGroup>
   );
 }
 

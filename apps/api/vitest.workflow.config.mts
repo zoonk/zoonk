@@ -31,6 +31,7 @@ export default defineConfig({
     maxWorkers: 3,
     server: { deps: { inline: [/@workflow\/vitest/u] } },
     setupFiles: ["./setup-workflow-tests.ts"],
+    silent: "passed-only",
     // The Workflow runtime waits at least 1 s before each step retry, so a step that uses all 3 of
     // its retries holds its test for 3 s. A file's first run also loads the workflow bundle, which
     // with 3 files at once on CI took a first test up to 15 s.

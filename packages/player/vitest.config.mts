@@ -15,6 +15,9 @@ const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];
 
 const touchTests = ["src/**/*.touch.browser.test.tsx"];
 
+const CI_BROWSER_CONNECT_TIMEOUT_MS = 90_000;
+const STALLED_RUN_TIMEOUT_MS = 120_000;
+
 const launchOptions = process.env.CI ? { channel: "chrome" } : {};
 
 const nextImageShim = fileURLToPath(
@@ -142,6 +145,7 @@ export default defineConfig({
         test: {
           browser: {
             commands: { answerPicture, emulateMedia, holdPictures, tap, touch },
+            connectTimeout: process.env.CI ? CI_BROWSER_CONNECT_TIMEOUT_MS : undefined,
             enabled: true,
             headless: true,
             instances: [
@@ -165,7 +169,9 @@ export default defineConfig({
         },
       },
     ],
-    // Vitest's own deadlines in a page are 60 s at most, so a page silent for twice that is stuck.
-    reporters: [...configDefaults.reporters, stalledRunReporter({ quietMs: 120_000 })],
+    reporters: [
+      ...configDefaults.reporters,
+      stalledRunReporter({ quietMs: STALLED_RUN_TIMEOUT_MS }),
+    ],
   },
 });

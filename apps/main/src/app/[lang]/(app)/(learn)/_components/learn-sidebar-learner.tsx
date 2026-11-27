@@ -13,6 +13,7 @@ import {
   type LearnerSummary,
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
+import { BeltLevel } from "@zoonk/learn/level-link";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
 import {
   SIDEBAR_ACCOUNT_CLASS,
@@ -24,7 +25,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
-import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 

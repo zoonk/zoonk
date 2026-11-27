@@ -654,65 +654,6 @@
         }
       }
     },
-    "End test and see result" : {
-      "comment" : "Ends the Focus test with the answers given so far and shows its result",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test beenden und Ergebnis ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar la prueba y ver el resultado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer le test et voir le résultat"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina il test e vedi il risultato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テストを終了して結果を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "진단 끝내고 결과 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zakończ test i zobacz wynik"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encerrar teste e ver resultado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testi bitir ve sonucu gör"
-          }
-        }
-      }
-    },
     "Find what to study most" : {
       "comment" : "What the Focus test does, for an exam with a date and more than one subject",
       "localizations" : {
@@ -1595,7 +1536,7 @@
       }
     },
     "See my result" : {
-      "comment" : "Ends the Focus test with the answers given so far and shows its result",
+      "comment" : "Button that ends the Focus test with the answers given so far and shows its result.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

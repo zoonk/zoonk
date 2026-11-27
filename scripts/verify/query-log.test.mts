@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDatabasePool } from "../../packages/db/src/pool";
 
-vi.mock("node:fs", () => ({ createWriteStream: () => ({ write: vi.fn() }) }));
+vi.mock("node:fs", () => ({
+  createWriteStream: () => ({ write: vi.fn() }),
+  mkdirSync: vi.fn(),
+  openSync: vi.fn(),
+}));
 
 describe("query logging during Next prerendering", () => {
   afterEach(() => {
