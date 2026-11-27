@@ -4,7 +4,7 @@ import { accessSync, constants } from "node:fs";
 import { platform } from "node:os";
 import path from "node:path";
 import { waitForTurn } from "../../../scripts/dev/queue.mts";
-import { getAndroidSdkDirectory, parseConnectedEmulator } from "./emulators.mts";
+import { getAndroidSdkDirectory, markEmulatorUsed, parseConnectedEmulator } from "./emulators.mts";
 
 type DeviceFamily = "phone" | "tablet";
 
@@ -562,6 +562,7 @@ async function runAndroidApp(options: CliOptions) {
     serial,
   });
 
+  markEmulatorUsed({ adb: toolchain.adbPath, serial });
   const turn = await waitForTurn();
 
   try {
