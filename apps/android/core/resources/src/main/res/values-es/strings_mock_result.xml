@@ -18,7 +18,6 @@
   "mock_result_by_test": "c1e5daf5541d62c945fc2ffd11b82f8f8e34c3029b199e09ee4ac721be82b918",
   "mock_result_by_topic": "162899f8af39806ce419007a115215ec2d7d733b12a1b30c611fdee806438e58",
   "mock_result_calibration_detail": "8937a7bc29e456f9d143f2d36095a3e34b0fc81b481d2622013643e67e06a870",
-  "mock_result_change_plan": "0a2faa509a85b9a32a9abc711785a9997d89c229fc011f387f0d8989a08c83a9",
   "mock_result_continue": "8026e4811157c754409eedf5ecee2a5efbfbc26ba8a04120f1cd124ce1c75128",
   "mock_result_details": "1cc3765141e782bc2fa1adeef24911644e19c866c776e2546e82e2eceaab78d9",
   "mock_result_down": "804ee9235d1c67639d1cbf7a9cbd5e68bce00364d582f1214782e051439a5ca2",
@@ -29,9 +28,6 @@
   "mock_result_estimated_exam_score": "d8c7fb40ac5aa1c851a19a1bf5697e065849c00de09256cbedf4cc4d48823fa6",
   "mock_result_estimated_score": "69788220be2a7a94bf8b8f21aa28b217e00924d923d21b0004e0d8f64ad857a6",
   "mock_result_every_minimum": "7ab263ecd8cf102dde355f9df0b2a0a0fba6d987c7628acf097bea3330492450",
-  "mock_result_focus_done": "8fc5a58742761e65e079da7168913f8f5ed69eb51ee8e1631d46baa713711b93",
-  "mock_result_focus_line": "b208eb3c05779735cdcffc675cf3390cf741d06647a4ce3ae04d5d8035cd3bbe",
-  "mock_result_focus_title": "56031cee41856d532072b1d640791db4350d27306d8a4a275281ae7b2c1a0c61",
   "mock_result_grade_it": "9b015f0e44fb8722b9807a7881a8cdb87801e6325e2752081b401bc83fa8d196",
   "mock_result_grading": "ec9203fdda94d9cf5e06a5910e2a17a9c95d876fac8e4afd0ea2c6be2a89838a",
   "mock_result_grading_failed": "7d5faabba1f8be00c3d2a18137a9bd47ae9b54e3a11a5d3ecffbf5b4c2d0aee2",
@@ -58,7 +54,6 @@
   "mock_result_not_done": "58966514abc957e8f81986bdd89694e2d180156c5f28237375c17ce82d56b06f",
   "mock_result_not_every_task": "5b0526472ac648b0b9b475e8dd25875ab06c724f92cbc30d8a551227d3079bd6",
   "mock_result_not_graded": "2760e3f31e1920dbabe23ae894c1558c159cad243c7ab0f3cc0405602eb1b7ab",
-  "mock_result_not_now": "fabcab92763ae9f4c2656103f69616546ad3ccac174c4197c04e5b53648e5b5a",
   "mock_result_notice_scoring": "c73164508105c7b763756091dfb33e7903ea286d5d372657a8b2d89ea0931d4a",
   "mock_result_of": "ca1ff778876c157503071078bb1415429589434c8dcb2a153f0c33a0275f9eb4",
   "mock_result_partly_right": "033d4b5bfe7a4a168a091a465b5e3a7ee3a855265bd30e4fd2d4bc8ce8e30d3c",
@@ -349,8 +344,6 @@
         <item quantity="many">¿Saltarte %d lecciones que ya conoces?</item>
         <item quantity="other">¿Saltarte %d lecciones que ya conoces?</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">¿Enfocarte más en %1$s?</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">Acertaste todo en %1$s.</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
@@ -359,15 +352,8 @@
         <item quantity="many">%1$s y %2$d temas más</item>
         <item quantity="other">%1$s y %2$d temas más</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="one">Ahí acertaste %1$s de %2$d.</item>
-        <item quantity="many">Ahí acertaste %1$s de %2$d.</item>
-        <item quantity="other">Ahí acertaste %1$s de %2$d.</item>
-    </plurals>
     <string name="mock_result_skip_them">Saltarlas</string>
     <string name="mock_result_keep_them">Mantenerlas</string>
-    <string name="mock_result_change_plan">Cambiar mi plan</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">Subió desde el %1$s</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -379,9 +365,6 @@
         <item quantity="many">Se saltaron %d lecciones.</item>
         <item quantity="other">Se saltaron %d lecciones.</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">Tu plan dedica más tiempo a %1$s.</string>
     <string name="mock_result_after">Después de este simulacro</string>
     <string name="mock_result_continue">Continuar</string>
-    <string name="mock_result_not_now">Ahora no</string>
 </resources>

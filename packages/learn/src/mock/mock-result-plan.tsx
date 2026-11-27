@@ -21,12 +21,6 @@ type Answers = Partial<Record<MockPlanOffer, Answer>>;
 
 const TOPICS_NAMED = 3;
 
-function getOffers(adapt: MockAdaptView): MockPlanOffer[] {
-  return [adapt.skip && "skip", adapt.focus && "focus"].filter(
-    (offer): offer is MockPlanOffer => typeof offer === "string",
-  );
-}
-
 function isSettled(answer: Answer | undefined): boolean {
   return answer !== undefined && !("failed" in answer);
 }
@@ -36,7 +30,7 @@ export function usePlanChange(adapt: MockAdaptView | null) {
   const { actions } = useMockScreen();
   const [answers, setAnswers] = useState<Answers>({});
   const [isPending, startTransition] = useTransition();
-  const offers = adapt ? getOffers(adapt) : [];
+  const offers: MockPlanOffer[] = adapt ? ["skip"] : [];
   const open = offers.find((offer) => !isSettled(answers[offer])) ?? null;
 
   return {
@@ -60,11 +54,11 @@ export function usePlanChange(adapt: MockAdaptView | null) {
 
 export type PlanChange = ReturnType<typeof usePlanChange>;
 
-function useAnswerLine(adapt: MockAdaptView) {
+function useAnswerLine() {
   const t = useExtracted();
   const saveError = useChangeSaveErrorMessage();
 
-  return ({ answer, offer }: { answer: Answer; offer: MockPlanOffer }): string => {
+  return (answer: Answer): string => {
     if ("declined" in answer) {
       return "";
     }
@@ -77,17 +71,15 @@ function useAnswerLine(adapt: MockAdaptView) {
       return t("Your plan didn't need to change.");
     }
 
-    return offer === "skip"
-      ? t("{count, plural, one {# lesson} other {# lessons}} skipped.", {
-          count: answer.outcome.lessonsSkipped,
-        })
-      : t("Your plan gives {area} more time.", { area: adapt.focus?.area ?? "" });
+    return t("{count, plural, one {# lesson} other {# lessons}} skipped.", {
+      count: answer.outcome.lessonsSkipped,
+    });
   };
 }
 
 function useStatusLines(change: PlanChange & { adapt: MockAdaptView }) {
   const t = useExtracted();
-  const answerLine = useAnswerLine(change.adapt);
+  const answerLine = useAnswerLine();
 
   const declinedAll =
     change.offers.length > 0 &&
@@ -103,7 +95,7 @@ function useStatusLines(change: PlanChange & { adapt: MockAdaptView }) {
 
   return change.offers.flatMap((offer) => {
     const answer = change.answers[offer];
-    const line = answer ? answerLine({ answer, offer }) : null;
+    const line = answer ? answerLine(answer) : null;
     const applied = answer && "outcome" in answer && answer.outcome.status === "applied";
     return line ? [{ applied, line }] : [];
   });
@@ -138,43 +130,27 @@ function useOfferCopy(adapt: MockAdaptView | null) {
   const format = useFormatter();
 
   return (
-    offer: MockPlanOffer,
+    _offer: MockPlanOffer,
   ): { accept: string; decline: string; line: string; title: string } => {
-    if (offer === "skip") {
-      const topics = adapt?.skip?.topics ?? [];
-      const named = topics.slice(0, TOPICS_NAMED);
-      const more = topics.length - named.length;
+    const topics = adapt?.skip.topics ?? [];
+    const named = topics.slice(0, TOPICS_NAMED);
+    const more = topics.length - named.length;
 
-      const names =
-        more > 0
-          ? t("{names} and {count, plural, one {# more topic} other {# more topics}}", {
-              count: more,
-              names: named.join(", "),
-            })
-          : format.list(named, { type: "conjunction" });
-
-      return {
-        accept: t("Skip them"),
-        decline: t("Keep them"),
-        line: t("You got everything right in {topics}.", { topics: names }),
-        title: t("Skip {count, plural, one {# lesson} other {# lessons}} you already know?", {
-          count: adapt?.skip?.lessons ?? 0,
-        }),
-      };
-    }
+    const names =
+      more > 0
+        ? t("{names} and {count, plural, one {# more topic} other {# more topics}}", {
+            count: more,
+            names: named.join(", "),
+          })
+        : format.list(named, { type: "conjunction" });
 
     return {
-      accept: t("Change my plan"),
-      decline: t("Not now"),
-      line: t(
-        "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there.",
-        {
-          // `#` shows up to three decimals; partial credit reads to the hundredth.
-          correct: Math.round((adapt?.focus?.correct ?? 0) * 100) / 100,
-          total: String(adapt?.focus?.total ?? 0),
-        },
-      ),
-      title: t("Focus more on {area}?", { area: adapt?.focus?.area ?? "" }),
+      accept: t("Skip them"),
+      decline: t("Keep them"),
+      line: t("You got everything right in {topics}.", { topics: names }),
+      title: t("Skip {count, plural, one {# lesson} other {# lessons}} you already know?", {
+        count: adapt?.skip.lessons ?? 0,
+      }),
     };
   };
 }

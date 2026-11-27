@@ -102,10 +102,7 @@ export type MockSizeSource = {
   time: "notice" | "unstated";
 };
 
-export type MockAdaptView = {
-  focus: { area: string; correct: number; total: number } | null;
-  skip: { lessons: number; topics: string[] } | null;
-};
+export type MockAdaptView = { skip: { lessons: number; topics: string[] } };
 
 export type MockLeftOut = {
   name: string | null;

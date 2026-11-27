@@ -12,7 +12,7 @@ import { type SectionMoves } from "./section-moves";
 
 export type MockPlanOfferOutcome =
   | { lessonsSkipped: number; status: "applied" }
-  | { reason: "alreadyIn" | "cantMove" | null; status: "unchanged" };
+  | { status: "unchanged" };
 
 export type MockEssayGrading = { mock: MockView; status: "graded" };
 
@@ -35,7 +35,7 @@ export type MockActions = {
 
 export type MockEssayGradingStatus = "failed" | "grading" | "idle";
 
-export type MockPlanOffer = "focus" | "skip";
+export type MockPlanOffer = "skip";
 
 export type MockHrefs = {
   again: string;

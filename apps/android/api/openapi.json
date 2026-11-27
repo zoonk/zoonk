@@ -21809,7 +21809,7 @@
     },
     "/mocks/{blockId}/plan-changes": {
       "post": {
-        "description": "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least two), as a change with an undo; `focus` gives the area that went worst more of the plan's time, as their own focus. `unchanged` when nothing moved, with why for a focus.",
+        "description": "The learner's yes to what a finished mock offers (`adapt` on GET /mocks/{blockId}), never applied without it: `skip` tests out the plan's lessons on the topics the mock showed they know (every question on them right, at least three), as a change with an undo. `unchanged` when nothing moved.",
         "operationId": "adaptPlanFromMock",
         "security": [
           {
@@ -33021,10 +33021,9 @@
           "offer": {
             "type": "string",
             "enum": [
-              "skip",
-              "focus"
+              "skip"
             ],
-            "description": "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo. `focus`: the area that went worst gets more of the plan's time (`adapt.focus`)"
+            "description": "`skip`: the plan skips the lessons of the topics the mock showed the learner knows (`adapt.skip`), with an undo"
           },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
@@ -45032,7 +45031,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, noticeChanged (the plan followed its official exam notice and removed areas or skills), relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it), mockReordered (a finished mock moved the topics it missed, not yet taught, earlier in the plan) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",
@@ -97503,36 +97502,10 @@
       },
       "MockAdapt": {
         "nullable": true,
-        "description": "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
+        "description": "What the finished mock offers to change in the plan, applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null when it offers nothing, before it's over and for a placement mock",
         "type": "object",
         "properties": {
-          "focus": {
-            "nullable": true,
-            "description": "The area that went worst, to give more of the plan's time",
-            "type": "object",
-            "properties": {
-              "area": {
-                "type": "string"
-              },
-              "correct": {
-                "type": "number"
-              },
-              "total": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "area",
-              "correct",
-              "total"
-            ],
-            "additionalProperties": false
-          },
           "skip": {
-            "nullable": true,
-            "description": "The lessons of the topics the mock showed the learner knows (every question right), to skip",
             "type": "object",
             "properties": {
               "lessons": {
@@ -97551,11 +97524,11 @@
               "lessons",
               "topics"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "The lessons of the topics the mock showed the learner knows (every question right), to skip"
           }
         },
         "required": [
-          "focus",
           "skip"
         ],
         "additionalProperties": false
@@ -97779,6 +97752,14 @@
           },
           "minutesUsed": {
             "type": "number"
+          },
+          "movedTopics": {
+            "description": "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier when it finished, soonest first; absent when nothing moved",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "net": {
             "nullable": true,
@@ -98531,15 +98512,6 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "reason": {
-            "nullable": true,
-            "description": "Why a focus left the plan as it is: every lesson of the area is in already (`alreadyIn`), or it starts as early as what it builds on allows (`cantMove`)",
-            "type": "string",
-            "enum": [
-              "alreadyIn",
-              "cantMove"
-            ]
-          },
           "status": {
             "type": "string",
             "enum": [
@@ -98551,7 +98523,6 @@
         "required": [
           "changeId",
           "lessonsSkipped",
-          "reason",
           "status"
         ],
         "additionalProperties": false

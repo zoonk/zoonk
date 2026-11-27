@@ -38,7 +38,6 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
@@ -51,8 +50,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.floor
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 sealed interface OfferAnswer {
@@ -110,14 +107,7 @@ class MockPlanOffersViewModel(
 /** The offer the learner answers now: the next ones show once this one is answered. */
 internal fun PlanOffers.open(adapt: MockAdapt?): Offer? = planOffers(adapt).firstOrNull { !answers[it].isSettled }
 
-fun planOffers(adapt: MockAdapt?): List<Offer> =
-    listOfNotNull(
-        Offer.SKIP.takeIf { adapt?.skip != null },
-        Offer.FOCUS.takeIf {
-            adapt?.focus !=
-                null
-        },
-    )
+fun planOffers(adapt: MockAdapt?): List<Offer> = listOfNotNull(Offer.SKIP.takeIf { adapt != null })
 
 /** A share the learner would read as unchanged ("41% → 41%") isn't news. */
 internal fun MockResultPreparation.hasMoved(): Boolean = (before * PERCENT).roundToLong() != (after * PERCENT).roundToLong()
@@ -194,10 +184,6 @@ private fun offerTitle(
             val lessons = adapt?.skip?.lessons?.toInt() ?: 0
             pluralStringResource(R.plurals.mock_result_skip_title, lessons, lessons)
         }
-
-        Offer.FOCUS -> {
-            stringResource(R.string.mock_result_focus_title, adapt?.focus?.area.orEmpty())
-        }
     }
 
 @Composable
@@ -208,7 +194,7 @@ internal fun offerCopy(
     val locale = currentLocale()
     return when (offer) {
         Offer.SKIP -> {
-            val topics = adapt.skip?.topics.orEmpty()
+            val topics = adapt.skip.topics
             val named = topics.take(TOPICS_NAMED)
             val more = topics.size - named.size
             val names =
@@ -222,24 +208,6 @@ internal fun offerCopy(
                 line = stringResource(R.string.mock_result_skip_line, names),
                 accept = stringResource(R.string.mock_result_skip_them),
                 decline = stringResource(R.string.mock_result_keep_them),
-            )
-        }
-
-        Offer.FOCUS -> {
-            val focus = adapt.focus
-            // Partial credit reads to the hundredth.
-            val correct = ((focus?.correct ?: 0.0) * PERCENT).roundToInt() / PERCENT
-            OfferCopy(
-                title = offerTitle(offer, adapt),
-                line =
-                    pluralStringResource(
-                        R.plurals.mock_result_focus_line,
-                        floor(correct).toInt(),
-                        formatNumber(correct, locale),
-                        (focus?.total ?: 0L).toInt(),
-                    ),
-                accept = stringResource(R.string.mock_result_change_plan),
-                decline = stringResource(R.string.mock_result_not_now),
             )
         }
     }
@@ -295,7 +263,7 @@ private fun OfferStatus(
         planOffers(adapt).mapNotNull { offer ->
             val answer = offers.answers[offer] ?: return@mapNotNull null
             val applied = (answer as? OfferAnswer.Outcome)?.result?.status == MockPlanOfferResult.Status.APPLIED
-            answerLine(offer, answer, adapt)?.let { it to applied }
+            answerLine(answer)?.let { it to applied }
         }
     val declinedAll = planOffers(adapt).let { all -> all.isNotEmpty() && all.all { offers.answers[it] == OfferAnswer.Declined } }
     // Declining writes nothing, so the step would still read as an open question.
@@ -330,11 +298,7 @@ private fun OfferStatus(
 }
 
 @Composable
-private fun answerLine(
-    offer: Offer,
-    answer: OfferAnswer,
-    adapt: MockAdapt,
-): String? =
+private fun answerLine(answer: OfferAnswer): String? =
     when (answer) {
         OfferAnswer.Declined -> {
             null
@@ -351,13 +315,9 @@ private fun answerLine(
                     stringResource(R.string.mock_result_plan_unchanged)
                 }
 
-                offer == Offer.SKIP -> {
+                else -> {
                     val lessons = result.lessonsSkipped.toInt()
                     pluralStringResource(R.plurals.mock_result_skip_done, lessons, lessons)
-                }
-
-                else -> {
-                    stringResource(R.string.mock_result_focus_done, adapt.focus?.area.orEmpty())
                 }
             }
         }
