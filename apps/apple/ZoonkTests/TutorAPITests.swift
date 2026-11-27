@@ -60,8 +60,8 @@ final class TutorAPITests: XCTestCase {
   private func askFailure(_ api: TutorAPI) async -> TutorFailure? {
     do {
       _ = try await api.ask(
-        .plan(goalId: "goal"), question: "Why?", suggestion: nil, requestId: "request",
-        token: "token")
+        .plan(goalId: "goal", conversationId: "conversation"), question: "Why?", suggestion: nil,
+        requestId: "request", token: "token")
       return nil
     } catch {
       return error as? TutorFailure

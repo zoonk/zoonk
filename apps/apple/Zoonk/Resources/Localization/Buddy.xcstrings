@@ -4266,7 +4266,7 @@
       }
     },
     "Something went wrong. Try again." : {
-      "comment" : "The buddy's day couldn't be read",
+      "comment" : "The buddy conversations couldn't be read\nThe buddy's day couldn't be read",
       "localizations" : {
         "de" : {
           "stringUnit" : {
