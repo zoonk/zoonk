@@ -209,17 +209,58 @@ struct MockResultView: View {
   }
 
   @ViewBuilder
+  /// Main's `MockPlanStep` on a phone: one step, titled by the preparation it measured, else the
+  /// topics the plan moved, else the skip question under "Your plan". Beside the result, main's
+  /// aside: the preparation on its own, then "Your plan" with the moved topics and the question.
   private func planSections(answersInBar: Bool) -> some View {
     let preparation = view.result?.preparation.flatMap { $0.after != $0.before ? $0 : nil }
     let moved = view.result?.movedTopics.flatMap { $0.isEmpty ? nil : $0 }
-
-    if preparation != nil || moved != nil {
-      MockPlanMoves(preparation: preparation, movedTopics: moved, isWide: !answersInBar)
+    let skip = view.adapt.map {
+      MockSkipRows(run: run, adapt: $0, answersInBar: answersInBar, answers: $choices.plan)
     }
 
-    if let adapt = view.adapt {
-      MockSkipSection(
-        run: run, adapt: adapt, answersInBar: answersInBar, answers: $choices.plan)
+    if answersInBar {
+      if preparation != nil || moved != nil || skip != nil {
+        Section {
+          if let preparation {
+            MockPreparationRow(preparation: preparation)
+          }
+
+          if let moved {
+            MockMovedTopics(topics: moved, showsTitle: preparation != nil)
+          }
+
+          skip
+        } header: {
+          if preparation != nil {
+            SectionTitle(MockPlanWords.preparation)
+          } else if moved != nil {
+            SectionTitle(MockPlanWords.moved)
+          } else {
+            SectionTitle(MockPlanWords.plan)
+          }
+        }
+      }
+    } else {
+      if let preparation {
+        Section {
+          MockPreparationRow(preparation: preparation)
+        } header: {
+          SectionTitle(MockPlanWords.preparation)
+        }
+      }
+
+      if moved != nil || skip != nil {
+        Section {
+          if let moved {
+            MockMovedTopics(topics: moved, showsTitle: true)
+          }
+
+          skip
+        } header: {
+          SectionTitle(MockPlanWords.plan)
+        }
+      }
     }
   }
 
@@ -989,48 +1030,40 @@ private struct MockSpeakingSection: View {
   }
 }
 
-/// What the mock already changed: the preparation it measured and the topics the plan moved
-/// earlier, which ask nothing of the learner. On a phone the moved topics are the step's own title;
-/// beside the result they sit under "Your plan", and under a moved preparation as a small line.
-private struct MockPlanMoves: View {
-  let preparation: MockResult.Preparation?
-  let movedTopics: [String]?
-  let isWide: Bool
-
-  private var movedIsTitle: Bool { preparation == nil && !isWide }
-
-  var body: some View {
-    Section {
-      if let preparation {
-        MockPreparationRow(preparation: preparation)
-      }
-
-      if let movedTopics {
-        VStack(alignment: .leading, spacing: 4) {
-          if !movedIsTitle {
-            Self.movedTitle.typeStyle(.body.weight(.semibold))
-          }
-
-          ForEach(Array(movedTopics.prefix(3).enumerated()), id: \.offset) { _, topic in
-            Text(verbatim: topic).foregroundStyle(.mutedForeground)
-          }
-        }
-        .accessibilityElement(children: .combine)
-      }
-    } header: {
-      SectionTitle(
-        preparation != nil
-          ? Text("Your preparation", tableName: "Mock", comment: "How preparation moved")
-          : movedIsTitle
-            ? Self.movedTitle
-            : Text("Your plan", tableName: "Mock", comment: "What a mock changed in the plan"))
-    }
+private enum MockPlanWords {
+  static var preparation: Text {
+    Text("Your preparation", tableName: "Mock", comment: "How preparation moved")
   }
 
-  private static var movedTitle: Text {
+  static var plan: Text {
+    Text("Your plan", tableName: "Mock", comment: "What a mock changed in the plan")
+  }
+
+  static var moved: Text {
     Text(
       "What you missed now comes sooner", tableName: "Mock",
       comment: "After a mock, the plan moved the topics it missed earlier")
+  }
+}
+
+/// The topics the plan moved earlier when the mock finished, each on its own line; they ask nothing
+/// of the learner. Their title is the step's own on a phone without a preparation readout.
+private struct MockMovedTopics: View {
+  let topics: [String]
+  let showsTitle: Bool
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      if showsTitle {
+        MockPlanWords.moved.typeStyle(.body.weight(.semibold))
+      }
+
+      ForEach(Array(topics.prefix(3).enumerated()), id: \.offset) { _, topic in
+        Text(verbatim: topic).foregroundStyle(.mutedForeground)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .accessibilityElement(children: .combine)
   }
 }
 
@@ -1133,14 +1166,15 @@ private struct MockPlanYesStyle: ViewModifier {
   }
 }
 
-private struct MockSkipSection: View {
+/// The skip question, its answers and what they did, as rows of the plan's section.
+private struct MockSkipRows: View {
   let run: MockRun
   let adapt: MockAdapt
   let answersInBar: Bool
   @Binding var answers: MockPlanAnswers
 
   var body: some View {
-    Section {
+    Group {
       if answers.isAsking(adapt) {
         VStack(alignment: .leading, spacing: 4) {
           Text(
