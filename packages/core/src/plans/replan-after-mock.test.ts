@@ -1,5 +1,5 @@
 import { type Skill, prisma } from "@zoonk/db";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -26,7 +26,7 @@ const UTC = "UTC";
 
 type Outcome = "blank" | "right" | "wrong";
 
-async function setup() {
+async function setup({ dailyMinutes = 6 }: { dailyMinutes?: number } = {}) {
   vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ["Date"] });
   vi.setSystemTime(START);
 
@@ -61,7 +61,7 @@ async function setup() {
 
   const { goal, plan } = await unplannedGoalFixture({
     ...PLAN_SHOWN,
-    dailyMinutes: 6,
+    dailyMinutes,
     examBlueprintId: blueprint.id,
     kind: "exam",
     targetDate: new Date(START.getTime() + 45 * MS_PER_DAY),
@@ -421,7 +421,81 @@ describe(replanAfterMock, () => {
   });
 });
 
+async function readToday(goalId: string) {
+  const view = await getTodayView({ goalId, timeZone: UTC });
+
+  if (view.status !== "ready") {
+    throw new Error(view.status);
+  }
+
+  return view.today.session.blocks.map(({ kind, lessonId, screen }) => ({
+    kind,
+    lessonId,
+    screen,
+  }));
+}
+
 describe(catchUpMockReplan, () => {
+  it("opens the day with its mistakes block and lessons as previewed, and re-plans only later days, once", async () => {
+    const fixture = await setup({ dailyMinutes: 20 });
+    const missed = lastTopic(fixture, "Direito");
+    const [practiced] = fixture.library.skills;
+
+    if (!practiced) {
+      throw new Error("Expected the plan's first topic");
+    }
+
+    await Promise.all([
+      finishedMock({
+        answers: [{ outcome: "wrong", skill: missed }],
+        finishedAt: new Date(Date.now() - 3 * MS_PER_DAY),
+        fixture,
+      }),
+      attemptFixture({
+        answeredAt: new Date(Date.now() - 2 * MS_PER_DAY),
+        cause: "gap",
+        evidence: "independent",
+        isCorrect: false,
+        itemId: fixture.itemOf(practiced).id,
+        skillId: practiced.id,
+        userId: fixture.user.id,
+      }),
+      mistakeFixture({
+        createdAt: new Date(Date.now() - 2 * MS_PER_DAY),
+        itemId: fixture.itemOf(practiced).id,
+        skillId: practiced.id,
+        userId: fixture.user.id,
+      }),
+    ]);
+
+    const [preview, before] = await Promise.all([
+      readToday(fixture.goal.id),
+      readPlan(fixture.plan.id),
+    ]);
+
+    expect(preview[0]).toMatchObject({ screen: "mistakesPractice" });
+
+    const today = (plan: typeof before) =>
+      plan.items
+        .filter((item) => item.scheduledFor?.getTime() === before.items[0]?.scheduledFor?.getTime())
+        .map((item) => item.id);
+
+    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+
+    const opened = await readPlan(fixture.plan.id);
+    const reordered = opened.changes.filter((change) => change.kind === "mockReordered");
+
+    await expect(readToday(fixture.goal.id)).resolves.toStrictEqual(preview);
+    expect(today(opened)).toStrictEqual(today(before));
+    expect(reordered).toHaveLength(1);
+    expect(opened.firstDay(missed)).toBeLessThan(before.firstDay(missed));
+
+    await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
+
+    await expect(readToday(fixture.goal.id)).resolves.toStrictEqual(preview);
+    await expect(readPlan(fixture.plan.id)).resolves.toMatchObject({ version: opened.version });
+  });
+
   it("applies the relearn and the reorder of a mock marked finished whose re-plan never ran when the learner opens a new day, once", async () => {
     const { fixture, missed, taught } = await relearnSetup();
     const before = await readPlan(fixture.plan.id);
