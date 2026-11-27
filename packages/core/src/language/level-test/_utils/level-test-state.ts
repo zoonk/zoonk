@@ -30,6 +30,7 @@ import {
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
 import { withLevelTestChange } from "./level-test-result-change";
+import { showLevelTestOptions } from "./level-test-shown-order";
 import { getLevelTestStart } from "./level-test-start-score";
 
 /** About how long the bank's run takes to voice its clips, retries included, after the questions. */
@@ -295,7 +296,11 @@ export async function toLevelTestView({
             })),
             id: step.question.id,
             level: step.question.level,
-            options: step.question.options,
+            options: showLevelTestOptions({
+              attemptId: progress.attemptId,
+              goalId: goal.id,
+              question: step.question,
+            }),
             passage: step.question.passage,
             question: step.question.question,
             skill: step.question.skill,

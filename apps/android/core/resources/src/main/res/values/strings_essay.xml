@@ -68,11 +68,10 @@
         <item quantity="one">0 of %1$d line</item>
         <item quantity="other">0 of %1$d lines</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">about %1$d of %2$d line · %3$d won\'t be read</item>
-        <item quantity="other">about %1$d of %2$d lines · %3$d won\'t be read</item>
-    </plurals>
+    <!-- The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it. -->
+    <string name="essay_lines_may_not_fit">about %1$d of %2$d lines · may not fit on paper</string>
+    <!-- The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end. -->
+    <string name="essay_lines_end_unread">about %1$d of %2$d lines · the end won\'t be read</string>
     <string name="essay_conflict_title">This answer changed on another device</string>
     <string name="essay_conflict_body">Keep the version you\'re writing here, or switch to the other one.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->

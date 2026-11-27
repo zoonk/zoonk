@@ -110,7 +110,11 @@ describe("diagnostic recall of notebook originals", () => {
     await expect(
       answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId },
+        input: {
+          answer: { selectedIndex: next?.options?.indexOf("Right answer") ?? -1 },
+          durationMs: 5000,
+          itemId,
+        },
       }),
     ).resolves.toMatchObject({ isCorrect: true, status: "ready" });
 

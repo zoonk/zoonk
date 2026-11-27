@@ -38,6 +38,11 @@ export const ANSWERED = [
   ...PROFILE_QUESTIONS,
 ];
 
+export function solvePlacementEquation(question: string): string | null {
+  const equation = /x \+ (?<addend>\d+) = (?<total>\d+)/u.exec(question)?.groups;
+  return equation ? String(Number(equation.total) - Number(equation.addend)) : null;
+}
+
 export async function createMappedGoal(userId: string, { exam = false } = {}) {
   const blueprint = exam ? await examBlueprintFixture() : null;
 

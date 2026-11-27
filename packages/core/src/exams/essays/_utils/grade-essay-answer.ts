@@ -14,7 +14,7 @@ import {
   type WritingResult,
   writtenAnswerSchema,
 } from "../writing-contract";
-import { countWritingLines } from "../writing-lines";
+import { WRITING_MAX_CHARACTERS_PER_LINE, countWritingLines } from "../writing-lines";
 import { getWritingArithmetic } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
@@ -42,6 +42,7 @@ export async function gradeWriting({
   const { estimatedLines, ignoredFrom } = countWritingLines({
     charactersPerLine: basis.charactersPerLine,
     limit: basis.lines,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
     text,
   });
 

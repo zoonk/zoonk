@@ -1,5 +1,4 @@
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
-import { shuffle } from "@zoonk/utils/shuffle";
 import { segmentLearnerWords, segmentWords } from "@zoonk/utils/string";
 import {
   type StepContentByKind,
@@ -13,6 +12,7 @@ import {
 } from "./build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "./exercise-content";
 import { type ReadingPromptWord, buildReadingPromptWords } from "./reading-prompt-words";
+import { stableOrder } from "./stable-order";
 import {
   type TranslationOption,
   buildDistractorWordLookup,
@@ -113,8 +113,6 @@ export type SerializedStep<Kind extends ExerciseKind = ExerciseKind> = {
   matchColumnsRightItems: string[];
 };
 
-type OptionsContent = { options: readonly unknown[] };
-
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
     audioUrl: word.audioUrl,
@@ -154,17 +152,28 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   };
 }
 
-function shuffleOptions<Content extends OptionsContent>(content: Content): Content {
-  return { ...content, options: shuffle(content.options) };
-}
-
-/** Shuffle on the server to avoid client-side randomization causing hydration mismatches. */
-function parseAndShuffleContent(kind: ExerciseKind, content: unknown) {
-  if (kind === "multipleChoice") {
-    return shuffleOptions(parseStepContent("multipleChoice", content));
+function parseAndOrderContent({
+  content,
+  kind,
+  stepId,
+}: {
+  content: unknown;
+  kind: ExerciseKind;
+  stepId: string;
+}) {
+  if (kind !== "multipleChoice") {
+    return parseStepContent(kind, content);
   }
 
-  return parseStepContent(kind, content);
+  const parsed = parseStepContent("multipleChoice", content);
+
+  const options = stableOrder({
+    items: parsed.options,
+    key: `${stepId}:options`,
+    text: (option) => option.text,
+  });
+
+  return { ...parsed, options };
 }
 
 function buildMatchColumnsRightItems(step: SerializedStep): string[] {
@@ -173,7 +182,12 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
   }
 
   const content = parseStepContent("matchColumns", step.content);
-  return shuffle(content.pairs.map((pair) => pair.right));
+
+  return stableOrder({
+    items: content.pairs.map((pair) => pair.right),
+    key: `${step.id}:matchColumns`,
+    text: (right) => right,
+  });
 }
 
 function buildStepReadingPromptWords({
@@ -203,7 +217,11 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
   }
 
   try {
-    const content = parseAndShuffleContent(step.kind, step.content);
+    const content = parseAndOrderContent({
+      content: step.content,
+      kind: step.kind,
+      stepId: step.id,
+    });
 
     return {
       content,

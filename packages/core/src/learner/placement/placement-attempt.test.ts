@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -759,7 +760,12 @@ describe("learn placement attempts", () => {
 
     const sent = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, attemptId, durationMs: 100, itemId: items[0]!.id },
+      input: {
+        answer: await pickInPlacement({ itemId: items[0]!.id }),
+        attemptId,
+        durationMs: 100,
+        itemId: items[0]!.id,
+      },
     });
 
     const answerTaps = async (result: typeof sent, remaining: number): Promise<typeof sent> => {

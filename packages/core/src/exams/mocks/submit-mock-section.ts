@@ -37,10 +37,7 @@ function scoreModule({
       return [];
     }
 
-    return [
-      gradeMockItem({ answer, item, mockId: mock.id, partialCredit: mock.conditions.partialCredit })
-        .isCorrect,
-    ];
+    return [gradeMockItem({ answer, item, mock }).isCorrect];
   });
 
   return { correct: verdicts.filter(Boolean).length, total: verdicts.length };

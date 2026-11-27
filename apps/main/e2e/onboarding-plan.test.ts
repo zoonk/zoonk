@@ -6,10 +6,11 @@ import { prisma } from "@zoonk/db";
 import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
+import { pressAnswerKey } from "./answer-key";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
-import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { ANSWERED, createMappedGoal, solvePlacementEquation } from "./onboarding-fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
@@ -55,17 +56,19 @@ test.describe("Placement and the plan", () => {
     await expect(page.getByText("Question 1 of 12", { exact: true })).toBeVisible();
     const stop = page.getByRole("button", { name: "Stop and use my answers" });
     await expect(stop).toBeHidden();
+    const first = await question.innerText();
+    const solution = solvePlacementEquation(first);
 
-    // "Solve x + a = b": the right answer is b - a, picked by its number key.
-    const solve = /x \+ (?<add>\d+) = (?<sum>\d+)/u.exec(await question.innerText())?.groups;
-    const answer = String(Number(solve?.sum) - Number(solve?.add));
-    const right = page.getByRole("radio", { name: answer });
+    if (solution === null) {
+      throw new Error(`Expected a one-step equation, got ${first}`);
+    }
 
-    await expect(right).toBeEnabled();
-    await page.keyboard.press((await right.getAttribute("aria-keyshortcuts")) ?? "1");
+    const right = page.getByRole("radio", { exact: true, name: solution });
+    await pressAnswerKey(page, right);
     await expect(right).toBeChecked();
     await page.keyboard.press("Enter");
 
+    await expect(question).not.toHaveText(first);
     await expect(page.getByText("Question 2 of 12", { exact: true })).toBeVisible();
 
     await page.reload();

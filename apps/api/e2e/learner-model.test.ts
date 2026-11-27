@@ -26,6 +26,7 @@ import {
 } from "../src/lib/openapi/schemas/test-out";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { readBody } from "./helpers/response";
 
 const SKILLS = 4;
@@ -321,7 +322,7 @@ test.describe("Learner model API", () => {
             answer:
               question.format === "order"
                 ? { order: ORDER_STEPS.map((step) => question.options.indexOf(step)) }
-                : { selectedIndex: 0 },
+                : tapOption(question.options),
             durationMs: 6000,
             itemId: question.itemId,
           })),

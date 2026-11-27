@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { pickItemInMock } from "../_test-utils/shown-choice";
 import {
   answerRight,
   runningMock,
@@ -58,7 +59,11 @@ describe("mock answers in preparation's mastery evidence", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: questions[5]?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 30_000,
         flagged: false,
         itemId: questions[5]?.itemId ?? "",

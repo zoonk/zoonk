@@ -14079,11 +14079,17 @@ msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
 msgstr "0/{lines}줄"
 
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
+#. The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.
 #: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "약 {used}/{lines}줄 · {over}줄은 채점자가 읽지 않아요"
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr "약 {used}/{lines}줄 · 끝부분은 읽지 않아요"
+
+#. The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.
+#: src/writing/writing-editor.tsx
+msgctxt "VxrG7A"
+msgid "about {used} of {lines} lines · may not fit on paper"
+msgstr "약 {used}/{lines}줄 · 종이에 다 들어가지 않을 수 있어요"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"

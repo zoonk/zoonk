@@ -17,10 +17,13 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import * as ownedGoalFact from "../../learner/facts/owned-goal";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { skipAlphabetIntro } from "../alphabet/skip-alphabet-intro";
+import { showLevelTestOptions } from "./_utils/level-test-shown-order";
+import { readLevelTestProgress } from "./_utils/level-test-state";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
@@ -73,7 +76,15 @@ async function answerNextQuestion(goalId: string, attemptId?: string): Promise<s
       ? view.test.next.question.id
       : "";
 
-  await answerLanguageLevelTest({ goalId, input: { answerIndex: 1, attemptId, questionId } });
+  await answerLanguageLevelTest({
+    goalId,
+    input: {
+      answerIndex: tapInLevelTest({ answerIndex: 1, attemptId, goalId, questionId }),
+      attemptId,
+      questionId,
+    },
+  });
+
   return questionId;
 }
 
@@ -116,6 +127,54 @@ describe("language level test", () => {
     },
   );
 
+  it("shows each attempt's options in its own order, grades the place tapped and saves the bank's option", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const readQuestion = async () => {
+      const view = await getLanguageLevelTest(goal.id);
+
+      return view.status === "ready" &&
+        view.test.status === "ready" &&
+        view.test.next.kind === "question"
+        ? view.test.next.question
+        : null;
+    };
+
+    const question = await readQuestion();
+    const bankOptions = BANK.questions[0]?.options ?? [];
+
+    expect(question?.options).not.toStrictEqual(bankOptions);
+    expect(question?.options.toSorted()).toStrictEqual(bankOptions.toSorted());
+    await expect(readQuestion()).resolves.toStrictEqual(question);
+
+    const questionId = question?.id ?? "";
+
+    await expect(
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: { answerIndex: question?.options.indexOf("b") ?? -1, questionId },
+      }),
+    ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: true } });
+
+    const saved = readLevelTestProgress(
+      await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+    );
+
+    expect(saved.answers).toMatchObject([{ answerIndex: 1, correct: true, id: questionId }]);
+
+    const attempts = Array.from({ length: 8 }, () =>
+      showLevelTestOptions({
+        attemptId: crypto.randomUUID(),
+        goalId: goal.id,
+        question: { id: questionId, options: bankOptions },
+      }).join(","),
+    );
+
+    expect(new Set(attempts).size).toBeGreaterThan(1);
+  });
+
   it("asks questions near the learner's level, checks only the current one, and sets levels", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
@@ -134,7 +193,14 @@ describe("language level test", () => {
 
     const wrongQuestion = await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, questionId: "listening-C1-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "listening-C1-0",
+        }),
+        questionId: "listening-C1-0",
+      },
     });
 
     expect(wrongQuestion).toMatchObject({
@@ -144,7 +210,14 @@ describe("language level test", () => {
 
     const answered = await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        questionId: "reading-A2-0",
+      },
     });
 
     expect(answered).toMatchObject({
@@ -301,7 +374,14 @@ describe("language level test", () => {
     try {
       await answerLanguageLevelTest({
         goalId: goal.id,
-        input: { answerIndex: 1, questionId: "reading-A2-0" },
+        input: {
+          answerIndex: tapInLevelTest({
+            answerIndex: 1,
+            goalId: goal.id,
+            questionId: "reading-A2-0",
+          }),
+          questionId: "reading-A2-0",
+        },
       });
 
       await expect(getLanguageLevelTest(goal.id)).resolves.toMatchObject({
@@ -320,7 +400,14 @@ describe("language level test", () => {
     const answer = () =>
       answerLanguageLevelTest({
         goalId: goal.id,
-        input: { answerIndex: 1, questionId: "reading-A2-0" },
+        input: {
+          answerIndex: tapInLevelTest({
+            answerIndex: 1,
+            goalId: goal.id,
+            questionId: "reading-A2-0",
+          }),
+          questionId: "reading-A2-0",
+        },
       });
 
     const writer = holdLearnerLock({ userId: user.id });
@@ -341,7 +428,15 @@ describe("language level test", () => {
 
     await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        durationMs: 40_000,
+        questionId: "reading-A2-0",
+      },
     });
 
     const next = await getLanguageLevelTest(goal.id);
@@ -353,7 +448,11 @@ describe("language level test", () => {
 
     await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 0, durationMs: 20_000, questionId },
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId: goal.id, questionId }),
+        durationMs: 20_000,
+        questionId,
+      },
     });
 
     await finishLanguageLevelTest(goal.id);
@@ -425,7 +524,15 @@ describe("language level test", () => {
 
     await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, durationMs: 30_000, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        durationMs: 30_000,
+        questionId: "reading-A2-0",
+      },
     });
 
     await answerNextQuestion(goal.id);
@@ -488,7 +595,15 @@ describe("language level test", () => {
 
     await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        durationMs: 40_000,
+        questionId: "reading-A2-0",
+      },
     });
 
     await completeCurrentTapTest(goal.id);
@@ -519,7 +634,15 @@ describe("language level test", () => {
 
     await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 1,
+          goalId: goal.id,
+          questionId: "reading-A2-0",
+        }),
+        durationMs: 40_000,
+        questionId: "reading-A2-0",
+      },
     });
 
     const writer = holdLearnerLock({ userId: user.id });
@@ -564,7 +687,13 @@ describe("language level test", () => {
     });
 
     await expect(
-      answerLanguageLevelTest({ goalId: goal.id, input: { answerIndex: 1, questionId } }),
+      answerLanguageLevelTest({
+        goalId: goal.id,
+        input: {
+          answerIndex: tapInLevelTest({ answerIndex: 1, goalId: goal.id, questionId }),
+          questionId,
+        },
+      }),
     ).resolves.toMatchObject({ status: "ready", test: { answered: 1, next: { kind: "done" } } });
 
     await expect(finishLanguageLevelTest(goal.id)).resolves.toStrictEqual(finished);
@@ -711,7 +840,16 @@ describe("a post-start level test", () => {
     await expect(
       answerLanguageLevelTest({
         goalId: goal.id,
-        input: { answerIndex: 1, attemptId, questionId: next.question.id },
+        input: {
+          answerIndex: tapInLevelTest({
+            answerIndex: 1,
+            attemptId,
+            goalId: goal.id,
+            questionId: next.question.id,
+          }),
+          attemptId,
+          questionId: next.question.id,
+        },
       }),
     ).resolves.toMatchObject({ status: "ready", test: { answered: 1 } });
 
@@ -799,13 +937,31 @@ describe("a post-start level test", () => {
     await expect(
       answerLanguageLevelTest({
         goalId: goal.id,
-        input: { answerIndex: 1, attemptId, questionId: retake.test.next.question.id },
+        input: {
+          answerIndex: tapInLevelTest({
+            answerIndex: 1,
+            attemptId,
+            goalId: goal.id,
+            questionId: retake.test.next.question.id,
+          }),
+          attemptId,
+          questionId: retake.test.next.question.id,
+        },
       }),
     ).resolves.toMatchObject({ status: "ready", test: { next: { kind: "done" } } });
 
     const resumedQuestion = await answerLanguageLevelTest({
       goalId: goal.id,
-      input: { answerIndex: 0, attemptId: nextAttemptId, questionId: retake.test.next.question.id },
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 0,
+          attemptId: nextAttemptId,
+          goalId: goal.id,
+          questionId: retake.test.next.question.id,
+        }),
+        attemptId: nextAttemptId,
+        questionId: retake.test.next.question.id,
+      },
     });
 
     if (resumedQuestion.status !== "ready") {
@@ -1124,14 +1280,25 @@ async function completeTapTest({
     return;
   }
 
+  const { question } = test.next;
+
+  const tap = (answerIndex: number) =>
+    tapInLevelTest({
+      answerIndex,
+      attemptId,
+      count: question.options.length,
+      goalId,
+      questionId: question.id,
+    });
+
   const input =
     test.next.kind === "confirmation"
-      ? { answerIndex: null, answerIndices: confirm(test.next.question, test) }
-      : { answerIndex: 1 };
+      ? { answerIndex: null, answerIndices: confirm(question, test).map((index) => tap(index)) }
+      : { answerIndex: tap(1) };
 
   const next = await answerLanguageLevelTest({
     goalId,
-    input: { ...input, attemptId, questionId: test.next.question.id },
+    input: { ...input, attemptId, questionId: question.id },
   });
 
   if (next.status !== "ready") {

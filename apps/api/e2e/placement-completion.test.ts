@@ -15,6 +15,7 @@ import {
 } from "../src/lib/openapi/schemas/learner";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { tapOption } from "./helpers/choices";
 import { readBody } from "./helpers/response";
 
 test("a finished placement returns an Undo ID accepted by Plan", async () => {
@@ -61,15 +62,17 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       throw new Error("Expected an open placement test");
     }
 
-    const answerNext = async (itemId: string | undefined): Promise<void> => {
-      if (!itemId) {
+    const answerNext = async (question: typeof opened.next): Promise<void> => {
+      if (!question) {
         return;
       }
+
+      const { itemId } = question;
 
       const placed = await readBody({
         response: await apiContext.post(`${path}/answers`, {
           data: {
-            answer: answers.get(itemId) ?? { selectedIndex: 0 },
+            answer: answers.get(itemId) ?? tapOption(question.options),
             attemptId,
             durationMs: 1000,
             itemId,
@@ -79,10 +82,10 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       });
 
       expect(placed.isCorrect).toBe(true);
-      await answerNext(placed.placement.next?.itemId);
+      await answerNext(placed.placement.next);
     };
 
-    await answerNext(opened.next?.itemId);
+    await answerNext(opened.next);
 
     const finish = async () =>
       readBody({

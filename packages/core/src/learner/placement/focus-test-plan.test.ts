@@ -3,6 +3,7 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
@@ -21,7 +22,8 @@ import { getGoalPlacement } from "./get-goal-placement";
 import { startPlacementSitting } from "./start-placement-sitting";
 
 const DONT_KNOW = { dontKnow: true } as const;
-const RIGHT = { selectedIndex: 0 };
+/** The right option, wherever placement shows it. */
+const RIGHT = "right" as const;
 
 const MISS_FOURTH = [RIGHT, RIGHT, RIGHT, DONT_KNOW];
 
@@ -30,10 +32,14 @@ async function sit(goalId: string, answers: readonly (typeof DONT_KNOW | typeof 
   let placement = await startSitting(goalId);
 
   for (const answer of answers) {
+    const itemId = placement.next?.itemId ?? "";
+    // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+    const picked = answer === RIGHT ? await pickInPlacement({ itemId }) : answer;
+
     // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
     const result = await answerPlacementQuestion({
       goalId,
-      input: { answer, durationMs: 20_000, itemId: placement.next?.itemId ?? "" },
+      input: { answer: picked, durationMs: 20_000, itemId },
     });
 
     if (result.status !== "ready") {

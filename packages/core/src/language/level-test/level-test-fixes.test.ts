@@ -3,6 +3,7 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { levelTestBankFixture } from "@zoonk/testing/fixtures/level-tests";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
 import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { readGoalDetails } from "../_utils/language-goal";
@@ -95,14 +96,27 @@ describe("level test answers to a question fixed during the test", () => {
     const { bankId, goalId } = await learnerWithBank();
     const first = await nextQuestionId(goalId);
 
-    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: first } });
+    await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: first }),
+        questionId: first,
+      },
+    });
+
     await expect(lastAnswer(goalId)).resolves.toMatchObject({ startedAt: expect.any(String) });
 
     const fixed = await nextQuestionId(goalId);
     await moveAnswerKey({ bankId, questionId: fixed });
 
     await expect(
-      answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: fixed } }),
+      answerLanguageLevelTest({
+        goalId,
+        input: {
+          answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: fixed }),
+          questionId: fixed,
+        },
+      }),
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: null } });
 
     await expect(lastAnswer(goalId)).resolves.toMatchObject({
@@ -120,7 +134,13 @@ describe("level test answers to a question fixed during the test", () => {
       questionId: first,
     });
 
-    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: first } });
+    await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: first }),
+        questionId: first,
+      },
+    });
 
     await expect(lastAnswer(goalId)).resolves.toMatchObject({
       answer: { answerIndex: null, skipped: true },
@@ -138,7 +158,13 @@ describe("level test answers to a question fixed during the test", () => {
     });
 
     await expect(
-      answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: first } }),
+      answerLanguageLevelTest({
+        goalId,
+        input: {
+          answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: first }),
+          questionId: first,
+        },
+      }),
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: false } });
 
     const { answer } = await lastAnswer(goalId);
@@ -168,7 +194,13 @@ describe("level test answers to a question fixed during the test", () => {
       questionId: first,
     });
 
-    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: first } });
+    await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: first }),
+        questionId: first,
+      },
+    });
 
     await expect(lastAnswer(goalId)).resolves.toMatchObject({
       answer: { answerIndex: null, skipped: true },
@@ -181,7 +213,13 @@ describe("level test answers to a question fixed during the test", () => {
     await moveAnswerKey({ bankId, questionId: first });
 
     await expect(
-      answerLanguageLevelTest({ goalId, input: { answerIndex: 1, questionId: first } }),
+      answerLanguageLevelTest({
+        goalId,
+        input: {
+          answerIndex: tapInLevelTest({ answerIndex: 1, goalId, questionId: first }),
+          questionId: first,
+        },
+      }),
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: true } });
   });
 });
@@ -190,7 +228,14 @@ describe("level test answers saved before a fix", () => {
   it("keeps the verdict each answer got when it was given", async () => {
     const { bankId, goalId } = await learnerWithBank();
     const answered = await nextQuestionId(goalId);
-    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: answered } });
+
+    await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: answered }),
+        questionId: answered,
+      },
+    });
 
     const before = await getLanguageLevelTest(goalId);
     await moveAnswerKey({ bankId, questionId: answered });
@@ -206,7 +251,14 @@ describe("level test answers saved before a fix", () => {
   it("grades answers saved without a verdict by the bank's key", async () => {
     const { goalId } = await learnerWithBank();
     const answered = await nextQuestionId(goalId);
-    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: answered } });
+
+    await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId: answered }),
+        questionId: answered,
+      },
+    });
 
     const before = await getLanguageLevelTest(goalId);
     const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });

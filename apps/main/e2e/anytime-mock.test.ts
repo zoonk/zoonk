@@ -226,7 +226,7 @@ test.describe("Mocks whenever the learner wants", () => {
         return saving ? route.abort() : route.fallback();
       });
 
-      const answer = frame.getByRole("radio").first();
+      const answer = frame.getByRole("radio", { exact: true, name: "Right answer" });
       await answer.click();
 
       await expect(bar.getByRole("button", { name: "Try again" })).toBeVisible();

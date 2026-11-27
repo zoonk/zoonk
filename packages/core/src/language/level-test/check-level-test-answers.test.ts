@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/level-tests";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import { readGoalDetails } from "../_utils/language-goal";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { checkLevelTestAnswers } from "./check-level-test-answers";
@@ -41,7 +42,11 @@ async function answerShownQuestion(goalId: string) {
 
   await answerLanguageLevelTest({
     goalId,
-    input: { answerIndex: 1, durationMs: 9000, questionId },
+    input: {
+      answerIndex: tapInLevelTest({ answerIndex: 1, goalId, questionId }),
+      durationMs: 9000,
+      questionId,
+    },
   });
 
   return questionId;
@@ -98,7 +103,11 @@ describe("level test answers kept for checking the bank", () => {
   it("keeps an answer sent twice at once only once", async () => {
     const { goalId } = await learnerOfStoredBank();
     const questionId = await shownQuestionId(goalId);
-    const input = { answerIndex: 0, questionId };
+
+    const input = {
+      answerIndex: tapInLevelTest({ answerIndex: 0, goalId, questionId }),
+      questionId,
+    };
 
     await Promise.all([
       answerLanguageLevelTest({ goalId, input }),
