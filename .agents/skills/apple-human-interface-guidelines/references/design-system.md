@@ -158,7 +158,7 @@ Each of main's pieces has one native counterpart in `DesignSystem/`, built on a 
 
 - Glass belongs to the navigation and control layer, never to content: `TabView`, `NavigationStack` bars, toolbars, sheets, menus and floating controls. They adopt it on their own.
 - Don't paint backgrounds on bars, tab bars or toolbars. Custom backgrounds there break glass and the scroll edge effect.
-- Content (rows, panels, readouts, answer options) stays opaque on the page and the design system's surfaces.
+- Content (rows, panels, readouts, answer options) stays opaque on the page and the design system's surfaces: a `ZoonkList` in a sheet stands on the page's surface, so below full height its words never sit on the glass.
 - `.glassProminent` is not the main action. With the ink tint its white label vanishes on dark mode's white glass, and recoloring it doesn't help because glass draws labels vibrantly (they turn gray). Use `.mainAction`, in a `safeAreaBar` when it floats.
 - Several custom glass controls together go in one `GlassEffectContainer`.
 - Group toolbar items by job, separate groups with `ToolbarSpacer(.fixed)`, and give every icon-only item an accessibility label.
