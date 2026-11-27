@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
@@ -61,8 +62,9 @@ function onboardingGoal({
   userId: string;
 }) {
   return goalFixture({
-    details: { answered: ANSWERED, level: "A2", ...details },
+    details: { answered: [...ANSWERED, ...PROFILE_QUESTIONS], level: "A2", ...details },
     kind: "language",
+    planRevealedAt: null,
     targetDate: new Date(Date.now() + GOAL_DAYS_AHEAD * MS_PER_DAY),
     ...goal,
   });
@@ -354,7 +356,7 @@ test.describe("Language calls", () => {
 });
 
 test.describe("Language practice in the plan", () => {
-  test("onboarding's level test shows each skill's range, as from the plan", async ({
+  test("onboarding's level test says where the learner is and ends on reading alone when they can't listen", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -371,11 +373,21 @@ test.describe("Language practice in the plan", () => {
     ]);
 
     await page.goto(`/start/${goal.id}`);
+    await expect(page.getByRole("radio", { name: /Level test/u })).toBeChecked();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
-    await page.getByRole("radio", { name: "Right A2" }).click();
-    await page.getByRole("button", { name: "Confirm" }).click();
+
+    for (const number of [1, 2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("button", { name: "Confirm" }).click();
+    }
+
+    await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
 
     const clip = await routeSpeechClips(page);
     await page.getByRole("button", { name: "Play the message" }).click();
@@ -391,10 +403,14 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
+    await page.getByRole("button", { name: "Can't listen now" }).click();
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
-    await expect(page.getByText("Your lessons keep adjusting as you answer.")).toBeVisible();
+
+    await expect(
+      page.getByText("You can test your listening later, from your plan."),
+    ).toBeVisible();
+
     await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
 
     await page.reload();
@@ -405,7 +421,9 @@ test.describe("Language practice in the plan", () => {
       page.getByRole("listitem").filter({ hasText: /^Reading[ABC][12](?:–[ABC][12])?$/u }),
     ).toBeVisible();
 
-    await expect(page.getByRole("listitem").filter({ hasText: "Listening" })).toHaveCount(0);
+    await expect(
+      page.getByRole("listitem").filter({ hasText: /^ListeningNot tested yet$/u }),
+    ).toBeVisible();
 
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -417,12 +435,16 @@ test.describe("Language practice in the plan", () => {
       .toMatchObject({
         answered: expect.arrayContaining(["placement"]),
         levelTest: {
-          attempt: { answers: [{ answerIndex: 0, id: "reading-A2-0" }], length: "quick" },
+          attempt: {
+            answers: expect.arrayContaining([
+              expect.objectContaining({ answerIndex: 0, id: "reading-A2-0" }),
+              expect.objectContaining({ audioDeferred: true }),
+            ]),
+          },
         },
-        skillLevels: { reading: expect.any(String) },
       });
 
-    // A skill the learner answered nothing in gets no level.
+    // A test that didn't finish both skills shows what it found and moves no level the plan uses.
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.details).not.toHaveProperty("skillLevels.listening");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");

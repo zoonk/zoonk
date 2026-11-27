@@ -143,14 +143,17 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await page.getByRole("button", { exact: true, name: "Skip" }).click();
-
+    // No test is offered while its questions can't be asked yet: setup goes on.
     await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
     await mapGoalSkills({ goalId: created.id });
 
     const time = page.getByRole("heading", { name: "How much time can you study each day?" });
     await expect(time).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
+
+    // The test's questions exist now, so a refresh offers it before the time; a first lesson goes on.
     await page.reload();
+    await page.getByRole("radio", { name: /First lesson/u }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(time).toBeVisible();
 
     await page.getByLabel("Time a day", { exact: true }).selectOption("30");
@@ -197,8 +200,8 @@ test.describe("Onboarding from a typed goal", () => {
         "targetDate",
         "work",
         "buddy",
-        "placement",
         "schedule",
+        "placement",
       ]);
 
     expect(events).toContainEqual(
@@ -219,14 +222,7 @@ test.describe("Onboarding from a typed goal", () => {
     ).resolves.toMatchObject({ settings: { weekdayMinutes: [0, 30, 30, 30, 30, 30, 60] } });
 
     expect(saved.details).toMatchObject({
-      answered: expect.arrayContaining([
-        "purpose",
-        "role",
-        "targetDate",
-        "level",
-        "schedule",
-        "placement",
-      ]),
+      answered: expect.arrayContaining(["purpose", "role", "targetDate", "level", "schedule"]),
       level: "basic",
       purpose: "careerChange",
       role: "Teacher",
@@ -302,7 +298,6 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await page.getByRole("button", { exact: true, name: "Skip" }).click();
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
-  await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
   await mapGoalSkills({ goalId: created.id });
