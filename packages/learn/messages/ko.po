@@ -6345,7 +6345,7 @@ msgstr "지금은 듣지 않기"
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "DxEIkj"
 msgid "I didn't understand"
-msgstr ""
+msgstr "이해하지 못했어요"
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -10183,13 +10183,13 @@ msgstr "어디서 시작할까요?"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "xu6eM8"
 msgid "Test"
-msgstr ""
+msgstr "레벨 테스트"
 
-#. Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.
+#. Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "yjiD94"
 msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr ""
+msgstr "{skipped, plural, other {전체 {lessons, number}개 레슨 중 #개 건너뜀}}"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
@@ -10201,10 +10201,11 @@ msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
 
+#. Over the name of the chapter a course's placement test starts the learner in.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "SGu5bG"
 msgid "You start here"
-msgstr ""
+msgstr "여기서 시작해요"
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts

@@ -10185,7 +10185,7 @@ msgctxt "xu6eM8"
 msgid "Test"
 msgstr "Test"
 
-#. Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.
+#. Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "yjiD94"
 msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
@@ -10201,6 +10201,7 @@ msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "You undid these today. Answer again tomorrow to skip them."
 
+#. Over the name of the chapter a course's placement test starts the learner in.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "SGu5bG"
 msgid "You start here"
