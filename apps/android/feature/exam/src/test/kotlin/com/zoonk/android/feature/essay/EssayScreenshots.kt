@@ -78,7 +78,7 @@ class EssayScreenshots {
         rule.mainClock.advanceTimeBy(1_000)
         if (fold) rule.unfoldBook(folds)
         rule.waitForIdle()
-        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender().asAndroidBitmap())
+        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender(scenario = name).asAndroidBitmap())
     }
 
     private fun question(
