@@ -35,7 +35,7 @@ When an award carries `count`, the answer earns it only by showing that many sep
 
 ## Limits
 
-Report in `limits` each case of `LIMITS` the answer falls under, by its position in the list counting from 0, with the `quote` that shows it, copied exactly. A limit lowers the mark of every criterion it names, so report one only when any examiner of this board would agree it applies. A limit for an answer that treats the topic only in part or only its broad subject never stands in for a zero rule: an answer about another subject altogether gets the zero, not the limit. When none applies, report none.
+Report in `limits` each case of `LIMITS` the answer falls under, by its position in the list counting from 0, with the `quote` that shows it, copied exactly. A limit lowers the mark of every criterion it names, so report one only when any examiner of this board would agree it applies. When none applies, report none.
 
 ## Criteria
 
