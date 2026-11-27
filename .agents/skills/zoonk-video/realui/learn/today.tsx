@@ -65,6 +65,7 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
     estimatedBrainPower: 15,
     extra: false,
     fullReview: false,
+    lesson: null,
     mistakesOnly: false,
     netScored: false,
     oftenTested: false,
@@ -88,6 +89,7 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
       chapterId: `chapter-${spec.lesson.module}`,
       estimatedMinutes: spec.lesson.minutes,
       kind: "learn",
+      lesson: { setAside: false, status: "ready" },
       lessonId: `lesson-${spec.lesson.index}`,
       planItemId: `item-${spec.lesson.index}`,
       questions: 8,
@@ -187,6 +189,7 @@ function buildToday({
   const unstartedMissions = careerMissions({ blocks, chapter, opens: unstartedOpens });
 
   const day = {
+    alternativePosition: null,
     brainPower: done.reduce((sum, block) => sum + block.brainPower, 0),
     current: true,
     dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,

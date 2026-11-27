@@ -117,6 +117,7 @@ function block(learner: SampleLearner, position: number): DayBlockView {
     extra: false,
     fullReview: false,
     kind: "learn",
+    lesson: { setAside: false, status: "ready" },
     lessonId: `lesson-${position}`,
     mistakesOnly: false,
     netScored: false,
@@ -164,6 +165,7 @@ export function firstDay(learner: SampleLearner): UnstartedDayView {
   const minutes = learner.minutesPerDay;
 
   return {
+    alternativePosition: null,
     blocks,
     brainPower: 0,
     catchUp: null,
