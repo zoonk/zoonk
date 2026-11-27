@@ -138,3 +138,50 @@ describe("a saved day with remedial blocks, rebuilt after a plan change (followP
     expect(rebuilt.blocks.filter((block) => isRemedial(block))).toStrictEqual([]);
   });
 });
+
+const essayBlocks = (blocks: readonly PlannedBlock[]) =>
+  blocks.filter((block) => block.kind === "produce");
+
+describe("an open day refreshed with a whole answer due (buildRemainingDay)", () => {
+  const essay = { minutes: 45, taskKey: "essay", title: "Essay", unit: "answer" as const };
+  const input = { ...baseInput, capsules: [], lessons: [], practice: [], produces: [essay] };
+
+  const keptDay = (minutes: number) => {
+    const kept = [
+      {
+        ...teaching("shown", minutes),
+        id: "shown",
+        payload: toBlockPayload({ title: "shown" }),
+        status: "pending" as const,
+      },
+    ];
+
+    return buildRemainingDay({
+      dated: true,
+      input,
+      kept,
+      session: { blocks: kept, plannedMinutes: minutes },
+    });
+  };
+
+  it("adds no answer past the day's time left", () => {
+    expect(keptDay(40)).toStrictEqual({ blocks: [], plannedMinutes: 40 });
+  });
+
+  it("adds an answer that fits the time left", () => {
+    expect(
+      essayBlocks(
+        buildRemainingDay({
+          dated: true,
+          input: { ...input, dailyMinutes: 90 },
+          kept: [],
+          session: { blocks: [], plannedMinutes: 0 },
+        }).blocks,
+      ),
+    ).toMatchObject([{ estimatedMinutes: 45, kind: "produce" }]);
+
+    expect(essayBlocks(keptDay(0).blocks)).toMatchObject([
+      { estimatedMinutes: 45, kind: "produce" },
+    ]);
+  });
+});

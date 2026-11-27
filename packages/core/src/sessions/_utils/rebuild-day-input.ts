@@ -1,5 +1,6 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { getBlockItemIds, isRemedialPractice, readBlockPayload } from "../block-payload";
+import { getSessionDayMinutes } from "../fresh-start";
 import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { getSessionUsedMinutes } from "../session-minutes";
 
@@ -42,6 +43,21 @@ function getOpenedPractice({
   return { dayMinutes: session.plannedMinutes, minutes: minutes + teachingMinutes };
 }
 
+/** A whole answer reserves a fresh day, but a day already open only takes what fits its time left. */
+function fitWriting({
+  minutes,
+  produces,
+}: {
+  minutes: number;
+  produces: SessionBuildInput["produces"];
+}): SessionBuildInput["produces"] {
+  return produces.filter(
+    (_, index) =>
+      produces.slice(0, index + 1).reduce((total, produce) => total + produce.minutes, 0) <=
+      minutes,
+  );
+}
+
 function withoutKept({
   dated,
   input,
@@ -71,6 +87,7 @@ function withoutKept({
   );
 
   const usedMinutes = getSessionUsedMinutes(kept) - mistakes - teaching;
+  const minutesLeft = getSessionDayMinutes(input) - usedMinutes;
 
   const lessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
   const itemIds = new Set(kept.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
@@ -111,6 +128,10 @@ function withoutKept({
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
     // A day that keeps its practice gives the rest of its time to lessons.
     practiceShare: kinds.has("practice") ? 0 : input.practiceShare,
+    produces:
+      kept.length > 0
+        ? fitWriting({ minutes: minutesLeft, produces: input.produces })
+        : input.produces,
     remedial:
       mistakes || teaching
         ? { dated, kept: { mistakes, teaching }, mistakes: [], teaching: [] }

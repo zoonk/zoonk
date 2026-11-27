@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -13,8 +14,11 @@ import { createWritingBlock } from "../exams/essays/create-writing-block";
 import { toProduceBlock } from "../exams/essays/produce-block";
 import { CGU } from "../exams/mocks/_test-utils/cgu-written";
 import { getMockOptions } from "../exams/mocks/get-mock-options";
+import { mockConditionsSchema, mockResultSchema } from "../exams/mocks/mock-contract";
+import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 import { listWritingPreparation } from "../lookahead/writing-preparation";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { loadDayPlan } from "../sessions/_utils/day-plan";
 import {
   captureDaySession,
@@ -26,6 +30,7 @@ import { loadSessionBuildInput } from "../sessions/_utils/load-build-inputs";
 import { followPlanChangeToday } from "../sessions/_utils/refresh-day-session";
 import { addWritingDrill } from "../sessions/_utils/writing-drills";
 import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
+import { refreshOwedStudyDay } from "../sessions/refresh-owed-study-day";
 import { buildSessionBlocks } from "../sessions/session-builder";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -35,6 +40,7 @@ import { getGoalPlan } from "./get-goal-plan";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
+import { catchUpMockReplan } from "./replan-after-mock";
 
 const START = new Date("2026-09-30");
 const DAYS = 35;
@@ -208,6 +214,163 @@ async function recordWritingBlock({
 
   return { block, session };
 }
+
+const OPENED_OFFSET = 2;
+const OPENED = addDays(START, OPENED_OFFSET);
+
+/** A day past the plan's first, opened before the plan has placed its first essay anywhere. */
+async function openDayWithoutWriting() {
+  const fixture = await setup({ dailyMinutes: 45, structure: CGU });
+  const settings = parsePlanSettings(fixture.saved.settings);
+
+  await prisma.plan.update({
+    data: { settings: { ...settings, writingSchedule: [] } },
+    where: { id: fixture.saved.id },
+  });
+
+  advanceTo(OPENED_OFFSET);
+  const opened = await getTodayStudySession({ goalId: fixture.goal.id, timeZone: "UTC" });
+
+  if (opened.status !== "ready") {
+    throw new Error(`Expected the day to open, got ${opened.status}`);
+  }
+
+  return { ...fixture, session: opened.session };
+}
+
+async function readOpenedDay({ goalId, sessionId }: { goalId: string; sessionId: string }) {
+  const [session, view] = await Promise.all([
+    prisma.studySession.findUniqueOrThrow({
+      include: { blocks: { orderBy: { position: "asc" } } },
+      where: { id: sessionId },
+    }),
+    getTodayView({ goalId, timeZone: "UTC" }),
+  ]);
+
+  return {
+    blocks: session.blocks.map(({ estimatedMinutes, id, kind }) => ({
+      estimatedMinutes,
+      id,
+      kind,
+    })),
+    minutes: view.status === "ready" ? view.today.session?.minutes : null,
+    plannedMinutes: session.plannedMinutes,
+  };
+}
+
+async function readWritingDates(goalId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+  return (parsePlanSettings(plan.settings).writingSchedule ?? []).map(({ date }) => date);
+}
+
+async function finishMockMissing({
+  goal,
+  skillId,
+}: {
+  goal: { id: string; userId: string };
+  skillId: string;
+}) {
+  const item = await itemFixture({ content: choiceItemContent(), skillId });
+
+  const mock = await prisma.mockExam.create({
+    data: {
+      conditions: mockConditionsSchema.parse({
+        day: null,
+        examQuestions: null,
+        fullLength: true,
+        partialCredit: "allOrNothing",
+        purpose: "practice",
+        reused: 0,
+        scoring: "raw",
+        sections: [],
+        shape: null,
+        startTime: null,
+        timeZone: "UTC",
+        timedOutSections: [],
+        wrongPenalty: 0,
+      }),
+      finishedAt: new Date(),
+      goalId: goal.id,
+      result: mockResultSchema.parse({
+        areas: [],
+        blank: 0,
+        calibration: null,
+        coherence: null,
+        correct: 0,
+        irt: null,
+        minutesUsed: 10,
+        net: null,
+        plannedMinutes: 10,
+        points: null,
+        preparation: null,
+        previous: null,
+        scoring: "raw",
+        topics: [{ area: null, correct: 0, name: "Writing", skillId, total: 1 }],
+        total: 1,
+        unansweredAtTimeout: 0,
+      }),
+      sectionStartedAt: new Date(),
+      startedAt: new Date(),
+      status: "finished",
+      userId: goal.userId,
+    },
+  });
+
+  await Promise.all([
+    prisma.mockExamAnswer.create({
+      data: { answer: { selectedIndex: 1 }, itemId: item.id, mockExamId: mock.id },
+    }),
+    attemptFixture({
+      answer: { selectedIndex: 1 },
+      isCorrect: false,
+      itemId: item.id,
+      mockExamId: mock.id,
+      skillId,
+      userId: goal.userId,
+    }),
+  ]);
+}
+
+describe("an opened day without an essay", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("keeps its blocks and minutes when lessons landing re-plan it, and the essay goes to a later day", async () => {
+    const { goal, saved, session } = await openDayWithoutWriting();
+    const shown = await readOpenedDay({ goalId: goal.id, sessionId: session.id });
+
+    await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [saved.id] }));
+    await refreshOwedStudyDay({ sessionId: session.id, timeZone: "UTC", userId: goal.userId });
+
+    const [day, plan, dates] = await Promise.all([
+      readOpenedDay({ goalId: goal.id, sessionId: session.id }),
+      prisma.plan.findUniqueOrThrow({ where: { id: saved.id } }),
+      readWritingDates(goal.id),
+    ]);
+
+    expect(day).toStrictEqual(shown);
+    expect(plan.version).toBe(saved.version + 1);
+    expect(dates[0]).toBe(toIsoDate(addDays(OPENED, 1)));
+  });
+
+  it("keeps its blocks and minutes when a finished mock re-plans it", async () => {
+    const { goal, saved, session, writingSkill } = await openDayWithoutWriting();
+    const shown = await readOpenedDay({ goalId: goal.id, sessionId: session.id });
+
+    await finishMockMissing({ goal, skillId: writingSkill ?? "" });
+    await catchUpMockReplan({ goal, now: new Date(), timeZone: "UTC" });
+    await refreshOwedStudyDay({ sessionId: session.id, timeZone: "UTC", userId: goal.userId });
+
+    const [day, plan, dates] = await Promise.all([
+      readOpenedDay({ goalId: goal.id, sessionId: session.id }),
+      prisma.plan.findUniqueOrThrow({ where: { id: saved.id } }),
+      readWritingDates(goal.id),
+    ]);
+
+    expect(day).toStrictEqual(shown);
+    expect(parsePlanSettings(plan.settings).mockReplan).toMatchObject({ applied: true });
+    expect(dates[0]).toBe(toIsoDate(addDays(OPENED, 1)));
+  });
+});
 
 describe("written exam allocation", () => {
   afterEach(() => vi.useRealTimers());
