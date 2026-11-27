@@ -136,7 +136,7 @@ private struct BuddyContent: View {
     // A pane rather than an inspector: a hidden tab's inspector turns into a sheet over the shown
     // tab when the width turns compact. The conversation keeps its identity as the pane comes and
     // goes, so what it's asking or opening goes on.
-    PaneBeside(isAvailable: list != nil, paneEdge: .trailing, primaryShare: 0.66) {
+    PaneBeside(isAvailable: list != nil, paneEdge: .trailing, primaryShare: 0.55) {
       if let goalId {
         conversationList(goalId: goalId, inSheet: false)
           // A list opened in a sheet before iPhone Duo unfolded gives way to the pane.
