@@ -85,7 +85,6 @@ async function createEssayBlock(userId: string) {
   });
 
   const prompt = {
-    charactersPerLine: 60,
     criteria: [CRITERION],
     keySource: "practiceKey",
     lines: TASK.lines,
@@ -220,7 +219,7 @@ test.describe("Essays API", () => {
         question: essay.question,
         sessionId,
         status: "active",
-        writing: prompt,
+        writing: { ...prompt, charactersPerLine: 87, denseCharactersPerLine: 155 },
         writingTask: WRITING_TASK,
       });
 

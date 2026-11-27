@@ -3,7 +3,7 @@ import { detectLanguage } from "@/lib/text-language";
 import { type TaskScorer } from "@/lib/types";
 import {
   countWritingLines,
-  getDenseCharactersPerLine,
+  WRITING_LINE_WIDTHS,
 } from "@zoonk/core/exams/essays/writing-lines";
 import { markWritingRows } from "@zoonk/core/exams/essays/writing-marks";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
@@ -237,8 +237,7 @@ function expectedScore({
   const { basis, text } = input;
 
   const { estimatedLines } = countWritingLines({
-    charactersPerLine: basis.charactersPerLine,
-    denseCharactersPerLine: getDenseCharactersPerLine(basis.charactersPerLine),
+    ...WRITING_LINE_WIDTHS,
     limit: basis.lines,
     text,
   });

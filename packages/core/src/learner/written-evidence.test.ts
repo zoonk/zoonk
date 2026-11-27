@@ -19,7 +19,6 @@ async function samplesFixture() {
         writing: {
           aspects: [],
           assessedSkillIds: [skill.id],
-          charactersPerLine: 65,
           criteria: [CRITERION],
           grading: { criteria: [], language: null, rounding: null, zeroing: [] },
           keySource: "practiceKey",

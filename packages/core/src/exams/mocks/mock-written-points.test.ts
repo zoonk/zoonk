@@ -83,7 +83,6 @@ function graded({
     text: "Answer",
     unsure: false,
     writing: readWritingPrompt({
-      charactersPerLine: 70,
       criteria: [],
       keySource: "notice",
       lines: 30,

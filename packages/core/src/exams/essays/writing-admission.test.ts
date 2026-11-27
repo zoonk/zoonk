@@ -94,7 +94,6 @@ async function setup(localDate = LOCAL_DATE) {
             { criterionId: CRITERION.id, description: "One valid inference", points: null },
           ],
           assessedSkillIds: [skill.id],
-          charactersPerLine: 65,
           criteria: [CRITERION],
           grading: { criteria: [], language: null, rounding: null, zeroing: [] },
           keySource: "practiceKey",

@@ -8,7 +8,6 @@ import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { type listPracticeWritingTasks } from "../../exams/essays/_utils/practice-writing-tasks";
 import { getWritingTaskBasis } from "../../exams/essays/_utils/writing-task-basis";
 import { type WritingPrompt, writtenItemSchema } from "../../exams/essays/writing-contract";
-import { WRITING_CHARACTERS_PER_LINE } from "../../exams/essays/writing-lines";
 import { getWrittenPartMinimum } from "../../exams/scoring/written-points";
 import { getAnswerAttemptId } from "../../learner/_utils/answer-once";
 import { getWritingSkillIds } from "../../learner/writing-skills";
@@ -122,7 +121,6 @@ export function promptContent({
   const writing = writtenItemSchema.parse({
     aspects: keyAspects({ aspects: data.aspects, grading }),
     assessedSkillIds,
-    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "practiceKey",

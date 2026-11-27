@@ -2,7 +2,11 @@ import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type writingZeroKindSchema } from "../../../library/exams/written-grading";
 import { type writtenItemSchema } from "../writing-contract";
-import { WRITING_LINE_BREAK, estimateWritingLines } from "../writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_LINE_BREAK,
+  estimateWritingLines,
+} from "../writing-lines";
 
 type Basis = z.infer<typeof writtenItemSchema>;
 type ZeroKind = z.infer<typeof writingZeroKindSchema>;
@@ -45,10 +49,10 @@ function originalText(text: string, quote: string) {
   return `${before}${after}`.trim();
 }
 
-function shortEnough(text: string, maxLines: number | null | undefined, basis: Basis) {
+function shortEnough(text: string, maxLines: number | null | undefined) {
   return (
     typeof maxLines === "number" &&
-    estimateWritingLines({ charactersPerLine: basis.charactersPerLine, text: text.trim() }) <=
+    estimateWritingLines({ charactersPerLine: WRITING_CHARACTERS_PER_LINE, text: text.trim() }) <=
       maxLines
   );
 }
@@ -73,7 +77,7 @@ function matchesNominatedRule({
   switch (zeroKind) {
     case "copiedSupport": {
       const original = context?.includes(zeroQuote) ? originalText(text, zeroQuote) : null;
-      return original !== null && shortEnough(original, maxLines, basis);
+      return original !== null && shortEnough(original, maxLines);
     }
     case "identification": {
       const name = IDENTITY.exec(zeroQuote)?.groups?.name;
@@ -113,7 +117,7 @@ function matchesRule({
     return "blank";
   }
 
-  if (kinds?.includes("tooFewLines") && shortEnough(text, maxLines, basis)) {
+  if (kinds?.includes("tooFewLines") && shortEnough(text, maxLines)) {
     return "tooFewLines";
   }
 

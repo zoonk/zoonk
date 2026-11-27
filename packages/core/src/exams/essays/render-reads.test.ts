@@ -55,7 +55,6 @@ describe("essay render reads", () => {
         writing: {
           aspects: [],
           assessedSkillIds: [skills[0]!.id],
-          charactersPerLine: 55,
           criteria: [{ id: "claim", name: "Claim", points: null }],
           grading: { criteria: [], language: null, rounding: null, zeroing: [] },
           keySource: "practiceKey",

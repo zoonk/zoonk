@@ -29,14 +29,11 @@ import { getWritingAttempt } from "./get-writing-attempt";
 import {
   type WritingConditions,
   type WritingResult,
+  readWritingPrompt,
   writtenAnswerSchema,
   writtenItemSchema,
 } from "./writing-contract";
-import {
-  WRITING_CHARACTERS_PER_LINE,
-  countWritingLines,
-  getDenseCharactersPerLine,
-} from "./writing-lines";
+import { WRITING_LINE_WIDTHS, countWritingLines } from "./writing-lines";
 import { isNumericWritingRubric } from "./writing-rubric-policy";
 
 vi.mock(import("@zoonk/ai/tasks/grading/grade-essay"), async (importOriginal) => ({
@@ -71,7 +68,6 @@ const basis = writtenItemSchema.parse({
     { criterionId: "claim", description: "Explain the claim", points: 0.45 },
   ],
   assessedSkillIds: ["6d0ef67d-2dc8-4cca-b355-9924a7549387"],
-  charactersPerLine: 24,
   criteria: [{ id: "claim", name: "Claim", points: 0.75 }],
   grading: {
     criteria: [{ citation, id: "claim", points: 0.75, text: "Claim" }],
@@ -709,8 +705,7 @@ describe(countWritingLines, () => {
   it("keeps a full 70-line answer that the board graded in full", () => {
     expect(
       countWritingLines({
-        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
-        denseCharactersPerLine: getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE),
+        ...WRITING_LINE_WIDTHS,
         limit: 70,
         text: cacd2024Essay,
       }).ignoredFrom,
@@ -736,11 +731,7 @@ describe(countWritingLines, () => {
       mockEvidence();
       const text = handwrittenAnswer(answer);
 
-      const writing = {
-        ...basis,
-        charactersPerLine: WRITING_CHARACTERS_PER_LINE,
-        lines: answer.lines,
-      };
+      const writing = { ...basis, lines: answer.lines };
 
       const grade = await gradeWriting({
         content: { ...content, writing },
@@ -758,8 +749,7 @@ describe(countWritingLines, () => {
     const text = handwrittenAnswer({ characters: 180, lines: 40, paragraphs: 4 });
 
     const { estimatedLines, ignoredFrom } = countWritingLines({
-      charactersPerLine: WRITING_CHARACTERS_PER_LINE,
-      denseCharactersPerLine: getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE),
+      ...WRITING_LINE_WIDTHS,
       limit: 40,
       text,
     });
@@ -768,9 +758,11 @@ describe(countWritingLines, () => {
     expect(ignoredFrom).toBeGreaterThan(text.length * 0.8);
   });
 
-  it("keeps each issued task's typical width and scales the dense one from it", () => {
-    expect(getDenseCharactersPerLine(WRITING_CHARACTERS_PER_LINE)).toBe(155);
-    expect(getDenseCharactersPerLine(55)).toBe(98);
+  it("reads a task saved with an older line width at the measured ones", () => {
+    expect(readWritingPrompt({ ...basis, charactersPerLine: 55 })).toMatchObject({
+      charactersPerLine: 87,
+      denseCharactersPerLine: 155,
+    });
   });
 
   it.each(lineFixtures)(

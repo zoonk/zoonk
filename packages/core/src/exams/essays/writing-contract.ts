@@ -3,7 +3,7 @@ import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
 import { withSavedNextStep } from "./_utils/writing-next-step";
-import { getDenseCharactersPerLine } from "./writing-lines";
+import { WRITING_LINE_WIDTHS } from "./writing-lines";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -28,12 +28,6 @@ export const writingTaskSchema = z
   .meta({ id: "WritingTask", override: { additionalProperties: false } });
 
 const writingBasisSchema = z.object({
-  charactersPerLine: z
-    .int()
-    .positive()
-    .describe(
-      "Characters a line in a typical hand on this sheet, as the estimated line count uses",
-    ),
   criteria: z.array(z.object({ id: z.string(), name: z.string(), points })),
   keySource: z.enum(["notice", "publishedStandard", "practiceKey"]),
   lines,
@@ -50,19 +44,21 @@ const writingBasisSchema = z.object({
 
 export const writingPromptSchema = writingBasisSchema
   .extend({
+    charactersPerLine: z
+      .int()
+      .positive()
+      .describe("Characters a line in a typical hand, as the estimated line count uses"),
     denseCharactersPerLine: z
       .int()
       .positive()
       .describe(
-        "Characters a line in the densest real handwriting on this sheet; graders read an answer up to where it passes `lines` at this width",
+        "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width",
       ),
   })
   .meta({ id: "WritingPrompt" });
 
-/** A saved task's prompt, with the dense width derived from the typical one it was issued with. */
 export function readWritingPrompt(value: unknown): z.infer<typeof writingPromptSchema> {
-  const basis = writingBasisSchema.parse(value);
-  return { ...basis, denseCharactersPerLine: getDenseCharactersPerLine(basis.charactersPerLine) };
+  return { ...writingBasisSchema.parse(value), ...WRITING_LINE_WIDTHS };
 }
 
 const keyedWritingRowKind = z.enum(["definitePoint", "judgedScale"]);

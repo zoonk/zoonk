@@ -27,7 +27,6 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
     const writing = {
       aspects: [{ criterionId: "claim", description: "Private answer key", points: null }],
       assessedSkillIds: [skill.id],
-      charactersPerLine: 55,
       criteria: [{ id: "claim", name: "Claim", points: null }],
       grading: { criteria: [], language: null, rounding: null, zeroing: [] },
       keySource: "practiceKey",

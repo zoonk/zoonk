@@ -8,7 +8,7 @@ import {
 } from "@zoonk/core/exams/essays/writing-feedback";
 import {
   countWritingLines,
-  getDenseCharactersPerLine,
+  WRITING_LINE_WIDTHS,
 } from "@zoonk/core/exams/essays/writing-lines";
 import { getWritingGraderSheet } from "@zoonk/core/exams/essays/writing-sheet";
 import { type GradeWritingExpected, type GradeWritingInput } from "./cases/shared";
@@ -37,8 +37,7 @@ async function generate({
   useFallback,
 }: GradeWritingInput & { model: string; reasoning?: Reasoning; useFallback?: boolean }) {
   const { estimatedLines, ignoredFrom } = countWritingLines({
-    charactersPerLine: basis.charactersPerLine,
-    denseCharactersPerLine: getDenseCharactersPerLine(basis.charactersPerLine),
+    ...WRITING_LINE_WIDTHS,
     limit: basis.lines,
     text,
   });

@@ -1,6 +1,5 @@
 import { type TestCase } from "@/lib/types";
 import { type writtenItemSchema } from "@zoonk/core/exams/essays/writing-contract";
-import { WRITING_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
 import { type z } from "zod";
 
 export type Basis = z.infer<typeof writtenItemSchema>;
@@ -87,7 +86,6 @@ export function basis({
   return {
     aspects,
     assessedSkillIds: [ANCHOR_SKILL],
-    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     criteria,
     grading,
     keySource: "publishedStandard",

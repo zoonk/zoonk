@@ -34772,13 +34772,6 @@
       "WritingPrompt": {
         "type": "object",
         "properties": {
-          "charactersPerLine": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991,
-            "description": "Characters a line in a typical hand on this sheet, as the estimated line count uses"
-          },
           "criteria": {
             "type": "array",
             "items": {
@@ -34882,16 +34875,22 @@
               "answer"
             ]
           },
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand, as the estimated line count uses"
+          },
           "denseCharactersPerLine": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Characters a line in the densest real handwriting on this sheet; graders read an answer up to where it passes `lines` at this width"
+            "description": "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width"
           }
         },
         "required": [
-          "charactersPerLine",
           "criteria",
           "keySource",
           "lines",
@@ -34900,6 +34899,7 @@
           "taskKey",
           "title",
           "unit",
+          "charactersPerLine",
           "denseCharactersPerLine"
         ]
       },
@@ -105799,13 +105799,6 @@
       "WritingPromptOutput": {
         "type": "object",
         "properties": {
-          "charactersPerLine": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991,
-            "description": "Characters a line in a typical hand on this sheet, as the estimated line count uses"
-          },
           "criteria": {
             "type": "array",
             "items": {
@@ -105912,16 +105905,22 @@
               "answer"
             ]
           },
+          "charactersPerLine": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "description": "Characters a line in a typical hand, as the estimated line count uses"
+          },
           "denseCharactersPerLine": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "Characters a line in the densest real handwriting on this sheet; graders read an answer up to where it passes `lines` at this width"
+            "description": "Characters a line in the densest real handwriting; graders read an answer up to where it passes `lines` at this width"
           }
         },
         "required": [
-          "charactersPerLine",
           "criteria",
           "keySource",
           "lines",
@@ -105930,6 +105929,7 @@
           "taskKey",
           "title",
           "unit",
+          "charactersPerLine",
           "denseCharactersPerLine"
         ],
         "additionalProperties": false

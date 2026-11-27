@@ -92,7 +92,6 @@ export function writtenEssayContent(skillId: string) {
         points: null,
       })),
       assessedSkillIds: [skillId],
-      charactersPerLine: 55,
       criteria: ESSAY_CRITERIA,
       grading: { criteria: [], language: null, rounding: null, zeroing: [] },
       keySource: "practiceKey",

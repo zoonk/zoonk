@@ -47,7 +47,6 @@ function promptContent({
         points: value,
       })),
       assessedSkillIds: [skillId],
-      charactersPerLine: 55,
       criteria: CRITERIA.map(({ id, points: value, text }) => ({ id, name: text, points: value })),
       grading: GRADING,
       keySource: "practiceKey",

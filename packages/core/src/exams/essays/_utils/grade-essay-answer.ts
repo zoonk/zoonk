@@ -14,7 +14,7 @@ import {
   type WritingResult,
   writtenAnswerSchema,
 } from "../writing-contract";
-import { countWritingLines, getDenseCharactersPerLine } from "../writing-lines";
+import { WRITING_LINE_WIDTHS, countWritingLines } from "../writing-lines";
 import { type WritingGrader, isNumericWritingRubric } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
@@ -41,8 +41,7 @@ export async function gradeWriting({
   const basis = content.writing;
 
   const { estimatedLines, ignoredFrom } = countWritingLines({
-    charactersPerLine: basis.charactersPerLine,
-    denseCharactersPerLine: getDenseCharactersPerLine(basis.charactersPerLine),
+    ...WRITING_LINE_WIDTHS,
     limit: basis.lines,
     text,
   });

@@ -22,7 +22,7 @@ import {
 import { readEssayContent } from "../essays/_utils/essay-content";
 import { type WritingCalibration } from "../essays/_utils/writing-calibration";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
-import { getDenseCharactersPerLine } from "../essays/writing-lines";
+import { WRITING_DENSE_CHARACTERS_PER_LINE } from "../essays/writing-lines";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
 import { loadExamHistory } from "../view/_utils/exam-history";
@@ -143,7 +143,6 @@ async function setup({
         writing: {
           aspects: [{ criterionId: "case", description: "Applies the rule", points }],
           assessedSkillIds: [writing.id],
-          charactersPerLine: 55,
           criteria: [
             { id: "case", name: taskKey === "short" ? "Presentation" : "Application", points },
             ...(taskKey === "short" ? [{ id: "rule", name: "Application", points: null }] : []),
@@ -580,15 +579,15 @@ describe("written mock sittings", () => {
     await gradeMockEssays({ blockId: id, input: UTC });
 
     expect(gradeWritingEvidence).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ text: text.slice(0, 30 * getDenseCharactersPerLine(55)) }),
+      expect.objectContaining({ text: text.slice(0, 30 * WRITING_DENSE_CHARACTERS_PER_LINE) }),
     );
 
     await expect(view(id)).resolves.toMatchObject({
       essays: [
         {
           grade: {
-            estimatedLines: 263,
-            ignoredFrom: 30 * getDenseCharactersPerLine(55),
+            estimatedLines: 167,
+            ignoredFrom: 30 * WRITING_DENSE_CHARACTERS_PER_LINE,
             kind: "levels",
             nextStep: { kind: "limit", title: null },
           },
@@ -632,7 +631,7 @@ describe("written mock sittings", () => {
             {
               answers: [
                 {
-                  estimatedLines: 263,
+                  estimatedLines: 167,
                   range: null,
                   taskKey: "short",
                   title: "Topic for short",

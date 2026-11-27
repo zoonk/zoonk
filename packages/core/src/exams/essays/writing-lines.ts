@@ -8,14 +8,13 @@ export const WRITING_CHARACTERS_PER_LINE = 87;
 
 // The densest of 122 published CACD answers read in full: a 2025 history answer of 7,771
 // characters and 19 paragraphs on 60 lines, marked 30 of 30 (#3265).
-const DENSEST_CHARACTERS_PER_LINE = 155;
+export const WRITING_DENSE_CHARACTERS_PER_LINE = 155;
 
-/** The densest real handwriting on a sheet whose typical hand fits `charactersPerLine`. */
-export function getDenseCharactersPerLine(charactersPerLine: number) {
-  return Math.round(
-    (charactersPerLine * DENSEST_CHARACTERS_PER_LINE) / WRITING_CHARACTERS_PER_LINE,
-  );
-}
+/** Both widths are measured on real handwriting, so a saved task reads at today's, never its own. */
+export const WRITING_LINE_WIDTHS = {
+  charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+  denseCharactersPerLine: WRITING_DENSE_CHARACTERS_PER_LINE,
+};
 
 /**
  * The sheet lines a text takes at `charactersPerLine`, and the UTF-16 offset of its first
