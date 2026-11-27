@@ -1,6 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
-import { closeSync, ftruncateSync, readFileSync, readdirSync, rmSync, writeSync } from "node:fs";
+import { closeSync, ftruncateSync, readFileSync, writeSync } from "node:fs";
 import { availableParallelism, homedir, loadavg } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -8,6 +7,7 @@ import { listCrashReports } from "../../../scripts/dev/crash-reports.mts";
 import { openExclusiveLock, tryExclusiveLock } from "../../../scripts/dev/exclusive-lock.mts";
 import { type QueueTurn, waitForTurn } from "../../../scripts/dev/queue.mts";
 import { deviceClaims } from "./device-claims.mts";
+import { joinWaitLine } from "./simulator-wait-line.mts";
 import { type Simulator, TEMPORARY_TEST_SIMULATOR_NAME, listSimulators } from "./simulators.mts";
 
 const BUSY_MAX_BOOTED_SIMULATORS = 3;
@@ -64,7 +64,7 @@ export function releaseLease({ descriptor }: { descriptor: number }) {
   closeSync(descriptor);
 }
 
-function markLease({ descriptor, kind }: { descriptor: number; kind: LeaseKind }) {
+function markLease({ descriptor, kind }: { descriptor: number; kind: LeaseKind | "pinned test" }) {
   ftruncateSync(descriptor);
 
   writeSync(
@@ -148,7 +148,7 @@ function reserveDevice({
   device: Simulator;
   kind: LeaseKind;
   wasBooted: boolean;
-}): Reservation | undefined {
+}): Reservation | "boot-limit" | undefined {
   const descriptor = tryLocking(device);
 
   if (descriptor === undefined) {
@@ -157,10 +157,10 @@ function reserveDevice({
 
   if (wasBooted ? automatic && !isAbandonedTest(device.udid) : !canBoot) {
     closeSync(descriptor);
-    return;
+    return wasBooted ? undefined : "boot-limit";
   }
 
-  markLease({ descriptor, kind });
+  markLease({ descriptor, kind: kind === "test" && !automatic ? "pinned test" : kind });
 
   return {
     descriptor,
@@ -184,7 +184,8 @@ function reserve({
     const { devices, create } = getCandidates();
     const booted = getBootedSimulators();
     const claims = deviceClaims();
-    const canBoot = booted.length < getMaxBootedSimulators();
+    const bootLimit = getMaxBootedSimulators();
+    const canBoot = booted.length < bootLimit;
 
     for (const device of devices.filter(({ udid }) => !claims.has(udid))) {
       const reservation = reserveDevice({
@@ -195,12 +196,22 @@ function reserve({
         wasBooted: booted.some(({ udid }) => udid === device.udid),
       });
 
-      if (reservation) {
+      if (reservation === "boot-limit" && kind === "launch") {
+        break;
+      }
+
+      if (reservation && reservation !== "boot-limit") {
         return reservation;
       }
     }
 
-    if (canBoot && create) {
+    const occupiedSlots = new Set(
+      [...booted, ...devices.filter(({ name }) => name === TEMPORARY_TEST_SIMULATOR_NAME)].map(
+        ({ udid }) => udid,
+      ),
+    );
+
+    if (create && occupiedSlots.size < bootLimit) {
       const reservation = reserveDevice({
         automatic,
         canBoot,
@@ -209,7 +220,7 @@ function reserve({
         wasBooted: false,
       });
 
-      if (reservation) {
+      if (reservation && reservation !== "boot-limit") {
         return reservation;
       }
     }
@@ -235,6 +246,10 @@ function startLease(reservation: Reservation, options: LeaseOptions): Lease | un
     const reportsBefore = new Set(listCrashReports());
 
     if (!isBooted) {
+      if (options.kind === "test" && !options.automatic) {
+        markLease({ descriptor: reservation.descriptor, kind: "test" });
+      }
+
       boot(device);
     }
 
@@ -280,37 +295,6 @@ async function startQueuedLease(reservation: Reservation, options: LeaseOptions)
   }
 }
 
-function joinWaitLine() {
-  const directory = path.join(leaseDirectory, "test-waiters");
-  const name = `${Date.now()}-${randomUUID()}`;
-  const ticket = path.join(directory, name);
-  const descriptor = openExclusiveLock({ lockPath: ticket });
-
-  return {
-    isFirst() {
-      for (const earlier of readdirSync(directory)
-        .filter((entry) => entry < name)
-        .toSorted()) {
-        const previous = path.join(directory, earlier);
-        const held = tryExclusiveLock(previous);
-
-        if (held === undefined) {
-          return false;
-        }
-
-        rmSync(previous, { force: true });
-        closeSync(held);
-      }
-
-      return true;
-    },
-    leave() {
-      rmSync(ticket, { force: true });
-      closeSync(descriptor);
-    },
-  };
-}
-
 export async function leaseSimulator(
   options: LeaseOptions,
 ): Promise<{ lease: Lease; turn: QueueTurn | undefined }> {
@@ -320,8 +304,9 @@ export async function leaseSimulator(
     throw new Error("ZOONK_SIMULATOR_WAIT_SECONDS must be a positive number.");
   }
 
-  const waiting = options.automatic ? joinWaitLine() : undefined;
-  const started = performance.now();
+  const waitLine = path.join(leaseDirectory, "test-waiters");
+  let waiting = options.automatic ? joinWaitLine(waitLine) : undefined;
+  let started = performance.now();
   let reportedAt = -Infinity;
 
   try {
@@ -329,12 +314,19 @@ export async function leaseSimulator(
       const attempt = reserve({ ...options, firstInLine: waiting?.isFirst() ?? true });
 
       if ("descriptor" in attempt) {
+        waiting?.leave();
+        waiting = undefined;
+        const queuedAt = performance.now();
+
         // oxlint-disable-next-line no-await-in-loop -- get a build slot for this reservation
         const startedLease = await startQueuedLease(attempt, options);
 
         if (startedLease) {
           return startedLease;
         }
+
+        started += performance.now() - queuedAt;
+        waiting = options.automatic ? joinWaitLine(waitLine) : undefined;
       }
 
       const now = performance.now();

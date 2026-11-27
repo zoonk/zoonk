@@ -28,11 +28,11 @@ function listNames(simulators: Simulator[]) {
   return simulators.map(({ name }) => name).join(", ");
 }
 
-function cleanUpAfterAppCrashes({ device, reportsBefore }: Lease) {
+function cleanUpAfterAppCrashes({ device, reportsBefore, temporary }: Lease) {
   const crashes = findSimulatorAppCrashes({ reportsBefore, udid: device.udid });
 
   // Damaged simulator data can crash one of its iOS apps on every boot, each crash opening an alert.
-  if (crashes.some(({ isSystemApp }) => isSystemApp)) {
+  if (!temporary && crashes.some(({ isSystemApp }) => isSystemApp)) {
     process.stdout.write(
       `One of iOS's own apps crashed on ${device.name}. Erasing it so the crash doesn't repeat on ` +
         `its next boot.\n`,
@@ -89,9 +89,9 @@ async function test({
 
         if (lease.temporary) {
           spawnSync("xcrun", ["simctl", "delete", lease.device.udid], { stdio: "inherit" });
-        } else {
-          cleanUpAfterAppCrashes(lease);
         }
+
+        cleanUpAfterAppCrashes(lease);
       }
     } finally {
       releaseLease(lease);
