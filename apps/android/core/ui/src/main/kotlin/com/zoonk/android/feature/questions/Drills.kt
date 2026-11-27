@@ -3,6 +3,7 @@ package com.zoonk.android.feature.questions
 import android.os.SystemClock
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,10 +24,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -258,6 +261,8 @@ fun NotSureButton(
     focusableWhenDisabled: Boolean = false,
     dontKnowYet: Boolean = false,
     label: String = stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure),
+    /** Every label it can change to, so it keeps the widest one's width and the main action beside it never moves. */
+    labels: List<String> = emptyList(),
 ) {
     OutlinedButton(
         busy = busy,
@@ -267,7 +272,10 @@ fun NotSureButton(
         focusableWhenDisabled = focusableWhenDisabled,
         contentPadding = PaddingValues(horizontal = if (isWideLayout()) 16.dp else 12.dp, vertical = 8.dp),
     ) {
-        Text(label)
+        Box(contentAlignment = Alignment.Center) {
+            labels.forEach { Text(it, Modifier.alpha(0f).clearAndSetSemantics {}) }
+            Text(label)
+        }
     }
 }
 

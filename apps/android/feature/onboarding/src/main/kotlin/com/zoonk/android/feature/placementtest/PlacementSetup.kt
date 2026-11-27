@@ -21,10 +21,8 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.OnboardingPlacement
 import com.zoonk.api.models.OnboardingPlacementTest
-import com.zoonk.api.models.PlacementLength
 import java.util.UUID
 
 /**
@@ -39,8 +37,8 @@ internal fun ColumnScope.PlacementSetup(
     language: String,
     targetLanguage: String?,
     placement: OnboardingPlacement?,
-    /** The learner said where they stand on the level question, which "First lesson" starts from. */
-    levelGiven: Boolean,
+    /** The first lesson by its name, where onboarding knows it. */
+    firstLesson: String?,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -54,7 +52,7 @@ internal fun ColumnScope.PlacementSetup(
             language,
             targetLanguage,
             placement?.mode,
-            levelGiven,
+            firstLesson,
             store,
             plans,
             navigator,
@@ -63,7 +61,7 @@ internal fun ColumnScope.PlacementSetup(
             onReportSaveFailure,
         )
     } else {
-        CourseSetup(goalId, subject, placement, levelGiven, store, plans, navigator, end, onSitting)
+        CourseSetup(goalId, subject, placement, firstLesson, store, plans, navigator, end, onSitting)
     }
 }
 
@@ -72,7 +70,7 @@ private fun ColumnScope.CourseSetup(
     goalId: UUID,
     subject: String,
     placement: OnboardingPlacement?,
-    levelGiven: Boolean,
+    firstLesson: String?,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -96,34 +94,24 @@ private fun ColumnScope.CourseSetup(
     }
 
     val offer = (placement?.test as? OnboardingPlacementTest.OnboardingPlacementTestOneOfValue)?.value?.offer
-    val quick = offer?.let { testFacts(it.questions.toInt(), it.estimatedMinutes.toInt()) }.orEmpty()
-    val whole = offer?.wholeCourse
     TestOffer(
         title = stringResource(R.string.placementtest_where_to_start),
         sentence = stringResource(R.string.placementtest_choose_description),
-        rows =
-            listOfNotNull(
-                firstLessonRow(levelGiven),
-                OfferRow(TestRow.Quick, stringResource(R.string.placementtest_quick), quick.factsLine()),
-                whole?.let {
-                    OfferRow(
-                        TestRow.WholeCourse,
-                        stringResource(R.string.placementtest_full_test),
-                        fullTestFacts(it.parts.toInt(), it.estimatedMinutes.toInt()).factsLine(),
-                    )
-                },
+        cards =
+            listOf(
+                testCard(
+                    TestRow.Quick,
+                    stringResource(R.string.placementtest_test),
+                    offer?.questions?.toInt(),
+                    offer?.estimatedMinutes?.toInt(),
+                ),
+                firstLessonCard(firstLesson),
             ),
         initial = TestRow.Quick,
         pressed = vm.pressed ?: Pressed.Main.takeIf { end.saving },
         failed = vm.failed,
-        onChoose = {
-            when (it) {
-                TestRow.FirstLesson -> vm.decline()
-                TestRow.WholeCourse -> vm.start(PlacementLength.WHOLE_COURSE)
-                else -> vm.start(PlacementLength.QUICK)
-            }
-        },
-        test = courseTest(goalId, onboarding = true, attempt = null).copy(parts = whole?.parts, questions = offer?.questions),
+        onChoose = { if (it == TestRow.FirstLesson) vm.decline() else vm.start() },
+        test = courseTest(goalId, onboarding = true, attempt = null).copy(questions = offer?.questions),
     )
 }
 
@@ -133,7 +121,7 @@ private fun ColumnScope.LanguageSetup(
     language: String,
     targetLanguage: String,
     mode: OnboardingPlacement.Mode?,
-    levelGiven: Boolean,
+    firstLesson: String?,
     store: OnboardingStore,
     plans: PlanStore,
     navigator: AppNavigator,
@@ -191,19 +179,24 @@ private fun ColumnScope.LanguageSetup(
         return
     }
 
-    val facts = opened.value?.let { testFacts(it.total.toInt(), it.estimatedMinutes.toInt()) }.orEmpty()
+    val read = opened.value
     TestOffer(
         title = stringResource(R.string.placementtest_where_to_start),
         sentence = stringResource(R.string.placementtest_choose_description),
-        rows =
+        cards =
             listOf(
-                firstLessonRow(levelGiven),
-                OfferRow(TestRow.Quick, stringResource(R.string.placementtest_level_title), facts.factsLine()),
+                testCard(
+                    TestRow.Quick,
+                    stringResource(R.string.placementtest_level_title),
+                    read?.total?.toInt(),
+                    read?.estimatedMinutes?.toInt(),
+                ),
+                firstLessonCard(firstLesson),
             ),
         initial = TestRow.Quick,
         pressed = vm.pressed ?: Pressed.Main.takeIf { end.saving },
         failed = vm.failed,
         onChoose = { if (it == TestRow.FirstLesson) end.continueWith(null) else vm.start() },
-        test = languageTest(goalId, onboarding = true, opened.value),
+        test = languageTest(goalId, onboarding = true, read),
     )
 }

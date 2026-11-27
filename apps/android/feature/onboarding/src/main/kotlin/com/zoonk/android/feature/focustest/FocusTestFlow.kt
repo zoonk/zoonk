@@ -29,9 +29,9 @@ import com.zoonk.android.feature.onboarding.setup.isStopped
 import com.zoonk.android.feature.onboarding.setup.rememberPoll
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.placementtest.Sitting
+import com.zoonk.android.feature.placementtest.TestStop
 import com.zoonk.android.feature.placementtest.TrackFirstQuestion
-import com.zoonk.android.feature.placementtest.questionPosition
-import com.zoonk.android.feature.placementtest.sitting
+import com.zoonk.android.feature.placementtest.asking
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.ActOn
@@ -51,8 +51,8 @@ internal class OnPlan(
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
  * Leaving it saves [handBack] (onboarding's step), then [onLeft] goes on (a plan goes back to it).
  * [plan] is set when the plan is already the learner's. [asked]: the learner asked for the test on
- * the level question, so it starts without its offer. [levelGiven]: the learner said where they stand on it, which
- * onboarding's "First lesson" starts from.
+ * the level question, so it starts without its offer. [firstLesson]: onboarding's first lesson by its name, where it's
+ * known.
  */
 @Composable
 internal fun ColumnScope.FocusTestFlow(
@@ -66,7 +66,7 @@ internal fun ColumnScope.FocusTestFlow(
     handBack: LeaveTest = { WriteOutcome.Done(Unit) },
     plan: OnPlan? = null,
     asked: Boolean = false,
-    levelGiven: Boolean = false,
+    firstLesson: String? = null,
     onReportSaveFailure: () -> Unit = {},
     onLeft: () -> Unit = {},
 ) {
@@ -93,8 +93,36 @@ internal fun ColumnScope.FocusTestFlow(
             surface = if (onboarding) TestContext.Surface.Onboarding else TestContext.Surface.Plan,
             questions = question?.sitting?.questions ?: (shown as? FocusTestPhase.Offer)?.test?.offer?.questions,
         )
-    LaunchedEffect(question?.sitting?.answered, question?.sitting?.questions) {
-        onSitting(question?.sitting?.let { sitting(test, it.answered, it.questions) })
+    val title = question?.let { it.sitting.subject?.name ?: subject }
+    val stopHint = stringResource(R.string.focustest_many_unknown)
+    val open =
+        shown != FocusTestPhase.Loading && shown != FocusTestPhase.Starting && shown != FocusTestPhase.LoadFailed &&
+            shown !is FocusTestPhase.Offer
+    LaunchedEffect(question?.sitting?.answered, question?.sitting?.questions, title, open) {
+        onSitting(
+            when {
+                question != null && title != null -> {
+                    val sitting = question.sitting
+                    asking(
+                        test,
+                        title,
+                        sitting.answered,
+                        sitting.questions,
+                        stop =
+                            TestStop(stopHint.takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN }, vm::stop)
+                                .takeIf { sitting.answered > 0 },
+                    )
+                }
+
+                open -> {
+                    Sitting()
+                }
+
+                else -> {
+                    null
+                }
+            },
+        )
     }
     DisposableEffect(Unit) { onDispose { onSitting(null) } }
     val tracker = LocalEventTracker.current
@@ -148,7 +176,7 @@ internal fun ColumnScope.FocusTestFlow(
                 test = shown.test,
                 minutes = shown.minutes,
                 onPlan = !onboarding,
-                levelGiven = levelGiven,
+                firstLesson = firstLesson,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onStart = vm::start,
@@ -162,7 +190,7 @@ internal fun ColumnScope.FocusTestFlow(
 
         shown is FocusTestPhase.Question -> {
             TrackFirstQuestion(vm.sitting, test, shown.sitting.answered + 1, "focus:${vm.sittingsEntered}")
-            TestQuestion(goalId, shown, subject, vm, onReportSaveFailure)
+            TestQuestion(shown, vm, onReportSaveFailure)
         }
 
         shown == FocusTestPhase.Ended -> {
@@ -196,30 +224,19 @@ internal fun ColumnScope.FocusTestFlow(
 
 @Composable
 private fun ColumnScope.TestQuestion(
-    goalId: String,
     question: FocusTestPhase.Question,
-    subject: String,
     vm: FocusTestViewModel,
     onReportSaveFailure: () -> Unit,
 ) {
-    val sitting = question.sitting
-    val name = sitting.subject?.name ?: subject
-
     SetupContent {
         key(question.item.itemId) {
             PlacementQuestion(
                 item = question.item,
-                subject = name,
-                position = questionPosition(sitting.answered.toInt() + 1, sitting.questions.toInt()),
                 labels = question.labels,
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,
                 onReportSaveFailure = onReportSaveFailure,
                 onAnswer = { answer, durationMs -> vm.answer(question, answer, durationMs) },
-                onStop = vm::stop,
-                canStop = sitting.answered > 0,
-                stopLabel = stringResource(R.string.focustest_stop),
-                stopHint = stringResource(R.string.focustest_many_unknown).takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN },
             )
         }
     }

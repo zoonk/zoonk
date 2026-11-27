@@ -17,7 +17,6 @@ import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.api.models.FocusTestOffer
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.LanguageLevelTestOneOfResultRangesValue
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PlanPlacementTestOneOf
@@ -107,17 +106,10 @@ private fun questionOf(
     total: Long,
 ): String = stringResource(R.string.onboarding_test_question_progress, number.toInt(), total.toInt())
 
-@Composable
-private fun partOf(
-    part: Long,
-    parts: Long,
-): String = stringResource(R.string.placementtest_part_of, part.toInt(), parts.toInt())
-
 /** The test's one line on the plan: what it's for and what it costs, where the learner is, or its last result and when. */
 @Composable
-private fun placementTestLine(test: PlanPlacementTest): String {
-    val locale = currentLocale()
-    return when (test) {
+private fun placementTestLine(test: PlanPlacementTest): String =
+    when (test) {
         is PlanPlacementTest.PlanPlacementTestOneOf1Value -> {
             val row = test.value
             val result = row.result
@@ -143,29 +135,7 @@ private fun placementTestLine(test: PlanPlacementTest): String {
             val row = test.value
             val attempt = row.attempt
             val result = row.result
-            val resume = attempt?.resume
-            val quickEnded = attempt?.length == PlacementLength.QUICK && (attempt.partComplete || resume != null)
             when {
-                // A quick test that ended isn't in progress: its row shows its result.
-                quickEnded && result != null -> {
-                    done(result.finishedAt, result.lessonsSkipped)
-                }
-
-                attempt != null && resume != null -> {
-                    factsLine(partOf(resume.part, attempt.parts), questionOf(resume.question, attempt.questions))
-                }
-
-                attempt != null && attempt.partComplete -> {
-                    factsLine(
-                        partOf(attempt.nextPart ?: attempt.part, attempt.parts),
-                        stringResource(R.string.placementtest_about_left, formatMinutes(attempt.remainingEstimatedMinutes.toInt(), locale)),
-                    )
-                }
-
-                attempt != null && attempt.length == PlacementLength.WHOLE_COURSE -> {
-                    factsLine(partOf(attempt.part, attempt.parts), questionOf(attempt.answered + 1, attempt.questions))
-                }
-
                 attempt != null -> {
                     factsLine(stringResource(R.string.placementtest_in_progress), questionOf(attempt.answered + 1, attempt.questions))
                 }
@@ -180,7 +150,6 @@ private fun placementTestLine(test: PlanPlacementTest): String {
             }
         }
     }
-}
 
 val PlanPlacementTest.isLanguage: Boolean get() = this is PlanPlacementTest.PlanPlacementTestOneOf1Value
 

@@ -48,6 +48,7 @@ import com.zoonk.android.feature.onboarding.focusOfferOf
 import com.zoonk.android.feature.onboarding.focusSittingOf
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
+import com.zoonk.android.feature.placementtest.Sitting
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.NotToday
@@ -164,52 +165,52 @@ class FocusTestScreenshots(
         )
 
     @Test
-    fun result() = shoot("result", closing(focusOf(), lessonsSkipped = 0, sessionQuestions = "on")) { tap(SEE_RESULT) }
+    fun result() = shoot("result", closing(focusOf(), lessonsSkipped = 0, sessionQuestions = "on")) { seeResult() }
 
     @Test
-    fun resultLessonsSkipped() = shoot("result-lessons-skipped", closing(focusOf(), sessionQuestions = "on")) { tap(SEE_RESULT) }
+    fun resultLessonsSkipped() = shoot("result-lessons-skipped", closing(focusOf(), sessionQuestions = "on")) { seeResult() }
 
     @Test
-    fun resultNoFocus() = shoot("result-no-focus", closing(focus = null)) { tap(SEE_RESULT) }
+    fun resultNoFocus() = shoot("result-no-focus", closing(focus = null)) { seeResult() }
 
     @Test
-    fun resultFromBasics() = shoot("result-from-basics", closing(focus = null, lessonsSkipped = 0)) { tap(SEE_RESULT) }
+    fun resultFromBasics() = shoot("result-from-basics", closing(focus = null, lessonsSkipped = 0)) { seeResult() }
 
     @Test
-    fun planResult() = shoot("plan-result", closing(focusOf(state = "current"), sessionQuestions = "on"), onPlan = true) { tap(SEE_RESULT) }
+    fun planResult() = shoot("plan-result", closing(focusOf(state = "current"), sessionQuestions = "on"), onPlan = true) { seeResult() }
 
     @Test
     fun planResultPaused() =
         shoot("plan-result-paused", closing(focusOf(state = "current"), sessionQuestions = "paused"), onPlan = true) {
-            tap(SEE_RESULT)
+            seeResult()
         }
 
     @Test
-    fun planResultHandPicked() = shoot("plan-result-hand-picked", closing(focusOf(state = "handPicked")), onPlan = true) { tap(SEE_RESULT) }
+    fun planResultHandPicked() = shoot("plan-result-hand-picked", closing(focusOf(state = "handPicked")), onPlan = true) { seeResult() }
 
     @Test
-    fun planResultDeclined() = shoot("plan-result-declined", closing(focusOf(state = "declined")), onPlan = true) { tap(SEE_RESULT) }
+    fun planResultDeclined() = shoot("plan-result-declined", closing(focusOf(state = "declined")), onPlan = true) { seeResult() }
 
     @Test
-    fun planResultSuggested() = shoot("plan-result-suggested", closing(focusOf(state = "suggested")), onPlan = true) { tap(SEE_RESULT) }
+    fun planResultSuggested() = shoot("plan-result-suggested", closing(focusOf(state = "suggested")), onPlan = true) { seeResult() }
 
     @Test
-    fun planResultCovered() = shoot("plan-result-covered", closing(focus = null), onPlan = true) { tap(SEE_RESULT) }
+    fun planResultCovered() = shoot("plan-result-covered", closing(focus = null), onPlan = true) { seeResult() }
 
     @Test
-    fun proposal() = shoot("proposal", closing(focusOf(state = "proposed", proposal = PROPOSAL)), onPlan = true) { tap(SEE_RESULT) }
+    fun proposal() = shoot("proposal", closing(focusOf(state = "proposed", proposal = PROPOSAL)), onPlan = true) { seeResult() }
 
     @Test
     fun proposalApplied() =
         shoot("proposal-applied", closing(focusOf(state = "proposed", proposal = PROPOSAL)), onPlan = true) {
-            tap(SEE_RESULT)
+            seeResult()
             tap("Update my plan")
         }
 
     @Test
     fun proposalNotNow() =
         shoot("proposal-not-now", closing(focusOf(state = "proposed", proposal = PROPOSAL)), onPlan = true) {
-            tap(SEE_RESULT)
+            seeResult()
             tap("Not now")
         }
 
@@ -249,6 +250,21 @@ class FocusTestScreenshots(
 
     private val dark get() = theme == "dark"
 
+    /** The test's top the flow last reported, whose ✕ holds "Stop and use my answers". */
+    private var sitting: Sitting? = null
+
+    /** "Stop and use my answers" from the sheet behind ✕, which this page draws without its frame. */
+    private fun seeResult() {
+        compose.runOnIdle {
+            sitting
+                ?.asking
+                ?.stop
+                ?.onStop
+                ?.invoke()
+        }
+        compose.waitForIdle()
+    }
+
     private fun tap(text: String) {
         compose.onNodeWithText(text).performScrollTo().performClick()
         compose.waitForIdle()
@@ -276,7 +292,7 @@ class FocusTestScreenshots(
                             plans,
                             GenerationRun(),
                             onRetryRun = null,
-                            onSitting = {},
+                            onSitting = { sitting = it },
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
                             asked = asked,
                         )
@@ -329,8 +345,6 @@ class FocusTestScreenshots(
         private val SESSION = AuthenticatedSession("ana", "token-a", "local-a")
 
         /** An open sitting's way to the result. */
-        private const val SEE_RESULT = "Stop and use my answers"
-
         private const val QUESTION =
             """
             {"context":null,"image":null,"itemId":"2b3c4d5e-6f70-4a81-9b2c-3d4e5f607182","skillId":"5d6e7f80-9a1b-4c2d-8e3f-4a5b6c7d8e9f",

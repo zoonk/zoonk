@@ -77,6 +77,18 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     }
 }
 
+internal val LevelTestQuestion.isListening get() = skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
+
+/** The test's reading, listening and check as runs of its [total] questions, drawn apart on its bar. */
+internal fun levelTestGroups(total: Int): List<Int> {
+    val reading = minOf(LEVEL_TEST_BLOCK, total)
+    val listening = minOf(LEVEL_TEST_BLOCK, total - reading)
+    return listOf(reading, listening, total - reading - listening).filter { it > 0 }
+}
+
+/** Core's `LEVEL_TEST_BLOCK_SIZE`: the questions each skill's block asks. */
+private const val LEVEL_TEST_BLOCK = 4
+
 /** What the wait for a language pair's questions has seen since the learner's Start. */
 internal data class BankWait(
     val askedAt: Long? = null,

@@ -170,7 +170,7 @@ private fun SetupColumnBody(
                             modifier =
                                 if (spread == null) {
                                     Modifier
-                                        .widthIn(max = COLUMN_WIDTH)
+                                        .widthIn(max = SETUP_COLUMN_WIDTH)
                                         .fillMaxWidth()
                                         .heightIn(min = height)
                                         .endInView(EDGE + noteRoom.height)
@@ -259,7 +259,7 @@ private fun SetupActionBar(
     bar: PageBar,
     noteRoom: BarNoteRoom,
 ) {
-    BottomBar(columnWidth = COLUMN_WIDTH, note = bar.note?.value, noteRoom = noteRoom) {
+    BottomBar(columnWidth = SETUP_COLUMN_WIDTH, note = bar.note?.value, noteRoom = noteRoom) {
         if (bar.actions != null) {
             bar.actions.value()
         } else {
@@ -377,6 +377,6 @@ private class EndInViewNode(
     }
 }
 
-private val COLUMN_WIDTH = 640.dp
+internal val SETUP_COLUMN_WIDTH = 640.dp
 private val EDGE = 16.dp
 private val GAP = 24.dp

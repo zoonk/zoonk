@@ -11,7 +11,6 @@
     <string name="focustest_continue">Continue</string>
     <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">See my result</string>
-    <string name="focustest_stop">Stop and use my answers</string>
     <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>
     <string name="focustest_answers_saved_title">Your answers are saved</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->

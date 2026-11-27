@@ -244,7 +244,7 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart? = null,
+        attemptId: UUID? = null,
         answered: Long? = null,
     ): PlacementCompletion
 
@@ -304,12 +304,6 @@ interface OnboardingApi {
         attemptId: UUID,
     ): LanguageLevelTestOut
 }
-
-/** A part of the test taken from the plan, which its answers and its close name. */
-data class PlacementPart(
-    val attemptId: UUID,
-    val part: Long,
-)
 
 class LiveOnboardingApi(
     private val api: ApiClients,
@@ -561,14 +555,13 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart?,
+        attemptId: UUID?,
         answered: Long?,
     ) = perform {
         api.clients(session).learner.completeGoalPlacement(
             UUID.fromString(goalId),
             PlacementCompletionInput(
-                attemptId = attempt?.attemptId,
-                part = attempt?.part,
+                attemptId = attemptId,
                 answered = answered,
                 fromScratch = fromScratch,
                 timeZone = TimeZone.getDefault().id,

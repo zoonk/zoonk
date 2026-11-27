@@ -2,6 +2,8 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -32,7 +34,6 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTest
@@ -111,7 +112,7 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
         rule.onNodeWithText("Level test").assertIsDisplayed()
-        rule.onNodeWithText("Up to 12 questions${FACT_SEPARATOR}About", substring = true, useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("Up to 12 questions").assertIsDisplayed()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)
@@ -125,7 +126,7 @@ class LevelTestStepFlowTest {
         tap("Start")
 
         assertEquals(1, api.levelTestStarts)
-        rule.onNodeWithText("Question 1 of 12").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Question 1 of 12").assertIsDisplayed()
         rule.onNodeWithText("Reading").assertIsDisplayed()
         rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
         tap("Every Saturday")
@@ -169,7 +170,7 @@ class LevelTestStepFlowTest {
         show(opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 4, attemptId = ATTEMPT), speech = speech())
         tap("Start")
         rule.onNodeWithText("Listening").assertIsDisplayed()
-        rule.onNodeWithText("Question 5 of 12").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Question 5 of 12").assertIsDisplayed()
         tap("Can't listen now")
 
         assertEquals(listOf(true), api.levelTestAnswers.map { it.audioDeferred })
@@ -276,14 +277,22 @@ class LevelTestStepFlowTest {
     }
 
     @Test
-    fun aStoredRecordingPlaysWithoutAskingForAClip() {
+    fun aStoredRecordingPlaysWithoutAskingForAClipAndOncePlayedTheWayAroundItBecomesTheMiss() {
         show(opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT), speech = speech())
         tap("Start")
+        rule.onNodeWithText("Can't listen now").assertIsDisplayed()
         rule.onNodeWithContentDescription("Play the message").performClick()
 
         assertEquals(listOf(CLIP_URL), downloads)
         assertEquals(emptyList<Pair<String, String>>(), asked)
         rule.onNodeWithContentDescription("Play the message again").assertIsDisplayed()
+        rule.onNodeWithText("Can't listen now").assertDoesNotExist()
+        tap("I didn't understand")
+
+        assertEquals(
+            listOf(Triple("listening-1", null, null)),
+            api.levelTestAnswers.map { Triple(it.questionId, it.answerIndex, it.audioDeferred) },
+        )
     }
 
     @Test
@@ -292,7 +301,7 @@ class LevelTestStepFlowTest {
         show(speech = speech())
 
         rule.onNodeWithText("The voice message is on its way…").assertIsDisplayed()
-        rule.onNodeWithContentDescription("Play the message").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsNotEnabled()
         rule.onNodeWithText("Skip this question").assertIsDisplayed()
         val reads = api.levelTestReads
 
@@ -301,8 +310,8 @@ class LevelTestStepFlowTest {
 
         assertEquals(reads + 1, api.levelTestReads)
         rule.onNodeWithText("The voice message is on its way…").assertDoesNotExist()
-        rule.onNodeWithContentDescription("Play the message").assertIsDisplayed()
-        rule.onNodeWithText("I didn't understand the audio").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Play the message").assertIsEnabled()
+        rule.onNodeWithText("Can't listen now").assertIsDisplayed()
     }
 
     @Test
@@ -343,11 +352,13 @@ class LevelTestStepFlowTest {
         tap("Confirm")
 
         api.writeFailure = ApiException(ApiError.Network)
+        rule.onNodeWithContentDescription("Leave").performClick()
         tap("Stop and use my answers")
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = null
+        rule.onNodeWithContentDescription("Leave").performClick()
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Your Italian level").assertIsDisplayed()

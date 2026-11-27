@@ -14,21 +14,24 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,9 +71,10 @@ import com.zoonk.android.feature.focustest.Note
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.placementtest.Sitting
+import com.zoonk.android.feature.placementtest.TestStop
 import com.zoonk.android.feature.placementtest.TestVisit
 import com.zoonk.android.feature.placementtest.TrackFirstQuestion
-import com.zoonk.android.feature.placementtest.sitting
+import com.zoonk.android.feature.placementtest.asking
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
@@ -81,19 +85,22 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LinkButton
-import com.zoonk.android.ui.components.MediaPending
+import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.LanguageLevelTestResultResult
 import com.zoonk.api.models.TrueFalseLabels
+import kotlinx.coroutines.delay
 import java.util.UUID
 import androidx.compose.ui.text.intl.LocaleList as TextLocales
 
@@ -141,7 +148,28 @@ internal fun ColumnScope.LevelTestSteps(
             attemptId = plan.attemptId.toString(),
         )
     val question = phase as? LevelTestPhase.Question
-    LaunchedEffect(question?.number) { onSitting(question?.let { sitting(context, it.number - 1L, it.total.toLong()) }) }
+    val title =
+        question?.let {
+            stringResource(
+                if (it.question.isListening) R.string.onboarding_language_test_listening else R.string.onboarding_language_test_reading,
+            )
+        }
+    LaunchedEffect(question?.number, question?.canStop, title) {
+        onSitting(
+            if (question != null && title != null) {
+                asking(
+                    context,
+                    title,
+                    question.number - 1L,
+                    question.total.toLong(),
+                    groups = levelTestGroups(question.total),
+                    stop = TestStop(onStop = vm::stop).takeIf { question.canStop },
+                )
+            } else {
+                Sitting()
+            },
+        )
+    }
     DisposableEffect(Unit) { onDispose { onSitting(null) } }
 
     when (phase) {
@@ -250,8 +278,9 @@ private fun ColumnScope.LevelTestWaiting(
 }
 
 /**
- * Reading questions show their passage; listening ones play it as a voice message. While the
- * message can't play, its question is skipped instead, which doesn't count toward a level.
+ * Reading questions show their passage; listening ones play it as a voice message. Until the message has played to its
+ * end once, the bar's way around it ends the test's listening; after, it's the miss. While the message can't play, its
+ * question is skipped instead, which doesn't count toward a level.
  */
 @Composable
 private fun ColumnScope.TestQuestion(
@@ -263,9 +292,13 @@ private fun ColumnScope.TestQuestion(
     onReportSaveFailure: () -> Unit,
 ) {
     val question = shown.question
-    val listening = question.skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
+    val listening = question.isListening
     val audio = LocalSetupSpeech.current?.let { rememberSpokenAudio(it, targetLanguage) }
     val noAudio = listening && (audioPending || audio?.state is SpeechState.Failed)
+    var heard by rememberSaveable { mutableStateOf(false) }
+    val cantListen = stringResource(R.string.onboarding_language_test_cant_listen)
+    val notUnderstood = stringResource(R.string.onboarding_language_test_did_not_understand)
+    val skip = stringResource(R.string.onboarding_language_test_skip_question)
     PlacementQuestion(
         item =
             Question(
@@ -276,44 +309,35 @@ private fun ColumnScope.TestQuestion(
                 select = Select.All.takeIf { shown.confirmation },
                 context = question.passage.takeUnless { listening },
             ),
-        subject = stringResource(if (listening) R.string.onboarding_language_test_listening else R.string.onboarding_language_test_reading),
-        position = stringResource(R.string.onboarding_test_question_progress, shown.number, shown.total),
         labels = TrueFalseLabels.TRUE_FALSE,
         pending = vm.isSaving,
         saveFailures = vm.saveFailures,
         onReportSaveFailure = onReportSaveFailure,
         onAnswer = { answer, durationMs -> vm.answer(question.id, answer, durationMs, skipped = noAudio && answer == Answer.DontKnow) },
-        onStop = vm::stop,
-        canStop = shown.canStop,
-        dontKnowLabel =
-            stringResource(
-                when {
-                    noAudio -> R.string.onboarding_language_test_skip_question
-                    listening -> R.string.onboarding_language_test_did_not_understand
-                    else -> R.string.onboarding_placement_dont_know
-                },
-            ),
-        media = {
+        second =
             if (listening) {
-                // No gap: the link's touch target alone puts its words close under the audio they belong to, far from the question.
-                Column {
-                    ListeningMessage(question, targetLanguage, audioPending, audio, navigator)
-                    LinkButton(
-                        text = stringResource(R.string.onboarding_language_test_cant_listen),
-                        onClick = { vm.deferAudio(question.id) },
-                        busy = vm.deferring,
-                        enabled = !vm.isSaving,
-                        focusableWhenDisabled = vm.isSaving,
-                    )
-                }
-            }
-        },
+                SecondAction(
+                    label =
+                        when {
+                            noAudio -> skip
+                            heard -> notUnderstood
+                            else -> cantListen
+                        },
+                    labels = listOf(cantListen, notUnderstood, skip),
+                    busy = vm.deferring,
+                    onClick = { vm.deferAudio(question.id) }.takeUnless { noAudio || heard },
+                )
+            } else {
+                SecondAction(stringResource(R.string.onboarding_placement_dont_know))
+            },
+        media = { if (listening) ListeningMessage(question, targetLanguage, audioPending, audio, navigator, onHeard = { heard = true }) },
     )
 }
 
 /**
- * Read a little slower than normal, so the test isn't one of catching fast speech. A stored
- * recording plays as it is; without one, the learner's tap asks for it.
+ * The voice message as one row: play, a line that fills as it plays, and its length counting down. Read a little
+ * slower than normal, so the test isn't one of catching fast speech. A stored recording plays as it is; without one, the
+ * learner's tap asks for it. While the recording is on its way, the button waits and the line says so.
  */
 @Composable
 private fun ListeningMessage(
@@ -322,31 +346,26 @@ private fun ListeningMessage(
     pending: Boolean,
     audio: SpokenAudio?,
     navigator: AppNavigator,
+    onHeard: () -> Unit,
 ) {
     if (audio == null) {
         Text(question.passage, style = MaterialTheme.typography.bodyLarge.copy(localeList = TextLocales(language)))
         return
     }
-    if (pending) {
-        MediaPending(Modifier.fillMaxWidth().heightIn(min = MESSAGE_MIN_HEIGHT)) {
-            Icon(
-                painterResource(R.drawable.ic_headphones),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp * LocalDensity.current.fontScale),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                stringResource(R.string.onboarding_language_test_audio_on_its_way),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        return
-    }
     var played by rememberSaveable { mutableStateOf(false) }
     val state = audio.state.withoutFailure()
+    val playing = state == SpeechState.Playing
+    val totalMs = question.audio?.durationMs?.let { (it / LISTENING_RATE).toLong() }
+    var elapsedMs by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(playing) {
+        elapsedMs = 0L
+        if (!playing) return@LaunchedEffect
+        val start = withFrameMillis { it }
+        while (true) {
+            delay(TICK_MS)
+            withFrameMillis { elapsedMs = it - start }
+        }
+    }
     val label =
         speechActionLabel(
             state,
@@ -354,19 +373,23 @@ private fun ListeningMessage(
         )
     val play = {
         played = true
-        audio.speak(listOf(SpokenText(question.passage, recording = question.audio?.url?.toString())), rate = LISTENING_RATE)
+        audio.speak(
+            listOf(SpokenText(question.passage, recording = question.audio?.url?.toString())),
+            rate = LISTENING_RATE,
+            onDone = onHeard,
+        )
     }
 
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(
-            Modifier.heightIn(min = MESSAGE_MIN_HEIGHT).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                FilledIconButton(
-                    onClick = { if (audio.isBusy) audio.cancel() else play() },
-                    modifier = Modifier.semantics { contentDescription = label },
-                ) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            FilledIconButton(
+                onClick = { if (audio.isBusy) audio.cancel() else play() },
+                enabled = !pending,
+                modifier = Modifier.size(48.dp).semantics { contentDescription = label },
+            ) {
+                if (pending) {
+                    CircularProgressIndicator(Modifier.size(buttonIconSize()), strokeWidth = 2.dp)
+                } else {
                     SpeechStatusIcon(state) {
                         Icon(
                             painterResource(R.drawable.ic_play_arrow),
@@ -375,32 +398,33 @@ private fun ListeningMessage(
                         )
                     }
                 }
-                Row(
+            }
+            if (pending) {
+                Text(
+                    stringResource(R.string.onboarding_language_test_audio_on_its_way),
                     modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_headphones),
-                        contentDescription = null,
-                        modifier = Modifier.padding(top = 2.dp).size(16.dp * LocalDensity.current.fontScale),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        stringResource(
-                            if (state == SpeechState.Loading) {
-                                R.string.onboarding_language_test_message_loading
-                            } else {
-                                R.string.onboarding_language_test_message
-                            },
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            } else {
+                Meter(
+                    share = if (playing && totalMs != null && totalMs > 0) elapsedMs.toFloat() / totalMs else 0f,
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    height = 4.dp,
+                )
+                // The length's room is kept while it isn't known, so the line never jumps.
+                Text(
+                    totalMs?.let { formatClock((it - if (playing) elapsedMs else 0L).coerceAtLeast(0L)) }.orEmpty(),
+                    modifier = Modifier.widthIn(min = 36.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.zoonkType.data.withTabularFigures(),
+                    textAlign = layoutEnd(),
+                )
             }
-            (audio.state as? SpeechState.Failed)?.let { failed ->
-                SpeechFailedNote(language, failed.limit, onRetry = play, navigator = navigator)
-            }
+        }
+        (audio.state as? SpeechState.Failed)?.let { failed ->
+            SpeechFailedNote(language, failed.limit, onRetry = play, navigator = navigator)
         }
     }
 }
@@ -463,6 +487,5 @@ internal fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String 
 
 private const val LISTENING_RATE = 0.9f
 
-/** The ready message's height, so Play replaces the on-its-way panel without moving the question. */
-private val MESSAGE_MIN_HEIGHT = 80.dp
+private const val TICK_MS = 250L
 private const val NAME_SHARE_LIMIT = 0.4f
