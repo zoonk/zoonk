@@ -177,6 +177,25 @@ class MistakePracticeScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneRightOnTheDayOfTheMiss() {
+        show("phone-same-day-right", play = ::check, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneRightOnTheDayOfTheMissDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("phone-same-day-right-dark-font200", dark = true, play = ::check, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDonePracticeAgain() {
+        show("phone-done-again", play = ::playToEnd, feedback = { practiceFeedback(requiresLaterDay = true) })
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDone() {
         show("phone-done", play = ::finish)
     }
@@ -461,6 +480,11 @@ class MistakePracticeScreenshots {
         val step = lesson.getValue("step").jsonObject
         val original = JsonObject(step + mapOf("kind" to JsonPrimitive(kind), "content" to content))
         return JsonObject(entry + ("lesson" to JsonObject(lesson + ("step" to original))))
+    }
+
+    private fun playToEnd() {
+        check()
+        rule.onNodeWithText("Continue").performClick()
     }
 
     private fun finish() {

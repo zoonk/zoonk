@@ -110,7 +110,7 @@ class BuddyScreenshots {
                         )
                         tutor.threads[TutorThreadKey.Plan(GOAL)].replace(TutorThread(turns, hasMore = false, nextCursor = null))
                         today.mistakes[UUID.fromString(GOAL)]
-                            .replace(GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 1))
+                            .replace(GoalMistakes(MistakeListAvailability(ready = 0), total = 1))
                         memory.memory.replace(Memory(enabled = true, facts = emptyList()))
                     }
                 }

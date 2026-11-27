@@ -97,21 +97,10 @@ data class PracticeState(
     val lesson: LessonPlayerState? = null,
     val lessonGrade: MistakePracticeFeedback? = null,
 ) {
-    val endNote: PracticeEndNote?
-        get() {
-            val missed = run.answers.values.any { !it.isCorrect }
-            val unreached = run.answers.size < read.tasks.size
-
-            return when {
-                missed && unreached -> PracticeEndNote.MissedAndUnreached
-                missed -> PracticeEndNote.Missed
-                unreached -> PracticeEndNote.Unreached
-                else -> null
-            }
-        }
+    /** A run played to its end can start again on what it didn't fix, in the same order; one left early ends there. */
+    val toPracticeAgain: List<MistakePracticeTask>
+        get() = if (run.index < read.tasks.size) emptyList() else read.tasks.filter { it.mistakeId !in fixedIds }
 }
-
-enum class PracticeEndNote { Missed, MissedAndUnreached, Unreached }
 
 /** Each answer carries the run's earlier ones, so a run left halfway still counts; the end counts it once more. */
 class MistakePracticeViewModel(
@@ -157,11 +146,37 @@ class MistakePracticeViewModel(
 
     override val canRetry: Boolean get() = sent != null
 
-    /** Only from a read made since the last answer: a kept one may hold mistakes that now wait for tomorrow. */
+    /** A day's block ends on Today and is done there; any other run can go again on what it didn't fix. */
+    val practicesAgain: Boolean get() = key.blockId == null
+
+    /** Only from a read made since the last answer: a kept one may hold mistakes this run already fixed. */
     fun begin(practice: MistakePractice) {
         if (mutableState.value != null || this.practice.freshState.value !is LoadState.Loaded) return
         day.read(sessions.current, viewModelScope)
-        val read = practice.toQuestions()
+        start(practice.toQuestions())
+    }
+
+    /** A day's block whose mistakes are all gone still ends through its finish, which completes it. */
+    fun beginEmpty() {
+        if (mutableState.value != null || key.blockId == null) return
+        val read = PracticeQuestions(emptyList(), TrueFalseWords.TrueFalse)
+        mutableState.value = PracticeState(read, QuestionRun(0, RunPhase.Finishing, DrillStage.Open))
+        finish()
+    }
+
+    fun practiceAgain() {
+        val current = mutableState.value ?: return
+        val tasks = current.toPracticeAgain
+        if (current.end == null || tasks.isEmpty() || !practicesAgain) return
+        attempts.clear()
+        sent = null
+        lessonSent = null
+        spokenSent = null
+        closeWhenEnded = false
+        start(current.read.copy(questions = tasks.mapNotNull { (it as? MistakePracticeTask.Bank)?.question }, tasks = tasks))
+    }
+
+    private fun start(read: PracticeQuestions) {
         val lesson = restoreLesson(read, 0)
         val phase = if (lessonSent != null) RunPhase.AnswerFailed else RunPhase.Answering
         mutableState.value = PracticeState(read, QuestionRun(0, phase, read.openingStage(0)), lesson = lesson)
@@ -281,7 +296,8 @@ class MistakePracticeViewModel(
         val answerIds = mutableState.value?.answerIds.orEmpty()
         viewModelScope.launch {
             // A count that didn't get through still ends the run: each answer was counted as it came.
-            val summary = if (answerIds.isEmpty()) null else (store.finish(key, answerIds) as? MutationResult.Done)?.value
+            val counts = answerIds.isNotEmpty() || key.blockId != null
+            val summary = if (counts) (store.finish(key, answerIds) as? MutationResult.Done)?.value else null
             mutableState.update { state ->
                 state?.copy(
                     end = PracticeEnd(summary),
