@@ -138,6 +138,19 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun aRunWhoseFinishFailedStillGoesAgainOnWhatItLeftOpen() =
+        runTest(dispatcher) {
+            val api = FakeMistakesApi(twoMistakes)
+            api.finish = { throw ApiException(ApiError.Network) }
+            val viewModel = viewModel(api)
+            started(viewModel)
+            playToEnd(viewModel)
+
+            assertNull(viewModel.now.end?.summary)
+            assertEquals(true, viewModel.now.offersAgain)
+        }
+
+    @Test
     fun aBatchThatFixedEverythingGoesAgainOnlyWhenTheScopeHasMore() =
         runTest(dispatcher) {
             val api = FakeMistakesApi(twoMistakes)

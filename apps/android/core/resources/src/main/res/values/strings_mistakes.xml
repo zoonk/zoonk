@@ -33,5 +33,9 @@
     <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
     <string name="mistakes_practice_again">Practice again</string>
     <string name="mistakes_practice_done">Done</string>
+    <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
+    <string name="mistakes_practice_not_saved">Your practice isn\'t saved yet</string>
+    <!-- When a day's practice of mistakes with no answers couldn't be marked done: there is nothing to keep. -->
+    <string name="mistakes_practice_not_through">That didn\'t go through.</string>
     <string name="mistakes_open_lesson">Open the lesson</string>
 </resources>

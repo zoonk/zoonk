@@ -101,15 +101,18 @@ data class PracticeState(
     val lesson: LessonPlayerState? = null,
     val lessonGrade: MistakePracticeFeedback? = null,
 ) {
+    /** A day block's completion failed and hasn't got through since: the run waits on "Try again". */
+    val unsaved: Boolean get() = end == null && finishFailures > 0
+
     /**
      * A run played to its end goes again while this batch left a mistake open or its scope has more;
      * one left early ends there.
      */
     val offersAgain: Boolean
         get() {
-            val summary = end?.summary ?: return false
+            val end = end ?: return false
             val unfixed = read.tasks.any { it.mistakeId !in fixedIds }
-            return run.index >= read.tasks.size && again != AgainLoad.NothingLeft && (unfixed || summary.hasMorePractice)
+            return run.index >= read.tasks.size && again != AgainLoad.NothingLeft && (unfixed || end.summary?.hasMorePractice == true)
         }
 }
 
