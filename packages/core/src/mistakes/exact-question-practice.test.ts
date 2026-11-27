@@ -181,7 +181,7 @@ describe("exact-question practice", () => {
     ).resolves.toHaveLength(1);
   });
 
-  it("takes no practice answer for a mistake made today", async () => {
+  it("grades a lesson question from today without fixing the notebook entry", async () => {
     const { mistake, step, user } = await setup();
 
     await prisma.mistake.update({
@@ -200,8 +200,12 @@ describe("exact-question practice", () => {
       mistakeId: mistake.id,
     });
 
-    expect(result).toStrictEqual({ status: "invalidItem" });
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
+    expect(result).toMatchObject({
+      feedback: { fixed: false, isCorrect: true, requiresLaterDay: true },
+      status: "ready",
+    });
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("offers no replacement for missing or retired originals, including their availability", async () => {
@@ -526,7 +530,7 @@ describe("exact-question practice", () => {
     });
   });
 
-  it("gives a later wrong answer to a fixed original the answer that fixed it, recording nothing new", async () => {
+  it("refuses a new request for a fixed lesson question", async () => {
     const { mistake, step, user } = await setup();
 
     const right = await answerMistakePractice({
@@ -550,9 +554,9 @@ describe("exact-question practice", () => {
       timeZone: "UTC",
     };
 
-    await expect(answerMistakePractice({ input, mistakeId: mistake.id })).resolves.toStrictEqual(
-      right,
-    );
+    await expect(answerMistakePractice({ input, mistakeId: mistake.id })).resolves.toStrictEqual({
+      status: "invalidItem",
+    });
 
     await expect(
       prisma.mistake.count({ where: { status: "open", userId: user.id } }),

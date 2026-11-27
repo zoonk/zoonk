@@ -2,9 +2,10 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findFreshMistakePatternWithDrill } from "../../language/patterns/find-fresh-pattern";
 import { PATTERN_DRILL_SECONDS } from "../../language/patterns/pattern-contract";
+import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { readSkillMistakeSignals } from "../../learner/read-skill-mistake-signals";
 import { MINUTES_PER_REVIEW } from "../../learner/review-load";
-import { readyMistakeWhere } from "../../mistakes/mistake-availability";
+import { openVisibleMistakeWhere } from "../../mistakes/_utils/visible-mistake";
 import { type MistakeReplay, loadMistakeReplays } from "../../mistakes/mistake-replay";
 import { PRACTICE_MINUTES_PER_QUESTION } from "../block-minutes";
 import { toBlockPayload } from "../block-payload";
@@ -39,7 +40,12 @@ async function loadReadyMistakes({
 
   const rows = await prisma.mistake.findMany({
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-    where: { ...readyMistakeWhere(context), skillId: { in: [...signals.keys()] }, userId },
+    where: {
+      ...openVisibleMistakeWhere,
+      missedAt: { lt: getStartOfLocalDay(context) },
+      skillId: { in: [...signals.keys()] },
+      userId,
+    },
   });
 
   if (rows.length === 0) {

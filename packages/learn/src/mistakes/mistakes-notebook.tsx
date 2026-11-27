@@ -25,14 +25,12 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { PatternRow } from "../language/today/language-today-section";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
-import { useNotebookAvailabilityText } from "./notebook-availability-text";
 import { useMistakesInbox } from "./use-mistakes-inbox";
 
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
@@ -68,15 +66,13 @@ function getGroupKey(group: readonly MistakeEntry[]): string {
   return group[0]?.skill?.id ?? "none";
 }
 
-function NotebookHero({ notebook }: { notebook: Notebook }) {
+function NotebookHero() {
   const t = useExtracted();
-  const availability = useNotebookAvailabilityText(notebook.availability);
 
   return (
     <DetailHero>
       <DetailHeroText>
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
-        {availability && <PageSubtitle>{availability}</PageSubtitle>}
       </DetailHeroText>
     </DetailHero>
   );
@@ -146,13 +142,11 @@ function MistakesInbox({
   groups,
   hrefs,
   openLesson,
-  tomorrowOnPage,
   trueFalseLabels,
 }: {
   groups: MistakeEntry[][];
   hrefs: MistakesHrefs;
   openLesson: (mistakeId: string) => Promise<boolean>;
-  tomorrowOnPage: boolean;
   trueFalseLabels: Notebook["trueFalseLabels"];
 }) {
   const t = useExtracted();
@@ -216,7 +210,6 @@ function MistakesInbox({
                     links={getMistakeEntryLinks({ hrefs, mistake })}
                     mistake={mistake}
                     openLesson={openLesson}
-                    tomorrowOnPage={tomorrowOnPage}
                     trueFalseLabels={trueFalseLabels}
                   />
                 ))}
@@ -275,7 +268,7 @@ export function MistakesNotebook({
       data-slot="mistakes-notebook"
     >
       <DetailAside>
-        <NotebookHero notebook={notebook} />
+        <NotebookHero />
       </DetailAside>
 
       <PageTabsGroup>
@@ -294,7 +287,6 @@ export function MistakesNotebook({
                 groups={groups}
                 hrefs={hrefs}
                 openLesson={openLesson}
-                tomorrowOnPage={notebook.availability.ready === 0}
                 trueFalseLabels={notebook.trueFalseLabels}
               />
             </section>

@@ -3,8 +3,7 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
-import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
 import {
@@ -14,12 +13,15 @@ import {
 } from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
 import { type MissionMomentView } from "../sessions/completion-contract";
+import { finishStudyBlock } from "../sessions/finish-study-block";
 import { withActivityMissionMoment } from "../sessions/missions/activity-mission-result";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { getLedgerLocalTime, recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
+import { findPracticeBlock } from "./_utils/practice-block";
+import { readPracticeMistakeId } from "./_utils/practice-claim";
 import {
   MISTAKE_PRACTICE_EVENT,
   type PracticeAnswer,
@@ -30,6 +32,7 @@ import {
   toRunContentIds,
 } from "./_utils/practice-runs";
 import { type MistakePracticeFinishInput } from "./contract";
+import { getPracticeTimeZone } from "./mistake-availability";
 
 type MistakePracticeSummary = ProgressCelebration & {
   brainPower: number;
@@ -199,6 +202,35 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
   });
 }
 
+async function loadCompletionScope(input: MistakePracticeFinishInput, userId: string) {
+  const block = input.blockId ? await findPracticeBlock({ blockId: input.blockId, userId }) : null;
+
+  if (input.blockId && (!block || (input.goalId && block.session.goalId !== input.goalId))) {
+    return { status: "notFound" as const };
+  }
+
+  const [goal, answers] = await Promise.all([
+    block ? block.session.goal : resolveGoal(input.goalId),
+    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
+  ]);
+
+  if (goal === "notFound") {
+    return { status: "notFound" as const };
+  }
+
+  const assigned = block ? new Set(block.mistakeIds) : null;
+
+  if (
+    !answers ||
+    (!block && answers.length === 0) ||
+    (assigned && answers.some(({ answer }) => !assigned.has(readPracticeMistakeId(answer) ?? "")))
+  ) {
+    return { status: "invalid" as const };
+  }
+
+  return { answers, block, goal, status: "ready" as const };
+}
+
 /** Send every answer so far after each answer and once more with ended=true on stop; retries count only fresh answers. */
 export async function finishMistakePractice(
   input: MistakePracticeFinishInput,
@@ -210,23 +242,14 @@ export async function finishMistakePractice(
   }
 
   const userId = session.user.id;
+  const scope = await loadCompletionScope(input, userId);
 
-  const [goal, answers] = await Promise.all([
-    resolveGoal(input.goalId),
-    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
-  ]);
-
-  if (goal === "notFound") {
-    return { status: "notFound" };
+  if (scope.status !== "ready") {
+    return scope;
   }
 
-  if (!answers) {
-    return { status: "invalid" };
-  }
-
-  const timeZone = goal
-    ? getAnswerTimeZone({ goal, timeZone: input.timeZone })
-    : await getLearnerTimeZone({ timeZone: input.timeZone, userId });
+  const { answers, block, goal } = scope;
+  const timeZone = await getPracticeTimeZone({ goal, timeZone: input.timeZone, userId });
 
   const { counted, progress, result, runId } = await settlePracticeRun({
     answers,
@@ -234,6 +257,14 @@ export async function finishMistakePractice(
     timeZone,
     userId,
   });
+
+  if (block) {
+    await finishStudyBlock({
+      blockId: block.block.id,
+      input: { timeZone },
+      sessionId: block.session.id,
+    });
+  }
 
   const source = runId ? { id: runId, kind: "mistakePractice" } : null;
 

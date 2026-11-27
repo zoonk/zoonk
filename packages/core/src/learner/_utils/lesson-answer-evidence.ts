@@ -1,10 +1,11 @@
 import { type LearnerSkill, type TransactionClient } from "@zoonk/db";
 import { isSecondTakeIdentityKey } from "../../library/second-takes/second-take-identity";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
+import { type LearnerAnswer } from "../record-learner-answer";
 
 export type LessonAnswerRun = { lessonId: string; startedAt: Date };
 
-export async function getLessonAnswerEvidence({
+async function getLessonAnswerEvidence({
   answeredAt,
   before,
   db,
@@ -66,4 +67,46 @@ export async function getLessonAnswerEvidence({
   `;
 
   return earlierTeaching?.taught ? "independent" : "guided";
+}
+
+export function getAttemptEvidence({
+  answeredAt,
+  before,
+  input,
+  skillId,
+  stepId,
+  transaction,
+}: {
+  answeredAt: Date;
+  before: LearnerSkill | null;
+  input: LearnerAnswer;
+  skillId: string | null;
+  stepId: string | null;
+  transaction: TransactionClient;
+}) {
+  if (input.isPlacement || input.purpose === "diagnostic" || input.mockExamId) {
+    return null;
+  }
+
+  if (input.practicedMistakeId) {
+    return "replay";
+  }
+
+  if (!input.lessonRun) {
+    return input.evidence ?? null;
+  }
+
+  if (!skillId || !stepId) {
+    return "guided";
+  }
+
+  return getLessonAnswerEvidence({
+    answeredAt,
+    before,
+    db: transaction,
+    run: input.lessonRun,
+    skillId,
+    stepId,
+    userId: input.userId,
+  });
 }
