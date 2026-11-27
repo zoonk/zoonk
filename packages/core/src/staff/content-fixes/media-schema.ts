@@ -16,7 +16,7 @@ type Quotes = z.infer<typeof quotes>;
 /**
  * What a screen's example box and underline become once its fix applies: the quotes it keeps, with
  * new ones only where it has none, except a screen asked to mark again, whose new example box
- * replaces its own. Without new quotes, as when marking failed, it keeps what it has.
+ * replaces its own. Without a new one, as when marking failed or framed nothing, it keeps what it has.
  */
 export function applyMarkedQuotes({
   kept,
@@ -28,7 +28,7 @@ export function applyMarkedQuotes({
   remarked: boolean;
 }): Quotes {
   return {
-    example: remarked && marked ? marked.example : (kept.example ?? marked?.example ?? null),
+    example: (remarked ? marked?.example : null) ?? kept.example ?? marked?.example ?? null,
     underline: kept.underline ?? marked?.underline ?? null,
   };
 }
