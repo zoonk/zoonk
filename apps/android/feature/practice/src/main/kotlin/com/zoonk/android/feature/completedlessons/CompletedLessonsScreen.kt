@@ -34,6 +34,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.isSaved
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.savedlessons.LessonRowBookmark
+import com.zoonk.android.feature.savedlessons.LessonRowBookmarkSpace
 import com.zoonk.android.feature.savedlessons.LessonSaveRow
 import com.zoonk.android.feature.savedlessons.SavedLessonsStore
 import com.zoonk.android.feature.savedlessons.rememberLessonSaves
@@ -302,7 +303,7 @@ private fun LessonRow(
                 )
             }
         } else {
-            LessonRowContent(lesson, today)
+            LessonRowContent(lesson, today, trailing = { LessonRowBookmarkSpace() })
         }
     }
 }
@@ -324,7 +325,6 @@ private fun LessonRowContent(
         onLongClickLabel = onLongClickLabel,
         onLongClick = onLongClick,
         trailing = trailing,
-        chevronSpace = !lesson.available,
     )
 }
 

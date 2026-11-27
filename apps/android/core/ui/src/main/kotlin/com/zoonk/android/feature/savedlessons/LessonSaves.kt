@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.savedlessons
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +56,12 @@ fun LessonRowBookmark(
         onToggle,
         Modifier.iconButtonEdge(ButtonEdge.End),
     )
+}
+
+/** A row bookmark's room, empty, on a row that can't be saved, so its value ends where its neighbors' do. */
+@Composable
+fun LessonRowBookmarkSpace() {
+    Spacer(Modifier.iconButtonEdge(ButtonEdge.End).minimumInteractiveComponentSize())
 }
 
 /**

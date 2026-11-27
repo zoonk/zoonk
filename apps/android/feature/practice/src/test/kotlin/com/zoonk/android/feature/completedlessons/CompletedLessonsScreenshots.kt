@@ -74,7 +74,7 @@ class CompletedLessonsScreenshots {
                 Lesson("How cells divide", "Cell biology", today, "biology"),
                 Lesson("Mitosis step by step", "Cell biology", today, "biology"),
                 Lesson("What a gene is", "Genetics", today.minusDays(1), "biology"),
-                Lesson("Proteins and what they do", null, today.minusDays(3), "chemistry"),
+                Lesson("Proteins and what they do", null, today.minusDays(3), "chemistry", available = false),
                 Lesson(
                     "Why the cell membrane lets some things through and keeps others out",
                     "Cell biology",
@@ -87,7 +87,7 @@ class CompletedLessonsScreenshots {
             ).takeUnless { empty }.orEmpty()
         val data =
             lessons.filter { group == null || it.group == group }.mapIndexed { index, lesson ->
-                """{"available":true,"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
+                """{"available":${lesson.available},"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
                 "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","saved":${index == 1},"title":"${lesson.title}"}"""
             }
         val filter =
@@ -105,6 +105,7 @@ class CompletedLessonsScreenshots {
         val chapter: String?,
         val day: LocalDate,
         val group: String,
+        val available: Boolean = true,
     )
 
     private fun show(

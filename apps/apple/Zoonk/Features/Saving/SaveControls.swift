@@ -37,6 +37,16 @@ struct RowSaveToggle: View {
   }
 }
 
+/// A row bookmark's room, empty, on a row that can't be saved, so its value ends where its
+/// neighbors' do.
+struct RowSaveSpace: View {
+  var body: some View {
+    RowSaveToggle(isSaved: false, save: Text(verbatim: ""), saved: Text(verbatim: "")) {}
+      .hidden()
+      .accessibilityHidden(true)
+  }
+}
+
 /// A save that can no longer open here: the title it had, and Remove, which takes it away at once,
 /// since it can't be saved again.
 struct UnavailableSaveRow<Detail: View>: View {

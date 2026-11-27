@@ -276,7 +276,11 @@ private struct CompletedLessonRow: View {
           lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle),
         goalId: goalId, server: lesson.saved)
     } else {
-      row.accessibilityElement(children: .combine)
+      HStack(spacing: 4) {
+        row
+        RowSaveSpace()
+      }
+      .accessibilityElement(children: .combine)
     }
   }
 
