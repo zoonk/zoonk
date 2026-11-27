@@ -319,6 +319,28 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testACheckpointWithUndoKeepsItsThreeActionsWholeAtALargeTextSize() async throws {
+    let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
+    let undo = PlacementResultUndo(
+      goalId: goalID, changeId: goalID, lessons: 2, request: VisitRequest<Bool>(), plans: store,
+      disabled: false)
+
+    try await capture(
+      "placement-checkpoint-undo-large-text", title: "Part 3 of 14 done", detail: "Finish later"
+    ) {
+      PlacementCheckpoint(
+        stop: PlacementPartStop(
+          attempt: PlacementAttempt(
+            answered: 12, chapter: nil, estimatedMinutes: 6, id: goalID, length: .wholeCourse,
+            nextPart: 4, part: 3, partComplete: true, parts: 14, partsLeft: 11, questions: 12,
+            resume: nil, totalEstimatedMinutes: 85, remainingEstimatedMinutes: 66),
+          partLessonsSkipped: 2, changeId: goalID, undoLessons: 2),
+        pressed: nil, failed: false, undo: undo, onKeepGoing: {}, onFinishLater: {}
+      )
+      .dynamicTypeSize(.accessibility2)
+    }
+  }
+
   func testResultsAfterUndo() async throws {
     let undo = try restored()
     let result = LevelTestOut.Result(changeId: goalID, finishedAt: .now, lessonsSkipped: 6)

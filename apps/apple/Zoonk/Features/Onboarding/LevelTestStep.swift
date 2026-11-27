@@ -119,17 +119,20 @@ struct AppLanguageAction: View {
   @Environment(\.openURL) private var openURL
 
   var body: some View {
+    // A quiet link under the result, drawn like "Test out of B2", as main's.
     if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
-      Section {
-        Button {
-          openURL(settings)
-        } label: {
-          Text(
-            "Use the app in \(Locale(identifier: language).localizedString(forLanguageCode: language) ?? language)",
-            tableName: "Onboarding",
-            comment: "Opens the app's settings to switch its language: the language's own name")
-        }
+      Button {
+        openURL(settings)
+      } label: {
+        Text(
+          "Use the app in \(Locale(identifier: language).localizedString(forLanguageCode: language) ?? language)",
+          tableName: "Onboarding",
+          comment: "Opens the app's settings to switch its language: the language's own name"
+        )
+        .underline()
       }
+      .buttonStyle(.borderless)
+      .listRowSeparator(.hidden)
     }
   }
 
