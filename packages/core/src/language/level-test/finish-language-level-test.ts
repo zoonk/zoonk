@@ -1,6 +1,6 @@
-import "server-only";
 import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -17,8 +17,11 @@ import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
+import { getLevelTestEnd } from "./_utils/level-test-end";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
+import { getLevelTestPlanningStart } from "./_utils/level-test-planning-start";
 import { withLevelTestChange } from "./_utils/level-test-result-change";
+import { getLevelTestStart } from "./_utils/level-test-start-score";
 import {
   canWriteLevelTest,
   levelTestDetailsWithProgress,
@@ -37,7 +40,6 @@ import {
   getLevelTestConfirmation,
   getLevelTestFloors,
   getLevelTestRanges,
-  getNextLevelTestStep,
   listLevelTestLevels,
   toLevelLabels,
 } from "./level-test-rules";
@@ -106,13 +108,20 @@ async function recordLevelTestResult({
 
   const result = {
     attemptId: currentProgress.attemptId ?? null,
+    end: getLevelTestEnd(input),
     finishedAt: now.toISOString(),
     lessonsSkipped: itemIds.length,
     levelsSkipped: through && itemIds.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
     ranges: getLevelTestRanges(input),
-    ...(currentProgress.length === "wholeCourse" &&
-      getNextLevelTestStep(input).kind === "done" && { wholeCourseReady: true as const }),
   };
+
+  const stated = getLevelTestStart(readGoalDetails(current).level);
+
+  const planningStart = getLevelTestPlanningStart(
+    input,
+    stated.firstBand ?? stated.start,
+    result.levelsSkipped.at(-1),
+  );
 
   const saved = { ...currentProgress, counted: currentProgress.answers.length, result, scores };
 
@@ -144,15 +153,20 @@ async function recordLevelTestResult({
           lastResult: result,
           usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
         },
-        skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
+        ...(planningStart !== null && {
+          languagePlanningStart: planningStart,
+          skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
+        }),
       },
     },
     where: { id: goalId },
   });
 
-  await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+  if (planningStart !== null) {
+    await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+  }
 
-  if (currentProgress.attemptId) {
+  if (levelsToRefill.size > 0 && bank.confirmations) {
     await oweFollowUps({
       db: transaction,
       followUps: [...levelsToRefill].map((level) => ({

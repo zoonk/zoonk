@@ -83,6 +83,7 @@ describe("level test answers kept for checking the bank", () => {
       ...pair,
       answers: [firstId, secondId].map((id) => ({
         answerIndex: 1,
+        answeredAt: expect.any(String),
         correct: false,
         durationMs: 9000,
         id,
@@ -108,7 +109,13 @@ describe("level test answers kept for checking the bank", () => {
     const record = await prisma.anonymousLevelTest.findUniqueOrThrow({ where: { id: recordId } });
 
     expect(record.answers).toStrictEqual([
-      { answerIndex: 0, correct: true, durationMs: 0, id: questionId },
+      {
+        answerIndex: 0,
+        answeredAt: expect.any(String),
+        correct: true,
+        durationMs: 0,
+        id: questionId,
+      },
     ]);
   });
 

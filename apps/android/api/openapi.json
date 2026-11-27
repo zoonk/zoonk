@@ -6802,7 +6802,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Opens a Quick or Whole course test and schedules missing questions. An attempt already open is returned with its saved progress.",
+        "description": "Opens a language level test and schedules missing questions. An attempt already open is returned with its saved progress.",
         "operationId": "startLanguageLevelTest",
         "summary": "Open a language level test",
         "parameters": [
@@ -7010,7 +7010,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Answers the test's current question. `answerIndex` null means \"I don't know\". An answer to any other question, such as one sent twice or one the test no longer asks, saves nothing and returns the test as it is now.",
+        "description": "Answers the test's current question. Set audioDeferred on a listening question to finish without scoring it. `answerIndex` null means \"I don't know\". An answer to any other question, such as one sent twice or one the test no longer asks, saves nothing and returns the test as it is now.",
         "operationId": "answerLanguageLevelTest",
         "summary": "Answer a level test question",
         "parameters": [
@@ -16321,7 +16321,7 @@
     },
     "/goals/{goalId}/placement/sittings": {
       "post": {
-        "description": "Starts or resumes a learn goal's placement attempt with length quick or wholeCourse. A language goal can start its whole-course topic walk after the Whole-course level assessment. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 when the goal has no test available or an attempt requires a length.",
+        "description": "Starts or resumes a learn goal's placement attempt with length quick or wholeCourse. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 when the goal has no test available or an attempt requires a length.",
         "operationId": "createPlacementSitting",
         "security": [
           {
@@ -28667,9 +28667,6 @@
             ]
           }
         },
-        "required": [
-          "length"
-        ],
         "additionalProperties": false
       },
       "LanguageLevelTestAnswerInput": {
@@ -28696,6 +28693,9 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "audioDeferred": {
+            "type": "boolean"
           },
           "durationMs": {
             "description": "Milliseconds from showing the question to the answer, which count toward the learner's study time; anything over an hour counts as an hour",
@@ -47181,12 +47181,11 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
-              "length": {
-                "type": "string",
-                "enum": [
-                  "quick",
-                  "wholeCourse"
-                ]
+              "estimatedMinutes": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
               },
               "result": {
                 "nullable": true,
@@ -47203,6 +47202,18 @@
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "end": {
+                    "type": "string",
+                    "enum": [
+                      "check_passed",
+                      "check_missed",
+                      "audio_deferred",
+                      "unknown_streak",
+                      "stopped",
+                      "question_cap",
+                      "nothing_to_check"
+                    ]
                   },
                   "finishedAt": {
                     "type": "string",
@@ -47263,12 +47274,6 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "wholeCourseReady": {
-                    "type": "boolean",
-                    "enum": [
-                      true
-                    ]
                   }
                 },
                 "required": [
@@ -47287,6 +47292,12 @@
                   "C1",
                   "C2"
                 ]
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
               },
               "expectedSeconds": {
                 "type": "integer",
@@ -47312,6 +47323,8 @@
               }
             },
             "required": [
+              "estimatedMinutes",
+              "total",
               "expectedSeconds",
               "showAlphabetNote",
               "startedAt",
@@ -47327,12 +47340,11 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
-              "length": {
-                "type": "string",
-                "enum": [
-                  "quick",
-                  "wholeCourse"
-                ]
+              "estimatedMinutes": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
               },
               "result": {
                 "nullable": true,
@@ -47349,6 +47361,18 @@
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "end": {
+                    "type": "string",
+                    "enum": [
+                      "check_passed",
+                      "check_missed",
+                      "audio_deferred",
+                      "unknown_streak",
+                      "stopped",
+                      "question_cap",
+                      "nothing_to_check"
+                    ]
                   },
                   "finishedAt": {
                     "type": "string",
@@ -47409,12 +47433,6 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "wholeCourseReady": {
-                    "type": "boolean",
-                    "enum": [
-                      true
-                    ]
                   }
                 },
                 "required": [
@@ -47433,6 +47451,12 @@
                   "C1",
                   "C2"
                 ]
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
               },
               "answered": {
                 "type": "integer",
@@ -47758,23 +47782,18 @@
               },
               "targetLanguage": {
                 "type": "string"
-              },
-              "total": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 9007199254740991,
-                "description": "Maximum scored questions, excluding any level confirmation"
               }
             },
             "required": [
+              "estimatedMinutes",
+              "total",
               "answered",
               "lastCorrect",
               "levels",
               "next",
               "showAlphabetNote",
               "status",
-              "targetLanguage",
-              "total"
+              "targetLanguage"
             ],
             "additionalProperties": false
           }
@@ -47854,6 +47873,18 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
+              "end": {
+                "type": "string",
+                "enum": [
+                  "check_passed",
+                  "check_missed",
+                  "audio_deferred",
+                  "unknown_streak",
+                  "stopped",
+                  "question_cap",
+                  "nothing_to_check"
+                ]
+              },
               "finishedAt": {
                 "type": "string",
                 "format": "date-time",
@@ -47913,12 +47944,6 @@
                   ],
                   "additionalProperties": false
                 }
-              },
-              "wholeCourseReady": {
-                "type": "boolean",
-                "enum": [
-                  true
-                ]
               }
             },
             "required": [
@@ -92218,6 +92243,18 @@
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
+                  "end": {
+                    "type": "string",
+                    "enum": [
+                      "check_passed",
+                      "check_missed",
+                      "audio_deferred",
+                      "unknown_streak",
+                      "stopped",
+                      "question_cap",
+                      "nothing_to_check"
+                    ]
+                  },
                   "finishedAt": {
                     "type": "string",
                     "format": "date-time",
@@ -92277,12 +92314,6 @@
                       ],
                       "additionalProperties": false
                     }
-                  },
-                  "wholeCourseReady": {
-                    "type": "boolean",
-                    "enum": [
-                      true
-                    ]
                   }
                 },
                 "required": [

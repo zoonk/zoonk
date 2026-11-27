@@ -146,7 +146,7 @@ export function LanguagePlanTestFlow({
           }}
           audioPending={audioPending}
           next={phase.test.next}
-          onStop={() => test.onStop(phase.attemptId, phase.test.length ?? "quick")}
+          onStop={() => test.onStop(phase.attemptId, "quick")}
           onView={test.onView(phase.attemptId)}
           progress={phase.test.answered / phase.test.total}
           targetLanguage={targetLanguage}
