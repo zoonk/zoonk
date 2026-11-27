@@ -101,6 +101,7 @@ final class BuddyStore {
   /// back, and only the latest save can report a failure: false when it did.
   @discardableResult
   func save(_ choice: BuddyChoice) async -> Bool {
+    guard choice.input != nil else { return false }
     latestSave += 1
     let request = latestSave
     let previous = status.value?.buddy

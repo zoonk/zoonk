@@ -114,7 +114,7 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(refusal(403, "SIGN_UP_REQUIRED").limit, .signUpRequired)
     XCTAssertEqual(
       refusal(429, "SLOW_DOWN", #"{"retryAfterSeconds":120}"#).limit,
-      .slowDown(retryAfterSeconds: 120)
+      .slowDown(until: opens.addingTimeInterval(-3600 + 120))
     )
     XCTAssertEqual(
       refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"day","tier":"free"}}"#).limit,

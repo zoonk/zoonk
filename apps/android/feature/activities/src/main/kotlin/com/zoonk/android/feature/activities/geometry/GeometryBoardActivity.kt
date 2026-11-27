@@ -91,7 +91,7 @@ private fun GeometryBoardActivity(props: ActivityProps) {
     val step = BoardGeometry.gridStep(start)
     val bounds = BoardGeometry.bounds(fields.measure, start, step)
     val hideTotal = hidesAskedTotal(content.check, props.phase)
-    val reading = readBoard(points, fields.measure)
+    val reading = readBoard(points, fields.measure) ?: return
     val summary = describeBoard(fields.measure, reading, hideTotal)
     val moved = points != start
 
@@ -259,6 +259,7 @@ private fun BoardDrawing(
                         R.string.activities_geometry_board_move_down to Vec(0.0, -step),
                     ).filter { (_, offset) ->
                         when (corner.track) {
+                            Track.UNKNOWN_DEFAULT_OPEN_API -> false
                             Track.HORIZONTAL -> offset.y == 0.0
                             Track.VERTICAL -> offset.x == 0.0
                             null -> true
@@ -404,6 +405,10 @@ private fun describeBoard(
     val parts = reading.parts.joinToString(", ") { formatAmount(it, locale, unit) }
     val total = formatAmount(reading.total, locale, unit)
     return when (measure) {
+        Measure.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         Measure.ANGLE_SUM -> {
             if (hideTotal) {
                 stringResource(R.string.activities_geometry_board_angles, parts)
@@ -533,6 +538,7 @@ private fun DrawScope.drawTrack(
 ) {
     val (from, to) =
         when (track) {
+            Track.UNKNOWN_DEFAULT_OPEN_API -> return
             Track.HORIZONTAL -> Vec(bounds.minX, point.y) to Vec(bounds.maxX, point.y)
             Track.VERTICAL -> Vec(point.x, bounds.minY) to Vec(point.x, bounds.maxY)
         }

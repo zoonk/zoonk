@@ -114,16 +114,16 @@ class EssayViewModelTest {
 
     @Test
     fun everyResultShapeDecodes() {
-        val levels = result(LEVELS_RESULT).toGrade()
+        val levels = result(LEVELS_RESULT).toGrade()!!
         assertNull(levels.points)
         assertEquals(listOf("strong", "partial", "complete"), levels.criteria.map { it.level.value })
 
-        val points = result(POINTS_RESULT).toGrade().points!!
+        val points = result(POINTS_RESULT).toGrade()!!.points!!
         assertEquals(16.6, points.total.low, 0.0)
         assertEquals(0.4, points.deduction.high, 0.0)
         assertEquals(3, points.rows.size)
 
-        assertEquals("An answer off the topic asked gets zero.", result(ZEROED_RESULT).toGrade().points!!.zeroReason)
+        assertEquals("An answer off the topic asked gets zero.", result(ZEROED_RESULT).toGrade()!!.points!!.zeroReason)
     }
 
     @Test

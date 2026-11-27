@@ -69,6 +69,7 @@ private fun AreaModelActivity(props: ActivityProps) {
         when (val fields = content.fields) {
             is GridFields -> Triple(true, listOf(fields.value.width, fields.value.height), fields.value.unit)
             is BarFields -> Triple(false, listOf(fields.value.bar), fields.value.unit)
+            else -> return
         }
     val locale = currentLocale()
     val starting = given.map { sideCuts(it.parts, it.total) }

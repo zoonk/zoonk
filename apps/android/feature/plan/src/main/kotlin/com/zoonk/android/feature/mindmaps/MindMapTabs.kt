@@ -62,6 +62,7 @@ import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.util.UUID
 import kotlin.time.toJavaInstant
 
@@ -383,8 +384,12 @@ private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
     when (reason) {
+        MindMapAllowanceStop.Reason.UNKNOWN_DEFAULT_OPEN_API -> {
+            Limit.Reached(tier)
+        }
+
         MindMapAllowanceStop.Reason.SLOW_DOWN -> {
-            Limit.SlowDown(SLOW_DOWN_SECONDS)
+            Limit.SlowDown(SLOW_DOWN_SECONDS, availableAt?.toJavaInstant() ?: Instant.now().plusSeconds(SLOW_DOWN_SECONDS.toLong()))
         }
 
         MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED -> {
@@ -395,6 +400,7 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
             Limit.Reached(
                 tier,
                 when (period) {
+                    MindMapAllowanceStop.Period.UNKNOWN_DEFAULT_OPEN_API -> null
                     MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day

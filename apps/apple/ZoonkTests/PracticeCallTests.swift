@@ -24,7 +24,7 @@ final class PracticeCallTests: XCTestCase {
 
   /// A short break has no way on of its own, so a length only subscribers get still offers one.
   func testALockedLengthOffersASubscriptionDuringAShortBreak() {
-    let slowDown = HelpLimit.slowDown(retryAfterSeconds: 30)
+    let slowDown = HelpLimit.slowDown(until: .now.addingTimeInterval(30))
 
     XCTAssertEqual(
       PracticeCallAction(limit: slowDown, isLocked: true, isWriting: false), .subscribe)

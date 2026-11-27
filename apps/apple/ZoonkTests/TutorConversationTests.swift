@@ -60,7 +60,7 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(conversation.turns.first?.linksVerified, true)
   }
 
-  func testRefusedAnswerTakesTheComposersPlace() async {
+  func testRefusedAnswerHoldsSending() async {
     let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
     let api = TutorAPIStub(answers: [], answerFailure: limit)
     let conversation = makeConversation(api: api)
@@ -70,6 +70,52 @@ final class TutorConversationTests: XCTestCase {
     await conversation.send()
 
     XCTAssertEqual(conversation.turns.first?.status, .failed)
+    XCTAssertEqual(conversation.limit, limit)
+    XCTAssertFalse(conversation.canAsk)
+  }
+
+  /// A question the limit refuses isn't saved: its words wait in the composer, and Send is back
+  /// once a short break is over.
+  func testARefusedQuestionWaitsInTheComposerUntilTheLimitLifts() async {
+    let over = Date(timeIntervalSince1970: 1_795_339_800)
+    let slowDown = TutorFailure.slowDown(until: over)
+    let api = TutorAPIStub(askFailures: [slowDown], answers: [[.finish]])
+    let conversation = makeConversation(api: api)
+    conversation.now = { over.addingTimeInterval(-30) }
+    await conversation.thread.load()
+
+    conversation.draft = "Why does it fall?"
+    await conversation.send()
+
+    XCTAssertTrue(conversation.turns.isEmpty)
+    XCTAssertEqual(conversation.draft, "Why does it fall?")
+    XCTAssertEqual(conversation.limit, slowDown)
+    XCTAssertEqual(
+      slowDown.words(now: over.addingTimeInterval(-30)).said,
+      "Take a short break. You can try again in 30 seconds.")
+    XCTAssertFalse(conversation.canSendDraft)
+    XCTAssertFalse(conversation.isShortBreakOver)
+
+    conversation.now = { over }
+
+    XCTAssertNil(conversation.limit)
+    XCTAssertTrue(conversation.canSendDraft)
+    XCTAssertTrue(conversation.isShortBreakOver, "the composer says sending is back")
+    await conversation.send()
+
+    XCTAssertEqual(conversation.turns.map(\.question), ["Why does it fall?"])
+    XCTAssertFalse(conversation.isShortBreakOver)
+  }
+
+  func testARefusedSuggestionLeavesTheComposerEmpty() async {
+    let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
+    let api = TutorAPIStub(askFailures: [limit])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    await conversation.send(TutorSuggestion(id: "simpler", label: "Explain it more simply"))
+
+    XCTAssertEqual(conversation.draft, "")
     XCTAssertEqual(conversation.limit, limit)
     XCTAssertFalse(conversation.canAsk)
   }

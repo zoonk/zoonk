@@ -110,8 +110,12 @@ const TASK_ASIDE_RAIL_CLASS =
 
 export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
 
-/** The aside's toggle sits over this header's end (`TASK_ASIDE_TOGGLE_CLASS`). */
-const TASK_ASIDE_HEADER_ROOM_CLASS = "pr-16";
+/**
+ * The aside's top row, for its header and for a panel drawn over the aside. The aside's toggle sits
+ * over the row's end (`TASK_ASIDE_TOGGLE_CLASS`), so the row leaves it that room.
+ */
+export const TASK_ASIDE_HEADER_CLASS =
+  "px-frame flex h-13 shrink-0 items-center justify-between gap-3 pr-16 xl:h-15";
 
 export function TaskAsideHeader({
   className,
@@ -125,14 +129,7 @@ export function TaskAsideHeader({
   titleId?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "px-frame flex h-13 shrink-0 items-center justify-between gap-3 xl:h-15",
-        TASK_ASIDE_HEADER_ROOM_CLASS,
-        className,
-      )}
-      data-slot="task-aside-header"
-    >
+    <div className={cn(TASK_ASIDE_HEADER_CLASS, className)} data-slot="task-aside-header">
       {title && (
         <h2 className="text-muted-foreground min-w-0 truncate text-xs font-medium" id={titleId}>
           {title}

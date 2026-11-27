@@ -114,6 +114,10 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
                     withUnit(distribution.value.max),
                 )
             }
+
+            else -> {
+                return
+            }
         }
     val shares =
         stringResource(

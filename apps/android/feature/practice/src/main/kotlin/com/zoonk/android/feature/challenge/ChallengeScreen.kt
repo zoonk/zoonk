@@ -758,6 +758,8 @@ private fun ChallengeFooter(
         }
     }
     when (challenge.status) {
+        Challenge.Status.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         Challenge.Status.READY, Challenge.Status.STARTED -> {
             val wait = challenge.waitReason
             when {

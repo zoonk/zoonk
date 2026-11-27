@@ -142,7 +142,9 @@ data class DayStep(
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
 
     val canOpen: Boolean
-        get() = !isFinished && waitReason == null && !preparing
+        get() =
+            !isFinished && waitReason == null && !preparing && kind != StudyBlock.Kind.UNKNOWN_DEFAULT_OPEN_API &&
+                screen != StudyBlock.Screen.UNKNOWN_DEFAULT_OPEN_API
 
     /**
      * A finished lesson opens again on its own, outside the session. A skipped one comes back in the
@@ -241,10 +243,8 @@ private fun checkpointKind(value: String) =
 
 fun StudyDay.toDayView(): DayView =
     when (this) {
-        is StudyDay.ActiveWrapper -> value.toDayView()
-        is StudyDay.CompletedWrapper -> value.toDayView()
-        is StudyDay.PlannedWrapper -> value.toDayView()
-        is StudyDay.UnstartedWrapper -> value.toDayView()
+        is StudyDay.StudySessionValue -> value.toDayView()
+        is StudyDay.UnstartedStudyDayValue -> value.toDayView()
     }
 
 fun StudySession.toDayView(): DayView =
@@ -252,11 +252,16 @@ fun StudySession.toDayView(): DayView =
         sessionId = id,
         goalId = goalId,
         localDate = localDate,
-        steps = blocks.map(StudyBlock::toDayStep),
+        steps =
+            blocks
+                .filter {
+                    it.kind != StudyBlock.Kind.UNKNOWN_DEFAULT_OPEN_API &&
+                        it.status != StudyBlock.Status.UNKNOWN_DEFAULT_OPEN_API
+                }.map(StudyBlock::toDayStep),
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = state,
-        missions = missions.map(StudyMission::toDayMission),
+        missions = missions.mapNotNull(StudyMission::toDayMission),
         fullMeal = fullMeal,
         emptyDay = emptyDay?.value?.let(::emptyDay),
         minutes = minutes,
@@ -277,11 +282,16 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         sessionId = null,
         goalId = goalId,
         localDate = localDate,
-        steps = blocks.map(UnstartedStudyDayBlocksInner::toDayStep),
+        steps =
+            blocks
+                .filter {
+                    it.kind != UnstartedStudyDayBlocksInner.Kind.UNKNOWN_DEFAULT_OPEN_API &&
+                        it.status != UnstartedStudyDayBlocksInner.Status.UNKNOWN_DEFAULT_OPEN_API
+                }.map(UnstartedStudyDayBlocksInner::toDayStep),
         sessionBar = SessionBar(sessionBar.completed.toInt(), sessionBar.total.toInt()),
         nextPosition = nextPosition,
         state = StudySession.State.entries.first { it.value == state.value },
-        missions = missions.map(UnstartedStudyDayMissionsInner::toDayMission),
+        missions = missions.mapNotNull(UnstartedStudyDayMissionsInner::toDayMission),
         fullMeal = fullMeal,
         emptyDay = emptyDay?.value?.let(::emptyDay),
         minutes = minutes,
@@ -301,14 +311,16 @@ private fun emptyDay(value: String) =
     when (value) {
         "nothingNew" -> EmptyDay.NothingNew
         "lessonsToPrepare" -> EmptyDay.LessonsToPrepare
-        else -> EmptyDay.LessonsComing
+        "lessonsComing" -> EmptyDay.LessonsComing
+        else -> null
     }
 
 private fun freshStart(value: String) =
     when (value) {
         "newWeek" -> FreshStart.NewWeek
         "newPhase" -> FreshStart.NewPhase
-        else -> FreshStart.WelcomeBack
+        "welcomeBack" -> FreshStart.WelcomeBack
+        else -> null
     }
 
 fun StudyBlock.toDayStep(): DayStep =
@@ -393,8 +405,9 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         mockPreparationReview = mockPreparationReview == true,
     )
 
-fun StudyMission.toDayMission(): DayMission =
-    DayMission(
+fun StudyMission.toDayMission(): DayMission? {
+    if (kind == StudyMission.Kind.UNKNOWN_DEFAULT_OPEN_API || status == StudyMission.Status.UNKNOWN_DEFAULT_OPEN_API) return null
+    return DayMission(
         kind = kind,
         done = status == StudyMission.Status.DONE,
         progress = done,
@@ -405,9 +418,15 @@ fun StudyMission.toDayMission(): DayMission =
         detail = detail,
         opens = opens?.toMissionOpens(),
     )
+}
 
-private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission =
-    DayMission(
+private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission? {
+    if (kind == UnstartedStudyDayMissionsInner.Kind.UNKNOWN_DEFAULT_OPEN_API ||
+        status == UnstartedStudyDayMissionsInner.Status.UNKNOWN_DEFAULT_OPEN_API
+    ) {
+        return null
+    }
+    return DayMission(
         kind = StudyMission.Kind.entries.first { it.value == kind.value },
         done = status == UnstartedStudyDayMissionsInner.Status.DONE,
         progress = done,
@@ -418,9 +437,11 @@ private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission =
         detail = detail,
         opens = opens?.toMissionOpens(),
     )
+}
 
-fun StudyMissionOpens.toMissionOpens(): MissionOpens =
+fun StudyMissionOpens.toMissionOpens(): MissionOpens? =
     when (this) {
+        is StudyMissionOpens.StudyMissionOpensOneOf8Value -> null
         is StudyMissionOpens.StudyMissionOpensOneOfValue -> MissionOpens.Block(blockId = value.blockId, position = null)
         is StudyMissionOpens.StudyMissionOpensOneOf1Value -> MissionOpens.MistakesPractice
         is StudyMissionOpens.StudyMissionOpensOneOf2Value -> MissionOpens.Pattern(value.patternId)
@@ -431,8 +452,12 @@ fun StudyMissionOpens.toMissionOpens(): MissionOpens =
         is StudyMissionOpens.StudyMissionOpensOneOf7Value -> MissionOpens.MockChooser
     }
 
-private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens =
+private fun UnstartedStudyDayMissionsInnerOpens.toMissionOpens(): MissionOpens? =
     when (this) {
+        is UnstartedStudyDayMissionsInnerOpens.StudyMissionOpensOneOf8Value -> {
+            null
+        }
+
         is UnstartedStudyDayMissionsInnerOpens.UnstartedStudyDayMissionsInnerOpensAnyOfValue -> {
             MissionOpens.Block(blockId = null, position = value.ref.position)
         }

@@ -74,13 +74,14 @@ function LessonQuestionPanelHeader({
     >
       {controller.canAskQuestions ? (
         <BuddyIdentityRow
+          description={
+            <DrawerDescription className="text-xs">
+              <LessonQuestionPanelDescription context={controller.state.context} />
+            </DrawerDescription>
+          }
           face={identity.avatar}
           title={<DrawerTitle className={BUDDY_NAME_CLASS}>{identity.name}</DrawerTitle>}
-        >
-          <DrawerDescription className="text-xs">
-            <LessonQuestionPanelDescription context={controller.state.context} />
-          </DrawerDescription>
-        </BuddyIdentityRow>
+        />
       ) : (
         <DrawerTitle className={BUDDY_NAME_CLASS}>
           {t("Ask {name} with a free account", { name: identity.name })}

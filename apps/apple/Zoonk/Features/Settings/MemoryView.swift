@@ -295,10 +295,12 @@ private struct MemoryFactRow: View {
     HStack {
       ListRow(
         Text(fact.statement),
-        description: Text(
-          "\(fact.source.name)\u{00A0}· \(PlanDate.momentDay(fact.createdAt))",
-          tableName: "Settings",
-          comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"))
+        description: fact.source.map { source in
+          Text(
+            "\(source.name)\u{00A0}· \(PlanDate.momentDay(fact.createdAt))",
+            tableName: "Settings",
+            comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”")
+        } ?? Text(verbatim: PlanDate.momentDay(fact.createdAt)))
 
       Spacer(minLength: 0)
 

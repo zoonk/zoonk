@@ -23,8 +23,7 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
   if (
     error?.kind === "authentication" ||
     error?.kind === "subscription" ||
-    error?.kind === "unavailable" ||
-    error?.kind === "slowDown"
+    error?.kind === "unavailable"
   ) {
     return <RequestErrorMessage error={error} />;
   }
@@ -86,7 +85,7 @@ export function QuestionAnswer({
 }) {
   const t = useExtracted();
   const refusal = toHelpLimit(error);
-  const liveRefusal = useLiveLimit(refusal);
+  const liveRefusal = toHelpLimit(useLiveLimit(error));
   const appLinks = useAnswerLinks({ linksVerified, status });
 
   if (status === "pending" && !isLocallyStreaming) {

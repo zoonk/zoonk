@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { CreateAccountLink } from "../_components/create-account-link";
 import { type HelpLimit, needsAccount, useHelpLimitWords } from "../_components/help-limit-notice";
+import { SaidLine } from "../_components/subscribe-gate";
 import { useSentenceSpace } from "../_utils/locale";
 import { type SpokenAudioState } from "./use-spoken-audio";
 
@@ -54,8 +55,8 @@ export function useSpeechActionLabel(state: SpokenAudioState, idle: string): str
 }
 
 function LimitTitle({ limit }: { limit: HelpLimit }) {
-  const { line, title } = useHelpLimitWords(limit);
-  return <p className="font-medium">{title ?? line}</p>;
+  const { line, said, title } = useHelpLimitWords(limit);
+  return <p className="font-medium">{title ?? <SaidLine line={line} said={said} />}</p>;
 }
 
 export function SpeechFailedNote({

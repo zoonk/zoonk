@@ -39,9 +39,10 @@ sealed interface Pace {
     ) : Pace
 }
 
-val PlanStatus.pace: Pace
+val PlanStatus.pace: Pace?
     get() =
         when (this) {
+            is PlanStatus.PlanStatusOneOf7Value -> null
             is PlanStatus.PlanStatusOneOfValue -> Pace.OnTrack
             is PlanStatus.PlanStatusOneOf1Value -> Pace.Ahead(value.days.toInt())
             is PlanStatus.PlanStatusOneOf2Value -> Pace.Behind(value.days.toInt(), value.extraMinutesPerDay.toInt(), value.lessons?.toInt())

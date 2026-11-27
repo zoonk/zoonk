@@ -147,6 +147,7 @@ struct ExamAPI {
 
         let status: MockWriting.Status =
           switch writing.status {
+          case .unrecognized: throw APIError.unavailable
           case .writing: .writing
           case .starting: .starting
           case .none: .none
@@ -189,6 +190,7 @@ struct ExamAPI {
       }
 
       switch started.status {
+      case .unrecognized: throw APIError.unavailable
       case .started, .running:
         guard let id = started.id else { throw APIError.unavailable }
         return .started(id: id)

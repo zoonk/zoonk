@@ -228,6 +228,27 @@ test.describe("Lesson questions API", () => {
     await api.dispose();
   });
 
+  test("refuses a question at the day's limit when it's asked, without saving it", async () => {
+    const [{ api, userId }, { lesson }] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "lesson-question-limit" }),
+      playableLessonFixture({ steps: [...LESSON_STEPS] }),
+    ]);
+
+    await usageRecordsFixture({ count: FREE_DAILY_TUTOR_MESSAGES, kind: "tutorMessage", userId });
+
+    const refused = await ask({ api, lessonId: lesson.id });
+
+    expect(refused.status()).toBe(402);
+
+    await expect(refused.json()).resolves.toMatchObject({
+      error: { code: "USAGE_LIMIT_REACHED", details: { limit: { resource: "tutorMessage" } } },
+    });
+
+    await expect(prisma.lessonQuestion.count({ where: { thread: { userId } } })).resolves.toBe(0);
+
+    await api.dispose();
+  });
+
   test("answers the earliest unfinished turn first and releases a refused one", async () => {
     const [{ api, userId }, { lesson }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "lesson-question-order" }),
@@ -249,6 +270,8 @@ test.describe("Lesson questions API", () => {
         where: { id: first.id },
       }),
       usageRecordsFixture({ count: FREE_DAILY_TUTOR_MESSAGES, kind: "tutorMessage", userId }),
+      // A question saved before questions were admitted when asked has no claim of its own yet.
+      prisma.usageRecord.deleteMany({ where: { targetId: first.id, userId } }),
     ]);
 
     const [firstAnswer, secondAnswer] = await Promise.all([
