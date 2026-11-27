@@ -145,7 +145,7 @@ enum TutorFailure: Error, Equatable, Sendable {
   var helpLimit: HelpLimit? {
     switch self {
     case .signUpRequired: .signUpRequired
-    case .slowDown(let until): .slowDown(retryAfterSeconds: 0, until: until)
+    case .slowDown(let until): .slowDown(until: until)
     case .limit(let limit): limit
     default: nil
     }

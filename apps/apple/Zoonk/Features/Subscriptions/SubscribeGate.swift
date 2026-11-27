@@ -121,11 +121,11 @@ struct LimitNotice: View {
   let limit: HelpLimit
   /// Read at the gate's clock, so words about a day or a short break's wait follow it while the
   /// notice is open.
-  private let words: (HelpLimit, Date) -> LimitWords
+  let words: (Date) -> LimitWords
 
   init(limit: HelpLimit, words: @escaping (Date) -> LimitWords) {
     self.limit = limit
-    self.words = { _, now in words(now) }
+    self.words = words
   }
 
   init(limit: HelpLimit, words: LimitWords) {
@@ -133,13 +133,12 @@ struct LimitNotice: View {
   }
 
   init(limit: HelpLimit, kind: HelpLimit.Kind? = nil) {
-    self.limit = limit
-    self.words = { limit, now in limit.words(kind, now: now) }
+    self.init(limit: limit) { now in limit.words(kind, now: now) }
   }
 
   var body: some View {
-    LimitClock(limit: limit) { timed, now in
-      notice(words(timed ?? limit, now), isOpen: limit.isOpen(at: now))
+    LimitClock(limit: limit) { now in
+      notice(words(now), isOpen: limit.isOpen(at: now))
     }
   }
 
@@ -208,10 +207,8 @@ extension HelpLimit {
   /// cap's day comes from `availableAt`, read at `now` in the learner's own time zone.
   func words(_ kind: Kind? = nil, now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     switch self {
-    case .slowDown(let seconds, let until):
-      LimitWords(
-        line: Self.waitLine(
-          seconds: until.map { Int($0.timeIntervalSince(now).rounded(.up)) } ?? seconds))
+    case .slowDown(let until):
+      LimitWords(line: Self.waitLine(seconds: Int(until.timeIntervalSince(now).rounded(.up))))
     case .signUpRequired:
       LimitWords(
         title: LocalizedStringResource(
@@ -253,7 +250,7 @@ extension HelpLimit {
       "The title over \"You can try again now.\" once a call the learner's call time stopped can be made again."
   )
 
-  private static let tryAgainNow = LocalizedStringResource(
+  static let tryAgainNow = LocalizedStringResource(
     "You can try again now.", table: "Subscriptions",
     comment:
       "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
@@ -520,32 +517,38 @@ extension HelpLimit {
 }
 
 /// Draws a limit at each whole second of a short break, so its wait counts down, and any other at
-/// the opening clock. A short break nothing timed counts from when this first shows, and `content`
-/// gets it with that end.
+/// the opening clock.
 struct LimitClock<Content: View>: View {
-  @State private var shownAt = Date.now
-
   let limit: HelpLimit?
-  @ViewBuilder let content: (HelpLimit?, Date) -> Content
+  @ViewBuilder let content: (Date) -> Content
 
   var body: some View {
-    let timed = limit?.started(at: shownAt)
-
-    if let end = timed?.breakEnd, end > .now {
-      TimelineView(.explicit(Self.seconds(until: end, from: .now))) { context in
-        content(timed, context.date)
+    if let end = limit?.breakEnd, end > .now {
+      TimelineView(BreakSeconds(end: end)) { context in
+        content(context.date)
       }
     } else {
-      OpeningClock(availableAt: timed?.availableAt) { now in
-        content(timed, now)
-      }
+      OpeningClock(availableAt: limit?.availableAt, content: content)
     }
   }
+}
 
-  /// Each whole second left before `end`, the first at or before `now`.
-  static func seconds(until end: Date, from now: Date) -> [Date] {
-    let left = Int(end.timeIntervalSince(now).rounded(.up))
-    return (0...max(left, 0)).reversed().map { end.addingTimeInterval(-TimeInterval($0)) }
+/// The whole seconds of a short break, made one at a time as the timeline asks for them: the first
+/// at or before the timeline starts, the last at `end`.
+struct BreakSeconds: TimelineSchedule {
+  let end: Date
+
+  func entries(from start: Date, mode: TimelineScheduleMode) -> AnyIterator<Date> {
+    var next = end.addingTimeInterval(-max(end.timeIntervalSince(start), 0).rounded(.up))
+
+    return AnyIterator {
+      guard next <= end else {
+        return nil
+      }
+
+      defer { next.addTimeInterval(1) }
+      return next
+    }
   }
 }
 

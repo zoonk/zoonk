@@ -572,8 +572,8 @@ extension TutorFailure {
     switch refusal.limit {
     case .signUpRequired:
       self = .signUpRequired
-    case .slowDown(let seconds, let until):
-      self = .slowDown(until: until ?? receivedAt.addingTimeInterval(TimeInterval(seconds)))
+    case .slowDown(let until):
+      self = .slowDown(until: until)
     case let limit?:
       self = .limit(limit)
     case nil:

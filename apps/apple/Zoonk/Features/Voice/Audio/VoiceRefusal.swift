@@ -9,9 +9,8 @@ enum HelpLimit: Hashable, Sendable {
     case total
   }
 
-  /// A short break, over at `until`, or `retryAfterSeconds` after its notice first shows when
-  /// nothing said when it ends.
-  case slowDown(retryAfterSeconds: Int, until: Date? = nil)
+  /// A short break, over at `until`: the server's wait, counted from when this device received it.
+  case slowDown(until: Date)
   /// The day's cap, or what a guest gets for good.
   case limitReached(period: Period, tier: LearnerTier)
   /// A monthly cap: each use comes back 30 days after it was made, and `availableAt` is when the
@@ -77,21 +76,11 @@ enum HelpLimit: Hashable, Sendable {
 
   /// When a short break is over.
   var breakEnd: Date? {
-    if case .slowDown(_, let until) = self {
+    if case .slowDown(let until) = self {
       return until
     }
 
     return nil
-  }
-
-  /// A short break that nothing timed, counted from `shownAt`, when its notice first showed.
-  func started(at shownAt: Date) -> HelpLimit {
-    if case .slowDown(let seconds, nil) = self {
-      return .slowDown(
-        retryAfterSeconds: seconds, until: shownAt.addingTimeInterval(TimeInterval(seconds)))
-    }
-
-    return self
   }
 
   /// The way to try is on the screen: a short break passes, and a cap's day has come. The server
@@ -132,8 +121,7 @@ struct VoiceRefusal: Error, Equatable, Sendable {
     if code == "SLOW_DOWN" {
       let value = object?["retryAfterSeconds"] ?? nil
       let seconds = (value as? Int) ?? (value as? Double).map(Int.init) ?? 60
-      return .slowDown(
-        retryAfterSeconds: seconds, until: receivedAt.addingTimeInterval(TimeInterval(seconds)))
+      return .slowDown(until: receivedAt.addingTimeInterval(TimeInterval(seconds)))
     }
 
     let limit = (object?["limit"] ?? nil) as? [String: (any Sendable)?] ?? object

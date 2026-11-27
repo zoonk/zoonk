@@ -94,14 +94,17 @@ final class TutorConversationTests: XCTestCase {
       slowDown.words(now: over.addingTimeInterval(-30)).said,
       "Take a short break. You can try again in 30 seconds.")
     XCTAssertFalse(conversation.canSendDraft)
+    XCTAssertFalse(conversation.isShortBreakOver)
 
     conversation.now = { over }
 
     XCTAssertNil(conversation.limit)
     XCTAssertTrue(conversation.canSendDraft)
+    XCTAssertTrue(conversation.isShortBreakOver, "the composer says sending is back")
     await conversation.send()
 
     XCTAssertEqual(conversation.turns.map(\.question), ["Why does it fall?"])
+    XCTAssertFalse(conversation.isShortBreakOver)
   }
 
   func testARefusedSuggestionLeavesTheComposerEmpty() async {

@@ -1,4 +1,5 @@
 import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -79,15 +80,45 @@ final class RefusalReceivedTests: XCTestCase {
     XCTAssertEqual(line(after: 90), "You can try again now.")
   }
 
-  /// A short break nothing timed counts from when its notice first shows.
-  func testAShortBreakNothingTimedCountsFromWhenItShows() {
-    let shown = HelpLimit.slowDown(retryAfterSeconds: 30).started(at: opens)
+  /// Each short break ends its own wait after it arrived, so a second one while the first's notice
+  /// still shows counts its whole wait.
+  func testEachShortBreakCountsFromWhenItArrived() throws {
+    let first = try XCTUnwrap(slowDown(30, receivedAt: opens))
+    let second = try XCTUnwrap(slowDown(30, receivedAt: opens.addingTimeInterval(40)))
 
-    XCTAssertEqual(shown.breakEnd, opens.addingTimeInterval(30))
+    XCTAssertEqual(first.breakEnd, opens.addingTimeInterval(30))
+    XCTAssertEqual(second.breakEnd, opens.addingTimeInterval(70))
     XCTAssertEqual(
-      shown.words(now: opens.addingTimeInterval(20)).said,
-      "Take a short break. You can try again in 10 seconds.")
-    XCTAssertEqual(shown.started(at: opens.addingTimeInterval(5)), shown)
+      second.words(now: opens.addingTimeInterval(45)).said,
+      "Take a short break. You can try again in 25 seconds.")
+  }
+
+  /// A countdown asks for each second only as it comes, so a wait of a year costs no more than
+  /// one of a minute, and it stops at the wait's end.
+  func testACountdownMakesItsSecondsOneAtATimeAndStopsAtTheEnd() {
+    let start = opens.addingTimeInterval(0.4)
+    let short = Array(
+      BreakSeconds(end: opens.addingTimeInterval(3)).entries(from: start, mode: .normal))
+
+    XCTAssertEqual(short, (0...3).map { opens.addingTimeInterval(TimeInterval($0)) })
+
+    let yearEnd = opens.addingTimeInterval(365 * 86_400)
+    let year = BreakSeconds(end: yearEnd).entries(from: opens, mode: .normal)
+
+    XCTAssertEqual(year.next(), opens)
+    XCTAssertEqual(year.next(), opens.addingTimeInterval(1))
+    XCTAssertEqual(
+      Array(BreakSeconds(end: opens).entries(from: opens.addingTimeInterval(5), mode: .normal)),
+      [opens])
+  }
+
+  private func slowDown(_ seconds: Int, receivedAt: Date) throws -> HelpLimit? {
+    VoiceRefusal(
+      status: 429, code: "SLOW_DOWN",
+      details: try JSONDecoder().decode(
+        OpenAPIValueContainer.self, from: Data(#"{"retryAfterSeconds":\#(seconds)}"#.utf8)),
+      receivedAt: receivedAt
+    ).limit
   }
 
   private func refusal(_ status: Int, _ code: String, receivedAt: Date) -> VoiceRefusal {

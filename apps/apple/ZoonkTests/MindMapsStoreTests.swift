@@ -284,7 +284,7 @@ final class MindMapsStoreTests: XCTestCase {
     let monthly = MindMapRequestFailure.refused(
       MindMapLimit(limit: .usedUp(tier: .free, availableAt: opens), resource: .mindMap))
     let shortBreak = MindMapRequestFailure.refused(
-      MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap))
+      MindMapLimit(limit: .slowDown(until: .now.addingTimeInterval(30)), resource: .mindMap))
 
     XCTAssertNotNil(monthly.holdingLimit(at: opens.addingTimeInterval(-60)))
     XCTAssertTrue(monthly.hidesCreate(at: opens.addingTimeInterval(-60)))
@@ -544,7 +544,7 @@ final class MindMapsStoreTests: XCTestCase {
   func testARowsOwnLimitDoesntStopThePage() async {
     for limit in [
       MindMapLimit(limit: .usedUp(tier: .free, availableAt: nil), resource: .lessons),
-      MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap),
+      MindMapLimit(limit: .slowDown(until: .now.addingTimeInterval(30)), resource: .mindMap),
     ] {
       let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
       let store = makeStore(api: api)
@@ -1283,7 +1283,8 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     if holdsRow {
       holdsRow = false
       await withTestVoidContinuation { heldRow = $0 }
-      return .refused(MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap))
+      return .refused(
+        MindMapLimit(limit: .slowDown(until: .now.addingTimeInterval(30)), resource: .mindMap))
     }
 
     if let startsAs {

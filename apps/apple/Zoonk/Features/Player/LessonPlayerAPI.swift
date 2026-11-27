@@ -527,7 +527,7 @@ struct LessonPlayerAPI: Sendable {
     switch code {
     case "SLOW_DOWN":
       let seconds = (details?["retryAfterSeconds"] ?? nil) as? Int ?? 30
-      return .slowDown(retryAfterSeconds: seconds)
+      return .slowDown(until: .now.addingTimeInterval(TimeInterval(seconds)))
     case "SIGN_UP_REQUIRED":
       return .limitReached(tier: .guest, period: .day)
     default:

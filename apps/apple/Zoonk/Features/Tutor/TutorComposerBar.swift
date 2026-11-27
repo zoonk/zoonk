@@ -47,6 +47,9 @@ struct TutorComposerBar: View {
     }
     .listRowEdges()
     .padding(.vertical, 8)
+    // The notice leaves as a short break ends, so the bar, which stays, says that sending is back.
+    .announcesStatus(
+      conversation.isShortBreakOver ? String(localized: HelpLimit.tryAgainNow) : nil)
   }
 
   private var composer: some View {
@@ -153,7 +156,7 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    LimitClock(limit: failure.helpLimit) { _, now in
+    LimitClock(limit: failure.helpLimit) { now in
       notice(failure.words(now: now))
     }
     // Said once as it shows, not again each time a short break's wait counts down.

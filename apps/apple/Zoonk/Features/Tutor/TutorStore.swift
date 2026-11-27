@@ -91,11 +91,22 @@ final class TutorConversation {
   /// Nothing can be sent until it lifts, so its notice sits over the composer, which keeps what
   /// the learner wrote; then sending is back and the server decides again.
   var limit: TutorFailure? {
-    let failure =
-      askFailure?.isLimit == true
-      ? askFailure : turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
+    heldLimit?.isLifted(at: now()) == true ? nil : heldLimit
+  }
 
-    return failure?.isLifted(at: now()) == true ? nil : failure
+  /// A short break that stopped sending has passed, until the learner sends again.
+  var isShortBreakOver: Bool {
+    if case .slowDown = heldLimit {
+      return limit == nil
+    }
+
+    return false
+  }
+
+  /// The limit refusal the composer answers to, lifted or not.
+  private var heldLimit: TutorFailure? {
+    askFailure?.isLimit == true
+      ? askFailure : turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
   }
 
   var isAsking: Bool {
