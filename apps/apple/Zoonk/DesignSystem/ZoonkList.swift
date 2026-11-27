@@ -41,6 +41,8 @@ struct ZoonkList<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .listRowInsets(.vertical, 12)
         .listRowInsets(.horizontal, margin)
+        // No fill of a row's own: in a sheet, the system's would band each row across its surface.
+        .listRowBackground(Color.clear)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
         // With a margin of its own, a row's hairline ends where its content does, not at the
