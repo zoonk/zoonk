@@ -16,7 +16,7 @@ export type LevelTestLength = z.infer<typeof levelTestLengthSchema>;
 export const levelTestOutLevelSchema = z.enum(["B2", "C1", "C2"]);
 
 export const startLanguageLevelTestInputSchema = z
-  .object({ length: levelTestLengthSchema })
+  .object({ length: levelTestLengthSchema.optional() })
   .strict()
   .meta({ id: "StartLanguageLevelTestInput" });
 
@@ -97,6 +97,8 @@ export const levelTestAnswerSchema = z.object({
     .max(OPTIONS - 1)
     .nullable(),
   answerIndices: z.array(z.int().nonnegative()).optional(),
+  answeredAt: z.iso.datetime().optional(),
+  audioDeferred: z.boolean().optional(),
   /**
    * The verdict when it was given, null for "I don't know": a later fix to the key never re-scores
    * it. Answers saved before verdicts were kept have none and are graded by the key.
@@ -115,11 +117,21 @@ export type LevelTestRanges = z.infer<typeof levelTestRangesSchema>;
 export const levelTestResultSchema = z.object({
   attemptId: uuidSchema().nullable(),
   changeId: uuidSchema().nullable().optional(),
+  end: z
+    .enum([
+      "check_passed",
+      "check_missed",
+      "audio_deferred",
+      "unknown_streak",
+      "stopped",
+      "question_cap",
+      "nothing_to_check",
+    ])
+    .optional(),
   finishedAt: z.iso.datetime(),
   lessonsSkipped: z.int().nonnegative().default(0),
   levelsSkipped: z.array(z.enum(CEFR_LEVELS)),
   ranges: levelTestRangesSchema,
-  wholeCourseReady: z.literal(true).optional(),
 });
 
 export type LevelTestResult = z.infer<typeof levelTestResultSchema>;
@@ -128,7 +140,7 @@ export const levelTestProgressSchema = z.object({
   answers: z.array(levelTestAnswerSchema).default([]),
   attemptId: uuidSchema().optional(),
   counted: z.int().min(0).default(0),
-  length: levelTestLengthSchema.optional(),
+  firstBand: z.int().min(0).max(MAX_CEFR_SCORE).optional(),
   placement: z
     .object({ placed: z.boolean(), unannounced: z.array(uuidSchema()).optional() })
     .optional(),
@@ -172,6 +184,7 @@ export const levelTestAnswerInputSchema = z
       .meta({ description: 'The option chosen, or null for "I don\'t know"' }),
     answerIndices: z.array(z.int().nonnegative()).min(1).optional(),
     attemptId: uuidSchema().optional(),
+    audioDeferred: z.boolean().optional(),
     durationMs: answerDurationSchema
       .optional()
       .meta({
@@ -217,9 +230,10 @@ const confirmationViewSchema = questionViewSchema;
 
 const attemptViewFields = {
   attemptId: uuidSchema().optional(),
-  length: levelTestLengthSchema.optional(),
+  estimatedMinutes: z.int().positive(),
   result: levelTestResultSchema.nullable().optional(),
   testOutLevel: levelTestOutLevelSchema.optional(),
+  total: z.int().positive(),
 };
 
 const speakingViewSchema = z.object({
@@ -236,11 +250,18 @@ const levelResultSchema = z.object({
 
 export const LEVEL_TEST_PREPARING_SECONDS = 120;
 
-const LEVEL_TEST_MINUTES = 4;
+export const LEVEL_TEST_BLOCK_SIZE = 4;
+export const LEVEL_TEST_CHECK_PER_SKILL = 2;
+const SECONDS_PER_QUESTION = 31;
+const total = 2 * (LEVEL_TEST_BLOCK_SIZE + LEVEL_TEST_CHECK_PER_SKILL);
+export const LANGUAGE_LEVEL_TEST_OFFER = {
+  estimatedMinutes: Math.round((total * SECONDS_PER_QUESTION) / 60),
+  total,
+};
 
 /** How long the level question's quick test takes: a language goal's is its level test. */
 export function getQuickTestMinutes(kind: GoalKind): number {
-  return kind === "language" ? LEVEL_TEST_MINUTES : DAY_PLACEMENT_MINUTES;
+  return kind === "language" ? LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes : DAY_PLACEMENT_MINUTES;
 }
 
 export const languageLevelTestViewSchema = z
@@ -280,10 +301,6 @@ export const languageLevelTestViewSchema = z
       showAlphabetNote: z.boolean(),
       status: z.literal("ready"),
       targetLanguage: z.string(),
-      total: z
-        .int()
-        .min(1)
-        .meta({ description: "Maximum scored questions, excluding any level confirmation" }),
     }),
   ])
   .meta({ id: "LanguageLevelTest" });

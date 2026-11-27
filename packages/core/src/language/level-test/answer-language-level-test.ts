@@ -27,7 +27,8 @@ function isValidLevelTestAnswer({ input, question }: Answer): boolean {
   const confirmation = "answerIndices" in question;
 
   return !(
-    (input.skipped && question.skill !== "listening") ||
+    (input.audioDeferred && (input.answerIndex !== null || indices || input.skipped)) ||
+    ((input.skipped || input.audioDeferred) && question.skill !== "listening") ||
     (confirmation && input.answerIndex !== null) ||
     (!confirmation && indices) ||
     indices?.some((index) => index >= question.options.length)
@@ -66,6 +67,7 @@ async function gradeCurrentQuestion({
   const correct = gradeLevelTestAnswer({ input, question });
 
   const skipped =
+    input.audioDeferred === true ||
     input.skipped === true ||
     (correct !== true &&
       (await isFixedDuringTest({
@@ -78,6 +80,8 @@ async function gradeCurrentQuestion({
   const answerIndex = skipped ? null : input.answerIndex;
 
   return {
+    answeredAt: new Date().toISOString(),
+    ...(input.audioDeferred && { audioDeferred: true }),
     answerIndex,
     ...(indices && !skipped && { answerIndices: indices }),
     correct: skipped ? null : correct,

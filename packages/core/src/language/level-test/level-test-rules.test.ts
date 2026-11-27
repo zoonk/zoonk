@@ -61,7 +61,7 @@ describe("level estimates", () => {
     expect(toLevelLabels(scores)).not.toHaveProperty("speaking");
   });
 
-  it("keeps a test stopped after one wrong answer at the bottom of what it could mean", () => {
+  it("saves no level for a stopped block", () => {
     const C1 = getBand("C1");
 
     const input = {
@@ -70,11 +70,8 @@ describe("level estimates", () => {
       start: C1,
     };
 
-    const low = getLevelTestRanges(input).reading?.low;
-
-    expect(low).toBeDefined();
-    expect(getLevelTestFloors(input).reading).toBe(getBand(low ?? "C2"));
-    expect(getLevelTestFloors(input).reading).toBeLessThan(getBand("B1"));
+    expect(getLevelTestRanges(input)).toStrictEqual({});
+    expect(getLevelTestFloors(input)).toStrictEqual({});
   });
 
   it("rises with right answers and falls with wrong ones", () => {
@@ -121,14 +118,30 @@ describe(getNextLevelTestStep, () => {
     expect(step).toMatchObject({ kind: "question", question: { level: "A2", skill: "reading" } });
   });
 
-  it("takes turns between reading and listening", () => {
+  it("finishes reading before asking for listening", () => {
     const step = getNextLevelTestStep({
       bank,
       progress: progress([{ answerIndex: 0, correct: true, id: "reading-A2-0" }]),
       start: A2,
     });
 
-    expect(step).toMatchObject({ kind: "question", question: { skill: "listening" } });
+    expect(step).toMatchObject({ kind: "question", question: { skill: "reading" } });
+  });
+
+  it("ends only the skill with two unknown A1 answers", () => {
+    const answers = [0, 1].map((index) => ({
+      answerIndex: null,
+      correct: null,
+      id: `reading-A1-${index}`,
+    }));
+
+    const input = { bank, progress: progress(answers), start: 0 };
+
+    expect(getNextLevelTestStep(input)).toMatchObject({
+      question: { level: "A1", skill: "listening" },
+    });
+
+    expect(getLevelTestRanges(input)).toStrictEqual({ reading: { high: "A1", low: "A1" } });
   });
 
   it("asks the other skill when a checked bank has none left for this one", () => {
@@ -157,7 +170,7 @@ describe(getNextLevelTestStep, () => {
 
   it("tries the next level down when there are too few fresh checks at the proposed level", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2", "C1", "C2"].map((level) => ({
+      ["B1", "B2", "C1", "C2"].map((level) => ({
         answerIndex: 0,
         correct: true,
         id: `${skill}-${level}-0`,
@@ -185,9 +198,9 @@ describe(getNextLevelTestStep, () => {
     ).toMatchObject({ kind: "confirmation", question: { level: "A1" } });
   });
 
-  it("finishes after five Quick questions in each skill without asking for speech", () => {
+  it("finishes after four questions in each skill without asking for speech", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2", "C1", "C2"].map((level) => ({
+      ["B1", "B2", "C1", "C2"].map((level) => ({
         answerIndex: 0,
         correct: true,
         id: `${skill}-${level}-0`,

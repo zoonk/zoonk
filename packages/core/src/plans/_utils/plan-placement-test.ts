@@ -1,5 +1,6 @@
 import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
+import { LANGUAGE_LEVEL_TEST_OFFER } from "../../language/level-test/level-test-contract";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
 import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
@@ -8,7 +9,6 @@ import {
   getPlacementEstimate,
   isTopicAhead,
   placementAttemptView,
-  readPendingTopicWalkAssessmentId,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { type PlanView } from "../plan-view-contract";
@@ -43,25 +43,8 @@ export async function readPlanPlacementTest(
     return null;
   }
 
-  const placement = readPlacementAttempt(goal);
-  const { attempt, result } = placement;
-
-  const attemptView = await readAttemptView(context, attempt);
-
-  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
-
-  const ahead = context.state.graph.skills.filter((skill) =>
-    isTopicAhead(lessonsBySkill.get(skill.skillId)),
-  );
-
-  const estimatedMinutes =
-    attemptView?.estimatedMinutes ??
-    getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
-
   if (goal.kind === "language") {
     const summary = readLevelTestSummary(goal);
-    const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
-    const continuing = attemptView || summary.attempt || waitingForTopicWalk;
     const idleState = summary.result ? "result" : "start";
 
     const [nextTestOutLevel, levelResult] = await Promise.all([
@@ -77,14 +60,29 @@ export async function readPlanPlacementTest(
     ]);
 
     return {
-      attempt: attemptView,
-      estimatedMinutes,
+      attempt: null,
+      estimatedMinutes: LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes,
       kind: "language",
       nextTestOutLevel,
       result: levelResult,
-      state: continuing ? "continue" : idleState,
+      state: summary.attempt ? "continue" : idleState,
     };
   }
+
+  const placement = readPlacementAttempt(goal);
+  const { attempt, result } = placement;
+
+  const attemptView = await readAttemptView(context, attempt);
+
+  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
+
+  const ahead = context.state.graph.skills.filter((skill) =>
+    isTopicAhead(lessonsBySkill.get(skill.skillId)),
+  );
+
+  const estimatedMinutes =
+    attemptView?.estimatedMinutes ??
+    getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
 
   const idleState = result ? "result" : "start";
 

@@ -54,8 +54,6 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.languageName
-import com.zoonk.api.models.LanguageLevelTest
-import com.zoonk.api.models.LanguageLevelTestOneOf1
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
 import com.zoonk.api.models.LanguageLevelTestOut
 import com.zoonk.api.models.LanguageLevelTestOutNext
@@ -127,7 +125,7 @@ private fun ColumnScope.LevelTestPlanFlow(
                         val changeId = result.result?.takeIf { it.lessonsSkipped > 0 }?.changeId
                         LevelResult(
                             result = result,
-                            walks = store.levelTest(goalId, attempt).wholeCourse && result.result?.wholeCourseReady == true,
+                            walks = false,
                             targetLanguage = targetLanguage,
                             testOutLevel = testOutLevel,
                             pressed = vm.pressed,
@@ -161,11 +159,6 @@ private fun ColumnScope.LevelTestPlanFlow(
         }
     }
 }
-
-private val com.zoonk.android.data.Resource<LanguageLevelTest>.wholeCourse: Boolean
-    get() =
-        (state.value.value as? LanguageLevelTest.LanguageLevelTestOneOf1Value)?.value?.length ==
-            LanguageLevelTestOneOf1.Length.WHOLE_COURSE
 
 /** Main's `LevelResult`: each skill's range, what the test skipped, and the way on. */
 @Composable

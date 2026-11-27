@@ -12,6 +12,7 @@ import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-lea
 import { findRowsFixedSince } from "../../../staff/content-fixes/fixed-since";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   LEVEL_TEST_PREPARING_SECONDS,
   type LanguageLevelTestView,
   type LevelTestBank,
@@ -20,12 +21,7 @@ import {
   type LevelTestQuestion,
   levelTestProgressSchema,
 } from "../level-test-contract";
-import {
-  getLevelTestFloors,
-  getNextLevelTestStep,
-  levelTestTotal,
-  listLevelTestLevels,
-} from "../level-test-rules";
+import { getLevelTestFloors, getNextLevelTestStep, listLevelTestLevels } from "../level-test-rules";
 import {
   readLevelTestAttempts,
   readLevelTestDetails,
@@ -34,7 +30,7 @@ import {
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
 import { withLevelTestChange } from "./level-test-result-change";
-import { getLevelTestStartScore } from "./level-test-start-score";
+import { getLevelTestStart } from "./level-test-start-score";
 
 /** About how long the bank's run takes to voice its clips, retries included, after the questions. */
 const AUDIO_PENDING_MS = 90_000;
@@ -99,7 +95,7 @@ export function readLevelTestProgress(
   return {
     ...stored,
     ...(scores && { scores }),
-    start: stored.start ?? getLevelTestStartScore({ level: details.level }),
+    ...(stored.start === undefined ? getLevelTestStart(details.level) : { start: stored.start }),
   };
 }
 
@@ -134,12 +130,10 @@ function bankForAttempt(
 
   return {
     ...bank,
-    confirmations: progress.attemptId
-      ? bank.confirmations?.filter(
-          ({ addedAt, id }) =>
-            !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
-        )
-      : [],
+    confirmations: bank.confirmations?.filter(
+      ({ addedAt, id }) =>
+        !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
+    ),
   };
 }
 
@@ -260,18 +254,21 @@ export async function toLevelTestView({
   lastCorrect?: boolean | null;
   progress: LevelTestProgress;
 }): Promise<LanguageLevelTestView> {
-  const result = progress.attemptId && (progress.result ?? readLevelTestSummary(goal).result);
+  const result = progress.result ?? (progress.attemptId && readLevelTestSummary(goal).result);
 
-  const attempt = progress.attemptId && {
-    attemptId: progress.attemptId,
-    length: progress.length,
-    result: result ? await withLevelTestChange(goal.id, result) : null,
-    testOutLevel: progress.testOutLevel,
+  const attempt = {
+    ...(progress.attemptId && {
+      attemptId: progress.attemptId,
+      result: null,
+      testOutLevel: progress.testOutLevel,
+    }),
+    ...(result && { result: await withLevelTestChange(goal.id, result) }),
   };
 
   if (!bank) {
     return {
       ...attempt,
+      ...LANGUAGE_LEVEL_TEST_OFFER,
       expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
       showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
       startedAt: bankStartedAt?.toISOString() ?? null,
@@ -305,6 +302,7 @@ export async function toLevelTestView({
 
   return {
     ...attempt,
+    ...LANGUAGE_LEVEL_TEST_OFFER,
     answered: progress.answers.length + (progress.speaking ? 1 : 0),
     lastCorrect,
     levels: listLevelTestLevels(scores),
@@ -312,7 +310,6 @@ export async function toLevelTestView({
     showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
     status: "ready",
     targetLanguage: goal.targetLanguage,
-    total: levelTestTotal(progress.length),
   };
 }
 

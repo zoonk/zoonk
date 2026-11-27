@@ -411,6 +411,11 @@ test.describe("Language goal API", () => {
     });
 
     const { goal } = await languageGoalFixture({ userId: user.id });
+
+    const previousListening = await prisma.languageSkillLevel.create({
+      data: { language: "en", score: 2, skill: "listening", startScore: 2, userId: user.id },
+    });
+
     const path = `/v1/goals/${goal.id}/language-level-test`;
 
     const firstResponse = await apiContext.get(path);
@@ -434,16 +439,43 @@ test.describe("Language goal API", () => {
     });
 
     expect(stale.status()).toBe(200);
-    expect(await stale.json()).toMatchObject({ answered: 1, lastCorrect: null });
+    let view = await stale.json();
+    expect(view).toMatchObject({ answered: 1, lastCorrect: null });
 
+    for (let index = 1; index < 4; index += 1) {
+      expect(view.next.question.skill).toBe("reading");
+      // oxlint-disable-next-line no-await-in-loop -- The server chooses the next question from this answer.
+      const response = await apiContext.post(`${path}/answers`, {
+        data: { answerIndex: 0, questionId: view.next.question.id },
+      });
+      // oxlint-disable-next-line no-await-in-loop -- The next POST needs this response's question ID.
+      view = await response.json();
+    }
+
+    expect(view.next.question.skill).toBe("listening");
+
+    const deferred = await apiContext.post(`${path}/answers`, {
+      data: { audioDeferred: true, questionId: view.next.question.id },
+    });
+
+    expect(await deferred.json()).toMatchObject({ next: { kind: "done" }, total: 12 });
     const finished = await apiContext.post(`${path}/completions`);
 
     expect(finished.status()).toBe(200);
 
     expect(await finished.json()).toMatchObject({
       levels: [{ skill: "reading" }],
-      result: { attemptId: null, levelsSkipped: [], ranges: { reading: expect.any(Object) } },
+      result: {
+        attemptId: null,
+        end: "audio_deferred",
+        levelsSkipped: [],
+        ranges: { reading: expect.any(Object) },
+      },
     });
+
+    expect(
+      await prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: previousListening.id } }),
+    ).toStrictEqual(previousListening);
 
     const retake = await apiContext.post(`${path}/attempts`, { data: { length: "quick" } });
     expect(retake.status()).toBe(200);
@@ -453,9 +485,10 @@ test.describe("Language goal API", () => {
     expect(open).toMatchObject({
       answered: 0,
       attemptId: expect.any(String),
-      length: "quick",
+      estimatedMinutes: 6,
       result: { attemptId: null, ranges: { reading: expect.any(Object) } },
       status: "ready",
+      total: 12,
     });
 
     const loaded = await apiContext.get(path, { params: { attemptId: open.attemptId } });
@@ -541,10 +574,12 @@ test.describe("Language goal API", () => {
     const shown = await apiContext.get(path);
 
     expect(await shown.json()).toStrictEqual({
+      estimatedMinutes: 6,
       expectedSeconds: 120,
       showAlphabetNote: false,
       startedAt: null,
       status: "preparing",
+      total: 12,
     });
 
     await expect(prisma.languageLevelTest.count({ where: pair })).resolves.toBe(0);

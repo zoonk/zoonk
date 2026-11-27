@@ -146,7 +146,7 @@ export async function loadPlannerInputs({
     ),
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
     findWrittenStartLessonId(goal),
-    loadCurrentLanguageLevel({ ...goal, userId }),
+    loadCurrentLanguageLevel({ ...goal, userId }, { forPlanning: true }),
   ]);
 
   const { writingNotice, writtenSkillIds, ...examFacts } = exam;

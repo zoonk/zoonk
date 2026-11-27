@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { describe, expect, it } from "vitest";
@@ -79,22 +78,11 @@ describe("whole-course language placement counts", () => {
         throw new Error("Expected two topics to confirm");
       }
 
-      const assessmentId = randomUUID();
-
       const [banks, outline] = await Promise.all([
         placementItemBank([first.id, second.id]),
         loadCourseOutline({ courseId: course.id, userId: user.id }),
         prisma.goal.update({
-          data: {
-            details: {
-              level: "A2",
-              levelTest: {
-                attempt: { attemptId: assessmentId, result: { wholeCourseReady: true } },
-              },
-              targetScore: "B1+",
-            },
-            planRevealedAt: new Date(),
-          },
+          data: { details: { level: "A2", targetScore: "B1+" }, planRevealedAt: new Date() },
           where: { id: goal.id },
         }),
       ]);
@@ -114,6 +102,7 @@ describe("whole-course language placement counts", () => {
           where: { kind: "lesson", planId: plan.id, skillId: { in: [first.id, second.id] } },
         });
 
+      await prisma.goal.update({ data: { kind: "learn" }, where: { id: goal.id } });
       const before = await readWork();
       const firstWork = before.filter(({ skillId }) => skillId === first.id);
       const secondWork = before.filter(({ skillId }) => skillId === second.id);
@@ -132,7 +121,7 @@ describe("whole-course language placement counts", () => {
         });
 
         if (opened.status !== "ready" || !opened.placement.attempt) {
-          throw new Error("Expected a language topic walk");
+          throw new Error("Expected a whole-course attempt");
         }
 
         const { id: attemptId, part } = opened.placement.attempt;

@@ -22,13 +22,13 @@ enum LanguageTestPhase: Equatable {
 
   /// A page load goes on with an open test; otherwise the learner chooses one.
   init(opened test: LevelTest, onboarding: Bool) {
-    guard let attemptID = test.attemptId, let length = test.length else {
+    guard let attemptID = test.attemptId else {
       self = .choose
       return
     }
 
     if let result = test.result, result.attemptId == attemptID {
-      self = onboarding ? .result(length: length, result) : .choose
+      self = onboarding ? .result(length: .quick, result) : .choose
     } else if test.status == .preparing {
       self = .preparing(attemptID: attemptID, generationID: nil)
     } else {

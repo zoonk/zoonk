@@ -87,15 +87,10 @@ function toOpenedPhase(view: LanguageLevelTestView | null, onboarding: boolean):
     view.attemptId && view.result?.attemptId === view.attemptId ? view.result : null;
 
   if (onboarding && ownResult) {
-    return {
-      kind: "result",
-      length: view.length ?? "wholeCourse",
-      nextTestOutLevel: null,
-      result: ownResult,
-    };
+    return { kind: "result", length: "quick", nextTestOutLevel: null, result: ownResult };
   }
 
-  if (!view.attemptId || view.length === undefined || ownResult) {
+  if (!view.attemptId || ownResult) {
     return { kind: "choose", showAlphabetNote: view.showAlphabetNote };
   }
 
@@ -104,7 +99,7 @@ function toOpenedPhase(view: LanguageLevelTestView | null, onboarding: boolean):
   }
 
   if (view.next.kind === "done") {
-    return { attemptId: view.attemptId, kind: "finish", length: view.length };
+    return { attemptId: view.attemptId, kind: "finish", length: "quick" };
   }
 
   return { attemptId: view.attemptId, kind: "test", test: view };
@@ -197,7 +192,7 @@ export function useLanguagePlanTest({
     }
 
     if (view.next.kind === "done") {
-      return finish(attemptId, view.length ?? "quick");
+      return finish(attemptId, "quick");
     }
 
     setPhase({ attemptId, kind: "test", test: view });

@@ -18,11 +18,9 @@ import { type TestOutView } from "./use-language-plan-test";
 
 export function LevelResult({
   failed,
-  length,
   onDone,
   onTestOut,
   onUndo,
-  onWalkTopics,
   onboarding = false,
   pressed,
   rail,
@@ -45,7 +43,6 @@ export function LevelResult({
 }) {
   const t = useExtracted();
   const languageName = useLanguageNameInSentence();
-  const walks = length === "wholeCourse" && result?.wholeCourseReady === true;
   const { skipped } = useSkippedLessonsSentences();
 
   const { button, pending, undone } = useResultUndo({ changeId: result?.changeId, onUndo });
@@ -55,11 +52,11 @@ export function LevelResult({
   return (
     <TestOutcome
       busy={pressed === "main"}
-      continueLabel={walks ? t("Keep going") : doneLabel}
+      continueLabel={doneLabel}
       disabled={pending || pressed === "other"}
       failed={failed}
       lead={<LevelResultLead result={result} undone={undone} />}
-      onContinue={walks ? onWalkTopics : onDone}
+      onContinue={onDone}
       other={button(pressed !== null)}
       rail={rail}
       title={
@@ -67,7 +64,7 @@ export function LevelResult({
       }
     >
       {result && <LevelRanges ranges={result.ranges} />}
-      {!walks && testOutLevel && (
+      {testOutLevel && (
         <Button
           busy={pressed === "other"}
           className="self-start"
