@@ -47,7 +47,7 @@ internal class PlacementTestViewModel(
     private var savedClosed by handle.saved { "" }
     private var autoStarted by handle.saved { false }
 
-    /** The length the learner last started in this visit; empty until they start one. */
+    /** The length of the learner's last start the server accepted in this visit; empty until one is. */
     private var wanted by handle.saved { "" }
 
     /** The learner's last start came back before the course had questions: it opens once they're written. */
@@ -89,7 +89,6 @@ internal class PlacementTestViewModel(
         button: Pressed = Pressed.Main,
     ) = save(button) {
         sitting.started()
-        wanted = length.value
         open(length)
     }
 
@@ -154,6 +153,7 @@ internal class PlacementTestViewModel(
         when (val started = store.startPlacementSitting(goalId, length)) {
             is WriteOutcome.Done -> {
                 show(null)
+                wanted = length.value
                 awaiting = started.value.attempt == null && !started.value.isReady
                 started.value.partOver()?.let { close(it) } ?: true
             }

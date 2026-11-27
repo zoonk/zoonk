@@ -107,6 +107,34 @@ class PlacementTestViewModelTest {
         }
 
     @Test
+    fun aStartThatDidNotGoThroughKeepsTheOfferAndSaysSo() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(attempt = null, next = null, status = "preparing")
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+
+            vm.start(PlacementLength.QUICK)
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertTrue(vm.failed)
+
+            api.placement = placement(attempt = null)
+            store.placements[GOAL_ID].refresh()
+            vm.start(PlacementLength.QUICK)
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertTrue(vm.failed)
+
+            api.writeFailure = null
+            api.sitting = { placement(QUICK) }
+            vm.start(PlacementLength.QUICK)
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
+            assertFalse(vm.failed)
+        }
+
+    @Test
     fun aTestTheLearnerAskedForSaysWhenItsCourseCouldNotBeBuiltOrHasNothingToTest() =
         runTest {
             val api = FakeOnboardingApi().apply { placement = placement(attempt = null, next = null, status = "failed") }
