@@ -6,8 +6,8 @@ extension View {
   /// `safeAreaBar` on the page's background under a hairline, so content scrolls out of sight under
   /// it and never shows through its see-through outline buttons. Its buttons are 44pt,
   /// 8pt apart, the main action last (or followed only by a task's Ask) and taking the room the
-  /// others leave on its line (`BarLines`). In a wide window (`WideBar`) the row sits at the bar's
-  /// end, the main action at its own width instead. Its one line (`note`) floats over the screen just
+  /// others leave on its line (`BarLines`). In a wide window (`WideBar`) the lines end at the bar's
+  /// end, each button at its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
@@ -54,16 +54,15 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
     let stacks = isStacked && !buttons.contains { $0.containerValues.isBarWayBack }
 
     return Group {
-      if isWide || stacks || buttons.count < 2 {
+      if stacks {
         AccessibilityStack(spacing: 8) {
           buttons
         }
-        // A lone button on a phone takes the whole row, as the main action does beside others.
-        .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
+        .buttonSizing(.flexible)
       } else {
         // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht"), or
         // any beside a way back, sits on its own line above the main action.
-        BarLines(spacing: 8) {
+        BarLines(spacing: 8, isWide: isWide) {
           actions
         }
         .buttonSizing(.flexible)
@@ -73,7 +72,7 @@ private struct BottomBarPlacement<Actions: View>: ViewModifier {
     .layoutAnchor("bar")
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
-    .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
+    .frame(maxWidth: .infinity)
     .barColumn(column, listMargins: listMargins, isTask: isTask)
     .scenePadding(.vertical)
     .background(ListMarginsReader { listMargins = $0 })
