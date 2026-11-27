@@ -4,7 +4,7 @@ import { cacheTag } from "next/cache";
 import { z } from "zod";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { writingRangeSchema, writtenAnswerSchema } from "../../exams/essays/writing-contract";
-import { isNumericWritingRubric } from "../../exams/essays/writing-rubric-policy";
+import { getCalibratedWritingGrade } from "../../exams/scoring/calibrated-written-standing";
 import { writingZeroKindSchema } from "../../library/exams/written-grading";
 
 const samplePrompt = writtenAnswerSchema.shape.writing.pick({
@@ -139,7 +139,12 @@ export async function loadWrittenSamples({
               grade: savedGrade,
               ...(savedGrader && { grader: savedGrader }),
             },
-            numericEligible: isNumericWritingRubric(savedPrompt, savedGrader),
+            numericEligible:
+              getCalibratedWritingGrade({
+                basis: savedPrompt,
+                grade: savedGrade,
+                observed: savedGrader,
+              }) !== null,
             prompt: savedPrompt,
           },
         ]
