@@ -331,7 +331,7 @@ internal class TutorViewModelTest : TutorFixture() {
             vm.send()
             advanceTimeBy(29_000)
 
-            assertEquals(Limit.SlowDown(30), vm.state.value.limit(vm.turns))
+            assertEquals(30, (vm.state.value.limit(vm.turns) as Limit.SlowDown).retryAfterSeconds)
             assertFalse(vm.state.value.canAsk(vm.turns))
 
             advanceTimeBy(2_000)
@@ -655,8 +655,9 @@ internal class TutorViewModelTest : TutorFixture() {
 
             val refused = vm.turns.single()
             assertEquals(TutorTurn.Status.Failed, refused.status)
-            assertEquals(Limit.SlowDown(30), vm.state.value.limit(vm.turns))
-            assertEquals(TutorFailure.Refused(Limit.SlowDown(30)), vm.state.value.answerFailures[refused.id])
+            val slowDown = vm.state.value.limit(vm.turns) as Limit.SlowDown
+            assertEquals(30, slowDown.retryAfterSeconds)
+            assertEquals(TutorFailure.Refused(slowDown), vm.state.value.answerFailures[refused.id])
             assertFalse(vm.state.value.canAsk(vm.turns))
 
             advanceTimeBy(2_000)

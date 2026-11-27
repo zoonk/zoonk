@@ -18,8 +18,10 @@ enum class LimitPeriod { Day, Rolling30Days, Total }
 enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, Uploads, Questions }
 
 sealed interface Limit {
+    /** A short break, over at [until], or [retryAfterSeconds] after its notice first shows when nothing said when it ends. */
     data class SlowDown(
         val retryAfterSeconds: Int,
+        val until: Instant? = null,
     ) : Limit
 
     /** Help without a `period` was the day's; [availableAt] is when the next one opens, where the API says. */
@@ -58,12 +60,12 @@ sealed interface Limit {
                 }
 
                 "SLOW_DOWN" -> {
-                    SlowDown(
+                    val seconds =
                         details
                             ?.field("retryAfterSeconds")
                             ?.jsonPrimitive
-                            ?.int ?: DEFAULT_RETRY_SECONDS,
-                    )
+                            ?.int ?: DEFAULT_RETRY_SECONDS
+                    SlowDown(seconds, receivedAt.plusSeconds(seconds.toLong()))
                 }
 
                 "USAGE_LIMIT_REACHED" -> {

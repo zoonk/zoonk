@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="limit_create_account">Create a free account</string>
-    <string name="limit_slow_down">Take a short break, then try again.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Take a short break. You can try again in %1$s second.</item>
+        <item quantity="other">Take a short break. You can try again in %1$s seconds.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Take a short break. You can try again in %1$s minute.</item>
+        <item quantity="other">Take a short break. You can try again in %1$s minutes.</item>
+    </plurals>
     <string name="limit_sign_up_required">This needs a free account</string>
     <string name="limit_more_tomorrow">More tomorrow.</string>
     <string name="limit_more_tomorrow_or_subscribe">More tomorrow, or subscribe to keep going.</string>

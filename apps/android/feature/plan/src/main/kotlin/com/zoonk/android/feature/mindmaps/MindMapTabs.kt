@@ -372,7 +372,7 @@ private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
     when (reason) {
         MindMapAllowanceStop.Reason.SLOW_DOWN -> {
-            Limit.SlowDown(SLOW_DOWN_SECONDS)
+            Limit.SlowDown(SLOW_DOWN_SECONDS, until = availableAt?.toJavaInstant())
         }
 
         MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED -> {
