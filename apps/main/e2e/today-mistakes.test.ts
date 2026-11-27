@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -47,6 +48,48 @@ async function createMistakesDay() {
   return day;
 }
 
+/** A saved day with a drill on one rule the learner keeps getting wrong. */
+async function createPatternDay() {
+  const day = await createStudyDay({ reviewDone: true });
+
+  const pattern = await prisma.mistakePattern.create({
+    data: {
+      content: {
+        contrast: [{ example: "since 2020", label: "since + when it started" }],
+        drill: [
+          {
+            answer: "since",
+            feedback: "When it started.",
+            options: ["since", "for", "from"],
+            sentence: "I've lived here ___ 2020.",
+            translation: "Moro aqui desde 2020.",
+          },
+        ],
+        examples: [],
+        rule: "Started in the past and still true? Use have + past participle.",
+      },
+      goalId: day.goal.id,
+      kind: "pattern",
+      language: "en",
+      model: "e2e",
+      promptVersion: "e2e",
+      runId: "e2e",
+      title: "since and for",
+      userId: day.user.id,
+    },
+  });
+
+  await studySessionBlockFixture({
+    estimatedMinutes: 3,
+    kind: "practice",
+    payload: { patternId: pattern.id, title: pattern.title },
+    position: 3,
+    sessionId: day.session.id,
+  });
+
+  return day;
+}
+
 test.describe("Today's mistakes", () => {
   test("a day's mistakes row opens their practice and ends back on Today with the row done", async ({
     browser,
@@ -82,6 +125,34 @@ test.describe("Today's mistakes", () => {
 
     await expect(
       page.getByRole("listitem").filter({ hasText: "Fix 1 mistake, done" }),
+    ).toBeVisible();
+
+    await page.context().close();
+  });
+
+  test("a day's pattern row opens its drill and ends back on Today with the row done", async ({
+    browser,
+  }) => {
+    const { user } = await createPatternDay();
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const patternRow = page.getByRole("listitem").filter({ hasText: "Practice: since and for" });
+    await expect(patternRow.getByText("A pattern in your mistakes")).toBeVisible();
+
+    await patternRow.getByRole("button", { exact: true, name: "Practice: since and for" }).click();
+    await page.getByRole("button", { exact: true, name: "Practice" }).click();
+    await page.getByRole("radio", { name: "since" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^See result/u }).click();
+    await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
+
+    await page.getByRole("link", { name: "Done" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+    await page.getByRole("button", { name: "2 done" }).click();
+
+    await expect(
+      page.getByRole("listitem").filter({ hasText: "Practice: since and for, done" }),
     ).toBeVisible();
 
     await page.context().close();
