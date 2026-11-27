@@ -12374,10 +12374,17 @@ msgctxt "lessonSaved"
 msgid "Saved"
 msgstr "Saved"
 
+#: src/saved-lessons/saved-lessons-row.tsx
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "BwmLVN"
 msgid "Saved lessons"
 msgstr "Saved lessons"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "Lessons you want to do again"
 
 #: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "t7w-Fo"
