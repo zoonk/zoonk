@@ -54,6 +54,8 @@ data class Question(
     val placement: Boolean = false,
     val drill: Drill? = null,
     val mistakeId: String? = null,
+    /** A drilled mistake's order of options, sent back with its answer so it's graded as shown. */
+    val showing: String? = null,
     val tutorAvailable: Boolean = true,
     val capsuleKey: String? = null,
     val answered: AnsweredMark? = null,

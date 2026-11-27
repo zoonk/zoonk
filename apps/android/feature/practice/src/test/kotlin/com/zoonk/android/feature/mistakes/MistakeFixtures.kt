@@ -50,7 +50,10 @@ internal fun practiceEntry(
     "mistakeId" to mistakeId,
     "questions" to JsonArray(questions.toList()),
     "drill" to drill,
+    "showing" to showing(mistakeId),
 )
+
+internal fun showing(mistakeId: String) = "mistake:$mistakeId:1"
 
 internal fun practice(vararg entries: JsonObject): MistakePractice =
     ApiJson.decodeFromJsonElement(

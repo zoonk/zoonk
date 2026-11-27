@@ -266,6 +266,7 @@ class MistakePracticeViewModel(
     private fun send(submission: Submission) {
         val current = mutableState.value ?: return
         val mistakeId = submission.question.mistakeId ?: return
+        val showing = submission.question.showing ?: return
         if (!current.run.canAnswer) return
         mutableState.value = current.copy(run = current.run.checking(submission.sender))
         sent = submission
@@ -273,7 +274,7 @@ class MistakePracticeViewModel(
 
         viewModelScope.launch {
             val (question, answer, _, duration) = submission
-            when (val result = store.answer(key, mistakeId, question.itemId, answer, duration, attemptId, current.answerIds)) {
+            when (val result = store.answer(key, mistakeId, question.itemId, showing, answer, duration, attemptId, current.answerIds)) {
                 is MutationResult.Done -> {
                     sent = null
                     mutableState.update { it?.answered(mistakeId, answer, result.value) }
@@ -637,7 +638,12 @@ internal fun MistakePractice.toQuestions(): PracticeQuestions {
                     MistakePracticeTask.Bank(
                         inner
                             .recode<MistakePracticePracticeInnerQuestionsInner, Question>()
-                            .copy(drill = drill, mistakeId = entry.mistakeId.toString(), tutorAvailable = entry.tutorAvailable),
+                            .copy(
+                                drill = drill,
+                                mistakeId = entry.mistakeId.toString(),
+                                showing = entry.showing,
+                                tutorAvailable = entry.tutorAvailable,
+                            ),
                     )
                 }
             }

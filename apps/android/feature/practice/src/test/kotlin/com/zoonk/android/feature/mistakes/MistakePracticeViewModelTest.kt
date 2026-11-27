@@ -111,6 +111,7 @@ class MistakePracticeViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(emptyList(), listOf(UUID.fromString(FIRST_ANSWER))), api.answers.map { it.run?.answerIds })
+            assertEquals(listOf(showing(FIRST_MISTAKE), showing(SECOND_MISTAKE)), api.answers.map { it.showing })
             assertEquals(listOf(FIRST_ANSWER, SECOND_ANSWER).map(UUID::fromString), api.finishes.single().answerIds)
             assertEquals(true, api.finishes.single().ended)
             assertEquals(completion(), viewModel.now.end?.summary)

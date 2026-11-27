@@ -144,11 +144,15 @@ class MistakesStore(
             session?.let { api.practice(it, key, timeZone()) }
         }
 
-    /** [attemptId] stays the same when an answer is sent again, so the server records it once. */
+    /**
+     * [attemptId] stays the same when an answer is sent again, so the server records it once.
+     * [showing] is the order the question's entry showed, so the answer is graded in it.
+     */
     suspend fun answer(
         key: PracticeKey,
         mistakeId: String,
         itemId: String,
+        showing: String,
         answer: Answer,
         durationMs: Long,
         attemptId: UUID,
@@ -158,7 +162,16 @@ class MistakesStore(
             api.answer(
                 session,
                 UUID.fromString(mistakeId),
-                answerInput(key, "itemId", itemId, ApiJson.encodeToJsonElement(answer), durationMs, attemptId, runAnswerIds),
+                answerInput(
+                    key,
+                    "itemId",
+                    itemId,
+                    ApiJson.encodeToJsonElement(answer),
+                    durationMs,
+                    attemptId,
+                    runAnswerIds,
+                    showing,
+                ),
             )
         }
 
@@ -218,10 +231,12 @@ class MistakesStore(
         durationMs: Long,
         attemptId: UUID,
         runAnswerIds: List<UUID>,
+        showing: String? = null,
     ): MistakePracticeAnswerInput =
         ApiJson.decodeFromJsonElement(
             buildJsonObject {
                 put(idName, id)
+                showing?.let { put("showing", it) }
                 put("answer", answer)
                 put("durationMs", durationMs.coerceAtMost(3_600_000))
                 put("attemptId", attemptId.toString())
