@@ -1,10 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { canStartUsage } from "../../entitlements/_utils/check-usage";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { evaluateUsage } from "../../entitlements/_utils/evaluate-usage";
-import { fitsGuestSpend, readGuestSpentMicros } from "../../entitlements/_utils/guest-spend-budget";
-import { countUsage } from "../../entitlements/_utils/usage-counts";
-import { getEstimatedCostMicros } from "../../entitlements/limits";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { loadPendingBlockMistakes } from "../../mistakes/_utils/practice-block";
 import { type BlockPayload, readBlockPayload } from "../block-payload";
@@ -17,26 +14,7 @@ import { type StudySessionRow } from "./study-session-access";
 async function hasSpokenAllowance(): Promise<boolean> {
   const viewer = await getEntitlementViewer();
 
-  if (!viewer) {
-    return false;
-  }
-
-  const now = new Date();
-  const kind = "assist";
-  const generated = false;
-  const costMicros = getEstimatedCostMicros({ generated, kind });
-
-  const [counts, spentMicros] = await Promise.all([
-    countUsage({ client: prisma, kind, now, userId: viewer.userId }),
-    viewer.isGuest ? readGuestSpentMicros(now) : 0,
-  ]);
-
-  const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
-
-  return (
-    decision.status !== "limitReached" &&
-    (!viewer.isGuest || fitsGuestSpend({ costMicros, spentMicros }))
-  );
+  return viewer ? canStartUsage({ kind: "assist", now: new Date(), viewer }) : false;
 }
 
 export async function finishMistakeBlock({

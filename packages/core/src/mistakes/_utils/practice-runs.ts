@@ -1,6 +1,5 @@
 import "server-only";
 import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
-import { isCreditedPracticeAnswer } from "./practice-claim";
 
 const MISTAKE_PRACTICE_LEDGER_KIND = "mistakePractice";
 
@@ -15,7 +14,7 @@ const ANSWER_ID_SEPARATOR = ",";
 
 export type PracticeAnswer = Pick<
   Attempt,
-  "answer" | "answeredAt" | "durationMs" | "id" | "isCorrect" | "itemId" | "skillId"
+  "answer" | "answeredAt" | "durationMs" | "evidence" | "id" | "isCorrect" | "itemId" | "skillId"
 >;
 
 /** Returns answers only if every id belongs to the learner's recent standalone mistake practice. */
@@ -34,6 +33,7 @@ export async function loadPracticeAnswers({
       answer: true,
       answeredAt: true,
       durationMs: true,
+      evidence: true,
       id: true,
       isCorrect: true,
       itemId: true,
@@ -110,7 +110,7 @@ export function matchRun({
   answers: readonly PracticeAnswer[];
   runs: readonly CountedRun[];
 }) {
-  const credited = answers.filter((answer) => isCreditedPracticeAnswer(answer.answer));
+  const credited = answers.filter((answer) => answer.evidence === "replay");
   const ids = new Set(credited.map((answer) => answer.id));
   const counted = new Set(runs.flatMap((run) => readRunAnswerIds(run)));
   const run = runs.find((candidate) => readRunAnswerIds(candidate).some((id) => ids.has(id)));

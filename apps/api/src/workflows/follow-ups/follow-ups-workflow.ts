@@ -27,7 +27,6 @@ import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow
 import { waitForMaterialReading } from "../research/wait-for-material-reading";
 import { sessionPreparationWorkflow } from "../sessions/session-preparation-workflow";
 import { backgroundTaskWorkflow, getBackgroundTaskToken } from "./background-task-workflow";
-import { ensureSecondTakeStep } from "./steps/ensure-second-take-step";
 import {
   endFollowUpStep,
   listFollowUpsStep,
@@ -68,11 +67,6 @@ async function startLessonContent(writing: LessonContentInput | null): Promise<v
   if (writing) {
     await startOnce(lessonContentWorkflow, [writing], getLessonContentHookToken(writing.lessonId));
   }
-}
-
-async function startSecondTake(input: { skillId: string; userId: string }): Promise<void> {
-  const lessonId = await ensureSecondTakeStep(input);
-  await startLessonContent(lessonId ? { lessonId, wait: "soon" } : null);
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
@@ -143,7 +137,6 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return startPlacementPreparation(followUp);
 
     case "writeSecondTake":
-      return startSecondTake({ skillId: followUp.input.skillId, userId });
     case "writeLesson":
       return startLessonContent(await requestLessonWritingStep(followUp.input, userId));
     case "writeSentenceOrders":

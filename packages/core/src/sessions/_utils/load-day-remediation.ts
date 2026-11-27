@@ -65,17 +65,31 @@ async function loadPattern({ goal, now, userId }: SessionDayContext): Promise<Te
 
   return [
     {
-      block: {
+      missedAt: (latest?.missedAt ?? pattern.createdAt).getTime(),
+      option: {
         canDo: null,
         estimatedMinutes: PATTERN_DRILL_SECONDS / 60,
         kind: "practice",
         lessonId: null,
         payload: toBlockPayload({ patternId: pattern.id, title: pattern.title }),
       },
-      missedAt: (latest?.missedAt ?? pattern.createdAt).getTime(),
       weight: 0,
     },
   ];
+}
+
+function teachingKey({ option }: TeachingCandidate): string {
+  if ("lessonId" in option) {
+    return option.lessonId ?? "";
+  }
+
+  const { input } = option.followUp;
+
+  if ("skillId" in input) {
+    return input.skillId;
+  }
+
+  return "quickSkillId" in input ? input.quickSkillId : input.lessonId;
 }
 
 export async function loadDayRemediation({
@@ -103,7 +117,7 @@ export async function loadDayRemediation({
 
   const signals = await readSkillMistakeSignals({ now, skillIds: [...weights.keys()], userId });
 
-  const [mistakes, { followUps, teaching }, pattern] = await Promise.all([
+  const [mistakes, teaching, pattern] = await Promise.all([
     loadReadyMistakes({ context, signals, weights }),
     loadTeaching({ context, signals, tier: plan.tier, weights }),
     loadPattern(context),
@@ -111,15 +125,14 @@ export async function loadDayRemediation({
 
   return {
     dated: goal.targetDate !== null,
-    followUps,
     mistakes,
     teaching: [...teaching, ...pattern]
       .toSorted(
         (a, b) =>
           b.weight - a.weight ||
           b.missedAt - a.missedAt ||
-          (a.block.lessonId ?? "").localeCompare(b.block.lessonId ?? ""),
+          teachingKey(a).localeCompare(teachingKey(b)),
       )
-      .map(({ block }) => block),
+      .map(({ option }) => option),
   };
 }

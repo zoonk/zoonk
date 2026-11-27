@@ -18,7 +18,10 @@ const FIRST_INTERVIEW_PHASE_DAYS = 8;
 const INTERVIEW_PLAN_DAYS = 41;
 
 export async function studySessionFixture(
-  attrs: FixtureAttrs<StudySession, "startSnapshot" | "endSnapshot" | "missions"> &
+  attrs: FixtureAttrs<
+    StudySession,
+    "startSnapshot" | "endSnapshot" | "missions" | "remedialGeneration"
+  > &
     Pick<StudySession, "userId">,
 ) {
   const { missions = { picks: [], version: 1 }, ...data } = attrs;

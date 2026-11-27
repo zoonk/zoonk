@@ -233,6 +233,9 @@ export const mockViewResponseSchema = z
     planItemId: uuidSchema()
       .nullable()
       .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
+    practiceAvailable: z
+      .boolean()
+      .meta({ description: "The finished mock has open mistakes with usable practice material" }),
     purpose: mockPurposeSchema,
     questions: z.number().int(),
     reached: reachedSchema.meta({

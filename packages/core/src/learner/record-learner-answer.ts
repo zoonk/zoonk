@@ -2,7 +2,6 @@ import "server-only";
 import {
   type Attempt,
   type AttemptEvidence,
-  DbNull,
   type LearnerSkill,
   type Mistake,
   type TransactionClient,
@@ -21,12 +20,11 @@ import { recordMistake } from "../mistakes/record-mistake";
 import { createLearnerAttempt, writeAttemptAttribution } from "./_utils/create-learner-attempt";
 import { type LessonAnswerRun, getAttemptEvidence } from "./_utils/lesson-answer-evidence";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
+import { loadSkillHistory } from "./_utils/skill-answer-history";
 import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-learner-skill";
 import { type SkillReview, getAnswerEvents } from "./answer-events";
 import { type GradedAnswer } from "./answer-rating";
 import { loadExamWritingSkillIdsForLearner } from "./writing-skills";
-
-const RECENT_SKILL_ANSWERS = 10;
 
 /** Diagnostics never create notebook mistakes and update memory only when correct or already being learned. */
 type LearnerAnswerPurpose = "diagnostic" | "learning";
@@ -65,36 +63,6 @@ export type RecordedLearnerAnswer = {
   learnerSkill: LearnerSkill | null;
   mistake: Mistake | null;
 };
-
-async function loadSkillHistory({
-  skillId,
-  transaction,
-  userId,
-}: {
-  skillId: string | null;
-  transaction: TransactionClient;
-  userId: string;
-}) {
-  if (!skillId) {
-    return { before: null, recent: { correct: 0, total: 0 } };
-  }
-
-  const before = await transaction.learnerSkill.findUnique({
-    where: { userSkill: { skillId, userId } },
-  });
-
-  const answers = await transaction.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: { isCorrect: true },
-    take: RECENT_SKILL_ANSWERS,
-    where: { answer: { equals: DbNull, path: ["practiceCredit"] }, skillId, userId },
-  });
-
-  return {
-    before,
-    recent: { correct: answers.filter((answer) => answer.isCorrect).length, total: answers.length },
-  };
-}
 
 type AnswerContext = {
   answeredAt: Date;
@@ -280,12 +248,11 @@ export async function persistLearnerAnswer({
     transaction,
   };
 
-  const answer = practiceCredit ? input.answer : { ...input.answer, practiceCredit: false };
   const evidence = practiceCredit ? await getAttemptEvidence(context) : null;
 
   const attempt = await createLearnerAttempt({
     answeredAt: context.answeredAt,
-    input: { ...input, answer, evidence, itemId: context.itemId, skillId, stepId: context.stepId },
+    input: { ...input, evidence, itemId: context.itemId, skillId, stepId: context.stepId },
     transaction,
   });
 

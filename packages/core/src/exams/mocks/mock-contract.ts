@@ -170,7 +170,7 @@ export const mockResultSchema = z
       .optional()
       .meta({
         description:
-          "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier when it finished, soonest first; absent when nothing moved",
+          "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier after it finished, soonest first; absent when nothing moved",
       }),
     net: z
       .object({
@@ -234,6 +234,7 @@ export type MockView = {
   pacing?: MockConditions["pacing"];
   passMarks: PassMarks | null;
   planItemId: string | null;
+  practiceAvailable: boolean;
   purpose: MockPurpose;
   questions: number;
   reached: Reached;

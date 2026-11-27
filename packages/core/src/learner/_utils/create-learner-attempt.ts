@@ -66,23 +66,23 @@ export function writeAttemptAttribution({
       ? notebookMistake?.id
       : undefined;
 
-  const recordsFix = fixedMistakeIds.length > 0 || "fixedMistakeIds" in answer;
+  const mockReplay = Boolean(attempt.mockExamId && replayed);
 
-  if (!cause && !exactReplay && !recordsFix && !mockMistakeId) {
+  const recorded = {
+    ...(fixedMistakeIds.length > 0 || "fixedMistakeIds" in answer ? { fixedMistakeIds } : {}),
+    ...(mockMistakeId ? { mockMistakeId } : {}),
+    ...(mockReplay ? { mockReplay } : {}),
+  };
+
+  const hasRecorded = Object.keys(recorded).length > 0;
+
+  if (!cause && !exactReplay && !hasRecorded) {
     return attempt;
   }
 
   return transaction.attempt.update({
     data: {
-      ...(recordsFix || mockMistakeId
-        ? {
-            answer: {
-              ...answer,
-              ...(recordsFix && { fixedMistakeIds }),
-              ...(mockMistakeId && { mockMistakeId }),
-            },
-          }
-        : {}),
+      ...(hasRecorded ? { answer: { ...answer, ...recorded } } : {}),
       cause,
       ...(exactReplay ? { evidence: "replay" } : {}),
     },

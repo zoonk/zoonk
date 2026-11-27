@@ -30,7 +30,7 @@ import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
 import { runMistakeGrade } from "./_utils/mistake-grade";
 import { getPracticeAnswerScope } from "./_utils/practice-answer-scope";
-import { isCreditedPracticeAnswer, refuseClosedMistake } from "./_utils/practice-claim";
+import { refuseClosedMistake } from "./_utils/practice-claim";
 import { countRunSoFar, finishPracticeAnswer } from "./_utils/practice-feedback";
 import {
   type RecordingInput,
@@ -84,6 +84,7 @@ export async function gradeSpokenMistake({
       blockId: fields.blockId,
       goalId: fields.goalId,
       mistakeId: mistake.id,
+      mockId: fields.mockId,
       timeZone: fields.timeZone,
       userId,
     }),
@@ -94,7 +95,12 @@ export async function gradeSpokenMistake({
   }
 
   const input = {
-    run: { answerIds: fields.answerIds ?? [], blockId: fields.blockId, goalId: scope.goalId },
+    run: {
+      answerIds: fields.answerIds ?? [],
+      blockId: fields.blockId,
+      goalId: scope.goalId,
+      mockId: fields.mockId,
+    },
     timeZone: scope.timeZone,
   };
 
@@ -290,7 +296,7 @@ async function recordSpokenPractice({
     refuse: refuseClosedMistake({ mistakeId: mistake.id, userId }),
     withAnswer: evidence
       ? async (transaction, attempt) => {
-          if (isCreditedPracticeAnswer(attempt.answer)) {
+          if (attempt.evidence === "replay") {
             await writeLanguageStepEvidence(transaction, evidence);
           }
         }
@@ -301,7 +307,7 @@ async function recordSpokenPractice({
     return { status: "notFound" };
   }
 
-  if (outcome.status === "recorded" && isCreditedPracticeAnswer(outcome.recorded.attempt.answer)) {
+  if (outcome.status === "recorded" && outcome.recorded.attempt.evidence === "replay") {
     await schedulePronunciationReviews({
       targetLanguage: step.content.language,
       timeZone,

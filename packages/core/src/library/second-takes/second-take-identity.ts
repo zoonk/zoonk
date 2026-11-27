@@ -1,5 +1,7 @@
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 
+export const SECOND_TAKE_MINUTES = 4;
+
 const SECOND_TAKE_KEY = "retake:";
 export const SECOND_TAKE_KEY_WHERE = {
   OR: [

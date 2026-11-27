@@ -1,8 +1,6 @@
 import "server-only";
-import { type Mistake, prisma } from "@zoonk/db";
-import { getString } from "@zoonk/utils/json";
+import { type Mistake } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { isUuid } from "@zoonk/utils/uuid";
 import { io } from "next/cache";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { type ItemSetView } from "../library/items/item-set-view";
@@ -10,9 +8,10 @@ import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { type SessionQuestion } from "../sessions/_utils/session-items";
 import { getSession } from "../users/get-session";
 import { narrowToSkill } from "./_utils/mistake-scope";
+import { findPracticeMock } from "./_utils/mock-practice";
 import { findPracticeBlock, loadPendingBlockMistakes } from "./_utils/practice-block";
+import { loadPracticeEntries } from "./_utils/practice-entries";
 import { resolvePracticeScope } from "./_utils/practice-scope";
-import { openVisibleMistakeWhere } from "./_utils/visible-mistake";
 import { MAX_PRACTICE_ANSWERS, type MistakePracticeInput } from "./contract";
 import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
 import { getPracticeTimeZone, listReadyMistakes } from "./mistake-availability";
@@ -23,7 +22,7 @@ import {
   selectMistakesToPractice,
 } from "./mistake-drills";
 import { toMistakeQuestion } from "./mistake-item";
-import { type MistakeLessonReplay, loadMistakeReplays } from "./mistake-replay";
+import { type MistakeLessonReplay } from "./mistake-replay";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 type MistakePracticeEntry = {
@@ -66,7 +65,7 @@ export async function getMistakePractice(
   const selected = await loadRunMistakes({ input, scope, userId });
 
   const lessons = await findTeachingLessonIds({
-    skillIds: selected.flatMap(({ mistake }) => mistake.skillId ?? []),
+    skillIds: selected.flatMap(({ skillId }) => skillId ?? []),
     userId,
   });
 
@@ -75,7 +74,7 @@ export async function getMistakePractice(
     scope.goal ? loadExamStructure(scope.goal) : null,
   ]);
 
-  const practice = selected.map(({ mistake, replay }) => {
+  const practice = selected.map(({ replay, ...mistake }) => {
     const kind = getDrillKind(mistake.cause);
 
     return {
@@ -117,34 +116,12 @@ async function resolveRunScope(input: MistakePracticeInput, userId: string) {
   }
 
   if (mockId) {
-    return resolveMockScope({ goalId, mockId, userId });
+    const mock = await findPracticeMock({ mockId, userId });
+    return mock && { block: null, goal: mock.goal, mockId, skillIds: null };
   }
 
   const scope = await resolvePracticeScope({ goalId });
   return scope && { ...scope, block: null, mockId: undefined };
-}
-
-async function resolveMockScope({
-  goalId,
-  mockId,
-  userId,
-}: {
-  goalId?: string;
-  mockId: string;
-  userId: string;
-}) {
-  if (!isUuid(mockId)) {
-    return null;
-  }
-
-  const mock = await prisma.mockExam.findFirst({
-    include: { goal: true },
-    where: { id: mockId, status: "finished", userId },
-  });
-
-  return mock && (!goalId || mock.goalId === goalId)
-    ? { block: null, goal: mock.goal, mockId, skillIds: null }
-    : null;
 }
 
 async function loadRunMistakes({
@@ -169,44 +146,38 @@ async function loadRunMistakes({
 
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
   const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId });
-  const includeAllFormats = Boolean(block || mockId || input.includeAllFormats);
 
-  const { mistakes: open, replays: replayById } = block
-    ? await loadPendingBlockMistakes({
-        mistakeIds: ["completed", "skipped"].includes(block.block.status) ? [] : block.mistakeIds,
-        timeZone,
-        userId,
-      })
-    : await loadOpenMistakes({ mockId, skillIds, userId });
+  if (block) {
+    const { mistakes, replays } = await loadPendingBlockMistakes({
+      mistakeIds: ["completed", "skipped"].includes(block.block.status) ? [] : block.mistakeIds,
+      timeZone,
+      userId,
+    });
 
-  const drillable = open.filter((mistake) => {
-    const replay = replayById.get(mistake.id);
+    return mistakes.flatMap((mistake) => {
+      const replay = replays.get(mistake.id);
+      return replay ? [{ ...mistake, replay }] : [];
+    });
+  }
 
-    return (
-      replay &&
-      (includeAllFormats ||
-        (replay.kind === "item" && ["multipleChoice", "trueFalse"].includes(replay.item.format)))
-    );
+  const entries = await loadPracticeEntries({
+    includeAllFormats: input.includeAllFormats,
+    mockId,
+    skillIds,
+    userId,
   });
 
-  const selected = block
-    ? drillable
-    : orderPractice({ localDate, mistakes: drillable, mockId, timeZone });
-
-  return selected.flatMap((mistake) => {
-    const replay = replayById.get(mistake.id);
-    return replay ? [{ mistake, replay }] : [];
-  });
+  return orderPractice({ localDate, mistakes: entries, mockId, timeZone });
 }
 
-function orderPractice({
+function orderPractice<TEntry extends Mistake>({
   localDate,
   mistakes,
   mockId,
   timeZone,
 }: {
   localDate: Date;
-  mistakes: Mistake[];
+  mistakes: TEntry[];
   mockId?: string;
   timeZone: string;
 }) {
@@ -224,39 +195,4 @@ function orderPractice({
     ...first,
     ...selectMistakesToPractice({ limit: MAX_PRACTICE_ANSWERS - first.length, mistakes: today }),
   ];
-}
-
-async function loadOpenMistakes({
-  mockId,
-  skillIds,
-  userId,
-}: {
-  mockId?: string;
-  skillIds: string[] | null;
-  userId: string;
-}) {
-  const mockAttempts = mockId
-    ? await prisma.attempt.findMany({
-        select: { answer: true },
-        where: { isCorrect: false, mockExamId: mockId, userId },
-      })
-    : [];
-
-  const reusedMistakes = mockAttempts.flatMap(
-    ({ answer }) => getString(answer, "mockMistakeId") ?? [],
-  );
-
-  const mistakes = await prisma.mistake.findMany({
-    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-    where: {
-      ...openVisibleMistakeWhere,
-      ...(mockId && {
-        AND: [{ OR: [{ attempt: { mockExamId: mockId } }, { id: { in: reusedMistakes } }] }],
-      }),
-      ...(skillIds && { skillId: { in: skillIds } }),
-      userId,
-    },
-  });
-
-  return { mistakes, replays: await loadMistakeReplays({ mistakes, userId }) };
 }

@@ -257,15 +257,15 @@ export async function completeMock({
     });
 
     if (count && mock.conditions.purpose !== "placement") {
-      await tx.attempt.updateMany({
-        data: { evidence: "independent" },
-        where: {
-          NOT: { answer: { equals: MOCK_BLANK_ANSWER } },
-          mockExamId: mock.id,
-          skillId: { not: null },
-          userId: mock.userId,
-        },
-      });
+      await tx.$executeRaw`
+        UPDATE attempts
+        SET evidence = CASE WHEN answer->'mockReplay' = 'true'::jsonb
+          THEN 'replay'::"AttemptEvidence" ELSE 'independent'::"AttemptEvidence" END
+        WHERE mock_exam_id = ${mock.id}::uuid
+          AND user_id = ${mock.userId}::uuid
+          AND skill_id IS NOT NULL
+          AND answer <> ${JSON.stringify(MOCK_BLANK_ANSWER)}::jsonb
+      `;
     }
 
     if (count && mock.goalId && mock.conditions.purpose !== "placement") {
@@ -296,17 +296,9 @@ export async function completeMock({
   }
 
   const movedTopics = await replanForMock({ graded, mock, timeZone, toRelearn });
-  const shown = movedTopics.length > 0 ? { ...result, movedTopics } : result;
-
-  if (movedTopics.length > 0) {
-    await prisma.mockExam.update({
-      data: { result: { ...shown, reached } },
-      where: { id: mock.id },
-    });
-  }
 
   revalidateCacheTags([getLearnerModelCacheTag(mock.userId)]);
   await trackCompletion({ graded, mock, result });
 
-  return shown;
+  return movedTopics.length > 0 ? { ...result, movedTopics } : result;
 }

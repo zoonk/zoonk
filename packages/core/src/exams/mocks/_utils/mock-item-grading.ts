@@ -107,7 +107,11 @@ export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): Moc
 
 export function readRecordedMockAnswer(value: unknown): MockAnswer | null {
   const answer = isJsonObject(value)
-    ? Object.fromEntries(Object.entries(value).filter(([key]) => key !== "mockMistakeId"))
+    ? Object.fromEntries(
+        Object.entries(value).filter(
+          ([key]) => !["fixedMistakeIds", "mockMistakeId", "mockReplay"].includes(key),
+        ),
+      )
     : value;
 
   const parsed = mockAnswerSchema.safeParse(answer);

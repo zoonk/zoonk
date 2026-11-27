@@ -5,10 +5,6 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { openVisibleMistakeWhere } from "./visible-mistake";
 
-export function isCreditedPracticeAnswer(answer: unknown): boolean {
-  return isJsonObject(answer) && answer.practiceCredit !== false;
-}
-
 export function readPracticeMistakeId(answer: unknown): string | null {
   return isJsonObject(answer) && typeof answer.practiceMistakeId === "string"
     ? answer.practiceMistakeId

@@ -8,7 +8,6 @@ import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { finishLessonChapters } from "../../mind-maps/finished-chapters";
 import { readBlockPayload } from "../block-payload";
-import { isOutsidePlanLesson } from "../day-block";
 import { oweDaySettlement } from "../settle-owed-session-day";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./plan-items";
 import { type StudySessionRow } from "./study-session-access";
@@ -108,6 +107,7 @@ export async function markLessonBlockDone({
   block,
   brainPower,
   eventId,
+  firstCompletion,
   goalId,
   lessonId,
   timeZone,
@@ -117,6 +117,7 @@ export async function markLessonBlockDone({
   brainPower: number;
   /** The completion that finished the lesson, which records a chapter the block finishes. */
   eventId: string;
+  firstCompletion: boolean;
   goalId: string | null;
   lessonId: string | null;
   timeZone: string;
@@ -144,7 +145,7 @@ export async function markLessonBlockDone({
 
       await oweDaySettlement(tx, { block, timeZone, userId });
 
-      if (!lessonId || isOutsidePlanLesson(readBlockPayload(block))) {
+      if (!lessonId || !firstCompletion) {
         return { languageGoals: [] };
       }
 

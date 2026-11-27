@@ -139,6 +139,21 @@ describe(getSkillMistakeSignal, () => {
     ).toMatchObject({ dueSecondTake: false, stage: "secondTake" });
   });
 
+  it.each([
+    { dueSecondTake: true, replayedAt: "2026-09-24T12:00:00Z", stage: "replay" },
+    { dueSecondTake: false, replayedAt: "2026-09-24T11:59:59Z", stage: "none" },
+  ])(
+    "counts a replay that falls within 60 days of the last miss ($stage)",
+    ({ dueSecondTake, replayedAt, stage }) => {
+      expect(
+        signal([attempt(22, "a"), attempt(23, "b")], {
+          ...HISTORY,
+          replayedAt: new Date(replayedAt),
+        }),
+      ).toMatchObject({ dueSecondTake, stage, stuck: true });
+    },
+  );
+
   it("discards mock misses before first teaching and ignores null evidence", () => {
     const mock = [
       attempt(23, "a", { mockExamId: "mock" }),

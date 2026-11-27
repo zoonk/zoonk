@@ -98,6 +98,30 @@ function toCauseInput({
   };
 }
 
+async function getWritingPatternCause({
+  existing,
+  transaction,
+  userId,
+  writingLanguage,
+}: {
+  existing: Mistake;
+  transaction: TransactionClient;
+  userId: string;
+  writingLanguage: string;
+}): Promise<Mistake["cause"]> {
+  const pattern = await transaction.mistakePattern.findFirst({
+    select: { id: true },
+    where: {
+      kind: { not: "typos" },
+      language: writingLanguage,
+      mistakeIds: { has: existing.id },
+      userId,
+    },
+  });
+
+  return pattern ? "gap" : null;
+}
+
 /** Reuses an existing open entry, which waits a day again; an ambiguous cause owes its classification, in the same transaction. */
 export async function recordMistake(
   {
@@ -164,19 +188,11 @@ export async function recordMistake(
       where: { id: existing.id },
     });
 
-    const pattern = writingLanguage
-      ? await transaction.mistakePattern.findFirst({
-          select: { id: true },
-          where: {
-            kind: { not: "typos" },
-            language: writingLanguage,
-            mistakeIds: { has: existing.id },
-            userId,
-          },
-        })
-      : null;
+    const reusedCause = writingLanguage
+      ? await getWritingPatternCause({ existing, transaction, userId, writingLanguage })
+      : (cause ?? existing.cause);
 
-    return { cause: pattern ? "gap" : cause, mistake, replayed: true };
+    return { cause: reusedCause, mistake, replayed: true };
   }
 
   const serialized = JSON.stringify(replay ? { ...snapshot, replay } : snapshot);

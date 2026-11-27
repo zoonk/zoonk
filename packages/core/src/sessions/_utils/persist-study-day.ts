@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../../plans/plan-conflict";
 import { getItemKey } from "../../plans/planner/plan-items";
@@ -78,6 +77,7 @@ export async function persistStudyDay({
             missions: planned.missions,
             planVersion,
             plannedMinutes: planned.plannedMinutes,
+            remedialGeneration: planned.remedialGeneration,
           },
         ],
         skipDuplicates: true,
@@ -109,13 +109,6 @@ export async function persistStudyDay({
             sessionId: session.id,
           };
         }),
-      });
-
-      await oweFollowUps({
-        db: tx,
-        followUps: planned.input.remedial?.followUps ?? [],
-        keepExisting: true,
-        userId: day.userId,
       });
 
       return { sessionId: session.id, status: "created" };

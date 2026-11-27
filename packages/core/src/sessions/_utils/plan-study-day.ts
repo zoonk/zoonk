@@ -19,6 +19,7 @@ export type PlannedStudyDay = {
   plan: Awaited<ReturnType<typeof loadDayPlan>>;
   plannedMinutes: number;
   preparing: ReadonlySet<number>;
+  remedialGeneration?: ReturnType<typeof buildSessionBlocks>["remedialGeneration"];
 };
 
 export function getPlanAllocationBlocks(day: Pick<PlannedStudyDay, "blocks" | "input">) {

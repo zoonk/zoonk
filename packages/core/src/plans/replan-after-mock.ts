@@ -4,8 +4,10 @@ import { loadSkillsToRelearn } from "../learner/_utils/load-skill-claims";
 import { readBlockPayload } from "../sessions/block-payload";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { commitPlan } from "./_utils/commit-plan";
+import { markPlanWrite } from "./_utils/mark-plan-write";
 import { findMockToFollow, loadMockMisses } from "./_utils/mock-misses";
 import { holdsSchedule } from "./_utils/mock-replan-guard";
+import { changedSchedule, listEarlierMissedTopics } from "./_utils/mock-replan-moves";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { writePlanMetadata } from "./_utils/plan-metadata-write";
@@ -14,11 +16,7 @@ import { findTestedOutItemIds, planRelearn, withoutSkippedAreas } from "./_utils
 import { type ComputedPlan, type PlanChangeRecord, revalidatePlanTags } from "./_utils/replan";
 import { getRelearnPayload, toRelearnChange } from "./bring-back-missed-lessons";
 import { withPlanRetry } from "./plan-conflict";
-import { LEARN_KINDS } from "./planner/plan-item-rules";
 import { type PlanSettings, type PlanState, parsePlanSettings } from "./planner/plan-state";
-import { type MockMiss } from "./planner/skill-order";
-
-const MOVED_TOPICS_NAMED = 3;
 
 /** For logs and admin only; Today never shows it and the apps don't word it. */
 const MOCK_REORDER_NOTE = "A finished mock moved the topics it missed earlier in the plan.";
@@ -27,84 +25,8 @@ type MockReplan = NonNullable<PlanSettings["mockReplan"]>;
 
 type RelearnPlan = Awaited<ReturnType<typeof planRelearn>>;
 
-type DatedItem = Pick<
-  PlanContext["items"][number],
-  "kind" | "lessonId" | "scheduledFor" | "skillId" | "status"
->;
-
 function withMockReplan(state: PlanState, mockReplan: MockReplan): PlanState {
   return { ...state, settings: { ...state.settings, mockReplan } };
-}
-
-async function loadTaughtSkills({
-  items,
-  skillIds,
-}: {
-  items: readonly DatedItem[];
-  skillIds: readonly string[];
-}): Promise<Map<string, string[]>> {
-  const lessonIds = [...new Set(items.flatMap((item) => item.lessonId ?? []))];
-
-  const taught = await prisma.lessonSkill.findMany({
-    select: { lessonId: true, skillId: true },
-    where: { lessonId: { in: lessonIds }, skillId: { in: [...skillIds] } },
-  });
-
-  return new Map(
-    [...Map.groupBy(taught, (row) => row.lessonId)].map(([lessonId, rows]) => [
-      lessonId,
-      rows.map((row) => row.skillId),
-    ]),
-  );
-}
-
-function getFirstDates({
-  items,
-  misses,
-  taught,
-}: {
-  items: readonly DatedItem[];
-  misses: ReadonlyMap<string, MockMiss>;
-  taught: ReadonlyMap<string, readonly string[]>;
-}): Map<string, number> {
-  return items.reduce((first, item) => {
-    const skillIds = item.lessonId
-      ? (taught.get(item.lessonId) ?? [])
-      : [item.skillId ?? ""].filter((skillId) => misses.has(skillId));
-
-    const at = item.scheduledFor?.getTime() ?? Infinity;
-
-    skillIds.forEach((skillId) => first.set(skillId, Math.min(at, first.get(skillId) ?? Infinity)));
-    return first;
-  }, new Map<string, number>());
-}
-
-/** The missed topics whose first lesson the re-plan brought forward, soonest first. */
-async function listMovedTopics({
-  after,
-  before,
-  misses,
-  state,
-}: {
-  after: readonly DatedItem[];
-  before: readonly DatedItem[];
-  misses: ReadonlyMap<string, MockMiss>;
-  state: PlanState;
-}): Promise<string[]> {
-  const todo = (items: readonly DatedItem[]) =>
-    items.filter((item) => item.status === "todo" && LEARN_KINDS.has(item.kind));
-
-  const [was, now] = [todo(before), todo(after)];
-  const taught = await loadTaughtSkills({ items: [...was, ...now], skillIds: [...misses.keys()] });
-  const wasFirst = getFirstDates({ items: was, misses, taught });
-
-  const moved = [...getFirstDates({ items: now, misses, taught })]
-    .filter(([skillId, at]) => at < (wasFirst.get(skillId) ?? Infinity))
-    .toSorted(([, first], [, second]) => first - second);
-
-  const names = new Map(state.graph.skills.map((skill) => [skill.skillId, skill.name]));
-
-  return moved.flatMap(([skillId]) => names.get(skillId) ?? []).slice(0, MOVED_TOPICS_NAMED);
 }
 
 /**
@@ -176,11 +98,14 @@ async function recordMockReplan({
 }): Promise<void> {
   await writePlanMetadata({
     context,
-    write: (tx) =>
-      tx.plan.update({
+    write: async (tx) => {
+      await markPlanWrite(tx, context.plan);
+
+      await tx.plan.update({
         data: { settings: withMockReplan(context.state, mockReplan).settings },
         where: { id: context.plan.id },
-      }),
+      });
+    },
   });
 
   revalidatePlanTags(context.goal.userId);
@@ -190,12 +115,16 @@ async function commitReplan({
   change,
   computed,
   context,
+  mockId,
+  movedTopics = [],
   restored,
   restoredIds,
 }: {
   change: PlanChangeRecord;
   computed: ComputedPlan;
   context: PlanContext;
+  mockId: string;
+  movedTopics?: string[];
   restored: PlanContext;
   restoredIds: ReadonlySet<string>;
 }): Promise<void> {
@@ -204,10 +133,20 @@ async function commitReplan({
     computed,
     context: restored,
     extraWrites: async (tx) => {
-      await tx.planItem.updateMany({
-        data: { completedAt: null, status: "todo" },
-        where: { id: { in: [...restoredIds] }, planId: context.plan.id, status: "testedOut" },
-      });
+      if (restoredIds.size > 0) {
+        await tx.planItem.updateMany({
+          data: { completedAt: null, status: "todo" },
+          where: { id: { in: [...restoredIds] }, planId: context.plan.id, status: "testedOut" },
+        });
+      }
+
+      if (movedTopics.length > 0) {
+        await tx.$executeRaw`
+          UPDATE mock_exams
+          SET result = result || jsonb_build_object('movedTopics', ${movedTopics}::text[])
+          WHERE id = ${mockId}::uuid AND goal_id = ${context.goal.id}::uuid
+        `;
+      }
     },
     phaseDates: { mode: "forced", pace: "saved" },
     snapshotContext: context,
@@ -270,7 +209,12 @@ export async function replanAfterMock({
           : null;
 
       if (planned && planned.restoredIds.size > 0) {
-        await commitReplan({ ...planned, change: toRelearnChange(relearn(planned)), context });
+        await commitReplan({
+          ...planned,
+          change: toRelearnChange(relearn(planned)),
+          context,
+          mockId,
+        });
       } else {
         await recordMockReplan({ context, mockReplan: applied });
       }
@@ -292,26 +236,34 @@ export async function replanAfterMock({
     ]);
 
     if (holdsSchedule({ baseline: baseline.computed, computed: reordered.computed })) {
-      const moved = await listMovedTopics({
-        after: reordered.computed.built.items,
+      const { computed, restoredIds } = reordered;
+
+      if (restoredIds.size === 0 && !changedSchedule(context, computed)) {
+        await recordMockReplan({ context, mockReplan: applied });
+        return [];
+      }
+
+      const movedTopics = await listEarlierMissedTopics({
+        after: computed.built.items,
         before: context.items,
         misses,
         state: context.state,
       });
 
-      if (reordered.restoredIds.size > 0) {
-        await commitReplan({ ...reordered, change: toRelearnChange(relearn(reordered)), context });
-      } else if (moved.length > 0) {
-        await commitReplan({ ...reordered, change: getReorderChange(reordered.computed), context });
-      } else {
-        await recordMockReplan({ context, mockReplan: applied });
-      }
+      const change =
+        restoredIds.size > 0 ? toRelearnChange(relearn(reordered)) : getReorderChange(computed);
 
-      return moved;
+      await commitReplan({ ...reordered, change, context, mockId, movedTopics });
+      return movedTopics;
     }
 
     if (baseline.restoredIds.size > 0) {
-      await commitReplan({ ...baseline, change: toRelearnChange(relearn(baseline)), context });
+      await commitReplan({
+        ...baseline,
+        change: toRelearnChange(relearn(baseline)),
+        context,
+        mockId,
+      });
     } else if (catchUp) {
       await recordMockReplan({ context, mockReplan: refused });
     }

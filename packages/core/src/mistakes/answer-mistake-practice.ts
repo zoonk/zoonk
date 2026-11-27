@@ -76,6 +76,7 @@ export async function answerMistakePractice({
       blockId: input.run?.blockId,
       goalId: input.run?.goalId,
       mistakeId: mistake.id,
+      mockId: input.run?.mockId,
       timeZone: input.timeZone,
       userId,
     }),

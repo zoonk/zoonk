@@ -161,9 +161,23 @@ describe(completeLibraryLesson, () => {
 
     await expect(signal()).resolves.toMatchObject({
       helpedAt: replayedAt,
+      latestMiss: null,
       replayedAt,
-      stage: "replay",
+      stage: "none",
     });
+
+    vi.setSystemTime(new Date(replayedAt.getTime() + MS_PER_DAY));
+
+    await attemptFixture({
+      answeredAt: new Date(),
+      cause: "gap",
+      evidence: "independent",
+      isCorrect: false,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    await expect(signal()).resolves.toMatchObject({ dueSecondTake: false, stage: "replay" });
 
     await prisma.lesson.update({
       data: { summary: { ideas: [{ text: "We can map where an electron is likely to be." }] } },

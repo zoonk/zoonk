@@ -2,13 +2,13 @@ import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
-import { getSecondTakeIdentityKey } from "./second-take-identity";
+import { SECOND_TAKE_MINUTES, getSecondTakeIdentityKey } from "./second-take-identity";
 import { findSecondTakeSource } from "./second-take-source";
 
-const SECOND_TAKE_MINUTES = 4;
-
 function lessonToWrite(lesson: Pick<Lesson, "contentStatus" | "id" | "setAsideAt">) {
-  return lesson.contentStatus === "completed" || lesson.setAsideAt ? null : lesson.id;
+  return ["completed", "failed"].includes(lesson.contentStatus) || lesson.setAsideAt
+    ? null
+    : lesson.id;
 }
 
 /** Internal workflow bridge. The follow-up must be owed by the learner's day-opening write. */

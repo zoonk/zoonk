@@ -1,8 +1,9 @@
 import "server-only";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
+import { getMistakeSkillIds, loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { celebrateProgress } from "../milestones/celebrate-progress";
@@ -20,8 +21,11 @@ import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { getLedgerLocalTime, recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
+import { narrowToSkill } from "./_utils/mistake-scope";
+import { findPracticeMock, mockMistakeWhere } from "./_utils/mock-practice";
 import { findPracticeBlock } from "./_utils/practice-block";
 import { readPracticeMistakeId } from "./_utils/practice-claim";
+import { loadPracticeEntries } from "./_utils/practice-entries";
 import {
   MISTAKE_PRACTICE_EVENT,
   type PracticeAnswer,
@@ -37,6 +41,7 @@ import { getPracticeTimeZone } from "./mistake-availability";
 type MistakePracticeSummary = ProgressCelebration & {
   brainPower: number;
   correct: number;
+  hasMorePractice: boolean;
   /** The missions the run completed, for the end of its screen; null when it completed none. */
   missionMoment: MissionMomentView | null;
   seconds: number;
@@ -45,7 +50,7 @@ type MistakePracticeSummary = ProgressCelebration & {
 
 type PracticeRunTotals = Omit<
   MistakePracticeSummary,
-  "ceremony" | "certificates" | "missionMoment" | "reached"
+  "ceremony" | "certificates" | "hasMorePractice" | "missionMoment" | "reached"
 >;
 
 export type FinishMistakePracticeResult =
@@ -203,32 +208,75 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
 }
 
 async function loadCompletionScope(input: MistakePracticeFinishInput, userId: string) {
-  const block = input.blockId ? await findPracticeBlock({ blockId: input.blockId, userId }) : null;
+  const { blockId, mockId } = input;
 
-  if (input.blockId && (!block || (input.goalId && block.session.goalId !== input.goalId))) {
+  const [block, mock, answers] = await Promise.all([
+    blockId ? findPracticeBlock({ blockId, userId }) : null,
+    mockId ? findPracticeMock({ mockId, userId }) : null,
+    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
+  ]);
+
+  if (
+    (blockId && (!block || (input.goalId && block.session.goalId !== input.goalId))) ||
+    (mockId && (!mock || blockId))
+  ) {
     return { status: "notFound" as const };
   }
 
-  const [goal, answers] = await Promise.all([
-    block ? block.session.goal : resolveGoal(input.goalId),
-    loadPracticeAnswers({ answerIds: input.answerIds, userId }),
-  ]);
+  const scope = block ? block.session : mock;
+  const goal = scope ? scope.goal : await resolveGoal(input.goalId);
 
   if (goal === "notFound") {
     return { status: "notFound" as const };
   }
 
-  const assigned = block ? new Set(block.mistakeIds) : null;
-
-  if (
-    !answers ||
-    (!block && answers.length === 0) ||
-    (assigned && answers.some(({ answer }) => !assigned.has(readPracticeMistakeId(answer) ?? "")))
-  ) {
+  if (!answers || (!block && answers.length === 0)) {
     return { status: "invalid" as const };
   }
 
+  const answerMistakes = new Set(answers.map(({ answer }) => readPracticeMistakeId(answer) ?? ""));
+
+  if (block && [...answerMistakes].some((id) => !block.mistakeIds.includes(id))) {
+    return { status: "invalid" as const };
+  }
+
+  if (mockId) {
+    const matches = await prisma.mistake.count({
+      where: { ...(await mockMistakeWhere({ mockId, userId })), id: { in: [...answerMistakes] } },
+    });
+
+    if (matches !== answerMistakes.size) {
+      return { status: "invalid" as const };
+    }
+  }
+
   return { answers, block, goal, status: "ready" as const };
+}
+
+async function hasPracticeRemaining({
+  goal,
+  input,
+  userId,
+}: {
+  goal: Goal | null;
+  input: MistakePracticeFinishInput;
+  userId: string;
+}): Promise<boolean> {
+  const { blockId, ended, includeAllFormats, mockId, skillId } = input;
+
+  if (!ended || blockId) {
+    return false;
+  }
+
+  const plan = goal && !mockId ? await loadGoalPlan(goal.id) : null;
+
+  const skillIds = narrowToSkill({
+    scopeSkillIds: plan && getMistakeSkillIds(plan.skills),
+    skillId,
+  });
+
+  const entries = await loadPracticeEntries({ includeAllFormats, mockId, skillIds, userId });
+  return entries.length > 0;
 }
 
 /** Send every answer so far after each answer and once more with ended=true on stop; retries count only fresh answers. */
@@ -293,9 +341,11 @@ export async function finishMistakePractice(
     });
   }
 
+  const hasMorePractice = await hasPracticeRemaining({ goal, input, userId });
+
   return {
     result: await withActivityMissionMoment({
-      result: { ...result, ...celebration },
+      result: { ...result, ...celebration, hasMorePractice },
       source,
       timeZone,
       userId,

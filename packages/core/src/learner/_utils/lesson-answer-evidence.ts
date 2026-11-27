@@ -27,6 +27,7 @@ async function getLessonAnswerEvidence({
     where: { id: run.lessonId },
   });
 
+  // A first-take check can be independent only when it tests a skill taught elsewhere.
   if (!lesson || isSecondTakeIdentityKey(lesson.identityKey) || lesson.skills.length > 0) {
     return "guided";
   }

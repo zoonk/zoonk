@@ -75,6 +75,7 @@ export async function countRunSoFar({
       answerIds: answerId ? [...run.answerIds, answerId] : run.answerIds,
       blockId: run.blockId,
       goalId: run.goalId,
+      mockId: run.mockId,
       timeZone: input.timeZone,
     }),
   );

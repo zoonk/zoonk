@@ -225,6 +225,7 @@ async function readPlan(planId: string) {
     changes,
     coveredShare: plan.coveredShare,
     firstDay,
+    inputVersion: plan.inputVersion,
     items,
     phaseEnds: parsePlanPhases(plan.phases).map((phase) => phase.endDate),
     settings: parsePlanSettings(plan.settings),
@@ -322,6 +323,35 @@ describe(replanAfterMock, () => {
     ).resolves.toBeNull();
   });
 
+  it("commits an earlier lesson position on the same date", async () => {
+    const fixture = await setup({ dailyMinutes: 90 });
+    const missed = lastTopic(fixture, "Direito");
+    const before = await readPlan(fixture.plan.id);
+    const mock = await finishedMock({ answers: [{ outcome: "wrong", skill: missed }], fixture });
+
+    await replanAfterMock({
+      goalId: fixture.goal.id,
+      mockId: mock.id,
+      now: new Date(),
+      timeZone: UTC,
+    });
+
+    const after = await readPlan(fixture.plan.id);
+
+    const links = await prisma.lessonSkill.findMany({ where: { skillId: missed.id } });
+    const lessonIds = new Set(links.map(({ lessonId }) => lessonId));
+
+    const first = (plan: typeof before) =>
+      plan.items.find(({ lessonId }) => lessonIds.has(lessonId ?? ""));
+
+    expect(first(after)?.scheduledFor).toStrictEqual(first(before)?.scheduledFor);
+    expect(first(after)?.position).toBeLessThan(first(before)?.position ?? -1);
+
+    await expect(
+      prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ result: { movedTopics: [missed.name] } });
+  });
+
   it("moves nothing for questions left blank", async () => {
     const fixture = await setup();
     const blank = lastTopic(fixture, "Direito");
@@ -403,6 +433,7 @@ describe(replanAfterMock, () => {
     const caughtUp = await readPlan(fixture.plan.id);
 
     expect(caughtUp.items).toStrictEqual(before.items);
+    expect(caughtUp.inputVersion).toBeGreaterThan(refused.inputVersion);
     expect(caughtUp.changes).toHaveLength(before.changes.length);
     expect(caughtUp.settings.mockReplan).toStrictEqual({ applied: false, mockId: mock.id });
 
@@ -497,13 +528,17 @@ describe(catchUpMockReplan, () => {
   });
 
   it("applies the relearn and the reorder of a mock marked finished whose re-plan never ran when the learner opens a new day, once", async () => {
-    const { fixture, missed, taught } = await relearnSetup();
+    const { fixture, missed, mock, taught } = await relearnSetup();
     const before = await readPlan(fixture.plan.id);
 
     await getTodayStudySession({ goalId: fixture.goal.id, timeZone: UTC });
 
     const opened = await readPlan(fixture.plan.id);
     const added = opened.changes.slice(before.changes.length).map((change) => change.kind);
+
+    await expect(
+      prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ result: { movedTopics: expect.arrayContaining([missed.name]) } });
 
     expect(added.filter((kind) => kind === "relearn" || kind === "mockReordered")).toStrictEqual([
       "relearn",

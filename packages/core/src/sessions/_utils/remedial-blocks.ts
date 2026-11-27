@@ -10,11 +10,17 @@ import { buildPracticeBlocks } from "./practice-blocks";
 
 type MistakeCandidate = { id: string; minutes: number; skillId: string | null };
 
+type RemedialFollowUp = Extract<FollowUp, { kind: "writeLesson" | "writeSecondTake" }>;
+
+export type TeachingOption =
+  | PlannedBlock
+  | { estimatedMinutes: number; followUp: RemedialFollowUp };
+
 export type RemedialWork = {
+  kept?: { mistakes: number; teaching: number };
   mistakes: readonly MistakeCandidate[];
-  teaching: readonly PlannedBlock[];
+  teaching: readonly TeachingOption[];
   dated: boolean;
-  followUps?: readonly Extract<FollowUp, { kind: "writeLesson" | "writeSecondTake" }>[];
 };
 
 function sumMinutes(blocks: readonly PlannedBlock[]): number {
@@ -172,12 +178,13 @@ function chooseTeaching({
     base.filter((block) => block.payload.reinforcement).map((block) => [block.lessonId, block]),
   );
 
-  const teaching = work.teaching.find((block) => {
-    const replacesBoss = block.lessonId && bossByLesson.get(block.lessonId);
+  const chosen = work.teaching.find((option) => {
+    const lessonId = "lessonId" in option ? option.lessonId : null;
+    const replacesBoss = lessonId && bossByLesson.get(lessonId);
 
     return (
-      !lessons.some((lesson) => block.lessonId && lesson.lessonId === block.lessonId) &&
-      block.estimatedMinutes <=
+      !lessons.some((lesson) => lessonId && lesson.lessonId === lessonId) &&
+      option.estimatedMinutes <=
         practiceMinutes +
           reviewMinutes +
           (last?.estimatedMinutes ?? 0) +
@@ -185,11 +192,13 @@ function chooseTeaching({
     );
   });
 
+  const followUp = chosen && "followUp" in chosen ? chosen.followUp : undefined;
+  const teaching = chosen && "kind" in chosen ? chosen : undefined;
   const boss = teaching?.lessonId ? bossByLesson.get(teaching.lessonId) : undefined;
 
   const teachingMinutes = (teaching?.estimatedMinutes ?? 0) - (boss?.estimatedMinutes ?? 0);
 
-  return { boss, last, teaching, teachingMinutes };
+  return { boss, followUp, last, teaching, teachingMinutes };
 }
 
 export function fundRemedialBlocks({
@@ -204,7 +213,7 @@ export function fundRemedialBlocks({
   input: SessionBuildInput;
   plannedMinutes: number;
   writingMinutes: number;
-}): { blocks: PlannedBlock[]; plannedMinutes: number } {
+}): { blocks: PlannedBlock[]; plannedMinutes: number; remedialGeneration?: RemedialFollowUp } {
   const work = input.remedial;
 
   if (!work || sumMinutes(blocks) + writingMinutes > budget || input.fullReviewSkillIds) {
@@ -219,13 +228,15 @@ export function fundRemedialBlocks({
   const practiceMinutes = sumMinutes(practice);
   const base = blocks.filter((block) => block.kind !== "review" && block.kind !== "practice");
 
-  const { boss, last, teaching, teachingMinutes } = chooseTeaching({
-    base,
-    practiceMinutes,
-    reviewMinutes: dueReview,
-    work,
-  });
+  const {
+    boss,
+    followUp,
+    last,
+    teaching,
+    teachingMinutes: newTeaching,
+  } = chooseTeaching({ base, practiceMinutes, reviewMinutes: dueReview, work });
 
+  const teachingMinutes = work.kept?.teaching ?? newTeaching;
   const remainingTeaching = Math.max(0, teachingMinutes - practiceMinutes);
   const replaceLesson = remainingTeaching > dueReview;
   const reviewForTeaching = Math.min(dueReview, remainingTeaching);
@@ -241,11 +252,19 @@ export function fundRemedialBlocks({
     work,
   });
 
-  if (!teaching && mistakes.length === 0) {
-    return { blocks, plannedMinutes };
+  const generation = followUp ? { remedialGeneration: followUp } : {};
+
+  if (!work.kept && !teaching && mistakes.length === 0) {
+    return { ...generation, blocks, plannedMinutes };
   }
 
-  const spentReview = reviewForTeaching + Math.max(0, sumMinutes(mistakes) - reviewSlack);
+  const mistakeMinutes = work.kept?.mistakes ?? sumMinutes(mistakes);
+
+  const spentReview = Math.min(
+    dueReview,
+    reviewForTeaching + Math.max(0, mistakeMinutes - reviewSlack),
+  );
+
   const keptReview = cutReview(review, spentReview);
 
   const keptPractice =
@@ -279,5 +298,12 @@ export function fundRemedialBlocks({
     }),
   ];
 
-  return { blocks: result, plannedMinutes: Math.max(plannedMinutes, sumMinutes(result)) };
+  return {
+    ...generation,
+    blocks: result,
+    plannedMinutes: Math.max(
+      plannedMinutes,
+      sumMinutes(result) + (work.kept ? work.kept.mistakes + work.kept.teaching : 0),
+    ),
+  };
 }

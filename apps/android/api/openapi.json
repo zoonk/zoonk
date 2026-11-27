@@ -20607,12 +20607,12 @@
             "in": "query",
             "name": "mockId",
             "schema": {
-              "description": "A finished mock whose mistakes can be practiced",
+              "description": "An owned finished mock. Its saved goal scopes the run.",
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
-            "description": "A finished mock whose mistakes can be practiced"
+            "description": "An owned finished mock. Its saved goal scopes the run."
           },
           {
             "in": "query",
@@ -28698,6 +28698,12 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "mockId": {
+            "description": "The finished mock for mistake practice",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
           "practiceDurationMs": {
             "type": "integer",
             "minimum": -9007199254740991,
@@ -32737,7 +32743,23 @@
             "type": "boolean"
           },
           "goalId": {
-            "description": "The goal the run practiced, when scoped",
+            "description": "The goal the run practiced. Omit for a mock run.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "includeAllFormats": {
+            "description": "Match the practice run's format filter",
+            "type": "boolean"
+          },
+          "mockId": {
+            "description": "An owned finished mock. Its saved goal scopes the run.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "skillId": {
+            "description": "Only this skill's mistakes (\"Practice this skill\"), within the goal's",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -32802,7 +32824,13 @@
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
                   "goalId": {
-                    "description": "The goal the run practiced, when scoped",
+                    "description": "The goal the run practiced. Omit for a mock run.",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "mockId": {
+                    "description": "An owned finished mock. Its saved goal scopes the run.",
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -32856,7 +32884,13 @@
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
                   "goalId": {
-                    "description": "The goal the run practiced, when scoped",
+                    "description": "The goal the run practiced. Omit for a mock run.",
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "mockId": {
+                    "description": "An owned finished mock. Its saved goal scopes the run.",
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -95897,6 +95931,10 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "hasMorePractice": {
+            "type": "boolean",
+            "description": "After the run ends, its scope has more open practice. Always false for day blocks."
+          },
           "missionMoment": {
             "nullable": true,
             "allOf": [
@@ -95924,6 +95962,7 @@
           "reached",
           "brainPower",
           "correct",
+          "hasMorePractice",
           "missionMoment",
           "seconds",
           "total"
@@ -97074,6 +97113,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "practiceAvailable": {
+            "type": "boolean",
+            "description": "The finished mock has open mistakes with usable practice material"
+          },
           "purpose": {
             "type": "string",
             "enum": [
@@ -97486,6 +97529,7 @@
           "number",
           "passMarks",
           "planItemId",
+          "practiceAvailable",
           "purpose",
           "questions",
           "reached",
@@ -97762,7 +97806,7 @@
             "type": "number"
           },
           "movedTopics": {
-            "description": "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier when it finished, soonest first; absent when nothing moved",
+            "description": "Up to three topics this mock missed that the plan hadn't taught yet and moved earlier after it finished, soonest first; absent when nothing moved",
             "minItems": 1,
             "type": "array",
             "items": {

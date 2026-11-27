@@ -7,6 +7,7 @@ const REQUIRED_MISSES = 2;
 const REQUIRED_MISS_SHARE = 0.5;
 const RIGHT_DAYS_TO_RECOVER = 2;
 const SECOND_TAKE_DELAY_DAYS = 7;
+const REPLAY_STAGE_WINDOW_DAYS = 60;
 
 export const TEACHING_MISS_CAUSES: readonly MistakeCause[] = ["gap", "trap"];
 
@@ -136,12 +137,18 @@ function hasRepeatedMisses(misses: readonly SkillSignalAttempt[]): boolean {
   return [...mockQuestions.values()].some((questions) => questions.size >= REQUIRED_MISSES);
 }
 
-function getStage({ replayedAt, secondTakeAt }: SkillTeachingHistory): SkillMistakeSignal["stage"] {
+function getStage({
+  recentReplay,
+  secondTakeAt,
+}: {
+  recentReplay: boolean;
+  secondTakeAt: Date | null;
+}): SkillMistakeSignal["stage"] {
   if (secondTakeAt) {
     return "secondTake";
   }
 
-  return replayedAt ? "replay" : "none";
+  return recentReplay ? "replay" : "none";
 }
 
 export function getSkillMistakeSignal({
@@ -173,17 +180,18 @@ export function getSkillMistakeSignal({
   const stuck =
     hasRepeatedMisses(misses) && recentMisses.length >= recent.length * REQUIRED_MISS_SHARE;
 
+  const replayAge =
+    replayedAt && latestMiss ? latestMiss.answeredAt.getTime() - replayedAt.getTime() : null;
+
+  const recentReplay =
+    replayAge !== null && replayAge >= 0 && replayAge <= REPLAY_STAGE_WINDOW_DAYS * MS_PER_DAY;
+
   return {
     ...history,
-    dueSecondTake: Boolean(
-      stuck &&
-      !secondTakeAt &&
-      replayedAt &&
-      latestMiss &&
-      latestMiss.answeredAt.getTime() >= replayedAt.getTime() + SECOND_TAKE_DELAY_DAYS * MS_PER_DAY,
-    ),
+    dueSecondTake:
+      stuck && !secondTakeAt && recentReplay && replayAge >= SECOND_TAKE_DELAY_DAYS * MS_PER_DAY,
     latestMiss,
-    stage: getStage(history),
+    stage: getStage({ recentReplay, secondTakeAt }),
     stuck,
   };
 }

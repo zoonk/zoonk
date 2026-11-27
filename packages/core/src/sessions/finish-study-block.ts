@@ -243,6 +243,7 @@ export async function finishLessonBlock({
     block: owned.block,
     brainPower: finish.brainPower,
     eventId: finish.id,
+    firstCompletion: finish.kind === "lesson",
     goalId,
     lessonId,
     timeZone: owned.timeZone,

@@ -199,6 +199,7 @@ function fundSessionChallenges(input: SessionBuildInput, budget: number) {
 export function buildSessionBlocks(day: SessionBuildInput): {
   blocks: PlannedBlock[];
   plannedMinutes: number;
+  remedialGeneration?: ReturnType<typeof fundRemedialBlocks>["remedialGeneration"];
 } {
   const input = {
     ...day,

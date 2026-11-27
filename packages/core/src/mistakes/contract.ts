@@ -29,6 +29,20 @@ export const mistakeListInputSchema = z
 
 export type MistakeListInput = z.infer<typeof mistakeListInputSchema>;
 
+const practiceScopeMessage = { message: "Choose one practice scope" };
+
+function hasOnePracticeScope({
+  blockId,
+  mockId,
+  skillId,
+}: {
+  blockId?: string;
+  mockId?: string;
+  skillId?: string;
+}) {
+  return [blockId, mockId, skillId].filter(Boolean).length <= 1;
+}
+
 export const mistakePracticeInputSchema = z
   .object({
     blockId: uuidSchema().optional().meta({ description: "The day block with frozen mistake IDs" }),
@@ -39,7 +53,7 @@ export const mistakePracticeInputSchema = z
       .optional(),
     mockId: uuidSchema()
       .optional()
-      .meta({ description: "A finished mock whose mistakes can be practiced" }),
+      .meta({ description: "An owned finished mock. Its saved goal scopes the run." }),
     skillId: uuidSchema()
       .optional()
       .meta({
@@ -48,10 +62,7 @@ export const mistakePracticeInputSchema = z
     timeZone: answerTimeZoneSchema,
   })
   .strict()
-  .refine(
-    ({ blockId, mockId, skillId }) => !(blockId && mockId) && !((blockId || mockId) && skillId),
-    { message: "Choose one practice scope" },
-  );
+  .refine(hasOnePracticeScope, practiceScopeMessage);
 
 export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 
@@ -72,9 +83,11 @@ const mistakePracticeAnswerCommon = z
         blockId: mistakePracticeInputSchema.shape.blockId,
         goalId: uuidSchema()
           .optional()
-          .meta({ description: "The goal the run practiced, when scoped" }),
+          .meta({ description: "The goal the run practiced. Omit for a mock run." }),
+        mockId: mistakePracticeInputSchema.shape.mockId,
       })
       .strict()
+      .refine(hasOnePracticeScope, practiceScopeMessage)
       .optional()
       .meta({
         description:
@@ -117,10 +130,17 @@ export const mistakePracticeFinishInputSchema = z
       .meta({ description: "True once, when the learner reached the end or stopped early" }),
     goalId: uuidSchema()
       .optional()
-      .meta({ description: "The goal the run practiced, when scoped" }),
+      .meta({ description: "The goal the run practiced. Omit for a mock run." }),
+    includeAllFormats: z
+      .boolean()
+      .optional()
+      .meta({ description: "Match the practice run's format filter" }),
+    mockId: mistakePracticeInputSchema.shape.mockId,
+    skillId: mistakePracticeInputSchema.shape.skillId,
     timeZone: answerTimeZoneSchema,
   })
   .strict()
+  .refine(hasOnePracticeScope, practiceScopeMessage)
   .refine(({ answerIds, blockId }) => answerIds.length > 0 || Boolean(blockId), {
     message: "Send at least one answer or a practice block",
     path: ["answerIds"],

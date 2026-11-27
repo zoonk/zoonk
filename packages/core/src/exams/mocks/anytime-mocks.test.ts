@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -489,6 +490,37 @@ describe("mocks taken any time", () => {
     const sitting = await prisma.mockExam.findFirstOrThrow({ where: { goalId: goal.id } });
 
     await expect(readMock(id)).resolves.toMatchObject({ mockId: sitting.id });
+  });
+
+  it("keeps a right answer to a known notebook question from becoming independent evidence", async () => {
+    const { goal, user } = await anytimeSetup();
+    const id = await startMath(goal.id);
+    const running = await readMock(id);
+    const question = running.current?.questions[0];
+
+    if (!question || !running.mockId) {
+      throw new Error("Expected a question from an active mock");
+    }
+
+    await mistakeFixture({
+      createdAt: daysAgo(2),
+      itemId: question.itemId,
+      skillId: question.skillId,
+      snapshot: { answer: "Wrong answer", question: question.question },
+      userId: user.id,
+    });
+
+    await answerSection({ id, rightOn: new Set([question.skillId]) });
+
+    await expect(finishMock({ blockId: id, input: { timeZone: UTC } })).resolves.toStrictEqual({
+      status: "finished",
+    });
+
+    await expect(
+      prisma.attempt.findFirst({
+        where: { itemId: question.itemId, mockExamId: running.mockId, userId: user.id },
+      }),
+    ).resolves.toMatchObject({ evidence: "replay", isCorrect: true });
   });
 
   it("compares a mock with the last one of the same part of the exam", async () => {

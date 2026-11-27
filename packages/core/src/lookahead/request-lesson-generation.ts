@@ -38,12 +38,14 @@ async function getActiveGoal(userId: string) {
 }
 
 async function requestFor({
+  allowSecondTake = false,
   claim,
   identityKey,
   lessonId,
   platform,
   userId,
 }: {
+  allowSecondTake?: boolean;
   claim: (input: Parameters<typeof claimUsage>[0]) => Promise<UsageDecision>;
   identityKey: string;
   lessonId: string;
@@ -69,7 +71,7 @@ async function requestFor({
     return { status: "setAside" };
   }
 
-  if (isSecondTakeIdentityKey(identityKey)) {
+  if (!allowSecondTake && isSecondTakeIdentityKey(identityKey)) {
     return { status: "notFound" };
   }
 
@@ -116,9 +118,11 @@ export async function requestLessonGeneration({
 
 /** Internal preparation reserves work, not a learner start; `userId` comes from the write that owes it. */
 export async function requestLessonGenerationFor({
+  allowSecondTake,
   lessonId,
   userId,
 }: {
+  allowSecondTake?: boolean;
   lessonId: string;
   userId: string;
 }): Promise<LessonGenerationRequest> {
@@ -132,6 +136,7 @@ export async function requestLessonGenerationFor({
   }
 
   return requestFor({
+    allowSecondTake,
     claim: (input) => claimUsageFor({ ...input, userId }),
     identityKey: lesson.identityKey,
     lessonId,

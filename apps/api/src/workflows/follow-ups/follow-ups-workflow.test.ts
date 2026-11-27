@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { FREE_LESSON_LIMIT } from "@zoonk/core/entitlements/limits";
 import { PlanConflictError } from "@zoonk/core/plans/conflict";
 import { refreshPlanSuggestion } from "@zoonk/core/plans/refresh-suggestion";
 import { refreshOwedStudyDay } from "@zoonk/core/sessions/refresh-owed-day";
@@ -110,11 +111,64 @@ describe(followUpsWorkflow, () => {
 
     expect(getStartMock()).toHaveBeenCalledExactlyOnceWith(
       lessonContentWorkflow,
-      [{ lessonId: secondTake.id, wait: "soon" }],
+      [
+        expect.objectContaining({
+          analytics: expect.objectContaining({ distinctId: user.id }),
+          lessonId: secondTake.id,
+          remedial: true,
+          wait: "learner",
+        }),
+      ],
       { experimental_hook: { token: getLessonContentHookToken(secondTake.id) } },
     );
 
+    await expect(
+      prisma.usageRecord.count({
+        where: { generated: true, targetId: secondTake.id, userId: user.id },
+      }),
+    ).resolves.toBe(1);
+
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("starts no paid second-take work when the learner has used their lesson allowance", async () => {
+    const [user, skill, original] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      libraryLessonFixture({
+        contentStatus: "completed",
+        summary: { ideas: [{ text: "The denominator names the size of each equal part." }] },
+      }),
+    ]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: original.id, skillId: skill.id }),
+      libraryStepFixture({ lessonId: original.id, skillId: skill.id }),
+      prisma.usageRecord.createMany({
+        data: Array.from({ length: FREE_LESSON_LIMIT }, () => ({
+          countedAt: new Date(),
+          kind: "lessonStart",
+          targetId: randomUUID(),
+          userId: user.id,
+        })),
+      }),
+      prisma.followUp.create({
+        data: {
+          input: { skillId: skill.id, userId: user.id },
+          key: skill.id,
+          kind: "writeSecondTake",
+          userId: user.id,
+        },
+      }),
+    ]);
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.usageRecord.count({ where: { generated: true, userId: user.id } }),
+    ).resolves.toBe(0);
   });
 
   it("starts the word orders an approved sentence fix owes at once", async () => {

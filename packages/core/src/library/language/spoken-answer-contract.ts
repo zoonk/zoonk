@@ -51,6 +51,7 @@ export const spokenAnswerFieldsSchema = z
       .meta({ description: "How long the learner spoke, in milliseconds" }),
     goalId: uuidSchema().optional(),
     mistakeId: uuidSchema().optional(),
+    mockId: uuidSchema().optional().meta({ description: "The finished mock for mistake practice" }),
     practiceDurationMs: z.coerce.number().int().pipe(answerDurationSchema).optional(),
     studySessionId: uuidSchema().optional().meta({ description: "Today's study session, if any" }),
     timeZone: answerTimeZoneSchema,

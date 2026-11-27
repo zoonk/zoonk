@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -9,6 +10,8 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getMock } from "../exams/mocks/get-mock";
+import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { finishStudyBlock } from "../sessions/finish-study-block";
@@ -103,12 +106,36 @@ describe("Scoped mistake practice", () => {
   it("includes a finished mock miss that reused an older notebook entry", async () => {
     const user = await userFixture();
 
-    const [skill, mock] = await Promise.all([
+    const [skill, goal, otherGoal] = await Promise.all([
       skillFixture(),
-      prisma.mockExam.create({
-        data: { conditions: {}, sectionStartedAt: new Date(), status: "finished", userId: user.id },
-      }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
     ]);
+
+    const mock = await prisma.mockExam.create({
+      data: {
+        conditions: mockConditionsSchema.parse({
+          day: null,
+          examQuestions: null,
+          fullLength: true,
+          partialCredit: "allOrNothing",
+          purpose: "practice",
+          reused: 0,
+          scoring: "raw",
+          sections: [],
+          shape: null,
+          startTime: null,
+          timeZone: "UTC",
+          timedOutSections: [],
+          wrongPenalty: 0,
+        }),
+        finishedAt: new Date(),
+        goalId: goal.id,
+        sectionStartedAt: new Date(),
+        status: "finished",
+        userId: user.id,
+      },
+    });
 
     const row = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
     const item = parseChoiceItem(row);
@@ -133,15 +160,103 @@ describe("Scoped mistake practice", () => {
     };
 
     const earlier = await recordLearnerAnswer(miss);
+
+    await Promise.all([
+      prisma.mistake.update({ data: { cause: "gap" }, where: { id: earlier.mistake!.id } }),
+      attemptFixture({ isCorrect: true, itemId: item.id, skillId: skill.id, userId: user.id }),
+      attemptFixture({ isCorrect: true, itemId: item.id, skillId: skill.id, userId: user.id }),
+    ]);
+
     const later = await recordLearnerAnswer({ ...miss, mockExamId: mock.id });
+    expect(later.attempt.cause).toBe("gap");
     expect(later.mistake?.id).toBe(earlier.mistake?.id);
 
     mockSession(user.id);
-    const scoped = await getMistakePractice({ mockId: mock.id });
+    const scoped = await getMistakePractice({ goalId: otherGoal.id, mockId: mock.id });
 
     expect(
       scoped.status === "ready" && scoped.practice.map((entry) => entry.mistakeId),
     ).toStrictEqual([earlier.mistake?.id]);
+
+    await expect(getMock(mock.id)).resolves.toMatchObject({
+      mock: { practiceAvailable: true },
+      status: "ready",
+    });
+
+    await prisma.mistake.update({
+      data: { missedAt: new Date(0) },
+      where: { id: earlier.mistake!.id },
+    });
+
+    const answered = await answerMistakePractice({
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 4000,
+        itemId: item.id,
+        run: { answerIds: [], mockId: mock.id },
+        timeZone: "UTC",
+      },
+      mistakeId: earlier.mistake!.id,
+    });
+
+    if (answered.status !== "ready") {
+      throw new Error(answered.status);
+    }
+
+    expect(answered.feedback.fixed).toBe(true);
+
+    await expect(
+      finishMistakePractice({
+        answerIds: [answered.feedback.answerId],
+        ended: true,
+        mockId: mock.id,
+        timeZone: "UTC",
+      }),
+    ).resolves.toMatchObject({ result: { hasMorePractice: false, total: 1 }, status: "ready" });
+
+    await expect(
+      prisma.learningEvent.findFirst({ where: { lessonKind: "mistakePractice", userId: user.id } }),
+    ).resolves.toMatchObject({ goalId: goal.id });
+
+    await expect(getMock(mock.id)).resolves.toMatchObject({
+      mock: { practiceAvailable: false },
+      status: "ready",
+    });
+  });
+
+  it("offers another notebook batch while a different question remains open", async () => {
+    const user = await userFixture();
+    const [first, next] = await questions(user.id);
+
+    await prisma.mistake.update({
+      data: { missedAt: new Date(0) },
+      where: { id: first!.mistake.id },
+    });
+
+    mockSession(user.id);
+
+    const answered = await answerMistakePractice({
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 4000,
+        itemId: first!.item.id,
+        timeZone: "UTC",
+      },
+      mistakeId: first!.mistake.id,
+    });
+
+    if (answered.status !== "ready") {
+      throw new Error(answered.status);
+    }
+
+    await expect(
+      finishMistakePractice({
+        answerIds: [answered.feedback.answerId],
+        ended: true,
+        skillId: next!.mistake.skillId ?? undefined,
+        timeZone: "UTC",
+      }),
+    ).resolves.toMatchObject({ result: { hasMorePractice: true }, status: "ready" });
   });
 
   it("returns only an owned finished mock's mistakes, including today's", async () => {

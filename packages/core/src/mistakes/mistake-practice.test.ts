@@ -515,11 +515,7 @@ describe(answerMistakePractice, () => {
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
     ]);
 
-    expect(
-      attempts.filter(
-        ({ answer }) => !(answer && typeof answer === "object" && "practiceCredit" in answer),
-      ),
-    ).toHaveLength(1);
+    expect(attempts.filter(({ evidence }) => evidence === "replay")).toHaveLength(1);
 
     expect(skillStates).toMatchObject([{ reps: 1 }]);
     expect(runs.map((run) => run.correctAnswers + run.incorrectAnswers)).toStrictEqual([1]);

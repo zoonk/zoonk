@@ -1,17 +1,18 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { evaluateUsage } from "../../entitlements/_utils/evaluate-usage";
-import { countUsage } from "../../entitlements/_utils/usage-counts";
-import { getEstimatedCostMicros } from "../../entitlements/limits";
-import { type FollowUp } from "../../follow-ups/follow-up-contract";
+import { canStartUsage } from "../../entitlements/_utils/check-usage";
 import { type readSkillMistakeSignals } from "../../learner/read-skill-mistake-signals";
 import { type SkillMistakeSignal } from "../../learner/skill-mistake-signal";
 import { NOT_A_CAPSULE } from "../../lesson-player/_utils/lesson-runs";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
-import { isQuickLessonIdentityKey } from "../../library/quick-lessons/quick-lesson-identity";
+import {
+  QUICK_LESSON_MINUTES,
+  isQuickLessonIdentityKey,
+} from "../../library/quick-lessons/quick-lesson-identity";
 import { findSecondTakes } from "../../library/second-takes/find-second-takes";
 import {
+  SECOND_TAKE_MINUTES,
   getSecondTakeIdentityKey,
   isSecondTakeIdentityKey,
 } from "../../library/second-takes/second-take-identity";
@@ -19,11 +20,11 @@ import { toMinutes } from "../block-minutes";
 import { toBlockPayload } from "../block-payload";
 import { type PlannedBlock } from "../session-builder";
 import { type loadDayPlan } from "./day-plan";
+import { type TeachingOption } from "./remedial-blocks";
 import { type SessionDayContext } from "./session-placement";
 
 type Signals = Awaited<ReturnType<typeof readSkillMistakeSignals>>;
 type DayPlan = Awaited<ReturnType<typeof loadDayPlan>>;
-type RemedialFollowUp = Extract<FollowUp, { kind: "writeLesson" | "writeSecondTake" }>;
 
 function isTeachingDue(signal: SkillMistakeSignal) {
   return signal.stuck && (signal.stage === "none" || signal.dueSecondTake);
@@ -89,30 +90,24 @@ async function loadLessonStarts({
   tier,
   userId,
 }: Pick<SessionDayContext, "now" | "userId"> & { lessonIds: string[]; tier: DayPlan["tier"] }) {
-  const [count, claimed] = await Promise.all([
-    countUsage({ client: prisma, kind: "lessonStart", now, userId }),
+  const [allowed, claimed] = await Promise.all([
+    canStartUsage({
+      kind: "lessonStart",
+      now,
+      viewer: { isGuest: tier === "guest", tier, userId },
+    }),
     prisma.usageRecord.findMany({
       select: { countedAt: true, targetId: true },
       where: { kind: "lessonStart", targetId: { in: lessonIds }, userId },
     }),
   ]);
 
-  const allowed =
-    evaluateUsage({
-      costMicros: getEstimatedCostMicros({ generated: false, kind: "lessonStart" }),
-      counts: count,
-      generated: false,
-      kind: "lessonStart",
-      now,
-      tier,
-    }).status === "allowed";
-
   return (lessonId: string) =>
     allowed ||
     claimed.some((row) => row.targetId === lessonId && (row.countedAt || tier !== "free"));
 }
 
-export type TeachingCandidate = { block: PlannedBlock; missedAt: number; weight: number };
+export type TeachingCandidate = { option: TeachingOption; missedAt: number; weight: number };
 
 export async function loadTeaching({
   context,
@@ -124,13 +119,13 @@ export async function loadTeaching({
   signals: Signals;
   tier: DayPlan["tier"];
   weights: ReadonlyMap<string, number>;
-}): Promise<{ followUps: RemedialFollowUp[]; teaching: TeachingCandidate[] }> {
+}): Promise<TeachingCandidate[]> {
   const { now, userId } = context;
 
   const ranked = [...signals].filter(([, signal]) => isTeachingDue(signal));
 
   if (ranked.length === 0) {
-    return { followUps: [], teaching: [] };
+    return [];
   }
 
   const [lessons, skills, secondTakes] = await Promise.all([
@@ -178,37 +173,34 @@ export async function loadTeaching({
       ? await loadLessonStarts({ lessonIds: lessons.map(({ id }) => id), now, tier, userId })
       : () => false;
 
-  const choices = ranked.flatMap(([skillId, signal]) => {
+  return ranked.flatMap(([skillId, signal]) => {
     const ownerId = ownerBySkill.get(skillId);
 
     if (ownerId === undefined) {
       return [];
     }
 
-    return [
-      {
-        ...chooseRemedialLesson({
-          finished,
-          lessons,
-          ownerId,
-          secondTakes,
-          signal,
-          skillId,
-          startable,
-          userId,
-        }),
-        missedAt: signal.latestMiss?.answeredAt.getTime() ?? 0,
-        weight: weights.get(skillId) ?? 0,
-      },
-    ];
-  });
+    const option = chooseRemedialLesson({
+      finished,
+      lessons,
+      ownerId,
+      secondTakes,
+      signal,
+      skillId,
+      startable,
+      userId,
+    });
 
-  return {
-    followUps: choices.flatMap(({ followUp }) => followUp ?? []),
-    teaching: choices.flatMap(({ block, missedAt, weight }) =>
-      block ? [{ block, missedAt, weight }] : [],
-    ),
-  };
+    return option
+      ? [
+          {
+            missedAt: signal.latestMiss?.answeredAt.getTime() ?? 0,
+            option,
+            weight: weights.get(skillId) ?? 0,
+          },
+        ]
+      : [];
+  });
 }
 
 function isWritten(lesson: TeachingLesson | undefined): lesson is TeachingLesson {
@@ -216,11 +208,7 @@ function isWritten(lesson: TeachingLesson | undefined): lesson is TeachingLesson
 }
 
 function needsSecondTakeWriting(lesson: TeachingLesson | undefined) {
-  return (
-    !lesson ||
-    (!lesson.setAsideAt &&
-      (lesson.contentStatus === "pending" || lesson.contentStatus === "failed"))
-  );
+  return !lesson || (!lesson.setAsideAt && lesson.contentStatus === "pending");
 }
 
 function chooseRemedialLesson({
@@ -241,7 +229,7 @@ function chooseRemedialLesson({
   skillId: string;
   startable: (lessonId: string) => boolean;
   userId: string;
-}): { block?: PlannedBlock; followUp?: RemedialFollowUp } {
+}): TeachingOption | undefined {
   const forSkill = lessons.filter((lesson) =>
     lesson.skills.some((link) => link.skillId === skillId),
   );
@@ -258,34 +246,35 @@ function chooseRemedialLesson({
     const alternative = alternatives.find((lesson) => isWritten(lesson));
 
     if (alternative) {
-      return startable(alternative.id) ? { block: toTeachingBlock(alternative, "anotherWay") } : {};
+      return startable(alternative.id) ? toTeachingBlock(alternative, "anotherWay") : undefined;
     }
 
     const ready = secondTakes.get(skillId);
 
     if (ready) {
       return startable(ready.lessonId)
-        ? {
-            block: toTeachingBlock(
-              {
-                canDo: null,
-                estimatedMinutes: ready.estimatedMinutes,
-                id: ready.lessonId,
-                skills: [{ skillId }],
-                title: ready.title,
-              },
-              "anotherWay",
-            ),
-          }
-        : {};
+        ? toTeachingBlock(
+            {
+              canDo: null,
+              estimatedMinutes: ready.estimatedMinutes,
+              id: ready.lessonId,
+              skills: [{ skillId }],
+              title: ready.title,
+            },
+            "anotherWay",
+          )
+        : undefined;
     }
 
     const identity = getSecondTakeIdentityKey({ ownerId, skillId });
     const writing = forSkill.find((lesson) => lesson.identityKey === identity);
 
     return alternatives.length === 0 && needsSecondTakeWriting(writing)
-      ? { followUp: { input: { skillId, userId }, kind: "writeSecondTake" } }
-      : {};
+      ? {
+          estimatedMinutes: SECOND_TAKE_MINUTES,
+          followUp: { input: { skillId, userId }, kind: "writeSecondTake" },
+        }
+      : undefined;
   }
 
   const origin = findOriginLesson({ latestMiss: signal.latestMiss, lessons });
@@ -297,7 +286,7 @@ function chooseRemedialLesson({
     (isWritten(quick) ? quick : undefined);
 
   if (chosen && (finished.has(chosen.id) || startable(chosen.id))) {
-    return { block: toTeachingBlock(chosen, finished.has(chosen.id) ? "again" : "missed") };
+    return toTeachingBlock(chosen, finished.has(chosen.id) ? "again" : "missed");
   }
 
   const needsQuickLesson = quick
@@ -305,8 +294,11 @@ function chooseRemedialLesson({
     : ordinary.length === 0;
 
   return !chosen && needsQuickLesson
-    ? { followUp: { input: { quickSkillId: skillId }, kind: "writeLesson" } }
-    : {};
+    ? {
+        estimatedMinutes: QUICK_LESSON_MINUTES,
+        followUp: { input: { quickSkillId: skillId }, kind: "writeLesson" },
+      }
+    : undefined;
 }
 
 function findOriginLesson({
