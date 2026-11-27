@@ -1,11 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mockSession } from "../../_test-utils/mock-session";
 import { createGoalPlan } from "../create-goal-plan";
 import { parsePlanPhases } from "../planner/plan-state";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
-
-const DAY = 86_400_000;
 
 export async function readPlan(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({
@@ -26,7 +25,7 @@ export async function readPlan(planId: string) {
 }
 
 function twoDaysLater(day: string): string {
-  return new Date(Date.parse(`${day}T00:00:00Z`) + 2 * DAY).toISOString().slice(0, 10);
+  return new Date(Date.parse(`${day}T00:00:00Z`) + 2 * MS_PER_DAY).toISOString().slice(0, 10);
 }
 
 /** Starts on Monday, September 28, 2020. */

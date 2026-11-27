@@ -39,6 +39,7 @@ import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.keptWhole
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.findCodeFenceLines
 import com.zoonk.android.ui.richtext.findMarkdownTableLines
@@ -133,7 +134,7 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** A question as a TalkBack heading, with any table of data or code above it. */
+/** A question as a TalkBack heading, with any table of data or code above it; a reveal scrolls it away whole ([keptWhole]). */
 @Composable
 fun QuestionText(text: String) {
     val (data, question) = remember(text) { splitQuestionData(text) }
@@ -142,7 +143,7 @@ fun QuestionText(text: String) {
     if (question.isNotBlank()) {
         RichText(
             text = question,
-            modifier = Modifier.semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
+            modifier = Modifier.keptWhole().semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
                 MaterialTheme.typography.titleLarge
                     .copy(fontWeight = FontWeight.SemiBold)

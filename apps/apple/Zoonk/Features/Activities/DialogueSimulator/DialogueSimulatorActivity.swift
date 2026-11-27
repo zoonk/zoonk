@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let dialogueSimulator = ActivityRenderer(
     template: "dialogueSimulator",
     grade: ActivityExpectedAnswer.grader(DialogueFields.self) { $0.expected }
-  ) { context in
-    if let fields = try? context.fields(as: DialogueFields.self) {
-      DialogueCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    DialogueCanvas(fields: fields, context: context)
   }
 }
 

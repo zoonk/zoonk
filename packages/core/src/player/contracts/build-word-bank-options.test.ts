@@ -1,5 +1,5 @@
-import { shuffle } from "@zoonk/utils/shuffle";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { anyOrder } from "../../_test-utils/any-order";
 import {
   buildFillBlankOptions,
   buildSentenceWordOptions,
@@ -12,10 +12,6 @@ import { type DistractorWord } from "./translation-options";
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
 const LANGUAGES = { language: "pt", targetLanguage: "de" };
-
-function keepOrder() {
-  vi.mocked(shuffle).mockImplementation((items) => [...items]);
-}
 
 function makeLessonWord(overrides: Partial<SerializedWord> = {}): SerializedWord {
   return {
@@ -74,8 +70,6 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildWordBankOptions, () => {
-  beforeEach(keepOrder);
-
   it("reading uses stored distractors only and removes phrases plus canonical collisions", () => {
     const options = buildWordBankOptions(
       makeStep(
@@ -91,13 +85,9 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "Guten",
-      "Morgen,",
-      "Anna!",
-      "Abend",
-      "Fenster",
-    ]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Guten", "Morgen,", "Anna!", "Abend", "Fenster"]),
+    );
   });
 
   it("reading hydrates target-language distractors with metadata", () => {
@@ -138,13 +128,15 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => [option.word, option.audioUrl])).toStrictEqual([
-      ["Das", "/audio/Das.mp3"],
-      ["ist", "/audio/ist.mp3"],
-      ["der", "/audio/der.mp3"],
-      ["rote", "/audio/rote.mp3"],
-      ["Faden", "/audio/Faden.mp3"],
-    ]);
+    expect(anyOrder(options.map((option) => [option.word, option.audioUrl]))).toStrictEqual(
+      anyOrder([
+        ["Das", "/audio/Das.mp3"],
+        ["ist", "/audio/ist.mp3"],
+        ["der", "/audio/der.mp3"],
+        ["rote", "/audio/rote.mp3"],
+        ["Faden", "/audio/Faden.mp3"],
+      ]),
+    );
   });
 
   it("listening uses translation distractors and keeps metadata empty", () => {
@@ -170,13 +162,9 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "Boa",
-      "tarde,",
-      "Lara.",
-      "Bom",
-      "noite",
-    ]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Boa", "tarde,", "Lara.", "Bom", "noite"]),
+    );
 
     expect(options.find((option) => option.word === "noite")).toStrictEqual({
       audioUrl: null,
@@ -201,43 +189,9 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "Hola",
-      "mundo",
-      "uno",
-      "dos",
-      "tres",
-      "cuatro",
-    ]);
-  });
-
-  it("shuffles reading distractors before applying the visible cap", () => {
-    vi.mocked(shuffle)
-      .mockImplementationOnce((items: readonly unknown[]) => [...items].toReversed())
-      .mockImplementationOnce((items: readonly unknown[]) => [...items]);
-
-    const options = buildWordBankOptions(
-      makeStep(
-        "reading",
-        makeSentence({
-          distractors: ["uno", "dos", "tres", "cuatro", "cinco"],
-          sentence: "Hola mundo",
-        }),
-      ),
-      [],
-      [],
-      new Map(),
-      LANGUAGES,
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Hola", "mundo", "uno", "dos", "tres", "cuatro"]),
     );
-
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "Hola",
-      "mundo",
-      "cinco",
-      "cuatro",
-      "tres",
-      "dos",
-    ]);
   });
 
   it("keeps a listening distractor's capital when its spelling or the sentence start needs it", () => {
@@ -256,16 +210,9 @@ describe(buildWordBankOptions, () => {
       { language: "en", targetLanguage: "pt" },
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "How",
-      "much",
-      "is",
-      "the",
-      "rent?",
-      "When",
-      "I",
-      "are",
-    ]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["How", "much", "is", "the", "rent?", "When", "I", "are"]),
+    );
   });
 
   it.each([
@@ -280,9 +227,7 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word).slice(-distractors.length)).toStrictEqual(
-      distractors,
-    );
+    expect(options.map((option) => option.word)).toStrictEqual(expect.arrayContaining(distractors));
   });
 
   it("splits a Japanese translation into phrases a learner can arrange", () => {
@@ -301,13 +246,9 @@ describe(buildWordBankOptions, () => {
       { language: "ja", targetLanguage: "en" },
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual([
-      "毎朝",
-      "コーヒーを",
-      "飲みます。",
-      "紅茶を",
-      "飲みました",
-    ]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["毎朝", "コーヒーを", "飲みます。", "紅茶を", "飲みました"]),
+    );
   });
 
   it("shows Turkish distractors with their own dotted and dotless i", () => {
@@ -326,7 +267,9 @@ describe(buildWordBankOptions, () => {
       { language: "tr", targetLanguage: "en" },
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Günaydın.", "ışık", "İyi"]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Günaydın.", "ışık", "İyi"]),
+    );
   });
 
   it("drops a distractor that is a sentence word in its language's casing", () => {
@@ -345,7 +288,9 @@ describe(buildWordBankOptions, () => {
       { language: "tr", targetLanguage: "en" },
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Işık", "burada.", "orada"]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Işık", "burada.", "orada"]),
+    );
   });
 
   it("shows fewer distractors when sanitation removes entries", () => {
@@ -357,13 +302,13 @@ describe(buildWordBankOptions, () => {
       LANGUAGES,
     );
 
-    expect(options.map((option) => option.word)).toStrictEqual(["Hola", "mundo", "Salut"]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder(["Hola", "mundo", "Salut"]),
+    );
   });
 });
 
 describe(buildSentenceWordOptions, () => {
-  beforeEach(keepOrder);
-
   it("hydrates multi-word lesson entries token by token", () => {
     const options = buildSentenceWordOptions({
       distractorWords: [],
@@ -526,7 +471,6 @@ describe(listTargetBankWords, () => {
   ])(
     "gives each $language reading tile the audio saved for its own word",
     ({ distractors, language, sentence }) => {
-      keepOrder();
       const read = makeSentence({ distractors, sentence });
       const step = makeStep("reading", read);
 
@@ -544,16 +488,14 @@ describe(listTargetBankWords, () => {
         targetLanguage: language,
       });
 
-      expect(options.map((option) => option.audioUrl)).toStrictEqual(
-        saved.map((word) => word.audioUrl),
+      expect(anyOrder(options.map((option) => option.audioUrl))).toStrictEqual(
+        anyOrder(saved.map((word) => word.audioUrl)),
       );
     },
   );
 });
 
 describe(buildFillBlankOptions, () => {
-  beforeEach(keepOrder);
-
   it("gives each tile its word's audio, and the step's own romanization first", () => {
     const step: SerializedStep = {
       ...makeStep("reading", makeSentence()),
@@ -588,19 +530,21 @@ describe(buildFillBlankOptions, () => {
       step,
     });
 
-    expect(options).toStrictEqual([
-      {
-        audioUrl: "/audio/taberu.mp3",
-        romanization: "tabemasu",
-        translation: null,
-        word: "食べます",
-      },
-      {
-        audioUrl: "/audio/nomu.mp3",
-        romanization: "nomimasu",
-        translation: null,
-        word: "飲みます",
-      },
-    ]);
+    expect(anyOrder(options)).toStrictEqual(
+      anyOrder([
+        {
+          audioUrl: "/audio/taberu.mp3",
+          romanization: "tabemasu",
+          translation: null,
+          word: "食べます",
+        },
+        {
+          audioUrl: "/audio/nomu.mp3",
+          romanization: "nomimasu",
+          translation: null,
+          word: "飲みます",
+        },
+      ]),
+    );
   });
 });

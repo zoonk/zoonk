@@ -2,6 +2,10 @@
   "name": "@zoonk/db",
   "private": true,
   "type": "module",
+  "imports": {
+    "#local-database": "./src/local-database.ts",
+    "#local-database-names": "./src/local-database-names.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./anonymous-records": "./src/anonymous-records.ts",
@@ -9,6 +13,7 @@
     "./enums": "./src/generated/prisma/enums.ts",
     "./learner-writes": "./src/learner-writes.ts",
     "./live-call-enums": "./src/live-call-enums.ts",
+    "./lesson-answer": "./src/lesson-answer.ts",
     "./local-database": "./src/local-database.ts",
     "./schema": "./src/schema.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",
@@ -28,8 +33,8 @@
     "db:seed": "prisma db seed",
     "db:seed:e2e": "node ../../scripts/run-test-env.mts e2e prisma db seed",
     "prisma:seed": "tsx src/prisma/seed.ts && pnpm --filter @zoonk/core seed",
-    "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate deploy",
-    "db:setup:test": "node ../../scripts/run-test-env.mts test prisma migrate deploy",
+    "db:setup:e2e": "node ../../scripts/run-test-env.mts e2e --quiet-on-success prisma migrate deploy",
+    "db:setup:test": "node ../../scripts/run-test-env.mts test --quiet-on-success prisma migrate deploy",
     "db:studio": "prisma studio",
     "typecheck": "tsrs --noEmit"
   },
@@ -38,7 +43,8 @@
     "@prisma/client": "7.10.1",
     "@vercel/functions": "catalog:",
     "@zoonk/utils": "workspace:*",
-    "pg": "8.23.1"
+    "pg": "8.23.1",
+    "pg-connection-string": "2.14.1"
   },
   "devDependencies": {
     "@prisma/generator-helper": "7.10.1",

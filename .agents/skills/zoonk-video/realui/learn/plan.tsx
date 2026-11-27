@@ -26,9 +26,10 @@ import {
   LearnShellContent,
   LearnShellMain,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
+import { namesModules } from "@repo/packages/learn/src/syllabus/names-modules.ts";
 import { SubjectScreen } from "@repo/packages/learn/src/syllabus/subject-screen.tsx";
 import { toSyllabusSection } from "@repo/packages/learn/src/syllabus/syllabus-section-view.ts";
-import { AskTutor } from "@repo/packages/player/src/questions/ask-tutor.tsx";
+import { AskTutorEntry, AskTutorScope } from "@repo/packages/player/src/questions/ask-tutor.tsx";
 import { useEffect, useMemo, type ReactNode } from "react";
 import { ADAPTERS, CAREER_GOAL_ID, LEARN_GOAL_ID, S, TabShell, ZU, type ViewProps } from "./common";
 
@@ -69,12 +70,24 @@ function buildWeek({
     const date = addDays(WEEK_START, offset);
     const weekend = offset >= 5;
     const studies = date >= TODAY && (weekends || !weekend);
+    const isToday = date === TODAY;
     return {
       date,
       items: [],
       minutes: studies ? minutes : 0,
       mockFunding: null,
-      state: date === TODAY ? "today" : studies ? "upcoming" : "rest",
+      state: isToday ? "today" : studies ? "upcoming" : "rest",
+      study: {
+        completed: 0,
+        date,
+        goalMinutes: studies ? minutes : 0,
+        hitGoal: false,
+        isToday,
+        kind: studies ? "study" : date < TODAY ? "beforeStart" : "rest",
+        minutes: 0,
+        studied: false,
+        total: 0,
+      },
     };
   });
 
@@ -165,6 +178,7 @@ function basePlan(input: {
     planId: `plan-${input.goalId}`,
     ready: true,
     shortPlan: null,
+    suggestedTime: null,
     schedule: {
       dailyMinutes: input.minutes,
       dailyTimes: [15, 30, 45, 60, 90, 120],
@@ -285,6 +299,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
     return {
       areas: [module.name],
       chapters: [],
+      covers: "covers" in module ? [...module.covers] : [],
       displayWeight: null,
       group: null,
       imageUrl: null,
@@ -390,6 +405,7 @@ export const ACTIONS = {
   decide: async () => true,
   findTimeToCover: async () => null,
   preview: async () => null,
+  readPlanAgain: () => {},
 };
 
 const LINKS: JourneyLinks = {
@@ -399,8 +415,11 @@ const LINKS: JourneyLinks = {
   course: () => "/courses",
   exam: null,
   focusTest: "/focus-test",
+  levelTest: "/level-test",
   logbook: "/logbook",
   mindMaps: null,
+  placementTest: "/placement-test",
+  savedLessons: null,
   subject: (key) => `/plan/${key}`,
 };
 
@@ -542,13 +561,20 @@ function CareerModulePage({ lang }: { lang: "en" | "pt" }) {
 
   return (
     <PushedShell>
-      <SubjectScreen
-        actions={{ restore: async () => true, setWrittenCadence: async () => true }}
-        ask={<AskTutor size="bar" target={target} tutor={tutor} />}
-        hrefs={{ adjust: "/plan", back: "/plan", chapter: (id) => `/content/chapters/${id}` }}
-        subject={subject}
-        syllabus={syllabus}
-      />
+      <AskTutorScope isModule={namesModules(syllabus.goal.kind)} target={target} tutor={tutor}>
+        <SubjectScreen
+          actions={{ restore: async () => true, setWrittenCadence: async () => true }}
+          ask={<AskTutorEntry size="bar" />}
+          hrefs={{
+            adjust: "/plan",
+            back: "/plan",
+            chapter: (id) => `/content/chapters/${id}`,
+            essay: (id) => `/essay/${id}`,
+          }}
+          subject={subject}
+          syllabus={syllabus}
+        />
+      </AskTutorScope>
     </PushedShell>
   );
 }
@@ -570,7 +596,7 @@ function CareerPlan({
         id: CAREER_GOAL_ID,
         kind: "learn",
         targetDate: career.date,
-        title: career.title,
+        displayName: career.title,
       }}
       tab="journey"
     >
@@ -614,7 +640,7 @@ function PlanLearnView({ lang, q, state }: ViewProps) {
         id: LEARN_GOAL_ID,
         kind: "learn",
         targetDate: null,
-        title: learn.title,
+        displayName: learn.title,
       }}
       tab="journey"
     >

@@ -82,15 +82,13 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
         title={t("Turn off email reminders")}
       />
 
-      <form action={() => turnOff()} className="contents">
-        <BottomBar>
-          <BottomBarActions>
-            <EnterButton busy={isPending} type="submit">
-              {t("Turn off")}
-            </EnterButton>
-          </BottomBarActions>
-        </BottomBar>
-      </form>
+      <BottomBar>
+        <BottomBarActions>
+          <EnterButton busy={isPending} onClick={turnOff}>
+            {t("Turn off")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
     </>
   );
 }

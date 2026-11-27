@@ -1,10 +1,7 @@
 {{!
-OpenAPI Generator 7.27.0's kotlin-client/data_class.mustache, giving a model's inner number enum
-(an inline `anyOf` of number literals, like `plays: 1 | 2`, which api/build.gradle.kts maps to
-kotlin.Double) the value serializer it gives an inline integer enum: the generator skips every
-`type: number` enum, so kotlinx.serialization reads and writes its @SerialName ("1.0"), the
-server's `1` doesn't decode and requests send a string. Nothing else differs.
-https://github.com/OpenAPITools/openapi-generator/issues/25588
+OpenAPI Generator 7.27.0's kotlin-client/data_class.mustache. Nest the fallback serializer so
+Kotlin identifiers escaped with backticks can reference it. Union tags must still reject a
+sibling branch's value when two branches have the same shape.
 }}
 {{^multiplatform}}
 {{#gson}}
@@ -45,6 +42,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Contextual
 {{#enumUnknownDefaultCase}}
 import kotlinx.serialization.KSerializer
+import com.zoonk.api.unknownApiEnum
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
@@ -158,7 +156,7 @@ import {{packageName}}.infrastructure.ITransformForStorage
      */
     {{^multiplatform}}
     {{#kotlinx_serialization}}
-    {{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{#enumUnknownDefaultCase}}(with = {{{nameInPascalCase}}}Serializer::class){{/enumUnknownDefaultCase}}{{/serializableModel}}{{^enumUnknownDefaultCase}}{{^isString}}{{#isPrimitiveType}}{{^isContainer}}(with = {{{nameInPascalCase}}}Serializer::class){{/isContainer}}{{/isPrimitiveType}}{{/isString}}{{/enumUnknownDefaultCase}}
+    {{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{#enumUnknownDefaultCase}}(with = {{{nameInPascalCase}}}.ValueSerializer::class){{/enumUnknownDefaultCase}}{{/serializableModel}}{{^enumUnknownDefaultCase}}{{^isString}}{{#isPrimitiveType}}{{^isContainer}}(with = {{{nameInPascalCase}}}Serializer::class){{/isContainer}}{{/isPrimitiveType}}{{/isString}}{{/enumUnknownDefaultCase}}
     {{/kotlinx_serialization}}
     {{#moshi}}
     @JsonClass(generateAdapter = false)
@@ -186,7 +184,12 @@ import {{packageName}}.infrastructure.ITransformForStorage
         @JsonProperty(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{#enumUnknownDefaultCase}}{{#-last}}@JsonEnumDefaultValue {{/-last}}{{/enumUnknownDefaultCase}}{{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
         {{/jackson}}
         {{#kotlinx_serialization}}
+        {{#vendorExtensions.x-zoonk-closed-enum}}
+        {{^-last}}@SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}),{{/-last}}{{#-last}};{{/-last}}
+        {{/vendorExtensions.x-zoonk-closed-enum}}
+        {{^vendorExtensions.x-zoonk-closed-enum}}
         @SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/vendorExtensions.x-zoonk-closed-enum}}
         {{/kotlinx_serialization}}
         {{/multiplatform}}
         {{#multiplatform}}
@@ -197,24 +200,43 @@ import {{packageName}}.infrastructure.ITransformForStorage
     {{#multiplatform}}
         override fun toString(): kotlin.String = value{{^isString}}.toString(){{/isString}}
     {{/multiplatform}}
-    }
     {{#kotlinx_serialization}}
     {{#enumUnknownDefaultCase}}
 
-    internal object {{nameInPascalCase}}Serializer : KSerializer<{{nameInPascalCase}}> {
-        override val descriptor = {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer().descriptor
+        internal object ValueSerializer : KSerializer<{{{nameInPascalCase}}}> {
+            override val descriptor = {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer().descriptor
 
-        override fun deserialize(decoder: Decoder): {{nameInPascalCase}} {
-            val value = decoder.decodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer())
-            return {{nameInPascalCase}}.entries.firstOrNull { it.value == value }
-                ?: {{nameInPascalCase}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}
-        }
+            override fun deserialize(decoder: Decoder): {{{nameInPascalCase}}} {
+                val value = decoder.decodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer())
+                {{#vendorExtensions.x-zoonk-unknown-tag}}
+                if ({{{nameInPascalCase}}}.entries.any { it.value == value && it.value != "__unknown_api_union_tag__" && it.value != "unknown_default_open_api" }) {
+                    throw kotlinx.serialization.SerializationException("Known {{baseName}} tag: $value")
+                }
+                return {{{nameInPascalCase}}}.entries.first { it.value == "__unknown_api_union_tag__" }
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-unknown-tag}}
+                return {{{nameInPascalCase}}}.entries.firstOrNull { it.value == value }
+                    {{#vendorExtensions.x-zoonk-closed-enum}}?: throw kotlinx.serialization.SerializationException("Unexpected {{baseName}} tag: $value"){{/vendorExtensions.x-zoonk-closed-enum}}
+                    {{^vendorExtensions.x-zoonk-closed-enum}}?: {{{nameInPascalCase}}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}{{/vendorExtensions.x-zoonk-closed-enum}}
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+            }
 
-        override fun serialize(encoder: Encoder, value: {{nameInPascalCase}}) {
-            encoder.encodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer(), value.value)
+            override fun serialize(encoder: Encoder, value: {{{nameInPascalCase}}}) {
+                {{#vendorExtensions.x-zoonk-unknown-tag}}
+                encoder.unknownApiEnum()
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-unknown-tag}}
+                {{^vendorExtensions.x-zoonk-closed-enum}}
+                if (value == {{{nameInPascalCase}}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}) encoder.unknownApiEnum()
+                {{/vendorExtensions.x-zoonk-closed-enum}}
+                {{/vendorExtensions.x-zoonk-unknown-tag}}
+                encoder.encodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer(), value.value)
+            }
         }
-    }
     {{/enumUnknownDefaultCase}}
+    {{/kotlinx_serialization}}
+    }
+    {{#kotlinx_serialization}}
     {{^multiplatform}}
     {{^enumUnknownDefaultCase}}
     {{^isString}}

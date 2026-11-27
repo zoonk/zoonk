@@ -9,6 +9,7 @@
     <string name="tutor_ask_mock">Ask %1$s about this mock exam</string>
     <string name="tutor_ask_plan">Ask %1$s about your plan</string>
     <string name="tutor_ask_subject">Ask %1$s about this subject</string>
+    <string name="tutor_ask_module">Ask %1$s about this module</string>
     <string name="tutor_ask_answer">Ask %1$s about your answer</string>
     <string name="tutor_ask_question">Ask %1$s about this question</string>
     <string name="tutor_ask_screen">Ask %1$s about this screen</string>
@@ -20,6 +21,7 @@
     <string name="tutor_description_mock">Ask questions about this mock exam</string>
     <string name="tutor_description_plan">Ask questions about your plan</string>
     <string name="tutor_description_subject">Ask questions about this subject</string>
+    <string name="tutor_description_module">Ask questions about this module</string>
     <string name="tutor_description_item">Ask about this question</string>
     <string name="tutor_close">Close questions</string>
 
@@ -31,9 +33,9 @@
     <string name="tutor_about_plan">About your plan</string>
     <string name="tutor_about_step">About this part</string>
     <string name="tutor_about_subject">About this subject</string>
+    <string name="tutor_about_module">About this module</string>
     <string name="tutor_about_question">About this question</string>
 
-    <string name="tutor_empty_title">What would you like help with?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
     <string name="tutor_empty_ai">%1$s is an AI study buddy and can make mistakes.</string>
     <string name="tutor_guest_title">Create a free account to ask questions</string>
@@ -53,19 +55,11 @@
     <string name="tutor_error_subscription">Asking questions needs a subscription</string>
     <string name="tutor_error_gone">This lesson is no longer available.</string>
     <string name="tutor_error_invalid">We couldn\'t send this question. Try again.</string>
-    <string name="tutor_error_slow_down">Take a short break, then ask again.</string>
     <string name="tutor_error_failed">Something went wrong. Try again.</string>
     <string name="tutor_error_last_question">We couldn\'t send your last question. Try again.</string>
     <string name="tutor_sign_in">Log in</string>
     <string name="tutor_try_again">Try again</string>
 
-    <string name="tutor_placeholder_chapter">Ask about this chapter…</string>
-    <string name="tutor_placeholder_mock">Ask about this mock exam…</string>
-    <string name="tutor_placeholder_plan">Ask about your plan…</string>
-    <string name="tutor_placeholder_subject">Ask about this subject…</string>
-    <string name="tutor_placeholder_item">Ask about this question…</string>
-    <string name="tutor_placeholder_answer">Ask about your answer…</string>
-    <string name="tutor_placeholder_lesson">Ask about the lesson content…</string>
     <string name="tutor_send">Send</string>
     <string name="tutor_retry_last_question">Retry last question</string>
 

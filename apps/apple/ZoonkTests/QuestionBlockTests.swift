@@ -266,6 +266,16 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertEqual(
       String(decoding: try encoder.encode(PracticeAnswer.order([1, 0])), as: UTF8.self),
       #"{"order":[1,0]}"#)
+    XCTAssertEqual(
+      String(decoding: try encoder.encode(PracticeAnswer.matches([1, 0])), as: UTF8.self),
+      #"{"matches":[1,0]}"#, "a test's match sends no misses, so core grades it as before")
+    XCTAssertEqual(
+      String(
+        decoding: try encoder.encode(
+          PracticeAnswer.matches(
+            [1, 0], misses: [MatchTry(left: 0, right: 0), MatchTry(left: 1, right: 0)])),
+        as: UTF8.self),
+      #"{"matches":[1,0],"misses":[{"left":0,"right":0},{"left":1,"right":0}]}"#)
   }
 
   func testPartialPicksAreNeverAnAnswer() {
@@ -274,6 +284,10 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertNil(partial.complete)
     XCTAssertEqual(PracticeAnswer.matches([2, 0]).complete, .matches([2, 0]))
     XCTAssertThrowsError(try JSONEncoder().encode(partial), "a partial answer is never sent")
+
+    let pairing = PracticeAnswer.pairing([1, nil], misses: [MatchTry(left: 1, right: 1)])
+    XCTAssertNil(pairing.complete)
+    XCTAssertThrowsError(try JSONEncoder().encode(pairing), "a board short of a pair is never sent")
   }
 
   func testAnswersReachTheGeneratedInputs() throws {
@@ -355,9 +369,9 @@ private func makeDetail(_ ids: [String]) -> QuestionBlockDetail {
 private func makeDetail(questions: [PracticeQuestion]) -> QuestionBlockDetail {
   QuestionBlockDetail(
     block: PracticeBlock(
-      areas: [], capsules: [], checkpoint: nil, estimatedMinutes: 5,
+      capsules: [], checkpoint: nil, estimatedMinutes: 5,
       fullReview: false, id: "block", kind: .practice, mistakesOnly: false, netScored: false,
-      questions: 3, status: .active, title: nil, topics: []),
+      practiceNumber: nil, questions: 3, status: .active, title: nil, topics: []),
     hints: true, questions: questions, trueFalseLabels: .trueFalse)
 }
 
@@ -395,3 +409,115 @@ private let completionJSON = #"""
    "netScore":null,"nextBlockId":null,"reached":{"energy":null,"level":null},"sessionBar":{"completed":1,"total":3},
    "reminderOffer":null,"sessionCompleted":false,"testOutOffer":null,"topHyperdrive":1,"total":1}
   """#
+
+final class MatchPickingTests: XCTestCase {
+  func testAMissKeepsTheCardPickedFirstSoItsNextPartnerIsOneTapAway() {
+    var picking = MatchPicking()
+    let key = [1, 0]
+    let goesTogether = { (attempt: MatchTry) in key[attempt.left] == attempt.right }
+
+    XCTAssertNil(picking.tap(.right(0), goesTogether: goesTogether))
+    let miss = picking.tap(.left(0), goesTogether: goesTogether)
+    XCTAssertEqual(miss?.attempt, MatchTry(left: 0, right: 0))
+    XCTAssertEqual(miss?.isRight, false)
+    XCTAssertEqual(picking.selected, .right(0))
+    XCTAssertTrue(picking.isMissed(.left(0)))
+
+    let pair = picking.tap(.left(1), goesTogether: goesTogether)
+    XCTAssertEqual(pair?.attempt, MatchTry(left: 1, right: 0))
+    XCTAssertEqual(pair?.isRight, true)
+    XCTAssertNil(picking.selected)
+    XCTAssertNil(picking.miss)
+  }
+
+  func testAKeptPairCuesForItsMomentThenSettlesOnItsNumberAndALaterPairKeepsItsOwn() {
+    var picking = MatchPicking()
+    let goesTogether = { (attempt: MatchTry) in attempt.left == attempt.right }
+
+    _ = picking.tap(.left(0), goesTogether: goesTogether)
+    _ = picking.tap(.right(0), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .right)
+    XCTAssertEqual(picking.kept(.right(0), pair: 1), .right)
+
+    _ = picking.tap(.left(1), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .right, "another tap leaves the cue its moment")
+
+    let firstLock = picking.lockCount
+    _ = picking.tap(.right(1), goesTogether: goesTogether)
+    XCTAssertEqual(picking.kept(.left(0), pair: 1), .done(1))
+    picking.endLock(firstLock)
+    XCTAssertEqual(picking.kept(.right(1), pair: 2), .right)
+
+    picking.endLock(picking.lockCount)
+    XCTAssertEqual(picking.kept(.right(1), pair: 2), .done(2))
+  }
+
+  func testTheSameSideMovesTheSelectionAndTheSameCardClearsIt() {
+    var picking = MatchPicking()
+
+    XCTAssertNil(picking.tap(.left(0), goesTogether: { _ in true }))
+    XCTAssertNil(picking.tap(.left(1), goesTogether: { _ in true }))
+    XCTAssertEqual(picking.selected, .left(1))
+    XCTAssertNil(picking.tap(.left(1), goesTogether: { _ in true }))
+    XCTAssertNil(picking.selected)
+  }
+
+  func testOnAHeldBoardATapOnAPairedCardUndoesThePairAndPicksIt() {
+    var picking = MatchPicking()
+
+    XCTAssertNil(picking.tapHeld(.left(0), pairs: [nil, nil]))
+    let paired = picking.tapHeld(.right(1), pairs: [nil, nil])
+    XCTAssertEqual(paired?.pairs, [1, nil])
+    XCTAssertEqual(paired?.attempt, MatchTry(left: 0, right: 1))
+    XCTAssertEqual(paired?.isUndone, false)
+
+    let undone = picking.tapHeld(.right(1), pairs: [1, nil])
+    XCTAssertEqual(undone?.pairs, [nil, nil])
+    XCTAssertEqual(undone?.attempt, MatchTry(left: 0, right: 1))
+    XCTAssertEqual(undone?.isUndone, true)
+    XCTAssertEqual(picking.selected, .right(1))
+
+    XCTAssertEqual(picking.tapHeld(.left(1), pairs: [nil, nil])?.pairs, [nil, 1])
+    XCTAssertNil(picking.selected)
+  }
+
+  func testEscapeLetsGoOfThePickedCard() {
+    var picking = MatchPicking()
+    _ = picking.tap(.left(0), goesTogether: { _ in false })
+    _ = picking.tap(.right(0), goesTogether: { _ in false })
+
+    picking.drop()
+
+    XCTAssertNil(picking.selected)
+    XCTAssertNil(picking.miss)
+  }
+
+  func testACardsOwnStopStandsInForTheLinesStop() {
+    XCTAssertEqual(
+      MatchAnnouncement.matched("lunch", "qui di fronte.", matched: 1, total: 5),
+      "Matched lunch with qui di fronte. Pairs matched: 1 of 5.")
+    XCTAssertEqual(
+      MatchAnnouncement.missed("Va bene!", "lunch"), "Va bene! and lunch don't go together.")
+    XCTAssertEqual(
+      MatchAnnouncement.unmatched("lunch", "Va bene?"),
+      "Unmatched lunch and Va bene?")
+  }
+
+  @MainActor
+  func testTheVerdictNamesEachCardsFirstWrongTryForTheFirstFewCards() {
+    let cards = (left: ["a", "b", "c", "d", "e"], right: ["1", "2", "3", "4", "5"])
+    let misses = MatchMisses(
+      [
+        MatchTry(left: 1, right: 0), MatchTry(left: 1, right: 2), MatchTry(left: 4, right: 9),
+        MatchTry(left: 0, right: 3), MatchTry(left: 2, right: 4), MatchTry(left: 3, right: 1),
+      ]
+    ) { card in
+      let side = card.side == .left ? cards.left : cards.right
+      return side.indices.contains(card.index)
+        ? RichInline(text: AttributedString(side[card.index])) : nil
+    }
+
+    XCTAssertEqual(misses.said, "You first matched:\nb → 1\na → 4\nc → 5")
+    XCTAssertNil(MatchMisses([]) { _ in nil }.said)
+  }
+}

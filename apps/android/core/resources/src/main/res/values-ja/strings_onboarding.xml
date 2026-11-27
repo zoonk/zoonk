@@ -167,17 +167,13 @@
   "onboarding_placement_answer_failed": "2610c70abc59c425f63405d074992e497a80f2f23988f8186bcd00230cd6087c",
   "onboarding_placement_confirm": "4358b2bb592ae544460bef70bbcf0cad3e58143691093a7b0316bb87a4c01e48",
   "onboarding_placement_dont_know": "c12a57eaabe66a48fa20792d0692bff7ac791b25532fcdb16b0f8ec92c3d7ee0",
-  "onboarding_placement_false": "ad9aba3becb14c5b51a352b946eee0f0db57b743f2d824f872241ae3592c772e",
   "onboarding_placement_progress": "dec6421572e5a92a42b74628801f8f0ab7c999a4383ef240c18eda9d03505a45",
   "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
-  "onboarding_placement_right": "794ec45fa119e4fd61a3f8de722e2d0ca52a6868d4edbe2cc97c3b50d5ee4683",
   "onboarding_placement_stop": "923084fb6166a1b4f3f1aea8cdbcbe5fef486b8d3057c426b4f47cd3cffc6ad9",
-  "onboarding_placement_true": "e3e29bb9f64665ee96ab1dd95664e876795c3c6f8204415bdca3cc5163ce026c",
   "onboarding_placement_unavailable_title": "a895c6a92640cf07d2def3082a9ce67511a9a5a61974f2f9fc3f8a246bd1223d",
   "onboarding_placement_waiting_material": "eb609017d4f9dc631740d4b8e725ab4ad98cb74c7b36ff3eba6468ab72cb91ad",
   "onboarding_placement_waiting_time": "d34e1572a5df02e79b0c9adf635f4c5c9d4c3c51367fda1d8597e96b3c8ff18e",
-  "onboarding_placement_wrong": "bad919077ee246f3495ea7ea0322d5ef3d1cbd2b976d60491e26887ec383c899",
   "onboarding_plan_answers_saved": "14c88c1667d57ba39ebc17118e8d54bc73f445f54feaa3856202809a45bca133",
   "onboarding_plan_not_started": "88de981632f14526d266f5565952f8c057db3897624a3688435ff9314d37a799",
   "onboarding_plan_ready_goal": "826e77fb14e2f70fd48df6c9b129cf31599ee1ca4f0dbfecd0a1b5db2feb0f83",
@@ -577,13 +573,6 @@
     <string name="onboarding_placement_confirm">確定する</string>
     <string name="onboarding_placement_stop">ここで終えて回答を使う</string>
     <string name="onboarding_placement_answer_failed">送信できませんでした。回答はそのまま残っています。</string>
-    <!-- The two answers to a statement judged true or false. -->
-    <string name="onboarding_placement_true">正しい</string>
-    <string name="onboarding_placement_false">間違っている</string>
-    <!-- An answer option judging a statement right, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_right">正しい</string>
-    <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
-    <string name="onboarding_placement_wrong">誤り</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
     <!-- The level test: a language goal's placement, in reading and listening. -->
     <string name="onboarding_language_test_new_alphabet">この言語の文字は初めてですか？テストはスキップしてください。最初のレッスンで読み方を学べます。</string>

@@ -15,6 +15,7 @@ import { type WritingSupplyInput } from "../../library/items/writing-prompt-pool
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { toListeningExam } from "../listening/listening-exam";
 import { type PartsToPrepare } from "../listening/prepare-listening-part";
+import { listAheadOptions } from "./_utils/ahead-options";
 import {
   listMissingRecordings,
   loadAnytimeMockSetup,
@@ -196,7 +197,10 @@ async function planAnytimeSupply({
   const asked = shape && resolveAnytimeOption({ choice: { shape }, setup });
   const askedKey = asked && mockPaperKey(asked);
 
-  const allowed = reuse || priority ? [asked].filter((option) => option !== null) : setup.options;
+  const allowed =
+    reuse || priority
+      ? [asked].filter((option) => option !== null)
+      : listAheadOptions({ askedKey, options: setup.options });
 
   // A written test that waits on an exam choice has no question to write yet.
   const options = allowed.filter(

@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { describe, expect, it } from "vitest";
+import { pickInPlacement } from "../../_test-utils/shown-choice";
 import { PLAN_SHOWN, examTestGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { loadEvidence } from "./_utils/placement-evidence";
 import { answerPlacementQuestion } from "./answer-placement-question";
@@ -112,7 +113,7 @@ describe("test progress while a sitting stays open", () => {
       const first = await answerPlacementQuestion({
         goalId: goal.id,
         input: {
-          answer: { selectedIndex: 0 },
+          answer: await pickInPlacement({ itemId: started.next?.itemId ?? "" }),
           durationMs: 20_000,
           itemId: started.next?.itemId ?? "",
         },

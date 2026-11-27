@@ -2,36 +2,34 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let mapExplorer = ActivityRenderer(template: "mapExplorer") {
-    context in
-    if let fields = try? context.fields(as: MapExplorerFields.self) {
-      if let map = context.baseMap {
-        MapExplorerCanvas(
-          fields: fields, map: map,
-          question: {
+    context, fields in
+    if let map = context.baseMap {
+      MapExplorerCanvas(
+        fields: fields, map: map,
+        question: {
+          switch context.check {
+          case .choice(let question, _, _, _): return question
+          case .numeric(let question, _, _, _, _, _, _): return question
+          default: return ""
+          }
+        }(),
+        references: {
+          let checkReferences =
             switch context.check {
-            case .choice(let question, _, _, _): return question
-            case .numeric(let question, _, _, _, _, _, _): return question
-            default: return ""
+            case .choice(let question, let options, _, _):
+              ([question] + options.map(\.text)).joined(separator: " ")
+            case .numeric(let question, _, _, _, _, _, _): question
+            default: ""
             }
-          }(),
-          references: {
-            let checkReferences =
-              switch context.check {
-              case .choice(let question, let options, _, _):
-                ([question] + options.map(\.text)).joined(separator: " ")
-              case .numeric(let question, _, _, _, _, _, _): question
-              default: ""
-              }
-            return ([checkReferences] + fields.places.map(\.label)).joined(separator: " ")
-          }())
-      } else {
-        Text(
-          "This map can't be shown. Continue to the next screen.", tableName: "Activities",
-          comment: "A map activity whose map isn't available"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-      }
+          return ([checkReferences] + fields.places.map(\.label)).joined(separator: " ")
+        }())
+    } else {
+      Text(
+        "This map can't be shown. Continue to the next screen.", tableName: "Activities",
+        comment: "A map activity whose map isn't available"
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }
@@ -214,7 +212,7 @@ private struct MapExplorerCanvas: View {
         .contentShape(.circle)
     }
     .buttonStyle(.plain)
-    .modifier(ActivityNumberKey(index: number - 1))
+    .modifier(PickKey(index: number - 1))
     .accessibilityLabel(
       Text(
         "\(number). \(place.label)", tableName: "Activities",

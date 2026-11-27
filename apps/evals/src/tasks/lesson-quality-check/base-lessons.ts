@@ -77,6 +77,7 @@ const RECORDED = {
             },
           ],
           question: "Which doorway is Gothic?",
+          standsAlone: true,
           visual: null,
         },
         {
@@ -109,6 +110,7 @@ const RECORDED = {
             },
           ],
           question: "Which style does the doorway most likely show, and why?",
+          standsAlone: true,
           visual: null,
         },
       ],
@@ -212,6 +214,7 @@ const RECORDED = {
             },
           ],
           question: "Por que essa atração não basta para deixá-lo espremido no núcleo?",
+          standsAlone: true,
           visual: null,
         },
         {
@@ -256,6 +259,7 @@ const RECORDED = {
             },
           ],
           question: "Qual é o erro nessa frase?",
+          standsAlone: true,
           visual: null,
         },
         {
@@ -358,6 +362,7 @@ const RECORDED = {
           ],
           question:
             "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+          standsAlone: true,
           visual: null,
         },
         {
@@ -742,6 +747,7 @@ const RECORDED = {
             },
           ],
           question: "What will the thermometer show?",
+          standsAlone: true,
           visual: null,
         },
       ],

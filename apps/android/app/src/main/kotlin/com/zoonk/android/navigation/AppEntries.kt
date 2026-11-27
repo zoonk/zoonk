@@ -35,6 +35,7 @@ import com.zoonk.android.feature.player.playerEntries
 import com.zoonk.android.feature.practice.block.practiceBlockEntries
 import com.zoonk.android.feature.pronunciation.pronunciationEntries
 import com.zoonk.android.feature.recap.recapEntries
+import com.zoonk.android.feature.savedlessons.savedLessonsEntries
 import com.zoonk.android.feature.session.sessionEntries
 import com.zoonk.android.feature.settings.licensesEntries
 import com.zoonk.android.feature.settings.settingsEntries
@@ -70,6 +71,7 @@ fun appEntries(
         explainEntries(app, navigator)
         practiceBlockEntries(app, navigator)
         mistakesEntries(app, navigator)
+        savedLessonsEntries(app, navigator)
         completedLessonsEntries(app, navigator)
         certificatesEntries(app, navigator)
         checkpointEntries(app, navigator)

@@ -155,6 +155,7 @@ export const languageLevelTestOutViewSchema = z
         format: true,
         image: true,
         itemId: true,
+        key: true,
         left: true,
         options: true,
         question: true,

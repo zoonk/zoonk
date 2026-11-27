@@ -75,7 +75,7 @@ private val natureSubject =
     {"areas":["Natural sciences"],"chapters":[${natureChapters.joinToString(",")}],"displayWeight":null,
      "group":"Day 2","imageUrl":null,"key":"natural-sciences","lessonsDone":6,"lessonsKnown":4,"lessonsTotal":40,
      "mastery":{"answered":8,"correct":6},
-     "matrix":["Competency 1 – Understand the natural sciences and their technologies","H1 - Recognize physical phenomena in everyday situations","H2 - Relate energy to its transformations","Competency 2 – Apply scientific methods","H3 - Interpret experiment data","Competency 3 – Weigh the environment's balance"],
+     "covers":[],"matrix":["Competency 1 – Understand the natural sciences and their technologies","H1 - Recognize physical phenomena in everyday situations","H2 - Relate energy to its transformations","Competency 2 – Apply scientific methods","H3 - Interpret experiment data","Competency 3 – Weigh the environment's balance"],
      "name":"Natural sciences and their technologies","nextDate":"2026-10-29","notPlannedReason":null,"preparation":0.42,
      "questions":45,"share":0.25,"sharedWith":[],"shortName":"Natural sciences","source":"notice",
      "topicFrequencySource":{"basis":"ENEM 2009–2024","title":null,"url":"https://www.qconcursos.com/enem"},
@@ -85,7 +85,7 @@ private val natureSubject =
 private val spanishSubject =
     """
     {"areas":["Spanish"],"chapters":[],"displayWeight":null,"group":"Day 1","imageUrl":null,"key":"spanish",
-     "lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,"mastery":null,"matrix":[],"name":"Spanish","nextDate":null,
+     "lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,"mastery":null,"covers":[],"matrix":[],"name":"Spanish","nextDate":null,
      "notPlannedReason":"skipped","preparation":null,"questions":5,"share":0.03,"sharedWith":[],"shortName":"Spanish","source":"notice",
      "topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
     """.trimIndent()
@@ -115,7 +115,7 @@ private val writtenEssay =
 private val essaySubject =
     """
     {"areas":["Essay"],"chapters":[${chapter(1, "Writing the argument", state = "current", done = 1, total = 3)}],"displayWeight":null,
-     "group":"Day 1","imageUrl":null,"key":"essay","lessonsDone":1,"lessonsKnown":0,"lessonsTotal":3,"mastery":null,"matrix":[],
+     "group":"Day 1","imageUrl":null,"key":"essay","lessonsDone":1,"lessonsKnown":0,"lessonsTotal":3,"mastery":null,"covers":[],"matrix":[],
      "name":"Essay","nextDate":"2026-10-30","notPlannedReason":null,"preparation":0.2,"questions":null,"share":null,
      "sharedWith":[],"shortName":"Essay","source":"notice","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
     """.trimIndent()
@@ -123,7 +123,7 @@ private val essaySubject =
 private val studySkills =
     """
     {"areas":["Study skills"],"chapters":[${chapter(1, "Planning your weeks", done = 1, total = 2)}],"displayWeight":null,"group":null,
-     "imageUrl":null,"key":"study-skills","lessonsDone":1,"lessonsKnown":0,"lessonsTotal":2,"mastery":null,"matrix":[],
+     "imageUrl":null,"key":"study-skills","lessonsDone":1,"lessonsKnown":0,"lessonsTotal":2,"mastery":null,"covers":[],"matrix":[],
      "name":"Study skills","nextDate":"2026-11-02","notPlannedReason":null,"preparation":null,"questions":null,"share":null,
      "sharedWith":[],"shortName":"Study skills","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
     """.trimIndent()
@@ -133,7 +133,7 @@ private val examStrategy =
     """
     {"areas":["Exam strategy"],"chapters":[${chapter(1, "How the exam is built", total = 5)},${chapter(2, "Time on exam day", total = 5)}],
      "displayWeight":null,"extra":true,"group":null,"imageUrl":null,"key":"exam-strategy","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":15,
-     "mastery":null,"matrix":[],"name":"Exam strategy","nextDate":"2027-02-22","notPlannedReason":null,"preparation":null,"questions":null,
+     "mastery":null,"covers":[],"matrix":[],"name":"Exam strategy","nextDate":"2027-02-22","notPlannedReason":null,"preparation":null,"questions":null,
      "share":null,"sharedWith":[],"shortName":"Exam strategy","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,
      "topicsStudied":null}
     """.trimIndent()
@@ -172,11 +172,11 @@ fun modulesSyllabus(): Syllabus =
             total = 3,
         )},${chapter(2, "Loops", state = "current", done = 0, total = 4)}],
            "displayWeight":null,"group":null,"imageUrl":null,"key":"basics","lessonsDone":3,"lessonsKnown":2,"lessonsTotal":10,"mastery":null,
-           "matrix":[],"name":"Python basics","nextDate":"2026-10-29","notPlannedReason":null,"preparation":null,"questions":null,"share":null,
+           "covers":[],"matrix":[],"name":"Python basics","nextDate":"2026-10-29","notPlannedReason":null,"preparation":null,"questions":null,"share":null,
            "sharedWith":[],"shortName":"Basics","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null},
           {"areas":["Data"],"chapters":[${chapter(3, "Lists")}],
            "displayWeight":null,"group":null,"imageUrl":null,"key":"data","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":10,"mastery":null,
-           "matrix":[],"name":"Working with data","nextDate":"2026-11-04","notPlannedReason":null,"preparation":null,"questions":null,"share":null,
+           "covers":[],"matrix":[],"name":"Working with data","nextDate":"2026-11-04","notPlannedReason":null,"preparation":null,"questions":null,"share":null,
            "sharedWith":[],"shortName":"Data","source":"plan","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}
          ],"topicCount":0,"topicsMapped":false,"writtenPractice":null}
         """.trimIndent(),

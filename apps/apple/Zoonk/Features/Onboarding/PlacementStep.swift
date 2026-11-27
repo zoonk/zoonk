@@ -59,7 +59,7 @@ struct PlacementStep: View {
           question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
       case .done:
         self = .done
-      case .unavailable, .failed:
+      case .unavailable, .failed, .unrecognized:
         self = .unavailable
       case .preparing, .waitingForQuestions:
         self = .waiting(failure: nil)
@@ -505,8 +505,8 @@ struct PlacementQuestionScreen<Media: View>: View {
     } actions: {
       let answer = question.answerToSubmit(draft)
       PracticeActionRow {
-        PracticeSecondaryButton(
-          title: dontKnowLabel, icon: .notSure, isBusy: isSaving && submission == .dontKnow,
+        QuestionDontKnowButton(
+          title: dontKnowLabel, isBusy: isSaving && submission == .dontKnow,
           isDisabled: isSaving
         ) {
           submission = .dontKnow

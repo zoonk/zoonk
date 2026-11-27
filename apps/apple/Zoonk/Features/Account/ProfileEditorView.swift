@@ -60,7 +60,7 @@ struct ProfileEditorView: View {
                 tableName: "Account",
                 comment:
                   "Shown on a certificate where the learner's name goes, until they add one to their profile."
-              )
+              ).fieldPrompt()
             ) {
               Text("Name", tableName: "Account", comment: "Profile name field label")
             }
@@ -97,7 +97,8 @@ struct ProfileEditorView: View {
                     prompt: Text(
                       "username",
                       tableName: "Account",
-                      comment: "Placeholder for the username field")
+                      comment: "Placeholder for the username field"
+                    ).fieldPrompt()
                   ) {
                     Text("Username", tableName: "Account", comment: "Profile username field label")
                   }

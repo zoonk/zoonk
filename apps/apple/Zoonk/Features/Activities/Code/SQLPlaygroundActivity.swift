@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let sqlPlayground = ActivityRenderer(
     template: "sqlPlayground",
     grade: SQLPlaygroundFields.grade
-  ) { context in
-    if let fields = try? context.fields(as: SQLPlaygroundFields.self) {
-      SQLPlaygroundCanvas(context: context, fields: fields)
-    }
+  ) { context, fields in
+    SQLPlaygroundCanvas(context: context, fields: fields)
   }
 }
 

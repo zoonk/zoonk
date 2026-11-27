@@ -166,12 +166,15 @@ function getShownKeyPoints(result: LessonStepResult): LessonStepResult["keyPoint
 }
 
 export function LessonStepResultView({
+  boardMisses,
   hyperdriveStreak,
   next,
   notes,
   result,
   step,
 }: {
+  /** The pairs a match board's learner first confused (`BoardMissesContext`). */
+  boardMisses?: React.ReactNode;
   hyperdriveStreak: number | null;
   next: LessonResultNext;
   notes?: React.ReactNode;
@@ -196,6 +199,7 @@ export function LessonStepResultView({
           }
           verdict={verdict}
         />
+        {boardMisses}
         {result.spelling && <SpellingLine spelling={result.spelling} />}
         {result.corrections.length > 0 && <CorrectionLines corrections={result.corrections} />}
         <CorrectAnswerLine result={result} step={step} />

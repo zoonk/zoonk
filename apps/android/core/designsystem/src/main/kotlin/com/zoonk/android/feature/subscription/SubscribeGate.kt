@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ fun GateWords(
     title: String?,
     line: String?,
     modifier: Modifier = Modifier,
+    said: String? = null,
 ) {
     val align = barNoteTextAlign()
     Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp), horizontalAlignment = barNoteAlignment()) {
@@ -34,13 +37,18 @@ fun GateWords(
         line?.let {
             Text(
                 it,
+                modifier = Modifier.saidAs(said),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+                // A wait that counts down keeps its width as its digits change.
+                style = MaterialTheme.typography.bodyMedium.let { if (said == null) it else it.copy(fontFeatureSettings = "tnum") },
                 textAlign = align,
             )
         }
     }
 }
+
+/** A line that counts down is heard as [said], so TalkBack reads the wait once and not again every second. */
+fun Modifier.saidAs(said: String?): Modifier = if (said == null) this else clearAndSetSemantics { contentDescription = said }
 
 /** The one action that leads to paying: small in place of what the learner tried, [ButtonSize.Large] as a sheet's own action. */
 @Composable
@@ -94,6 +102,7 @@ internal fun GateLayout(
     line: String?,
     modifier: Modifier = Modifier,
     wordsGated: Boolean? = null,
+    said: String? = null,
     buttons: (@Composable () -> Unit)?,
 ) {
     Column(
@@ -101,7 +110,11 @@ internal fun GateLayout(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-        if (wordsGated == null) GateWords(title, line) else HeldSlot(gated = wordsGated) { GateWords(title, line) }
+        if (wordsGated == null) {
+            GateWords(title, line, said = said)
+        } else {
+            HeldSlot(gated = wordsGated) { GateWords(title, line, said = said) }
+        }
         buttons?.let {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { it() }
         }

@@ -26,7 +26,7 @@ Existing ones only get new migrations, so rerun it whenever you like. It never r
 
 #### Environment Variables
 
-None is required. To use another local server or database, set `DATABASE_URL` (and `DATABASE_URL_UNPOOLED`, which migrations prefer) in this package's `.env` and in each app's `.env`. Tests and E2E use `zoonk_test` and `zoonk_e2e` on the default server unless ignored `.env.test.local` or `.env.e2e.local` files here name others.
+None is required. To use another local server or database, set `DATABASE_URL` (and `DATABASE_URL_UNPOOLED`, which migrations prefer) in this package's `.env` and in each app's `.env`. Tests and E2E use the checkout's test and E2E databases on the default server unless ignored `.env.test.local` or `.env.e2e.local` files here name others.
 
 Prisma generates the client we use to talk to the database; `pnpm db:setup`, `pnpm dev` and builds generate it.
 
@@ -69,7 +69,7 @@ The ID comes from the worktree's absolute path, so branches can be renamed witho
 
 Use Node.js 26 with PostgreSQL 18's `psql`, `pg_dump`, and `pg_restore` on `PATH`. On Windows, add PostgreSQL's `bin` directory to `PATH`; when using WSL, install and run these tools inside WSL. The local connection role needs permission to create databases and read the source. An unreachable local PostgreSQL server stops setup with what to do; start it and rerun setup. Remote source URLs skip isolation. The primary checkout keeps its existing databases.
 
-Setup writes development URLs into `packages/db/.env`, into the `.env` of every app that reads the database (creating it when missing, since an app without one would use the primary checkout's `zoonk`), and into any other environment file that already names a database URL, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. CI continues to use its configured URLs. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
+Setup writes development URLs into `packages/db/.env`, into the `.env` of every app that reads the database (creating it when missing), and into any other environment file that already names a database URL, plus ignored `packages/db/.env.test.local` and `.env.e2e.local` overrides. Vitest, Prisma test commands, Playwright, and E2E builds read the same overrides. A command without a configured URL defaults to the linked worktree's database for its mode on the default server. A URL that names a local database the worktree doesn't own, such as the primary checkout's `zoonk`, stops the app, Prisma or script with an error, even when it comes from the shell, so a worktree never writes to another checkout's data; databases on other hosts are used as given. CI continues to use its configured URLs. Keep using the regular commands, including `pnpm --filter @zoonk/db db:migrate --name <name>`.
 
 The local `zoonk` can be behind the worktree's branch, so setup applies the branch's migrations to the development copy, and `pnpm dev` and `pnpm start` apply new ones before they start; they never migrate `zoonk` itself. Rerunning setup preserves ready databases and existing secrets. It repairs unfinished database initialization without replacing ready worktree data. If an expired database has been removed, rerun setup to recreate it. Setup prevents simultaneous attempts for the same worktree; if one is already running, let it finish before retrying. Different worktrees can initialize independently.
 

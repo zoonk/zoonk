@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { type Page, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { type SourceReadState } from "@zoonk/db/enums";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
 import { asPersona } from "./learn-personas";
@@ -93,7 +92,6 @@ function materialRow(page: Page) {
 
 async function editGoal(page: Page) {
   const back = page.getByRole("button", { exact: true, name: "Back" });
-  await expectHydrated(back);
   await back.click();
 }
 
@@ -114,7 +112,6 @@ async function sendWhileAdding(page: Page, answer: (route: Route) => Promise<voi
   const attach = page.getByRole("button", { name: "Study your own material" });
   const send = page.getByRole("button", { name: "Build my plan" });
 
-  await expectHydrated(attach);
   await attach.click();
   await page.getByRole("button", { name: "Paste text" }).click();
   await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);
@@ -360,7 +357,6 @@ test.describe("Material that's read after it's added", () => {
 
     const attach = page.getByRole("button", { name: "Study your own material" });
 
-    await expectHydrated(attach);
     await attach.click();
     await page.getByRole("button", { name: "Paste text" }).click();
     await page.getByRole("textbox", { name: "Your text" }).fill(NOTES);

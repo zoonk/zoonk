@@ -57,7 +57,7 @@
 - In the app, buttons are one to three words the learner already knows: "Start", "Continue", "Skip", "Save". A screen's main action, the one in the bottom bar, is one or two. Never a destination, a duration or a consequence. The action that leads to paying is "Subscribe" on every screen. A marketing page's call to action may name what the visitor gets.
 - Honest doesn't mean hedged. Write "for now", "so far", "may", "up to" or "about" only where a learner would be misled without it, and never two in one line.
 - A translator note that explains a word means the learner doesn't know it either: rewrite the string.
-- How long, how many and how a string is laid out on its screen follow zoonk-design's [Words](../../../.agents/skills/zoonk-design/SKILL.md#words) for the app and its [Marketing pages](../../../.agents/skills/zoonk-design/SKILL.md#marketing-pages) for public pages.
+- How long, how many and how a string is laid out on its screen follow zoonk-design's [Words](../../../.agents/skills/zoonk-design/SKILL.md#words) for the app and its [Marketing pages](../../../.agents/skills/zoonk-design/references/marketing-pages.md) for public pages.
 
 ## Product terminology
 

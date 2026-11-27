@@ -172,12 +172,12 @@ function ChoiceDates({
   }
 
   return (
-    <form className="mt-1.5 flex flex-wrap items-center gap-2">
+    <div className="mt-1.5 flex flex-wrap items-center gap-2">
       {offered.map((date) => (
         <Button
           disabled={isSaving}
           focusableWhenDisabled
-          formAction={() =>
+          onClick={() =>
             startSaving(async () => {
               setFailed(false);
               const { data: saved } = await safeAsync(() => onSave(date));
@@ -186,14 +186,13 @@ function ChoiceDates({
           }
           key={date}
           size="sm"
-          type="submit"
           variant="outline"
         >
           {formatDate(date, "row", { year: "always" })}
         </Button>
       ))}
       {failed && <ChangeSaveError />}
-    </form>
+    </div>
   );
 }
 

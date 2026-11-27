@@ -24,6 +24,7 @@ import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
 import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
+import { matchSpokenAnswer } from "./spoken-answer-match";
 
 const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u;
 
@@ -51,6 +52,19 @@ function withShrunkTimestamps(recording: Uint8Array): Uint8Array {
 }
 
 const FIELDS = { durationMs: 2400, timeZone: "America/Sao_Paulo" };
+
+/** Unless a test says otherwise, the recording judge hears what the transcript says. */
+function judgeAgreesWithTranscript() {
+  vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText, language }) => {
+    const transcript = await vi.mocked(transcribeSpeech).mock.results.at(-1)?.value;
+    const heard = transcript?.data.text ?? "";
+    const { words } = matchSpokenAnswer({ expected: expectedText, heard, language });
+
+    return {
+      data: { transcript: heard, words: words.map((word) => ({ ...word, issue: null })) },
+    } as Awaited<ReturnType<typeof assessPronunciation>>;
+  });
+}
 
 function mockTranscript(text: string) {
   vi.mocked(transcribeSpeech).mockResolvedValueOnce({
@@ -108,6 +122,8 @@ async function createSpokenStep(lesson: Parameters<typeof libraryLessonFixture>[
 
 describe(gradeSpokenAnswer, () => {
   beforeEach(() => {
+    judgeAgreesWithTranscript();
+
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
       error: new Error("Text-to-speech is unavailable"),
@@ -773,7 +789,8 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("links the attempt to the learner's own study session only", async () => {
-    const [step, learner, other] = await Promise.all([
+    const [ownStep, foreignStep, learner, other] = await Promise.all([
+      createSpokenStep(),
       createSpokenStep(),
       userFixture(),
       userFixture(),
@@ -791,13 +808,13 @@ describe(gradeSpokenAnswer, () => {
     const own = await gradeSpokenAnswer({
       audio: AUDIO,
       fields: { ...FIELDS, studySessionId: ownSession.id },
-      stepId: step.id,
+      stepId: ownStep.id,
     });
 
     const foreign = await gradeSpokenAnswer({
       audio: AUDIO,
       fields: { ...FIELDS, studySessionId: otherSession.id },
-      stepId: step.id,
+      stepId: foreignStep.id,
     });
 
     const attempts = await prisma.attempt.findMany({

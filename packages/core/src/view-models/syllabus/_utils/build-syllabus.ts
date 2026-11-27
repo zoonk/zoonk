@@ -218,6 +218,10 @@ export function buildSyllabus(
     return {
       areas: draft.areas,
       chapters: chapters.map((chapter) => withoutKey(chapter)),
+      covers:
+        notPlannedReason && topics.length + chapters.length === 0
+          ? ownSkills.map((skill) => skill.name)
+          : [],
       displayWeight: displayWeights[index] ?? null,
       ...(extra && { extra: true }),
       group: draft.group,

@@ -174,7 +174,7 @@ fun TutorPanel(
         if (page != null) {
             TurnSignals(turns, page)
             val empty = thread.value?.let(state::isEmpty) == true
-            if (empty && state.offersSuggestions(turns.orEmpty())) {
+            if (empty && state.offersSuggestions) {
                 Suggestions(
                     suggestions,
                     enabled = state.canAsk(turns.orEmpty()),
@@ -189,7 +189,7 @@ fun TutorPanel(
             state,
             routes,
             composerPadding,
-            placeholder = page?.placeholder ?: placeholderLabel(vm.scope),
+            placeholder = page?.placeholder ?: identity.askText(),
             focus = page?.composerFocus ?: remember { FocusRequester() },
         )
     }

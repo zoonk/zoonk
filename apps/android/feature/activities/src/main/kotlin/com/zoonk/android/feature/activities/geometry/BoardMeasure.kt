@@ -26,9 +26,13 @@ internal data class BoardReading(
 internal fun readBoard(
     points: List<Vec>,
     measure: Measure,
-): BoardReading {
+): BoardReading? {
     val indexes = points.indices.toList()
     return when (measure) {
+        Measure.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         Measure.ANGLE_SUM -> {
             val parts = BoardGeometry.roundParts(BoardGeometry.interiorAngles(points), digits = 0)
             BoardReading(parts, indexes, cleanFloat(parts.sum()), totalIndex = null)

@@ -43,6 +43,7 @@
   "mindmaps_previous": "6979306a6b17f2a1cfb97bdbef7aafbfd66350937ac9dee6f07dc2df8072133e",
   "mindmaps_ready": "3d49143d16faf148a026720d9cf965dd89f87c8d65c4e6a90baad261de8ae016",
   "mindmaps_remove": "45bca246921307f897508d08a05dcbec95c6b6f0a5122c8660391202d36b79ce",
+  "mindmaps_remove_map_failed": "424ba4ed55fdde03ae08311b2437b6423d79dc9fbbda7b88c24172a6e556aa39",
   "mindmaps_remove_spoken": "6b446f62e1fa343270979d28d299b1c98baf769192aa72a5d175a2acf456e4bf",
   "mindmaps_row_description": "56b535a40052d4f94fa129df66366fdb08937181ae805ab4642940d279f7e30d",
   "mindmaps_row_description_finish": "0363567a8d9eaa953787a305c1afb713c7c5882272ce865c96dc17c8e8daa59b",
@@ -50,8 +51,10 @@
   "mindmaps_save": "de4476a190a3a00489dfa7a0aadf58fb1f4ce46da0d5e6e92a5d11d3b9ab34b9",
   "mindmaps_save_failed": "7d4b7832227f6eb83e670af538d6fc61c174e620fc32d64059fc50cc17da73ce",
   "mindmaps_save_map_failed": "b3513ae444fc576acfd110d7385d063f0de61a0a47eb8d2c8389011a7c71454f",
+  "mindmaps_save_named": "1b534c3c0057868024b6886e248e0166b67bb5b6e7b11990739912ae6d5f0f95",
   "mindmaps_saved": "6a3d9eb18923ee6324a3741bbc7e4a78d95b7aa1f1df9aecdcab3c799f25fa02",
   "mindmaps_saved_empty": "64e2339dafe0d6f73def50df8ec725e968f03af683cb1681fa736cb3b48f14be",
+  "mindmaps_saved_named": "f612f6cc563e571298591c36a5e33fe49154545ef02878944e7f28c1913409bd",
   "mindmaps_saved_state": "7e4fd5363d978db650673fbd6e960f239c403177539cfe6d9501d7a1d2e70e98",
   "mindmaps_show_all": "8a6d82e2ee217a7e15c87df6adabeb7a32a7906236be1d64489586cf1c0cda8a",
   "mindmaps_shown_as": "f0a6bd2dfb7ac7c9eee1afc3fdac74ca54455e7d914fa3f43ae914890b24dd52",
@@ -206,9 +209,13 @@
     <string name="mindmaps_save">Guardar</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">Guardado</string>
+    <string name="mindmaps_save_named">Guardar %1$s</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">%1$s, guardado</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">Quitar de guardados</string>
     <string name="mindmaps_save_map_failed">No pudimos guardar este mapa. Inténtalo de nuevo.</string>
+    <string name="mindmaps_remove_map_failed">No pudimos quitar este mapa. Inténtalo de nuevo.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">Más opciones</string>
     <string name="mindmaps_previous">Anterior</string>

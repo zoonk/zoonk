@@ -118,7 +118,8 @@ class VoiceAnswerRecorderTest {
         fun refused(code: String) = MutationResult.Failed(ApiError.Unavailable, code, status = 429)
         assertEquals(GradeOutcome.Graded(1), MutationResult.Done(1).toGradeOutcome())
         assertEquals(GradeOutcome.NoSpeech, refused("NO_SPEECH").toGradeOutcome())
-        assertEquals(GradeOutcome.Limited(Limit.SlowDown(60)), refused("SLOW_DOWN").toGradeOutcome())
+        val slowed = refused("SLOW_DOWN").toGradeOutcome() as GradeOutcome.Limited
+        assertEquals(60, (slowed.limit as Limit.SlowDown).retryAfterSeconds)
         assertEquals(GradeOutcome.Failed, MutationResult.Failed(ApiError.Network).toGradeOutcome())
         assertEquals(GradeOutcome.Obsolete, MutationResult.Obsolete.toGradeOutcome())
     }

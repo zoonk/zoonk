@@ -62,10 +62,12 @@ struct FeedbackVerdict<End: View>: View {
 }
 
 extension View {
-  /// Main's `FeedbackPanel`: a checked answer's verdict and what it explains, on a panel.
+  /// Main's `FeedbackPanel`: a checked answer's verdict and what it explains, on a panel, brought
+  /// into sight as it arrives, since every question's verdict comes through it.
   func feedbackPanel() -> some View {
     frame(maxWidth: .infinity, alignment: .leading)
       .padding(16)
       .panel()
+      .scrollsIntoSightWhenShown()
   }
 }

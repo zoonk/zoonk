@@ -29,6 +29,10 @@
   "questions_left_blank": "c6a97c9bcb0639d019f156604aca4060470f02c2fb8b5defa2d540ab96ec82ef",
   "questions_mark_correct": "503dd47e909506e40b15b5c68a7861b9144c2b0285dc34bc91d37823a2f48890",
   "questions_mark_wrong": "ebc4bc09b1b314dccbf396ce8df847daeb0d122a8319af75a26af61fc3e65897",
+  "questions_match_first_tries": "ae3d56f8eb4807c9d7cd08aaea967dc1c3fc64a426b810c93059cfca38ffce34",
+  "questions_match_not_a_pair": "6bec49cd6b47116ff28f30d0f356049d9b307d16972099d9b404e1b2c8cc97b8",
+  "questions_match_paired": "90ae5a90c39491a62ea8e575b0d77d692cf82a30f034e0ef5b6951fab582797e",
+  "questions_match_unpaired": "e4a00c8c5987993c85159beb51853187c43e14f48e2cd626a812fb8746f1bfb7",
   "questions_matched_with": "fed2b901231c69128d45130907d3f64e68d440d692f5f5a0d00457e7d86c4c73",
   "questions_mistake_fixed": "9ebfa1cdcda5602c4d111df264321e267dcadb3f92febe3cf8e4a4d7d8515b7b",
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
@@ -73,6 +77,11 @@
     <string name="questions_place_wrong">%1$d번째 위치, 잘못된 위치</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, %2$s에 연결됨</string>
+    <string name="questions_match_paired">%1$s와(과) %2$s을(를) 연결했어요. 맞춘 짝: %4$d개 중 %3$d개.</string>
+    <string name="questions_match_not_a_pair">%1$s와(과) 짝인 카드는 %2$s이(가) 아니에요.</string>
+    <string name="questions_match_unpaired">%1$s와(과) %2$s의 짝을 풀었어요.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">처음에 이렇게 짝지었어요:</string>
     <string name="questions_your_answer">내 답</string>
     <string name="questions_mark_correct">정답</string>
     <string name="questions_mark_wrong">오답</string>

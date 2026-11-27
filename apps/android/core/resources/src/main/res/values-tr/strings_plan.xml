@@ -330,6 +330,7 @@
   "plan_outside_past_basics": "01d56c4bd6ccf4f24d9d30ef1b22f3d98bba59a6e90bfbd5891fd0b41fad593b",
   "plan_outside_skipped": "9d7473d664f2df57efaab6b64e8af0ff21d36f2922afa655b68d99aa1b9a0183",
   "plan_outside_skipped_base": "b49073a1ca9bbbab4454da126db35d9405e3f08b8bc04382103cef3d60af3ea2",
+  "plan_outside_skipped_module": "82eb9fab20d4eec80928e6ae015e21e123c1dbfe41ec4963fae7baec754065f4",
   "plan_pace": "413fbf8565e8c9fa50735fc75d7d3297874560d7ccbabd2fd862d4d516b685da",
   "plan_pace_challenges_to_go": "a283638043651cef7c79ba9a7614be08259d59ac95452e690f4d6aa67abd4ff3",
   "plan_pace_date_passed": "23d637eff382e5d621cad318eba6954f3d3fe3456d168e798befa58552db2c77",
@@ -1356,6 +1357,8 @@
     <string name="plan_outside_others_first">Planında yok · önce diğer konular geliyor</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Planında yok · bu branşı plandan çıkardın</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">Planında yok · bu modülü sen çıkardın</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">Hilebaz planında yer almıyor</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

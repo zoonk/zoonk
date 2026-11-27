@@ -375,7 +375,6 @@ internal fun PracticeChapterRow(
             )
         },
         onClick = onPractice,
-        leadOnFirstLine = true,
         busy = practice.running,
         leading = { KindDot(LearnKind.Practice) },
     )
@@ -484,6 +483,7 @@ private fun SkillDot(state: MapSkill.State) {
     val modifier = Modifier.size(8.dp)
     val tertiary = MaterialTheme.colorScheme.tertiary
     when (state) {
+        MapSkill.State.UNKNOWN_DEFAULT_OPEN_API -> Unit
         MapSkill.State.MASTERED -> FilledDot(tertiary, modifier)
         MapSkill.State.SOLID -> FilledDot(MaterialTheme.colorScheme.onSurface, modifier)
         MapSkill.State.LEARNING -> Box(modifier.border(1.5.dp, tertiary, CircleShape))
@@ -492,14 +492,16 @@ private fun SkillDot(state: MapSkill.State) {
 }
 
 @Composable
-private fun skillStateLabel(state: MapSkill.State) =
-    stringResource(
+private fun skillStateLabel(state: MapSkill.State): String {
+    return stringResource(
         when (state) {
+            MapSkill.State.UNKNOWN_DEFAULT_OPEN_API -> return ""
             MapSkill.State.LEARNING -> R.string.goalcontent_skill_learning
             MapSkill.State.SOLID -> R.string.goalcontent_skill_solid
             MapSkill.State.MASTERED -> R.string.goalcontent_skill_mastered
             MapSkill.State.NEW -> R.string.goalcontent_new
         },
     )
+}
 
 private const val NEW_ALPHA = 0.4f

@@ -5,23 +5,32 @@ import {
   type CompletedLesson,
   type CompletedLessonFilter,
 } from "@zoonk/core/completed-lessons/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DetailAsideSection, DetailContent, DetailLayout } from "../_components/detail-page";
 import {
-  LIST_GROUP_CLASS,
+  ListGroup,
+  ListRow,
   ListRowBody,
   ListRowContent,
   ListRowDescription,
-  ListRowLink,
+  ListRowLinkWithAction,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabsColumn, PageTabsGroup, PageTabsScroll } from "../_components/page-tabs";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { LessonSaveButton } from "../saved-lessons/lesson-save-button";
+import {
+  type LessonSaves,
+  type SaveLesson,
+  useLessonSaves,
+} from "../saved-lessons/use-lesson-saves";
+import { SavedBookmarkIcon } from "../saves/save-button";
 import { LearnPageBar } from "../shell/learn-bar";
 
 export type CompletedLessonsHrefs = {
@@ -49,19 +58,72 @@ function useGroupsTitle(kind: CompletedLessonFilter["kind"]): string {
   return kind === "modules" ? t("Modules") : t("Phases");
 }
 
-function LessonRow({ href, lesson }: { href: string; lesson: CompletedLesson }) {
+/** The bookmark's box, empty, so a row without one ends its date where the others do. */
+function BookmarkSpace() {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        buttonVariants({ edge: "end", size: "icon-lg", variant: "ghost" }),
+        "invisible",
+      )}
+    >
+      <SavedBookmarkIcon saved={false} />
+    </span>
+  );
+}
+
+/** Its bookmark saves the lesson for later without opening it. */
+function LessonRow({
+  href,
+  lesson,
+  saves,
+}: {
+  href: string;
+  lesson: CompletedLesson;
+  saves: LessonSaves;
+}) {
   const formatDate = useFormatIsoDate();
+  const state = { saved: lesson.saved, target: lesson.lessonId };
+
+  const body = (
+    <ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{lesson.title}</ListRowTitle>
+        {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
+      </ListRowContent>
+      <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
+    </ListRowBody>
+  );
+
+  if (!lesson.available) {
+    return (
+      <div className="flex items-center gap-1">
+        <ListRow className="min-w-0 flex-1">{body}</ListRow>
+        <BookmarkSpace />
+      </div>
+    );
+  }
 
   return (
-    <ListRowLink href={href} lessonWritten prefetch="intent">
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{lesson.title}</ListRowTitle>
-          {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
-        </ListRowContent>
-        <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
-      </ListRowBody>
-    </ListRowLink>
+    <ListRowLinkWithAction
+      action={
+        <LessonSaveButton
+          edge="end"
+          labelled={false}
+          onToggle={() => saves.toggle(state)}
+          saved={saves.isSaved(state)}
+          size="icon-lg"
+          title={lesson.title}
+          variant="ghost"
+        />
+      }
+      href={href}
+      lessonWritten
+      prefetch="intent"
+    >
+      {body}
+    </ListRowLinkWithAction>
   );
 }
 
@@ -70,10 +132,12 @@ function MonthSection({
   hrefs,
   lessons,
   month,
+  saves,
 }: {
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
   month: string;
+  saves: LessonSaves;
 }) {
   const formatDate = useFormatIsoDate();
   const titleId = `completed-lessons-${month}`;
@@ -86,13 +150,13 @@ function MonthSection({
         </PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className={LIST_GROUP_CLASS}>
+      <ListGroup as="ul">
         {lessons.map((lesson) => (
           <li key={lesson.lessonId}>
-            <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} />
+            <LessonRow href={hrefs.lesson(lesson.lessonId)} lesson={lesson} saves={saves} />
           </li>
         ))}
-      </ul>
+      </ListGroup>
     </PageSection>
   );
 }
@@ -147,9 +211,11 @@ function GroupTabs({
 function LessonMonths({
   hrefs,
   lessons,
+  saves,
 }: {
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
+  saves: LessonSaves;
 }) {
   const t = useExtracted();
   const [shown, setShown] = useState(COMPLETED_LESSON_PAGE_SIZE);
@@ -157,7 +223,13 @@ function LessonMonths({
   return (
     <>
       {groupByMonth(lessons.slice(0, shown)).map(([month, monthLessons]) => (
-        <MonthSection hrefs={hrefs} key={month} lessons={monthLessons} month={month} />
+        <MonthSection
+          hrefs={hrefs}
+          key={month}
+          lessons={monthLessons}
+          month={month}
+          saves={saves}
+        />
       ))}
 
       {lessons.length > shown && (
@@ -178,14 +250,17 @@ export function CompletedLessonsScreen({
   group,
   hrefs,
   lessons,
+  save,
 }: {
   filter: CompletedLessonFilter | null;
   /** The group in the page's address, which picking one changes in place. */
   group: string | null;
   hrefs: CompletedLessonsHrefs;
   lessons: readonly CompletedLesson[];
+  save: SaveLesson;
 }) {
   const t = useExtracted();
+  const saves = useLessonSaves(save);
   const groupsTitle = useGroupsTitle(filter?.kind ?? "subjects");
   const current = filter?.groups.find((candidate) => candidate.key === group)?.key ?? null;
   const listed = current ? lessons.filter((lesson) => lesson.group === current) : lessons;
@@ -198,7 +273,7 @@ export function CompletedLessonsScreen({
         </p>
       )}
 
-      <LessonMonths hrefs={hrefs} key={current} lessons={listed} />
+      <LessonMonths hrefs={hrefs} key={current} lessons={listed} saves={saves} />
     </DetailContent>
   );
 

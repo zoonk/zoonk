@@ -56,7 +56,7 @@ import com.zoonk.android.feature.player.PlayingLesson
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.LessonLoad
-import com.zoonk.android.feature.player.model.toPlayableLesson
+import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -135,7 +135,7 @@ fun ExplainScreen(
         }
 
         is LoadState.Loaded -> {
-            ExplanationView(route, state.value, app, navigator, readAgain = { resource.refresh() })
+            ExplanationView(route, state.value.explanation, state.value.lesson, app, navigator, readAgain = { resource.refresh() })
         }
     }
 }
@@ -144,6 +144,7 @@ fun ExplainScreen(
 private fun ExplanationView(
     route: AppRoute.Explain,
     explanation: Explanation,
+    playable: PlayableLesson?,
     app: AppContainer,
     navigator: AppNavigator,
     readAgain: suspend () -> Unit,
@@ -156,13 +157,10 @@ private fun ExplanationView(
     // A learner who waited sees the finished outline first; one opening a written explanation reads it at once.
     val readsAtOnce = rememberSaveable { explanation.lesson != null }
     var started by rememberSaveable { mutableStateOf(false) }
-    val lesson = explanation.lesson
 
     LaunchedEffect(explanation, (session as? SessionState.SignedIn)?.session) { viewModel.show(explanation) }
 
-    if (lesson != null && (readsAtOnce || started)) {
-        // The lesson goes by the question's title, as Today and the goal list name it.
-        val playable = remember(lesson, explanation.title) { lesson.toPlayableLesson().copy(title = explanation.title) }
+    if (playable != null && (readsAtOnce || started)) {
         val exits = remember(navigator) { explainExits(navigator) }
 
         PlayingLesson(

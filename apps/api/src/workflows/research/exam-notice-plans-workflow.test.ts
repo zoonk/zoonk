@@ -9,10 +9,9 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { examNoticePlansWorkflow } from "./exam-notice-plans-workflow";
-
-const DAY_MS = 86_400_000;
 
 describe(examNoticePlansWorkflow, () => {
   it("prunes an old shared exam graph and its active plans, then offers the extra the graph gains", async () => {
@@ -42,7 +41,7 @@ describe(examNoticePlansWorkflow, () => {
       dailyMinutes: 60,
       examBlueprintId: blueprint.id,
       kind: "exam",
-      targetDate: new Date(Date.now() + 30 * DAY_MS),
+      targetDate: new Date(Date.now() + 30 * MS_PER_DAY),
       userId: user.id,
     });
 

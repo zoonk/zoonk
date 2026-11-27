@@ -6,7 +6,7 @@ import { parseArgs } from "node:util";
 import { adoptRenders } from "./adopt.mts";
 import { checkBody } from "./body-check.mts";
 import { deviceSection, readDeviceShots } from "./device-section.mts";
-import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
+import { deviceBridge, takeDevicePicture } from "./device.mts";
 import { closedSection, resolveFinding } from "./findings.mts";
 import { findManifests, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
@@ -37,6 +37,7 @@ function readArguments() {
     return parseArgs({
       allowPositionals: true,
       options: {
+        "agent-device": { type: "string" },
         by: { type: "string" },
         device: { type: "string" },
         exception: { type: "string" },
@@ -289,7 +290,7 @@ async function recordDevice({ positionals: files, values }: Arguments) {
   const to = resolve(values.to ?? join(CAPTURE, "device"));
 
   const item = await takeDevicePicture({
-    bridge: DEVICE_BRIDGES[platform],
+    bridge: deviceBridge({ command: values["agent-device"], platform }),
     deviceId,
     name,
     platform,

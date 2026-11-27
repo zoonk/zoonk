@@ -43,6 +43,7 @@
   "mindmaps_previous": "7ea41e66412b1f448090f075e39282689498a9c381600d68511b5289c7696941",
   "mindmaps_ready": "dffdd162f0144d7998be93acfd953a7a72a597211a0b792a4ea508e3a80244e9",
   "mindmaps_remove": "128dc00cde1dbfca579da4fbec5845ddaa405edb4c77d123d51e4adaea76ddf7",
+  "mindmaps_remove_map_failed": "1fee5b127d17042442187e6dd0368c4d2f6af03479ddafbc6a7eac4e185408ca",
   "mindmaps_remove_spoken": "f5b3ab142863422f8fd552e2c406094aa87bd87ed9bf47b6482d64a116f5b022",
   "mindmaps_row_description": "25529b780bc3479bb62b203f86b3b2f38e696d7fcfc27f11f3a1e750a1548c71",
   "mindmaps_row_description_finish": "0897dc2d122fba2df44ca5dc966adef4f68b54d8d80e393deb5c124900534cf3",
@@ -50,8 +51,10 @@
   "mindmaps_save": "f544f560fb86fe878002cb20c10b618337c0faba9e44d5b3cb746ee00bff82bc",
   "mindmaps_save_failed": "17c4703fd5a84f9d07a6f3228e65f79a5f28fbd7f3b19349b0a95076df0c989a",
   "mindmaps_save_map_failed": "cf5072d4bec14ac81423e2d90ecaad8777494441ab54078bf60ec224f46db8f2",
+  "mindmaps_save_named": "c69d4ac8eda4acfaec2415db00706b5a2f8a3de416aec65bca6aad497c5d46ee",
   "mindmaps_saved": "7fd83126608cef0876e4c35f610c15265b3e411e424a16685d09a923a4cff0dd",
   "mindmaps_saved_empty": "2a5e36f326c156fc69dd6e9ff218fd0976ca7a58957a2780e8d7a365cee547a9",
+  "mindmaps_saved_named": "d32bdb803a61c536d62b31bafee244b6227444cff6c9ffe0bdce1ebd0494fc6e",
   "mindmaps_saved_state": "80438167e711e394111ea24b9b5c7d4297caa1fd9e668cd0268dba3a15eec950",
   "mindmaps_show_all": "2d897bb618e4efb10c876e77cc387a4b2a663f9695f7b8d8c73927e7965c5402",
   "mindmaps_shown_as": "61289214d15a0a2e22c5f6177943d93487fc9d54fb4bf0038b3e7af39e3bdd27",
@@ -190,9 +193,13 @@
     <string name="mindmaps_save">저장</string>
     <!-- A map the learner saved; tapping it again removes it. -->
     <string name="mindmaps_saved_state">저장됨</string>
+    <string name="mindmaps_save_named">%1$s 저장</string>
+    <!-- Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved. -->
+    <string name="mindmaps_saved_named">%1$s 저장됨</string>
     <!-- Removes a map from the saved ones, from a row's menu. -->
     <string name="mindmaps_unsave">저장 해제</string>
     <string name="mindmaps_save_map_failed">이 마인드맵을 저장하지 못했어요. 다시 시도해 보세요.</string>
+    <string name="mindmaps_remove_map_failed">이 마인드맵을 저장 목록에서 삭제하지 못했어요. 다시 시도해 보세요.</string>
     <!-- The study screen's menu of other ways to go. -->
     <string name="mindmaps_options">더보기</string>
     <string name="mindmaps_previous">이전</string>

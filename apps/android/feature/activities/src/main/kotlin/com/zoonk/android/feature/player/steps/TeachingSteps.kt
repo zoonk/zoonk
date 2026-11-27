@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -186,6 +187,16 @@ val LocalWordBankCheck = compositionLocalOf<(@Composable () -> Unit)?> { null }
 
 /** Where a checked question goes next ("Saved to your mistakes"), drawn inside the activity's own feedback card. */
 val LocalResultNotes = compositionLocalOf<(@Composable () -> Unit)?> { null }
+
+/**
+ * How a language step's match board hands the verdict under it the pairs the learner first confused: only the board saw
+ * its wrong tries. The screen that draws both holds them ([rememberBoardMisses]).
+ */
+val LocalBoardMisses = compositionLocalOf<MutableState<(@Composable () -> Unit)?>?> { null }
+
+/** A screen's [LocalBoardMisses], empty again for each new [screen]. */
+@Composable
+fun rememberBoardMisses(screen: Any): MutableState<(@Composable () -> Unit)?> = remember(screen) { mutableStateOf(null) }
 
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the

@@ -360,6 +360,7 @@ msgstr "Abbrechen"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Speichern"
@@ -383,11 +384,6 @@ msgstr "Mit {time} pro Tag erreichst du {level} etwa im {month}."
 msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "Du bist etwa im {month} fertig."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "Mach eine kurze Pause und versuch es dann noch einmal."
 
 #: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
@@ -574,6 +570,22 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Zusammenfassungen"
 
+#: src/_components/match-board.tsx
+msgctxt "hu7rTE"
+msgid "Match these"
+msgstr "Diese zuordnen"
+
+#: src/_components/match-board.tsx
+msgctxt "t4J0rv"
+msgid "With these"
+msgstr "Diesen zuordnen"
+
+#. Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”.
+#: src/_components/match-misses.tsx
+msgctxt "8PETCo"
+msgid "You first matched:"
+msgstr "Zuerst hast du zugeordnet:"
+
 #. How many answers the learner got right in a challenge.
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
@@ -724,6 +736,18 @@ msgstr "Schließen"
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Zum Wiederholen"
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "Mach eine kurze Pause. Du kannst es in {seconds, plural, one {# Sekunde} other {# Sekunden}} noch einmal versuchen."
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "Mach eine kurze Pause. Du kannst es in {minutes, plural, one {# Minute} other {# Minuten}} noch einmal versuchen."
 
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"
@@ -991,6 +1015,26 @@ msgstr "Für dieses Ziel sind täglich {main} und für deine anderen Ziele zusam
 msgctxt "T3LP-r"
 msgid "Use {time}"
 msgstr "{time} übernehmen"
+
+#: src/_components/use-match-board.ts
+msgctxt "Y-oZiJ"
+msgid "Unmatched {left} and {right}."
+msgstr "Zuordnung von {left} und {right} aufgehoben."
+
+#: src/_components/use-match-board.ts
+msgctxt "5sU5Ih"
+msgid "{left} and {right} don't go together."
+msgstr "{left} und {right} gehören nicht zusammen."
+
+#: src/_components/use-match-board.ts
+msgctxt "IYSXye"
+msgid "Matched {left} with {right}. Pairs matched: {matched} of {total}."
+msgstr "{left} mit {right} verbunden. Zugeordnete Paare: {matched} von {total}."
+
+#: src/_components/use-match-board.ts
+msgctxt "BwID7H"
+msgid "{entry}, matched with {other}"
+msgstr "{entry}, zugeordnet zu {other}"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -1297,6 +1341,7 @@ msgid "Change"
 msgstr "Ändern"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1329,6 +1374,34 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "App-Sprache"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr "Neuer Chat"
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr "Weitere Chats konnten nicht geladen werden. Versuch es noch einmal."
+
+#. A button under a list that loads more of its rows.
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "Mehr anzeigen"
+
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr "Chats"
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1359,38 +1432,6 @@ msgstr "Energie von {buddy}"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "Mit deiner ersten Lektion geht es los."
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "Woran sich {buddy} erinnert"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "Brillen von {buddy}"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "Wochenübersicht"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energie"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Heutige Missionen"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1507,6 +1548,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "Dein Buddy bringt sie mit"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "Mehr über {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "{buddy} wechseln"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "Brillen von {buddy}"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "Woran sich {buddy} erinnert"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "Wochenübersicht"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1519,17 +1587,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Name"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "Mehr über {buddy}"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "{buddy} wechseln"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1540,6 +1597,13 @@ msgstr "{buddy} heute"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Noch nicht"
+
+#: src/buddies/buddy-today.tsx
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Heutige Missionen"
 
 #: src/buddies/use-buddy-name.ts
 msgctxt "buddyNames.WsAzWR"
@@ -1701,6 +1765,7 @@ msgid "Copy link"
 msgstr "Link kopieren"
 
 #: src/certificates/certificate-details.tsx
+#: src/shell/level-link.tsx
 msgctxt "y1Qr81"
 msgid "Level"
 msgstr "Level"
@@ -2783,12 +2848,6 @@ msgid "All"
 msgstr "Alle"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "Mehr anzeigen"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
 msgid "Lessons you finish show up here, so you can do them again anytime."
 msgstr "Abgeschlossene Lektionen erscheinen hier, damit du sie jederzeit wiederholen kannst."
@@ -3768,11 +3827,11 @@ msgctxt "feedback.hBQCdX"
 msgid "Your email, if you'd like a reply"
 msgstr "Deine E-Mail-Adresse, falls du eine Antwort möchtest"
 
-#. An example email address in an empty field. Adapt it to the language.
+#. An example email address in an empty email field. Localize "you" and keep example.com.
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.OiSL94"
-msgid "myemail@gmail.com"
-msgstr "meineemail@gmail.com"
+msgctxt "feedback.PwhG9W"
+msgid "you@example.com"
+msgstr "du@example.com"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.Xx0WZV"
@@ -4987,6 +5046,13 @@ msgstr "{done, number} von {total, plural, one {# Phase} other {# Phasen}} abges
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "Mehr"
+
+#: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Gespeicherte Lektionen"
 
 #: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
@@ -7110,7 +7176,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Lektions-Mindmap"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "{title} aus den gespeicherten Mindmaps entfernen"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Entfernen"
@@ -7130,6 +7203,18 @@ msgstr "Kurz gesagt:"
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "Gespeichert"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "{title} speichern"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "Mindmap {title} gespeichert"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7194,6 +7279,7 @@ msgid "Saved maps"
 msgstr "Gespeicherte Mindmaps"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "Nicht mehr verfügbar"
@@ -7242,14 +7328,14 @@ msgid "Create all"
 msgstr "Alle erstellen"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "Wir konnten diese Mindmap nicht speichern. Versuch es noch einmal."
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Diese Mindmap konnte nicht entfernt werden. Versuch es noch einmal."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "Wir konnten diese Mindmap nicht speichern. Versuch es noch einmal."
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8224,7 +8310,6 @@ msgid "Show less"
 msgstr "Weniger anzeigen"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {# weiteres Thema} other {# weitere Themen}}"
@@ -12342,6 +12427,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "Vektor {base}"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "Lektion {title} gespeichert"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "Gespeichert"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "Lektionen, die du noch einmal machen möchtest"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "{title} aus gespeicherten Lektionen entfernen"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "Noch nichts gespeichert. Tippe auf das Lesezeichen einer Lektion, um sie hier zu speichern."
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "Diese Lektion konnte nicht entfernt werden. Versuch es noch einmal."
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "Diese Lektion konnte nicht gespeichert werden. Versuch es noch einmal."
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12478,21 +12603,6 @@ msgstr "Text"
 msgctxt "5jOH04"
 msgid "What the question is about"
 msgstr "Worum es in der Frage geht"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "hu7rTE"
-msgid "Match these"
-msgstr "Diese zuordnen"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "t4J0rv"
-msgid "With these"
-msgstr "Diesen zuordnen"
-
-#: src/session/question-block/match-pairs-question.tsx
-msgctxt "BwID7H"
-msgid "{entry}, matched with {other}"
-msgstr "{entry}, zugeordnet zu {other}"
 
 #: src/session/question-block/order-question.tsx
 msgctxt "NGRcqI"
@@ -12760,22 +12870,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Neue Lektion"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "Übung: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "Übung: {subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "Übungen: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "Übung {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "Gemischte Übung"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "Übung"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -12907,6 +13018,17 @@ msgstr "Lernbereiche"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Suchen"
+
+#: src/shell/level-link.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Level {level}"
+
+#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
+#: src/shell/level-link.tsx
+msgctxt "xjYKLD"
+msgid "{belt}, Level {level}"
+msgstr "{belt}, Level {level}"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"
@@ -13058,6 +13180,12 @@ msgctxt "tDrkTA"
 msgid "{done, number} of {total, number} chapters"
 msgstr "{done, number} von {total, number} Kapiteln"
 
+#. Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them.
+#: src/syllabus/subject-covers.tsx
+msgctxt "PllRqz"
+msgid "What it covers"
+msgstr "Das sind die Inhalte"
+
 #: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "eNbJHf"
@@ -13079,16 +13207,34 @@ msgctxt "MaFsVi"
 msgid "Add it back"
 msgstr "Wieder hinzufügen"
 
+#. On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6pJpYl"
+msgid "You took this module out of your plan."
+msgstr "Du hast dieses Modul aus deinem Plan genommen."
+
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "Du hast dieses Fach aus deinem Plan genommen."
+
+#. Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "NmEJhW"
+msgid "This module isn't in your plan. Other modules come first."
+msgstr "Dieses Modul ist nicht in deinem Plan. Andere Module kommen zuerst."
 
 #. Why a subject isn't in the learner's plan: their study time goes to subjects that matter more first. Followed by a link to change the plan.
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "ydjRGM"
 msgid "This subject isn't in your plan. Other subjects come first."
 msgstr "Dieses Fach ist nicht in deinem Plan. Andere Fächer haben Vorrang."
+
+#. On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet.
+#: src/syllabus/subject-not-planned.tsx
+msgctxt "6YC_jf"
+msgid "This module isn't in your plan yet."
+msgstr "Dieses Modul ist noch nicht in deinem Plan."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
@@ -13117,9 +13263,19 @@ msgid "{total, plural, one {{done, number} of # topic} other {{done, number} of 
 msgstr "{total, plural, one {{done, number} von # Thema} other {{done, number} von # Themen}}"
 
 #: src/syllabus/subject-screen.tsx
+msgctxt "W40WkX"
+msgid "About this module"
+msgstr "Über dieses Modul"
+
+#: src/syllabus/subject-screen.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Über dieses Fach"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "qsKSNx"
+msgid "Module options"
+msgstr "Moduloptionen"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "vx7zl3"
@@ -13282,6 +13438,12 @@ msgstr "Bei {course} an {institution} werden alle Teile der Prüfung gleich gewi
 msgctxt "uZd7hU"
 msgid "On the exam"
 msgstr "In der Prüfung"
+
+#. Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules".
+#: src/syllabus/topic-note.tsx
+msgctxt "i2ZFZr"
+msgid "Not in your plan · you took this module out"
+msgstr "Nicht in deinem Plan · du hast dieses Modul herausgenommen"
 
 #. Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out.
 #: src/syllabus/topic-note.tsx
@@ -13769,6 +13931,12 @@ msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Nicht gelernt"
 
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, one {# Thema} other {# Themen}} · {topic}"
+
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
 msgid "Every topic"
@@ -14030,11 +14198,17 @@ msgctxt "a2NxUG"
 msgid "0 of {lines} lines"
 msgstr "0 von {lines} Zeilen"
 
-#. The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read.
+#. The approximate line count of a written answer so far past its limit that no handwriting would fit it; the exam's graders won't read its end.
 #: src/writing/writing-editor.tsx
-msgctxt "6omgAR"
-msgid "about {used} of {lines} lines · {over} won't be read"
-msgstr "etwa {used} von {lines} Zeilen · {over} werden nicht gelesen"
+msgctxt "O21PBU"
+msgid "about {used} of {lines} lines · the end won't be read"
+msgstr "ca. {used} von {lines} Zeilen · das Ende wird nicht gelesen"
+
+#. The approximate line count of a written answer past its limit at a typical handwriting size; it's still graded in full, since small handwriting could fit it.
+#: src/writing/writing-editor.tsx
+msgctxt "VxrG7A"
+msgid "about {used} of {lines} lines · may not fit on paper"
+msgstr "ca. {used} von {lines} Zeilen · passt vielleicht nicht aufs Papier"
 
 #: src/writing/writing-editor.tsx
 msgctxt "F6UFzM"

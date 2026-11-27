@@ -18,6 +18,11 @@
     <string name="questions_place_wrong">Place %1$d, wrong place</string>
     <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, matched with %2$s</string>
+    <string name="questions_match_paired">Matched %1$s with %2$s. Pairs matched: %3$d of %4$d.</string>
+    <string name="questions_match_not_a_pair">%1$s and %2$s don\'t go together.</string>
+    <string name="questions_match_unpaired">Unmatched %1$s and %2$s.</string>
+    <!-- Under a matching question's verdict, before the pairs of cards the learner first put together wrong, one per line as “card → card”. -->
+    <string name="questions_match_first_tries">You first matched:</string>
     <string name="questions_your_answer">Your answer</string>
     <string name="questions_mark_correct">Correct</string>
     <string name="questions_mark_wrong">Wrong</string>

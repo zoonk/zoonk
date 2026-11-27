@@ -330,6 +330,7 @@
   "plan_outside_past_basics": "ebaded7dbed716aab09ea30ebe662c9cfae909087d48c6d3d8ecccbf3ace40c8",
   "plan_outside_skipped": "7796c65522705de39c906f5be28d81a2f492bf26888446e8f40e0b59dabbc744",
   "plan_outside_skipped_base": "96db8f07051c9b81d5c33f74017cbde2c23dc56962c157bc33c57274932f6351",
+  "plan_outside_skipped_module": "d57ed6f9a5d919688bf8641886e428de2a6df434edda3987afb63b80d69a4c58",
   "plan_pace": "b96475041e050e0832366eb3f567441612d165d23fe301448701d4eba0a60187",
   "plan_pace_challenges_to_go": "ffe76d30d860fbe1b86335f101760f72e0af278ee40a88025b2119ffebf06918",
   "plan_pace_date_passed": "2fd52917df26c411f6e5b19c0e07219d716039d2fa58ac7566bee1e354175443",
@@ -1423,6 +1424,8 @@
     <string name="plan_outside_others_first">No está en tu plan · primero van otros temas</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">No está en tu plan · quitaste esta materia</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">No está en tu plan · sacaste este módulo</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">El Tramposo no está en tu plan</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

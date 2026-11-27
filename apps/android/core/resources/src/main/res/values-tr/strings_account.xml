@@ -13,7 +13,7 @@
   "account_continue_with_google": "f4f8036176991d7adeb7901ddd2fd1a4a371b3751e12a765fd1dab19d8b473d7",
   "account_did_not_get_it": "debcf2553481ea248078dfd2ea1b49daf825137fc99d3717337b775e7ec42033",
   "account_email": "b6e4c797b9be0df6cad6cbfd3b080ae240cb7ab71cacc25c9f2ee9238864eb0d",
-  "account_email_placeholder": "6732b7cf0b432c0994b0503c73ecb1f54acff4f7b8ff26d4bee45eceb41a3660",
+  "account_email_placeholder": "4ec75d99589370cae8019be0a2020d6d4704a1e6972e26ce99efbcccf321f4dc",
   "account_failure_code_expired": "1fec3bcedebefdb7056b34ea946b5e43119aa87ac5ae58ec84e2b56702d7cc53",
   "account_failure_code_locked": "a5d0338977bfa043b4ed0162d3616e41e66981f42317a6abc1d2612aba48a3d6",
   "account_failure_disposable_email": "b9015d0d12879cf8ad1dde49ea622bae774393d18cf8cb40f0937eb432190d32",
@@ -69,7 +69,8 @@
     <string name="account_continue_with_apple">Apple ile devam et</string>
     <string name="account_or">Veya</string>
     <string name="account_email">E-posta</string>
-    <string name="account_email_placeholder">me@gmail.com</string>
+    <!-- An example email address in an empty email field. Localize "you" and keep example.com. -->
+    <string name="account_email_placeholder">sen@example.com</string>
     <string name="account_continue">Devam et</string>
     <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
     <string name="account_agreement">Devam ederek Zoonk’un %1$s ve %2$s metinlerini kabul edersin.</string>

@@ -10,16 +10,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithText
 import org.junit.Assert.assertTrue
 
-/** The one spinner on screen is [button]'s, in its icon's place beside its words rather than over them. */
-internal fun SemanticsNodeInteractionsProvider.assertOnlySpinnerBeside(button: String) {
-    val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
-    onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
-    val spinner = onNode(spinning and hasAnySibling(hasText(button)), useUnmergedTree = true).getUnclippedBoundsInRoot()
-    val words = onNodeWithText(button, useUnmergedTree = true).getUnclippedBoundsInRoot()
-    assertTrue(spinner.right <= words.left || spinner.left >= words.right)
-}
-
-/** The one spinner on screen is [button]'s, over its words: a main action has no glyph for it to take the place of. */
+/** The one spinner on screen is [button]'s, over its words: a button of words alone has no glyph for it to take the place of. */
 internal fun SemanticsNodeInteractionsProvider.assertOnlySpinnerOver(button: String) {
     val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
     onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)

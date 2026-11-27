@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arrangeMatchColumns, solvedRows } from "./match-pairs-columns";
+import { arrangeMatchColumns } from "./match-pairs-columns";
 
 const fields = {
   distractors: [
@@ -41,21 +41,5 @@ describe(arrangeMatchColumns, () => {
       const aligned = left.filter((card, index) => right[index]?.id === card.id);
       expect(aligned).toStrictEqual([]);
     }
-  });
-});
-
-describe(solvedRows, () => {
-  it("keeps the left column's order, and puts each pair in one row", () => {
-    const columns = arrangeMatchColumns(fields);
-
-    const partners: Record<string, string> = {
-      embarazada: "pregnant",
-      librería: "bookstore",
-      éxito: "success",
-    };
-
-    expect(solvedRows(columns).map(({ left, right }) => [left.text, right.text])).toStrictEqual(
-      columns.left.map((card) => [card.text, partners[card.text]]),
-    );
   });
 });

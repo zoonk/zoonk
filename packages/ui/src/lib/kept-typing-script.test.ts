@@ -1,6 +1,11 @@
 import { runInThisContext } from "node:vm";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { KEEP_TYPING_ATTRIBUTE, KEEP_TYPING_SCRIPT } from "./kept-typing-script";
+import {
+  KEEP_TYPING_ATTRIBUTE,
+  KEEP_TYPING_SCRIPT,
+  KEPT_PICK,
+  KEPT_READOUT_ATTRIBUTE,
+} from "./kept-typing-script";
 
 class TextField {
   value: string;
@@ -41,7 +46,24 @@ function select(value: string, key: string) {
 
 type Listener = (event: { target: unknown }) => void;
 
-function openPage() {
+function readoutBox(key: string, values: string[]) {
+  const box = document.createElement("span");
+  box.setAttribute(KEPT_READOUT_ATTRIBUTE, key);
+
+  for (const value of values) {
+    const shown = document.createElement("span");
+    shown.dataset.value = value;
+    box.append(shown);
+  }
+
+  return box;
+}
+
+function shownIn(box: HTMLElement) {
+  return [...box.children].map((readout) => !readout.hasAttribute("hidden"));
+}
+
+function openPage(readouts: HTMLElement[] = []) {
   const listeners: { listener: Listener; options: unknown; type: string }[] = [];
 
   vi.stubGlobal("HTMLInputElement", TextField);
@@ -52,6 +74,7 @@ function openPage() {
     addEventListener: (type: string, listener: Listener, options: unknown) => {
       listeners.push({ listener, options, type });
     },
+    querySelectorAll: () => readouts,
   });
 
   runInThisContext(KEEP_TYPING_SCRIPT);
@@ -106,14 +129,34 @@ describe("the keeper of words typed before a field's code arrives", () => {
     expect(globalThis.zoonkKeptTyping?.typed.size).toBe(0);
   });
 
-  it("ignores a choice or a file, whose value isn't typed words", () => {
+  it("ignores a checkbox or a file, whose value isn't typed words", () => {
     const { type } = openPage();
 
     type(new TextField("on", "agree", "checkbox"));
-    type(new TextField("weekly", "often", "radio"));
     type(new TextField(String.raw`C:\fakepath\notes.pdf`, "notes", "file"));
 
     expect(globalThis.zoonkKeptTyping?.typed.size).toBe(0);
+  });
+
+  it("keeps a radio that opted in as picked, whatever its value", () => {
+    const { type } = openPage();
+
+    type(new TextField("weekly", "often", "radio"));
+
+    expect(globalThis.zoonkKeptTyping?.typed).toStrictEqual(new Map([["often", KEPT_PICK]]));
+  });
+
+  it("shows the picked option in the readout keyed like its select, and only there", () => {
+    const time = readoutBox("time", ["15", "30", "45"]);
+    const other = readoutBox("other", ["15", "30"]);
+    const { type } = openPage([time, other]);
+    const picker = select("15", "time");
+
+    picker.value = "30";
+    type(picker);
+
+    expect(shownIn(time)).toStrictEqual([false, true, false]);
+    expect(shownIn(other)).toStrictEqual([true, true]);
   });
 
   it("stops keeping a field's words once its code took them", () => {

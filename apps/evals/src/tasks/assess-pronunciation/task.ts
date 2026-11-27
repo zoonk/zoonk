@@ -74,6 +74,7 @@ async function assessClip(run: PronunciationClipRun) {
     model,
     reasoning,
     romanization: input.romanization,
+    transcriberHeard: input.transcriberHeard,
   });
 }
 

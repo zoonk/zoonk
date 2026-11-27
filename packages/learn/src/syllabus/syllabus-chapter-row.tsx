@@ -73,7 +73,7 @@ export function SyllabusChapterRow({
 
   const content = (
     <>
-      <ListRowLeading firstLine>
+      <ListRowLeading>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={chapter.known} />
       </ListRowLeading>
       <ListRowBody>
@@ -107,7 +107,7 @@ export function SyllabusChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={chapter.title}
-        trigger={<ListRowButton className={className} type="submit" />}
+        trigger={<ListRowButton className={className} />}
       >
         {content}
       </FarTopicSheet>

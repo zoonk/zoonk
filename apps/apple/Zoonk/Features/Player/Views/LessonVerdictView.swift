@@ -3,6 +3,7 @@ import SwiftUI
 struct LessonVerdictView: View {
   @Environment(\.legibilityWeight) private var legibility
   @Environment(\.activityRenderers) private var activityRenderers
+  @Environment(ActivityWork.self) private var work: ActivityWork?
 
   let step: LessonStep
   let answer: LessonAnswer?
@@ -50,6 +51,8 @@ struct LessonVerdictView: View {
 
   @ViewBuilder
   private var details: some View {
+    boardMisses
+
     if let spelling = result.spelling {
       LabeledText(
         label: Text(
@@ -138,6 +141,19 @@ struct LessonVerdictView: View {
       Text(note)
         .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  /// Main's `boardMisses` and `MatchPairsMisses`: a solved match board shows every pair right, so
+  /// the verdict names the ones first put together wrong.
+  private var boardMisses: MatchMisses? {
+    switch step.content {
+    case .language(let exercise, _) where exercise.kind == .matchColumns:
+      MatchColumnsMisses.view(exercise, work: work)
+    case .activity(let content) where content.template == ActivityRenderer.matchPairs.template:
+      MatchPairs.misses(content, answer: answer)
+    default:
+      nil
     }
   }
 

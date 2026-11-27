@@ -148,7 +148,7 @@ function TodayTab({ q }: ViewProps) {
         targetDate: learner.goal.targetDate,
         targetLanguage: learner.goal.targetLanguage,
         targetRegion: learner.goal.targetRegion,
-        title: learner.goal.displayName,
+        displayName: learner.goal.displayName,
       }}
       missions={{ done: 0, total: 3 }}
       tab="today"

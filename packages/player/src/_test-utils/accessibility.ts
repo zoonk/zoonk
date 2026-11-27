@@ -1,11 +1,11 @@
 import {
+  WCAG_TARGET_SIZE_RULE,
   describeViolations,
   resumeAnimations,
   settleAnimations,
   stillAnimations,
 } from "@zoonk/testing/accessibility/scan";
 import {
-  MIN_TARGET_PX,
   TARGET_SELECTOR,
   findSmallTargets,
   sampleTargets,
@@ -40,14 +40,12 @@ async function scanScreen(where: string): Promise<string[]> {
 
   const results = await axe.run(document, {
     resultTypes: ["violations"],
-    rules: HOST_DOCUMENT_RULES,
+    rules: { ...HOST_DOCUMENT_RULES, ...WCAG_TARGET_SIZE_RULE },
   });
 
   const targets = sampleTargets(TARGET_SELECTOR);
 
-  const smallTargets = findSmallTargets(targets).map(
-    (target) => `${where}: [target-size] ${target} (needs ${MIN_TARGET_PX} px)`,
-  );
+  const smallTargets = findSmallTargets(targets).map((target) => `${where}: ${target}`);
 
   const selectable = [
     ...findSelectableTargets(targets),

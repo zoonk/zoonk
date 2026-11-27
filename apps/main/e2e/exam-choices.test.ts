@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -63,7 +62,6 @@ test("a new exam goal asks which option the learner takes, saves it for the plan
 
   const options = page.getByRole("radiogroup", { name: FOREIGN });
   const spanish = options.getByRole("radio", { name: /Espanhol/u });
-  await expectHydrated(spanish);
   await spanish.click();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -133,7 +131,6 @@ test("an exam whose candidates take two modules asks for both and saves them tog
 
   const modules = page.getByRole("group", { name: MODULES });
   const biology = modules.getByRole("checkbox", { name: "Biología" });
-  await expectHydrated(biology);
   await biology.click();
   await modules.getByRole("checkbox", { name: "Química" }).click();
   await expect(modules.getByRole("checkbox", { name: "Derecho" })).toBeDisabled();

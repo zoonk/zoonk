@@ -205,7 +205,8 @@ struct AccountDeletionView: View {
             prompt: Text(
               "6-digit code",
               tableName: "Account",
-              comment: "Placeholder for the account deletion verification code")
+              comment: "Placeholder for the account deletion verification code"
+            ).fieldPrompt()
           ) {
             Text(
               "Verification code",

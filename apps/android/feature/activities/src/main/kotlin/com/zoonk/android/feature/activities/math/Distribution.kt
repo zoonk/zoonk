@@ -31,6 +31,7 @@ internal fun farEnds(distribution: Distribution): Interval =
     when (distribution) {
         is NormalValue -> distribution.value.run { Interval(mean - FAR_SDS * sd, mean + FAR_SDS * sd) }
         is UniformValue -> distribution.value.run { Interval(min, max) }
+        else -> Interval(Double.NaN, Double.NaN)
     }
 
 internal fun distributionDomain(fields: DistributionFields): ClosedFloatingPointRange<Double> {
@@ -38,6 +39,7 @@ internal fun distributionDomain(fields: DistributionFields): ClosedFloatingPoint
         when (val distribution = fields.distribution) {
             is NormalValue -> distribution.value.run { mean - NORMAL_REACH * sd to mean + NORMAL_REACH * sd }
             is UniformValue -> distribution.value.run { min - (max - min) * UNIFORM_MARGIN to max + (max - min) * UNIFORM_MARGIN }
+            else -> return Double.NaN..Double.NaN
         }
     return minOf(low, fields.handles.from, fields.target.from)..maxOf(high, fields.handles.to, fields.target.to)
 }
@@ -84,6 +86,7 @@ internal fun distributionTicks(
     when (distribution) {
         is NormalValue -> landmarks(distribution).filter { it in domain }
         is UniformValue -> niceTicks(domain, UNIFORM_TICKS)
+        else -> emptyList()
     }
 
 /** The ticks whose labels don't touch, kept outward from [anchor], so a crowded axis drops every other one around it. */
@@ -115,6 +118,10 @@ internal fun densityAt(
         is UniformValue -> {
             distribution.value.run { if (value in min..max) 1 / (max - min) else 0.0 }
         }
+
+        else -> {
+            Double.NaN
+        }
     }
 
 private fun cumulative(
@@ -124,6 +131,7 @@ private fun cumulative(
     when (distribution) {
         is NormalValue -> distribution.value.run { normalCdf(value, mean, sd) }
         is UniformValue -> distribution.value.run { ((value - min) / (max - min)).coerceIn(0.0, 1.0) }
+        else -> Double.NaN
     }
 
 /** Core's `normalCdf`, through Abramowitz and Stegun's erf (7.1.26). */
@@ -152,6 +160,7 @@ private fun landmarks(distribution: Distribution): List<Double> =
     when (distribution) {
         is NormalValue -> distribution.value.run { (-SD_TICKS..SD_TICKS).map { mean + it * sd } }
         is UniformValue -> distribution.value.run { listOf(min, max) }
+        else -> emptyList()
     }
 
 private const val PERCENT = 100

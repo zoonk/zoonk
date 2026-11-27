@@ -14,6 +14,7 @@ import {
   type TodayHostNotices,
 } from "@repo/packages/learn/src/today/today-context.tsx";
 import { TodayScreen } from "@repo/packages/learn/src/today/today-screen.tsx";
+import { MS_PER_DAY } from "@repo/packages/utils/src/date.ts";
 import { useEffect } from "react";
 import {
   CAREER_GOAL_ID,
@@ -26,7 +27,6 @@ import {
   type ViewProps,
 } from "./common";
 
-const DAY_MS = 86_400_000;
 const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
 
 /** The plan's lessons, in order, with the minutes each takes. */
@@ -71,6 +71,8 @@ function toBlock(spec: BlockSpec, position: number): DayBlockView {
     opensInPlayer: true,
     planItemKey: null,
     position,
+    practiceNumber: null,
+    preparing: false,
     refresh: false,
     reinforcement: false,
     status: spec.status,
@@ -121,12 +123,15 @@ type WeekPlan = {
   date: string;
   kind: "beforeStart" | "study" | "rest";
   minutes: number;
+  completed?: number;
+  total?: number;
   studied?: boolean;
   hitGoal?: boolean;
 }[];
 
 function toWeek({ days, today }: { days: WeekPlan; today: string }): SessionWeek {
   const weekDays = days.map((day) => ({
+    completed: day.completed ?? 0,
     date: utc(day.date),
     goalMinutes: day.kind === "study" ? 60 : 0,
     hitGoal: day.hitGoal ?? false,
@@ -134,6 +139,7 @@ function toWeek({ days, today }: { days: WeekPlan; today: string }): SessionWeek
     kind: day.kind,
     minutes: day.minutes,
     studied: day.studied ?? day.minutes > 0,
+    total: day.total ?? 0,
   }));
 
   return {
@@ -183,7 +189,7 @@ function buildToday({
   const day = {
     brainPower: done.reduce((sum, block) => sum + block.brainPower, 0),
     current: true,
-    dayEndsAt: localDate.getTime() + DAY_MS + 3 * 3_600_000,
+    dayEndsAt: localDate.getTime() + MS_PER_DAY + 3 * 3_600_000,
     emptyDay: null,
     examAccess: { includesMockExams: true, trialEnded: false },
     examTomorrow: false,
@@ -232,7 +238,7 @@ function buildToday({
       }
     : { ...day, blocks, catchUp, missions: unstartedMissions, status: "unstarted" };
 
-  const daysLeft = Math.round((target.getTime() - localDate.getTime()) / DAY_MS);
+  const daysLeft = Math.round((target.getTime() - localDate.getTime()) / MS_PER_DAY);
   const lessonsDone = 4 + done.length;
 
   const today: TodayView = {
@@ -244,6 +250,7 @@ function buildToday({
       dateEstimated: false,
       daysLeft,
       displayName: career.title,
+      examDocument: "notice",
       id: CAREER_GOAL_ID,
       kind: "learn",
       targetDate: target,
@@ -413,7 +420,7 @@ function Screen({
         id: CAREER_GOAL_ID,
         kind: "learn",
         targetDate: career.date,
-        title: career.title,
+        displayName: career.title,
       }}
       missions={{ done: missionsDone, total: dayMissions.length }}
       tab="today"
@@ -452,8 +459,10 @@ function TodayView({ lang, q }: ViewProps) {
     week: [
       { date: "2026-11-02", kind: "beforeStart", minutes: 0 },
       {
+        completed: done,
         date: "2026-11-03",
         kind: "study",
+        total: 4,
         minutes: lessons.slice(0, done).reduce((sum, lesson) => sum + lesson.minutes, 0),
       },
       { date: "2026-11-04", kind: "study", minutes: 0 },
@@ -535,7 +544,7 @@ function TodayChangedView({ lang, q }: ViewProps) {
     sourceChange: source,
     week: [
       { date: "2026-11-02", kind: "beforeStart", minutes: 0 },
-      { date: "2026-11-03", kind: "study", minutes: 44 },
+      { completed: 3, date: "2026-11-03", kind: "study", minutes: 44, total: 4 },
       { date: "2026-11-04", kind: "study", minutes: 0 },
       { date: "2026-11-05", kind: "study", minutes: 0 },
       { date: "2026-11-06", kind: "study", minutes: 0 },

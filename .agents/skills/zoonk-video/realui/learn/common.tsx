@@ -1,3 +1,4 @@
+import { useBeltLabel } from "@repo/apps/main/src/lib/belt-label.ts";
 // The frames Main composes around the learn routes on a phone, with no-op learn adapters
 // (apps/main/src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx, learn-goal-menu.tsx, learn-bar-end.tsx).
 import { type LearnBuddy } from "@repo/packages/learn/src/buddies/use-buddy-name.ts";
@@ -12,24 +13,22 @@ import {
   type DayStepOpenerProps,
   DayStepOpenerProvider,
 } from "@repo/packages/learn/src/session/day-step-opener.tsx";
-import { type GoalKind } from "@repo/packages/learn/src/shell/goal-menu-row.tsx";
 import { GoalSwitcher } from "@repo/packages/learn/src/shell/goal-switcher.tsx";
 import {
   LearnBottomNavigation,
   type LearnTab,
 } from "@repo/packages/learn/src/shell/learn-navigation.tsx";
 import {
-  FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
   LearnShellMain,
-  NO_WAY_BACK,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
+import { LearnLevelLink } from "@repo/packages/learn/src/shell/level-link.tsx";
+import { LearnTabRootBar } from "@repo/packages/learn/src/shell/tab-root-bar.tsx";
 import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
-import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
-import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
-import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
+import { type BeltColor } from "@repo/packages/utils/src/belt-level.ts";
+import { User } from "lucide-react";
+import { type ComponentProps, type ReactNode } from "react";
 import { story } from "../story";
 
 export function Link({
@@ -40,15 +39,16 @@ export function Link({
   prefetch: _prefetch,
   scroll: _scroll,
   lessonWritten: _lessonWritten,
-  unstable_dynamicOnHover: _dynamicOnHover,
   ref,
+  title,
   ...rest
-}: LearnLinkComponentProps) {
+}: LearnLinkComponentProps & { title?: string }) {
   return (
     <a
       {...rest}
       href={href}
       ref={ref}
+      title={title}
       onClick={(e) => {
         e.preventDefault();
         onClick?.(e);
@@ -142,77 +142,72 @@ export const ZU: LearnBuddy = {
   studiedToday: false,
 };
 
-export type ShellGoal = {
-  id: string;
-  title: string;
-  kind: GoalKind;
-  dailyMinutes: number;
-  targetDate: string | null;
-  languageFlag?: string | null;
-  targetLanguage?: string | null;
-  targetRegion?: string | null;
-};
+type SwitcherGoal = ComponentProps<typeof GoalSwitcher>["goals"][number];
+type ShellGoal = Omit<
+  SwitcherGoal,
+  "status" | "languageFlag" | "targetDateEstimated" | "targetLanguage" | "targetRegion"
+> &
+  Partial<Pick<SwitcherGoal, "languageFlag" | "targetLanguage" | "targetRegion">>;
 
-/** Main's LevelLink (learn-bar-end.tsx) at level 1 on the white belt. */
-function LevelLink() {
-  const t = useExtracted();
+export function StudioTabBar({
+  color,
+  level,
+  switcher,
+}: {
+  color: BeltColor;
+  level: number;
+  switcher: ReactNode;
+}) {
+  const belt = useBeltLabel(color);
 
   return (
-    <a
-      className="text-compact text-muted-foreground -ms-2 flex h-9 shrink-0 items-center px-2 whitespace-nowrap tabular-nums"
-      href="/level"
-    >
-      <span className="flex items-center gap-1.5">
-        <BeltIndicator aria-hidden="true" className="size-2.5" color="white" label="White belt" />
-        <span aria-hidden="true">{t("Level {level}", { level: "1" })}</span>
-      </span>
-    </a>
+    <LearnTabRootBar
+      end={
+        <>
+          <LearnLevelLink belt={belt} href="/level" level={{ color, level }} link={Link} />
+          <span className="relative size-7 shrink-0 rounded-full">
+            <Avatar className="size-full">
+              <AvatarFallback>
+                <User size={16} />
+              </AvatarFallback>
+            </Avatar>
+          </span>
+        </>
+      }
+      start={switcher}
+    />
   );
 }
 
 function TopBar({ goal }: { goal: ShellGoal }) {
   return (
-    <div className={FRAME_COLUMN_CLASS} data-slot="learn-frame-bar">
-      <PageTopBar
-        className={NO_WAY_BACK.computer.bare}
-        actions={
-          <>
-            <LevelLink />
-            <span className="relative size-7 shrink-0 rounded-full">
-              <Avatar className="size-full">
-                <AvatarFallback>o</AvatarFallback>
-              </Avatar>
-            </span>
-          </>
-        }
-        back={
-          <GoalSwitcher
-            activeGoalId={goal.id}
-            explanationHref="/explain"
-            exploreHref="/courses"
-            goals={[
-              {
-                dailyMinutes: goal.dailyMinutes,
-                displayName: goal.title,
-                id: goal.id,
-                kind: goal.kind,
-                languageFlag: goal.languageFlag ?? null,
-                status: "active",
-                targetDate: goal.targetDate,
-                targetDateEstimated: false,
-                targetLanguage: goal.targetLanguage ?? null,
-                targetRegion: goal.targetRegion ?? null,
-              },
-            ]}
-            hasAccount
-            newGoalHref="/start"
-            onSelect={async () => true}
-            onStartWaiting={async () => true}
-            waitingGoals={[]}
-          />
-        }
-      />
-    </div>
+    <StudioTabBar
+      color="white"
+      level={1}
+      switcher={
+        <GoalSwitcher
+          activeGoalId={goal.id}
+          explanationHref="/explain"
+          exploreHref="/courses"
+          goals={[
+            {
+              ...goal,
+              languageFlag: goal.languageFlag ?? null,
+              status: "active",
+              targetDateEstimated: false,
+              targetLanguage: goal.targetLanguage ?? null,
+              targetRegion: goal.targetRegion ?? null,
+            },
+          ]}
+          hasAccount
+          newGoalHref="/start"
+          onSelect={async () => true}
+          onStartWaiting={async () => true}
+          placement="bar"
+          waitingGoals={[]}
+        />
+      }
+    />
   );
 }
 

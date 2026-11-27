@@ -86,6 +86,10 @@ internal fun TutorOffer(
     modifier: Modifier = Modifier,
 ) {
     when (offer) {
+        is TutorToolOffer.TutorToolOfferOneOf14Value -> {
+            return
+        }
+
         is TutorToolOffer.TutorToolOfferOneOfValue -> {
             StartGoalOffer(offer.value, routes, modifier)
         }
@@ -336,6 +340,7 @@ private fun EssayOffer(
     val locked = offer.access == TutorToolOfferOneOf5.Access.PLUS_REQUIRED
     val cadence =
         when (offer.cadence) {
+            TutorToolOfferOneOf5.Cadence.UNKNOWN_DEFAULT_OPEN_API -> return
             TutorToolOfferOneOf5.Cadence.WEEKLY -> R.string.tutor_offer_essay_weekly
             TutorToolOfferOneOf5.Cadence.BIWEEKLY -> R.string.tutor_offer_essay_biweekly
             TutorToolOfferOneOf5.Cadence.FINAL_WEEKS -> R.string.tutor_offer_essay_final_weeks

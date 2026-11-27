@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { mockAnswersSql } from "@zoonk/db/anonymous-records";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 
 const MIN_ANSWER_MS = 10_000;
 const MAX_ANSWER_MS = 900_000;
@@ -9,8 +10,6 @@ const MIN_ANSWERS = 100;
 const MIN_LEARNERS = 5;
 
 const RECENT_MOCKS = 500;
-
-const MS_PER_MINUTE = 60_000;
 
 type PaceRow = { answers: number; learners: number; ms: number | null };
 

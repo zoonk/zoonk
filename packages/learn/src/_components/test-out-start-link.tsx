@@ -87,8 +87,7 @@ export function TestOutStartLink({
 
   return (
     <div className={cn("flex flex-col items-start", compact ? "relative gap-px" : "gap-2")}>
-      <form
-        action={start}
+      <p
         className={cn(
           "text-muted-foreground",
           compact ? "text-xs leading-4" : "text-sm",
@@ -97,10 +96,10 @@ export function TestOutStartLink({
       >
         {nextChapter ? t("Already know the next chapter?") : t("Already know this chapter?")}
         {space}
-        <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
+        <Button busy={opening} className="text-[length:inherit]" onClick={start} variant="link">
           {t("Take the test")}
         </Button>
-      </form>
+      </p>
 
       <TestOutStartStatus compact={compact} isPending={isPending} result={result} />
     </div>
@@ -133,14 +132,12 @@ export function TestOutStartRow({
 
   return (
     <>
-      <form action={start}>
-        <ListRowButton disabled={opening} type={opening ? "button" : "submit"}>
-          <ListRowLeading>
-            <KindDot kind="practice" />
-          </ListRowLeading>
-          <TestOutRowContent opening={opening} scope={scope} />
-        </ListRowButton>
-      </form>
+      <ListRowButton disabled={opening} onClick={start}>
+        <ListRowLeading>
+          <KindDot kind="practice" />
+        </ListRowLeading>
+        <TestOutRowContent opening={opening} scope={scope} />
+      </ListRowButton>
 
       <TestOutStartStatus
         className="in-data-[list=panel]:px-4 [&:has(>*)]:pb-3"

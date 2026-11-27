@@ -143,7 +143,7 @@ export function OfferPreview({
           // Never applied before its effect is worked out, as Today's proposals.
           !unchanged &&
           effect !== null && (
-            <SuggestionAction action={onApply} busy={pending}>
+            <SuggestionAction onClick={onApply} busy={pending}>
               {t("Change my plan")}
             </SuggestionAction>
           )

@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_HELD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { useActivityDropTarget } from "../_components/activity-drag-drop";
 import { type DiagramSlot } from "./labeled-diagram-model";
 import { SpotNumber, type SpotState } from "./spot-number";
@@ -46,6 +46,7 @@ function SlotButton({
       aria-pressed={isActive}
       className={cn(
         "focus-visible:ring-ring/50 flex min-h-11 w-full items-center gap-3 rounded-xl border px-2.5 py-1.5 text-left text-sm outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow,background-color]",
+        ACTIVITY_HELD_CLASS,
         !name && !isActive && "border-dashed",
         name && "bg-background hover:bg-accent",
         (isActive || isOver) && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft/40"),

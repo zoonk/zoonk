@@ -47,7 +47,7 @@ internal fun TodayPreparation(
     when (progress) {
         is TodayProgress.TodayProgressOneOfValue -> PreparationCard(progress.value, onOpenPlan, modifier, goalTitle)
         is TodayProgress.TodayProgressOneOf1Value -> LessonsCard(progress.value, onOpenPlan, modifier)
-        null -> Unit
+        is TodayProgress.TodayProgressOneOf2Value, null -> Unit
     }
 }
 

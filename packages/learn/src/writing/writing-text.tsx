@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
-import { toWordStart } from "./word-start";
 
 type Mark = { error: number | null; ignored: boolean; step: boolean };
 
@@ -16,8 +15,7 @@ function cutText({ grade, text }: { grade: WritingResult; text: string }): Piece
   const stepQuote = grade.nextStep?.quote;
   const stepStart = stepQuote ? text.indexOf(stepQuote) : -1;
 
-  const ignoredFrom =
-    grade.ignoredFrom === null ? text.length : toWordStart(text, grade.ignoredFrom);
+  const ignoredFrom = Math.min(grade.ignoredFrom ?? text.length, text.length);
 
   const cuts = new Set([0, text.length, ignoredFrom]);
 

@@ -13,7 +13,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic } from "react";
 import { DownloadRow } from "../_components/download-row";
-import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import {
   PageSection,
   PageSectionFooter,
@@ -218,7 +218,7 @@ export function MemoryScreen({
             </PageSectionTitle>
           </PageSectionHeader>
 
-          <ul className={LIST_GROUP_CLASS}>
+          <ListGroup as="ul">
             {group.facts.map((fact) => (
               <MemoryFactRow
                 fact={fact}
@@ -228,7 +228,7 @@ export function MemoryScreen({
                 onEdit={(statement) => screen.updateFact(fact.id, statement)}
               />
             ))}
-          </ul>
+          </ListGroup>
         </PageSection>
       ))}
 

@@ -31,15 +31,9 @@ export function MainAskTutor({
 export function MainTutorScope({
   buddy,
   canAsk,
-  children,
   goalId,
-  target,
+  ...props
 }: Omit<React.ComponentProps<typeof AskTutorScope>, "tutor"> & TutorViewer) {
   const tutor = useMainTutor({ buddy, canAsk, goalId });
-
-  return (
-    <AskTutorScope target={target} tutor={tutor}>
-      {children}
-    </AskTutorScope>
-  );
+  return <AskTutorScope {...props} tutor={tutor} />;
 }

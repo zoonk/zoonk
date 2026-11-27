@@ -13,6 +13,7 @@ import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { captureAnalytics } from "./analytics";
+import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -23,7 +24,6 @@ async function readStory(page: Page, screens: number): Promise<void> {
 
   // The first screen's Continue is in the HTML before the player's code runs, and does nothing until then.
   const next = page.getByRole("button", { name: /^Continue/u });
-  await expectHydrated(next);
   await next.click();
   await readStory(page, screens - 1);
 }
@@ -190,7 +190,11 @@ test.describe("Quick explanations", () => {
         page.getByText("A headline says the market is up 2% today. What do you know for sure?"),
       ).toBeVisible();
 
-      await page.keyboard.press("1");
+      const right = page.getByRole("radio", {
+        name: "The basket of stocks in the index is worth 2% more than at yesterday's close",
+      });
+
+      await pressAnswerKey(page, right);
       await page.keyboard.press("Enter");
       await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
 

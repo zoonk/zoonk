@@ -1,3 +1,4 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { fitOptions } from "../_utils/fit-options";
 import { MAX_PICTURE_OPTIONS } from "../images/image-request-schema";
 import { MAX_CHECK_OPTIONS, MAX_GUESS_OPTIONS } from "./written-lesson-schema";
@@ -7,17 +8,13 @@ const MAX_OPTIONS_BY_KIND: Readonly<Partial<Record<string, number>>> = {
   hookGuess: MAX_GUESS_OPTIONS,
 };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function fitScreen(screen: unknown): unknown {
-  if (!isRecord(screen)) {
+  if (!isJsonObject(screen)) {
     return screen;
   }
 
   const options: unknown[] | undefined = Array.isArray(screen.options) ? screen.options : undefined;
-  const pictured = options?.some((option) => isRecord(option) && isRecord(option.picture));
+  const pictured = options?.some((option) => isJsonObject(option) && isJsonObject(option.picture));
   const kindMax = typeof screen.kind === "string" ? MAX_OPTIONS_BY_KIND[screen.kind] : undefined;
   const max = pictured ? MAX_PICTURE_OPTIONS : kindMax;
   const fitted = options && max !== undefined ? fitOptions(options, max) : options;
@@ -31,7 +28,7 @@ function fitScreen(screen: unknown): unknown {
  * 2026). Anything else out of bounds still fails.
  */
 export function fitWrittenBounds(answer: unknown): unknown {
-  if (!isRecord(answer) || !Array.isArray(answer.screens)) {
+  if (!isJsonObject(answer) || !Array.isArray(answer.screens)) {
     return answer;
   }
 

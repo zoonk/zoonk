@@ -3,12 +3,13 @@ import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { listeningExamFixture } from "@zoonk/testing/fixtures/listening";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { DAY_MS, SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
+import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 
-const TOMORROW = new Date(SESSION_TODAY.getTime() + DAY_MS);
+const TOMORROW = new Date(SESSION_TODAY.getTime() + MS_PER_DAY);
 
 function graphSkill(area: string, skillId: string | undefined) {
   return { area, lessons: 6, name: area, phase: 0, skillId: skillId ?? "", weight: 4 };
@@ -22,7 +23,7 @@ async function camaraDayOne({ held = "TI" }: { held?: string } = {}) {
     goal: {
       examBlueprintId: exam?.blueprint.id ?? null,
       kind: "exam",
-      targetDate: new Date(SESSION_TODAY.getTime() + 60 * DAY_MS),
+      targetDate: new Date(SESSION_TODAY.getTime() + 60 * MS_PER_DAY),
       targetLanguage: exam ? "en" : null,
     },
     lessons: 3,

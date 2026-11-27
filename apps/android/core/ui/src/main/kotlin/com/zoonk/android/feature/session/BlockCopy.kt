@@ -46,7 +46,7 @@ val DayStep.learnKind: LearnKind
                 when (kind) {
                     StudyBlock.Kind.CHECKPOINT -> LearnKind.Challenge
                     StudyBlock.Kind.LEARN -> LearnKind.Lesson
-                    StudyBlock.Kind.PRACTICE -> LearnKind.Practice
+                    StudyBlock.Kind.PRACTICE, StudyBlock.Kind.UNKNOWN_DEFAULT_OPEN_API -> LearnKind.Practice
                     StudyBlock.Kind.PRODUCE -> LearnKind.Essay
                     StudyBlock.Kind.REVIEW -> LearnKind.Review
                 }
@@ -103,17 +103,22 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_practice_mistakes)
         }
 
-        step.topics.isNotEmpty() -> {
-            stringResource(R.string.session_block_practice_topic, step.topics.first())
-        }
-
-        step.areas.isNotEmpty() -> {
-            stringResource(R.string.session_block_practice_areas, formatList(step.areas, currentLocale()))
-        }
-
         else -> {
-            stringResource(R.string.session_block_mixed_practice)
+            practiceTitle(step)
         }
+    }
+}
+
+/** A subject's practice asks only about it; any other practice mixes topics, so none names it. */
+@Composable
+private fun practiceTitle(step: DayStep): String {
+    val subject = step.title.takeIf { step.kind == StudyBlock.Kind.PRACTICE }
+    val number = step.practiceNumber
+
+    return when {
+        subject != null -> stringResource(R.string.session_block_practice_subject, subject)
+        number != null -> stringResource(R.string.session_block_practice_number, number)
+        else -> stringResource(R.string.session_block_practice)
     }
 }
 
@@ -184,6 +189,17 @@ fun shortTopicList(
     } else {
         pluralStringResource(R.plurals.session_topics_and_more, rest, shown.joinToString(", "), rest)
     }
+}
+
+/**
+ * A practice's name doesn't say what it's on, so Today's line counts its topics before naming the one
+ * it asks most: a long name can only cut off its own end.
+ */
+@Composable
+fun practiceTopicsLine(topics: List<String>): String {
+    val topic = topicWords(topics.first())
+
+    return if (topics.size == 1) topic else pluralStringResource(R.plurals.today_step_practice_topics, topics.size, topics.size, topic)
 }
 
 /** "1", "1.1", "5.7.": a notice's item number, never a year opening a topic ("2026 in numbers"). */

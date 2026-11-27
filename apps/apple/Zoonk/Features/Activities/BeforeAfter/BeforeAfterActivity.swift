@@ -2,10 +2,8 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let beforeAfter = ActivityRenderer(template: "beforeAfter", badge: .always(.beforeAfter)) {
-    context in
-    if let fields = try? context.fields(as: BeforeAfterFields.self) {
-      BeforeAfterCanvas(fields: fields, context: context)
-    }
+    context, fields in
+    BeforeAfterCanvas(fields: fields, context: context)
   }
 }
 

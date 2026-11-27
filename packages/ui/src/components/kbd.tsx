@@ -50,6 +50,26 @@ const KEY_GLYPHS: Partial<Record<string, typeof CornerDownLeftIcon>> = {
   "⏎": CornerDownLeftIcon,
 };
 
+/**
+ * The served Geist Mono draws its zero slashed, which reads as "Ø" on a key, and Google's copy drops
+ * its plain alternate (`ss09`), so a 0 takes Geist Sans' plain zero.
+ */
+function PlainZeros({ text }: { text: string }) {
+  const at = text.indexOf("0");
+
+  if (at === -1) {
+    return text;
+  }
+
+  return (
+    <>
+      {text.slice(0, at)}
+      <span className="font-sans">0</span>
+      <PlainZeros text={text.slice(at + 1)} />
+    </>
+  );
+}
+
 function KeyGlyph({ children }: { children: React.ReactNode }) {
   if (typeof children !== "string") {
     return children;
@@ -70,19 +90,19 @@ function KeyGlyph({ children }: { children: React.ReactNode }) {
     return (
       <>
         <KeyGlyph>⌘</KeyGlyph>
-        {children.slice(1)}
+        <PlainZeros text={children.slice(1)} />
       </>
     );
   }
 
-  return children;
+  return <PlainZeros text={children} />;
 }
 
 function Kbd({ children, className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
       className={cn(
-        "bg-foreground/4 ring-foreground/12 in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background text-muted-foreground dark:in-data-[slot=tooltip-content]:bg-background/10 text-2xs pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-0.5 rounded-sm px-1 font-mono font-medium ring-1 select-none ring-inset in-data-[slot=tooltip-content]:ring-0 [&_svg:not([class*='size-'])]:size-3",
+        "bg-foreground/4 ring-foreground/12 in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background text-muted-foreground dark:in-data-[slot=tooltip-content]:bg-background/10 text-2xs pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-0.5 rounded-sm px-1 font-mono font-medium ring-1 select-none ring-inset in-data-[slot=tooltip-content]:ring-0 contrast-more:bg-transparent [&_svg:not([class*='size-'])]:size-3",
         className,
       )}
       data-slot="kbd"

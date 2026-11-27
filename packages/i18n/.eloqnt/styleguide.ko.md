@@ -75,6 +75,7 @@
 - “BP” (Brain Power's short form after an amount, “+50 BP”): “두뇌력” (the name is already short, so it stays whole)
 - “mission”: “미션”
 - “call” (speaking practice): “대화”, not “전화”
+- a “conversation” with the buddy (a written chat on the buddy page): “채팅” (“새 채팅”), never “대화”, which is the call
 - “Mistakes notebook”: “오답 노트”
 - “Saved to your mistakes”: “오답 노트에 저장했어요”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “고칠 문제” / “고친 문제”

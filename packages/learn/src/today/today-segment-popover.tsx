@@ -28,7 +28,7 @@ export const DAY_SEGMENT_SLOT = "today-day-segment";
  * the first row, 38px in all, since any taller it would cover one of them.
  */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 held-pressed:brightness-90 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125 dark:held-pressed:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();

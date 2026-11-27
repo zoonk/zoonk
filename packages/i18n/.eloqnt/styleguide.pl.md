@@ -66,6 +66,7 @@
 - Buddy stages “Baby” / “Young” / “Adult”: “Maluch” / “Nastolatek” / “Dorosły”
 - “mission”: “misja”
 - “call” (speaking practice): “rozmowa”, not “połączenie”
+- a “conversation” with the buddy (a written chat on the buddy page): “czat” (“Nowy czat”, “Czaty”), never “rozmowa”, which is the call
 - “Mistakes notebook”: “Zeszyt błędów”
 - “Saved to your mistakes”: “Zapisano w zeszycie błędów”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Do poprawy” / “Poprawione”; “Practice mistakes” (the notebook’s practice, as a button or a title): “Popraw błędy”

@@ -11,6 +11,7 @@ import { AnswersSaveError } from "../../_components/save-error";
 import { SheetHeader } from "../../_components/sheet-header";
 import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
+import { useScreenAtTop } from "../../_utils/use-screen-at-top";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { usePracticeVerb } from "../../conversation/tutor-offer-card";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
@@ -118,6 +119,7 @@ export function LanguagePatternScreen({
   const practice = usePracticeVerb();
   const drill = usePatternDrill({ drill: pattern.drill, practice: actions.practice });
   const { step } = drill;
+  useScreenAtTop(`${step.kind}:${drill.index}`);
 
   if (pattern.kind === "typos" || pattern.drill.length === 0) {
     return <TyposPattern dismiss={actions.dismiss} exitHref={exitHref} pattern={pattern} />;

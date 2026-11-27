@@ -39,8 +39,9 @@ export function toStudyBlockViews({
   subjects?: ReadonlyMap<number, BlockSubject>;
   writingTasks?: Parameters<typeof toDayBlockView>[0]["writingTasks"];
 }): StudyBlockView[] {
-  const answeredAttemptIds = new Set(answers.map((answer) => answer.id));
-  const answeredItemIds = new Set(answers.flatMap((answer) => answer.itemId ?? []));
+  const questionAnswers = answers.filter((answer) => answer.isBlockAnswer);
+  const answeredAttemptIds = new Set(questionAnswers.map((answer) => answer.id));
+  const answeredItemIds = new Set(questionAnswers.flatMap((answer) => answer.itemId ?? []));
 
   const savedWritingTasks = new Map(
     answers.flatMap(({ itemId, writingTask }) =>

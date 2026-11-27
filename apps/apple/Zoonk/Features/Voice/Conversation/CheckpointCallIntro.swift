@@ -23,7 +23,7 @@ struct CheckpointCallIntro: View {
       )
       .onDisappear { starting?.cancel() }
       .onChange(of: call.value, initial: true) { _, value in
-        if case .earlierFirst? = value {
+        if case .LanguageCheckpointCallEarlierFirst? = value {
           router.showRoot(of: .today)
         }
       }
@@ -32,7 +32,7 @@ struct CheckpointCallIntro: View {
   @ViewBuilder
   private var content: some View {
     switch call.state {
-    case .loaded(.notStarted(let preview)):
+    case .loaded(.LanguageCheckpointCallIntro(let preview)):
       ConversationIntro(
         intro: CallIntro(preview.intro), isLocked: needsPlus,
         barNote: startFailure.map { BarNote($0) }
@@ -43,9 +43,10 @@ struct CheckpointCallIntro: View {
           startButton(writesFirst: false, callee: preview.intro.character.name)
         }
       }
-    case .loaded(.preparing) where needsPlus, .loaded(.plusRequired):
+    case .loaded(.LanguageCheckpointCallPreparing) where needsPlus,
+      .loaded(.LanguageCheckpointCallPlusRequired):
       lockedCall
-    case .loaded(.preparing(let preparing)):
+    case .loaded(.LanguageCheckpointCallPreparing(let preparing)):
       StateMessage {
         Label(preparing.unitTitle, systemImage: "phone")
       } description: {
@@ -71,7 +72,7 @@ struct CheckpointCallIntro: View {
         }
       }
       .lonePage()
-    case .empty, .failed(.notFound), .loaded(.notLanguage):
+    case .empty, .failed(.notFound), .loaded(.LanguageCheckpointCallNotLanguage), .loaded(.case7):
       NotFoundView()
     case .failed(let error) where error != .unauthorized:
       CallLoadFailed {

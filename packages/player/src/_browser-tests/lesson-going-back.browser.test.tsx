@@ -249,13 +249,21 @@ describe("going back to reread", () => {
       await page.getByRole("button", { exact: true, name: right }).click();
     }
 
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: "Two kinds of change" })).toBeVisible();
     await page.getByRole("button", { name: "Previous screen" }).click();
 
     for (const { left, right } of pairs) {
-      const leftCard = page.getByRole("button", { exact: true, name: left });
-      const rightCard = page.getByRole("button", { exact: true, name: right });
+      const leftCard = page.getByRole("button", {
+        exact: true,
+        name: `${left}, matched with ${right}`,
+      });
+
+      const rightCard = page.getByRole("button", {
+        exact: true,
+        name: `${right}, matched with ${left}`,
+      });
+
       // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.
       await expectSideBySide(leftCard, rightCard);
       // oxlint-disable-next-line no-await-in-loop -- Each pair is checked in turn.

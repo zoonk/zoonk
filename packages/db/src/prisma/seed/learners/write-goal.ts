@@ -1,6 +1,6 @@
 import { type PrismaClient } from "../../../generated/prisma/client";
 import { daysFrom, localDayFrom } from "../_utils/dates";
-import { Localized } from "../_utils/localize";
+import { localizeObject, localizeText } from "../_utils/localize";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { seedId } from "../_utils/seed-id";
 import { libraryIds } from "../library/library-ids";
@@ -89,7 +89,11 @@ function listWrittenItems(scope: LearnerScope, goal: SeedGoal): WrittenItem[] {
 
 function writtenContent(scope: LearnerScope, { item, lesson }: WrittenItem) {
   if (!lesson) {
-    return { chapterId: null, lessonId: null, titleSnapshot: item.title ?? item.kind };
+    return {
+      chapterId: null,
+      lessonId: null,
+      titleSnapshot: localizeText(item.title ?? item.kind, scope.learner.language),
+    };
   }
 
   const found = scope.lookup.lesson(lesson);
@@ -158,18 +162,15 @@ async function writePlanChanges(
 
   await Promise.all(
     changes.map(({ change, id }) => {
+      const { language } = scope.learner;
+      const payload = localizeObject(change.payload, language);
+
       const data = {
         createdAt: daysFrom(scope.now, change.day),
         kind: change.kind,
-        payload:
-          change.kind === "testedOut"
-            ? { ...change.payload, planItemIds: testedOut }
-            : change.payload,
+        payload: change.kind === "testedOut" ? { ...payload, planItemIds: testedOut } : payload,
         planId,
-        reason:
-          change.reason instanceof Localized
-            ? change.reason.in(scope.learner.language)
-            : change.reason,
+        reason: localizeText(change.reason, language),
         status: change.status ?? "applied",
         ...SEED_PROVENANCE,
       };
@@ -188,11 +189,13 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
   const goalId = seedId(`learner:${learner.key}:goal:${goal.key}`);
   const planId = seedId(`learner:${learner.key}:goal:${goal.key}:plan`);
 
+  const title = localizeText(goal.title, learner.language);
+
   const goalData = {
     createdAt: daysFrom(now, goal.createdDay),
     dailyMinutes: goal.dailyMinutes,
     details: goal.details,
-    displayName: goal.title,
+    displayName: title,
     examBlueprintId: goal.exam ? libraryIds.blueprint(goal.exam, learner.language) : null,
     kind: goal.kind,
     language: learner.language,
@@ -204,7 +207,7 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     targetDate: goal.targetDate ?? null,
     targetLanguage: goal.course.targetLanguage ?? null,
     timezone: learner.timeZone,
-    title: goal.title,
+    title,
     userId,
   };
 
@@ -218,7 +221,7 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
         group: choice.group.in(learner.language),
         subjects: choice.subjects.map((subject) => subject.in(learner.language)),
       })),
-      focusAreas: goal.plan.focusAreas ?? [],
+      focusAreas: (goal.plan.focusAreas ?? []).map((area) => localizeText(area, learner.language)),
       pace: LESSON_PACE,
       startDate: isoDay(scope, goal.createdDay),
     },

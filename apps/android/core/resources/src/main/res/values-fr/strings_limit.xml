@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "5e5a02996572f52502f7d2a00f98b624b7df2e12e97d7dba4c6e125d7f68ab0f",
   "limit_sentence": "31450e9c865b50909733b4e60d7e55ad8130c525b3c7e810f934d89258fd50bc",
   "limit_sign_up_required": "bb8215bd3c0258c03e058d4d5f714237dca38c3a536d96ac0ca0e4e435017f6a",
-  "limit_slow_down": "64eb1e237c09e650b2424933396efc2af5eaa6eac593f2a5c0f9996c8127f3d4",
+  "limit_slow_down_minutes": "4ce866c8cee46be7cb4be727d531e97bce5c3bb4d46dd4432a99b2704e8ac123",
+  "limit_slow_down_seconds": "ed0b078624c82873edcb7acc5026fbfb9b840aa8c72e7c10c270f20711abe298",
   "limit_still_review": "8a15068d85ae65b306b579216d787cff47bd93bf18834cc1e801454a9bc0698e",
   "limit_try_again_now": "a51a4117859e8db69ccae447087345fbe2cdf55347066325e29881ee0aedbf11",
   "limit_uploads_day": "853136cb95016ce458186571a345f202d60043915fa72f3eac4b2e791aeca2ad",
@@ -49,7 +50,18 @@
 -->
 <resources>
     <string name="limit_create_account">Créer un compte gratuit</string>
-    <string name="limit_slow_down">Fais une courte pause, puis réessaie.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Fais une petite pause. Tu pourras réessayer dans %1$s seconde.</item>
+        <item quantity="many">Fais une petite pause. Tu pourras réessayer dans %1$s secondes.</item>
+        <item quantity="other">Fais une petite pause. Tu pourras réessayer dans %1$s secondes.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Fais une petite pause. Tu pourras réessayer dans %1$s minute.</item>
+        <item quantity="many">Fais une petite pause. Tu pourras réessayer dans %1$s minutes.</item>
+        <item quantity="other">Fais une petite pause. Tu pourras réessayer dans %1$s minutes.</item>
+    </plurals>
     <string name="limit_sign_up_required">Il te faut un compte gratuit</string>
     <string name="limit_more_tomorrow">La suite demain.</string>
     <string name="limit_more_tomorrow_or_subscribe">Tu pourras reprendre demain ou continuer en t’abonnant.</string>

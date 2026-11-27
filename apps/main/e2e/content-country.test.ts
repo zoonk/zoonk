@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
@@ -28,7 +27,6 @@ test.describe("Content country", () => {
     await expect(continueButton).toBeDisabled();
 
     const another = page.getByRole("button", { name: "Another country" });
-    await expectHydrated(another);
     await another.click();
 
     const picker = page.getByRole("dialog", { name: "Country" });
@@ -94,7 +92,6 @@ test.describe("Content country", () => {
       await page.goto("/plan");
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const row = properties.getByRole("button", { name: /^Country/u });
-      await expectHydrated(row);
       await expect(row).toHaveText(/Portugal$/u);
       await expect(properties.getByText("Português (Brasil)")).toBeVisible();
 

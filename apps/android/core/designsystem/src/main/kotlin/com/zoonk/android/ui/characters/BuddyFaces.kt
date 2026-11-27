@@ -9,7 +9,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 
 /** Every face has its eyes at x 44 and 76, y 58, and its mouth near y 80, so every pair of glasses fits it. */
-internal fun ArtPainter.drawBuddyFace(expression: BuddyExpression) {
+internal fun ArtPainter.drawBuddyFace(
+    expression: BuddyExpression,
+    snores: Boolean,
+) {
     when (expression) {
         BuddyExpression.Neutral -> {
             openEyes(Faces.eyeLeft, Faces.eyeRight)
@@ -55,22 +58,27 @@ internal fun ArtPainter.drawBuddyFace(expression: BuddyExpression) {
             part(CharacterPart.EyeLeft, EyePivotLeft) { stroke(Faces.sleepyEyeLeft, Pupil, 3.2f, cap = StrokeCap.Round) }
             part(CharacterPart.EyeRight, EyePivotRight) { stroke(Faces.sleepyEyeRight, Pupil, 3.2f, cap = StrokeCap.Round) }
             part(CharacterPart.Mouth, MouthPivot) { fill(Faces.sleepyMouth, Ink) }
-            part(CharacterPart.Snore, Offset(104f, 20f)) {
-                stroke(Faces.snoreBig, Color(0xFF8B93C9), 2.6f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                stroke(Faces.snoreSmall, Color(0xFFB3B9DD), 2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            if (snores) {
+                part(CharacterPart.Snore, Offset(104f, 20f)) {
+                    stroke(Faces.snoreBig, Color(0xFF8B93C9), 2.6f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                    stroke(Faces.snoreSmall, Color(0xFFB3B9DD), 2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                }
             }
         }
     }
 }
 
-internal fun ArtPainter.drawGlasses(glasses: BuddyGlasses) {
+internal fun ArtPainter.drawGlasses(
+    glasses: BuddyGlasses,
+    chain: Boolean,
+) {
     when (glasses) {
         BuddyGlasses.Round -> roundGlasses()
         BuddyGlasses.Star -> starGlasses()
         BuddyGlasses.Aviator -> aviatorGlasses()
         BuddyGlasses.CatEye -> catEyeGlasses()
         BuddyGlasses.Retro -> retroGlasses()
-        BuddyGlasses.Monocle -> monocleGlasses()
+        BuddyGlasses.Monocle -> monocleGlasses(chain)
     }
 }
 
@@ -245,8 +253,8 @@ private fun ArtPainter.retroGlasses() {
     Retro.rivets.forEach { fill(it, Color(0xFFF3D9A4)) }
 }
 
-private fun ArtPainter.monocleGlasses() {
-    stroke(Monocle.chain, Aviator.brass, 1.8f, cap = StrokeCap.Round, dash = Monocle.links)
+private fun ArtPainter.monocleGlasses(chain: Boolean) {
+    if (chain) stroke(Monocle.chain, Aviator.brass, 1.8f, cap = StrokeCap.Round, dash = Monocle.links)
     fill(Monocle.lens, Color.White, alpha = 0.16f)
     stroke(Monocle.lens, Monocle.gold, 3.6f)
     stroke(Monocle.rim, Color(0xFF9C6B12), 0.9f, alpha = 0.7f)

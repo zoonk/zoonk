@@ -1,9 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -20,7 +22,6 @@ vi.mock("../plans/refresh-goal-plan", async (importOriginal) => {
 });
 
 const TIME_ZONE = "UTC";
-const DAY_MS = 86_400_000;
 
 const TRUE_STATEMENT = {
   context: null,
@@ -35,7 +36,7 @@ async function setup(format: "multipleChoice" | "trueFalse") {
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
 
   const { goal, plan } = await unplannedGoalFixture({
-    createdAt: new Date(Date.now() - DAY_MS),
+    createdAt: new Date(Date.now() - MS_PER_DAY),
     timezone: TIME_ZONE,
     userId: user.id,
   });
@@ -95,7 +96,12 @@ describe("a placement answer in a first-week session", () => {
 
     await answerStudyQuestion({
       blockId,
-      input: { answer: { selectedIndex: 1 }, durationMs: 3000, itemId, timeZone: TIME_ZONE },
+      input: {
+        answer: await pickItemInBlock({ blockId, itemId, right: false }),
+        durationMs: 3000,
+        itemId,
+        timeZone: TIME_ZONE,
+      },
       sessionId,
     });
 

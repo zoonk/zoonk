@@ -6,10 +6,8 @@ extension ActivityRenderer {
     grade: ActivityExpectedAnswer.grader(CombinationGridFields.self) {
       .grid(CombinationGrid.cells($0))
     }
-  ) { context in
-    if let fields = try? context.fields(as: CombinationGridFields.self) {
-      CombinationGridCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    CombinationGridCanvas(fields: fields, context: context)
   }
 }
 
@@ -290,7 +288,7 @@ private struct CombinationGridCanvas: View {
               .frame(maxWidth: .infinity)
             }
             .buttonStyle(ActivityTileStyle(mark: .plain))
-            .modifier(ActivityNumberKey(index: index))
+            .modifier(PickKey(index: index))
           }
         }
       }

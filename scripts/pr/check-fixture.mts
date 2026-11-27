@@ -1,9 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { afterAll, onTestFinished } from "vitest";
+import { MS_PER_MINUTE } from "../../packages/utils/src/date.ts";
 import { checkPictures } from "./check.mts";
 import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
 
@@ -11,7 +12,6 @@ export const CLEAN: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findi
 
 /** The fixture's commits are dated from here, a minute apart: no test reads the real clock. */
 const FIRST_COMMIT = Date.parse("2026-01-01T12:00:00.000Z");
-const MINUTE = 60_000;
 
 /** Inside a test the folder goes when the test ends; a fixture a file or `describe` shares goes after them all. */
 function removeAfterUse(folder: string) {
@@ -51,9 +51,18 @@ function commitHistory() {
   git(repository, "init", "-q");
   git(repository, "config", "user.email", "agent@example.com");
   git(repository, "config", "user.name", "Agent");
+  const attributes = readFileSync(resolve(import.meta.dirname, "../../.gitattributes"), "utf8");
+  commitFile(repository, ".gitattributes", attributes, FIRST_COMMIT - MS_PER_MINUTE);
   const older = commitFile(repository, "apps/main/page.txt", "one", FIRST_COMMIT);
-  const current = commitFile(repository, "packages/ui/row.txt", "two", FIRST_COMMIT + MINUTE);
-  commitFile(repository, "docs/notes.md", "unrelated", FIRST_COMMIT + 2 * MINUTE);
+
+  const current = commitFile(
+    repository,
+    "packages/ui/row.txt",
+    "two",
+    FIRST_COMMIT + MS_PER_MINUTE,
+  );
+
+  commitFile(repository, "docs/notes.md", "unrelated", FIRST_COMMIT + 2 * MS_PER_MINUTE);
   return { current, older, repository };
 }
 
@@ -67,14 +76,15 @@ removeAfterUse(history.repository);
 /**
  * A repository where `apps/main` changed after `older` and only docs changed after `current`,
  * with captures written into it: each picture's bytes are its own name. `changedAt` is when its
- * code last changed (`packages/`, at `current`), from the fixture's own dates.
+ * code last changed (`packages/`, at `current`), from the fixture's own dates. It marks files with
+ * the repository's own `.gitattributes`, and `commit` adds a later commit of one file.
  */
 export function checkFixture() {
   const { current, older } = history;
   const repository = mkdtempSync(join(tmpdir(), "pr-media-check-"));
   removeAfterUse(repository);
   cpSync(history.repository, repository, { recursive: true });
-  const changedAt = new Date(FIRST_COMMIT + MINUTE);
+  const changedAt = new Date(FIRST_COMMIT + MS_PER_MINUTE);
 
   function shot(overrides: Partial<CaptureItem> & { file: string }): CaptureItem {
     return {
@@ -119,7 +129,10 @@ export function checkFixture() {
     };
   }
 
-  return { capture, changedAt, current, older, repository, shot };
+  const commit = (path: string) =>
+    commitFile(repository, path, "changed", FIRST_COMMIT + 3 * MS_PER_MINUTE);
+
+  return { capture, changedAt, commit, current, older, repository, shot };
 }
 
 export function kinds(result: Awaited<ReturnType<typeof checkPictures>>): string[] {

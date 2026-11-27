@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  fillSlot,
   getContentLocale,
   getFormattingLocale,
   getSentenceSpace,
@@ -91,5 +92,25 @@ describe(toSentence, () => {
     { locale: "ja", sentence: "動いた。", text: "動いた。" },
   ])("ends $text as a sentence in $locale", ({ locale, sentence, text }) => {
     expect(toSentence(text, locale)).toBe(sentence);
+  });
+});
+
+describe(fillSlot, () => {
+  it.each([
+    ["Matched # with lunch.", "il pranzo", "Matched il pranzo with lunch."],
+    [
+      "Matched lunch with #. Pairs matched: 1 of 5.",
+      "qui di fronte.",
+      "Matched lunch with qui di fronte. Pairs matched: 1 of 5.",
+    ],
+    ["# and lunch don't go together.", "Va bene!", "Va bene! and lunch don't go together."],
+    ["Lunch and # don't go together.", "Va bene?", "Lunch and Va bene? don't go together."],
+    ["Unmatched lunch and #.", "Va bene?", "Unmatched lunch and Va bene?"],
+    ["「#」と「昼食」を組み合わせました。", "明日。", "「明日。」と「昼食」を組み合わせました。"],
+    ["#と昼食を組み合わせました。", "明日。", "明日。と昼食を組み合わせました。"],
+    ["Matched lunch with #。", "明日。", "Matched lunch with 明日。"],
+    ["No slot here.", "lunch.", "No slot here."],
+  ])("%j with %j reads %j", (line, text, expected) => {
+    expect(fillSlot(line, "#", text)).toBe(expected);
   });
 });

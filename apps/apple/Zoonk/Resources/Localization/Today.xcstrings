@@ -60,8 +60,7 @@
         }
       }
     },
-    "%@ and %lld more" : {
-      "comment" : "A short list of topics and how many more",
+    "%@ and %lld more topics" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -77,13 +76,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg weiteres"
+                      "value" : "%arg weiteres Thema"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg weitere"
+                      "value" : "%arg weitere Themen"
                     }
                   }
                 }
@@ -105,13 +104,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more topic"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more topics"
                     }
                   }
                 }
@@ -130,10 +129,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tema más"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg más"
+                      "value" : "%arg temas más"
                     }
                   }
                 }
@@ -155,13 +160,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg autre"
+                      "value" : "%arg autre sujet"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg autres"
+                      "value" : "%arg autres sujets"
                     }
                   }
                 }
@@ -183,13 +188,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg altro"
+                      "value" : "%arg altro argomento"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg altri"
+                      "value" : "%arg altri argomenti"
                     }
                   }
                 }
@@ -200,7 +205,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@、%#@more@"
+            "value" : "%1$@、ほかに%#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -211,7 +216,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "ほか%argトピック"
+                      "value" : "%argトピック"
                     }
                   }
                 }
@@ -222,7 +227,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 외 %#@more@"
+            "value" : "%1$@ 및 주제 %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -233,7 +238,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg개"
+                      "value" : "%arg개 더"
                     }
                   }
                 }
@@ -244,7 +249,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ i %#@more@"
+            "value" : "%1$@ i jeszcze %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -252,10 +257,28 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematy"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tematów"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg temat"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "jeszcze %arg"
+                      "value" : "%arg tematu"
                     }
                   }
                 }
@@ -266,7 +289,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e %#@more@"
+            "value" : "%1$@ e mais %#@more@"
           },
           "substitutions" : {
             "more" : {
@@ -274,10 +297,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg tópico"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg"
+                      "value" : "%arg tópicos"
                     }
                   }
                 }
@@ -299,7 +328,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg tane daha"
+                      "value" : "%arg konu daha"
                     }
                   }
                 }
@@ -558,7 +587,7 @@
       }
     },
     "%@ studied" : {
-      "comment" : "The time studied today, once the day's session is done; the argument is a duration like '23 min'",
+      "comment" : "The time studied today, once the day's session is done; the argument is a duration like '23 min'\nTime studied on a day; the argument is a duration like '23 min'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1302,178 +1331,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld ders daha"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld more topics" : {
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld weiteres Thema"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld weitere Themen"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld more topic"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld more topics"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tema más"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld temas más"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld sujet de plus"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld sujets de plus"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld altro argomento"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld altri argomenti"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "ほか%lld件のトピック"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "그 외 주제 %lld개"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tematy więcej"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld temat więcej"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tematów więcej"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Mais %lld tópico"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Mais %lld tópicos"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld konu daha"
                 }
               }
             }
@@ -2603,16 +2460,22 @@
         }
       }
     },
-    "+%lld more" : {
-      "comment" : "Folded later blocks",
+    "%lld topics · %@" : {
+      "comment" : "Today's line under a practice: how many topics it mixes, then the one it asks most, like \"3 topics · Calculating discounts\".",
       "localizations" : {
         "de" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld Thema · %2$@"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld mehr"
+                  "value" : "%1$lld Themen · %2$@"
                 }
               }
             }
@@ -2624,13 +2487,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "+%lld more"
+                  "value" : "%1$lld topic · %2$@"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "+%lld more"
+                  "value" : "%1$lld topics · %2$@"
                 }
               }
             }
@@ -2639,10 +2502,16 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tema · %2$@"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld más"
+                  "value" : "%1$lld temas · %2$@"
                 }
               }
             }
@@ -2654,13 +2523,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld autre"
+                  "value" : "%1$lld sujet · %2$@"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld autres"
+                  "value" : "%1$lld sujets · %2$@"
                 }
               }
             }
@@ -2672,13 +2541,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld altro"
+                  "value" : "%1$lld argomento · %2$@"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld altri"
+                  "value" : "%1$lld argomenti · %2$@"
                 }
               }
             }
@@ -2690,7 +2559,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld"
+                  "value" : "%1$lldトピック · %2$@"
                 }
               }
             }
@@ -2702,7 +2571,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld개 더"
+                  "value" : "%1$lld개 주제 · %2$@"
                 }
               }
             }
@@ -2711,10 +2580,28 @@
         "pl" : {
           "variations" : {
             "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tematy · %2$@"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tematów · %2$@"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld temat · %2$@"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld więcej"
+                  "value" : "%1$lld tematu · %2$@"
                 }
               }
             }
@@ -2723,10 +2610,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld tópico · %2$@"
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld a mais"
+                  "value" : "%1$lld tópicos · %2$@"
                 }
               }
             }
@@ -2738,7 +2631,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "+%lld daha"
+                  "value" : "%1$lld konu · %2$@"
                 }
               }
             }
@@ -3566,65 +3459,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu üniteyi zaten biliyor musun?"
-          }
-        }
-      }
-    },
-    "Already know this? **Take the test**" : {
-      "comment" : "Skips the next lesson's chapter with its test",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kennst du das schon? **Mach den Test**"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Ya conoces este tema? **Hacer la prueba**"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu connais déjà ce contenu ? **Passe le test**"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo sai già? **Fai il test**"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう知っていますか？**テストを受ける**"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이미 아는 내용인가요? **테스트 보기**"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Już to znasz? **Rozwiąż test**"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Já sabe isso? **Faça o teste**"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunu zaten biliyor musun? **Testi çöz**"
           }
         }
       }
@@ -4572,7 +4406,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Opens the goal the learner typed and hasn't confirmed yet",
+      "comment" : "Continues today's session\nOpens the goal the learner typed and hasn't confirmed yet\nOpens the goal's questions",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5050,7 +4884,7 @@
       }
     },
     "done" : {
-      "comment" : "A day's status: the day's list was finished",
+      "comment" : "A day's status: the day's study time was met",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6483,7 +6317,7 @@
       }
     },
     "Keep my time" : {
-      "comment" : "Keeps the daily time after falling behind, with less depth",
+      "comment" : "Keeps the time a day after missed days, with less of the plan covered",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6655,6 +6489,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınavdan sonra çalışmaya devam et"
+          }
+        }
+      }
+    },
+    "Lessons you want to do again" : {
+      "comment" : "The line under Saved lessons in Practice anytime.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen, die du noch einmal machen möchtest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones que quieres volver a hacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons à refaire"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni da rifare"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度取り組みたいレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 하고 싶은 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje, do których chcesz wrócić"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas que você quer fazer de novo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden çalışmak istediğin dersler"
           }
         }
       }
@@ -6961,67 +6854,8 @@
         }
       }
     },
-    "Mixed practice" : {
-      "comment" : "A practice block",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gemischte Übungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Práctica variada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entraînement varié"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esercizi misti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "総合練習"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "혼합 연습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ćwiczenia mieszane"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática variada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Karma alıştırma"
-          }
-        }
-      }
-    },
     "Mock exam" : {
-      "comment" : "A weekly mock exam block\nThe week's mock",
+      "comment" : "A mock exam block\nThe week's mock",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7250,65 +7084,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tarihine taşındı"
-          }
-        }
-      }
-    },
-    "New goal" : {
-      "comment" : "Starts a new goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neues Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuevo objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nouvel objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuovo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nowy cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Novo objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni hedef"
           }
         }
       }
@@ -7604,65 +7379,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün çalışma planlanmadı."
-          }
-        }
-      }
-    },
-    "Not enough time left for all your lessons." : {
-      "comment" : "Under Today's title when the plan has more lessons than its days can hold",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht genug Zeit für alle deine Lektionen übrig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No queda tiempo suficiente para todas tus lecciones."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il ne reste pas assez de temps pour toutes tes leçons."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non c’è abbastanza tempo per tutte le lezioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべてのレッスンを終えるには時間が足りません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모든 레슨을 하기엔 시간이 부족해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za mało czasu, by zmieścić wszystkie lekcje."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não há tempo suficiente para todas as suas aulas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tüm derslerin için yeterli zaman kalmadı."
           }
         }
       }
@@ -8264,6 +7980,65 @@
         }
       }
     },
+    "Practice %lld" : {
+      "comment" : "One of the day's practice blocks, numbered in the order the day lists them, like \"Practice 2\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übung %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Práctica %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entraînement %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esercitazione %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "練習%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연습 %lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwiczenie %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática %lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alıştırma %lld"
+          }
+        }
+      }
+    },
     "Practice %lld min" : {
       "comment" : "Adds practice on a day with nothing new; the number is minutes",
       "localizations" : {
@@ -8383,7 +8158,7 @@
       }
     },
     "Practice a pattern" : {
-      "comment" : "Mission: a pattern\nOpens a noticed pattern",
+      "comment" : "Mission: a pattern",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8801,67 +8576,74 @@
         }
       }
     },
-    "Practice: %@" : {
-      "comment" : "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\"",
+    "practiceBlock" : {
+      "comment" : "A block of the day's practice questions, when it's the day's only one",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übungen: %@"
+            "value" : "Übung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Práctica: %@"
+            "value" : "Práctica"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entraînement : %@"
+            "value" : "Entraînement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi: %@"
+            "value" : "Esercitazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "練習：%@"
+            "value" : "練習"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습: %@"
+            "value" : "연습"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwiczenia: %@"
+            "value" : "Ćwiczenia"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prática: %@"
+            "value" : "Prática"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alıştırma: %@"
+            "value" : "Alıştırma"
           }
         }
       }
     },
-    "practiceTopic" : {
-      "comment" : "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\".",
+    "practiceSubject" : {
+      "comment" : "A block practising one subject the learner chose. {subject} names it, like \"Percentages\".",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
@@ -8891,7 +8673,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esercizi: %@"
+            "value" : "Esercitazione: %@"
           }
         },
         "ja" : {
@@ -8903,13 +8685,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "연습: %@"
+            "value" : "%@ 연습"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ćwiczenia: %@"
+            "value" : "Ćwiczenie: %@"
           }
         },
         "pt" : {
@@ -9045,7 +8827,6 @@
       }
     },
     "Quick explanation" : {
-      "comment" : "An unfinished explanation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9457,7 +9238,7 @@
       }
     },
     "Review" : {
-      "comment" : "Mission: do the day's review",
+      "comment" : "A review block\nMission: do the day's review",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9570,6 +9351,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "genel tekrar"
+          }
+        }
+      }
+    },
+    "Saved lessons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones guardadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons enregistrées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni salvate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存したレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장한 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisane lekcje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas salvas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilen dersler"
           }
         }
       }
@@ -9931,7 +9770,7 @@
       }
     },
     "See plan" : {
-      "comment" : "Opens the Plan",
+      "comment" : "Opens the Plan\nOpens the goal's plan before its first day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10459,122 +10298,6 @@
         }
       }
     },
-    "Some lessons no longer fit before your date." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einige Lektionen passen nicht mehr vor deinem Datum."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algunas lecciones ya no caben antes de tu fecha."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certaines leçons ne peuvent plus être faites avant ta date."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcune lezioni non rientrano più entro la data che hai scelto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "期日までに終えられないレッスンがあります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "정해 둔 날짜까지 끝내기 어려운 레슨이 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niektóre lekcje nie zmieszczą się już przed wybraną datą."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algumas aulas já não cabem até a data escolhida."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bazı dersler artık hedef tarihinden önceye sığmıyor."
-          }
-        }
-      }
-    },
-    "Some lessons no longer fit before your exam." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einige Lektionen passen nicht mehr vor deiner Prüfung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algunas lecciones ya no caben antes de tu examen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certaines leçons ne peuvent plus être faites avant ton examen."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcune lezioni non rientrano più prima dell’esame."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験までに終えられないレッスンがあります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 전까지 끝내기 어려운 레슨이 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niektóre lekcje nie zmieszczą się już przed egzaminem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algumas aulas já não cabem até a sua prova."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bazı dersler artık sınavından önceye sığmıyor."
-          }
-        }
-      }
-    },
     "Start" : {
       "comment" : "Accepts the suggested goal\nStarts today's session",
       "localizations" : {
@@ -10689,65 +10412,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "çalışıldı"
-          }
-        }
-      }
-    },
-    "Suggested goal" : {
-      "comment" : "A goal from the learner's last course",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorgeschlagenes Ziel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objetivo sugerido"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objectif suggéré"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obiettivo suggerito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "おすすめの目標"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "추천 목표"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Proponowany cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objetivo sugerido"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Önerilen hedef"
           }
         }
       }
@@ -10988,7 +10652,7 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "A plan change failed\nAsking for the day's lessons failed\nDismissing failed",
+      "comment" : "A change couldn't be saved",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -14371,183 +14035,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü çalışmanı tamamladın."
-          }
-        }
-      }
-    },
-    "Your %@ goal is paused" : {
-      "comment" : "Today for a paused goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Ziel %@ ist pausiert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu objetivo de %@ está en pausa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton objectif %@ est en pause"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo obiettivo %@ è in pausa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標「%@」は一時停止中です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 목표가 일시 중지되어 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój cel jest wstrzymany: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu objetivo de %@ está pausado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hedefin duraklatıldı"
-          }
-        }
-      }
-    },
-    "Your %@ plan is ready" : {
-      "comment" : "A goal whose plan the learner hasn't looked at yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein %@-Plan ist bereit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan de %@ está listo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan %@ est prêt"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano per %@ è pronto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画ができました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 계획이 준비됐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan jest gotowy: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano de %@ está pronto"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ planın hazır"
-          }
-        }
-      }
-    },
-    "Your %@ plan needs a few more answers" : {
-      "comment" : "A goal left halfway through its questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für deinen %@-Plan fehlen noch ein paar Antworten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faltan algunas respuestas para completar tu plan de %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il manque encore quelques réponses pour ton plan %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo piano per %@ richiede ancora qualche risposta"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「%@」の学習計画は、あと数問に答えると完成します"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 계획을 세우려면 몇 가지 답변이 더 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan czeka na jeszcze kilka odpowiedzi: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano de %@ precisa de mais algumas respostas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ planın için birkaç cevap daha gerekiyor"
           }
         }
       }

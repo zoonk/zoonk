@@ -346,6 +346,8 @@ struct PracticeFeedbackPanel<Notes: View>: View {
   let verdict: PracticeVerdict
   var streak = 0
   var correctAnswerText: RichInline?
+  /// A match checked pair by pair names the pairs the learner mixed up first.
+  var misses: MatchMisses?
   var explanation: String?
   var workedSteps: [String] = []
   var citation: PracticeCitation?
@@ -367,6 +369,8 @@ struct PracticeFeedbackPanel<Notes: View>: View {
           .typeStyle(.data)
         }
       }
+
+      misses
 
       if let correctAnswerText {
         Text(PracticeAnswerText.rightAnswerLine(correctAnswerText), legibility: legibilityWeight)
@@ -398,12 +402,13 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 extension PracticeFeedbackPanel where Notes == EmptyView {
   init(
     verdict: PracticeVerdict, streak: Int = 0, correctAnswerText: RichInline? = nil,
-    explanation: String? = nil, workedSteps: [String] = [], citation: PracticeCitation? = nil
+    misses: MatchMisses? = nil, explanation: String? = nil, workedSteps: [String] = [],
+    citation: PracticeCitation? = nil
   ) {
     self.init(
       verdict: verdict, streak: streak, correctAnswerText: correctAnswerText,
-      explanation: explanation, workedSteps: workedSteps, citation: citation, notes: { EmptyView() }
-    )
+      misses: misses, explanation: explanation, workedSteps: workedSteps,
+      citation: citation, notes: { EmptyView() })
   }
 }
 
@@ -428,7 +433,8 @@ struct WorkedStepsView: View {
   }
 }
 
-/// Choice and true-or-false questions mark the right option instead, so they need no line.
+/// Choice and true-or-false questions mark the right option instead, and a learning match lays its
+/// answer out on the board, so they need no line.
 enum PracticeAnswerText {
   static func rightAnswerLine(_ answer: RichInline) -> RichInline {
     RichInline(
@@ -442,12 +448,24 @@ enum PracticeAnswerText {
       })
   }
 
+  /// The pairs the learner first mixed up on a match checked pair by pair, so the reason that
+  /// follows has something to explain.
+  @MainActor
+  static func misses(for answer: PracticeAnswer, question: PracticeQuestion) -> MatchMisses? {
+    guard question.checksEachPair, case .matches(_, let misses?) = answer else { return nil }
+
+    return MatchMisses(misses) { card in
+      let cards = card.side == .left ? question.left : question.right
+      return cards.indices.contains(card.index) ? LessonRichText.typeset(cards[card.index]) : nil
+    }
+  }
+
   static func correctLine(
     feedbackIsCorrect: Bool, correctAnswer: PracticeAnswer?, question: PracticeQuestion,
     labels: PracticeTrueFalseLabels
   ) -> RichInline? {
     guard !feedbackIsCorrect, question.format != .multipleChoice, question.format != .trueFalse,
-      let correctAnswer
+      !question.checksEachPair, let correctAnswer
     else { return nil }
 
     return text(for: correctAnswer, question: question, labels: labels)
@@ -474,7 +492,7 @@ enum PracticeAnswerText {
       return plain(text)
     case .trueFalse(let isTrue):
       return plain(String(localized: TrueFalseWords.label(isTrue: isTrue, labels: labels)))
-    case .matches(let matches):
+    case .matches(let matches, _):
       let pairs = question.left.enumerated().map { index, entry in
         let match =
           matches.indices.contains(index) && question.right.indices.contains(matches[index])
@@ -488,7 +506,7 @@ enum PracticeAnswerText {
       guard let unit = question.unit else { return plain(value) }
       return plain(
         unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)")
-    case .dontKnow, .partial, .typing:
+    case .dontKnow, .partial, .pairing, .typing:
       return nil
     }
   }

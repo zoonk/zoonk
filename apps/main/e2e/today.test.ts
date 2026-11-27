@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
@@ -117,7 +116,6 @@ test.describe("Today without a session to start", () => {
 
     const keepLearning = page.getByRole("button", { name: "Keep learning" });
 
-    await expectHydrated(keepLearning);
     await keepLearning.click();
     await expect(page).toHaveURL(new RegExp(`/learn/${missed[0]?.id}\\?session=`, "u"));
     await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
@@ -191,7 +189,6 @@ test("an expanded day highlights only the current lesson on a touch screen", asy
     const page = await context.newPage();
     await page.goto("/today");
     const expand = page.getByRole("button", { name: /^\d+ more(?: lessons?)?$/u });
-    await expectHydrated(expand);
     await expand.tap();
 
     const list = page
@@ -257,7 +254,6 @@ test("one tap acknowledges today's tip on a phone", async ({ browser }) => {
 
     const tip = page.getByRole("region", { name: "From your recent answers" });
     const acknowledge = tip.getByRole("button", { name: "Got it" });
-    await expectHydrated(acknowledge);
     await acknowledge.tap();
 
     await expect(tip.getByRole("status")).toHaveText("Noted.");
@@ -299,7 +295,6 @@ test("one tap moves the study time from a schedule idea on a phone", async ({ br
 
     const idea = page.getByRole("region", { name: "From your recent answers" });
     const move = idea.getByRole("button", { name: "Move it" });
-    await expectHydrated(move);
     await move.tap();
 
     await expect(idea.getByRole("status")).toHaveText("Study time moved.");

@@ -72,7 +72,7 @@ fun BuddyPicker(
             inputTransformation = InputTransformation.fitTo(MAX_NAME_LENGTH),
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.buddy_picker_name),
-            placeholder = { Text(buddyName(kind, null), color = MaterialTheme.colorScheme.onSurface) },
+            placeholder = { Text(buddyName(kind, null)) },
             lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         )

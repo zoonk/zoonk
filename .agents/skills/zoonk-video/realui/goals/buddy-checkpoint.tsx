@@ -55,6 +55,7 @@ function topics(lang: Lang) {
 
 function challengeView(lang: Lang, won: boolean): ChallengeProps["challenge"] {
   return {
+    access: "open",
     blockId: "block",
     call: null,
     canMove: false,
@@ -110,6 +111,7 @@ function question(
     format: "multipleChoice",
     image: null,
     itemId: `item-${index}`,
+    key: null,
     mistakeId: null,
     options: choice?.options ?? [],
     placement: false,

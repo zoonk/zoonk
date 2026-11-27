@@ -1,5 +1,6 @@
+import { PLACEMENT_SCENARIOS } from "./placement.mts";
 import { SEEDED_SCREEN_SCENARIOS } from "./seeded-screens.mts";
-import { type Anchor, PHONE_AND_LAPTOP, type Scenario } from "./shape.mts";
+import { type Anchor, PHONE_AND_LAPTOP, PINNED_ACTION, type Scenario } from "./shape.mts";
 import { STATE_SCENARIOS } from "./states.mts";
 
 export type { Prerequisites, Scenario, Step } from "./shape.mts";
@@ -13,11 +14,6 @@ export type { Prerequisites, Scenario, Step } from "./shape.mts";
  */
 /** A laptop at twice the default text: large-text learners on the web, otherwise unmeasured. */
 const LAPTOP_TEXT_2X: Scenario["sizes"][number] = { pointer: "keys", size: "laptop", textScale: 2 };
-
-const PINNED_ACTION: Anchor = {
-  id: "pinned-action",
-  web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",
-};
 
 const SHEET_FRAME: Anchor = {
   id: "sheet-frame",
@@ -59,6 +55,7 @@ export const SCENARIOS: Scenario[] = [
     id: "plan.path.sheet",
     prerequisites: { persona: { name: "ana" } },
     proof: "Your path",
+    proofWithin: SHEET_FRAME.web,
     reach: [{ click: "Phase 1 of 4" }],
     screen: "/plan",
     sizes: [{ pointer: "touch", size: "phone" }],
@@ -86,25 +83,30 @@ export const SCENARIOS: Scenario[] = [
     anchors: [],
     id: "catalog.visitor.large-text",
     prerequisites: { persona: "visitor" },
-    proof: "Log in",
+    proof: "Explore courses",
+    proofWithin: "[data-slot=page-title]",
     reach: [],
     screen: "/courses",
     sizes: [{ pointer: "touch", size: "phone", textScale: 2 }],
   },
   {
     anchors: [],
+    evidence: ["html:not([data-sidebar-collapsed]) [data-slot=sidebar]"],
     id: "catalog.visitor.sidebar",
     prerequisites: { persona: "visitor" },
-    proof: "Log in",
+    proof: "Explore courses",
+    proofWithin: "[data-slot=page-title]",
     reach: [],
     screen: "/courses",
     sizes: [{ pointer: "keys", size: "laptop" }],
   },
   {
     anchors: [],
+    evidence: ["html[data-sidebar-collapsed] [data-slot=sidebar]"],
     id: "catalog.visitor.sidebar-collapsed",
     prerequisites: { persona: "visitor", storage: { "sidebar-collapsed": "true" } },
-    proof: "Courses",
+    proof: "Explore courses",
+    proofWithin: "[data-slot=page-title]",
     reach: [],
     screen: "/courses",
     sizes: [{ pointer: "keys", size: "laptop" }],
@@ -124,6 +126,7 @@ export const SCENARIOS: Scenario[] = [
     id: "plan.adjust",
     prerequisites: { persona: { flags: ["--free"], name: "pedro" } },
     proof: "Adjust your plan",
+    proofWithin: SHEET_FRAME.web,
     reach: [{ click: "Adjust plan" }, { wait: "Adjust your plan" }],
     screen: "/plan",
     sizes: [{ pointer: "touch", size: "phone" }],
@@ -134,6 +137,7 @@ export const SCENARIOS: Scenario[] = [
     pair: { change: [], with: "plan.adjust" },
     prerequisites: { persona: { flags: ["--free"], name: "pedro" } },
     proof: "Weekends",
+    proofWithin: SHEET_FRAME.web,
     reach: [
       { click: "Adjust plan" },
       { wait: "Adjust your plan" },
@@ -153,6 +157,7 @@ export const SCENARIOS: Scenario[] = [
       seed: "the free call time used up",
     },
     proof: "Subscribe",
+    proofWithin: SHEET_FRAME.web,
     reach: null,
     screen: "/today",
     sizes: PHONE_AND_LAPTOP,
@@ -165,6 +170,7 @@ export const SCENARIOS: Scenario[] = [
       seed: "a language goal with a call to practice",
     },
     proof: "Start",
+    proofWithin: SHEET_FRAME.web,
     reach: null,
     screen: "/today",
     sizes: PHONE_AND_LAPTOP,
@@ -185,7 +191,8 @@ export const SCENARIOS: Scenario[] = [
     anchors: [PINNED_ACTION],
     id: "today.start",
     prerequisites: { persona: { name: "maya" } },
-    proof: "Today",
+    proof: "Start",
+    proofWithin: "[data-slot=bottom-bar] [aria-describedby=today-next-title]",
     reach: [],
     screen: "/today",
     sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
@@ -195,6 +202,7 @@ export const SCENARIOS: Scenario[] = [
     id: "session.lesson-wait.failed",
     prerequisites: { persona: { name: "maya" }, seed: "the next lesson's writing failed" },
     proof: "Try again",
+    proofWithin: "[role=alert]",
     reach: null,
     screen: "/today",
     sizes: PHONE_AND_LAPTOP,
@@ -217,12 +225,14 @@ export const SCENARIOS: Scenario[] = [
     pair: { change: ["notice"], with: "mind-maps.offer.lifted" },
     prerequisites: { persona: { flags: ["--free"], name: "maya" }, state: "maps-used-up" },
     proof: "Subscribe",
+    proofWithin: "[data-slot=maps-not-made] [data-slot=subscribe-gate]",
     reach: [],
     screen: "/mind-maps",
     sizes: PHONE_AND_LAPTOP,
   },
   ...STATE_SCENARIOS,
   ...SEEDED_SCREEN_SCENARIOS,
+  ...PLACEMENT_SCENARIOS,
   {
     anchors: [],
     evidence: ["[data-slot=maps-not-made]:not(:has([data-slot=gate-words]))"],

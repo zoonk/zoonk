@@ -1,10 +1,10 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
+import { MS_PER_SECOND } from "../../packages/utils/src/date.ts";
 import { getPortlessEnvironment } from "../dev/config.mts";
 import { getPnpmCommand } from "../dev/process.mts";
 
-const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 /** Linux's clock ticks per second (`getconf CLK_TCK`), 100 on every common kernel. */
 const TICKS_PER_SECOND = 100;

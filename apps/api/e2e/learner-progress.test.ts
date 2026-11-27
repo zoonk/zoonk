@@ -4,6 +4,7 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type ZodType } from "zod";
 import {
   currentUserActivityResponseSchema,
@@ -24,7 +25,6 @@ const PROGRESS_PATHS = [
   "/v1/me/progress/score/patterns",
 ] as const;
 
-const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 const LOGICAL_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 
 const WEEKDAYS = [
@@ -92,7 +92,7 @@ async function createBearerProgressContext({
 
 async function createPopulatedProgress({ userId }: { userId: string }) {
   const today = getCurrentUtcDate();
-  const previousDay = new Date(today.getTime() - DAY_IN_MILLISECONDS);
+  const previousDay = new Date(today.getTime() - MS_PER_DAY);
   const otherUser = await userFixture();
 
   await Promise.all([

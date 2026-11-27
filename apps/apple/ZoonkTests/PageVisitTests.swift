@@ -144,7 +144,7 @@ actor PageServer: ClientTransport {
     """#,
 
     "getGoalSyllabus": #"""
-    {"courseWeights":null,"examDocument":"guide","fromMaterial":false,"goal":{"displayName":"ENEM","id":"00000000-0000-4000-8000-000000000001","kind":"exam","title":"ENEM"},"kind":"notice","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"noticeUrl":null,"passMarks":null,"questionsSource":null,"sharedExams":[],"subjects":[{"areas":["00000000-0000-4000-8000-0000000000a1"],"chapters":[],"displayWeight":null,"group":null,"imageUrl":null,"key":"biology","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,"mastery":null,"matrix":[],"name":"Biology","nextDate":null,"notPlannedReason":"skipped","preparation":null,"questions":null,"share":null,"sharedWith":[],"shortName":"Biology","source":"notice","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}],"topicCount":0,"topicsMapped":false,"writtenPractice":null}
+    {"courseWeights":null,"examDocument":"guide","fromMaterial":false,"goal":{"displayName":"ENEM","id":"00000000-0000-4000-8000-000000000001","kind":"exam","title":"ENEM"},"kind":"notice","knownTopicsReturn":"practice","lessons":{"done":0,"known":0,"total":0},"noticeUrl":null,"passMarks":null,"questionsSource":null,"sharedExams":[],"subjects":[{"areas":["00000000-0000-4000-8000-0000000000a1"],"chapters":[],"covers":[],"displayWeight":null,"group":null,"imageUrl":null,"key":"biology","lessonsDone":0,"lessonsKnown":0,"lessonsTotal":0,"mastery":null,"matrix":[],"name":"Biology","nextDate":null,"notPlannedReason":"skipped","preparation":null,"questions":null,"share":null,"sharedWith":[],"shortName":"Biology","source":"notice","topicFrequencySource":null,"topics":[],"topicsKnown":null,"topicsStudied":null}],"topicCount":0,"topicsMapped":false,"writtenPractice":null}
     """#,
   ]
 }
@@ -170,7 +170,7 @@ struct OneGoalSummary: LearnerSummaryAPIClient {
       level: level, nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: kind == .exam, mindMaps: false,
-        readyMistakes: 0, speaking: true),
+        readyMistakes: 0, savedLessons: false, speaking: true),
       readAt: .now, tier: .plus, timeZone: "America/Sao_Paulo", todayBlocksLeft: nil)
   }
 

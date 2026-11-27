@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInBlock } from "../_test-utils/shown-choice";
 import { getReviewHorizon, loadReviewCapsules } from "./_utils/load-review-capsules";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload, toBlockPayload } from "./block-payload";
@@ -128,7 +129,11 @@ async function answerShared(fixture: Awaited<ReturnType<typeof setup>>, correct:
     answerStudyQuestion({
       blockId: fixture.sourceBlock.id,
       input: {
-        answer: { selectedIndex: correct ? 0 : 1 },
+        answer: pickInBlock({
+          blockId: fixture.sourceBlock.id,
+          item: fixture.first,
+          right: correct,
+        }),
         durationMs: 6000,
         itemId: fixture.first.id,
         timeZone: "UTC",
@@ -264,6 +269,51 @@ describe("shared daily skill reviews", () => {
     ).resolves.toStrictEqual([]);
   });
 
+  it("uses quick questions before wordy matches and keeps a skill with only a wordy match", async () => {
+    const { remaining, shared, third, user } = await setup();
+
+    const content = {
+      pairs: [
+        { left: "Mars", right: "A planet with a surface rich in iron oxide" },
+        { left: "Moon", right: "Earth's only natural satellite" },
+      ],
+      question: "Match each object with its description.",
+      reason: "The Moon orbits Earth.",
+    };
+
+    await Promise.all([
+      itemFixture({ content, format: "matchPairs", skillId: shared.id }),
+      prisma.item.update({ data: { content, format: "matchPairs" }, where: { id: third.id } }),
+    ]);
+
+    const capsules = await loadReviewCapsules({
+      dailyMinutes: 20,
+      examBlueprintId: null,
+      field: null,
+      horizon: getReviewHorizon({
+        finalStretchStart: null,
+        goal: { kind: "learn", targetDate: null },
+        localDate: TODAY,
+        timeZone: "UTC",
+      }),
+      netScoring: false,
+      planLessons: [],
+      skillIds: [shared.id, remaining.id],
+      userId: user.id,
+    });
+
+    expect(capsules).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ format: "rapidFire", skillIds: [shared.id] }),
+        expect.objectContaining({
+          format: "matchPairs",
+          itemIds: [third.id],
+          skillIds: [remaining.id],
+        }),
+      ]),
+    );
+  });
+
   it("persists the filtered payload when resuming an already active review", async () => {
     const fixture = await setup();
     const ref = { blockId: fixture.otherBlock.id, sessionId: fixture.other.id };
@@ -364,7 +414,11 @@ describe("shared daily skill reviews", () => {
 
     await answerStudyQuestion({
       blockId: fixture.otherBlock.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 6000, itemId: fixture.first.id },
+      input: {
+        answer: pickInBlock({ blockId: fixture.otherBlock.id, item: fixture.first }),
+        durationMs: 6000,
+        itemId: fixture.first.id,
+      },
       sessionId: fixture.other.id,
     });
 

@@ -2,8 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
-import { type BodyImage } from "./body.mts";
-import { deviceSection, firstOfEach, sectionStart } from "./device-section.mts";
+import { type Body, sectionProblems } from "./device-section.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -17,7 +16,7 @@ import {
   readManifest,
   readOf,
 } from "./media.mts";
-import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
+import { commitIncludes, latestCommitSince, screenSources, sha256File } from "./provenance.mts";
 import { type CheckResult, type Problem } from "./report.mts";
 
 type Entry = { folder: string; item: ManifestItem };
@@ -79,10 +78,7 @@ function cachedGit(repository: string): Git {
       const key = `${commit} ${app}`;
 
       if (!latest.has(key)) {
-        latest.set(
-          key,
-          latestCommitSince({ commit, paths: [`apps/${app}`, "packages"], repository }),
-        );
+        latest.set(key, latestCommitSince({ commit, paths: screenSources(app), repository }));
       }
 
       return latest.get(key);
@@ -270,9 +266,6 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
     : problems;
 }
 
-/** The body the pictures came from, each image where it was written and the path it resolves to. */
-export type Body = { images: (BodyImage & { path: string })[]; markdown: string };
-
 /** A device record, where no measured capture records the same bytes. */
 function deviceItem(entries: Entry[]): CaptureItem | undefined {
   const afters = entries.flatMap(({ item }) =>
@@ -280,36 +273,6 @@ function deviceItem(entries: Entry[]): CaptureItem | undefined {
   );
 
   return afters.every((item) => item.device) ? afters[0] : undefined;
-}
-
-/**
- * Device pictures appear only in the section `deviceSection` writes from their records, in the
- * order they first appear, and the body holds that text exactly once between blank lines. The
- * check compares text: what an author writes around the section is theirs to answer for.
- */
-function sectionProblems(body: Body | undefined, devices: Map<string, CaptureItem>): Problem[] {
-  if (devices.size === 0) {
-    return [];
-  }
-
-  const shown = body?.images.filter(({ path }) => devices.has(path)) ?? [];
-
-  const firsts = firstOfEach(shown);
-
-  const shots = body
-    ? firsts.flatMap(({ link, path }) => {
-        const item = devices.get(path);
-        return item ? [{ item, link }] : [];
-      })
-    : [...devices].map(([path, item]) => ({ item, link: path }));
-
-  const section = deviceSection(shots);
-  const at = body ? sectionStart(body.markdown, section) : null;
-
-  const inside =
-    at !== null && shown.every(({ end, start }) => start >= at && end <= at + section.length);
-
-  return inside ? [] : [{ detail: section, kind: "device-section" }];
 }
 
 /**
@@ -337,7 +300,14 @@ export async function checkPictures({
   const entries = loaded.flatMap(({ folder, items }) => items.map((item) => ({ folder, item })));
   const byHash = Map.groupBy(entries, (entry) => entry.item.sha256);
   const byPath = new Map(entries.map((entry) => [resolve(entry.folder, entry.item.file), entry]));
-  const unique = [...new Set(pictures)];
+
+  const capturedAfters = body
+    ? entries.flatMap(({ folder, item }) =>
+        item.side === "after" ? [resolve(folder, item.file)] : [],
+      )
+    : [];
+
+  const unique = [...new Set([...pictures, ...capturedAfters])];
 
   const checked = await Promise.all(
     unique.map(async (picture) => ({

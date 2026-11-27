@@ -202,7 +202,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
         </SuggestionDescription>
         <SuggestionActions
           main={
-            <SuggestionAction action={() => void showChange()} key="preview">
+            <SuggestionAction onClick={() => void showChange()} key="preview">
               {retry ? t("Try again") : t("Find a date")}
             </SuggestionAction>
           }

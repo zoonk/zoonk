@@ -366,6 +366,7 @@ struct ChallengeScreen: View {
   /// lost duel comes back.
   private func statusLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
     switch challenge.status {
+    case .unrecognized: return nil
     case .ready, .started:
       guard challenge.waitReason != nil else {
         return nil
@@ -507,6 +508,7 @@ struct ChallengeScreen: View {
     }
 
     switch challenge.kind {
+    case .unrecognized: return LocalizedStringResource("Challenge", table: "Practice")
     case .weekly:
       return LocalizedStringResource(
         "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
@@ -730,6 +732,7 @@ struct ChallengeScreen: View {
       dismiss()
 
       switch start.kind {
+      case .unrecognized: break
       case .checkpoint:
         hooks.navigate(.checkpoint(blockId: start.blockId, sessionId: start.sessionId))
       case .mock: hooks.navigate(.mock(blockId: start.blockId, sessionId: start.sessionId))

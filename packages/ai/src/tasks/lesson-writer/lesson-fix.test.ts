@@ -113,6 +113,7 @@ function fixedCheck(count: number) {
     })),
     question: "Which one?",
     screen: 2,
+    standsAlone: true,
     visual: null,
   };
 }

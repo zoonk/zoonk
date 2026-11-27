@@ -1,42 +1,90 @@
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { examStructureSchema } from "../library/exams/blueprint-contract";
+import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { seedPersonaCopy } from "../seed/seed";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { changeMockSchedule, getMockSchedule, undoMockSchedule } from "./mock-schedule";
 
+const TIME_ZONE = "America/Sao_Paulo";
+const TARGET_DATE = new Date("2020-12-11");
+
+/** Two exam days, so each mock's paper differs from its neighbors' and a mix-up would show. */
+const STRUCTURE = examStructureSchema.parse({
+  formats: [],
+  mock: {
+    adaptive: false,
+    citations: [],
+    order: null,
+    scoring: { description: "One point per correct answer", method: "raw" },
+    sections: [
+      { day: 1, kind: "objective", minutes: 120, name: "Math", questions: 30 },
+      { day: 2, kind: "objective", minutes: 90, name: "Science", questions: 20 },
+    ],
+    timeLimitMinutes: 210,
+    totalQuestions: 50,
+  },
+  rules: [],
+  subjects: [],
+});
+
+async function setup() {
+  const [user, blueprint, library] = await Promise.all([
+    userFixture(),
+    examBlueprintFixture({ structure: STRUCTURE }),
+    planLibraryFixture({
+      skills: [
+        { area: "Math", lessons: 30 },
+        { area: "Science", lessons: 10 },
+      ],
+    }),
+  ]);
+
+  const [{ goal }] = await Promise.all([
+    unplannedGoalFixture({
+      dailyMinutes: 30,
+      details: { placementDeclined: true },
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: TARGET_DATE,
+      timezone: TIME_ZONE,
+      userId: user.id,
+    }),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
+  ]);
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  mockSession(user.id);
+  return goal.id;
+}
+
 async function openMockDay() {
-  const copyKey = randomUUID().slice(0, 8);
-
-  const copy = await seedPersonaCopy({
-    copyKey,
-    email: `schedule-day-${copyKey}@zoonk.test`,
-    persona: "exam",
-  });
-
-  mockSession(copy.userId);
-  vi.setSystemTime(new Date("2026-11-08T14:00:00Z"));
-  const { goalId } = copy;
-  const timeZone = "America/Sao_Paulo";
-  await getTodayStudySession({ goalId, timeZone });
+  const goalId = await setup();
+  vi.setSystemTime(new Date("2020-10-11T14:00:00Z"));
+  await getTodayStudySession({ goalId, timeZone: TIME_ZONE });
 
   const item = await prisma.planItem.findFirstOrThrow({
-    where: { kind: "mock", plan: { goalId }, scheduledFor: new Date("2026-11-08"), status: "todo" },
+    where: { kind: "mock", plan: { goalId }, scheduledFor: new Date("2020-10-11"), status: "todo" },
   });
 
   const block = await prisma.studySessionBlock.findFirstOrThrow({
     where: { payload: { equals: item.id, path: ["planItemId"] }, session: { goalId } },
   });
 
-  return { block, item, timeZone };
+  return { block, item };
 }
 
 describe("scheduled mock changes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-10-16T20:52:12Z"));
+    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
   });
 
   afterEach(() => {
@@ -44,25 +92,16 @@ describe("scheduled mock changes", () => {
   });
 
   it("moves one funded mock twice, skips it, and restores the second date", async () => {
-    const copyKey = randomUUID().slice(0, 8);
-
-    const copy = await seedPersonaCopy({
-      copyKey,
-      email: `schedule-${copyKey}@zoonk.test`,
-      persona: "exam",
-    });
-
-    mockSession(copy.userId);
+    const goalId = await setup();
 
     const original = await prisma.planItem.findFirstOrThrow({
-      where: { kind: "mock", plan: { goalId: copy.goalId }, scheduledFor: new Date("2026-11-08") },
+      where: { kind: "mock", plan: { goalId }, scheduledFor: new Date("2020-10-11") },
     });
 
-    const timeZone = "America/Sao_Paulo";
-    const get = (planItemId: string) => getMockSchedule({ planItemId, timeZone });
+    const get = (planItemId: string) => getMockSchedule({ planItemId, timeZone: TIME_ZONE });
 
     const change = (planItemId: string, date: string | null) =>
-      changeMockSchedule({ input: { date, timeZone }, planItemId });
+      changeMockSchedule({ input: { date, timeZone: TIME_ZONE }, planItemId });
 
     const others = async (except: string) => {
       const mocks = await prisma.planItem.findMany({
@@ -78,49 +117,40 @@ describe("scheduled mock changes", () => {
       return parsePlanSettings(plan.settings).mockFunding.find((entry) => entry.date === date);
     };
 
-    const paper = await fundingOn("2026-11-08");
+    const paper = await fundingOn("2020-10-11");
     expect(paper?.day).toBeDefined();
     const identity = { day: paper?.day, fullLength: paper?.fullLength, minutes: paper?.minutes };
     const before = await others(original.id);
 
-    const target = await prisma.goal.findUniqueOrThrow({
-      select: { targetDate: true },
-      where: { id: copy.goalId },
-    });
-
-    const goal = await prisma.goal.update({
-      data: { targetDate: null },
-      select: { id: true },
-      where: { id: copy.goalId },
-    });
+    await prisma.goal.update({ data: { targetDate: null }, where: { id: goalId } });
 
     await expect(get(original.id)).resolves.toMatchObject({
-      dates: expect.arrayContaining(["2026-11-09"]),
+      dates: expect.arrayContaining(["2020-10-12"]),
       status: "ready",
     });
 
-    await prisma.goal.update({ data: { targetDate: target.targetDate }, where: { id: goal.id } });
+    await prisma.goal.update({ data: { targetDate: TARGET_DATE }, where: { id: goalId } });
     const options = await get(original.id);
 
     expect(options).toMatchObject({
-      dates: expect.arrayContaining(["2026-11-09", "2026-11-10"]),
+      dates: expect.arrayContaining(["2020-10-12", "2020-10-13"]),
       status: "ready",
     });
 
-    await expect(change(original.id, "2026-11-08")).resolves.toStrictEqual({
+    await expect(change(original.id, "2020-10-11")).resolves.toStrictEqual({
       status: "notMovable",
     });
 
-    const first = await change(original.id, "2026-11-09");
+    const first = await change(original.id, "2020-10-12");
     expect(first.status).toBe("changed");
 
     if (first.status !== "changed") {
       return;
     }
 
-    await expect(fundingOn("2026-11-09")).resolves.toMatchObject(identity);
+    await expect(fundingOn("2020-10-12")).resolves.toMatchObject(identity);
     await expect(others(first.planItemId)).resolves.toStrictEqual(before);
-    const second = await change(first.planItemId, "2026-11-10");
+    const second = await change(first.planItemId, "2020-10-13");
     expect(second.status).toBe("changed");
 
     if (second.status !== "changed") {
@@ -128,7 +158,7 @@ describe("scheduled mock changes", () => {
     }
 
     await expect(others(second.planItemId)).resolves.toStrictEqual(before);
-    await expect(fundingOn("2026-11-10")).resolves.toMatchObject(identity);
+    await expect(fundingOn("2020-10-13")).resolves.toMatchObject(identity);
     const skipped = await change(second.planItemId, null);
     expect(skipped.status).toBe("changed");
 
@@ -143,18 +173,26 @@ describe("scheduled mock changes", () => {
         where: {
           kind: "mock",
           planId: original.planId,
-          scheduledFor: new Date("2026-11-10"),
+          scheduledFor: new Date("2020-10-13"),
           status: "todo",
         },
       }),
     ).resolves.toBe(0);
 
     await expect(
-      undoMockSchedule({ changeId: skipped.changeId, planItemId: original.id, timeZone }),
+      undoMockSchedule({
+        changeId: skipped.changeId,
+        planItemId: original.id,
+        timeZone: TIME_ZONE,
+      }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
     await expect(
-      undoMockSchedule({ changeId: skipped.changeId, planItemId: second.planItemId, timeZone }),
+      undoMockSchedule({
+        changeId: skipped.changeId,
+        planItemId: second.planItemId,
+        timeZone: TIME_ZONE,
+      }),
     ).resolves.toStrictEqual({ status: "undone" });
 
     await expect(
@@ -162,7 +200,7 @@ describe("scheduled mock changes", () => {
         where: {
           kind: "mock",
           planId: original.planId,
-          scheduledFor: new Date("2026-11-10"),
+          scheduledFor: new Date("2020-10-13"),
           status: "todo",
         },
       }),
@@ -170,23 +208,15 @@ describe("scheduled mock changes", () => {
   });
 
   it("accepts a later mock's vacated date when it is offered for the preceding mock", async () => {
-    const copyKey = randomUUID().slice(0, 8);
-
-    const copy = await seedPersonaCopy({
-      copyKey,
-      email: `vacated-${copyKey}@zoonk.test`,
-      persona: "exam",
-    });
-
-    mockSession(copy.userId);
+    const goalId = await setup();
 
     const [first, second] = await prisma.planItem.findMany({
       orderBy: { scheduledFor: "asc" },
       take: 2,
       where: {
         kind: "mock",
-        plan: { goalId: copy.goalId },
-        scheduledFor: { gte: new Date("2026-11-08") },
+        plan: { goalId },
+        scheduledFor: { gte: new Date("2020-10-11") },
         status: "todo",
       },
     });
@@ -195,15 +225,17 @@ describe("scheduled mock changes", () => {
       throw new Error("Expected two scheduled mocks");
     }
 
-    const timeZone = "America/Sao_Paulo";
-    const options = await getMockSchedule({ planItemId: second.id, timeZone });
+    const options = await getMockSchedule({ planItemId: second.id, timeZone: TIME_ZONE });
 
     if (options.status !== "ready" || !options.dates[0]) {
       throw new Error("Expected a later date");
     }
 
     await expect(
-      changeMockSchedule({ input: { date: options.dates[0], timeZone }, planItemId: second.id }),
+      changeMockSchedule({
+        input: { date: options.dates[0], timeZone: TIME_ZONE },
+        planItemId: second.id,
+      }),
     ).resolves.toMatchObject({ status: "changed" });
 
     const earlier = await prisma.planItem.findFirstOrThrow({
@@ -217,26 +249,25 @@ describe("scheduled mock changes", () => {
 
     const date = second.scheduledFor.toISOString().slice(0, 10);
 
-    await expect(getMockSchedule({ planItemId: earlier.id, timeZone })).resolves.toMatchObject({
-      dates: expect.arrayContaining([date]),
-    });
+    await expect(
+      getMockSchedule({ planItemId: earlier.id, timeZone: TIME_ZONE }),
+    ).resolves.toMatchObject({ dates: expect.arrayContaining([date]) });
 
     await expect(
-      changeMockSchedule({ input: { date, timeZone }, planItemId: earlier.id }),
+      changeMockSchedule({ input: { date, timeZone: TIME_ZONE }, planItemId: earlier.id }),
     ).resolves.toMatchObject({ status: "changed" });
   });
 
   it("preserves yesterday's saved block through skipping and undoing an overdue mock", async () => {
-    const { item, block, timeZone } = await openMockDay();
-    vi.setSystemTime(new Date("2026-11-09T14:00:00Z"));
+    const { item, block } = await openMockDay();
+    vi.setSystemTime(new Date("2020-10-12T14:00:00Z"));
 
-    await expect(getMockSchedule({ planItemId: item.id, timeZone })).resolves.toMatchObject({
-      dates: expect.arrayContaining(["2026-11-10"]),
-      status: "ready",
-    });
+    await expect(
+      getMockSchedule({ planItemId: item.id, timeZone: TIME_ZONE }),
+    ).resolves.toMatchObject({ dates: expect.arrayContaining(["2020-10-13"]), status: "ready" });
 
     const overdue = await changeMockSchedule({
-      input: { date: null, timeZone },
+      input: { date: null, timeZone: TIME_ZONE },
       planItemId: item.id,
     });
 
@@ -247,7 +278,7 @@ describe("scheduled mock changes", () => {
     }
 
     await expect(
-      undoMockSchedule({ changeId: overdue.changeId, planItemId: item.id, timeZone }),
+      undoMockSchedule({ changeId: overdue.changeId, planItemId: item.id, timeZone: TIME_ZONE }),
     ).resolves.toStrictEqual({ status: "undone" });
 
     await expect(
@@ -256,10 +287,10 @@ describe("scheduled mock changes", () => {
   });
 
   it("removes an unstarted mock from today's saved session atomically, restores it, and refuses a started block", async () => {
-    const { item, block, timeZone } = await openMockDay();
+    const { item, block } = await openMockDay();
 
     const result = await changeMockSchedule({
-      input: { date: null, timeZone },
+      input: { date: null, timeZone: TIME_ZONE },
       planItemId: item.id,
     });
 
@@ -274,7 +305,7 @@ describe("scheduled mock changes", () => {
     ).resolves.toBeNull();
 
     await expect(
-      undoMockSchedule({ changeId: result.changeId, planItemId: item.id, timeZone }),
+      undoMockSchedule({ changeId: result.changeId, planItemId: item.id, timeZone: TIME_ZONE }),
     ).resolves.toStrictEqual({ status: "undone" });
 
     await expect(
@@ -287,7 +318,7 @@ describe("scheduled mock changes", () => {
     });
 
     await expect(
-      changeMockSchedule({ input: { date: null, timeZone }, planItemId: item.id }),
+      changeMockSchedule({ input: { date: null, timeZone: TIME_ZONE }, planItemId: item.id }),
     ).resolves.toStrictEqual({ status: "notMovable" });
   });
 });

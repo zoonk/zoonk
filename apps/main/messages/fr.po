@@ -179,6 +179,20 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Continuer la séance du jour"
 
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Leçons enregistrées"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
+msgctxt "odE1Ih"
+msgid "Completed lessons"
+msgstr "Leçons terminées"
+
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -241,13 +255,6 @@ msgstr "Binôme"
 msgctxt "g3GlDw"
 msgid "Mistakes notebook"
 msgstr "Carnet d’erreurs"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
-msgctxt "odE1Ih"
-msgid "Completed lessons"
-msgstr "Leçons terminées"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
@@ -735,26 +742,6 @@ msgctxt "OvhCe0"
 msgid "Online courses with a study plan for each day"
 msgstr "Cours en ligne avec un plan d’études pour chaque jour"
 
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "Niveau {level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Niveau"
-
-#. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
-#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "xjYKLD"
-msgid "{belt}, Level {level}"
-msgstr "{belt}, Niveau {level}"
-
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
 msgid "Skip to content"
@@ -793,6 +780,11 @@ msgid "{belt}, level {level}"
 msgstr "{belt}, niveau {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Niveau {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
 msgid "Guest"
 msgstr "Invité"
@@ -817,21 +809,16 @@ msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Développer la barre latérale"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "FRwDt3"
 msgid "Your buddy"
 msgstr "Ton binôme"
 
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
+#: src/app/[lang]/(app)/(learn)/buddy/layout.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
 msgstr "Ton binôme répond à tes questions et ajuste ton plan."
-
-#: src/app/[lang]/(app)/(learn)/buddy/page.tsx
-msgctxt "BV0cQk"
-msgid "Your day"
-msgstr "Ta journée"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"
@@ -909,6 +896,11 @@ msgstr "Préparer mon plan"
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
 msgstr "Ton plan en un coup d’œil"
+
+#: src/app/[lang]/(app)/(learn)/saved-lessons/page.tsx
+msgctxt "FH8mtx"
+msgid "The lessons you save, ready to do again anytime."
+msgstr "Les leçons que tu enregistres, prêtes à refaire quand tu veux."
 
 #: src/app/[lang]/(app)/(learn)/speaking/page.tsx
 msgctxt "LdUCtG"
@@ -1583,6 +1575,13 @@ msgstr "Vue d’ensemble"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Tes stats"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Niveau"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx

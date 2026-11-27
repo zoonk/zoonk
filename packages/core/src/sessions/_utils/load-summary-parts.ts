@@ -138,7 +138,9 @@ export async function loadBuddyMeal({
 
   return {
     fixes,
-    reviews: answers.filter((answer) => answer.itemId && due.has(answer.itemId)).length,
+    reviews: answers.filter(
+      (answer) => answer.isBlockAnswer && answer.itemId && due.has(answer.itemId),
+    ).length,
   };
 }
 

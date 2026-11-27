@@ -5,6 +5,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
+import { KEEP_TYPING_ATTRIBUTE, KEPT_READOUT_ATTRIBUTE } from "@zoonk/ui/lib/kept-typing-script";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
@@ -144,7 +145,19 @@ function DailyTimeReadout({
       )}
     >
       <span aria-hidden="true" className="flex items-baseline gap-2">
-        <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
+        <span {...{ [KEPT_READOUT_ATTRIBUTE]: kept[KEEP_TYPING_ATTRIBUTE] }}>
+          {times.map((time) => (
+            <span
+              data-value={time}
+              hidden={time !== choice.value}
+              key={time}
+              // Every time is drawn, so the kept-typing script shows one picked before the page hydrates.
+              suppressHydrationWarning
+            >
+              <BigQuantity className="text-5xl">{formatDuration(time)}</BigQuantity>
+            </span>
+          ))}
+        </span>
         <ChevronDownIcon className="text-muted-foreground -ms-1.5 size-5 shrink-0 translate-y-1" />
         {waiting && <ShortcutKbd shortcut="main" />}
       </span>

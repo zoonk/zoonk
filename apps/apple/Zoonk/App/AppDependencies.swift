@@ -19,6 +19,7 @@ struct AppDependencies {
   let planStore: PlanStore
   let practiceStore: PracticeStore
   let progressStore: ProgressStore
+  let savedLessonsStore: SavedLessonsStore
   let sessionStore: SessionStore
   let settingsStore: SettingsStore
   let studyRemindersStore: StudyRemindersStore
@@ -59,8 +60,9 @@ struct AppDependencies {
     buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
     certificatesStore = CertificatesStore(
       api: certificatesAPI ?? CertificatesAPI(clients: clients), cache: cache)
-    completedLessonsStore = CompletedLessonsStore(
+    let completedLessonsStore = CompletedLessonsStore(
       api: CompletedLessonsAPI(clients: clients), cache: cache)
+    self.completedLessonsStore = completedLessonsStore
     countryCatalogStore = CountryCatalogStore(clients: clients, cache: cache)
     courseCatalogStore = CourseCatalogStore(
       api: CourseCatalogAPI(clients: clients),
@@ -78,11 +80,15 @@ struct AppDependencies {
     self.todayStore = todayStore
     let studySessionStore = StudySessionStore(api: studyAPI, cache: cache, today: todayStore)
     self.studySessionStore = studySessionStore
+    let savedLessonsStore = SavedLessonsStore(api: SavedLessonsAPI(clients: clients), cache: cache)
+    self.savedLessonsStore = savedLessonsStore
+    savedLessonsStore.showElsewhere = { completedLessonsStore.show(saved: $1, lessonId: $0) }
     lessonPlayer = LessonPlayerDependencies(
       api: LessonPlayerAPI(clients: clients), cache: cache,
       preferences: settingsStore.preferences,
       blockFinished: { studySessionStore.apply($1, sessionID: $0) },
-      sessionStarted: { todayStore.lessonStarted(in: $0) })
+      sessionStarted: { todayStore.lessonStarted(in: $0) },
+      runStarting: { savedLessonsStore.runStarting(lessonId: $0) })
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     self.imageLoader = imageLoader
     mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
@@ -125,6 +131,7 @@ extension View {
       .environment(dependencies.onboardingStore)
       .environment(dependencies.practiceStore)
       .environment(dependencies.progressStore)
+      .environment(dependencies.savedLessonsStore)
       .environment(session)
       .environment(dependencies.settingsStore)
       .environment(dependencies.studyRemindersStore)

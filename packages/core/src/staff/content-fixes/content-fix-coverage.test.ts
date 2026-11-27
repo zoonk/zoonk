@@ -104,6 +104,7 @@ const NOT_FIXED: Record<string, string> = {
   PronunciationReview: ONE_LEARNERS,
   RateLimit: SIGN_IN,
   RestoreKey: SIGN_IN,
+  SavedLesson: ONE_LEARNERS,
   SavedMindMap: ONE_LEARNERS,
   Session: SIGN_IN,
   "Skill: creating, deleting or merging": "Structure fixes rearrange existing rows only.",

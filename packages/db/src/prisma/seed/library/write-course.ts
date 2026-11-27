@@ -8,6 +8,7 @@ import { SEED_TRANSACTION } from "../_utils/seed-transaction";
 import { buildLessonSpec } from "./lesson-spec";
 import { libraryIds } from "./library-ids";
 import { type SeedChapter, type SeedCourse, type SeedLesson } from "./types";
+import { writeLevelTest } from "./write-level-test";
 import { type SkillIds, skillIdOf, writeItems, writeSkills, writeVocabulary } from "./write-skills";
 
 const SEEDED_COURSES_CREATED_AT = new Date("2026-01-01T00:00:00.000Z");
@@ -68,7 +69,12 @@ function lessonSummary(lesson: SeedLesson, language: SeedLanguage) {
   return summary ? localizeObject(summary.content, language) : Prisma.DbNull;
 }
 
-async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: string) {
+async function writeSteps(
+  context: CourseContext,
+  lesson: SeedLesson,
+  lessonId: string,
+  version: number,
+) {
   const { course, language, prisma, sentenceIds, skillIds, wordIds } = context;
   const steps = lesson.steps ?? [];
 
@@ -86,6 +92,8 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
         retiredAt: null,
         sentenceId: lookup(sentenceIds, step.sentence),
         skillId: skillKey ? skillIdOf(course, skillIds, skillKey) : null,
+        staged: false,
+        version,
         wordId: lookup(wordIds, step.word),
         ...SEED_PROVENANCE,
       };
@@ -96,7 +104,9 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
     }),
   );
 
-  await prisma.step.deleteMany({ where: { id: { notIn: ids }, lessonId } });
+  await prisma.step.deleteMany({
+    where: { id: { notIn: ids }, lessonId, runId: SEED_PROVENANCE.runId },
+  });
 }
 
 async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson, lessonId: string) {
@@ -134,28 +144,38 @@ async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson,
   );
 }
 
-async function isWrittenByApp(
+async function seedContentVersion(
   prisma: PrismaClient,
   { id, isWritten }: { id: string; isWritten: boolean },
-): Promise<boolean> {
+): Promise<number | null> {
   const existing = await prisma.lesson.findUnique({
     select: {
       contentStatus: true,
       specStatus: true,
-      steps: { select: { id: true }, take: 1, where: { runId: { not: SEED_PROVENANCE.runId } } },
+      steps: { select: { retiredAt: true, runId: true, version: true } },
     },
     where: { id },
   });
 
   if (!existing) {
-    return false;
+    return 1;
   }
 
-  if (existing.steps.length > 0) {
-    return true;
+  if (
+    existing.steps.some(
+      (step) => step.runId !== SEED_PROVENANCE.runId && step.retiredAt === null,
+    ) ||
+    (!isWritten && (existing.specStatus !== "pending" || existing.contentStatus !== "pending"))
+  ) {
+    return null;
   }
 
-  return !isWritten && (existing.specStatus !== "pending" || existing.contentStatus !== "pending");
+  return Math.max(
+    1,
+    ...existing.steps.map((step) =>
+      step.runId === SEED_PROVENANCE.runId ? step.version : step.version + 1,
+    ),
+  );
 }
 
 async function writeLesson(
@@ -207,11 +227,11 @@ async function writeLesson(
 
   // A reseed never throws away what the app wrote, which would make it pay to write it again: the
   // seed writes a lesson's content only while it's the seed's or still empty.
-  const keepsContent = await isWrittenByApp(prisma, { id, isWritten });
+  const version = await seedContentVersion(prisma, { id, isWritten });
 
   await prisma.lesson.upsert({
     create: { id, ...outline, ...content },
-    update: keepsContent ? outline : { ...outline, ...content },
+    update: version === null ? outline : { ...outline, ...content },
     where: { id },
   });
 
@@ -225,11 +245,11 @@ async function writeLesson(
     ),
   );
 
-  if (keepsContent) {
+  if (version === null) {
     return id;
   }
 
-  await writeSteps(context, lesson, id);
+  await writeSteps(context, lesson, id, version);
 
   if (lesson.words || lesson.sentences) {
     await writeLessonVocabulary(context, lesson, id);
@@ -422,7 +442,7 @@ export async function writeLibraryCourse({
 
       await writeOutline(context);
 
-      await writeItems({ ...base, skillIds });
+      await Promise.all([writeItems({ ...base, skillIds }), writeLevelTest(base)]);
     }),
   );
 }

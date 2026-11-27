@@ -3,12 +3,11 @@ import { prisma } from "@zoonk/db";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { registerServerSinks } from "../server-sinks";
 import { recordEvaluationRun } from "./evaluation-run-log";
 import { purgeEvaluationRuns } from "./purge-evaluation-runs";
-
-const DAY_MS = 86_400_000;
 
 function runRecord(attrs: Partial<EvaluationRunRecord> = {}): EvaluationRunRecord {
   return {
@@ -121,8 +120,8 @@ describe(purgeEvaluationRuns, () => {
     const now = Date.now();
 
     const [old, recent] = await Promise.all([
-      evaluationRunFixture({ createdAt: new Date(now - 31 * DAY_MS) }),
-      evaluationRunFixture({ createdAt: new Date(now - 29 * DAY_MS) }),
+      evaluationRunFixture({ createdAt: new Date(now - 31 * MS_PER_DAY) }),
+      evaluationRunFixture({ createdAt: new Date(now - 29 * MS_PER_DAY) }),
     ]);
 
     const { purged } = await purgeEvaluationRuns();

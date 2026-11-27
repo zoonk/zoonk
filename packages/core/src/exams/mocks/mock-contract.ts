@@ -1,5 +1,6 @@
 import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/research/partial-credit";
 import { type MistakeCause } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type OwnedCertificateFacts } from "../../certificates/certificate-contract";
@@ -31,8 +32,6 @@ import {
   type MockSectionView,
   type MockSizeSource,
 } from "./mock-view-contract";
-
-const MS_PER_MINUTE = 60_000;
 
 export const MOCK_ABANDONMENT_DELAY_MS = 10 * MS_PER_MINUTE;
 
@@ -96,6 +95,8 @@ export const mockConditionsSchema = z.object({
   scoring: z.enum(MOCK_SCORINGS),
   sections: z.array(mockSectionSchema),
   shape: mockShapeSchema.nullable(),
+  /** Unset on mocks started before each mock showed options in its own order: their saved answers point into the stored order. */
+  shufflesOptions: z.literal(true).optional(),
   startTime: z.string().nullable(),
   timeZone: z.string().nullable(),
   timedOutSections: z.array(z.int()),

@@ -703,14 +703,19 @@ internal fun WritingLineCount(
         )
         return
     }
-    val used =
-        remember(text, writing.charactersPerLine, limit) { countWritingLines(text, writing.charactersPerLine.toInt(), limit).estimated }
+    val lines =
+        remember(text, writing.charactersPerLine, writing.maxCharactersPerLine, limit) {
+            countWritingLines(text, writing.charactersPerLine.toInt(), writing.maxCharactersPerLine.toInt(), limit)
+        }
+    val used = lines.estimated
     val over = used > limit
     Text(
         if (text.isBlank()) {
             pluralStringResource(R.plurals.essay_lines_empty, limit, limit)
+        } else if (lines.ignoredFrom != null) {
+            pluralStringResource(R.plurals.essay_lines_end_unread, limit, used, limit)
         } else if (over) {
-            pluralStringResource(R.plurals.essay_lines_over, limit, used, limit, used - limit)
+            pluralStringResource(R.plurals.essay_lines_may_not_fit, limit, used, limit)
         } else {
             pluralStringResource(R.plurals.essay_lines_used, limit, used, limit)
         },
@@ -768,7 +773,7 @@ internal fun WritingResultScreen(
     val moveFocus = rememberMoveFocus()
     val grade = remember(latest.grade) { latest.grade.toGrade() }
     // Changes the grade isn't for still have a rewrite to go to.
-    val done = remember(grade, latest.text) { grade.nextStep(latest.text) == NextStep.Done } && ui.unsent == null
+    val done = remember(grade, latest.text) { grade?.nextStep(latest.text) == NextStep.Done } && ui.unsent == null
 
     LaunchedEffect(latest) { if (ui.switched) moveFocus(heading) }
 
@@ -806,7 +811,7 @@ internal fun WritingResultScreen(
                         Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = width) {
                             Text(stringResource(R.string.essay_back_to_today))
                         }
-                    } else if (done) {
+                    } else if (done || grade == null) {
                         // Nothing left to work on: no rewrite to offer, so the bar's one action goes on.
                         Button(onClick = viewModel::finish, modifier = width, busy = finishing) {
                             Text(stringResource(R.string.essay_continue))
@@ -829,7 +834,7 @@ internal fun WritingResultScreen(
     ) { padding ->
         CompositionLocalProvider(LocalStepHeading provides heading) {
             RunColumn(Modifier.padding(padding)) {
-                WritingResultView(grade, essay.writing, latest.text)
+                if (grade != null) WritingResultView(grade, essay.writing, latest.text)
             }
         }
     }
@@ -948,7 +953,7 @@ fun WritingAnswerScreen(
             val answer = read.value
             val grade = remember(answer.grade) { answer.grade.toGrade() }
             RunPage(onClose = navigator::closeTask, title = { BarTitle(answer.writing.title) }) {
-                WritingResultView(grade, answer.writing, answer.text)
+                if (grade != null) WritingResultView(grade, answer.writing, answer.text)
             }
         }
 

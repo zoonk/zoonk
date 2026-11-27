@@ -6,9 +6,11 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickInPlacement } from "../_test-utils/shown-choice";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { markSkillsKnown } from "../learner/_utils/known-skills";
 import * as requestClock from "../learner/facts/request-instant";
@@ -18,8 +20,7 @@ import { measureSessionState } from "../sessions/_utils/capture-snapshot";
 import { getGoalPreparation } from "./get-goal-preparation";
 
 const NOW = new Date();
-const DAY_MS = 86_400_000;
-const daysAgo = (days: number) => new Date(NOW.getTime() - days * DAY_MS);
+const daysAgo = (days: number) => new Date(NOW.getTime() - days * MS_PER_DAY);
 
 function mockClock(now = NOW) {
   vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(now);
@@ -242,6 +243,45 @@ describe(getGoalPreparation, () => {
     expect(withMonday.status === "ready" && withMonday.preparation.weekGain).toBeGreaterThan(0);
   });
 
+  it("counts a bank item's first answer for mastery only when it was cold", async () => {
+    const { goal, items, user } = await setup();
+    const [seenInLesson, ...practiceItems] = items;
+    const coldItems = practiceItems.slice(0, 6);
+
+    if (!seenInLesson || coldItems.length !== 6) {
+      throw new Error("Expected a lesson check and six practice items");
+    }
+
+    await Promise.all([
+      attemptFixture({
+        answeredAt: daysAgo(3),
+        fromLesson: true,
+        itemId: seenInLesson.id,
+        skillId: seenInLesson.skillId,
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: daysAgo(2),
+        itemId: seenInLesson.id,
+        skillId: seenInLesson.skillId,
+        userId: user.id,
+      }),
+      ...coldItems.map((item) =>
+        attemptFixture({
+          answeredAt: daysAgo(1),
+          itemId: item.id,
+          skillId: item.skillId,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    await expect(getGoalPreparation(goal.id)).resolves.toMatchObject({
+      preparation: { components: { mastery: { answered: 6, correct: 6 } } },
+      status: "ready",
+    });
+  });
+
   it("measures studied skills, unseen questions and an exam's mocks by area", async () => {
     const { chapters, goal, items, skills, user } = await setup();
     const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
@@ -443,7 +483,11 @@ describe(getGoalPreparation, () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: itemOf(3)?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: itemOf(3)?.id ?? "" }),
+        durationMs: 4000,
+        itemId: itemOf(3)?.id ?? "",
+      },
     });
 
     mockClock(new Date());
@@ -499,7 +543,11 @@ describe(getGoalPreparation, () => {
     await Promise.all([
       answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: { selectedIndex: 1 }, durationMs: 4000, itemId: missed?.id ?? "" },
+        input: {
+          answer: await pickInPlacement({ itemId: missed?.id ?? "", right: false }),
+          durationMs: 4000,
+          itemId: missed?.id ?? "",
+        },
       }),
       attemptFixture({ itemId: leftOutItem.id, skillId: leftOut.id, userId: user.id }),
     ]);
@@ -903,7 +951,7 @@ describe(getGoalPreparation, () => {
       planItems.map((item, index) =>
         prisma.planItem.update({
           data: {
-            scheduledFor: new Date(today.getTime() + (index - 2) * DAY_MS),
+            scheduledFor: new Date(today.getTime() + (index - 2) * MS_PER_DAY),
             status: index < 3 ? "done" : "todo",
           },
           where: { id: item.id },
@@ -925,7 +973,10 @@ describe(getGoalPreparation, () => {
     await Promise.all(
       planItems.map((item, index) =>
         prisma.planItem.update({
-          data: { scheduledFor: new Date(today.getTime() + (index + 5) * DAY_MS), status: "done" },
+          data: {
+            scheduledFor: new Date(today.getTime() + (index + 5) * MS_PER_DAY),
+            status: "done",
+          },
           where: { id: item.id },
         }),
       ),
@@ -940,7 +991,7 @@ describe(getGoalPreparation, () => {
     await Promise.all([
       prisma.planItem.update({ data: { status: "skipped" }, where: { id: planItems[0]!.id } }),
       prisma.goal.update({
-        data: { targetDate: new Date(today.getTime() - DAY_MS) },
+        data: { targetDate: new Date(today.getTime() - MS_PER_DAY) },
         where: { id: goal.id },
       }),
     ]);

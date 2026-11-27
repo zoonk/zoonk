@@ -6,13 +6,13 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadTodayPlanChange } from "../_utils/today-plan-change";
 import { createGoalPlan } from "../create-goal-plan";
 import { decidePlanChange } from "../decide-plan-change";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
-const DAY_MS = 86_400_000;
 const STAND_IN_LESSONS = 4;
 const PARTIAL_SKILL_LESSONS = 10;
 const DEFAULT_WRITTEN_LESSONS = 8;
@@ -80,7 +80,8 @@ export async function pacedPlanFixture({
       ...(own ? { pace: { factor: 1, source: "own" } } : {}),
       ...(fullCourse ? { fullCourse: true } : {}),
     },
-    targetDate: days === null ? null : new Date(Date.parse("2020-09-29T00:00:00Z") + days * DAY_MS),
+    targetDate:
+      days === null ? null : new Date(Date.parse("2020-09-29T00:00:00Z") + days * MS_PER_DAY),
     timezone: "UTC",
     userId: user.id,
   });

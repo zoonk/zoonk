@@ -18,6 +18,7 @@ import { readEssayContent } from "../essays/_utils/essay-content";
 import { passedWritingEvaluations } from "../essays/_utils/writing-rubric-evaluations";
 import { getWritingRubricFingerprint } from "../essays/_utils/writing-task-basis";
 import { getWritingAttempt } from "../essays/get-writing-attempt";
+import { WRITING_MAX_CHARACTERS_PER_LINE } from "../essays/writing-lines";
 import { loadGoalWrittenProjection } from "../estimates/load-goal-written-projection";
 import { loadWrittenProjection } from "../estimates/written-projection";
 import { loadExamHistory } from "../view/_utils/exam-history";
@@ -520,6 +521,7 @@ describe("written mock sittings", () => {
     expect(gradeWritingEvidence).not.toHaveBeenCalled();
 
     const text = `  ${"Legal argument. ".repeat(900)}\n  End of the answer.  `;
+    const cut = text.indexOf("Legal") + 30 * WRITING_MAX_CHARACTERS_PER_LINE;
 
     const input = mockAnswerInputSchema.parse({
       answer: { text },
@@ -574,7 +576,7 @@ describe("written mock sittings", () => {
     await gradeMockEssays({ blockId: id, input: UTC });
 
     expect(gradeWritingEvidence).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ text: text.slice(0, 30 * 55) }),
+      expect.objectContaining({ text: text.slice(0, cut) }),
     );
 
     await expect(view(id)).resolves.toMatchObject({
@@ -582,7 +584,7 @@ describe("written mock sittings", () => {
         {
           grade: {
             estimatedLines: 263,
-            ignoredFrom: 30 * 55,
+            ignoredFrom: cut,
             kind: "levels",
             nextStep: { kind: "limit", title: null },
           },

@@ -32,18 +32,16 @@ export function ExtraTimeButton({
 
   return (
     <>
-      <form action={() => void run()} className="contents">
-        <Button
-          busy={isPending}
-          className={SIZE_CLASS[size]}
-          icon={<PlayIcon aria-hidden="true" />}
-          size="sm"
-          type="submit"
-          variant="outline"
-        >
-          {label ?? t("Practice {minutes} more min", { minutes: String(minutes) })}
-        </Button>
-      </form>
+      <Button
+        busy={isPending}
+        className={SIZE_CLASS[size]}
+        icon={<PlayIcon aria-hidden="true" />}
+        size="sm"
+        onClick={run}
+        variant="outline"
+      >
+        {label ?? t("Practice {minutes} more min", { minutes: String(minutes) })}
+      </Button>
 
       {failed && <ChangeSaveError />}
     </>

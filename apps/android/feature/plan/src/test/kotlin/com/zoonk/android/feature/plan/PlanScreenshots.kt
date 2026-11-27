@@ -346,8 +346,9 @@ class PlanScreenshots {
         val timeLeft = page.copy(plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"))
         val sheets: Map<String, @Composable ColumnScope.(PlanLinks) -> Unit> =
             mapOf(
-                "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
-                "plan-sheet-pace-time-left" to { links -> PaceDetails(timeLeft, timeLeft.plan.status!!.pace, links, onAdjust = {}) },
+                "plan-sheet-pace" to { links -> PaceDetails(page, requireNotNull(page.plan.status?.pace), links, onAdjust = {}) },
+                "plan-sheet-pace-time-left" to
+                    { links -> PaceDetails(timeLeft, requireNotNull(timeLeft.plan.status?.pace), links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
                 "plan-sheet-preparation-review" to
@@ -1189,6 +1190,24 @@ class PlanScreenshots {
     }
 
     private fun page() = PlanPageState(learnerSummary().goals.first(), learnPlan(), learnerSummary())
+
+    /** A learn goal whose path ends in a module the learner took out of the plan. */
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun phoneWithAModuleTakenOut() = capture("plan-module-taken-out-phone", exam = takenOutPage())
+
+    @Test
+    @Config(qualifiers = "pt-w411dp-h1900dp-xxhdpi")
+    fun phoneWithAModuleTakenOutInPortuguese() = capture("plan-module-taken-out-phone-pt", exam = takenOutPage())
+
+    private fun takenOutPage(): PlanPageState {
+        val plan = learnPlan()
+        val phases =
+            plan.phases.map {
+                if (it.index == plan.phases.last().index) it.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = "skipped") else it
+            }
+        return PlanPageState(learnerSummary().goals.first(), plan.copy(phases = phases), learnerSummary())
+    }
 
     private fun write(
         name: String,

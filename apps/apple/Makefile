@@ -12,7 +12,10 @@ XCODEBUILD_ARGUMENTS ?=
 XCODEBUILD_COMMAND := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc -derivedDataPath DerivedData/Make $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 XCODEBUILD := $(if $(CI),,node ../../scripts/dev/queue.mts node scripts/swift-packages.mts) $(XCODEBUILD_COMMAND)
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
-TEST_ON_DESTINATION := $(if $(TEST_DESTINATION),$(XCODEBUILD) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(XCODEBUILD_COMMAND))
+# A lease boots its simulator before the build, to hold it on a Mac that agents share. CI's runner
+# is its own machine with 3 cores, where a booted simulator makes the compile about three times
+# slower, so there xcodebuild boots the simulator itself once the tests start.
+TEST_ON_DESTINATION := $(if $(and $(CI),$(TEST_DESTINATION)),$(XCODEBUILD_COMMAND) -destination "$(TEST_DESTINATION)",node scripts/with-simulator.mts $(if $(TEST_DESTINATION),--destination "$(TEST_DESTINATION)") $(XCODEBUILD_COMMAND))
 
 .PHONY: build build-ios test test-mac build-mac-tests ui-test format format-check strings-check formatting-check check
 

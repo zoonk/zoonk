@@ -83,7 +83,7 @@ function UnchangedRun({ context, rows }: { context: Context; rows: ScreenRow[] }
             </span>
             {FACT_SEPARATOR}
             {kindsInWords(screens)}
-            <FoldChevron className="ms-1 inline-block size-3.5 align-[-0.2em]" inline />
+            <FoldChevron className="ms-1 size-3.5 align-[-0.2em]" inline />
           </span>
         </summary>
         <ol className="flex flex-col pb-2 text-sm leading-6">

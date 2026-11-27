@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
+import { MAX_MATCH_MISSES } from "@zoonk/core/sessions/answer-limits";
 import { studyBlockSchema } from "@zoonk/core/sessions/block-view-contract";
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import { studyBlockOpeningSchema } from "@zoonk/core/sessions/open-block-contract";
@@ -15,10 +16,12 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
 import {
   mistakePracticeCompletionSchema,
   mistakePracticeFeedbackSchema,
+  mistakePracticeResponseSchema,
 } from "../src/lib/openapi/schemas/mistakes";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
@@ -30,10 +33,10 @@ import {
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
-const DAY_MS = 86_400_000;
 const CHALLENGE_QUESTIONS = 5;
 /** The phase's challenge then asks ten, too long for the welcome-back day after its lesson. */
 const QUESTIONS_PER_SKILL = 10;
@@ -112,7 +115,7 @@ async function expectEarlierFirst({
 async function createGoal(userId: string) {
   const [goal, skills, lessons] = await Promise.all([
     goalFixture({
-      createdAt: new Date(Date.now() - 30 * DAY_MS),
+      createdAt: new Date(Date.now() - 30 * MS_PER_DAY),
       dailyMinutes: 30,
       timezone: "UTC",
       userId,
@@ -149,8 +152,8 @@ async function createGoal(userId: string) {
   const [, mistake] = await Promise.all([
     learnerSkillFixture({
       difficulty: 5,
-      due: new Date(Date.now() - DAY_MS),
-      lastReviewedAt: new Date(Date.now() - 4 * DAY_MS),
+      due: new Date(Date.now() - MS_PER_DAY),
+      lastReviewedAt: new Date(Date.now() - 4 * MS_PER_DAY),
       reps: 2,
       skillId: skills[0]?.id ?? "",
       stability: 3,
@@ -158,7 +161,7 @@ async function createGoal(userId: string) {
       userId,
     }),
     mistakeFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       itemId: items[0]?.id,
       skillId: skills[0]?.id,
       userId,
@@ -194,7 +197,7 @@ async function playBlock({
 
     await readBody({
       response: await api.post(`${blockPath}/answers`, {
-        data: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.itemId },
+        data: { answer: tapOption(question.options), durationMs: 4000, itemId: question.itemId },
       }),
       schema: studyAnswerFeedbackResponseSchema,
     });
@@ -244,6 +247,113 @@ test.describe("Study sessions API", () => {
     await api.dispose();
   });
 
+  test("records confused match pairs once after a review board is repaired", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "review-match" });
+    const [session, skill] = await Promise.all([studySessionFixture({ userId }), skillFixture()]);
+
+    const pairs = [
+      { left: "Mars", right: "Planet" },
+      { left: "Moon", right: "Satellite" },
+    ];
+
+    const item = await itemFixture({
+      content: { pairs, question: "Match the names.", reason: "The Moon orbits Earth." },
+      format: "matchPairs",
+      skillId: skill.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: {
+        capsules: [
+          {
+            format: "matchPairs",
+            itemIds: [item.id],
+            key: `skill:${skill.id}`,
+            lessonId: null,
+            skillIds: [skill.id],
+            title: skill.name,
+          },
+        ],
+        skillIds: [skill.id],
+      },
+      sessionId: session.id,
+    });
+
+    const path = `/v1/study-sessions/${session.id}/blocks/${block.id}`;
+
+    await readBody({
+      response: await api.post(`${path}/starts`, { data: {} }),
+      schema: startedStudyBlockResponseSchema,
+    });
+
+    const detail = await readBody({
+      response: await api.get(path),
+      schema: studyBlockDetailResponseSchema,
+    });
+
+    const [question] = detail.questions;
+
+    if (!question?.right || !question.key) {
+      throw new Error("The review did not serve a learning match");
+    }
+
+    expect(question.key.map((index) => question.right?.[index])).toStrictEqual([
+      "Planet",
+      "Satellite",
+    ]);
+
+    const miss = { left: 0, right: question.right.indexOf("Satellite") };
+
+    const submit = (misses: (typeof miss)[]) =>
+      api.post(`${path}/answers`, {
+        data: { answer: { matches: question.key, misses }, durationMs: 2000, itemId: item.id },
+      });
+
+    const oversized = await submit(Array.from({ length: MAX_MATCH_MISSES + 1 }, () => miss));
+    expect(oversized.status()).toBe(400);
+
+    const feedback = await readBody({
+      response: await submit([miss]),
+      schema: studyAnswerFeedbackResponseSchema,
+    });
+
+    expect(feedback).toMatchObject({ isCorrect: false, savedToNotebook: true });
+    await submit([miss]);
+
+    await expect(
+      prisma.attempt.findMany({ where: { itemId: item.id, userId } }),
+    ).resolves.toMatchObject([
+      { answer: { matches: question.key, misses: [miss] }, isCorrect: false },
+    ]);
+
+    const mistake = await prisma.mistake.findFirstOrThrow({ where: { itemId: item.id, userId } });
+    expect(mistake.snapshot).toMatchObject({ answer: "Mars → Satellite" });
+
+    await prisma.mistake.update({
+      data: { missedAt: new Date(Date.now() - MS_PER_DAY) },
+      where: { id: mistake.id },
+    });
+
+    const notebook = await readBody({
+      response: await api.get("/v1/me/mistake-practice?includeAllFormats=true&timeZone=UTC"),
+      schema: mistakePracticeResponseSchema,
+    });
+
+    expect(notebook.practice).toMatchObject([
+      { mistakeId: mistake.id, questions: [{ itemId: item.id }] },
+    ]);
+
+    const replay = notebook.practice[0]?.questions[0];
+
+    expect(replay?.key?.map((index) => replay.right?.[index])).toStrictEqual([
+      "Planet",
+      "Satellite",
+    ]);
+
+    await api.dispose();
+  });
+
   test("plays today's session from capsules to the summary", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-session" });
     const { goal, lessons, mistake, skills } = await createGoal(userId);
@@ -258,10 +368,17 @@ test.describe("Study sessions API", () => {
       "fixMistake",
     ]);
 
+    const notebook = await readBody({
+      response: await api.get(`/v1/me/mistake-practice?goalId=${goal.id}&timeZone=UTC`),
+      schema: mistakePracticeResponseSchema,
+    });
+
+    const replayed = notebook.practice.find((entry) => entry.mistakeId === mistake.id);
+
     const correction = await readBody({
       response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(replayed?.questions[0]?.options),
           attemptId: randomUUID(),
           durationMs: 2000,
           itemId: mistake.itemId,

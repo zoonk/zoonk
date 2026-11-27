@@ -1,18 +1,15 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickItemInMock } from "../../_test-utils/shown-choice";
 import { trackServerEvent } from "../../analytics/server";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
-import {
-  MINUTE_MS,
-  answerRight,
-  runningMock,
-  scheduledMockSetup,
-} from "./_test-utils/scheduled-mock";
+import { answerRight, runningMock, scheduledMockSetup } from "./_test-utils/scheduled-mock";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { saveMockAnswer } from "./save-mock-answer";
@@ -118,7 +115,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: first?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 90_000,
         flagged: true,
         itemId: first?.itemId ?? "",
@@ -128,7 +129,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: second?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 60_000,
         flagged: false,
         itemId: second?.itemId ?? "",
@@ -141,11 +146,11 @@ describe("mock exams", () => {
     });
 
     await Promise.all(
-      rest.map((question, index) =>
+      rest.map(async (question, index) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 30_000,
             flagged: index === 0,
             itemId: question.itemId,
@@ -202,7 +207,7 @@ describe("mock exams", () => {
 
   it("numbers a mock after the goal's finished mocks, skipping one left unfinished", async () => {
     const { blockId, goal, user } = await scheduledMockSetup();
-    const lastWeek = new Date(SESSION_NOW.getTime() - 7 * 24 * 60 * MINUTE_MS);
+    const lastWeek = new Date(SESSION_NOW.getTime() - 7 * 24 * 60 * MS_PER_MINUTE);
     const earlier = { conditions: {}, createdAt: lastWeek, goalId: goal.id, userId: user.id };
 
     await prisma.mockExam.createMany({
@@ -225,7 +230,11 @@ describe("mock exams", () => {
     await saveMockAnswer({
       blockId,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInMock({
+          itemId: wrongUnsure?.itemId ?? "",
+          mockId: blockId,
+          right: false,
+        }),
         durationMs: 1000,
         flagged: true,
         itemId: wrongUnsure?.itemId ?? "",
@@ -233,11 +242,11 @@ describe("mock exams", () => {
     });
 
     await Promise.all(
-      rest.map((question) =>
+      rest.map(async (question) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 1000,
             flagged: false,
             itemId: question.itemId,
@@ -263,11 +272,11 @@ describe("mock exams", () => {
     const running = await runningMock(blockId);
 
     await Promise.all(
-      (running.current?.questions ?? []).map((question) =>
+      (running.current?.questions ?? []).map(async (question) =>
         saveMockAnswer({
           blockId,
           input: {
-            answer: { selectedIndex: 0 },
+            answer: await pickItemInMock({ itemId: question.itemId, mockId: blockId }),
             durationMs: 1000,
             flagged: false,
             itemId: question.itemId,
@@ -291,7 +300,9 @@ describe("mock exams", () => {
     const running = await runningMock(blockId);
     const itemId = running.current?.questions[0]?.itemId ?? "";
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + running.minutes * MINUTE_MS + MINUTE_MS));
+    vi.setSystemTime(
+      new Date(SESSION_NOW.getTime() + running.minutes * MS_PER_MINUTE + MS_PER_MINUTE),
+    );
 
     await expect(
       saveMockAnswer({
@@ -378,7 +389,9 @@ describe(finishMock, () => {
     await startMock({ blockId, input: {} });
     const running = await answerRight({ blockId, count: 2 });
 
-    vi.setSystemTime(new Date(SESSION_NOW.getTime() + running.minutes * MINUTE_MS + MINUTE_MS));
+    vi.setSystemTime(
+      new Date(SESSION_NOW.getTime() + running.minutes * MS_PER_MINUTE + MS_PER_MINUTE),
+    );
 
     await expect(finishMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "finished" });
 
@@ -478,7 +491,10 @@ describe(finishMock, () => {
     await answerRight({ blockId, count: 9 });
 
     await prisma.mockExam.update({
-      data: { handInClaimedAt: new Date(SESSION_NOW.getTime() - 6 * MINUTE_MS), sectionIndex: 1 },
+      data: {
+        handInClaimedAt: new Date(SESSION_NOW.getTime() - 6 * MS_PER_MINUTE),
+        sectionIndex: 1,
+      },
       where: { blockId },
     });
 

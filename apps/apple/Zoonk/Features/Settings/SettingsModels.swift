@@ -58,15 +58,10 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
-  var body: Components.Schemas.LearningProfileUpdate {
+  var body: Components.Schemas.LearningProfileUpdate? {
     switch self {
     case .buddy(let buddy):
-      .init(
-        buddy: .init(
-          value1: .init(
-            glasses: .init(rawValue: buddy.glasses.rawValue),
-            kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
-            name: buddy.name)))
+      buddy.input.map { .init(buddy: .init(value1: $0)) }
     case .homeCountry(let country):
       .init(homeCountry: country.code)
     case .shareUsageData(let shares):
@@ -120,7 +115,7 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let id: String
   var statement: String
   let category: Category
-  let source: Source
+  let source: Source?
   let createdAt: Date
   /// The About you question this fact answers, which is where it's changed.
   var profileQuestion: ProfileQuestion?
@@ -199,9 +194,10 @@ extension LearningPreferences {
 
 extension MemoryFact {
   init(_ fact: Components.Schemas.MemoryFact) {
-    let source: Source =
+    let source: Source? =
       switch (fact.origin, fact.source?.value1.kind) {
       case (.noticed, _): .noticed
+      case (.unrecognized, _), (_, .unrecognized): nil
       case (_, .call): .call
       case (_, .chat): .chat
       case (_, .onboarding): .onboarding

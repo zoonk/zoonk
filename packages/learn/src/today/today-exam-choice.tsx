@@ -90,7 +90,7 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 
   const undoButton = change.canUndo && (
     <SuggestionAction
-      action={undo}
+      onClick={undo}
       busy={isPending}
       icon={<Undo2Icon aria-hidden="true" />}
       variant="outline"

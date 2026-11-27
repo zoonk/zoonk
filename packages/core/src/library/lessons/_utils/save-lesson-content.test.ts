@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -15,12 +18,14 @@ import { listCheckpointQuestions } from "../../../checkpoints/_utils/checkpoint-
 import { learnerGoalFixture } from "../../../learner/_test-utils/learner-goal";
 import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../../lesson-player/check-lesson-step";
+import { startLibraryLesson } from "../../../lesson-player/start-library-lesson";
 import { mistakeListInputSchema } from "../../../mistakes/contract";
 import { listCurrentUserMistakes } from "../../../mistakes/list-current-user-mistakes";
 import { loadPracticeItems } from "../../../sessions/_utils/load-practice";
 import { answerStudyQuestion } from "../../../sessions/answer-study-question";
 import { finishStudyBlock } from "../../../sessions/finish-study-block";
 import { completeLessonContent } from "../../generation/lesson-generation-state";
+import { parseItemContent } from "../../items/item-content";
 import { writtenTemperatureLesson } from "../../quality/_test-utils/written-lessons";
 import { toStepContent } from "../../steps/written-screens";
 import { readLessonMap } from "../lesson-map";
@@ -116,6 +121,321 @@ async function saveReadyLesson(input: Parameters<typeof saveLessonContent>[0]) {
 }
 
 describe(saveLessonContent, () => {
+  it("banks a standalone check and records its lesson answer against the item", async () => {
+    const [{ lesson, skill, workflowRunId }, user] = await Promise.all([
+      claimedLesson(),
+      userFixture(),
+    ]);
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [{ ...screen(skill.id), standsAlone: true }],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const step = await prisma.step.findFirstOrThrow({
+      include: { item: true },
+      where: { lessonId: lesson.id },
+    });
+
+    expect(step.item).toMatchObject({
+      content: { question: content.question, select: 1 },
+      format: "multipleChoice",
+    });
+
+    mockSession(user.id);
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "check", optionId: "right" },
+        durationMs: 8000,
+        runId: run.id,
+        timeZone: "UTC",
+      },
+      stepId: step.id,
+    });
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { stepId: step.id, userId: user.id } }),
+    ).resolves.toMatchObject({ fromLesson: true, isCorrect: true, itemId: step.itemId });
+  });
+
+  it("keeps non-standalone and pictured checks out of the bank", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+    const picture = { alt: "Two matching rectangles.", prompt: "Two rectangles on a grid." };
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [
+        { ...screen(skill.id), standsAlone: false },
+        { ...screen(skill.id), content: { ...content, image: picture }, standsAlone: true },
+        {
+          ...screen(skill.id),
+          content: {
+            ...content,
+            options: content.options.map((option) => ({ ...option, picture })),
+          },
+          standsAlone: true,
+        },
+      ],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const steps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
+    expect(steps.map(({ itemId }) => itemId)).toStrictEqual([null, null, null]);
+  });
+
+  it("only banks checks on a skill with the lesson's owner", async () => {
+    const [user, { lesson, workflowRunId }] = await Promise.all([userFixture(), claimedLesson()]);
+    const skill = await skillFixture({ ownerId: user.id, visibility: "private" });
+    await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [{ ...screen(skill.id), standsAlone: true }],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    await expect(
+      prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({ itemId: null, skillId: skill.id });
+  });
+
+  it("keeps a private lesson's numeric check out of its public skill's bank", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+    const user = await userFixture();
+
+    await prisma.lesson.update({
+      data: { ownerId: user.id, visibility: "private" },
+      where: { id: lesson.id },
+    });
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [numericScreen(skill.id)],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    await expect(
+      prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } }),
+    ).resolves.toMatchObject({ itemId: null, skillId: skill.id });
+
+    await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(0);
+  });
+
+  it("keeps the bank item's option indexes when re-saving and replaces it when the key changes", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+    const selected = { ...screen(skill.id), standsAlone: true };
+
+    const input = {
+      language: "en",
+      lessonId: lesson.id,
+      screens: [selected],
+      summary: { ideas: [], shape: "hub" as const },
+      workflowRunId,
+    };
+
+    const current = () =>
+      prisma.step.findFirstOrThrow({
+        include: { item: true },
+        where: { lessonId: lesson.id, retiredAt: null, staged: false },
+      });
+
+    await saveLessonContent(input);
+    const first = await current();
+
+    if (!first.item) {
+      throw new Error("Expected a bank item");
+    }
+
+    const shuffled = content.options
+      .toReversed()
+      .map((option) => ({ ...option, reason: `Revised: ${option.reason}` }));
+
+    await saveLessonContent({
+      ...input,
+      screens: [{ ...selected, content: { ...content, options: shuffled } }],
+    });
+
+    const second = await current();
+    const stored = second.item && parseItemContent(second.item);
+    const original = parseItemContent(first.item);
+
+    if (stored?.format !== "multipleChoice" || original.format !== "multipleChoice") {
+      throw new Error("Expected multiple-choice items");
+    }
+
+    expect(second.itemId).toBe(first.item.id);
+
+    expect(stored.content.options).toStrictEqual(
+      original.content.options.map((option) => ({
+        ...option,
+        reason: `Revised: ${option.reason}`,
+      })),
+    );
+
+    await saveLessonContent({
+      ...input,
+      screens: [
+        {
+          ...selected,
+          content: {
+            ...content,
+            options: shuffled.map((option) => ({ ...option, isCorrect: !option.isCorrect })),
+          },
+        },
+      ],
+    });
+
+    const replaced = await current();
+    expect(replaced.item).toMatchObject({ format: "multipleChoice" });
+    expect(replaced.itemId).not.toBe(first.item.id);
+
+    await expect(
+      prisma.item.findUniqueOrThrow({ where: { id: first.item.id } }),
+    ).resolves.toMatchObject({ retiredAt: expect.any(Date) });
+  });
+
+  it("banks a staged check only after its version is published", async () => {
+    const { lesson, skill, workflowRunId } = await claimedLesson();
+
+    const input = {
+      language: "en",
+      lessonId: lesson.id,
+      screens: [screen(skill.id)],
+      summary: { ideas: [], shape: "hub" as const },
+      workflowRunId,
+    };
+
+    await saveReadyLesson(input);
+
+    const version = await stageLessonVersion({
+      ...input,
+      replaces: 1,
+      screens: [{ ...screen(skill.id), standsAlone: true }],
+    });
+
+    expect(version).toBe(2);
+
+    await expect(
+      prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id, version: 2 } }),
+    ).resolves.toMatchObject({
+      itemId: null,
+      staged: true,
+      stagedItem: { format: "multipleChoice" },
+    });
+
+    await publishStagedLessonVersion({ lessonId: lesson.id, version: 2 });
+
+    await expect(
+      prisma.step.findFirstOrThrow({
+        include: { item: true },
+        where: { lessonId: lesson.id, version: 2 },
+      }),
+    ).resolves.toMatchObject({
+      item: { format: "multipleChoice" },
+      staged: false,
+      stagedItem: null,
+    });
+  });
+
+  it("records a variant answer against the step only and uses the served version for Hyperdrive", async () => {
+    const tool = "Excel";
+
+    const [{ lesson, skill, workflowRunId }, user, baseUser, chapter] = await Promise.all([
+      claimedLesson(),
+      userFixture(),
+      userFixture(),
+      libraryChapterFixture({ tools: [{ essential: true, name: tool }] }),
+    ]);
+
+    await saveReadyLesson({
+      language: "en",
+      lessonId: lesson.id,
+      screens: [{ ...screen(skill.id), standsAlone: true }],
+      summary: { ideas: [], shape: "hub" },
+      workflowRunId,
+    });
+
+    const step = await prisma.step.findFirstOrThrow({ where: { lessonId: lesson.id } });
+
+    if (!step.itemId) {
+      throw new Error("Expected a bank item");
+    }
+
+    const goal = await goalFixture({ userId: user.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      settings: { tools: [{ choice: "have", name: tool }] },
+    });
+
+    const answeredAt = new Date(Date.now() - 60_000);
+
+    await Promise.all([
+      planItemFixture({ chapterId: chapter.id, lessonId: lesson.id, planId: plan.id }),
+      stepVariantFixture({
+        content: {
+          ...content,
+          options: content.options.map((option) => ({ ...option, isCorrect: !option.isCorrect })),
+          question: "Which value does the spreadsheet show?",
+        },
+        key: "excel",
+        kind: "tool",
+        stepId: step.id,
+      }),
+      ...[user, baseUser].map(({ id }) =>
+        attemptFixture({ answeredAt, itemId: step.itemId, userId: id }),
+      ),
+    ]);
+
+    mockSession(baseUser.id);
+
+    await expect(
+      startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id }),
+    ).resolves.toMatchObject({
+      run: { hyperdrive: { knownStepIds: [step.id] } },
+      status: "started",
+    });
+
+    mockSession(user.id);
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    const variantRun = await startLibraryLesson({
+      input: { runId: run.id, timeZone: "UTC" },
+      lessonId: lesson.id,
+    });
+
+    if (variantRun.status !== "started") {
+      throw new Error("Expected the variant lesson to start");
+    }
+
+    expect(variantRun.run.hyperdrive.knownStepIds).toStrictEqual([]);
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "check", optionId: "wrong" },
+        durationMs: 8000,
+        runId: variantRun.run.runId,
+        timeZone: "UTC",
+      },
+      stepId: step.id,
+    });
+
+    await expect(
+      prisma.attempt.findFirstOrThrow({ where: { stepId: step.id, userId: user.id } }),
+    ).resolves.toMatchObject({ fromLesson: true, isCorrect: true, itemId: null });
+  });
+
   it("keeps the surviving identity of a screen skill merged while its writer was running", async () => {
     const { lesson, workflowRunId } = await claimedLesson();
     const [survivor, duplicate] = await Promise.all([skillFixture(), skillFixture()]);

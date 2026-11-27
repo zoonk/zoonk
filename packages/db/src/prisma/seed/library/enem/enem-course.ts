@@ -6,6 +6,8 @@ import { enemAreaChapters, enemMathChapters } from "./enem-chapters";
 import { enemDayOneItems } from "./enem-day-one-items";
 import { enemExamSkills } from "./enem-exam-skills";
 import { enemMathItems } from "./enem-math-items";
+import { enemPlacementLanguageItems } from "./enem-placement-language-items";
+import { enemPlacementScienceItems } from "./enem-placement-science-items";
 import { enemAreaSkills, enemMathSkills } from "./enem-skills";
 
 export const enemCourse: SeedCourse = {
@@ -16,7 +18,14 @@ export const enemCourse: SeedCourse = {
     "O Exame Nacional do Ensino Médio, assunto por assunto, na ordem que mais rende.",
   ),
   format: "exam",
-  items: [...enemMathItems, ...enemAreaItems, ...enemChallengeItems, ...enemDayOneItems],
+  items: [
+    ...enemMathItems,
+    ...enemAreaItems,
+    ...enemChallengeItems,
+    ...enemDayOneItems,
+    ...enemPlacementScienceItems,
+    ...enemPlacementLanguageItems,
+  ],
   key: "enem",
   languages: ["en", "pt"],
   skills: [...enemMathSkills, ...enemAreaSkills, ...enemExamSkills],

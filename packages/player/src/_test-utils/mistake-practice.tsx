@@ -92,7 +92,6 @@ export function openPractice(
           onNavigate: _onNavigate,
           prefetch: _prefetch,
           scroll: _scroll,
-          unstable_dynamicOnHover: _dynamicOnHover,
           ...props
         }) => (
           <a href={href} {...props}>
@@ -139,6 +138,7 @@ export function bankQuestion(format: Format): Question {
     context: "The numbers and context from the original question.",
     image: null,
     itemId: "original-bank-item",
+    key: null,
     left: null,
     options: null,
     question: "The original bank question",
@@ -184,6 +184,7 @@ export function bankQuestion(format: Format): Question {
     context: null,
     entry: null,
     format,
+    key: [0, 1],
     left: ["Electron", "Proton"],
     right: ["Negative charge", "Positive charge"],
   };

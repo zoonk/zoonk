@@ -16,7 +16,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +54,7 @@ import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
+import com.zoonk.android.feature.mock.ChangeMockSchedule
 import com.zoonk.android.feature.mock.MockPreparingNote
 import com.zoonk.android.feature.mock.MockScheduleSheet
 import com.zoonk.android.feature.mock.mockTitle
@@ -754,10 +754,12 @@ private fun ChallengeFooter(
         challenge.status in setOf(Challenge.Status.READY, Challenge.Status.UPCOMING, Challenge.Status.WAITING)
     ) {
         actions.schedule?.let { open ->
-            TextButton(onClick = open, enabled = !ui.starting) { Text(stringResource(R.string.mock_schedule_change)) }
+            ChangeMockSchedule(enabled = !ui.starting, onClick = open)
         }
     }
     when (challenge.status) {
+        Challenge.Status.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         Challenge.Status.READY, Challenge.Status.STARTED -> {
             val wait = challenge.waitReason
             when {

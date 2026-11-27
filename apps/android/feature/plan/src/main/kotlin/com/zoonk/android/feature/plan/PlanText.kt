@@ -68,6 +68,7 @@ fun phaseKindName(
     number: Int,
 ): String =
     when (kind) {
+        PlanPhase.Kind.UNKNOWN_DEFAULT_OPEN_API -> ""
         PlanPhase.Kind.FOUNDATIONS -> stringResource(R.string.plan_phase_foundations)
         PlanPhase.Kind.GAPS -> stringResource(R.string.plan_phase_gaps)
         PlanPhase.Kind.PRACTICE -> stringResource(R.string.plan_phase_practice)
@@ -82,6 +83,10 @@ fun shortFocusName(
     mocksRequirePlus: Boolean,
 ): String =
     when (focus) {
+        ShortExamFocus.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         ShortExamFocus.MAP_AND_GAPS -> {
             stringResource(R.string.plan_short_map_and_gaps)
         }

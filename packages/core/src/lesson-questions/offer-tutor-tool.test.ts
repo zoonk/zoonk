@@ -165,7 +165,7 @@ async function examSetup({
 async function askBuddy(goalId: string, question = "The English lessons are too basic") {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {
@@ -238,7 +238,7 @@ describe("app tools the buddy offers", () => {
 
     const thread = await getLessonQuestionThread({
       contextKind: "plan",
-      target: { goalId: goal.id, kind: "plan" },
+      target: { conversationId: null, goalId: goal.id, kind: "plan" },
     });
 
     expect(thread.status === "ready" ? thread.thread?.questions : null).toMatchObject([

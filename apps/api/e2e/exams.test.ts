@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
 import {
   mockEssayGradesResponseSchema,
@@ -14,10 +15,10 @@ import {
   mockPlanOfferResultSchema,
 } from "../src/lib/openapi/schemas/mocks";
 import { createBearerLearner } from "./helpers/bearer";
+import { tapOption } from "./helpers/choices";
 import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
   BREAK_SECTION_QUESTIONS,
-  DAY_MS,
   EXAM_IN_DAYS,
   MOCK_QUESTIONS,
   createBreakExamGoal,
@@ -106,7 +107,7 @@ test.describe("Exams API", () => {
 
       const response = await api.put(`${path}/answers`, {
         data: {
-          answer: index === 0 ? null : { selectedIndex: 0 },
+          answer: index === 0 ? null : tapOption(question.options),
           durationMs: 5000,
           flagged: index < 2,
           itemId: question.itemId,
@@ -152,7 +153,7 @@ test.describe("Exams API", () => {
         where: { id: blueprintId },
       }),
       prisma.goal.update({
-        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * DAY_MS) },
+        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * MS_PER_DAY) },
         where: { id: goal.id },
       }),
     ]);
@@ -225,7 +226,7 @@ test.describe("Exams API", () => {
     const saved = [
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(right?.options),
           durationMs: 5000,
           flagged: false,
           itemId: right?.itemId,
@@ -233,7 +234,7 @@ test.describe("Exams API", () => {
       }),
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 1 },
+          answer: tapOption(wrong?.options, { right: false }),
           durationMs: 5000,
           flagged: false,
           itemId: wrong?.itemId,
@@ -358,7 +359,7 @@ test.describe("Exams API", () => {
 
       await api.put(`${path}/answers`, {
         data: {
-          answer: { selectedIndex: 0 },
+          answer: tapOption(question.options),
           durationMs: 5000,
           flagged: false,
           itemId: question.itemId,

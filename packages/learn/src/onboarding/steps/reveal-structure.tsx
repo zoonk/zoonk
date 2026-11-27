@@ -12,7 +12,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
-  LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListRow,
   ListRowBody,
@@ -35,10 +34,10 @@ import { PHASE_END_CLASS, PhaseMark } from "../../journey/path-phase-row";
 import { PhaseWhen } from "../../journey/phase-when";
 import { usePlanScreen } from "../../plan/plan-context";
 import { usePhaseName } from "../../plan/use-phase-name";
-import { groupSubjects } from "../../syllabus/group-subjects";
+import { namesModules } from "../../syllabus/names-modules";
+import { SubjectGroups } from "../../syllabus/subject-groups";
 import { TopicChapters } from "../../syllabus/subject-topic-chapters";
 import { SubjectTopics } from "../../syllabus/subject-topics";
-import { SubjectGroupHeading } from "../../syllabus/syllabus-notes";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { useNotPlannedReason } from "../../syllabus/topic-note";
 
@@ -119,9 +118,9 @@ function RevealPath() {
   );
 }
 
-function useSubjectLine() {
+function useSubjectLine({ isModule }: { isModule: boolean }) {
   const t = useExtracted();
-  const reasonText = useNotPlannedReason();
+  const reasonText = useNotPlannedReason({ isModule });
 
   return function subjectLine(subject: SyllabusSubject): string | null {
     if (subject.notPlannedReason) {
@@ -138,9 +137,9 @@ function useSubjectLine() {
   };
 }
 
-function SubjectRow({ subject }: { subject: SyllabusSubject }) {
+function SubjectRow({ isModule, subject }: { isModule: boolean; subject: SyllabusSubject }) {
   const questionCount = useExamQuestionCount();
-  const subjectLine = useSubjectLine();
+  const subjectLine = useSubjectLine({ isModule });
   const titleId = useId();
   const line = subjectLine(subject);
 
@@ -193,7 +192,7 @@ function SubjectRow({ subject }: { subject: SyllabusSubject }) {
 function RevealSubjects({ syllabus }: { syllabus: SyllabusView }) {
   const t = useExtracted();
   const titleId = useId();
-  const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
+  const isModule = namesModules(syllabus.goal.kind);
 
   return (
     <PageSection
@@ -202,33 +201,14 @@ function RevealSubjects({ syllabus }: { syllabus: SyllabusView }) {
       data-slot="reveal-structure"
     >
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>
-          {syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules")}
-        </PageSectionTitle>
+        <PageSectionTitle id={titleId}>{isModule ? t("Modules") : t("Subjects")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <div className={LIST_GROUP_CLASS}>
-        {groups.map((group, index) => (
-          <div key={group.extra ? "extra" : (group.name ?? "all")}>
-            <SubjectGroupHeading
-              group={group}
-              id={`${titleId}-group-${index}`}
-              syllabus={syllabus}
-            />
-
-            <ul
-              aria-labelledby={group.extra || group.name ? `${titleId}-group-${index}` : titleId}
-              className="divided-rows"
-            >
-              {group.subjects.map((subject) => (
-                <li key={subject.key}>
-                  <SubjectRow subject={subject} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <SubjectGroups
+        renderSubject={(subject) => <SubjectRow isModule={isModule} subject={subject} />}
+        syllabus={syllabus}
+        titleId={titleId}
+      />
     </PageSection>
   );
 }

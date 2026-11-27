@@ -4,6 +4,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
+import { pressAnswerKey } from "./answer-key";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import {
@@ -60,11 +61,14 @@ async function createFirstWeekDay() {
 
 /** Today opens a question block on its intro, which waits for the learner's Start. */
 async function startFromIntro(page: Page) {
-  await expect(
-    page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
-  ).toBeEnabled();
+  await expect(page).toHaveURL((url) => url.pathname === "/session");
 
-  await page.keyboard.press("Enter");
+  // Enter is a page shortcut, whose listener attaches only after the page hydrates.
+  await pressUntil(
+    () => page.keyboard.press("Enter"),
+    page.getByRole("main").getByRole("button", { exact: true, name: "Start" }),
+    { visible: false },
+  );
 }
 
 async function answerPlacement(page: Page) {
@@ -80,14 +84,11 @@ async function playCapsules(page: Page) {
   await answerRight(page, /^Capsule two/u);
 }
 
-async function finishLesson(page: Page, started: Promise<unknown>) {
-  await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+(?:&block=[\w-]+)?$/u);
+async function completeLessonCheck(page: Page, started: Promise<unknown>) {
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
-  await page.keyboard.press("2");
-
-  await expect(
-    page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
-  ).toBeChecked();
+  const right = page.getByRole("radio", { name: "Where the electron is most likely to be found" });
+  await pressAnswerKey(page, right);
+  await expect(right).toBeChecked();
 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
@@ -95,6 +96,11 @@ async function finishLesson(page: Page, started: Promise<unknown>) {
   await page.keyboard.press("Enter");
 
   await expectMoment(page, "Lesson complete");
+}
+
+async function finishLesson(page: Page, started: Promise<unknown>) {
+  await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+(?:&block=[\w-]+)?$/u);
+  await completeLessonCheck(page, started);
 }
 
 async function playLesson(page: Page, started: Promise<unknown>) {
@@ -115,13 +121,7 @@ async function replayFromToday(page: Page, lesson: { id: string; title: string }
   const started = waitForLessonStart(page, lesson.id);
   await page.getByRole("link", { name: `${lesson.title}, done` }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?from=%2Ftoday$`, "u"));
-  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
-  await page.keyboard.press("2");
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
-  await started;
-  await page.keyboard.press("Enter");
-  await expectMoment(page, "Lesson complete");
+  await completeLessonCheck(page, started);
   await page.getByRole("link", { name: /^Continue/u }).click();
   await expect(page).toHaveURL(/\/today$/u);
 
@@ -181,14 +181,15 @@ test("reopening a fully answered block waits for Finish before completing the se
 
   await page.reload();
 
-  // Enabled once the page is interactive, so Enter reaches it.
-  await expect(page.getByRole("button", { exact: true, name: "Finish" })).toBeEnabled();
+  const finish = page.getByRole("button", { exact: true, name: "Finish" });
+  await expect(finish).toBeVisible();
 
   await expect(
     prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
   ).resolves.toMatchObject({ status: "active" });
 
-  await page.keyboard.press("Enter");
+  // Enter is a page shortcut, whose listener attaches only after the page hydrates.
+  await pressUntil(() => page.keyboard.press("Enter"), finish, { visible: false });
 
   await expect
     .poll(async () => {
@@ -258,6 +259,7 @@ test.describe("Today's session", () => {
     await page.goto("/session");
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await page.getByRole("button", { name: "Keep learning" }).click();
+    await expect(page).toHaveURL(new RegExp(`/learn/${bonus.id}\\?session=`, "u"));
     await page.goto("/today");
     await page.getByRole("link", { name: "See summary" }).click();
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
@@ -331,7 +333,6 @@ test.describe("Today's session", () => {
     const missions = page.getByRole("region", { name: "Today's missions" });
     const showMissions = missions.getByRole("button", { name: "Today's missions" });
 
-    await expectHydrated(showMissions);
     await showMissions.click();
     await missions.getByRole("button", { name: /^Practice/u }).click();
     await expect(page).toHaveURL((url) => url.searchParams.get("block") === practice.id);

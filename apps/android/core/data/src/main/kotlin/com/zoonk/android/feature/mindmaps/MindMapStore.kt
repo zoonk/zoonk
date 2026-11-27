@@ -11,6 +11,8 @@ import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Saves
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
@@ -204,21 +206,37 @@ class MindMapStore(
     suspend fun save(
         goalId: UUID,
         target: MindMapTarget,
-        chapterId: UUID?,
         saved: Boolean,
     ): MutationResult<SavedMindMapState> {
         val result = cache.mutate(invalidating = setOf(DataDomain.SavedMindMaps)) { api.save(it, goalId, target, saved) }
-        if (result is MutationResult.Done) showSaved(goalId, target, chapterId, result.value.saved)
+        if (result is MutationResult.Done) showSaved(goalId, target, result.value.saved)
         return result
+    }
+
+    private val queue = Saves<MindMapTarget>(cache)
+
+    /** A screen's [visit] to the map saves, saving them from [goalId]. */
+    fun saves(
+        visit: Visit,
+        goalId: UUID,
+    ) = queue.on(visit) { target, saved ->
+        when (val result = save(goalId, target, saved)) {
+            is MutationResult.Done -> MutationResult.Done(result.value.saved)
+            is MutationResult.Failed -> result
+            MutationResult.Obsolete -> MutationResult.Obsolete
+        }
     }
 
     private fun showSaved(
         goalId: UUID,
         target: MindMapTarget,
-        chapterId: UUID?,
         saved: Boolean,
     ) {
         when (target.kind) {
+            SavedMindMapKind.UNKNOWN_DEFAULT_OPEN_API -> {
+                return
+            }
+
             SavedMindMapKind.CHAPTER -> {
                 list[goalId].update { maps ->
                     maps.copy(chapters = maps.chapters.map { if (it.chapterId == target.id) it.copy(saved = saved) else it })
@@ -227,10 +245,8 @@ class MindMapStore(
             }
 
             SavedMindMapKind.LESSON -> {
-                chapterId?.let { id ->
-                    lessonMaps[ChapterKey(goalId, id)].update { maps ->
-                        maps.copy(lessons = maps.lessons.map { if (it.lessonId == target.id) it.copy(saved = saved) else it })
-                    }
+                lessonMaps.update({ it.goalId == goalId }) { maps ->
+                    maps.copy(lessons = maps.lessons.map { if (it.lessonId == target.id) it.copy(saved = saved) else it })
                 }
             }
         }

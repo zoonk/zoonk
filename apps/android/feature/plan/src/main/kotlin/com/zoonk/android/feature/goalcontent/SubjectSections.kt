@@ -184,17 +184,19 @@ private fun LegendMark(dot: LegendDot) {
     }
 }
 
+/** Why the subject isn't in the plan, naming it as the Plan's list does: a [module] or a subject. */
 @Composable
 internal fun NotPlannedNotice(
     subject: SyllabusSubject,
+    module: Boolean,
     writes: SubjectWrites,
     actions: SubjectActions,
 ) {
     val words =
         when (subject.notPlannedReason) {
-            "skipped" -> R.string.goalcontent_subject_skipped
-            "time" -> R.string.goalcontent_subject_time
-            "missing" -> R.string.goalcontent_subject_missing
+            "skipped" -> if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
+            "time" -> if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
+            "missing" -> if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
             else -> return
         }
 
@@ -246,7 +248,7 @@ private fun SaveFailed() {
     )
 }
 
-/** When the exam's written tests are practiced, on a written test's own page. */
+/** When the exam's written tests are practiced, on a written test's own page while the plan teaches it. */
 @Composable
 internal fun SubjectWrittenPractice(
     syllabus: Syllabus,
@@ -255,7 +257,7 @@ internal fun SubjectWrittenPractice(
     actions: SubjectActions,
 ) {
     val practice = syllabus.writtenPractice ?: return
-    if (subject.areas.none { it in practice.parts }) return
+    if (subject.isExtra || subject.notPlannedReason != null || subject.areas.none { it in practice.parts }) return
 
     WrittenCadenceChoice(
         practice = practice,
@@ -734,8 +736,9 @@ private fun numberedTopic(
 
 @Composable
 private fun topicNote(topic: SyllabusTopic): String? {
-    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known")
-    return topic.notPlannedReason?.let { planOutsideReason(it) }
+    // Only an exam's subjects have topics.
+    if (topic.status == SyllabusTopic.Status.KNOWN) return planOutsideReason("known", module = false)
+    return topic.notPlannedReason?.let { planOutsideReason(it, module = false) }
 }
 
 /** Main's `TopicFrequencySource`: where the "Asked a lot" marks come from, behind a quiet "Sources" for the learner who wants to check. */
@@ -755,6 +758,22 @@ private fun TopicFrequencySource(
                     publisher to LinkTarget(source.url),
                 ),
             )
+        }
+    }
+}
+
+/** What a subject out of the plan would teach, by name, when it has no chapters or topics to show it. */
+internal fun LazyListScope.subjectCovers(covers: List<String>) {
+    if (covers.isEmpty()) return
+
+    sectionTitle(key = "covers-title", title = { stringResource(R.string.goalcontent_covers) })
+
+    item(key = "covers", contentType = "covers") {
+        Column {
+            covers.forEachIndexed { index, name ->
+                if (index > 0) ListDivider()
+                ListRow(headline = { Text(name) })
+            }
         }
     }
 }

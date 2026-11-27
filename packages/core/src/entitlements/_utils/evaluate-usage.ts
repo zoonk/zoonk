@@ -1,4 +1,5 @@
 import { type UsageKind } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type AllowanceLimit, type EntitlementTier, type UsageDecision } from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
@@ -10,8 +11,6 @@ import {
 import { getRollingLimitOpening, getUsageAvailableAt } from "./rolling-usage";
 import { type UsageCounts } from "./usage-counts";
 import { getUsageResets } from "./usage-periods";
-
-const MS_PER_SECOND = 1000;
 
 type UsageClaim = {
   costMicros: number;

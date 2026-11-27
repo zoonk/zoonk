@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { betterAuth } from "better-auth/minimal";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
@@ -44,8 +45,6 @@ function otherCode(otp: string) {
   return otp === "000000" ? "111111" : "000000";
 }
 
-const MINUTE = 60 * 1000;
-
 describe("email sign-in codes", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -84,7 +83,7 @@ describe("email sign-in codes", () => {
 
     await prisma.verification.create({
       data: {
-        expiresAt: new Date(start - MINUTE),
+        expiresAt: new Date(start - MS_PER_MINUTE),
         identifier: `sign-in-otp-${email}`,
         value: "expired-and-never-typed:0",
       },
@@ -93,10 +92,10 @@ describe("email sign-in codes", () => {
     vi.useFakeTimers({ now: start, toFake: ["Date"] });
     const first = await sendCode(email);
 
-    vi.setSystemTime(start + 4 * MINUTE);
+    vi.setSystemTime(start + 4 * MS_PER_MINUTE);
     await sendCode(email);
 
-    vi.setSystemTime(start + 6 * MINUTE);
+    vi.setSystemTime(start + 6 * MS_PER_MINUTE);
     await expect(signIn(email, first)).resolves.toMatchObject({ user: { email } });
   });
 });

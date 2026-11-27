@@ -112,7 +112,7 @@ export function NoticeFollowedNotice({
             {removedLine && <SuggestionDescription>{removedLine}</SuggestionDescription>}
             <SuggestionActions
               main={
-                <SuggestionAction action={see} busy={isPending} variant="outline">
+                <SuggestionAction onClick={see} busy={isPending} variant="outline">
                   {t("Got it")}
                 </SuggestionAction>
               }

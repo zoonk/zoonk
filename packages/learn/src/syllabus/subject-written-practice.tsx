@@ -20,7 +20,12 @@ export function SubjectWrittenPractice({
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
-  if (subject.extra || !practice || !subject.areas.some((area) => practice.parts.includes(area))) {
+  if (
+    subject.extra ||
+    subject.notPlannedReason ||
+    !practice ||
+    !subject.areas.some((area) => practice.parts.includes(area))
+  ) {
     return null;
   }
 

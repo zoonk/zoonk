@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mindmaps
 
+import com.zoonk.api.models.SavedMindMapKind
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -31,6 +32,19 @@ class MindMapDeckTest {
             listOf(DeckSlot.Lesson(mapChapter(3), mapLesson(2)), DeckSlot.Chapter(mapChapter(1))),
             maps.deck(StudyTab.Saved),
         )
+    }
+
+    @Test
+    fun aSaveRemovedOnTheSavedTabOpensAtItselfInItsKindsDeck() {
+        val removed = goalMindMaps(lessonGroups = listOf(lessonGroupJson(3, lessons = listOf(2, 3))))
+        val lesson = maps.saved.first { it.kind == SavedMindMapKind.LESSON }
+        val chapter = maps.saved.first { it.kind == SavedMindMapKind.CHAPTER }
+
+        for ((save, place) in listOf(lesson to MapPlace(mapChapter(3), mapLesson(2)), chapter to MapPlace(mapChapter(1)))) {
+            val deck = removed.deck(save.deckTab(saved = false))
+            assertEquals(place, deck.indexOfPlace(place)?.let { deck[it].place })
+        }
+        assertEquals(StudyTab.Saved, lesson.deckTab(saved = true))
     }
 
     @Test

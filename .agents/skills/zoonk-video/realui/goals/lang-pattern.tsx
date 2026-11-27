@@ -22,6 +22,7 @@ export function patternView(lang: Lang): Props["pattern"] {
         feedback: pattern.rule,
         options: [pattern.wrong, pattern.right],
         sentence: "",
+        translation: pattern.translation,
       },
     ],
     examples: [{ answer: pattern.wrong, correctAnswer: pattern.right, format: "spoken" }],

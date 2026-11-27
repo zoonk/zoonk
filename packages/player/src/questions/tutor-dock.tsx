@@ -1,10 +1,13 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import { TASK_ASIDE_PLACE_CLASS, TASK_GUTTER_CLASS } from "@zoonk/learn/task-layout";
+import {
+  TASK_ASIDE_HEADER_CLASS,
+  TASK_ASIDE_PLACE_CLASS,
+  TASK_GUTTER_CLASS,
+} from "@zoonk/learn/task-layout";
 import { BOTTOM_BAR_ROOM_CLASS } from "@zoonk/ui/components/bottom-bar";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Empty } from "@zoonk/ui/components/empty";
+import { BusyIcon, Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
@@ -17,7 +20,8 @@ import { QuestionComposer } from "./lesson-question-composer";
 import { isAboutCheckedAnswer } from "./lesson-question-context";
 import { LessonQuestionNavigationContext } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
-import { QuestionThread, TutorIntro } from "./lesson-question-thread";
+import { type OfferedSuggestion } from "./lesson-question-state";
+import { QuestionThread, TutorWelcome } from "./lesson-question-thread";
 import { type TutorBuddy, useTutorBuddy } from "./tutor-buddy";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -102,23 +106,14 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   );
 }
 
-function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
+/** What the screen's own button asks is left out, since that button sits beside them. */
+function useDockSuggestions(buddy: TutorBuddy): OfferedSuggestion[] {
   const controller = useLessonQuestionController();
 
-  const suggestions = useTutorSuggestions({
+  return useTutorSuggestions({
     context: buddy.context,
     lessonSuggestions: controller.suggestions,
-  })
-    .filter(({ suggestion }) => !suggestion || suggestion !== buddy.screenSuggestion)
-    .slice(0, SUGGESTED);
-
-  return (
-    <TutorSuggestions
-      className="bg-background px-frame pb-3"
-      onSelect={(suggestion) => buddy.ask(suggestion)}
-      suggestions={suggestions}
-    />
-  );
+  }).filter(({ suggestion }) => !suggestion || suggestion !== buddy.screenSuggestion);
 }
 
 function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
@@ -138,7 +133,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       )}
       data-slot="tutor-docked-conversation"
     >
-      <div className="px-frame flex h-13 shrink-0 items-center justify-between gap-3 xl:h-15">
+      <div className={TASK_ASIDE_HEADER_CLASS}>
         <Button
           className="text-muted-foreground"
           edge="start"
@@ -178,15 +173,20 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
   const dockRef = useRef<HTMLDivElement>(null);
   const offersSuggestions = useOffersSuggestions();
   const suggests = buddy.suggests && canAskQuestions && !buddy.docked && offersSuggestions;
+  const suggestions = useDockSuggestions(buddy);
 
   useTaskFootHeight(dockRef);
 
   return (
     <LessonQuestionNavigationContext value={buddy.navigation}>
-      {/* Only while nothing comes before it in the side panel, such as a lesson's recap. */}
-      <Empty className="not-first:hidden" data-slot="tutor-intro">
-        <TutorIntro identity={buddy.identity} />
-      </Empty>
+      {/* Only while nothing comes before it in the side panel, such as a lesson's recap; behind a recap, the suggestions sit above the composer instead. */}
+      <TutorWelcome
+        className="not-first:hidden"
+        data-slot="tutor-intro"
+        identity={buddy.identity}
+        onSelect={buddy.ask}
+        suggestions={suggests ? suggestions : []}
+      />
 
       {buddy.docked && <DockedConversation buddy={buddy} />}
 
@@ -195,7 +195,13 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
         data-slot="tutor-dock"
         ref={dockRef}
       >
-        {suggests && <DockSuggestions buddy={buddy} />}
+        {suggests && (
+          <TutorSuggestions
+            className="bg-background px-frame pb-3 [[data-slot=tutor-intro]:first-child~*_&]:hidden"
+            onSelect={buddy.ask}
+            suggestions={suggestions.slice(0, SUGGESTED)}
+          />
+        )}
 
         <div className={cn("bg-background px-frame", TASK_GUTTER_CLASS, BOTTOM_BAR_ROOM_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
@@ -235,7 +241,9 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         {buddy.identity.avatar}
       </span>
       {t("{count, plural, one {# question} other {# questions}}", { count })}
-      <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+      <BusyIcon>
+        <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+      </BusyIcon>
     </button>
   );
 }
@@ -267,6 +275,7 @@ export function TutorAskButton() {
         render={
           <Button
             className="with-aside:hidden h-11 shrink-0 max-lg:w-11 max-lg:px-0"
+            data-slot="question-ask"
             size="lg"
             type="button"
             variant="outline"

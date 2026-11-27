@@ -3,9 +3,15 @@ package com.zoonk.api
 import com.zoonk.api.models.AnytimeMockInput
 import com.zoonk.api.models.AnytimeMockInputShape
 import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
+import com.zoonk.api.models.ItemSetListening
+import com.zoonk.api.models.MatchAnswer
+import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
+import com.zoonk.api.models.PlanChangeOperationsInner
+import com.zoonk.api.models.StudyMissionOpens
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.serialization.Serializable
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApiJsonTest {
@@ -15,9 +21,44 @@ class ApiJsonTest {
     )
 
     @Test
+    fun aMissionStillOpensPronunciationWhenOtherKindsHaveTheSameShape() {
+        val opens = ApiJson.decodeFromString<StudyMissionOpens>("""{"kind":"pronunciation"}""")
+        assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf3Value)
+    }
+
+    @Test
+    fun aNewNumberOfListeningPlaysKeepsItsValue() {
+        val listening =
+            ApiJson.decodeFromString<ItemSetListening>(
+                """{"audio":null,"plays":3,"task":null,"title":null,"transcript":null}""",
+            )
+        assertEquals(3.0, listening.plays, 0.0)
+    }
+
+    @Test
+    fun aNestedPlanOperationLeavesTheOuterNoticeRouteAlone() {
+        val operation = ApiJson.decodeFromString<PlanChangeOperationsInner>("""{"kind":"followNotice"}""")
+        assertTrue(operation is PlanChangeOperationsInner.PlanChangeOperationsInnerAnyOf2Value)
+    }
+
+    @Test
     fun anOlderResponseModelIgnoresFieldsAddedByTheServer() {
         val response = ApiJson.decodeFromString<OlderResponse>("""{"studied":true,"targetDateEstimated":true,"days":[]}""")
         assertEquals(OlderResponse(studied = true), response)
+    }
+
+    @Test
+    fun notebookMatchReadsTheShownKeyAndWritesMissesInOrder() {
+        val question =
+            ApiJson.decodeFromString<MistakePracticePracticeInnerQuestionsInner>(
+                """{"format":"matchPairs","itemId":"3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","key":[1,0],"left":["Mars","Moon"],"question":"Match the names.","right":["Satellite","Planet"],"skillId":"5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"}""",
+            )
+        assertEquals(listOf(1L, 0L), question.key)
+
+        val reported = """{"matches":[1,0],"misses":[{"left":1,"right":1},{"left":0,"right":0}]}"""
+        val answer = ApiJson.decodeFromString<MatchAnswer>(reported)
+        assertEquals(reported, ApiRequestJson.encodeToString(MatchAnswer.serializer(), answer))
+        assertEquals("""{"matches":[1,0]}""", ApiRequestJson.encodeToString(MatchAnswer(listOf(1L, 0L))))
     }
 
     @Test

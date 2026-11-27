@@ -16,6 +16,7 @@
   "goalcontent_count_of": "91eb8d20037cd23099dfd219e0083a4031713a79e195deee74c3cfcdcabe20b4",
   "goalcontent_course_weights_even": "a70a2b2c5c6512ac40998ffff028054bc50eb4e7282eab511ed41b9707e974b8",
   "goalcontent_course_weights_heavier": "25d160ed988d47c565275f575c9ac90a4feb2c85fe3d593a10d91877455a4d9c",
+  "goalcontent_covers": "fee7af2c18edd6d027b1cd08f1c0bf397d4a5610b8e5f0159d2698803b44d7a4",
   "goalcontent_details": "0daac85f4bc4c072b9b65b727ee1b3fe71c0edd10c1b877d1d8e89250b4abc0c",
   "goalcontent_done_and_known": "4f537c1b5091df63156d0efd4269287fdf36509eb0dde67275cdb783a5413746",
   "goalcontent_for_reference": "dcc61fa2ddac6a878706c1c020e59d7cfcab4de3d7b1813e1ca8cbb2b2e1ff45",
@@ -28,6 +29,9 @@
   "goalcontent_lessons_known_skipped": "c3fe5dde998f93fe34e5e3eef98ed86726836fdbeff39d6f3d889f5ef8d47fd5",
   "goalcontent_lessons_skipped": "9ad9217400289bd436d688ee08835410e8af3e328f995ca817fea64f736b838d",
   "goalcontent_matrix_title": "9e9b5bfaf9c23cfece87ecbc8f29f37df07eb22799dda0caeeb2315362169223",
+  "goalcontent_module_missing": "1cc01e088a6b0ccb4f629d087e56c4e5d61045cd781b7a84f6677e7e512253cc",
+  "goalcontent_module_skipped": "dd9cb01fd600040f3d31269334339e39375320da3db5b13248ddef108773dd9c",
+  "goalcontent_module_time": "736e842c8538e59e22dae11a9fe19ab835256f6ae39e5582a2cfc81bc856048e",
   "goalcontent_modules": "8f78b7ac4521eb120e408b021a0916c4554af3d734e16a1c986395645e7ae98f",
   "goalcontent_more_chapters": "d36f3eefa885482c9e5488d10d497f6090f150fd09728774d1df604f0642b07a",
   "goalcontent_new": "f452a2f84d6ef09ba6af2c08c73a57b8259245fe1a7ed3418f887dce3b7e9d56",
@@ -201,6 +205,14 @@
     <!-- Why a subject isn't in the learner's plan: their time goes to other subjects first. -->
     <string name="goalcontent_subject_time">Dieses Fach ist nicht in deinem Plan. Andere Fächer kommen zuerst.</string>
     <string name="goalcontent_subject_missing">Dieses Fach ist noch nicht in deinem Plan.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: the learner took this module out of their plan. Followed by a button to add it back. -->
+    <string name="goalcontent_module_skipped">Du hast dieses Modul aus deinem Plan genommen.</string>
+    <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
+    <string name="goalcontent_module_time">Dieses Modul ist nicht in deinem Plan. Andere Module kommen zuerst.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
+    <string name="goalcontent_module_missing">Dieses Modul ist noch nicht in deinem Plan.</string>
+    <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
+    <string name="goalcontent_covers">Das sind die Inhalte</string>
     <string name="goalcontent_adjust_plan">Plan anpassen</string>
     <string name="goalcontent_add_back">Wieder hinzufügen</string>
     <string name="goalcontent_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>

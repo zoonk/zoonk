@@ -56,6 +56,7 @@
 - Buddy stages “Baby” / “Young” / “Adult”: “Piccolo” / “Giovane” / “Adulto”
 - “mission”: “missione”
 - “call” (speaking practice): “conversazione”, not “chiamata”
+- a “conversation” with the buddy (a written chat on the buddy page): “chat” (“Nuova chat”, “Chat”), never “conversazione”, which is the call
 - “Mistakes notebook”: “Quaderno degli errori”
 - “Saved to your mistakes”: “Salvato nel tuo quaderno degli errori”, in every line that starts with it
 - “To fix” / “Fixed” (notebook tabs): “Da correggere” / “Corretti”

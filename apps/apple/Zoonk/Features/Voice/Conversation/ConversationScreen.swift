@@ -66,7 +66,7 @@ struct ConversationScreen: View {
     if let started {
       conversation(started, callsRightAway: callsNow)
     } else if let call = checkpointCall {
-      if case .ready(let made)? = call.value {
+      if case .LanguageCheckpointCallReady(let made)? = call.value {
         conversation(made.conversationId, callsRightAway: false)
       } else {
         CheckpointCallIntro(call: call, blockId: blockId) { conversationId, callsNow in
@@ -177,8 +177,9 @@ struct ConversationTitle {
   let conversation: LanguageConversation
 
   var text: Text {
-    if let exam = conversation.mockExam {
+    if let exam = conversation.mockExam, exam != .unrecognized {
       return switch exam {
+      case .unrecognized: Text(verbatim: "")
       case .ielts:
         Text("IELTS speaking mock", tableName: "Voice", comment: "A speaking mock's name")
       case .toefl:

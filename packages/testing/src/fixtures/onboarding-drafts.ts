@@ -1,10 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type OnboardingDraft, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 
 function learnUnderstanding(prompt: string): object {
   return {
@@ -26,16 +23,16 @@ function learnUnderstanding(prompt: string): object {
 }
 
 function withGoalOnboardingId({ goal, id }: { goal: unknown; id: string }): unknown {
-  if (!isRecord(goal) || !isRecord(goal.draft)) {
+  if (!isJsonObject(goal) || !isJsonObject(goal.draft)) {
     return goal;
   }
 
-  const details = isRecord(goal.draft.details) ? goal.draft.details : {};
+  const details = isJsonObject(goal.draft.details) ? goal.draft.details : {};
   return { ...goal, draft: { ...goal.draft, details: { ...details, onboardingId: id } } };
 }
 
 function withOnboardingId({ id, understanding }: { id: string; understanding: object }): object {
-  if (!isRecord(understanding) || !Array.isArray(understanding.goals)) {
+  if (!isJsonObject(understanding) || !Array.isArray(understanding.goals)) {
     return understanding;
   }
 

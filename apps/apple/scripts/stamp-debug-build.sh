@@ -16,14 +16,17 @@ if [ -n "$root" ]; then
   cd "$root"
   commit=$(git rev-parse HEAD)
 
-  if [ -z "$(git status --porcelain --untracked-files=all)" ]; then
+  # Files `.gitattributes` marks `never-on-screen`, such as tests, can't change a picture.
+  on_screen=':(top,exclude,attr:never-on-screen)'
+
+  if [ -z "$(git status --porcelain --untracked-files=all -- "$on_screen")" ]; then
     dirty=false
   else
     # The tracked changes and the untracked files' contents, so two dirty builds of different trees
     # differ.
     digest=$({
-      git diff HEAD --binary
-      git ls-files --others --exclude-standard -z | xargs -0 shasum -a 256
+      git diff HEAD --binary -- "$on_screen"
+      git ls-files --others --exclude-standard -z -- "$on_screen" | xargs -0 shasum -a 256
     } | shasum -a 256 | cut -d' ' -f1)
   fi
 fi

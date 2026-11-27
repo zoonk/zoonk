@@ -1,3 +1,4 @@
+import { t } from "../../_utils/localize";
 import { physicsCourse } from "../../library/physics/physics-course";
 import { type SeedLearner } from "../types";
 
@@ -12,12 +13,18 @@ export const mayaHugeGoal: SeedLearner = {
       mistake: {
         cause: "gap",
         snapshot: {
-          answer: "−1,000",
-          correctAnswer: "0.001",
-          explanation: "A negative power makes a small number, never a negative one.",
+          answer: t("−1,000", "−1.000"),
+          correctAnswer: t("0.001", "0,001"),
+          explanation: t(
+            "A negative power makes a small number, never a negative one.",
+            "Potência negativa faz um número pequeno, nunca um número negativo.",
+          ),
           format: "multipleChoice",
-          misconception: "Thinks a negative power makes a negative number",
-          question: "What is 10⁻³?",
+          misconception: t(
+            "Thinks a negative power makes a negative number",
+            "Acha que potência negativa faz um número negativo",
+          ),
+          question: t("What is 10⁻³?", "Quanto é 10⁻³?"),
         },
         status: "open",
       },
@@ -65,8 +72,10 @@ export const mayaHugeGoal: SeedLearner = {
           day: -24,
           kind: "testedOut",
           payload: { lessons: 48, source: "placement" },
-          reason:
+          reason: t(
             "You already know fractions and linear equations, so the plan skips their 48 lessons.",
+            "Você já sabe frações e equações lineares, então o plano pula as 48 aulas desses tópicos.",
+          ),
         },
       ],
       items: [
@@ -97,14 +106,32 @@ export const mayaHugeGoal: SeedLearner = {
         { chapter: "quantum-computing", kind: "chapter", phase: 4, status: "todo" },
       ],
       phases: [
-        { milestone: "Solve equations and use vectors", name: "The math physics uses" },
         {
-          milestone: "Differentiate, integrate and use matrices",
-          name: "Calculus and linear algebra",
+          milestone: t("Solve equations and use vectors", "Resolver equações e usar vetores"),
+          name: t("The math physics uses", "A matemática da física"),
         },
-        { milestone: "Motion, waves and electricity", name: "Classical physics" },
-        { milestone: "The atom and the Schrödinger equation", name: "Quantum mechanics" },
-        { milestone: "Spin, entanglement and computing", name: "Advanced quantum physics" },
+        {
+          milestone: t(
+            "Differentiate, integrate and use matrices",
+            "Derivar, integrar e usar matrizes",
+          ),
+          name: t("Calculus and linear algebra", "Cálculo e álgebra linear"),
+        },
+        {
+          milestone: t("Motion, waves and electricity", "Movimento, ondas e eletricidade"),
+          name: t("Classical physics", "Física clássica"),
+        },
+        {
+          milestone: t(
+            "The atom and the Schrödinger equation",
+            "O átomo e a equação de Schrödinger",
+          ),
+          name: t("Quantum mechanics", "Mecânica quântica"),
+        },
+        {
+          milestone: t("Spin, entanglement and computing", "Spin, emaranhamento e computação"),
+          name: t("Advanced quantum physics", "Física quântica avançada"),
+        },
       ],
       skillLessons: {
         "atom-structure": 25,
@@ -146,7 +173,7 @@ export const mayaHugeGoal: SeedLearner = {
     },
     prompt: "I want to master quantum physics, starting from scratch",
     studyTime: "07:30",
-    title: "Master quantum physics, from scratch",
+    title: t("Master quantum physics, from scratch", "Dominar física quântica do zero"),
   },
   history: { accuracy: 0.82, days: 24, energy: 76, minutesPerDay: 42, skipChance: 0.15 },
   key: "maya",

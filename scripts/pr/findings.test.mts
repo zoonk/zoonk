@@ -11,7 +11,7 @@ const polish: Finding = {
   before: false,
   id: "polish-1",
   misleads: false,
-  rule: "none",
+  rule: "none: visual grouping",
   state: "open",
   text: "The helper could sit closer to its field",
 };
@@ -28,11 +28,15 @@ const onBase: Finding = {
 const broken: Finding = { ...onBase, before: false, id: "broken-1" };
 
 const misleading: Finding = {
-  ...onBase,
+  ...broken,
   id: "misleads-1",
   misleads: true,
+  rule: "none: wrong date",
   text: "The date reads Nov 16 for a lesson on Nov 17",
 };
+
+/** Misleads a learner, but main already draws it that way. */
+const misleadingOnBase: Finding = { ...misleading, before: true, id: "misleads-base-1" };
 
 /** A finding read before the reader sorted its findings. */
 const unsorted: Finding = { id: "old-1", state: "open", text: "The gap above the list is 20 px" };
@@ -54,10 +58,10 @@ function readWith(findings: Finding[]) {
 }
 
 describe("closing a finding", () => {
-  it("files polish and a fault already on the base in an issue, and the check passes them", async () => {
-    const { check, findingsNow, root } = readWith([polish, onBase, unsorted]);
+  it("files polish and faults already on the base in an issue, misleading ones too, and the check passes them", async () => {
+    const { check, findingsNow, root } = readWith([polish, onBase, misleadingOnBase, unsorted]);
 
-    for (const id of [polish.id, onBase.id, unsorted.id]) {
+    for (const id of [polish.id, onBase.id, misleadingOnBase.id, unsorted.id]) {
       // oxlint-disable-next-line no-await-in-loop -- Each close rewrites the same manifest.
       await resolveFinding({ id, root, state: { issue: 2790, state: "issue" } });
     }
@@ -65,12 +69,12 @@ describe("closing a finding", () => {
     const result = await check();
 
     assert.deepEqual(kinds(result), []);
-    assert.match(formatCheck(result, root), /^Findings: 3 filed in an issue;/mu);
+    assert.match(formatCheck(result, root), /^Findings: 4 filed in an issue;/mu);
     const closed = await findingsNow();
     assert.ok(closed.every((finding) => finding.state === "issue"));
   });
 
-  it("refuses an issue for what misleads a learner or a rule the PR broke", async () => {
+  it("refuses an issue for what the PR brought that misleads a learner or breaks a rule", async () => {
     const { findingsNow, root } = readWith([misleading, broken]);
     const state = { issue: 2790, state: "issue" } as const;
 
@@ -133,7 +137,7 @@ describe("the PR's list of findings closed without a fix", () => {
       { ...polish, issue: 2790, state: "issue" },
       {
         ...onBase,
-        reason: "Craft's deliberate choice: a hovered row | passes",
+        reason: "Craft's deliberate choice: a hovered row | passes (media/plan.png)",
         state: "not-a-fault",
       },
       { ...broken, grantedBy: "the user", state: "exception" },
@@ -158,7 +162,7 @@ describe("the PR's list of findings closed without a fix", () => {
         "| Finding | Pictures | Closed |",
         "| --- | --- | --- |",
         `| The helper could sit closer to its field | \`${where}/a.png\`, \`${where}/b.png\` | Filed in #2790 |`,
-        `| The chevrons end 4 px apart | \`${where}/a.png\` | Not a fault: Craft\\'s deliberate choice\\: a hovered row \\| passes |`,
+        `| The chevrons end 4 px apart | \`${where}/a.png\` | Not a fault: Craft\\'s deliberate choice\\: a hovered row \\| passes \\(media\\/plan\\.png\\) |`,
         `| The chevrons end 4 px apart | \`${where}/a.png\` | Exception granted by the user |`,
       ].join("\n"),
     );

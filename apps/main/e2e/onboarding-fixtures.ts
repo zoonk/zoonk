@@ -38,6 +38,11 @@ export const ANSWERED = [
   ...PROFILE_QUESTIONS,
 ];
 
+export function solvePlacementEquation(question: string): string | null {
+  const equation = /x \+ (?<addend>\d+) = (?<total>\d+)/u.exec(question)?.groups;
+  return equation ? String(Number(equation.total) - Number(equation.addend)) : null;
+}
+
 export async function createMappedGoal(userId: string, { exam = false } = {}) {
   const blueprint = exam ? await examBlueprintFixture() : null;
 
@@ -110,6 +115,12 @@ export async function mapGoalSkills({ goalId }: { goalId: string }) {
                 misconception: "Adds instead of subtracting",
                 reason: `Subtract ${copy} from both sides rather than adding it.`,
                 text: String(index + copy * 2 + 1),
+              },
+              {
+                isCorrect: false,
+                misconception: "Uses the total as the value of x",
+                reason: `The total includes the ${copy} added to x.`,
+                text: String(index + copy + 1),
               },
             ],
           },

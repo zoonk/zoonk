@@ -1,6 +1,7 @@
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
 import { hasCompletedLessons } from "@/lib/learn/has-completed-lessons";
+import { hasSavedLessons } from "@/lib/learn/has-saved-lessons";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "@zoonk/core/cache-tags";
@@ -216,10 +217,11 @@ async function JourneyContent() {
 
   const goalStatus = getGoalStatus(activeGoal);
 
-  const [end, resume, completedLessons] = await Promise.all([
+  const [end, resume, completedLessons, savedLessons] = await Promise.all([
     loadGoalMapEnd({ goal, over: plan.end !== null }),
     loadResumePreview({ goalId: goal.id, paused: goalStatus === "paused" }),
     hasCompletedLessons(goal.id),
+    hasSavedLessons(goal.id),
   ]);
 
   const standing = progress.status === "ready" ? progress.progress : null;
@@ -261,6 +263,7 @@ async function JourneyContent() {
       plan={plan}
       readAt={readAt}
       resume={resume}
+      savedLessons={savedLessons}
       preparation={getPreparation({ forExam: goal.kind === "exam", standing, syllabus })}
       shareHref={getPathname({
         href: `/plan-link/${plan.planId}`,

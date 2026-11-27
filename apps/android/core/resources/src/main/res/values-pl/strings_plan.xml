@@ -330,6 +330,7 @@
   "plan_outside_past_basics": "689864428b84889bc86fe758189990198b73fb0041e504b0c2873f23bee01c5e",
   "plan_outside_skipped": "7928e9afde9124c0bcc48b284b4ff84bc720498f1216599b35f4df79245b4bac",
   "plan_outside_skipped_base": "e92a706e38bfe6d198ee8b8442b1f4a7c525bf89ad7b8b999e2ed43f2795f8c5",
+  "plan_outside_skipped_module": "270754f9c73cf8d3c58e54c7e137e7d95de7f222d08acbf72ae1cc3fa1a5b24e",
   "plan_pace": "ab43e71f17e75d3a1a2f758c75bc7443834117848ebb4f8878abf60fb1e464e8",
   "plan_pace_challenges_to_go": "c9460ddbb10361942ec87d063ab526f4160e0f050d250a55bd1444a48c3bcff4",
   "plan_pace_date_passed": "9a9231ad3cd68e5c112557b06a419763cfd1b286c0cbf3fb5ee5ff23396d19fb",
@@ -1490,6 +1491,8 @@
     <string name="plan_outside_others_first">Poza twoim planem · najpierw inne tematy</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Poza twoim planem · usunięto ten przedmiot</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">Nie w twoim planie · ten moduł został usunięty</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">Twój plan nie obejmuje Spryciarza</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

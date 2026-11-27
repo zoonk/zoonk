@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { safeAsync } from "@zoonk/utils/error";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import {
@@ -62,7 +63,12 @@ export async function recordSessionAttempt({
 
       const existing = await tx.attempt.findFirst({
         orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
-        where: { itemId: input.itemId, studySessionId: input.studySessionId, userId: input.userId },
+        where: {
+          ...NOT_LESSON_ANSWER_FILTER,
+          itemId: input.itemId,
+          studySessionId: input.studySessionId,
+          userId: input.userId,
+        },
       });
 
       if (existing && block.kind !== "checkpoint") {

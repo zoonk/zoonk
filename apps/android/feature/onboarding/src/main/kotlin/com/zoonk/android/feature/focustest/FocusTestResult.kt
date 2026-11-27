@@ -138,7 +138,7 @@ private fun FocusRows(rows: List<FocusTestFocusRow>) {
             if (index > 0) ListDivider()
             ListRow(
                 headline = { Text(row.subject.name) },
-                leading = {
+                lead = {
                     Text(
                         "${index + 1}",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -277,6 +277,10 @@ private fun FocusTestSheet(
 @Composable
 private fun subjectState(subject: FocusTestSubject): String? =
     when (subject.state) {
+        FocusTestSubject.State.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         FocusTestSubject.State.ANSWERED -> {
             val chosen = (subject.asked - subject.dontKnow).toInt()
             if (chosen == 0) {
@@ -293,6 +297,7 @@ private fun subjectState(subject: FocusTestSubject): String? =
         FocusTestSubject.State.NOT_CHECKED -> {
             stringResource(
                 when (subject.part) {
+                    FocusTestSubject.Part.UNKNOWN_DEFAULT_OPEN_API -> return null
                     FocusTestSubject.Part.WRITTEN -> R.string.focustest_written_not_checked
                     FocusTestSubject.Part.LISTENING -> R.string.focustest_listening_not_checked
                     FocusTestSubject.Part.SPEAKING -> R.string.focustest_speaking_not_checked

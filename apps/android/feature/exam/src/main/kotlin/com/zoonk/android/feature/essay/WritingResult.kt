@@ -114,7 +114,7 @@ private fun PointsHeader(
     text: String,
 ) {
     val errorCount = grade.errors.size
-    val lines = grade.estimatedLines ?: countWritingLines(text, prompt.charactersPerLine.toInt(), prompt.lines?.toInt()).estimated
+    val lines = grade.estimatedLines ?: estimateWritingLines(text, prompt.charactersPerLine.toInt())
     val part = prompt.partMinimum
     val partMax = part?.max
     val percent = part?.minimum?.unit?.value == "percent"
@@ -306,6 +306,10 @@ private fun WritingNextStep(
 @Composable
 private fun zeroStep(kind: WritingResultOutputOneOf1.ZeroKind?): Pair<String, String>? =
     when (kind) {
+        WritingResultOutputOneOf1.ZeroKind.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         WritingResultOutputOneOf1.ZeroKind.BLANK -> {
             stringResource(R.string.essay_zero_blank_title) to stringResource(R.string.essay_zero_blank_text)
         }
@@ -347,19 +351,22 @@ private fun QuotedLine(
 }
 
 @Composable
-private fun levelName(level: WritingResultOutputOneOfCriteriaInner.Level): String =
-    stringResource(
+private fun levelName(level: WritingResultOutputOneOfCriteriaInner.Level): String {
+    return stringResource(
         when (level) {
+            WritingResultOutputOneOfCriteriaInner.Level.UNKNOWN_DEFAULT_OPEN_API -> return ""
             WritingResultOutputOneOfCriteriaInner.Level.COMPLETE -> R.string.essay_level_complete
             WritingResultOutputOneOfCriteriaInner.Level.STRONG -> R.string.essay_level_strong
             WritingResultOutputOneOfCriteriaInner.Level.PARTIAL -> R.string.essay_level_partial
             WritingResultOutputOneOfCriteriaInner.Level.MISSING -> R.string.essay_level_missing
         },
     )
+}
 
 private val WritingResultOutputOneOfCriteriaInner.Level.cells: Int
     get() =
         when (this) {
+            WritingResultOutputOneOfCriteriaInner.Level.UNKNOWN_DEFAULT_OPEN_API -> 0
             WritingResultOutputOneOfCriteriaInner.Level.COMPLETE -> 4
             WritingResultOutputOneOfCriteriaInner.Level.STRONG -> 3
             WritingResultOutputOneOfCriteriaInner.Level.PARTIAL -> 2
@@ -513,7 +520,7 @@ private fun WritingMarkedText(
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Medium,
         )
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) }
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length)
     val marked =
         remember(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle) {
             markText(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
@@ -597,7 +604,7 @@ private fun markText(
     numberStyle: SpanStyle,
 ): MarkedText {
     val stepRange = stepQuote?.let { quote -> text.indexOf(quote).takeIf { it >= 0 }?.let { it until it + quote.length } }
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) } ?: text.length
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length) ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
     val cuts =
         (
@@ -629,20 +636,6 @@ private fun markText(
             offsets[text.length] = length
         }
     return MarkedText(annotated, offsets)
-}
-
-/**
- * A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
- * A limit on the space after a word leaves that word where the grader read it.
- */
-internal fun wordStart(
-    text: String,
-    offset: Int,
-): Int {
-    if (offset >= text.length || text[offset].isWhitespace()) return offset
-    var start = offset
-    while (start > 0 && !text[start - 1].isWhitespace()) start--
-    return start
 }
 
 private const val LEVEL_CELLS = 4

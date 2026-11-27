@@ -56,6 +56,7 @@ const lesson: WrittenLesson = {
         },
       ],
       question: "Como você avalia a proposta de Raimundo?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -114,6 +115,7 @@ const lesson: WrittenLesson = {
         },
       ],
       question: "A condição apresentada por Thaís está correta?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -162,6 +164,7 @@ const lesson: WrittenLesson = {
         },
       ],
       question: "Onde está o erro de Murilo?",
+      standsAlone: true,
       visual: null,
     },
     {
@@ -201,6 +204,7 @@ const lesson: WrittenLesson = {
         },
       ],
       question: "Qual classificação dos três pedidos está correta, na ordem?",
+      standsAlone: true,
       visual: null,
     },
   ],

@@ -1,5 +1,5 @@
-import { shuffle } from "@zoonk/utils/shuffle";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { anyOrder } from "../../_test-utils/any-order";
 import {
   type DistractorWord,
   buildDistractorWordLookup,
@@ -11,10 +11,6 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildTranslationOptions, () => {
-  beforeEach(() => {
-    vi.mocked(shuffle).mockImplementation((items) => [...items]);
-  });
-
   it("shows each distractor as written, with its own word's audio", () => {
     const distractorLookup = buildDistractorWordLookup([
       makeDistractorWord({ audioUrl: "/audio/esta-accent.mp3", id: "esta-accent", word: "está" }),
@@ -62,6 +58,8 @@ describe(buildTranslationOptions, () => {
       },
     });
 
-    expect(options.map((option) => option.word)).toStrictEqual([word, ...distractors]);
+    expect(anyOrder(options.map((option) => option.word))).toStrictEqual(
+      anyOrder([word, ...distractors]),
+    );
   });
 });

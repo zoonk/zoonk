@@ -26,6 +26,8 @@
               DebugChallenge()
             } else if section == "composer" {
               DebugComposer()
+            } else if section == "lessonBar" {
+              DebugLessonBar()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -67,6 +69,8 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "match", title: "Match cards") { MatchCards() }
+          GallerySection(id: "questionBar", title: "Question bar") { QuestionBar() }
           GallerySection(id: "code", title: "Code") { Code() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
@@ -642,6 +646,7 @@
             .controlSize(.small)
         }
       }
+      .mindMapSaveVisit()
     }
 
     private static let refusals = [
@@ -741,6 +746,43 @@
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
         """
       return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=lessonBar` opens a screen with a lesson's bar (`bottomBar`): its way back,
+  /// "I don't know yet", Check and the buddy's ask, as the bar draws them at every text size.
+  private struct DebugLessonBar: View {
+    var body: some View {
+      ScrollView {
+        Text(verbatim: "Why a cloud?")
+          .typeStyle(.question)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .taskColumn()
+      }
+      .bottomBar {
+        StepBackButton(label: Text(verbatim: "Previous screen")) {}
+        Button {
+        } label: {
+          Text(verbatim: "I don't know yet")
+        }
+        .buttonStyle(.outline.tight)
+        Button {
+        } label: {
+          Text(verbatim: "Check")
+        }
+        .buttonStyle(.mainAction)
+        .barMainAction()
+        Button {
+        } label: {
+          Label {
+            Text(verbatim: "Ask Pip")
+          } icon: {
+            Image(systemName: "bubble.left")
+          }
+        }
+        .tutorAskIcon()
+      }
+      .environment(\.isTaskScreen, true)
     }
   }
 
@@ -882,7 +924,7 @@
   /// The buddy's composer under an empty conversation, as the buddy's page draws it.
   private struct DebugComposer: View {
     @State private var conversation = TutorConversation(
-      scope: .plan(goalId: "debug"), api: DebugTutorAPI(),
+      scope: .plan(goalId: "debug", conversationId: "debug"), api: DebugTutorAPI(),
       cache: AppCache(
         session: .preview(
           account: CurrentAccount(
@@ -1127,6 +1169,74 @@
         AnswerOption(
           marker: 5, isPicked: true, result: .guess, isLocked: true,
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
+      }
+      .padding(.vertical, 8)
+    }
+  }
+
+  /// A phone's question bars (`BarLines`) in English and in German, whose "I don't know yet" is
+  /// longer than its Continue: a practice question's, then a lesson's with its way back.
+  private struct QuestionBar: View {
+    private let rows: [(dontKnow: String, main: String)] = [
+      ("I don't know yet", "Check"), ("Ich weiß es noch nicht", "Weiter"),
+    ]
+
+    var body: some View {
+      ForEach(rows, id: \.dontKnow) { row in
+        PracticeActionRow {
+          QuestionDontKnowButton(
+            title: LocalizedStringResource(stringLiteral: row.dontKnow), action: {})
+          PracticeMainButton(title: LocalizedStringResource(stringLiteral: row.main), action: {})
+          ask
+        }
+        .padding(.vertical, 8)
+      }
+
+      ForEach(rows, id: \.main) { row in
+        BarLines(spacing: 8) {
+          StepBackButton(label: Text(verbatim: "Previous screen")) {}
+          Button(row.dontKnow) {}
+            .buttonStyle(.outline.tight)
+          Button(row.main) {}
+            .buttonStyle(.mainAction)
+            .barMainAction()
+          ask
+        }
+        .buttonSizing(.flexible)
+        .controlSize(.large)
+        .environment(\.mainActionFillsRow, true)
+        .padding(.vertical, 8)
+      }
+    }
+
+    private var ask: some View {
+      Button {
+      } label: {
+        Label {
+          Text(verbatim: "Ask Pip")
+        } icon: {
+          Image(systemName: "bubble.left")
+        }
+      }
+      .tutorAskIcon()
+    }
+  }
+
+  private struct MatchCards: View {
+    private let cards: [(MatchEntryState, String)] = [
+      (.idle, "At rest"), (.selected, "Picked first"), (.wrong(0), "Didn't go together"),
+      (.missed, "Solved, missed first"), (.right, "A pair kept"),
+      (.done(3), "Kept earlier, pair 3"),
+      (.paired(2), "In pair 2, unchecked"),
+      (.idle, "A longer card whose words wrap onto a second line"),
+    ]
+
+    var body: some View {
+      MatchBoard(leftCount: 4, rightCount: 4) { card in
+        let (state, text) = cards[card.side == .left ? card.index : 4 + card.index]
+        MatchEntry(state: state, action: {}) {
+          Text(verbatim: text)
+        }
       }
       .padding(.vertical, 8)
     }

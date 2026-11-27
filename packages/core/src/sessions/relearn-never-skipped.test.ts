@@ -2,8 +2,10 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { finishChallengesFixture } from "../plans/_test-utils/finish-challenges";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
@@ -15,7 +17,6 @@ import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
-const DAY_MS = 86_400_000;
 
 describe("a miss on a topic below the known bar", () => {
   beforeEach(() => {
@@ -44,7 +45,7 @@ describe("a miss on a topic below the known bar", () => {
     });
 
     const { goal, plan } = await unplannedGoalFixture({
-      createdAt: new Date(Date.now() - DAY_MS),
+      createdAt: new Date(Date.now() - MS_PER_DAY),
       timezone: TIME_ZONE,
       userId: user.id,
     });
@@ -61,7 +62,7 @@ describe("a miss on a topic below the known bar", () => {
     await Promise.all(
       library.skills.map((skill) =>
         attemptFixture({
-          answeredAt: new Date(Date.now() - DAY_MS),
+          answeredAt: new Date(Date.now() - MS_PER_DAY),
           isCorrect: true,
           isPlacement: true,
           itemId: items.find((item) => item.skillId === skill.id)!.id,
@@ -89,12 +90,14 @@ describe("a miss on a topic below the known bar", () => {
 
     expect([...new Set(lessonsBefore.map((item) => item.status))]).toStrictEqual(["todo"]);
 
+    const askedId = asked && "itemId" in asked ? (asked.itemId ?? "") : "";
+
     const result = await answerStudyQuestion({
       blockId: review.id,
       input: {
-        answer: { selectedIndex: 1 },
+        answer: await pickItemInBlock({ blockId: review.id, itemId: askedId, right: false }),
         durationMs: 3000,
-        itemId: asked && "itemId" in asked ? (asked.itemId ?? "") : "",
+        itemId: askedId,
         timeZone: TIME_ZONE,
       },
       sessionId: session!.id,

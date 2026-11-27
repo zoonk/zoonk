@@ -120,6 +120,7 @@ extension SentGoal {
   init(draft: OnboardingDraft) {
     let intent: MaterialIntent? =
       switch draft.materialIntent {
+      case .unrecognized: nil
       case .exam: .exam
       case .understand: .understand
       case nil: nil
@@ -192,7 +193,7 @@ struct GoalEntrySections<Attach: View, Attached: View, Attachment: View>: View {
 
           MultilineTextField(
             text: $words, limit: SentGoal.promptLimit,
-            prompt: Text(placeholder).foregroundStyle(.mutedForeground),
+            prompt: Text(placeholder),
             label: Text(
               "I want to", tableName: "Onboarding",
               comment: "The goal box's label, before the learner's words"),

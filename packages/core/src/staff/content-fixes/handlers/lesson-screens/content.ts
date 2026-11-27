@@ -55,6 +55,7 @@ type Context = {
   entry: Entry;
   screen: Screen;
   original?: Screen;
+  numeric: boolean;
   list: ScreenList;
   vocabulary: Vocabulary;
   map: ReturnType<typeof mapIdeas>;
@@ -70,7 +71,7 @@ function setSummary({
   original,
   path,
   problems,
-}: Omit<Context, "vocabulary">) {
+}: Omit<Context, "numeric" | "vocabulary">) {
   if (screen.kind === "summary" && list.ideas) {
     screen.content = { ideas: map.ideas.map(({ text }) => ({ text })) };
   }
@@ -99,7 +100,7 @@ function setSpokenContent({
   vocabulary,
   path,
   problems,
-}: Omit<Context, "map">) {
+}: Omit<Context, "map" | "numeric">) {
   if (
     screen.kind !== "spokenAnswer" ||
     !screen.sentenceId ||
@@ -146,6 +147,7 @@ export function setContent({
   entry,
   screen,
   original,
+  numeric,
   list,
   vocabulary,
   map,
@@ -174,7 +176,7 @@ export function setContent({
     });
   }
 
-  if (original?.itemId && entry.content && !isDeepStrictEqual(entry.content, original.content)) {
+  if (numeric && original && entry.content && !isDeepStrictEqual(entry.content, original.content)) {
     problems.push(
       `${path}.content: replace the linked numeric check with a numeric question so practice grades the same problem.`,
     );

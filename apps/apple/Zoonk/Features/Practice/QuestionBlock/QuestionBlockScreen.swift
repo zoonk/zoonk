@@ -188,6 +188,7 @@ struct QuestionBlockView: View {
       followPress(to: phase)
     }
     .announcesStatus(announcement(phase))
+    .questionOptions(reportTarget(phase))
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "question-block", reportType: .saveFailure), isReport: true
@@ -198,6 +199,22 @@ struct QuestionBlockView: View {
     .onDisappear {
       stopping.leave()
     }
+  }
+
+  /// Main's `getVoteTarget`: the question in view, once answered on a timed drill.
+  private func reportTarget(_ phase: QuestionBlockPhase) -> FeedbackContext? {
+    guard let question = run.question else { return nil }
+
+    switch phase {
+    case .feedback:
+      break
+    case .answering, .checking, .answerFailed, .alreadyAnswered:
+      if run.drill?.timeLimitSeconds != nil { return nil }
+    case .finishFailed, .finished, .finishReady, .finishing:
+      return nil
+    }
+
+    return FeedbackContext(contentID: question.itemId, contentKind: .item, screen: "question-block")
   }
 
   @ViewBuilder
@@ -278,7 +295,13 @@ struct QuestionBlockView: View {
       recordingQuestions: run.detail.recordingQuestions(for: question),
       transcript: graded(phase)?.feedback.transcript,
       draft: $run.draft,
-      onSubmit: { answer in Task { await run.submit(answer) } })
+      onSubmit: { answer in
+        // The board's last pair sent it, so focus goes on to Continue as after Check.
+        if question.checksEachPair {
+          pressedWithFocus = .answer
+        }
+        Task { await run.submit(answer) }
+      })
   }
 
   private func announcement(_ phase: QuestionBlockPhase) -> String? {
@@ -290,16 +313,19 @@ struct QuestionBlockView: View {
         return nil
       }
 
-      return [
+      let lead: [String?] = [
         run.timedOut ? DrillAnswerNotes.timesUp : nil,
         String(localized: verdict(feedback, answer: answer).label),
         correctLine(feedback, question: question).map {
           PracticeAnswerText.rightAnswerLine($0).said
         },
+      ]
+      let misses = PracticeAnswerText.misses(for: answer, question: question)?.said
+      let tally: String? =
         run.detail.isNetScored(question)
-          ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts()
-          : nil,
-      ].compactMap(\.self).joined(separator: "\n")
+        ? (run.state.netTally.line + [run.state.netTally.spokenScore]).joinedFacts() : nil
+
+      return (lead + [misses, tally]).compactMap(\.self).joined(separator: "\n")
     default:
       return nil
     }
@@ -326,6 +352,7 @@ struct QuestionBlockView: View {
         verdict: verdict(feedback, answer: answer),
         streak: feedback.isCorrect ? feedback.hyperdrive.streak : 0,
         correctAnswerText: correctLine(feedback, question: question),
+        misses: PracticeAnswerText.misses(for: answer, question: question),
         explanation: feedback.explanation,
         workedSteps: feedback.isCorrect ? [] : feedback.workedSteps,
         citation: question.citation
@@ -394,44 +421,52 @@ struct QuestionBlockView: View {
 
     PracticeActionRow {
       if run.drill?.kind == .noGuessing {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "I'm not sure", table: "Practice",
             comment: "Honest way out of a guess in a no-guessing drill."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
       } else if let question, run.detail.isNetScored(question), question.format != .trueFalse {
-        PracticeSecondaryButton(
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "Leave blank", table: "Practice", comment: "Leaves an exam question unanswered."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
-      } else if question?.placement == true || question?.format == .typed {
-        PracticeSecondaryButton(
+      } else if question?.placement == true || question?.format == .typed
+        || question?.checksEachPair == true
+      {
+        QuestionDontKnowButton(
           title: LocalizedStringResource(
             "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."),
-          icon: .notSure, isBusy: phase.checking == .notSure,
+          isBusy: phase.checking == .notSure,
           isDisabled: !accepts, action: notSure
         )
         .practiceFocus(.notSure)
       }
 
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Check", table: "Practice", comment: "Sends the answer to be graded."),
-        isBusy: phase.checking?.pressesCheck == true,
-        isDisabled: !accepts || answer == nil
-      ) {
-        if let answer {
-          press(.check)
-          Task { await run.submit(answer) }
+      // A learning match sends itself with its last pair, so its main action waits as Continue.
+      if question?.checksEachPair == true {
+        PracticeMainButton(
+          title: continueTitle, isBusy: phase.checking != nil, isDisabled: true, action: {})
+      } else {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Check", table: "Practice", comment: "Sends the answer to be graded."),
+          isBusy: phase.checking?.pressesCheck == true,
+          isDisabled: !accepts || answer == nil
+        ) {
+          if let answer {
+            press(.check)
+            Task { await run.submit(answer) }
+          }
         }
+        .practiceFocus(.check)
       }
-      .practiceFocus(.check)
 
       ask(answered: false)
     }
@@ -565,23 +600,24 @@ private struct NetScoreLine: View {
   }
 }
 
+/// Main's `MistakeNote`: a quiet line under the verdict, as the lesson's own.
 private struct MistakeMovedNote: View {
   let feedback: PracticeFeedback
 
   var body: some View {
-    if feedback.mistakeFixed {
-      QuestionNote(systemImage: "checkmark.circle") {
+    Group {
+      if feedback.mistakeFixed {
         Text(
           "Mistake fixed. It leaves your notebook.", tableName: "Practice",
           comment: "After answering a saved mistake right.")
-      }
-    } else if feedback.savedToNotebook {
-      QuestionNote(systemImage: "square.and.pencil") {
+      } else if feedback.savedToNotebook {
         Text(
           "Saved to your mistakes", tableName: "Practice",
           comment: "After a wrong answer saved to the mistakes notebook.")
       }
     }
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 }
 

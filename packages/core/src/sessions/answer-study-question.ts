@@ -1,5 +1,6 @@
 import "server-only";
 import { type Attempt, type StudySessionBlock, prisma } from "@zoonk/db";
+import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { isBlockDuelDecided } from "../checkpoints/_utils/checkpoint-outcome";
 import { loadCheckpointReinforcement } from "../checkpoints/_utils/checkpoint-reinforcement";
 import { loadClaimEvents, loadSkippedRecheckSkills } from "../learner/_utils/load-skill-claims";
@@ -119,16 +120,18 @@ async function gradeStudyAnswer({
   answer,
   blockId,
   item,
+  keepsStoredOrder,
   session,
   userId,
 }: {
   answer: StudyAnswerInput["answer"];
   blockId: string;
   item: SessionItem;
+  keepsStoredOrder?: boolean;
   session: StudySessionRow;
   userId: string;
 }): Promise<GradedSessionAnswer> {
-  const graded = gradeSessionAnswer({ answer, blockId, item });
+  const graded = gradeSessionAnswer({ answer, blockId, item, keepsStoredOrder });
 
   if (item.format !== "typed" || graded.isCorrect || !("text" in answer)) {
     return graded;
@@ -184,7 +187,12 @@ export async function answerStudyQuestion({
     }),
     prisma.attempt.findFirst({
       orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
-      where: { itemId: input.itemId, studySessionId: sessionId, userId },
+      where: {
+        ...NOT_LESSON_ANSWER_FILTER,
+        itemId: input.itemId,
+        studySessionId: sessionId,
+        userId,
+      },
     }),
   ]);
 
@@ -203,8 +211,20 @@ export async function answerStudyQuestion({
   const storedAnswer = getStoredCheckpointAnswer({ block, previous });
 
   const graded = storedAnswer
-    ? gradeSessionAnswer({ answer: storedAnswer, blockId: block.id, item })
-    : await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, session, userId });
+    ? gradeSessionAnswer({
+        answer: storedAnswer,
+        blockId: block.id,
+        item,
+        keepsStoredOrder: !payload.shufflesOptions,
+      })
+    : await gradeStudyAnswer({
+        answer: input.answer,
+        blockId: block.id,
+        item,
+        keepsStoredOrder: !payload.shufflesOptions,
+        session,
+        userId,
+      });
 
   const drill = payload.drills.find((candidate) => candidate.itemIds.includes(item.id));
 

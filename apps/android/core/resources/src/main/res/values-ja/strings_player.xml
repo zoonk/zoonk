@@ -67,7 +67,6 @@
   "player_create_account_to_save": "69c59cff768b93116874af0bbbab22fd6620e6c1ce3a42b0fc5af59cc53319f6",
   "player_didnt_get_it": "585dacdb268e26e2f9a4d426c313b637d10901bd1c36ca2946291841d3b8c4af",
   "player_done": "697efb2878041c16960287cced06fe0a85e4be34e0ba3a19ff5a34df02a57dd6",
-  "player_dont_know_yet": "28e2260534b8216d3ace4459d370ec241093e1d8930c7ce10dc60f453451d48b",
   "player_drawing_picture": "683f4921bd17f0dfc72b519de50b30ca69caba42ae6ed9b9df366ccf4e63929a",
   "player_enter_hint": "b24b318a5bc6902ff891b1324d9da77b3c070b291ff1f42f76ffff5d6d046a2b",
   "player_example": "08028c0372b2ebce9683bb0a20aad5c3d0da642e34e3f6a09def3c0f9a24cf37",
@@ -285,7 +284,6 @@
     </plurals>
     <string name="player_in_your_own_words">自分の言葉で</string>
     <string name="player_cant_write_now">今日は書いて答える問題をスキップする</string>
-    <string name="player_dont_know_yet">まだわからない</string>
     <!-- Button asking Zoonk to show the explanation before the learner answers. It doesn't tell the learner to explain. -->
     <string name="player_explain_first">先に解説を見る</string>
     <string name="player_enter_hint">Enterで答え合わせ、Shift+Enterで改行できます。</string>

@@ -1,5 +1,6 @@
 import { localDay } from "../../_utils/dates";
 import { t } from "../../_utils/localize";
+import { ENEM_AREAS } from "../../library/enem/enem-chapters";
 import { enemCourse } from "../../library/enem/enem-course";
 import { type EnemEdition } from "../../library/enem/enem-edition";
 import { type SeedAttempt, type SeedGoal, type SeedLearner } from "../types";
@@ -66,10 +67,19 @@ const anaAttempts: SeedAttempt[] = [
       snapshot: {
         answer: "R$ 18",
         correctAnswer: "R$ 102",
-        explanation: "Isso é o que você economiza. Você paga o que sobra depois dele.",
+        explanation: t(
+          "That's what you save. You pay what's left after the discount.",
+          "Isso é o que você economiza. Você paga o que sobra depois dele.",
+        ),
         format: "numeric",
-        misconception: "Respondeu com o desconto em vez do preço pago",
-        question: "Uma camisa de R$ 120 está com 15% de desconto. Quanto você paga, em reais?",
+        misconception: t(
+          "Gave the discount instead of the price paid",
+          "Respondeu com o desconto em vez do preço pago",
+        ),
+        question: t(
+          "An R$ 120 shirt is 15% off. How much do you pay, in reais?",
+          "Uma camisa de R$ 120 está com 15% de desconto. Quanto você paga, em reais?",
+        ),
       },
       status: "open",
     },
@@ -85,14 +95,25 @@ const anaAttempts: SeedAttempt[] = [
     mistake: {
       cause: "trap",
       snapshot: {
-        answer: "R$ 1.000",
-        context:
+        answer: t("R$ 1,000", "R$ 1.000"),
+        context: t(
+          "An investor put R$ 1,000 into a fund. It gained 10% in the first month and lost 10% in the second.",
           "Um investidor aplicou R$ 1.000 num fundo. No primeiro mês, a aplicação rendeu 10%; no segundo, perdeu 10%.",
+        ),
         correctAnswer: "R$ 990",
-        explanation: "A perda de 10% saiu de R$ 1.100, então tirou R$ 110.",
+        explanation: t(
+          "The 10% loss was on R$ 1,100, so the fund lost R$ 110.",
+          "A perda de 10% saiu de R$ 1.100, então tirou R$ 110.",
+        ),
         format: "multipleChoice",
-        misconception: "Achou que ganho e perda iguais se anulam",
-        question: "Ao fim dos dois meses, o investidor tem:",
+        misconception: t(
+          "Thought equal gains and losses cancel out",
+          "Achou que ganho e perda iguais se anulam",
+        ),
+        question: t(
+          "After the two months, the investor has:",
+          "Ao fim dos dois meses, o investidor tem:",
+        ),
       },
       status: "open",
     },
@@ -108,14 +129,18 @@ const anaAttempts: SeedAttempt[] = [
     mistake: {
       cause: "gap",
       snapshot: {
-        answer: "5.000 kcal",
+        answer: t("5,000 kcal", "5.000 kcal"),
         correctAnswer: "500 kcal",
-        explanation:
+        explanation: t(
+          "Secondary consumers are two levels above producers, so multiply by 0.1 twice.",
           "Os consumidores secundários estão dois níveis acima dos produtores, então multiplique por 0,1 duas vezes.",
+        ),
         format: "numeric",
-        misconception: "Subiu só um nível",
-        question:
+        misconception: t("Went up only one level", "Subiu só um nível"),
+        question: t(
+          "The producers of an ecosystem capture 50,000 kcal. On average, how much reaches the secondary consumers?",
           "Os produtores de um ecossistema captam 50000 kcal. Em média, quanto chega aos consumidores secundários?",
+        ),
       },
       status: "fixed",
     },
@@ -140,14 +165,22 @@ const anaAttempts: SeedAttempt[] = [
     mistake: {
       cause: "gap",
       snapshot: {
-        answer: "3,0 A",
-        context:
+        answer: t("3.0 A", "3,0 A"),
+        context: t(
+          "A flashlight uses a 6 V battery connected to two resistors in series, one of 2 Ω and one of 4 Ω.",
           "Uma lanterna usa uma bateria de 6 V ligada a dois resistores em série, de 2 Ω e 4 Ω.",
-        correctAnswer: "1,0 A",
-        explanation: "6 ÷ 2 usa só um resistor. Em série eles se somam.",
+        ),
+        correctAnswer: t("1.0 A", "1,0 A"),
+        explanation: t(
+          "6 ÷ 2 uses only one resistor. In series they add up.",
+          "6 ÷ 2 usa só um resistor. Em série eles se somam.",
+        ),
         format: "multipleChoice",
-        misconception: "Usou só o resistor de 2 Ω",
-        question: "Qual é a corrente elétrica no circuito?",
+        misconception: t("Used only the 2 Ω resistor", "Usou só o resistor de 2 Ω"),
+        question: t(
+          "What is the electric current in the circuit?",
+          "Qual é a corrente elétrica no circuito?",
+        ),
       },
       status: "open",
     },
@@ -234,11 +267,13 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
           day: firstMock + 1,
           kind: "edited",
           payload: {
-            operations: [{ areas: ["Ciências da Natureza"], kind: "focusAreas" }],
+            operations: [{ areas: [ENEM_AREAS.sciences], kind: "focusAreas" }],
             source: "system",
           },
-          reason:
+          reason: t(
+            "On Monday, we moved 20 minutes from Humanities to Natural Sciences. You're doing well in Humanities.",
             "Na segunda, passamos 20 min de Ciências Humanas para Ciências da Natureza. Você está indo bem em Humanas.",
+          ),
         },
         {
           day: -1,
@@ -261,7 +296,7 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
           subjects: [t("English", "Língua Inglesa")],
         },
       ],
-      focusAreas: ["Ciências da Natureza"],
+      focusAreas: [ENEM_AREAS.sciences],
       graph: anaGraph,
       items: [
         { day: -13, kind: "lesson", lesson: "what-a-percent-is", phase: 0, status: "done" },

@@ -1,6 +1,8 @@
 "use client";
 
 import { MainActionSlotProvider } from "@zoonk/learn/main-action-slot";
+import { OwnFeedbackReveal } from "@zoonk/learn/reveal-when-shown";
+import { type SaveLesson, useLessonSaves } from "@zoonk/learn/saved-lessons/saves";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
@@ -65,15 +67,22 @@ function LessonCompletion() {
   );
 }
 
+const cannotSave: SaveLesson = async () => null;
+
+/**
+ * The lesson's saves last as long as the lesson, past a host's header over its end, so a save that
+ * fails after the bookmark is gone still says so.
+ */
 function LessonHeader() {
-  const { slots } = useLessonPlayerConfig();
+  const { adapters, slots } = useLessonPlayerConfig();
   const props = useCompletionProps();
+  const saves = useLessonSaves(adapters.saveLesson ?? cannotSave);
 
   const completionHeader = props
     ? slots.completionHeader?.({ ...props, menu: <LessonScreenMenu /> })
     : null;
 
-  return completionHeader ?? <LessonPlayerHeader />;
+  return completionHeader ?? <LessonPlayerHeader saves={adapters.saveLesson ? saves : null} />;
 }
 
 function LessonContent() {
@@ -219,7 +228,9 @@ function LessonPlayerFrame() {
         tabIndex={-1}
       >
         <div className="flex min-h-full flex-col">
-          <LessonContent />
+          <OwnFeedbackReveal>
+            <LessonContent />
+          </OwnFeedbackReveal>
         </div>
       </main>
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct StudyMission: Decodable, Hashable, Sendable {
-  enum Kind: String, Decodable, Sendable {
+struct StudyMission: OmittableAPIContent, Hashable, Sendable {
+  enum Kind: String, OmittableAPIContent, Sendable {
     case askBuddy
     case call
     case challenge
@@ -27,7 +27,7 @@ struct StudyMission: Decodable, Hashable, Sendable {
   }
 
   /// A block by id, or by its place on a day not opened yet.
-  struct Opens: Decodable, Hashable, Sendable {
+  struct Opens: OmittableAPIContent, Hashable, Sendable {
     struct Ref: Decodable, Hashable, Sendable {
       let position: Int
     }
@@ -45,11 +45,13 @@ struct StudyMission: Decodable, Hashable, Sendable {
   let kind: Kind
   let minutes: Double?
   let opens: Opens?
-  let status: String
+  enum Status: String, Decodable { case todo, done }
+
+  let status: Status
   let total: Int
   let waitReason: StudyBlock.WaitReason?
 
-  var isDone: Bool { status == "done" }
+  var isDone: Bool { status == .done }
 
   func opens(_ block: StudyBlock) -> Bool {
     guard let opens, opens.kind == "block" else {
@@ -127,6 +129,8 @@ struct MissionRow: View {
 
   let mission: StudyMission
   let buddyName: String
+  /// What the row is called when it isn't the mission's own name, as a first step's.
+  var name: String?
   /// Its place among the missions a result just completed, which stamp in one after another.
   var justDone: Int?
   var isBusy = false
@@ -167,7 +171,7 @@ struct MissionRow: View {
 
   private var text: some View {
     VStack(alignment: .leading, spacing: 2) {
-      Text(mission.name(buddy: buddyName))
+      Text(name ?? mission.name(buddy: buddyName))
         .foregroundStyle((mission.isDone && justDone == nil) || waits ? .mutedForeground : .primary)
 
       if failed {

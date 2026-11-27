@@ -3,34 +3,51 @@
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { MatchBoard } from "@zoonk/learn/match-board";
 import { MatchEntry } from "@zoonk/learn/match-entry";
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { MatchMisses } from "@zoonk/learn/match-misses";
+import { useMatchBoard } from "@zoonk/learn/use-match-board";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { useCallback, useId, useMemo, useRef, useState } from "react";
-import { useWebHaptics } from "web-haptics/react";
+import { use, useId, useMemo } from "react";
 import { ActivityCanvas } from "../activities/_components/activity-canvas";
+import { BoardMissesContext } from "../lesson/feedback/board-misses";
+import { useCheckWhenAnswered } from "../lesson/use-check-when-answered";
 import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer } from "../step-answer";
-import {
-  type MatchAttempt,
-  type MatchItemData,
-  type MatchSelection,
-  type MatchSide,
-  buildLeftMatchItems,
-  buildMatchAttempt,
-  buildRightMatchItems,
-  buildSolvedMatchBoard,
-  getEntryState,
-  getPairIndex,
-  isItemMatched,
-  restoreMatches,
-} from "./_utils/match-columns";
-import { MatchBoard, MatchBoardCount } from "./match-board";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
-const FLASH_DURATION = 800;
+type Pair = { left: string; right: string };
+
+/** A finished board's pairs, by each card's place in its column. */
+function placesOf({
+  left,
+  pairs,
+  right,
+}: {
+  left: readonly string[];
+  pairs: readonly Pair[];
+  right: readonly string[];
+}): number[] {
+  const places = left.map(() => -1);
+  const usedRight = new Set<number>();
+
+  for (const pair of pairs) {
+    const leftIndex = left.findIndex((label, index) => label === pair.left && places[index] === -1);
+
+    const rightIndex = right.findIndex(
+      (label, index) => label === pair.right && !usedRight.has(index),
+    );
+
+    if (leftIndex !== -1 && rightIndex !== -1) {
+      places[leftIndex] = rightIndex;
+      usedRight.add(rightIndex);
+    }
+  }
+
+  return places;
+}
 
 export function MatchColumnsStep({
   onSelectAnswer,
@@ -45,147 +62,67 @@ export function MatchColumnsStep({
   const t = useExtracted();
   const questionId = useId();
   const interactionState = usePlayerInteractionState();
-  const { trigger } = useWebHaptics();
+  const answered = selectedAnswer?.kind === "matchColumns" ? selectedAnswer : null;
+  const checkWhenAnswered = useCheckWhenAnswered(answered !== null);
+  const showMisses = use(BoardMissesContext);
+  const left = content.pairs.map((pair) => pair.left);
+  const right = step.matchColumnsRightItems;
 
-  const leftItems = useMemo(() => buildLeftMatchItems(content.pairs), [content.pairs]);
+  const text = (side: "left" | "right", index: number) =>
+    (side === "left" ? left : right)[index] ?? "";
 
-  const rightItems = useMemo(
-    () => buildRightMatchItems(step.matchColumnsRightItems),
-    [step.matchColumnsRightItems],
-  );
+  const cardText = (side: "left" | "right", index: number) =>
+    stripWrappingQuotes(text(side, index));
 
-  const [selected, setSelected] = useState<MatchSelection | null>(null);
+  const board = useMatchBoard({
+    disabled: answered !== null,
+    finished: answered
+      ? { pairs: placesOf({ left, pairs: answered.userPairs, right }) }
+      : undefined,
+    isPair: (attempt) =>
+      checkSingleMatchPair(content, {
+        left: text("left", attempt.left),
+        right: text("right", attempt.right),
+      }),
+    keys: interactionState !== "paused",
+    leftCount: left.length,
+    onComplete: ({ matches, misses }) => {
+      showMisses?.(<MatchMisses misses={misses} renderCard={cardText} />);
+      checkWhenAnswered();
 
-  const [correctMatches, setCorrectMatches] = useState<MatchAttempt[]>(() =>
-    selectedAnswer?.kind === "matchColumns"
-      ? restoreMatches({ leftItems, pairs: selectedAnswer.userPairs, rightItems })
-      : [],
-  );
-
-  const [flashingMatch, setFlashingMatch] = useState<MatchAttempt | null>(null);
-  const [mistakes, setMistakes] = useState(0);
-  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const allMatched = correctMatches.length === content.pairs.length;
-  const isSolved = allMatched || selectedAnswer?.kind === "matchColumns";
-
-  const board = isSolved
-    ? buildSolvedMatchBoard(content.pairs)
-    : { matches: correctMatches, rightItems };
-
-  const handleTap = useCallback(
-    (item: MatchItemData) => {
-      if (isItemMatched({ correctMatches, item })) {
-        return;
-      }
-
-      if (flashingMatch) {
-        return;
-      }
-
-      if (!selected) {
-        setSelected(item);
-        return;
-      }
-
-      if (selected.side === item.side) {
-        setSelected(selected.id === item.id ? null : item);
-        return;
-      }
-
-      const match = buildMatchAttempt({ current: item, selected });
-
-      const isCorrectPair = checkSingleMatchPair(content, match.pair);
-
-      if (isCorrectPair) {
-        const nextCorrect = [...correctMatches, match];
-        void trigger("light");
-        setCorrectMatches(nextCorrect);
-        setSelected(null);
-
-        if (nextCorrect.length === content.pairs.length) {
-          onSelectAnswer({
-            kind: "matchColumns",
-            mistakes,
-            userPairs: nextCorrect.map((attempt) => attempt.pair),
-          });
-        }
-      } else {
-        void trigger("warning");
-        setMistakes((prev) => prev + 1);
-        setFlashingMatch(match);
-        setSelected(null);
-
-        if (flashTimeoutRef.current) {
-          clearTimeout(flashTimeoutRef.current);
-        }
-
-        flashTimeoutRef.current = setTimeout(() => {
-          setFlashingMatch(null);
-          flashTimeoutRef.current = null;
-        }, FLASH_DURATION);
-      }
+      onSelectAnswer({
+        kind: "matchColumns",
+        mistakes: misses.length,
+        userPairs: matches.map((place, index) => ({
+          left: text("left", index),
+          right: text("right", place),
+        })),
+      });
     },
-    [content, correctMatches, flashingMatch, mistakes, onSelectAnswer, selected, trigger],
-  );
-
-  useNumberKeys({
-    count: leftItems.length + rightItems.length,
-    enabled: !isSolved && flashingMatch === null && interactionState !== "paused",
-    onPick: (index) => {
-      const item = leftItems[index] ?? rightItems[index - leftItems.length];
-
-      if (!item || isItemMatched({ correctMatches, item })) {
-        return false;
-      }
-
-      handleTap(item);
-    },
+    rightCount: right.length,
+    say: cardText,
   });
-
-  const question = content.question ?? t("Match the pairs.");
-
-  const solvedRows = leftItems.map((item, index) => ({
-    left: item,
-    right: board.rightItems[index] ?? null,
-  }));
-
-  function renderItem(side: MatchSide, item: MatchItemData, index: number) {
-    const state = getEntryState({ correctMatches: board.matches, flashingMatch, item, selected });
-
-    return (
-      <MatchEntry
-        disabled={state === "wrong"}
-        index={side === "left" ? index : leftItems.length + index}
-        onClick={() => handleTap(item)}
-        pair={getPairIndex({ correctMatches: board.matches, item, leftItems })}
-        state={state}
-      >
-        {stripWrappingQuotes(item.label)}
-      </MatchEntry>
-    );
-  }
 
   return (
     <InteractiveStepLayout>
       <div id={questionId}>
-        <QuestionText>{question}</QuestionText>
+        <QuestionText>{content.question ?? t("Match the pairs.")}</QuestionText>
       </div>
 
       <ActivityCanvas labelId={questionId}>
-        <MatchBoardCount matched={board.matches.length} total={leftItems.length} />
-
         <MatchBoard
-          alignRows
-          left={leftItems}
-          renderItem={renderItem}
-          right={board.rightItems}
-          solvedRows={isSolved ? solvedRows : undefined}
+          leftCount={left.length}
+          renderCard={(side, index) => (
+            <MatchEntry {...board.entry(side, index)}>{cardText(side, index)}</MatchEntry>
+          )}
+          rightCount={right.length}
+          solved={board.solved}
         />
       </ActivityCanvas>
 
-      <div aria-live="polite" className="sr-only" role="status">
-        {allMatched && t("All pairs matched. Press Check to continue.")}
-      </div>
+      <p aria-live="polite" className="sr-only">
+        {board.announcement}
+      </p>
     </InteractiveStepLayout>
   );
 }

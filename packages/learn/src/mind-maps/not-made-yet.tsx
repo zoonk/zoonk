@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { Disclosure } from "../_components/disclosure";
 import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
-import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
+import { ListGroup } from "../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -141,7 +141,7 @@ function NotMadeRows({
   plus,
 }: RowsProps & { chapters: readonly MindMapsPageChapter[]; label?: string }) {
   return (
-    <ul aria-label={label} className={LIST_GROUP_CLASS}>
+    <ListGroup as="ul" aria-label={label}>
       {chapters.map((chapter) => (
         <li key={chapter.chapterId}>
           <MindMapRowView
@@ -153,7 +153,7 @@ function NotMadeRows({
           />
         </li>
       ))}
-    </ul>
+    </ListGroup>
   );
 }
 

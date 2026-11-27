@@ -8,13 +8,13 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { skillOutlineGenerationSchema } from "../src/lib/openapi/schemas/skill-outlines";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
 const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
-const DAY_MS = 86_400_000;
 
 async function createFarGoal({ userId }: { userId: string }) {
   const [goal, course, skill] = await Promise.all([
@@ -44,7 +44,7 @@ async function createFarGoal({ userId }: { userId: string }) {
   await planItemFixture({
     planId: plan.id,
     position: 0,
-    scheduledFor: new Date(Date.now() + 60 * DAY_MS),
+    scheduledFor: new Date(Date.now() + 60 * MS_PER_DAY),
     skillId: skill.id,
   });
 

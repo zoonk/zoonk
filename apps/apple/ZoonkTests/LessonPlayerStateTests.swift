@@ -966,6 +966,17 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertTrue(board.isRight(.init(left: "A", right: "1")), "the second A → 1 is still to match")
   }
 
+  func testEachMatchedLeftTileKnowsTheShownPlaceOfItsPartner() {
+    let board = MatchColumnsBoard(
+      pairs: [
+        .init(left: "A", right: "1"), .init(left: "A", right: "1"), .init(left: "B", right: "2"),
+      ],
+      rightItems: ["2", "1", "1"],
+      matched: [.init(left: "B", right: "2"), .init(left: "A", right: "1")])
+
+    XCTAssertEqual(board.places, [1, nil, 0], "so a solved row slides each card in from its place")
+  }
+
   func testAMatchedPairCountsAgainstHowOftenTheExerciseHasIt() {
     let board = MatchColumnsBoard(
       pairs: [

@@ -1,6 +1,7 @@
 name: Apple Unit Tests
 
-# Runs the full iPhone suite on demand. Apple PRs run the Mac-compatible units automatically.
+# Runs the full iPhone suite on demand. Main runs the same tests on Mac after each merge, where
+# the few that need an iPhone skip themselves.
 on:
   workflow_dispatch:
 
@@ -18,7 +19,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # Restores main's caches and saves none, so a branch's entries don't evict main's.
+      # Restores main's Swift packages. Main saves no simulator build, and a branch saves none so
+      # its entries don't evict main's, so this compiles the app from scratch.
       - name: Restore the last build
         uses: ./.github/actions/apple-last-build
         with:
@@ -33,7 +35,8 @@ jobs:
             -resultBundlePath ${{ runner.temp }}/apple-unit-tests.xcresult
             COMPILER_INDEX_STORE_ENABLE=NO
             GCC_GENERATE_DEBUGGING_SYMBOLS=NO
-        # The newest runtime the image installs, as in apple.yml's test job.
+        # The newest runtime the image installs, which can trail Xcode's SDK while a new image rolls out
+        # (xcodebuild's default OS is the SDK's).
         run: |
           udid=$(xcrun simctl list devices available --json | jq -r '[.devices | to_entries | sort_by(.key) | .[].value[] | select(.name == "iPhone 17")] | last | .udid')
           make -C apps/apple test TEST_DESTINATION="platform=iOS Simulator,id=$udid"

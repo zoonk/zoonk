@@ -16,6 +16,7 @@ import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { pickInPlacement, shownOptionTexts } from "../../_test-utils/shown-choice";
 import { analytics } from "../../_test-utils/test-boundaries";
 import { askPlacement } from "../_test-utils/exam-test-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
@@ -26,7 +27,8 @@ import { getGoalPlacement } from "./get-goal-placement";
 import { type PlacementAnswerInput } from "./placement-contract";
 
 const DONT_KNOW = { dontKnow: true } as const;
-const RIGHT = { selectedIndex: 0 };
+/** The right option, wherever placement shows it. */
+const RIGHT = "right" as const;
 
 async function setup(phases = [3, 2]) {
   const user = await userFixture();
@@ -169,15 +171,17 @@ async function answerNext({
   goalId,
   placement,
 }: {
-  answer: PlacementAnswerInput["answer"];
+  answer: PlacementAnswerInput["answer"] | typeof RIGHT;
   goalId: string;
   placement: Placement;
 }): Promise<Placement> {
   const flush = runDeferredWork();
+  const itemId = placement?.next?.itemId ?? "";
+  const picked = answer === RIGHT ? await pickInPlacement({ itemId }) : answer;
 
   const result = await answerPlacementQuestion({
     goalId,
-    input: { answer, durationMs: 5000, itemId: placement?.next?.itemId ?? "" },
+    input: { answer: picked, durationMs: 5000, itemId },
   });
 
   await flush();
@@ -186,7 +190,7 @@ async function answerNext({
     expect.objectContaining({
       name: "Placement Answered",
       properties: {
-        answer: "dontKnow" in answer ? "dont_know" : "correct",
+        answer: "dontKnow" in picked ? "dont_know" : "correct",
         duration_ms: 5000,
         question_number: (placement?.answered ?? 0) + 1,
         skill_id: placement?.next?.skillId,
@@ -292,7 +296,16 @@ describe(getGoalPlacement, () => {
       "visual",
     ]);
 
-    expect(next?.options).toStrictEqual(["Right answer", "Wrong answer"]);
+    expect(next?.options).toStrictEqual(
+      shownOptionTexts({
+        blockId: next?.itemId ?? "",
+        item: await prisma.item.findUniqueOrThrow({ where: { id: next?.itemId ?? "" } }),
+      }),
+    );
+
+    expect(next?.options?.toSorted()).toStrictEqual(
+      ["Right answer", "Wrong answer", "Incomplete answer", "Unrelated answer"].toSorted(),
+    );
 
     const sent = JSON.stringify(result);
 
@@ -537,12 +550,20 @@ describe(getGoalPlacement, () => {
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 5000, itemId: firstEasy?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: firstEasy?.id ?? "" }),
+        durationMs: 5000,
+        itemId: firstEasy?.id ?? "",
+      },
     });
 
     await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 5000, itemId: firstMedium?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: firstMedium?.id ?? "" }),
+        durationMs: 5000,
+        itemId: firstMedium?.id ?? "",
+      },
     });
 
     await answerPlacementQuestion({
@@ -678,12 +699,20 @@ describe(answerPlacementQuestion, () => {
 
     const first = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 9000, itemId: middle[0]?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: middle[0]?.id ?? "" }),
+        durationMs: 9000,
+        itemId: middle[0]?.id ?? "",
+      },
     });
 
     const second = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 9000, itemId: middle[1]?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: middle[1]?.id ?? "" }),
+        durationMs: 9000,
+        itemId: middle[1]?.id ?? "",
+      },
     });
 
     expect(first.status === "ready" && first.isCorrect).toBe(true);
@@ -706,7 +735,11 @@ describe(answerPlacementQuestion, () => {
 
     const result = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 5000, itemId: asked?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: asked?.id ?? "" }),
+        durationMs: 5000,
+        itemId: asked?.id ?? "",
+      },
     });
 
     expect(result.status === "ready" && result.isCorrect).toBe(true);
@@ -725,7 +758,11 @@ describe(answerPlacementQuestion, () => {
 
     const result = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 5000, itemId: asked?.id ?? "" },
+      input: {
+        answer: await pickInPlacement({ itemId: asked?.id ?? "" }),
+        durationMs: 5000,
+        itemId: asked?.id ?? "",
+      },
     });
 
     expect(result.status === "ready" && result.isCorrect).toBe(true);
@@ -751,10 +788,14 @@ describe(answerPlacementQuestion, () => {
     ]);
 
     const answers = await Promise.all(
-      [privateItem, otherExamItem].map((item) =>
+      [privateItem, otherExamItem].map(async (item) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 5000, itemId: item.id },
+          input: {
+            answer: await pickInPlacement({ itemId: item.id }),
+            durationMs: 5000,
+            itemId: item.id,
+          },
         }),
       ),
     );
@@ -769,10 +810,14 @@ describe(finishGoalPlacement, () => {
     const middle = items.filter((item) => item.skillId === skills[2]?.id);
 
     await Promise.all(
-      middle.map((item) =>
+      middle.map(async (item) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+          input: {
+            answer: await pickInPlacement({ itemId: item.id }),
+            durationMs: 9000,
+            itemId: item.id,
+          },
         }),
       ),
     );
@@ -804,10 +849,14 @@ describe(finishGoalPlacement, () => {
     const known = items.filter((item) => item.skillId === skills[0]?.id);
 
     await Promise.all(
-      known.map((item) =>
+      known.map(async (item) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+          input: {
+            answer: await pickInPlacement({ itemId: item.id }),
+            durationMs: 9000,
+            itemId: item.id,
+          },
         }),
       ),
     );
@@ -952,9 +1001,12 @@ describe(finishGoalPlacement, () => {
 
     for (const item of checks) {
       // oxlint-disable-next-line no-await-in-loop -- Each answer updates placement's state.
+      const answer = await pickInPlacement({ itemId: item.id });
+
+      // oxlint-disable-next-line no-await-in-loop -- Each answer updates placement's state.
       await answerPlacementQuestion({
         goalId: goal.id,
-        input: { answer: RIGHT, durationMs: 5000, itemId: item.id },
+        input: { answer, durationMs: 5000, itemId: item.id },
       });
     }
 
@@ -991,10 +1043,14 @@ describe(finishGoalPlacement, () => {
     const lawIntermediate = items.filter((item) => item.skillId === skills[2]?.id).slice(0, 2);
 
     await Promise.all(
-      lawIntermediate.map((item) =>
+      lawIntermediate.map(async (item) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+          input: {
+            answer: await pickInPlacement({ itemId: item.id }),
+            durationMs: 9000,
+            itemId: item.id,
+          },
         }),
       ),
     );
@@ -1152,10 +1208,14 @@ describe(finishGoalPlacement, () => {
     const organelles = items.filter((item) => item.skillId === skills[2]?.id).slice(0, 2);
 
     await Promise.all(
-      organelles.map((item) =>
+      organelles.map(async (item) =>
         answerPlacementQuestion({
           goalId: goal.id,
-          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+          input: {
+            answer: await pickInPlacement({ itemId: item.id }),
+            durationMs: 9000,
+            itemId: item.id,
+          },
         }),
       ),
     );

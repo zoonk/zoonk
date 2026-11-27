@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadExamFacts } from "../../plans/_utils/planner-exam-facts";
@@ -7,7 +8,6 @@ import { findAnnouncedSkillIds } from "../../plans/planner/announced-lessons";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { findFrequentSkillIds } from "../../plans/planner/topic-weights";
 import { readBlockPayload } from "../block-payload";
-import { loadReviewCapsules } from "./load-review-capsules";
 
 /** first must receive questions even on short days; last is optional. Rotate claims by lastAsked rather than studying order. */
 export type PracticeClaims = {
@@ -19,7 +19,6 @@ export type PracticeClaims = {
 
 /** Promote aging unconfirmed claims so low-weight topics cannot wait indefinitely. */
 const DUE_AFTER_DAYS = 7;
-const DAY_MS = 86_400_000;
 
 const ASKED_WINDOW_DAYS = 14;
 
@@ -43,7 +42,7 @@ async function loadLastAsked({
       kind: { in: ["practice", "review"] },
       session: {
         goalId,
-        localDate: { gte: new Date(today.getTime() - ASKED_WINDOW_DAYS * DAY_MS), lt: today },
+        localDate: { gte: new Date(today.getTime() - ASKED_WINDOW_DAYS * MS_PER_DAY), lt: today },
       },
     },
   });
@@ -80,7 +79,7 @@ export async function loadPracticeClaims({
   userId: string;
 }): Promise<PracticeClaims> {
   const claims = await loadDatedClaims({ goalId: goal.id, readClaims, skillIds, userId });
-  const dueBefore = now.getTime() - DUE_AFTER_DAYS * DAY_MS;
+  const dueBefore = now.getTime() - DUE_AFTER_DAYS * MS_PER_DAY;
 
   const toConfirm = [...claims].filter(([, { claim }]) => claim === "toConfirm");
 
@@ -108,21 +107,4 @@ export async function loadPracticeClaims({
     last: new Set(toConfirmIds.filter((skillId) => !priority.has(skillId))),
     lastAsked,
   };
-}
-
-export async function loadReviewsAndClaims({
-  claims: claimsInput,
-  readClaims,
-  review,
-}: {
-  claims: Omit<Parameters<typeof loadPracticeClaims>[0], "readClaims">;
-  readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
-  review: Parameters<typeof loadReviewCapsules>[0];
-}) {
-  const [capsules, claims] = await Promise.all([
-    loadReviewCapsules(review),
-    loadPracticeClaims({ ...claimsInput, readClaims }),
-  ]);
-
-  return { capsules, claims };
 }

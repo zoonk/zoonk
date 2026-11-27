@@ -137,11 +137,9 @@ function ContinueButton() {
 
   return (
     <TodayBar note={speaking && <TodayContinueStatus />}>
-      <form action={() => void run()} className="contents">
-        <EnterButton aria-describedby={NEXT_TITLE_ID} busy={isPending} enter="host" type="submit">
-          {started ? t("Continue") : t("Start")}
-        </EnterButton>
-      </form>
+      <EnterButton aria-describedby={NEXT_TITLE_ID} busy={isPending} enter="host" onClick={run}>
+        {started ? t("Continue") : t("Start")}
+      </EnterButton>
     </TodayBar>
   );
 }
@@ -171,11 +169,9 @@ function SaveAction({
 
   return (
     <TodayBar note={failed && <ChangeSaveError />}>
-      <form action={() => void run()} className="contents">
-        <EnterButton busy={isPending} type="submit">
-          {children}
-        </EnterButton>
-      </form>
+      <EnterButton busy={isPending} onClick={run}>
+        {children}
+      </EnterButton>
     </TodayBar>
   );
 }
@@ -231,11 +227,9 @@ function KeepLearning() {
         )
       }
     >
-      <form action={() => void run()} className="contents">
-        <EnterButton busy={isPending && !rowSent} disabled={rowSent} enter="host" type="submit">
-          {t("Keep learning")}
-        </EnterButton>
-      </form>
+      <EnterButton busy={isPending && !rowSent} disabled={rowSent} enter="host" onClick={run}>
+        {t("Keep learning")}
+      </EnterButton>
     </TodayBar>
   );
 }

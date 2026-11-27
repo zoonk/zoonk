@@ -24,6 +24,7 @@ const PUBLISHED_QUESTION_FIELDS = [
   "format",
   "image",
   "itemId",
+  "key",
   "left",
   "options",
   "question",
@@ -74,9 +75,15 @@ async function takeTest({
   seenSkills.add(next.skill);
 
   expect(Object.keys(next).toSorted()).toStrictEqual(PUBLISHED_QUESTION_FIELDS);
+  expect(next.key).toBeNull();
   expect(Boolean(next.set?.listening?.audio?.url)).toBe(next.skill === "listening");
 
-  const answer = next.select === "all" ? { selectedIndexes: [0, 1] } : { selectedIndex: 0 };
+  const shownAt = (text: string) => next.options?.indexOf(text) ?? -1;
+
+  const answer =
+    next.select === "all"
+      ? { selectedIndexes: ["Option 1", "Option 2"].map((text) => shownAt(text)) }
+      : { selectedIndex: shownAt("Right answer") };
 
   const result = await answerLanguageLevelTestOut({
     goalId,
@@ -164,7 +171,12 @@ describe("a language level test-out", () => {
     while (view.next && missed.size < 2) {
       const { next } = view;
       missed.add(next.skill);
-      const answer = next.select === "all" ? { selectedIndexes: [4] } : { selectedIndex: 1 };
+      const shownAt = (text: string) => next.options?.indexOf(text) ?? -1;
+
+      const answer =
+        next.select === "all"
+          ? { selectedIndexes: [shownAt("Option 5")] }
+          : { selectedIndex: shownAt("Wrong answer") };
 
       // oxlint-disable-next-line no-await-in-loop -- Each answer reads the question the last one left.
       const result = await answerLanguageLevelTestOut({

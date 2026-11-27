@@ -1,6 +1,7 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type QuestionTitleProps } from "../../_components/question-title";
 import {
   type StudyBlockDetail,
   type StudyQuestion,
@@ -64,6 +65,15 @@ function getOrderResult(result: QuestionResult | null): OrderResult | null {
   };
 }
 
+/** The answer a learner who said "I don't know yet" sees on the board. */
+function getRevealedMatches(result: QuestionResult | null): number[] | null {
+  const correct = result?.correctAnswer;
+
+  return result && "dontKnow" in result.answer && correct && "matches" in correct
+    ? correct.matches
+    : null;
+}
+
 function getAnswerMark(result: QuestionResult | null): "correct" | "wrong" | null {
   if (!result || "dontKnow" in result.answer) {
     return null;
@@ -124,6 +134,11 @@ export function QuestionView({
   );
 }
 
+/** A statement is answered on its own card, so the host leaves its title to the inputs. */
+export function drawsOwnTitle(format: StudyQuestion["format"]): boolean {
+  return format === "trueFalse";
+}
+
 export function QuestionInputs({
   allowBlank,
   disabled,
@@ -132,6 +147,7 @@ export function QuestionInputs({
   order,
   question,
   result,
+  title,
   trueFalseLabels,
 }: {
   allowBlank: boolean;
@@ -139,11 +155,15 @@ export function QuestionInputs({
   onChange: (answer: StudyQuestionAnswer | null) => void;
   onSubmit: (answer: StudyQuestionAnswer) => void;
   order?: readonly number[];
+  /** `key` only on a learning match, which checks each pair as it's made. */
   question: Pick<
     StudyQuestion,
     "format" | "entry" | "unit" | "options" | "left" | "right" | "question" | "select"
-  >;
+  > &
+    Partial<Pick<StudyQuestion, "key">>;
   result: QuestionResult | null;
+  /** The title the inputs draw themselves (`drawsOwnTitle`), as the host's heading. */
+  title?: QuestionTitleProps;
   trueFalseLabels: TrueFalseLabels;
 }) {
   if (question.format === "numeric") {
@@ -185,9 +205,12 @@ export function QuestionInputs({
   if (question.format === "matchPairs") {
     return (
       <MatchPairsQuestion
+        answerKey={question.key}
         disabled={disabled}
         left={question.left ?? []}
         onChange={onChange}
+        onSubmit={onSubmit}
+        revealed={getRevealedMatches(result)}
         right={question.right ?? []}
       />
     );
@@ -201,6 +224,7 @@ export function QuestionInputs({
         onChange={onChange}
         result={getTrueFalseResult(result)}
         statement={question.question}
+        title={title}
         trueFalseLabels={trueFalseLabels}
       />
     );

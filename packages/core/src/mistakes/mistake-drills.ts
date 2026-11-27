@@ -1,4 +1,5 @@
 import { type MistakeCause } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 
 export const MISTAKE_DRILL_KINDS = [
   "noGuessing",
@@ -35,8 +36,6 @@ const DRILL_KINDS: Readonly<Record<MistakeCause, MistakeDrillKind>> = {
 };
 
 const TIMED_DRILL_SECONDS = 45;
-
-const MS_PER_SECOND = 1000;
 
 export function getDrillKind(cause: MistakeCause | null): MistakeDrillKind {
   return cause ? DRILL_KINDS[cause] : "retry";

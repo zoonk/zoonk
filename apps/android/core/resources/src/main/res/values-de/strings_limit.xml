@@ -40,7 +40,8 @@
   "limit_quick_explanations_used": "0a5660b2593fa43b02d80df36163eab7af9d3b34d8563d1720c1d029247deb5d",
   "limit_sentence": "d9b076e87343071708447aa56ee16a6b05790ba05d865cf809caad6ba094c189",
   "limit_sign_up_required": "8b484cdd0cb30422753b9504a9667fdee5dab6275991ef0b00c335f6724ecdc8",
-  "limit_slow_down": "71b253e518db1136a43a8b04d39b8ab728df1c5e3c46cdf140b26ae5ebd0d5f0",
+  "limit_slow_down_minutes": "2264311d5fcf3f4269578ed6f9e905e146e81bba7d778f09aef3993a14564300",
+  "limit_slow_down_seconds": "8746c967efb0e1c4d9396a114a47aa0207561f98ef23a58fea602c14c04ad85c",
   "limit_still_review": "6086742e8d888dabee70fb9fdb27e7bf534bb446a6a17a8756196bcf771fcda2",
   "limit_try_again_now": "3c1a8e8c36dcd00f14e6385b4c837b2a9877a81944658373626f23fde81e4f46",
   "limit_uploads_day": "cca2bb8e51977311ff75900a1bc9eda2d28337a7b39e7b109b0506cc5a0ce8a3",
@@ -49,7 +50,16 @@
 -->
 <resources>
     <string name="limit_create_account">Kostenloses Konto erstellen</string>
-    <string name="limit_slow_down">Mach eine kurze Pause und versuch es dann noch einmal.</string>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again. -->
+    <plurals name="limit_slow_down_seconds">
+        <item quantity="one">Mach eine kurze Pause. Du kannst es in %1$s Sekunde noch einmal versuchen.</item>
+        <item quantity="other">Mach eine kurze Pause. Du kannst es in %1$s Sekunden noch einmal versuchen.</item>
+    </plurals>
+    <!-- The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again. -->
+    <plurals name="limit_slow_down_minutes">
+        <item quantity="one">Mach eine kurze Pause. Du kannst es in %1$s Minute noch einmal versuchen.</item>
+        <item quantity="other">Mach eine kurze Pause. Du kannst es in %1$s Minuten noch einmal versuchen.</item>
+    </plurals>
     <string name="limit_sign_up_required">Dafür brauchst du ein kostenloses Konto</string>
     <string name="limit_more_tomorrow">Morgen gibt es mehr.</string>
     <string name="limit_more_tomorrow_or_subscribe">Morgen geht es weiter. Mit einem Abo kannst du gleich weitermachen.</string>

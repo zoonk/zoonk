@@ -29,7 +29,6 @@ import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.beforeAfterRenderer
-import com.zoonk.android.feature.activities.canvasOwnsAnswer
 import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
@@ -83,6 +82,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.model.canvasOwnsAnswer
 import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.feature.questions.decimalEntryRule
 import com.zoonk.android.ui.components.Eyebrow
@@ -149,9 +149,12 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "unitCircle" to unitCircleRenderer,
     )
 
+internal val ActivityFrame.renderer: ActivityRenderer?
+    get() = if (hasSupportedCanvas) activityRenderers[template] else null
+
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */
 val StepContent.Activity.isPlayable: Boolean
-    get() = frame.check !is InteractionCheckValue || frame.template in activityRenderers
+    get() = frame.check !is InteractionCheckValue || frame.renderer != null
 
 /** Main's `ActivityStep`: the badge and prompt, the picture, the check and the template's canvas, then its own feedback. */
 @Composable
@@ -165,7 +168,7 @@ internal fun ActivityView(
     part: StepPart,
 ) {
     val frame = content.frame
-    val renderer = activityRenderers[frame.template]
+    val renderer = frame.renderer
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
@@ -208,6 +211,10 @@ internal fun ActivityView(
             content.baseMap,
             actions::takeNumberKeys,
             rounded,
+            onComplete = { done ->
+                onAnswerChange(done)
+                if (!locked) actions.runPrimary()
+            },
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
@@ -238,7 +245,11 @@ internal fun ActivityView(
             check()
             if (!canvasOnScreen && checkFirst) canvas()
 
-            if (result != null) ActivityFeedback(frame.check, activityAnswer, result.isCorrect, rounded, showsNumbers = !ownsAnswer)
+            if (result != null) {
+                ActivityFeedback(frame.check, activityAnswer, result.isCorrect, rounded, showsNumbers = !ownsAnswer) {
+                    renderer?.feedback?.invoke(content.content, activityAnswer)
+                }
+            }
         }
     }
 }
@@ -359,6 +370,7 @@ private fun NumericCheckField(
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
+            ActivityExpectedFormulaTolerance.Kind.UNKNOWN_DEFAULT_OPEN_API -> 0.0
             ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
@@ -378,7 +390,7 @@ internal fun ExploredActivityCanvas(
     explore: ExploredActivity,
     cantListen: Boolean,
 ) {
-    val renderer = activityRenderers[explore.frame.template] ?: return
+    val renderer = explore.frame.renderer ?: return
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ScreenCanvas {
@@ -440,7 +452,7 @@ private fun ActivityDataNote(frame: ActivityFrame) {
     }
 }
 
-/** Main's `ActivityFeedback`: the verdict, then the check's own reasons, numbers or explanation. */
+/** Main's `ActivityFeedback`: the verdict, the template's own [added] lines, then the check's reasons, numbers or explanation. */
 @Composable
 private fun ActivityFeedback(
     check: ActivityCheck,
@@ -448,6 +460,7 @@ private fun ActivityFeedback(
     isCorrect: Boolean,
     rounded: ActivityRoundedAnswer?,
     showsNumbers: Boolean,
+    added: @Composable () -> Unit,
 ) {
     val reveal = LocalFeedbackReveal.current
 
@@ -457,6 +470,8 @@ private fun ActivityFeedback(
             tone = if (isCorrect) FeedbackTone.Right else FeedbackTone.Wrong,
             modifier = Modifier.revealPart(reveal, RevealPart.Verdict),
         )
+
+        added()
 
         when (check) {
             is ChoiceCheckValue -> {
@@ -488,6 +503,8 @@ private fun ActivityFeedback(
             is InteractionCheckValue -> {
                 FeedbackText(check.value.explanation)
             }
+
+            else -> {}
         }
 
         LocalResultNotes.current?.invoke()

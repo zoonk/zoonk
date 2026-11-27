@@ -43,6 +43,13 @@ export const studyBlockQuestionSchema = z.object({
     }),
   image: questionImageSchema,
   itemId: idSchema,
+  key: z
+    .array(z.int().nonnegative())
+    .nullable()
+    .meta({
+      description:
+        "For a learning match, the shown right index for each left entry; null otherwise",
+    }),
   left: z.array(z.string()).nullable().meta({ description: "Match pairs: the left column" }),
   mistakeId: idSchema.nullable(),
   options: z

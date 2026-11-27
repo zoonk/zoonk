@@ -14,8 +14,10 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_HOUR } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { pickItemInBlock } from "../_test-utils/shown-choice";
 import { loadListeningSkillIds } from "../exams/listening/listening-skills";
 import { mistakeListInputSchema } from "../mistakes/contract";
 import { listCurrentUserMistakes } from "../mistakes/list-current-user-mistakes";
@@ -32,8 +34,6 @@ import { readBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
-
-const HOUR_MS = 3_600_000;
 
 async function passageFixture() {
   const user = await userFixture();
@@ -129,7 +129,7 @@ describe("question sets in practice", () => {
     const { alone, goal, setItems, skillId, user } = await passageFixture();
 
     await attemptFixture({
-      answeredAt: new Date(SESSION_NOW.getTime() - 2 * HOUR_MS),
+      answeredAt: new Date(SESSION_NOW.getTime() - 2 * MS_PER_HOUR),
       itemId: setItems[1],
       skillId,
       userId: user.id,
@@ -215,13 +215,17 @@ describe("question sets in practice", () => {
     const ref = { blockId: block.id, sessionId: session.id };
     await startStudyBlock({ ...ref, input: {} });
 
-    const answer = ({ itemId, selectedIndex }: { itemId: string; selectedIndex: number }) =>
+    const answer = async ({ itemId, right }: { itemId: string; right: boolean }) =>
       answerStudyQuestion({
         ...ref,
-        input: { answer: { selectedIndex }, durationMs: 4000, itemId },
+        input: {
+          answer: await pickItemInBlock({ blockId: block.id, itemId, right }),
+          durationMs: 4000,
+          itemId,
+        },
       });
 
-    const first = await answer({ itemId: itemIds[0] ?? "", selectedIndex: 1 });
+    const first = await answer({ itemId: itemIds[0] ?? "", right: false });
     expect(first.status === "ready" && first.feedback.transcript).toBeNull();
 
     const notebook = await listCurrentUserMistakes(
@@ -240,7 +244,7 @@ describe("question sets in practice", () => {
       inProgress.status === "ready" && inProgress.detail.questions[0]?.set?.listening?.transcript,
     ).toBeNull();
 
-    const last = await answer({ itemId: itemIds[1] ?? "", selectedIndex: 0 });
+    const last = await answer({ itemId: itemIds[1] ?? "", right: true });
 
     expect(last.status === "ready" && last.feedback.transcript).toStrictEqual([
       { speaker: "Receptionist", text: "Good morning, Riverside Sports Centre. How can I help?" },
@@ -251,11 +255,11 @@ describe("question sets in practice", () => {
   });
 
   it.each([
-    { optionIndex: 0, outcome: "won" },
-    { optionIndex: 1, outcome: "lost" },
+    { outcome: "won", right: true },
+    { outcome: "lost", right: false },
   ])(
     "shows a recording's transcript once a boss's duel is $outcome before its last question",
-    async ({ optionIndex }) => {
+    async ({ right }) => {
       const user = await userFixture();
 
       const { goal, skills } = await sessionGoalFixture({
@@ -300,10 +304,14 @@ describe("question sets in practice", () => {
       mockSession(user.id);
       const ref = { blockId: block.id, sessionId: session.id };
 
-      const answer = (itemId: string) =>
+      const answer = async (itemId: string) =>
         answerStudyQuestion({
           ...ref,
-          input: { answer: { selectedIndex: optionIndex }, durationMs: 4000, itemId },
+          input: {
+            answer: await pickItemInBlock({ blockId: block.id, itemId, right }),
+            durationMs: 4000,
+            itemId,
+          },
         });
 
       const first = await answer(itemIds[0] ?? "");
@@ -323,7 +331,7 @@ describe("question sets in practice", () => {
       ).toContainEqual({ speaker: "Tom", text: "Tuesday, no, sorry, Thursday the twelfth." });
 
       await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
-        completion: { checkpoint: { passMark: 2, passed: optionIndex === 0, total: 2 } },
+        completion: { checkpoint: { passMark: 2, passed: right, total: 2 } },
         status: "ready",
       });
     },

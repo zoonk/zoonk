@@ -3,15 +3,16 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { type Json, type Resolution, refuse, toJson } from "../_utils/resolved-change";
+import { bankedCheckRef, screenSelect, syncStepCheckQuestion } from "./check-question";
 import { defineFixHandler, fieldChangeSchema, idSchema } from "./fix-handler";
 import { prepareOptions } from "./option-collections";
-import { screenSelect } from "./screens";
 
 type Model = "Step" | "StepVariant";
 const pictureSchema = z.object({ mediaAssetId: idSchema, optionId: z.string() });
 
 const storedSchema = <ModelName extends Model>(model: ModelName) =>
   z.object({
+    checkItemId: idSchema.optional(),
     fields: z.array(fieldChangeSchema),
     id: idSchema,
     mintedIds: z.array(z.string()),
@@ -61,8 +62,8 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
 
     const { before, step, stepId } = loaded;
 
-    if (step.staged || step.retiredAt || step.itemId) {
-      return refuse("Only a current screen without a bank Item supports setOptions.");
+    if (step.staged || step.retiredAt || step.item?.format === "numeric") {
+      return refuse("Only a current screen without a numeric bank Item supports setOptions.");
     }
 
     const result = prepareOptions(
@@ -117,6 +118,7 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
       ],
       ok: true,
       stored: {
+        ...bankedCheckRef(model, step),
         fields: [{ after: result.after, before: toJson(before), field: "content" }],
         id: proposed.id,
         mintedIds: [...new Set([...result.mintedIds, ...(proposed.allowedIds ?? [])])],
@@ -139,15 +141,23 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
 
       const updated =
         model === "Step"
-          ? await tx.step.update({ data: { content }, where: { id: stored.id } })
-          : await tx.stepVariant.update({ data: { content }, where: { id: stored.id } });
+          ? {
+              model: "Step" as const,
+              row: await tx.step.update({ data: { content }, where: { id: stored.id } }),
+            }
+          : {
+              model: "StepVariant" as const,
+              row: await tx.stepVariant.update({ data: { content }, where: { id: stored.id } }),
+            };
 
-      const stepId = "stepId" in updated ? updated.stepId : updated.id;
+      const stepId = updated.model === "Step" ? updated.row.id : updated.row.stepId;
 
       await tx.answerExplanation.deleteMany({ where: { stepId } });
       await tx.tutorSharedAnswer.deleteMany({ where: { stepId } });
 
-      if (model === "Step") {
+      if (updated.model === "Step") {
+        await syncStepCheckQuestion(tx, updated.row);
+
         await tx.stepOptionPicture.deleteMany({
           where: { optionId: { in: stored.pictures.map((picture) => picture.optionId) }, stepId },
         });
@@ -159,6 +169,7 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
     },
     model,
     op: "setOptions",
+    planRoots: ({ checkItemId }) => ({ itemIds: checkItemId ? [checkItemId] : [] }),
     proposal: {
       rules:
         "Send { setOptions: { content } } with the whole screen. Kept options change only isCorrect; new options omit id. Include every variant with setOptions in the same fix. Picture-option additions are unsupported.",

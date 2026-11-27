@@ -78,8 +78,9 @@ function EmailField({
           name="email"
           onChange={(event) => onChange(event.target.value)}
           placeholder={t({
-            description: "An example email address in an empty field. Adapt it to the language.",
-            message: "myemail@gmail.com",
+            description:
+              'An example email address in an empty email field. Localize "you" and keep example.com.',
+            message: "you@example.com",
           })}
           required={required}
           type="email"
@@ -116,6 +117,14 @@ async function sendMessage({
   }
 
   return "success";
+}
+
+/**
+ * A message sent before the page hydrated goes with the words it had then, while the box keeps what
+ * was typed after: only those words are left to send.
+ */
+function unsentPart({ current, sent }: { current: string; sent: string }): string {
+  return current.startsWith(sent) ? current.slice(sent.length).trimStart() : current;
 }
 
 type FeedbackFormLayout = "dialog" | "page";
@@ -183,9 +192,10 @@ export function FeedbackForm({
 
       const result = await sendMessage({ context, email, feedback, message });
 
-      if (result === "success") {
-        const submitted = formData.get("message");
-        setDraft((current) => (current === submitted ? "" : current));
+      const sent = formData.get("message");
+
+      if (result === "success" && typeof sent === "string") {
+        setDraft((current) => unsentPart({ current, sent }));
         onSent?.();
       }
 

@@ -4,6 +4,7 @@ import { useExtracted } from "next-intl";
 import { QuestionActions } from "../../_components/question-actions";
 import { type TaskSegment } from "../../_components/task-header";
 import { TaskActionBar } from "../../_components/task-layout";
+import { useScreenAtTop } from "../../_utils/use-screen-at-top";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
@@ -156,6 +157,8 @@ export function QuestionBlock({
   const blockDrill = useBlockDrill({ detail, index: run.state.index });
   const draft = useDraftAnswer(run.state.index, question);
   const aside = useBlockAside({ question, tutor });
+  const screen = `${blockDrill.stage === "idea"}:${run.state.index}`;
+  useScreenAtTop(phase.kind === "finished" ? "finished" : screen);
 
   if (phase.kind === "finished") {
     return (

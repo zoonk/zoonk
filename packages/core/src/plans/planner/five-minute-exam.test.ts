@@ -1,3 +1,4 @@
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { checkDayOneHasSession, checkDayOneOpensWithGaps } from "../_test-utils/rules/day-rules";
 import { checkWrittenTestsKept } from "../_test-utils/rules/keep-rules";
@@ -7,7 +8,6 @@ import { toIsoDate } from "./plan-calendar";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 const graph: PlanGraph = {
   phases: [
@@ -58,13 +58,13 @@ function newPlan({
   gaps?: string[];
   minutes: number;
 }): RuleContext {
-  const today = new Date(TODAY.getTime() + from * DAY_MS);
+  const today = new Date(TODAY.getTime() + from * MS_PER_DAY);
 
   const input: BuildPlanInput = {
     goal: {
       dailyMinutes: minutes,
       kind: "exam",
-      targetDate: new Date(today.getTime() + daysAway * DAY_MS),
+      targetDate: new Date(today.getTime() + daysAway * MS_PER_DAY),
     },
     graph,
     items: [],
