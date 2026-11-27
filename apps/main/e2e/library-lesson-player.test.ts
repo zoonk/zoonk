@@ -281,7 +281,11 @@ test.describe("Library lesson player", () => {
     await page.reload();
 
     await expect(page.getByText("Reading it")).toBeVisible();
-    await expect(notSaved).toBeVisible();
+
+    expect(
+      await prisma.attempt.count({ where: { stepId: missed, userId: noProgressUser.id } }),
+    ).toBe(0);
+
     await primary(page, /^Continue/u).click();
     await expect(notSaved).toBeHidden();
 

@@ -180,10 +180,6 @@ export function LessonPlayerProvider({
 
     const held = viewer.learnerId && state.run.status === "idle" ? reopen(viewer.learnerId) : [];
 
-    if (held.length > 0) {
-      dispatch({ type: "saveFailed" });
-    }
-
     if (held.length > 0 && !(firstAnswer && state.phase === "feedback")) {
       dispatch({ answers: addHeldAnswers(resume, held), type: "unsentPlaced" });
     }
