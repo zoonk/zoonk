@@ -17,8 +17,9 @@ function leadsTo(away: RegExp) {
 /**
  * Holds the answer to the page's next Server Action on `path`, as a slow connection would: `start`
  * sends it, `whileHeld` runs once its request has reached the server, and then the answer is handed
- * over. Only that one request is held, and it is answered and its route removed before this
- * returns, even when a step fails, so nothing is left in flight when the test ends.
+ * over. Only that one request is held; later ones pass straight through. It is answered and the
+ * route removed before this returns, even when a step fails, so nothing is left in flight when the
+ * test ends.
  *
  * With `away`, it says whether the answer then took the learner there. A navigation counts from its
  * request, since on a loaded machine its page can take longer than the wait to show.
@@ -51,7 +52,6 @@ export async function holdActionAnswer(
     caught = true;
 
     try {
-      await page.unroute(pattern, handler);
       const response = await route.fetch();
       held.resolve(null);
       await released.promise;
