@@ -9,6 +9,7 @@ function subject(
   return {
     areas: [key],
     chapters: [],
+    covers: [],
     displayWeight: null,
     group: null,
     imageUrl: null,

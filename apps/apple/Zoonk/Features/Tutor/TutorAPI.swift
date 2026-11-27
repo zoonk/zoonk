@@ -194,7 +194,7 @@ private func readThread(
     case .notFound: throw APIError.notFound
     case .badRequest, .internalServerError, .undocumented: throw APIError.unavailable
     }
-  case .subject(let goalId, let subjectKey):
+  case .subject(let goalId, let subjectKey, _):
     let output = try await client.getSubjectQuestionThread(
       path: .init(goalId: goalId, subjectKey: subjectKey),
       query: .init(contextKind: .subject, cursor: cursor))
@@ -259,7 +259,7 @@ private func createQuestion(
   case .plan(let goalId):
     return try createdQuestion(
       try await client.createPlanQuestion(path: .init(goalId: goalId), body: .json(request)))
-  case .subject(let goalId, let subjectKey):
+  case .subject(let goalId, let subjectKey, _):
     return try createdQuestion(
       try await client.createSubjectQuestion(
         path: .init(goalId: goalId, subjectKey: subjectKey), body: .json(request)))

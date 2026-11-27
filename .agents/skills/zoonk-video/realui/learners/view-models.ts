@@ -317,6 +317,7 @@ function subject(input: SampleLearner["subjects"][number], index: number): Sylla
   return {
     areas: [input.name],
     chapters: [],
+    covers: [],
     displayWeight: null,
     group: null,
     imageUrl: null,

@@ -16,7 +16,7 @@ internal fun askLabel(
             is TutorScope.Chapter -> R.string.tutor_ask_chapter
             is TutorScope.Mock -> R.string.tutor_ask_mock
             is TutorScope.Plan -> R.string.tutor_ask_plan
-            is TutorScope.Subject -> R.string.tutor_ask_subject
+            is TutorScope.Subject -> if (scope.module) R.string.tutor_ask_module else R.string.tutor_ask_subject
             is TutorScope.Answer -> R.string.tutor_ask_answer
             is TutorScope.Item -> if (scope.answered) R.string.tutor_ask_answer else R.string.tutor_ask_question
             is TutorScope.Lesson, is TutorScope.Step -> R.string.tutor_ask_screen
@@ -33,28 +33,19 @@ internal fun descriptionLabel(scope: TutorScope): String =
             is TutorScope.Lesson -> R.string.tutor_description_lesson
             is TutorScope.Mock -> R.string.tutor_description_mock
             is TutorScope.Plan -> R.string.tutor_description_plan
-            is TutorScope.Subject -> R.string.tutor_description_subject
+            is TutorScope.Subject -> if (scope.module) R.string.tutor_description_module else R.string.tutor_description_subject
             is TutorScope.Item -> R.string.tutor_description_item
         },
     )
 
+/** What a question in [scope]'s conversation is about; a subject's questions name a module as its page does. */
 @Composable
-internal fun placeholderLabel(scope: TutorScope): String =
-    stringResource(
-        when (scope) {
-            is TutorScope.Chapter -> R.string.tutor_placeholder_chapter
-            is TutorScope.Mock -> R.string.tutor_placeholder_mock
-            is TutorScope.Plan -> R.string.tutor_placeholder_plan
-            is TutorScope.Subject -> R.string.tutor_placeholder_subject
-            is TutorScope.Item -> R.string.tutor_placeholder_item
-            is TutorScope.Answer -> R.string.tutor_placeholder_answer
-            is TutorScope.Lesson, is TutorScope.Step -> R.string.tutor_placeholder_lesson
-        },
-    )
-
-@Composable
-internal fun aboutLabel(about: TutorTurn.About): String =
-    stringResource(
+internal fun aboutLabel(
+    about: TutorTurn.About,
+    scope: TutorScope,
+): String {
+    val module = (scope as? TutorScope.Subject)?.module == true
+    return stringResource(
         when (about) {
             TutorTurn.About.Answer -> R.string.tutor_about_answer
             TutorTurn.About.Chapter -> R.string.tutor_about_chapter
@@ -62,10 +53,11 @@ internal fun aboutLabel(about: TutorTurn.About): String =
             TutorTurn.About.Mock -> R.string.tutor_about_mock
             TutorTurn.About.Plan -> R.string.tutor_about_plan
             TutorTurn.About.Step -> R.string.tutor_about_step
-            TutorTurn.About.Subject -> R.string.tutor_about_subject
+            TutorTurn.About.Subject -> if (module) R.string.tutor_about_module else R.string.tutor_about_subject
             TutorTurn.About.Item -> R.string.tutor_about_question
         },
     )
+}
 
 @Composable
 internal fun failureMessage(failure: TutorFailure?): String {

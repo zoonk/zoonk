@@ -189,7 +189,7 @@ fun TutorPanel(
             state,
             routes,
             composerPadding,
-            placeholder = page?.placeholder ?: placeholderLabel(vm.scope),
+            placeholder = page?.placeholder ?: identity.askText(),
             focus = page?.composerFocus ?: remember { FocusRequester() },
         )
     }

@@ -77,7 +77,7 @@ final class PlanSubjectsRenderTests: XCTestCase {
       preparation: Double?
     ) -> [String: Any] {
       [
-        "areas": [], "chapters": [], "displayWeight": NSNull(), "group": NSNull(),
+        "areas": [], "chapters": [], "covers": [], "displayWeight": NSNull(), "group": NSNull(),
         "imageUrl": NSNull(), "key": key, "lessonsDone": done, "lessonsKnown": known,
         "lessonsTotal": total, "mastery": NSNull(), "matrix": [], "name": name,
         "nextDate": NSNull(), "notPlannedReason": NSNull(),

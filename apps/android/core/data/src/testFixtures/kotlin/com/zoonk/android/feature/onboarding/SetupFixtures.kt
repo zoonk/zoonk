@@ -220,7 +220,7 @@ fun subjectOf(
     percent: Int? = null,
     assumed: Boolean = false,
 ) = """
-    {"areas":["$name"],"chapters":[],"key":"${name.lowercase().replace(' ', '-')}","lessonsDone":0,"lessonsKnown":0,
+    {"areas":["$name"],"chapters":[],"covers":[],"key":"${name.lowercase().replace(' ', '-')}","lessonsDone":0,"lessonsKnown":0,
      "lessonsTotal":10,"matrix":[],"name":"$name","sharedWith":[],"shortName":"$name","source":"notice","topics":[]
      ${percent?.let {
     ""","displayWeight":{"basis":"${if (assumed) "assumed" else "stated"}","percent":$it,"share":${it / 100.0}}"""

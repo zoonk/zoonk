@@ -831,6 +831,8 @@
     <string name="plan_outside_others_first">Not in your plan · other topics come first</string>
     <!-- Why a topic, subject or step on the path isn't in the learner's plan: they took its subject out. -->
     <string name="plan_outside_skipped">Not in your plan · you took this subject out</string>
+    <!-- Why a module or a step on the path isn't in the learner's plan: they took the module out. Said on a plan that isn't for an exam, whose list is titled "Modules". -->
+    <string name="plan_outside_skipped_module">Not in your plan · you took this module out</string>
     <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
     <string name="plan_trickster_not_in_plan">The Trickster isn\'t in your plan</string>
     <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->

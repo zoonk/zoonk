@@ -20,9 +20,11 @@ import {
 import { FactSegments } from "../_components/task-meta";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
+import { namesModules } from "./names-modules";
 import { useAlsoIn } from "./shared-exams";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";
+import { SubjectCovers } from "./subject-covers";
 import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
@@ -43,6 +45,7 @@ export type SubjectSyllabus = Pick<
   SyllabusView,
   | "examDocument"
   | "fromMaterial"
+  | "goal"
   | "hasNotice"
   | "questionsSource"
   | "sharedExams"
@@ -246,6 +249,7 @@ export function SubjectScreen({
 }) {
   const t = useExtracted();
   const written = findWrittenSubject({ practice: syllabus.writtenPractice, subject });
+  const isModule = namesModules(syllabus.goal.kind);
 
   return (
     <DetailLayout
@@ -256,14 +260,17 @@ export function SubjectScreen({
           written={written}
         />
       }
-      asideLabel={t("About this subject")}
+      asideLabel={isModule ? t("About this module") : t("About this subject")}
       bar={
         <LearnPageBar
           back={{ href: hrefs.back, label: t("Plan") }}
           title={subject.shortName ?? subject.name}
         >
           {ask}
-          <ReportProblemMenu label={t("Subject options")} screen="subject" />
+          <ReportProblemMenu
+            label={isModule ? t("Module options") : t("Subject options")}
+            screen="subject"
+          />
         </LearnPageBar>
       }
       bottomBar={
@@ -279,10 +286,17 @@ export function SubjectScreen({
         <SubjectHeader subject={subject} syllabus={syllabus} written={written} />
         {/* A written part's headline is its estimated points: lessons are a small part of its time. */}
         {!written && <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />}
-        <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
+        <NotPlannedCallout
+          actions={actions}
+          adjustHref={hrefs.adjust}
+          isModule={isModule}
+          subject={subject}
+        />
       </DetailAside>
 
       <DetailContent>
+        <SubjectCovers covers={subject.covers} />
+
         {written && hrefs.answer && (
           <SubjectWrittenScore answerHref={hrefs.answer} written={written} />
         )}

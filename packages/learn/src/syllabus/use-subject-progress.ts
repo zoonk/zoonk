@@ -50,10 +50,10 @@ export function useKnownLine() {
   };
 }
 
-export function useSubjectProgress() {
+export function useSubjectProgress({ isModule }: { isModule: boolean }) {
   const t = useExtracted();
   const knownLine = useKnownLine();
-  const reasonText = useNotPlannedReason();
+  const reasonText = useNotPlannedReason({ isModule });
 
   return (subject: SyllabusSectionSubject): SubjectProgress => {
     const total = subject.topics.length;

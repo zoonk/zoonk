@@ -1175,6 +1175,24 @@ class PlanScreenshots {
 
     private fun page() = PlanPageState(learnerSummary().goals.first(), learnPlan(), learnerSummary())
 
+    /** A learn goal whose path ends in a module the learner took out of the plan. */
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun phoneWithAModuleTakenOut() = capture("plan-module-taken-out-phone", exam = takenOutPage())
+
+    @Test
+    @Config(qualifiers = "pt-w411dp-h1900dp-xxhdpi")
+    fun phoneWithAModuleTakenOutInPortuguese() = capture("plan-module-taken-out-phone-pt", exam = takenOutPage())
+
+    private fun takenOutPage(): PlanPageState {
+        val plan = learnPlan()
+        val phases =
+            plan.phases.map {
+                if (it.index == plan.phases.last().index) it.copy(state = PlanPhase.State.LEFT_OUT, notPlannedReason = "skipped") else it
+            }
+        return PlanPageState(learnerSummary().goals.first(), plan.copy(phases = phases), learnerSummary())
+    }
+
     private fun write(
         name: String,
         bitmap: Bitmap,

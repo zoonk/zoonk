@@ -78,6 +78,7 @@ export function ExamSubject({ lang, q }: { lang: Lang; q: URLSearchParams }) {
         subject={subject}
         syllabus={{
           fromMaterial: false,
+          goal: examSyllabus(lang).goal,
           kind: "notice",
           questionsSource: null,
           sharedExams: [],
