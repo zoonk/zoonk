@@ -235,6 +235,9 @@ describe("Original notebook questions", () => {
     vi.mocked(explainSpokenAnswer).mockResolvedValue({
       data: { explanation: "Ask the whole question." },
       provenance: targetTranscript().provenance,
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
     });
 
     vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText, language }) => {
