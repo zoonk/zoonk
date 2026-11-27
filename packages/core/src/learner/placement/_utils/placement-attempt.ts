@@ -224,10 +224,7 @@ async function resumePlacementAttempt({
     return { events: openingEvents({ attempt, goal, previous: current }), goal };
   }
 
-  if (current.length === "quick" && length === "quick") {
-    return unchanged({ events: [], goal });
-  }
-
+  // Released Android sends the completed part's length when the learner taps Keep going.
   const plan = await loadPlacementPlan(goalId, tx);
   const { attemptNextPart } = await loadPlacementWithSummary({ goalId, plan, tx, userId });
 
