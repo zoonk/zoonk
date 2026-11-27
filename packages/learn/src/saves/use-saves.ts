@@ -15,7 +15,7 @@ export type SaveState<Target> = { saved: boolean; target: Target };
 
 /**
  * Shows the learner's choice at once, on every page in this tab, and sends it as the state they
- * want ([toggleSave]). A save that fails goes back, and says so if the learner is still on the
+ * want through `toggleSave`. A save that fails goes back, and says so if the learner is still on the
  * visit of their last tap. What the server last stored for a save made in this tab wins over what
  * the page was served, a copy the router kept from before the tap included.
  */
