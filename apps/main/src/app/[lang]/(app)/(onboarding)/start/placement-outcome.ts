@@ -39,7 +39,11 @@ export function toPlacementOutcome(placement: PlacementState): PlacementOutcome 
   }
 
   if (placement.status === "unavailable") {
-    return { attempt: placement.attempt ?? null, status: "unavailable" };
+    return {
+      attempt: placement.attempt ?? null,
+      result: placement.result ?? null,
+      status: "unavailable",
+    };
   }
 
   return {

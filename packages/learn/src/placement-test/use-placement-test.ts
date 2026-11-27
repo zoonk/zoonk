@@ -1,15 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { type GenerationRun } from "../generation/generation-run";
-import {
-  type PlacementAnswer,
-  type PlacementAttemptView,
-  type PlacementOutcome,
-} from "../onboarding/onboarding-actions";
+import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboarding-actions";
 import { usePlacementQuestionPoll } from "../onboarding/steps/use-placement-question-poll";
 import { isRunStopped } from "../onboarding/steps/wait-run";
-import { type PlacementLength, type PlacementTestActions } from "./placement-test-actions";
+import { type PlacementTestActions } from "./placement-test-actions";
 import {
   type PlacementQuestionPhase,
   type PlacementTestPhase,
@@ -48,7 +44,7 @@ function countFailure({
     : current;
 }
 
-type OpenAttempt = { id: string; part: number };
+type OpenAttempt = { id: string };
 
 export function usePlacementTest({
   actions,
@@ -70,15 +66,15 @@ export function usePlacementTest({
 
   const offered = host.surface === "onboarding" && host.mode === "offer";
   const [phase, setPhase] = useState<PlacementTestPhase>({ kind: offered ? "offer" : "loading" });
-  const wanted = useRef<PlacementLength>("quick");
   const waiting = phase.kind === "waiting" ? phase : null;
 
   /**
-   * Closing a part applies what it skipped; another device that closed it first wins. A stop sends
-   * the answers its question showed, so a stop from a question another device moved past is refused.
+   * Closing the test applies where it starts the learner; another device that closed it first wins.
+   * A stop sends the answers its question showed, so a stop from a question another device moved
+   * past is refused.
    */
   const close = async (attempt: OpenAttempt, answered?: number) => {
-    const finished = await actions.finish({ answered, attemptId: attempt.id, part: attempt.part });
+    const finished = await actions.finish({ answered, attemptId: attempt.id });
 
     if (finished.status === "failed") {
       return false;
@@ -93,11 +89,11 @@ export function usePlacementTest({
     return true;
   };
 
-  /** A part that's over closes in the same save; if that fails, its screen holds the retry. */
+  /** A test that's over closes in the same save; if that fails, its screen holds the retry. */
   const show = async (outcome: PlacementOutcome, asked: boolean): Promise<boolean> => {
     const next = toPlacementTestPhase({ asked, outcome, surface });
 
-    if (next.kind !== "partOver") {
+    if (next.kind !== "over") {
       setPhase(next);
       return true;
     }
@@ -111,10 +107,9 @@ export function usePlacementTest({
     return closed;
   };
 
-  const start = (length: PlacementLength) => async () => {
+  const start = async () => {
     analytics.markStarted();
-    wanted.current = length;
-    const outcome = await actions.start(length).catch(() => FAILED);
+    const outcome = await actions.start().catch(() => FAILED);
     return outcome.status !== "failed" && show(outcome, true);
   };
 
@@ -126,7 +121,7 @@ export function usePlacementTest({
       return;
     }
 
-    if (!(await start("quick")().catch(() => false))) {
+    if (!(await start().catch(() => false))) {
       setPhase({ kind: "loadFailed" });
     }
   };
@@ -145,7 +140,7 @@ export function usePlacementTest({
       outcome.status === "generationFailed" || outcome.status === "unavailable"
         ? toPlacementTestPhase({ asked: true, outcome, surface })
         : wait,
-    paused: Boolean(waiting?.retryLength) || isRunStopped(build),
+    paused: Boolean(waiting?.retry) || isRunStopped(build),
     read: actions.get,
     setPhase,
     waiting,
@@ -160,7 +155,6 @@ export function usePlacementTest({
             attemptId: from.attempt.id,
             durationMs,
             itemId: from.question.itemId,
-            part: from.attempt.part,
           }),
         question: from.question,
         read: actions.get,
@@ -179,48 +173,28 @@ export function usePlacementTest({
     continueWait: () => {
       const arrived = waiting?.arrived;
 
-      if (!arrived) {
-        return;
-      }
-
-      if (arrived.attempt) {
+      if (arrived) {
         save(null, () => show(arrived, true));
-        return;
       }
-
-      // Questions for a test that couldn't open yet: the start the learner asked for opens it now,
-      // and one that doesn't go through waits for "Try again".
-      const length = wanted.current;
-
-      run(async () => {
-        if (!(await start(length)())) {
-          setPhase((current) =>
-            current === waiting ? { kind: "waiting", retryLength: length } : current,
-          );
-        }
-      });
     },
     failed,
     isPending,
-    /** Goes on with a test that was stopped before its end. */
-    onContinue: (attempt: Pick<PlacementAttemptView, "length">) =>
-      save("main", start(attempt.length)),
     onDecline: () =>
       save("main", async () =>
         host.surface === "onboarding" && (await host.decline()) ? onLeave() : false,
       ),
-    /** Closes a part the learner came back to after its questions ran out. */
-    onFinishPart: (attempt: OpenAttempt) => save("main", () => close(attempt)),
+    /** Closes a test the learner came back to after its questions ran out. */
+    onFinish: (attempt: OpenAttempt) => save("main", () => close(attempt)),
     onLeave: (button: Exclude<TestPressed, null>, attemptId?: string) =>
       save(button, () => onLeave(attemptId).catch(() => false)),
     onOpenLesson: (lessonId: string, openLesson?: (lessonId: string) => Promise<boolean>) =>
       save("main", () => (openLesson ? openLesson(lessonId) : onLeave()).catch(() => false)),
     onRetryWait: () => {
-      if (!isPending && waiting?.retryLength) {
-        save("main", start(waiting.retryLength));
+      if (!isPending && waiting?.retry) {
+        save("main", start);
       }
     },
-    onStart: () => save("main", start("quick")),
+    onStart: () => save("main", start),
     phase,
     poll,
     pressed,

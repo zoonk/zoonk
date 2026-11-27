@@ -12,12 +12,7 @@ import { PlacementDone, PlacementUnavailable } from "../onboarding/steps/placeme
 import { PlacementWaiting, useWaitLeave } from "../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../onboarding/steps/step-parts";
 import { type PlacementTestActions } from "./placement-test-actions";
-import {
-  CoursePlanOffer,
-  CourseStartOffer,
-  type CourseTestOffer,
-  PlacementContinue,
-} from "./placement-test-offers";
+import { CoursePlanOffer, CourseStartOffer, type CourseTestOffer } from "./placement-test-offers";
 import { type PlacementTestPhase } from "./placement-test-phase";
 import { PlacementResult } from "./placement-test-screens";
 import { type PlacementTestHost, usePlacementTest } from "./use-placement-test";
@@ -29,12 +24,7 @@ import {
 } from "./use-test-analytics";
 
 function toSittingFacts(attempt: PlacementAttemptView): TestFactsNow {
-  return {
-    attemptId: attempt.id,
-    part: attempt.part,
-    parts: attempt.parts,
-    questions: attempt.questions,
-  };
+  return { attemptId: attempt.id, questions: attempt.questions };
 }
 
 type Flow = {
@@ -50,10 +40,7 @@ type Flow = {
   waitLeave: ReturnType<typeof useWaitLeave>;
 };
 
-type OpenPhase = Exclude<
-  PlacementTestPhase,
-  { kind: "continue" | "loadFailed" | "loading" | "offer" }
->;
+type OpenPhase = Exclude<PlacementTestPhase, { kind: "loadFailed" | "loading" | "offer" }>;
 
 /** The test once it's open: its questions, the wait for them and its result, each a task screen. */
 function PlacementOpenTest({
@@ -82,7 +69,7 @@ function PlacementOpenTest({
           poll={test.poll}
           questionsReady={test.questionsReady}
           readWarmUp={readWarmUp}
-          retry={phase.retryLength ? test.onRetryWait : undefined}
+          retry={phase.retry ? test.onRetryWait : undefined}
           run={run}
           skip={waitLeave}
           skipFailed={failed}
@@ -116,11 +103,11 @@ function PlacementOpenTest({
           trueFalseLabels={phase.trueFalseLabels}
         />
       );
-    case "partOver":
+    case "over":
       return (
         <PlacementDone
           failed={failed}
-          onContinue={() => test.onFinishPart(phase.attempt)}
+          onContinue={() => test.onFinish(phase.attempt)}
           pending={test.isPending}
         />
       );
@@ -179,7 +166,7 @@ export function PlacementTestFlow({
     onShown: () =>
       asked &&
       analytics.firstQuestionShown({ ...toSittingFacts(asked), number: asked.answered + 1 }),
-    sitting: asked && `${asked.id}:${asked.part}`,
+    sitting: asked && asked.id,
   });
 
   const waitLeave = useWaitLeave(onboarding);
@@ -213,24 +200,10 @@ export function PlacementTestFlow({
           pressed={pressed}
         />
       );
-    case "continue":
-      return (
-        <PlacementContinue
-          attempt={phase.attempt}
-          failed={failed}
-          onContinue={() => test.onContinue(phase.attempt)}
-          onLeave={() => {
-            analytics.notNow(toSittingFacts(phase.attempt));
-            test.onLeave("other", phase.attempt.id);
-          }}
-          onShown={(offered) => analytics.offered({ ...offered, ...toSittingFacts(phase.attempt) })}
-          pressed={pressed}
-        />
-      );
     case "waiting":
     case "unavailable":
     case "question":
-    case "partOver":
+    case "over":
     case "result":
       return (
         <OnboardingTask>

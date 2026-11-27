@@ -162,7 +162,7 @@ export function PlacementQuestionScreen({
       groups={groups}
       onClose={onClose}
       onStop={
-        (canStop ?? answered > 0) && !pending
+        (canStop ?? answered > 0)
           ? () => {
               setPressed("stop");
               onStop();
@@ -170,6 +170,7 @@ export function PlacementQuestionScreen({
           : undefined
       }
       stopHint={stopHint}
+      stopWaits={pending}
       title={subject}
       total={total}
     >

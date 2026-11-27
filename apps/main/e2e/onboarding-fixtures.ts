@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page, expect } from "@playwright/test";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import {
@@ -48,14 +48,64 @@ export function testQuestion(page: Page, number: number, total?: number): Locato
     .filter({ visible: true });
 }
 
+/** The question on screen, by the place its header's segments say: gone once the test moves on. */
+export async function questionOnScreen(page: Page): Promise<Locator> {
+  const bar = page.getByRole("progressbar", { name: /^Question \d+ of \d+$/u });
+  const label = await bar.filter({ visible: true }).getAttribute("aria-label");
+
+  if (!label) {
+    throw new Error("Expected a question's segments on screen");
+  }
+
+  return page.getByRole("progressbar", { exact: true, name: label });
+}
+
 /** A test's ✕: it offers the two ways out once stopping gives a result, and only leaves before. */
 export function testLeave(page: Page): Locator {
   return page.getByRole("link", { exact: true, name: "Leave" }).filter({ visible: true });
 }
 
+/** Answers "I don't know yet" and waits until the test has moved on from the question. */
+export async function answerDontKnow(page: Page) {
+  const asked = await questionOnScreen(page);
+  await page.getByRole("button", { name: "I don't know yet" }).click();
+  await expect(asked).toBeHidden();
+}
+
 export async function stopTest(page: Page) {
   await testLeave(page).click();
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
+}
+
+export const ORDER_STEPS = [
+  "Write the equation",
+  "Undo the addition",
+  "Simplify both sides",
+  "Check the answer",
+];
+
+/** A test asks questions a guess rarely gets right, two a topic: each topic gets three to order. */
+export async function addOrderQuestions(goalId: string) {
+  const items = await prisma.planItem.findMany({
+    select: { skillId: true },
+    where: { plan: { goalId }, skillId: { not: null } },
+  });
+
+  await Promise.all(
+    [...new Set(items.flatMap((item) => item.skillId ?? []))].flatMap((skillId) =>
+      ["first", "second", "third"].map((copy) =>
+        itemFixture({
+          content: {
+            question: `Put the ${copy} steps in order.`,
+            reason: "In order.",
+            steps: ORDER_STEPS,
+          },
+          format: "order",
+          skillId,
+        }),
+      ),
+    ),
+  );
 }
 
 export function solvePlacementEquation(question: string): string | null {

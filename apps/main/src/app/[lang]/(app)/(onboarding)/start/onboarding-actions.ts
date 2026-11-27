@@ -27,7 +27,7 @@ import {
   type PlanOutcome,
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
-import { type PlacementPartOutcome } from "@zoonk/learn/placement-test/actions";
+import { type PlacementFinishOutcome } from "@zoonk/learn/placement-test/actions";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
@@ -132,8 +132,8 @@ export async function getPlacementAction({
 }
 
 /**
- * Opens an exam goal's next sitting, or with a `length` the test taken from the plan (its next part
- * once one ended); asked again, it answers with the one already open.
+ * Opens an exam goal's next sitting, or with a `length` the course's test; asked again, it answers
+ * with the one already open.
  */
 export async function startPlacementSittingAction({
   goalId,
@@ -160,7 +160,6 @@ export async function answerPlacementAction({
 }: {
   answer: unknown;
   attemptId?: string;
-  part?: number;
   durationMs: number;
   goalId: string;
   itemId: string;
@@ -197,17 +196,16 @@ export async function finishPlacementAction({
   return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
 }
 
-/** Closes a part of the course test, or stops it midway, and applies what its answers skip. */
-export async function finishPlacementPartAction({
+/** Closes the course test, or stops it midway, and applies where its answers start the learner. */
+export async function finishPlacementTestAction({
   goalId,
   ...input
 }: {
   answered?: number;
   attemptId: string;
   goalId: string;
-  part: number;
   timeZone: string;
-}): Promise<PlacementPartOutcome> {
+}): Promise<PlacementFinishOutcome> {
   const parsed = placementCompletionInputSchema.safeParse({ ...input, fromScratch: false });
 
   if (!parsed.success || !isUuid(goalId)) {
@@ -227,11 +225,9 @@ export async function finishPlacementPartAction({
   const { completion } = finished;
 
   return {
-    attempt: completion.attempt ?? null,
     changeId: completion.changeId,
     ...(completion.heldUntilTomorrow && { heldUntilTomorrow: completion.heldUntilTomorrow }),
     lessonsSkipped: completion.lessonsSkipped,
-    partLessonsSkipped: completion.partLessonsSkipped ?? completion.lessonsSkipped,
     result: completion.result ?? null,
     status: "finished",
   };

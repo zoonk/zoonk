@@ -60,8 +60,10 @@ export function useLevelTestAudio({
   return poll.status === "polling";
 }
 
+const LISTENING_OUTS = ["cantListen", "notUnderstood", "skip"] as const;
+
 /** A listening question's bar: the way around it until the message has played, then the miss. */
-function useListeningOuts() {
+function useListeningOuts(): Record<(typeof LISTENING_OUTS)[number], string> {
   const t = useExtracted();
 
   return {
@@ -109,8 +111,8 @@ function AskedQuestion({
   const { question } = step;
   const isListening = question.skill === "listening";
   const noAudio = isListening && (audioPending || speech.state.status === "failed");
-  const heardOut = heard ? outs.notUnderstood : outs.cantListen;
-  const out = noAudio ? outs.skip : heardOut;
+  const heardOut = heard ? "notUnderstood" : "cantListen";
+  const out = noAudio ? "skip" : heardOut;
 
   const send = (input: Omit<LevelTestAnswerInput, "attemptId" | "questionId">) =>
     onAnswer({ ...input, questionId: question.id });
@@ -160,7 +162,12 @@ function AskedQuestion({
       second={
         isListening
           ? {
-              label: <SteadyLabel labels={Object.values(outs)} shown={out} />,
+              label: (
+                <SteadyLabel
+                  labels={LISTENING_OUTS.map((name) => outs[name])}
+                  shown={LISTENING_OUTS.indexOf(out)}
+                />
+              ),
               // Until the message has played, the way around it ends the test's listening.
               onPress:
                 noAudio || heard

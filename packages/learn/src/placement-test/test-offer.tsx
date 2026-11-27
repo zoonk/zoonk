@@ -51,13 +51,16 @@ function CardFace<Value extends string>({ card }: { card: TestOfferCard<Value> }
 
   return (
     <>
-      <KindIcon className="size-5 self-start" kind={card.mark === "test" ? "mock" : "lesson"} />
+      {/* The mark sits on the name's line, and the two are centered in the card as one. */}
+      <span className="flex min-w-0 flex-1 items-start gap-4">
+        <KindIcon className="mt-0.5 size-5" kind={card.mark === "test" ? "mock" : "lesson"} />
 
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-reading font-medium wrap-break-word">{card.label}</span>
-        {card.line && (
-          <span className="text-muted-foreground text-xs wrap-break-word">{card.line}</span>
-        )}
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-reading font-medium wrap-break-word">{card.label}</span>
+          {card.line && (
+            <span className="text-muted-foreground text-xs wrap-break-word">{card.line}</span>
+          )}
+        </span>
       </span>
 
       {card.minutes ? (
@@ -142,7 +145,8 @@ function OfferCards<Value extends string>({
   return (
     <RadioGroup
       aria-label={label}
-      className="gap-2"
+      // One height for every card, with or without its second line, so they read as a pair.
+      className="auto-rows-fr gap-2"
       onValueChange={(next) => {
         const card = cards.find((item) => item.value === next);
 

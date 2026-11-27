@@ -120,11 +120,10 @@ export function ListeningMessage({
               />
             </Meter>
 
-            {totalMs !== null && (
-              <span className="text-muted-foreground font-mono text-xs tabular-nums">
-                {formatClock(toPlayedMs(totalMs - elapsedMs))}
-              </span>
-            )}
+            {/* The length's room is kept while it isn't known yet, so the line never jumps. */}
+            <span className="text-muted-foreground min-w-[4ch] text-end font-mono text-xs tabular-nums">
+              {totalMs !== null && formatClock(toPlayedMs(totalMs - elapsedMs))}
+            </span>
           </>
         )}
       </div>

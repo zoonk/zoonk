@@ -2487,6 +2487,7 @@ msgstr "챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
@@ -4003,7 +4004,6 @@ msgstr "선택한 과목에 집중하는 계획을 유지해요."
 
 #: src/focus-test/use-result-line.ts
 #: src/mock/mock-result-plan.tsx
-#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -9289,7 +9289,6 @@ msgstr "시작하기"
 
 #: src/onboarding/onboarding-task.tsx
 #: src/onboarding/start-over-menu.tsx
-#: src/placement-test/placement-test-offers.tsx
 msgctxt "c6IvRW"
 msgid "Finish later"
 msgstr "나중에 마무리하기"
@@ -10186,10 +10185,16 @@ msgctxt "xu6eM8"
 msgid "Test"
 msgstr ""
 
-#: src/placement-test/placement-test-offers.tsx
-msgctxt "G9nQHt"
-msgid "Continue your test"
-msgstr "테스트 이어서 풀기"
+#. Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "yjiD94"
+msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
+msgstr ""
+
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "eBoUdl"
+msgid "Start lesson"
+msgstr "레슨 시작하기"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "Yr5YUZ"
@@ -10197,9 +10202,9 @@ msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 답하면 건너뛸 수 있어요."
 
 #: src/placement-test/placement-test-screens.tsx
-msgctxt "eBoUdl"
-msgid "Start lesson"
-msgstr "레슨 시작하기"
+msgctxt "SGu5bG"
+msgid "You start here"
+msgstr ""
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts

@@ -18,7 +18,15 @@ const PERCENT = 100;
  * A test's two ways out, behind its ✕: leave and come back to it, or end it with the answers
  * given. Offered only while stopping gives a result; before that the ✕ just leaves.
  */
-function TestWaysOut({ hint, onStop }: { hint?: string; onStop: () => void }) {
+function TestWaysOut({
+  hint,
+  onStop,
+  waits = false,
+}: {
+  hint?: string;
+  onStop: () => void;
+  waits?: boolean;
+}) {
   const t = useExtracted();
   const { onLeave, onOpenChange, open } = useTaskExitAsk();
 
@@ -37,6 +45,8 @@ function TestWaysOut({ hint, onStop }: { hint?: string; onStop: () => void }) {
 
           <Button
             className={TASK_WRAPPING_ACTION_CLASS}
+            disabled={waits}
+            focusableWhenDisabled
             onClick={() => {
               onOpenChange(false);
               onStop();
@@ -87,7 +97,7 @@ export function OnboardingTaskScreen({
           top.onClose?.();
           return null;
         }}
-        exitAsk={stop && <TestWaysOut hint={test.stopHint} onStop={stop} />}
+        exitAsk={stop && <TestWaysOut hint={test.stopHint} onStop={stop} waits={test.stopWaits} />}
         exitHref={backHref}
         exitToApp
         headerTitle={test && <TaskHeaderTitle title={test.title} />}

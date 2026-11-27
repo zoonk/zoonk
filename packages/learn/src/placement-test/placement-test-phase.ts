@@ -6,7 +6,7 @@ import {
   type PlacementResult,
 } from "../onboarding/onboarding-actions";
 import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
-import { type PlacementLength, type PlacementPartOutcome } from "./placement-test-actions";
+import { type PlacementFinishOutcome } from "./placement-test-actions";
 
 export type PlacementQuestionPhase = {
   attempt: PlacementAttemptView;
@@ -16,33 +16,34 @@ export type PlacementQuestionPhase = {
   trueFalseLabels: TrueFalseLabels;
 };
 
-type Finished = Extract<PlacementPartOutcome, { status: "finished" }>;
+type Finished = Extract<PlacementFinishOutcome, { status: "finished" }>;
 
-/** What a finish skipped. `changeId` is null when Undo wouldn't restore what the screen counts. */
-type Skips = { changeId: string | null; heldUntilTomorrow: boolean; lessonsSkipped: number };
-
-export type PlacementResultPhase = Skips & {
+/**
+ * Where the test starts the learner. `course` draws the course's line and is null when the result
+ * exists before the plan does; `changeId` is null when nothing was skipped, so there is no Undo.
+ */
+export type PlacementResultPhase = Pick<PlacementResult, "chapter" | "course" | "nextLesson"> & {
   attemptId: string;
+  changeId: string | null;
+  heldUntilTomorrow: boolean;
   kind: "result";
-  nextLesson: PlacementResult["nextLesson"];
+  lessonsSkipped: number;
 };
 
 export type PlacementTestPhase =
   | PlacementQuestionPhase
   /**
-   * `retryLength`: the test couldn't start, or its questions couldn't be written, so the wait
-   * offers "Try again", which starts it again.
-   * `buildFailed`: the course itself is still being built and that stopped.
+   * `retry`: the test couldn't start, or its questions couldn't be written, so the wait offers "Try
+   * again", which starts it again. `buildFailed`: the course itself is still being built and that
+   * stopped.
    */
-  | (PlacementQuestionWait & { buildFailed?: true; retryLength?: PlacementLength })
+  | (PlacementQuestionWait & { buildFailed?: true; retry?: true })
   | { kind: "loadFailed" }
   | { kind: "loading" }
   | { kind: "offer" }
   | { kind: "unavailable" }
   /** The test asks nothing more and isn't closed yet: closing it is the next save. */
-  | { attempt: PlacementAttemptView; kind: "partOver" }
-  /** Back at a test that was stopped before its end. */
-  | { attempt: PlacementAttemptView; kind: "continue" }
+  | { attempt: PlacementAttemptView; kind: "over" }
   | PlacementResultPhase;
 
 const FAILED: PlacementOutcome = { status: "failed" };
@@ -68,49 +69,25 @@ export async function answerOrRead({
   return now.status === "failed" || stillAsked ? null : now;
 }
 
-/** A test that's closed or was stopped: either way it asks nothing until it's started again. */
-function isResting(attempt: PlacementAttemptView): boolean {
-  return attempt.partComplete || attempt.resume !== null;
-}
-
-/** Undo restores one finish's lessons, so it shows only when they are all the screen counts. */
-function undoableChange({
+function toResultPhase({
   changeId,
-  counted,
-  restored,
-}: {
-  changeId: string | null | undefined;
-  counted: number;
-  restored: number | undefined;
-}): string | null {
-  return changeId && restored === counted ? changeId : null;
-}
-
-function toSavedResult(result: PlacementResult): PlacementResultPhase {
-  return {
-    attemptId: result.attemptId,
-    changeId: undoableChange({
-      changeId: result.changeId,
-      counted: result.lessonsSkipped,
-      restored: result.partLessonsSkipped,
-    }),
-    heldUntilTomorrow: result.heldUntilTomorrow === true,
-    kind: "result",
-    lessonsSkipped: result.lessonsSkipped,
-    nextLesson: result.nextLesson ?? null,
-  };
-}
-
-function toRestingPhase({
-  attempt,
+  heldUntilTomorrow,
   result,
 }: {
-  attempt: PlacementAttemptView;
-  result: PlacementResult | null;
-}): PlacementTestPhase {
-  return attempt.length === "quick" && result
-    ? toSavedResult(result)
-    : { attempt, kind: "continue" };
+  changeId: string | null | undefined;
+  heldUntilTomorrow: boolean;
+  result: PlacementResult;
+}): PlacementResultPhase {
+  return {
+    attemptId: result.attemptId,
+    changeId: result.lessonsSkipped > 0 ? (changeId ?? null) : null,
+    chapter: result.chapter,
+    course: result.course,
+    heldUntilTomorrow,
+    kind: "result",
+    lessonsSkipped: result.lessonsSkipped,
+    nextLesson: result.nextLesson,
+  };
 }
 
 /** With no test open, one the learner asked for waits for the course's questions; otherwise it's offered. */
@@ -135,9 +112,9 @@ function toUnopenedPhase({
 }
 
 /**
- * Where a read of the test leaves the learner. A sitting goes on at its next question; a test that
- * ended shows its result. With nothing open, onboarding shows the result of the test it ran;
- * otherwise the test is offered, or waited for when the learner already `asked` for it.
+ * Where a read of the test leaves the learner: an open test goes on at its next question. With
+ * nothing open, onboarding shows the result of the test it ran; otherwise the test is offered, or
+ * waited for when the learner already `asked` for it.
  */
 export function toPlacementTestPhase({
   asked = false,
@@ -153,20 +130,20 @@ export function toPlacementTestPhase({
   }
 
   const attempt = ("attempt" in outcome && outcome.attempt) || null;
-  const result = outcome.status === "ready" ? outcome.result : null;
+  const result = ("result" in outcome && outcome.result) || null;
 
   if (!attempt) {
     return surface === "onboarding" && result
-      ? toSavedResult(result)
+      ? toResultPhase({
+          changeId: result.changeId,
+          heldUntilTomorrow: result.heldUntilTomorrow === true,
+          result,
+        })
       : toUnopenedPhase({ asked, outcome });
   }
 
-  if (isResting(attempt)) {
-    return toRestingPhase({ attempt, result });
-  }
-
   if (outcome.status === "generationFailed") {
-    return { kind: "waiting", retryLength: attempt.length };
+    return { kind: "waiting", retry: true };
   }
 
   if (outcome.status === "unavailable") {
@@ -178,7 +155,7 @@ export function toPlacementTestPhase({
   }
 
   if (!outcome.next) {
-    return { attempt, kind: "partOver" };
+    return { attempt, kind: "over" };
   }
 
   return {
@@ -197,20 +174,26 @@ export function toFinishedPhase({
 }: {
   attemptId: string;
   finished: Finished;
-}): PlacementTestPhase {
-  const { result } = finished;
-  const lessonsSkipped = result?.lessonsSkipped ?? finished.lessonsSkipped;
+}): PlacementResultPhase {
+  const heldUntilTomorrow =
+    (finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow) === true;
+
+  if (finished.result) {
+    return toResultPhase({
+      changeId: finished.changeId,
+      heldUntilTomorrow,
+      result: finished.result,
+    });
+  }
 
   return {
     attemptId,
-    changeId: undoableChange({
-      changeId: finished.changeId,
-      counted: lessonsSkipped,
-      restored: finished.lessonsSkipped,
-    }),
-    heldUntilTomorrow: (result?.heldUntilTomorrow ?? finished.heldUntilTomorrow) === true,
+    changeId: finished.lessonsSkipped > 0 ? finished.changeId : null,
+    chapter: null,
+    course: null,
+    heldUntilTomorrow,
     kind: "result",
-    lessonsSkipped,
-    nextLesson: result?.nextLesson ?? null,
+    lessonsSkipped: finished.lessonsSkipped,
+    nextLesson: null,
   };
 }

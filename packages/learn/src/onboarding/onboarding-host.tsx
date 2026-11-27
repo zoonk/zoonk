@@ -82,6 +82,8 @@ export type TestQuestionTop = {
   onStop?: () => void;
   /** Said in the ways out, to a learner the test thinks should stop. */
   stopHint?: string;
+  /** A save is out, so stopping waits for it. */
+  stopWaits?: boolean;
   /** What the question tests: a chapter, a skill, a subject. */
   title: string;
   /** The most questions the test asks: one segment each. */

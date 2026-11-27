@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type PlacementAttemptView } from "../onboarding/onboarding-actions";
 import { TestOffer, type TestOfferCard, type TestPressed } from "./test-offer";
 import { type TestFactsNow, type TestRowId } from "./use-test-analytics";
 import { useTestFacts } from "./use-test-facts";
@@ -144,49 +143,6 @@ export function CoursePlanOffer({
       other={{ label: t("Not now"), onPress: onNotNow }}
       pressed={pressed}
       title={texts.skipTitle}
-    />
-  );
-}
-
-/** Back at a test the learner stopped before its end: where it stands and the way on. */
-export function PlacementContinue({
-  attempt,
-  failed,
-  onContinue,
-  onLeave,
-  onShown,
-  pressed,
-}: {
-  attempt: PlacementAttemptView;
-  failed: boolean;
-  onContinue: () => void;
-  onLeave: () => void;
-  onShown: (offered: OfferedRows) => void;
-  pressed: TestPressed;
-}) {
-  const t = useExtracted();
-  const facts = useTestFacts();
-  const test = useCourseCard(null);
-
-  return (
-    <TestOffer
-      cards={[
-        {
-          ...test,
-          line: facts.question({
-            number: attempt.resume?.question ?? attempt.answered + 1,
-            total: attempt.questions,
-          }),
-        },
-      ]}
-      failed={failed}
-      initial="test"
-      mainLabel={() => t("Continue")}
-      onShown={() => onShown({ preselected: "continue", rows: ["continue"] })}
-      onStart={onContinue}
-      other={{ label: t("Finish later"), onPress: onLeave }}
-      pressed={pressed}
-      title={t("Continue your test")}
     />
   );
 }
