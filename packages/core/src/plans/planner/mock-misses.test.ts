@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { holdsSchedule } from "../_utils/mock-replan-guard";
+import { findPlanSuggestion } from "../_utils/suggested-time";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { getPlanFeasibility } from "./plan-feasibility";
 import { parsePlanSettings } from "./plan-state";
+import { summarizeSelectedPlan } from "./selected-plan-summary";
 import { type MockMiss, getExamValue } from "./skill-order";
 
 const TODAY = fromIsoDate("2026-10-07");
@@ -84,6 +88,138 @@ describe("an exam plan after a mock", () => {
     };
 
     expect(topicOrder(weighted).slice(0, 2)).toStrictEqual(["equations", "fractions"]);
+  });
+
+  it("moves kept mock misses earlier without changing what fits in a short exam plan", () => {
+    const original = examInput();
+
+    const skills = Array.from({ length: 12 }, (_, index) => ({
+      area: index < 6 ? "Math" : "Language",
+      lessons: 5,
+      name: `Topic ${index}`,
+      phase: 0,
+      skillId: `topic-${index}`,
+      weight: 3,
+    }));
+
+    const lessons = skills.flatMap(({ skillId, lessons: count }) =>
+      Array.from({ length: count }, (_, index) => ({
+        chapterId: skillId,
+        lessonId: `${skillId}-lesson-${index}`,
+        minutes: 4,
+        skillIds: [skillId],
+        title: `${skillId} lesson ${index}`,
+      })),
+    );
+
+    const carried = lessons[0]!;
+
+    const input = {
+      ...original,
+      carryOver: { itemIds: ["carried"], lessonIds: [carried.lessonId] },
+      goal: { ...original.goal, dailyMinutes: 15, targetDate: addDays(TODAY, 18) },
+      graph: { ...original.graph, skills },
+      items: [
+        {
+          chapterId: carried.chapterId,
+          completedAt: null,
+          id: "carried",
+          kind: "lesson",
+          lessonId: carried.lessonId,
+          phase: 0,
+          position: 0,
+          scheduledFor: addDays(TODAY, -1),
+          skillId: carried.skillIds[0]!,
+          status: "todo",
+          titleSnapshot: carried.title,
+        },
+      ],
+      lessons,
+      openedKeys: [],
+      todayShown: true,
+    } satisfies BuildPlanInput;
+
+    const keptMisses = ["topic-2", "topic-3", "topic-8", "topic-9"];
+    const missed = [...keptMisses, "topic-10"];
+    const withMock = { ...input, mockMisses: new Map(missed.map((id) => [id, "missed"] as const)) };
+    const baseline = buildPlan(input);
+    const reordered = buildPlan(withMock);
+
+    const scheduled = (plan: typeof baseline) =>
+      plan.items.filter((item) => item.kind === "lesson");
+
+    const identities = (plan: typeof baseline) =>
+      new Set(scheduled(plan).flatMap(({ lessonId }) => lessonId ?? []));
+
+    const leftOut = (plan: typeof baseline) => {
+      const kept = identities(plan);
+      return lessons.map(({ lessonId }) => lessonId).filter((id) => !kept.has(id));
+    };
+
+    expect(leftOut(baseline)).toStrictEqual(
+      expect.arrayContaining(
+        lessons
+          .filter(({ skillIds }) => skillIds.includes("topic-10"))
+          .map(({ lessonId }) => lessonId),
+      ),
+    );
+
+    expect(identities(reordered)).toStrictEqual(identities(baseline));
+    expect(leftOut(reordered)).toStrictEqual(leftOut(baseline));
+
+    expect(
+      reordered.skillMinutes.toSorted((a, b) => a.skillId.localeCompare(b.skillId)),
+    ).toStrictEqual(baseline.skillMinutes.toSorted((a, b) => a.skillId.localeCompare(b.skillId)));
+
+    expect(reordered.phases.map(({ endDate }) => endDate)).toStrictEqual(
+      baseline.phases.map(({ endDate }) => endDate),
+    );
+
+    const behind = (plan: typeof baseline) =>
+      scheduled(plan).filter(({ id, status }) => id === "carried" && status === "todo").length;
+
+    expect(behind(baseline)).toBe(1);
+    expect(behind(reordered)).toBe(behind(baseline));
+
+    const before = getPlanFeasibility({ input, planned: baseline });
+    const after = getPlanFeasibility({ input: withMock, planned: reordered });
+    expect(after.coreFits).toBe(before.coreFits);
+    expect(after.coveredShare).toBe(before.coveredShare);
+
+    expect(
+      findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: after }),
+    ).toStrictEqual(
+      findPlanSuggestion({ dailyMinutes: input.goal.dailyMinutes, feasibility: before }),
+    );
+
+    expect(
+      holdsSchedule({
+        baseline: {
+          built: baseline,
+          feasibility: before,
+          selected: summarizeSelectedPlan({ built: baseline, examSubjects: null, input }),
+        },
+        computed: {
+          built: reordered,
+          feasibility: after,
+          selected: summarizeSelectedPlan({
+            built: reordered,
+            examSubjects: null,
+            input: withMock,
+          }),
+        },
+        movableFrom: addDays(TODAY, 1),
+      }),
+    ).toBe(true);
+
+    for (const id of keptMisses) {
+      const first = (plan: typeof baseline) =>
+        scheduled(plan)
+          .find(({ skillId }) => skillId === id)
+          ?.scheduledFor?.getTime();
+
+      expect(first(reordered)).toBeLessThan(first(baseline)!);
+    }
   });
 
   it("leads the next study day with an available mock miss across exam subjects", () => {

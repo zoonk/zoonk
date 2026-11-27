@@ -170,10 +170,9 @@ function rankSkills(input: QueueInput): RankedSkill[] {
 
     const readiness = input.readiness.get(skill.skillId);
     const mockMiss = input.mockMisses?.get(skill.skillId);
-    const baseValue = getExamValue({ mockMiss, readiness, weight: skill.weight ?? 1 });
+    const baseValue = getExamValue({ readiness, weight: skill.weight ?? 1 });
 
     const value = getExamValue({
-      mockMiss,
       readiness,
       weight: (skill.weight ?? 1) * getSteerFactor({ focused, reduced }),
     });
@@ -223,8 +222,6 @@ function compareByPhase(a: RankedSkill, b: RankedSkill): number {
 function compareExamSkills(a: RankedSkill, b: RankedSkill): number {
   return (
     a.phase - b.phase ||
-    b.mockPriority - a.mockPriority ||
-    (a.mockPriority > 0 ? (b.weight ?? 1) - (a.weight ?? 1) : 0) ||
     Number(b.focused) - Number(a.focused) ||
     Number(a.reduced) - Number(b.reduced) ||
     Number(a.beyondNotice) - Number(b.beyondNotice) ||
@@ -314,7 +311,12 @@ export function buildPlanQueue(queueInput: QueueInput): {
   const values = new Map(ordered.map((skill) => [skill.skillId, skill.value]));
   const focused = new Set(ordered.filter((skill) => skill.focused).map((skill) => skill.skillId));
 
-  const missed = ordered.filter((skill) => skill.mockPriority > 0);
+  const missed = orderSkills({
+    compare: (a, b) =>
+      a.phase - b.phase || b.mockPriority - a.mockPriority || (b.weight ?? 1) - (a.weight ?? 1),
+    prerequisites: input.prerequisites,
+    skills: ordered.filter((skill) => skill.mockPriority > 0),
+  });
 
   const mockPriority = new Map(
     missed.map((skill, index) => [skill.skillId, missed.length - index]),

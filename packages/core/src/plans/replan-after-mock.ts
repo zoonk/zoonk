@@ -16,6 +16,7 @@ import { findTestedOutItemIds, planRelearn, withoutSkippedAreas } from "./_utils
 import { type ComputedPlan, type PlanChangeRecord, revalidatePlanTags } from "./_utils/replan";
 import { getRelearnPayload, toRelearnChange } from "./bring-back-missed-lessons";
 import { withPlanRetry } from "./plan-conflict";
+import { addDays } from "./planner/plan-calendar";
 import { type PlanSettings, type PlanState, parsePlanSettings } from "./planner/plan-state";
 
 /** For logs and admin only; Today never shows it and the apps don't word it. */
@@ -156,7 +157,7 @@ async function commitReplan({
 /**
  * Re-plans from the next day when a mock finishes, in one plan write: the lessons of topics taken as
  * known that it missed come back (relearn), and the topics it missed that the plan hasn't taught
- * yet move earlier, but only while coverage and the phase dates hold. A refused move is tried
+ * yet move earlier within the same selected work and schedule limits. A refused move is tried
  * once more at the next day the learner opens (`catchUp`), which records the mock either way.
  * Returns the moved topics' names.
  */
@@ -235,7 +236,9 @@ export async function replanAfterMock({
       planRelearn({ context, ids, now, openedKeys, state: withMockReplan(context.state, applied) }),
     ]);
 
-    if (holdsSchedule({ baseline: baseline.computed, computed: reordered.computed })) {
+    const movableFrom = openedKeys ? addDays(context.today, 1) : context.today;
+
+    if (holdsSchedule({ baseline: baseline.computed, computed: reordered.computed, movableFrom })) {
       const { computed, restoredIds } = reordered;
 
       if (restoredIds.size === 0 && !changedSchedule(context, computed)) {

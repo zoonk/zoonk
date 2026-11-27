@@ -22,6 +22,7 @@ import {
 import { splitStandIns } from "./stand-in-parts";
 import { arrangeStudyCycle } from "./study-cycle";
 import { type CadencedArea } from "./study-cycle-lanes";
+import { splitIntoParts } from "./study-cycle-parts";
 import { rotateTopics } from "./topic-rotation";
 import { type ScoredTopic, getAskedScore } from "./topic-weights";
 
@@ -96,6 +97,49 @@ function toQueueUnit({
   return unit;
 }
 
+function resetPlacement({
+  heldOn: _heldOn,
+  opensDay: _opensDay,
+  rankedOut: _rankedOut,
+  startsAt: _startsAt,
+  ...unit
+}: ScheduledUnit): QueueUnit {
+  return toQueueUnit(unit);
+}
+
+function arrangeExamUnits({
+  cadenced,
+  input,
+  mockPriority,
+  units,
+}: {
+  cadenced: ReadonlyMap<string, CadencedArea> | null;
+  input: RestInput;
+  mockPriority?: (a: QueueUnit, b: QueueUnit) => number;
+  units: readonly QueueUnit[];
+}) {
+  const { graph, queue } = input;
+  const gapAreas = getAreasOf({ graph, skillIds: input.missedSkillIds });
+
+  return queue.rates
+    ? scheduleUnits({
+        days: input.days,
+        units: arrangeStudyCycle({
+          areaPhases: getCyclePhases({ focusAreas: input.settings.focusAreas, gapAreas, graph }),
+          cadenced: cadenced ?? undefined,
+          days: input.days,
+          firstAreas: gapAreas,
+          knownAreas: input.opening.knownAreas,
+          mockPriority,
+          noticeAreas: input.opening.noticeAreas,
+          prerequisites: queue.prerequisites,
+          rates: queue.rates,
+          units,
+        }),
+      })
+    : scheduleKeepingEnds({ days: input.days, ends: input.phaseEnds, units });
+}
+
 function listAnnouncedTopics({
   announcements = [],
   graph,
@@ -115,31 +159,10 @@ function scheduleWith({
   cadenced: ReadonlyMap<string, CadencedArea> | null;
   input: RestInput;
 }) {
-  const { graph, queue } = input;
-  const gapAreas = getAreasOf({ graph, skillIds: input.missedSkillIds });
+  const { queue } = input;
 
-  const priorityOf = (unit: QueueUnit) => queue.mockPriority?.get(unit.skillId ?? "") ?? 0;
-
-  const schedulePending = (list: readonly QueueUnit[]) =>
-    queue.rates
-      ? scheduleUnits({
-          days: input.days,
-          units: arrangeStudyCycle({
-            areaPhases: getCyclePhases({ focusAreas: input.settings.focusAreas, gapAreas, graph }),
-            cadenced: cadenced ?? undefined,
-            days: input.days,
-            firstAreas: gapAreas,
-            knownAreas: input.opening.knownAreas,
-            mockPriority: queue.mockPriority?.size
-              ? (a, b) => priorityOf(b) - priorityOf(a)
-              : undefined,
-            noticeAreas: input.opening.noticeAreas,
-            prerequisites: queue.prerequisites,
-            rates: queue.rates,
-            units: list,
-          }),
-        })
-      : scheduleKeepingEnds({ days: input.days, ends: input.phaseEnds, units: list });
+  const schedulePending = (units: readonly QueueUnit[]) =>
+    arrangeExamUnits({ cadenced, input, units });
 
   const rotates = input.goal.kind === "language";
 
@@ -194,6 +217,50 @@ function scheduleWith({
   return { ...cut, ...again, dropped: [...cut.dropped, ...again.dropped] };
 }
 
+function prioritizeKeptMisses({
+  cadenced,
+  input,
+  schedule,
+}: {
+  cadenced: ReadonlyMap<string, CadencedArea> | null;
+  input: RestInput;
+  schedule: ReturnType<typeof scheduleWith>;
+}) {
+  const priorities = input.queue.mockPriority;
+
+  if (input.goal.kind !== "exam" || !priorities?.size) {
+    return schedule;
+  }
+
+  const priorityOf = (unit: QueueUnit) => priorities.get(unit.skillId ?? "") ?? 0;
+
+  if (!schedule.units.some((unit) => priorityOf(unit) > 0)) {
+    return schedule;
+  }
+
+  const teachingPhases = new Map(input.units.map(({ key, phase }) => [key, phase]));
+
+  const kept = schedule.units.map((unit) => ({
+    ...resetPlacement(unit),
+    phase: teachingPhases.get(unit.key) ?? unit.phase,
+  }));
+
+  const compareMisses = (a: QueueUnit, b: QueueUnit) => priorityOf(b) - priorityOf(a);
+
+  const units = splitIntoParts(kept).flatMap((part) =>
+    part.toSorted(
+      (a, b) =>
+        Number(a.kind === "boss") - Number(b.kind === "boss") ||
+        Number(Boolean(b.inProgress)) - Number(Boolean(a.inProgress)) ||
+        a.phase - b.phase ||
+        compareMisses(a, b),
+    ),
+  );
+
+  const reordered = arrangeExamUnits({ cadenced, input, mockPriority: compareMisses, units });
+  return reordered.dropped.length === 0 ? { ...schedule, units: reordered.units } : schedule;
+}
+
 function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {
   if (input.goal.kind !== "exam" || input.queue.rates === null) {
     return input.units;
@@ -229,5 +296,6 @@ export function scheduleRest(rest: RestInput) {
       written: getWrittenTestAreas(input.graph),
     });
 
-  return cadenced ? scheduleWith({ cadenced, input }) : spread;
+  const schedule = cadenced ? scheduleWith({ cadenced, input }) : spread;
+  return prioritizeKeptMisses({ cadenced, input, schedule });
 }
