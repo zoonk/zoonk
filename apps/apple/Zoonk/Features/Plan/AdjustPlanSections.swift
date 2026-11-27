@@ -138,8 +138,9 @@ private struct PlanFocusSection: View {
       let focused = Set(choices.filter(\.focused).map(\.name))
       let selection = picked ?? focused
 
-      Section {
-        if let focusTest = plan.focusTest {
+      // Main's two groups: the Focus test's marked row and the subjects don't share a label edge.
+      if let focusTest = plan.focusTest {
+        Section {
           Button {
             dismiss()
             router.open(.focusTest(goalId: goal.id))
@@ -152,7 +153,11 @@ private struct PlanFocusSection: View {
             }
             .disclosureChevron()
           }
+        } header: {
+          title
+        }
 
+        Section {
           Text(
             "Or choose them yourself", tableName: "Plan",
             comment: "Above the subjects to focus on, under the Focus test that suggests them"
@@ -160,44 +165,65 @@ private struct PlanFocusSection: View {
           .typeStyle(.note.weight(.medium))
           .foregroundStyle(.mutedForeground)
           .listRowSeparator(.hidden, edges: .bottom)
-        }
 
-        ForEach(choices) { area in
-          let isPicked = selection.contains(area.name)
-
-          ChoiceRow(picks: .several, isPicked: isPicked) {
-            var next = selection
-            if isPicked { next.remove(area.name) } else { next.insert(area.name) }
-            picked = next
-            unchanged = nil
-          } words: {
-            areaWords(area, isPicked: isPicked)
-          }
+          picks(choices, focused: focused, selection: selection)
+        } footer: {
+          footer
         }
-
-        Button {
-          editor.run { await focus(on: selection, choices: choices) }
-        } label: {
-          if selection.isEmpty, !focused.isEmpty {
-            Text(
-              "Remove focus", tableName: "Plan",
-              comment: "Saves no subject to focus on, so the plan has no focus")
-          } else {
-            Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
-          }
-        }
-        .disabled(selection == focused || selection == unchanged)
-      } header: {
-        SectionTitle(
-          Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
-      } footer: {
-        SectionFooter {
-          Text(
-            "The subjects you pick get more of your time.", tableName: "Plan",
-            comment: "What focusing on subjects does")
+      } else {
+        Section {
+          picks(choices, focused: focused, selection: selection)
+        } header: {
+          title
+        } footer: {
+          footer
         }
       }
     }
+  }
+
+  private var title: some View {
+    SectionTitle(
+      Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
+  }
+
+  private var footer: some View {
+    SectionFooter {
+      Text(
+        "The subjects you pick get more of your time.", tableName: "Plan",
+        comment: "What focusing on subjects does")
+    }
+  }
+
+  @ViewBuilder
+  private func picks(_ choices: [GoalPlan.Area], focused: Set<String>, selection: Set<String>)
+    -> some View
+  {
+    ForEach(choices) { area in
+      let isPicked = selection.contains(area.name)
+
+      ChoiceRow(picks: .several, isPicked: isPicked) {
+        var next = selection
+        if isPicked { next.remove(area.name) } else { next.insert(area.name) }
+        picked = next
+        unchanged = nil
+      } words: {
+        areaWords(area, isPicked: isPicked)
+      }
+    }
+
+    Button {
+      editor.run { await focus(on: selection, choices: choices) }
+    } label: {
+      if selection.isEmpty, !focused.isEmpty {
+        Text(
+          "Remove focus", tableName: "Plan",
+          comment: "Saves no subject to focus on, so the plan has no focus")
+      } else {
+        Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
+      }
+    }
+    .disabled(selection == focused || selection == unchanged)
   }
 
   /// What the area holds, and once it's picked, the part of it the learner named.
