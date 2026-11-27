@@ -21,6 +21,7 @@ import {
   type PlacementAttempt,
   type PlacementRecord,
   readPlacementAttempt,
+  settlePlacementPart,
 } from "./placement-attempt-record";
 import { readPlacementNextLesson } from "./placement-result";
 
@@ -213,15 +214,7 @@ async function savePart({
     goal: current,
     record: {
       ...record,
-      attempt:
-        attemptQuestions.partsLeft > 0
-          ? {
-              ...attempt,
-              lessonsSkipped,
-              partComplete: attemptQuestions.complete,
-              paused: !attemptQuestions.complete,
-            }
-          : null,
+      attempt: settlePlacementPart({ attempt, lessonsSkipped, progress: attemptQuestions }),
       finishedParts: [...finishedParts, receipt],
       result: {
         ...held,

@@ -59,7 +59,9 @@ export const placementAttemptViewSchema = z
     totalEstimatedMinutes: z
       .int()
       .nonnegative()
-      .meta({ description: "Estimated minutes for all parts at the start of the attempt" }),
+      .meta({
+        description: "Estimated minutes for the current, completed and retained future parts",
+      }),
   })
   .meta({ id: "PlacementAttempt" });
 

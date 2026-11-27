@@ -58,7 +58,6 @@ export type PlacementState = {
 };
 
 export type PlacementLoad = {
-  attemptNextPart?: { ids: string[]; part: number };
   attemptQuestions?: ReturnType<typeof readAttemptQuestions>;
   firstQuestionReady?: boolean;
   /** What an exam goal's writes need beside the state; null for other goals. */

@@ -43,7 +43,6 @@ export async function loadAttemptState({
       : null;
 
   return {
-    attemptNextPart: questions.nextPart,
     attemptQuestions: questions,
     focusTest: null,
     state: {

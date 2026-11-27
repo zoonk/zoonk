@@ -226,13 +226,13 @@ async function resumePlacementAttempt({
 
   // Released Android sends the completed part's length when the learner taps Keep going.
   const plan = await loadPlacementPlan(goalId, tx);
-  const { attemptNextPart } = await loadPlacementWithSummary({ goalId, plan, tx, userId });
+  const { attemptQuestions } = await loadPlacementWithSummary({ goalId, plan, tx, userId });
 
-  if (!attemptNextPart) {
+  if (!attemptQuestions?.nextPart) {
     return unchanged({ events: [], goal });
   }
 
-  const { ids: partSkillIds, part } = attemptNextPart;
+  const { ids: partSkillIds, part } = attemptQuestions.nextPart;
 
   await owePartQuestions({
     goalId,
@@ -252,7 +252,7 @@ async function resumePlacementAttempt({
     partRequestedAt: null,
     partSkillIds,
     partStartedAt: at,
-    parts: getAttemptParts(current),
+    parts: attemptQuestions.retainedParts,
     paused: false,
   };
 

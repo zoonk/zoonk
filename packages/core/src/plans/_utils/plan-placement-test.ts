@@ -73,7 +73,7 @@ async function readCourseRow({
   return {
     attempt: attemptView,
     estimatedMinutes:
-      attemptView?.totalEstimatedMinutes ??
+      attemptView?.remainingEstimatedMinutes ??
       offer?.wholeCourse?.estimatedMinutes ??
       offer?.estimatedMinutes ??
       0,
