@@ -1597,13 +1597,19 @@ describe("the learner's buddy", () => {
   beforeEach(showDrawerSize);
   afterEach(restoreViewport);
 
-  it("answers in the sheet by face and name", async () => {
+  it("answers in the sheet by face and name, with what to ask under the name", async () => {
     const { lesson } = lessonWithTutor();
     playLesson({ lesson });
 
     const sheet = await openTutor();
-    await expect.element(sheet.getByText("Ask about this screen")).toBeVisible();
+    const description = sheet.getByText("Ask about this screen");
+    await expect.element(description).toBeVisible();
     await expect.element(sheet.getByPlaceholder(/^Ask /u)).toBeVisible();
+
+    const name = sheet.getByRole("heading", { name: "Pip" }).element().getBoundingClientRect();
+    const under = description.element().getBoundingClientRect();
+    expect(under.top).toBeGreaterThanOrEqual(name.bottom - 1);
+    expect(under.left).toBeCloseTo(name.left, 0);
   });
 
   it("answers as the default buddy before the learner picks one", async () => {
@@ -1861,6 +1867,32 @@ function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
 }
 
+const NEXT_TO = 32;
+
+async function expectRightAbove({ above, below }: { above: Locator; below: Locator }) {
+  await expect.element(above).toBeVisible();
+  await expect.element(below).toBeVisible();
+
+  const gap =
+    below.element().getBoundingClientRect().top - above.element().getBoundingClientRect().bottom;
+
+  expect(gap).toBeGreaterThanOrEqual(0);
+  expect(gap).toBeLessThanOrEqual(NEXT_TO);
+}
+
+function asideSuggestions() {
+  return lessonAside().getByRole("list", { name: "Suggested questions" });
+}
+
+/** As in the sheet: the buddy, what it is, then what to ask. */
+function expectSuggestionsUnder(intro: Locator) {
+  return expectRightAbove({ above: intro, below: asideSuggestions() });
+}
+
+function expectSuggestionsAbove(input: Locator) {
+  return expectRightAbove({ above: asideSuggestions(), below: input });
+}
+
 async function askFromAside() {
   await asideComposer().fill("Why does the cloud show chances?");
   await press("Enter");
@@ -1942,6 +1974,13 @@ describe("docked beside the lesson", () => {
       question: "Why does the cloud show chances?",
     });
 
+    const name = conversation.getByText("Pip", { exact: true }).first().element();
+    const toggle = page.getByRole("button", { name: "Collapse sidebar" }).element();
+
+    expect(name.getBoundingClientRect().right).toBeLessThanOrEqual(
+      toggle.getBoundingClientRect().left,
+    );
+
     await conversation.getByRole("button", { name: "From the lesson" }).click();
     await expect.element(conversation).not.toBeInTheDocument();
 
@@ -1972,11 +2011,55 @@ describe("docked beside the lesson", () => {
 
     playLesson({ lesson });
     const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
+    const suggestions = lessonAside().getByRole("list", { name: "Suggested questions" });
     await expect.element(intro).toBeVisible();
+    await expectCount(suggestions, 1);
+    await expectSuggestionsUnder(intro);
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(lessonAside().getByText("From the lesson")).toBeVisible();
     await expect.element(intro).not.toBeVisible();
+
+    await page.getByRole("radio", { name: "The electron's size" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expectCount(suggestions, 1);
+    await expectSuggestionsAbove(asideComposer());
+  });
+
+  it("keeps the aside's empty state when the limit refuses a question, since nothing was saved", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    const question = "Why does the cloud show chances?";
+
+    api.next("create", () =>
+      Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.slowDown,
+              details: { retryAfterSeconds: 30 },
+              message: "Slow down",
+            },
+          },
+          { status: 429 },
+        ),
+      ),
+    );
+
+    playLesson({ lesson });
+    await asideComposer().fill(question);
+    await press("Enter");
+
+    await expect
+      .element(lessonAside().getByRole("alert"))
+      .toHaveTextContent("Take a short break, then try again.");
+
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+    await expect.element(asideComposer()).toHaveValue(question);
+
+    const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
+    await expect.element(intro).toBeVisible();
+    await expectSuggestionsUnder(intro);
+    expect(api.questions).toHaveLength(0);
   });
 
   it("offers the lesson's takes on a reading screen, one tap each", async () => {
