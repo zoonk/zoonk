@@ -29,9 +29,8 @@ import { Suspense } from "react";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 import { PrivateShellPlaceholder } from "./private-shell-placeholder";
 
-function StudyLinksView({ places: summaryPlaces }: { places: LearnerSummaryPlaces }) {
+function StudyLinksList({ places }: { places: LearnerSummaryPlaces }) {
   const t = useExtracted();
-  const places = useListedPlaces(summaryPlaces);
 
   return (
     <>
@@ -49,6 +48,19 @@ function StudyLinksView({ places: summaryPlaces }: { places: LearnerSummaryPlace
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
     </>
+  );
+}
+
+function ListedStudyLinks({ places }: { places: LearnerSummaryPlaces }) {
+  return <StudyLinksList places={useListedPlaces(places)} />;
+}
+
+/** The page shown can add its own row, and a dynamic route's path is known only at request time. */
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces }) {
+  return (
+    <Suspense fallback={<StudyLinksList places={places} />}>
+      <ListedStudyLinks places={places} />
+    </Suspense>
   );
 }
 

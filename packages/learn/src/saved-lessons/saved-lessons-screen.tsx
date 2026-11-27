@@ -142,8 +142,7 @@ export function SavedLessonsScreen({
       bar={
         <LearnPageBar
           back={{ href: hrefs.back }}
-          // The sidebar lists the page while the goal has a save: the list this page was served.
-          listed={lessons.length > 0 ? "learner" : undefined}
+          listed="learner"
           root
           title={t("Saved lessons")}
         />
