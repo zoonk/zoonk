@@ -2,7 +2,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type DatabaseMode } from "../../packages/db/src/local-database.ts";
+import { type DatabaseMode } from "../../packages/db/src/local-database-names.ts";
 import { ownDevelopmentDatabaseUrl } from "./environment.mts";
 import { readLibrarySource } from "./library-source.mts";
 import {

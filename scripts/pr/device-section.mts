@@ -45,7 +45,7 @@ export function unwritablePath(path: string): string | null {
 }
 
 /** The first of each picture, by the path it resolves to, in order. */
-export function firstOfEach<Shown extends { path: string }>(shown: Shown[]): Shown[] {
+function firstOfEach<Shown extends { path: string }>(shown: Shown[]): Shown[] {
   return shown.filter((item, index) => shown.findIndex(({ path }) => path === item.path) === index);
 }
 
@@ -101,7 +101,7 @@ export function deviceSection(shots: DeviceShot[]): string {
  * Where the body holds `section` as whole lines between blank lines (or the body's ends): its
  * start, or null unless it does so exactly once.
  */
-export function sectionStart(markdown: string, section: string): number | null {
+function sectionStart(markdown: string, section: string): number | null {
   const padded = `\n\n${markdown}\n\n`;
   const fenced = `\n\n${section}\n\n`;
   const first = padded.indexOf(fenced);

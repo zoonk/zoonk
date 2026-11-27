@@ -1,6 +1,10 @@
-import { createHash } from "node:crypto";
 import { realpathSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import {
+  type DatabaseMode,
+  LOCAL_DATABASE_NAMES,
+  worktreeDatabaseName,
+} from "./local-database-names.ts";
 
 const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
 const POSTGRES_PROTOCOLS = new Set(["postgres:", "postgresql:"]);
@@ -18,27 +22,6 @@ const CONNECTION_TARGET_PARAMETERS = new Set([
 ]);
 
 const DEVELOPMENT_DATABASE_NAME = /^zoonk(?:_wt_[a-f0-9]{12}_dev)?$/u;
-
-const LOCAL_DATABASE_NAMES = { dev: "zoonk", e2e: "zoonk_e2e", test: "zoonk_test" } as const;
-
-export type DatabaseMode = keyof typeof LOCAL_DATABASE_NAMES;
-
-const WORKTREE_ID_LENGTH = 12;
-
-export function worktreeDatabaseName({
-  mode,
-  worktree,
-}: {
-  mode: DatabaseMode;
-  worktree: string;
-}): string {
-  const identifier = createHash("sha256")
-    .update(worktree)
-    .digest("hex")
-    .slice(0, WORKTREE_ID_LENGTH);
-
-  return `zoonk_wt_${identifier}_${mode}`;
-}
 
 /** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
 export function getLocalDatabaseUrl(

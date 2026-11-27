@@ -3,10 +3,12 @@ import { dirname, join } from "node:path";
 import { parseEnv } from "node:util";
 import {
   type DatabaseMode,
+  worktreeDatabaseName,
+} from "../../packages/db/src/local-database-names.ts";
+import {
   getLocalDatabaseUrl,
   getUnpooledDatabaseUrl,
   isLocalDevelopmentDatabase,
-  worktreeDatabaseName,
 } from "../../packages/db/src/local-database.ts";
 import { getTestEnvironment } from "../../packages/db/src/test-environment.ts";
 
