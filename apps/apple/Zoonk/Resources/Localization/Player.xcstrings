@@ -3123,7 +3123,7 @@
       }
     },
     "Create a free account" : {
-      "comment" : "Opens account creation for a guest\nA guest creates an account at the end of a lesson",
+      "comment" : "A guest creates an account at the end of a lesson\nOpens account creation for a guest",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9382,7 +9382,7 @@
       }
     },
     "Source: %@" : {
-      "comment" : "Where a model's or a chart's numbers come from",
+      "comment" : "Where a chart's numbers come from\nWhere a model's numbers come from",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10090,7 +10090,7 @@
       }
     },
     "Take a short break" : {
-      "comment" : "Fair use spaces AI help out\nFair use spaces new lessons out",
+      "comment" : "Fair use spaces new lessons out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10678,7 +10678,7 @@
       }
     },
     "This lesson isn't available" : {
-      "comment" : "Every draft of a lesson was held back by its quality checks",
+      "comment" : "Every draft of a lesson was held back by its quality checks\nThe lesson doesn't exist anymore",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12090,7 +12090,7 @@
       }
     },
     "What do you hear?" : {
-      "comment" : "Above a sentence to listen to and arrange",
+      "comment" : "The question over a sentence to listen to and arrange",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13034,7 +13034,7 @@
       }
     },
     "Writing your challenge" : {
-      "comment" : "The challenge's status over the quiz while it's written\nVoiceOver: the bar of a challenge's wait",
+      "comment" : "VoiceOver: the bar of a challenge's wait",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13858,7 +13858,6 @@
       }
     },
     "Your lesson is ready" : {
-      "comment" : "The lesson's status over the quiz once it's written",
       "localizations" : {
         "de" : {
           "stringUnit" : {

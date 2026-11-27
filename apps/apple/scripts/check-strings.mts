@@ -1,22 +1,48 @@
-import { existsSync, globSync, readFileSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import {
+  copyFileSync,
+  existsSync,
+  globSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
+import { isDeepStrictEqual } from "node:util";
 
 type CompiledString = { key: string; table: string };
 
-type Catalog = { strings: Record<string, unknown> };
+type CatalogEntry = { comment?: string; extractionState?: string };
 
-type StringsData = { file: string; source: string; tables: Record<string, { key: string }[]> };
+type Catalog = { strings: Record<string, CatalogEntry> };
+
+type StringsData = {
+  file: string;
+  source: string;
+  tables: Record<string, { key: string; comment: string }[]>;
+};
+
+type CatalogChange = {
+  file: string;
+  catalog: Catalog;
+  added: CompiledString[];
+  removed: CompiledString[];
+  updated: CompiledString[];
+};
 
 const appleDirectory = path.resolve(import.meta.dirname, "..");
 
 const IGNORED_PATHS = ["DerivedData/**", "node_modules/**", "**/.build/**"];
 
 // `make` and `pnpm iphone` build here; the compiler writes the strings each source file uses.
-const STRINGSDATA = "DerivedData/*/Build/Intermediates.noindex/**/*.stringsdata";
+const STRINGSDATA =
+  "DerivedData/*/Build/Intermediates.noindex/Zoonk.build/Debug-*/Zoonk.build/**/*.stringsdata";
 
-const TEST_SOURCES = ["ZoonkTests/", "ZoonkUITests/"].map((folder) =>
-  path.join(appleDirectory, folder),
-);
+const sourceDirectory = path.join(appleDirectory, "Zoonk");
 
 // The format specifiers the compiler writes for interpolations, and escaped percent signs.
 const FORMAT_SPECIFIER = /%%|%(?:\d+\$)?(?:@|hh[du]|h[du]|ll[du]|l[duf]|[duf])/gu;
@@ -26,12 +52,12 @@ function needsCatalog({ key, table }: CompiledString): boolean {
   return table !== "Localizable" || /\p{L}/u.test(key.replaceAll(FORMAT_SPECIFIER, ""));
 }
 
-export function readCatalog(file: string): Catalog {
+function readCatalog(file: string): Catalog {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Xcode and Eloqnt write these files.
   return JSON.parse(readFileSync(file, "utf8")) as Catalog;
 }
 
-export function catalogFiles(): Map<string, string> {
+function catalogFiles(): Map<string, string> {
   const files = globSync("**/*.xcstrings", { cwd: appleDirectory, exclude: IGNORED_PATHS });
 
   return new Map(
@@ -42,74 +68,186 @@ export function catalogFiles(): Map<string, string> {
 function readStringsData(file: string): StringsData & { builtAt: number } {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The Swift compiler writes this file.
   const data = JSON.parse(readFileSync(file, "utf8")) as Omit<StringsData, "file">;
-  return { ...data, builtAt: statSync(file).mtimeMs, file };
-}
-
-function isAppSource(source: string): boolean {
-  return (
-    existsSync(source) &&
-    source.startsWith(`${appleDirectory}/`) &&
-    !source.startsWith(path.join(appleDirectory, "DerivedData")) &&
-    !TEST_SOURCES.some((folder) => source.startsWith(folder))
-  );
+  const source = existsSync(data.source) ? realpathSync(data.source) : data.source;
+  return { ...data, builtAt: statSync(file).mtimeMs, file, source };
 }
 
 /** Each app source file's newest build, with the strings the app looks up exactly. */
-export function newestStringsData(): StringsData[] {
+function newestStringsData(): StringsData[] {
+  const sources = globSync("**/*.swift", { cwd: sourceDirectory }).map((file) =>
+    path.join(sourceDirectory, file),
+  );
+
+  const sourceTimes = new Map(sources.map((file) => [file, statSync(file).mtimeMs]));
+
   const builds = globSync(STRINGSDATA, { cwd: appleDirectory })
     .map((file) => readStringsData(path.join(appleDirectory, file)))
-    .filter((data) => isAppSource(data.source));
+    .filter((data) => data.builtAt >= (sourceTimes.get(data.source) ?? Infinity));
 
-  return Map.groupBy(builds, (data) => data.source)
-    .values()
-    .map((versions) => versions.reduce((last, data) => (data.builtAt > last.builtAt ? data : last)))
-    .toArray();
-}
+  const bySource = Map.groupBy(builds, (data) => data.source);
 
-function compiledStrings(): CompiledString[] {
-  return newestStringsData().flatMap((data) =>
-    Object.entries(data.tables).flatMap(([table, strings]) =>
-      strings.map(({ key }) => ({ key, table })),
-    ),
-  );
-}
-
-/** Reads the last build's strings, so build the app first. */
-export function findMissingStrings(): { missing: CompiledString[]; total: number } {
-  const strings = compiledStrings();
-
-  if (strings.length === 0) {
-    throw new Error("No build found. Build the app (`make -C apps/apple build`) first.");
+  if (bySource.size < sourceTimes.size) {
+    throw new Error(
+      `Missing current string extraction for ${sourceTimes.size - bySource.size} Swift files. Build the Debug app (` +
+        "`make -C apps/apple build`) before checking or syncing catalogs.",
+    );
   }
 
-  const catalogs = new Map(
-    [...catalogFiles()].map(([table, file]) => [table, readCatalog(file).strings]),
+  return [...bySource.values()].map((versions) =>
+    versions.reduce((last, data) => (data.builtAt > last.builtAt ? data : last)),
   );
-
-  const missing = strings.filter(
-    (string) =>
-      needsCatalog(string) && !Object.hasOwn(catalogs.get(string.table) ?? {}, string.key),
-  );
-
-  return { missing, total: new Set(strings.map(({ key, table }) => `${table}\n${key}`)).size };
 }
 
-export function listStrings(strings: CompiledString[]): string {
+function syncedStrings({ data, file }: { data: StringsData[]; file: string }) {
+  const directory = mkdtempSync(path.join(tmpdir(), "zoonk-strings-"));
+  const copy = path.join(directory, path.basename(file));
+
+  try {
+    copyFileSync(file, copy);
+
+    execFileSync(
+      "xcrun",
+      [
+        "xcstringstool",
+        "sync",
+        copy,
+        ...data.flatMap((entry) => ["--stringsdata", entry.file]),
+        "--skip-marking-strings-stale",
+      ],
+      { stdio: "pipe" },
+    );
+
+    return readCatalog(copy).strings;
+  } finally {
+    rmSync(directory, { force: true, recursive: true });
+  }
+}
+
+function syncCatalog({
+  compiled,
+  file,
+  table,
+}: {
+  compiled: StringsData[];
+  file: string;
+  table: string;
+}): CatalogChange {
+  const catalog = readCatalog(file);
+  const entries = new Map(Object.entries(catalog.strings));
+  const data = compiled.filter(({ tables }) => Object.hasOwn(tables, table));
+  const strings = data.flatMap(({ tables }) => tables[table] ?? []);
+  const currentKeys = new Set(strings.map(({ key }) => key));
+  const commentedKeys = new Set(strings.filter(({ comment }) => comment).map(({ key }) => key));
+  const added = [...currentKeys].filter((key) => !entries.has(key));
+
+  const removed = [...entries]
+    .filter(([key, entry]) => !currentKeys.has(key) && entry.extractionState !== "manual")
+    .map(([key]) => key);
+
+  const updated: string[] = [];
+  const synced = data.length > 0 ? syncedStrings({ data, file }) : {};
+
+  for (const [key, entry] of Object.entries(synced).filter(([catalogKey]) =>
+    currentKeys.has(catalogKey),
+  )) {
+    if (!commentedKeys.has(key) && entry.extractionState !== "manual") {
+      delete entry.comment;
+    }
+
+    const original = entries.get(key);
+
+    if (!isDeepStrictEqual(original, entry)) {
+      entries.set(key, entry);
+
+      if (original) {
+        updated.push(key);
+      }
+    }
+  }
+
+  for (const key of removed) {
+    entries.delete(key);
+  }
+
+  return {
+    added: added.map((key) => ({ key, table })),
+    catalog: { ...catalog, strings: Object.fromEntries(entries) },
+    file,
+    removed: removed.map((key) => ({ key, table })),
+    updated: updated.map((key) => ({ key, table })),
+  };
+}
+
+function syncCatalogs({ write }: { write: boolean }): void {
+  const compiled = newestStringsData();
+  const catalogs = catalogFiles();
+  const changes = [...catalogs].map(([table, file]) => syncCatalog({ compiled, file, table }));
+
+  const unresolved = compiled.flatMap(({ tables }) =>
+    Object.entries(tables)
+      .filter(([table]) => !catalogs.has(table))
+      .flatMap(([table, strings]) =>
+        strings.map(({ key }) => ({ key, table })).filter((string) => needsCatalog(string)),
+      ),
+  );
+
+  const added = changes.flatMap((change) => change.added);
+  const removed = changes.flatMap((change) => change.removed);
+  const updated = changes.flatMap((change) => change.updated);
+
+  if (unresolved.length > 0) {
+    process.stderr.write(
+      `No String Catalog for:\n${listStrings(unresolved)}` +
+        "Give each string the `table:` of its feature's catalog.\n",
+    );
+
+    process.exitCode = 1;
+    return;
+  }
+
+  if (added.length + removed.length + updated.length === 0) {
+    process.stdout.write("String Catalogs match the built app.\n");
+    return;
+  }
+
+  const report =
+    (added.length > 0 ? `Missing from their String Catalogs:\n${listStrings(added)}` : "") +
+    (removed.length > 0 ? `Unused String Catalog entries:\n${listStrings(removed)}` : "") +
+    (updated.length > 0 ? `Outdated String Catalog entries:\n${listStrings(updated)}` : "");
+
+  if (!write) {
+    process.stderr.write(
+      `${report}Run \`pnpm --filter apple i18n:sync\` to sync, then translate any new strings.\n`,
+    );
+
+    process.exitCode = 1;
+    return;
+  }
+
+  for (const change of changes) {
+    if (change.added.length + change.removed.length + change.updated.length > 0) {
+      const { catalog, file } = change;
+      const source = readFileSync(file, "utf8");
+
+      const json = JSON.stringify(catalog, null, 2).replaceAll(
+        /^(?<key>\s*"(?:[^"\\]|\\.)*"): /gmu,
+        "$<key> : ",
+      );
+
+      writeFileSync(file, source.endsWith("\n") ? `${json}\n` : json);
+    }
+  }
+
+  process.stdout.write(
+    `Synced String Catalogs (${added.length} added, ${removed.length} removed, ${updated.length} updated).\n`,
+  );
+}
+
+function listStrings(strings: CompiledString[]): string {
   const lines = strings.map((string) => `  ${string.table}: ${JSON.stringify(string.key)}\n`);
   return [...new Set(lines)].join("");
 }
 
 if (import.meta.main) {
-  const { missing, total } = findMissingStrings();
-
-  if (missing.length === 0) {
-    process.stdout.write(`All ${total} localized strings are in their String Catalogs.\n`);
-  } else {
-    process.stderr.write(
-      `Missing from their String Catalogs, so they would show in English:\n${listStrings(missing)}` +
-        "Run `pnpm --filter apple i18n` to add and translate them.\n",
-    );
-
-    process.exitCode = 1;
-  }
+  syncCatalogs({ write: process.argv.includes("--write") });
 }

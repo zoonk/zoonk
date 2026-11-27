@@ -3482,7 +3482,7 @@
       }
     },
     "No exam date in %@" : {
-      "comment" : "An exam with no sitting in the learner's month; the argument is a month like 'May'",
+      "comment" : "An exam with no sitting in the learner's month\nAn exam with no sitting in the learner's month; the argument is a month like 'May'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4775,64 +4775,6 @@
         }
       }
     },
-    "The exam's likely date is now %@." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der voraussichtliche Prüfungstermin ist jetzt der %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fecha probable del examen es ahora el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La date probable de l’examen est désormais le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La data probabile dell’esame ora è %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験日は現在、%@の見込みです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "현재는 %@에 시험이 있을 것으로 예상돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przewidywany termin egzaminu to teraz %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A data provável da prova agora é %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavın tahmini tarihi artık %@."
-          }
-        }
-      }
-    },
     "The final stretch" : {
       "comment" : "The exam's last weeks",
       "localizations" : {
@@ -5305,7 +5247,7 @@
       }
     },
     "Use %@" : {
-      "comment" : "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'",
+      "comment" : "Moves the plan to one of the closest sittings\nMoves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
