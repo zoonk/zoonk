@@ -119,7 +119,6 @@ export function endQuestionCreate({
   return { creating: null, draft: draft || (creating?.draft ?? "") };
 }
 
-/** What stops asking: the refused question, or the refused answer of one saved before. */
 export function getQuestionRefusal({
   answerError,
   error,

@@ -38,7 +38,6 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   return null;
 }
 
-/** The limit that stops asking while it holds; once it lifts, the learner can ask again. */
 export function useQuestionLimit(
   state: Pick<LessonQuestionState, "answerError" | "error" | "requestError">,
 ): HelpLimit | null {

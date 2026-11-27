@@ -28,7 +28,6 @@ export function hasOtherAnswerInProgress({
 
 const CREATE_NAVIGATION_ERROR_KINDS = new Set(["authentication", "subscription", "unavailable"]);
 
-/** `limited`: a limit refused asking and still holds, so the draft waits in the composer. */
 export function getComposerAvailability({
   isResolvingPreviousQuestion,
   limited,

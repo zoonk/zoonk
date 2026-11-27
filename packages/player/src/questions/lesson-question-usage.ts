@@ -91,7 +91,6 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
 
 const USAGE_REFUSAL_KINDS = new Set(["signUpRequired", "slowDown", "usageLimit"]);
 
-/** A refusal that holds until the learner's allowance is back, an account is made or a short wait ends. */
 export function isUsageRefusal(
   error: LessonQuestionApiError | null | undefined,
 ): error is LessonQuestionUsageRefusal {
