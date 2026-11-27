@@ -35,7 +35,11 @@ final class AppNavigationTests: XCTestCase {
         .route(.lesson(lessonId: "l1", sessionId: "s1", opening: .block("b1")))
       ),
       ("https://www.zoonk.com/learn/l1?session=", .route(.lesson(lessonId: "l1"))),
-      ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(skillId: "k1"))),
+      ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(.skill("k1")))),
+      (
+        "https://www.zoonk.com/mistakes/practice?blockId=b1", .route(.mistakePractice(.block("b1")))
+      ),
+      ("https://www.zoonk.com/mistakes/practice?mockId=m1", .route(.mistakePractice(.mock("m1")))),
       ("https://www.zoonk.com/test-out/c1", .route(.testOut(chapterId: "c1"))),
       (
         "https://www.zoonk.com/test-out/c1?result=r1",
@@ -127,6 +131,25 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertEqual(first.playback.playingBlockID, "b1", "Another window's block leaves this one's")
     XCTAssertEqual(first.tasks, [.session])
     XCTAssertNil(second.playback.playingBlockID)
+  }
+
+  /// A day's mistakes and pattern open over the screen that tapped them, so closing one goes back
+  /// to Today with its row done.
+  @MainActor
+  func testADaysMistakesAndPatternOpenTheirOwnScreens() throws {
+    func destination(_ json: String) throws -> StudyDestination {
+      StudyDestination(try JSONDecoder().decode(StudyBlockOpening.self, from: Data(json.utf8)))
+    }
+
+    let mistakes = AppRouter()
+    mistakes.openStudy(
+      try destination(#"{"kind":"mistakesPractice","blockId":"b1","sessionId":"s1"}"#))
+    XCTAssertEqual(mistakes.tasks, [.mistakePractice(.block("b1"))])
+
+    let pattern = AppRouter()
+    pattern.openStudy(
+      try destination(#"{"kind":"pattern","blockId":"b2","patternId":"p1","sessionId":"s1"}"#))
+    XCTAssertEqual(pattern.tasks, [.pattern(patternId: "p1")])
   }
 
   @MainActor

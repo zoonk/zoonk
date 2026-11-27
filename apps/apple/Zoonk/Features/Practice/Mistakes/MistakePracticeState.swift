@@ -1,5 +1,37 @@
 import Foundation
 
+/// Which open mistakes a run asks: the notebook's, one skill's, a day block's, or a finished mock's.
+enum MistakePracticeScope: Hashable, Sendable {
+  case notebook
+  case skill(String)
+  case block(String)
+  case mock(String)
+
+  init(skillId: String?, blockId: String?, mockId: String?) {
+    if let skillId {
+      self = .skill(skillId)
+    } else if let blockId {
+      self = .block(blockId)
+    } else if let mockId {
+      self = .mock(mockId)
+    } else {
+      self = .notebook
+    }
+  }
+
+  var skillId: String? {
+    if case .skill(let id) = self { id } else { nil }
+  }
+
+  var blockId: String? {
+    if case .block(let id) = self { id } else { nil }
+  }
+
+  var mockId: String? {
+    if case .mock(let id) = self { id } else { nil }
+  }
+}
+
 struct MistakePracticeStep: Equatable {
   let entry: MistakePracticeEntry
   let isFirstOfEntry: Bool
@@ -20,12 +52,6 @@ enum MistakePracticePhase: Equatable {
   var failed: SentAnswer? {
     if case .answerFailed(let sent) = self { sent } else { nil }
   }
-}
-
-enum PracticeEndNote: Equatable {
-  case missed
-  case missedAndUnreached
-  case unreached
 }
 
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
@@ -152,14 +178,13 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  var endNote: PracticeEndNote? {
-    let missed = verdicts.contains { $0 != .right }
-    let unreached = verdicts.count < steps.count
-    switch (missed, unreached) {
-    case (true, true): return .missedAndUnreached
-    case (true, false): return .missed
-    case (false, true): return .unreached
-    case (false, false): return nil
+  /// A run played to its end can start again on what it didn't fix, in the same order. One the
+  /// learner left early ends there.
+  var entriesToPracticeAgain: [MistakePracticeEntry] {
+    guard index >= steps.count else { return [] }
+
+    return steps.compactMap { step in
+      step.isFirstOfEntry && !fixedIds.contains(step.entry.mistakeId) ? step.entry : nil
     }
   }
 

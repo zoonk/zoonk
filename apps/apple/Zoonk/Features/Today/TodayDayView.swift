@@ -600,12 +600,17 @@ extension AppRouter {
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with
-  /// the day; a question block plays in the session, which comes to the front. `changed` opens
-  /// nothing: the screen the learner tapped on reads again.
+  /// the day; a question block plays in the session, which comes to the front. Mistakes and a
+  /// pattern open over the screen that tapped them, so closing them goes back there. `changed`
+  /// opens nothing: the screen the learner tapped on reads again.
   func openStudy(_ destination: StudyDestination) {
     switch destination {
     case .questionBlock(let blockID):
       playback.play(blockID: blockID)
+    case .mistakesPractice(let blockID):
+      return open(.mistakePractice(.block(blockID)))
+    case .pattern(let patternID):
+      return open(.pattern(patternId: patternID))
     case .today:
       return showRoot(of: .today)
     case .changed:
@@ -642,7 +647,7 @@ extension StudyDestination {
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):
       .mock(blockId: blockID, sessionId: sessionID)
-    case .questionBlock, .session, .lessonWait, .today, .changed:
+    case .questionBlock, .session, .lessonWait, .mistakesPractice, .pattern, .today, .changed:
       nil
     }
   }

@@ -6,6 +6,7 @@ struct MistakeLessonQuestionView: View {
   let segments: [TaskSegment]
   let index: Int
   let goalId: String?
+  let blockId: String?
   let answerIds: [String]
   let checking: () -> Void
   let failed: () -> Void
@@ -40,7 +41,7 @@ struct MistakeLessonQuestionView: View {
 
   init(
     replay: MistakeLessonReplay, entry: MistakePracticeEntry, segments: [TaskSegment], index: Int,
-    goalId: String?, answerIds: [String], checking: @escaping () -> Void,
+    goalId: String?, blockId: String?, answerIds: [String], checking: @escaping () -> Void,
     failed: @escaping () -> Void, answered: @escaping (MistakePracticeGrade) -> Void,
     next: @escaping () -> Void
   ) {
@@ -49,6 +50,7 @@ struct MistakeLessonQuestionView: View {
     self.segments = segments
     self.index = index
     self.goalId = goalId
+    self.blockId = blockId
     self.answerIds = answerIds
     self.checking = checking
     self.failed = failed
@@ -261,7 +263,7 @@ struct MistakeLessonQuestionView: View {
             DrillAnswerNotes(
               drill: entry.drill, notSure: grade?.notSure == true,
               timedOut: sentTimedOut, trap: grade?.trap)
-            FixedMistakesNote(count: grade?.fixedMistakeIds.count ?? 0)
+            if let grade { FixedMistakesNote(grade: grade) }
           }))
     }
   }
@@ -272,7 +274,7 @@ struct MistakeLessonQuestionView: View {
       cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
       mistake: SpokenMistakeTarget(
         mistakeId: entry.mistakeId, attemptId: attemptId,
-        goalId: goalId, answerIds: answerIds, questionStartedAt: shownAt),
+        goalId: goalId, blockId: blockId, answerIds: answerIds, questionStartedAt: shownAt),
       onPracticeGraded: { feedback in
         if let result = try? MistakePracticeGrade(feedback) { show(result) }
       },
@@ -336,7 +338,7 @@ struct MistakeLessonQuestionView: View {
         try await practice.api.answerLessonMistake(
           token: identity.bearerToken, mistakeId: entry.mistakeId, stepId: replay.step.id,
           answer: answer, durationMs: sentDuration ?? 0,
-          attemptId: attemptId, runAnswerIds: answerIds, goalId: goalId)
+          attemptId: attemptId, runAnswerIds: answerIds, goalId: goalId, blockId: blockId)
       })
     {
     case .done(let result):

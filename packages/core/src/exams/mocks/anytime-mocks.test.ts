@@ -483,6 +483,14 @@ describe("mocks taken any time", () => {
     });
   });
 
+  it("names its sitting, so a run can practice the mock's mistakes", async () => {
+    const { goal } = await anytimeSetup();
+    const id = await startMath(goal.id);
+    const sitting = await prisma.mockExam.findFirstOrThrow({ where: { goalId: goal.id } });
+
+    await expect(readMock(id)).resolves.toMatchObject({ mockId: sitting.id });
+  });
+
   it("compares a mock with the last one of the same part of the exam", async () => {
     const { goal, skills } = await anytimeSetup({ itemsPerSkill: 12 });
     const everyTopic = new Set(skills.map((skill) => skill.id));

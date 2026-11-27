@@ -7,8 +7,8 @@ extension PracticeHooks {
         switch destination {
         case .lesson(let lessonId):
           router.open(.lesson(lessonId: lessonId))
-        case .mistakePractice(let skillId):
-          router.open(.mistakePractice(skillId: skillId))
+        case .mistakePractice(let scope):
+          router.open(.mistakePractice(scope))
         case .pattern(let patternId):
           router.open(.pattern(patternId: patternId))
         case .checkpoint(let blockId, let sessionId):

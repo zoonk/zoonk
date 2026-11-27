@@ -54,6 +54,73 @@ final class StudyAPITests: XCTestCase {
     }
   }
 
+  /// A remedial row says only why it's in the day, in both of Today's places for a row's line.
+  func testRemedialRowsSayWhyTheyAreInTheDay() throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let cases: [([String: Any], String, String)] = [
+      (["returning": "again"], "What you own when you buy a share", "Again: you keep missing this"),
+      (["returning": "anotherWay"], "What you own when you buy a share", "Another way to see it"),
+      (["returning": "missed"], "What you own when you buy a share", "You keep missing this"),
+      (
+        ["kind": "practice", "screen": "mistakesPractice", "questions": 3, "title": NSNull()],
+        "Fix 3 mistakes", "Questions you missed before"
+      ),
+      (
+        ["kind": "practice", "screen": "pattern", "patternId": "p1", "title": "Ser or estar"],
+        "Practice: Ser or estar", "A pattern in your mistakes"
+      ),
+    ]
+
+    for (changes, title, line) in cases {
+      let fixture = base.merging(changes) { $1 }
+      let block = try JSONDecoder().decode(
+        StudyBlock.self, from: JSONSerialization.data(withJSONObject: fixture))
+
+      XCTAssertEqual(block.displayTitle, title)
+      XCTAssertEqual(block.label(document: .notice), line)
+      XCTAssertEqual(block.detail, line)
+      XCTAssertEqual(block.learnKind, block.kind == .learn ? .lesson : .mistakes)
+    }
+  }
+
+  /// Opening a preview row names the same remedial work core showed, and leaves out what it isn't.
+  func testOpeningARemedialRowEchoesWhatItIs() async throws {
+    let base = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(Self.block.utf8)) as? [String: Any])
+    let rows: [[String: Any]] = [
+      [:],
+      ["returning": "anotherWay"],
+      ["kind": "practice", "screen": "mistakesPractice"],
+      ["kind": "practice", "screen": "pattern", "patternId": "p1"],
+    ]
+    var refs: [NSDictionary] = []
+
+    for row in rows {
+      let transport = StudyRecordingTransport()
+      let api = StudyAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+      let block = try JSONDecoder().decode(
+        StudyBlock.self,
+        from: JSONSerialization.data(withJSONObject: base.merging(row) { $1 }))
+
+      _ = try? await api.openDay(
+        token: "token", goalID: "56adb511-8f30-426f-b358-fb4a556aaeb1", shownDate: "2026-10-28",
+        timeZone: "America/Sao_Paulo", target: .ref(DayBlockRef(block)))
+
+      let sent = try XCTUnwrap(transport.sent.value.first)
+      let target = try XCTUnwrap(sent.json["target"] as? NSDictionary)
+      refs.append(try XCTUnwrap(target["ref"] as? NSDictionary))
+    }
+
+    let flags = try refs.map { try XCTUnwrap($0["flags"] as? NSDictionary) }
+    XCTAssertNil(flags[0]["mistakesPractice"])
+    XCTAssertNil(flags[0]["returning"])
+    XCTAssertNil(refs[0]["patternId"])
+    XCTAssertEqual(flags[1]["returning"] as? String, "anotherWay")
+    XCTAssertEqual(flags[2]["mistakesPractice"] as? Bool, true)
+    XCTAssertEqual(refs[3]["patternId"] as? String, "p1")
+  }
+
   /// Core reads the shown block's missing values as `null` and refuses a body that leaves them out.
   func testOpeningADaySendsTheShownBlocksNullsWithTheBodysOwnLength() async throws {
     let transport = StudyRecordingTransport()
