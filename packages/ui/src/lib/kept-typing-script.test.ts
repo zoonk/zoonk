@@ -46,7 +46,6 @@ function select(value: string, key: string) {
 
 type Listener = (event: { target: unknown }) => void;
 
-/** A select's readout box, keyed like the select, with one child per option. */
 function readoutBox(key: string, values: string[]) {
   const box = document.createElement("span");
   box.setAttribute(KEPT_READOUT_ATTRIBUTE, key);

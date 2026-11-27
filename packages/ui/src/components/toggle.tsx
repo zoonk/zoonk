@@ -28,10 +28,7 @@ const toggleVariants = cva(
   },
 );
 
-/**
- * Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. A press made
- * before the page hydrates (`data-held`) draws the state it asks for at once.
- */
+/** Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. */
 function Toggle({
   className,
   disabled,

@@ -74,7 +74,6 @@ function openPage(body: string) {
     },
     find: <Found extends Element = HTMLElement>(selector: string) =>
       page.document.querySelector<Found>(selector)!,
-    /** Each frame runs what the last one asked for. */
     frame: (count = 1) => {
       Array.from({ length: count }).forEach(() => runFrame());
     },

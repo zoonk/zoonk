@@ -4,8 +4,13 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { ChevronRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
+const KEYCAP_LAST_CLASS = "*:data-[slot=shortcut-kbd]:order-last";
+
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] data-held:cursor-progress *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-(--icon-size,1rem)",
+  [
+    "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] data-held:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-(--icon-size,1rem)",
+    KEYCAP_LAST_CLASS,
+  ],
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -57,9 +62,6 @@ const BUSY_HIDDEN_WITHOUT_KEYS =
 
 const BUSY_CONTENT_CLASS =
   "[display:inherit] min-w-0 [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
-
-/** A keycap passed as a child goes last, as it would in the control itself. */
-const BUSY_ALONE_CLASS = "*:data-[slot=shortcut-kbd]:order-last";
 
 function BusySpinner({ className, iconClassName }: { className?: string; iconClassName?: string }) {
   return (
@@ -166,7 +168,7 @@ function BusyContent({
   return (
     <>
       <span
-        className={cn(BUSY_CONTENT_CLASS, BUSY_ALONE_CLASS, BUSY_HIDDEN)}
+        className={cn(BUSY_CONTENT_CLASS, KEYCAP_LAST_CLASS, BUSY_HIDDEN)}
         data-slot="busy-content"
       >
         {children}
