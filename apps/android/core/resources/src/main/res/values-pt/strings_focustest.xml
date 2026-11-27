@@ -41,7 +41,7 @@
   "focustest_start": "ba991c3960bbbe5908a3543ef78291355ae58367340c968e26259fe220de6850",
   "focustest_starting_point_title": "c6e4e43533b9ef39655592ca019c3ee5bb537f2cb59a519e417bf492050d8a8d",
   "focustest_stop": "a330b3abb2948186f79078f1c414e7f518096d9855dd760296eb298697199436",
-  "focustest_subject_right": "85354bf32ab8758ebdc09fa3646893876be6995c4443651accba8fef26d6241d",
+  "focustest_subject_right": "5a507bfcac86c225d15fd1f910a18983e1c5b9e343036fb413c7db64a35b1e97",
   "focustest_subjects": "0937038f7bc9a1fc23df0fa39511f2b8a3a1eda1a93346ac0f3bf681e1a2f810",
   "focustest_suggestion_body": "0f072c9735c5deefc5414766b150d05c12662432f26ed0f9dcca517d3cda135f",
   "focustest_suggestion_dismissed": "9ee7789ae7e1c0bfd414370f0d97f14228b320f4b7691dff13bc99090ffff837",
@@ -54,11 +54,8 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Teste de foco</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Descubra o que precisa estudar mais</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Já sabe um pouco disso?</string>
     <string name="focustest_offer_sentence">Um teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa.</string>
     <string name="focustest_offer_line">Esse teste mostra o que você já sabe para seu plano poder pular essa parte.</string>
@@ -66,9 +63,9 @@
     <string name="focustest_skip_note">Você pode fazer o teste depois, pelo seu plano.</string>
     <string name="focustest_not_now">Agora não</string>
     <string name="focustest_continue">Continuar</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Ver meu resultado</string>
     <string name="focustest_stop">Parar e usar minhas respostas</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Ainda não estudou a maior parte disso? Tudo bem. Você pode parar por aqui e começar a aprender.</string>
     <string name="focustest_answers_saved_title">Suas respostas estão salvas</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
@@ -92,14 +89,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">Você deixou seu plano como está. Esta é a sugestão do teste.</string>
     <string name="focustest_change_focus">Mudar o foco</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">Ver todas as matérias</string>
     <string name="focustest_subjects">Matérias</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">Receber mais algumas perguntas enquanto estudo</string>
     <string name="focustest_session_questions_when">Durante sua primeira semana</string>
     <string name="focustest_done">Concluído</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">Responder mais perguntas</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">Dedicar mais tempo a essas matérias?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">Com base nas suas respostas e no quanto cada matéria é cobrada na prova.</string>
@@ -112,26 +111,24 @@
     <string name="focustest_not_known_yet">Ainda não sabe</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
-        <item quantity="one">Você acertou %1$d de %2$d</item>
-        <item quantity="many">Você acertou %1$d de %2$d</item>
-        <item quantity="other">Você acertou %1$d de %2$d</item>
+        <item quantity="one">Acertou %1$d de %2$d</item>
+        <item quantity="many">Acertou %1$d de %2$d</item>
+        <item quantity="other">Acertou %1$d de %2$d</item>
     </plurals>
     <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
     <string name="focustest_written_not_checked">Escrita: fora deste teste</string>
     <string name="focustest_listening_not_checked">Escuta: fora deste teste</string>
     <string name="focustest_speaking_not_checked">Conversação: fora deste teste</string>
     <string name="focustest_practical_not_checked">Parte prática: fora deste teste</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">Em andamento</string>
     <string name="focustest_see_your_result">Ver seu resultado</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">Fazer o Teste de foco</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">O Teste de foco mostra o que você mais precisa estudar.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">Um teste de foco de %1$s mostra o que você já sabe, para que mais tempo seja dedicado ao que você mais precisa. Ele nunca remove uma matéria.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Tudo bem. Você pode fazer o teste pelo seu plano.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">Hoje não</string>
     <string name="focustest_not_today_failed">Não foi possível salvar. Tente de novo.</string>
 </resources>

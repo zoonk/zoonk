@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
     <string name="placementtest_title">Test what you know</string>
     <string name="placementtest_skip_lessons">Skip lessons you already know</string>
-    <!-- The plan's row and the screen's name for a language course's test. -->
     <string name="placementtest_level_title">Level test</string>
     <string name="placementtest_find_level">Find your level and skip what you know</string>
     <string name="placementtest_in_progress">In progress</string>
     <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
     <string name="placementtest_no_lessons_skipped">No lessons skipped</string>
+    <!-- The title after a placement test: how many lessons it took out of the plan. -->
     <plurals name="placementtest_lessons_skipped">
         <item quantity="one">%d lesson skipped</item>
         <item quantity="other">%d lessons skipped</item>
     </plurals>
-    <!-- A CEFR level range the test found for reading; %1$s is a range such as "B1–B2". -->
+    <!-- A CEFR level range the test found for reading, such as “B1–B2”. -->
     <string name="placementtest_reading_range">Reading %1$s</string>
-    <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
+    <!-- A CEFR level range the test found for listening, such as “B1–B2”. -->
     <string name="placementtest_listening_range">Listening %1$s</string>
     <!-- A level range, such as "B1–B2": the lowest and the highest level a skill's answers place it between. -->
     <string name="placementtest_level_range" translatable="false">%1$s–%2$s</string>
@@ -23,11 +22,9 @@
     <string name="placementtest_choose_description">A test finds the lessons you can skip.</string>
     <!-- The short test: about six minutes of questions. -->
     <string name="placementtest_quick">Quick test</string>
-    <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">About %1$s</string>
-    <!-- A short test of one language level, such as "Test out of B2". -->
+    <!-- A short test of one language level, such as “Test out of B2”. -->
     <string name="placementtest_test_out">Test out of %1$s</string>
-    <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Skip %1$s if you already know it</string>
     <string name="placementtest_start">Start</string>
     <string name="placementtest_continue_title">Continue your test</string>
@@ -38,21 +35,15 @@
     <string name="placementtest_known_other">You already know them. They stay in your practice.</string>
     <string name="placementtest_plan_stays">Your plan stays as it is.</string>
     <string name="placementtest_retake_tomorrow">You undid these today. Answer again tomorrow to skip them.</string>
-    <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">Up next</string>
     <string name="placementtest_done">Done</string>
     <string name="placementtest_not_now">Not now</string>
-    <!-- %1$s is a language's name, such as "Italian". -->
     <string name="placementtest_your_level">Your %1$s level</string>
     <string name="placementtest_keeps_adjusting">Your lessons keep adjusting as you answer.</string>
-    <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
     <string name="placementtest_level_stays">%1$s stays in your plan</string>
-    <!-- A level test-out whose level has too few questions to test yet; %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_unavailable">There aren\'t enough questions for %1$s yet.</string>
-    <!-- A lesson's end, after a run of easy lessons. -->
     <string name="placementtest_offer_title">This looks easy for you</string>
     <string name="placementtest_offer_quick">A quick test can skip lessons you already know.</string>
-    <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">A short test can skip %1$s if you already know it.</string>
     <string name="placementtest_where_to_start">Where would you like to start?</string>
     <string name="placementtest_first_lesson">First lesson</string>
@@ -64,9 +55,10 @@
         <item quantity="one">%d part, any day you like</item>
         <item quantity="other">%d parts, any day you like</item>
     </plurals>
-    <plurals name="placementtest_questions">
-        <item quantity="one">%d question</item>
-        <item quantity="other">%d questions</item>
+    <!-- The most questions a test asks. It can end sooner. -->
+    <plurals name="placementtest_up_to_questions">
+        <item quantity="one">Up to %d question</item>
+        <item quantity="other">Up to %d questions</item>
     </plurals>
     <!-- Where the learner is in a test split into parts, such as “Part 3 of 14”. -->
     <string name="placementtest_part_of">Part %1$d of %2$d</string>
@@ -94,7 +86,8 @@
         <item quantity="one">Skipped %d lesson you already know.</item>
         <item quantity="other">Skipped %d lessons you already know.</item>
     </plurals>
-    <string name="placementtest_listening_later">You can test your listening later, from your plan.</string>
+    <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
+    <string name="placementtest_take_again_later">You can take the test again later, from your plan.</string>
     <string name="placementtest_not_tested">Not tested yet</string>
     <string name="placementtest_about_left">About %1$s left</string>
 </resources>

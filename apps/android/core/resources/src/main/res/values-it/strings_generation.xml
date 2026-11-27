@@ -99,7 +99,6 @@
     <string name="generation_curriculum_plan_line_1">Stiamo cercando le lezioni per il tuo obiettivo…</string>
     <string name="generation_curriculum_plan_line_2">Stiamo distribuendo le abilità nei tuoi giorni di studio…</string>
     <string name="generation_curriculum_plan_line_3">Stiamo salvando il tuo piano…</string>
-    <!-- The wait while placement questions are written. -->
     <string name="generation_placement">Stiamo preparando il tuo test</string>
     <string name="generation_placement_questions">Stiamo preparando le tue domande</string>
     <string name="generation_placement_questions_line">Stiamo scegliendo le abilità da verificare…</string>

@@ -111,7 +111,7 @@ class LevelTestStepFlowTest {
 
         rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
         rule.onNodeWithText("Level test").assertIsDisplayed()
-        rule.onNodeWithText("12 questions${FACT_SEPARATOR}About", substring = true, useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("Up to 12 questions${FACT_SEPARATOR}About", substring = true, useUnmergedTree = true).assertExists()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)
@@ -174,7 +174,7 @@ class LevelTestStepFlowTest {
 
         assertEquals(listOf(true), api.levelTestAnswers.map { it.audioDeferred })
         assertEquals(listOf<Long?>(null), api.levelTestAnswers.map { it.answerIndex })
-        rule.onNodeWithText("You can test your listening later, from your plan.").assertIsDisplayed()
+        rule.onNodeWithText("You can take the test again later, from your plan.").assertIsDisplayed()
         rule.onNodeWithText("Not tested yet").assertIsDisplayed()
     }
 

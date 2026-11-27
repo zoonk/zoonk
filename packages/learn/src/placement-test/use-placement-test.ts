@@ -24,6 +24,8 @@ export type PlacementTestHost =
   | {
       /** "First lesson": saves that the learner starts without a test; false when it didn't. */
       decline: () => Promise<boolean>;
+      /** The learner told us their level, so the first lesson starts there. */
+      levelGiven: boolean;
       mode: "direct" | "offer" | "resume";
       surface: "onboarding";
     }

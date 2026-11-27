@@ -63,13 +63,14 @@ internal fun Note(
 
 /**
  * The Focus test's offer: in onboarding, "First lesson" or the test; on the plan, the test with its facts and "Not now".
- * [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step.
+ * [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. [levelGiven]: see [firstLessonRow].
  */
 @Composable
 internal fun ColumnScope.FocusTestOffer(
     test: FocusTest,
     minutes: Int,
     onPlan: Boolean,
+    levelGiven: Boolean,
     pressed: Pressed?,
     failed: Boolean,
     onStart: () -> Unit,
@@ -87,7 +88,7 @@ internal fun ColumnScope.FocusTestOffer(
                 else -> stringResource(R.string.focustest_find_start)
             },
         sentence = stringResource(if (focus) R.string.focustest_offer_sentence else R.string.focustest_offer_line),
-        rows = if (onPlan) listOf(testRow) else listOf(firstLessonRow(), testRow),
+        rows = if (onPlan) listOf(testRow) else listOf(firstLessonRow(levelGiven), testRow),
         initial = TestRow.Quick,
         pressed = pressed,
         failed = failed,

@@ -121,7 +121,7 @@
   "onboarding_language_test_reading": "781c74433391cf62b52e71799b280255dd6cb12a448ba8519866d64dcb989377",
   "onboarding_language_test_skip_question": "89daf085b0d2b5c43a9d529495cf90bc307998fccfd74a3fc6b276babedcb28a",
   "onboarding_language_test_speaking": "61c6633d0923a935035efd143eea153b1045bd16cc99259346790145336b6f4a",
-  "onboarding_language_test_use_app_in": "11026a935f9e7416f7dcbeba3e616024eb6898c84da84aabfce5b5c9bfbe2e05",
+  "onboarding_language_test_use_app_in": "e87b45f1e9b0b7b044d9f16095f7cba53c3003bc5b9857108bd0c2688214cddc",
   "onboarding_language_test_writing": "d16e702b252c9356beb8aeffc6001e65e555877341b14854c2d3a4050c265d47",
   "onboarding_level_advanced": "4aa8ef5a7b8dc2f5b5c49d4023fb443546b6dced25cfa3bcf32dbbe0f3934855",
   "onboarding_level_advanced_description": "d3d8cd174edd8d02d821cdedef610804eb4831d3241026861a9e6b8d38771f2b",
@@ -564,9 +564,8 @@
     <string name="onboarding_question_failed">No pudimos responder esa pregunta. Inténtalo de nuevo en un momento.</string>
     <string name="onboarding_question_sign_in">Crea una cuenta para hacer preguntas sobre tu material.</string>
     <string name="onboarding_question_slow_down">Estás haciendo muchas preguntas seguidas. Inténtalo de nuevo en unos minutos.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">Leer tu material toma unos minutos.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">Esto tarda uno o dos minutos.</string>
     <string name="onboarding_placement_ready">Tu prueba está lista</string>
     <string name="onboarding_placement_progress">Preguntas respondidas</string>
@@ -575,21 +574,16 @@
     <string name="onboarding_placement_stop">Parar y usar mis respuestas</string>
     <string name="onboarding_placement_answer_failed">No se pudo guardar. Conservamos tus respuestas.</string>
     <string name="onboarding_placement_unavailable_title">Veremos qué sabes durante tus primeros días</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
-    <string name="onboarding_language_test_use_app_in">Usar la app en %1$s</string>
-    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_use_app_in">Usar la aplicación en %1$s</string>
     <string name="onboarding_language_test_did_not_understand">No entendí el audio</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">Saltar esta pregunta</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">No puedo escuchar ahora</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">El mensaje de voz está en camino…</string>
     <string name="onboarding_language_test_play">Reproducir el mensaje</string>
     <string name="onboarding_language_test_play_again">Volver a reproducir el mensaje</string>
     <string name="onboarding_language_test_message_loading">Preparando el mensaje. La primera vez puede tardar unos segundos.</string>
     <string name="onboarding_language_test_message">Recibiste un mensaje de voz. Escucha y responde.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lectura</string>
     <string name="onboarding_language_test_listening">Escucha</string>
     <string name="onboarding_language_test_speaking">Expresión oral</string>

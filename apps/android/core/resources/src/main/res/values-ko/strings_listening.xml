@@ -13,7 +13,7 @@
   "listening_play_again": "9718cfd6de892da206d4c63b507bcb00ce9043fc0f000f0d868dc090da65ec58",
   "listening_playing": "4577cf7a5f138ea49bc7880b24b77dbb8e57313e02dfa462375a367415aea8c9",
   "listening_playing_note": "6f418ea1a05b69aea324fa47430295cf12f0af24c8e4836e67effacc861dbb1d",
-  "listening_questions": "9b058ea4439c83aa1a5ace0853c352fb495c9cf6f6cfe0997be7718212406972",
+  "listening_questions": "bc3c43b72e066ae78f2b9aba2a112b5a17294b7e2cb3698271a99e190fc57100",
   "listening_recording": "5320bd24db56711f5f075d8d7c330760f29d59c9a3f1dcdd2d599b5eff219c53",
   "listening_stop": "4a8ddbd5b4c28c57496102e27ba4f424c3977412bc966ad6bc0d57de02c808eb",
   "listening_transcript": "cf25452f753ffbc595cc7b2ace1bf79bf0fa5163966bbcd6a8ed1ffd44638214"
@@ -36,7 +36,7 @@
     <string name="listening_failed">녹음 파일을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="listening_playing_note">재생하고 있어요. 실제 시험처럼 일시 정지할 수 없어요.</string>
     <plurals name="listening_questions">
-        <item quantity="other">녹음 내용에 관한 문제 (%d)</item>
+        <item quantity="other">이 음성에 딸린 문제 %d개</item>
     </plurals>
     <string name="listening_transcript">대본</string>
 </resources>

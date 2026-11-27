@@ -560,9 +560,8 @@
     <string name="onboarding_question_failed">回答できませんでした。少し待ってからもう一度お試しください。</string>
     <string name="onboarding_question_sign_in">資料について質問するには、アカウントを作成してください。</string>
     <string name="onboarding_question_slow_down">短時間に質問が続いています。数分後にもう一度お試しください。</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">資料の読み取りには数分かかります。</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">1〜2分ほどかかります。</string>
     <string name="onboarding_placement_ready">テストの準備ができました</string>
     <string name="onboarding_placement_progress">回答済みの問題数</string>
@@ -571,21 +570,16 @@
     <string name="onboarding_placement_stop">ここで終えて回答を使う</string>
     <string name="onboarding_placement_answer_failed">送信できませんでした。回答はそのまま残っています。</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">アプリを%1$sで使う</string>
-    <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">音声の内容がわからない</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">この問題をスキップ</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">今は音声を聞けない</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">音声メッセージを準備しています…</string>
     <string name="onboarding_language_test_play">メッセージを再生する</string>
     <string name="onboarding_language_test_play_again">メッセージをもう一度再生する</string>
     <string name="onboarding_language_test_message_loading">メッセージを準備しています。初回は数秒かかることがあります。</string>
     <string name="onboarding_language_test_message">音声メッセージが届きました。聞いて答えてください。</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">リーディング</string>
     <string name="onboarding_language_test_listening">リスニング</string>
     <string name="onboarding_language_test_speaking">スピーキング</string>

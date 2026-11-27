@@ -271,7 +271,7 @@ internal fun ColumnScope.LevelResult(
         lead =
             when {
                 lessons > 0 -> pluralStringResource(R.plurals.placementtest_lessons_you_know, lessons, lessons)
-                READING in ranges && LISTENING !in ranges -> stringResource(R.string.placementtest_listening_later)
+                READING in ranges && LISTENING !in ranges -> stringResource(R.string.placementtest_take_again_later)
                 else -> stringResource(R.string.placementtest_keeps_adjusting)
             },
         action = action,

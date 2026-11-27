@@ -1,16 +1,10 @@
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { isLowGuessTap, isQuickChoice } from "../../_utils/placement-guess-rate";
 import { type PlacementEvidence } from "../placement-beliefs";
+import { PART_QUESTIONS, QUESTIONS_PER_TOPIC, getCourseMinutes } from "../placement-budget";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { readWholeCourseWalk } from "../whole-course-walk";
-import {
-  PART_QUESTIONS,
-  type PlacementAttempt,
-  QUESTIONS_PER_TOPIC,
-  getAttemptParts,
-  getCourseMinutes,
-  getTopicsAhead,
-} from "./placement-attempt-record";
+import { type PlacementAttempt, getAttemptParts, getTopicsAhead } from "./placement-attempt-record";
 import { type loadEvidence, toPlacementEvidence } from "./placement-evidence";
 import { type loadPlanBuild } from "./placement-plan-build";
 

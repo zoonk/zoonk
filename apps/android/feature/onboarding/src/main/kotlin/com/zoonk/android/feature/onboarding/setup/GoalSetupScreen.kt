@@ -49,6 +49,7 @@ import com.zoonk.android.data.withRead
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.focustest.FocusTestFlow
+import com.zoonk.android.feature.language.parseCefrScore
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
@@ -532,6 +533,7 @@ private fun ColumnScope.QuestionStep(
                     onSitting = { vm.placementProgress = it },
                     handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
                     asked = view.placement?.mode == OnboardingPlacement.Mode.DIRECT,
+                    levelGiven = view.goal.levelGiven(),
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
@@ -544,6 +546,7 @@ private fun ColumnScope.QuestionStep(
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
                     placement = view.placement,
+                    levelGiven = view.goal.levelGiven(),
                     store = store,
                     plans = plans,
                     navigator = navigator,
@@ -685,6 +688,17 @@ private fun Goal.levelChoice(): LevelChoice? {
     if (level != null) return LevelChoice.Own(level)
     val answered = (details["answered"] as? JsonArray)?.any { (it as? JsonPrimitive)?.contentOrNull == "level" } == true
     return LevelChoice.QuickTest.takeIf { answered }
+}
+
+/**
+ * The learner said where they stand on the level question: a level of their own, a language level or the subjects
+ * they know. "Not sure, give me a short test" saves none of them.
+ */
+private fun Goal.levelGiven(): Boolean {
+    val level = details.text("level")
+    return levelChoice() is LevelChoice.Own ||
+        (level != null && parseCefrScore(level) != null) ||
+        details.texts("knownSubjects").isNotEmpty()
 }
 
 private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: String): List<String> =

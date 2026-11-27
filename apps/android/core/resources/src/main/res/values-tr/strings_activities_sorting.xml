@@ -49,7 +49,7 @@
   "activities_sorting_spot_empty": "d321e1ee714649a7b4ae36c1ea16af9080b78865a38094788b432e158d3e5663",
   "activities_sorting_spot_named": "aa5da8ff37a19671bc5e986c1f507c6f29a50ec53e87a0c604311f31f5a6a033",
   "activities_sorting_spots_to_label": "cc979ef70fcb662f528c1294664d86f7137e03c36a99c735f52c460a2f753e08",
-  "activities_sorting_steps_in_your_order": "9d9062bd5e61c2723bb532c3a39923e5298e35ae1011538101f651d9bfa75d06",
+  "activities_sorting_steps_in_your_order": "4714a9d7e2553e7bafe180ab1d3559d64b7c8dd26e9d2e613bcc1a9fee4820ba",
   "activities_sorting_tap_a_name": "c87b76616ab1d35ee104cd3b145b9c1ee704d95b970650c5077f168a2af866f7",
   "activities_sorting_time_between": "750845865b8cbe5853f77b800cfbcd8441b69ee0e1d123e9465ef597d205f087",
   "activities_sorting_timeline_from": "bd3dc693e56398c7fe4ab30a3190ec9bc925ed3725aa93ed89655ef2bd86251f",
@@ -100,8 +100,7 @@
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s öğesi %2$s grubunda olmalı.</string>
     <string name="activities_sorting_badge_put_in_order">Sıraya koy</string>
-    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
-    <string name="activities_sorting_steps_in_your_order">Senin sıralamana göre adımlar</string>
+    <string name="activities_sorting_steps_in_your_order">Senin sıraladığın adımlar</string>
     <string name="activities_sorting_drag_steps">Adımları basılı tutup sürükleyerek sırala.</string>
     <!-- Above a process's steps in their true order, once checked. -->
     <string name="activities_sorting_right_order">Doğru sıralama</string>

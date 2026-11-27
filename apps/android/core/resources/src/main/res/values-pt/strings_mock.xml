@@ -84,7 +84,7 @@
   "mock_speaking_writing_paper_line_4": "097f8bb78cc1174da33f3d169ef68b0ee7f08714066f0984f4aac6cdf6c0b7e8",
   "mock_speaking_writing_paper_phase": "dda39f6789f6fad0d9a3da51e0d56b8df539b0f196e23e497d22ff762bd0e537",
   "mock_start_now": "a433b468e988918e673c103ab6b8c026e19470877a8fdf17491d704a501a5f61",
-  "mock_step_failed": "7f0f5ef327643ad7d3e78b5e26dfcfb12afe1e3fa9053192a19c11f29a9a43a5",
+  "mock_step_failed": "5ac5e8e2cd4ab553931ddb74bc173314b632c536576d353e5c1859b75dcb919c",
   "mock_step_failed_saved": "89e3ebdd5190b5e72bb34831f944512cb384cbc8537e99887fd202847424dac3",
   "mock_step_slow": "6b369583cdca9ccbc866086e7155f0372770f259b17f66072a88d26bd8be1fd9",
   "mock_take": "bc4802f052239ccea56a14d801eb59ec0ab85519ba8ec8eca27330d70c054804",
@@ -242,7 +242,7 @@
     <!-- During a mock exam: one of the learner's answers couldn't be saved. -->
     <string name="mock_answer_not_saved">Uma resposta não foi salva.</string>
     <string name="mock_step_failed_saved">Não deu certo. Suas respostas estão salvas. Tente de novo em instantes.</string>
-    <string name="mock_step_failed">Não deu certo. Tente de novo em instantes.</string>
+    <string name="mock_step_failed">Não foi possível concluir. Tente de novo em instantes.</string>
     <string name="mock_step_slow">Ainda estamos entregando. Isso está demorando mais que o normal.</string>
     <string name="mock_handed_in_title">Simulado entregue</string>
     <string name="mock_see_result">Ver resultado</string>

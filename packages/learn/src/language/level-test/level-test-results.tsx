@@ -125,7 +125,11 @@ function useLevelResultSentence() {
     }
 
     return result?.ranges.reading && !result.ranges.listening
-      ? t("You can test your listening later, from your plan.")
+      ? t({
+          description:
+            "On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.",
+          message: "You can take the test again later, from your plan.",
+        })
       : t("Your lessons keep adjusting as you answer.");
   };
 }

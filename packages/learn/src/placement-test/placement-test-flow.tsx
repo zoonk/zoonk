@@ -212,9 +212,10 @@ export function PlacementTestFlow({
     case "loadFailed":
       return <StepLoadFailed onRetry={test.reopen} />;
     case "offer":
-      return onboarding ? (
+      return host.surface === "onboarding" ? (
         <CourseStartOffer
           failed={failed}
+          levelGiven={host.levelGiven}
           offer={offer}
           onFirstLesson={test.onDecline}
           onShown={analytics.offered}

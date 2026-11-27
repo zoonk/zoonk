@@ -6,7 +6,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { hasCountryReading } from "../../../goals/_utils/goal-content-country";
 import { saveMetadataInTransaction } from "../../../goals/_utils/goal-metadata";
 import { loadCoursePlacementTopics } from "../../../learner/placement/_utils/course-placement-offer";
-import { TOPICS_PER_PART } from "../../../learner/placement/_utils/placement-attempt-record";
+import { TOPICS_PER_PART } from "../../../learner/placement/placement-budget";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions } from "../onboarding-steps";

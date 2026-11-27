@@ -60,7 +60,12 @@ export type LanguagePlanTestActions = {
 
 /** Where the flow runs. In onboarding a test the learner asked for (`direct`) starts as it opens. */
 export type LevelTestHost =
-  | { mode: "direct" | "offer" | "resume"; surface: "onboarding" }
+  | {
+      /** The learner told us their level, so the first lesson starts there. */
+      levelGiven: boolean;
+      mode: "direct" | "offer" | "resume";
+      surface: "onboarding";
+    }
   | { surface: "plan" };
 
 type Saves = Pick<ReturnType<typeof useTestVisit>, "run" | "save" | "setFailed">;

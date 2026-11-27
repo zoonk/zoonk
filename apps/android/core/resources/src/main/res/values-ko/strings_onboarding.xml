@@ -121,7 +121,7 @@
   "onboarding_language_test_reading": "0051297ad6a930c747e8bc231b5885cefd451f8fbc285838064538af8eb81ac8",
   "onboarding_language_test_skip_question": "caf9a3854a40eda2bb243df73064a4f7cb4fc9c883ded8bc22135ffecee19ee2",
   "onboarding_language_test_speaking": "92c8e90a4f78908d32c23dd286292b2f0269ba18df3d250d9cc413ec80366a1f",
-  "onboarding_language_test_use_app_in": "0750987381dfc8829127c06a1ba20d8b314a7ee14b629216ee1d08d974abd9ba",
+  "onboarding_language_test_use_app_in": "4a015a54446312a995b62445b7ac4d001e2d9845036cdcd8a8b32da748118885",
   "onboarding_language_test_writing": "f185ba432a9f6408a54d323650f82fd4d639295900b20b4ee94d0b7a513a72ab",
   "onboarding_level_advanced": "e4d3da25d0b790a34cac5f36f26b06ba81171cf2e3ce942b6cb0fe7fda9b3322",
   "onboarding_level_advanced_description": "d930d3f19ca567a6c9b385721c827bdd07c19ba3d21ec0a4ee773a522d19ec2c",
@@ -324,7 +324,7 @@
   "onboarding_subjects_label": "648c31ee2e6e42f77a38d949ba7555bdd8ef40bf275d296cdded0b2fbaf79f98",
   "onboarding_subjects_title": "aa87d7116ac91ad8fe4be8afcdf13d1c55426653118bb54242aca8cebb9f39a6",
   "onboarding_target_label": "a315606475a97e740383a983027a9a1c109e3ed9d733f20cd6f849be46638e96",
-  "onboarding_test_question_progress": "ad572395953a6a701780eddfbfa9926b2b2244964e6cdc8554c97f673c49cf50",
+  "onboarding_test_question_progress": "801208243115122eccf483a6e82984afedfe6e18a05e5715e57e991a685c008b",
   "onboarding_time_a_day": "48b0f2c8f554a757b9f3fc0feaf9b9ec3e8e10d476864a2e0e33bc485f8fd335",
   "onboarding_try_another_goal": "ea602afd566b2d4091ab17524a56dd21374576fe24c3fe9a972ebf85a8d2b077",
   "onboarding_unclear_description": "e2b51c64304dda1a114618a83260b16caf4eb06015ce666c1cbc9a5ce66c043a",
@@ -560,9 +560,8 @@
     <string name="onboarding_question_failed">답변하지 못했어요. 잠시 후 다시 시도해 보세요.</string>
     <string name="onboarding_question_sign_in">자료에 대해 질문하려면 계정을 만드세요.</string>
     <string name="onboarding_question_slow_down">짧은 시간에 여러 번 질문하셨어요. 몇 분 후에 다시 시도해 보세요.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">자료를 읽는 데 몇 분 걸려요.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">1~2분 정도 걸려요.</string>
     <string name="onboarding_placement_ready">테스트가 준비됐어요</string>
     <string name="onboarding_placement_progress">답한 문제 수</string>
@@ -571,21 +570,16 @@
     <string name="onboarding_placement_stop">그만 풀고 내 답변 반영하기</string>
     <string name="onboarding_placement_answer_failed">전송하지 못했어요. 답은 그대로 남아 있어요.</string>
     <string name="onboarding_placement_unavailable_title">처음 며칠 동안 알고 있는 내용을 확인해 볼게요</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
-    <string name="onboarding_language_test_use_app_in">%1$s로 앱 사용하기</string>
-    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_use_app_in">앱 언어를 %1$s(으)로 바꾸기</string>
     <string name="onboarding_language_test_did_not_understand">무슨 말인지 못 알아들었어요</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">이 문제 건너뛰기</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">지금은 듣지 않기</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">음성 메시지를 준비하고 있어요…</string>
     <string name="onboarding_language_test_play">메시지 듣기</string>
     <string name="onboarding_language_test_play_again">메시지 다시 듣기</string>
     <string name="onboarding_language_test_message_loading">메시지를 준비하고 있어요. 처음에는 몇 초 걸릴 수 있어요.</string>
     <string name="onboarding_language_test_message">음성 메시지가 도착했어요. 듣고 답해 보세요.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">읽기</string>
     <string name="onboarding_language_test_listening">듣기</string>
     <string name="onboarding_language_test_speaking">말하기</string>
@@ -825,5 +819,5 @@
     <string name="onboarding_country_skip_default">건너뛰면: %1$s</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">사는 나라</string>
-    <string name="onboarding_test_question_progress">%1$d번 문제 / 총 %2$d문제</string>
+    <string name="onboarding_test_question_progress">%1$d번 문제 (총 %2$d문제)</string>
 </resources>

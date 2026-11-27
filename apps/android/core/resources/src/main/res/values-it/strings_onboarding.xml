@@ -564,9 +564,8 @@
     <string name="onboarding_question_failed">Non siamo riusciti a rispondere. Riprova tra poco.</string>
     <string name="onboarding_question_sign_in">Crea un account per fare domande sul tuo materiale.</string>
     <string name="onboarding_question_slow_down">Stai facendo molte domande in poco tempo. Riprova tra qualche minuto.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">Ci serve qualche minuto per leggere il tuo materiale.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">Ci vuole un minuto o due.</string>
     <string name="onboarding_placement_ready">Il tuo test è pronto</string>
     <string name="onboarding_placement_progress">Domande a cui hai risposto</string>
@@ -575,21 +574,16 @@
     <string name="onboarding_placement_stop">Interrompi e usa le mie risposte</string>
     <string name="onboarding_placement_answer_failed">L’invio non è riuscito. Le tue risposte sono al sicuro.</string>
     <string name="onboarding_placement_unavailable_title">Nei primi giorni vedremo cosa sai già</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
     <string name="onboarding_language_test_use_app_in">Usa l’app in %1$s</string>
-    <!-- Answers a listening question without guessing. -->
     <string name="onboarding_language_test_did_not_understand">Non ho capito l’audio</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
     <string name="onboarding_language_test_skip_question">Salta questa domanda</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">Non posso ascoltare ora</string>
-    <!-- Shown while a listening question's recording is still being made. -->
     <string name="onboarding_language_test_audio_on_its_way">Stiamo preparando il messaggio vocale…</string>
     <string name="onboarding_language_test_play">Ascolta il messaggio</string>
     <string name="onboarding_language_test_play_again">Riascolta il messaggio</string>
     <string name="onboarding_language_test_message_loading">Stiamo preparando il messaggio. La prima volta può volerci qualche secondo.</string>
     <string name="onboarding_language_test_message">Hai ricevuto un messaggio vocale. Ascolta e rispondi.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lettura</string>
     <string name="onboarding_language_test_listening">Ascolto</string>
     <string name="onboarding_language_test_speaking">Parlato</string>

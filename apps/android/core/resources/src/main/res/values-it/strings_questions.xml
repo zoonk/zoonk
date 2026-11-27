@@ -36,7 +36,7 @@
   "questions_matched_with": "b2638afbeaf521387a821946109267b1ce988655edb4376b1e8b2c7872d91494",
   "questions_mistake_fixed": "35a246bf7ca3d42cb99fb2995863e109d74eebdb27f0d69c0ff27d8e71f4c817",
   "questions_mistakes_fixed": "5ab4316176c0a6ae3f409c6cc0de54cddeca916b1ddd9eafd93646f1e9dbe735",
-  "questions_not_quite": "589d955109e2f825e6cf5b66c420fb9231d0f26aa3b860437e88867950b50cb1",
+  "questions_not_quite": "c5cb074a92c7b73f26484c03d5d85613a6d6dfb79d70b541ef6dbfc33b325233",
   "questions_pick_all": "6d28ba82c14953788277725937de6f9c59442c21a9abe9f3cb60750c1cc28570",
   "questions_pick_count": "6afcda4bc467e55e5c793545f9e5c444af132bfb47ef5803389d34e6f27719f9",
   "questions_place_right": "7dea2aa836862b8180d78307d18ead0af00273896edf257473259ccb2f76a9ca",
@@ -72,12 +72,10 @@
     <string name="questions_right">Corretto</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Errato</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Lascia in bianco</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">Posizione %1$d, posizione corretta</string>
     <string name="questions_place_wrong">Posizione %1$d, posizione sbagliata</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, in coppia con %2$s</string>
     <string name="questions_match_paired">Abbinamento riuscito tra %1$s e %2$s. Coppie abbinate: %3$d su %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s e %2$s non vanno insieme.</string>
@@ -95,15 +93,14 @@
     </plurals>
     <string name="questions_entry_fraction">Una frazione, come 2/3, o un numero decimale.</string>
     <string name="questions_entry_integer">Un numero intero.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">Inserisci un numero, come %1$s.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Inserisci una frazione, come 2/3, o un numero, come %1$s.</string>
     <string name="questions_invalid_integer">Inserisci un numero intero, come 12.</string>
     <string name="questions_feedback_label">Commenti sulla risposta</string>
     <string name="questions_correct">Esatto!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Non è corretto</string>
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
+    <string name="questions_not_quite">Non proprio</string>
     <string name="questions_left_blank">Senza risposta</string>
     <string name="questions_dont_know_yet">Non lo so ancora</string>
     <plurals name="questions_streak">
@@ -121,6 +118,7 @@
         <item quantity="many">Hai corretto %d errori. Non sono più nel tuo quaderno.</item>
         <item quantity="other">Hai corretto %d errori. Non sono più nel tuo quaderno.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">Salvato nel tuo quaderno degli errori</string>
     <string name="questions_show_less">Mostra meno</string>
     <string name="questions_read_again">Rileggi tutto</string>

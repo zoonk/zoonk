@@ -16,7 +16,7 @@
   "questions_drill_timed": "9708d19feb5bdb590c96d2fad7d5cfd177d2f30679ed07b81b080094d2f21cdb",
   "questions_drill_timed_out": "236989b637e739ec591b925d5cde28e652fbe5290d5627223eaa31818421bdaf",
   "questions_drill_trap": "34b791d073480a2ddd7bc01990049a1b302f35985000e9200dd3b676acdf4ba6",
-  "questions_entry_decimals": "95f474c44103df9e3c37582468a3681da8b9123c45124ad7259ce503cc877b33",
+  "questions_entry_decimals": "4d1caf9dfdf61abb330ad1727bad976de75b90cbf93fa4c471bda1183d874364",
   "questions_entry_fraction": "e389f2e91d1c24cc1414487db559f7bdc6bdccfb921419b1b66711fbc8febb7e",
   "questions_entry_integer": "5de16fc709c02f018eb5f0156e47c26037718bc0a241f19d0691fbb66c607b1a",
   "questions_entry_round_to_whole": "0d17c8386eb72ef7448cfc34140717aaf773f51c71ea9d8970ae4dc151f121f6",
@@ -25,7 +25,7 @@
   "questions_invalid_fraction": "4aa580f793dc35818a92562f208078b03e99e65673a1799ad31df5e72558fb7c",
   "questions_invalid_integer": "8cab87b43db0b680ce3530a5d04e3acaa94fd87579616fb3dfe0a2076c323de3",
   "questions_invalid_number": "ce2607b91df2ea3dc826b863693902a802089f6968a2decf440a6d488f003e51",
-  "questions_leave_blank": "cb52ef245cd63c48457f922e5deb64a1bea4ae2b24c73fe6d11e9747f5976cfc",
+  "questions_leave_blank": "88e6bc1e00a4112c7a57589f0c32e284d1ba3689932f3a06e342f8ff5914dd79",
   "questions_left_blank": "c6a97c9bcb0639d019f156604aca4060470f02c2fb8b5defa2d540ab96ec82ef",
   "questions_mark_correct": "503dd47e909506e40b15b5c68a7861b9144c2b0285dc34bc91d37823a2f48890",
   "questions_mark_wrong": "ebc4bc09b1b314dccbf396ce8df847daeb0d122a8319af75a26af61fc3e65897",
@@ -33,12 +33,12 @@
   "questions_match_not_a_pair": "6bec49cd6b47116ff28f30d0f356049d9b307d16972099d9b404e1b2c8cc97b8",
   "questions_match_paired": "90ae5a90c39491a62ea8e575b0d77d692cf82a30f034e0ef5b6951fab582797e",
   "questions_match_unpaired": "e4a00c8c5987993c85159beb51853187c43e14f48e2cd626a812fb8746f1bfb7",
-  "questions_matched_with": "fed2b901231c69128d45130907d3f64e68d440d692f5f5a0d00457e7d86c4c73",
+  "questions_matched_with": "0dcac052fc7beeb98be796b8eb1830291bcd02c7fac53396bf6a3c27f014202a",
   "questions_mistake_fixed": "9ebfa1cdcda5602c4d111df264321e267dcadb3f92febe3cf8e4a4d7d8515b7b",
   "questions_mistakes_fixed": "acb3820d35f1709094fe89227d421638143166c71949d72a02490b46c601fd1d",
   "questions_not_quite": "1cc0cfef3c1a9b06305c65c56f639bf5443c70d5831391ccd82389bb0ff5cd05",
   "questions_pick_all": "5e40865407ecf31cbfc49eac61c494a52e310ca3cd145cc89ca351ab251a8c02",
-  "questions_pick_count": "6ba0440bad0423cec81c835bb2102ac42518c9c4abc56ab2cd968ada49be1f2a",
+  "questions_pick_count": "8c1ed8704c4aeb379ded3c51dcdd981221aa00471fa00b31a6258888d5f50e9a",
   "questions_place_right": "c41f5afd11de1b794f173d9615462f73586c693c5b4d72c7acb05ed3e1ebd032",
   "questions_place_wrong": "6dcca0bfa1e4a49352af9de46850a67fcc6077e9dd92adb4c3cb9b6012f43314",
   "questions_placement_note": "55ad8fc5b26d4433f60539e02154c119d76bc48be70e477e8115967275b1167d",
@@ -48,10 +48,10 @@
   "questions_right": "d399db5c429f4f92089bbf9daded23e14ca60e69cc43001022563fab9469a5da",
   "questions_right_answer": "76ee67c2a648f47a631f77c8244a374a85c4f63b4292243cbc74f79a6a1d1040",
   "questions_saved": "7aa1fd07cbf13ebd6a3ba61355a7a44ccee67cf3c59479f19127e38c27fd3b0c",
-  "questions_set_place_audio": "aaae5dc856dd89431f9522348f3f88894303ae9dfeffa5ab7424704df05aa857",
-  "questions_set_place_case": "556b8eba5bf8c544e78c35ac27495c6e52991fa0df24130069054e615630a2c8",
-  "questions_set_place_chart": "36189efd92703b9e7bdefe053e64030cbda6a44d8d1297fafec7ec77549c220f",
-  "questions_set_place_text": "70311571dded17fb309fa32a6979d54df66f69423411b5b1cb6a06964bb00209",
+  "questions_set_place_audio": "084c22565b293651337c4cbe606f42820bb8aa2cb545b62dfe9e3b6034ee06e8",
+  "questions_set_place_case": "1ede0044bf58b2cdcfb914a61321ad1a64e56b71f6b2c9b4d7a8aa935c4e80c9",
+  "questions_set_place_chart": "d670e2718fe59cde64405ba035d299d0c125345252b17227acfdf5c19883f879",
+  "questions_set_place_text": "c0382cceb118a4a6c103db9baafeea9db35cb585552bad64f5eaaa5016ae52a9",
   "questions_show_less": "8fd0c7dab6e58cc423527e99c518ca1e94f96d16d1dcb644ce6341496f32bef9",
   "questions_streak": "93f1b272ce33e5faf4d2db08b4a7637a1be032a8daefcbb52618d6da25286d55",
   "questions_true": "3150be553b23ce1b6330ca3b4a691f4ddce254f1280c4447f4211f6f96cc5235",
@@ -62,7 +62,7 @@
 <resources>
     <string name="questions_pick_all">해당하는 항목을 모두 선택하세요.</string>
     <plurals name="questions_pick_count">
-        <item quantity="other">선택지를 %d개 고르세요.</item>
+        <item quantity="other">보기 %d개를 선택하세요.</item>
     </plurals>
     <string name="questions_true">참</string>
     <string name="questions_false">거짓</string>
@@ -70,13 +70,11 @@
     <string name="questions_right">맞아요</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">틀려요</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
-    <string name="questions_leave_blank">빈칸으로 남기기</string>
+    <string name="questions_leave_blank">답하지 않기</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">%1$d번째 위치, 올바른 위치</string>
     <string name="questions_place_wrong">%1$d번째 위치, 잘못된 위치</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
-    <string name="questions_matched_with">%1$s, %2$s에 연결됨</string>
+    <string name="questions_matched_with">%1$s, %2$s와(과) 연결됨</string>
     <string name="questions_match_paired">%1$s와(과) %2$s을(를) 연결했어요. 맞춘 짝: %4$d개 중 %3$d개.</string>
     <string name="questions_match_not_a_pair">%1$s와(과) 짝인 카드는 %2$s이(가) 아니에요.</string>
     <string name="questions_match_unpaired">%1$s와(과) %2$s의 짝을 풀었어요.</string>
@@ -87,18 +85,17 @@
     <string name="questions_mark_wrong">오답</string>
     <string name="questions_entry_round_to_whole">소수 첫째 자리에서 반올림하세요.</string>
     <plurals name="questions_entry_decimals">
-        <item quantity="other">반올림해 소수점 아래 %d자리까지 쓰세요.</item>
+        <item quantity="other">소수점 아래 %d자리까지 반올림하세요.</item>
     </plurals>
     <string name="questions_entry_fraction">2/3 같은 분수나 소수로 입력하세요.</string>
     <string name="questions_entry_integer">정수로 입력하세요.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">%1$s 같은 숫자를 입력하세요.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">2/3 같은 분수나 %1$s 같은 숫자를 입력하세요.</string>
     <string name="questions_invalid_integer">12 같은 정수를 입력하세요.</string>
     <string name="questions_feedback_label">답안 피드백</string>
     <string name="questions_correct">정답이에요!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
     <string name="questions_not_quite">정답이 아니에요</string>
     <string name="questions_left_blank">미응답</string>
     <string name="questions_dont_know_yet">아직 모르겠어요</string>
@@ -113,13 +110,14 @@
     <plurals name="questions_mistakes_fixed">
         <item quantity="other">오답 %d개를 고쳤어요. 오답 노트에서 사라져요.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">오답 노트에 저장했어요</string>
     <string name="questions_show_less">접기</string>
     <string name="questions_read_again">전체 다시 읽기</string>
-    <string name="questions_set_place_audio">이 녹음에 관한 %1$d번째 문제, 총 %2$d문제</string>
-    <string name="questions_set_place_case">이 사례에 관한 %1$d번째 문제, 총 %2$d문제</string>
-    <string name="questions_set_place_chart">이 도표에 관한 %1$d번째 문제, 총 %2$d문제</string>
-    <string name="questions_set_place_text">이 지문에 관한 %1$d번째 문제, 총 %2$d문제</string>
+    <string name="questions_set_place_audio">이 녹음에 관한 %1$d번째 문제(총 %2$d문제)</string>
+    <string name="questions_set_place_case">이 사례에 관한 %1$d번째 문제(총 %2$d문제)</string>
+    <string name="questions_set_place_chart">이 도표에 관한 %1$d번째 문제(총 %2$d문제)</string>
+    <string name="questions_set_place_text">이 지문에 관한 %1$d번째 문제(총 %2$d문제)</string>
     <string name="questions_placement_note">계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">기출문제 · %1$s</string>

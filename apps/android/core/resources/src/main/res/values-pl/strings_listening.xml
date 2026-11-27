@@ -13,7 +13,7 @@
   "listening_play_again": "f706f10c26e45d45b33f2e18cdc60e44b8e7fa4b19675cb4f0e1688c37a168ba",
   "listening_playing": "b308f55e11d89438d45e7fdeaa1a8d5ef4d16ecebecb432a114e22ffdca2bda8",
   "listening_playing_note": "8d9dab4d4b82751fe9e5a27addff64a75fa38700a149b8975ef8aff8ea198620",
-  "listening_questions": "d2d07e748ba3af06507b16313ab1539130f3d16b66dcbee3f4d69dedcee01524",
+  "listening_questions": "ef161abd43ec0efe9f6cc0211c6b1848003cd0a6e1fce17f858b1501431d3cba",
   "listening_recording": "1f245d55dd0cc18681aff14f19138ab98b7ccf5bb9aa0461ee5fdbb0b70ef903",
   "listening_stop": "418f180d3ae2b49b03a915468c9a5f26ee4381a3c4692593e6294ba4009def23",
   "listening_transcript": "ca6df1743d75209f6373471e1d361a4be2724cd5883b4621b7044433bc952a25"
@@ -36,10 +36,10 @@
     <string name="listening_failed">Nie udało się wczytać nagrania. Sprawdź połączenie z internetem i spróbuj ponownie.</string>
     <string name="listening_playing_note">Odtwarzamy nagranie. Tak jak na egzaminie nie można go wstrzymać.</string>
     <plurals name="listening_questions">
-        <item quantity="one">Pytanie do tego nagrania (%d)</item>
-        <item quantity="few">Pytania do tego nagrania (%d)</item>
-        <item quantity="many">Pytania do tego nagrania (%d)</item>
-        <item quantity="other">Pytania do tego nagrania (%d)</item>
+        <item quantity="one">%d pytanie do tego nagrania</item>
+        <item quantity="few">%d pytania do tego nagrania</item>
+        <item quantity="many">%d pytań do tego nagrania</item>
+        <item quantity="other">%d pytania do tego nagrania</item>
     </plurals>
     <string name="listening_transcript">Tekst nagrania</string>
 </resources>

@@ -13,7 +13,7 @@
   "focustest_in_progress": "3b0a3f0c942a6330a05fe2c604b6cec43dda074946b5328697be7e990152e7f9",
   "focustest_lessons_skipped": "3182a594ecdb7318dd022ddbfa5538f1dc14e7d9069bee2465ac34b81be8dfc7",
   "focustest_listening_not_checked": "188d5fc156612e35ecb1488f97ddbb44ee3b5e7e7d8abbbdab89e4183dc2a301",
-  "focustest_many_unknown": "f6e6412adcd44dc327fc5992788be49480640d6ba4920fbaa846710cc14d79d4",
+  "focustest_many_unknown": "c1ff5116c4fb44672ddb3a8db5bd1c2d8f5619e6df5659c1cecfbc8c48d6994e",
   "focustest_not_known_yet": "d02e8b398ba94ca230e1e886a81e403fb11a22b1cd1b1c3c7dc19c116ee6be5d",
   "focustest_not_now": "70df1526d32228b0a9b88c37a441c108df6e517189c051a8c659300b6d5d3bfa",
   "focustest_not_today": "1cd24f018636fe75be2d3604aab232720333f2b63e11f2d9463f3236cff2ef57",
@@ -41,7 +41,7 @@
   "focustest_start": "2ebb8ee454da0cbc73909ea2f5d7e04bed3e1c51a49339871c71198b3bfe8c21",
   "focustest_starting_point_title": "9df162807add598d682331a4a994a58e0a9f74825b02222e404ea56d854f100f",
   "focustest_stop": "08ab7181a880765aba5cb29e2d0d62cf73250532f37b001c6739fd39b9386499",
-  "focustest_subject_right": "02f3fdf50c6fd719470943a558a253ad3fa5d80fbaf7fcd1372ce9a92e987f63",
+  "focustest_subject_right": "e939be03897597aa73443d81564d18f5f01b842ab29dca8f909d2e9204a1eb1c",
   "focustest_subjects": "6dd8e7d4cddb8f325065d1bcf6bbea04773fc819a0575d2017fa76c8cadbb5ae",
   "focustest_suggestion_body": "41f3638baacc6ee08c5747a01dd17d71136354ee5d78b7e5b6c09cea750894e9",
   "focustest_suggestion_dismissed": "d994e744309482c0f6e00560dd24ab40a0676c6cf1c98ce213b3f5c1e250593d",
@@ -54,11 +54,8 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Prueba de enfoque</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Descubre qué necesitas estudiar más</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">¿Ya sabes algo de esto?</string>
     <string name="focustest_offer_sentence">Una prueba muestra lo que ya sabes, para que dediques más tiempo a lo que más necesitas.</string>
     <string name="focustest_offer_line">Esta prueba muestra lo que ya sabes para que tu plan pueda saltárselo.</string>
@@ -66,10 +63,10 @@
     <string name="focustest_skip_note">Puedes hacer la prueba más adelante, desde tu plan.</string>
     <string name="focustest_not_now">Ahora no</string>
     <string name="focustest_continue">Continuar</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Ver mi resultado</string>
     <string name="focustest_stop">Parar y usar mis respuestas</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
-    <string name="focustest_many_unknown">¿Aún no estudiaste la mayor parte de esto? No pasa nada. Puedes parar aquí y empezar a aprender.</string>
+    <string name="focustest_many_unknown">¿Aún no estudiaste la mayoría de estos temas? Está bien. Puedes parar aquí y empezar a aprender.</string>
     <string name="focustest_answers_saved_title">Tus respuestas están guardadas</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">En qué enfocarte</string>
@@ -92,14 +89,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">Dejaste tu plan como estaba. Esto es lo que sugiere la prueba.</string>
     <string name="focustest_change_focus">Cambiar el enfoque</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">Ver todas las materias</string>
     <string name="focustest_subjects">Materias</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">Hacer algunas preguntas más mientras estudio</string>
     <string name="focustest_session_questions_when">Durante tu primera semana</string>
     <string name="focustest_done">Listo</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">Responder más preguntas</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">¿Dedicar más tiempo a estas materias?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">Se eligieron según tus respuestas y la cantidad de preguntas del examen sobre cada materia.</string>
@@ -112,26 +111,24 @@
     <string name="focustest_not_known_yet">Aún no lo sabes</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
-        <item quantity="one">Acertaste %1$d de %2$d</item>
-        <item quantity="many">Acertaste %1$d de %2$d</item>
-        <item quantity="other">Acertaste %1$d de %2$d</item>
+        <item quantity="one">%1$d de %2$d bien</item>
+        <item quantity="many">%1$d de %2$d bien</item>
+        <item quantity="other">%1$d de %2$d bien</item>
     </plurals>
     <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
     <string name="focustest_written_not_checked">Expresión escrita: no se evalúa en esta prueba</string>
     <string name="focustest_listening_not_checked">Escucha: no se evalúa en esta prueba</string>
     <string name="focustest_speaking_not_checked">Expresión oral: no se evalúa en esta prueba</string>
     <string name="focustest_practical_not_checked">Parte práctica: no se evalúa en esta prueba</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">En curso</string>
     <string name="focustest_see_your_result">Ver tu resultado</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">Hacer la Prueba de enfoque</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">La Prueba de enfoque te muestra qué estudiar más.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">Una prueba de %1$s muestra lo que ya sabes, para dedicar más tiempo a lo que más necesitas. Nunca elimina ninguna materia.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Entendido. Puedes hacer la prueba desde tu plan.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">Hoy no</string>
     <string name="focustest_not_today_failed">No se pudo guardar. Inténtalo de nuevo.</string>
 </resources>

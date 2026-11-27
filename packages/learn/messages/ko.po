@@ -2248,7 +2248,6 @@ msgid "Getting your mock exam ready"
 msgstr "모의고사를 준비하고 있어요"
 
 #: src/challenge/challenge-intro-parts.tsx
-#: src/placement-test/use-test-facts.ts
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
@@ -6364,10 +6363,11 @@ msgctxt "qd8BIn"
 msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
 msgstr "{lessons, plural, other {이미 아는 레슨 #개 건너뜀}}"
 
+#. On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.
 #: src/language/level-test/level-test-results.tsx
-msgctxt "C__1Cb"
-msgid "You can test your listening later, from your plan."
-msgstr "계획에서 나중에 듣기 테스트를 볼 수 있어요."
+msgctxt "8txltA"
+msgid "You can take the test again later, from your plan."
+msgstr "나중에 계획에서 레벨 테스트를 다시 볼 수 있어요."
 
 #: src/language/level-test/level-test-results.tsx
 msgctxt "pdcoIY"
@@ -10246,6 +10246,12 @@ msgstr "{count, plural, other {남은 파트 #개}}"
 msgctxt "HUvYmi"
 msgid "Question {number, number} of {total, number}"
 msgstr "{number, number}번 문제 (총 {total, number}문제)"
+
+#. The most questions a test asks. It can end sooner.
+#: src/placement-test/use-test-facts.ts
+msgctxt "HYkp5w"
+msgid "Up to {count, plural, one {# question} other {# questions}}"
+msgstr "최대 {count, plural, other {#개 문제}}"
 
 #. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts

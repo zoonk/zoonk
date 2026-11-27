@@ -31,11 +31,13 @@ export function useTestOfferTexts() {
   const t = useExtracted();
 
   return {
-    firstLesson: {
-      facts: [t("Starts at the level you gave")],
-      label: t("First lesson"),
-      value: "firstLesson",
-    } as const,
+    /** Says where it starts only to a learner who told us their level. */
+    firstLesson: (levelGiven: boolean) =>
+      ({
+        facts: levelGiven ? [t("Starts at the level you gave")] : [],
+        label: t("First lesson"),
+        value: "firstLesson",
+      }) as const,
     lessonsLine: t("A test finds the lessons you can skip."),
     skipTitle: t("Skip what you already know"),
     startTitle: t("Where would you like to start?"),
@@ -63,7 +65,9 @@ function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] 
 
   return [
     {
-      facts: offer ? [facts.questions(offer.questions), facts.about(offer.estimatedMinutes)] : [],
+      facts: offer
+        ? [facts.upToQuestions(offer.questions), facts.about(offer.estimatedMinutes)]
+        : [],
       label: t({
         description: "The short test: about six minutes of questions.",
         message: "Quick test",
@@ -88,6 +92,7 @@ function useCourseRows(offer: CourseTestOffer): TestOfferRow<PlacementLength>[] 
 /** Onboarding's offer: a first lesson or a test, the short test picked. */
 export function CourseStartOffer({
   failed,
+  levelGiven,
   offer,
   onFirstLesson,
   onShown,
@@ -95,6 +100,7 @@ export function CourseStartOffer({
   pressed,
 }: {
   failed: boolean;
+  levelGiven: boolean;
   offer: CourseTestOffer;
   onFirstLesson: () => void;
   onShown: (offered: OfferedRows) => void;
@@ -120,7 +126,7 @@ export function CourseStartOffer({
       }
       onStart={(choice) => (choice === "firstLesson" ? onFirstLesson() : onStart(choice))}
       pressed={pressed}
-      rows={[texts.firstLesson, ...rows]}
+      rows={[texts.firstLesson(levelGiven), ...rows]}
       title={texts.startTitle}
     />
   );
