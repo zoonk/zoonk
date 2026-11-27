@@ -33,7 +33,7 @@ export function getWritingFit({ text, writing }: { text: string; writing: Writin
 
 /**
  * "about 23 of 30 lines": the count stays in view under the field, and past the limit it says
- * whether the text fits only in small handwriting or its end won't be read.
+ * whether the text fits if written small or its end won't be read.
  */
 export function WritingLineCount({
   id,
@@ -66,7 +66,7 @@ export function WritingLineCount({
       return t({
         description:
           "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.",
-        message: "about {used} of {lines} lines · fits only in small handwriting",
+        message: "about {used} of {lines} lines · fits if written small",
         values,
       });
     }

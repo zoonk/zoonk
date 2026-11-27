@@ -243,7 +243,7 @@ enum WritingLabels {
   }
 
   /// "about 23 of 30 lines" ("0 of 30 lines" while empty), or the words written where the question
-  /// has no line limit. Past the limit it says whether the text fits only in small handwriting or
+  /// has no line limit. Past the limit it says whether the text fits if written small or
   /// its end won't be read; `isOver` is the latter.
   static func lineCount(_ text: String, writing: WritingPrompt) -> (words: String, isOver: Bool) {
     guard let limit = writing.lines, let measured = WritingLines.fit(text, writing: writing) else {
@@ -280,7 +280,7 @@ enum WritingLabels {
 
   static func smallHandwriting(used: Int, limit: Int) -> String {
     String(
-      localized: "about \(used) of \(limit) lines · fits only in small handwriting",
+      localized: "about \(used) of \(limit) lines · fits if written small",
       table: "Essay",
       comment:
         "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small."

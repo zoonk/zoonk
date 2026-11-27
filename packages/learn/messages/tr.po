@@ -14098,8 +14098,8 @@ msgstr "0 / {lines} satır"
 
 #. The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.
 #: src/writing/writing-line-count.tsx
-msgctxt "BpElGj"
-msgid "about {used} of {lines} lines · fits only in small handwriting"
+msgctxt "B33WO_"
+msgid "about {used} of {lines} lines · fits if written small"
 msgstr ""
 
 #. The approximate line count of a written answer that won't fit the exam's answer sheet even in small handwriting; graders stop reading at the last line.

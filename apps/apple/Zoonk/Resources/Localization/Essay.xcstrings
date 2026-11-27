@@ -1392,13 +1392,13 @@
         }
       }
     },
-    "about %lld of %lld lines · fits only in small handwriting" : {
+    "about %lld of %lld lines · fits if written small" : {
       "comment" : "The approximate line count of a written answer past its limit at a typical hand; it fits the exam's answer sheet only if the learner writes small.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "about %1$lld of %2$lld lines · fits only in small handwriting"
+            "value" : "about %1$lld of %2$lld lines · fits if written small"
           }
         }
       }
