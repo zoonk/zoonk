@@ -9,18 +9,23 @@ export const WRITING_CHARACTERS_PER_LINE = 87;
 // published hand could have fit it.
 export const WRITING_MAX_CHARACTERS_PER_LINE = 160;
 
-// A paragraph starts on the next line of the sheet, and none is left blank between paragraphs, so
-// a run of breaks and the spaces around it open one line, and only once more text follows.
+const SPACE = /^\p{White_Space}+$/u;
+
+// A paragraph starts on the next line of the sheet, none is left blank between paragraphs, and a
+// space never starts a line, so only text opens one. The text past the limit starts at a word.
 function countLines(text: string, charactersPerLine: number, limit: number | null) {
   let lines = 0;
   let passedFrom: number | null = null;
   let used = 0;
   let broken = false;
+  let wordStart = 0;
 
   for (const { index, segment } of GRAPHEMES.segment(text)) {
+    const space = SPACE.test(segment);
+
     if (WRITING_LINE_BREAK.test(segment)) {
       broken = lines > 0;
-    } else if (segment.trim() !== "" || (lines > 0 && !broken)) {
+    } else if (!space) {
       if (lines === 0 || broken || used === charactersPerLine) {
         lines += 1;
         used = 0;
@@ -28,10 +33,16 @@ function countLines(text: string, charactersPerLine: number, limit: number | nul
       }
 
       if (limit !== null && lines > limit) {
-        passedFrom ??= index;
+        passedFrom ??= wordStart;
       }
 
       used += 1;
+    } else if (lines > 0 && !broken && used < charactersPerLine) {
+      used += 1;
+    }
+
+    if (space) {
+      wordStart = index + segment.length;
     }
   }
 

@@ -5,7 +5,7 @@
     "limit": 2,
     "text": "é🙂\r\n\r\nnext",
     "estimatedLines": 3,
-    "ignoredFrom": 10
+    "ignoredFrom": 8
   },
   {
     "charactersPerLine": 10,
@@ -93,6 +93,38 @@
     "limit": 1,
     "text": "aaaaaaaaaaaaaaaaaaaa b",
     "estimatedLines": 3,
-    "ignoredFrom": 20
+    "ignoredFrom": 21
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 2,
+    "text": "aaaaaaaaaa \nb",
+    "estimatedLines": 2,
+    "ignoredFrom": null
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "a a a a Brazil",
+    "estimatedLines": 2,
+    "ignoredFrom": 8
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 2,
+    "text": "A\n\uFEFFbbbbbbbbbb",
+    "estimatedLines": 3,
+    "ignoredFrom": 2
+  },
+  {
+    "charactersPerLine": 10,
+    "maxCharactersPerLine": 10,
+    "limit": 1,
+    "text": "aa\u00A0bb\u0085cc",
+    "estimatedLines": 1,
+    "ignoredFrom": null
   }
 ]
