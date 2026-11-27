@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.today
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider
@@ -17,6 +18,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -90,6 +92,7 @@ fun TodayPracticeRows(
                 add {
                     PracticeRow(
                         kind = LearnKind.Lesson,
+                        icon = PlaceIcon.SavedLessons.icon,
                         title = stringResource(R.string.navigation_saved_lessons),
                         description = stringResource(R.string.today_saved_lessons_line),
                     ) { navigate(AppRoute.SavedLessons) }
@@ -99,6 +102,7 @@ fun TodayPracticeRows(
                 add {
                     PracticeRow(
                         kind = LearnKind.Lesson,
+                        icon = PlaceIcon.CompletedLessons.icon,
                         title = stringResource(R.string.navigation_completed_lessons),
                         description = stringResource(R.string.today_completed_lessons_line),
                     ) { navigate(AppRoute.CompletedLessons) }
@@ -201,6 +205,7 @@ private fun MistakesRow(
 private fun PracticeRow(
     kind: LearnKind,
     title: String,
+    @DrawableRes icon: Int = kind.icon,
     description: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
@@ -209,7 +214,7 @@ private fun PracticeRow(
         headline = { Text(title) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
-        leading = { KindMark(kind) },
+        leading = { KindMark(kind, icon = icon) },
         supporting = listRowDescription(description),
         meta = trailing,
     )

@@ -1167,11 +1167,7 @@ struct TodayPracticeSection: View {
               "Lessons you want to do again", tableName: "Today",
               comment: "The line under Saved lessons in Practice anytime.")
           ) {
-            Image(systemName: AppTab.savedLessons.systemImage)
-              .typeStyle(.rowTitle)
-              .imageScale(.medium)
-              .foregroundStyle(LearnKind.lesson.color)
-              .accessibilityHidden(true)
+            KindMark(kind: .lesson, symbol: AppTab.savedLessons.systemImage)
           }
         }
       }
@@ -1186,7 +1182,7 @@ struct TodayPracticeSection: View {
               "Do a lesson again", tableName: "Today",
               comment: "The line under Completed lessons in Practice anytime.")
           ) {
-            KindMark(kind: .lesson)
+            KindMark(kind: .lesson, symbol: AppTab.completedLessons.systemImage)
           }
         }
       }
