@@ -38,16 +38,12 @@ function readPlacesAfterSave(saved: boolean): void {
   }
 }
 
-/** `onSaved` defaults to reading the frame's places again at once. */
-export function saveLessonIn(
-  goalId: string,
-  onSaved: (saved: boolean) => void = readPlacesAfterSave,
-): SaveLesson {
+export function saveLessonIn(goalId: string): SaveLesson {
   return async (input) => {
     const saved = await saveLesson({ goalId, input });
 
     if (saved !== null) {
-      onSaved(saved);
+      readPlacesAfterSave(saved);
     }
 
     return saved;

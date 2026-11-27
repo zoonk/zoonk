@@ -65,6 +65,20 @@ function savedCount(userId: string) {
   return prisma.savedLesson.count({ where: { userId } });
 }
 
+/** The summary read that says the goal has no saves left, as the frame's places come from it. */
+function waitForNoSavesSummary(page: Page) {
+  return page.waitForResponse(async (response) => {
+    if (new URL(response.url()).pathname !== "/api/learner/summary") {
+      return false;
+    }
+
+    const body: { summary?: { places?: { savedLessons?: boolean } } | null } =
+      await response.json();
+
+    return body.summary?.places?.savedLessons === false;
+  });
+}
+
 function sidebarRow(page: Page) {
   return page
     .getByRole("complementary", { name: "Sidebar" })
@@ -314,12 +328,15 @@ test.describe("Saved lessons", () => {
       await expect(row(unfinished.title)).toBeVisible();
       await expect(row(finished.title)).toHaveCount(0);
 
+      const noSaves = waitForNoSavesSummary(page);
       await list.getByRole("button", { name: `Saved ${unfinished.title}` }).click();
       await expect.poll(() => savedCount(user.id)).toBe(0);
+      await noSaves;
       await expect(row(unfinished.title)).toBeVisible();
       await expect(sidebarRow(page)).toBeVisible();
 
       await sidebar.getByRole("link", { name: "Mistakes notebook" }).click();
+      await expect(page).toHaveURL(/\/mistakes/u);
       await expect(sidebarRow(page)).toHaveCount(0);
 
       await page.goBack();
