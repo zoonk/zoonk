@@ -3,6 +3,7 @@
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
 import { useWritingLine, useWritingTaskTitle } from "../writing/writing-header";
+import { isAlreadyFixed } from "./block-kind";
 import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
@@ -22,6 +23,7 @@ type BlockCopyInput = Pick<
   | "reinforcement"
   | "returning"
   | "screen"
+  | "status"
   | "title"
   | "topics"
   | "weakest"
@@ -80,8 +82,12 @@ export function useRemedialLine() {
   const t = useExtracted();
 
   return function remedialLine(
-    block: Pick<BlockCopyInput, "patternId" | "returning" | "screen">,
+    block: Pick<BlockCopyInput, "patternId" | "questions" | "returning" | "screen" | "status">,
   ): string | null {
+    if (isAlreadyFixed(block)) {
+      return null;
+    }
+
     if (block.screen === "mistakesPractice") {
       return t({
         description:
@@ -143,6 +149,14 @@ export function useBlockTitle() {
 
     if (block.kind === "learn") {
       return block.title ?? t("New lesson");
+    }
+
+    if (isAlreadyFixed(block)) {
+      return t({
+        description:
+          "Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.",
+        message: "Already fixed",
+      });
     }
 
     if (block.screen === "mistakesPractice") {
