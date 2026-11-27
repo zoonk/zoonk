@@ -8,14 +8,19 @@ export async function applyCourseStart({
   startedPastSkillIds,
   tx,
   exceptIds = [],
+  lineSkillIds,
 }: {
   goalId: string;
   now: Date;
   startedPastSkillIds: readonly string[];
   tx: TransactionClient;
+  lineSkillIds?: readonly string[];
   exceptIds?: readonly string[];
 }) {
   const ids = [...startedPastSkillIds];
+
+  const started = new Set(ids);
+  const kept = lineSkillIds?.filter((id) => !started.has(id));
 
   const items =
     ids.length > 0
@@ -45,6 +50,14 @@ export async function applyCourseStart({
               {
                 OR: [
                   { lessonId: null },
+                  ...(kept
+                    ? [
+                        {
+                          lesson: { skills: { none: { skillId: { in: kept } } } },
+                          skillId: { in: ids },
+                        },
+                      ]
+                    : []),
                   { lesson: { skills: { every: { skillId: { in: ids } } } } },
                 ],
               },

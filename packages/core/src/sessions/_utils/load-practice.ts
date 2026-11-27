@@ -321,17 +321,18 @@ export async function loadPracticeItems({
     })),
   );
 
+  const room = Math.max(
+    Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
+    everySkill ? FULL_REVIEW_QUESTIONS : 0,
+  );
+
   const practice = mixCourseStartPractice({
     courseStarts: claims.courseStarts ?? [],
+    prerequisites: claims.prerequisites,
+    room,
     studied: new Set(studiedBySkill.keys()),
     units,
   });
 
-  return takePracticeQuestions({
-    practice,
-    room: Math.max(
-      Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
-      everySkill ? FULL_REVIEW_QUESTIONS : 0,
-    ),
-  });
+  return takePracticeQuestions({ practice, room });
 }

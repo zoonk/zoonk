@@ -36,12 +36,11 @@ const frozenTopicSchema = z.object({
 
 const attemptSchema = z.object({
   id: uuidSchema(),
-  length: placementLengthSchema,
-  lessonsSkipped: z.number().int().nonnegative(),
-  part: z.int().positive(),
-  partComplete: z.boolean(),
+  length: placementLengthSchema.default("quick"),
+  lessonsSkipped: z.number().int().nonnegative().default(0),
+  part: z.int().positive().default(1),
+  partComplete: z.boolean().default(false),
   partStartedAt: z.iso.datetime(),
-  paused: z.boolean().optional(),
   search: z
     .object({
       failed: z.boolean().optional(),
@@ -50,7 +49,7 @@ const attemptSchema = z.object({
       topics: z.array(frozenTopicSchema).nullable(),
     })
     .optional(),
-  skillIds: z.array(uuidSchema()),
+  skillIds: z.array(uuidSchema()).default([]),
 });
 
 const recordSchema = z.object({
@@ -60,6 +59,8 @@ const recordSchema = z.object({
     .extend({
       chapter: placementResultSchema.shape.chapter.default(null),
       course: placementResultSchema.shape.course.default(null),
+      courseStart: z.boolean().optional(),
+      lessonsSkipped: placementResultSchema.shape.lessonsSkipped.default(0),
       nextLesson: z
         .object({
           chapter: z.string().nullable().optional(),
@@ -69,13 +70,13 @@ const recordSchema = z.object({
         })
         .nullable()
         .optional(),
-      startedPastSkillIds: z.array(uuidSchema()).optional(),
     })
     .nullable(),
 });
 
 export type PlacementAttempt = z.infer<typeof attemptSchema>;
 export type PlacementRecord = z.infer<typeof recordSchema>;
+export type StoredPlacement = z.input<typeof recordSchema>;
 
 export function readPlacementAttempt(goal: { details: unknown }): PlacementRecord {
   const details = isJsonObject(goal.details) ? goal.details : {};

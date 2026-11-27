@@ -100,10 +100,24 @@ export async function completeLessonPlanItems(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
 ): Promise<CompletedLessonItems> {
+  const provisional = await tx.$queryRaw<{ id: string }[]>`
+    SELECT i.id FROM plan_items i JOIN plans p ON p.id = i.plan_id JOIN goals g ON g.id = p.goal_id
+    WHERE i.lesson_id = ${lessonId}::uuid AND g.user_id = ${userId}::uuid AND i.status = 'tested_out'
+    AND EXISTS (SELECT 1 FROM plan_changes c WHERE c.plan_id = p.id AND c.kind = 'testedOut'
+      AND c.status = 'applied' AND c.payload ? 'startedPastSkillIds' AND (c.payload->'planItemIds') ? i.id::text)
+  `;
+
   const checked = await tx.planItem.updateManyAndReturn({
     data: { completedAt: now, status: "done" },
     select: { id: true, kind: true, lessonId: true, phase: true, planId: true },
-    where: { lessonId, plan: { goal: { userId } }, status: "todo" },
+    where: {
+      OR: [
+        { status: "todo" },
+        { id: { in: provisional.map((item) => item.id) }, status: "testedOut" },
+      ],
+      lessonId,
+      plan: { goal: { userId } },
+    },
   });
 
   await skipSettledLessonBlocks(tx, { lessonIds: [lessonId], userId });
@@ -112,7 +126,13 @@ export async function completeLessonPlanItems(
     return { languageGoals: [], planItemIds: [] };
   }
 
-  await reduceCompletedPlans(tx, { checked, userId });
+  const alreadyCounted = new Set(provisional.map((item) => item.id));
+
+  await reduceCompletedPlans(tx, {
+    checked: checked.filter((item) => !alreadyCounted.has(item.id)),
+    userId,
+  });
+
   await awardLanguageLevelCertificates(tx, { finished: checked });
   await awardCourseCertificates(tx, { finished: checked });
 

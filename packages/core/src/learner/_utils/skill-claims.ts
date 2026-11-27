@@ -253,7 +253,9 @@ export function listPassedOverToRelearn(events: readonly ClaimEvent[]): Set<stri
       state.claimSource !== "test" &&
       state.claimSource !== "writing" &&
       !state.studied &&
-      isKnownClaim({ passedOver: false, state })
+      (state.claimSource === "courseStart"
+        ? state.claim !== "gap"
+        : isKnownClaim({ passedOver: false, state }))
         ? [skillId]
         : [],
     ),

@@ -2,11 +2,15 @@ import { type PracticeItem } from "../session-builder";
 
 export function mixCourseStartPractice({
   units,
+  room,
+  prerequisites,
   courseStarts,
   studied,
 }: {
   units: readonly { questions: PracticeItem[] }[];
   courseStarts: readonly string[];
+  room?: number;
+  prerequisites?: ReadonlySet<string>;
   studied: ReadonlySet<string>;
 }) {
   if (courseStarts.length === 0) {
@@ -30,8 +34,22 @@ export function mixCourseStartPractice({
     unit.questions.some((question) => studied.has(question.skillId)),
   );
 
+  const one =
+    pending.find((unit) =>
+      unit.questions.some((question) => prerequisites?.has(question.skillId)),
+    ) ??
+    due.find((unit) => unit.questions.length === 1) ??
+    ordinary.find((unit) => unit.questions.length === 1);
+
+  const markSingle = (items: PracticeItem[]) =>
+    items.map((item) => ({ ...item, singleCourseReview: item === one?.questions[0] }));
+
+  if (room === 1) {
+    return markSingle(one?.questions ?? []);
+  }
+
   if (due.length === 0) {
-    return [...pending, ...ordinary].flatMap((unit) => unit.questions);
+    return markSingle([...pending, ...ordinary].flatMap((unit) => unit.questions));
   }
 
   const paired = new Set(due.slice(0, pending.length));
@@ -41,9 +59,8 @@ export function mixCourseStartPractice({
     practice.push(...unit.questions, ...(pending[index]?.questions ?? []));
   }
 
-  return [
+  return markSingle([
     ...practice,
     ...ordinary.filter((unit) => !paired.has(unit)).flatMap((unit) => unit.questions),
-    ...pending.slice(paired.size).flatMap((unit) => unit.questions),
-  ];
+  ]);
 }

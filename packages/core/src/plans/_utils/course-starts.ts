@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-export async function loadCourseStarts(goalId: string, tx: TransactionClient = prisma) {
+export async function loadCourseStartFacts(goalId: string, tx: TransactionClient = prisma) {
   const changes = await tx.planChange.findMany({
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: { createdAt: true, id: true, kind: true, payload: true },
@@ -11,6 +11,8 @@ export async function loadCourseStarts(goalId: string, tx: TransactionClient = p
 
   const starts = new Map<string, { at: Date; changeId: string }>();
 
+  const itemLines = new Map<string, ReadonlySet<string>>();
+
   for (const change of changes) {
     const payload = parsePlanChangePayload(change.payload);
 
@@ -18,13 +20,24 @@ export async function loadCourseStarts(goalId: string, tx: TransactionClient = p
       for (const id of payload.recheckedSkillIds) {
         starts.delete(id);
       }
-    } else {
+    } else if (payload.startedPastSkillIds) {
+      const line = new Set(payload.lineSkillIds ?? payload.startedPastSkillIds);
+
+      for (const id of payload.planItemIds) {
+        itemLines.set(id, line);
+      }
+
       for (const id of payload.startedPastSkillIds ?? []) {
         starts.set(id, { at: change.createdAt, changeId: change.id });
       }
     }
   }
 
+  return { itemLines, starts };
+}
+
+export async function loadCourseStarts(goalId: string, tx: TransactionClient = prisma) {
+  const { starts } = await loadCourseStartFacts(goalId, tx);
   return starts;
 }
 

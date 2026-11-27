@@ -13,6 +13,7 @@ type Input = {
   itemIds: readonly string[];
   now: Date;
   receipt: string;
+  lineSkillIds?: readonly string[];
   startedPastSkillIds?: readonly string[];
   timeZone: string;
   tx: TransactionClient;
@@ -81,6 +82,7 @@ export async function recordTestOutChange(input: Input): Promise<void> {
             lessonsSkipped,
             planItemIds: items.map(({ id }) => id),
             testReceipt: receipt,
+            ...(input.lineSkillIds && { lineSkillIds: [...input.lineSkillIds] }),
             ...(starts && { startedPastSkillIds: [...starts] }),
             todaySession: "unchanged",
             versionAfter,

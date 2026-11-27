@@ -34,29 +34,40 @@ export async function storeFinishedResult({
   testedOutPlanItemIds: string[];
   tx: TransactionClient;
 }) {
+  const result = { attemptId: attempt.id, finish, finishedAt: now.toISOString() };
+
+  if (attempt.search) {
+    const first = attempt.search.topics?.find(
+      (topic) => !attemptQuestions.startedPastSkillIds.includes(topic.id),
+    );
+
+    await savePlacementAttempt({
+      goal: current,
+      record: {
+        attempt: null,
+        result: { ...result, chapter: first?.chapter ?? null, courseStart: true },
+      },
+      tx,
+    });
+
+    return;
+  }
+
   const nextLesson = await readPlacementNextLesson(goalId, tx);
   const course = await readPlacementCourse(goalId, new Set(testedOutPlanItemIds), tx);
-
-  const first = attempt.search?.topics?.find(
-    (topic) => !attemptQuestions.startedPastSkillIds.includes(topic.id),
-  );
 
   await savePlacementAttempt({
     goal: current,
     record: {
-      ...record,
       attempt: null,
       finishedParts: [...record.finishedParts, receipt],
       result: {
         ...held,
-        attemptId: attempt.id,
-        chapter: nextLesson?.chapter ?? first?.chapter ?? null,
+        ...result,
+        chapter: nextLesson?.chapter ?? null,
         course,
-        finish,
-        finishedAt: now.toISOString(),
         lessonsSkipped,
         nextLesson,
-        ...(attempt.search && { startedPastSkillIds: attemptQuestions.startedPastSkillIds }),
       },
     },
     tx,
@@ -84,7 +95,9 @@ export function makeReceipt({
   partLessonsSkipped: number;
   testedOutPlanItemIds: string[];
 }) {
-  const newTopics = new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered));
+  const newTopics = attempt.search
+    ? null
+    : new Set(attemptQuestions.partAnswers.slice(last?.finish?.answered));
 
   const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
   const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
@@ -99,7 +112,7 @@ export function makeReceipt({
   const receipt = {
     ...held,
     finish,
-    knownSkillIds: [...confirmed].filter((id) => newTopics.has(id)),
+    knownSkillIds: newTopics ? [...confirmed].filter((id) => newTopics.has(id)) : [],
     lessonsSkipped: partLessonsSkipped,
     part,
     testedOutPlanItemIds,

@@ -61,9 +61,17 @@ async function applyNewLessons({
   skillIds: string[];
   tx: TransactionClient;
 }) {
+  const change = await tx.planChange.findUniqueOrThrow({
+    select: { payload: true },
+    where: { id: changeId },
+  });
+
+  const payload = parsePlanChangePayload(change.payload);
+
   const applied = await applyCourseStart({
     exceptIds: [...existing],
     goalId: context.goal.id,
+    lineSkillIds: payload.lineSkillIds,
     now: at,
     startedPastSkillIds: skillIds,
     tx,
@@ -73,12 +81,6 @@ async function applyNewLessons({
     return;
   }
 
-  const change = await tx.planChange.findUniqueOrThrow({
-    select: { payload: true },
-    where: { id: changeId },
-  });
-
-  const payload = parsePlanChangePayload(change.payload);
   const versionAfter = context.plan.version + 1;
 
   const canUndo =

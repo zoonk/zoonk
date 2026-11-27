@@ -10,7 +10,7 @@ import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change
 import { COURSE_QUESTION_LIMIT } from "../course-search";
 import { readCourseBank } from "./course-placement-bank";
 import {
-  type PlacementRecord,
+  type StoredPlacement,
   getCourseOffer,
   readPlacementAttempt,
 } from "./placement-attempt-record";
@@ -22,7 +22,7 @@ export async function savePlacementAttempt({
   tx,
 }: {
   goal: Pick<Goal, "details" | "id">;
-  record: PlacementRecord;
+  record: StoredPlacement;
   tx: TransactionClient;
 }) {
   await tx.goal.update({
@@ -45,17 +45,7 @@ export async function openPlacementAttempt({ goalId, userId }: { goalId: string;
       }
 
       if (record.attempt && !coursePreparationFailed(record.attempt)) {
-        if (!record.attempt.paused) {
-          return unchanged(null);
-        }
-
-        await savePlacementAttempt({
-          goal,
-          record: { ...record, attempt: { ...record.attempt, paused: false } },
-          tx,
-        });
-
-        return { event: null, goal };
+        return unchanged(null);
       }
 
       const bank = await readCourseBank(goal, tx);
@@ -69,20 +59,15 @@ export async function openPlacementAttempt({ goalId, userId }: { goalId: string;
 
       const attempt = {
         id,
-        length: "quick" as const,
-        lessonsSkipped: 0,
-        part: 1,
-        partComplete: false,
         partStartedAt: new Date().toISOString(),
         search: {
           position: bank.position,
           questions: offer?.questions ?? COURSE_QUESTION_LIMIT,
           topics: bank.ready ? bank.topics : null,
         },
-        skillIds: bank.topics.map((t) => t.id),
       };
 
-      await savePlacementAttempt({ goal, record: { ...record, attempt, finishedParts: [] }, tx });
+      await savePlacementAttempt({ goal, record: { attempt, result: record.result }, tx });
 
       if (!bank.ready && bank.ids.length > 0) {
         await oweFollowUps({

@@ -61,7 +61,12 @@ export type PlannedCheckpoint = BlockCheckpoint & {
 };
 
 /** Supply weakest skills first and contiguous stimulus sets; sets must be asked whole. */
-export type PracticeItem = { itemId: string; setId?: string; skillId: string };
+export type PracticeItem = {
+  singleCourseReview?: boolean;
+  itemId: string;
+  setId?: string;
+  skillId: string;
+};
 
 export type SessionBuildInput = {
   /** On a shortened review day the lesson inputs contain only the optional study allocated to that day. */

@@ -12,10 +12,7 @@ import {
   readLevelTestDetails,
 } from "../../language/level-test/read-level-test-summary";
 import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
-import {
-  readPlacementCourse,
-  readPlacementNextLesson,
-} from "../../learner/placement/_utils/placement-result";
+import { readPlacementNextLesson } from "../../learner/placement/_utils/placement-result";
 import { levelTestOutReceipt, levelTestReceipt, placementPartReceipt } from "./test-out-receipt";
 
 function clearResult(result: LevelTestResult | undefined, receipt: string) {
@@ -74,6 +71,10 @@ async function restorePlacement({
   const attemptId = attempt?.id ?? result?.attemptId;
   const [receiptId] = receipt.split(":");
 
+  if (result?.courseStart && result.attemptId === receiptId) {
+    return null;
+  }
+
   const part =
     attemptId && attemptId === receiptId
       ? finishedParts.find(
@@ -94,11 +95,6 @@ async function restorePlacement({
       ? {
           ...result,
           lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped),
-          ...(result.startedPastSkillIds && {
-            chapter: nextLesson?.chapter ?? result.chapter,
-            course: await readPlacementCourse(goalId, new Set(), tx),
-            startedPastSkillIds: [],
-          }),
           nextLesson,
         }
       : result;

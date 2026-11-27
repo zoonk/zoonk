@@ -11,7 +11,7 @@ export function readTestOutChange({
   receipt: string;
 }) {
   return db.planChange.findFirst({
-    select: { id: true },
+    select: { id: true, payload: true },
     where: {
       kind: "testedOut",
       payload: { equals: receipt, path: ["testReceipt"] },

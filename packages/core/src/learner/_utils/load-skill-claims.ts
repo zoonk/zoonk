@@ -1,7 +1,7 @@
 import "server-only";
 import { type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
-import { loadCourseStarts } from "../../plans/_utils/course-starts";
+import { loadCourseStartFacts } from "../../plans/_utils/course-starts";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
@@ -25,7 +25,7 @@ import {
 
 /** GETs pass the saved plan already read; writes omit it for a fresh read. */
 export type ClaimPlan = Pick<Plan, "createdAt" | "graph" | "id" | "settings"> & {
-  items: Pick<PlanItem, "completedAt" | "kind" | "lessonId" | "skillId" | "status">[];
+  items: Pick<PlanItem, "id" | "completedAt" | "kind" | "lessonId" | "skillId" | "status">[];
 };
 
 function isClaimingItem(item: ClaimPlan["items"][number]) {
@@ -59,17 +59,19 @@ async function loadClaimLessonSkills({
 
 /** A test-out claims the skill tested, never skills later linked to its lesson. */
 async function loadPlanEvents({
+  courseItems,
   goalId,
   known,
 }: {
   goalId: string;
+  courseItems: ReadonlySet<string>;
   known?: ClaimPlan | null;
 }): Promise<ClaimEvent[]> {
   const [items, plan] =
     known === undefined
       ? await Promise.all([
           prisma.planItem.findMany({
-            select: { completedAt: true, lessonId: true, skillId: true, status: true },
+            select: { completedAt: true, id: true, lessonId: true, skillId: true, status: true },
             where: {
               completedAt: { not: null },
               kind: { in: [...LEARN_KINDS] },
@@ -88,22 +90,24 @@ async function loadPlanEvents({
 
   const taughtBy = Map.groupBy(lessonSkills, (row) => row.lessonId);
 
-  return items.flatMap((item) => {
-    const taught = item.lessonId
-      ? (taughtBy.get(item.lessonId) ?? []).map((row) => row.skillId)
-      : [];
+  return items
+    .filter((item) => item.status !== "testedOut" || !courseItems.has(item.id))
+    .flatMap((item) => {
+      const taught = item.lessonId
+        ? (taughtBy.get(item.lessonId) ?? []).map((row) => row.skillId)
+        : [];
 
-    const claimed =
-      item.status === "testedOut" && item.skillId && graphSkills.has(item.skillId)
-        ? [item.skillId]
-        : [...new Set([...(item.skillId ? [item.skillId] : []), ...taught])];
+      const claimed =
+        item.status === "testedOut" && item.skillId && graphSkills.has(item.skillId)
+          ? [item.skillId]
+          : [...new Set([...(item.skillId ? [item.skillId] : []), ...taught])];
 
-    return claimed.map((skillId): ClaimEvent => ({
-      at: item.completedAt ?? new Date(0),
-      kind: item.status === "done" ? "studied" : "claim",
-      skillId,
-    }));
-  });
+      return claimed.map((skillId): ClaimEvent => ({
+        at: item.completedAt ?? new Date(0),
+        kind: item.status === "done" ? "studied" : "claim",
+        skillId,
+      }));
+    });
 }
 
 /** Includes basics skipped by choice, dated from that choice. */
@@ -138,11 +142,10 @@ export async function loadPlanClaimEvents({
   /** A fresh read for these skills only skips history no asked skill needs; GETs share every skill's. */
   skillIds?: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
-  const [planEvents, passedOver, undone, starts] = await Promise.all([
-    loadPlanEvents({ goalId, known: plan }),
+  const [{ itemLines, starts }, passedOver, undone] = await Promise.all([
+    loadCourseStartFacts(goalId),
     loadPassedOverClaims({ goalId, known: plan, skillIds }),
     loadUndoneTestOuts(goalId),
-    loadCourseStarts(goalId),
   ]);
 
   const courseClaims = [...starts].map(([skillId, start]): ClaimEvent => ({
@@ -152,10 +155,11 @@ export async function loadPlanClaimEvents({
     skillId,
   }));
 
-  const otherClaims = planEvents.filter(
-    (event) =>
-      event.kind !== "claim" || starts.get(event.skillId)?.at.getTime() !== event.at.getTime(),
-  );
+  const otherClaims = await loadPlanEvents({
+    courseItems: new Set(itemLines.keys()),
+    goalId,
+    known: plan,
+  });
 
   const restored = undone.map((event) =>
     event.kind === "claim" && starts.has(event.skillId)

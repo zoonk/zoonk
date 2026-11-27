@@ -1,5 +1,8 @@
+import { setTimeout as delay } from "node:timers/promises";
 import { prisma } from "@zoonk/db";
+import { lockLearner } from "@zoonk/db/learner-writes";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { isJsonObject } from "@zoonk/utils/json";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { recordPlacementPrepared } from "../../lookahead/placement-item-skills";
@@ -37,7 +40,54 @@ describe("preparing course placement", () => {
     });
 
     await expect(read()).resolves.toMatchObject({ topics: null });
-    await recordPlacementPrepared({ goalId, planRunId: plan.runId });
+    const held = Promise.withResolvers<number>();
+    const write = Promise.withResolvers<true>();
+
+    const edit = prisma.$transaction(async (tx) => {
+      await lockLearner(tx, { userId: user.id });
+      const snapshot = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+      const [connection] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      held.resolve(connection!.pid);
+      await write.promise;
+
+      await tx.goal.update({
+        data: {
+          details: {
+            ...(isJsonObject(snapshot.details) ? snapshot.details : {}),
+            placementDeclined: false,
+          },
+        },
+        where: { id: goalId },
+      });
+    });
+
+    const owner = await held.promise;
+    const freeze = recordPlacementPrepared({ goalId, planRunId: plan.runId });
+
+    const blocked = async (): Promise<void> => {
+      const [wait] = await prisma.$queryRaw<{ waiting: boolean }[]>`SELECT EXISTS (
+        SELECT 1 FROM pg_stat_activity WHERE ${owner}::int = ANY(pg_blocking_pids(pid))
+      ) AS waiting`;
+
+      if (!wait?.waiting) {
+        await delay(5);
+
+        if (!released) {
+          await blocked();
+        }
+      }
+    };
+
+    let released = false;
+
+    try {
+      await Promise.race([freeze, blocked()]);
+    } finally {
+      released = true;
+      write.resolve(true);
+      await Promise.all([edit, freeze]);
+    }
+
     const frozen = await read();
     expect(frozen?.topics?.length).toBe(8);
 
