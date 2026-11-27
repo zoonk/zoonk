@@ -513,7 +513,7 @@ private fun WritingMarkedText(
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Medium,
         )
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) }
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length)
     val marked =
         remember(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle) {
             markText(grade, stepQuote, text, errorStyle, stepStyle, ignoredStyle, numberStyle)
@@ -597,7 +597,7 @@ private fun markText(
     numberStyle: SpanStyle,
 ): MarkedText {
     val stepRange = stepQuote?.let { quote -> text.indexOf(quote).takeIf { it >= 0 }?.let { it until it + quote.length } }
-    val ignoredFrom = grade.ignoredFrom?.let { wordStart(text, it.coerceIn(0, text.length)) } ?: text.length
+    val ignoredFrom = grade.ignoredFrom?.coerceIn(0, text.length) ?: text.length
     val errors = grade.errors.map { it.start.toInt().coerceIn(0, text.length) until minOf(text.length, it.start.toInt() + it.quote.length) }
     val cuts =
         (
@@ -629,20 +629,6 @@ private fun markText(
             offsets[text.length] = length
         }
     return MarkedText(annotated, offsets)
-}
-
-/**
- * A line limit falls inside a word as often as not; the word it splits is shown as past it, whole.
- * A limit on the space after a word leaves that word where the grader read it.
- */
-internal fun wordStart(
-    text: String,
-    offset: Int,
-): Int {
-    if (offset >= text.length || text[offset].isWhitespace()) return offset
-    var start = offset
-    while (start > 0 && !text[start - 1].isWhitespace()) start--
-    return start
 }
 
 private const val LEVEL_CELLS = 4

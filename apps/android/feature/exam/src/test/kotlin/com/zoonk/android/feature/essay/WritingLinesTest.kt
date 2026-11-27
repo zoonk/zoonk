@@ -31,12 +31,4 @@ class WritingLinesTest {
             )
         }
     }
-
-    @Test
-    fun onlyAWordTheLimitSplitsIsShownPastIt() {
-        val cut = countWritingLines("abc def", 3, 3, 1).ignoredFrom!!
-        assertEquals(3, wordStart("abc def", cut))
-        assertEquals(4, wordStart("abc def", 6))
-        assertEquals(7, wordStart("abc def", 7))
-    }
 }

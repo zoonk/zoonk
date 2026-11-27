@@ -32,8 +32,8 @@ fun countWritingLines(
 
 /**
  * Each grapheme takes a character of a line [charactersPerLine] long. A paragraph starts on the next
- * line of the sheet and none is left blank between paragraphs, so a run of breaks and the spaces
- * around it open one line, and only once more text follows.
+ * line of the sheet, none is left blank between paragraphs, and a space never starts a line, so only
+ * text opens one. The text past the limit starts at a word.
  */
 private fun countLines(
     text: String,
@@ -44,23 +44,28 @@ private fun countLines(
     var used = 0
     var broken = false
     var passedFrom: Int? = null
+    var wordStart = 0
     val graphemes = BreakIterator.getCharacterInstance().apply { setText(text) }
     var start = graphemes.first()
     var end = graphemes.next()
 
     while (end != BreakIterator.DONE) {
         val grapheme = text.substring(start, end)
+        val space = grapheme.all { it in WHITE_SPACE }
         if (isLineBreak(grapheme)) {
             broken = lines > 0
-        } else if (grapheme.isNotBlank() || (lines > 0 && !broken)) {
+        } else if (!space) {
             if (lines == 0 || broken || used == charactersPerLine) {
                 lines += 1
                 used = 0
                 broken = false
             }
-            if (limit != null && lines > limit && passedFrom == null) passedFrom = start
+            if (limit != null && lines > limit && passedFrom == null) passedFrom = wordStart
+            used += 1
+        } else if (lines > 0 && !broken && used < charactersPerLine) {
             used += 1
         }
+        if (space) wordStart = end
         start = end
         end = graphemes.next()
     }
@@ -70,3 +75,10 @@ private fun countLines(
 private fun isLineBreak(grapheme: String): Boolean = grapheme == "\r\n" || (grapheme.length == 1 && grapheme[0] in LINE_BREAKS)
 
 private val LINE_BREAKS = setOf('\r', '\n', ' ', ' ')
+
+/** Unicode's `White_Space`, core's `\p{White_Space}`, listed so it doesn't depend on the regex engine a device runs. */
+private val WHITE_SPACE =
+    (
+        ('\u0009'..'\u000D') + '\u0020' + '\u0085' + '\u00A0' + '\u1680' + ('\u2000'..'\u200A') +
+            '\u2028' + '\u2029' + '\u202F' + '\u205F' + '\u3000'
+    ).toSet()
