@@ -63,7 +63,6 @@ import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.MockExam
-import com.zoonk.api.models.MockExamReviewInner
 import com.zoonk.api.models.MockResult
 import com.zoonk.api.models.MockResultPreparation
 
@@ -91,10 +90,7 @@ internal fun MockResult(
         viewModel(key = "mock-offers-$blockId-${app.sessions.current?.localId}") { MockPlanOffersViewModel(store, app.sessions, blockId) }
     val offers by offersViewModel.state.collectAsStateWithLifecycle()
     val placement = view.purpose == MockExam.Purpose.PLACEMENT
-    // A question with several picks answered partly right missed some, so the notebook keeps it too.
-    val mistakes =
-        view.review.count { it.outcome == MockExamReviewInner.Outcome.WRONG || it.outcome == MockExamReviewInner.Outcome.PARTIAL }
-    val practice = view.mockId?.takeIf { mistakes > 0 && !placement }?.let { AppRoute.MistakePractice(mockId = it.toString()) }
+    val practice = view.mockId?.takeIf { view.practiceAvailable && !placement }?.let { AppRoute.MistakePractice(mockId = it.toString()) }
     val essays = essaySteps(view)
     val speaking = view.speaking
     val preparation = result?.preparation?.takeIf { it.hasMoved() }
@@ -361,7 +357,7 @@ internal fun MockResult(
     }
 }
 
-/** [practice] is the run of this mock's mistakes, there when it missed some; otherwise the way on. */
+/** [practice] is the run of this mock's mistakes, there while any is left to practice; otherwise the way on. */
 @Composable
 private fun MainAction(
     practice: AppRoute.MistakePractice?,

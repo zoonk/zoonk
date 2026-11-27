@@ -26,7 +26,7 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import java.util.UUID
 
-/** A run's scope: the goal's notebook, narrowed to a skill, a day's block or a finished mock. */
+/** A run's scope: the goal's notebook, narrowed to a skill or a day's block; or a finished mock alone, with no goal. */
 data class PracticeKey(
     val goalId: UUID?,
     val skillId: UUID? = null,
@@ -115,6 +115,7 @@ class LiveMistakesApi(
             attemptId = attemptId,
             blockId = key.blockId,
             goalId = key.goalId,
+            mockId = key.mockId,
             answerIds =
                 ApiJson.encodeToString(
                     kotlinx.serialization.builtins.ListSerializer(kotlinx.serialization.serializer<String>()),
@@ -231,6 +232,7 @@ class MistakesStore(
                         putJsonArray("answerIds") { runAnswerIds.forEach { add(it.toString()) } }
                         key.blockId?.let { put("blockId", it.toString()) }
                         key.goalId?.let { put("goalId", it.toString()) }
+                        key.mockId?.let { put("mockId", it.toString()) }
                     },
                 )
             },
@@ -244,7 +246,17 @@ class MistakesStore(
         cache.mutate(invalidating = PRACTICED) { session ->
             api.finish(
                 session,
-                MistakePracticeFinishInput(answerIds, blockId = key.blockId, ended = true, goalId = key.goalId, timeZone = timeZone()),
+                MistakePracticeFinishInput(
+                    answerIds,
+                    blockId = key.blockId,
+                    ended = true,
+                    goalId = key.goalId,
+                    // As the practice read asks, so "Practice again" learns what's left in the same scope.
+                    includeAllFormats = true,
+                    mockId = key.mockId,
+                    skillId = key.skillId,
+                    timeZone = timeZone(),
+                ),
             )
         }
 

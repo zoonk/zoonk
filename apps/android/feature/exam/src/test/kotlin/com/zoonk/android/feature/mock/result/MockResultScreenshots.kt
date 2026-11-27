@@ -104,6 +104,20 @@ class MockResultScreenshots {
         capture("result-expanded-plan-moved")
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneNothingLeftToPractice() {
+        show(enem(practiceAvailable = false))
+        capture("result-phone-1-nothing-left")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneNothingLeftToPracticeDark() {
+        show(enem(practiceAvailable = false), dark = true)
+        capture("result-phone-1-nothing-left-dark")
+    }
+
     /** Opens every question to review, each row in place. */
     private fun openQuestions() {
         val rows = compose.onAllNodesWithText("Question ", substring = true)
@@ -457,6 +471,7 @@ class MockResultScreenshots {
     private fun enem(
         moved: Boolean = false,
         preparation: Boolean = true,
+        practiceAvailable: Boolean = true,
     ) = finishedMock(
         result =
             result(
@@ -467,7 +482,8 @@ class MockResultScreenshots {
                         ""","movedTopics":["Percentages","Ratios and proportions","Probability"]""".takeIf { moved }.orEmpty(),
             ),
         extra =
-            """"review":[$MISSED,$STATEMENT],"adapt":{"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
+            """"mockId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a09","practiceAvailable":$practiceAvailable,""" +
+                """"review":[$MISSED,$STATEMENT],"adapt":{"skip":{"lessons":3,"topics":["Addition","Fractions"]}},
                 "scoreNotes":{"noticeScoring":null,"relative":false,"scale":{"max":1000,"min":0,"name":"ENEM","passScore":null,"score":null}}""",
     )
 

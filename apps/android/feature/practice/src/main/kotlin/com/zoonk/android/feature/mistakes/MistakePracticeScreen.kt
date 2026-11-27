@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.mistakes
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.RunQuestion
 import com.zoonk.android.feature.practice.RunSegments
+import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.answerAction
 import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
@@ -41,9 +43,11 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.TaskActions
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -61,7 +65,8 @@ fun MistakePracticeScreen(
     }
     val key =
         PracticeKey(
-            goalId = learner.activeGoalId,
+            // Core takes a mock run's goal from its sitting, so it works after the learner switched goals.
+            goalId = learner.activeGoalId.takeIf { route.mockId == null },
             skillId = route.skillId?.toUuid(),
             blockId = route.blockId?.toUuid(),
             mockId = route.mockId?.toUuid(),
@@ -141,12 +146,12 @@ internal fun PracticeRun(
     BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(
-            state,
-            app,
-            onClose = viewModel::leave,
-            onAgain = viewModel::practiceAgain.takeIf { viewModel.practicesAgain && state.toPracticeAgain.isNotEmpty() },
-        ) { navigator.open(AppRoute.Subscription) }
+        val bar: @Composable () -> Unit = { DoneBar(state, viewModel, saveReport::open) }
+        if (state.read.tasks.isEmpty()) {
+            NothingToPractice(viewModel::leave, bar)
+        } else {
+            PracticeDone(state, app, onClose = viewModel::leave, bar = bar) { navigator.open(AppRoute.Subscription) }
+        }
         return
     }
 
@@ -217,20 +222,19 @@ private fun PracticeDone(
     state: PracticeState,
     app: AppContainer,
     onClose: () -> Unit,
-    onAgain: (() -> Unit)?,
+    bar: @Composable () -> Unit,
     onSeePlus: () -> Unit,
 ) {
-    val end = state.end
-    val summary = end?.summary
+    val summary = state.end?.summary
     val fixed = state.fixedIds.size
 
     MomentAfterCeremony(app, summary?.ceremony, summary?.certificates.orEmpty().map { it.naming }, onSeePlus) { buddy ->
         RunFinished(
             title = stringResource(R.string.practice_done_title),
-            action = stringResource(if (onAgain != null) R.string.mistakes_practice_again else R.string.mistakes_practice_done),
-            saving = end == null,
+            action = stringResource(R.string.mistakes_practice_done),
+            saving = state.finishing,
             onClose = onClose,
-            onAction = onAgain ?: onClose,
+            actions = bar,
         ) {
             MomentReadouts(
                 brainPower = summary?.brainPower ?: 0,
@@ -248,13 +252,60 @@ private fun PracticeDone(
     }
 }
 
+/**
+ * "Practice again" while this batch left a mistake open or the scope has more, else Done. A day
+ * block's Done waits for its completion, which marks its row on Today, and says when it didn't get
+ * through; the rest are counted as they go.
+ */
 @Composable
-internal fun NothingToPractice(onClose: () -> Unit) {
+private fun DoneBar(
+    state: PracticeState,
+    viewModel: MistakePracticeViewModel,
+    onReport: () -> Unit,
+) {
+    val again = viewModel.practicesAgain && state.offersAgain
+    val unsaved = state.end == null && state.finishFailures > 0 && !state.finishing
+
+    when {
+        unsaved -> {
+            SaveErrorText(state.finishFailures, onRetry = viewModel::retryFinish, onReport = onReport)
+        }
+
+        again && state.again == AgainLoad.Failed -> {
+            SaveErrorText(
+                1,
+                onReport = onReport,
+                firstFailureMessage = stringResource(R.string.mistakes_more_failed),
+            )
+        }
+    }
+    TaskActions { width ->
+        if (again) {
+            Button(busy = state.again == AgainLoad.Loading, onClick = viewModel::practiceAgain, modifier = width) {
+                Text(stringResource(R.string.mistakes_practice_again))
+            }
+        } else {
+            Button(
+                busy = state.finishing,
+                onClick = viewModel::leave,
+                enabled = !unsaved,
+                modifier = width,
+            ) { Text(stringResource(R.string.mistakes_practice_done)) }
+        }
+    }
+}
+
+@Composable
+internal fun NothingToPractice(
+    onClose: () -> Unit,
+    bar: (@Composable () -> Unit)? = null,
+) {
     RunFinished(
         title = stringResource(R.string.mistakes_nothing_title),
         action = stringResource(R.string.navigation_back),
         saving = false,
         onClose = onClose,
+        actions = bar,
     ) {}
 }
 
