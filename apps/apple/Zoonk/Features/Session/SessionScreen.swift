@@ -402,7 +402,7 @@ private struct NextStopView: View {
     } else {
       // Main's `canStop`: a day with nothing done has nothing to stop.
       if let sessionID, day.blocks.contains(where: \.isFinished) {
-        BusyButton(isBusy: isStopping) {
+        BusyButton(isBusy: isStopping, icon: .stop) {
           stop(sessionID: sessionID)
         } label: {
           Text("Stop for today", tableName: "Session", comment: "Ends the session for today")

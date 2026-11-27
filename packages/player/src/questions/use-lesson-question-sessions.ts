@@ -1,8 +1,9 @@
 "use client";
 
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
-import { useCallback, useLayoutEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { type LessonQuestionContext } from "./lesson-question-context";
+import { getLessonQuestionScope } from "./lesson-question-scope";
 import {
   INITIAL_LESSON_QUESTION_SESSIONS,
   getLessonQuestionSession,
@@ -28,12 +29,7 @@ function getInitialSessions({
   }
 
   return lessonQuestionSessionsReducer(INITIAL_LESSON_QUESTION_SESSIONS, {
-    action: {
-      hasMore: initialThread.hasMore,
-      nextCursor: initialThread.nextCursor,
-      questions: initialThread.questions,
-      type: "threadLoaded",
-    },
+    action: { ...initialThread, type: "threadLoaded" },
     context: activeContext,
   });
 }
@@ -50,6 +46,21 @@ export function useLessonQuestionSessions({
     { activeContext, initialThread },
     getInitialSessions,
   );
+
+  const scope = getLessonQuestionScope(activeContext);
+
+  const [receivedPages, setReceivedPages] = useState(
+    () => new Map(initialThread ? [[scope, initialThread]] : []),
+  );
+
+  if (initialThread && receivedPages.get(scope) !== initialThread) {
+    setReceivedPages(new Map(receivedPages).set(scope, initialThread));
+
+    dispatchToContext({
+      action: { ...initialThread, fromPage: true, type: "threadLoaded" },
+      context: activeContext,
+    });
+  }
 
   const currentSessions = useRef(sessions);
 

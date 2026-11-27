@@ -7,9 +7,12 @@ import { useTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { useMissionLinks } from "@/lib/session/use-mission-links";
-import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
-  type BuddyDayHrefs,
+  type BuddyConversations,
+  type LessonQuestionResource,
+} from "@zoonk/core/lesson-questions/contract";
+import {
+  type BuddyHrefs,
   BuddyScreen,
   type BuddyStatusView,
   type TutorSituation,
@@ -17,20 +20,29 @@ import {
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useSearchParams } from "next/navigation";
+import { type BuddyPageRead } from "./buddy-first-page";
+import { useBuddyPages } from "./buddy-pages";
+import { useBuddyConversations } from "./use-buddy-conversations";
 
-const HREFS: BuddyDayHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
+const HREFS: BuddyHrefs = { energy: "/energy", logbook: "/logbook", memory: "/settings/memory" };
 
-type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
+type ThreadPage = ReturnType<ReturnType<typeof useBuddyPages>["readOf"]>;
+
+const NOTHING_ASKED: NonNullable<ThreadPage> = { hasMore: false, nextCursor: null, questions: [] };
 
 /** A question from search (`?ask=`) waits in the composer: only the learner's own send asks it. */
 function BuddyConversation({
   canAsk,
+  conversationId,
   goalId,
-  initialThread,
+  onQuestionSaved,
+  thread,
 }: {
   canAsk: boolean;
+  conversationId: string;
   goalId: string;
-  initialThread: ThreadPage | null;
+  onQuestionSaved: (saved: { conversationId: string; question: LessonQuestionResource }) => void;
+  thread: ThreadPage;
 }) {
   const content = useBuddyTutor();
   const router = useRouter();
@@ -42,30 +54,34 @@ function BuddyConversation({
 
   return (
     <TutorConversation
+      conversationId={conversationId}
       draft={question}
       goalId={goalId}
-      initialThread={initialThread}
       onMissionMoment={() => router.refresh()}
+      onQuestionSaved={onQuestionSaved}
+      thread={thread}
       tutor={tutor}
       {...content}
     />
   );
 }
 
-export function BuddyPageClient({
+export function BuddyClient({
   canAsk,
+  conversations,
+  firstPage,
   goalId,
-  initialThread,
-  memoryCount,
   readAt,
   situation,
   status,
   viewerId,
 }: {
   canAsk: boolean;
+  /** Null for a guest, who can't ask and so has none. */
+  conversations: BuddyConversations | null;
+  /** What the page drawn with this layout read, in the same server render. */
+  firstPage: BuddyPageRead | null;
   goalId: string;
-  initialThread: ThreadPage | null;
-  memoryCount: number;
   readAt: number;
   situation: TutorSituation;
   status: BuddyStatusView;
@@ -74,6 +90,15 @@ export function BuddyPageClient({
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId, { learner: viewerId });
+
+  const pages = useBuddyPages(firstPage);
+
+  const { list, open, questionSaved } = useBuddyConversations({
+    goalId,
+    isOfAnotherGoal: pages.isOfAnotherGoal,
+    read: conversations,
+    readAt,
+  });
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },
@@ -98,12 +123,18 @@ export function BuddyPageClient({
         },
         tools,
       }}
+      conversations={list}
       hrefs={HREFS}
-      memoryCount={memoryCount}
       situation={situation}
       status={status}
     >
-      <BuddyConversation canAsk={canAsk} goalId={goalId} initialThread={initialThread} />
+      <BuddyConversation
+        canAsk={canAsk}
+        conversationId={open.id}
+        goalId={goalId}
+        onQuestionSaved={questionSaved}
+        thread={open.blank ? NOTHING_ASKED : pages.readOf(open.id)}
+      />
     </BuddyScreen>
   );
 }

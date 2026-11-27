@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { type APIRequestContext, request } from "@playwright/test";
+import { requireCheckoutDatabase } from "../../packages/db/src/checkout-database.ts";
 import { getDatabaseUrl } from "../../packages/db/src/local-database.ts";
 import { type Finding } from "./checks.mts";
 
@@ -163,7 +164,9 @@ function connect(repository: string, production: boolean): Client {
     Client: new (options: { connectionString?: string }) => Client;
   };
 
-  return new Client({ connectionString: getDatabaseUrl(environment) });
+  return new Client({
+    connectionString: requireCheckoutDatabase(getDatabaseUrl(environment), repository),
+  });
 }
 
 /**

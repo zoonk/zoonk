@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
+import { requireCheckoutDatabase } from "./checkout-database";
 import { Prisma, PrismaClient, UsageKind as StoredUsageKind } from "./generated/prisma/client";
 import { getDatabaseUrl } from "./local-database";
 import { createDatabasePool } from "./pool";
@@ -8,7 +9,7 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const pool = createDatabasePool(getDatabaseUrl());
+const pool = createDatabasePool(requireCheckoutDatabase(getDatabaseUrl()));
 
 attachDatabasePool(pool);
 
@@ -145,6 +146,7 @@ export {
 } from "./generated/prisma/client";
 
 export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
+export type { AttemptWhereInput } from "./generated/prisma/models/Attempt";
 export type { ContentFixWhereInput } from "./generated/prisma/models/ContentFix";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type {

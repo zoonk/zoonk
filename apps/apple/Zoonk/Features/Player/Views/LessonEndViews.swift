@@ -331,7 +331,7 @@ struct LessonCompletionView: View {
         case .saving, .saved:
           // Inside a day the learner can end it here; the day's last block only goes on.
           if let moment = completion.summary?.block, !moment.sessionCompleted {
-            BusyButton(isBusy: isStopping) {
+            BusyButton(isBusy: isStopping, icon: .stop) {
               stopForToday(sessionID: moment.sessionId)
             } label: {
               Text("Stop for today", tableName: "Session", comment: "Ends the session for today")

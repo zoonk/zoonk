@@ -2,43 +2,37 @@ package com.zoonk.android.feature.buddy
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.missions.MissionListRow
 import com.zoonk.android.feature.missions.MissionMark
 import com.zoonk.android.feature.missions.missionOpenLabel
+import com.zoonk.android.feature.missions.missionStepLine
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.toMissionOpens
 import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.components.MarkStatus
-import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.BuddyFirstSteps
 import com.zoonk.api.models.BuddyFirstStepsStepsInner
 import com.zoonk.api.models.BuddyFirstStepsStepsInner.Kind
 import com.zoonk.api.models.BuddyFirstStepsStepsInner.Status
-import com.zoonk.api.models.BuddyFirstStepsStepsInnerWhen
-import com.zoonk.api.models.BuddyFirstStepsStepsInnerWhenOneOf2
 import com.zoonk.api.models.StudyMission
-import kotlinx.datetime.toJavaLocalDate
 
-/** Main's first steps: each thing the plan uses, tried once, in the order the plan brings them. */
+/**
+ * Main's `FirstStepsSection`: only the steps a learner can do now are rows. The ones done are in the count, and the
+ * ones that open later are one line, since a row nobody can press only says when the plan gets to it.
+ */
 @Composable
 internal fun BuddyFirstStepsSection(
     firstSteps: BuddyFirstSteps?,
@@ -47,77 +41,94 @@ internal fun BuddyFirstStepsSection(
     taps: BuddyDayTaps,
 ) {
     firstSteps ?: return
-    val done = firstSteps.done.toString()
-    val total = firstSteps.total.toString()
-    val spoken = stringResource(R.string.buddy_page_count, done, total)
+    val locale = currentLocale()
+    val steps = firstSteps.steps.filter { it.kind != Kind.UNKNOWN_DEFAULT_OPEN_API }
+    val open = steps.filter { it.status == Status.TODAY || it.status == Status.AVAILABLE }
+    val later = steps.count { it.status == Status.LATER }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                stringResource(R.string.buddy_page_first_steps),
-                Modifier.weight(1f).semantics {
-                    heading()
-                },
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Text(
-                "$done/$total",
-                Modifier.semantics { contentDescription = spoken },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-            )
-        }
-        Column {
-            firstSteps.steps
-                .filter { it.kind != Kind.UNKNOWN_DEFAULT_OPEN_API && it.status != Status.UNKNOWN_DEFAULT_OPEN_API }
-                .forEachIndexed {
-                    index,
-                    step,
-                    ->
-                    if (index > 0) HorizontalDivider()
-                    FirstStepRow(step, look, name, taps)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        SectionHeader(
+            stringResource(R.string.buddy_page_first_steps),
+            detail =
+                stringResource(
+                    R.string.buddy_page_count,
+                    formatNumber(firstSteps.done.toDouble(), locale),
+                    formatNumber(firstSteps.total.toDouble(), locale),
+                ),
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (open.isNotEmpty()) {
+                Column {
+                    open.forEachIndexed { index, step ->
+                        if (index > 0) HorizontalDivider()
+                        FirstStepRow(step.asMission(), firstStepName(step.kind, name), look, name, taps)
+                    }
                 }
+            }
+            if (later > 0) {
+                SectionNote(
+                    pluralStringResource(R.plurals.buddy_page_first_steps_later, later, later),
+                    first = open.isEmpty(),
+                )
+            }
+            if (firstSteps.completedOn != null) {
+                SectionNote(
+                    stringResource(R.string.buddy_page_first_steps_done),
+                    first = open.isEmpty() && later == 0,
+                    success = true,
+                )
+            }
         }
-        if (firstSteps.completedOn != null) {
-            Text(
-                stringResource(R.string.buddy_page_first_steps_done),
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
-                style = MaterialTheme.typography.labelMedium,
-            )
-        }
+    }
+}
+
+/** A quiet line under the rows, set off by a hairline unless it's the first thing under the header. */
+@Composable
+private fun SectionNote(
+    text: String,
+    first: Boolean,
+    success: Boolean = false,
+) {
+    Column {
+        if (!first) HorizontalDivider()
+        Text(
+            text,
+            Modifier.padding(top = if (first) 0.dp else 12.dp),
+            color = if (success) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = if (success) FontWeight.Medium else null,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 
 @Composable
 private fun FirstStepRow(
-    step: BuddyFirstStepsStepsInner,
+    mission: DayMission,
+    stepName: String,
     look: BuddyLook,
-    name: String,
+    buddyName: String,
     taps: BuddyDayTaps,
 ) {
-    val done = step.status == Status.DONE
-    val later = step.status == Status.LATER
-    val mission = step.asMission()
-    val opens = mission.opens?.takeIf { !done && !later && step.waitReason == null }
+    val tap = mission.tap(firstStep = true)?.takeIf { mission.waitReason == null }
 
     MissionListRow(
-        name = firstStepName(step.kind, name),
-        line = if (done) null else firstStepLine(step),
-        done = done,
-        muted = done || later,
-        mark = { if (later) StatusMark(MarkStatus.Todo) else MissionMark(mission.kind, done, look) },
-        openLabel = missionOpenLabel(mission, name),
-        onOpen = opens?.let { { taps.open(BuddyTap(it, firstStep = true)) } },
-        busy = taps.isOpening(mission.tap(firstStep = true)),
-        openFailed = taps.hasFailed(mission.tap(firstStep = true)),
+        name = stepName,
+        line = missionStepLine(mission),
+        done = false,
+        muted = mission.waitReason != null,
+        mark = { MissionMark(mission.kind, false, look) },
+        openLabel = missionOpenLabel(mission, buddyName),
+        onOpen = tap?.let { { taps.open(it) } },
+        busy = taps.isOpening(tap),
+        openFailed = taps.hasFailed(tap),
     )
 }
 
-/** A first step reads as the mission it is, so its mark and open label are the mission's. */
+/** A first step reads as the mission it is, so its mark, its wait and its open label are the mission's. */
 private fun BuddyFirstStepsStepsInner.asMission(): DayMission =
     DayMission(
         kind = StudyMission.Kind.entries.first { it.value == kind.value },
-        done = status == Status.DONE,
+        done = false,
         progress = 0,
         total = 1,
         minutes = null,
@@ -143,49 +154,4 @@ private fun firstStepName(
         Kind.CALL -> stringResource(R.string.buddy_page_first_call)
         Kind.MOCK -> stringResource(R.string.buddy_page_first_mock)
         Kind.CHALLENGE -> stringResource(R.string.buddy_page_first_challenge)
-    }
-
-/** Main's `MissionStepLine`: what it waits for, that it's one of today's, anytime, or when it comes. */
-@Composable
-private fun firstStepLine(step: BuddyFirstStepsStepsInner): String? {
-    val wait = step.waitReason
-
-    return when {
-        wait != null -> stringResource(R.string.missions_after_lessons)
-        step.status == Status.TODAY -> stringResource(R.string.buddy_page_first_today)
-        step.status == Status.AVAILABLE -> stringResource(R.string.buddy_page_first_anytime)
-        else -> step.`when`?.let { whenLine(it) }
-    }
-}
-
-@Composable
-private fun whenLine(comes: BuddyFirstStepsStepsInnerWhen): String? =
-    when (comes) {
-        is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOf3Value -> {
-            null
-        }
-
-        is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOfValue -> {
-            comes.value.date?.let {
-                stringResource(R.string.buddy_page_when_challenge_on, formatDate(it.toJavaLocalDate(), currentLocale()))
-            } ?: stringResource(R.string.buddy_page_when_challenge)
-        }
-
-        is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOf1Value -> {
-            stringResource(R.string.buddy_page_when_essay)
-        }
-
-        is BuddyFirstStepsStepsInnerWhen.BuddyFirstStepsStepsInnerWhenOneOf2Value -> {
-            stringResource(
-                when (comes.value.kind) {
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.MISTAKE -> R.string.buddy_page_when_mistake
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.REVIEW -> R.string.buddy_page_when_review
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.PATTERN -> R.string.buddy_page_when_pattern
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.CALL -> R.string.buddy_page_when_call
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.BUDDY -> R.string.buddy_page_when_buddy
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.LESSON -> R.string.buddy_page_when_lesson
-                    BuddyFirstStepsStepsInnerWhenOneOf2.Kind.MOCK -> R.string.buddy_page_when_mock
-                },
-            )
-        }
     }

@@ -1,13 +1,16 @@
 package com.zoonk.android.feature.tutor
 
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.SessionSource
 import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Instant
 
-internal class FakeTutorApi : TutorApi {
+class FakeTutorApi : TutorApi {
     class Ask(
         val question: String,
         val requestId: String,
@@ -29,6 +32,26 @@ internal class FakeTutorApi : TutorApi {
 
     /** Holds every ask until it completes. */
     var askGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+
+    /** Each goal's pages of conversations, by the cursor that reads them (null for the first). */
+    var conversationPages: Map<String?, BuddyConversationList> = emptyMap()
+    var conversationsFailure: ApiException? = null
+    val conversationReads = mutableListOf<String?>()
+
+    /** Holds every conversations read, which answers with the page as it was when asked. */
+    var conversationsGate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+
+    override suspend fun conversations(
+        goalId: String,
+        cursor: String?,
+        session: AuthenticatedSession,
+    ): BuddyConversationList {
+        conversationReads += cursor
+        val page = conversationPages[cursor] ?: BuddyConversationList(emptyList(), currentId = null, nextCursor = null)
+        conversationsGate?.await()
+        conversationsFailure?.let { throw it }
+        return page
+    }
 
     override suspend fun thread(
         key: TutorThreadKey,
@@ -66,6 +89,21 @@ internal class FakeTutorApi : TutorApi {
         session: AuthenticatedSession,
     ) = question.invoke(id)
 }
+
+/** A store whose writes all succeed, over [api]. */
+fun tutorStore(
+    api: TutorApi,
+    cache: AppCache,
+    sessions: SessionSource,
+) = TutorStore(
+    api,
+    cache,
+    sessions,
+    { MutationResult.Done(Unit) },
+    { _, _ -> MutationResult.Done(Unit) },
+    { _, _ -> MutationResult.Done(Unit) },
+    { true },
+) { _, change, _ -> MutationResult.Done(change) }
 
 fun turn(
     id: String,

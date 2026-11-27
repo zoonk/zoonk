@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "{name}에게 이 모의고사에 대해 질문하기"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "{name}에게 내 계획에 대해 질문하기"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "이 모듈에 대해 {name}님에게 질문하기"

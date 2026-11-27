@@ -138,6 +138,12 @@
       status
     }
 
+    func conversations(goalId: String, cursor: String?, token: String) async throws
+      -> BuddyConversations
+    {
+      BuddyConversations(conversations: [], currentId: nil, nextCursor: nil)
+    }
+
     func save(_ buddy: BuddyChoice, token: String) async throws {}
 
     func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
