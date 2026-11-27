@@ -88,6 +88,7 @@ struct ChoiceItemView: View {
         {
           AnswerOption(
             marker: index + 1,
+            picks: select.isMulti ? .several : .one,
             isPicked: shownPicks.contains(index),
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,

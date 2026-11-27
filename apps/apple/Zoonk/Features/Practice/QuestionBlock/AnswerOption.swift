@@ -8,11 +8,14 @@ enum AnswerOptionResult: Equatable {
   case wrong
 }
 
-/// Main's `AnswerOption`: its number key, its words and, once checked, the word its result shows.
-/// The first ten answer to their number key on a hardware keyboard (the tenth to 0), as on the web.
+/// Main's `AnswerOption`: its words, a mark at its end that shows what's picked, a ring where the
+/// question takes one answer and a square where it takes several, and once checked the word its
+/// result shows. On a hardware keyboard the first ten answer to their number key (the tenth to 0),
+/// as on the web, and show it before the words.
 struct AnswerOption: View {
   var marker: Int?
   var shortcut: Int?
+  var picks: ChoiceMark.Kind = .one
   var isPicked = false
   var result: AnswerOptionResult?
   /// The learner's pick was a guess, so it says "Your guess".
@@ -21,53 +24,68 @@ struct AnswerOption: View {
   var tag: AnyView?
   let text: RichInline
   var detail: String?
-  /// Without one, the answer is shown after the fact: the same look, with nothing to press.
+  /// Without one, the answer is shown after the fact: the same look, with nothing to press and no
+  /// mark, its marker (such as a step's place) in ink once picked.
   let action: (() -> Void)?
 
   var body: some View {
     if let action {
       button(action)
     } else {
-      markedContent
-        .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
-        .accessibilityElement(children: .combine)
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        if let marker {
+          KeyMarker(number: marker, isPicked: isPicked && result == nil)
+        }
+        answerContent
+      }
+      .answerOptionFrame(AnswerOptionStyle.tone(isPicked: isPicked, result: result))
+      .accessibilityElement(children: .combine)
     }
   }
 
+  /// The mark holds its room from the first draw, so a pick or a check moves no word. Words too
+  /// wide to share their line go under the key and the mark.
   private func button(_ action: @escaping () -> Void) -> some View {
-    Button(action: action) {
-      if let marker {
-        ViewThatFits(in: .horizontal) {
-          markedContent
+    let key = HardwareKeyboard.shared.isConnected ? marker : nil
 
-          VStack(alignment: .leading, spacing: 12) {
-            KeyMarker(number: marker, isPicked: isPicked && result == nil)
-            answerContent
+    return Button(action: action) {
+      ViewThatFits(in: .horizontal) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+          if let key {
+            pickKey(key)
           }
+          answerContent
+          ChoiceMark(kind: picks, isPicked: isPicked)
         }
-      } else {
-        markedContent
+
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 12) {
+            if let key {
+              pickKey(key)
+            }
+            Spacer(minLength: 0)
+            ChoiceMark(kind: picks, isPicked: isPicked)
+          }
+          answerContent
+        }
       }
     }
     .buttonStyle(AnswerOptionStyle(isPicked: isPicked, result: result))
     .disabled(isLocked)
     .modifier(PickKey(index: isLocked ? nil : (shortcut ?? marker).map { $0 - 1 }))
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
+    .choiceTraits(picks, isPicked: isPicked)
   }
 
-  private var markedContent: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
-      if let marker {
-        KeyMarker(number: marker, isPicked: isPicked && result == nil)
-      }
-      answerContent
-    }
+  /// Once locked the key answers nothing, so it hides in its room and the words stay put.
+  private func pickKey(_ number: Int) -> some View {
+    KeyMarker(number: number)
+      .opacity(isLocked ? 0 : 1)
   }
 
   private var answerContent: some View {
     TagBesideOrUnder(
       text: text, detail: detail, tag: hasTag ? AnyView(tagContent) : nil,
-      hasMarker: marker != nil)
+      hasMarker: marker != nil || action != nil)
   }
 
   @ViewBuilder
@@ -239,7 +257,8 @@ private struct AnswerOptionLayout: Layout {
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let content = subviews.prefix(hasTag ? 2 : 1)
-    // ViewThatFits can keep the key beside a multiline answer when its words still fit there.
+    // ViewThatFits can keep the key and the mark beside a multiline answer when its words still
+    // fit there.
     let fitting =
       proposal.width == nil && hasMarker
       ? ProposedViewSize(width: widestUnit(in: subviews), height: proposal.height) : proposal
@@ -309,9 +328,9 @@ private struct AnswerOptionLayout: Layout {
   }
 }
 
-/// Main's `Kbd`: the key that picks an option. A picked option's key turns ink: the option's mark,
-/// as a radio's dot is.
-private struct KeyMarker: View {
+/// Main's `Kbd`: the key that picks an option, or the marker of an answer shown after the fact, in
+/// ink once picked.
+struct KeyMarker: View {
   let number: Int
   var isPicked = false
 

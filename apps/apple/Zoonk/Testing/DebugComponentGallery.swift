@@ -1169,6 +1169,18 @@
         AnswerOption(
           marker: 5, isPicked: true, result: .guess, isLocked: true,
           text: RichInline(text: AttributedString("A guess, checked")), action: {})
+        AnswerOption(
+          marker: 6, picks: .several,
+          text: RichInline(text: AttributedString("One of several at rest")), action: {})
+        AnswerOption(
+          marker: 7, picks: .several, isPicked: true,
+          text: RichInline(text: AttributedString("One of several, picked")), action: {})
+
+        LessonOptionList(
+          options: ["A red apple", "A green pear"].map {
+            LessonOption(id: $0, text: $0, pictureAlt: $0)
+          },
+          selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
       }
       .padding(.vertical, 8)
     }

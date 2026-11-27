@@ -11,7 +11,9 @@ struct LessonOption: Identifiable, Hashable {
 }
 
 /// Main's `PlayerChoiceSceneOptions`: number keys pick them on a hardware keyboard, and once
-/// checked only the right option and a wrong pick stay, unless it was a guess.
+/// checked only the right option and a wrong pick stay, unless it was a guess. A picture option
+/// keeps its key and its mark in its picture's top corners, each on a disc of the page so it reads
+/// over any picture.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
 
@@ -24,6 +26,9 @@ struct LessonOptionList: View {
   /// Picture options are still being drawn: a missing picture shows its placeholder.
   var picturesPending = false
   let select: (String) -> Void
+
+  /// Past this text size a corner mark would cover too much of its picture.
+  private static let cornerMarkSize = DynamicTypeSize.xxLarge
 
   private var isPictureGrid: Bool {
     options.contains { $0.pictureAlt != nil }
@@ -61,6 +66,24 @@ struct LessonOptionList: View {
         select(option.id)
       } label: {
         pictureLabel(option)
+          .overlay(alignment: .topLeading) {
+            if HardwareKeyboard.shared.isConnected {
+              KeyMarker(number: marker)
+                .background(
+                  .boxBackground, in: .rect(cornerRadius: Radius.sm, style: .continuous)
+                )
+                .padding(6)
+                .opacity(isLocked || isChecked ? 0 : 1)
+                .dynamicTypeSize(...Self.cornerMarkSize)
+            }
+          }
+          .overlay(alignment: .topTrailing) {
+            ChoiceMark(kind: .one, isPicked: option.id == selectedId)
+              .padding(3)
+              .background(.boxBackground, in: .circle)
+              .padding(6)
+              .dynamicTypeSize(...Self.cornerMarkSize)
+          }
       }
       .buttonStyle(LessonOptionStyle(mark: mark(option)))
       .disabled(isLocked || isChecked)
