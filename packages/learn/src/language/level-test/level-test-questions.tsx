@@ -112,7 +112,7 @@ function AskedQuestion({
       failures={failures}
       media={
         isListening ? (
-          <>
+          <div className="flex flex-col gap-2">
             <ListeningMessage
               language={targetLanguage}
               pending={audioPending}
@@ -134,7 +134,7 @@ function AskedQuestion({
                 message: "Can't listen now",
               })}
             </Button>
-          </>
+          </div>
         ) : null
       }
       number={number}
