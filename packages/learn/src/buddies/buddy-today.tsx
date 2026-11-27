@@ -129,8 +129,9 @@ export function BuddyToday({
     <>
       <button
         aria-haspopup="dialog"
-        // Its padding hangs past the name's gap, so the mark sits as close to the name as words do.
-        className="hit-area text-muted-foreground hover:text-foreground relative -mx-2 flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
+        // Right after the name, as its own reading: its padding hangs into the name's gap, and the
+        // free room goes after it instead of between them.
+        className="hit-area text-muted-foreground hover:text-foreground relative -ms-2 me-auto flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
         data-slot="buddy-today"
         onClick={() => {
           setAsked(false);
