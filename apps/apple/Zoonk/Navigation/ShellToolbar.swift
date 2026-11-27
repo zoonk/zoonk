@@ -8,12 +8,13 @@ struct ShellToolbar: ViewModifier {
   @Environment(\.isToolbarVertical) private var isToolbarVertical
   @Environment(\.tabBarPlacement) private var tabBarPlacement
   @State private var barWidth: CGFloat?
+  @State private var hasScreenOptions = false
   /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
   /// chevron (34), the gap the bar leaves before its next item (12), the level, the spacer (20) and
   /// the account (52). Less, and the bar sends the level and the account to its overflow menu. The
-  /// level is "Level 12" (83) in a regular width and "12" (37) in a compact one.
+  /// level is "Level 12" (83) in words and "12" (46) as a number.
   @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 244
-  @ScaledMetric(relativeTo: .body) private var besideNameByNumber: CGFloat = 198
+  @ScaledMetric(relativeTo: .body) private var besideNameByNumber: CGFloat = 207
   /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
   /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
   @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
@@ -37,7 +38,9 @@ struct ShellToolbar: ViewModifier {
   }
 
   private func measured(_ content: Content) -> some View {
-    content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
+    content
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
+      .onPreferenceChange(ScreenOptionsKey.self) { hasScreenOptions = $0 }
   }
 
   /// The name keeps a readable minimum; lower-priority items overflow when they no longer fit.
@@ -54,9 +57,15 @@ struct ShellToolbar: ViewModifier {
     return max(shortestName, barWidth - (isLevelInWords ? besideName : besideNameByNumber))
   }
 
-  /// A compact bar shows the level's number alone, as main's does below its wide layout.
+  /// A compact bar shows the level's number alone, as main's does below its wide layout. The
+  /// overflow menu lists an item by its text, so where the level may move there (beside a screen's
+  /// own options, or once the name is down to its shortest) it keeps its words.
   private var isLevelInWords: Bool {
-    horizontalSizeClass != .compact
+    guard horizontalSizeClass == .compact, !hasScreenOptions else {
+      return true
+    }
+
+    return (barWidth ?? .infinity) - besideNameByNumber < shortestName
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
