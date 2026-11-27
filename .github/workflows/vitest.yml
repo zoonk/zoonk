@@ -37,10 +37,12 @@ jobs:
             task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=1/2"
+            test-clock: "Wednesday 01:30"
           - part: core and api 2 of 2
             task: test
             filter: "--filter=@zoonk/core --filter=api"
             args: "-- --shard=2/2"
+            test-clock: "Sunday 16:00"
           - part: player and the rest
             task: test
             filter: "--filter=!@zoonk/core --filter=!api"
@@ -68,6 +70,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: ${{ github.event_name == 'pull_request' && matrix.test-clock && 2 || 1 }}
 
       # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
       # whose slow downloads time jobs out.
@@ -99,6 +102,18 @@ jobs:
 
       - name: Run Vitest
         run: pnpm turbo run ${{ matrix.task }} ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
+
+      - name: Run affected tests at ${{ matrix.test-clock }} UTC
+        if: github.event_name == 'pull_request' && matrix.test-clock
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          TEST_CLOCK: ${{ matrix.test-clock }}
+        run: |
+          ZOONK_TEST_NOW=$(date -u --date="next $TEST_CLOCK" +%FT%TZ)
+          export ZOONK_TEST_NOW
+          echo "Run with ZOONK_TEST_NOW=$ZOONK_TEST_NOW to reproduce this instant."
+          pnpm turbo run test --filter=@zoonk/core --filter=api --concurrency=2 \
+            --env-mode=loose --cache=local:,remote: -- --changed="$PR_BASE" --passWithNoTests
 
   # The one check branch protection requires: it passes only when every part passed.
   vitest:
