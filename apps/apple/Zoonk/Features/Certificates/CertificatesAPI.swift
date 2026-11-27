@@ -75,6 +75,7 @@ private func makeCertificateUpNext(_ goals: [Components.Schemas.Goal]) -> [Certi
     }
 
     switch goal.kind {
+    case .unrecognized: return nil
     case .language:
       return CertificateUpNext(
         id: goal.id, displayName: goal.displayName, languageFlag: goal.languageFlag,

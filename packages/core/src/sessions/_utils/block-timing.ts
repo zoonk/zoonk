@@ -30,7 +30,11 @@ export function pausedBlockTiming({
   };
 }
 
-/** Caller holds the progress lock; acquire blocks in id order before any session locks. */
+/**
+ * Caller holds the progress lock; acquire blocks in id order before any session locks. Locks only
+ * blocks that pausing changes: blocks stay active across days, so a learner gathers many whose
+ * clocks already stopped.
+ */
 export async function lockStudyBlockClocks({
   blockId,
   tx,
@@ -44,7 +48,14 @@ export async function lockStudyBlockClocks({
     SELECT block.id FROM study_session_blocks AS block
     JOIN study_sessions AS session ON session.id = block.session_id
     WHERE session.user_id = ${userId}::uuid
-      AND (block.id = ${blockId}::uuid OR block.status = 'active' OR block.payload #>> '{timing,activeAt}' IS NOT NULL)
+      AND (
+        block.id = ${blockId}::uuid
+        OR block.payload #>> '{timing,activeAt}' IS NOT NULL
+        OR (
+          block.status = 'active'
+          AND (block.payload #>> '{timing}' IS NULL OR block.payload #>> '{timing,clock}' IS NOT NULL)
+        )
+      )
     ORDER BY block.id FOR UPDATE OF block
   `;
 

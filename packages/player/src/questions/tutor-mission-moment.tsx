@@ -4,14 +4,18 @@ import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract
 import { MissionMoment } from "@zoonk/learn/mission-moment";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/** A moment belongs to the conversation whose question earned it, and shows only there. */
 export function useConversationMissionMoment({
-  goalId,
+  conversationId,
   onMoment,
 }: {
-  goalId: string;
+  conversationId: string;
   onMoment?: (moment: MissionMomentView) => void;
 }) {
-  const [latest, setLatest] = useState<{ goalId: string; moment: MissionMomentView } | null>(null);
+  const [latest, setLatest] = useState<{
+    conversationId: string;
+    moment: MissionMomentView;
+  } | null>(null);
 
   const onMomentRef = useRef(onMoment);
 
@@ -21,16 +25,16 @@ export function useConversationMissionMoment({
 
   const receive = useCallback(
     (next: MissionMomentView | null) => {
-      setLatest(next ? { goalId, moment: next } : null);
+      setLatest(next ? { conversationId, moment: next } : null);
 
       if (next) {
         onMomentRef.current?.(next);
       }
     },
-    [goalId],
+    [conversationId],
   );
 
-  return { moment: latest?.goalId === goalId ? latest.moment : null, receive };
+  return { moment: latest?.conversationId === conversationId ? latest.moment : null, receive };
 }
 
 export function ConversationMissionMoment({ moment }: { moment: MissionMomentView | null }) {

@@ -229,7 +229,9 @@ fun keyPick(
 
             is StepContent.Activity -> {
                 val picked =
-                    activityRenderers[content.frame.template]?.keyPick?.invoke(content.content, index)
+                    content.frame.renderer
+                        ?.keyPick
+                        ?.invoke(content.content, index)
                         ?: (content.frame.check as? ChoiceCheckValue)
                             ?.value
                             ?.options

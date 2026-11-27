@@ -59,7 +59,7 @@ struct PlacementStep: View {
           question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
       case .done:
         self = .done
-      case .unavailable, .failed:
+      case .unavailable, .failed, .unrecognized:
         self = .unavailable
       case .preparing, .waitingForQuestions:
         self = .waiting(failure: nil)

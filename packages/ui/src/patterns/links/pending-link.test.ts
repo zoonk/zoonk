@@ -70,10 +70,12 @@ describe("the pending-link script", () => {
     expect(document.activeElement).toBe(loginLink());
   });
 
-  it("clears the mark when going back restores the page", () => {
+  it("keeps the mark through the page's own load, and clears it when going back restores the page", () => {
     click(loginLink());
-    globalThis.dispatchEvent(new Event("pageshow"));
+    globalThis.dispatchEvent(new PageTransitionEvent("pageshow"));
+    expect(loginLink().getAttribute("aria-busy")).toBe("true");
 
+    globalThis.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
     expect(loginLink().hasAttribute("aria-busy")).toBe(false);
   });
 });

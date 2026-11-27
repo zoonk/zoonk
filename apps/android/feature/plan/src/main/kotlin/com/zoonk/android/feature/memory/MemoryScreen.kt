@@ -160,6 +160,7 @@ private fun Loaded(
         }
     val groups =
         MemoryCategory.entries
+            .filterNot { it == MemoryCategory.UNKNOWN_DEFAULT_OPEN_API }
             .map { category ->
                 category to memory.facts.filter { it.category == category }
             }.filter { it.second.isNotEmpty() }
@@ -262,7 +263,11 @@ private fun FactRow(
 
     ListRow(
         headline = { Text(fact.statement) },
-        supporting = { Text(stringResource(R.string.memory_fact_source, sourceName(fact), factDate(fact))) },
+        supporting = {
+            val day = factDate(fact)
+            val source = sourceName(fact)
+            Text(if (source == null) day else stringResource(R.string.memory_fact_source, source, day))
+        },
         trailing = {
             Box {
                 // Main's quiet "⋯" (a ghost icon button), not the outlined one beside a page's title.
@@ -340,9 +345,10 @@ private fun EditFactDialog(
 }
 
 @Composable
-private fun categoryName(category: MemoryCategory): String =
-    stringResource(
+private fun categoryName(category: MemoryCategory): String {
+    return stringResource(
         when (category) {
+            MemoryCategory.UNKNOWN_DEFAULT_OPEN_API -> return ""
             MemoryCategory.GOALS -> R.string.memory_category_goals
             MemoryCategory.BACKGROUND -> R.string.memory_category_background
             MemoryCategory.ROUTINE -> R.string.memory_category_routine
@@ -351,12 +357,15 @@ private fun categoryName(category: MemoryCategory): String =
             MemoryCategory.CONTEXT -> R.string.memory_category_context
         },
     )
+}
 
 @Composable
-private fun sourceName(fact: MemoryFact): String =
-    stringResource(
+private fun sourceName(fact: MemoryFact): String? {
+    return stringResource(
         when {
             fact.origin == MemoryFact.Origin.NOTICED -> R.string.memory_source_noticed
+            fact.origin == MemoryFact.Origin.UNKNOWN_DEFAULT_OPEN_API -> return null
+            fact.source?.kind == MemorySource.Kind.UNKNOWN_DEFAULT_OPEN_API -> return null
             fact.source == null || fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_you
             fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat
@@ -364,6 +373,7 @@ private fun sourceName(fact: MemoryFact): String =
             else -> R.string.memory_source_session
         },
     )
+}
 
 @Composable
 private fun factDate(fact: MemoryFact): String = formatMomentDay(fact.createdAt, currentLocale())

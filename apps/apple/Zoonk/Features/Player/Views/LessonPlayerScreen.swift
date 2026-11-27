@@ -181,13 +181,7 @@ private struct LessonPlayerContent: View {
         return
       }
 
-      store.isUnplayable = { [activityRenderers] step in
-        guard case .activity(let content) = step.content, case .interaction = content.check else {
-          return false
-        }
-
-        return activityRenderers.renderer(for: content.template) == nil
-      }
+      store.isUnplayable = activityRenderers.isUnplayable
       await store.load()
     }
     // Per opening: a lesson written on the learner's tap opens after `load()` has returned.

@@ -302,7 +302,7 @@ private fun ChapterStrip(
             formatNumber(place.number.toDouble(), locale),
             formatNumber(place.total.toDouble(), locale),
         )
-    val label = position + FACT_SEPARATOR + place.chapter.level.label()
+    val label = listOfNotNull(position, place.chapter.level.label()).joinToString(FACT_SEPARATOR)
     val stretch = detail.chapters.drop(place.number - 1).take(NEXT_CHAPTERS + 1)
     val subject =
         Subject

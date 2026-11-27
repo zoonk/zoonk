@@ -33,6 +33,10 @@ fun focusTestOffer(plan: Plan): FocusTestOffer? =
 internal fun focusTestLine(summary: FocusTestSummary): String {
     val minutes = summary.offer?.minutes?.let { formatMinutes(it.toInt(), currentLocale()) }
     return when (summary.state) {
+        FocusTestSummary.State.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         FocusTestSummary.State.NOT_STARTED -> {
             factsLine(
                 stringResource(if (summary.suggestsFocus) R.string.focustest_find_focus else R.string.focustest_find_start),
@@ -97,6 +101,10 @@ private fun placementTestLine(test: PlanPlacementTest): String {
     val locale = currentLocale()
     val (state, minutes, result) =
         when (test) {
+            is PlanPlacementTest.PlanPlacementTestOneOf2Value -> {
+                return ""
+            }
+
             is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
                 Triple(
                     test.value.state.value,
@@ -135,6 +143,10 @@ val PlanPlacementTest.opensLevelTest: Boolean
 /** A test there's nothing left to check with has no row, as main hides it. */
 fun PlanPlacementTest.isShown(): Boolean =
     when (this) {
+        is PlanPlacementTest.PlanPlacementTestOneOf2Value -> {
+            false
+        }
+
         is PlanPlacementTest.PlanPlacementTestOneOfValue -> {
             value.state != PlanPlacementTestOneOf.State.START || value.estimatedMinutes > 0
         }

@@ -23,7 +23,6 @@ function findSameSubjectThreads({ guestUserId, transaction, userId }: GuestLinkC
       AND (
         account.library_lesson_id = guest.library_lesson_id
         OR account.chapter_id = guest.chapter_id
-        OR account.goal_id = guest.goal_id
         OR account.mock_exam_id = guest.mock_exam_id
         OR (account.subject_goal_id = guest.subject_goal_id AND account.subject_key = guest.subject_key)
         OR account.item_id = guest.item_id
@@ -123,6 +122,11 @@ export async function moveTutorThreads(context: GuestLinkContext) {
   if (pairs.length > 0) {
     await joinSameSubjectThreads({ pairs, transaction });
   }
+
+  await transaction.$executeRaw`
+    UPDATE lesson_question_threads SET user_id = ${userId}::uuid
+    WHERE user_id = ${guestUserId}::uuid AND kind = 'plan'
+  `;
 
   // A thread the account starts after the lookup fails this on its unique key; the link retries and joins them.
   await transaction.lessonQuestionThread.updateMany({

@@ -9,6 +9,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -59,12 +60,11 @@ function MinuteChips({
           )}
           key={minutes}
         >
-          <input
+          <RadioInput
             checked={selected === minutes}
             className="sr-only"
             name={name}
             onChange={() => onChange(minutes)}
-            type="radio"
             value={minutes}
           />
           <span className="font-mono tabular-nums">{formatDuration(minutes)}</span>
@@ -286,24 +286,21 @@ export function PracticeConversation({
     );
   }
 
-  // A submit, so a tap before the page hydrates opens the call's setup once it does.
   return (
     <>
-      <form action={() => setOpen(true)} className="contents">
-        <ListRowButton aria-haspopup="dialog" type="submit">
-          <ListRowLeading>
-            <KindDot kind="conversation" />
-          </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
-            {character && (
-              <ListRowDescription>
-                {t("with {name} · {role}", { name: character.name, role: character.role })}
-              </ListRowDescription>
-            )}
-          </ListRowContent>
-        </ListRowButton>
-      </form>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <ListRowLeading>
+          <KindDot kind="conversation" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
+          {character && (
+            <ListRowDescription>
+              {t("with {name} · {role}", { name: character.name, role: character.role })}
+            </ListRowDescription>
+          )}
+        </ListRowContent>
+      </ListRowButton>
 
       <PracticeCallSheet
         conversation={conversation}

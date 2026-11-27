@@ -3,10 +3,11 @@ import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseRows } from "@zoonk/testing/statement-counter";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockSession } from "../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { findMemoryForTask } from "../memory/get-memory-for-task";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import {
@@ -205,16 +206,10 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
         userId: reader.id,
       });
 
-      const claimed = await claimLessonQuestionAnswer({ questionId: second.id });
-      expect(claimed.status).toBe(hasShared ? "shared" : "ready");
+      expect(second.status).toBe(hasShared ? "completed" : "pending");
 
-      if (claimed.status === "ready") {
-        await completeLessonQuestionAnswer({
-          ...answerRun("A general explanation."),
-          questionId: second.id,
-          revision: claimed.claim.revision,
-          shareAnswer: claimed.claim.shareAnswer,
-        });
+      if (!hasShared) {
+        await answerQuestion({ questionId: second.id, text: "A general explanation." });
       }
 
       await expect(
@@ -248,10 +243,7 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       userId: learner.id,
     });
 
-    await expect(claimLessonQuestionAnswer({ questionId: asked.id })).resolves.toMatchObject({
-      answer: "A general explanation.",
-      status: "shared",
-    });
+    expect(asked).toMatchObject({ answer: "A general explanation.", status: "completed" });
   });
 
   it("writes a shared answer without the address form of the learner who asked first", async () => {
@@ -310,11 +302,7 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       userId: second.id,
     });
 
-    await expect(claimLessonQuestionAnswer({ questionId: again.id })).resolves.toStrictEqual({
-      answer: "A simpler take.",
-      questionId: again.id,
-      status: "shared",
-    });
+    expect(again).toMatchObject({ answer: "A simpler take.", status: "completed" });
 
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: again.id } }),
@@ -331,6 +319,43 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     await expect(countTutorMessages(second.id)).resolves.toBe(0);
     expect(findMemoryForTask).not.toHaveBeenCalled();
     expect(updateMemoryFromActivity).not.toHaveBeenCalled();
+  });
+
+  it("answers a guest's tapped suggestion from its shared answer, though guests have no allowance", async () => {
+    const [shared, author, guest] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    const first = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: author.id,
+    });
+
+    await answerQuestion({ questionId: first.id, text: "A simpler take." });
+
+    mockGuestSession(guest.id);
+
+    const created = await createLessonQuestion({
+      input: {
+        context: { kind: "step", stepId: shared.step.id, stepNumber: shared.step.stepNumber },
+        question: WORDS.simpler,
+        requestId: randomUUID(),
+        suggestion: "simpler",
+      },
+      target: { kind: "lesson", lessonId: shared.lesson.id },
+      wordSuggestion,
+    });
+
+    expect(created).toMatchObject({
+      question: { answer: "A simpler take.", status: "completed" },
+      status: "created",
+    });
+
+    await expect(countTutorMessages(guest.id)).resolves.toBe(0);
   });
 
   it("answers a question the learner typed for them alone, with their memory, even in a suggestion's words", async () => {
@@ -409,6 +434,101 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     await expect(
       prisma.lessonQuestion.count({ where: { question: { contains: "divorce" } } }),
     ).resolves.toBe(0);
+  });
+
+  it("answers a suggestion from its shared answer when it's asked, so a need turned on later can't fail it", async () => {
+    const [shared, author, learner] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    const first = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: author.id,
+    });
+
+    await answerQuestion({ questionId: first.id, text: "A simpler take." });
+    await usageRecordsFixture({ count: 10, kind: "tutorMessage", userId: learner.id });
+
+    const asked = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: learner.id,
+    });
+
+    expect(asked).toMatchObject({ answer: "A simpler take.", status: "completed" });
+
+    await learningProfileFixture({
+      learningNeeds: ["stepByStep"],
+      memoryEnabled: false,
+      userId: learner.id,
+    });
+
+    await expect(claimLessonQuestionAnswer({ questionId: asked.id })).resolves.toStrictEqual({
+      status: "conflict",
+    });
+
+    const saved = await prisma.tutorSharedAnswer.findUniqueOrThrow({
+      where: { stepSuggestion: { stepId: shared.step.id, suggestion: "simpler" } },
+    });
+
+    await expect(
+      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.id } }),
+    ).resolves.toMatchObject({
+      answer: "A simpler take.",
+      generatedAt: saved.generatedAt,
+      model: saved.model,
+      promptVersion: saved.promptVersion,
+      runId: saved.runId,
+      sharedAnswerId: saved.id,
+      status: "completed",
+    });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "tutorMessage", targetId: asked.id } }),
+    ).resolves.toBe(0);
+  });
+
+  it("gives back the message of a question answered from a shared answer written after it was asked", async () => {
+    const [shared, first, second] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    const waiting = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: first.id,
+    });
+
+    await expect(countTutorMessages(first.id)).resolves.toBe(1);
+
+    const answered = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: second.id,
+    });
+
+    await answerQuestion({ questionId: answered.id, text: "A simpler take." });
+
+    mockSession(first.id);
+
+    await expect(claimLessonQuestionAnswer({ questionId: waiting.id })).resolves.toStrictEqual({
+      answer: "A simpler take.",
+      questionId: waiting.id,
+      status: "shared",
+    });
+
+    await expect(
+      Promise.all([countTutorMessages(first.id), countTutorMessages(second.id)]),
+    ).resolves.toStrictEqual([0, 1]);
   });
 
   it("never serves a follow-up from a shared answer", async () => {

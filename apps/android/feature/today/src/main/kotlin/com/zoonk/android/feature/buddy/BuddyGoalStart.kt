@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -21,10 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,61 +30,33 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
-import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.tutor.TutorGreeting
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.ActOn
-import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.rememberGoalExamples
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.api.models.BuddyStatus
 
 /**
  * Main's buddy without a goal to tutor: it offers to plan one. An example fills the box; only the
- * learner's own send starts it, and a goal from search ([ask]) waits there the same way. Across an
- * unfolded book's fold the buddy's day faces it, as it does a goal's conversation.
+ * learner's own send starts it, and a goal from search ([ask]) waits there the same way.
  */
 @Composable
 internal fun BuddyGoalStart(
     status: BuddyStatus,
     ask: String?,
-    app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.studyOpener) }
     val look = status.look()
     val name = buddyName(look.kind, status.buddy.name)
     val goal = androidx.compose.runtime.key(ask) { rememberTextFieldState(ask.orEmpty()) }
-    var wearing by rememberSaveable { mutableStateOf(false) }
     val examples = rememberGoalExamples().take(EXAMPLES).map { it.label }
 
-    OnVisitEnd(vm, onEnd = vm::endVisit)
-    ActOn(vm.route, navigator::open)
-
-    PageWithSupportingPane(
-        atFoldOnly = true,
-        supportingPane = {
-            BuddyDayPane(
-                status,
-                look,
-                name,
-                BuddyDayTaps(
-                    open = { tap -> status.today?.let { vm.openMission(tap, it.goalId.toString()) } },
-                    opening = vm.opening,
-                    failed = vm.openFailed,
-                ),
-                onGlasses = { wearing = true },
-                navigator,
-                app,
-            )
-        },
-    ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    BeforeFold { beforeFold ->
+        Box(Modifier.fillMaxSize().then(beforeFold), contentAlignment = Alignment.TopCenter) {
             Column(
                 Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -114,15 +81,6 @@ internal fun BuddyGoalStart(
             }
         }
     }
-
-    BuddyChanges(
-        vm,
-        status,
-        look,
-        BuddyChangesOpen(glasses = wearing, editor = false),
-        closeGlasses = { wearing = false },
-        closeEditor = {},
-    )
 }
 
 private const val EXAMPLES = 3

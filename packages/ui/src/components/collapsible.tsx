@@ -3,6 +3,7 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
+import { BusyIcon } from "./button";
 
 function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
@@ -27,20 +28,28 @@ function CollapsibleContent({ className, ...props }: CollapsiblePrimitive.Panel.
 
 /**
  * The glyph of anything that folds. It turns by itself inside a `CollapsibleTrigger`, a control
- * with `aria-expanded` or the `summary` of an open `details`. At a row's end it takes the tone of a
- * list row's chevron; `inline`, after a label's words, it takes the label's color.
+ * with `aria-expanded` or the `summary` of an open `details`, and gives way to the spinner while its
+ * control is busy or held. At a row's end it takes the tone of a list row's chevron; `inline`, after
+ * a label's words, it takes the label's color.
  */
 function FoldChevron({ className, inline = false }: { className?: string; inline?: boolean }) {
   return (
-    <ChevronDownIcon
-      aria-hidden="true"
+    <BusyIcon
       className={cn(
-        "size-4 shrink-0 self-center transition-transform in-aria-expanded:rotate-180 in-data-panel-open:rotate-180 motion-reduce:transition-none [details[open]>summary_&]:rotate-180",
-        !inline && "text-faint edge ms-(--edge-pull) -me-(--edge-pull)",
+        "size-4 shrink-0 self-center",
+        !inline && "text-muted-foreground edge ms-(--edge-pull) -me-(--edge-pull)",
         className,
       )}
       data-slot="fold-chevron"
-    />
+    >
+      <ChevronDownIcon
+        aria-hidden="true"
+        className={cn(
+          "size-full transition-transform in-aria-expanded:rotate-180 in-data-panel-open:rotate-180 motion-reduce:transition-none [details[open]>summary_&]:rotate-180",
+          !inline && "text-faint",
+        )}
+      />
+    </BusyIcon>
   );
 }
 

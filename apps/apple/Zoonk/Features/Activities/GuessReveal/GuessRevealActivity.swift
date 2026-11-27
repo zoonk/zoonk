@@ -3,10 +3,8 @@ import SwiftUI
 extension ActivityRenderer {
   static let guessReveal = ActivityRenderer(
     template: "guessReveal", badge: .always(.estimateFirst), answersOnCanvas: true
-  ) { context in
-    if let fields = try? context.fields(as: GuessRevealFields.self) {
-      GuessRevealCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    GuessRevealCanvas(fields: fields, context: context)
   }
 }
 

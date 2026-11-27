@@ -61,21 +61,20 @@ import com.zoonk.api.models.ProfileQuestionView
 
 @Composable
 fun profileQuestionTitle(question: ProfileQuestion): String =
-    stringResource(
-        when (question) {
-            ProfileQuestion.WORK -> R.string.profile_questions_work_title
-            ProfileQuestion.TOOLS -> R.string.profile_questions_tools_title
-            ProfileQuestion.STUDIES -> R.string.profile_questions_studies_title
-            ProfileQuestion.WATCH -> R.string.profile_questions_watch_title
-            ProfileQuestion.LISTEN -> R.string.profile_questions_listen_title
-            ProfileQuestion.PLAY -> R.string.profile_questions_play_title
-            ProfileQuestion.READ -> R.string.profile_questions_read_title
-            ProfileQuestion.ACTIVITIES -> R.string.profile_questions_activities_title
-            ProfileQuestion.CONDITIONS -> R.string.profile_questions_conditions_title
-            ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_support_title
-            ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_address_title
-        },
-    )
+    when (question) {
+        ProfileQuestion.UNKNOWN_DEFAULT_OPEN_API -> null
+        ProfileQuestion.WORK -> R.string.profile_questions_work_title
+        ProfileQuestion.TOOLS -> R.string.profile_questions_tools_title
+        ProfileQuestion.STUDIES -> R.string.profile_questions_studies_title
+        ProfileQuestion.WATCH -> R.string.profile_questions_watch_title
+        ProfileQuestion.LISTEN -> R.string.profile_questions_listen_title
+        ProfileQuestion.PLAY -> R.string.profile_questions_play_title
+        ProfileQuestion.READ -> R.string.profile_questions_read_title
+        ProfileQuestion.ACTIVITIES -> R.string.profile_questions_activities_title
+        ProfileQuestion.CONDITIONS -> R.string.profile_questions_conditions_title
+        ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_support_title
+        ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_address_title
+    }?.let { stringResource(it) }.orEmpty()
 
 /** [inSettings] drops "in Settings" from the lines that point there, as main's Settings page does. */
 @Composable

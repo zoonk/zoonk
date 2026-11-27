@@ -6,6 +6,7 @@ let buddyKinds: [BuddyKind] = [.zu, .noodle, .beep, .otto]
 extension BuddyKind {
   var name: String {
     switch self {
+    case .unrecognized: ""
     case .zu:
       String(localized: "Zu", table: "Settings", comment: "Name of the alien study buddy")
     case .noodle:
@@ -21,6 +22,7 @@ extension BuddyKind {
 
   var tagline: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .zu: Text("Curious alien", tableName: "Buddy", comment: "What the Zu buddy is")
     case .noodle: Text("Brain with legs", tableName: "Buddy", comment: "What the Noodle buddy is")
     case .beep: Text("Tidy robot", tableName: "Buddy", comment: "What the Beep buddy is")
@@ -32,6 +34,7 @@ extension BuddyKind {
 extension BuddyStatus.StagePayload {
   var name: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .baby: Text("Baby", tableName: "Buddy", comment: "The buddy's first stage")
     case .young: Text("Young", tableName: "Buddy", comment: "The buddy's second stage")
     case .adult: Text("Adult", tableName: "Buddy", comment: "The buddy's grown stage")
@@ -42,6 +45,7 @@ extension BuddyStatus.StagePayload {
 extension Components.Schemas.GlassesProgress.GlassesPayload {
   var name: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .round: Text("Round", tableName: "Buddy", comment: "A pair of the buddy's glasses")
     case .star: Text("Star", tableName: "Buddy", comment: "A pair of the buddy's glasses")
     case .aviator: Text("Aviator", tableName: "Buddy", comment: "A pair of the buddy's glasses")
@@ -53,6 +57,7 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
 
   var howToEarn: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .round:
       Text("Comes with your buddy", tableName: "Buddy", comment: "How the round glasses are earned")
     case .star:
@@ -125,6 +130,7 @@ extension BuddyChoice {
 extension BuddyGlasses {
   var name: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .round: Text("Round", tableName: "Settings", comment: "Buddy glasses: round frames")
     case .star: Text("Star", tableName: "Settings", comment: "Buddy glasses: star-shaped frames")
     case .aviator: Text("Aviator", tableName: "Settings", comment: "Buddy glasses: aviators")
@@ -136,6 +142,7 @@ extension BuddyGlasses {
 
   var worn: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .round:
       Text("Round glasses", tableName: "Settings", comment: "What the buddy wears: round glasses")
     case .star:
@@ -153,6 +160,7 @@ extension BuddyGlasses {
 
   var howToEarn: Text {
     switch self {
+    case .unrecognized: Text(verbatim: "")
     case .round:
       Text(
         "Comes with your buddy", tableName: "Settings",

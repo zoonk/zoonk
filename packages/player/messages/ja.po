@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "この模試について{name}に質問する"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "学習計画について{name}に質問する"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "{name}にこのモジュールについて質問する"
@@ -3707,11 +3702,6 @@ msgstr "このレッスンは利用できなくなりました。"
 msgctxt "g4aIUa"
 msgid "We couldn't send this question. Try again."
 msgstr "この質問を送信できませんでした。もう一度お試しください。"
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "少し時間をおいてから、もう一度質問してください。"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"

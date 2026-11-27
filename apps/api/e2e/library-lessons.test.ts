@@ -6,7 +6,6 @@ import {
   libraryLessonOpenedSchema,
   libraryLessonRunSchema,
 } from "@zoonk/core/lesson-player/contract";
-import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -549,30 +548,26 @@ test.describe("Library lessons API", () => {
     await api.dispose();
   });
 
-  test("asks a guest to sign up before the tutor answers a question about a Library lesson", async () => {
-    const [{ guestApi }, { lesson }] = await Promise.all([
+  test("asks a guest to sign up when they ask the tutor about a Library lesson, saving nothing", async () => {
+    const [{ guestApi, userId }, { lesson }] = await Promise.all([
       createGuest(baseURL),
       playableLessonFixture({ steps: [...LESSON_STEPS] }),
     ]);
 
-    const guestQuestion = await readBody({
-      response: await guestApi.post(`/v1/lessons/${lesson.id}/questions`, {
-        data: { context: { kind: "lesson" }, question: "Why?", requestId: randomUUID() },
-      }),
-      schema: createdLessonQuestionSchema,
-      status: 201,
+    const asked = await guestApi.post(`/v1/lessons/${lesson.id}/questions`, {
+      data: { context: { kind: "lesson" }, question: "Why?", requestId: randomUUID() },
     });
 
-    const answer = await guestApi.post(`/v1/questions/${guestQuestion.id}/answers`);
+    expect(asked.status()).toBe(403);
 
-    expect(answer.status()).toBe(403);
-
-    await expect(answer.json()).resolves.toMatchObject({
+    await expect(asked.json()).resolves.toMatchObject({
       error: {
         code: "USAGE_LIMIT_REACHED",
         details: { limit: { resource: "tutorMessage", tier: "guest" } },
       },
     });
+
+    await expect(prisma.lessonQuestionThread.count({ where: { userId } })).resolves.toBe(0);
 
     await guestApi.dispose();
   });

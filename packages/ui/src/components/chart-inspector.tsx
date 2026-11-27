@@ -177,6 +177,7 @@ export function ChartInspectorPoints({
       )}
       data-slot="chart-inspector-points"
       onBlur={close}
+      // oxlint-disable-next-line zoonk/held-press-control -- The tooltip needs the original chart point as its target, inside the chart’s single keyboard stop.
       onClick={(event) => inspectTarget(event.target)}
       onFocus={(event) => {
         if (event.currentTarget.matches(":focus-visible")) {

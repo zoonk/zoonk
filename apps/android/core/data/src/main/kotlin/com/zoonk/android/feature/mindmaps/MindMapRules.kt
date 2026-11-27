@@ -68,6 +68,7 @@ val GoalMindMap.Status.shown: MindMapShown
             GoalMindMap.Status.AVAILABLE -> MindMapShown.Available
             GoalMindMap.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
             GoalMindMap.Status.DRAWING -> MindMapShown.Drawing
+            GoalMindMap.Status.UNKNOWN_DEFAULT_OPEN_API -> MindMapShown.Unavailable
             GoalMindMap.Status.READY -> MindMapShown.Ready
             GoalMindMap.Status.FAILED -> MindMapShown.Failed
         }
@@ -79,6 +80,7 @@ val ChapterMindMap.Status.shown: MindMapShown
             ChapterMindMap.Status.AVAILABLE -> MindMapShown.Available
             ChapterMindMap.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
             ChapterMindMap.Status.DRAWING -> MindMapShown.Drawing
+            ChapterMindMap.Status.UNKNOWN_DEFAULT_OPEN_API -> MindMapShown.Unavailable
             ChapterMindMap.Status.READY -> MindMapShown.Ready
             ChapterMindMap.Status.FAILED -> MindMapShown.Failed
         }
@@ -90,6 +92,7 @@ val ChapterMindMapStatus.Status.shown: MindMapShown
             ChapterMindMapStatus.Status.AVAILABLE -> MindMapShown.Available
             ChapterMindMapStatus.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
             ChapterMindMapStatus.Status.DRAWING -> MindMapShown.Drawing
+            ChapterMindMapStatus.Status.UNKNOWN_DEFAULT_OPEN_API -> MindMapShown.Unavailable
             ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
             ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
         }
@@ -97,6 +100,7 @@ val ChapterMindMapStatus.Status.shown: MindMapShown
 val MindMapGeneration.Status.shown: MindMapShown
     get() =
         when (this) {
+            MindMapGeneration.Status.UNKNOWN_DEFAULT_OPEN_API -> MindMapShown.Unavailable
             MindMapGeneration.Status.READY -> MindMapShown.Ready
             MindMapGeneration.Status.WRITING_LESSONS -> MindMapShown.WritingLessons
             MindMapGeneration.Status.DRAWING -> MindMapShown.Drawing
@@ -120,7 +124,7 @@ fun AllowanceResponse.reachedCap(kind: AllowanceItem.Kind): Limit.Reached? {
     val tier =
         when (tier) {
             AllowanceResponse.Tier.GUEST -> LimitTier.Guest
-            AllowanceResponse.Tier.FREE -> LimitTier.Free
+            AllowanceResponse.Tier.FREE, AllowanceResponse.Tier.UNKNOWN_DEFAULT_OPEN_API -> LimitTier.Free
             AllowanceResponse.Tier.PLUS -> LimitTier.Plus
         }
     return Limit.Reached(tier, period, item.availableAt?.toJavaInstant())

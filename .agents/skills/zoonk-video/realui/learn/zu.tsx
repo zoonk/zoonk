@@ -5,6 +5,7 @@ import { getGlassesProgress } from "@repo/packages/core/src/milestones/milestone
 import { type PlanChangeView } from "@repo/packages/core/src/plans/plan-view-contract.ts";
 import { BRAIN_POWER_BONUS } from "@repo/packages/core/src/sessions/brain-power.ts";
 import {
+  type BuddyConversationList,
   BuddyScreen,
   type BuddyStatusView,
   useBuddyTutor,
@@ -17,6 +18,8 @@ import { buddyGrowth } from "../goals/buddy-energy";
 import { CAREER_GOAL_ID, MISSION_LINKS, S, TabShell, actions, type ViewProps } from "./common";
 
 const TODAY_ISO = "2026-11-03";
+
+const CONVERSATION_ID = "2c9d1a7e-7a0b-4f43-b0a8-8d7b5e7f9a11";
 
 /** Zu's own words: the reply the tutor model writes before its proposal card. */
 const REPLY = {
@@ -124,19 +127,32 @@ function Conversation({ lang, applied }: { lang: "en" | "pt"; applied: boolean }
   const content = useBuddyTutor();
 
   const thread = useMemo(
-    () => ({
-      hasMore: false,
-      id: "2c9d1a7e-7a0b-4f43-b0a8-8d7b5e7f9a11",
-      lessonId: null,
-      nextCursor: null,
-      questions: [question(lang, applied)],
-    }),
+    () => ({ hasMore: false, nextCursor: null, questions: [question(lang, applied)] }),
     [lang, applied],
   );
 
   return (
-    <TutorConversation goalId={CAREER_GOAL_ID} initialThread={thread} tutor={TUTOR} {...content} />
+    <TutorConversation
+      conversationId={CONVERSATION_ID}
+      goalId={CAREER_GOAL_ID}
+      thread={thread}
+      tutor={TUTOR}
+      {...content}
+    />
   );
+}
+
+/** The goal's one conversation, titled by its first question, as the list shows it. */
+function conversationList(lang: "en" | "pt"): BuddyConversationList {
+  return {
+    conversationHref: (id) => `/buddy/${id}`,
+    conversations: [
+      { id: CONVERSATION_ID, lastAskedAt: question(lang, false).createdAt, title: S(lang).zuAsk },
+    ],
+    more: null,
+    newHref: "/buddy/new",
+    openId: CONVERSATION_ID,
+  };
 }
 
 const noopHref = () => "#";
@@ -211,8 +227,8 @@ function ZuTab({ lang, q, state }: ViewProps) {
             },
           }),
         }}
+        conversations={conversationList(lang)}
         hrefs={{ energy: "/energy", logbook: "/logbook", memory: "/settings/memory" }}
-        memoryCount={4}
         situation={{ hasMistake: false, hasToday: true }}
         status={status}
       >

@@ -34,11 +34,15 @@ function findCheckout(directory: string): string {
   return findCheckout(parent);
 }
 
+export function currentCheckout(): string {
+  // Turbopack leaves out import.meta.dirname in the bundled server.
+  return findCheckout(import.meta.dirname ?? process.cwd());
+}
+
 /** `scripts/cloud/setup.sh` gives Debian's `postgres` role this password. */
 export function getLocalDatabaseUrl(
   mode: DatabaseMode = "dev",
-  // Turbopack leaves out import.meta.dirname in the bundled server.
-  checkout = findCheckout(import.meta.dirname ?? process.cwd()),
+  checkout = currentCheckout(),
 ): string {
   const name = isLinkedWorktree(checkout)
     ? worktreeDatabaseName({ mode, worktree: realpathSync(checkout) })

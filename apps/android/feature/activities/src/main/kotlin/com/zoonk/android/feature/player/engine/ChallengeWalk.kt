@@ -104,9 +104,10 @@ fun pickChallengeChoice(
 
 private const val PASS_SCORE = 0.5
 
-private val Quality.score: Double
+private val Quality.score: Double?
     get() =
         when (this) {
+            Quality.UNKNOWN_DEFAULT_OPEN_API -> null
             Quality.STRONG -> 1.0
             Quality.FAIR -> 0.5
             Quality.WEAK -> 0.0
@@ -125,7 +126,7 @@ fun gradeChallengePath(
     choiceIds: List<String>,
 ): ChallengeGrade? {
     val walk = walkChallenge(content, choiceIds) as? ChallengeWalk.Ended ?: return null
-    val score = if (walk.moves.isEmpty()) 0.0 else walk.moves.sumOf { it.choice.quality.score } / walk.moves.size
+    val score = if (walk.moves.isEmpty()) 0.0 else walk.moves.sumOf { it.choice.quality.score ?: return null } / walk.moves.size
 
     return ChallengeGrade(walk.ending, score >= PASS_SCORE, score, walk.moves)
 }

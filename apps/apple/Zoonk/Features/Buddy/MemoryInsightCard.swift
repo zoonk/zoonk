@@ -47,6 +47,10 @@ struct MemoryInsightCard: View {
   }
 
   var body: some View {
+    if insight.kind != .unrecognized { card }
+  }
+
+  private var card: some View {
     TodaySuggestionCard(mark: mark) {
       if let answer {
         SuggestionResult(text: answered(answer))
@@ -120,7 +124,7 @@ struct MemoryInsightCard: View {
     }
   }
 
-  private var acceptLabel: Text {
+  private var acceptLabel: Text? {
     switch insight.kind {
     case .planChange:
       insight.planChange?.status == .proposed
@@ -132,6 +136,7 @@ struct MemoryInsightCard: View {
         comment:
           "Accepts a schedule idea: moves the time of day the learner studies to the time the sentence above names"
       )
+    case .unrecognized: nil
     case .tip:
       Text("Got it", tableName: "Buddy", comment: "Acknowledges a tip")
     }
@@ -145,7 +150,7 @@ struct MemoryInsightCard: View {
         : Text("Undo", tableName: "Buddy", comment: "Undoes a lesson an insight added")
     case .scheduleIdea:
       Text("Not now", tableName: "Buddy", comment: "Declines a schedule idea")
-    case .tip:
+    case .tip, .unrecognized:
       nil
     }
   }
@@ -169,6 +174,7 @@ struct MemoryInsightCard: View {
           localized: "Your study time stays the same.", table: "Buddy",
           comment:
             "A schedule idea was declined: the time of day the learner studies stays the same")
+    case .unrecognized: ""
     case .tip:
       String(localized: "Noted.", table: "Buddy", comment: "A tip was acknowledged")
     }

@@ -85,6 +85,7 @@ class ConversationViewModel(
         microphone: Boolean,
         takeover: Boolean = false,
     ) {
+        val task = conversation.callTask ?: return
         val left = call
         left?.leave()
         save = null
@@ -93,7 +94,7 @@ class ConversationViewModel(
             left?.settle()
             // Ended meanwhile, it's being saved under that connection: no other may start.
             if (call !== left || left?.state?.value?.phase == LiveCallPhase.Ended) return@launch
-            val next = newCall(conversation.callTask, left?.soFar ?: CallSoFar())
+            val next = newCall(task, left?.soFar ?: CallSoFar())
             call = next
             next.start(microphone, takeover)
             // The notification's Hang up does what End does.
@@ -232,11 +233,12 @@ class ConversationViewModel(
     }
 }
 
-val LanguageConversation.callTask: LiveCallTask
-    get() =
-        LiveCallTask(
+val LanguageConversation.callTask: LiveCallTask?
+    get() {
+        return LiveCallTask(
             kind =
                 when (kind) {
+                    LanguageConversation.Kind.UNKNOWN_DEFAULT_OPEN_API -> return null
                     LanguageConversation.Kind.PRACTICE -> "practice"
                     LanguageConversation.Kind.CHECKPOINT -> "checkpoint"
                     LanguageConversation.Kind.SPEAKING_MOCK -> "speaking_mock"
@@ -247,6 +249,7 @@ val LanguageConversation.callTask: LiveCallTask
             talkSeconds = talkSeconds,
             examCues = examTask?.cues,
         )
+    }
 
 /** The whole call's talk time; a connection after a drop gets what's left of it. */
 internal val LanguageConversation.talkSeconds get() = minutes * 60

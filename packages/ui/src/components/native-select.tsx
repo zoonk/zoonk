@@ -3,6 +3,7 @@
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
+import { BusyIcon } from "./button";
 import type * as React from "react";
 
 /**
@@ -92,7 +93,9 @@ function NativeSelectButton({ children, className, ...props }: React.ComponentPr
       {...props}
     >
       <span className="block truncate">{children}</span>
-      <ChevronDownIcon aria-hidden="true" className={CHEVRON_CLASS} />
+      <BusyIcon className={CHEVRON_CLASS}>
+        <ChevronDownIcon aria-hidden="true" className="size-full" />
+      </BusyIcon>
     </button>
   );
 }

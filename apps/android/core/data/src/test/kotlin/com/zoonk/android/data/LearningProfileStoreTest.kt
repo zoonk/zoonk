@@ -103,6 +103,23 @@ class LearningProfileStoreTest {
         }
 
     @Test
+    fun anUnrecognizedBuddyCannotBeOverwrittenByRenamingIt() =
+        runTest {
+            api.current = ApiJson.decodeFromString(PROFILE.replace("\"zu\"", "\"futureBuddy\""))
+            val store = loaded()
+            val buddy = api.current.buddy
+
+            assertFalse(store.setBuddy(buddy.kind, buddy.glasses, "Octo"))
+
+            assertTrue(api.changes.isEmpty())
+            assertEquals(
+                buddy,
+                store.profile.state.value.value
+                    ?.buddy,
+            )
+        }
+
+    @Test
     fun theActiveGoalIsSentByItsId() =
         runTest {
             val store = loaded()

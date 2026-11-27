@@ -491,6 +491,7 @@ class StartGoalViewModel(
     private fun restoreDraftMaterial(draft: OnboardingDraft) {
         val intent =
             when (draft.materialIntent) {
+                OnboardingDraft.MaterialIntent.UNKNOWN_DEFAULT_OPEN_API -> null
                 OnboardingDraft.MaterialIntent.EXAM -> MaterialIntent.Exam
                 OnboardingDraft.MaterialIntent.UNDERSTAND -> MaterialIntent.Understand
                 null -> null

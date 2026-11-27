@@ -163,13 +163,13 @@ internal fun PlanProperties(
                 val skipped =
                     page.plan.steering.skippedActivities
                         .toSet()
-                val practiced = PlanSteering.SkippedActivities.entries.filterNot { it in skipped }
+                val practiced = planActivities.filterNot { it in skipped }
                 if (practiced.isNotEmpty()) {
                     PropertyRow(
                         label = stringResource(R.string.plan_practice),
                         value =
                             AnnotatedString(
-                                if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
+                                if (practiced.size == planActivities.size) {
                                     stringResource(R.string.plan_everything)
                                 } else {
                                     practiced.map { activityName(it) }.factsLine()
@@ -371,12 +371,14 @@ private fun weekdaysWord(weekday: Int): String =
     )
 
 @Composable
-internal fun activityName(activity: PlanSteering.SkippedActivities): String =
-    stringResource(
+internal fun activityName(activity: PlanSteering.SkippedActivities): String {
+    return stringResource(
         when (activity) {
+            PlanSteering.SkippedActivities.UNKNOWN_DEFAULT_OPEN_API -> return ""
             PlanSteering.SkippedActivities.VOCABULARY -> R.string.plan_activity_vocabulary
             PlanSteering.SkippedActivities.LISTENING -> R.string.plan_activity_listening
             PlanSteering.SkippedActivities.WRITING -> R.string.plan_activity_writing
             PlanSteering.SkippedActivities.SPEAKING -> R.string.plan_activity_speaking
         },
     )
+}

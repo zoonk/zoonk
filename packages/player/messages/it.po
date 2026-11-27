@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "Fai una domanda a {name} su questa simulazione"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "Fai una domanda a {name} sul tuo piano"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "Fai una domanda a {name} su questo modulo"
@@ -3707,11 +3702,6 @@ msgstr "Questa lezione non è più disponibile."
 msgctxt "g4aIUa"
 msgid "We couldn't send this question. Try again."
 msgstr "Non siamo riusciti a inviare questa domanda. Riprova."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "Fai una breve pausa, poi riprova."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"

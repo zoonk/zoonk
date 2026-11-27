@@ -43,10 +43,11 @@ struct SettingsAPI: SettingsAPIClient {
   func updatePreferences(token: String, _ update: PreferencesUpdate) async throws
     -> LearningPreferences
   {
-    try await clients.perform(token: token) { client in
+    guard let body = update.body else { throw APIError.unavailable }
+    return try await clients.perform(token: token) { client in
       switch try await client.updateCurrentUserLearningProfile(
         query: .init(language: .init(rawValue: OnboardingAPI.language) ?? .en),
-        body: .json(update.body))
+        body: .json(body))
       {
       case .ok(let response):
         return LearningPreferences(try response.body.json.profile)
@@ -192,7 +193,10 @@ struct SettingsAPI: SettingsAPIClient {
       switch try await client.getStripeSubscriptionCancellation() {
       case .ok(let response):
         let plus = try response.body.json
-        return WebPlus(state: WebPlus.State(plus.state), periodEnd: plus.periodEnd)
+        guard let state = WebPlus.State(rawValue: plus.state.rawValue) else {
+          throw APIError.unavailable
+        }
+        return WebPlus(state: state, periodEnd: plus.periodEnd)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
@@ -235,14 +239,4 @@ private func exportFile(_ value: some Encodable) throws -> Data {
   encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
   encoder.dateEncodingStrategy = .iso8601
   return try encoder.encode(value)
-}
-
-extension WebPlus.State {
-  fileprivate init(_ state: Components.Schemas.StripeSubscriptionCancellation.StatePayload) {
-    switch state {
-    case .renewing: self = .renewing
-    case .ending: self = .ending
-    case .unpaid: self = .unpaid
-    }
-  }
 }

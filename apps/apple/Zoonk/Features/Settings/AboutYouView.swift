@@ -228,6 +228,7 @@ extension ProfileDraft {
 private enum AboutYouCopy {
   static func rowName(_ question: ProfileQuestion) -> Text {
     switch question {
+    case .unrecognized: Text(verbatim: "")
     case .addressForm:
       Text(
         "How we address you", tableName: "AboutYou",
@@ -276,6 +277,7 @@ private enum AboutYouCopy {
 
     let parts: [String] =
       switch view.id {
+      case .unrecognized: []
       case .work:
         saved.text.isEmpty ? saved.picks.map(label) : [saved.text]
       case .studies:

@@ -258,7 +258,7 @@ final class TodayStore {
         let ref = DayBlockRef(block)
         let opened = try await self.openDay(
           shown, target: tap == .next ? .next(ref) : .ref(ref), token: token)
-        return opened.opening ?? .changed(.init(kind: .changed))
+        return opened.opening ?? .StudyBlockOpeningChanged(.init(kind: .changed))
       }
 
       return try await self.openBlock(tap, blockID: blockID, sessionID: sessionID, token: token)
@@ -482,7 +482,7 @@ final class TodayStore {
     async throws -> StudyDestination
   {
     // Opening a written question is its start: the tap admits the grading, or starts writing it.
-    if case .essay(let essay) = opening {
+    if case .StudyBlockOpeningEssay(let essay) = opening {
       guard cache.session.authenticatedSession == identity else {
         throw CancellationError()
       }
@@ -492,7 +492,7 @@ final class TodayStore {
       return .essay(blockID: essay.blockId, start: start)
     }
 
-    guard case .unwrittenLesson(let lesson) = opening else {
+    guard case .StudyBlockOpeningUnwrittenLesson(let lesson) = opening else {
       return StudyDestination(opening)
     }
 
@@ -543,7 +543,7 @@ final class TodayStore {
       let block = try await api.addExtraBlock(
         token: token, sessionID: sessionID, timeZone: TimeZone.current.identifier)
     else {
-      return .today(.init(kind: .today))
+      return .StudyBlockOpeningToday(.init(kind: .today))
     }
 
     guard let blockID = block.id else {
@@ -574,15 +574,15 @@ extension StudyBlockOpening {
   /// Nil for Today or a change.
   var sessionID: String? {
     switch self {
-    case .lesson(let lesson): lesson.sessionId
-    case .unwrittenLesson(let lesson): lesson.sessionId
-    case .preparingLesson(let step): step.sessionId
-    case .essay(let essay): essay.sessionId
-    case .checkpoint(let checkpoint): checkpoint.sessionId
-    case .mock(let mock): mock.sessionId
-    case .challenge(let challenge): challenge.sessionId
-    case .session(let session): session.sessionId
-    case .today, .changed: nil
+    case .StudyBlockOpeningLesson(let lesson): lesson.sessionId
+    case .StudyBlockOpeningUnwrittenLesson(let lesson): lesson.sessionId
+    case .StudyBlockOpeningPreparingLesson(let step): step.sessionId
+    case .StudyBlockOpeningEssay(let essay): essay.sessionId
+    case .StudyBlockOpeningCheckpoint(let checkpoint): checkpoint.sessionId
+    case .StudyBlockOpeningMock(let mock): mock.sessionId
+    case .StudyBlockOpeningChallenge(let challenge): challenge.sessionId
+    case .StudyBlockOpeningSession(let session): session.sessionId
+    case .StudyBlockOpeningToday, .StudyBlockOpeningChanged, .case11: nil
     }
   }
 }
@@ -592,25 +592,25 @@ extension StudyDestination {
   /// it again.
   init(_ opening: StudyBlockOpening) {
     switch opening {
-    case .lesson(let lesson):
+    case .StudyBlockOpeningLesson(let lesson):
       self = .lesson(lessonID: lesson.lessonId, sessionID: lesson.sessionId)
-    case .unwrittenLesson:
+    case .StudyBlockOpeningUnwrittenLesson:
       self = .session
-    case .preparingLesson(let step):
+    case .StudyBlockOpeningPreparingLesson(let step):
       self = .lessonWait(blockID: step.blockId, writing: .preparing)
-    case .essay(let essay):
+    case .StudyBlockOpeningEssay(let essay):
       self = .essay(blockID: essay.blockId, start: nil)
-    case .checkpoint(let checkpoint):
+    case .StudyBlockOpeningCheckpoint(let checkpoint):
       self = .checkpoint(blockID: checkpoint.blockId, sessionID: checkpoint.sessionId)
-    case .mock(let mock):
+    case .StudyBlockOpeningMock(let mock):
       self = .mock(blockID: mock.blockId, sessionID: mock.sessionId)
-    case .challenge(let challenge):
+    case .StudyBlockOpeningChallenge(let challenge):
       self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
-    case .session(let session):
+    case .StudyBlockOpeningSession(let session):
       self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
-    case .today:
+    case .StudyBlockOpeningToday:
       self = .today
-    case .changed:
+    case .StudyBlockOpeningChanged, .case11:
       self = .changed
     }
   }

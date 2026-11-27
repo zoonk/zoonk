@@ -21,7 +21,7 @@ class LimitTest {
     @Test
     fun readsTheApisRefusals() {
         assertEquals(Limit.SignUpRequired, refused("SIGN_UP_REQUIRED"))
-        assertEquals(Limit.SlowDown(30), refused("SLOW_DOWN", """{"retryAfterSeconds":30}"""))
+        assertEquals(Limit.SlowDown(30, received.plusSeconds(30)), refused("SLOW_DOWN", """{"retryAfterSeconds":30}"""))
         assertEquals(
             Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-29T12:00:00Z")),
             refused(
@@ -30,6 +30,16 @@ class LimitTest {
             ),
         )
         assertEquals(Limit.Reached(LimitTier.Guest), refused("USAGE_LIMIT_REACHED", """{"limit":{"tier":"guest"}}"""))
+    }
+
+    @Test
+    fun aWaitLongerThanAnIntCountsIsHeldToTheLongestOne() {
+        val longest = Int.MAX_VALUE
+        assertEquals(
+            Limit.SlowDown(longest, received.plusSeconds(longest.toLong())),
+            refused("SLOW_DOWN", """{"retryAfterSeconds":9007199254740991}""", 429),
+        )
+        assertEquals(Limit.SlowDown(0, received), refused("SLOW_DOWN", """{"retryAfterSeconds":-5}""", 429))
     }
 
     @Test
@@ -67,7 +77,7 @@ class LimitTest {
         assertEquals(Limit.Reached(LimitTier.Free), refused("USAGE_LIMIT_REACHED", status = 402))
         assertEquals(Limit.Reached(LimitTier.Plus), refused("USAGE_LIMIT_REACHED", status = 429))
         assertEquals(Limit.Reached(LimitTier.Free), refused("USAGE_LIMIT_REACHED", """{"limit":{"tier":"enterprise"}}""", 402))
-        assertEquals(Limit.SlowDown(60), refused("SLOW_DOWN", status = 429))
+        assertEquals(Limit.SlowDown(60, received.plusSeconds(60)), refused("SLOW_DOWN", status = 429))
     }
 
     @Test

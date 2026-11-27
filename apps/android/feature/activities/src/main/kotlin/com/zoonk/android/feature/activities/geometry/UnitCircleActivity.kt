@@ -304,6 +304,7 @@ private class TrigTones(
 ) {
     fun of(trig: Trig) =
         when (trig) {
+            Trig.UNKNOWN_DEFAULT_OPEN_API -> Color.Transparent
             Trig.SIN -> sin
             Trig.COS -> cos
             Trig.TAN -> tan

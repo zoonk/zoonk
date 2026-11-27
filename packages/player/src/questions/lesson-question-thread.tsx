@@ -80,13 +80,7 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-export function TutorIntro({
-  guest = false,
-  identity,
-}: {
-  guest?: boolean;
-  identity: TutorIdentity;
-}) {
+function TutorIntro({ guest = false, identity }: { guest?: boolean; identity: TutorIdentity }) {
   const t = useExtracted();
 
   return (
@@ -111,6 +105,27 @@ export function TutorIntro({
   );
 }
 
+/** The buddy's empty state wherever its chat opens: who it is, then what to ask. */
+export function TutorWelcome({
+  identity,
+  onSelect,
+  suggestions,
+  ...props
+}: Omit<React.ComponentProps<typeof Empty>, "onSelect"> & {
+  identity: TutorIdentity;
+  onSelect: (suggestion: OfferedSuggestion) => void;
+  suggestions: readonly OfferedSuggestion[];
+}) {
+  return (
+    <Empty {...props}>
+      <TutorIntro identity={identity} />
+      <EmptyContent>
+        <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
+      </EmptyContent>
+    </Empty>
+  );
+}
+
 function EmptyThread({
   context,
   identity,
@@ -127,12 +142,12 @@ function EmptyThread({
   const suggestions = lessonSuggestions ? offered : [];
 
   return (
-    <Empty className="min-h-full">
-      <TutorIntro identity={identity} />
-      <EmptyContent>
-        <TutorSuggestions onSelect={onSelect} suggestions={suggestions} />
-      </EmptyContent>
-    </Empty>
+    <TutorWelcome
+      className="min-h-full"
+      identity={identity}
+      onSelect={onSelect}
+      suggestions={suggestions}
+    />
   );
 }
 

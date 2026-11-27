@@ -5,7 +5,7 @@ enum LessonScreenSuggestion {
   example
 }
 
-/// One thread per learner and thing. Plan, subject and mock threads go with their goal or mock.
+/// Goals can have several plan threads. Other subjects have one thread per learner.
 model LessonQuestionThread {
   id              String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String           @map("user_id") @db.Uuid
@@ -31,13 +31,13 @@ model LessonQuestionThread {
 
   @@unique([userId, libraryLessonId], name: "userLibraryLessonQuestionThread")
   @@unique([userId, chapterId], name: "userChapterQuestionThread")
-  @@unique([userId, goalId], name: "userGoalQuestionThread")
   @@unique([userId, mockExamId], name: "userMockQuestionThread")
   @@unique([userId, subjectGoalId, subjectKey], name: "userSubjectQuestionThread")
   @@unique([userId, itemId], name: "userItemQuestionThread")
   @@index([libraryLessonId])
   @@index([chapterId])
   @@index([goalId])
+  @@index([userId, goalId, updatedAt, id])
   @@index([subjectGoalId])
   @@index([itemId])
   @@index([mockExamId])

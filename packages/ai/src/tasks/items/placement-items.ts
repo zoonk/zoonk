@@ -66,7 +66,7 @@ export type PlacementItemsParams = {
 export type PlacementSkillItems = { quick: GeneratedItem[]; taps: GeneratedItem[] };
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the situation and question come before the answers. */
-const tapSchema = z.discriminatedUnion("format", [
+const tapSchema = z.union([
   GENERATED_ITEM_SCHEMAS.order.extend({ steps: z.array(z.string()).min(MIN_TAP_STEPS) }),
   GENERATED_ITEM_SCHEMAS.matchPairs.extend({
     pairs: GENERATED_ITEM_SCHEMAS.matchPairs.shape.pairs.element.array().min(MIN_TAP_PAIRS),

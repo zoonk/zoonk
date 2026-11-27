@@ -399,7 +399,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     let after = await transport.count
     XCTAssertEqual(after, 2, "one retry for 503")
     XCTAssertEqual(destinations.count, 1)
-    XCTAssertEqual(destinations.first, .today(.init(kind: .today)))
+    XCTAssertEqual(destinations.first, .StudyBlockOpeningToday(.init(kind: .today)))
     XCTAssertNil(store.state?.runId)
   }
 

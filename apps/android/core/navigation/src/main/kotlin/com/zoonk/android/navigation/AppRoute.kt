@@ -21,10 +21,16 @@ sealed interface AppRoute : NavKey {
         val focus: String? = null,
     ) : AppRoute
 
-    /** `ask` waits in the composer, as search leaves it: only the learner's own send asks it. */
+    /**
+     * The buddy's conversation [conversationId] (main's `/buddy/{id}`), a new one ([startsNew], main's
+     * `/buddy/new`), or the one a visit opens. [ask] waits in a new conversation's composer, as search
+     * leaves it: only the learner's own send asks it.
+     */
     @Serializable
     data class Buddy(
         val ask: String? = null,
+        val conversationId: String? = null,
+        val startsNew: Boolean = false,
     ) : AppRoute
 
     @Serializable
