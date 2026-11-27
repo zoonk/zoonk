@@ -3,7 +3,8 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { type APIRequestContext, request } from "@playwright/test";
-import { getDatabaseUrl, requireCheckoutDatabase } from "../../packages/db/src/local-database.ts";
+import { requireCheckoutDatabase } from "../../packages/db/src/checkout-database.ts";
+import { getDatabaseUrl } from "../../packages/db/src/local-database.ts";
 import { type Finding } from "./checks.mts";
 
 /** As `ZOONK_QUERY_LOG` writes it (`packages/db/src/pool.ts`). */

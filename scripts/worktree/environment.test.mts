@@ -11,11 +11,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
+import { requireCheckoutDatabase } from "../../packages/db/src/checkout-database.ts";
 import { worktreeDatabaseName } from "../../packages/db/src/local-database-names.ts";
-import {
-  getLocalDatabaseUrl,
-  requireCheckoutDatabase,
-} from "../../packages/db/src/local-database.ts";
+import { getLocalDatabaseUrl } from "../../packages/db/src/local-database.ts";
 import { requireDevelopmentDatabase } from "./databases.mts";
 import { copyEnvironment, ownDevelopmentDatabaseUrl, writeEnvironment } from "./environment.mts";
 

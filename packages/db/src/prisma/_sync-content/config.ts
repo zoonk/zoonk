@@ -1,9 +1,6 @@
 import { config } from "dotenv";
-import {
-  getUnpooledDatabaseUrl,
-  isLocalDevelopmentDatabase,
-  requireCheckoutDatabase,
-} from "../../local-database";
+import { requireCheckoutDatabase } from "../../checkout-database";
+import { getUnpooledDatabaseUrl, isLocalDevelopmentDatabase } from "../../local-database";
 
 config();
 

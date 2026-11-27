@@ -5,11 +5,9 @@ import {
   LOCAL_DATABASE_NAMES,
   isLinkedWorktree,
   worktreeDatabaseName,
-  worktreeDatabasePrefix,
 } from "#local-database-names";
-import { parse } from "pg-connection-string";
 
-const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "::1", "localhost"]);
+const LOCAL_DATABASE_HOSTS = new Set(["127.0.0.1", "[::1]", "localhost"]);
 const POSTGRES_PROTOCOLS = new Set(["postgres:", "postgresql:"]);
 
 /** Target overrides bypass the authority/path check, including pg and libpq connection options. */
@@ -36,7 +34,7 @@ function findCheckout(directory: string): string {
   return findCheckout(parent);
 }
 
-function currentCheckout(): string {
+export function currentCheckout(): string {
   // Turbopack leaves out import.meta.dirname in the bundled server.
   return findCheckout(import.meta.dirname ?? process.cwd());
 }
@@ -60,33 +58,6 @@ export function getDatabaseUrl(environment: NodeJS.Dict<string> = process.env): 
 /** Migrations need a direct connection, which deployments name apart from the pooled one. */
 export function getUnpooledDatabaseUrl(environment: NodeJS.Dict<string> = process.env): string {
   return environment.DATABASE_URL_UNPOOLED || getDatabaseUrl(environment);
-}
-
-/**
- * A `DATABASE_URL` in the shell outranks a worktree's env files, so it can send the worktree's
- * seeds, migrations and servers to another checkout's database. Remote hosts are left alone.
- */
-export function requireCheckoutDatabase(
-  connectionString: string,
-  checkout = currentCheckout(),
-): string {
-  if (!isLinkedWorktree(checkout)) {
-    return connectionString;
-  }
-
-  // pg's own parser, so query parameters such as `?host=` or `?port=` count as pg counts them.
-  const { database, host } = parse(connectionString);
-  const prefix = worktreeDatabasePrefix(realpathSync(checkout));
-  const name = database ?? "";
-  const local = !host || host.startsWith("/") || LOCAL_DATABASE_HOSTS.has(host.toLowerCase());
-
-  if (!local || name.startsWith(prefix)) {
-    return connectionString;
-  }
-
-  throw new Error(
-    `This worktree's database is ${prefix}dev, but DATABASE_URL or DATABASE_URL_UNPOOLED names the local database ${name}, which isn't this worktree's. Unset DATABASE_URL and DATABASE_URL_UNPOOLED in your shell, or run pnpm worktree:setup if the worktree has no database yet.`,
-  );
 }
 
 export function isLocalDevelopmentDatabase(connectionString: string): boolean {

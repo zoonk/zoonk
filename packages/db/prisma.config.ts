@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { defineConfig } from "prisma/config";
-import { getUnpooledDatabaseUrl, requireCheckoutDatabase } from "./src/local-database";
+import { requireCheckoutDatabase } from "./src/checkout-database";
+import { getUnpooledDatabaseUrl } from "./src/local-database";
 
 config();
 
