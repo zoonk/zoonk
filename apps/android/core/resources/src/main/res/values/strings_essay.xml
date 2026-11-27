@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="essay_writing_practice">Writing practice</string>
     <!-- A few minutes of writing after a lesson, using what it just taught, such as one paragraph of an exam answer. -->
     <string name="essay_short_exercise">Short writing exercise</string>
@@ -177,7 +177,8 @@
     <string name="essay_see_comments">See comments</string>
     <string name="essay_comments">Comments</string>
     <string name="essay_your_text">Your text</string>
-    <string name="essay_past_line_small_hand">Past line %1$d even in small handwriting: not read</string>
+    <!-- %1$d is the last line graders read, a line number rather than a count. -->
+    <string name="essay_past_line_small_hand" tools:ignore="PluralsCandidate">Past line %1$d even in small handwriting: not read</string>
     <string name="essay_past_limit_small_hand">Past the limit even in small handwriting: not read</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">You wrote “%1$s” (%2$s)</string>

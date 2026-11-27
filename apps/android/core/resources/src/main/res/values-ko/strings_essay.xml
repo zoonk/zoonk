@@ -43,12 +43,9 @@
   "essay_level_missing": "6d103aee4737cd2a273cf9db6d925b56898fb0e113a56fe95d4158a658aea16b",
   "essay_level_partial": "ec2284c183abf1fdcec7ba20100d8d5798ab4256878beb6260cb5421e4aa8a0f",
   "essay_level_strong": "37df72344e024bc9e9657f8c0f7b12343abc8893c82dfd8bfbc5684c781634af",
-  "essay_limit_text": "c099d673a550eade8aefd76e5be3da6f9555151852e3faafb3389190e946ce67",
-  "essay_limit_text_any": "9b5a51fb4dcf8dc2540ac4b120c8296dd3aff41a067b780327b30925310a24dc",
   "essay_limit_title": "58b392d26aa41eb4be8f31df5f56b81efa3ae81224de2b3a445c1e260cd40472",
   "essay_limit_title_any": "ceadcc2693b358abdfd6c880c3bbd59678abd6c04a14877bed6eb482f6da9052",
   "essay_lines_empty": "6976c301c6c0cfc40219e56f1443b27ec774049037df5e5bade9c544dad2777a",
-  "essay_lines_over": "b36c90da4009c256606596729dd9ed6b91ef23b1cf1d3fbc7f4c36aaf0696354",
   "essay_lines_question": "70a97ffec6c2471f45a7ff609c2cfc9991dffc0166a8d88adf29f0a4a02f13b8",
   "essay_lines_used": "bfa2569d96d568ae9342676208635c1c80cf88369eea9f3fd406bb82e6fead90",
   "essay_minus": "afc9b7e2e0a718b063f378f53081ef25726bdac69b40434a39d66d7abf131ed2",
@@ -65,8 +62,6 @@
   "essay_part_minimum": "8fe510a8d584aa66023896110e048e4a2dc21938dc8039e021d8cb87c531b25b",
   "essay_part_minimum_points": "bfff3ab5848a5cb2eb8c6a8347f4a7af68eceeaade803f09fa1a90ef9924dc48",
   "essay_part_minimum_total": "92557ee09a736e0da35a84cc912271255ede51dea8d174cd3beda6e1aa31246f",
-  "essay_past_limit": "b91225329a0610a4ab414cbab9209f4ba22e6801f63d22ccc02fc46cbddfd8a8",
-  "essay_past_line": "50171b3fa4d68271d0e83ad2d8d8fcb8d9255459a53e794621efc930042a6267",
   "essay_points": "1ff1cf211bb78504d3d5c18fe7044201291d9c802b305a535d953c944b7e8baf",
   "essay_points_of": "a708da378245f3255d18a230cfb198ae08f951c2b59d846b705d52d87d4baab9",
   "essay_points_split": "c7ee18283f1d771c576da74cbf646975b440423c4419d66045677a34f0250d73",
@@ -193,10 +188,6 @@
     <plurals name="essay_lines_empty">
         <item quantity="other">0/%1$d줄</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="other">약 %1$d/%2$d줄 · %3$d줄은 채점되지 않아요</item>
-    </plurals>
     <string name="essay_conflict_title">다른 기기에서 답변이 변경됐어요</string>
     <string name="essay_conflict_body">여기서 작성 중인 버전을 유지하거나 다른 버전으로 바꿀 수 있어요.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -252,8 +243,6 @@
         <item quantity="other">%1$d줄에 맞춰 쓰기</item>
     </plurals>
     <string name="essay_limit_title_any">줄 수 제한에 맞추기</string>
-    <string name="essay_limit_text">채점은 %1$d번째 줄까지만 진행돼요. 그 뒤는 읽지 않아요.</string>
-    <string name="essay_limit_text_any">채점은 줄 수 제한까지만 진행돼요. 그 뒤는 읽지 않아요.</string>
     <string name="essay_short_title">답안을 더 길게 쓰기</string>
     <string name="essay_short_text">이 답안은 너무 짧아서 채점할 수 없어요. 내용을 더 쓰고 다시 제출해 주세요.</string>
     <string name="essay_zero_title">질문에 맞게 답하기</string>
@@ -290,8 +279,6 @@
     <string name="essay_see_comments">평가 의견 보기</string>
     <string name="essay_comments">평가 의견</string>
     <string name="essay_your_text">내 텍스트</string>
-    <string name="essay_past_line">%1$d번째 줄 이후: 여기부터 채점자가 읽지 않아요</string>
-    <string name="essay_past_limit">분량 제한 이후: 여기부터 채점자가 읽지 않아요</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">작성한 내용: “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

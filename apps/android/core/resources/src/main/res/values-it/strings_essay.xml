@@ -43,12 +43,9 @@
   "essay_level_missing": "538a8e609059b2becd8283896a8f05682916e78cfa9805e834a74468656ff811",
   "essay_level_partial": "487437e1cf95355851f5064bddec29c144d8a5a095921b09700ac5ca489051c8",
   "essay_level_strong": "730f25a2f4cfbc56e289103a65ab31c3d9baa84bfdb9d919a9c1ac148dc60e0d",
-  "essay_limit_text": "0acfcabc96ee0f29713173f61e1d07b19b9a34b52a1194655fef04bfbb418bcd",
-  "essay_limit_text_any": "f3ac5c1f60377084052e39162b354bced7609414097115f3c755dc88009c835a",
   "essay_limit_title": "c4ca36b956fa32312142cfbb71865e9b94bb7221d05db55b467dc8d63d700a9a",
   "essay_limit_title_any": "2724c2f244ee09893458b84f4c2c33f3f7964561a29c8d3b48e1e87d5bbb65ef",
   "essay_lines_empty": "454440efcb3c81646ef5a7586f244f70c530a1ff1568a729960d3edbc25260b4",
-  "essay_lines_over": "3db09fd7ccbe6f8672f2a88dec9c3515c529469634cc97779556f1e8598bce8d",
   "essay_lines_question": "ede5cea0fbdfb6284f8ae6de74dc019e259915dc346250abceb80938f2765b0f",
   "essay_lines_used": "c7d0fa2ca7b84200ab3603b038b5b2c53fad236c7568c2f3fef4625ac22665dc",
   "essay_minus": "cee8b1e9f5b28b4f0e936a86edc9e45b59d649e67f6360afd7535961bfdc9caa",
@@ -65,8 +62,6 @@
   "essay_part_minimum": "b10d94d1b077e521ddce1089b30c29ab2931ef1591dbe5fe9ecda1f2b18a2752",
   "essay_part_minimum_points": "ba0f47d39afa65d321a7212d071d7454e5b920a74d6d447c8613bd3ad69c819c",
   "essay_part_minimum_total": "3f574753150d883716f3ddcff4ce18ea042895990ad6874274232952b325a814",
-  "essay_past_limit": "d76ba0a6e51903982f91c9110dd1955d4885e3cba33f2bc724041adb1ba0e2f9",
-  "essay_past_line": "fd4de7b5c47d6f9d67e3b2c4d252192177e679c770a969fe1f4f5f1565927036",
   "essay_points": "0e05cf280912f501ec271fc4a3586b1be863c74165bb49702be8a07659db356a",
   "essay_points_of": "45d4c4f9d9b208fbb1b3ec5c17085852b41cb4c32f961749a30b0c3834282b56",
   "essay_points_split": "68f99f25d4b8ef810e7d48e92b66ca6d21280631cef676dc3b432e6c382498b5",
@@ -201,12 +196,6 @@
         <item quantity="many">0 righe su %1$d righe</item>
         <item quantity="other">0 righe su %1$d righe</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">circa %1$d riga su %2$d · %3$d non verrà letta</item>
-        <item quantity="many">circa %1$d righe su %2$d · %3$d non verranno lette</item>
-        <item quantity="other">circa %1$d righe su %2$d · %3$d non verranno lette</item>
-    </plurals>
     <string name="essay_conflict_title">Questa risposta è cambiata su un altro dispositivo</string>
     <string name="essay_conflict_body">Mantieni la versione che stai scrivendo qui oppure passa all’altra.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -268,8 +257,6 @@
         <item quantity="other">Rientra in %1$d righe</item>
     </plurals>
     <string name="essay_limit_title_any">Resta entro il limite di righe</string>
-    <string name="essay_limit_text">I correttori si fermano alla riga %1$d, quindi il resto non viene letto.</string>
-    <string name="essay_limit_text_any">I correttori si fermano al limite di righe, quindi il resto non viene letto.</string>
     <string name="essay_short_title">Scrivi una risposta più lunga</string>
     <string name="essay_short_text">Questa risposta è troppo breve per essere valutata. Aggiungi altro e inviala di nuovo.</string>
     <string name="essay_zero_title">Rispondi alla domanda</string>
@@ -308,8 +295,6 @@
     <string name="essay_see_comments">Leggi i commenti</string>
     <string name="essay_comments">Commenti</string>
     <string name="essay_your_text">Il tuo testo</string>
-    <string name="essay_past_line">Oltre la riga %1$d: chi corregge smette di leggere qui</string>
-    <string name="essay_past_limit">Oltre il limite: chi corregge smette di leggere qui</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">Hai scritto “%1$s” (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->

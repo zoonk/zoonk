@@ -43,12 +43,9 @@
   "essay_level_missing": "3bbe268167e4b1b60277ac00fd02827c25dd75b21166852adb0280b76272cfe2",
   "essay_level_partial": "0fb10041454e4ddf713f452c2787e59d2cf838860c9d4de7297a789ad64d9b21",
   "essay_level_strong": "2b7360a76f73e4dd676152a772c92b788a8f0b433ba29b8cf12e7d601aaac074",
-  "essay_limit_text": "8e421fab5c76de8e527e04e732be70c1f1b3f072169a92ea4f24e378df3afedd",
-  "essay_limit_text_any": "9dac177ff51d2865b9ec52f535a4d0e310da05a8d534426943c12c918ee4581b",
   "essay_limit_title": "2a0e5c9d922d4f95b3b67fcf26a598a5a6cad8604a8634625d6795a6b2be8932",
   "essay_limit_title_any": "1dde54ba2386b7214f2bf6a861df4e2832ba604530cef373261c8c3643f0a2e8",
   "essay_lines_empty": "60f90685c6d00aaaa4047d21cb259500faefb9a4d37aff681921c568a93f8334",
-  "essay_lines_over": "dd5394c651c17efb3823da90ff639f957f7cd70f72f1ed0a817e3aeff02b8136",
   "essay_lines_question": "2c8c00c22365a3c83a983ef467c755bb93e4dff749ac62bacfcf39848cff2ce2",
   "essay_lines_used": "b6d15f7ecd63042025cb983e85e99ad47b4d800a7c2f1d2df8d9cef87d03c514",
   "essay_minus": "d551e510e48abe7a5435c62240c7b2a3a38b7a1f2de36d91d4934a0282d592d2",
@@ -65,8 +62,6 @@
   "essay_part_minimum": "9f31c924267eda524f19fc8d8c0d847609e910c2e93bc2512ff69ee27b6358b8",
   "essay_part_minimum_points": "187bde9f512fe828a4ae25dcc19f4285ab8af61155b99c2cf043bd163cd409c6",
   "essay_part_minimum_total": "674ac868510a8cc4a074b0c39e215cb6b5ca6d9c167dfd2569a69e45ef03a4b7",
-  "essay_past_limit": "c232c64eac6022a930b8749233f1f77e3a927d0b68cb2435eaac0a7291cd8e2d",
-  "essay_past_line": "0e210ea46e7761ef996a27305f8d37a1d02515f68c065a6a332b78294e1df3d5",
   "essay_points": "1b1c312be7a66903363c737b2bb4bfff2739dd83c78868cfa4f03bcb350b3e1e",
   "essay_points_of": "828e84119c6a6832fc20effe53ba50371e78564d4de0fd3660f848f7356094db",
   "essay_points_split": "9c695e62ea7f47f7e5c276dc488c1d894224d62ca95d8aa9ce6337b0d61f28cf",
@@ -197,11 +192,6 @@
         <item quantity="one">0 / %1$d satır</item>
         <item quantity="other">0 / %1$d satır</item>
     </plurals>
-    <!-- The approximate line count of a written answer past its limit; the lines past it are ones the exam's graders won't read. -->
-    <plurals name="essay_lines_over">
-        <item quantity="one">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
-        <item quantity="other">%1$d / %2$d satır civarı · %3$d okunmayacak</item>
-    </plurals>
     <string name="essay_conflict_title">Bu cevap başka bir cihazda değişti</string>
     <string name="essay_conflict_body">Burada yazdığın sürümü koru ya da diğerine geç.</string>
     <!-- A choice between two versions of one written answer: keep what's typed on this device and save it over the other. -->
@@ -260,8 +250,6 @@
         <item quantity="other">%1$d satıra sığdır</item>
     </plurals>
     <string name="essay_limit_title_any">Satır sınırına sığdır</string>
-    <string name="essay_limit_text">Değerlendirenler %1$d satırdan sonrasını okumaz.</string>
-    <string name="essay_limit_text_any">Değerlendirenler satır sınırından sonrasını okumaz.</string>
     <string name="essay_short_title">Daha uzun bir cevap yaz</string>
     <string name="essay_short_text">Bu cevap değerlendirilemeyecek kadar kısa. Biraz daha ekleyip tekrar gönder.</string>
     <string name="essay_zero_title">Sorulan soruyu cevapla</string>
@@ -299,8 +287,6 @@
     <string name="essay_see_comments">Yorumları gör</string>
     <string name="essay_comments">Yorumlar</string>
     <string name="essay_your_text">Metnin</string>
-    <string name="essay_past_line">%1$d satır geçildikten sonra değerlendirenler okumayı bırakır</string>
-    <string name="essay_past_limit">Sınırdan sonrası: değerlendirenler okumayı bırakır</string>
     <!-- Under a correction: what the learner wrote, then the kind of error, like "grammar". -->
     <string name="essay_you_wrote">“%1$s” yazdın (%2$s)</string>
     <!-- On a written task the learner skipped, opened again from a link. -->
