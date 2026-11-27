@@ -2,6 +2,7 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { completedLessonListResponseSchema } from "../src/lib/openapi/schemas/completed-lessons";
 import { createBearerLearner } from "./helpers/bearer";
@@ -18,7 +19,10 @@ test.describe("Completed lessons API", () => {
     const [{ api, userId }, stranger, lessons] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "completed-lessons" }),
       userFixture(),
-      Promise.all([libraryLessonFixture(), libraryLessonFixture()]),
+      Promise.all([
+        libraryLessonFixture(),
+        playableLessonFixture({ steps: ["check"] }).then(({ lesson }) => lesson),
+      ]),
     ]);
 
     const [goal, strangerGoal] = await Promise.all([
@@ -46,7 +50,14 @@ test.describe("Completed lessons API", () => {
     });
 
     expect(first).toMatchObject({
-      data: [{ finishedOn: "2026-10-21", lessonId: lessons[1]?.id, title: lessons[1]?.title }],
+      data: [
+        {
+          available: true,
+          finishedOn: "2026-10-21",
+          lessonId: lessons[1]?.id,
+          title: lessons[1]?.title,
+        },
+      ],
       filter: null,
       pagination: { hasMore: true },
     });
@@ -57,7 +68,7 @@ test.describe("Completed lessons API", () => {
     });
 
     expect(second).toMatchObject({
-      data: [{ lessonId: lessons[0]?.id }],
+      data: [{ available: false, lessonId: lessons[0]?.id }],
       pagination: { hasMore: false, nextCursor: null },
     });
 

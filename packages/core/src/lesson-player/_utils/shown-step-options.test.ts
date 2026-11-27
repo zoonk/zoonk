@@ -44,6 +44,20 @@ function words(step: ReturnType<typeof showStepOptions>, list: "sentence" | "ban
 }
 
 describe(showStepOptions, () => {
+  it("shows the same bank in different orders for different sittings", () => {
+    const first = words(showStepOptions({ seed: "first sitting", step: reading }), "bank");
+
+    const orders = ["second", "third", "fourth", "fifth"].map((seed) =>
+      words(showStepOptions({ seed, step: reading }), "bank"),
+    );
+
+    for (const order of orders) {
+      expect(order.toSorted()).toStrictEqual(first.toSorted());
+    }
+
+    expect(orders.some((order) => order.join(" ") !== first.join(" "))).toBe(true);
+  });
+
   it("keeps a reading's sentence in its order, since apps check the arranged answer against it", () => {
     const shown = showStepOptions({ seed: "sitting", step: reading });
 

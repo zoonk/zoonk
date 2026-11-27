@@ -17,7 +17,7 @@ import {
 /** A fresh database is marked ready only once it's migrated and has its content. */
 export type CheckoutDatabase = { fresh: boolean; mode: DatabaseMode; seed: boolean; url: URL };
 
-export function prisma({
+function prisma({
   args,
   env = process.env,
   worktree,
@@ -29,6 +29,12 @@ export function prisma({
   const directory = join(worktree, "packages/db");
   const cli = createRequire(join(directory, "package.json")).resolve("prisma/build/index.js");
   return run({ args: [cli, ...args], command: process.execPath, cwd: directory, env });
+}
+
+/** Generation connects to no database, so a shell's URL for another checkout mustn't stop it. */
+export function generatePrisma(worktree: string): Promise<string> {
+  const { DATABASE_URL: _url, DATABASE_URL_UNPOOLED: _unpooled, ...env } = process.env;
+  return prisma({ args: ["generate"], env, worktree });
 }
 
 function runDatabaseScript({

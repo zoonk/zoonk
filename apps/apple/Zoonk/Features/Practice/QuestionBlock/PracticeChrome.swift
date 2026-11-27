@@ -147,14 +147,14 @@ private struct PracticeBar: ViewModifier {
 
 private struct PracticeMainAction: ViewModifier {
   @Environment(\.practiceBarIsWide) private var isWide
-  @Environment(\.practiceActionsSideBySide) private var sideBySide
+  @Environment(\.isInPracticeActionRow) private var isInRow
 
   func body(content: Content) -> some View {
     content
       .controlSize(.large)
-      .buttonSizing(isWide ? .automatic : .flexible)
+      .buttonSizing(isWide && !isInRow ? .automatic : .flexible)
       .environment(\.mainActionMinWidth, isWide ? WideBar.mainActionMinWidth : nil)
-      .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+      .frame(maxWidth: isWide && !isInRow ? .infinity : nil, alignment: .trailing)
       .barMainAction()
   }
 }
@@ -315,35 +315,23 @@ struct PracticeMainButton: View {
   }
 }
 
-/// Main's `QuestionActions`: on a wide bar the buttons keep their own width at its end, stacking
+/// Main's `QuestionActions`: on a wide bar the buttons keep their own width at its end, wrapping
 /// once they don't fit; on a phone they share lines (`BarLines`).
 struct PracticeActionRow<Content: View>: View {
   @Environment(\.practiceBarIsWide) private var isWide
   @ViewBuilder let content: Content
 
   var body: some View {
-    if isWide {
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 8) {
-          content
-        }
-        .environment(\.practiceActionsSideBySide, true)
-
-        VStack(spacing: 8) {
-          content
-        }
-      }
-      .frame(maxWidth: .infinity, alignment: .trailing)
-    } else {
-      BarLines(spacing: 8) {
-        content
-      }
+    BarLines(spacing: 8, isWide: isWide) {
+      content
     }
+    .environment(\.isInPracticeActionRow, true)
   }
 }
 
 extension EnvironmentValues {
-  @Entry var practiceActionsSideBySide = false
+  /// A practice button takes the width its row (`BarLines`) gives it.
+  @Entry var isInPracticeActionRow = false
   @Entry var practiceBarIsWide = false
 }
 
@@ -396,8 +384,8 @@ private struct PracticeFocusTag: ViewModifier {
 }
 
 struct PracticeSecondaryButton: View {
-  @Environment(\.practiceActionsSideBySide) private var sideBySide
   @Environment(\.practiceBarIsWide) private var isWide
+  @Environment(\.isInPracticeActionRow) private var isInRow
 
   let title: LocalizedStringResource
   let icon: ActionIcon?
@@ -410,14 +398,11 @@ struct PracticeSecondaryButton: View {
     BusyButton(isBusy: isBusy, icon: icon, action: action) {
       Text(title)
     }
-    // Beside the main action it keeps its own width, so its label stays on one line; the row
-    // stacks instead when that doesn't fit.
-    .fixedSize(horizontal: sideBySide, vertical: false)
     .buttonStyle(isTight && !isWide ? .outline.tight : .outline)
     .controlSize(.large)
-    .buttonSizing(sideBySide || isWide ? .fitted : .flexible)
+    .buttonSizing(isWide && !isInRow ? .fitted : .flexible)
     .disabled(isDisabled && !isBusy)
-    .frame(maxWidth: isWide && !sideBySide ? .infinity : nil, alignment: .trailing)
+    .frame(maxWidth: isWide && !isInRow ? .infinity : nil, alignment: .trailing)
   }
 }
 

@@ -58,6 +58,7 @@
   "navigation_mind_maps": "0f6332d21ef00b88cc190534244ab1c578c29ec9aee6a7dca8d9fcf12ed15a4a",
   "navigation_mistakes": "da691f07e02cf61d491b6e2103b32de83d1bf3e4026629cb0893eb6e767ea23f",
   "navigation_plan": "342492bbf77aa3d8a9963619e4a8ea559140bde0df0e42404cadaff71b917b17",
+  "navigation_saved_lessons": "200387d19358e498aee1b5218a8f47aee8d1d5c2ccb9a0dba5d6f15f0f4ff189",
   "navigation_speaking": "addbd281ce8bffc0f23acacec5e6ab25db3b99829a42c88534c09aea619a0e5e",
   "navigation_statistics": "03b37d844d53b90eae441f5385e8a855539cca70e3e69b1ec30e0c7f7d4c2efb",
   "navigation_study": "8b3752f2d808233863b8e0797833bad85e2c9d653c47232cfe7b060895bfc381",
@@ -86,6 +87,7 @@
     <string name="navigation_buddy">Buddy</string>
     <string name="navigation_study">Lernen</string>
     <string name="navigation_mistakes">Fehlerheft</string>
+    <string name="navigation_saved_lessons">Gespeicherte Lektionen</string>
     <!-- A place name, like "Mistakes notebook": the page listing the lessons the learner finished, to do them again. -->
     <string name="navigation_completed_lessons">Abgeschlossene Lektionen</string>
     <string name="navigation_exam">Deine Prüfung</string>

@@ -1,5 +1,7 @@
 "use client";
 
+import { LessonSaveButton } from "@zoonk/learn/saved-lessons/save";
+import { type LessonSaves } from "@zoonk/learn/saved-lessons/saves";
 import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskClose } from "@zoonk/learn/task-close";
 import {
@@ -17,6 +19,7 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTutorBuddy } from "../questions/tutor-buddy";
@@ -82,6 +85,25 @@ function UnsavedAnswers() {
   );
 }
 
+/** It holds its place until the run says whether the lesson is saved, so the title never moves. */
+function LessonBookmark({ saves }: { saves: LessonSaves }) {
+  const { lesson } = useLessonPlayerConfig();
+  const { state } = useLessonPlayer();
+  const run = state.run.status === "started" ? state.run : null;
+  const saveState = { saved: run?.saved ?? false, target: lesson.id };
+
+  return (
+    <LessonSaveButton
+      className={cn("shrink-0", !run && "invisible")}
+      labelled={false}
+      onToggle={() => saves.toggle(saveState)}
+      saved={saves.isSaved(saveState)}
+      size="icon-bar"
+      variant="ghost"
+    />
+  );
+}
+
 function LessonProgress() {
   const t = useExtracted();
   const { screen, state } = useLessonPlayer();
@@ -115,7 +137,8 @@ function LessonProgress() {
   );
 }
 
-export function LessonPlayerHeader() {
+/** `saves` is null where the lesson can't be saved. */
+export function LessonPlayerHeader({ saves }: { saves: LessonSaves | null }) {
   const { lesson, slots } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
   const end = useCompletionProps();
@@ -147,6 +170,7 @@ export function LessonPlayerHeader() {
 
         <TaskHeaderSide align="end">
           <UnsavedAnswers />
+          {saves && <LessonBookmark saves={saves} />}
           <LessonScreenMenu />
         </TaskHeaderSide>
       </TaskHeaderBar>

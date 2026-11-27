@@ -366,6 +366,7 @@ msgstr "취소"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "저장"
@@ -2815,6 +2816,7 @@ msgstr "전체"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "더 보기"
@@ -4993,6 +4995,13 @@ msgid "More"
 msgstr "더보기"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "저장한 레슨"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -7102,7 +7111,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "레슨 마인드맵"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "저장한 마인드맵에서 {title} 삭제하기"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "삭제"
@@ -7122,6 +7138,18 @@ msgstr "요약:"
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "저장됨"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "{title} 저장"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "{title} 저장됨"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7186,6 +7214,7 @@ msgid "Saved maps"
 msgstr "저장한 마인드맵"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "더 이상 볼 수 없음"
@@ -7234,14 +7263,14 @@ msgid "Create all"
 msgstr "모두 만들기"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "이 마인드맵을 저장하지 못했어요. 다시 시도해 보세요."
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "이 마인드맵을 저장 목록에서 삭제하지 못했어요. 다시 시도해 보세요."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "이 마인드맵을 저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8217,7 +8246,6 @@ msgid "Show less"
 msgstr "접기"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, other {그 외 주제 #개}}"
@@ -12355,6 +12383,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "벡터 {base}"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "{title} 저장됨"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "저장됨"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "다시 하고 싶은 레슨"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "저장한 레슨에서 {title} 삭제"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "아직 저장한 레슨이 없어요. 레슨의 북마크를 눌러 여기에 저장해 보세요."
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "이 레슨을 저장 목록에서 제거할 수 없어요. 다시 시도해 보세요."
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "이 레슨을 저장할 수 없어요. 다시 시도해 보세요."
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12758,22 +12826,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "새 레슨"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "연습: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "{subject} 연습"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "연습: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "연습 {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "섞어서 연습하기"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "연습"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13817,6 +13886,12 @@ msgstr "{time} 학습 예정"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "학습 안 함"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, other {#개 주제}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

@@ -33,7 +33,7 @@ final class UsageAnalyticsTests: XCTestCase {
       nextChangeAt: .distantFuture,
       places: LearnerPlaces(
         certificates: false, completedLessons: false, exam: false, mindMaps: false,
-        readyMistakes: 0, speaking: false),
+        readyMistakes: 0, savedLessons: false, speaking: false),
       readAt: .now,
       tier: .plus,
       timeZone: nil,

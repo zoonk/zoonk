@@ -366,6 +366,7 @@ msgstr "Vazgeç"
 #: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
+#: src/saved-lessons/lesson-save-button.tsx
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Kaydet"
@@ -2815,6 +2816,7 @@ msgstr "Tümü"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "aWpBzj"
 msgid "Show more"
 msgstr "Daha fazla göster"
@@ -4993,6 +4995,13 @@ msgid "More"
 msgstr "Diğer"
 
 #: src/journey/plan-sections.tsx
+#: src/saved-lessons/saved-lessons-row.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "BwmLVN"
+msgid "Saved lessons"
+msgstr "Kaydedilen dersler"
+
+#: src/journey/plan-sections.tsx
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Z9Sg5E"
@@ -7102,7 +7111,14 @@ msgctxt "Oku1XG"
 msgid "Lesson map"
 msgstr "Ders haritası"
 
+#. What screen readers say for Remove, naming the map.
 #: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "-S6z5P"
+msgid "Remove {title} from saved maps"
+msgstr "{title} haritasını kaydedilenlerden kaldır"
+
+#: src/mind-maps/mind-map-index-rows.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Kaldır"
@@ -7122,6 +7138,18 @@ msgstr "Kısaca:"
 msgctxt "mindMapSaved"
 msgid "Saved"
 msgstr "Kaydedildi"
+
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "eIjk1v"
+msgid "Save {title}"
+msgstr "Kaydet: {title}"
+
+#. Read aloud for the bookmark on a saved mind map's row, which removes it: says the map {title} is saved.
+#: src/mind-maps/mind-map-save-button.tsx
+msgctxt "mindMapSavedTitle"
+msgid "Saved {title}"
+msgstr "{title} kaydedildi"
 
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "_UnJ3S"
@@ -7186,6 +7214,7 @@ msgid "Saved maps"
 msgstr "Kaydedilen haritalar"
 
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
 msgctxt "g41uEF"
 msgid "No longer available"
 msgstr "Artık kullanılamıyor"
@@ -7234,14 +7263,14 @@ msgid "Create all"
 msgstr "Hepsini oluştur"
 
 #: src/mind-maps/use-mind-map-saves.ts
-msgctxt "U0yWHz"
-msgid "Couldn't save this map. Try again."
-msgstr "Bu harita kaydedilemedi. Tekrar dene."
-
-#: src/mind-maps/use-mind-map-saves.ts
 msgctxt "w16BF2"
 msgid "Couldn't remove this map. Try again."
 msgstr "Bu harita kaldırılamadı. Tekrar dene."
+
+#: src/mind-maps/use-mind-map-saves.ts
+msgctxt "U0yWHz"
+msgid "Couldn't save this map. Try again."
+msgstr "Bu harita kaydedilemedi. Tekrar dene."
 
 #: src/missions/first-step-copy.tsx
 msgctxt "missions.0TTPFv"
@@ -8217,7 +8246,6 @@ msgid "Show less"
 msgstr "Daha az göster"
 
 #: src/mock/mock-result-breakdown.tsx
-#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, other {# konu daha}}"
@@ -12355,6 +12383,46 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "{base} vektörü"
 
+#. Read aloud for the bookmark on a saved lesson's row, which removes it: says the lesson {title} is saved.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSavedTitle"
+msgid "Saved {title}"
+msgstr "{title} kaydedildi"
+
+#. Says the lesson is saved to do again later: the bookmark's state.
+#: src/saved-lessons/lesson-save-button.tsx
+msgctxt "lessonSaved"
+msgid "Saved"
+msgstr "Kaydedildi"
+
+#. The line under Saved lessons in Practice anytime.
+#: src/saved-lessons/saved-lessons-row.tsx
+msgctxt "u7HPS5"
+msgid "Lessons you want to do again"
+msgstr "Yeniden çalışmak istediğin dersler"
+
+#. What screen readers say for Remove, naming the lesson.
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "mezuKn"
+msgid "Remove {title} from saved lessons"
+msgstr "{title} adlı dersi kaydedilen derslerden kaldır"
+
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "t7w-Fo"
+msgid "Nothing saved yet. Tap the bookmark on a lesson to keep it here."
+msgstr "Henüz kaydedilen bir şey yok. Bir dersi burada tutmak için dersin yer imi simgesine dokun."
+
+#. Taking the lesson out of the saved lessons didn't work, so it's still saved.
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "BcKHqn"
+msgid "Couldn't remove this lesson. Try again."
+msgstr "Bu ders kaldırılamadı. Tekrar dene."
+
+#: src/saved-lessons/use-lesson-saves.ts
+msgctxt "JBnz9z"
+msgid "Couldn't save this lesson. Try again."
+msgstr "Bu ders kaydedilemedi. Tekrar dene."
+
 #: src/session/action-failed.tsx
 #: src/session/open-next-step.tsx
 #: src/today/today-action.tsx
@@ -12758,22 +12826,23 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Yeni ders"
 
-#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
-msgctxt "YGPuF7"
-msgid "Practice: {topic}"
-msgstr "Alıştırma: {topic}"
+msgctxt "kjsfD5"
+msgid "Practice: {subject}"
+msgstr "Alıştırma: {subject}"
 
-#. A block of the day's practice. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
+#. One of the day's practice blocks, numbered in the order the day lists them, like "Practice 2".
 #: src/session/use-block-copy.ts
-msgctxt "I85zr9"
-msgid "Practice: {areas}"
-msgstr "Alıştırma: {areas}"
+msgctxt "5-NTPa"
+msgid "Practice {number, number}"
+msgstr "Alıştırma {number, number}"
 
+#. A block of the day's practice questions, when it's the day's only one
 #: src/session/use-block-copy.ts
-msgctxt "MbAJ4_"
-msgid "Mixed practice"
-msgstr "Karma alıştırma"
+msgctxt "practiceBlock.KV-O0y"
+msgid "Practice"
+msgstr "Alıştırma"
 
 #: src/session/use-block-copy.ts
 msgctxt "87izcS"
@@ -13817,6 +13886,12 @@ msgstr "{time} planlandı"
 msgctxt "-FZPmK"
 msgid "Not studied"
 msgstr "Çalışılmadı"
+
+#. Today's line under a practice: how many topics it mixes, then the one it asks most, like "3 topics · Calculating discounts".
+#: src/today/use-row-label.ts
+msgctxt "AX3sJq"
+msgid "{count, plural, one {# topic} other {# topics}} · {topic}"
+msgstr "{count, plural, other {# konu}} · {topic}"
 
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"

@@ -156,7 +156,7 @@ async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } 
 }
 
 test.describe("Language calls", () => {
-  test("a quiet learner is checked on, then the call says goodbye, hangs up and saves", async ({
+  test("a quiet learner is checked on, then the call says goodbye, hangs up and saves, and other pages still open by their link", async ({
     browser,
   }) => {
     const { goal, renting, user } = await createLanguageLearner();
@@ -185,6 +185,10 @@ test.describe("Language calls", () => {
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.id } }),
     ).resolves.toMatchObject({ status: "completed" });
+
+    // A save that throws away every cached page leaves a page prerendered per link blank.
+    await page.goto("/settings/about-you/watch");
+    await expect(page.getByRole("button", { exact: true, name: "Anime" })).toBeVisible();
 
     await page.context().close();
   });

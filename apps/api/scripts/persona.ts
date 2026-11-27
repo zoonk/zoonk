@@ -12,6 +12,7 @@ import {
   type PersonaRequest,
   clonePersona,
   createPersona,
+  hasPlus,
   listPersonaNames,
 } from "./_utils/personas";
 import { getTestLearnerRefusal } from "./_utils/test-learners";
@@ -139,7 +140,7 @@ async function describePersona({ email, goalId }: { email: string; goalId: strin
   });
 
   const [plus, lastStudy] = await Promise.all([
-    prisma.subscription.count({ where: { referenceId: goal.userId, status: "active" } }),
+    hasPlus(goal.userId),
     prisma.learningEvent.findFirst({
       orderBy: { endedAt: "desc" },
       where: { endedAt: { not: null }, userId: goal.userId },
@@ -150,7 +151,7 @@ async function describePersona({ email, goalId }: { email: string; goalId: strin
   const mailbox = process.env.MAILBOX_URL ? new URL(process.env.MAILBOX_URL).origin : null;
 
   return [
-    `${goal.user.name}: ${goal.title} (${goal.kind}), ${plus > 0 ? "Plus" : "Free"}, ${timeZone}, ${goal.language}`,
+    `${goal.user.name}: ${goal.title} (${goal.kind}), ${plus ? "Plus" : "Free"}, ${timeZone}, ${goal.language}`,
     `Today is day ${daysSince(goal.createdAt, timeZone) + 1} of the plan; ${describeLastStudy(lastStudy?.endedAt, timeZone)}.`,
     "",
     "Sign in",

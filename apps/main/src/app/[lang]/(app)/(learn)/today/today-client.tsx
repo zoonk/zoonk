@@ -288,6 +288,7 @@ export function TodayClient({
         plusHref: "/subscription",
         prepareLessons: taps.prepareLessons,
         refresh: refreshOnPlanChange,
+        savedLessonsHref: "/saved-lessons",
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
         studyEverythingHref: "/plan?focus=everything",
@@ -300,6 +301,7 @@ export function TodayClient({
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
       notices={toHostNotices({ ...uploadAnswer, data, goalId: today.goal.id })}
       planEnd={data.planEnd}
+      savedLessons={data.savedLessons}
       speakingEntry={
         data.language?.speaking && (
           <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />

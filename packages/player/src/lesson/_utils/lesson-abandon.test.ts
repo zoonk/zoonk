@@ -20,6 +20,7 @@ const STARTED: LessonPlayerAction = {
   hyperdrive: { knownStepIds: [], streak: 0 },
   replay: false,
   runId: "run",
+  saved: false,
   startedAt: STARTED_AT,
   type: "runStarted",
 };
