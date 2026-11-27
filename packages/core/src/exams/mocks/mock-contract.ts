@@ -228,6 +228,8 @@ export type MockView = {
   minutes: number;
   missionMoment: MissionMomentView | null;
   mistakes: { cause: MistakeCause | null; count: number }[];
+  /** The sitting itself, for a practice run of its mistakes; null before it starts. */
+  mockId: string | null;
   number: number;
   pacing?: MockConditions["pacing"];
   passMarks: PassMarks | null;

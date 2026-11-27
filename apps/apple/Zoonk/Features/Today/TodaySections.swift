@@ -754,7 +754,9 @@ private struct MistakesCount: View {
   @Environment(\.stacksContent) private var isStacked
 
   var body: some View {
-    let phrase = Text("Fix \(ready) mistakes", tableName: "Today", comment: "Mission: fix mistakes")
+    let phrase = Text(
+      "Fix \(ready) mistakes", tableName: "Today",
+      comment: "Mistakes to fix: a step of the day, or how many the notebook has ready")
 
     if isStacked {
       phrase

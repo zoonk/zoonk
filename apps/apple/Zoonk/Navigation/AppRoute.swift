@@ -27,7 +27,7 @@ enum AppRoute: Hashable, Identifiable {
     lessonId: String, sessionId: String? = nil, fromCatalog: Bool = false,
     opening: LessonOpening? = nil, activated: Bool = false)
   case questionBlock(sessionId: String, blockId: String)
-  case mistakePractice(skillId: String? = nil)
+  case mistakePractice(MistakePracticeScope = .notebook)
   case pattern(patternId: String)
   /// `resultId` opens a test-out already sent, as it was recorded.
   case testOut(chapterId: String, resultId: String? = nil)

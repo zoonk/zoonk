@@ -2864,6 +2864,7 @@
         }
       }
     },
+    "A pattern in your mistakes" : {},
     "A practice exam, like the real one." : {
       "comment" : "What a mock exam in the day's session is for",
       "localizations" : {
@@ -3454,6 +3455,9 @@
         }
       }
     },
+    "Again: you keep missing this" : {
+      "comment" : "Under a lesson the learner takes again because they keep missing its idea."
+    },
     "Already know the next chapter?" : {
       "localizations" : {
         "de" : {
@@ -3687,6 +3691,9 @@
           }
         }
       }
+    },
+    "Another way to see it" : {
+      "comment" : "Under a short lesson that explains, in a new way, an idea the learner keeps missing."
     },
     "Ask %@ something" : {
       "comment" : "Mission: ask the buddy",
@@ -5646,7 +5653,7 @@
       }
     },
     "Fix %lld mistakes" : {
-      "comment" : "Mission: fix mistakes",
+      "comment" : "Mistakes to fix: a step of the day, or how many the notebook has ready",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -5672,7 +5679,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "Fix a mistake"
+                  "value" : "Fix %lld mistake"
                 }
               },
               "other" : {
@@ -8860,6 +8867,18 @@
         }
       }
     },
+    "practicePattern" : {
+      "comment" : "A study step that drills one rule the learner keeps getting wrong. {pattern} names the rule, like \"Adjective endings after der\".",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice: %@"
+          }
+        }
+      }
+    },
     "practiceTopic" : {
       "comment" : "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\".",
       "extractionState" : "extracted_with_value",
@@ -9044,6 +9063,7 @@
         }
       }
     },
+    "Questions you missed before" : {},
     "Quick explanation" : {
       "comment" : "An unfinished explanation",
       "localizations" : {
@@ -14080,6 +14100,7 @@
         }
       }
     },
+    "You keep missing this" : {},
     "You missed a few days" : {
       "comment" : "Title after missed study days",
       "localizations" : {

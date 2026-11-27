@@ -83,22 +83,25 @@ final class MistakePracticeStateTests: XCTestCase {
     XCTAssertEqual(state.phase, .ending)
   }
 
-  func testTheEndSaysMissesWaitAndUnreachedMistakesAreStillReady() {
-    let entries = [makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b"])]
+  func testAFinishedRunGoesAgainOnlyOnWhatItDidntFix() {
+    let entries = [
+      makeEntry("m1", questions: ["a"]), makeEntry("m2", questions: ["b", "c"]),
+      makeEntry("m3", questions: ["d"]),
+    ]
     var state = MistakePracticeState(entries: entries)
-    XCTAssertEqual(state.endNote, .unreached)
 
-    answer(&state, .dontKnow, by: .notSure, grade: makeGrade(isCorrect: false))
-    XCTAssertEqual(state.endNote, .missedAndUnreached)
+    answer(&state, grade: makeGrade(isCorrect: true, fixed: true, fixedIds: ["m1"]))
+    state.next()
+    XCTAssertEqual(state.entriesToPracticeAgain, [], "a run left early ends there")
+
+    answer(&state, grade: makeGrade(isCorrect: false))
     state.next()
     answer(&state, grade: makeGrade(isCorrect: true))
-    XCTAssertEqual(state.endNote, .missed)
+    state.next()
+    answer(&state, grade: makeGrade(isCorrect: true))
+    state.next()
 
-    var right = MistakePracticeState(entries: entries)
-    answer(&right, grade: makeGrade(isCorrect: true))
-    right.next()
-    answer(&right, grade: makeGrade(isCorrect: true))
-    XCTAssertNil(right.endNote)
+    XCTAssertEqual(state.entriesToPracticeAgain.map(\.mistakeId), ["m2", "m3"])
   }
 
   private func answer(

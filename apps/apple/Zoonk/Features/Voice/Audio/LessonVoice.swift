@@ -37,7 +37,7 @@ private struct SpokenStepRecorder: View {
               SpokenMistakeTarget(
                 mistakeId: target.mistakeId,
                 attemptId: UUID().uuidString.lowercased(), goalId: target.goalId,
-                answerIds: target.answerIds,
+                blockId: target.blockId, answerIds: target.answerIds,
                 questionStartedAt: target.questionStartedAt,
                 practiceDurationMs: Int(Date.now.timeIntervalSince(target.questionStartedAt) * 1000)
               )

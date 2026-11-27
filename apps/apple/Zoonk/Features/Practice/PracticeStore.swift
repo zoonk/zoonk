@@ -162,11 +162,12 @@ enum PracticeWrite<Value: Sendable>: Sendable {
 }
 
 extension PracticeChange {
-  /// Mirrors what core revalidates for each practice write.
+  /// Mirrors what core revalidates for each practice write, and the day a pattern's practice
+  /// completes a block of.
   var domains: Set<DataDomain> {
     switch self {
     case .answered: [.learnerModel, .userProgress, .userSession]
-    case .patternDone: [.learnerModel, .userProgress]
+    case .patternDone: [.learnerModel, .userProgress, .userSession]
     case .finished: [.goals, .learnerModel, .userProgress, .userSession]
     case .planChanged: [.goals, .learnerModel, .userSession]
     }

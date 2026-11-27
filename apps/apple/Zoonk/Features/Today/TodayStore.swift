@@ -7,6 +7,8 @@ enum StudyDestination: Hashable, Sendable {
   case essay(blockID: String, start: WritingStart?)
   case lesson(lessonID: String, sessionID: String)
   case mock(blockID: String, sessionID: String)
+  case mistakesPractice(blockID: String)
+  case pattern(patternID: String)
   case questionBlock(blockID: String)
   case instantLesson(lessonID: String, sessionID: String?, opening: LessonOpening)
   case session
@@ -610,7 +612,11 @@ extension StudyDestination {
       self = .challenge(planItemID: challenge.planItemId, sessionID: challenge.sessionId)
     case .session(let session):
       self = session.blockId.map { .questionBlock(blockID: $0) } ?? .session
-    case .today, .mistakesPractice, .pattern:
+    case .mistakesPractice(let practice):
+      self = .mistakesPractice(blockID: practice.blockId)
+    case .pattern(let pattern):
+      self = .pattern(patternID: pattern.patternId)
+    case .today:
       self = .today
     case .changed:
       self = .changed

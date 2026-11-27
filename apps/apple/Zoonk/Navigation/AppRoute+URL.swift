@@ -78,7 +78,11 @@ enum AppLink: Equatable {
         opening = nil
       }
       return .route(.lesson(lessonId: lessonId, sessionId: session, opening: opening))
-    case (2, "mistakes", "practice", _): return .route(.mistakePractice(skillId: value("skill")))
+    case (2, "mistakes", "practice", _):
+      return .route(
+        .mistakePractice(
+          MistakePracticeScope(
+            skillId: value("skill"), blockId: value("blockId"), mockId: value("mockId"))))
     case (2, "pattern", let patternId, _): return .route(.pattern(patternId: patternId))
     case (2, "test-out", let chapterId, _):
       return .route(.testOut(chapterId: chapterId, resultId: value("result")))
