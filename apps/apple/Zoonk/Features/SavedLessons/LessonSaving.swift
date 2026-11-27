@@ -4,6 +4,7 @@ import SwiftUI
 /// lesson without opening it. `keep` runs first on Saved lessons, which keeps the row in place.
 struct LessonRowSave: ViewModifier {
   @Environment(SavedLessonsStore.self) private var store
+  @Environment(SaveVisit<LessonSaveTarget>.self) private var visit
 
   let target: LessonSaveTarget
   let goalId: String
@@ -43,13 +44,14 @@ struct LessonRowSave: ViewModifier {
 
   private func toggle(_ isSaved: Bool) {
     keep()
-    store.saves.set(!isSaved, target, goalId: goalId)
+    visit.set(!isSaved, target, goalId: goalId, in: store.saves)
   }
 }
 
 /// The lesson player's bookmark, from the first screen to the end: "Save" until it's "Saved".
 struct LessonSaveButton: View {
   @Environment(SavedLessonsStore.self) private var store
+  @Environment(SaveVisit<LessonSaveTarget>.self) private var visit
 
   let target: LessonSaveTarget
   let goalId: String
@@ -66,7 +68,7 @@ struct LessonSaveButton: View {
         "Saved", tableName: "SavedLessons",
         comment: "Says the lesson is saved to do again later: the bookmark's state.")
     ) {
-      store.saves.set(!isSaved, target, goalId: goalId)
+      visit.set(!isSaved, target, goalId: goalId, in: store.saves)
     }
     .labelStyle(.iconOnly)
     .disabled(server == nil)
@@ -80,25 +82,10 @@ extension View {
     modifier(LessonRowSave(target: target, goalId: goalId, server: server, keep: keep))
   }
 
-  /// "Couldn't save this lesson. Try again." over the screen that tried.
-  func lessonSaveFailureAlert(goalId: String) -> some View {
-    modifier(LessonSaveFailureAlert(goalId: goalId))
-  }
-}
-
-private struct LessonSaveFailureAlert: ViewModifier {
-  @Environment(SavedLessonsStore.self) private var store
-
-  let goalId: String
-
-  func body(content: Content) -> some View {
-    content.saveFailureAlert(message) {
-      store.saves.dismissFailure()
-    }
-  }
-
-  private var message: Text? {
-    store.saves.failure(goalId: goalId).map { failure in
+  /// The screen's visit for lesson saves: "Couldn't save this lesson. Try again." over it when one
+  /// of its saves didn't work.
+  func lessonSaveVisit() -> some View {
+    saveVisit(of: LessonSaveTarget.self) { failure in
       failure.saved
         ? Text(
           "Couldn't save this lesson. Try again.", tableName: "SavedLessons")

@@ -52,7 +52,7 @@ private struct CompletedLessonsList: View {
       content(lessons, query: query, chips: isBeside ? nil : filter)
     }
     .loads(lessons)
-    .lessonSaveFailureAlert(goalId: goalId)
+    .lessonSaveVisit()
   }
 
   private var title: Text {

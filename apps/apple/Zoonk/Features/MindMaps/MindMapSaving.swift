@@ -14,6 +14,7 @@ struct SavedMark: View {
 /// The reader's and the map viewer's Save: its words and its bookmark say whether it's saved.
 struct MindMapSaveButton: View {
   @Environment(MindMapsStore.self) private var store
+  @Environment(SaveVisit<SaveTarget>.self) private var visit
 
   let target: SaveTarget
   let goalId: String
@@ -23,7 +24,7 @@ struct MindMapSaveButton: View {
     let isSaved = store.saves.isSaved(target.key, server: server)
 
     SaveToggle(isSaved: isSaved, save: MindMapSaveWords.save, saved: MindMapSaveWords.saved) {
-      store.saves.set(!isSaved, target, goalId: goalId)
+      visit.set(!isSaved, target, goalId: goalId, in: store.saves)
     }
   }
 }
@@ -48,14 +49,22 @@ extension View {
       SavesMindMap(target: target, goalId: goalId, server: server, isAvailable: isAvailable))
   }
 
-  /// "Couldn't save this map." or "Couldn't remove this map." over the screen that tried.
-  func mindMapSaveFailureAlert(goalId: String) -> some View {
-    modifier(MindMapSaveFailureAlert(goalId: goalId))
+  /// The screen's visit for map saves: "Couldn't save this map." or "Couldn't remove this map."
+  /// over it when one of its saves didn't work.
+  func mindMapSaveVisit() -> some View {
+    saveVisit(of: SaveTarget.self) { failure in
+      failure.saved
+        ? Text(
+          "Couldn't save this map. Try again.", tableName: "MindMaps")
+        : Text(
+          "Couldn't remove this map. Try again.", tableName: "MindMaps")
+    }
   }
 }
 
 private struct SavesMindMap: ViewModifier {
   @Environment(MindMapsStore.self) private var store
+  @Environment(SaveVisit<SaveTarget>.self) private var visit
 
   let target: SaveTarget
   let goalId: String
@@ -72,30 +81,10 @@ private struct SavesMindMap: ViewModifier {
           "Remove from saved", tableName: "MindMaps",
           comment: "Takes a map out of the learner's saved maps")
       ) {
-        store.saves.set(!isSaved, target, goalId: goalId)
+        visit.set(!isSaved, target, goalId: goalId, in: store.saves)
       }
     } else {
       content
-    }
-  }
-}
-
-private struct MindMapSaveFailureAlert: ViewModifier {
-  @Environment(MindMapsStore.self) private var store
-
-  let goalId: String
-
-  func body(content: Content) -> some View {
-    content.saveFailureAlert(
-      store.saves.failure(goalId: goalId).map { failure in
-        failure.saved
-          ? Text(
-            "Couldn't save this map. Try again.", tableName: "MindMaps")
-          : Text(
-            "Couldn't remove this map. Try again.", tableName: "MindMaps")
-      }
-    ) {
-      store.saves.dismissFailure()
     }
   }
 }

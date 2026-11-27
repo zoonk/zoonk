@@ -34,7 +34,7 @@ struct MindMapsScreen: View {
         String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
       )
       .loads(list)
-      .mindMapSaveFailureAlert(goalId: goal.id)
+      .mindMapSaveVisit()
       .forgetsKeptRows($keptSaves)
       // One follower for every map on its way, each at its own pace.
       .task(id: Following(goalId: goal.id, maps: list.value)) {
@@ -476,6 +476,7 @@ private struct LessonGroupRow: View {
 
 private struct MindMapSavedTab: View {
   @Environment(MindMapsStore.self) private var store
+  @Environment(SaveVisit<SaveTarget>.self) private var visit
 
   let goalId: String
   let maps: GoalMindMaps
@@ -519,8 +520,9 @@ private struct MindMapSavedTab: View {
               "Remove \(save.title) from saved maps", tableName: "MindMaps",
               comment: "What screen readers say for Remove, naming the map.")
           ) {
-            store.saves.set(
-              false, SaveTarget(key: save.key, title: save.title, chapterId: nil), goalId: goalId)
+            visit.set(
+              false, SaveTarget(key: save.key, title: save.title, chapterId: nil), goalId: goalId,
+              in: store.saves)
           } detail: {
             SavedKind(kind: save.kind)
           }
@@ -544,6 +546,7 @@ extension SavedMindMap: Identifiable {
 private struct SavedRow: View {
   @Environment(AppRouter.self) private var router
   @Environment(MindMapsStore.self) private var store
+  @Environment(SaveVisit<SaveTarget>.self) private var visit
 
   let goalId: String
   let save: SavedMindMap
@@ -605,9 +608,9 @@ private struct SavedRow: View {
 
   private func toggle(_ isSaved: Bool) {
     keep()
-    store.saves.set(
+    visit.set(
       !isSaved, SaveTarget(key: save.key, title: save.title, chapterId: save.chapterId),
-      goalId: goalId)
+      goalId: goalId, in: store.saves)
   }
 
   private var thumbnail: URL? {

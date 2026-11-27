@@ -148,7 +148,7 @@ private struct LessonPlayerContent: View {
             }
           }
         }
-        .lessonSaveFailureAlert(goalId: lessonSave?.goalId ?? "")
+        .lessonSaveVisit()
         .taskOptions(
           isShown: store.screen == .playing && store.state != nil && !isRefused,
           label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")

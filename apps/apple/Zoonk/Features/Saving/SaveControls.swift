@@ -103,17 +103,44 @@ extension View {
       .contextMenu { button }
   }
 
-  /// A save that didn't work, over the screen that tried; the bookmark is already back as it was.
-  func saveFailureAlert(_ message: Text?, dismiss: @escaping () -> Void) -> some View {
-    alert(
-      message ?? Text(verbatim: ""),
-      isPresented: Binding(
-        get: { message != nil },
-        set: { isPresented in
-          if !isPresented {
-            dismiss()
-          }
-        })
-    ) {}
+  /// This screen's visit for saves of one kind, which its save controls read from the environment:
+  /// a save of this visit that didn't work says `message` over it, the bookmark already back as it
+  /// was. The visit ends as the screen goes away or a task covers it.
+  func saveVisit<Target: Saveable>(
+    of _: Target.Type, message: @escaping (Saves<Target>.Failure) -> Text
+  ) -> some View {
+    modifier(SaveVisitOwner<Target>(message: message))
+  }
+}
+
+private struct SaveVisitOwner<Target: Saveable>: ViewModifier {
+  @Environment(\.isCoveredByTask) private var isCovered
+  @State private var visit = SaveVisit<Target>()
+
+  let message: (Saves<Target>.Failure) -> Text
+
+  func body(content: Content) -> some View {
+    let message = visit.failure.map(message)
+
+    content
+      .environment(visit)
+      .alert(
+        message ?? Text(verbatim: ""),
+        isPresented: Binding(
+          get: { message != nil },
+          set: { isPresented in
+            if !isPresented {
+              visit.failure = nil
+            }
+          })
+      ) {}
+      .onChange(of: isCovered) {
+        if isCovered {
+          visit.leave()
+        }
+      }
+      .onDisappear {
+        visit.leave()
+      }
   }
 }

@@ -21,7 +21,6 @@ final class SavedLessonsStoreTests: XCTestCase {
     XCTAssertEqual(store.runSaved(lessonId: "new"), true)
     XCTAssertEqual(elsewhere.map(\.0), ["new"])
     XCTAssertEqual(elsewhere.map(\.1), [true])
-    XCTAssertNil(store.saves.failure(goalId: "goal"))
   }
 
   func testAFailedRemovalStaysSavedAndSaysItCouldntRemove() async throws {
@@ -31,16 +30,16 @@ final class SavedLessonsStoreTests: XCTestCase {
     let list = store.lessons(goalId: "goal")
     await list.load()
     store.runStarted(lessonId: "saved", saved: true)
+    let visit = SaveVisit<LessonSaveTarget>()
 
-    store.saves.set(false, Self.target("saved"), goalId: "goal")
+    visit.set(false, Self.target("saved"), goalId: "goal", in: store.saves)
     XCTAssertFalse(store.saves.isSaved("saved", server: true))
-    _ = try await waitForTestCondition("The save did not end") { store.saves.pending.isEmpty }
+    _ = try await waitForTestCondition("The failure did not arrive") { visit.failure != nil }
 
     XCTAssertTrue(store.saves.isSaved("saved", server: true))
     XCTAssertEqual(store.runSaved(lessonId: "saved"), true)
     XCTAssertEqual(list.value?.map(\.lessonId), ["saved"])
-    XCTAssertEqual(store.saves.failure(goalId: "goal")?.saved, false, "says it couldn't remove")
-    XCTAssertNil(store.saves.failure(goalId: "another goal"))
+    XCTAssertEqual(visit.failure?.saved, false, "says it couldn't remove")
   }
 
   func testARemovedRowKeepsItsPlaceAndASecondTapSavesItThere() {

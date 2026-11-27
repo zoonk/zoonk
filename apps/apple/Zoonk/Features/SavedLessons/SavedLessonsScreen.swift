@@ -7,6 +7,7 @@ struct SavedLessonsScreen: View {
     Group {
       if let goal = learner.summary.value?.shownGoal {
         SavedLessonsList(goalId: goal.id)
+          .lessonSaveVisit()
           .id(goal.id)
       } else {
         ProgressView()
@@ -23,6 +24,7 @@ struct SavedLessonsScreen: View {
 /// the learner tapped keeps its place until they leave the page.
 private struct SavedLessonsList: View {
   @Environment(SavedLessonsStore.self) private var store
+  @Environment(SaveVisit<LessonSaveTarget>.self) private var visit
   @State private var kept = KeptRows<SavedLesson>()
   @State private var shownCount = Self.pageSize
 
@@ -35,7 +37,6 @@ private struct SavedLessonsList: View {
 
     content(lessons)
       .loads(lessons)
-      .lessonSaveFailureAlert(goalId: goalId)
       .forgetsKeptRows($kept)
   }
 
@@ -101,12 +102,12 @@ private struct SavedLessonsList: View {
                     "Remove \(lesson.title) from saved lessons", tableName: "SavedLessons",
                     comment: "What screen readers say for Remove, naming the lesson.")
                 ) {
-                  store.saves.set(
+                  visit.set(
                     false,
                     LessonSaveTarget(
                       lessonId: lesson.lessonId, title: lesson.title,
                       chapterTitle: lesson.chapterTitle),
-                    goalId: goalId)
+                    goalId: goalId, in: store.saves)
                 } detail: {
                   EmptyView()
                 }

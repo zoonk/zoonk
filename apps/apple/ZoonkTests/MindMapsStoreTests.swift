@@ -329,25 +329,71 @@ final class MindMapsStoreTests: XCTestCase {
 
     XCTAssertEqual(list.value?.chapters.first?.saved, true)
     XCTAssertEqual(list.value?.saved.map(\.targetId), ["chapter"])
-    XCTAssertNil(store.saves.failure(goalId: "goal"))
   }
 
-  func testAFailedSaveGoesBackAndSaysSo() async {
+  func testAFailedSaveGoesBackAndSaysSoToTheVisitThatAsked() async {
     let api = MindMapsAPIStub(server: .ready, statuses: [])
     let store = makeStore(api: api)
     let list = store.list(goalId: "goal")
     await list.load()
     await api.failSaves(1)
+    let visit = SaveVisit<SaveTarget>()
 
-    store.saves.set(true, Self.chapterTarget, goalId: "goal")
-    _ = try? await waitForTestCondition("Fixture state did not arrive") {
-      !(!store.saves.pending.isEmpty)
-    }
+    visit.set(true, Self.chapterTarget, goalId: "goal", in: store.saves)
+    _ = try? await waitForTestCondition("The failure did not arrive") { visit.failure != nil }
 
     XCTAssertFalse(
       store.saves.isSaved(Self.chapterKey, server: list.value?.chapters.first?.saved ?? true))
-    XCTAssertNotNil(store.saves.failure(goalId: "goal"))
-    XCTAssertNil(store.saves.failure(goalId: "another goal"))
+    XCTAssertEqual(visit.failure?.saved, true, "says it couldn't save")
+    XCTAssertNil(SaveVisit<SaveTarget>().failure, "another screen says nothing")
+  }
+
+  func testASaveThatFailsAfterItsVisitEndedSaysNothingThereOrOnTheNextVisit() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failSaves(1)
+    await api.holdNextSave()
+    let visit = SaveVisit<SaveTarget>()
+
+    visit.set(true, Self.chapterTarget, goalId: "goal", in: store.saves)
+    _ = try? await waitForTestCondition("The save was not sent") { await api.isHoldingSave }
+
+    visit.leave()
+    await api.releaseSave()
+    _ = try? await waitForTestCondition("The save did not end") { store.saves.pending.isEmpty }
+    await Task.yield()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.saves, [true], "leaving never cancels the write itself")
+    XCTAssertNil(visit.failure)
+    XCTAssertFalse(store.saves.isSaved(Self.chapterKey, server: false))
+  }
+
+  func testATapOnAnotherMapNeverHidesTheFirstOnesFailure() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+    await api.failSaves(1)
+    await api.holdNextSave()
+    let visit = SaveVisit<SaveTarget>()
+    let other = SaveTarget(
+      key: MindMapKey(kind: .chapter, targetId: "other chapter"), title: "Other",
+      chapterId: "other chapter")
+
+    visit.set(true, Self.chapterTarget, goalId: "goal", in: store.saves)
+    _ = try? await waitForTestCondition("The save was not sent") { await api.isHoldingSave }
+
+    visit.set(true, other, goalId: "goal", in: store.saves)
+    _ = try? await waitForTestCondition("The other save did not end") {
+      store.saves.pending.count == 1
+    }
+
+    await api.releaseSave()
+    _ = try? await waitForTestCondition("The failure did not arrive") { visit.failure != nil }
+
+    XCTAssertEqual(visit.failure?.saved, true)
   }
 
   func testTapsFasterThanTheSaveEndInTheLastOneAskedFor() async {
@@ -419,7 +465,6 @@ final class MindMapsStoreTests: XCTestCase {
     await other.load()
     let calls = await api.calls
     XCTAssertEqual(calls.saves, [true, false])
-    XCTAssertNotNil(store.saves.failure(goalId: "goal"))
     XCTAssertEqual(other.value?.saved.map(\.targetId), ["chapter"])
   }
 
