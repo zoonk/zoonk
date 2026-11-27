@@ -3,12 +3,11 @@
 import { type WritingPrompt, type WritingResult } from "@zoonk/core/exams/essays/writing-contract";
 import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { PageSectionFooter, PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
 import { ESSAY_QUOTE_CLASS, useFormatScore } from "../essay/essay-labels";
-import { fixedDecimals } from "./format-points-range";
 import { getNextStep } from "./next-step";
 import {
   LEVEL_CELLS,
@@ -199,7 +198,6 @@ function useCriteriaFooter(prompt: WritingPrompt, grade: WritingResult): string 
 
 function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: WritingPrompt }) {
   const t = useExtracted();
-  const format = useFormatter();
   const formatScore = useFormatScore();
   const formatPoints = useFormatPointsRange();
   const levelName = useLevelName();
@@ -210,10 +208,7 @@ function WritingCriteria({ grade, prompt }: { grade: WritingResult; prompt: Writ
     const decimals = row.decimals ?? (grade.kind === "points" ? grade.decimals : undefined);
 
     return t("{score} of {max}", {
-      max:
-        decimals === undefined
-          ? formatScore(row.max)
-          : format.number(row.max, fixedDecimals(decimals)),
+      max: formatScore(row.max),
       score: formatPoints(row.range ?? { high: row.earned, low: row.earned }, { decimals }),
     });
   };

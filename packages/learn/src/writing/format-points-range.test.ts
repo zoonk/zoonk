@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPointsRange } from "./format-points-range";
+import { formatFixedPoints, formatPointsRange } from "./format-points-range";
 
 const number = (value: number, options: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat("en-US", options).format(value);
@@ -51,5 +51,17 @@ describe(formatPointsRange, () => {
     expect(format({ high: 0.04, low: 0 }, { kind: "deduction" })).toBe("0");
     expect(format({ high: 0.35, low: 0.02 }, { kind: "deduction" })).toBe("0.0 to −0.4");
     expect(format({ high: 0.6, low: 0.6 }, { kind: "deduction" })).toBe("−0.6");
+  });
+});
+
+describe(formatFixedPoints, () => {
+  it("writes a maximum as it is, never padded to its mark's decimals", () => {
+    expect(formatFixedPoints(22, number)).toBe("22");
+    expect(formatFixedPoints(9.5, number)).toBe("9.5");
+    expect(formatFixedPoints(1.25, number)).toBe("1.25");
+
+    expect(
+      `${format({ high: 14.67, low: 14.67 }, { decimals: 1 })} of ${formatFixedPoints(22, number)}`,
+    ).toBe("14.7 of 22");
   });
 });

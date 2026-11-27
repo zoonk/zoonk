@@ -1,10 +1,24 @@
 import { roundOutward } from "./round-outward";
 
 const DEDUCTION_DECIMALS = 1;
+const FIXED_AMOUNT_DECIMALS = 2;
 const MINUS = "−";
 
-export function fixedDecimals(decimals: number) {
+type FormatNumber = (
+  value: number,
+  options: { maximumFractionDigits: number; minimumFractionDigits?: number },
+) => string;
+
+function fixedDecimals(decimals: number) {
   return { maximumFractionDigits: decimals, minimumFractionDigits: decimals };
+}
+
+/**
+ * A fixed amount, such as a maximum or a minimum, as it is: "22", "9.5", "1.25". It never pads to a
+ * mark's decimals, so a criterion reads "14.7 of 22", never "14.7 of 22.0".
+ */
+export function formatFixedPoints(value: number, number: FormatNumber): string {
+  return number(value, { maximumFractionDigits: FIXED_AMOUNT_DECIMALS });
 }
 
 export function formatPointsRange({
@@ -17,7 +31,7 @@ export function formatPointsRange({
   decimals?: number;
   joinDeduction: (low: string, high: string) => string;
   kind?: "deduction" | "detail" | "estimate";
-  number: (value: number, options: ReturnType<typeof fixedDecimals>) => string;
+  number: FormatNumber;
   range: { high: number; low: number };
 }): string {
   const options = fixedDecimals(kind === "deduction" ? DEDUCTION_DECIMALS : decimals);

@@ -25,13 +25,13 @@ export function WrittenStandingLine({ className, part }: { className?: string; p
     return null;
   }
 
-  const line = cn("flex items-center gap-1.5 text-xs", className);
+  const line = cn("flex items-center gap-1 text-xs", className);
   const points = formatScore(minimum);
 
   if (standing === "met") {
     return (
       <p className={cn(line, "text-muted-foreground")}>
-        <CheckIcon aria-hidden="true" className="text-success-text size-3.5 shrink-0" />
+        <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" />
         {t("Likely above the {minimum} points needed", { minimum: points })}
       </p>
     );
