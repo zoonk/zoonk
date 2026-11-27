@@ -20,6 +20,10 @@ final class AppNavigationTests: XCTestCase {
       ("https://www.zoonk.com/buddy?ask=Why%20orbits%3F", .buddy(.new(ask: "Why orbits?"))),
       ("https://www.zoonk.com/buddy/new", .buddy(.new(ask: nil))),
       (
+        "https://www.zoonk.com/pt/buddy/new?ask=Can%20I%20skip%20Saturday%3F",
+        .buddy(.new(ask: "Can I skip Saturday?"))
+      ),
+      (
         "https://www.zoonk.com/pt/buddy/0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10",
         .buddy(.conversation(id: "0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10"))
       ),
