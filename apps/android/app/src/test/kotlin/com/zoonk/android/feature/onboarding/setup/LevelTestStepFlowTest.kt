@@ -1,11 +1,12 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -33,6 +34,7 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTest
@@ -110,7 +112,8 @@ class LevelTestStepFlowTest {
         show()
 
         rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
-        rule.onNodeWithText("12 questions${FACT_SEPARATOR}About 6 min").assertIsDisplayed()
+        rule.onNodeWithText("Level test").assertIsDisplayed()
+        rule.onAllNodesWithText("12 questions${FACT_SEPARATOR}About 6 min").onFirst().assertExists()
         assertEquals(1, api.levelTestReads)
         assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)

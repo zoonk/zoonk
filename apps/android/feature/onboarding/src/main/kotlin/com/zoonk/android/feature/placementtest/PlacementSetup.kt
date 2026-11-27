@@ -47,7 +47,18 @@ internal fun ColumnScope.PlacementSetup(
     onReportSaveFailure: () -> Unit,
 ) {
     if (targetLanguage != null) {
-        LanguageSetup(goalId.toString(), language, targetLanguage, placement?.mode, store, plans, navigator, end, onSitting, onReportSaveFailure)
+        LanguageSetup(
+            goalId.toString(),
+            language,
+            targetLanguage,
+            placement?.mode,
+            store,
+            plans,
+            navigator,
+            end,
+            onSitting,
+            onReportSaveFailure,
+        )
     } else {
         CourseSetup(goalId, subject, placement, store, plans, navigator, end, onSitting)
     }

@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -25,6 +24,7 @@ import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.PlacementAttempt

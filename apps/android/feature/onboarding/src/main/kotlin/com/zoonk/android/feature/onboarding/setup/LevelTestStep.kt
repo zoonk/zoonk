@@ -4,8 +4,6 @@ import android.app.LocaleConfig
 import android.app.LocaleManager
 import android.os.Build
 import android.os.LocaleList
-import androidx.compose.ui.platform.LocalContext
-import com.zoonk.android.ui.format.formattingLocale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -33,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,6 +84,7 @@ import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formattingLocale
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.theme.layoutEnd
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -214,8 +214,13 @@ internal fun InterfaceOffer(language: String) {
     val translated = supported != null && (0 until supported.size()).any { supported[it].language == own.language }
     if (!translated || own.language == currentLocale().language) return
 
-    TextButton(onClick = { context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own) }, edge = ButtonEdge.Start) {
-        Text(stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)), textDecoration = TextDecoration.Underline)
+    TextButton(onClick = {
+        context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList(own)
+    }, edge = ButtonEdge.Start) {
+        Text(
+            stringResource(R.string.onboarding_language_test_use_app_in, languageName(language, own)),
+            textDecoration = TextDecoration.Underline,
+        )
     }
 }
 
