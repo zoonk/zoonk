@@ -1,4 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -11,6 +13,8 @@ import { answerStudyQuestion } from "../../sessions/answer-study-question";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { coursePlacementSitting } from "../_test-utils/course-placement-sitting";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
+import { loadClaimEvents } from "../_utils/load-skill-claims";
+import { listKnownSkills } from "../_utils/skill-claims";
 import { finishGoalPlacement } from "./finish-goal-placement";
 
 async function setup() {
@@ -19,12 +23,16 @@ async function setup() {
   mockSession(user.id);
   const goalId = fixture.goal.id;
 
+  let bank: Awaited<ReturnType<typeof coursePlacementSitting>>["bank"] = [];
+
   const finish = async () => {
     const sitting = await coursePlacementSitting(
       goalId,
       fixture.skills.map((skill) => skill.id),
+      bank,
     );
 
+    bank = sitting.bank;
     await sitting.answerAll();
     return finishGoalPlacement({ goalId, input: { attemptId: sitting.attemptId } });
   };
@@ -85,5 +93,35 @@ describe("course placement after completion", () => {
         },
       },
     });
+  });
+
+  it("keeps earlier skipped items provisional after a second test", async () => {
+    const { chapters, finish, goalId, plan, skills, user } = await setup();
+    const first = skills[0]!.id;
+    const last = skills[4]!.id;
+    const chapterId = chapters[0]!.id;
+    const lesson = await libraryLessonFixture({ homeChapterId: chapterId });
+    await lessonSkillFixture({ lessonId: lesson.id, skillId: last });
+
+    await planItemFixture({
+      chapterId,
+      lessonId: lesson.id,
+      planId: plan.id,
+      position: 5,
+      skillId: first,
+    });
+
+    await finish();
+
+    const known = async () =>
+      listKnownSkills({
+        events: await loadClaimEvents({ goalId, skillIds: [first], userId: user.id }),
+      });
+
+    const before = await known();
+    expect(before.has(first)).toBe(false);
+    await finish();
+    const after = await known();
+    expect(after.has(first)).toBe(false);
   });
 });

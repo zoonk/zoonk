@@ -2,9 +2,13 @@ import { answerPlacementQuestion } from "../placement/answer-placement-question"
 import { startPlacementSitting } from "../placement/start-placement-sitting";
 import { lowGuessTapItems } from "./placement-tap-items";
 
-export async function coursePlacementSitting(goalId: string, skillIds: readonly string[]) {
+export async function coursePlacementSitting(
+  goalId: string,
+  skillIds: readonly string[],
+  previous: Awaited<ReturnType<typeof lowGuessTapItems>> = [],
+) {
   const banks = await Promise.all(skillIds.map((skillId) => lowGuessTapItems(skillId)));
-  const bank = banks.flat();
+  const bank = [...previous, ...banks.flat()];
   const started = await startPlacementSitting({ goalId, input: {} });
 
   if (started.status !== "ready" || !started.placement.attempt || !started.placement.next) {
@@ -39,5 +43,5 @@ export async function coursePlacementSitting(goalId: string, skillIds: readonly 
     }
   };
 
-  return { answerAll, answerNext, attemptId, first };
+  return { answerAll, answerNext, attemptId, bank, first };
 }
