@@ -7576,11 +7576,6 @@ msgid "Open the lesson"
 msgstr "レッスンを開く"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "明日から練習できます"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "このトピックを練習する"
@@ -7650,34 +7645,14 @@ msgid "What you got wrong"
 msgstr "間違えた問題"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {練習できる問題は#問です} other {#問を練習できます}} · {tomorrow, plural, =0 {明日から練習できる問題は#問です} other {明日から#問を練習できます}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "間違えた問題を解き直す"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "今日間違えた問題は明日から練習できます"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {練習できる問題は#問です} other {#問を練習できます}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {明日練習できる問題は#問です} other {明日は#問を練習できます}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "明日から練習できます"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"

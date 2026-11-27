@@ -7576,11 +7576,6 @@ msgid "Open the lesson"
 msgstr "Abrir la lección"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "Podrás practicar mañana"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "Practicar este tema"
@@ -7650,34 +7645,14 @@ msgid "What you got wrong"
 msgstr "En qué te equivocaste"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {# disponibles para practicar} one {# listo para practicar} other {# listos para practicar}} · {tomorrow, plural, =0 {# disponibles a partir de mañana} one {# disponible mañana} other {# disponibles mañana}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "Vuelve a intentar lo que respondiste mal"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "Los errores de hoy vuelven mañana"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {# listos para practicar} one {# listo para practicar} other {# listos para practicar}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {# disponibles mañana} one {# disponible mañana} other {# disponibles mañana}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "Podrás practicar mañana"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
