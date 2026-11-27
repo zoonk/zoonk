@@ -8,6 +8,7 @@ import {
   getPracticeScore,
   getPracticeSegments,
   practiceReducer,
+  toPracticeAnswer,
 } from "./mistake-practice-state";
 
 function entry(
@@ -37,6 +38,7 @@ function entry(
       unit: null,
       visual: null,
     })),
+    showing: `mistake:${mistakeId}:1`,
     snapshot: { answer: "Wrong", question: "Question 0?" },
     tutorAvailable: true,
   };
@@ -291,6 +293,34 @@ describe(practiceReducer, () => {
       ]);
     },
   );
+});
+
+describe(toPracticeAnswer, () => {
+  it("sends a question's answer with the order its entry showed", () => {
+    const [step] = createPracticeState([entry("m1")]).steps;
+
+    if (!step) {
+      throw new Error("The run has no step");
+    }
+
+    expect(
+      toPracticeAnswer({
+        answer: { selectedIndex: 1 },
+        attemptId: "a1",
+        durationMs: 3000,
+        runAnswerIds: ["earlier"],
+        step,
+      }),
+    ).toStrictEqual({
+      answer: { selectedIndex: 1 },
+      attemptId: "a1",
+      durationMs: 3000,
+      itemId: "m1-0",
+      mistakeId: "m1",
+      runAnswerIds: ["earlier"],
+      showing: "mistake:m1:1",
+    });
+  });
 });
 
 describe(getPracticeSegments, () => {

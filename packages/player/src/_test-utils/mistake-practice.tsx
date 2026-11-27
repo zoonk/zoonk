@@ -72,6 +72,7 @@ export function practiceEntries(
         : null,
       mistakeId: "original-mistake",
       questions: question ? [question] : [],
+      showing: "mistake:original-mistake:1",
       snapshot: {
         answer: "The earlier answer",
         question: question?.question ?? "The original lesson question",

@@ -16,17 +16,15 @@ export type PracticeAnswer = QuestionAnswer | LessonStepAnswer;
 
 /**
  * `attemptId` stays the same when an answer is sent again, so the server records one answer per
- * question.
+ * question. A question's answer sends back its entry's `showing`, the order its options were in.
  */
 export type MistakePracticeAnswer = {
   answer: PracticeAnswer;
   attemptId: string;
   durationMs: number;
-  itemId?: string;
-  stepId?: string;
   mistakeId: string;
   runAnswerIds: string[];
-};
+} & ({ itemId: string; showing: string } | { stepId: string });
 
 export type MistakePracticeFeedback =
   | Extract<MistakePracticeAnswerResult, { status: "ready" }>["feedback"]
@@ -43,6 +41,23 @@ export type PracticeStep = {
   question: PracticeEntry["questions"][number] | null;
   lesson: PracticeEntry["lesson"];
 };
+
+/** What an answer to the step in view sends: a lesson screen by its id, a question with the order it was shown in. */
+export function toPracticeAnswer({
+  step,
+  ...sent
+}: Omit<MistakePracticeAnswer, "itemId" | "mistakeId" | "showing" | "stepId"> & {
+  step: PracticeStep;
+}): MistakePracticeAnswer {
+  const { entry, lesson, question } = step;
+  const mistakeId = entry.mistakeId;
+
+  if (lesson) {
+    return { ...sent, mistakeId, stepId: lesson.step.id };
+  }
+
+  return { ...sent, itemId: question?.itemId ?? "", mistakeId, showing: entry.showing };
+}
 
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";

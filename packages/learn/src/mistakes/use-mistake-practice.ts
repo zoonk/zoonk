@@ -12,6 +12,7 @@ import {
   type SentPracticeAnswer,
   createPracticeState,
   practiceReducer,
+  toPracticeAnswer,
 } from "./mistake-practice-state";
 import { type RecordMistakeAction, usePracticeRecording } from "./use-practice-recording";
 
@@ -90,14 +91,15 @@ export function useMistakePractice({
     }
 
     const feedback = await actions
-      .answer({
-        answer,
-        attemptId: attempt.current.id,
-        durationMs,
-        ...(step.lesson ? { stepId: step.lesson.step.id } : { itemId: step.question?.itemId }),
-        mistakeId: step.entry.mistakeId,
-        runAnswerIds: state.answerIds,
-      })
+      .answer(
+        toPracticeAnswer({
+          answer,
+          attemptId: attempt.current.id,
+          durationMs,
+          runAnswerIds: state.answerIds,
+          step,
+        }),
+      )
       .catch(() => null);
 
     if (!feedback) {
