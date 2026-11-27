@@ -24,18 +24,8 @@ struct BuddyConversationList: View {
               comment:
                 "The first row of the conversations list: starts a conversation with no questions yet."
             )
-          ) {
-            EmptyView()
-          } trailing: {
-            // Where the other rows' chevrons are, as main's row ends with its plus.
-            Image(systemName: "plus")
-              .font(.body.weight(.semibold))
-              .imageScale(.small)
-              .foregroundStyle(Color(.tertiaryLabel))
-              .layoutPart(.end)
-              .accessibilityHidden(true)
-          }
-          .contentShape(.rect)
+          )
+          .disclosurePlus()
         }
         .currentRow(isOpenNew)
         .accessibilityAddTraits(isOpenNew ? .isSelected : [])
