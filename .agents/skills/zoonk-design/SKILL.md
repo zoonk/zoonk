@@ -1,10 +1,10 @@
 ---
 name: zoonk-design
-description: Design, build or review a Zoonk screen on the web, iOS or Android, marketing pages included: how it's structured, drawn, worded and moves, the one piece each role uses, and the reads a screen passes before it ships.
+description: Use when designing, building or reviewing a Zoonk screen on the web, iOS or Android, marketing pages included, or judging how one looks, reads or moves.
 license: MIT
 metadata:
   author: zoonk
-  version: "7.0.0"
+  version: "7.1.0"
 ---
 
 # Zoonk design

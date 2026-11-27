@@ -117,11 +117,14 @@ test("holds a file waiting to be split to its own ceiling, and asks to drop it o
   ]);
 });
 
-test("holds each skill's description to its budget and asks for a missing one", () => {
+test("holds each skill's description to one short plain line and asks for a missing one", () => {
   const root = repository({
     ".agents/skills/bare/SKILL.md": "# Bare\n",
     ".agents/skills/brief/SKILL.md":
-      "---\nname: brief\ndescription: Use when asked.\n---\n\n# Brief\n",
+      "---\r\nname: brief\r\ndescription: Use when asked.\r\n---\r\n\r\n# Brief\r\n",
+    ".agents/skills/colon/SKILL.md": "---\ndescription: Use when done: before a commit.\n---\n",
+    ".agents/skills/empty/SKILL.md": "---\ndescription:\nlicense: MIT\n---\n",
+    ".agents/skills/folded/SKILL.md": "---\ndescription: >\n  Use when asked.\n---\n",
     ".agents/skills/installed/SKILL.md": `---\ndescription: ${"word ".repeat(MANY_WORDS)}\n---\n`,
     ".agents/skills/long/SKILL.md": `---\nname: long\ndescription: ${"word ".repeat(60)}\n---\n\n# Long\n`,
     "AGENTS.md": "# Root\n",
@@ -135,16 +138,20 @@ test("holds each skill's description to its budget and asks for a missing one", 
 
   expect(problems.filter((problem) => !problem.startsWith(".claude/"))).toStrictEqual([
     ".agents/skills/bare/SKILL.md has no description: add one that says when to use the skill.",
+    `.agents/skills/colon/SKILL.md's description isn't one plain line: drop the quotes or block marker, and any ": " or " #" in it.`,
+    ".agents/skills/empty/SKILL.md has no description: add one that says when to use the skill.",
+    `.agents/skills/folded/SKILL.md's description isn't one plain line: drop the quotes or block marker, and any ": " or " #" in it.`,
     ".agents/skills/long/SKILL.md's description is 299 bytes, over the 200 every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.",
   ]);
 });
 
-test("asks to link or delete a reference its skill never links", () => {
+test("asks to link or delete a reference its entry can't reach", () => {
   const root = repository({
     ".agents/skills/brief/SKILL.md":
       "---\ndescription: Use when asked.\n---\n\n# Brief\n\nSee [steps](references/steps.md#first).\n",
-    ".agents/skills/brief/references/forgotten.md": "# Forgotten\n",
+    ".agents/skills/brief/references/forgotten.md": "# Forgotten\n\n[pair](pair.md)\n",
     ".agents/skills/brief/references/more.md": "# More\n",
+    ".agents/skills/brief/references/pair.md": "# Pair\n\n[forgotten](forgotten.md)\n",
     ".agents/skills/brief/references/steps.md": "# Steps\n\n## First\n\nThen [more](more.md).\n",
     "AGENTS.md": "# Root\n\n[forgotten](.agents/skills/brief/references/forgotten.md)\n",
   });
@@ -154,7 +161,8 @@ test("asks to link or delete a reference its skill never links", () => {
       (problem) => !problem.startsWith(".claude/"),
     ),
   ).toStrictEqual([
-    ".agents/skills/brief/references/forgotten.md isn't linked from its skill, so no agent reads it: link it from the entry with when to read it, or delete it.",
+    ".agents/skills/brief/references/forgotten.md can't be reached from its SKILL.md, so no agent reads it: link it from the entry with when to read it, or delete it.",
+    ".agents/skills/brief/references/pair.md can't be reached from its SKILL.md, so no agent reads it: link it from the entry with when to read it, or delete it.",
   ]);
 });
 

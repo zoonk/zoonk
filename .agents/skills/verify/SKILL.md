@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Use when work is finished: before calling it done, committing, or opening or updating a PR.
+description: Use when work is finished, before calling it done, committing, or opening or updating a PR.
 license: MIT
 metadata:
   author: zoonk

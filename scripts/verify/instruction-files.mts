@@ -198,50 +198,71 @@ function sizeProblems(root: string, files: string[], options: Required<Options>)
 }
 
 function description(skill: string): string | undefined {
-  const frontmatter = /^---\n(?<yaml>[^]*?)\n---$/mu.exec(skill)?.groups?.yaml ?? "";
+  const lines = skill.replaceAll("\r\n", "\n");
+  const frontmatter = /^---\n(?<yaml>[^]*?)\n---$/mu.exec(lines)?.groups?.yaml;
 
-  return /^description:\s*(?<text>.+?)\s*$/mu.exec(frontmatter)?.groups?.text;
+  return /^description:[ \t]*(?<text>.*)$/mu.exec(frontmatter ?? "")?.groups?.text.trim();
+}
+
+/** Quotes, block scalars and a `: ` or ` #` inside the text change what YAML reads, or fail to parse. */
+function isPlainLine(text: string): boolean {
+  return !/^[|>'"[\]{}&*!%@`#,?-]|: | #/u.test(text);
+}
+
+function descriptionProblem(path: string, text: string | undefined, limit: number) {
+  if (text === undefined || text === "") {
+    return `${path} has no description: add one that says when to use the skill.`;
+  }
+
+  if (!isPlainLine(text)) {
+    return `${path}'s description isn't one plain line: drop the quotes or block marker, and any ": " or " #" in it.`;
+  }
+
+  const bytes = Buffer.byteLength(text);
+
+  return bytes > limit
+    ? `${path}'s description is ${bytes} bytes, over the ${limit} every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.`
+    : null;
 }
 
 function descriptionProblems(root: string, limit: number): string[] {
-  return ownSkills(root).flatMap((name) => {
-    const path = `.agents/skills/${name}/SKILL.md`;
+  return ownSkills(root)
+    .map((name) => {
+      const path = `.agents/skills/${name}/SKILL.md`;
 
-    const text = isFile(join(root, path))
-      ? description(readFileSync(join(root, path), "utf8"))
-      : undefined;
+      const text = isFile(join(root, path))
+        ? description(readFileSync(join(root, path), "utf8"))
+        : undefined;
 
-    if (text === undefined) {
-      return [`${path} has no description: add one that says when to use the skill.`];
+      return descriptionProblem(path, text, limit);
+    })
+    .filter((problem) => problem !== null);
+}
+
+function reachableFrom(skillDirectory: string): Set<string> {
+  const reached = new Set([join(skillDirectory, "SKILL.md")]);
+
+  for (const file of reached) {
+    if (file.startsWith(`${skillDirectory}/`) && file.endsWith(".md") && isFile(file)) {
+      for (const target of linkTargets(readFileSync(file, "utf8"))) {
+        reached.add(resolve(dirname(file), decodeURI(target.split("#")[0] ?? "")));
+      }
     }
+  }
 
-    const bytes = Buffer.byteLength(text);
-
-    return bytes > limit
-      ? [
-          `${path}'s description is ${bytes} bytes, over the ${limit} every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.`,
-        ]
-      : [];
-  });
+  return reached;
 }
 
 function unlinkedProblems(root: string): string[] {
   return ownSkills(root).flatMap((name) => {
-    const files = listMarkdown(join(root, ".agents/skills", name));
+    const skillDirectory = join(root, ".agents/skills", name);
+    const reached = reachableFrom(skillDirectory);
 
-    const linked = new Set(
-      files.flatMap((file) =>
-        linkTargets(readFileSync(file, "utf8")).map((target) =>
-          resolve(dirname(file), decodeURI(target.split("#")[0] ?? "")),
-        ),
-      ),
-    );
-
-    return files
-      .filter((file) => !file.endsWith("/SKILL.md") && !linked.has(file))
+    return listMarkdown(skillDirectory)
+      .filter((file) => !reached.has(file))
       .map(
         (file) =>
-          `${relative(root, file)} isn't linked from its skill, so no agent reads it: link it from the entry with when to read it, or delete it.`,
+          `${relative(root, file)} can't be reached from its SKILL.md, so no agent reads it: link it from the entry with when to read it, or delete it.`,
       );
   });
 }
@@ -261,7 +282,7 @@ function symlinkProblems(root: string): string[] {
 
 /**
  * Holds the instruction files agents load to what keeps them cheap to read and safe to follow:
- * every file small, every skill's description short, every reference linked from its skill, every link
+ * every file small, every skill's description short, every reference reachable from its entry, every link
  * and anchor resolving, and every skill reachable from `.claude/skills`.
  * Skills installed from elsewhere (`skills-lock.json`) aren't ours to edit, so only their symlinks are checked.
  */
