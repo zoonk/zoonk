@@ -41,10 +41,13 @@ enum PlacementTestPhase: Equatable {
   case offer
   /// The way back into a full test with parts left, or a part stopped midway.
   case continueTest(PlacementAttempt)
-  /// The open part's questions are still being written.
+  /// The open part's questions, or the course a test was asked for, are still being written.
   case waiting
-  /// The open part's questions couldn't be written: "Try again" starts the same part again.
-  case preparationFailed(PlacementAttempt)
+  /// The open part's questions couldn't be written: "Try again" starts the same part again. With
+  /// no attempt, the course the test was asked for couldn't be built, and "Try again" asks again.
+  case preparationFailed(PlacementAttempt?)
+  /// The wait stopped hearing back: "Try again" reads again.
+  case connectionLost
   /// No question can be written and none is being written: the first days place the learner.
   case unavailable
   case question(PlacementTestQuestion)
@@ -54,32 +57,40 @@ enum PlacementTestPhase: Equatable {
   case stopped(PlacementPartStop)
   case result(PlacementTestEnd)
 
-  var isWaiting: Bool { self == .waiting || failedAttempt != nil }
+  var isWaiting: Bool { waitFailure != nil || self == .waiting }
 
-  var failedAttempt: PlacementAttempt? {
-    if case .preparationFailed(let attempt) = self { attempt } else { nil }
+  /// What the wait says went wrong, with its "Try again".
+  var waitFailure: GenerationFailure? {
+    switch self {
+    case .preparationFailed: .generation
+    case .connectionLost: .connection
+    default: nil
+    }
   }
 
   /// An open test goes on where it stopped: a sitting at its next question, a quick test that ended
   /// on its result, a full test with parts left on "Continue your test". With nothing open,
-  /// onboarding shows the result of the test it ran and the plan offers one.
-  init(_ placement: GoalPlacement, onboarding: Bool) {
+  /// onboarding shows the result of the test it ran; otherwise the test is offered, or waited for
+  /// when the learner already `asked` for it.
+  init(_ placement: GoalPlacement, onboarding: Bool, asked: Bool = false) {
     self.init(
       attempt: placement.activeTestAttempt, result: placement.savedTestResult,
       status: placement.status,
       next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
       labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
-      onboarding: onboarding)
+      onboarding: onboarding, asked: asked)
   }
 
   init(
     attempt: PlacementAttempt?, result: PlacementTestResult?,
     status: Components.Schemas.PlacementStatus, next: PracticeQuestion?,
-    labels: PracticeTrueFalseLabels, onboarding: Bool
+    labels: PracticeTrueFalseLabels, onboarding: Bool, asked: Bool = false
   ) {
     guard let attempt else {
       if onboarding, let result, result.attemptId != nil {
         self = .result(PlacementTestEnd(read: result, rest: nil))
+      } else if asked {
+        self = Self(unopened: status)
       } else {
         self = .offer
       }
@@ -108,6 +119,20 @@ enum PlacementTestPhase: Equatable {
       } else {
         self = .partOver(attempt)
       }
+    }
+  }
+
+  /// No test opened after the learner asked for one: it waits while the course and its questions
+  /// are written; otherwise there's nothing to test. Questions that came while it waited open the
+  /// start the learner asked for (`PlacementTestFlow`).
+  private init(unopened status: Components.Schemas.PlacementStatus) {
+    switch status {
+    case .preparing, .waitingForQuestions:
+      self = .waiting
+    case .failed:
+      self = .preparationFailed(nil)
+    case .unavailable, .asking, .done:
+      self = .unavailable
     }
   }
 

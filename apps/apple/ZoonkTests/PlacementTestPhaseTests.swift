@@ -18,6 +18,19 @@ final class PlacementTestPhaseTests: XCTestCase {
       .result(PlacementTestEnd(lessonsSkipped: 5, undoLessons: 5, attemptId: "a1")))
   }
 
+  func testATestTheLearnerAskedForWaitsWhileItsCourseIsBuilt() {
+    XCTAssertEqual(phase(attempt: nil, .preparing, onboarding: true), .offer)
+    XCTAssertEqual(phase(attempt: nil, .preparing, onboarding: true, asked: true), .waiting)
+    XCTAssertEqual(
+      phase(attempt: nil, .waitingForQuestions, onboarding: true, asked: true), .waiting)
+    XCTAssertEqual(
+      phase(attempt: nil, .failed, onboarding: true, asked: true), .preparationFailed(nil),
+      "A course that couldn't be built keeps the wait open to try again")
+    XCTAssertEqual(
+      phase(attempt: nil, .asking, next: question, asked: true), .unavailable,
+      "A start that opened nothing has nothing to test")
+  }
+
   func testAnOpenPartGoesOnAtItsNextQuestionWithItsPlaceInTheTest() {
     let open = attempt(part: 3, answered: 4)
 
@@ -238,11 +251,12 @@ final class PlacementTestPhaseTests: XCTestCase {
 
   private func phase(
     attempt: PlacementAttempt?, _ status: Components.Schemas.PlacementStatus,
-    next: PracticeQuestion? = nil, result: PlacementTestResult? = nil, onboarding: Bool = false
+    next: PracticeQuestion? = nil, result: PlacementTestResult? = nil, onboarding: Bool = false,
+    asked: Bool = false
   ) -> PlacementTestPhase {
     PlacementTestPhase(
       attempt: attempt, result: result, status: status, next: next, labels: .trueFalse,
-      onboarding: onboarding)
+      onboarding: onboarding, asked: asked)
   }
 }
 

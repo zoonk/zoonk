@@ -52,8 +52,9 @@ struct FocusTestFlow: View {
   /// The goal's run while its questions are written, as the wait shows it.
   @State private var run: GenerationWait?
   @State private var waitStartedAt = Date.now
-  @State private var visitStart = ContinuousClock.now
-  @State private var firstQuestionShown = false
+  @State private var visit = TestVisit()
+  /// Sittings started in this visit, which tell one sitting's first question from the next's.
+  @State private var sittingsStarted = 0
 
   private var waitRun: GenerationWait {
     let kind: GenerationWait.Kind = host == .onboarding ? .placement : .placementQuestions
@@ -208,15 +209,9 @@ struct FocusTestFlow: View {
     // A question held behind the wait is timed from when it shows.
     .onAppear {
       shownAt = .now
-
-      guard !firstQuestionShown else { return }
-      firstQuestionShown = true
-      let waited = visitStart.duration(to: .now).components
-      UsageAnalytics.track(
-        .testFirstQuestionShown(
-          analytics, questionNumber: sitting.answered + 1,
-          waitMs: Int(waited.seconds * 1000 + waited.attoseconds / 1_000_000_000_000_000),
-          resumed: sitting.answered > 0))
+      visit.firstQuestion(
+        analytics, number: sitting.answered + 1, sitting: "sitting:\(sittingsStarted)"
+      ).map(UsageAnalytics.track)
     }
   }
 
@@ -280,6 +275,8 @@ struct FocusTestFlow: View {
 
   /// Opens the next sitting; asked again, it answers with the one already open.
   private func start() async throws {
+    sittingsStarted += 1
+    visit.started()
     try await show(try await store.startPlacementSitting(goalID: goalID))
   }
 

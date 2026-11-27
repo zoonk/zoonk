@@ -343,3 +343,32 @@ extension LanguageConversation.KindPayload {
     }
   }
 }
+
+/// One visit to a test, for its sittings' first questions: when the wait for one began (the visit,
+/// or the learner's start or "Keep going" in it), and whether the question picks up a sitting
+/// opened before. Main's `useTestAnalytics` visit.
+struct TestVisit {
+  private var since = ContinuousClock.now
+  private var startedHere = false
+  private var said: String?
+
+  /// The learner started or continued a sitting: the wait for its first question begins.
+  mutating func started() {
+    startedHere = true
+    since = .now
+  }
+
+  /// The first question this visit shows of `sitting` (a part, or a sitting of questions), once.
+  mutating func firstQuestion(
+    _ context: AnalyticsEvent.TestContext, number: Int, sitting: String
+  ) -> AnalyticsEvent? {
+    guard said != sitting else { return nil }
+    said = sitting
+    let waited = since.duration(to: .now).components
+
+    return .testFirstQuestionShown(
+      context, questionNumber: number,
+      waitMs: Int(waited.seconds * 1000 + waited.attoseconds / 1_000_000_000_000_000),
+      resumed: !startedHere)
+  }
+}

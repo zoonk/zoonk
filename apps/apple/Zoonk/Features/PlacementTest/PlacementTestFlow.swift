@@ -38,8 +38,9 @@ struct PlacementTestFlow: View {
   @State private var questionFailures = 0
   @State private var failedAnswer: SentAnswer?
   @State private var shownAt = ContinuousClock.now
-  @State private var visitStart = ContinuousClock.now
-  @State private var firstQuestionShown = false
+  @State private var visit = TestVisit()
+  /// The length the learner last started, which a wait for the course's questions opens.
+  @State private var wanted = PlacementLength.quick
   @State private var showsSaveReport = false
   @State private var waitRound = 0
   @State private var waitStartedAt = Date.now
@@ -78,11 +79,12 @@ struct PlacementTestFlow: View {
   }
 
   private var phase: PlacementTestPhase {
-    reached ?? read?.value.map(phase(for:)) ?? .loading
+    reached ?? read?.value.map { phase(for: $0, asked: false) } ?? .loading
   }
 
-  private func phase(for placement: GoalPlacement) -> PlacementTestPhase {
-    PlacementTestPhase(placement, onboarding: isOnboarding)
+  /// `asked`: the learner started the test in this visit, so a test that couldn't open waits.
+  private func phase(for placement: GoalPlacement, asked: Bool = true) -> PlacementTestPhase {
+    PlacementTestPhase(placement, onboarding: isOnboarding, asked: asked)
   }
 
   private func openOnAppear() {
@@ -135,7 +137,7 @@ struct PlacementTestFlow: View {
   @ViewBuilder
   private var ready: some View {
     switch phase {
-    case .loading, .waiting, .preparationFailed:
+    case .loading, .waiting, .preparationFailed, .connectionLost:
       StepLoading()
     case .offer:
       if let offer {
@@ -231,7 +233,9 @@ struct PlacementTestFlow: View {
     let attempt = asked.attempt
 
     return PlacementQuestionScreen(
-      subject: attempt.chapter ?? subject, number: attempt.answered + 1, total: attempt.questions,
+      subject: attempt.chapter.map { $0.trimmingCharacters(in: .whitespaces) }
+        .flatMap { $0.isEmpty ? nil : $0 } ?? subject,
+      number: attempt.answered + 1, total: attempt.questions,
       part: attempt.length == .wholeCourse ? (attempt.part, attempt.parts) : nil,
       question: asked.question, labels: asked.labels, isSaving: isAnswering,
       failures: questionFailures, context: context, onReport: { showsSaveReport = true },
@@ -241,19 +245,10 @@ struct PlacementTestFlow: View {
     // A question held behind the wait is timed from when it shows.
     .onAppear {
       shownAt = .now
-      trackFirstQuestion(attempt)
+      visit.firstQuestion(
+        context, number: attempt.answered + 1, sitting: "\(attempt.id):\(attempt.part)"
+      ).map(UsageAnalytics.track)
     }
-  }
-
-  private func trackFirstQuestion(_ attempt: PlacementAttempt) {
-    guard !firstQuestionShown else { return }
-    firstQuestionShown = true
-    let waited = visitStart.duration(to: .now).components
-    UsageAnalytics.track(
-      .testFirstQuestionShown(
-        context, questionNumber: attempt.answered + 1,
-        waitMs: Int(waited.seconds * 1000 + waited.attoseconds / 1_000_000_000_000_000),
-        resumed: attempt.answered > 0))
   }
 
   private var waitRun: GenerationWait {
@@ -263,11 +258,9 @@ struct PlacementTestFlow: View {
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
-    let failedAttempt = phase.failedAttempt
-
-    return PlacementWaitScreen(
-      onboarding: onboarding, goalID: goalID, run: waitRun,
-      failure: failedAttempt.map { _ in .generation }, holding: holding,
+    PlacementWaitScreen(
+      onboarding: onboarding, goalID: goalID, run: waitRun, failure: phase.waitFailure,
+      holding: holding,
       isActing: pressed == .main,
       skip: .init(
         label: isOnboarding
@@ -278,10 +271,13 @@ struct PlacementTestFlow: View {
       ) {
         save(.other) { try await leave(attemptId: nil) }
       },
-      onRetry: { _ in
-        if let failedAttempt {
-          save(.main) { try await start(failedAttempt.length) }
+      onRetry: { failure in
+        // A writer that failed starts the same part, or the asked-for test, again; a lost
+        // connection reads again.
+        if failure == .generation {
+          save(.main) { try await start(phase.attempt?.length ?? wanted) }
         } else {
+          reached = .waiting
           waitRound += 1
         }
       }
@@ -326,9 +322,15 @@ struct PlacementTestFlow: View {
     }
   }
 
-  /// Opens a test of this length, or goes on with the open one.
-  private func start(_ length: PlacementLength) async throws {
+  /// Opens a test of this length, or goes on with the open one. `arrived`: the questions a wait was
+  /// for came, so the learner's earlier press still times the wait.
+  private func start(_ length: PlacementLength, arrived: Bool = false) async throws {
     undoRequest.leave()
+    wanted = length
+    if !arrived {
+      visit.started()
+    }
+
     try await show(try await store.startPlacementTest(goalID: goalID, length: length))
   }
 
@@ -350,8 +352,12 @@ struct PlacementTestFlow: View {
   }
 
   /// Closing a part applies what it skipped; another device that closed it first wins.
-  private func close(_ attempt: PlacementAttempt) async throws {
-    switch try await store.finishPlacementPart(goalID: goalID, attempt: attempt) {
+  /// `stoppedAt`: a stop's answer count as the learner saw it, so a position another device moved
+  /// past is refused and read again.
+  private func close(_ attempt: PlacementAttempt, stoppedAt: Int? = nil) async throws {
+    switch try await store.finishPlacementPart(
+      goalID: goalID, attempt: attempt, stoppedAt: stoppedAt)
+    {
     case .finished(let end):
       undoRequest.leave()
       reached = PlacementTestPhase(finished: end, attemptId: attempt.id)
@@ -412,7 +418,7 @@ struct PlacementTestFlow: View {
       defer { isAnswering = false }
 
       do {
-        try await close(attempt)
+        try await close(attempt, stoppedAt: attempt.answered)
         questionFailures = 0
       } catch is CancellationError {
       } catch {
@@ -426,7 +432,7 @@ struct PlacementTestFlow: View {
       return
     }
 
-    _ = await PlacementWaitScreen.follow(
+    let followed = await PlacementWaitScreen.follow(
       generationID: onboarding?.generationId, store: store,
       apply: { event in
         var updated = waitRun
@@ -444,11 +450,20 @@ struct PlacementTestFlow: View {
         }
 
         if let placement = try? await store.placement(goalID: goalID), phase == .waiting {
-          try? await show(placement)
+          // The questions of a test that couldn't open yet are written: the start the learner
+          // asked for opens it now.
+          let arrived =
+            placement.activeTestAttempt == nil
+            && (placement.status == .asking || placement.status == .done)
+          try? await (arrived ? start(wanted, arrived: true) : show(placement))
         }
 
         return phase == .waiting
       })
+
+    if !followed, phase == .waiting {
+      reached = .connectionLost
+    }
   }
 }
 
@@ -456,7 +471,9 @@ extension PlacementTestPhase {
   /// The open test, for the screen's analytics.
   var attempt: PlacementAttempt? {
     switch self {
-    case .continueTest(let attempt), .preparationFailed(let attempt), .partOver(let attempt):
+    case .continueTest(let attempt), .partOver(let attempt):
+      attempt
+    case .preparationFailed(let attempt):
       attempt
     case .question(let asked):
       asked.attempt
@@ -464,7 +481,7 @@ extension PlacementTestPhase {
       stop.attempt
     case .result(let end):
       end.rest
-    case .loading, .offer, .waiting, .unavailable:
+    case .loading, .offer, .waiting, .connectionLost, .unavailable:
       nil
     }
   }

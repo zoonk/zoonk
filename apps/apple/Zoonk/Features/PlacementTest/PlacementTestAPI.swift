@@ -60,6 +60,8 @@ private struct PlacementSittingBody: Encodable {
 private struct PlacementPartBody: Encodable {
   let attemptId: String
   let part: Int
+  /// A stop's answers as the learner saw them, so core refuses a position another device moved past.
+  let answered: Int?
   let fromScratch = false
   let timeZone = TimeZone.current.identifier
 }
@@ -104,11 +106,11 @@ extension OnboardingAPI {
   }
 
   /// Closes a part of the test taken from the plan and applies what it skipped.
-  func finishPlacementPart(goalID: String, attemptID: String, part: Int, token: String)
-    async throws -> PlacementPartOutcome
-  {
+  func finishPlacementPart(
+    goalID: String, attemptID: String, part: Int, stoppedAt answered: Int?, token: String
+  ) async throws -> PlacementPartOutcome {
     let body = try PracticeJSON.recode(
-      PlacementPartBody(attemptId: attemptID, part: part),
+      PlacementPartBody(attemptId: attemptID, part: part, answered: answered),
       as: Components.Schemas.PlacementCompletionInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.completeGoalPlacement(path: .init(goalId: goalID), body: .json(body))

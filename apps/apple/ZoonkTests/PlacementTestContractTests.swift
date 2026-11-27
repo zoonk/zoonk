@@ -130,6 +130,31 @@ final class PlacementTestContractTests: XCTestCase {
       "The test asks nothing more, so it goes to its result")
   }
 
+  @MainActor
+  func testAStopSendsTheAnswersTheLearnerSawSoAnOlderPositionIsRefused() async throws {
+    let server = PartCloseServer()
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(baseURL: URL(string: "https://api.zoonk.test")!, transport: server),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live())
+    let attempt = PlacementAttempt(
+      answered: 3, chapter: nil, estimatedMinutes: 6, id: "c367d72f-4d87-408a-ba10-6bbcddca31ba",
+      length: .wholeCourse, nextPart: nil, part: 2, partComplete: false, parts: 4, partsLeft: 3,
+      questions: 12, resume: nil, totalEstimatedMinutes: 24, remainingEstimatedMinutes: 18)
+
+    let outcome = try await dependencies.onboardingStore.finishPlacementPart(
+      goalID: "00000000-0000-4000-8000-0000000000a1", attempt: attempt, stoppedAt: 3)
+
+    let body = await server.body
+    let sent = try XCTUnwrap(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+    XCTAssertEqual(sent["answered"] as? Int, 3)
+    XCTAssertEqual(sent["part"] as? Int, 2)
+    XCTAssertEqual(sent["attemptId"] as? String, attempt.id)
+    guard case .stale = outcome else {
+      return XCTFail("A refused stop reads the test again")
+    }
+  }
+
   private func planTest(_ json: String) throws -> PlanPlacementTest {
     try read(json, as: Components.Schemas.PlanPlacementTest.self, then: PlanPlacementTest.self)
   }
@@ -168,5 +193,26 @@ private actor LevelTestAnswerServer: ClientTransport {
         #"{"status":"ready","answered":6,"canStop":false,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"es","total":12,"estimatedMinutes":6,"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba"}"#
       )
     )
+  }
+}
+
+/// Refuses a part's close, as core does for a position another device moved past, keeping its body.
+private actor PartCloseServer: ClientTransport {
+  private(set) var body = Data()
+
+  func send(
+    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    guard operationID == "completeGoalPlacement" else {
+      return (HTTPResponse(status: .notFound), nil)
+    }
+
+    if let body {
+      self.body = try await Data(collecting: body, upTo: 1 << 20)
+    }
+
+    var response = HTTPResponse(status: .conflict)
+    response.headerFields[.contentType] = "application/json"
+    return (response, HTTPBody(#"{"error":{"code":"CONFLICT","message":"Conflict"}}"#))
   }
 }

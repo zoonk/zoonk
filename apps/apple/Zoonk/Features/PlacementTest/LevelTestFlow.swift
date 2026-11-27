@@ -101,8 +101,7 @@ struct LevelTestFlow: View {
   @State private var answerFailures = 0
   @State private var failedAnswer: SentAnswer?
   @State private var shownAt = ContinuousClock.now
-  @State private var visitStart = ContinuousClock.now
-  @State private var firstQuestionShown = false
+  @State private var visit = TestVisit()
   /// The open test's facts, for the analytics of its screens.
   @State private var total: Int?
   @State private var showsSaveReport = false
@@ -174,7 +173,7 @@ struct LevelTestFlow: View {
       .id(question.id)
       .onAppear {
         shownAt = .now
-        trackFirstQuestion(number: number)
+        visit.firstQuestion(context, number: number, sitting: attemptID).map(UsageAnalytics.track)
       }
       .task(id: question.id) { await waitForAudio(question, attemptID: attemptID) }
     case .finish(let attemptID, let completion):
@@ -227,7 +226,11 @@ struct LevelTestFlow: View {
         onStop: { stopTestOut(view) }
       )
       .id(question.itemId)
-      .onAppear { shownAt = .now }
+      .onAppear {
+        shownAt = .now
+        visit.firstQuestion(context, number: view.answered + 1, sitting: view.attemptId)
+          .map(UsageAnalytics.track)
+      }
     case .testOutResult(let view):
       LevelTestOutResult(
         view: view, isSaving: pressed != nil || undoRequest.isRunning, failed: failed,
@@ -291,17 +294,6 @@ struct LevelTestFlow: View {
     PlacementResultUndo(
       goalId: goalID, changeId: changeId, lessons: lessons, request: undoRequest,
       plans: plans, disabled: pressed != nil)
-  }
-
-  private func trackFirstQuestion(number: Int) {
-    guard !firstQuestionShown else { return }
-    firstQuestionShown = true
-    let waited = visitStart.duration(to: .now).components
-    UsageAnalytics.track(
-      .testFirstQuestionShown(
-        context, questionNumber: number,
-        waitMs: Int(waited.seconds * 1000 + waited.attoseconds / 1_000_000_000_000_000),
-        resumed: number > 1))
   }
 
   /// "Getting your test ready", with the way on available at once: onboarding's "Skip" and its
@@ -456,6 +448,7 @@ struct LevelTestFlow: View {
 
   /// The accepted start, which opens the test or goes on with the open one.
   private func start() async throws {
+    visit.started()
     let test = try await store.startLanguageTest(goalID: goalID)
     total = test.total
 
@@ -556,6 +549,7 @@ struct LevelTestFlow: View {
 
     save(.other) {
       undoRequest.leave()
+      visit.started()
       phase = LanguageTestPhase(
         testOut: try await store.startLevelTestOut(goalID: goalID, level: testOutLevel))
     }

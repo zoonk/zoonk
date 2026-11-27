@@ -422,14 +422,16 @@ final class OnboardingStore {
   }
 
   /// Closing a part applies what it skipped to the plan.
-  func finishPlacementPart(goalID: String, attempt: PlacementAttempt) async throws
-    -> PlacementPartOutcome
+  /// `stoppedAt`: a stop's answer count, as the learner saw it.
+  func finishPlacementPart(goalID: String, attempt: PlacementAttempt, stoppedAt: Int? = nil)
+    async throws -> PlacementPartOutcome
   {
     try await cache.onboardingWrite(
       invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
     ) { [api] identity in
       try await api.finishPlacementPart(
-        goalID: goalID, attemptID: attempt.id, part: attempt.part, token: identity.bearerToken)
+        goalID: goalID, attemptID: attempt.id, part: attempt.part, stoppedAt: stoppedAt,
+        token: identity.bearerToken)
     }
   }
 

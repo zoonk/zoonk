@@ -39,4 +39,19 @@ final class UsageAnalyticsTests: XCTestCase {
       timeZone: nil,
       todayBlocksLeft: nil)
   }
+
+  func testEachSittingsFirstQuestionIsSentOnceAndResumesOnlyWhatThisVisitDidntStart() {
+    let context = AnalyticsEvent.TestContext(goalID: "g1", test: .course, surface: .plan)
+    var visit = TestVisit()
+
+    XCTAssertEqual(
+      visit.firstQuestion(context, number: 4, sitting: "a1:1")?.properties["resumed"] as? Bool,
+      true, "A sitting opened before this visit")
+    XCTAssertNil(visit.firstQuestion(context, number: 5, sitting: "a1:1"))
+
+    visit.started()
+    let next = visit.firstQuestion(context, number: 1, sitting: "a1:2")
+    XCTAssertEqual(next?.properties["resumed"] as? Bool, false, "Keep going started part 2")
+    XCTAssertEqual(next?.properties["question_number"] as? Int, 1)
+  }
 }
