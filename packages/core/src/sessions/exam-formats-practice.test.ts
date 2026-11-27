@@ -48,7 +48,7 @@ const SELECT_ALL = {
       text: "Over the limit",
     },
   ],
-  question: "Select all that apply.",
+  question: "Which of these are true about the daily dose?",
   select: "all",
 };
 
