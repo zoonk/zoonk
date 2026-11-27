@@ -231,6 +231,26 @@ class PlacementTestViewModelTest {
         }
 
     @Test
+    fun aStopRefusedBecauseAnotherDeviceAnsweredMoreShowsWhereTheTestIsInsteadOfAFailure() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(PART_TWO_FOURTH)
+                    writeFailure = ApiException(ApiError.Unavailable, status = 409)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+            api.placement = placement(attemptOf("wholeCourse", 2, complete = false, answered = 5))
+
+            vm.stop(question)
+            runCurrent()
+
+            assertEquals(listOf(3L), api.finishedAnswered)
+            assertEquals(0, vm.saveFailures)
+            assertEquals(6, (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question).number)
+        }
+
+    @Test
     fun aCloseThatFailsWhileThePartIsStillOpenSaysSo() =
         runTest {
             val api =
@@ -295,7 +315,59 @@ class PlacementTestViewModelTest {
 
             assertEquals(7, (shown as PlacementTestPhase.Result).lessonsSkipped)
             assertEquals(0, shown.partsLeft)
-            assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null))))
+            assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null, next = null, status = "done", result = true))))
+        }
+
+    @Test
+    fun aRestoredPartShowsOnlyOnceTheFirstReadStillHasTheTestWhereItClosed() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(PART_ONE, next = null)
+                    completion = completion(attempt = PART_ONE_CLOSED, skipped = 6)
+                }
+            val handle = SavedStateHandle()
+            val (vm, store) = viewModel(api, handle)
+            val over = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.PartOver
+            vm.finishPart(over.attempt)
+            runCurrent()
+            assertTrue(vm.phase(store.placements[GOAL_ID].state.value) is PlacementTestPhase.PartDone)
+
+            val restored =
+                PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+            assertEquals(PlacementTestPhase.Loading, restored.phase(LoadState.Loading))
+            assertTrue(
+                restored.phase(LoadState.Loaded(placement(PART_ONE_CLOSED, next = null, status = "done"))) is PlacementTestPhase.PartDone,
+            )
+            // Another device went on to the next part, or finished the test, while the process was gone.
+            assertTrue(restored.phase(LoadState.Loaded(placement(PART_TWO))) is PlacementTestPhase.Question)
+            val finished = LoadState.Loaded(placement(attempt = null, next = null, status = "done", result = true))
+            assertEquals(PlacementTestPhase.Choose, restored.phase(finished))
+            assertEquals(3, (restored.phase(finished, finished = true) as PlacementTestPhase.Result).lessonsSkipped)
+        }
+
+    @Test
+    fun aRestoredStopGivesWayToWhereAnotherDeviceStoppedTheSamePartSince() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(PART_TWO_FOURTH)
+                    completion = completion(attempt = PART_TWO_STOPPED, skipped = 1)
+                }
+            val handle = SavedStateHandle()
+            val (vm, store) = viewModel(api, handle)
+            vm.stop(shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question)
+            runCurrent()
+
+            val restored =
+                PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+            val same = placement(PART_TWO_STOPPED, next = null, status = "done")
+            assertTrue(restored.phase(LoadState.Loaded(same)) is PlacementTestPhase.PartStopped)
+            val later = attemptOf("wholeCourse", 2, complete = false, answered = 7, resume = 8)
+            val moved = restored.phase(LoadState.Loaded(placement(later, next = null, status = "done")))
+            assertEquals(8L, (moved as PlacementTestPhase.Continue).attempt.resume?.question)
         }
 
     private companion object {
