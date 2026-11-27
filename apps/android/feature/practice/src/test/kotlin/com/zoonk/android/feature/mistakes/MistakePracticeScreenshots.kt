@@ -114,19 +114,35 @@ class MistakePracticeScreenshots {
         feedback: () -> MistakePracticeFeedback = {
             practiceFeedback(isCorrect = true, fixed = true, fixedMistakeIds = listOf(FIRST_MISTAKE))
         },
+        hasMorePractice: Boolean = false,
+        block: Boolean = false,
+        finish: suspend (com.zoonk.api.models.MistakePracticeFinishInput) -> com.zoonk.api.models.MistakePracticeCompletion = {
+            completion(correct = 1, total = 2, hasMorePractice = hasMorePractice)
+        },
     ) {
         val api =
             FakeMistakesApi(
                 practice(entry ?: practiceEntry(FIRST_MISTAKE, *questions, drill = drill)),
                 answer = { feedback() },
-                finish = { completion(correct = 1, total = 2) },
+                finish = finish,
             )
         val cache =
             AppCache(
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = practiceViewModel(cache, api)
+        val viewModel =
+            if (block) {
+                practiceViewModel(
+                    cache,
+                    api,
+                    key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()),
+                    sessionId = java.util.UUID.randomUUID(),
+                    steps = com.zoonk.android.feature.practice.UnusedSessionSteps,
+                )
+            } else {
+                practiceViewModel(cache, api)
+            }
         viewModel.started()
 
         rule.setContent {
@@ -154,7 +170,14 @@ class MistakePracticeScreenshots {
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val viewModel = practiceViewModel(cache, api, key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()))
+        val viewModel =
+            practiceViewModel(
+                cache,
+                api,
+                key = PracticeKey(goalId = null, blockId = java.util.UUID.randomUUID()),
+                sessionId = java.util.UUID.randomUUID(),
+                steps = com.zoonk.android.feature.practice.UnusedSessionSteps,
+            )
         viewModel.beginEmpty()
         if (retried) {
             api.finish = { completion() }
@@ -187,7 +210,7 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDonePracticeAgainDark() {
-        show("phone-done-again-dark", dark = true, play = ::playToEnd, feedback = { practiceFeedback(requiresLaterDay = true) })
+        show("phone-done-again-dark", dark = true, play = ::playToEnd, hasMorePractice = true)
     }
 
     @Test
@@ -247,7 +270,44 @@ class MistakePracticeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneDonePracticeAgain() {
-        show("phone-done-again", play = ::playToEnd, feedback = { practiceFeedback(requiresLaterDay = true) })
+        show("phone-done-again", play = ::playToEnd, hasMorePractice = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDoneSameDayNothingCounted() {
+        show(
+            "phone-done-same-day",
+            play = ::playToEnd,
+            feedback = { practiceFeedback(requiresLaterDay = true) },
+            finish = { completion(correct = 0, total = 0) },
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneBlockDone() = show("phone-block-done", play = ::playToEnd, block = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneBlockDoneDark() = show("phone-block-done-dark", dark = true, play = ::playToEnd, block = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneBlockNotSaved() =
+        show("phone-block-not-saved", play = ::playToEnd, block = true, finish = { throw ApiException(ApiError.Network) })
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneBlockNotSavedDarkLarge() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(
+            "phone-block-not-saved-dark-font200",
+            dark = true,
+            play = ::playToEnd,
+            block = true,
+            finish = { throw ApiException(ApiError.Network) },
+        )
     }
 
     @Test

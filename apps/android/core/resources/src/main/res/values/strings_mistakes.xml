@@ -29,13 +29,15 @@
     <string name="mistakes_cause_guess">Guessed</string>
     <string name="mistakes_practice_topic">Practice this topic</string>
     <!-- After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day. -->
-    <string name="mistakes_practice_later_day">Get it right again another day to fix it.</string>
+    <string name="mistakes_practice_later_day">It comes back another day to make sure.</string>
     <!-- The main action once a practice of mistakes ends: practice the ones it didn't fix again, right away. -->
     <string name="mistakes_practice_again">Practice again</string>
     <string name="mistakes_practice_done">Done</string>
     <!-- Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet. -->
     <string name="mistakes_practice_not_saved">Your practice isn\'t saved yet</string>
-    <!-- When a day's practice of mistakes with no answers couldn't be marked done: there is nothing to keep. -->
-    <string name="mistakes_practice_not_through">That didn\'t go through.</string>
+    <!-- Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere. -->
+    <string name="mistakes_practice_already_fixed">Already fixed</string>
+    <!-- Under "Already fixed" when marking the day's practice done didn't reach the server. -->
+    <string name="mistakes_practice_not_marked">We couldn\'t mark it done. Check your connection.</string>
     <string name="mistakes_open_lesson">Open the lesson</string>
 </resources>

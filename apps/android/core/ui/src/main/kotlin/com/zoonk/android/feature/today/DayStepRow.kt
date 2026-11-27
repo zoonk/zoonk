@@ -140,7 +140,11 @@ private fun StepLines(
         }
 
     subject?.let { SubLine(it) }
-    if (!step.isFinished) stepLine(lessonStatus, writingStalled, step)?.let { SubLine(it) }
+    if (!step.isFinished) {
+        // Why the plan added a row is a sentence, so it wraps at large text rather than losing its end.
+        val line = stepLine(lessonStatus, writingStalled, step)
+        line?.let { SubLine(it, lines = if (it == remedialLine(step)) 2 else 1) }
+    }
 }
 
 /** Main's `useStepLabel` without the subject, which [StepLines] puts above it. */
@@ -178,8 +182,11 @@ private fun stepLine(
 }
 
 @Composable
-private fun SubLine(text: String) {
-    Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+private fun SubLine(
+    text: String,
+    lines: Int = 1,
+) {
+    Text(text = text, maxLines = lines, overflow = TextOverflow.Ellipsis)
 }
 
 /**

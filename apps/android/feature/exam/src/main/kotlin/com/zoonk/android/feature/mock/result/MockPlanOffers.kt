@@ -123,7 +123,11 @@ internal fun PlanStep(
     val movedIsTitle = preparation == null && movedTopics != null
 
     Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Eyebrow(stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan))
+        // A title saying what moved already says it's the plan, so the chip would repeat it.
+        when {
+            preparation != null -> Eyebrow(stringResource(R.string.mock_result_your_preparation))
+            !movedIsTitle -> Eyebrow(stringResource(R.string.mock_result_your_plan))
+        }
         when {
             preparation != null -> PreparationReadout(preparation, MaterialTheme.typography.displayMedium)
             movedIsTitle -> StepTitle(stringResource(R.string.mock_result_plan_moved))
@@ -143,11 +147,9 @@ internal fun MovedTopics(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         if (showTitle) Text(stringResource(R.string.mock_result_plan_moved), style = MaterialTheme.typography.bodyMedium)
-        Text(
-            formatList(topics.take(TOPICS_NAMED), currentLocale()),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        topics.take(TOPICS_NAMED).forEach {
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
 

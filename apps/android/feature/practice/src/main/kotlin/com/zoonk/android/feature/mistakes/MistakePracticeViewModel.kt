@@ -12,6 +12,9 @@ import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.android.feature.player.DayChoices
+import com.zoonk.android.feature.player.SessionMove
+import com.zoonk.android.feature.player.SessionMover
+import com.zoonk.android.feature.player.SessionSteps
 import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -35,6 +38,7 @@ import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.MistakeDrill
@@ -105,15 +109,15 @@ data class PracticeState(
     val unsaved: Boolean get() = end == null && finishFailures > 0
 
     /**
-     * A run played to its end goes again while this batch left a mistake open or its scope has more;
-     * one left early ends there.
+     * Going again can fix something today only while a mistake from an earlier day is still open in
+     * the scope, which the finish says; today's misses wait for another day.
      */
     val offersAgain: Boolean
-        get() {
-            val end = end ?: return false
-            val unfixed = read.tasks.any { it.mistakeId !in fixedIds }
-            return run.index >= read.tasks.size && again != AgainLoad.NothingLeft && (unfixed || end.summary?.hasMorePractice == true)
-        }
+        get() = end?.summary?.hasMorePractice == true && again != AgainLoad.NothingLeft
+
+    /** The run's own answers, so a batch whose answers counted nothing new still shows how it went. */
+    val score: MomentScore
+        get() = MomentScore(run.answers.size, run.answers.values.count { it.isCorrect })
 }
 
 /** "Practice again" reads a fresh batch in the same scope; [NothingLeft] when it came back empty. */
@@ -127,8 +131,25 @@ class MistakePracticeViewModel(
     private val sessions: SessionSource,
     private val saved: SavedStateHandle,
     private val now: () -> Long = SystemClock::elapsedRealtime,
+    /** A day block's run and the steps of its session, so its end goes on to the day's next stop. */
+    sessionId: UUID? = null,
+    steps: SessionSteps? = null,
 ) : ViewModel(),
     RunControls {
+    private val sessionMover = if (sessionId != null && steps != null) SessionMover(steps, sessionId, viewModelScope) else null
+    val sessionMove: StateFlow<SessionMove> = sessionMover?.move ?: MutableStateFlow(SessionMove()).asStateFlow()
+
+    /** A day block's run ends as the day's other blocks do, on its next stop. */
+    val leadsOn: Boolean get() = sessionMover != null
+
+    fun continueSession() {
+        sessionMover?.continueSession()
+    }
+
+    fun stopSession() {
+        sessionMover?.stop()
+    }
+
     private val mutableState = MutableStateFlow<PracticeState?>(null)
     val state: StateFlow<PracticeState?> = mutableState.asStateFlow()
 

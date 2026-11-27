@@ -139,9 +139,11 @@ internal fun practiceViewModel(
     choices: TodayChoices = noChoices(),
     sessions: SessionSource = FakeSession(null),
     key: PracticeKey = PracticeKey(goalId = null),
+    sessionId: UUID? = null,
+    steps: com.zoonk.android.feature.player.SessionSteps? = null,
 ): MistakePracticeViewModel {
     val store = MistakesStore(api, cache) { "UTC" }
-    return MistakePracticeViewModel(key, store, choices, sessions, saved, clock)
+    return MistakePracticeViewModel(key, store, choices, sessions, saved, clock, sessionId, steps)
 }
 
 /** A learner who hasn't chosen anything for the day; drafts that no account opened are never read from disk. */

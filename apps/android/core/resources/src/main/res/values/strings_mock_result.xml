@@ -204,8 +204,8 @@
     <string name="mock_result_not_done">Not done</string>
     <string name="mock_result_your_preparation">Your preparation</string>
     <string name="mock_result_your_plan">Your plan</string>
-    <!-- On a mock exam's result: the plan moved the topics the learner missed to its start. The topics follow on the next line. -->
-    <string name="mock_result_plan_moved">Your plan now starts with what you missed</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">What you missed now comes sooner</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Skip %d lesson you already know?</item>
         <item quantity="other">Skip %d lessons you already know?</item>

@@ -308,11 +308,11 @@ fun StudyBlockOpening.route(): AppRoute? =
         }
 
         is StudyBlockOpening.MistakespracticeWrapper -> {
-            AppRoute.MistakePractice(blockId = value.blockId.toString())
+            AppRoute.MistakePractice(blockId = value.blockId.toString(), sessionId = value.sessionId.toString())
         }
 
         is StudyBlockOpening.PatternWrapper -> {
-            AppRoute.Pattern(value.patternId.toString())
+            AppRoute.Pattern(value.patternId.toString(), value.sessionId.toString())
         }
 
         is StudyBlockOpening.TodayWrapper -> {
