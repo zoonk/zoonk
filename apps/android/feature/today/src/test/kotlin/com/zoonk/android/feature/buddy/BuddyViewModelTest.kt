@@ -42,9 +42,11 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonObject
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
@@ -127,6 +129,34 @@ class BuddyViewModelTest {
             val chosen = blank.openConversation(GOAL)
             assertNotNull(chosen)
             assertNotEquals(LINKED, chosen)
+        }
+
+    @Test
+    fun anEmptyReadRejectsTheLinkedIdAndKeepsANewConversationWritable() =
+        runTest(dispatcher) {
+            val api = FakeTutorApi()
+            val tutor = tutorStore(api, AppCache(session, backgroundScope), session)
+            val saved = SavedStateHandle()
+            val vm = buddy(tutor = tutor, saved = saved)
+            val route = AppRoute.Buddy(conversationId = LINKED)
+            vm.choose(GOAL, route, list = null)
+
+            val linkedThread = tutor.threads[TutorThreadKey.Plan(GOAL, LINKED)]
+            linkedThread.load()
+            assertEquals(1, api.threadReads)
+            assertEquals(TutorThread.Empty, linkedThread.state.value.value)
+            assertTrue(vm.isUnreadable(GOAL, route.conversationId, linkedThread.state.value))
+
+            vm.unreadable(GOAL, LINKED, conversations(current = LINKED))
+            val draftId = requireNotNull(vm.openConversation(GOAL))
+            assertNotEquals(LINKED, draftId)
+            val draftThread = tutor.threads[TutorThreadKey.Plan(GOAL, draftId)]
+            draftThread.load()
+            assertEquals(1, api.threadReads)
+            assertEquals(TutorThread.Empty, draftThread.state.value.value)
+            val restored = buddy(tutor = tutor, saved = saved)
+            assertEquals(draftId, restored.openConversation(GOAL))
+            assertFalse(restored.isUnreadable(GOAL, route.conversationId, draftThread.state.value))
         }
 
     @Test
