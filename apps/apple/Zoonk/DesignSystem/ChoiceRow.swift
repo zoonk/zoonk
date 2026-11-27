@@ -43,17 +43,28 @@ struct ChoiceRowLabel<Words: View>: View {
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
 
-      Image(systemName: isLocked ? "lock" : isPicked ? "checkmark.circle.fill" : "circle")
-        .foregroundStyle(
-          isLocked
-            ? AnyShapeStyle(.mutedForeground)
-            : AnyShapeStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
-        )
-        .accessibilityHidden(true)
+      ChoiceMark(isPicked: isPicked, isLocked: isLocked)
         .layoutPart(.end)
     }
     .contentShape(.rect)
     .layoutRow(.choiceList)
+  }
+}
+
+/// A choice's ring, which fills with a check once picked; a lock for one the learner can't pick
+/// yet.
+struct ChoiceMark: View {
+  let isPicked: Bool
+  var isLocked = false
+
+  var body: some View {
+    Image(systemName: isLocked ? "lock" : isPicked ? "checkmark.circle.fill" : "circle")
+      .foregroundStyle(
+        isLocked
+          ? AnyShapeStyle(.mutedForeground)
+          : AnyShapeStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
+      )
+      .accessibilityHidden(true)
   }
 }
 

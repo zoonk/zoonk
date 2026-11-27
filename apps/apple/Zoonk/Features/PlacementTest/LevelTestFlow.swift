@@ -86,8 +86,8 @@ struct LevelTestFlow: View {
   var onStartLesson: ((String) -> Void)?
   /// Onboarding's: the learner's own language, which the result offers to switch the app to.
   var appLanguage: String?
-  /// Onboarding's: the learner gave a level, so "First lesson" says it starts there.
-  var statedLevel = false
+  /// Onboarding's first lesson by its name, where it's known.
+  var firstLesson: String?
   /// Onboarding's "First lesson".
   var onFirstLesson: (() async throws -> Void)?
   var onOnboardingDone: ((String?) async throws -> Void)?
@@ -243,32 +243,30 @@ struct LevelTestFlow: View {
     }
   }
 
-  /// Onboarding's "First lesson" or the level test; on the plan the level test, with the next
-  /// level's test-out beside it when there is one.
+  /// Onboarding's level test or "First lesson"; on the plan the level test, with the next level's
+  /// test-out beside it when there is one.
   private func offer(_ test: LevelTest) -> some View {
-    let levelTest = TestOfferRow(
-      id: .quick, label: String(localized: PlacementTestCopy.languageName),
-      facts: TestCopy.testFacts(questions: test.total, minutes: test.estimatedMinutes))
-    let testOutRow = testOutLevel.map { level in
-      TestOfferRow(
+    let levelTest = TestCopy.testCard(
+      label: String(localized: PlacementTestCopy.languageName), questions: test.total,
+      minutes: test.estimatedMinutes)
+    let testOutCard = testOutLevel.map { level in
+      TestOfferCard(
         id: .testOut, label: PlacementTestCopy.testOut(level),
-        facts: [
-          String(
-            localized: "Skip \(level) if you already know it", table: "Onboarding",
-            comment:
-              "What a language level's test-out does, such as \"Skip B2 if you already know it\"")
-        ])
+        line: String(
+          localized: "Skip \(level) if you already know it", table: "Onboarding",
+          comment:
+            "What a language level's test-out does, such as \"Skip B2 if you already know it\""))
     }
-    let rows =
+    let cards =
       isOnboarding
-      ? [TestCopy.firstLessonRow(statedLevel: statedLevel), levelTest]
-      : [levelTest] + (testOutRow.map { [$0] } ?? [])
+      ? [levelTest, TestCopy.firstLessonCard(title: firstLesson)]
+      : [levelTest] + (testOutCard.map { [$0] } ?? [])
 
     return TestOffer(
-      rows: rows, chip: String(localized: PlacementTestCopy.languageName),
+      cards: cards,
       title: Text(isOnboarding ? TestCopy.whereToStart : TestCopy.skipWhatYouKnow),
       description: Text(TestCopy.findsSkips),
-      preselected: testOutFirst && testOutRow != nil ? .testOut : .quick,
+      preselected: testOutFirst && testOutCard != nil ? .testOut : .quick,
       context: AnalyticsEvent.TestContext(
         goalID: goalID, test: .language, surface: isOnboarding ? .onboarding : .plan,
         questions: test.total),
@@ -339,6 +337,7 @@ struct LevelTestFlow: View {
       .buttonSizing(.flexible)
     }
     .onboardingColumn()
+    .testTop(.open)
     // Without the run's id, as when the learner comes back to a test still being written, the
     // wait reads the test until it's ready.
     .task(id: generationID == nil ? attemptID : nil) {
@@ -622,7 +621,6 @@ struct LevelTestScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
-  @State private var leaving: AnalyticsEvent?
 
   var body: some View {
     let plan = plans.plan(goalId: goalId)
@@ -652,17 +650,7 @@ struct LevelTestScreen: View {
           StepLoading()
         }
       }
-      .onPreferenceChange(TestLeaveKey.self) { leaving = $0 }
-      .navigationTitle(Text(PlacementTestCopy.languageName))
-      .navigationBarTitleDisplayMode(.inline)
-      .testBar()
-      .taskClose {
-        Button(role: .close) {
-          leaving.map(UsageAnalytics.track)
-          dismiss()
-        }
-        .leavesOnEscape()
-      }
+      .testTask(name: Text(PlacementTestCopy.languageName)) { dismiss() }
     }
     .loads(plan, standing, refreshable: false)
   }

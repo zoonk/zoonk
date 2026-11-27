@@ -13,7 +13,7 @@ struct OnboardingTestStep: Decodable, Equatable {
 
   let mode: Mode
   let kind: Kind
-  /// A course's quick test and, with more than one part, its full test.
+  /// A course's test before it starts.
   let courseOffer: CoursePlacementOffer?
   /// The Focus test's sitting.
   let focusOffer: FocusTest.Offer?
@@ -40,7 +40,7 @@ extension GoalOnboarding {
   }
 }
 
-/// A course's test in onboarding: "First lesson" or a test, then the same test the plan opens.
+/// A course's test in onboarding: the test or "First lesson", then the same test the plan opens.
 /// Main's course placement step.
 struct PlacementStep: View {
   let view: GoalOnboarding
@@ -48,8 +48,8 @@ struct PlacementStep: View {
   let onDone: (String?) async throws -> Void
 
   @Environment(OnboardingStore.self) private var onboarding
-  /// The test the learner picked on the offer.
-  @State private var chosen: PlacementLength?
+  /// The learner picked the test on the offer.
+  @State private var started = false
   @State private var isSaving = false
   @State private var failed = false
   @State private var tasks = ScreenTasks()
@@ -58,27 +58,26 @@ struct PlacementStep: View {
     let step = view.testStep
 
     Group {
-      if let chosen {
-        flow(.start(chosen))
+      if started || step?.mode == .direct {
+        flow(.start)
       } else if step?.mode == .offer, let offer = step?.courseOffer {
         TestOffer(
-          rows: [TestCopy.firstLessonRow(statedLevel: view.statedLevel)]
-            + TestCopy.courseRows(offer),
+          cards: [
+            TestCopy.courseCard(offer), TestCopy.firstLessonCard(title: view.firstLesson?.title),
+          ],
           title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
           preselected: .quick,
           context: AnalyticsEvent.TestContext(
             goalID: view.goal.id, test: .course, surface: .onboarding,
-            parts: offer.wholeCourse?.parts, questions: offer.questions),
+            questions: offer.questions),
           isSaving: isSaving, failed: failed
         ) { row in
-          switch row {
-          case .firstLesson: firstLesson()
-          case .wholeCourse: chosen = .wholeCourse
-          default: chosen = .quick
+          if row == .firstLesson {
+            firstLesson()
+          } else {
+            started = true
           }
         }
-      } else if step?.mode == .direct {
-        flow(.start(.quick))
       } else {
         flow(.read)
       }
@@ -175,6 +174,7 @@ struct TestOutcome<Lead: View>: View {
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isSaving)
+    .testTop(.open)
   }
 }
 
@@ -212,75 +212,58 @@ struct PlacementUnavailable: View {
   }
 }
 
-/// The ✕ of a test's screen during a sitting: what it reports as the learner leaves.
-struct TestLeaveKey: PreferenceKey {
-  static let defaultValue: AnalyticsEvent? = nil
-
-  static func reduce(value: inout AnalyticsEvent?, nextValue: () -> AnalyticsEvent?) {
-    value = nextValue() ?? value
-  }
+/// A question's second button in the bar where the question has its own, such as a listening
+/// question's "Can't listen now". It keeps the width of the widest label it shows in turn, so
+/// Confirm beside it never moves.
+struct QuestionSecondAction {
+  let label: LocalizedStringResource
+  var steadyAmong: [LocalizedStringResource] = []
+  /// Pressed in place of answering "I don't know yet".
+  var action: (() -> Void)?
 }
 
-/// A question of any test, under its chip and its place in the test: "Question 5 of 12", or "Part 3
-/// of 14 · Question 5 of 12" in a full test. A new question gets a fresh view (`.id`), so nothing
-/// picked carries over.
+/// A question of any test, under the test's task top: what it tests as the bar's title over one
+/// segment a question. A new question gets a fresh view (`.id`), so nothing picked carries over.
 struct PlacementQuestionScreen<Media: View>: View {
   /// What the question tests: its skill, chapter or subject.
   let subject: String
   let number: Int
   /// The ceiling promised before the first question.
   let total: Int
-  /// The full test's part and its count of parts.
-  var part: (number: Int, of: Int)?
+  /// The sizes of the test's sections in order, where it has them.
+  var groups: [Int] = []
   let question: PracticeQuestion
   var askedIn: String?
   var labels = PracticeTrueFalseLabels.trueFalse
-  var dontKnowLabel = LocalizedStringResource(
-    "I don't know yet", table: "Onboarding",
-    comment: "Answers a placement question without guessing")
-  /// A listening question's "Can't listen now".
-  var defersAudio: (() -> Void)?
+  var second: QuestionSecondAction?
   let isSaving: Bool
   let failures: Int
   var saveFailure: LocalizedStringResource?
-  /// Said right above Stop, when stopping is worth suggesting.
+  /// Said over the ways out behind ✕, when stopping is worth suggesting.
   var stopHint: LocalizedStringResource?
   /// What ✕ reports while this question shows.
   var context: AnalyticsEvent.TestContext?
   let onReport: () -> Void
   let onAnswer: (PracticeAnswer) -> Void
-  /// "Stop and use my answers", from the second question; nil where stopping saves nothing yet.
+  /// "Stop and use my answers", behind ✕ from the second question; nil where stopping saves
+  /// nothing yet.
   let onStop: (() -> Void)?
   @ViewBuilder var media: () -> Media
 
   @State private var draft: PracticeAnswer?
   @State private var submission: Submission?
 
-  private enum Submission { case confirm, dontKnow, deferAudio, stop }
+  private enum Submission { case confirm, second, stop }
+
+  static var dontKnow: LocalizedStringResource {
+    LocalizedStringResource(
+      "I don't know yet", table: "Onboarding",
+      comment: "Answers a placement question without guessing")
+  }
 
   var body: some View {
     PracticeTaskLayout {
-      ChipRow(chip: Chip(Text(verbatim: subject)), position: Text(verbatim: position))
-
-      // Under the voice message it belongs to, closer to it than to the question, as main's link.
-      if let defersAudio {
-        VStack(alignment: .leading, spacing: 8) {
-          media()
-
-          BusyButton(isBusy: isSaving && submission == .deferAudio) {
-            submission = .deferAudio
-            defersAudio()
-          } label: {
-            Text(TestCopy.cantListen)
-              .underline()
-          }
-          .buttonStyle(.borderless)
-          .disabled(isSaving && submission != .deferAudio)
-        }
-      } else {
-        media()
-      }
-
+      media()
       asked.stimulus
     } response: {
       asked.response
@@ -292,41 +275,27 @@ struct PlacementQuestionScreen<Media: View>: View {
       if failures > 0, !isSaving {
         SaveFailureNotice(failures: failures, onReport: onReport)
       }
-
-      if number > 1, let onStop {
-        if let stopHint {
-          Text(stopHint)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        BusyButton(isBusy: isSaving && submission == .stop) {
-          submission = .stop
-          onStop()
-        } label: {
-          Text(
-            "Stop and use my answers", tableName: "Onboarding"
-          )
-          .underline()
-        }
-        .buttonStyle(.borderless)
-        .disabled(isSaving && submission != .stop)
-      }
     } actions: {
       let answer = question.answerToSubmit(draft)
       PracticeActionRow {
         QuestionDontKnowButton(
-          title: dontKnowLabel, isBusy: isSaving && submission == .dontKnow,
-          isDisabled: isSaving
+          title: second?.label ?? Self.dontKnow, steadyAmong: second?.steadyAmong ?? [],
+          isBusy: isSaving && submission == .second, isDisabled: isSaving
         ) {
-          submission = .dontKnow
-          onAnswer(.dontKnow)
+          submission = .second
+
+          if let action = second?.action {
+            action()
+          } else {
+            onAnswer(.dontKnow)
+          }
         }
 
         PracticeMainButton(
           title: LocalizedStringResource(
             "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-          isBusy: isSaving && submission == .confirm,
+          // A stop sent from behind ✕ has no button of its own on this screen.
+          isBusy: isSaving && (submission == .confirm || submission == .stop),
           isDisabled: isSaving || answer == nil
         ) {
           if let answer {
@@ -336,19 +305,20 @@ struct PlacementQuestionScreen<Media: View>: View {
         }
       }
     }
-    .preference(
-      key: TestQuestionProgressKey.self, value: Double(number - 1) / Double(max(1, total))
-    )
-    .preference(
-      key: TestLeaveKey.self, value: context.map { .testLeft($0, questionNumber: number) })
+    .testTop(.question(top))
   }
 
-  /// "Part 3 of 14 · Question 5 of 12": two facts, joined as facts are.
-  private var position: String {
-    let question = TestCopy.question(number, of: total)
-
-    guard let part else { return question }
-    return [TestCopy.part(part.number, of: part.of), question].joinedFacts()
+  private var top: TestQuestionTop {
+    TestQuestionTop(
+      title: subject, answered: number - 1, total: total, groups: groups,
+      leaving: context.map { .testLeft($0, questionNumber: number) },
+      stop: number > 1
+        ? onStop.map { onStop in
+          TestStop(id: question.itemId, hint: stopHint, waits: isSaving) {
+            submission = .stop
+            onStop()
+          }
+        } : nil)
   }
 
   private var asked: PracticeQuestionView {
@@ -368,7 +338,6 @@ extension PlacementQuestionScreen where Media == EmptyView {
     subject: String,
     number: Int,
     total: Int,
-    part: (number: Int, of: Int)? = nil,
     question: PracticeQuestion,
     askedIn: String? = nil,
     labels: PracticeTrueFalseLabels,
@@ -379,13 +348,13 @@ extension PlacementQuestionScreen where Media == EmptyView {
     context: AnalyticsEvent.TestContext? = nil,
     onReport: @escaping () -> Void,
     onAnswer: @escaping (PracticeAnswer) -> Void,
-    onStop: @escaping () -> Void
+    onStop: (() -> Void)?
   ) {
     self.init(
-      subject: subject, number: number, total: total, part: part, question: question,
-      askedIn: askedIn, labels: labels, isSaving: isSaving, failures: failures,
-      saveFailure: saveFailure, stopHint: stopHint, context: context, onReport: onReport,
-      onAnswer: onAnswer, onStop: onStop, media: { EmptyView() }
+      subject: subject, number: number, total: total, question: question, askedIn: askedIn,
+      labels: labels, isSaving: isSaving, failures: failures, saveFailure: saveFailure,
+      stopHint: stopHint, context: context, onReport: onReport, onAnswer: onAnswer,
+      onStop: onStop, media: { EmptyView() }
     )
   }
 }

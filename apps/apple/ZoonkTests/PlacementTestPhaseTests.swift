@@ -2,20 +2,24 @@ import XCTest
 
 @testable import Zoonk
 
-/// Main's `placement-test-phase.test.ts`: which screen a course's test shows, from a read or from a
-/// part that closed, and where a learner who comes back picks up.
+/// Main's `placement-test-phase.test.ts`: which screen a course's test shows, from a read or from
+/// its finish, and where a learner who comes back picks up.
 final class PlacementTestPhaseTests: XCTestCase {
   private let question = PracticeQuestion(itemId: "i1", format: .order, question: "Q?")
 
   func testWithNoTestOpenThePlanOffersOneAndOnboardingComesBackToItsResult() {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 5)
     result.attemptId = "a1"
+    result.chapter = "Why prices move"
+    result.course = course
 
     XCTAssertEqual(phase(attempt: nil, .asking, next: question), .offer)
     XCTAssertEqual(phase(attempt: nil, .done, result: result), .offer)
     XCTAssertEqual(
       phase(attempt: nil, .done, result: result, onboarding: true),
-      .result(PlacementTestEnd(lessonsSkipped: 5, undoLessons: 5, attemptId: "a1")))
+      .result(
+        PlacementTestEnd(
+          lessonsSkipped: 5, chapter: "Why prices move", course: course, attemptId: "a1")))
   }
 
   func testATestTheLearnerAskedForWaitsWhileItsCourseIsBuilt() {
@@ -31,140 +35,62 @@ final class PlacementTestPhaseTests: XCTestCase {
       "A start that opened nothing has nothing to test")
   }
 
-  func testAnOpenPartGoesOnAtItsNextQuestionWithItsPlaceInTheTest() {
-    let open = attempt(part: 3, answered: 4)
+  func testAnOpenTestGoesOnAtItsNextQuestionInOnboardingAndOnThePlan() {
+    let open = attempt(answered: 4)
 
-    guard case .question(let asked) = phase(attempt: open, .asking, next: question) else {
-      return XCTFail("Expected the question")
+    for onboarding in [false, true] {
+      guard
+        case .question(let asked) = phase(
+          attempt: open, .asking, next: question, onboarding: onboarding)
+      else {
+        return XCTFail("Expected the question")
+      }
+
+      XCTAssertEqual(asked.question.itemId, "i1")
+      XCTAssertEqual(asked.attempt, open, "Its answer carries the attempt")
     }
-
-    XCTAssertEqual(asked.question.itemId, "i1")
-    XCTAssertEqual(asked.attempt, open, "Its answer carries the attempt and the part")
-    XCTAssertEqual(asked.attempt.answered + 1, 5)
-    XCTAssertEqual(asked.attempt.questions, 12)
   }
 
-  func testAnOpenPartWaitsWhileItsQuestionsAreWritten() {
+  func testAnOpenTestWaitsWhileItsQuestionsAreWritten() {
     XCTAssertEqual(phase(attempt: attempt(), .waitingForQuestions), .waiting)
     XCTAssertEqual(phase(attempt: attempt(), .preparing), .waiting)
   }
 
-  func testAPartWhoseQuestionsCouldntBeWrittenKeepsTheWaitOpenToTryAgain() {
+  func testATestWhoseQuestionsCouldntBeWrittenKeepsTheWaitOpenToTryAgain() {
     let failed = phase(attempt: attempt(), .failed)
 
     XCTAssertEqual(failed, .preparationFailed(attempt()))
-    XCTAssertTrue(failed.isWaiting, "Never a finished part")
+    XCTAssertTrue(failed.isWaiting, "Never a finished test")
     XCTAssertEqual(phase(attempt: attempt(), .unavailable), .unavailable)
   }
 
-  func testAPartWithNothingLeftToAskClosesNext() {
-    XCTAssertEqual(phase(attempt: attempt(), .done), .partOver(attempt()))
+  func testATestWithNothingLeftToAskFinishesNext() {
+    XCTAssertEqual(phase(attempt: attempt(), .done), .over(attempt()))
   }
 
-  func testAFullTestWithPartsLeftReopensOnContinueYourTestInOnboardingAndOnThePlan() {
-    let between = attempt(part: 3, partComplete: true, nextPart: 4)
-    let stopped = attempt(part: 5, answered: 3, resume: .init(part: 5, question: 4))
+  func testAFinishShowsWhereTheLearnerStartsAndItsUndoOnlyWhenItGivesBackWhatItCounts() {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
+    result.chapter = "Why prices move"
+    result.course = course
+    result.nextLesson = .init(
+      id: "l1", title: "News, results and expectations", estimatedMinutes: 5,
+      chapter: "Why prices move")
 
-    for onboarding in [false, true] {
-      XCTAssertEqual(
-        phase(attempt: between, .done, onboarding: onboarding), .continueTest(between))
-      XCTAssertEqual(
-        phase(attempt: stopped, .done, onboarding: onboarding), .continueTest(stopped))
-    }
+    let end = PlacementTestEnd(
+      finished: PlacementFinish(lessonsSkipped: 4, changeId: "c", result: result), attemptId: "a1")
+    XCTAssertEqual(end.chapter, "Why prices move")
+    XCTAssertEqual(end.course, course)
+    XCTAssertEqual(end.nextLesson?.estimatedMinutes, 5)
+    XCTAssertEqual(end.changeId, "c")
+    XCTAssertEqual(end.undoLessons, 4)
 
-    XCTAssertEqual(
-      plainFacts(PlacementTestCopy.standing(between)), ["Part 4 of 14", "About 1 hr 6 min left"],
-      "Between parts it names the next part, never the one that closed")
-    XCTAssertEqual(
-      plainFacts(PlacementTestCopy.standing(stopped)), ["Part 5 of 14", "Question 4 of 12"],
-      "A part stopped midway goes on at the question after the last answer")
-  }
-
-  func testAQuickTestThatEndedShowsItsResultWithTheRestOfTheCourseToTest() {
-    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 2)
-    result.attemptId = "a1"
-    let ended = attempt(length: .quick, partComplete: true, partsLeft: 13)
-
-    XCTAssertEqual(
-      phase(attempt: ended, .done, result: result),
-      .result(PlacementTestEnd(lessonsSkipped: 2, undoLessons: 2, attemptId: "a1", rest: ended)))
-  }
-
-  func testAClosedPartIsDoneOnlyOnceItsQuestionsAreExhausted() {
-    let done = attempt(part: 3, partComplete: true, nextPart: 4)
-    let stopped = attempt(part: 3, answered: 4, resume: .init(part: 3, question: 5))
-
-    XCTAssertEqual(
-      PlacementTestPhase(finished: end(done, part: 2, close: 2, change: "c"), attemptId: "a1"),
-      .checkpoint(
-        PlacementPartStop(attempt: done, partLessonsSkipped: 2, changeId: "c", undoLessons: 2)))
-    XCTAssertEqual(
-      PlacementTestPhase(finished: end(stopped, part: 1, close: 1), attemptId: "a1"),
-      .stopped(PlacementPartStop(attempt: stopped, partLessonsSkipped: 1)))
-  }
-
-  func testTheLastPartCountsTheWholeTestAndItsUndoOnlyWhenItGivesThatBack() {
-    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
-    result.heldUntilTomorrow = true
-    result.nextLesson = .init(id: "l1", title: "Loops with for")
-
-    XCTAssertEqual(
-      PlacementTestPhase(
-        finished: PlacementPartEnd(
-          attempt: nil, lessonsSkipped: 12, partLessonsSkipped: 12, changeId: "change-2",
-          result: result),
-        attemptId: "a1"),
-      .result(
-        PlacementTestEnd(
-          lessonsSkipped: 40, undoLessons: 12, heldUntilTomorrow: true,
-          nextLesson: .init(id: "l1", title: "Loops with for"), attemptId: "a1")))
-
-    let onePart = PlacementTestResult(finishedAt: .now, lessonsSkipped: 12)
-    guard
-      case .result(let end) = PlacementTestPhase(
-        finished: PlacementPartEnd(
-          attempt: nil, lessonsSkipped: 12, partLessonsSkipped: 12, changeId: "change-2",
-          result: onePart),
-        attemptId: "a1")
-    else {
-      return XCTFail("Expected the result")
-    }
-
-    XCTAssertEqual(end.changeId, "change-2")
-  }
-
-  func testAResultSaysThePartsItsLastPartRemovedWhenItShowsAgainInOnboarding() {
-    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
-    result.attemptId = "a1"
-    result.partsRemoved = 11
-
-    guard
-      case .result(let finished) = PlacementTestPhase(
-        finished: PlacementPartEnd(
-          attempt: nil, lessonsSkipped: 0, partLessonsSkipped: 0, result: result),
-        attemptId: "a1"),
-      case .result(let read) = phase(attempt: nil, .done, result: result, onboarding: true)
-    else {
-      return XCTFail("Expected the result")
-    }
-
-    XCTAssertEqual(finished.partsRemoved, 11, "No attempt is left to read them from")
-    XCTAssertEqual(read.partsRemoved, 11)
-  }
-
-  func testAQuickTestsCloseShowsItsResultEvenWithTheCourseLeft() {
-    let rest = attempt(length: .quick, partComplete: true, partsLeft: 13, remainingMinutes: 78)
-
-    guard
-      case .result(let end) = PlacementTestPhase(
-        finished: end(rest, part: 3, close: 3, change: "c"), attemptId: "a1")
-    else {
-      return XCTFail("Expected the result")
-    }
-
-    XCTAssertEqual(end.rest, rest)
-    XCTAssertEqual(
-      plainFacts(PlacementTestCopy.partsLeftFacts(rest)), ["13 parts left", "About 1 hr 18 min"])
+    // An old open test finished where it stood: this finish gives back less than the title counts.
+    var older = PlacementTestResult(finishedAt: .now, lessonsSkipped: 40)
+    older.chapter = result.chapter
+    let partial = PlacementTestEnd(
+      finished: PlacementFinish(lessonsSkipped: 12, changeId: "c", result: older), attemptId: "a1")
+    XCTAssertNil(partial.changeId)
+    XCTAssertEqual(partial.undoLessons, 0)
   }
 
   func testAnExhaustedLevelTestOutWaitsForItsResult() {
@@ -248,25 +174,17 @@ final class PlacementTestPhaseTests: XCTestCase {
       result: result, total: total)
   }
 
-  private func end(
-    _ attempt: PlacementAttempt, part: Int, close: Int, change: String? = nil
-  ) -> PlacementPartEnd {
-    PlacementPartEnd(
-      attempt: attempt, lessonsSkipped: close, partLessonsSkipped: part, changeId: change,
-      result: nil)
-  }
+  private let course = PlacementCourse(
+    lessons: 9,
+    chapters: [
+      .init(lessons: 2, skipped: 2, start: false), .init(lessons: 2, skipped: 2, start: false),
+      .init(lessons: 2, skipped: 0, start: true), .init(lessons: 3, skipped: 0, start: false),
+    ])
 
-  private func attempt(
-    length: PlacementLength = .wholeCourse, part: Int = 1, answered: Int = 0,
-    partComplete: Bool = false, nextPart: Int? = nil, partsLeft: Int = 12,
-    resume: PlacementAttempt.Resume? = nil, remainingMinutes: Int = 66
-  ) -> PlacementAttempt {
+  private func attempt(answered: Int = 0) -> PlacementAttempt {
     PlacementAttempt(
-      answered: answered, chapter: "Variables and types", estimatedMinutes: 6, id: "a1",
-      length: length, nextPart: nextPart, part: part, partComplete: partComplete, parts: 14,
-      partsLeft: partsLeft, partsRemoved: 0, questions: 12, resume: resume,
-      totalEstimatedMinutes: 85,
-      remainingEstimatedMinutes: remainingMinutes)
+      answered: answered, chapter: "Variables and types", estimatedMinutes: 4, id: "a1",
+      questions: 8)
   }
 
   private func phase(

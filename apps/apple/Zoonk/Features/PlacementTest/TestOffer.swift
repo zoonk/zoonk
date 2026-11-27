@@ -1,27 +1,29 @@
 import SwiftUI
 
-/// One of the offer's rows: a test with its facts, or onboarding's "First lesson".
-struct TestOfferRow: Equatable {
+/// One way to start: a test with its size and time, or the first lesson by its name.
+struct TestOfferCard: Equatable {
   let id: AnalyticsEvent.TestRow
   let label: String
-  let facts: [String]
+  /// One quiet line under the name: the most questions a test asks, a lesson's name.
+  var line: String?
+  /// A test's mark in its kind's hue, or a lesson's.
+  var kind = LearnKind.mock
+  /// How long it takes, as the card's readout.
+  var minutes: Int?
 }
 
-/// Main's test offer, one piece for the three tests: where to start in onboarding ("First lesson"
-/// or a test), which test to take on the plan, or the one test with its facts. The main action
-/// follows the picked row; the plan's has "Not now" beside it, onboarding's none, since "First
+/// Main's test offer, one piece for the three tests: each way to start is a card with its mark,
+/// and a test's card says how many questions it asks and how long it takes. With two cards one
+/// comes picked and the main action starts the picked one; a test offered alone is its card and
+/// the way in. The plan's has "Not now" beside the main action; onboarding's none, since "First
 /// lesson" is its way to decline.
 struct TestOffer: View {
-  let rows: [TestOfferRow]
-  /// A screen with one test names it over the title; rows name themselves.
-  var chip: String?
+  let cards: [TestOfferCard]
   let title: Text
   var description: Text?
   let preselected: AnalyticsEvent.TestRow
   /// For the offer's analytics, sent once per presentation.
   let context: AnalyticsEvent.TestContext
-  /// The plan's way out: "Not now", or "Finish later" for a test with parts left.
-  var notNowLabel = PlacementTestCopy.notNow
   let isSaving: Bool
   let failed: Bool
   /// "Not now", on the plan.
@@ -30,43 +32,42 @@ struct TestOffer: View {
 
   @State private var picked: AnalyticsEvent.TestRow?
   @State private var offered = false
+  /// Each card's own height, so every card takes the tallest and they read as a pair.
+  @State private var heights: [AnalyticsEvent.TestRow: CGFloat] = [:]
 
   var body: some View {
     let picked = self.picked ?? preselected
 
     ZoonkList {
-      StepHeader(
-        subject: rows.count == 1 ? chip : nil,
-        position: rows.count == 1 ? Text(verbatim: rows[0].facts.joinedFacts()) : nil,
-        title: title, description: description)
+      StepHeader(title: title, description: description)
 
-      if rows.count > 1 {
-        Section {
-          ForEach(rows, id: \.id) { row in
-            ChoiceRow(isPicked: picked == row.id) {
-              self.picked = row.id
-            } words: {
-              VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: row.label)
-                  .typeStyle(.rowTitle)
-                  .foregroundStyle(Color(.foreground))
-
-                if !row.facts.isEmpty {
-                  FactSegments(row.facts)
-                    .typeStyle(.meta)
-                    .foregroundStyle(.mutedForeground)
-                }
-              }
+      Section {
+        ForEach(cards, id: \.id) { card in
+          if cards.count > 1 {
+            Button {
+              self.picked = card.id
+            } label: {
+              TestOfferCardView(
+                card: card, isPicked: picked == card.id, picks: true,
+                minHeight: heights.values.max()
+              ) { heights[card.id] = $0 }
             }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(picked == card.id ? .isSelected : [])
+          } else {
+            TestOfferCardView(card: card, isPicked: false, picks: false)
           }
         }
-        .locksWhileSaving()
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+        .listRowInsets(.vertical, 4)
       }
+      .locksWhileSaving()
     }
     .bottomBar(note: failed && !isSaving ? BarNote(TestCopy.saveFailure) : nil) {
       StepButtons(
         continueLabel: Text(mainLabel(picked)),
-        skipLabel: Text(notNowLabel),
+        skipLabel: Text(PlacementTestCopy.notNow),
         onContinue: { onStart(picked) }, onSkip: onNotNow)
     }
     .onboardingColumn()
@@ -75,20 +76,76 @@ struct TestOffer: View {
       guard !offered else { return }
       offered = true
       UsageAnalytics.track(
-        .testOffered(context, rows: rows.map(\.id), preselected: preselected))
+        .testOffered(context, rows: cards.map(\.id), preselected: preselected))
     }
+  }
+
+  /// "Start" for a test; "Continue" for onboarding's first lesson, since the daily time and the
+  /// plan still follow.
+  private func mainLabel(_ row: AnalyticsEvent.TestRow) -> LocalizedStringResource {
+    row == .firstLesson ? TestCopy.continueSetup : TestCopy.start
   }
 }
 
-extension TestOffer {
-  /// "Start" for a test; "Continue" for onboarding's first lesson, since the daily time and the
-  /// plan still follow, and for a test the learner comes back to.
-  fileprivate func mainLabel(_ row: AnalyticsEvent.TestRow) -> LocalizedStringResource {
-    switch row {
-    case .firstLesson: TestCopy.continueSetup
-    case .continue: TestCopy.continueLabel
-    default: TestCopy.start
+/// An offer's card: its mark, its name over one quiet line, its minutes as a readout and, where
+/// there's a choice, its ring. The picked one sits on the pick's tint; the others are outlined.
+private struct TestOfferCardView: View {
+  let card: TestOfferCard
+  let isPicked: Bool
+  let picks: Bool
+  var minHeight: CGFloat?
+  var onHeight: (CGFloat) -> Void = { _ in }
+
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: Radius.option, style: .continuous)
+
+    HStack(spacing: 16) {
+      // The mark sits on the name's line, and the two are centered in the card as one.
+      HStack(alignment: .firstTextBaseline, spacing: 16) {
+        KindMark(kind: card.kind)
+          .markColumn()
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text(verbatim: card.label)
+            .typeStyle(.reading)
+            .fontWeight(.medium)
+            .foregroundStyle(Color(.foreground))
+
+          if let line = card.line {
+            Text(verbatim: line)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .multilineTextAlignment(.leading)
+      }
+
+      if let minutes = card.minutes {
+        BigQuantity(studyDuration(minutes: minutes))
+          .fixedSize()
+      }
+
+      if picks {
+        ChoiceMark(isPicked: isPicked)
+      }
     }
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.height
+    } action: {
+      onHeight($0)
+    }
+    .frame(minHeight: minHeight)
+    .padding(16)
+    .contentShape(shape)
+    .background {
+      if isPicked {
+        shape.fill(.selectedTint)
+      } else {
+        shape.strokeBorder(.input, lineWidth: 1)
+      }
+    }
+    .accessibilityElement(children: .combine)
   }
 }
 
@@ -117,32 +174,11 @@ enum TestCopy {
   static let firstLesson = LocalizedStringResource(
     "First lesson", table: "Onboarding")
 
-  static let startsAtLevel = LocalizedStringResource(
-    "Starts at the level you gave", table: "Onboarding")
-
-  static let quickTest = LocalizedStringResource(
-    "Quick test", table: "Onboarding",
-    comment: "The short test: about six minutes of questions.")
-
-  static let fullTest = LocalizedStringResource(
-    "Full test", table: "Onboarding",
-    comment: "The long test: it checks every topic still ahead, in parts.")
-
-  static let continueTest = LocalizedStringResource(
-    "Continue your test", table: "Onboarding")
-
-  static let continueLabel = LocalizedStringResource(
-    "Continue", table: "Onboarding", comment: "Goes on with a test the learner came back to")
-
-  static let keepGoing = LocalizedStringResource(
-    "Keep going", table: "Onboarding", comment: "Starts the full test's next part")
-
   static let finishLater = LocalizedStringResource(
     "Finish later", table: "Onboarding")
 
-  static let testTheRest = LocalizedStringResource(
-    "Test the rest", table: "Onboarding",
-    comment: "Button after the short test: goes on to test the rest of the course, in parts.")
+  static let stopAndUseAnswers = LocalizedStringResource(
+    "Stop and use my answers", table: "Onboarding")
 
   static let startLesson = LocalizedStringResource(
     "Start lesson", table: "Onboarding")
@@ -152,10 +188,6 @@ enum TestCopy {
 
   static let answersSaved = LocalizedStringResource(
     "Your answers are saved", table: "Onboarding")
-
-  /// The sentence that ends a line where the learner can stop, as a full test's checkpoint.
-  static let answersSavedLine = LocalizedStringResource(
-    "Your answers are saved.", table: "Onboarding")
 
   static let upNext = LocalizedStringResource(
     "Up next", table: "Onboarding", comment: "Over the lesson the plan goes on with")
@@ -175,7 +207,7 @@ enum TestCopy {
   static let notTested = LocalizedStringResource(
     "Not tested yet", table: "Onboarding")
 
-  /// "Up to 12 questions": a test can end sooner than its ceiling.
+  /// "Up to 8 questions": a test can end sooner than its ceiling.
   static func upToQuestions(_ count: Int) -> String {
     String(
       localized: "Up to \(count) questions", table: "Onboarding", locale: .appLanguage,
@@ -187,92 +219,31 @@ enum TestCopy {
       localized: "About \(studyDuration(minutes: minutes))", table: "Onboarding")
   }
 
-  static func aboutLeft(minutes: Int) -> String {
-    String(
-      localized: "About \(studyDuration(minutes: minutes)) left", table: "Onboarding")
-  }
-
-  static func parts(_ count: Int) -> String {
-    String(
-      localized: "\(count) parts, any day you like", table: "Onboarding", locale: .appLanguage,
-      comment:
-        "How many parts the long test has. The learner can take each part on a different day.")
-  }
-
-  static func partsLeft(_ count: Int) -> String {
-    String(
-      localized: "\(count) parts left", table: "Onboarding", locale: .appLanguage,
-      comment: "How many parts of a test the learner still has to take.")
-  }
-
-  static func part(_ part: Int, of parts: Int) -> String {
-    String(
-      localized: "Part \(part) of \(parts)", table: "Onboarding",
-      comment: "Where the learner is in a test split into parts, such as “Part 3 of 14”.")
-  }
-
   static func question(_ number: Int, of total: Int) -> String {
     String(
       localized: "Question \(number) of \(total)", table: "Onboarding")
   }
 
-  static func partDone(_ part: Int, of parts: Int) -> String {
-    String(
-      localized: "Part \(part) of \(parts) done", table: "Onboarding",
-      comment: "The title after one part of a test split into parts, such as “Part 3 of 14 done”.")
+  /// A test's card: the most it asks, and how long it takes as the card's readout.
+  static func testCard(
+    _ id: AnalyticsEvent.TestRow = .quick, label: String, questions: Int?, minutes: Int?
+  ) -> TestOfferCard {
+    TestOfferCard(
+      id: id, label: label, line: questions.map(upToQuestions), kind: .mock, minutes: minutes)
   }
 
-  /// "This part skipped 2 lessons you already know."
-  static func partSkipped(_ count: Int) -> String {
-    count == 0
-      ? String(
-        localized: "No lessons skipped in this part.", table: "Onboarding",
-        comment:
-          "After one part of a test: how many lessons that part took out of the learner's plan.")
-      : String(
-        localized: "This part skipped \(count) lessons you already know.", table: "Onboarding",
-        locale: .appLanguage,
-        comment:
-          "After one part of a test: how many lessons that part took out of the learner's plan.")
+  /// The other way to start, by the lesson's name where onboarding knows it.
+  static func firstLessonCard(title: String?) -> TestOfferCard {
+    TestOfferCard(
+      id: .firstLesson, label: String(localized: firstLesson), line: title, kind: .lesson)
   }
 
-  static func nextTime(part: Int, of parts: Int, question: Int) -> String {
-    String(
-      localized: "Next time: part \(part) of \(parts), question \(question)", table: "Onboarding",
-      comment:
-        "Where a learner who stopped a test picks it up: the part of the test and the question in it."
-    )
-  }
-
-  /// A test's facts before it starts: "Up to 12 questions · About 6 min".
-  static func testFacts(questions: Int, minutes: Int) -> [String] {
-    [upToQuestions(questions), about(minutes: minutes)]
-  }
-
-  /// The full test's facts before it starts: "14 parts, any day you like · About 1 hr 25 min".
-  static func fullTestFacts(_ wholeCourse: CoursePlacementOffer.WholeCourse) -> [String] {
-    [parts(wholeCourse.parts), about(minutes: wholeCourse.estimatedMinutes)]
-  }
-
-  /// "First lesson", with where it starts when the learner gave a level.
-  static func firstLessonRow(statedLevel: Bool) -> TestOfferRow {
-    TestOfferRow(
-      id: .firstLesson, label: String(localized: firstLesson),
-      facts: statedLevel ? [String(localized: startsAtLevel)] : [])
-  }
-
-  /// A course's rows: its quick test, and the full test when it has more than one part.
-  static func courseRows(_ offer: CoursePlacementOffer) -> [TestOfferRow] {
-    [
-      TestOfferRow(
-        id: .quick, label: String(localized: quickTest),
-        facts: testFacts(questions: offer.questions, minutes: offer.estimatedMinutes))
-    ]
-      + (offer.wholeCourse.map {
-        [
-          TestOfferRow(
-            id: .wholeCourse, label: String(localized: fullTest), facts: fullTestFacts($0))
-        ]
-      } ?? [])
+  /// A course's test card.
+  static func courseCard(_ offer: CoursePlacementOffer?) -> TestOfferCard {
+    testCard(
+      label: String(
+        localized: "Test", table: "Onboarding",
+        comment: "The name of a course's placement test, on the card that offers it."),
+      questions: offer?.questions, minutes: offer?.estimatedMinutes)
   }
 }

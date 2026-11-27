@@ -116,7 +116,8 @@ struct PlacementWaitScreen: View {
     }
     .measuresWait(
       surface: "placementWait", contentKind: "curriculum", goalID: goalID,
-      onboardingID: onboarding?.onboardingID)
+      onboardingID: onboarding?.onboardingID
+    ).testTop(.open)
   }
 
   /// Reads until the questions come: each event of the goal's run says when to read again, then a

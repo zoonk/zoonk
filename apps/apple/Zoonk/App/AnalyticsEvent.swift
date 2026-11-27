@@ -100,9 +100,6 @@ enum AnalyticsEvent: Equatable {
   enum TestRow: String {
     case firstLesson = "first_lesson"
     case quick
-    case wholeCourse = "whole_course"
-    case direct
-    case `continue`
     case testOut = "test_out"
     case notNow = "not_now"
   }

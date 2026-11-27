@@ -387,7 +387,6 @@ final class OnboardingStore {
       durationMs: Int(duration.components.seconds * 1000),
       itemId: itemID,
       attemptId: attempt?.id,
-      part: attempt?.part,
       timeZone: TimeZone.current.identifier)
 
     return try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
@@ -415,23 +414,22 @@ final class OnboardingStore {
   }
 
   /// A course's test: opens one of this length, or goes on with the open one.
-  func startPlacementTest(goalID: String, length: PlacementLength) async throws -> GoalPlacement {
+  func startPlacementTest(goalID: String) async throws -> GoalPlacement {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
-      try await api.startPlacementTest(goalID: goalID, length: length, token: identity.bearerToken)
+      try await api.startPlacementTest(goalID: goalID, token: identity.bearerToken)
     }
   }
 
-  /// Closing a part applies what it skipped to the plan.
+  /// Finishing the test applies what it skipped to the plan.
   /// `stoppedAt`: a stop's answer count, as the learner saw it.
-  func finishPlacementPart(goalID: String, attempt: PlacementAttempt, stoppedAt: Int? = nil)
-    async throws -> PlacementPartOutcome
+  func finishPlacementTest(goalID: String, attempt: PlacementAttempt, stoppedAt: Int? = nil)
+    async throws -> PlacementFinishOutcome
   {
     try await cache.onboardingWrite(
       invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
     ) { [api] identity in
-      try await api.finishPlacementPart(
-        goalID: goalID, attemptID: attempt.id, part: attempt.part, stoppedAt: stoppedAt,
-        token: identity.bearerToken)
+      try await api.finishPlacementTest(
+        goalID: goalID, attemptID: attempt.id, stoppedAt: stoppedAt, token: identity.bearerToken)
     }
   }
 

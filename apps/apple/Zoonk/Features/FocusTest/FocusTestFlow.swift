@@ -146,21 +146,18 @@ struct FocusTestFlow: View {
     }
   }
 
-  /// Onboarding's "First lesson" or the test; the plan's one test with its facts.
+  /// Onboarding's test or "First lesson"; the plan's one test with its facts.
   private func invitation(_ focusTest: FocusTest) -> some View {
     let findsFocus = focusTest.suggestsFocus
-    let test = TestOfferRow(
-      id: .quick, label: String(localized: FocusTestCopy.name),
-      facts: focusTest.offer.map {
-        TestCopy.testFacts(questions: $0.questions, minutes: $0.minutes)
-      } ?? [])
+    let test = TestCopy.testCard(
+      label: String(localized: FocusTestCopy.name), questions: focusTest.offer?.questions,
+      minutes: focusTest.offer?.minutes)
     let onboarding = host == .onboarding
 
     return TestOffer(
-      rows: onboarding
-        ? [TestCopy.firstLessonRow(statedLevel: self.onboarding?.statedLevel == true), test]
+      cards: onboarding
+        ? [test, TestCopy.firstLessonCard(title: self.onboarding?.firstLesson?.title)]
         : [test],
-      chip: String(localized: FocusTestCopy.name),
       title: onboarding
         ? Text(TestCopy.whereToStart) : Text(FocusTestCopy.title(findsFocus: findsFocus)),
       description: Text(FocusTestCopy.offerLine(findsFocus: findsFocus)),

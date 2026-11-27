@@ -1,63 +1,45 @@
 import Foundation
 
-/// A question of the open test, with the part it counts in.
+/// A question of the open test.
 struct PlacementTestQuestion: Equatable {
   let attempt: PlacementAttempt
   let question: PracticeQuestion
   let labels: PracticeTrueFalseLabels
 }
 
-/// A part that closed with work left in the test: the full test's checkpoint, or where a part the
-/// learner stopped midway goes on.
-struct PlacementPartStop: Equatable {
-  let attempt: PlacementAttempt
-  /// What the part skipped, every close of it together.
-  let partLessonsSkipped: Int
-  /// The close its Undo gives back; nil with nothing to give back.
-  var changeId: String?
-  var undoLessons = 0
-  var heldUntilTomorrow = false
-}
-
-/// A course's test that's over, or a quick test with the rest of the course still to test.
+/// A course's test that's over: where the learner starts and what it skipped.
 struct PlacementTestEnd: Equatable {
-  /// Every part's skips.
   let lessonsSkipped: Int
-  /// The last close, when giving it back restores what the title counts.
+  /// The finish its Undo gives back; nil when giving it back wouldn't restore what the screen
+  /// counts.
   var changeId: String?
-  var undoLessons = 0
   var heldUntilTomorrow = false
+  /// The chapter the learner starts in, the result's title.
+  var chapter: String?
+  /// The course as the result draws it; nil when the result came before the plan.
+  var course: PlacementCourse?
   var nextLesson: PlacementTestResult.NextLesson?
   var attemptId: String?
-  /// A quick test's attempt while the rest of the course is left to test.
-  var rest: PlacementAttempt?
-  /// The parts the last part removed, which "The test got shorter" explains.
-  var partsRemoved = 0
 }
 
-/// What a course's test shows, from a read of it or from a part that closed. Main's
-/// `toPlacementTestPhase`.
+/// What a course's test shows, from a read of it or from its finish. Main's `toPlacementTestPhase`.
 enum PlacementTestPhase: Equatable {
   case loading
   /// No test is open: the learner picks one. Only the plan offers; onboarding's offer comes first.
   case offer
-  /// The way back into a full test with parts left, or a part stopped midway.
-  case continueTest(PlacementAttempt)
-  /// The open part's questions, or the course a test was asked for, are still being written.
+  /// The test's questions, or the course a test was asked for, are still being written.
   case waiting
-  /// The open part's questions couldn't be written: "Try again" starts the same part again. With
-  /// no attempt, the course the test was asked for couldn't be built, or its start failed once its
-  /// questions came, and "Try again" asks again.
+  /// The test's questions couldn't be written: "Try again" starts it again. With no attempt, the
+  /// course the test was asked for couldn't be built, or its start failed once its questions came,
+  /// and "Try again" asks again.
   case preparationFailed(PlacementAttempt?)
   /// The wait stopped hearing back: "Try again" reads again.
   case connectionLost
   /// No question can be written and none is being written: the first days place the learner.
   case unavailable
   case question(PlacementTestQuestion)
-  /// This part asks nothing more and isn't closed yet: closing it is the next save.
-  case partOver(PlacementAttempt)
-  case checkpoint(PlacementPartStop)
-  case stopped(PlacementPartStop)
+  /// The test asks nothing more and isn't finished yet: finishing it is the next save.
+  case over(PlacementAttempt)
   case result(PlacementTestEnd)
 
   var isWaiting: Bool { waitFailure != nil || self == .waiting }
@@ -71,10 +53,9 @@ enum PlacementTestPhase: Equatable {
     }
   }
 
-  /// An open test goes on where it stopped: a sitting at its next question, a quick test that ended
-  /// on its result, a full test with parts left on "Continue your test". With nothing open,
-  /// onboarding shows the result of the test it ran; otherwise the test is offered, or waited for
-  /// when the learner already `asked` for it.
+  /// An open test goes on at its next question. With nothing open, onboarding shows the result of
+  /// the test it ran; otherwise the test is offered, or waited for when the learner already
+  /// `asked` for it.
   init(_ placement: GoalPlacement, onboarding: Bool, asked: Bool = false) {
     self.init(
       attempt: placement.activeTestAttempt, result: placement.savedTestResult,
@@ -91,20 +72,11 @@ enum PlacementTestPhase: Equatable {
   ) {
     guard let attempt else {
       if onboarding, let result, result.attemptId != nil {
-        self = .result(PlacementTestEnd(read: result, rest: nil))
+        self = .result(PlacementTestEnd(read: result))
       } else if asked {
         self = Self(unopened: status)
       } else {
         self = .offer
-      }
-      return
-    }
-
-    if attempt.partComplete || attempt.resume != nil {
-      if attempt.length == .quick, let result {
-        self = .result(PlacementTestEnd(read: result, rest: attempt))
-      } else {
-        self = .continueTest(attempt)
       }
       return
     }
@@ -120,7 +92,7 @@ enum PlacementTestPhase: Equatable {
       if let next {
         self = .question(PlacementTestQuestion(attempt: attempt, question: next, labels: labels))
       } else {
-        self = .partOver(attempt)
+        self = .over(attempt)
       }
     }
   }
@@ -138,45 +110,32 @@ enum PlacementTestPhase: Equatable {
       self = .unavailable
     }
   }
-
-  /// A closed part: the test's result once nothing is left or the quick test ended, else the full
-  /// test's checkpoint, or where a part stopped midway goes on.
-  init(finished: PlacementPartEnd, attemptId: String) {
-    let undo = finished.changeId == nil ? 0 : finished.lessonsSkipped
-
-    guard let attempt = finished.attempt, attempt.length == .wholeCourse else {
-      let total = finished.result?.lessonsSkipped ?? finished.lessonsSkipped
-      self = .result(
-        PlacementTestEnd(
-          lessonsSkipped: total,
-          changeId: undo == total ? finished.changeId : nil, undoLessons: undo,
-          heldUntilTomorrow: finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow,
-          nextLesson: finished.result?.nextLesson, attemptId: attemptId,
-          rest: finished.attempt, partsRemoved: finished.result?.partsRemoved ?? 0))
-      return
-    }
-
-    let stop = PlacementPartStop(
-      attempt: attempt, partLessonsSkipped: finished.partLessonsSkipped,
-      changeId: finished.changeId, undoLessons: undo,
-      heldUntilTomorrow: finished.heldUntilTomorrow)
-    self = attempt.resume == nil ? .checkpoint(stop) : .stopped(stop)
-  }
 }
 
 extension PlacementTestEnd {
-  /// A test the learner comes back to: its Undo only when the last close skipped every lesson the
-  /// title counts.
-  init(read result: PlacementTestResult?, rest: PlacementAttempt?) {
-    let total = result?.lessonsSkipped ?? 0
-    let part = result?.partLessonsSkipped ?? total
+  /// A test the learner comes back to.
+  init(read result: PlacementTestResult) {
+    self.init(
+      lessonsSkipped: result.lessonsSkipped, changeId: result.changeId,
+      heldUntilTomorrow: result.heldUntilTomorrow == true, chapter: result.chapter,
+      course: result.course, nextLesson: result.nextLesson, attemptId: result.attemptId)
+  }
+
+  /// A finish: Undo only when it restores every lesson the screen counts.
+  init(finished: PlacementFinish, attemptId: String) {
+    let result = finished.result
+    let lessonsSkipped = result?.lessonsSkipped ?? finished.lessonsSkipped
 
     self.init(
-      lessonsSkipped: total, changeId: part == total ? result?.changeId : nil, undoLessons: part,
-      heldUntilTomorrow: result?.heldUntilTomorrow == true, nextLesson: result?.nextLesson,
-      attemptId: result?.attemptId ?? rest?.id, rest: (rest?.partsLeft ?? 0) > 0 ? rest : nil,
-      partsRemoved: result?.partsRemoved ?? 0)
+      lessonsSkipped: lessonsSkipped,
+      changeId: finished.lessonsSkipped == lessonsSkipped ? finished.changeId : nil,
+      heldUntilTomorrow: result?.heldUntilTomorrow ?? finished.heldUntilTomorrow,
+      chapter: result?.chapter, course: result?.course, nextLesson: result?.nextLesson,
+      attemptId: attemptId)
   }
+
+  /// The lessons Undo gives back.
+  var undoLessons: Int { changeId == nil ? 0 : lessonsSkipped }
 }
 
 extension GoalPlacement {

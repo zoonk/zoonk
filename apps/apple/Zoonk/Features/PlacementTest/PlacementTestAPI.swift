@@ -1,21 +1,17 @@
 import Foundation
 
-/// A part of a course's test that closed: what it skipped, the test as it stands after it
-/// (`attempt`, nil once nothing is left) and its `result`.
-struct PlacementPartEnd: Equatable, Sendable {
-  let attempt: PlacementAttempt?
-  /// What this close skipped, which its Undo gives back.
+/// A course's test that finished: what this finish skipped, which its Undo gives back, and the
+/// test's `result`.
+struct PlacementFinish: Equatable, Sendable {
   let lessonsSkipped: Int
-  /// What the part skipped, every close of it together.
-  var partLessonsSkipped: Int
   var changeId: String?
   var heldUntilTomorrow = false
   let result: PlacementTestResult?
 }
 
-enum PlacementPartOutcome: Equatable, Sendable {
-  case finished(PlacementPartEnd)
-  /// Another device already closed the part or started a newer test.
+enum PlacementFinishOutcome: Equatable, Sendable {
+  case finished(PlacementFinish)
+  /// Another device already finished the test or started a newer one.
   case stale
 }
 
@@ -53,25 +49,21 @@ struct LevelTestOut: Decodable, Equatable, Sendable {
 }
 
 private struct PlacementSittingBody: Encodable {
-  let length: PlacementLength
   let timeZone = TimeZone.current.identifier
 }
 
-private struct PlacementPartBody: Encodable {
+private struct PlacementFinishBody: Encodable {
   let attemptId: String
-  let part: Int
   /// A stop's answers as the learner saw them, so core refuses a position another device moved past.
   let answered: Int?
   let fromScratch = false
   let timeZone = TimeZone.current.identifier
 }
 
-private struct PlacementPartCompletion: Decodable {
-  let attempt: PlacementAttempt?
+private struct PlacementFinishCompletion: Decodable {
   let changeId: String?
   let heldUntilTomorrow: Bool?
   let lessonsSkipped: Int
-  let partLessonsSkipped: Int?
   let result: PlacementTestResult?
 }
 
@@ -84,13 +76,11 @@ private struct LevelTestOutAnswerBody: Encodable {
 }
 
 extension OnboardingAPI {
-  /// Opens a test of this length, or goes on with the open one: its next part, or the full test
-  /// after a quick one. Asked again, it answers with the test already open.
-  func startPlacementTest(goalID: String, length: PlacementLength, token: String) async throws
-    -> GoalPlacement
-  {
+  /// Opens the test, or goes on with the open one. Asked again, it answers with the test already
+  /// open.
+  func startPlacementTest(goalID: String, token: String) async throws -> GoalPlacement {
     let body = try PracticeJSON.recode(
-      PlacementSittingBody(length: length), as: Components.Schemas.PlacementSittingInput.self)
+      PlacementSittingBody(), as: Components.Schemas.PlacementSittingInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.createPlacementSitting(path: .init(goalId: goalID), body: .json(body))
     }
@@ -105,12 +95,12 @@ extension OnboardingAPI {
     }
   }
 
-  /// Closes a part of the test taken from the plan and applies what it skipped.
-  func finishPlacementPart(
-    goalID: String, attemptID: String, part: Int, stoppedAt answered: Int?, token: String
-  ) async throws -> PlacementPartOutcome {
+  /// Finishes the course's test and applies what it skipped.
+  func finishPlacementTest(
+    goalID: String, attemptID: String, stoppedAt answered: Int?, token: String
+  ) async throws -> PlacementFinishOutcome {
     let body = try PracticeJSON.recode(
-      PlacementPartBody(attemptId: attemptID, part: part, answered: answered),
+      PlacementFinishBody(attemptId: attemptID, answered: answered),
       as: Components.Schemas.PlacementCompletionInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.completeGoalPlacement(path: .init(goalId: goalID), body: .json(body))
@@ -119,13 +109,11 @@ extension OnboardingAPI {
     switch output {
     case .ok(let response):
       let completion = try PracticeJSON.recode(
-        try response.body.json, as: PlacementPartCompletion.self)
+        try response.body.json, as: PlacementFinishCompletion.self)
       return .finished(
-        PlacementPartEnd(
-          attempt: completion.attempt, lessonsSkipped: completion.lessonsSkipped,
-          partLessonsSkipped: completion.partLessonsSkipped ?? completion.lessonsSkipped,
-          changeId: completion.changeId, heldUntilTomorrow: completion.heldUntilTomorrow == true,
-          result: completion.result))
+        PlacementFinish(
+          lessonsSkipped: completion.lessonsSkipped, changeId: completion.changeId,
+          heldUntilTomorrow: completion.heldUntilTomorrow == true, result: completion.result))
     case .conflict:
       return .stale
     case .unauthorized:

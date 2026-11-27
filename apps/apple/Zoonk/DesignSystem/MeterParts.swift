@@ -7,14 +7,16 @@ struct MeterParts: View {
       case track
       case current
       case color(Color)
-      /// The track, filled in `success` from its start this far (0 to 1).
-      case share(Double)
+      /// The track, filled in `color` from its start this far (0 to 1).
+      case share(Double, color: Color = .success)
       /// Main's current phase on the roadmap: the track, faintly filled this far (0 to 1).
       case currentPhase(Double)
     }
 
     var weight = 1.0
     var fill: Fill
+    /// A ring over the fill: where the learner is, such as the chapter a test starts them in.
+    var ringed = false
   }
 
   let parts: [Part]
@@ -52,21 +54,28 @@ struct MeterParts: View {
           context.fill(
             Path(roundedRect: rect, cornerRadius: radius), with: .color(.surface3))
         case .current:
-          let inset = rect.insetBy(dx: ringWidth / 2, dy: ringWidth / 2)
-          context.stroke(
-            Path(roundedRect: inset, cornerRadius: radius), with: .color(.success),
-            lineWidth: ringWidth)
+          ring(rect, radius: radius, in: context)
         case .color(let color):
           context.fill(Path(roundedRect: rect, cornerRadius: radius), with: .color(color))
-        case .share(let filled):
-          fill(rect, share: filled, with: .success, radius: radius, in: context)
+        case .share(let filled, let color):
+          fill(rect, share: filled, with: color, radius: radius, in: context)
         case .currentPhase(let filled):
           fill(rect, share: filled, with: .success.opacity(0.3), radius: radius, in: context)
+        }
+
+        if part.ringed {
+          ring(rect, radius: radius, in: context)
         }
       }
     }
     .frame(height: height)
     .accessibilityHidden(true)
+  }
+
+  private func ring(_ rect: CGRect, radius: Double, in context: GraphicsContext) {
+    let inset = rect.insetBy(dx: ringWidth / 2, dy: ringWidth / 2)
+    context.stroke(
+      Path(roundedRect: inset, cornerRadius: radius), with: .color(.success), lineWidth: ringWidth)
   }
 
   /// The track, filled in `color` from its start this far (0 to 1).
