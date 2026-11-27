@@ -114,7 +114,7 @@ async function loadFinished({
     adapt: offers?.view ?? null,
     essays,
     reached,
-    result: withMockWrittenPoints({ conditions, essays, grades, numericBlankItems, result }),
+    result: withMockWrittenPoints({ conditions, grades, numericBlankItems, result }),
   };
 }
 

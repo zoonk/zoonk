@@ -3,11 +3,9 @@ import {
   rowCalibrationFixture,
   weightedResiduals,
 } from "../essays/_test-utils/writing-calibration";
-import { readWritingPrompt } from "../essays/writing-contract";
 import { CGU } from "./_test-utils/cgu-written";
 import { analyzeMock } from "./mock-analysis";
 import { type MockConditions } from "./mock-contract";
-import { type MockEssayView } from "./mock-view-contract";
 import { snapshotMockWriting, withMockWrittenPoints } from "./mock-written-points";
 
 const CALIBRATION = [
@@ -49,50 +47,8 @@ const RESULT = analyzeMock({
   previous: null,
 });
 
-function graded({
-  itemId,
-  high,
-  low,
-  max,
-}: {
-  itemId: string;
-  high: number;
-  low: number;
-  max: number;
-}): MockEssayView {
-  return {
-    area: null,
-    context: null,
-    grade: {
-      content: { high, low },
-      criteria: [],
-      deduction: { high: 0, low: 0 },
-      errors: [],
-      ignoredFrom: null,
-      kind: "points",
-      max,
-      nextStep: null,
-      progress: null,
-      rows: [],
-      total: { high, low },
-      zeroReason: null,
-    },
-    itemId,
-    question: "Question",
-    status: "graded",
-    text: "Answer",
-    unsure: false,
-    writing: readWritingPrompt({
-      criteria: [],
-      keySource: "notice",
-      lines: 30,
-      minimumWords: 0,
-      points: max,
-      taskKey: itemId,
-      title: "A question",
-      unit: "answer",
-    }),
-  };
+function graded({ high, low, max }: { high: number; low: number; max: number }) {
+  return { calibration: CALIBRATION, kind: "points" as const, max, total: { high, low } };
 }
 
 describe(withMockWrittenPoints, () => {
@@ -112,11 +68,10 @@ describe(withMockWrittenPoints, () => {
           ...CONDITIONS,
           ...snapshotMockWriting({ day: null, essays: ESSAYS, structure }),
         },
-        essays: [
-          graded({ high: 30, itemId: "short", low: 30, max: 30 }),
-          graded({ high: 70, itemId: "long", low: 70, max: 70 }),
-        ],
-        grades: new Map(),
+        grades: new Map([
+          ["short", graded({ high: 30, low: 30, max: 30 })],
+          ["long", graded({ high: 70, low: 70, max: 70 })],
+        ]),
         numericBlankItems: new Set(),
         result: RESULT,
       }),
@@ -126,14 +81,16 @@ describe(withMockWrittenPoints, () => {
   });
 
   it("measures only this sitting and leaves missing feedback unjudged", () => {
-    const short = graded({ high: 20, itemId: "short", low: 18, max: 30 });
-    const elsewhere = graded({ high: 69, itemId: "another-sitting", low: 67, max: 70 });
+    const short = graded({ high: 20, low: 18, max: 30 });
+    const elsewhere = graded({ high: 69, low: 67, max: 70 });
 
     expect(
       withMockWrittenPoints({
         conditions: CONDITIONS,
-        essays: [short, elsewhere],
-        grades: new Map(),
+        grades: new Map([
+          ["short", short],
+          ["another-sitting", elsewhere],
+        ]),
         numericBlankItems: new Set(),
         result: RESULT,
       }),
@@ -149,20 +106,11 @@ describe(withMockWrittenPoints, () => {
       },
     });
 
-    const long = graded({ high: 36, itemId: "long", low: 33, max: 70 });
-
     const result = withMockWrittenPoints({
       conditions: CONDITIONS,
-      essays: [short, long],
       grades: new Map([
-        [
-          "short",
-          { calibration: CALIBRATION, kind: "points", max: 30, total: { high: 20, low: 18 } },
-        ],
-        [
-          "long",
-          { calibration: CALIBRATION, kind: "points", max: 70, total: { high: 36, low: 33 } },
-        ],
+        ["short", short],
+        ["long", graded({ high: 36, low: 33, max: 70 })],
       ]),
       numericBlankItems: new Set(),
       result: RESULT,
@@ -179,7 +127,6 @@ describe(withMockWrittenPoints, () => {
 
     const result = withMockWrittenPoints({
       conditions: CONDITIONS,
-      essays: [],
       grades: new Map(),
       numericBlankItems: new Set(),
       result: RESULT && {
@@ -206,13 +153,10 @@ describe(withMockWrittenPoints, () => {
   });
 
   it("shows a blank as zero and leaves a part without a grade unmeasured", () => {
-    const short = graded({ high: 20, itemId: "short", low: 18, max: 30 });
-
     expect(
       withMockWrittenPoints({
         conditions: CONDITIONS,
-        essays: [short],
-        grades: new Map(),
+        grades: new Map([["short", graded({ high: 20, low: 18, max: 30 })]]),
         numericBlankItems: new Set(["long"]),
         result: RESULT,
       }),
