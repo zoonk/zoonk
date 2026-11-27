@@ -378,9 +378,14 @@ test.describe("Language practice in the plan", () => {
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
 
+    const stop = page.getByRole("button", { name: "Stop and use my answers" });
+
     for (const number of [1, 2, 3, 4]) {
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await expect(page.getByText(`Question ${number} of 12`, { exact: true })).toBeVisible();
+      // Stopping before a skill's questions are done would use no answer, so it isn't offered yet.
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(stop).toBeHidden();
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
       await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
       // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
@@ -388,6 +393,7 @@ test.describe("Language practice in the plan", () => {
     }
 
     await expect(page.getByText("Question 5 of 12", { exact: true })).toBeVisible();
+    await expect(stop).toBeVisible();
 
     const clip = await routeSpeechClips(page);
     await page.getByRole("button", { name: "Play the message" }).click();

@@ -107,6 +107,7 @@ function PlacementStop({
 }
 
 export function PlacementQuestionScreen({
+  canStop,
   dontKnowLabel,
   failures,
   media,
@@ -126,7 +127,9 @@ export function PlacementQuestionScreen({
   /** Saves from this screen (answers and Stop) that failed in a row. */
   failures: number;
   media?: React.ReactNode;
-  /** This question's number in the sitting, from 1: the way out shows from the second. */
+  /** Whether stopping now uses the answers given; from the second question when the test doesn't say. */
+  canStop?: boolean;
+  /** This question's number in the sitting, from 1. */
   number: number;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
   /** The learner pressed ✕ on this question. */
@@ -238,7 +241,7 @@ export function PlacementQuestionScreen({
           trueFalseLabels={trueFalseLabels}
         />
 
-        {number > 1 && (
+        {(canStop ?? number > 1) && (
           <PlacementStop
             busy={pending && pressed === "stop"}
             hint={stopHint}

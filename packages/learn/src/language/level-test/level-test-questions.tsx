@@ -112,6 +112,7 @@ function AskedQuestion({
 
   return (
     <PlacementQuestionScreen
+      canStop={test.canStop}
       dontKnowLabel={isListening ? listeningOut : undefined}
       failures={failures}
       media={
