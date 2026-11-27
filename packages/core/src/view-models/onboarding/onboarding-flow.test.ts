@@ -459,7 +459,7 @@ describe("onboarding a new goal", () => {
   it("reads the learner's language bank without starting its writer", async () => {
     const user = await useLearner();
     const language = "pt";
-    const targetLanguage = `en-x-${randomUUID().slice(0, 8)}`;
+    const targetLanguage = `en-x-${randomUUID().slice(0, 5)}`;
 
     const goal = await goalFixture({
       details: { answered: GOAL_QUESTIONS, level: "basic" },

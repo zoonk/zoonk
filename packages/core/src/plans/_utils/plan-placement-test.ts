@@ -2,34 +2,17 @@ import { availableLevelTestOut } from "../../language/level-test/_utils/level-te
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
 import { LANGUAGE_LEVEL_TEST_OFFER } from "../../language/level-test/level-test-contract";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
-import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
-import { readCoursePlacementOffer } from "../../learner/placement/_utils/course-placement-offer";
+import { type GoalPlan, loadCoursePlacementPlan } from "../../learner/_utils/goal-skill-graph";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
-  type PlacementAttempt,
   type PlacementRecord,
+  getCourseOffer,
+  getTopicsAhead,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
 import { readPlacementResult } from "../../learner/placement/_utils/placement-result";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
-
-async function readAttemptPlacement(
-  { goal, timeZone, today }: PlanContext,
-  attempt: PlacementAttempt | null,
-) {
-  if (!attempt) {
-    return null;
-  }
-
-  return loadPlacementState({
-    goalId: goal.id,
-    plan: await loadPlacementPlan(goal.id),
-    timeZone,
-    today,
-    userId: goal.userId,
-  });
-}
 
 async function readLanguageRow(
   context: PlanContext,
@@ -66,17 +49,20 @@ async function readLanguageRow(
 }
 
 async function readCourseRow({
-  attemptPlacement,
-  context: { goal },
+  context: { goal, timeZone, today },
   placement,
+  plan,
 }: {
-  attemptPlacement: Awaited<ReturnType<typeof readAttemptPlacement>>;
   context: PlanContext;
   placement: PlacementRecord;
+  plan: GoalPlan;
 }): Promise<PlanView["placementTest"]> {
+  const attemptPlacement = placement.attempt
+    ? await loadPlacementState({ goalId: goal.id, plan, timeZone, today, userId: goal.userId })
+    : null;
+
   const attemptView = attemptPlacement?.attempt ?? null;
-  const course = attemptView ? null : await readCoursePlacementOffer({ goal });
-  const offer = course?.offer ?? null;
+  const offer = attemptView ? null : getCourseOffer(getTopicsAhead(plan).length);
 
   const result = attemptPlacement
     ? (attemptPlacement.result ?? null)
@@ -116,6 +102,15 @@ export async function readPlanPlacementTest(
   }
 
   const placement = readPlacementAttempt(goal);
-  const attemptPlacement = await readAttemptPlacement(context, placement.attempt);
-  return readCourseRow({ attemptPlacement, context, placement });
+
+  const plan = await loadCoursePlacementPlan(goal.id, {
+    source: {
+      graph: context.state.graph,
+      items: context.items,
+      phases: context.phases,
+      settings: context.state.settings,
+    },
+  });
+
+  return readCourseRow({ context, placement, plan });
 }
