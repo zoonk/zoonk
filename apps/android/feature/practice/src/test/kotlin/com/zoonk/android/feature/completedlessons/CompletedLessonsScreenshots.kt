@@ -87,7 +87,7 @@ class CompletedLessonsScreenshots {
             ).takeUnless { empty }.orEmpty()
         val data =
             lessons.filter { group == null || it.group == group }.mapIndexed { index, lesson ->
-                """{"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
+                """{"available":true,"chapterTitle":${lesson.chapter?.let { "\"$it\"" } ?: "null"},"finishedOn":"${lesson.day}",
                 "group":"${lesson.group}","lessonId":"00000000-0000-4000-8000-00000000000$index","saved":${index == 1},"title":"${lesson.title}"}"""
             }
         val filter =

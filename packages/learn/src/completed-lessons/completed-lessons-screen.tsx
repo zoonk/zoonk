@@ -5,13 +5,15 @@ import {
   type CompletedLesson,
   type CompletedLessonFilter,
 } from "@zoonk/core/completed-lessons/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DetailAsideSection, DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
+  ListRow,
   ListRowBody,
   ListRowContent,
   ListRowDescription,
@@ -28,6 +30,7 @@ import {
   type SaveLesson,
   useLessonSaves,
 } from "../saved-lessons/use-lesson-saves";
+import { SavedBookmarkIcon } from "../saves/save-button";
 import { LearnPageBar } from "../shell/learn-bar";
 
 export type CompletedLessonsHrefs = {
@@ -55,6 +58,21 @@ function useGroupsTitle(kind: CompletedLessonFilter["kind"]): string {
   return kind === "modules" ? t("Modules") : t("Phases");
 }
 
+/** The bookmark's box, empty, so a row without one ends its date where the others do. */
+function BookmarkSpace() {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        buttonVariants({ edge: "end", size: "icon-lg", variant: "ghost" }),
+        "invisible",
+      )}
+    >
+      <SavedBookmarkIcon saved={false} />
+    </span>
+  );
+}
+
 /** Its bookmark saves the lesson for later without opening it. */
 function LessonRow({
   href,
@@ -67,6 +85,25 @@ function LessonRow({
 }) {
   const formatDate = useFormatIsoDate();
   const state = { saved: lesson.saved, target: lesson.lessonId };
+
+  const body = (
+    <ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{lesson.title}</ListRowTitle>
+        {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
+      </ListRowContent>
+      <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
+    </ListRowBody>
+  );
+
+  if (!lesson.available) {
+    return (
+      <div className="flex items-center gap-1">
+        <ListRow className="min-w-0 flex-1">{body}</ListRow>
+        <BookmarkSpace />
+      </div>
+    );
+  }
 
   return (
     <ListRowLinkWithAction
@@ -85,13 +122,7 @@ function LessonRow({
       lessonWritten
       prefetch="intent"
     >
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{lesson.title}</ListRowTitle>
-          {lesson.chapterTitle && <ListRowDescription>{lesson.chapterTitle}</ListRowDescription>}
-        </ListRowContent>
-        <ListRowTrailing>{formatDate(lesson.finishedOn)}</ListRowTrailing>
-      </ListRowBody>
+      {body}
     </ListRowLinkWithAction>
   );
 }

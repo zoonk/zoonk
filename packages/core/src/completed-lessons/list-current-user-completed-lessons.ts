@@ -4,6 +4,7 @@ import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getSavedLessonsCacheTag, getUserProgressCacheTag } from "../cache/tags";
 import { readSavedLessonIds } from "../learner/facts/saved-lessons";
 import { getOwnedGoal } from "../learner/get-owned-goal";
+import { startableLessonWhere } from "../lesson-player/_utils/lesson-rows";
 import { loadSkillGroups } from "../view-models/syllabus/_utils/load-syllabus";
 import { groupCompletedLessons } from "./_utils/completed-lesson-groups";
 import { completedLessonRuns } from "./_utils/completed-lesson-runs";
@@ -50,7 +51,9 @@ export async function listCurrentUserCompletedLessons(
   });
 
   const [rows, groups, savedLessonIds] = await Promise.all([
-    prisma.$queryRaw<(Omit<CompletedLesson, "group" | "saved"> & { skillIds: string[] })[]>`
+    prisma.$queryRaw<
+      (Omit<CompletedLesson, "available" | "group" | "saved"> & { skillIds: string[] })[]
+    >`
       SELECT
         latest.lesson_id AS "lessonId",
         latest.title,
@@ -98,11 +101,25 @@ export async function listCurrentUserCompletedLessons(
   const wanted = filter?.groups.some((group) => group.key === input.group) ? input.group : null;
   const listed = wanted ? lessons.filter((lesson) => lesson.group === wanted) : lessons;
   const end = input.offset + input.limit;
+  const page = listed.slice(input.offset, end);
+
+  const startable =
+    page.length === 0
+      ? []
+      : await prisma.lesson.findMany({
+          select: { id: true },
+          where: {
+            ...startableLessonWhere(owned.userId),
+            id: { in: page.map((row) => row.lessonId) },
+          },
+        });
+
+  const available = new Set(startable.map((lesson) => lesson.id));
 
   return {
     filter,
     hasMore: listed.length > end,
-    lessons: listed.slice(input.offset, end),
+    lessons: page.map((lesson) => ({ ...lesson, available: available.has(lesson.lessonId) })),
     status: "ready",
   };
 }

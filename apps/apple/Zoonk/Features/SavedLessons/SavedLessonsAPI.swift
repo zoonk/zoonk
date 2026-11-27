@@ -26,11 +26,12 @@ struct SavedLessonsAPI: SavedLessonsAPIClient {
     }
   }
 
-  /// A lesson the learner can't start in this goal can't be saved: the screen says it couldn't.
   func save(token: String, goalId: String, lessonId: String, saved: Bool) async throws -> Bool {
     try await clients.perform(token: token) { client in
+      let input = Components.Schemas.SaveLessonInput(lessonId: lessonId, saved: saved)
+
       switch try await client.saveLesson(
-        path: .init(goalId: goalId), body: .json(.init(lessonId: lessonId, saved: saved)))
+        path: .init(goalId: goalId), body: .json(input))
       {
       case .ok(let response): return try response.body.json.saved
       case .unauthorized: throw APIError.unauthorized

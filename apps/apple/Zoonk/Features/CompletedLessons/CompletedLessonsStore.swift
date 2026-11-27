@@ -7,6 +7,7 @@ struct CompletedLesson: Equatable, Identifiable, Sendable {
   let chapterTitle: String?
   /// The learner's calendar day of its latest finish, `YYYY-MM-DD`.
   let finishedOn: String
+  let available: Bool
   var saved: Bool
 
   var id: String { lessonId }
@@ -168,7 +169,7 @@ struct CompletedLessonsAPI: CompletedLessonsAPIClient {
           lessons: list.data.map { lesson in
             CompletedLesson(
               lessonId: lesson.lessonId, title: lesson.title, chapterTitle: lesson.chapterTitle,
-              finishedOn: lesson.finishedOn, saved: lesson.saved)
+              finishedOn: lesson.finishedOn, available: lesson.available, saved: lesson.saved)
           },
           nextCursor: list.pagination.nextCursor,
           filter: (list.filter?.value1).map(CompletedLessonsFilter.init))

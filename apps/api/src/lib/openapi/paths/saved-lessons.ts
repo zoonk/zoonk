@@ -1,4 +1,8 @@
-import { saveLessonSchema, savedLessonListSchema } from "@zoonk/core/saved-lessons/contract";
+import {
+  saveLessonSchema,
+  savedLessonListSchema,
+  savedLessonStateSchema,
+} from "@zoonk/core/saved-lessons/contract";
 import { goalPathParamsSchema } from "../schemas/paths";
 import {
   notFoundResponse,
@@ -42,7 +46,7 @@ export const savedLessonPaths = {
       requestParams: { path: goalPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: saveLessonSchema } },
+          content: { "application/json": { schema: savedLessonStateSchema } },
           description: "The lesson's saved state",
         },
         ...accessErrors,
