@@ -226,6 +226,45 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("a map removed from Saved is gone once the learner leaves, even coming back by Back", async ({
+    browser,
+  }) => {
+    const { first, goal, user } = await createLearner();
+
+    await drawMap(first.chapter.id);
+    await saveChapterMap({ chapter: first.chapter, goalId: goal.id, userId: user.id });
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+    const savedCount = () => prisma.savedMindMap.count({ where: { userId: user.id } });
+
+    try {
+      await page.goto("/mind-maps?tab=saved");
+
+      const saved = page.getByRole("list", { name: "Saved maps" });
+      const savedMap = saved.getByRole("link", { name: new RegExp(first.chapter.title, "u") });
+      const remove = saved.getByRole("button", { name: `Saved ${first.chapter.title}` });
+
+      await expectHydrated(remove);
+      await remove.click();
+      await expect.poll(savedCount).toBe(0);
+      await expect(savedMap).toBeVisible();
+
+      await page
+        .getByRole("complementary", { name: "Sidebar" })
+        .getByRole("link", { name: "Mistakes notebook" })
+        .click();
+
+      await expect(page).toHaveURL(/\/mistakes/u);
+      await page.goBack();
+      await expect(page).toHaveURL(/\/mind-maps\?tab=saved/u);
+      await expect(page.getByRole("navigation", { name: "Mind maps" })).toBeVisible();
+      await expect(savedMap).toHaveCount(0);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a map removed from Saved opens in Study as not saved, so one press saves it again", async ({
     browser,
   }) => {

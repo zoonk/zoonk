@@ -55,7 +55,8 @@ async function SavedLessonsBody() {
     );
   }
 
-  return <SavedLessonsClient goalId={goal.id} lessons={result.lessons} />;
+  // A switch of goal on this page starts the list over: rows kept for one goal never show in another.
+  return <SavedLessonsClient goalId={goal.id} key={goal.id} lessons={result.lessons} />;
 }
 
 async function SavedLessonsSkeleton() {

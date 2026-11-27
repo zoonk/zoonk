@@ -51,7 +51,9 @@ async function MindMapsBody() {
   }
 
   return (
+    // A switch of goal on this page starts its lists over: rows kept for one goal never show in another.
     <MindMapsClient
+      key={goal.id}
       listed={hasMindMapsPage(goal.kind)}
       mindMaps={toMindMapsPage(result.mindMaps)}
       tier={allowance?.tier ?? "free"}

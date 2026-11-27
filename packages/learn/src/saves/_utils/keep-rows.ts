@@ -28,3 +28,25 @@ export function keepRows<Row>({
 
   return merged;
 }
+
+/**
+ * What a list of saves shows: each row kept on this visit, and each row the server lists that's
+ * still saved. A row kept on an earlier visit goes, and so does one an older copy of the list still
+ * has after the learner removed it.
+ */
+export function shownRows<Row>({
+  isKept,
+  isSaved,
+  keyOf,
+  rows,
+  served,
+}: {
+  isKept: (row: Row) => boolean;
+  isSaved: (row: Row) => boolean;
+  keyOf: (row: Row) => string;
+  rows: readonly Row[];
+  served: readonly Row[];
+}): Row[] {
+  const listed = new Set(served.map((row) => keyOf(row)));
+  return rows.filter((row) => isKept(row) || (listed.has(keyOf(row)) && isSaved(row)));
+}

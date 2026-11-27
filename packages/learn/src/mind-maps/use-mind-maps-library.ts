@@ -127,9 +127,10 @@ export function useMindMapsLibrary({
   // A save that can no longer open has no bookmark to tap again, so its Remove takes it away.
   const savedRows = useKeptRows({
     isKept: (entry) => entry.available && saves.isTouched(entry),
+    isSaved: (entry) => saves.isSaved({ saved: true, target: entry }),
     keyOf: toSavedMapKey,
     rows: page.saved,
-  }).filter((entry) => entry.available || saves.isSaved({ saved: true, target: entry }));
+  });
 
   const stillSaved = savedRows.filter((entry) => saves.isSaved({ saved: true, target: entry }));
 

@@ -233,6 +233,111 @@ test.describe("Saved lessons", () => {
     }
   });
 
+  test("a save removed on Saved lessons is gone once the learner leaves, by a link or by Back, and the sidebar lets the page go only then", async ({
+    browser,
+  }) => {
+    const { finished, goal, unfinished, user } = await createLearner();
+
+    await prisma.savedLesson.createMany({
+      data: [finished, unfinished].map((lesson) => ({
+        goalId: goal.id,
+        lessonId: lesson.id,
+        title: lesson.title,
+        userId: user.id,
+      })),
+    });
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+    const list = page.getByRole("list", { name: "Saved lessons" });
+    const row = (title: string) => list.getByRole("link", { name: new RegExp(title, "u") });
+
+    try {
+      await page.goto("/saved-lessons");
+
+      const remove = list.getByRole("button", { name: `Saved ${finished.title}` });
+      await expectHydrated(remove);
+      await remove.click();
+      await expect.poll(() => savedCount(user.id)).toBe(1);
+      await expect(list.getByRole("button", { name: `Save ${finished.title}` })).toBeVisible();
+
+      await sidebar.getByRole("link", { name: "Mistakes notebook" }).click();
+      await expect(page).toHaveURL(/\/mistakes/u);
+      await sidebarRow(page).click();
+
+      await expect(row(unfinished.title)).toBeVisible();
+      await expect(row(finished.title)).toHaveCount(0);
+
+      await list.getByRole("button", { name: `Saved ${unfinished.title}` }).click();
+      await expect.poll(() => savedCount(user.id)).toBe(0);
+      await expect(row(unfinished.title)).toBeVisible();
+      await expect(sidebarRow(page)).toBeVisible();
+
+      await sidebar.getByRole("link", { name: "Mistakes notebook" }).click();
+      await expect(sidebarRow(page)).toHaveCount(0);
+
+      await page.goBack();
+      await expect(page).toHaveURL(/\/saved-lessons$/u);
+
+      await expect(
+        page.getByText("Nothing saved yet. Tap the bookmark on a lesson to keep it here."),
+      ).toBeVisible();
+
+      await expect(row(unfinished.title)).toHaveCount(0);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("switching goals on Saved lessons lists only the new goal's saves", async ({ browser }) => {
+    const { finished, goal, user } = await createLearner();
+
+    const other = await goalFixture({
+      title: `Learn to cook ${randomUUID().slice(0, 6)}`,
+      userId: user.id,
+    });
+
+    await Promise.all([
+      planFixture({ goalId: other.id }),
+      prisma.savedLesson.create({
+        data: { goalId: goal.id, lessonId: finished.id, title: finished.title, userId: user.id },
+      }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 1440 });
+
+    try {
+      await page.goto("/saved-lessons");
+
+      const list = page.getByRole("list", { name: "Saved lessons" });
+      const remove = list.getByRole("button", { name: `Saved ${finished.title}` });
+      await expectHydrated(remove);
+      await remove.click();
+      await expect.poll(() => savedCount(user.id)).toBe(0);
+      await expect(list.getByRole("button", { name: `Save ${finished.title}` })).toBeVisible();
+
+      await page
+        .getByRole("button", { name: /Switch goal$/u })
+        .first()
+        .click();
+
+      await page.getByRole("menuitemradio", { name: other.title }).click();
+
+      await expect(
+        page.getByText("Nothing saved yet. Tap the bookmark on a lesson to keep it here."),
+      ).toBeVisible();
+
+      await expect(page.getByRole("link", { name: new RegExp(finished.title, "u") })).toHaveCount(
+        0,
+      );
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("with nothing saved the page says how to keep a lesson there", async ({ browser }) => {
     const { user } = await createLearner();
     const page = await openAs(browser, user);

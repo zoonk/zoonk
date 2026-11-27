@@ -117,17 +117,16 @@ export function SavedLessonsScreen({
   const saves = useLessonSaves(save);
   const [shown, setShown] = useState(SHOWN_AT_ONCE);
 
+  // A save that can no longer open has no bookmark to tap again, so its Remove takes it away.
   const rows = useKeptRows({
     isKept: (lesson) => lesson.available && saves.isTouched(lesson.lessonId),
+    isSaved: (lesson) => saves.isSaved({ saved: true, target: lesson.lessonId }),
     keyOf: (lesson) => lesson.lessonId,
     rows: lessons,
   });
 
   const open = rows.filter((lesson) => lesson.available);
-
-  const gone = rows.filter(
-    (lesson) => !lesson.available && saves.isSaved({ saved: true, target: lesson.lessonId }),
-  );
+  const gone = rows.filter((lesson) => !lesson.available);
 
   return (
     <DetailLayout
