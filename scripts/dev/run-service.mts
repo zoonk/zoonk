@@ -7,7 +7,7 @@ import {
   getStopWithLauncherEnvironment,
   runForegroundCommand,
 } from "./process.mts";
-import { SERVICE_HOST, claimServicePort } from "./service-port.mts";
+import { claimServicePort } from "./service-port.mts";
 
 const [serviceName, appScript = "dev:app"] = process.argv
   .slice(2)
@@ -55,7 +55,6 @@ try {
       ...pnpmCommand.args,
       "run",
       appScript,
-      ...(serviceName === "mailbox" ? [] : ["--hostname", SERVICE_HOST]),
     ],
     command: pnpmCommand.command,
     currentDirectory,
