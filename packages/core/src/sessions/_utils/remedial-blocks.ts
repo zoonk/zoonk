@@ -6,6 +6,7 @@ import { toBlockPayload } from "../block-payload";
 import { takeReviewCapsules } from "../capsules";
 import { isOutsidePlanLesson } from "../day-block";
 import { type PlannedBlock, type SessionBuildInput } from "../session-builder";
+import { putWelcomeBackMistakesSecond } from "./day-stretch";
 import { buildPracticeBlocks } from "./practice-blocks";
 
 type MistakeCandidate = { id: string; minutes: number; skillId: string | null };
@@ -19,6 +20,7 @@ export type TeachingOption =
 export type RemedialWork = {
   kept?: { mistakes: number; teaching: number };
   mistakes: readonly MistakeCandidate[];
+  previousReplacedOnlyLesson?: boolean;
   teaching: readonly TeachingOption[];
   dated: boolean;
 };
@@ -171,34 +173,64 @@ function chooseTeaching({
     (block) => block.kind === "learn" && !isOutsidePlanLesson(block.payload),
   );
 
-  const last =
-    work.dated || lessons.length <= 1 ? undefined : findReplaceableLesson(base, lessons.at(-1));
+  const last = findReplaceableLesson(base, lessons.at(-1));
 
   const bossByLesson = new Map(
     base.filter((block) => block.payload.reinforcement).map((block) => [block.lessonId, block]),
   );
 
-  const chosen = work.teaching.find((option) => {
-    const lessonId = "lessonId" in option ? option.lessonId : null;
-    const replacesBoss = lessonId && bossByLesson.get(lessonId);
+  const room = practiceMinutes + reviewMinutes;
 
-    return (
-      !lessons.some((lesson) => lessonId && lesson.lessonId === lessonId) &&
-      option.estimatedMinutes <=
-        practiceMinutes +
-          reviewMinutes +
-          (last?.estimatedMinutes ?? 0) +
-          (replacesBoss ? replacesBoss.estimatedMinutes : 0)
-    );
+  const canReplace = (option: TeachingOption) => {
+    const pattern = "payload" in option && option.payload.patternId !== null;
+
+    return work.dated
+      ? pattern && lessons.length > 1
+      : lessons.length > 1 || !work.previousReplacedOnlyLesson;
+  };
+
+  const candidates = work.teaching.values().map((option) => {
+    const lessonId = "lessonId" in option ? option.lessonId : null;
+
+    const boss = lessonId ? bossByLesson.get(lessonId) : undefined;
+    const teachingMinutes = option.estimatedMinutes - (boss?.estimatedMinutes ?? 0);
+
+    return { boss, lessonId, option, teachingMinutes };
   });
 
-  const followUp = chosen && "followUp" in chosen ? chosen.followUp : undefined;
-  const teaching = chosen && "kind" in chosen ? chosen : undefined;
-  const boss = teaching?.lessonId ? bossByLesson.get(teaching.lessonId) : undefined;
+  const chosen = candidates.find(
+    ({ lessonId, option, teachingMinutes }) =>
+      !lessons.some((lesson) => lessonId && lesson.lessonId === lessonId) &&
+      teachingMinutes <= room + (canReplace(option) ? (last?.estimatedMinutes ?? 0) : 0),
+  );
 
-  const teachingMinutes = (teaching?.estimatedMinutes ?? 0) - (boss?.estimatedMinutes ?? 0);
+  const keptLast = !work.dated && lessons.length > 1 ? last : undefined;
 
-  return { boss, followUp, last, teaching, teachingMinutes };
+  if (!chosen) {
+    return { last: keptLast, teachingMinutes: 0 };
+  }
+
+  const { boss, option, teachingMinutes } = chosen;
+
+  if ("followUp" in option) {
+    return { followUp: option.followUp, last: keptLast, teachingMinutes: 0 };
+  }
+
+  const replaced = teachingMinutes > room ? last : undefined;
+
+  return {
+    boss,
+    last: replaced,
+    teaching: {
+      ...option,
+      payload: {
+        ...option.payload,
+        reinforcement: Boolean(boss),
+        ...(replaced && lessons.length === 1 && { replacedOnlyLesson: true as const }),
+      },
+    },
+    teachingMinutes,
+  };
 }
 
 export function fundRemedialBlocks({
@@ -286,9 +318,7 @@ export function fundRemedialBlocks({
   const result = [
     ...mistakes,
     ...keptReview,
-    ...(teaching
-      ? [{ ...teaching, payload: { ...teaching.payload, reinforcement: Boolean(boss) } }]
-      : []),
+    ...(teaching ? [teaching] : []),
     ...pending.flatMap((block) => {
       if (block.kind === "practice") {
         return block === firstPractice ? keptPractice : [];
@@ -300,7 +330,7 @@ export function fundRemedialBlocks({
 
   return {
     ...generation,
-    blocks: result,
+    blocks: input.freshStart === "welcomeBack" ? putWelcomeBackMistakesSecond(result) : result,
     plannedMinutes: Math.max(
       plannedMinutes,
       sumMinutes(result) + (work.kept ? work.kept.mistakes + work.kept.teaching : 0),

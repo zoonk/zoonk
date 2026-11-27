@@ -225,13 +225,30 @@ export function listFittingLessons({
   );
 }
 
+export function putWelcomeBackMistakesSecond<Block extends Pick<StudySessionBlock, "payload">>(
+  blocks: Block[],
+): Block[] {
+  const first = blocks.findIndex((block) => readBlockPayload(block).mistakeIds.length === 0);
+  const lead = blocks[first];
+
+  return first > 0 && lead ? [lead, ...blocks.slice(0, first), ...blocks.slice(first + 1)] : blocks;
+}
+
 export function orderDayBlocks<
   Block extends {
     kind: StudyBlockKind;
     lessonId: string | null;
     payload: StudySessionBlock["payload"];
   },
->({ blocks, items }: { blocks: readonly Block[]; items: readonly ChallengeReachItem[] }): Block[] {
+>({
+  blocks,
+  items,
+  welcomeBack = false,
+}: {
+  blocks: readonly Block[];
+  items: readonly ChallengeReachItem[];
+  welcomeBack?: boolean;
+}): Block[] {
   const ranks = [
     "mistakes",
     "review",
@@ -284,9 +301,11 @@ export function orderDayBlocks<
 
   const afterLessons = (block: Block) => Number(readBlockPayload(block).afterLessons);
 
-  return blocks.toSorted(
+  const ordered = blocks.toSorted(
     (a, b) =>
       rank(a) - rank(b) ||
       (group(a) === "stretch" ? afterLessons(a) - afterLessons(b) || position(a) - position(b) : 0),
   );
+
+  return welcomeBack ? putWelcomeBackMistakesSecond(ordered) : ordered;
 }

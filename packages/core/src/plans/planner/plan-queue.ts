@@ -59,6 +59,7 @@ type RankedSkill = PlanGraphSkill & {
   index: number;
   reduced: boolean;
   minutes: number;
+  mockPriority: number;
   value: number;
   baseValue: number;
   rank: number;
@@ -193,6 +194,7 @@ function rankSkills(input: QueueInput): RankedSkill[] {
       focused,
       index,
       minutes,
+      mockPriority: mockMiss === "shortPart" ? 2 : Number(mockMiss === "missed"),
       outcome,
       phase,
       reduced,
@@ -221,6 +223,8 @@ function compareByPhase(a: RankedSkill, b: RankedSkill): number {
 function compareExamSkills(a: RankedSkill, b: RankedSkill): number {
   return (
     a.phase - b.phase ||
+    b.mockPriority - a.mockPriority ||
+    (a.mockPriority > 0 ? (b.weight ?? 1) - (a.weight ?? 1) : 0) ||
     Number(b.focused) - Number(a.focused) ||
     Number(a.reduced) - Number(b.reduced) ||
     Number(a.beyondNotice) - Number(b.beyondNotice) ||
@@ -231,6 +235,7 @@ function compareExamSkills(a: RankedSkill, b: RankedSkill): number {
 
 export function buildPlanQueue(queueInput: QueueInput): {
   focused: Set<string>;
+  mockPriority: ReadonlyMap<string, number>;
   prerequisites: Map<string, string[]>;
   ranks: Map<string, number>;
   rates: Map<string, number> | null;
@@ -309,8 +314,23 @@ export function buildPlanQueue(queueInput: QueueInput): {
   const values = new Map(ordered.map((skill) => [skill.skillId, skill.value]));
   const focused = new Set(ordered.filter((skill) => skill.focused).map((skill) => skill.skillId));
 
+  const missed = ordered.filter((skill) => skill.mockPriority > 0);
+
+  const mockPriority = new Map(
+    missed.map((skill, index) => [skill.skillId, missed.length - index]),
+  );
+
+  const priorities = {
+    focused,
+    mockPriority,
+    prerequisites: input.prerequisites,
+    ranks,
+    rates,
+    values,
+  };
+
   if (isExamSchedule(input.goal) || input.goal.kind === "explain") {
-    return { focused, prerequisites: input.prerequisites, ranks, rates, units, values };
+    return { ...priorities, units };
   }
 
   const share = getLearningShare({ phaseKind: "learn", practiceBias: input.settings.practiceBias });
@@ -323,12 +343,5 @@ export function buildPlanQueue(queueInput: QueueInput): {
     units,
   });
 
-  return {
-    focused,
-    prerequisites: input.prerequisites,
-    ranks,
-    rates,
-    units: withCheckpoints,
-    values,
-  };
+  return { ...priorities, units: withCheckpoints };
 }

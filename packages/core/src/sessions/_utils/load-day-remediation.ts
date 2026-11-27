@@ -126,6 +126,7 @@ export async function loadDayRemediation({
   return {
     dated: goal.targetDate !== null,
     mistakes,
+    previousReplacedOnlyLesson: plan.previousReplacedOnlyLesson,
     teaching: [...teaching, ...pattern]
       .toSorted(
         (a, b) =>

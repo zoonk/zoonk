@@ -61,10 +61,12 @@ function withoutKept({
     kept.filter((block) => readBlockPayload(block).mistakeIds.length > 0),
   );
 
+  const replacedOnlyLesson = kept.some((block) => readBlockPayload(block).replacedOnlyLesson);
+
   const teaching = getSessionUsedMinutes(
     kept.filter((block) => {
-      const { patternId, returning } = readBlockPayload(block);
-      return patternId !== null || returning !== null;
+      const { patternId, replacedOnlyLesson: replaced, returning } = readBlockPayload(block);
+      return !replaced && (returning !== null || (!dated && patternId !== null));
     }),
   );
 
@@ -102,8 +104,8 @@ function withoutKept({
         ...checkpoint,
         reinforcement: checkpoint.reinforcement?.filter(isNewLesson),
       })),
-    fillLessons: input.fillLessons && newLessons(input.fillLessons),
-    lessons: newLessons(input.lessons),
+    fillLessons: !replacedOnlyLesson && input.fillLessons ? newLessons(input.fillLessons) : [],
+    lessons: replacedOnlyLesson ? [] : newLessons(input.lessons),
     openedPractice: getOpenedPractice({ kept, session, teachingMinutes: teaching }),
     placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
@@ -113,6 +115,7 @@ function withoutKept({
       mistakes || teaching
         ? { dated, kept: { mistakes, teaching }, mistakes: [], teaching: [] }
         : undefined,
+    unwritten: replacedOnlyLesson ? [] : input.unwritten,
     usedMinutes,
   };
 }

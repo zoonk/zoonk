@@ -96,6 +96,7 @@ const blockPayloadSchema = z.object({
   refresh: z.boolean().default(false),
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
+  replacedOnlyLesson: z.literal(true).optional(),
   returning: returningLessonSchema.nullable().default(null),
   skillIds: z.array(z.string()).default([]),
   /** Focused time survives switching blocks; only the most recently opened clock runs. */
