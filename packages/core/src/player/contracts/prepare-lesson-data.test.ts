@@ -1,5 +1,4 @@
-import { shuffle } from "@zoonk/utils/shuffle";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { anyOrder } from "../../_test-utils/any-order";
 import {
   type TranslationOption,
@@ -13,7 +12,6 @@ type StepInput = SerializeInput["steps"][number];
 type WordInput = NonNullable<StepInput["word"]>;
 type SentenceInput = NonNullable<StepInput["sentence"]>;
 type DistractorWordInput = Resources["distractorWords"][number];
-const shuffleMock = vi.mocked(shuffle);
 
 const alphabetContent = {
   audioText: "a",
@@ -102,11 +100,6 @@ function serializeTranslation(word: WordInput, distractorWords: DistractorWordIn
 }
 
 describe(serializeExerciseSteps, () => {
-  beforeEach(() => {
-    shuffleMock.mockReset();
-    shuffleMock.mockImplementation(<T>(items: readonly T[]) => [...items]);
-  });
-
   it("parses exercise content and filters steps that are not exercises", () => {
     const result = serialize({
       steps: [
@@ -202,8 +195,11 @@ describe(serializeExerciseSteps, () => {
     expect(anyOrder(result[1]?.matchColumnsRightItems)).toStrictEqual(anyOrder(["1", "2"]));
   });
 
-  it("orders each step's choices the same on every build, however they arrive", () => {
-    const sentence = makeSentence({ distractors: ["Abend", "Fenster", "Tag"], id: "30" });
+  it("orders each step's choices the same on every build, without drawing random tiles", () => {
+    const sentence = makeSentence({
+      distractors: ["Abend", "Fenster", "Tag", "Hund", "Katze", "Haus"],
+      id: "30",
+    });
 
     const steps = [
       makeStep({
@@ -231,11 +227,12 @@ describe(serializeExerciseSteps, () => {
       makeStep({ content: {}, id: "7", kind: "reading", sentence }),
     ];
 
+    using random = vi.spyOn(Math, "random").mockReturnValue(0);
     const first = serialize({ steps });
-
-    shuffleMock.mockImplementation(<T>(items: readonly T[]) => [...items].toReversed());
+    random.mockReturnValue(0.99);
 
     expect(serialize({ steps })).toStrictEqual(first);
+    expect(random).not.toHaveBeenCalled();
   });
 
   it("serializes the step word and sentence distractor arrays", () => {

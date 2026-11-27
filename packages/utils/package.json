@@ -71,7 +71,6 @@
     "./search": "./src/search.ts",
     "./seeded-random": "./src/seeded-random.ts",
     "./sentry": "./src/sentry.ts",
-    "./shuffle": "./src/shuffle.ts",
     "./split-evenly": "./src/split-evenly.ts",
     "./string": "./src/string.ts",
     "./subscription": "./src/subscription.ts",
