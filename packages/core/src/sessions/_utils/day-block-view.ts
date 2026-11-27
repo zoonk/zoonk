@@ -110,6 +110,31 @@ function getWritingFields({
   };
 }
 
+function getMistakeWork({
+  block,
+  mistakeIds,
+  pendingMistakeMinutes,
+}: {
+  block: DayBlockInput;
+  mistakeIds: readonly string[];
+  pendingMistakeMinutes?: ReadonlyMap<string, number>;
+}) {
+  if (
+    !pendingMistakeMinutes ||
+    mistakeIds.length === 0 ||
+    (block.status !== "active" && block.status !== "pending")
+  ) {
+    return { estimatedMinutes: block.estimatedMinutes ?? 0, mistakeQuestions: mistakeIds.length };
+  }
+
+  const remaining = mistakeIds.flatMap((id) => pendingMistakeMinutes.get(id) ?? []);
+
+  return {
+    estimatedMinutes: Math.ceil(remaining.reduce((sum, minutes) => sum + minutes, 0)),
+    mistakeQuestions: remaining.length,
+  };
+}
+
 export function toDayBlockView({
   answeredAttemptIds,
   answeredItemIds,
@@ -117,6 +142,7 @@ export function toDayBlockView({
   blocks = [block],
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
+  pendingMistakeMinutes,
   savedWritingTasks,
   preparing = false,
   subject = null,
@@ -130,6 +156,7 @@ export function toDayBlockView({
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
+  pendingMistakeMinutes?: ReadonlyMap<string, number>;
   savedWritingTasks?: ReadonlyMap<string, DayBlockView["writingTask"] | null>;
   preparing?: boolean;
   subject?: string | null;
@@ -139,6 +166,12 @@ export function toDayBlockView({
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
+
+  const { estimatedMinutes, mistakeQuestions } = getMistakeWork({
+    block,
+    mistakeIds: payload.mistakeIds,
+    pendingMistakeMinutes,
+  });
 
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
@@ -162,7 +195,7 @@ export function toDayBlockView({
     chapterId: payload.chapterId,
     checkpoint: toViewCheckpoint(payload.checkpoint),
     estimatedBrainPower: estimateBrainPower(getEstimateOutcome(block)),
-    estimatedMinutes: block.estimatedMinutes ?? 0,
+    estimatedMinutes,
     extra: payload.extra,
     fullReview: payload.fullReview,
     kind: block.kind,
@@ -178,11 +211,7 @@ export function toDayBlockView({
     planItemKey: payload.planItemKey,
     position: block.position,
     preparing,
-    questions: getBlockQuestions(
-      block,
-      payload.checkpoint,
-      itemIds.length + payload.mistakeIds.length,
-    ),
+    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length + mistakeQuestions),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
     returning: payload.returning,

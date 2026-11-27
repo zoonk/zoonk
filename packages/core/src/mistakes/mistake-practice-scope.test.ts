@@ -15,6 +15,7 @@ import { mockConditionsSchema } from "../exams/mocks/mock-contract";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { finishStudyBlock } from "../sessions/finish-study-block";
+import { getStudySession } from "../sessions/get-study-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
@@ -105,7 +106,8 @@ describe("Scoped mistake practice", () => {
 
   it("keeps a block fixed from the notebook untouched until the empty completion POST", async () => {
     const user = await userFixture();
-    const [assigned] = await questions(user.id);
+    const all = await questions(user.id);
+    const assigned = all.slice(0, 2);
 
     const session = await studySessionFixture({
       startedAt: new Date(),
@@ -115,32 +117,69 @@ describe("Scoped mistake practice", () => {
 
     const block = await studySessionBlockFixture({
       kind: "practice",
-      payload: { mistakeIds: [assigned!.mistake.id] },
+      payload: { mistakeIds: assigned.map(({ mistake }) => mistake.id) },
       sessionId: session.id,
       status: "pending",
     });
 
-    await prisma.mistake.update({
+    await prisma.mistake.updateMany({
       data: { missedAt: new Date(0) },
-      where: { id: assigned!.mistake.id },
+      where: { id: { in: assigned.map(({ mistake }) => mistake.id) } },
     });
 
     mockSession(user.id);
 
-    await expect(
+    const fix = ({ item, mistake }: (typeof assigned)[number]) =>
       answerMistakePractice({
-        input: {
-          answer: { selectedIndex: 0 },
-          durationMs: 4000,
-          itemId: assigned!.item.id,
-          timeZone: "UTC",
-        },
-        mistakeId: assigned!.mistake.id,
-      }),
-    ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });
+        input: { answer: { selectedIndex: 0 }, durationMs: 4000, itemId: item.id, timeZone: "UTC" },
+        mistakeId: mistake.id,
+      });
 
     const input = { blockId: block.id, timeZone: "UTC" };
     const read = () => prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    const day = () => getStudySession({ input, sessionId: session.id });
+
+    await expect(fix(assigned[0]!)).resolves.toMatchObject({
+      feedback: { fixed: true },
+      status: "ready",
+    });
+
+    await expect(day()).resolves.toMatchObject({
+      session: {
+        blocks: [
+          {
+            estimatedMinutes: 1,
+            id: block.id,
+            questions: 1,
+            screen: "mistakesPractice",
+            status: "pending",
+          },
+        ],
+      },
+      status: "ready",
+    });
+
+    await expect(read()).resolves.toStrictEqual(block);
+
+    await expect(fix(assigned[1]!)).resolves.toMatchObject({
+      feedback: { fixed: true },
+      status: "ready",
+    });
+
+    await expect(day()).resolves.toMatchObject({
+      session: {
+        blocks: [
+          {
+            estimatedMinutes: 0,
+            id: block.id,
+            questions: 0,
+            screen: "mistakesPractice",
+            status: "pending",
+          },
+        ],
+      },
+      status: "ready",
+    });
 
     await expect(getMistakePractice(input)).resolves.toMatchObject({
       practice: [],

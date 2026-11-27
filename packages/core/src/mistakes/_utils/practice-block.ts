@@ -28,14 +28,20 @@ export async function findPracticeBlock({ blockId, userId }: { blockId: string; 
 
 export async function loadPendingBlockMistakes({
   mistakeIds,
+  now,
   timeZone,
   userId,
 }: {
   mistakeIds: string[];
+  now: Date;
   timeZone: string;
   userId: string;
-}) {
-  const localDate = getDateInTimeZone({ date: new Date(), timeZone });
+}): Promise<{ mistakes: Mistake[]; replays: Awaited<ReturnType<typeof loadMistakeReplays>> }> {
+  if (mistakeIds.length === 0) {
+    return { mistakes: [], replays: new Map() };
+  }
+
+  const localDate = getDateInTimeZone({ date: now, timeZone });
 
   const [open, attempts] = await Promise.all([
     prisma.mistake.findMany({

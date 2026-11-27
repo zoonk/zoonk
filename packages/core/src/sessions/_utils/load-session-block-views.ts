@@ -5,6 +5,8 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
+import { loadPendingBlockMistakes } from "../../mistakes/_utils/practice-block";
+import { getReplayMinutes } from "../../mistakes/mistake-practice-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { loadBlockSubjects } from "./block-subjects";
 import { isCurrentSession } from "./current-session";
@@ -49,6 +51,7 @@ export async function loadSessionBlockViews({
     oftenTestedSkillIds,
     withWritingAvailability,
     preparing,
+    pendingMistakes,
   ] = await Promise.all([
     knownAnswers ?? loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
     loadBlockSubjects({ blocks: session.blocks, blueprint, goal: session.goal }),
@@ -76,9 +79,29 @@ export async function loadSessionBlockViews({
       userId,
     }),
     knownPreparing ?? loadPreparingMockPositions({ ...session, blueprint }),
+    loadPendingBlockMistakes({
+      mistakeIds: [
+        ...new Set(
+          session.blocks.flatMap((block) =>
+            block.status === "active" || block.status === "pending"
+              ? readBlockPayload(block).mistakeIds
+              : [],
+          ),
+        ),
+      ],
+      now,
+      timeZone: getAnswerTimeZone({ goal: session.goal, timeZone }),
+      userId,
+    }),
   ]);
 
   const current = isCurrentSession({ now, session, timeZone });
+
+  const pendingMistakeMinutes = new Map(
+    [...pendingMistakes.replays].flatMap(([id, replay]) =>
+      replay ? [[id, getReplayMinutes(replay)] as const] : [],
+    ),
+  );
 
   const { blocks } = await readLessonScreens(
     {
@@ -87,6 +110,7 @@ export async function loadSessionBlockViews({
         blockedTestOutChapters: blockedChapters,
         blocks: session.blocks,
         oftenTestedSkillIds,
+        pendingMistakeMinutes,
         preparing,
         subjects,
         writingTasks,

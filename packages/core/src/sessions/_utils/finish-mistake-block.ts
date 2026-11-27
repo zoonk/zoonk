@@ -37,6 +37,7 @@ export async function finishMistakeBlock({
   if (block.status !== "completed") {
     const { replays } = await loadPendingBlockMistakes({
       mistakeIds: payload.mistakeIds,
+      now: new Date(),
       timeZone,
       userId,
     });

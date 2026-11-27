@@ -22,7 +22,7 @@ type MaterialMistake = PracticeMistake & {
   userId: string;
 };
 
-function getReplayMinutes(replay: MistakeReplay): number {
+export function getReplayMinutes(replay: MistakeReplay): number {
   const format = replay.kind === "item" ? replay.item.format : replay.lesson.step.kind;
 
   if (format === "typed" || format === "spokenAnswer" || format === "typedAnswer") {

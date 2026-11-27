@@ -144,12 +144,13 @@ async function loadRunMistakes({
 
   await io();
 
-  const localDate = getDateInTimeZone({ date: new Date(), timeZone });
+  const now = new Date();
   const skillIds = narrowToSkill({ scopeSkillIds: scope.skillIds, skillId });
 
   if (block) {
     const { mistakes, replays } = await loadPendingBlockMistakes({
       mistakeIds: ["completed", "skipped"].includes(block.block.status) ? [] : block.mistakeIds,
+      now,
       timeZone,
       userId,
     });
@@ -167,7 +168,12 @@ async function loadRunMistakes({
     userId,
   });
 
-  return orderPractice({ localDate, mistakes: entries, mockId, timeZone });
+  return orderPractice({
+    localDate: getDateInTimeZone({ date: now, timeZone }),
+    mistakes: entries,
+    mockId,
+    timeZone,
+  });
 }
 
 function orderPractice<TEntry extends Mistake>({

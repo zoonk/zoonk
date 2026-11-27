@@ -82688,7 +82688,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration."
+            "description": "Personal lesson estimate, rounded when the block is planned. For pending or active mistake practice, the estimate covers the assigned questions that are still playable. Other blocks use their planned duration."
           },
           "extra": {
             "type": "boolean",
@@ -82774,7 +82774,8 @@
           "questions": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "Question count. For pending or active mistake practice, counts only the assigned questions that are still playable."
           },
           "refresh": {
             "type": "boolean",
@@ -100562,7 +100563,7 @@
                   "type": "integer",
                   "minimum": 0,
                   "maximum": 9007199254740991,
-                  "description": "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration."
+                  "description": "Personal lesson estimate, rounded when the block is planned. For pending or active mistake practice, the estimate covers the assigned questions that are still playable. Other blocks use their planned duration."
                 },
                 "extra": {
                   "type": "boolean",
@@ -100643,7 +100644,8 @@
                 "questions": {
                   "type": "integer",
                   "minimum": 0,
-                  "maximum": 9007199254740991
+                  "maximum": 9007199254740991,
+                  "description": "Question count. For pending or active mistake practice, counts only the assigned questions that are still playable."
                 },
                 "refresh": {
                   "type": "boolean",

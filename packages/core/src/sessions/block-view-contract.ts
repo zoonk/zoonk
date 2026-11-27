@@ -56,7 +56,7 @@ export const studyBlockSchema = z
       .min(0)
       .meta({
         description:
-          "Personal lesson estimate, rounded once when the block is planned and persisted for queue packing and display. Other block kinds use their planned duration.",
+          "Personal lesson estimate, rounded when the block is planned. For pending or active mistake practice, the estimate covers the assigned questions that are still playable. Other blocks use their planned duration.",
       }),
     extra: z.boolean().meta({ description: 'A "10 more minutes" block after the day\'s session' }),
     fullReview: z
@@ -105,7 +105,13 @@ export const studyBlockSchema = z
     preparing: z
       .boolean()
       .describe("True when a scheduled mock cannot start because some questions are unavailable."),
-    questions: z.number().int().min(0),
+    questions: z
+      .number()
+      .int()
+      .min(0)
+      .describe(
+        "Question count. For pending or active mistake practice, counts only the assigned questions that are still playable.",
+      ),
     refresh: z
       .boolean()
       .meta({
